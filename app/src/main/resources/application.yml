@@ -431,6 +431,8 @@ initializr:
           artifactId: cas-server-support-acceptto-mfa
           description: Apereo CAS Acceptto MFA Support
           bom: cas-bom
+          aliases:
+            - acceptto
         - name: cas-server-support-actions
           id: support-actions
           groupId: org.apereo.cas
@@ -533,12 +535,16 @@ initializr:
           artifactId: cas-server-support-aup-webflow
           description: Apereo CAS AUP Webflow Support
           bom: cas-bom
+          aliases:
+            - aup
         - name: cas-server-support-authy
           id: support-authy
           groupId: org.apereo.cas
           artifactId: cas-server-support-authy
           description: Apereo CAS Authy Support
           bom: cas-bom
+          aliases:
+            - authy
         - name: cas-server-support-authy-core
           id: support-authy-core
           groupId: org.apereo.cas
@@ -587,12 +593,16 @@ initializr:
           artifactId: cas-server-support-bootadmin-client
           description: Apereo CAS Spring Boot Admin Client
           bom: cas-bom
+          aliases:
+            - bootadmin
         - name: cas-server-support-captcha
           id: support-captcha
           groupId: org.apereo.cas
           artifactId: cas-server-support-captcha
           description: Apereo CAS Captcha Support
           bom: cas-bom
+          aliases:
+            - captcha
         - name: cas-server-support-captcha-core
           id: support-captcha-core
           groupId: org.apereo.cas
@@ -761,6 +771,8 @@ initializr:
           artifactId: cas-server-support-consul-client
           description: Apereo CAS Spring Cloud Consul Client
           bom: cas-bom
+          aliases:
+            - consule
         - name: cas-server-support-cosmosdb-core
           id: support-cosmosdb-core
           groupId: org.apereo.cas
@@ -833,12 +845,16 @@ initializr:
           artifactId: cas-server-support-discovery-profile
           description: Apereo CAS Discovery Support
           bom: cas-bom
+          aliases:
+            - discovery
         - name: cas-server-support-duo
           id: support-duo
           groupId: org.apereo.cas
           artifactId: cas-server-support-duo
           description: Apereo CAS DuoSecurity Support
           bom: cas-bom
+          aliases:
+            - duo
         - name: cas-server-support-duo-core
           id: support-duo-core
           groupId: org.apereo.cas
@@ -887,6 +903,8 @@ initializr:
           artifactId: cas-server-support-ehcache3-ticket-registry
           description: Apereo CAS Ehcache3 Integration
           bom: cas-bom
+          aliases:
+            - ehcache3
         - name: cas-server-support-electrofence
           id: support-electrofence
           groupId: org.apereo.cas
@@ -899,6 +917,8 @@ initializr:
           artifactId: cas-server-support-eureka-client
           description: Apereo CAS Spring Cloud Eureka Client
           bom: cas-bom
+          aliases:
+            - eureka
         - name: cas-server-support-events-couchdb
           id: support-events-couchdb
           groupId: org.apereo.cas
@@ -947,6 +967,8 @@ initializr:
           artifactId: cas-server-support-gauth
           description: Apereo CAS Google Authenticator Support
           bom: cas-bom
+          aliases:
+            - gauth
         - name: cas-server-support-gauth-core
           id: support-gauth-core
           groupId: org.apereo.cas
@@ -1025,6 +1047,8 @@ initializr:
           artifactId: cas-server-support-git-service-registry
           description: Apereo CAS Git Service Registry Implementation
           bom: cas-bom
+          aliases:
+            - gitsvc
         - name: cas-server-support-google-analytics
           id: support-google-analytics
           groupId: org.apereo.cas
@@ -1049,6 +1073,8 @@ initializr:
           artifactId: cas-server-support-gua
           description: Apereo CAS Graphical User Authentication Support
           bom: cas-bom
+          aliases:
+            - gua
         - name: cas-server-support-hazelcast
           id: support-hazelcast
           groupId: org.apereo.cas
@@ -1103,6 +1129,9 @@ initializr:
           artifactId: cas-server-support-hazelcast-ticket-registry
           description: Apereo CAS Hazelcast Integration
           bom: cas-bom
+          aliases:
+            - hazelcast
+            - hz
         - name: cas-server-support-ignite-ticket-registry
           id: support-ignite-ticket-registry
           groupId: org.apereo.cas
@@ -1139,12 +1168,16 @@ initializr:
           artifactId: cas-server-support-interrupt-webflow
           description: Apereo CAS Notification/Interrupt Webflow
           bom: cas-bom
+          aliases:
+            - interrupt
         - name: cas-server-support-javamelody
           id: support-javamelody
           groupId: org.apereo.cas
           artifactId: cas-server-support-javamelody
           description: Apereo CAS JavaMelody Support
           bom: cas-bom
+          aliases:
+            - melody
         - name: cas-server-support-jdbc
           id: support-jdbc
           groupId: org.apereo.cas
@@ -1181,6 +1214,8 @@ initializr:
           artifactId: cas-server-support-jmx
           description: Apereo CAS JMX Support
           bom: cas-bom
+          aliases:
+            - jmx
         - name: cas-server-support-jpa-eclipselink
           id: support-jpa-eclipselink
           groupId: org.apereo.cas
@@ -1193,12 +1228,16 @@ initializr:
           artifactId: cas-server-support-jpa-hibernate
           description: Apereo CAS JPA Hibernate Support
           bom: cas-bom
+          aliases:
+            - hibernate
         - name: cas-server-support-jpa-service-registry
           id: support-jpa-service-registry
           groupId: org.apereo.cas
           artifactId: cas-server-support-jpa-service-registry
           description: Apereo CAS JPA Service Registry Support
           bom: cas-bom
+          aliases:
+            - jpasvc
         - name: cas-server-support-jpa-ticket-registry
           id: support-jpa-ticket-registry
           groupId: org.apereo.cas
@@ -1217,6 +1256,8 @@ initializr:
           artifactId: cas-server-support-json-service-registry
           description: Apereo CAS JSON Service Registry
           bom: cas-bom
+          aliases:
+            - jsonsvc
         - name: cas-server-support-kafka-core
           id: support-kafka-core
           groupId: org.apereo.cas
@@ -1229,6 +1270,8 @@ initializr:
           artifactId: cas-server-support-ldap
           description: Apereo CAS LDAP Support
           bom: cas-bom
+          aliases:
+            - ldap
         - name: cas-server-support-ldap-core
           id: support-ldap-core
           groupId: org.apereo.cas
@@ -1253,6 +1296,8 @@ initializr:
           artifactId: cas-server-support-logback
           description: Apereo CAS Core Logging Support for Logback
           bom: cas-bom
+          aliases:
+            - logback
         - name: cas-server-support-logging-config-cloudwatch
           id: support-logging-config-cloudwatch
           groupId: org.apereo.cas
@@ -1265,6 +1310,8 @@ initializr:
           artifactId: cas-server-support-logging-config-splunk
           description: Apereo CAS Core Logging Splunk Support
           bom: cas-bom
+          aliases:
+            - splunk
         - name: cas-server-support-memcached-aws-elasticache
           id: support-memcached-aws-elasticache
           groupId: org.apereo.cas
@@ -1295,6 +1342,8 @@ initializr:
           artifactId: cas-server-support-memcached-ticket-registry
           description: Apereo CAS Memcached Integration
           bom: cas-bom
+          aliases:
+            - memcached
         - name: cas-server-support-metrics
           id: support-metrics
           groupId: org.apereo.cas
@@ -1325,6 +1374,8 @@ initializr:
           artifactId: cas-server-support-mongo-service-registry
           description: Apereo CAS Mongo Integration
           bom: cas-bom
+          aliases:
+            - mongosvc
         - name: cas-server-support-mongo-ticket-registry
           id: support-mongo-ticket-registry
           groupId: org.apereo.cas
@@ -1391,12 +1442,16 @@ initializr:
           artifactId: cas-server-support-oauth-webflow
           description: Apereo CAS OAuth Webflow Support
           bom: cas-bom
+          aliases:
+            - oauth
         - name: cas-server-support-oidc
           id: support-oidc
           groupId: org.apereo.cas
           artifactId: cas-server-support-oidc
           description: Apereo CAS Server OpenID Connect Support
           bom: cas-bom
+          aliases:
+            - oidc
         - name: cas-server-support-oidc-core
           id: support-oidc-core
           groupId: org.apereo.cas
@@ -1421,6 +1476,8 @@ initializr:
           artifactId: cas-server-support-okta-authentication
           description: Apereo CAS Okta Authentication
           bom: cas-bom
+          aliases:
+            - okta
         - name: cas-server-support-openid
           id: support-openid
           groupId: org.apereo.cas
@@ -1481,6 +1538,9 @@ initializr:
           artifactId: cas-server-support-pac4j-webflow
           description: Apereo CAS Pac4j Webflow Support
           bom: cas-bom
+          aliases:
+            - pac4j
+            - delegation
         - name: cas-server-support-passwordless
           id: support-passwordless
           groupId: org.apereo.cas
@@ -1517,6 +1577,8 @@ initializr:
           artifactId: cas-server-support-person-directory
           description: Apereo CAS Person Directory & Attribute Resolution Support
           bom: cas-bom
+          aliases:
+            - pd
         - name: cas-server-support-pm
           id: support-pm
           groupId: org.apereo.cas
@@ -1553,12 +1615,16 @@ initializr:
           artifactId: cas-server-support-pm-webflow
           description: Apereo CAS Password Management - Core
           bom: cas-bom
+          aliases:
+            - pm
         - name: cas-server-support-radius
           id: support-radius
           groupId: org.apereo.cas
           artifactId: cas-server-support-radius
           description: Apereo CAS RADIUS Support
           bom: cas-bom
+          aliases:
+            - radius
         - name: cas-server-support-radius-core
           id: support-radius-core
           groupId: org.apereo.cas
@@ -1607,6 +1673,8 @@ initializr:
           artifactId: cas-server-support-reports
           description: Apereo CAS Web Application Reports
           bom: cas-bom
+          aliases:
+            - reports
         - name: cas-server-support-reports-core
           id: support-reports-core
           groupId: org.apereo.cas
@@ -1619,6 +1687,8 @@ initializr:
           artifactId: cas-server-support-rest
           description: Apereo CAS REST Implementation
           bom: cas-bom
+          aliases:
+            - rest
         - name: cas-server-support-rest-authentication
           id: support-rest-authentication
           groupId: org.apereo.cas
@@ -1661,6 +1731,8 @@ initializr:
           artifactId: cas-server-support-saml
           description: Apereo CAS SAML Server and Validation Support
           bom: cas-bom
+          aliases:
+            - saml1
         - name: cas-server-support-saml-core
           id: support-saml-core
           groupId: org.apereo.cas
@@ -1691,6 +1763,8 @@ initializr:
           artifactId: cas-server-support-saml-idp
           description: Apereo CAS SAML Identity Provider Support
           bom: cas-bom
+          aliases:
+            - saml2
         - name: cas-server-support-saml-idp-core
           id: support-saml-idp-core
           groupId: org.apereo.cas
@@ -2057,6 +2131,8 @@ initializr:
           artifactId: cas-server-support-thymeleaf
           description: Apereo CAS Support for Thymeleaf Template Engine
           bom: cas-bom
+          aliases:
+            - thymeleaf
         - name: cas-server-support-token-authentication
           id: support-token-authentication
           groupId: org.apereo.cas
@@ -2147,6 +2223,8 @@ initializr:
           artifactId: cas-server-support-u2f
           description: Apereo CAS U2F Support
           bom: cas-bom
+          aliases:
+            - u2f
         - name: cas-server-support-u2f-core
           id: support-u2f-core
           groupId: org.apereo.cas
@@ -2201,6 +2279,9 @@ initializr:
           artifactId: cas-server-support-webauthn
           description: Apereo CAS FIDO2 WebAuthn Support
           bom: cas-bom
+          aliases:
+            - webauthn
+            - fido2
         - name: cas-server-support-webauthn-core
           id: support-webauthn-core
           groupId: org.apereo.cas
@@ -2267,6 +2348,8 @@ initializr:
           artifactId: cas-server-support-wsfederation-webflow
           description: Apereo CAS WS-Federation Webflow Support
           bom: cas-bom
+          aliases:
+            - wsfed
         - name: cas-server-support-x509
           id: support-x509
           groupId: org.apereo.cas
@@ -2285,6 +2368,8 @@ initializr:
           artifactId: cas-server-support-x509-webflow
           description: Apereo CAS X509 Webflow Support
           bom: cas-bom
+          aliases:
+            - x509
         - name: cas-server-support-yaml-service-registry
           id: support-yaml-service-registry
           groupId: org.apereo.cas
@@ -2297,6 +2382,8 @@ initializr:
           artifactId: cas-server-support-yubikey
           description: Apereo CAS YubiKey Support
           bom: cas-bom
+          aliases:
+            - yubikey
         - name: cas-server-support-yubikey-core
           id: support-yubikey-core
           groupId: org.apereo.cas
@@ -2407,6 +2494,8 @@ initializr:
           artifactId: cas-server-webapp-jetty
           description: Apereo CAS Web Application via Jetty
           bom: cas-bom
+          aliases:
+            - jetty
         - name: cas-server-webapp-resources
           id: webapp-resources
           groupId: org.apereo.cas
@@ -2419,9 +2508,13 @@ initializr:
           artifactId: cas-server-webapp-tomcat
           description: Apereo CAS Web Application via Apache Tomcat
           bom: cas-bom
+          aliases:
+            - tomcat
         - name: cas-server-webapp-undertow
           id: webapp-undertow
           groupId: org.apereo.cas
           artifactId: cas-server-webapp-undertow
           description: Apereo CAS Web Application via Undertow
           bom: cas-bom
+          aliases:
+            - undertow
