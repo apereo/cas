@@ -976,6 +976,8 @@ The following options are shared and apply when CAS is configured to integrate w
 # ${configurationKey}.view-timeout=PT30S
 # ${configurationKey}.kv-timeout=PT30S 
 # ${configurationKey}.max-http-connections=PT30S
+# ${configurationKey}.idle-connection-timeout=PT30S
+# ${configurationKey}.query-threshold=PT30S
 # ${configurationKey}.scan-consistency=NOT_BOUNDED|REQUEST_PLUS
 ```
 

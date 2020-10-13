@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.CollectionUtils;
 
 import com.couchbase.client.core.cnc.tracing.ThresholdRequestTracer;
-import com.couchbase.client.core.endpoint.CircuitBreakerConfig;
 import com.couchbase.client.core.env.IoConfig;
 import com.couchbase.client.core.env.NetworkResolution;
 import com.couchbase.client.core.env.SeedNode;
