@@ -4,6 +4,8 @@ import org.apereo.cas.configuration.model.support.couchbase.BaseCouchbasePropert
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.CollectionUtils;
 
+import com.couchbase.client.core.cnc.tracing.ThresholdRequestTracer;
+import com.couchbase.client.core.endpoint.CircuitBreakerConfig;
 import com.couchbase.client.core.env.IoConfig;
 import com.couchbase.client.core.env.NetworkResolution;
 import com.couchbase.client.core.env.SeedNode;
@@ -98,6 +100,24 @@ public class CouchbaseClientFactory {
      */
     public Duration getConnectionTimeout() {
         return Beans.newDuration(properties.getConnectionTimeout());
+    }
+
+    /**
+     * Gets idle connection timeout.
+     *
+     * @return the idle connection timeout
+     */
+    public Duration getIdleConnectionTimeout() {
+        return Beans.newDuration(properties.getIdleConnectionTimeout());
+    }
+
+    /**
+     * Gets query threshold.
+     *
+     * @return the query threshold
+     */
+    public Duration getQueryThreshold() {
+        return Beans.newDuration(properties.getQueryThreshold());
     }
 
     /**
@@ -319,6 +339,13 @@ public class CouchbaseClientFactory {
         return bucketGet(id, GetOptions.getOptions());
     }
 
+    /**
+     * Bucket get get result.
+     *
+     * @param id      the id
+     * @param options the options
+     * @return the get result
+     */
     public GetResult bucketGet(final String id, final GetOptions options) {
         val bucket = this.cluster.bucket(properties.getBucket());
         return bucket.defaultCollection().get(id, options);
@@ -330,6 +357,7 @@ public class CouchbaseClientFactory {
 
         val env = ClusterEnvironment
             .builder()
+            .maxNumRequestsInRetry(properties.getMaxNumRequestsInRetry())
             .timeoutConfig(TimeoutConfig
                 .connectTimeout(getConnectionTimeout())
                 .kvTimeout(getKvTimeout())
@@ -337,8 +365,13 @@ public class CouchbaseClientFactory {
                 .searchTimeout(getSearchTimeout())
                 .viewTimeout(getViewTimeout()))
             .ioConfig(IoConfig
+                .idleHttpConnectionTimeout(getIdleConnectionTimeout())
                 .maxHttpConnections(properties.getMaxHttpConnections())
                 .networkResolution(NetworkResolution.AUTO))
+            .requestTracer(ThresholdRequestTracer
+                .builder(null)
+                .queryThreshold(getQueryThreshold())
+                .build())
             .build();
 
         val listOfNodes = properties.getAddresses()
