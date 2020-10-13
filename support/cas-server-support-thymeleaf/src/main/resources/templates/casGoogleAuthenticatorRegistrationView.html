@@ -138,7 +138,7 @@
         <table>
             <tr>
                 <td>
-                    <img th:src="@{/otp/qrgen(key=${keyUri})}"/>
+                    <img th:src="@{'data:image/jpeg;base64,' + ${QRcode}}" />
                 </td>
 
                 <td>
