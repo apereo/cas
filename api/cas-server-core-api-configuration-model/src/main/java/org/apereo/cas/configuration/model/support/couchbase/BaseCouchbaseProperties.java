@@ -38,6 +38,16 @@ public abstract class BaseCouchbaseProperties implements Serializable {
     private String connectionTimeout = "PT60S";
 
     /**
+     * String representation of idle connection timeout.
+     */
+    private String idleConnectionTimeout = "PT60S";
+
+    /**
+     * String representation of query threshold.
+     */
+    private String queryThreshold = "PT30S";
+
+    /**
      * String representation of search timeout.
      */
     private String searchTimeout = "PT30S";
@@ -78,10 +88,17 @@ public abstract class BaseCouchbaseProperties implements Serializable {
      * Maximum number of connections made to the cluster.
      */
     private int maxHttpConnections = 5;
+
     /**
      * Maximum number of parallel threads made for queries.
      */
     private int maxParallelism;
+
+    /**
+     * Allows to customize the maximum number of
+     * requests allowed in the retry timer.
+     */
+    private long maxNumRequestsInRetry = 32768;
 
     /**
      * Bucket name.
