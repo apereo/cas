@@ -24,9 +24,9 @@ public class CasConfigurationMetadataRepositoryTests {
     public void verifyOperation() {
         val repository = new CasConfigurationMetadataRepository();
         var properties = repository.getPropertiesWithType(LdapAuthenticationProperties.class);
-        assertFalse(properties.isEmpty());
+        assertTrue(properties.isEmpty());
         properties = repository.getPropertiesWithType(GoogleAuthenticatorMultifactorProperties.class);
-        assertFalse(properties.isEmpty());
+        assertTrue(properties.isEmpty());
         properties = repository.getPropertiesWithType(Set.class);
         assertFalse(properties.isEmpty());
     }
