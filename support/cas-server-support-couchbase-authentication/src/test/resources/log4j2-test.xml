@@ -7,7 +7,7 @@
     </Appenders>
     <Loggers>
         <Logger name="org.apereo" level="error" />
-        <Logger name="com.couchbase" level="error" />
+        <Logger name="com.couchbase" level="warn" />
         <Root level="off">
             <AppenderRef ref="console"/>
         </Root>
