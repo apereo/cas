@@ -44,7 +44,7 @@ publishing {
                 def dependencies = dependencyManagement.appendNode("dependencies")
 
                 rootProject.subprojects
-                        .findAll { p -> p != project && p.tasks.asMap['generatePomFileForMavenJavaPublication']?.enabled }
+                        .findAll { p -> p != project }
                         .each { p ->
                             createDependency(dependencies, groupId, p.name, version)
                         }
