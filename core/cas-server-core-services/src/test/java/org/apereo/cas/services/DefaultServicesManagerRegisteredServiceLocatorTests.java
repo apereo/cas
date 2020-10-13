@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -30,6 +31,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     CasCoreNotificationsConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreServicesConfiguration.class
 })
