@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
+import org.apereo.cas.util.QRUtils;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
@@ -34,7 +35,10 @@ public class OneTimeTokenAccountCheckRegistrationAction extends AbstractAction {
             final OneTimeTokenAccount keyAccount = this.repository.create(uid);
             final String keyUri = "otpauth://totp/" + this.label + ':' + uid + "?secret=" + keyAccount.getSecretKey() + "&issuer=" + this.issuer;
             requestContext.getFlowScope().put("key", keyAccount);
-            requestContext.getFlowScope().put("keyUri", keyUri);
+
+            final String qrCodeBase64 = QRUtils.generateQRCode(keyUri, QRUtils.WIDTH_LARGE, QRUtils.WIDTH_LARGE);
+            requestContext.getFlowScope().put("QRcode", qrCodeBase64);
+
             LOGGER.debug("Registration key URI is [{}]", keyUri);
             return new EventFactorySupport().event(this, "register");
         }
