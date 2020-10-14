@@ -24,15 +24,13 @@ Support is enabled by including the following dependency in the WAR overlay:
 You may also need to declare the following repository in your
 CAS Overlay to be able to resolve dependencies:
 
-```xml
-<repositories>
-    ...
-    <repository>
-        <id>shibboleth-releases</id>
-        <url>https://build.shibboleth.net/nexus/content/repositories/releases</url>
-    </repository>
-    ...
-</repositories>
+```groovy
+repositories {
+    maven { 
+        mavenContent { releasesOnly() }
+        url "https://build.shibboleth.net/nexus/content/repositories/releases" 
+    }
+}
 ```
 
 <div class="alert alert-info"><strong>JCE Requirement</strong><p>It's safe to make sure you have the proper JCE bundle 
