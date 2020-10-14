@@ -43,6 +43,11 @@ public abstract class BasePac4jOidcClientProperties extends Pac4jIdentifiableCli
     private boolean useNonce;
 
     /**
+     * Disable PKCE, even when supported by the IdP.
+     */
+    private boolean disablePkce;
+
+    /**
      * Requested scope(s).
      */
     private String scope;
@@ -65,15 +70,15 @@ public abstract class BasePac4jOidcClientProperties extends Pac4jIdentifiableCli
 
     /**
      * The response mode specifies how the result of the authorization request is formatted.
-     * For backward compatibility the default value is empty, which means the default pac4j (empty) response mode is used. 
-     * Possible values includes "query", "fragment", "form_post", or "web_message" 
+     * For backward compatibility the default value is empty, which means the default pac4j (empty) response mode is used.
+     * Possible values includes "query", "fragment", "form_post", or "web_message"
      */
     private String responseMode;
 
     /**
      * The response type tells the authorization server which grant to execute.
      * For backward compatibility the default value is empty, which means the default pac4j ("code") response type is used.
-     * Possibles values includes "code", "token" or "id_token".     
+     * Possibles values includes "code", "token" or "id_token".
      */
     private String responseType;
 

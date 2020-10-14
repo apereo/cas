@@ -1142,7 +1142,7 @@ to an external OpenID Connect provider such as Azure AD, given the provider's *c
 # ${configurationKey}.connect-timeout=PT5S
 # ${configurationKey}.expire-session-with-token=false
 # ${configurationKey}.token-expiration-advance=0
-
+# ${configurationKey}.disable-pkce=false
 ```
 
 ## LDAP Connection Settings
