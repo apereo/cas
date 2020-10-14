@@ -264,15 +264,13 @@ To see the relevant list of CAS properties, please [review this guide](../config
 You may also need to declare the following repository in
 your CAS Overlay to be able to resolve dependencies:
 
-```xml
-<repositories>
-    ...
-    <repository>
-        <id>shibboleth-releases</id>
-        <url>https://build.shibboleth.net/nexus/content/repositories/releases</url>
-    </repository>
-    ...
-</repositories>
+```groovy
+repositories {
+    maven { 
+        mavenContent { releasesOnly() }
+        url "https://build.shibboleth.net/nexus/content/repositories/releases" 
+    }
+}
 ```
 
 ## Troubleshooting

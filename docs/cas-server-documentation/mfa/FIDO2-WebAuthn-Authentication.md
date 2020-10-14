@@ -26,15 +26,13 @@ To see the relevant list of CAS properties, please [review this guide](../config
 You may also need to declare the following repository in
 your CAS overlay to be able to resolve dependencies:
 
-```xml
-<repositories>
-    ...
-    <repository>
-        <id>webauthn-cas</id>
-        <url>https://dl.bintray.com/apereocas/webauthn-cas</url>
-    </repository>
-    ...
-</repositories>
+```groovy       
+repositories {
+    maven { 
+        mavenContent { releasesOnly() }
+        url "https://dl.bintray.com/apereocas/webauthn-cas" 
+    }
+}
 ```
 
 ## Registration
