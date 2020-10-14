@@ -16,7 +16,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.EnumMap;
 import java.util.stream.IntStream;
@@ -38,15 +37,15 @@ public class QRUtils {
     /**
      * Generate qr code.
      *
-     * @param stream the stream
      * @param key    the key
      * @param width  the width
      * @param height the height
+     * @return the string
      */
     @SneakyThrows
-    public static void generateQRCode(final OutputStream stream, final String key,
-                                      final int width, final int height) {
-        val hintMap = new EnumMap<EncodeHintType, Object>(EncodeHintType.class);
+    public static String generateQRCode(final String key,
+                                        final int width, final int height) {
+        val hintMap = new EnumMap<>(EncodeHintType.class);
         hintMap.put(EncodeHintType.CHARACTER_SET, StandardCharsets.UTF_8.name());
         hintMap.put(EncodeHintType.MARGIN, 2);
         hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
@@ -71,9 +70,7 @@ public class QRUtils {
 
         val out = new ByteArrayOutputStream();
         ImageIO.write(image, "PNG", out);
-        byte[] bytes = out.toByteArray();
-
-        val base64bytes = EncodingUtils.encodeBase64(bytes);
-        stream.write(base64bytes.getBytes("UTF-8"));
+        val bytes = out.toByteArray();
+        return EncodingUtils.encodeBase64(bytes);
     }
 }

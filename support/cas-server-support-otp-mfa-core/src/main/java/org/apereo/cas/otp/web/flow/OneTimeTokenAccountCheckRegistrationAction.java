@@ -13,7 +13,6 @@ import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import java.io.ByteArrayOutputStream;
 
 /**
  * This is {@link OneTimeTokenAccountCheckRegistrationAction}.
@@ -48,9 +47,7 @@ public class OneTimeTokenAccountCheckRegistrationAction extends AbstractAction {
         if (acct == null || StringUtils.isBlank(acct.getSecretKey())) {
             val keyAccount = this.repository.create(uid);
             val keyUri = "otpauth://totp/" + this.label + ':' + uid + "?secret=" + keyAccount.getSecretKey() + "&issuer=" + this.issuer;
-            val qrCodeBase64 = new ByteArrayOutputStream();
-            QRUtils.generateQRCode(qrCodeBase64, keyUri, QRUtils.WIDTH_LARGE, QRUtils.WIDTH_LARGE);
-
+            val qrCodeBase64 = QRUtils.generateQRCode(keyUri, QRUtils.WIDTH_LARGE, QRUtils.WIDTH_LARGE);
             val flowScope = requestContext.getFlowScope();
             flowScope.put(FLOW_SCOPE_ATTR_ACCOUNT, keyAccount);
             flowScope.put(FLOW_SCOPE_ATTR_QR_IMAGE_BASE64, qrCodeBase64);
