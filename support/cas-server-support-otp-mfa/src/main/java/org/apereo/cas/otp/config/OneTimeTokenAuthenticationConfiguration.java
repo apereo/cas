@@ -11,7 +11,6 @@ import org.apereo.cas.otp.repository.token.CachingOneTimeTokenRepository;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.otp.web.flow.OneTimeTokenAuthenticationWebflowAction;
 import org.apereo.cas.otp.web.flow.OneTimeTokenAuthenticationWebflowEventResolver;
-import org.apereo.cas.otp.web.flow.rest.OneTimeTokenQRGeneratorController;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -96,7 +95,7 @@ public class OneTimeTokenAuthenticationConfiguration {
     @Autowired
     @Qualifier("authenticationEventExecutionPlan")
     private ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
-    
+
     @Bean
     @RefreshScope
     public CasWebflowEventResolver oneTimeTokenAuthenticationWebflowEventResolver() {
@@ -121,11 +120,6 @@ public class OneTimeTokenAuthenticationConfiguration {
     @RefreshScope
     public Action oneTimeTokenAuthenticationWebflowAction() {
         return new OneTimeTokenAuthenticationWebflowAction(oneTimeTokenAuthenticationWebflowEventResolver());
-    }
-
-    @Bean
-    public OneTimeTokenQRGeneratorController oneTimeTokenQRGeneratorController() {
-        return new OneTimeTokenQRGeneratorController();
     }
 
     @ConditionalOnMissingBean(name = "oneTimeTokenAuthenticatorTokenRepository")

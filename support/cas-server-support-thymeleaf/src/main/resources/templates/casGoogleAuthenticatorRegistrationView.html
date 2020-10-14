@@ -18,7 +18,7 @@
 
             <form method="post" id="fm1" class="fm-v clearfix" th:action="@{/login}">
                 <div class="d-flex flex-column align-items-center">
-                    <img th:src="@{/otp/qrgen(key=${keyUri})}" />
+                    <img th:src="@{'data:image/jpeg;base64,' + ${QRcode}}" />
                     <div class="my-2">
                         <p th:utext="#{screen.authentication.gauth.key(${key.getSecretKey()})}">Secret key to register
                             is...</p>
