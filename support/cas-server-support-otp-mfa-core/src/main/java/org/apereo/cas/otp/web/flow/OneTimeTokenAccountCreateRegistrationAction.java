@@ -13,8 +13,6 @@ import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.io.ByteArrayOutputStream;
-
 /**
  * This is {@link OneTimeTokenAccountCreateRegistrationAction}.
  *
@@ -49,10 +47,9 @@ public class OneTimeTokenAccountCreateRegistrationAction extends AbstractAction 
 
         flowScope.put(FLOW_SCOPE_ATTR_ACCOUNT, keyAccount);
 
-        val qrCodeBase64 = new ByteArrayOutputStream();
-        QRUtils.generateQRCode(qrCodeBase64, keyUri, QRUtils.WIDTH_LARGE, QRUtils.WIDTH_LARGE);
+        val qrCodeBase64 = QRUtils.generateQRCode(keyUri, QRUtils.WIDTH_LARGE, QRUtils.WIDTH_LARGE);
         flowScope.put(FLOW_SCOPE_ATTR_QR_IMAGE_BASE64, qrCodeBase64);
-        
+
         LOGGER.debug("Registration key URI is [{}]", keyUri);
         return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_REGISTER);
     }
