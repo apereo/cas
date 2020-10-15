@@ -59,19 +59,19 @@ curl -u 'admin:password' http://localhost:8091/pools/default/buckets
 echo -e "\n*************************************************************"
 echo -e "Creating index settings..."
 echo -e "*************************************************************"
-curl  -v -u 'admin:password' 'http://localhost:8091/settings/indexes' -d 'indexerThreads=0' -d 'logLevel=info' -d \
+curl -u 'admin:password' 'http://localhost:8091/settings/indexes' -d 'indexerThreads=0' -d 'logLevel=info' -d \
 'maxRollbackPoints=5' -d 'memorySnapshotInterval=200' -d 'stableSnapshotInterval=5000' -d 'storageMode=memory_optimized'
 sleep 5
 echo -e "\n*************************************************************"
 echo -e "Creating index..."
 echo -e "*************************************************************"
-curl -v -u 'admin:password'  http://localhost:8093/query/service -d 'statement=CREATE INDEX accounts_idx ON testbucket(username)' \
+curl -u 'admin:password'  http://localhost:8093/query/service -d 'statement=CREATE INDEX accounts_idx ON testbucket(username)' \
 -d 'namespace=default'
 sleep 5
 echo -e "\n*************************************************************"
 echo -e "Creating primary index..."
 echo -e "*************************************************************"
-curl -v -u 'admin:password'  http://localhost:8093/query/service -d \
+curl -u 'admin:password'  http://localhost:8093/query/service -d \
 'statement=CREATE PRIMARY INDEX `primary-idx` ON `testbucket` USING GSI;' \
 -d 'namespace=default'
 sleep 5
