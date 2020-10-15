@@ -19,7 +19,7 @@ dependencies {
     implementation project(":support:cas-server-support-trusted-mfa-core")
     implementation files("./lib/pinsafe.client.jar")
 
-    compileOnly project(":support:cas-server-support-trusted-mfa")
+    compileOnlyApi  project(":support:cas-server-support-trusted-mfa")
 
     api project(":api:cas-server-core-api")
     api project(":api:cas-server-core-api-webflow")

@@ -15,7 +15,7 @@ dependencies {
     implementation project(":support:cas-server-support-oauth-api")
     implementation project(":support:cas-server-support-oauth-services")
     
-    compileOnly project(":core:cas-server-core-tickets")
+    compileOnlyApi  project(":core:cas-server-core-tickets")
 
     implementation libraries.pac4jcore
     implementation libraries.jose4j

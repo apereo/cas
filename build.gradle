@@ -121,7 +121,7 @@ dependencyCheck {
     skipTestGroups = true
     skipConfigurations = ['jacocoAgent', 'jacocoAnt', 'optional', 'provided', 'providedCompile', 'providedRuntime',
                           'signatures', 'spotbugs', 'spotbugsPlugins', 'checkstyle', 'errorprone', 'errorproneJavac',
-                          'annotationProcessor', 'archives', 'compileOnly',
+                          'annotationProcessor', 'archives', 'compileOnlyApi ',
                           'tests', 'testRuntimeOnly', 'testRuntimeClasspath', 'testRuntime', 'testImplementation',
                           'testCompileOnly', 'testCompileClasspath', 'testCompile', 'testAnnotationProcessor',
                           'bootArchives', 'bootRunAnnotationProcessor']
@@ -175,6 +175,12 @@ allprojects {
     afterEvaluate { project ->
         jacoco {
             toolVersion = "$gradleJacocoVersion"
+        }
+    }
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(project.targetCompatibility)
         }
     }
 
@@ -581,7 +587,7 @@ subprojects {
         }
         testImplementation libraries.tests
         testImplementation libraries.log4j
-        compileOnly libraries.spotbugsannotations
+        compileOnlyApi  libraries.spotbugsannotations
     }
 }
 

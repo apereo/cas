@@ -6,7 +6,7 @@ dependencies {
     api project(":api:cas-server-core-api-cookie")
     api project(":api:cas-server-core-api-protocol")
 
-    compileOnly project(":support:cas-server-support-jpa-util")
+    compileOnlyApi  project(":support:cas-server-support-jpa-util")
 
     implementation project(":support:cas-server-support-throttle")
     implementation project(":support:cas-server-support-oauth-webflow")
