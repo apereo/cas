@@ -72,13 +72,15 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
             }
             val document = couchbase.bucketGet(encTicketId, GetOptions.getOptions()
                 .transcoder(JsonTranscoder.create(JacksonJsonSerializer.create(MAPPER))));
-            val ticket = document.contentAs(Ticket.class);
-            LOGGER.debug("Got ticket [{}] from the registry.", ticket);
-            val decoded = decodeTicket(ticket);
-            if (predicate.test(decoded)) {
-                return decoded;
+            if (document != null) {
+                val ticket = document.contentAs(Ticket.class);
+                LOGGER.debug("Got ticket [{}] from the registry.", ticket);
+                val decoded = decodeTicket(ticket);
+                if (predicate.test(decoded)) {
+                    return decoded;
+                }
+                return null;
             }
-            return null;
         } catch (final Exception e) {
             LOGGER.error("Failed fetching [{}]", ticketId);
             LoggingUtils.error(LOGGER, e);

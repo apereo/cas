@@ -6,7 +6,7 @@ tomcatUrl="https://www-eu.apache.org/dist/tomcat/tomcat-9/${tomcatVersionTag}/bi
 
 export CATALINA_HOME=./apache-tomcat-${tomcatVersion}
 rm -Rf ${CATALINA_HOME}
-wget ${tomcatUrl}
+wget --no-check-certificate ${tomcatUrl}
 unzip apache-tomcat-${tomcatVersion}.zip
 
 mv webapp/cas-server-webapp/build/libs/cas-server-webapp-*.war ${CATALINA_HOME}/webapps/cas.war

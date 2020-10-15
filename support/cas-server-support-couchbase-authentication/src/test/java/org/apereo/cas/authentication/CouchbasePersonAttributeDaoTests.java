@@ -30,11 +30,11 @@ import static org.junit.jupiter.api.Assertions.*;
     properties = {
         "cas.authn.couchbase.cluster-username=admin",
         "cas.authn.couchbase.cluster-password=password",
-        "cas.authn.couchbase.bucket=testbucket",
+        "cas.authn.couchbase.bucket=pplbucket",
 
         "cas.authn.attribute-repository.couchbase.cluster-password=password",
         "cas.authn.attribute-repository.couchbase.cluster-username=admin",
-        "cas.authn.attribute-repository.couchbase.bucket=testbucket",
+        "cas.authn.attribute-repository.couchbase.bucket=pplbucket",
         "cas.authn.attribute-repository.couchbase.username-attribute=username"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
