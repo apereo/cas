@@ -33,7 +33,7 @@ import static org.mockito.Mockito.*;
     properties = {
         "cas.authn.couchbase.cluster-username=admin",
         "cas.authn.couchbase.cluster-password=password",
-        "cas.authn.couchbase.bucket=testbucket"
+        "cas.authn.couchbase.bucket=pplbucket"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CouchbaseAuthenticationHandlerTests {

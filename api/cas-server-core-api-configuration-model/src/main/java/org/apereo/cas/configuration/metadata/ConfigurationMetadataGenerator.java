@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.metadata;
 
+import org.apereo.cas.configuration.support.PropertyOwner;
 import org.apereo.cas.configuration.support.RelaxedPropertyNames;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -7,6 +8,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,7 +30,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -56,6 +57,9 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class ConfigurationMetadataGenerator {
+    private static final ObjectMapper MAPPER = new ObjectMapper()
+        .setDefaultPrettyPrinter(new MinimalPrettyPrinter())
+        .findAndRegisterModules();
 
     private static final Pattern PATTERN_GENERICS = Pattern.compile(".+\\<(.+)\\>");
 
@@ -254,31 +258,25 @@ public class ConfigurationMetadataGenerator {
                     .orElseThrow(() -> new RuntimeException(clazz.getCanonicalName() + " is missing @RequiresModule"));
 
                 val valueHint = new ValueHint();
-                valueHint.setValue(List.of(RequiresModule.class.getName(), annotation.automated()));
-                valueHint.setDescription(annotation.name());
+                valueHint.setValue(toJson(Map.of("module", annotation.name(), "automated", annotation.automated())));
+                valueHint.setDescription(RequiresModule.class.getName());
                 hint.getValues().add(valueHint);
 
                 val grpHint = new ValueHint();
-                grpHint.setValue(annotation.name());
-                grpHint.setDescription(clazz.getCanonicalName());
+                grpHint.setValue(toJson(Map.of("owner", clazz.getCanonicalName())));
+                grpHint.setDescription(PropertyOwner.class.getName());
                 hint.getValues().add(grpHint);
 
                 val names = RelaxedPropertyNames.forCamelCase(propName);
-                names.getValues().forEach(name -> {
+                names.getValues().forEach(Unchecked.consumer(name -> {
                     val f = ReflectionUtils.findField(clazz, name);
                     if (f != null && f.isAnnotationPresent(RequiredProperty.class)) {
-                        val propertyAnnotation = Arrays.stream(f.getAnnotations())
-                            .filter(a -> a.annotationType().equals(RequiredProperty.class))
-                            .findFirst()
-                            .map(RequiredProperty.class::cast)
-                            .get();
                         val propertyHint = new ValueHint();
-                        propertyHint.setValue(RequiredProperty.class.getName());
-                        propertyHint.setDescription(clazz.getName());
-                        propertyHint.setShortDescription(propertyAnnotation.message());
+                        propertyHint.setValue(toJson(Map.of("owner", clazz.getName())));
+                        propertyHint.setDescription(RequiredProperty.class.getName());
                         hint.getValues().add(propertyHint);
                     }
-                });
+                }));
 
                 if (!hint.getValues().isEmpty()) {
                     hints.add(hint);
@@ -294,5 +292,9 @@ public class ConfigurationMetadataGenerator {
         properties.stream()
             .filter(p -> p.getDeprecation() != null)
             .forEach(property -> property.getDeprecation().setLevel(Deprecation.Level.ERROR));
+    }
+
+    private static String toJson(final Object value) throws Exception {
+        return MAPPER.writeValueAsString(value);
     }
 }
