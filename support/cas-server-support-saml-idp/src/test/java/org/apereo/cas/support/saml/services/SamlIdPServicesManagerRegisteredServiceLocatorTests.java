@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.services;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
@@ -17,6 +18,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link SamlIdPServicesManagerRegisteredServiceLocatorTests}.
@@ -68,5 +70,41 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
         val result = servicesManager.findServiceBy(service);
         assertNotNull(result);
         assertTrue(result instanceof SamlRegisteredService);
+    }
+
+    /**
+     * serviceLocator should not trigger metadata lookups when requested entityID does not match pattern for service in question.
+     *
+     * This test first verifies that, in the case of one service entry that does not match the requested entityID, no
+     * metadata lookups are performed. It then verifies that, in the case of two service entries, one matching the
+     * requested entityID, exactly one metadata lookup is performed.
+     *
+     * @author Hayden Sartoris
+     */
+    @Test
+    public void verifyEntityIDFilter() {
+        val service1 = RegisteredServiceTestUtils.getRegisteredService("urn:abc:def.+");
+        service1.setEvaluationOrder(9);
+
+        val service2 = getSamlRegisteredServiceFor(false, false, false, ".+");
+        service2.setEvaluationOrder(10);
+
+        servicesManager.save(service1);
+
+        val service = webApplicationServiceFactory.createService("https://sp.testshib.org/shibboleth-sp");
+
+        try (MockedStatic mockedFacade = mockStatic(SamlRegisteredServiceServiceProviderMetadataFacade.class)) {
+            //mockedFacade.when(SamlRegisteredServiceServiceProviderMetadataFacade::get)
+                //.thenThrow(new IllegalStateException("SamlRegisteredServiceServiceProviderMetadataFacade.get should not be called when requested entityID does not match configured pattern"));
+            val res1 = servicesManager.findServiceBy(service);
+            assertNull(res1);
+            mockedFacade.verify(never(), SamlRegisteredServiceServiceProviderMetadataFacade::get);
+
+            servicesManager.save(service2);
+
+            val res2 = servicesManager.findServiceBy(service);
+            assertNotNull(res2);
+            mockedFacade.verify(times(1), SamlRegisteredServiceServiceProviderMetadataFacade::get);
+        }
     }
 }
