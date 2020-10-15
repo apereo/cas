@@ -3,6 +3,7 @@ package org.apereo.cas.couchbase.core;
 import org.apereo.cas.configuration.model.support.couchbase.BaseCouchbaseProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.couchbase.client.core.cnc.tracing.ThresholdRequestTracer;
 import com.couchbase.client.core.env.IoConfig;
@@ -346,8 +347,13 @@ public class CouchbaseClientFactory {
      * @return the get result
      */
     public GetResult bucketGet(final String id, final GetOptions options) {
-        val bucket = this.cluster.bucket(properties.getBucket());
-        return bucket.defaultCollection().get(id, options);
+        try {
+            val bucket = cluster.bucket(properties.getBucket());
+            return bucket.defaultCollection().get(id, options);
+        } catch (final DocumentNotFoundException e) {
+            LoggingUtils.warn(LOGGER, e);
+        }
+        return null;
     }
 
     private void initializeCluster() {
