@@ -7,7 +7,7 @@ dependencies {
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-util-api")
 
-    compileOnly project(":core:cas-server-core-events")
+    compileOnlyApi  project(":core:cas-server-core-events")
 
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-notifications")

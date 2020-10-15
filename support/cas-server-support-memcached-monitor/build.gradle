@@ -23,5 +23,5 @@ dependencies {
     
     provided project(":support:cas-server-support-memcached-spy")
 
-    compileOnly project(":support:cas-server-support-saml")
+    compileOnlyApi project(":support:cas-server-support-saml")
 }
