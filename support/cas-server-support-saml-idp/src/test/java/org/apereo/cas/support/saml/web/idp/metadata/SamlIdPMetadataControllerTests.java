@@ -48,4 +48,15 @@ public class SamlIdPMetadataControllerTests extends BaseSamlIdPConfigurationTest
             }
         });
     }
+
+    @Test
+    public void verifyNoServiceOperation() {
+        val response = new MockHttpServletResponse();
+        assertDoesNotThrow(new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                samlIdPMetadataController.generateMetadataForIdp(null, response);
+            }
+        });
+    }
 }

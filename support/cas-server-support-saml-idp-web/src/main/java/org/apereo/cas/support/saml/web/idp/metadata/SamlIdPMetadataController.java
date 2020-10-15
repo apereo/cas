@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Controller;
@@ -64,7 +65,7 @@ public class SamlIdPMetadataController implements InitializingBean {
         final HttpServletResponse response) throws IOException {
 
         val registeredService = getRegisteredServiceIfAny(service);
-        this.metadataAndCertificatesGenerationService.generate(registeredService);
+        metadataAndCertificatesGenerationService.generate(registeredService);
         val md = this.samlIdPMetadataLocator.resolveMetadata(registeredService).getInputStream();
         val contents = IOUtils.toString(md, StandardCharsets.UTF_8);
         response.setContentType(CONTENT_TYPE);
@@ -81,7 +82,8 @@ public class SamlIdPMetadataController implements InitializingBean {
             val svc = servicesManager.findServiceBy(Long.parseLong(service), SamlRegisteredService.class);
             return Optional.ofNullable(svc);
         }
-        val svc = servicesManager.findServiceBy(webApplicationServiceFactory.createService(service), SamlRegisteredService.class);
-        return Optional.ofNullable(svc);
+        val svc = StringUtils.isNotBlank(service) ? webApplicationServiceFactory.createService(service) : null;
+        val registeredService = servicesManager.findServiceBy(svc, SamlRegisteredService.class);
+        return Optional.ofNullable(registeredService);
     }
 }
