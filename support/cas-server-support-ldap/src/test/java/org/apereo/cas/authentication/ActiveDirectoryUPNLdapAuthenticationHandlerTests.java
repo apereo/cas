@@ -30,7 +30,8 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.ldap[0].trust-store=" + BaseActiveDirectoryLdapAuthenticationHandlerTests.AD_TRUST_STORE,
     "cas.authn.ldap[0].trust-store-type=JKS",
     "cas.authn.ldap[0].trust-store-password=changeit",
-    "cas.authn.ldap[0].hostname-verifier=ANY"
+    "cas.authn.ldap[0].hostname-verifier=ANY",
+    "cas.authn.ldap[0].trust-manager=ANY"
 })
 @EnabledIfPortOpen(port = 10390)
 @Tag("Ldap")
