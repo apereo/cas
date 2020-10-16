@@ -74,8 +74,8 @@ OAUth relying party or a CAS-enabled client application.
 - CAS [Release Process](../developer/Release-Process.html) can now automatically close and publish releases on Sonatype. 
 - Webflow auto-configuration is slightly improved to allow Kerberos/SPNEGO and X509 modules to work together.
 - [Configuration metadata](../configuration/Configuration-Metadata-Repository.html) is improved to better track required modules, properties and owners for CAS settings.
-- [Google Authenticator](../mfa/GoogleAuthenticator-Authentication.html) for multifactor authentication is now patched to securely generate QR codes. 
-
+- [Google Authenticator](../mfa/GoogleAuthenticator-Authentication.html) for multifactor authentication is now patched to securely generate QR codes.
+ 
 ## Library Upgrades
 
 - Lettuce
