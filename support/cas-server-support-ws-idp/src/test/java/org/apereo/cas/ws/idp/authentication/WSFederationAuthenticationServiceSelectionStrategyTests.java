@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.Ordered;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -38,7 +39,7 @@ public class WSFederationAuthenticationServiceSelectionStrategyTests extends Bas
 
         val service2 = RegisteredServiceTestUtils.getService("https://cas.com?" + WSFederationConstants.WREPLY + "=wreply");
         assertFalse(wsFederationAuthenticationServiceSelectionStrategy.supports(service2));
-
+        assertEquals(Ordered.HIGHEST_PRECEDENCE, wsFederationAuthenticationServiceSelectionStrategy.getOrder());
     }
 
 }
