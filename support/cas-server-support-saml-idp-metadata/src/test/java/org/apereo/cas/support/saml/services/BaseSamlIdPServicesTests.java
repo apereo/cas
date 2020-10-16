@@ -4,6 +4,7 @@ import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CoreSamlConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
+import org.apereo.cas.util.http.HttpClient;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,6 +28,10 @@ public abstract class BaseSamlIdPServicesTests {
     @Autowired
     @Qualifier("shibboleth.OpenSAMLConfig")
     protected OpenSamlConfigBean openSamlConfigBean;
+
+    @Autowired
+    @Qualifier("httpClient")
+    protected HttpClient httpClient;
 
     @Autowired
     protected CasConfigurationProperties casProperties;

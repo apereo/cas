@@ -46,11 +46,10 @@ public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLo
     @Synchronized
     @SneakyThrows
     public ChainingMetadataResolver load(final SamlRegisteredServiceCacheKey cacheKey) {
-
         val metadataResolver = new ChainingMetadataResolver();
 
         val service = cacheKey.getRegisteredService();
-        val availableResolvers = this.metadataResolutionPlan.getRegisteredMetadataResolvers();
+        val availableResolvers = metadataResolutionPlan.getRegisteredMetadataResolvers();
         val size = availableResolvers.size();
         val metadataResolvers = new ArrayList<MetadataResolver>(size);
         LOGGER.debug("There are [{}] metadata resolver(s) available in the chain", size);
