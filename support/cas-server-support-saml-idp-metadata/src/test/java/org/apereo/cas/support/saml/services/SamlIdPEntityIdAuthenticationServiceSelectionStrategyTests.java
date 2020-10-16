@@ -6,6 +6,7 @@ import org.apereo.cas.services.ServicesManager;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.Ordered;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -38,6 +39,7 @@ public class SamlIdPEntityIdAuthenticationServiceSelectionStrategyTests {
             + "3NhbWwycDpBdXRoblJlcXVlc3Q%2B&RelayState=http%3A%2F%2Flocalhost%3A8081%2Fcallback%3Fclient_name%3DSAML2Client");
         val result = strategy.resolveServiceFrom(service);
         assertTrue(strategy.supports(service));
+        assertEquals(Ordered.HIGHEST_PRECEDENCE, strategy.getOrder());
         assertEquals("http://localhost:8081/callback?client_name=SAML2Client", result.getId());
     }
 }

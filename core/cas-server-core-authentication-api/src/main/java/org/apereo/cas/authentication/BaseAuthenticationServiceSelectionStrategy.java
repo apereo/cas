@@ -29,7 +29,7 @@ public abstract class BaseAuthenticationServiceSelectionStrategy implements Auth
 
     private final transient ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
-    private int order = Ordered.LOWEST_PRECEDENCE;
+    private int order = Ordered.HIGHEST_PRECEDENCE;
 
     /**
      * Create service.
