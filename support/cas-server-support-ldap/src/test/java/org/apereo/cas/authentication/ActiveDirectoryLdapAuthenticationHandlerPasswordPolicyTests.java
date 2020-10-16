@@ -39,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
     "cas.authn.ldap[0].trust-store-type=JKS",
     "cas.authn.ldap[0].trust-store-password=changeit",
     "cas.authn.ldap[0].hostname-verifier=DEFAULT",
+    "cas.authn.ldap[0].trust-manager=DEFAULT",
     "cas.authn.ldap[0].password-policy.type=AD",
     "cas.authn.ldap[0].password-policy.enabled=true"
 })
