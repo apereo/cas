@@ -23,6 +23,8 @@ are expected to be preceded with the `#` character. The following predefined var
 | `environmentVariables`   | Same as above.
 | `envVars`                | Same as above.
 | `env`                    | Same as above.
+| `tempDir`                | Path to the temp directory.
+| `uuid`                   | Auto-generated `UUID` value.
 | `randomNumber2`          | 2-digit random number.
 | `randomNumber4`          | 4-digit random number.
 | `randomNumber6`          | 6-digit random number.
