@@ -178,13 +178,13 @@ public class CasPersonDirectoryConfiguration {
 
         val impl = new CachingPersonAttributeDaoImpl();
         impl.setCacheNullResults(false);
-        val graphs = Caffeine.newBuilder()
+        val userinfoCache = Caffeine.newBuilder()
             .maximumSize(props.getMaximumCacheSize())
             .expireAfterWrite(props.getExpirationTime(), TimeUnit.valueOf(props.getExpirationTimeUnit().toUpperCase()))
             .build();
-        impl.setUserInfoCache((Map) graphs.asMap());
+        impl.setUserInfoCache((Map) userinfoCache.asMap());
         impl.setCachedPersonAttributesDao(aggregatingAttributeRepository());
-        LOGGER.trace("Configured cache expiration policy for merging attribute sources to be [{}] minute(s)", props.getExpirationTime());
+        LOGGER.trace("Configured cache expiration policy for attribute sources to be [{}] minute(s)", props.getExpirationTime());
         return impl;
     }
 
