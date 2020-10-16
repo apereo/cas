@@ -1322,6 +1322,20 @@ The following LDAP validators can be used to test connection health status:
 #${configurationKey}.hostname-verifier=DEFAULT|ANY
 ```
 
+### LDAP SSL Trust Managers
+
+Trust managers are responsible for managing the trust material that is used when making LDAP trust decisions, 
+and for deciding whether credentials presented by a peer should be accepted.
+
+| Type                    | Description
+|-------------------------|------------------------------------
+| `DEFAULT`               | Default option to enable and force the default JVM trust managers.
+| `ANY`                   | Trust any client or server.
+
+```properties
+#${configurationKey}.trust-manager=DEFAULT|ANY
+```
+
 ### LDAP Types
 
 A number of components/features in CAS allow you to explicitly indicate a `type` for the LDAP server, specially in cases where CAS needs to update an attribute, etc in LDAP (i.e. consent, password management, etc). The relevant setting would be:
