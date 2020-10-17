@@ -68,6 +68,21 @@ by improving lookup operations to be protocol-aware. For example, in a scenario 
 to correctly locate the right definition depending on whether an authentication request is submitted by an 
 OAUth relying party or a CAS-enabled client application.
 
+## WebAuthN FIDO2 DynamoDb
+
+[WebAuthn FIDO2](../mfa/FIDO2-WebAuthn-Authentication.md) multifactor authentication is able manage and maintain registration records in DynamoDb.
+
+## Integration Tests Upgrades
+
+A number of docker images for backend integration tests are updated to ensure support for 
+latest versions of each system. These include the following systems:
+
+- Amazon DynamoDb
+- Couchbase
+- MongoDb
+- Redis
+- Apache Cassandra
+
 ## Other Stuff
 
 - Apereo CAS [Docker images](https://hub.docker.com/r/apereo/cas) are now automatically published by CI for the `latest` tag.

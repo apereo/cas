@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
     "cas.authn.ldap[0].bind-dn=Administrator@cas.example.org",
     "cas.authn.ldap[0].bind-credential=" + BaseActiveDirectoryLdapAuthenticationHandlerTests.AD_ADMIN_PASSWORD,
     "cas.authn.ldap[0].ldap-url=" + BaseActiveDirectoryLdapAuthenticationHandlerTests.AD_LDAP_URL,
-    "cas.authn.ldap[0].useStartTls=true",
+    "cas.authn.ldap[0].use-start-tls=true",
     "cas.authn.ldap[0].subtree-search=true",
     "cas.authn.ldap[0].base-dn=dc=cas,dc=example,dc=org",
     "cas.authn.ldap[0].follow-referrals=false",
@@ -39,7 +39,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
     "cas.authn.ldap[0].trust-store-type=JKS",
     "cas.authn.ldap[0].trust-store-password=changeit",
     "cas.authn.ldap[0].hostname-verifier=DEFAULT",
-    "cas.authn.ldap[0].trust-manager=DEFAULT",
     "cas.authn.ldap[0].password-policy.type=AD",
     "cas.authn.ldap[0].password-policy.enabled=true"
 })

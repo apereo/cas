@@ -42,18 +42,18 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * This is {@link YubiKeyDynamoDbFacilitator}.
+ * This is {@link DynamoDbYubiKeyFacilitator}.
  *
  * @author Misagh Moayyed
  * @since 6.3.0
  */
 @Slf4j
-public class YubiKeyDynamoDbFacilitator {
+public class DynamoDbYubiKeyFacilitator {
     private final YubiKeyDynamoDbMultifactorProperties dynamoDbProperties;
 
     private final DynamoDbClient amazonDynamoDBClient;
 
-    public YubiKeyDynamoDbFacilitator(final YubiKeyDynamoDbMultifactorProperties dynamoDbProperties,
+    public DynamoDbYubiKeyFacilitator(final YubiKeyDynamoDbMultifactorProperties dynamoDbProperties,
                                       final DynamoDbClient amazonDynamoDBClient) {
         this.dynamoDbProperties = dynamoDbProperties;
         this.amazonDynamoDBClient = amazonDynamoDBClient;
@@ -76,8 +76,14 @@ public class YubiKeyDynamoDbFacilitator {
             .build();
 
         val request = CreateTableRequest.builder()
-            .attributeDefinitions(AttributeDefinition.builder().attributeName(ColumnNames.USERNAME.getColumnName()).attributeType(ScalarAttributeType.S).build())
-            .keySchema(KeySchemaElement.builder().attributeName(ColumnNames.USERNAME.getColumnName()).keyType(KeyType.HASH).build())
+            .attributeDefinitions(AttributeDefinition.builder()
+                .attributeName(ColumnNames.USERNAME.getColumnName())
+                .attributeType(ScalarAttributeType.S)
+                .build())
+            .keySchema(KeySchemaElement.builder()
+                .attributeName(ColumnNames.USERNAME.getColumnName())
+                .keyType(KeyType.HASH)
+                .build())
             .provisionedThroughput(throughput)
             .tableName(dynamoDbProperties.getTableName())
             .build();

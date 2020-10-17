@@ -111,3 +111,17 @@ Device registrations may be kept inside a Redis database instance by including t
 ```
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#fido2-webauthn-redis).
+
+### DynamoDb
+
+Device registrations may be kept inside a DynamoDb instance by including the following module in the WAR overlay:
+
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-support-webauthn-dynamodb</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```
+
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#fido2-webauthn-dynamodb).

@@ -797,13 +797,16 @@ public class LdapUtils {
                     sslConfig.setHostnameVerifier(new DefaultHostnameVerifier());
             }
 
-            switch (l.getTrustManager()) {
-                case ANY:
-                    sslConfig.setTrustManagers(new AllowAnyTrustManager());
-                    break;
-                case DEFAULT:
-                default:
-                    sslConfig.setTrustManagers(new DefaultTrustManager());
+            if (StringUtils.isNotBlank(l.getTrustManager())) {
+                switch (AbstractLdapProperties.LdapTrustManagerOptions.valueOf(l.getTrustManager().trim().toUpperCase())) {
+                    case ANY:
+                        sslConfig.setTrustManagers(new AllowAnyTrustManager());
+                        break;
+                    case DEFAULT:
+                    default:
+                        sslConfig.setTrustManagers(new DefaultTrustManager());
+                        break;
+                }
             }
         }
 

@@ -247,9 +247,9 @@ public abstract class AbstractLdapProperties implements Serializable {
 
     /**
      * Trust Manager options.
-     * Accepted values are {@link LdapTrustManagerOptions#DEFAULT} and {@link LdapTrustManagerOptions#ANY}.
+     * Accepted values are {@link LdapTrustManagerOptions#ANY}, {@link LdapTrustManagerOptions#DEFAULT}.
      */
-    private LdapTrustManagerOptions trustManager = LdapTrustManagerOptions.DEFAULT;
+    private String trustManager;
 
     /**
      * Name of the LDAP handler.
@@ -347,9 +347,13 @@ public abstract class AbstractLdapProperties implements Serializable {
         ANY
     }
 
+    /**
+     * Describe trust manager strategies.
+     */
     public enum LdapTrustManagerOptions {
         /**
-         * Default option, loads the trust managers from the default {@link TrustManagerFactory} and delegates to those.
+         * Loads the trust managers from the
+         * default {@link javax.net.ssl.TrustManagerFactory} and delegates to those.
          */
         DEFAULT,
         /**
