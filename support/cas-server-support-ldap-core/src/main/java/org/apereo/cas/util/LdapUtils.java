@@ -83,7 +83,9 @@ import org.ldaptive.sasl.QualityOfProtection;
 import org.ldaptive.sasl.SaslConfig;
 import org.ldaptive.sasl.SecurityStrength;
 import org.ldaptive.ssl.AllowAnyHostnameVerifier;
+import org.ldaptive.ssl.AllowAnyTrustManager;
 import org.ldaptive.ssl.DefaultHostnameVerifier;
+import org.ldaptive.ssl.DefaultTrustManager;
 import org.ldaptive.ssl.KeyStoreCredentialConfig;
 import org.ldaptive.ssl.SslConfig;
 import org.ldaptive.ssl.X509CredentialConfig;
@@ -801,7 +803,15 @@ public class LdapUtils {
                 case DEFAULT:
                 default:
                     sslConfig.setHostnameVerifier(new DefaultHostnameVerifier());
+            }
+
+            switch (l.getTrustManager()) {
+                case ANY:
+                    sslConfig.setTrustManagers(new AllowAnyTrustManager());
                     break;
+                case DEFAULT:
+                default:
+                    sslConfig.setTrustManagers(new DefaultTrustManager());
             }
         }
 
