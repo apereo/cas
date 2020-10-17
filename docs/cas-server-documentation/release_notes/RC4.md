@@ -97,10 +97,12 @@ latest versions of each system. These include the following systems:
 - Apache Tomcat
 - Java Melody
 - Oshi
+- Guava
 - Nimbus Jose
 - Twillio
 - Couchbase Driver
 - Lombok
+- Person Directory
 - Maxmind
 - Amazon SDK
 - Eureka Client
