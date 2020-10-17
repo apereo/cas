@@ -63,8 +63,14 @@ public class DynamoDbAuditTrailManagerFacilitator {
             .writeCapacityUnits(dynamoDbProperties.getWriteCapacity())
             .build();
         val request = CreateTableRequest.builder()
-            .attributeDefinitions(AttributeDefinition.builder().attributeName(ColumnNames.PRINCIPAL.getColumnName()).attributeType(ScalarAttributeType.S).build())
-            .keySchema(KeySchemaElement.builder().attributeName(ColumnNames.PRINCIPAL.getColumnName()).keyType(KeyType.HASH).build())
+            .attributeDefinitions(AttributeDefinition.builder()
+                .attributeName(ColumnNames.PRINCIPAL.getColumnName())
+                .attributeType(ScalarAttributeType.S)
+                .build())
+            .keySchema(KeySchemaElement.builder()
+                .attributeName(ColumnNames.PRINCIPAL.getColumnName())
+                .keyType(KeyType.HASH)
+                .build())
             .provisionedThroughput(throughput)
             .tableName(dynamoDbProperties.getTableName())
             .build();

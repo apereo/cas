@@ -1328,8 +1328,8 @@ Trust managers are responsible for managing the trust material that is used when
 and for deciding whether credentials presented by a peer should be accepted.
 
 | Type                    | Description
-|-------------------------|------------------------------------
-| `DEFAULT`               | Default option to enable and force the default JVM trust managers.
+|-------------------------|---------------------------------------------------------------------------------------------
+| `DEFAULT`               | Enable and force the default JVM trust managers.
 | `ANY`                   | Trust any client or server.
 
 ```properties
