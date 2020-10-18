@@ -5,6 +5,15 @@ plugins {
     id "java-library"
 }
 
+repositories {
+    mavenCentral()
+    jcenter()
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots"
+        mavenContent { snapshotsOnly() }
+    }
+}
+
 dependencyManagement {
     imports {
         mavenBom "io.spring.initializr:initializr-bom:${springInitializrVersion}"
