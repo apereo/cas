@@ -18,31 +18,19 @@ on:
 
 jobs:
   build:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Build with Gradle
-        run: ./gradlew --build-cache --configure-on-demand --no-daemon clean build -x test -x javadoc -x check --parallel
-  overlay:
     runs-on: ubuntu-latest
-    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
           java-version: ${{ env.JDK_CURRENT }}
-      - name: Build with Gradle
+      - name: Build Overlay
         run: |
-          java -jar app/build/libs/app.jar &> /dev/null &
+          ./gradlew --build-cache --configure-on-demand --no-daemon clean build -x test -x javadoc -x check --parallel
+          java -jar app/build/libs/app.jar &
           sleep 10
+          mkdir tmp
+          cd tmp
           curl http://localhost:8080/starter.tgz -d dependencies=core | tar -xzvf -
           ./gradlew clean build --refresh-dependencies
