@@ -79,7 +79,7 @@ public class ConfigurationMetadataGenerator {
      */
     public static void main(final String[] args) throws Exception {
         if (args.length != 2) {
-            throw new RuntimeException("Invalid build configuration. No command-line arguments specified");
+            throw new RuntimeException("Invalid build configuration. Incorrect command-line arguments specified");
         }
         val buildDir = args[0];
         val projectDir = args[1];
