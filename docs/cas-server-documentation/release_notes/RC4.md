@@ -61,18 +61,18 @@ to fail all pull requests that fall below this threshold. This area will be clos
 as progress is made with the goal of hopefully reaching at least `90%` before the final GA release. Of course, 
 this will not be a blocker for the final release.
 
-## Wildcarded Service Definitions
+### Wildcarded Service Definitions
 
 Following up on previous release notes, wildcarded service definitions should now be correctly located via CAS service management facilities
 by improving lookup operations to be protocol-aware. For example, in a scenario where two service definitions for OAuth and CAS service providers might have a very permissive `.*` for the service URL pattern, CAS should be able
 to correctly locate the right definition depending on whether an authentication request is submitted by an 
 OAUth relying party or a CAS-enabled client application.
 
-## WebAuthN FIDO2 DynamoDb
+### WebAuthN FIDO2 DynamoDb
 
-[WebAuthn FIDO2](../mfa/FIDO2-WebAuthn-Authentication.md) multifactor authentication is able manage and maintain registration records in DynamoDb.
+[WebAuthn FIDO2](../mfa/FIDO2-WebAuthn-Authentication.html) multifactor authentication is able manage and maintain registration records in DynamoDb.
 
-## Integration Tests Upgrades
+### Integration Tests Upgrades
 
 A number of docker images for backend integration tests are updated to ensure support for 
 latest versions of each system. These include the following systems:
@@ -85,10 +85,12 @@ latest versions of each system. These include the following systems:
 
 ## Other Stuff
 
+- LDAP trust managers can now be specified in CAS properties.
 - Apereo CAS [Docker images](https://hub.docker.com/r/apereo/cas) are now automatically published by CI for the `latest` tag.
 - CAS [Release Process](../developer/Release-Process.html) can now automatically close and publish releases on Sonatype. 
 - Webflow auto-configuration is slightly improved to allow Kerberos/SPNEGO and X509 modules to work together.
 - [Configuration metadata](../configuration/Configuration-Metadata-Repository.html) is improved to better track required modules, properties and owners for CAS settings.
+- The publishing process of the Bill of Materials (BOM) is improved to include all CAS modules in `dependencyManagement` blocks, removing them from the `dependencies` block in the final generated POM with versions separated and extracted as properties in the `properties` section. 
 - [Google Authenticator](../mfa/GoogleAuthenticator-Authentication.html) for multifactor authentication is now patched to securely generate QR codes.
  
 ## Library Upgrades
@@ -107,6 +109,7 @@ latest versions of each system. These include the following systems:
 - Amazon SDK
 - Eureka Client
 - Gradle
+- Spring Boot
 
 
 

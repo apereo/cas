@@ -81,6 +81,9 @@
         <module name="DefaultComesLast">
             <property name="severity" value="error"/>
         </module>
+        <module name="PatternVariableName">
+            <property name="severity" value="error"/>
+        </module>
         <!--
         <module name="MissingCtorCheck">
             <property name="severity" value="error"/>
