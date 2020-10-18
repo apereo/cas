@@ -19,7 +19,7 @@ publishing {
                         iter.remove()
                     }
                 }
-                
+
                 def dependencyManagement = asNode().appendNode("dependencyManagement")
                 def dependencies = dependencyManagement.appendNode("dependencies")
 
@@ -29,8 +29,8 @@ publishing {
                 rootProject.subprojects
                         .findAll { p -> p != project && p.name.startsWith("cas-") }
                         .each { p ->
-                            createDependency(dependencies, groupId, p.name, 
-                                p.version, dependencyVersions, allLibraries)
+                            createDependency(dependencies, groupId, p.name,
+                                    p.version, dependencyVersions, allLibraries)
                         }
 
                 libraries.each {
@@ -40,23 +40,23 @@ publishing {
                             if (art.class.isArray()) {
                                 art.each { coords ->
                                     def elem = coords.toString().split(":")
-                                    createDependency(dependencies, elem[0], elem[1], elem[2], 
-                                        dependencyVersions, allLibraries)
+                                    createDependency(dependencies, elem[0], elem[1], elem[2],
+                                            dependencyVersions, allLibraries)
                                 }
                             } else {
-                                createDependency(dependencies, art.group, art.name, 
-                                    art.version, dependencyVersions, allLibraries)
+                                createDependency(dependencies, art.group, art.name,
+                                        art.version, dependencyVersions, allLibraries)
                             }
                         }
                     } else {
-                        createDependency(dependencies, artifact.group, artifact.name, 
-                            artifact.version, dependencyVersions, allLibraries)
+                        createDependency(dependencies, artifact.group, artifact.name,
+                                artifact.version, dependencyVersions, allLibraries)
                     }
                 }
 
                 def properties = asNode().appendNode("properties")
-                dependencyVersions.each { ver -> 
-                    properties.appendNode(ver.key, ver.value)  
+                dependencyVersions.each { ver ->
+                    properties.appendNode(ver.key, ver.value)
                 }
             }
 
@@ -100,6 +100,8 @@ publishing {
 def createDependency(dependencies, group, name, version, dependencyVersions, allLibraries) {
     def key = "${group}@${name}"
     if (!allLibraries.contains(key)) {
+        logger.info "Dependency: ${group}:${name}:${version}"
+        
         def dependency = dependencies.appendNode("dependency")
         dependency.appendNode("groupId", group)
         dependency.appendNode("artifactId", name)
@@ -108,7 +110,8 @@ def createDependency(dependencies, group, name, version, dependencyVersions, all
             dependency.appendNode("version", "\${cas.version}")
             dependencyVersions.put("cas.version", version)
         } else {
-            def versionProp = "${name}.version"
+            def versionProp = "${group}.${name}.version"
+            
             dependency.appendNode("version", String.format("\${%s}", versionProp))
             dependencyVersions.put(versionProp, version)
         }
