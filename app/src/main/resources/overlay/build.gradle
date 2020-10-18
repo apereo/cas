@@ -23,6 +23,7 @@ buildscript {
         classpath "gradle.plugin.com.google.cloud.tools:jib-gradle-plugin:${project.jibVersion}"
         classpath "io.freefair.gradle:maven-plugin:${project.gradleMavenPluginVersion}"
         classpath "io.freefair.gradle:lombok-plugin:${project.gradleLombokPluginVersion}"
+        classpath "io.spring.gradle:dependency-management-plugin:${project.gradleDependencyManagementPluginVersion}"
     }
 }
 
@@ -60,6 +61,8 @@ project.ext."casWebApplicationBinaryName" = casWebApplicationBinaryName
 
 apply plugin: "io.freefair.war-overlay"
 apply plugin: "io.freefair.lombok"
+apply plugin: "io.spring.dependency-management"
+
 apply from: rootProject.file("gradle/tasks.gradle")
 
 apply plugin: "war"
@@ -69,9 +72,13 @@ apply plugin: "idea"
 apply from: rootProject.file("gradle/springboot.gradle")
 apply from: rootProject.file("gradle/dockerjib.gradle")
 
+dependencyManagement {
+    imports {
+        mavenBom "org.apereo.cas:cas-server-support-bom:${casServerVersion}"
+    }
+}
+
 dependencies {
-    implementation enforcedPlatform("org.apereo.cas:cas-server-support-bom:${casServerVersion}")
-    
     compileOnly "org.apereo.cas:cas-server-core-api-configuration-model"
 
     if (project.hasProperty("casModules")) {
