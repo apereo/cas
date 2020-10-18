@@ -1,6 +1,5 @@
 buildscript {
     repositories {
-        mavenLocal()
         gradlePluginPortal()
         mavenCentral()
         jcenter()
@@ -28,7 +27,6 @@ buildscript {
 }
 
 repositories {
-    mavenLocal()
     mavenCentral()
     jcenter()
     maven { 
@@ -80,6 +78,7 @@ dependencyManagement {
 
 dependencies {
     compileOnly "org.apereo.cas:cas-server-core-api-configuration-model"
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
 
     if (project.hasProperty("casModules")) {
         def dependencies = project.getProperty("casModules").split(",")
@@ -91,6 +90,13 @@ dependencies {
         }
     }
 
+    /**
+     * CAS dependencies and modules may be listed here.
+     * 
+     * There is no need to specify the version number for each dependency
+     * since versions are all resolved and controlled by the dependency management
+     * plugin via the CAS bom.
+     */
     {{#dependencies}}
     implementation "{{groupId}}:{{artifactId}}"
     {{/dependencies}}

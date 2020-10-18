@@ -19,6 +19,7 @@ springBoot {
 dependencies {
 
     implementation "org.jooq:jool:0.9.14"
+    implementation "org.jsoup:jsoup:1.13.1"
     implementation "com.github.spullara.mustache.java:compiler:0.9.6"
     implementation "org.springframework.boot:spring-boot-starter-web"
 
@@ -28,8 +29,8 @@ dependencies {
     implementation "io.spring.initializr:initializr-generator"
     implementation "io.spring.initializr:initializr-generator"
 
-//    implementation "org.apereo.cas:cas-server-core-configuration-metadata-repository:6.3.0-SNAPSHOT"
-//    implementation "org.apereo.cas:cas-server-core-api-configuration-model:6.3.0-SNAPSHOT"
+    implementation "org.apereo.cas:cas-server-core-configuration-metadata-repository:${casVersion}"
+    implementation "org.apereo.cas:cas-server-core-api-configuration-model:${casVersion}"
 
     runtime "org.springframework.boot:spring-boot-starter-tomcat"
 }
@@ -59,4 +60,5 @@ task copyWrapperExecutables(type: Copy) {
     into "src/main/resources/overlay/gradle/exec"
 }
 
+rootProject.tasks["wrapper"].finalizedBy([copyWrapper, copyWrapperExecutables]) 
 build.dependsOn([copyWrapper, copyWrapperExecutables])

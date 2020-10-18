@@ -42,7 +42,8 @@ public abstract class TemplatedProjectContributor implements ProjectContributor 
         val mustache = mf.compile(new InputStreamReader(resource.getInputStream()), resource.getFilename());
         try (val writer = new StringWriter()) {
             val project = applicationContext.getBean(ProjectDescription.class);
-            mustache.execute(writer, contributeInternal(project)).flush();
+            val model = contributeInternal(project);
+            mustache.execute(writer, model).flush();
             val template = writer.toString();
             FileCopyUtils.copy(new BufferedInputStream(new ByteArrayInputStream(template.getBytes(StandardCharsets.UTF_8))),
                 Files.newOutputStream(output, StandardOpenOption.APPEND));
