@@ -84,7 +84,7 @@ public class CasOverlayPropertiesCatalog {
 
                     if (prop.isDeprecated()) {
                         val deprecation = prop.getDeprecation();
-                        builder.deprecationLevel(deprecation.getLevel());
+                        builder.deprecationLevel(deprecation.getLevel().toString());
                         if (deprecation.getShortReason() != null) {
                             builder.deprecationReason(deprecation.getShortReason());
                         }
@@ -140,7 +140,7 @@ public class CasOverlayPropertiesCatalog {
 
         private final Object defaultValue;
 
-        private final Object deprecationLevel;
+        private final String deprecationLevel;
 
         private final String deprecationReason;
 

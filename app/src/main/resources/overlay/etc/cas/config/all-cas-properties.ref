@@ -26,5 +26,14 @@
 # Module: {{module}}
 # {{{description}}}
 # {{name}}: {{defaultValue}}
+{{#deprecationLevel}}
+# Deprecation Level: {{deprecationLevel}}
+{{/deprecationLevel}}
+{{#deprecationReason}}
+# Deprecation Reason: {{deprecationReason}}
+{{/deprecationReason}}
+{{#deprecationReplacement}}
+# Deprecation Replacement: {{deprecationReplacement}}
+{{/deprecationReplacement}}
 
 {{/properties}}
