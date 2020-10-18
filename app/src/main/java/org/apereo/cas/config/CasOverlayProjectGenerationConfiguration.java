@@ -1,15 +1,15 @@
 package org.apereo.cas.config;
 
-import io.spring.initializr.generator.buildsystem.BuildItemResolver;
-import io.spring.initializr.generator.project.ProjectGenerationConfiguration;
 import org.apereo.cas.overlay.CasOverlayGradleBuild;
+import org.apereo.cas.overlay.contrib.CasOverlayApplicationYamlPropertiesContributor;
 import org.apereo.cas.overlay.contrib.CasOverlayConfigurationPropertiesContributor;
 import org.apereo.cas.overlay.contrib.CasOverlayLoggingConfigurationContributor;
+import org.apereo.cas.overlay.contrib.CasOverlayOtherReferencePropertiesContributor;
+import org.apereo.cas.overlay.contrib.CasOverlayOverrideConfigurationContributor;
 import org.apereo.cas.overlay.contrib.CasOverlayProjectLicenseContributor;
 import org.apereo.cas.overlay.contrib.CasOverlayReadMeContributor;
+import org.apereo.cas.overlay.contrib.CasOverlaySpringFactoriesContributor;
 import org.apereo.cas.overlay.contrib.CasOverlayWebXmlContributor;
-import org.apereo.cas.overlay.contrib.util.ChainingMultipleResourcesProjectContributor;
-import org.apereo.cas.overlay.contrib.util.ChainingSingleResourceProjectContributor;
 import org.apereo.cas.overlay.contrib.docker.CasOverlayDockerContributor;
 import org.apereo.cas.overlay.contrib.docker.jib.CasOverlayGradleJibContributor;
 import org.apereo.cas.overlay.contrib.docker.jib.CasOverlayGradleJibEntrypointContributor;
@@ -20,9 +20,10 @@ import org.apereo.cas.overlay.contrib.gradle.CasOverlayGradleSpringBootContribut
 import org.apereo.cas.overlay.contrib.gradle.CasOverlayGradleTasksContributor;
 import org.apereo.cas.overlay.contrib.gradle.wrapper.CasOverlayGradleWrapperConfigurationContributor;
 import org.apereo.cas.overlay.contrib.gradle.wrapper.CasOverlayGradleWrapperExecutablesContributor;
-import org.apereo.cas.overlay.contrib.CasOverlayApplicationYamlPropertiesContributor;
-import org.apereo.cas.overlay.contrib.CasOverlayOverrideConfigurationContributor;
-import org.apereo.cas.overlay.contrib.CasOverlaySpringFactoriesContributor;
+import org.apereo.cas.overlay.contrib.util.ChainingMultipleResourcesProjectContributor;
+import org.apereo.cas.overlay.contrib.util.ChainingSingleResourceProjectContributor;
+import io.spring.initializr.generator.buildsystem.BuildItemResolver;
+import io.spring.initializr.generator.project.ProjectGenerationConfiguration;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -49,10 +50,11 @@ public class CasOverlayProjectGenerationConfiguration {
     public CasOverlayDockerContributor casOverlayDockerContributor() {
         return new CasOverlayDockerContributor();
     }
-    
+
     @Bean
     public ChainingSingleResourceProjectContributor casOverlayGradleConfigurationContributor() {
         var chain = new ChainingSingleResourceProjectContributor();
+        chain.addContributor(new CasOverlayOtherReferencePropertiesContributor(applicationContext));
         chain.addContributor(new CasOverlayGradleBuildContributor(applicationContext));
         chain.addContributor(new CasOverlayGradlePropertiesContributor(applicationContext));
         chain.addContributor(new CasOverlayGradleSettingsContributor());

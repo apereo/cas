@@ -96,7 +96,8 @@ dependencies {
      * There is no need to specify the version number for each dependency
      * since versions are all resolved and controlled by the dependency management
      * plugin via the CAS bom.
-     */
+     **/
+    
     {{#dependencies}}
     implementation "{{groupId}}:{{artifactId}}"
     {{/dependencies}}
