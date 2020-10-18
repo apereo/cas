@@ -33,7 +33,7 @@ jobs:
         run: ./gradlew --build-cache --configure-on-demand --no-daemon clean build -x test -x javadoc -x check --parallel
   overlay:
     runs-on: ubuntu-latest
-    needs: [publish-snapshots]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
