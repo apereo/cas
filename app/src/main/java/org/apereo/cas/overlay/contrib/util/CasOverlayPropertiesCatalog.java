@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -19,7 +20,9 @@ import org.jsoup.Jsoup;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 import org.springframework.boot.configurationmetadata.ValueHint;
 import org.springframework.util.ReflectionUtils;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -29,7 +32,8 @@ import java.util.stream.Collectors;
 public class CasOverlayPropertiesCatalog {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
-    private final String module;
+    @Builder.Default
+    private final List<String> modules = new ArrayList<>();
 
     private final boolean casExclusive;
 
@@ -38,8 +42,7 @@ public class CasOverlayPropertiesCatalog {
         return MAPPER.readValue(value, Map.class);
     }
 
-    private static boolean doesPropertyBelongToModule(final ConfigurationMetadataProperty property,
-                                                      final String module) {
+    private boolean doesPropertyBelongToModule(final ConfigurationMetadataProperty property) {
         val valueHints = property.getHints().getValueHints();
         return valueHints
             .stream()
@@ -47,8 +50,8 @@ public class CasOverlayPropertiesCatalog {
             .anyMatch(hint -> {
                 val valueHint = ValueHint.class.cast(hint);
                 val results = reasonJsonValueAsMap(valueHint.getValue().toString());
-                val owner = results.get("module");
-                return owner.equals(module);
+                val module = results.get("module");
+                return modules.contains(module);
             });
     }
 
@@ -121,7 +124,7 @@ public class CasOverlayPropertiesCatalog {
 
         val properties = allProperties
             .stream()
-            .filter(entry -> StringUtils.isBlank(module) || doesPropertyBelongToModule(entry.getValue(), module))
+            .filter(entry -> modules.isEmpty() || doesPropertyBelongToModule(entry.getValue()))
             .map(Map.Entry::getValue)
             .map(CasOverlayPropertiesCatalog::collectReferenceProperty)
             .sorted(Comparator.comparing(CasReferenceProperty::getName))
