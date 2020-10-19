@@ -7,13 +7,19 @@ import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.WordUtils;
 import org.jooq.lambda.Unchecked;
 import org.jsoup.Jsoup;
+import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 import org.springframework.boot.configurationmetadata.ValueHint;
+import org.springframework.util.ReflectionUtils;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -26,6 +32,78 @@ public class CasOverlayPropertiesCatalog {
     private final String module;
 
     private final boolean casExclusive;
+
+    @SneakyThrows
+    private static Map reasonJsonValueAsMap(final String value) {
+        return MAPPER.readValue(value, Map.class);
+    }
+
+    private static boolean doesPropertyBelongToModule(final ConfigurationMetadataProperty property,
+                                                      final String module) {
+        val valueHints = property.getHints().getValueHints();
+        return valueHints
+            .stream()
+            .filter(hint -> hint.getDescription().equals(RequiresModule.class.getName()))
+            .anyMatch(hint -> {
+                val valueHint = ValueHint.class.cast(hint);
+                val results = reasonJsonValueAsMap(valueHint.getValue().toString());
+                val owner = results.get("module");
+                return owner.equals(module);
+            });
+    }
+
+    private static CasReferenceProperty collectReferenceProperty(final ConfigurationMetadataProperty property) {
+        val builder = CasReferenceProperty.builder();
+
+        builder.owner(determinePropertySourceType(property));
+
+        property.getHints().getValueHints().forEach(Unchecked.consumer(hint -> {
+            val description = hint.getDescription();
+            if (StringUtils.isNotBlank(description)) {
+                if (description.equals(RequiredProperty.class.getName())) {
+                    builder.required(true);
+                }
+                if (description.equals(RequiresModule.class.getName())) {
+                    val results = MAPPER.readValue(hint.getValue().toString(), Map.class);
+                    builder.module(results.get("module").toString());
+                }
+                if (description.equals(PropertyOwner.class.getName())) {
+                    val results = MAPPER.readValue(hint.getValue().toString(), Map.class);
+                    builder.owner(results.get("owner").toString());
+                }
+            }
+        }));
+        builder.type(property.getType());
+        var description = StringUtils.defaultIfBlank(property.getDescription(), property.getShortDescription());
+        description = StringUtils.isBlank(description) ? StringUtils.EMPTY : Jsoup.parse(description).text();
+        description = WordUtils.wrap(description, 100, "\n# ", false);
+        
+        builder.description(description);
+        builder.name(property.getId());
+        builder.defaultValue(ObjectUtils.defaultIfNull(property.getDefaultValue(), ""));
+
+        if (property.isDeprecated()) {
+            val deprecation = property.getDeprecation();
+            builder.deprecationLevel(deprecation.getLevel().toString());
+            if (deprecation.getShortReason() != null) {
+                builder.deprecationReason(deprecation.getShortReason());
+            }
+            if (deprecation.getReplacement() != null) {
+                builder.deprecationReplacement(deprecation.getReplacement());
+            }
+        }
+        return builder.build();
+    }
+
+    @SneakyThrows
+    private static String determinePropertySourceType(final ConfigurationMetadataProperty property) {
+        val method = ReflectionUtils.findMethod(property.getClass(), "getSourceType");
+        if (method == null) {
+            return null;
+        }
+        method.setAccessible(true);
+        return (String) method.invoke(property);
+    }
 
     /**
      * Catalog cas properties container.
@@ -41,64 +119,13 @@ public class CasOverlayPropertiesCatalog {
             .filter(entry -> casExclusive == CasConfigurationMetadataRepository.isCasProperty(entry.getValue()))
             .collect(Collectors.toList());
 
-        val properties = new TreeSet<CasReferenceProperty>();
-        allProperties.forEach(entry -> {
-            try {
-                val value = entry.getValue();
-                val valueHints = value.getHints().getValueHints();
-                val propsByModule = valueHints
-                    .stream()
-                    .filter(hint -> hint.getDescription().equals(RequiresModule.class.getName()))
-                    .filter(Unchecked.predicate(h -> {
-                        if (module != null) {
-                            var hint = ValueHint.class.cast(h);
-                            val results = MAPPER.readValue(hint.getValue().toString(), Map.class);
-                            val owner = results.get("module");
-                            return owner.equals(module);
-                        }
-                        return true;
-                    }))
-                    .map(hint -> value)
-                    .collect(Collectors.toList());
-
-                propsByModule.forEach(prop -> {
-                    val builder = CasReferenceProperty.builder();
-                    prop.getHints().getValueHints().forEach(Unchecked.consumer(hint -> {
-                        if (hint.getDescription().equals(RequiredProperty.class.getName())) {
-                            builder.required(true);
-                        }
-                        if (hint.getDescription().equals(RequiresModule.class.getName())) {
-                            val results = MAPPER.readValue(hint.getValue().toString(), Map.class);
-                            builder.module(results.get("module").toString());
-                        }
-                        if (hint.getDescription().equals(PropertyOwner.class.getName())) {
-                            val results = MAPPER.readValue(hint.getValue().toString(), Map.class);
-                            builder.owner(results.get("owner").toString());
-                        }
-                    }));
-                    builder.type(prop.getType());
-                    val desc = Jsoup.parse(prop.getDescription()).text();
-                    builder.description(desc);
-                    builder.name(prop.getName());
-                    builder.defaultValue(ObjectUtils.defaultIfNull(prop.getDefaultValue(), ""));
-
-                    if (prop.isDeprecated()) {
-                        val deprecation = prop.getDeprecation();
-                        builder.deprecationLevel(deprecation.getLevel().toString());
-                        if (deprecation.getShortReason() != null) {
-                            builder.deprecationReason(deprecation.getShortReason());
-                        }
-                        if (deprecation.getReplacement() != null) {
-                            builder.deprecationReplacement(deprecation.getReplacement());
-                        }
-                    }
-                    properties.add(builder.build());
-                });
-
-            } catch (final Exception ex) {
-                log.error(ex.getMessage(), ex);
-            }
-        });
+        val properties = allProperties
+            .stream()
+            .filter(entry -> StringUtils.isBlank(module) || doesPropertyBelongToModule(entry.getValue(), module))
+            .map(Map.Entry::getValue)
+            .map(CasOverlayPropertiesCatalog::collectReferenceProperty)
+            .sorted(Comparator.comparing(CasReferenceProperty::getName))
+            .collect(Collectors.toCollection(TreeSet::new));
         return new CasPropertiesContainer(properties);
     }
 
@@ -145,6 +172,8 @@ public class CasOverlayPropertiesCatalog {
         private final String deprecationReason;
 
         private final String deprecationReplacement;
+
+        private final String sourceType;
 
         @Override
         public int compareTo(final CasReferenceProperty o) {

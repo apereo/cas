@@ -1,0 +1,37 @@
+############################################################
+# Reference: All Properties
+############################################################
+# This file contains a catalog of all properties
+# that are not owned/controlled by CAS.
+#
+# Each property definition is annotated with:
+#   - Description
+#   - Deprecation warning (if any)
+#   - Default value
+#   - Type
+##############################################################################################################
+# This catalog is meant as a guide only. Do NOT copy/paste the entire collection of settings
+# into your CAS configuration; rather pick only the properties that you need. Do NOT enable settings
+# unless you are certain of their purpose and do NOT copy settings into your configuration
+# only to keep them as reference. Such efforts, as well-intentioned as they may be, lead
+# to upgrade headaches, maintenance nightmares and premature aging.
+###############################################################################################################
+
+{{#properties}}
+{{#owner}}
+# Owner: {{owner}}
+{{/owner}}
+# Type: {{{type}}}
+# {{{description}}}
+# {{name}}: {{defaultValue}}
+{{#deprecationLevel}}
+# Deprecation Level: {{deprecationLevel}}
+{{/deprecationLevel}}
+{{#deprecationReason}}
+# Deprecation Reason: {{deprecationReason}}
+{{/deprecationReason}}
+{{#deprecationReplacement}}
+# Deprecation Replacement: {{deprecationReplacement}}
+{{/deprecationReplacement}}
+
+{{/properties}}

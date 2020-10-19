@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.overlay.CasOverlayGradleBuild;
+import org.apereo.cas.overlay.contrib.CasOverlayAllReferencePropertiesContributor;
 import org.apereo.cas.overlay.contrib.CasOverlayApplicationYamlPropertiesContributor;
 import org.apereo.cas.overlay.contrib.CasOverlayCasReferencePropertiesContributor;
 import org.apereo.cas.overlay.contrib.CasOverlayConfigurationPropertiesContributor;
@@ -54,6 +55,7 @@ public class CasOverlayProjectGenerationConfiguration {
     @Bean
     public ChainingSingleResourceProjectContributor casOverlayGradleConfigurationContributor() {
         var chain = new ChainingSingleResourceProjectContributor();
+        chain.addContributor(new CasOverlayAllReferencePropertiesContributor(applicationContext));
         chain.addContributor(new CasOverlayCasReferencePropertiesContributor(applicationContext));
         chain.addContributor(new CasOverlayGradleBuildContributor(applicationContext));
         chain.addContributor(new CasOverlayGradlePropertiesContributor(applicationContext));
