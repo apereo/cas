@@ -24,9 +24,11 @@ import org.apereo.cas.overlay.contrib.gradle.wrapper.CasOverlayGradleWrapperConf
 import org.apereo.cas.overlay.contrib.gradle.wrapper.CasOverlayGradleWrapperExecutablesContributor;
 import org.apereo.cas.overlay.contrib.util.ChainingMultipleResourcesProjectContributor;
 import org.apereo.cas.overlay.contrib.util.ChainingSingleResourceProjectContributor;
+import org.apereo.cas.overlay.info.DependencyAliasesInfoContributor;
 import org.apereo.cas.overlay.rate.RateLimitInterceptor;
 import io.spring.initializr.generator.buildsystem.BuildItemResolver;
 import io.spring.initializr.generator.project.ProjectGenerationConfiguration;
+import io.spring.initializr.metadata.InitializrMetadataProvider;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -43,6 +45,12 @@ public class CasOverlayProjectGenerationConfiguration {
 
     private static CasOverlayGradleBuild createGradleBuild(BuildItemResolver buildItemResolver) {
         return buildItemResolver != null ? new CasOverlayGradleBuild(buildItemResolver) : new CasOverlayGradleBuild();
+    }
+
+    @Autowired
+    @Bean
+    public DependencyAliasesInfoContributor dependencyAliasesInfoContributor(final InitializrMetadataProvider provider) {
+        return new DependencyAliasesInfoContributor(provider);
     }
 
     @Bean

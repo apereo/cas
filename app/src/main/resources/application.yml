@@ -3,6 +3,13 @@ server:
   ssl:
     enabled: false
 
+management:
+  endpoint:
+    info:
+      enabled: true
+    health:
+      enabled: true
+
 logging:
   level:
     org:
