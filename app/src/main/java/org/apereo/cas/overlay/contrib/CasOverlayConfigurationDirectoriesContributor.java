@@ -14,7 +14,7 @@ public class CasOverlayConfigurationDirectoriesContributor implements ProjectCon
 
     @Override
     public void contribute(final Path projectRoot) throws IOException {
-        createDirectory(projectRoot, "./etc/cas/config/services");
-        createDirectory(projectRoot, "./etc/cas/config/saml");
+        createDirectory(projectRoot, "./etc/cas/services");
+        createDirectory(projectRoot, "./etc/cas/saml");
     }
 }
