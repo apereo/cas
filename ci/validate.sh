@@ -16,6 +16,9 @@ echo "Downloading Shell"
 echo "Listing Views"
 ./gradlew listTemplateViews
 
+echo "Configuration Metadata Export"
+./gradlew exportConfigMetadata
+
 echo "Exploding WAR"
 ./gradlew explodeWar
 

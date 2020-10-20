@@ -29,7 +29,6 @@ springBoot {
 dependencies {
 
     implementation "org.jooq:jool:0.9.14"
-    implementation "org.jsoup:jsoup:1.13.1"
     implementation "com.github.vladimir-bukhtoyarov:bucket4j-core:4.10.0"
     implementation "com.github.spullara.mustache.java:compiler:0.9.6"
     implementation "org.springframework.boot:spring-boot-starter-web"

@@ -1,6 +1,7 @@
 package org.apereo.cas.overlay.contrib;
 
-import org.apereo.cas.overlay.contrib.util.CasOverlayPropertiesCatalog;
+import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
+import org.apereo.cas.metadata.ConfigurationMetadataCatalogQuery;
 import org.apereo.cas.overlay.contrib.util.TemplatedProjectContributor;
 import io.spring.initializr.generator.buildsystem.Dependency;
 import io.spring.initializr.generator.project.ProjectDescription;
@@ -20,11 +21,11 @@ public class CasOverlayConfigurationPropertiesContributor extends TemplatedProje
             .stream()
             .map(Dependency::getArtifactId)
             .collect(Collectors.toList());
-        return CasOverlayPropertiesCatalog.builder()
-            .casExclusive(true)
+        val repository = new CasConfigurationMetadataRepository();
+        return repository.query(ConfigurationMetadataCatalogQuery.builder()
             .modules(modules)
-            .build()
-            .catalog();
+            .casExclusive(false)
+            .build());
     }
 
 }

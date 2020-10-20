@@ -1,7 +1,7 @@
 import org.apache.ivy.util.url.ApacheURLLister
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.internal.logging.text.StyledTextOutputFactory
-
+import org.apereo.cas.metadata.*
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
@@ -246,54 +246,28 @@ task exportConfigMetadata(group: "CAS", description: "Export collection of CAS p
     doLast {
         def file = new File(project.rootDir, 'config-metadata.properties')
         file.withWriter('utf-8') { writer ->
-            def metadataRepository = new org.apereo.cas.metadata.CasConfigurationMetadataRepository()
-            def repository = metadataRepository.repository;
-            repository.allGroups
-                    .values()
-                    .sort { o1, o2 -> o1.id <=> o2.id }
-                    .each({ group ->
-                        def groupProperties = group.properties
-                        if (!groupProperties.isEmpty()) {
-                            def groupId = group.id.equalsIgnoreCase("_ROOT_GROUP_") ? "" : group.id + "."
-
-                            writer.writeLine("# Group ${group.id}");
-                            writer.writeLine("# ====================")
-                            groupProperties
-                                    .values()
-                                    .sort { o1, o2 -> o1.id <=> o2.id }
-                                    .each({ property ->
-                                        def description = property.shortDescription
-                                        if (!property.shortDescription?.equalsIgnoreCase(property.description) && property.description != null) {
-                                            description = property.description.replace('\n', '#')
-                                        }
-                                        writer.writeLine("# ${description}");
-                                        writer.writeLine("# Type: ${property.type}");
-                                        if (property.deprecated) {
-                                            def deprecation = property.deprecation
-                                            writer.writeLine("# This setting is deprecated with a severity level of ${deprecation.level}.")
-                                            if (deprecation.shortReason != null) {
-                                                writer.writeLine("# because ${deprecation.shortReason}")
-                                            }
-                                            if (deprecation.replacement != null) {
-                                                writer.writeLine("# Replace with: ${deprecation.replacement}")
-                                            }
-                                        }
-                                        property.hints.valueHints.each {
-                                            if (it.value instanceof Object[]) {
-                                                if (it.value[0].toString().contains("RequiresModule")) {
-                                                    writer.writeLine("# Required module: org.apereo.cas:${it.description}")
-                                                    writer.writeLine("# Automatically included/available: ${it.value[1]}")
-                                                }
-                                            }
-                                            if (it.value.toString().contains("RequiredProperty")) {
-                                                writer.writeLine("# Note: This setting is required!")
-                                            }
-                                        }
-                                        writer.writeLine("${groupId}${property.name}=${property.defaultValue}")
-                                        writer.writeLine("")
-                                    });
-                        }
-                    });
+            def repository = new CasConfigurationMetadataRepository()
+            def props = repository.query(ConfigurationMetadataCatalogQuery.builder()
+                .casExclusive(true)
+                .build())
+                .properties()
+            props.each { property ->
+                writer.writeLine("# Type: ${property.type}");
+                writer.writeLine("# Module: ${property.module}")
+                writer.writeLine("# Owner: ${property.owner}")
+                if (property.deprecationLevel != null) {
+                    writer.writeLine("# This setting is deprecated with a severity level of ${property.deprecationLevel}.")
+                    if (property.deprecationReason != null) {
+                        writer.writeLine("# because ${property.deprecationReason}")
+                    }
+                    if (property.deprecationReason != null) {
+                        writer.writeLine("# Replace with: ${property.deprecationReason}")
+                    }
+                }
+                writer.writeLine("# ${property.description}");
+                writer.writeLine("# ${property.name}: ${property.defaultValue}")
+                writer.writeLine("")
+            }
         }
         println "Configuration metadata is available at ${file.absolutePath}"
     }
