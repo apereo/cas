@@ -76,6 +76,12 @@ dependencyManagement {
     }
 }
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(project.targetCompatibility)
+    }
+}
+
 dependencies {
     compileOnly "org.apereo.cas:cas-server-core-api-configuration-model"
     testImplementation "org.springframework.boot:spring-boot-starter-test"

@@ -1,6 +1,6 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.overlay.CasOverlayGradleBuild;
+import org.apereo.cas.overlay.build.CasOverlayGradleBuild;
 import org.apereo.cas.overlay.contrib.CasOverlayAllReferencePropertiesContributor;
 import org.apereo.cas.overlay.contrib.CasOverlayApplicationYamlPropertiesContributor;
 import org.apereo.cas.overlay.contrib.CasOverlayCasReferencePropertiesContributor;
@@ -23,12 +23,17 @@ import org.apereo.cas.overlay.contrib.gradle.wrapper.CasOverlayGradleWrapperConf
 import org.apereo.cas.overlay.contrib.gradle.wrapper.CasOverlayGradleWrapperExecutablesContributor;
 import org.apereo.cas.overlay.contrib.util.ChainingMultipleResourcesProjectContributor;
 import org.apereo.cas.overlay.contrib.util.ChainingSingleResourceProjectContributor;
+import org.apereo.cas.overlay.rate.RateLimitInterceptor;
 import io.spring.initializr.generator.buildsystem.BuildItemResolver;
 import io.spring.initializr.generator.project.ProjectGenerationConfiguration;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @ProjectGenerationConfiguration
 public class CasOverlayProjectGenerationConfiguration {
@@ -86,4 +91,20 @@ public class CasOverlayProjectGenerationConfiguration {
         return createGradleBuild(buildItemResolver.getIfAvailable());
     }
 
+    @Bean
+    public HandlerInterceptor rateLimitInterceptor() {
+        return new RateLimitInterceptor();
+    }
+
+    @Bean
+    @Autowired
+    public WebMvcConfigurer rateLimitingWebMvcConfigurer(@Qualifier("rateLimitInterceptor")
+                                                         final HandlerInterceptor rateLimitInterceptor) {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addInterceptors(final InterceptorRegistry registry) {
+                registry.addInterceptor(rateLimitInterceptor).addPathPatterns("/**");
+            }
+        };
+    }
 }
