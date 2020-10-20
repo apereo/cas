@@ -1,6 +1,6 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.overlay.build.CasOverlayGradleBuild;
+import org.apereo.cas.overlay.buildsystem.CasOverlayGradleBuild;
 import org.apereo.cas.overlay.contrib.CasOverlayAllReferencePropertiesContributor;
 import org.apereo.cas.overlay.contrib.CasOverlayApplicationYamlPropertiesContributor;
 import org.apereo.cas.overlay.contrib.CasOverlayCasReferencePropertiesContributor;

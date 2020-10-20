@@ -1,6 +1,6 @@
 package org.apereo.cas.overlay.contrib.gradle;
 
-import org.apereo.cas.overlay.build.CasOverlayGradleBuild;
+import org.apereo.cas.overlay.buildsystem.CasOverlayGradleBuild;
 import org.apereo.cas.overlay.contrib.util.TemplatedProjectContributor;
 import io.spring.initializr.generator.project.ProjectDescription;
 import lombok.AllArgsConstructor;
