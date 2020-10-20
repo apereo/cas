@@ -2,8 +2,8 @@ package org.apereo.cas.webauthn.web.flow;
 
 import org.apereo.cas.web.support.WebUtils;
 
-import com.yubico.webauthn.core.RegistrationStorage;
-import com.yubico.webauthn.core.SessionManager;
+import com.yubico.core.RegistrationStorage;
+import com.yubico.core.SessionManager;
 import com.yubico.webauthn.data.ByteArray;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

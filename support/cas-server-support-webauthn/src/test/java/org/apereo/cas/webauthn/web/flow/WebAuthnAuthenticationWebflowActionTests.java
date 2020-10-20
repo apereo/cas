@@ -10,10 +10,10 @@ import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.webauthn.WebAuthnCredential;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 
+import com.yubico.core.SessionManager;
+import com.yubico.data.CredentialRegistration;
 import com.yubico.webauthn.RegisteredCredential;
-import com.yubico.webauthn.core.SessionManager;
 import com.yubico.webauthn.data.ByteArray;
-import com.yubico.webauthn.data.CredentialRegistration;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;

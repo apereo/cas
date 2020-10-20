@@ -105,6 +105,7 @@ latest versions of each system. These include the following systems:
 - Couchbase Driver
 - Lombok
 - Person Directory
+- WebAuthN FIDO2
 - Maxmind
 - Amazon SDK
 - Eureka Client
