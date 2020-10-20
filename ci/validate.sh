@@ -17,3 +17,9 @@ echo "Listing Views"
 
 echo "Exploding WAR"
 ./gradlew explodeWar
+
+echo "Build Container Image w/ Docker"
+./docker-build.sh
+
+echo "Build Container Image w/ Docker Compose"
+docker-compose build

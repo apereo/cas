@@ -32,6 +32,7 @@ jobs:
           name: binary-artifacts
           path: ./**/build/libs/*.*
   validate:
+    needs: [build]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -46,11 +47,3 @@ jobs:
           name: binary-artifacts
       - name: Validate Overlay
         run: ./ci/validate.sh
-  docker:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Build Container Image w/ Docker
-        run: ./docker-build.sh 
-      - name: Build Container Image w/ Docker Compose
-        run: docker-compose build
