@@ -272,7 +272,7 @@ subprojects {
         maven {
             url "https://dl.bintray.com/apereocas/webauthn-cas/"
             content {
-                includeGroupByRegex ".*yubico.*"
+                includeGroupByRegex ".*webauthn.*"
             }
             mavenContent { releasesOnly() }
         }
