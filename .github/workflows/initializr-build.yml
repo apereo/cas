@@ -25,7 +25,7 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: ${{ env.JDK_CURRENT }}
-      - name: Build Overlay
+      - name: Build Initializr
         run: ./gradlew --build-cache --configure-on-demand --no-daemon clean build -x test -x javadoc -x check --parallel
       - uses: actions/upload-artifact@v2
         with:
