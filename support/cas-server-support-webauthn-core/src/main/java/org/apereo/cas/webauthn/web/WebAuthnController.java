@@ -1,12 +1,12 @@
 package org.apereo.cas.webauthn.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yubico.core.WebAuthnServer;
+import com.yubico.data.AssertionRequestWrapper;
+import com.yubico.data.RegistrationRequest;
 import com.yubico.internal.util.JacksonCodecs;
 import com.yubico.util.Either;
-import com.yubico.webauthn.core.WebAuthnServer;
-import com.yubico.webauthn.data.AssertionRequestWrapper;
 import com.yubico.webauthn.data.ByteArray;
-import com.yubico.webauthn.data.RegistrationRequest;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -60,11 +60,18 @@ public class WebAuthnController {
 
     @PostMapping(WEBAUTHN_ENDPOINT_REGISTER)
     public ResponseEntity<Object> startRegistration(
-        @NonNull @RequestParam("username") final String username,
-        @NonNull @RequestParam("displayName") final String displayName,
-        @RequestParam(value = "credentialNickname", required = false, defaultValue = StringUtils.EMPTY) final String credentialNickname,
-        @RequestParam(value = "requireResidentKey", required = false) final boolean requireResidentKey,
-        @RequestParam(value = "sessionToken", required = false, defaultValue = StringUtils.EMPTY) final String sessionTokenBase64)
+        @NonNull
+        @RequestParam("username")
+        final String username,
+        @NonNull
+        @RequestParam("displayName")
+        final String displayName,
+        @RequestParam(value = "credentialNickname", required = false, defaultValue = StringUtils.EMPTY)
+        final String credentialNickname,
+        @RequestParam(value = "requireResidentKey", required = false)
+        final boolean requireResidentKey,
+        @RequestParam(value = "sessionToken", required = false, defaultValue = StringUtils.EMPTY)
+        final String sessionTokenBase64)
         throws Exception {
 
         val result = server.startRegistration(
@@ -81,13 +88,17 @@ public class WebAuthnController {
     }
 
     @PostMapping(WEBAUTHN_ENDPOINT_REGISTER + WEBAUTHN_ENDPOINT_FINISH)
-    public ResponseEntity<Object> finishRegistration(@RequestBody final String responseJson) {
+    public ResponseEntity<Object> finishRegistration(
+        @RequestBody
+        final String responseJson) {
         val result = server.finishRegistration(responseJson);
         return finishResponse(result, responseJson);
     }
 
     @PostMapping(WEBAUTHN_ENDPOINT_AUTHENTICATE)
-    public ResponseEntity<Object> startAuthentication(@RequestParam("username") final String username) {
+    public ResponseEntity<Object> startAuthentication(
+        @RequestParam("username")
+        final String username) {
         val request = server.startAuthentication(Optional.ofNullable(username));
         if (request.isRight()) {
             return startResponse(new StartAuthenticationResponse(request.right().get()));
@@ -96,7 +107,9 @@ public class WebAuthnController {
     }
 
     @PostMapping(WEBAUTHN_ENDPOINT_AUTHENTICATE + WEBAUTHN_ENDPOINT_FINISH)
-    public ResponseEntity<Object> finishAuthentication(@RequestBody final String responseJson) {
+    public ResponseEntity<Object> finishAuthentication(
+        @RequestBody
+        final String responseJson) {
         val result = server.finishAuthentication(responseJson);
         return finishResponse(result, responseJson);
     }
@@ -112,7 +125,7 @@ public class WebAuthnController {
     }
 
     private static ResponseEntity<Object> finishResponse(final Either<List<String>, ?> result,
-                                                         final String responseJson) {
+        final String responseJson) {
         if (result.isRight()) {
             LOGGER.trace("Response: [{}]", responseJson);
             return ResponseEntity.ok(writeJson(result.right().get()));

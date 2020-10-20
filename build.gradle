@@ -272,7 +272,7 @@ subprojects {
         maven {
             url "https://dl.bintray.com/apereocas/webauthn-cas/"
             content {
-                includeGroupByRegex ".*java-webauthn-server.*"
+                includeGroupByRegex ".*yubico.*"
             }
             mavenContent { releasesOnly() }
         }
@@ -302,6 +302,9 @@ subprojects {
         }
         maven {
             url "https://splunk.jfrog.io/splunk/ext-releases-local"
+            content {
+                includeGroupByRegex ".*splunk.*"
+            }
             mavenContent { releasesOnly() }
         }
         maven {
