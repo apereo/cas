@@ -9,6 +9,7 @@ import org.apereo.cas.overlay.contrib.CasOverlayLoggingConfigurationContributor;
 import org.apereo.cas.overlay.contrib.CasOverlayOverrideConfigurationContributor;
 import org.apereo.cas.overlay.contrib.CasOverlayProjectLicenseContributor;
 import org.apereo.cas.overlay.contrib.CasOverlayReadMeContributor;
+import org.apereo.cas.overlay.contrib.CasOverlayConfigurationDirectoriesContributor;
 import org.apereo.cas.overlay.contrib.CasOverlaySpringFactoriesContributor;
 import org.apereo.cas.overlay.contrib.CasOverlayWebXmlContributor;
 import org.apereo.cas.overlay.contrib.docker.CasOverlayDockerContributor;
@@ -64,6 +65,7 @@ public class CasOverlayProjectGenerationConfiguration {
         chain.addContributor(new CasOverlayCasReferencePropertiesContributor(applicationContext));
         chain.addContributor(new CasOverlayGradleBuildContributor(applicationContext));
         chain.addContributor(new CasOverlayGradlePropertiesContributor(applicationContext));
+        chain.addContributor(new CasOverlayConfigurationDirectoriesContributor());
         chain.addContributor(new CasOverlayGradleSettingsContributor());
         chain.addContributor(new CasOverlayGradleSpringBootContributor());
         chain.addContributor(new CasOverlayGradleTasksContributor());
@@ -98,8 +100,7 @@ public class CasOverlayProjectGenerationConfiguration {
 
     @Bean
     @Autowired
-    public WebMvcConfigurer rateLimitingWebMvcConfigurer(@Qualifier("rateLimitInterceptor")
-                                                         final HandlerInterceptor rateLimitInterceptor) {
+    public WebMvcConfigurer rateLimitingWebMvcConfigurer(@Qualifier("rateLimitInterceptor") final HandlerInterceptor rateLimitInterceptor) {
         return new WebMvcConfigurer() {
             @Override
             public void addInterceptors(final InterceptorRegistry registry) {

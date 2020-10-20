@@ -7,6 +7,7 @@ cd tmp
 curl http://localhost:8080/starter.tgz -d dependencies=core | tar -xzvf -
 
 echo "Building Overlay"
+chmod -R 777 ./*.sh
 ./gradlew clean build jibDockerBuild --refresh-dependencies
 
 echo "Downloading Shell"
