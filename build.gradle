@@ -271,9 +271,6 @@ subprojects {
         }
         maven {
             url "https://dl.bintray.com/apereocas/webauthn-cas/"
-            content {
-                includeGroupByRegex ".*webauthn.*"
-            }
             mavenContent { releasesOnly() }
         }
         maven {
