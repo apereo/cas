@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
+import org.apereo.cas.configuration.model.support.quartz.SchedulingProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -43,6 +44,17 @@ public class CasSimpleMultifactorProperties extends BaseMultifactorProviderPrope
      * Indicates whether this provider should support trusted devices.
      */
     private boolean trustedDeviceEnabled;
+
+    /**
+     * Time in seconds during which resend button will be deactivated. Default time is the same as token duration
+     */
+    private long resendTimeInSeconds = timeToKillInSeconds;
+
+    /**
+     * Scheduler settings to clean up throttled attempts.
+     */
+    @NestedConfigurationProperty
+    private SchedulingProperties resendTokenSchedule = new SchedulingProperties();
     
     /**
      * Email settings for notifications.
