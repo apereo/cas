@@ -19,8 +19,11 @@ import static org.junit.jupiter.api.Assertions.*;
 public class CasKryoPoolTests {
     @Test
     public void verifyRunOperation() {
-        val input = new CasKryoPool();
-        assertNotNull(input.run(kryo -> new Object()));
+        val pool = new CasKryoPool();
+        try (val kryo = pool.borrow()) {
+            assertNotNull(kryo);
+            pool.free(kryo);
+        }
     }
 
 }

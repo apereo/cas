@@ -34,7 +34,7 @@ public class ZonedDateTimeSerializer extends Serializer<ZonedDateTime> {
     }
 
     @Override
-    public ZonedDateTime read(final Kryo kryo, final Input input, final Class<ZonedDateTime> type) {
+    public ZonedDateTime read(final Kryo kryo, final Input input, final Class<? extends ZonedDateTime> aClass) {
         val time = kryo.readObject(input, Long.class);
         val zoneId = RegExUtils.removeAll(input.readString().trim(), "\\p{C}");
         try {
@@ -42,7 +42,7 @@ public class ZonedDateTimeSerializer extends Serializer<ZonedDateTime> {
             val zone = ZoneId.of(zoneId);
             return DateTimeUtils.zonedDateTimeOf(time, zone);
         } catch (final Exception e) {
-            LOGGER.warn("Unable to parse a zoned datetime instance with time [{}] and zone id [{}]: [{}]", time, zoneId, e.getMessage());
+            LOGGER.warn("Unable to parse zoned datetime with time [{}] and zone id [{}]: [{}]", time, zoneId, e.getMessage());
             return DateTimeUtils.zonedDateTimeOf(time, ZoneId.systemDefault());
         }
     }
