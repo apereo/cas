@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.idp.metadata.generator;
 
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -58,26 +59,6 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
         return samlIdPMetadataLocator.fetch(registeredService);
     }
 
-    protected SamlIdPMetadataDocument newSamlIdPMetadataDocument() {
-        return new SamlIdPMetadataDocument();
-    }
-
-    /**
-     * Finalize metadata document saml idp metadata document.
-     *
-     * @param doc               the doc
-     * @param registeredService the registered service
-     * @return the saml id p metadata document
-     */
-    protected SamlIdPMetadataDocument finalizeMetadataDocument(final SamlIdPMetadataDocument doc,
-                                                               final Optional<SamlRegisteredService> registeredService) {
-        return doc;
-    }
-
-    private String getIdPEndpointUrl() {
-        return configurationContext.getCasProperties().getServer().getPrefix().concat("/idp");
-    }
-
     /**
      * Build self signed encryption cert.
      *
@@ -94,36 +75,20 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
      */
     public abstract Pair<String, String> buildSelfSignedSigningCert(Optional<SamlRegisteredService> registeredService);
 
+    protected SamlIdPMetadataDocument newSamlIdPMetadataDocument() {
+        return new SamlIdPMetadataDocument();
+    }
+
     /**
-     * Build metadata generator parameters by passing the encryption,
-     * signing and back-channel certs to the parameter generator.
+     * Finalize metadata document saml idp metadata document.
      *
-     * @param signing           the signing
-     * @param encryption        the encryption
-     * @param registeredService registered service
-     * @return the metadata
+     * @param doc               the doc
+     * @param registeredService the registered service
+     * @return the saml id p metadata document
      */
-    @SneakyThrows
-    private String buildMetadataGeneratorParameters(final Pair<String, String> signing,
-                                                    final Pair<String, String> encryption,
-                                                    final Optional<SamlRegisteredService> registeredService) {
-        val template = configurationContext.getResourceLoader().getResource("classpath:/template-idp-metadata.xml");
-        val signingCert = SamlIdPMetadataGenerator.cleanCertificate(signing.getKey());
-        val encryptionCert = SamlIdPMetadataGenerator.cleanCertificate(encryption.getKey());
-
-        val idp = configurationContext.getCasProperties().getAuthn().getSamlIdp();
-        try (val writer = new StringWriter()) {
-            IOUtils.copy(template.getInputStream(), writer, StandardCharsets.UTF_8);
-            val metadata = writer.toString()
-                .replace("${entityId}", idp.getEntityId())
-                .replace("${scope}", configurationContext.getCasProperties().getServer().getScope())
-                .replace("${idpEndpointUrl}", getIdPEndpointUrl())
-                .replace("${encryptionKey}", encryptionCert)
-                .replace("${signingKey}", signingCert);
-
-            writeMetadata(metadata, registeredService);
-            return metadata;
-        }
+    protected SamlIdPMetadataDocument finalizeMetadataDocument(final SamlIdPMetadataDocument doc,
+        final Optional<SamlRegisteredService> registeredService) {
+        return doc;
     }
 
     /**
@@ -148,6 +113,46 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
             configurationContext.getSamlIdPCertificateAndKeyWriter().writeCertificateAndKey(keyWriter, certWriter);
             val encryptionKey = configurationContext.getMetadataCipherExecutor().encode(keyWriter.toString());
             return Pair.of(certWriter.toString(), encryptionKey);
+        }
+    }
+
+    private String getIdPEndpointUrl() {
+        val resolver = SpringExpressionLanguageValueResolver.getInstance();
+        return resolver.resolve(configurationContext.getCasProperties().getServer().getPrefix().concat("/idp"));
+    }
+
+    /**
+     * Build metadata generator parameters by passing the encryption,
+     * signing and back-channel certs to the parameter generator.
+     *
+     * @param signing           the signing
+     * @param encryption        the encryption
+     * @param registeredService registered service
+     * @return the metadata
+     */
+    @SneakyThrows
+    private String buildMetadataGeneratorParameters(final Pair<String, String> signing,
+        final Pair<String, String> encryption,
+        final Optional<SamlRegisteredService> registeredService) {
+        val template = configurationContext.getResourceLoader().getResource("classpath:/template-idp-metadata.xml");
+        val signingCert = SamlIdPMetadataGenerator.cleanCertificate(signing.getKey());
+        val encryptionCert = SamlIdPMetadataGenerator.cleanCertificate(encryption.getKey());
+
+        val idp = configurationContext.getCasProperties().getAuthn().getSamlIdp();
+        try (val writer = new StringWriter()) {
+            IOUtils.copy(template.getInputStream(), writer, StandardCharsets.UTF_8);
+            val resolver = SpringExpressionLanguageValueResolver.getInstance();
+            val entityId = resolver.resolve(idp.getEntityId());
+            val scope = resolver.resolve(configurationContext.getCasProperties().getServer().getScope());
+            val metadata = writer.toString()
+                .replace("${entityId}", entityId)
+                .replace("${scope}", scope)
+                .replace("${idpEndpointUrl}", getIdPEndpointUrl())
+                .replace("${encryptionKey}", encryptionCert)
+                .replace("${signingKey}", signingCert);
+
+            writeMetadata(metadata, registeredService);
+            return metadata;
         }
     }
 }
