@@ -4,14 +4,15 @@ import org.apereo.cas.overlay.buildsystem.CasOverlayGradleBuild;
 import org.apereo.cas.overlay.contrib.CasOverlayAllReferencePropertiesContributor;
 import org.apereo.cas.overlay.contrib.CasOverlayApplicationYamlPropertiesContributor;
 import org.apereo.cas.overlay.contrib.CasOverlayCasReferencePropertiesContributor;
+import org.apereo.cas.overlay.contrib.CasOverlayConfigurationDirectoriesContributor;
 import org.apereo.cas.overlay.contrib.CasOverlayConfigurationPropertiesContributor;
 import org.apereo.cas.overlay.contrib.CasOverlayLoggingConfigurationContributor;
 import org.apereo.cas.overlay.contrib.CasOverlayOverrideConfigurationContributor;
 import org.apereo.cas.overlay.contrib.CasOverlayProjectLicenseContributor;
 import org.apereo.cas.overlay.contrib.CasOverlayReadMeContributor;
-import org.apereo.cas.overlay.contrib.CasOverlayConfigurationDirectoriesContributor;
 import org.apereo.cas.overlay.contrib.CasOverlaySpringFactoriesContributor;
 import org.apereo.cas.overlay.contrib.CasOverlayWebXmlContributor;
+import org.apereo.cas.overlay.contrib.ProjectAssetsCleanUpContributor;
 import org.apereo.cas.overlay.contrib.docker.CasOverlayDockerContributor;
 import org.apereo.cas.overlay.contrib.docker.jib.CasOverlayGradleJibContributor;
 import org.apereo.cas.overlay.contrib.docker.jib.CasOverlayGradleJibEntrypointContributor;
@@ -24,11 +25,15 @@ import org.apereo.cas.overlay.contrib.gradle.wrapper.CasOverlayGradleWrapperConf
 import org.apereo.cas.overlay.contrib.gradle.wrapper.CasOverlayGradleWrapperExecutablesContributor;
 import org.apereo.cas.overlay.contrib.util.ChainingMultipleResourcesProjectContributor;
 import org.apereo.cas.overlay.contrib.util.ChainingSingleResourceProjectContributor;
+import org.apereo.cas.overlay.customize.DefaultDependenciesBuildCustomizer;
 import org.apereo.cas.overlay.info.DependencyAliasesInfoContributor;
 import org.apereo.cas.overlay.rate.RateLimitInterceptor;
 import io.spring.initializr.generator.buildsystem.BuildItemResolver;
 import io.spring.initializr.generator.project.ProjectGenerationConfiguration;
+import io.spring.initializr.generator.project.contributor.ProjectContributor;
+import io.spring.initializr.generator.spring.build.BuildCustomizer;
 import io.spring.initializr.metadata.InitializrMetadataProvider;
+import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -37,15 +42,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import java.util.stream.Collectors;
 
 @ProjectGenerationConfiguration
 public class CasOverlayProjectGenerationConfiguration {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
-
-    private static CasOverlayGradleBuild createGradleBuild(BuildItemResolver buildItemResolver) {
-        return buildItemResolver != null ? new CasOverlayGradleBuild(buildItemResolver) : new CasOverlayGradleBuild();
-    }
 
     @Autowired
     @Bean
@@ -97,8 +99,22 @@ public class CasOverlayProjectGenerationConfiguration {
     }
 
     @Bean
-    public CasOverlayGradleBuild gradleBuild(ObjectProvider<BuildItemResolver> buildItemResolver) {
-        return createGradleBuild(buildItemResolver.getIfAvailable());
+    public CasOverlayGradleBuild gradleBuild(ObjectProvider<BuildCustomizer<CasOverlayGradleBuild>> buildCustomizers,
+                                             ObjectProvider<BuildItemResolver> buildItemResolver) {
+        var build = new CasOverlayGradleBuild(buildItemResolver.getIfAvailable());
+        val customizers = buildCustomizers.orderedStream().collect(Collectors.toList());
+        customizers.forEach(c -> c.customize(build));
+        return build;
+    }
+
+    @Bean
+    public BuildCustomizer<CasOverlayGradleBuild> defaultDependenciesBuildCustomizer() {
+        return new DefaultDependenciesBuildCustomizer(applicationContext);
+    }
+
+    @Bean
+    public ProjectContributor projectAssetsCleanUpContributor() {
+        return new ProjectAssetsCleanUpContributor();
     }
 
     @Bean

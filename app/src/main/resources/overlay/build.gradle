@@ -84,7 +84,6 @@ java {
 
 dependencies {
     compileOnly "org.apereo.cas:cas-server-core-api-configuration-model"
-    testImplementation "org.springframework.boot:spring-boot-starter-test"
 
     if (project.hasProperty("casModules")) {
         def dependencies = project.getProperty("casModules").split(",")

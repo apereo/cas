@@ -57,6 +57,15 @@ To unzip and explode the CAS web application file and the internal resources jar
 
 - The specifics of the build are controlled using the `gradle.properties` file.
 
+## Configuration Metadata
+
+Configuration metadata allows you to export collection of CAS properties as a report into a file 
+that can later be examined. You will find a full list of CAS settings along with notes, types, default and accepted values:
+
+```bash
+./gradlew exportConfigMetadata
+```                           
+
 ## Adding Modules
 
 CAS modules may be specified under the `dependencies` block of the [Gradle build script](build.gradle):

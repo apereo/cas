@@ -35,7 +35,7 @@ public class RateLimitInterceptor implements HandlerInterceptor {
             response.addHeader("X-Rate-Limit-Remaining", String.valueOf(probe.getRemainingTokens()));
             return true;
         }
-        long waitForRefill = probe.getNanosToWaitForRefill() / 1_000_000_000;
+        var waitForRefill = probe.getNanosToWaitForRefill() / 1_000_000_000;
         response.addHeader("X-Rate-Limit-Retry-After-Seconds", String.valueOf(waitForRefill));
         response.sendError(HttpStatus.TOO_MANY_REQUESTS.value(), "Exhausted Request Quota");
         return false;

@@ -25,7 +25,7 @@ initializr:
   name:
     value: cas
   description:
-    value: 'Generic CAS WAR overlay to exercise the latest versions of CAS. This overlay could be freely used as a starting template for local CAS war overlays.'
+    value: 'CAS WAR overlay to use as a starting template for CAS deployments.'
   group-id:
     value: org.apereo.cas
   artifact-id:
@@ -2534,60 +2534,80 @@ initializr:
           artifactId: cas-server-webapp
           description: Apereo CAS Web Application
           bom: cas-bom
+          facets:
+            - web
         - name: cas-server-webapp-bootadmin-server
           id: webapp-bootadmin-server
           groupId: org.apereo.cas
           artifactId: cas-server-webapp-bootadmin-server
           description: Apereo CAS Spring Boot Admin Server
           bom: cas-bom
+          facets:
+            - web
         - name: cas-server-webapp-config
           id: webapp-config
           groupId: org.apereo.cas
           artifactId: cas-server-webapp-config
           description: Apereo CAS Web Application Configuration
           bom: cas-bom
+          facets:
+            - web
         - name: cas-server-webapp-config-server
           id: webapp-config-server
           groupId: org.apereo.cas
           artifactId: cas-server-webapp-config-server
           description: Apereo CAS Spring Cloud Configuration Web Application Server
           bom: cas-bom
+          facets:
+            - web
         - name: cas-server-webapp-eureka-server
           id: webapp-eureka-server
           groupId: org.apereo.cas
           artifactId: cas-server-webapp-eureka-server
           description: Apereo CAS Spring Cloud Eureka Service Discovery Server Web Application
           bom: cas-bom
+          facets:
+            - web
         - name: cas-server-webapp-init
           id: webapp-init
           groupId: org.apereo.cas
           artifactId: cas-server-webapp-init
           description: Apereo CAS Web Application Initializer
           bom: cas-bom
+          facets:
+            - web
         - name: cas-server-webapp-init-bootadmin-server
           id: webapp-init-bootadmin-server
           groupId: org.apereo.cas
           artifactId: cas-server-webapp-init-bootadmin-server
           description: Apereo CAS Spring Boot Admin Web Application Initializer
           bom: cas-bom
+          facets:
+            - web
         - name: cas-server-webapp-init-config-server
           id: webapp-init-config-server
           groupId: org.apereo.cas
           artifactId: cas-server-webapp-init-config-server
           description: Apereo CAS Spring Cloud Configuration Server API
           bom: cas-bom
+          facets:
+            - web
         - name: cas-server-webapp-init-eureka-server
           id: webapp-init-eureka-server
           groupId: org.apereo.cas
           artifactId: cas-server-webapp-init-eureka-server
           description: Apereo CAS Spring Cloud Eureka Service Discovery Server API
           bom: cas-bom
+          facets:
+            - web
         - name: cas-server-webapp-init-tomcat
           id: webapp-init-tomcat
           groupId: org.apereo.cas
           artifactId: cas-server-webapp-init-tomcat
           description: Apereo CAS Web Application via Apache Tomcat
           bom: cas-bom
+          facets:
+            - web
         - name: cas-server-webapp-jetty
           id: webapp-jetty
           groupId: org.apereo.cas
@@ -2596,12 +2616,16 @@ initializr:
           bom: cas-bom
           aliases:
             - jetty
+          facets:
+            - web
         - name: cas-server-webapp-resources
           id: webapp-resources
           groupId: org.apereo.cas
           artifactId: cas-server-webapp-resources
           description: Apereo CAS Web Resources
           bom: cas-bom
+          facets:
+            - web
         - name: cas-server-webapp-tomcat
           id: webapp-tomcat
           groupId: org.apereo.cas
@@ -2610,6 +2634,8 @@ initializr:
           bom: cas-bom
           aliases:
             - tomcat
+          facets:
+            - web
         - name: cas-server-webapp-undertow
           id: webapp-undertow
           groupId: org.apereo.cas
@@ -2618,3 +2644,5 @@ initializr:
           bom: cas-bom
           aliases:
             - undertow
+          facets:
+            - web

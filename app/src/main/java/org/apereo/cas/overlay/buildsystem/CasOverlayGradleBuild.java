@@ -9,15 +9,11 @@ import java.util.List;
 public class CasOverlayGradleBuild extends Build {
     public static final List<String> WEBAPP_ARTIFACTS =
         List.of("cas-server-webapp-tomcat", "cas-server-webapp-jetty", "cas-server-webapp-undertow");
-    
+
     private final GradleBuildSettings.Builder settings = new GradleBuildSettings.Builder();
 
     public CasOverlayGradleBuild(final BuildItemResolver buildItemResolver) {
         super(buildItemResolver);
-    }
-
-    public CasOverlayGradleBuild() {
-        this(null);
     }
 
     @Override
