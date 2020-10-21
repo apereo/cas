@@ -12,7 +12,7 @@ import org.apereo.cas.overlay.contrib.CasOverlayProjectLicenseContributor;
 import org.apereo.cas.overlay.contrib.CasOverlayReadMeContributor;
 import org.apereo.cas.overlay.contrib.CasOverlaySpringFactoriesContributor;
 import org.apereo.cas.overlay.contrib.CasOverlayWebXmlContributor;
-import org.apereo.cas.overlay.contrib.ProjectAssetsCleanUpContributor;
+import org.apereo.cas.overlay.contrib.ProjectAssetsUndoContributor;
 import org.apereo.cas.overlay.contrib.docker.CasOverlayDockerContributor;
 import org.apereo.cas.overlay.contrib.docker.jib.CasOverlayGradleJibContributor;
 import org.apereo.cas.overlay.contrib.docker.jib.CasOverlayGradleJibEntrypointContributor;
@@ -113,8 +113,8 @@ public class CasOverlayProjectGenerationConfiguration {
     }
 
     @Bean
-    public ProjectContributor projectAssetsCleanUpContributor() {
-        return new ProjectAssetsCleanUpContributor();
+    public ProjectContributor projectAssetsUndoContributor() {
+        return new ProjectAssetsUndoContributor();
     }
 
     @Bean
