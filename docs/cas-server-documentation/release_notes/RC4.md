@@ -72,6 +72,13 @@ OAUth relying party or a CAS-enabled client application.
 
 [WebAuthn FIDO2](../mfa/FIDO2-WebAuthn-Authentication.html) multifactor authentication is able manage and maintain registration records in DynamoDb.
 
+### Kryo v5
+
+The [Kryo library](https://github.com/EsotericSoftware/kryo) used by 
+the [Memcached ticket registry](../ticketing/Memcached-Ticket-Registry.html) and family is now upgraded to version `5.0.0`. 
+This is a major upgrade and a number of internal components that affect Kryo pooling operations are also revised and upgraded.
+However, the upgrade should remain invisible for the most part.
+
 ### Integration Tests Upgrades
 
 A number of docker images for backend integration tests are updated to ensure support for 
@@ -102,6 +109,7 @@ latest versions of each system. These include the following systems:
 - Guava
 - Nimbus Jose
 - Twillio
+- Kryo
 - Couchbase Driver
 - Lombok
 - Person Directory
