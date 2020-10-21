@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.idp.metadata.generator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -19,6 +20,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerator implements InitializingBean {
     public FileSystemSamlIdPMetadataGenerator(final SamlIdPMetadataGeneratorConfigurationContext context) {
         super(context);
@@ -59,9 +61,11 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
     @SneakyThrows
     protected void writeCertificateAndKey(final File certificate, final File key) {
         if (certificate.exists()) {
+            LOGGER.info("Certificate file [{}] already exists, and will be deleted", certificate.getCanonicalPath());
             FileUtils.forceDelete(certificate);
         }
         if (key.exists()) {
+            LOGGER.info("Key file [{}] already exists, and will be deleted", certificate.getCanonicalPath());
             FileUtils.forceDelete(key);
         }
         try (val keyWriter = Files.newBufferedWriter(key.toPath(), StandardCharsets.UTF_8);
