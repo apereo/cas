@@ -86,7 +86,7 @@ public class CasOverlayProjectGenerationConfiguration {
         chain.addContributor(new CasOverlayProjectLicenseContributor());
         chain.addContributor(new CasOverlayWebXmlContributor());
         chain.addContributor(new CasOverlayLoggingConfigurationContributor());
-        chain.addContributor(new CasOverlayReadMeContributor());
+        chain.addContributor(new CasOverlayReadMeContributor(applicationContext));
         return chain;
     }
 

@@ -2,10 +2,10 @@ package org.apereo.cas.overlay.contrib.gradle;
 
 import org.apereo.cas.overlay.contrib.util.TemplatedProjectContributor;
 import io.spring.initializr.generator.project.ProjectDescription;
-import lombok.AllArgsConstructor;
+import io.spring.initializr.metadata.InitializrMetadataProvider;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ApplicationContext;
@@ -18,6 +18,9 @@ public class CasOverlayGradlePropertiesContributor extends TemplatedProjectContr
 
     @Override
     protected Object contributeInternal(final ProjectDescription project) {
+        val provider = applicationContext.getBean(InitializrMetadataProvider.class);
+        val defaults = provider.get().defaults();
+
         val dependencies = project.getRequestedDependencies();
         var appServer = "-tomcat";
         if (dependencies.containsKey("webapp-jetty")) {
@@ -25,20 +28,12 @@ public class CasOverlayGradlePropertiesContributor extends TemplatedProjectContr
         } else if (dependencies.containsKey("webapp-undertow")) {
             appServer = "-undertow";
         }
-        return new CasPropertiesContainer(new CasProperties(appServer));
-    }
-
-    @RequiredArgsConstructor
-    private static class CasPropertiesContainer {
-        private final CasProperties properties;
-
-        CasProperties properties() {
-            return this.properties;
-        }
+        defaults.put("appServer", appServer);
+        return defaults;
     }
 
     @Getter
-    @AllArgsConstructor
+    @SuperBuilder
     @ToString
     private static class CasProperties {
         private final String appServer;

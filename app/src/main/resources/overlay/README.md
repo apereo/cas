@@ -1,12 +1,13 @@
-CAS Overlay Template [![Build Status](https://travis-ci.org/apereo/cas-overlay-template.svg?branch=master)](https://travis-ci.org/apereo/cas-overlay-template)
+CAS Overlay Template
 =======================
 
-Generic CAS WAR overlay to exercise the latest versions of CAS. This overlay could be freely used as a starting template for local CAS war overlays.
+CAS WAR overlay to use as a starting template for CAS deployments.
 
 # Versions
 
-- CAS `6.3.x`
-- JDK `11`
+- CAS `{{version}}`
+- JDK `{{javaVersion}}`
+- Spring Boot `{{bootVersion}}`
 
 # Overview
 
@@ -72,15 +73,27 @@ CAS modules may be specified under the `dependencies` block of the [Gradle build
 
 ```gradle
 dependencies {
-    compile "org.apereo.cas:cas-server-some-module:${project.casVersion}"
+    implementation "org.apereo.cas:cas-server-some-module"
     ...
 }
 ```
 
-To collect the list of all project modules and dependencies:
+To collect the list of all project modules and dependencies in the overlay:
 
 ```bash
 ./gradlew[.bat] allDependencies
+```                                                                       
+
+To see a full list of all project dependencies that are available for configuration and use:
+
+```bash
+curl {{initializrUrl}}/dependencies
+```     
+
+Or:
+
+```
+curl {{initializrUrl}}/actuator/info
 ```
 
 ### Clear Gradle Cache
