@@ -1,7 +1,6 @@
 package org.apereo.cas.web.view;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.web.support.WebUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

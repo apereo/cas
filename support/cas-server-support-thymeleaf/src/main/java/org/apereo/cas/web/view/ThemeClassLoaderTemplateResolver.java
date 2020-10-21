@@ -55,7 +55,7 @@ public class ThemeClassLoaderTemplateResolver extends ClassLoaderTemplateResolve
         return getCurrentTheme(casProperties);
     }
 
-    static String getCurrentTheme(CasConfigurationProperties casProperties) {
+    static String getCurrentTheme(final CasConfigurationProperties casProperties) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
         String theme = null;
         if (request != null) {
