@@ -64,7 +64,7 @@ jobs:
         with:
           name: binary-artifacts
       - name: Build Docker Image
-        run: ./gradlew buildBootImage
+        run: ./gradlew bootBuildImage
       - name: Publish Docker Image
         if: ${{ github.event_name == 'push' && env.DOCKER_USER != null && env.DOCKER_PWD != null }}
         run: |
