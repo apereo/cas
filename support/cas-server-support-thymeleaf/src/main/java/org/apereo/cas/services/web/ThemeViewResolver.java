@@ -49,6 +49,11 @@ public class ThemeViewResolver extends AbstractCachingViewResolver {
         return view;
     }
 
+    @Override
+    protected Object getCacheKey(final String viewName, final Locale locale) {
+        return String.format("%s#%s", theme, super.getCacheKey(viewName, locale));
+    }
+
     private void configureTemplateThemeDefaultLocation(final AbstractThymeleafView thymeleafView) {
         val baseTemplateName = thymeleafView.getTemplateName();
         val templateName = theme + '/' + baseTemplateName;

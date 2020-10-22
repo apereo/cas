@@ -195,7 +195,7 @@ public class CasThymeleafConfiguration {
         resolver.setApplicationContext(applicationContext);
         resolver.setExcludedViewNames(properties.getExcludedViewNames());
         resolver.setOrder(Ordered.LOWEST_PRECEDENCE - 5);
-        resolver.setCache(properties.isCache());
+        resolver.setCache(false);
         resolver.setViewNames(properties.getViewNames());
         resolver.setContentType(appendCharset(properties.getServlet().getContentType(), resolver.getCharacterEncoding()));
 
