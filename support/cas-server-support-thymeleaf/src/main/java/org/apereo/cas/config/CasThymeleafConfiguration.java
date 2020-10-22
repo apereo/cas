@@ -172,7 +172,8 @@ public class CasThymeleafConfiguration {
     @Bean
     @RefreshScope
     public ThemeViewResolverFactory themeViewResolverFactory() {
-        val factory = new ThemeViewResolver.Factory(thymeleafViewResolver(), thymeleafProperties.getObject());
+        val factory = new ThemeViewResolver.Factory(thymeleafViewResolver(),
+            thymeleafProperties.getObject(), casProperties);
         factory.setApplicationContext(applicationContext);
         return factory;
     }
@@ -195,7 +196,7 @@ public class CasThymeleafConfiguration {
         resolver.setApplicationContext(applicationContext);
         resolver.setExcludedViewNames(properties.getExcludedViewNames());
         resolver.setOrder(Ordered.LOWEST_PRECEDENCE - 5);
-        resolver.setCache(properties.isCache());
+        resolver.setCache(false);
         resolver.setViewNames(properties.getViewNames());
         resolver.setContentType(appendCharset(properties.getServlet().getContentType(), resolver.getCharacterEncoding()));
 
