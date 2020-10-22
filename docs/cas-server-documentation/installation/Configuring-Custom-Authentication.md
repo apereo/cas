@@ -29,11 +29,13 @@ package com.example.cas;
 
 public class MyAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
     ...
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
-                                                                 final String originalPassword) {
+    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
+        final UsernamePasswordCredential credential,
+        final String originalPassword) {
+
         if (everythingLooksGood()) {
             return createHandlerResult(credential,
-                    this.principalFactory.createPrincipal(username), null);
+                this.principalFactory.createPrincipal(username), null);
         }
         throw new FailedLoginException("Sorry, you are a failure!");
     }
@@ -69,7 +71,7 @@ public class MyAuthenticationEventExecutionPlanConfiguration
 
     @Bean
     public AuthenticationHandler myAuthenticationHandler() {
-        final MyAuthenticationHandler handler = new MyAuthenticationHandler();
+        var handler = new MyAuthenticationHandler();
         /*
             Configure the handler by invoking various setter methods.
             Note that you also have full access to the collection of resolved CAS settings.
@@ -92,7 +94,8 @@ public class MyAuthenticationEventExecutionPlanConfiguration
 Now that we have properly created and registered our handler with the CAS authentication machinery, we just need to ensure that CAS is able to pick up our special configuration. To do so, create a `src/main/resources/META-INF/spring.factories` file and reference the configuration class in it as such:
 
 ```properties
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.example.cas.MyAuthenticationEventExecutionPlanConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+    com.example.cas.MyAuthenticationEventExecutionPlanConfiguration
 ```
 
 To learn more about the registration strategy, [please see this guide](http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-developing-auto-configuration.html).
