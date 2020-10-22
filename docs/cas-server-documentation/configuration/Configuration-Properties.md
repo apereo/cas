@@ -3313,8 +3313,8 @@ settings for this feature are available [here](Configuration-Properties-Common.h
 ### SAML Logout
 
 ```properties
-# cas.authn.saml-idp.logout.forceSignedLogoutRequests=true
-# cas.authn.saml-idp.logout.singleLogoutCallbacksDisabled=false
+# cas.authn.saml-idp.logout.force-signed-logout-requests=true
+# cas.authn.saml-idp.logout.single-logout-callbacks-disabled=false
 ```
 
 ### SAML Algorithms & Security
@@ -5302,7 +5302,7 @@ To learn more about this topic, [please review this guide](../installation/Servi
 # spring.cloud.consul.host=localhost
 
 # spring.cloud.consul.discovery.health-check-path=<health-endpoint-url>
-# spring.cloud.consul.discovery.health-check-path=15s
+# spring.cloud.consul.discovery.health-check-interval=15s
 # spring.cloud.consul.discovery.instance-id=${spring.application.name}:${random.value}
 
 # spring.cloud.consul.discovery.heartbeat.enabled=true
