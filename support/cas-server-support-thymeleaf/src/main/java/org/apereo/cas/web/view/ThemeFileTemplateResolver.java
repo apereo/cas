@@ -47,6 +47,6 @@ public class ThemeFileTemplateResolver extends FileTemplateResolver {
      * @return the current theme
      */
     protected String getCurrentTheme() {
-        return ThemeClassLoaderTemplateResolver.getCurrentTheme(casProperties);
+        return ThemeUtils.getCurrentTheme(casProperties);
     }
 }

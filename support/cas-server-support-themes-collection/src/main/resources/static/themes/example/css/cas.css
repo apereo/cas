@@ -1,0 +1,9 @@
+@import "../../../css/cas.css";
+
+body {
+    background-color: rgb(12, 71, 112);
+}
+
+body, p, span, div, a {
+    font-family: cursive;
+}
