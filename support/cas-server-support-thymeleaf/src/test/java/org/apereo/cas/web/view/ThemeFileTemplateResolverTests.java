@@ -64,6 +64,12 @@ public class ThemeFileTemplateResolverTests {
         verifyThemeFile();
     }
 
+    @Test
+    public void verifyOperationByDefaultValue() throws Exception {
+        casProperties.getTheme().setDefaultThemeName("test");
+        verifyThemeFile();
+    }
+
     private void verifyThemeFile() throws IOException {
         val themeDir = new File(FileUtils.getTempDirectory(), "test");
         if (!themeDir.exists() && !themeDir.mkdir()) {
