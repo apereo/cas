@@ -11,12 +11,24 @@ You will need JDK 11 to run the CAS Initializer locally.
 ./gradlew clean build
 ```                  
 
+Generate a Docker image from the build:
+
+```bash
+./gradlew bootBuildImage
+```
+
 ## Run
 
 CAS Initializer is a Spring Boot application and can be run using the following command:
 
 ```bash
 ./gradlew :app:bootRun
+```
+
+Or run the Docker image:
+
+```bash  
+imageTag=(`./gradlew casVersion --q`) && docker run --rm -p 8080:8080 -t apereo/cas-initializr:$imageTag 
 ```
 
 The service will be available on `http://localhost:8080`.

@@ -69,5 +69,6 @@ jobs:
         if: ${{ github.event_name == 'push' && env.DOCKER_USER != null && env.DOCKER_PWD != null }}
         run: |
           echo "${DOCKER_PWD}" | docker login --username "$DOCKER_USER" --password-stdin
-          imageTag=(`./gradlew casVersion`)
+          imageTag=(`./gradlew casVersion --q`)
+          echo "Pushing Docker image with tag $imageTag"
           docker push apereo/cas-initializr:"$imageTag"
