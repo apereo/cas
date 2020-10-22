@@ -1,4 +1,3 @@
-
 allprojects {
     repositories {
         mavenLocal()
@@ -7,3 +6,8 @@ allprojects {
     }
 }
 
+task casVersion(description: "Display current CAS version") {
+    doLast {
+        println rootProject.casVersion
+    }
+}

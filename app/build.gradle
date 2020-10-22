@@ -45,6 +45,10 @@ dependencies {
     runtime "org.springframework.boot:spring-boot-starter-tomcat"
 }
 
+bootBuildImage {
+    imageName = "apereo/cas-initializr:${casVersion}"
+}
+
 bootJar {
     archiveName "app.jar"
     baseName "app"

@@ -5,6 +5,8 @@ env:
   GRADLE_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server -XX:+UseG1GC"
   TERM: xterm-256color
   JDK_CURRENT: 11.0.8
+  DOCKER_USER: ${{ secrets.DOCKER_USER }}
+  DOCKER_PWD: ${{ secrets.DOCKER_PWD }}
 
 ##########################################################################
 
@@ -47,3 +49,25 @@ jobs:
           name: binary-artifacts
       - name: Validate Overlay
         run: ./ci/validate.sh
+  publish:
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
+      - name: Build Docker Image
+        run: ./gradlew buildBootImage
+      - name: Publish Docker Image
+        if: ${{ github.event_name == 'push' && env.DOCKER_USER != null && env.DOCKER_PWD != null }}
+        run: |
+          echo "${DOCKER_PWD}" | docker login --username "$DOCKER_USER" --password-stdin
+          imageTag=(`./gradlew casVersion`)
+          docker push apereo/cas-initializr:"$imageTag"
