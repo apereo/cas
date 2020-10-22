@@ -11,6 +11,7 @@ import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.scripting.ScriptingUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -135,12 +136,14 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
             }
 
             val messageSource = new CasThemeResourceBundleMessageSource();
-            messageSource.setBasename(rService.getTheme());
-            if (messageSource.doGetBundle(rService.getTheme(), request.getLocale()) != null) {
-                LOGGER.trace("Found custom theme [{}] for service [{}]", rService.getTheme(), rService);
-                return rService.getTheme();
+            val theme = SpringExpressionLanguageValueResolver.getInstance().resolve(rService.getTheme());
+            messageSource.setBasename(theme);
+            if (messageSource.doGetBundle(theme, request.getLocale()) != null) {
+                LOGGER.trace("Found custom theme [{}] for service [{}]", theme, rService);
+                return theme;
             }
-            LOGGER.warn("Custom theme [{}] for service [{}] cannot be located. Falling back to default theme...", rService.getTheme(), rService);
+            LOGGER.warn("Custom theme [{}] for service [{}] cannot be located. Falling back to default theme...",
+                rService.getTheme(), rService);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         } finally {
