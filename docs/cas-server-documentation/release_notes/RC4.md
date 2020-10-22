@@ -64,9 +64,17 @@ this will not be a blocker for the final release.
 ### Wildcarded Service Definitions
 
 Following up on previous release notes, wildcarded service definitions should now be correctly located via CAS service management facilities
-by improving lookup operations to be protocol-aware. For example, in a scenario where two service definitions for OAuth and CAS service providers might have a very permissive `.*` for the service URL pattern, CAS should be able
+by improving lookup operations to be protocol-aware. For example, in a scenario where two service definitions for OAuth 
+and CAS service providers might have a very permissive `.*` for the service URL pattern, CAS should be able
 to correctly locate the right definition depending on whether an authentication request is submitted by an 
 OAUth relying party or a CAS-enabled client application.
+
+### UI Themes Bundles
+
+Minor improvements to handling of [UI themes](../ux/User-Interface-Customization-Themes.html) when 
+it comes to defining a custom theme on a per application basis.
+A theme bundle is now also available that will incrementally act as a drawer and a toolbox for a number of common
+user interface designs and themes, and may also serve as a reference example on how to define or modify a CAS theme.
 
 ### WebAuthN FIDO2 DynamoDb
 
