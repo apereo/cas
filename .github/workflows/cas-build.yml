@@ -443,10 +443,10 @@ jobs:
     steps:
       - name: Prepare
         run: |
-        mkdir temp
-        cd temp
-        curl https://casinit.herokuapp.com/starter.tgz | tar -xzvf -
-        chmod -R 777 ./*.sh
+          mkdir temp
+          cd temp
+          curl https://casinit.herokuapp.com/starter.tgz | tar -xzvf -
+          chmod -R 777 ./*.sh
       - name: Build Docker Image
         run: ./docker-build.sh latest
       - name: Publish Docker Image
