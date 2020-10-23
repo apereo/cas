@@ -2988,6 +2988,16 @@ Additionally, tokens can be managed via REST using the following settings:
 # cas.authn.mfa.gauth.mongo.token-collection=MongoDbGoogleAuthenticatorTokenRepository
 ```
 
+#### Google Authenticator LDAP
+
+LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.authn.mfa.gauth.ldap`. 
+
+The following settings are additionally available for this feature:
+
+```properties
+# cas.authn.mfa.gauth.ldap.account-attribute-name=gauthRecord
+```
+
 #### Google Authenticator Redis
 
  Configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration) 
