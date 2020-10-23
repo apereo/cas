@@ -15,8 +15,7 @@ import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang.StringUtils;
-import org.hjson.JsonValue;
+import org.apache.commons.lang3.StringUtils;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
@@ -55,37 +54,42 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
     private final LdapGoogleAuthenticatorMultifactorProperties ldapProperties;
 
     public LdapGoogleAuthenticatorTokenCredentialRepository(final CipherExecutor<String, String> tokenCredentialCipher,
-                                                            final IGoogleAuthenticator googleAuthenticator,
-                                                            final ConnectionFactory connectionFactory,
-                                                            final LdapGoogleAuthenticatorMultifactorProperties ldapProperties) {
+        final IGoogleAuthenticator googleAuthenticator,
+        final ConnectionFactory connectionFactory,
+        final LdapGoogleAuthenticatorMultifactorProperties ldapProperties) {
         super(tokenCredentialCipher, googleAuthenticator);
         this.connectionFactory = connectionFactory;
         this.ldapProperties = ldapProperties;
     }
 
     @Override
-    public OneTimeTokenAccount get(final String username) {
+    public OneTimeTokenAccount get(final long id) {
+        return load().stream().filter(acct -> acct.getId() == id).findFirst().orElse(null);
+    }
+
+    @Override
+    public OneTimeTokenAccount get(final String username, final long id) {
+        return get(username).stream().filter(acct -> acct.getId() == id).findFirst().orElse(null);
+    }
+
+    @Override
+    public Collection<? extends OneTimeTokenAccount> get(final String username) {
         val entry = locateLdapEntryFor(username);
         if (entry != null) {
             val accounts = entry.getAttribute(ldapProperties.getAccountAttributeName());
             if (accounts != null) {
                 LOGGER.debug("Located accounts for [{}] at attribute [{}]", username,
                     ldapProperties.getAccountAttributeName());
-                val results = accounts.getStringValues()
+                return accounts.getStringValues()
                     .stream()
                     .map(LdapGoogleAuthenticatorTokenCredentialRepository::mapFromJson)
                     .filter(Objects::nonNull)
                     .flatMap(List::stream)
                     .map(this::decode)
                     .collect(Collectors.toList());
-                if (!results.isEmpty()) {
-                    val account = results.get(0);
-                    LOGGER.debug("Located account [{}]", account);
-                    return account;
-                }
             }
         }
-        return null;
+        return new ArrayList<>(0);
     }
 
     @Override
@@ -111,10 +115,8 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
     }
 
     @Override
-    public void save(final String username, final String secretKey,
-                     final int validationCode,
-                     final List<Integer> scratchCodes) {
-        update(new GoogleAuthenticatorAccount(username, secretKey, validationCode, scratchCodes));
+    public OneTimeTokenAccount save(final OneTimeTokenAccount account) {
+        return update(account);
     }
 
     @Override
@@ -182,6 +184,11 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
     }
 
     @Override
+    public long count(final String username) {
+        return get(username).size();
+    }
+
+    @Override
     public void destroy() {
         connectionFactory.close();
     }
@@ -241,7 +248,6 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
         }
         return null;
     }
-
 
     private static List<OneTimeTokenAccount> mapFromJson(final String payload) {
         try {
