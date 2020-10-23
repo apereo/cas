@@ -439,7 +439,7 @@ jobs:
 
   publish-docker-image:
     runs-on: ubuntu-latest
-#    needs: [publish-snapshots]
+    needs: [publish-snapshots]
     steps:
       - name: Prepare
         run: |
@@ -451,14 +451,13 @@ jobs:
       - name: Build Docker Image
         run: |
           cd work
-          ls
           ./docker-build.sh latest
       - name: Publish Docker Image
-#        if: ${{ github.event_name == 'push' && env.DOCKER_USER != null && env.DOCKER_PWD != null }}
+        if: ${{ github.event_name == 'push' && env.DOCKER_USER != null && env.DOCKER_PWD != null }}
         run: |
           cd work
           ls
-          ./work/docker-push.sh "${DOCKER_USER}" "${DOCKER_PWD}" latest
+          ./docker-push.sh "${DOCKER_USER}" "${DOCKER_PWD}" latest
 
 ##########################################################################
 
