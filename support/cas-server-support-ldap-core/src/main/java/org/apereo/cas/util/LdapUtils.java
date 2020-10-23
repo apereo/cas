@@ -211,10 +211,10 @@ public class LdapUtils {
      * @throws LdapException the ldap exception
      */
     public static SearchResponse executeSearchOperation(final ConnectionFactory connectionFactory,
-        final String baseDn,
-        final FilterTemplate filter,
-        final int pageSize,
-        final String... returnAttributes) throws LdapException {
+                                                        final String baseDn,
+                                                        final FilterTemplate filter,
+                                                        final int pageSize,
+                                                        final String... returnAttributes) throws LdapException {
         return executeSearchOperation(connectionFactory, baseDn,
             filter, pageSize, null, returnAttributes);
     }
@@ -232,11 +232,11 @@ public class LdapUtils {
      * @throws LdapException the ldap exception
      */
     public static SearchResponse executeSearchOperation(final ConnectionFactory connectionFactory,
-        final String baseDn,
-        final FilterTemplate filter,
-        final int pageSize,
-        final String[] binaryAttributes,
-        final String[] returnAttributes) throws LdapException {
+                                                        final String baseDn,
+                                                        final FilterTemplate filter,
+                                                        final int pageSize,
+                                                        final String[] binaryAttributes,
+                                                        final String[] returnAttributes) throws LdapException {
         val request = LdapUtils.newLdaptiveSearchRequest(baseDn, filter, binaryAttributes, returnAttributes);
         if (pageSize <= 0) {
             val searchOperation = new SearchOperation(connectionFactory);
@@ -258,9 +258,9 @@ public class LdapUtils {
      * @throws LdapException the ldap exception
      */
     public static SearchResponse executeSearchOperation(final ConnectionFactory connectionFactory,
-        final String baseDn,
-        final FilterTemplate filter,
-        final int pageSize) throws LdapException {
+                                                        final String baseDn,
+                                                        final FilterTemplate filter,
+                                                        final int pageSize) throws LdapException {
         return executeSearchOperation(connectionFactory, baseDn, filter, pageSize,
             ReturnAttributes.ALL_USER.value(), ReturnAttributes.ALL_USER.value());
     }
@@ -295,10 +295,10 @@ public class LdapUtils {
      * letting user change their own (e.g. expiring) password.
      */
     public static boolean executePasswordModifyOperation(final String currentDn,
-        final ConnectionFactory connectionFactory,
-        final String oldPassword,
-        final String newPassword,
-        final AbstractLdapProperties.LdapType type) {
+                                                         final ConnectionFactory connectionFactory,
+                                                         final String oldPassword,
+                                                         final String newPassword,
+                                                         final AbstractLdapProperties.LdapType type) {
         try {
             val connConfig = connectionFactory.getConnectionConfig();
             if (connConfig.getUseStartTLS()
@@ -346,7 +346,7 @@ public class LdapUtils {
      * @return true/false
      */
     public static boolean executeModifyOperation(final String currentDn, final ConnectionFactory connectionFactory,
-        final Map<String, Set<String>> attributes) {
+                                                 final Map<String, Set<String>> attributes) {
         try {
             val operation = new ModifyOperation(connectionFactory);
             val mods = attributes.entrySet()
@@ -462,9 +462,9 @@ public class LdapUtils {
      * @return the search request
      */
     public static SearchRequest newLdaptiveSearchRequest(final String baseDn,
-        final FilterTemplate filter,
-        final String[] binaryAttributes,
-        final String[] returnAttributes) {
+                                                         final FilterTemplate filter,
+                                                         final String[] binaryAttributes,
+                                                         final String[] returnAttributes) {
         val sr = new SearchRequest(baseDn, filter);
         sr.setBinaryAttributes(binaryAttributes);
         sr.setReturnAttributes(returnAttributes);
@@ -482,8 +482,8 @@ public class LdapUtils {
      * @return the search executor
      */
     public static SearchRequest newLdaptiveSearchRequest(final String baseDn, final String filterQuery,
-        final List<String> params,
-        final String[] returnAttributes) {
+                                                         final List<String> params,
+                                                         final String[] returnAttributes) {
         val request = new SearchRequest();
         request.setBaseDn(baseDn);
         request.setFilter(newLdaptiveSearchFilter(filterQuery, params));
@@ -501,7 +501,7 @@ public class LdapUtils {
      * @return the search request
      */
     public static SearchRequest newLdaptiveSearchRequest(final String baseDn,
-        final FilterTemplate filter) {
+                                                         final FilterTemplate filter) {
         return newLdaptiveSearchRequest(baseDn, filter, ReturnAttributes.ALL_USER.value(), ReturnAttributes.ALL_USER.value());
     }
 
@@ -599,8 +599,8 @@ public class LdapUtils {
      * @return the search executor
      */
     public static SearchOperation newLdaptiveSearchOperation(final String baseDn, final String filterQuery,
-        final List<String> params,
-        final List<String> returnAttributes) {
+                                                             final List<String> params,
+                                                             final List<String> returnAttributes) {
         val operation = new SearchOperation();
         val request = newLdaptiveSearchRequest(baseDn, filterQuery, params, returnAttributes.toArray(ArrayUtils.EMPTY_STRING_ARRAY));
         operation.setRequest(request);
@@ -805,13 +805,15 @@ public class LdapUtils {
                     sslConfig.setHostnameVerifier(new DefaultHostnameVerifier());
             }
 
-            switch (l.getTrustManager()) {
-                case ANY:
-                    sslConfig.setTrustManagers(new AllowAnyTrustManager());
-                    break;
-                case DEFAULT:
-                default:
-                    sslConfig.setTrustManagers(new DefaultTrustManager());
+            if (l.getTrustManager() != null) {
+                switch (l.getTrustManager()) {
+                    case ANY:
+                        sslConfig.setTrustManagers(new AllowAnyTrustManager());
+                        break;
+                    case DEFAULT:
+                    default:
+                        sslConfig.setTrustManagers(new DefaultTrustManager());
+                }
             }
         }
 
@@ -862,7 +864,7 @@ public class LdapUtils {
      * @return the entry resolver
      */
     public static EntryResolver newLdaptiveSearchEntryResolver(final AbstractLdapAuthenticationProperties l,
-        final ConnectionFactory factory) {
+                                                               final ConnectionFactory factory) {
 
         var resolvers = Arrays.stream(StringUtils.split(l.getBaseDn(), BASE_DN_DELIMITER))
             .map(baseDn -> {
@@ -1027,7 +1029,7 @@ public class LdapUtils {
     }
 
     private static CompareAuthenticationHandler getCompareAuthenticationHandler(final AbstractLdapAuthenticationProperties l,
-        final ConnectionFactory factory) {
+                                                                                final ConnectionFactory factory) {
         val handler = new CompareAuthenticationHandler(factory);
         handler.setPasswordAttribute(l.getPrincipalAttributePassword());
         return handler;
@@ -1070,7 +1072,7 @@ public class LdapUtils {
     }
 
     private static DnResolver buildAggregateDnResolver(final AbstractLdapAuthenticationProperties l,
-        final ConnectionFactory connectionFactory) {
+                                                       final ConnectionFactory connectionFactory) {
         var resolvers = Arrays.stream(StringUtils.split(l.getBaseDn(), BASE_DN_DELIMITER))
             .map(baseDn -> {
                 val resolver = new SearchDnResolver();

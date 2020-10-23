@@ -122,7 +122,7 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 ### Redis
 
-Registration records and tokens may be kept inside a Redis instance, via the following module:
+Registration records and tokens may be kept inside a Redis instance via the following module:
 
 ```xml
 <dependency>
@@ -133,6 +133,23 @@ Registration records and tokens may be kept inside a Redis instance, via the fol
 ```
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#google-authenticator-redis).
+
+### LDAP
+
+Registration records may be kept inside LDAP/AD systems via the following module:
+
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-support-gauth-ldap</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```
+
+Account registration records are kept inside a designated configurable multi-valued attribute as JSON blobs. The attribute values are parsed
+to load, save, update or delete accounts. The content of each attribute value can be signed/encrypted if necessary. 
+
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#google-authenticator-ldap).
 
 ### REST
 

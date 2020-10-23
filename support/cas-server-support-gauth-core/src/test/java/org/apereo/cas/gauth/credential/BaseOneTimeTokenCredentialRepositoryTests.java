@@ -65,7 +65,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
 
     @Test
     public void verifyCreate() {
-        val casuser = UUID.randomUUID().toString();
+        val casuser = getUsernameUnderTest();
         val acct = getAccount("verifyCreate", casuser);
         assertNotNull(acct);
         val repo = getRegistry("verifyCreate");
@@ -78,7 +78,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
 
     @Test
     public void verifySaveAndUpdate() {
-        val casuser = UUID.randomUUID().toString();
+        val casuser = getUsernameUnderTest();
         val acct = getAccount("verifySaveAndUpdate", casuser);
         val repo = getRegistry("verifySaveAndUpdate");
         repo.save(acct.getUsername(), acct.getSecretKey(), acct.getValidationCode(), acct.getScratchCodes());
@@ -97,7 +97,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
 
     @Test
     public void verifyGet() {
-        val casuser = UUID.randomUUID().toString();
+        val casuser = getUsernameUnderTest();
         val repo = getRegistry("verifyGet");
         val acct = repo.get(casuser);
         assertNull(acct);
@@ -113,7 +113,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
 
     @Test
     public void verifyGetWithDecodedSecret() {
-        val casuser = UUID.randomUUID().toString();
+        val casuser = getUsernameUnderTest();
         when(cipherExecutor.encode(PLAIN_SECRET)).thenReturn("abc321");
         when(cipherExecutor.decode("abc321")).thenReturn(PLAIN_SECRET);
         val repo = getRegistry("verifyGetWithDecodedSecret");
@@ -141,5 +141,9 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         public void init() {
             SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
         }
+    }
+
+    protected String getUsernameUnderTest() {
+        return UUID.randomUUID().toString();
     }
 }

@@ -69,6 +69,12 @@ public class GoogleAuthenticatorMultifactorProperties extends BaseMultifactorPro
     private MongoDbGoogleAuthenticatorMultifactorProperties mongo = new MongoDbGoogleAuthenticatorMultifactorProperties();
 
     /**
+     * Store google authenticator devices inside a LDAP directories.
+     */
+    @NestedConfigurationProperty
+    private LdapGoogleAuthenticatorMultifactorProperties ldap = new LdapGoogleAuthenticatorMultifactorProperties();
+
+    /**
      * Store google authenticator devices inside a jdbc instance.
      */
     @NestedConfigurationProperty
