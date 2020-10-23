@@ -87,6 +87,11 @@ the [Memcached ticket registry](../ticketing/Memcached-Ticket-Registry.html) and
 This is a major upgrade and a number of internal components that affect Kryo pooling operations are also revised and upgraded.
 However, the upgrade should remain invisible for the most part.
 
+### Google Authenticator w/ LDAP/AD
+
+[Google Authenticator](../mfa/GoogleAuthenticator-Authentication.html) registration records may be kept inside 
+LDAP/AD systems. Account registration records are kept inside a designated configurable multi-valued attribute as JSON blobs.
+
 ### Integration Tests Upgrades
 
 A number of docker images for backend integration tests are updated to ensure support for 
@@ -97,6 +102,8 @@ latest versions of each system. These include the following systems:
 - MongoDb
 - Redis
 - Apache Cassandra
+
+Furthermore, the test infrastructure is updated to also support OpenLDAP in addition to 389-ds and Samba (AD).
 
 ## Other Stuff
 

@@ -22,7 +22,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Configuration("googleAuthenticatorLdapConfiguration")
+@Configuration(value = "googleAuthenticatorLdapConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 public class GoogleAuthenticatorLdapConfiguration {
