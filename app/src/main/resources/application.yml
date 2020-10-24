@@ -1010,6 +1010,12 @@ initializr:
           artifactId: cas-server-support-gauth-jpa
           description: Apereo CAS Google Authenticator JPA
           bom: cas-bom
+        - name: cas-server-support-gauth-ldap
+          id: support-gauth-ldap
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-gauth-ldap
+          description: Apereo CAS Google Authenticator LDAP
+          bom: cas-bom
         - name: cas-server-support-gauth-mongo
           id: support-gauth-mongo
           groupId: org.apereo.cas
