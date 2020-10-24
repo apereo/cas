@@ -1,7 +1,7 @@
-CAS Overlay Template
+Apereo CAS Overlay Template
 =======================
 
-CAS WAR overlay to use as a starting template for CAS deployments.
+CAS Overlay to use as a starting template for CAS deployments.
 
 # Versions
 
@@ -9,7 +9,7 @@ CAS WAR overlay to use as a starting template for CAS deployments.
 - JDK `{{javaVersion}}`
 - Spring Boot `{{bootVersion}}`
 
-# Overview
+# Build
 
 To build the project, use:
 
@@ -18,11 +18,13 @@ To build the project, use:
 ./gradlew[.bat] clean build
 ```
 
-To see what commands are available to the build script, run:
+To see what commands/tasks are available to the build script, run:
 
 ```bash
 ./gradlew[.bat] tasks
 ```
+
+## CAS Command-line Shell
 
 To launch into the CAS command-line shell:
 
@@ -30,12 +32,16 @@ To launch into the CAS command-line shell:
 ./gradlew[.bat] downloadShell runShell
 ```
 
+## Retrieve Overlay Resources
+
 To fetch and overlay a CAS resource or view, use:
 
 ```bash
 ./gradlew[.bat] getResource -PresourceName=[resource-name]
 ```
 
+## List Overlay Resources
+ 
 To list all available CAS views and templates:
 
 ```bash
@@ -92,13 +98,15 @@ curl {{initializrUrl}}/dependencies
 
 Or:
 
-```
+```bash
 curl {{initializrUrl}}/actuator/info
 ```
 
+
 ### Clear Gradle Cache
 
-If you need to, on Linux/Unix systems, you can delete all the existing artifacts (artifacts and metadata) Gradle has downloaded using:
+If you need to, on Linux/Unix systems, you can delete all the existing artifacts 
+(artifacts and metadata) Gradle has downloaded using:
 
 ```bash
 # Only do this when absolutely necessary
@@ -149,6 +157,16 @@ Deploy the binary web application file `cas.war` after a successful build to a s
 
 The following strategies outline how to build and deploy CAS Docker images.
 
+### Spring Boot
+
+You can build a container image using the [Spring Boot Gradle build plugin](https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/html/). This approach does not require a Dockerfile. You build the image 
+using the same standard container format as you get from `docker build` - and it can work in environments where docker is not installed.
+This task requires access to a Docker daemon. By default, it will communicate with a Docker daemon over a local connection.
+
+```bash
+./gradlew build bootBuildImage
+```
+
 ### Jib
 
 The overlay embraces the [Jib Gradle Plugin](https://github.com/GoogleContainerTools/jib) to provide easy-to-use out-of-the-box tooling for building CAS docker images. Jib is an open-source Java containerizer from Google that lets Java developers build containers using the tools they know. It is a container image builder that handles all the steps of packaging your application into a container image. It does not require you to write a Dockerfile or have Docker installed, and it is directly integrated into the overlay.
@@ -165,4 +183,12 @@ You can also use the native Docker tooling and the provided `Dockerfile` to buil
 chmod +x *.sh
 ./docker-build.sh
 ./docker-run.sh
+```
+
+### Docker Compose
+
+For convenience, an additional `docker-compose.yml` is also provided to orchestrate the build:
+
+```bash  
+docker-compose build
 ```
