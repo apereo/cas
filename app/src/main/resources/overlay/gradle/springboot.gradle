@@ -19,6 +19,10 @@ sourceSets {
     }
 }
 
+bootBuildImage {
+    imageName = "apereo/cas:${casServerVersion}"
+}
+
 bootRun {
     classpath = configurations.bootRunConfig + sourceSets.main.compileClasspath + sourceSets.main.runtimeClasspath
     doFirst {

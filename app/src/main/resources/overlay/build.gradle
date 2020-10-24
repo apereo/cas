@@ -84,6 +84,7 @@ java {
 
 dependencies {
     compileOnly "org.apereo.cas:cas-server-core-api-configuration-model"
+    compileOnly "org.apereo.cas:cas-server-webapp-init"
 
     if (project.hasProperty("casModules")) {
         def dependencies = project.getProperty("casModules").split(",")
