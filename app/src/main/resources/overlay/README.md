@@ -40,6 +40,32 @@ To fetch and overlay a CAS resource or view, use:
 ./gradlew[.bat] getResource -PresourceName=[resource-name]
 ```
 
+## Create User Interface Themes Structure
+
+You can use the overlay to construct the correct directory structure for custom user interface themes:
+
+```bash
+./gradlew[.bat] createTheme -Ptheme=redbeard
+```
+
+The generated directory structure should match the following:
+
+```
+├── redbeard.properties
+├── static
+│   └── themes
+│       └── redbeard
+│           ├── css
+│           │   └── cas.css
+│           └── js
+│               └── cas.js
+└── templates
+    └── redbeard
+        └── fragments
+```
+
+HTML templates and fragments can be moved into the above directory structure, and the theme may be assigned to applications for use.
+
 ## List Overlay Resources
  
 To list all available CAS views and templates:

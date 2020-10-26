@@ -321,3 +321,42 @@ task verifyRequiredJavaVersion {
         throw new GradleException("Current Java version ${JavaVersion.current()} does not match required Java version ${project.targetCompatibility}")
     }
 }
+
+task createTheme() {
+    doFirst {
+        def theme = project.getProperty("theme")
+        def builder = new FileTreeBuilder()
+        new File("src/main/resources/${theme}.properties").delete()
+
+        builder.src {
+            main {
+                resources {
+                    "static" {
+                        themes {
+                            "${theme}" {
+                                css {
+                                    'cas.css'('')
+                                }
+                                js {
+                                    'cas.js'('')
+                                }
+                            }
+                        }
+                    }
+
+                    templates {
+                        "${theme}" {
+                            fragments {
+
+                            } 
+                        }
+                    }
+
+                    "${theme}.properties"("""cas.standard.css.file=/themes/${theme}/css/cas.css
+cas.standard.js.file=/themes/${theme}/js/cas.js
+                    """)
+                }
+            }
+        }
+    }
+}
