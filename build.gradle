@@ -6,6 +6,7 @@ defaultTasks "clean", "build"
 buildscript {
     repositories {
         jcenter()
+        gradlePluginPortal()
         maven {
             url "https://maven.eveoh.nl/content/repositories/releases"
             mavenContent { releasesOnly() }
