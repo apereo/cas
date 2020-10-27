@@ -486,73 +486,73 @@ jobs:
 
   tests:
     runs-on: ubuntu-latest
-    needs: [cache]
+#    needs: [cache]
     continue-on-error: false
     strategy:
       fail-fast: false
       matrix:
         category:
-          - simple
-          - groovy
-          - filesystem
-          - webflow
-          - webflow-config
-          - webflow-actions
-          - webflow-events
-          - webflow-mfa-actions
-          - attributes
-          - services
-          - expiration-policy
-          - rest
-          - password-ops
-          - mfa
-          - web
-          - metrics
-          - cas
-          - logout
-          - util
-          - authentication
-          - tickets
-          - cas-config
-          - actuator
-          - webapp
-          - ldap
-          - x509
-          - oauth
-          - wsfed
-          - uma
-          - oidc
-          - audit
-          - saml
-          - infinispan
-          - spnego
-          - hazelcast
+#          - simple
+#          - groovy
+#          - filesystem
+#          - webflow
+#          - webflow-config
+#          - webflow-actions
+#          - webflow-events
+#          - webflow-mfa-actions
+#          - attributes
+#          - services
+#          - expiration-policy
+#          - rest
+#          - password-ops
+#          - mfa
+#          - web
+#          - metrics
+#          - cas
+#          - logout
+#          - util
+#          - authentication
+#          - tickets
+#          - cas-config
+#          - actuator
+#          - webapp
+#          - ldap
+#          - x509
+#          - oauth
+#          - wsfed
+#          - uma
+#          - oidc
+#          - audit
+#          - saml
+#          - infinispan
+#          - spnego
+#          - hazelcast
           - jmx
-          - shell
-          - mongo
-          - memcached
-          - sms
-          - jdbc
-          - mariadb
-          - postgres
-          - mssql
-          - oracle
-          - mysql
-          - aws
-          - ehcache
-          - redis
-          - dynamodb
-          - radius
-          - couchdb
-          - couchbase
-          - mail
-          - kafka
-          - ignite
-          - cassandra
-          - influxdb
-          - zookeeper
+#          - shell
+#          - mongo
+#          - memcached
+#          - sms
+#          - jdbc
+#          - mariadb
+#          - postgres
+#          - mssql
+#          - oracle
+#          - mysql
+#          - aws
+#          - ehcache
+#          - redis
+#          - dynamodb
+#          - radius
+#          - couchdb
+#          - couchbase
+#          - mail
+#          - kafka
+#          - ignite
+#          - cassandra
+#          - influxdb
+#          - zookeeper
           - jms
-          - cosmosdb
+#          - cosmosdb
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -574,13 +574,38 @@ jobs:
 #        uses: mxschmitt/action-tmate@v2
       - name: Run Tests
         run: ./testcas.sh --with-coverage --category ${{ matrix.category }}
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1.0.13
+      - name: "Upload coverage file"
+        uses: "actions/upload-artifact@v2"
         with:
-          flags: ${{ matrix.category }}
-          fail_ci_if_error: true
+          name: "cas-tests-${{ matrix.category }}.coverage"
+          path: "./build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
+  #      - name: Upload coverage to Codecov
+  #        uses: codecov/codecov-action@v1
+  #        with:
+  #          flags: ${{ matrix.category }}
+  #          fail_ci_if_error: true
 ##########################################################################
+  upload_coverage:
+    name: "Upload coverage to Codecov"
+    runs-on: "ubuntu-20.04"
+    needs: [tests]
 
+    steps:
+      - uses: actions/checkout@v2
+      - name: "Download coverage files"
+        uses: "actions/download-artifact@v2"
+        with:
+          path: "reports"
+      - name: "Display structure of downloaded files"
+        run: ls -R
+        working-directory: reports
+
+      - name: "Upload to Codecov"
+        uses: "codecov/codecov-action@v1"
+        with:
+          directory: reports
+  ##########################################################################
+  
   tests-performance-locust:
     runs-on: ubuntu-latest
     needs: [build]
