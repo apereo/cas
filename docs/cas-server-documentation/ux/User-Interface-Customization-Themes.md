@@ -16,7 +16,8 @@ CAS is configured to decorate views based on the `theme` property of a given reg
 
 ### Configuration
 
-- Add a `[theme_name].properties` placed to the root of `src/main/resources` folder. Contents of this file should match the following:
+- Add a `[theme_name].properties` placed to the root of `src/main/resources` folder. 
+Contents of this file should match the following:
 
 ```properties 
 # Path to theme CSS file
@@ -36,6 +37,12 @@ cas.standard.js.file=/themes/[theme_name]/js/cas.js
 
 # Path to theme favicon file.
 # cas.favicon.file=/themes/example/images/favicon.ico
+
+# Enable and display the notifications menu
+# cas.notifications-menu.enabled=true
+
+# Enable and display the drawer menu
+# cas.drawer-menu.enabled=true
 ```
 
 - Create the directory `src/main/resources/static/themes/[theme_name]`. Put the theme-specific `cas.css` and `cas.js` inside the appropriate directories for `css` and `js`.

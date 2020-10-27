@@ -15,9 +15,10 @@
 
     <header id="app-bar" class="mdc-top-app-bar mdc-top-app-bar--fixed mdc-elevation--z4">
         <nav class="mdc-top-app-bar__row">
-            <section th:if="${'true' == #strings.defaultString(#themes.code('cas.drawer-menu.enabled'), 'true')}"
-                class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
-                <button class="mdc-icon-button mdc-top-app-bar__navigation-icon">
+            <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+                <button
+                        th:if="${'true' == #strings.defaultString(#themes.code('cas.drawer-menu.enabled'), 'true')}"
+                        class="mdc-icon-button mdc-top-app-bar__navigation-icon">
                     <span class="mdi mdi-menu"></span>
                     <span class="sr-only">menu</span>
                 </button>
@@ -27,11 +28,13 @@
                         <span class="sr-only"
                               th:text="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS')}">CAS</span>
                         <img class="cas-logo"
+                             th:title="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS')}"
                              th:src="@{${#strings.defaultString(#themes.code('cas.logo.file'), 'images/cas-logo.png')}}" />
                     </span>
             </section>
             <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end">
                 <button id="cas-notifications-menu"
+                        th:if="${'true' == #strings.defaultString(#themes.code('cas.notifications-menu.enabled'), 'true')}"
                         class="mdc-icon-button mdc-top-app-bar__action-item cas-notification-toggle"
                         aria-label="Bookmark this page">
                     <span class="mdi mdi-bell-alert"></span>
@@ -42,10 +45,14 @@
         </nav>
 
     </header>
-    <aside id="app-drawer" class="mdc-drawer mdc-drawer--dismissible mdc-drawer--modal">
+    <aside id="app-drawer"
+           th:if="${'true' == #strings.defaultString(#themes.code('cas.drawer-menu.enabled'), 'true')}"
+           class="mdc-drawer mdc-drawer--dismissible mdc-drawer--modal">
         <div class="mdc-drawer__header">
-            <h3 class="mdc-drawer__title">CAS</h3>
-            <h6 class="mdc-drawer__subtitle">Central Authentication Service</h6>
+            <h3 class="mdc-drawer__title" th:text="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS')}">CAS</h3>
+            <h6 class="mdc-drawer__subtitle"
+                th:text="${#strings.defaultString(#themes.code('cas.theme.description'), 'Central Authentication Service')}">
+                Central Authentication Service</h6>
         </div>
         <div class="mdc-drawer__content">
             <nav class="mdc-list">
@@ -87,8 +94,13 @@
     </aside>
 
     <script>var countMessages = 0;</script>
-    <div class="mdc-dialog cas-notification-dialog" id="cas-notification-dialog" role="alertdialog"
-         aria-modal="true" aria-labelledby="notif-dialog-title" aria-describedby="notif-dialog-content">
+    <div
+            th:if="${'true' == #strings.defaultString(#themes.code('cas.notifications-menu.enabled'), 'true')}"
+            class="mdc-dialog cas-notification-dialog"
+            id="cas-notification-dialog" role="alertdialog"
+            aria-modal="true" aria-labelledby="notif-dialog-title"
+            aria-describedby="notif-dialog-content">
+        
         <div class="mdc-dialog__container">
             <div class="mdc-dialog__surface">
                 <h1 class="mdc-dialog__title mt-lg-2" id="notif-dialog-title">
@@ -125,6 +137,7 @@
         </div>
         <div class="mdc-dialog__scrim"></div>
     </div>
+
     <script type="text/javascript">
 
         (function (material) {
@@ -135,27 +148,34 @@
                 },
                 attachDrawer: function () {
                     var elm = document.getElementById('app-drawer');
-                    var drawer = material.drawer.MDCDrawer.attachTo(elm);
-                    var closeDrawer = function (evt) {
-                        drawer.open = false;
-                    };
-                    drawer.foundation.handleScrimClick = closeDrawer;
-                    document.onkeydown = function (evt) {
-                        evt = evt || window.event;
-                        if (evt.keyCode == 27) {
-                            closeDrawer();
-                        }
-                    };
-
-                    header.drawer = drawer;
-
-                    return drawer;
+                    if (elm != null) {
+                        var drawer = material.drawer.MDCDrawer.attachTo(elm);
+                        var closeDrawer = function (evt) {
+                            drawer.open = false;
+                        };
+                        drawer.foundation.handleScrimClick = closeDrawer;
+                        document.onkeydown = function (evt) {
+                            evt = evt || window.event;
+                            if (evt.keyCode == 27) {
+                                closeDrawer();
+                            }
+                        };
+                        header.drawer = drawer;
+                        return drawer;
+                    }
+                    return undefined;
                 },
                 attachTopbar: function (drawer) {
+
                     var drawer = header.attachDrawer();
                     var dialog = header.attachNotificationDialog();
-                    header.attachDrawerToggle(drawer);
-                    header.attachNotificationToggle(dialog);
+
+                    if (drawer != undefined) {
+                        header.attachDrawerToggle(drawer);
+                    }
+                    if (dialog != undefined) {
+                        header.attachNotificationToggle(dialog);
+                    }
                 },
                 checkCaps: function (ev) {
                     var s = String.fromCharCode(ev.which);
@@ -166,30 +186,35 @@
                     }
                 },
                 attachDrawerToggle: function (drawer) {
-                    var topAppBar = material.topAppBar.MDCTopAppBar.attachTo(document.getElementById('app-bar'));
-                    topAppBar.setScrollTarget(document.getElementById('main-content'));
-                    topAppBar.listen('MDCTopAppBar:nav', function () {
-                        drawer.open = !drawer.open;
-                    });
-                    return topAppBar;
+                    let appBar = document.getElementById('app-bar');
+                    if (appBar != null) {
+                        var topAppBar = material.topAppBar.MDCTopAppBar.attachTo(appBar);
+                        topAppBar.setScrollTarget(document.getElementById('main-content'));
+                        topAppBar.listen('MDCTopAppBar:nav', function () {
+                            drawer.open = !drawer.open;
+                        });
+                        return topAppBar;
+                    }
+                    return undefined;
                 },
                 attachNotificationDialog: function () {
                     var element = document.getElementById('cas-notification-dialog');
-                    var dialog = material.dialog.MDCDialog.attachTo(element);
-                    return dialog;
+                    if (element != null) {
+                        return material.dialog.MDCDialog.attachTo(element);
+                    }
+                    return undefined;
                 },
                 attachNotificationToggle: function (dialog) {
                     var btn = document.getElementById('cas-notifications-menu');
-                    btn.addEventListener('click', function () {
-                        dialog.open();
-                    });
+                    if (btn != null) {
+                        btn.addEventListener('click', function () {
+                            dialog.open();
+                        });
+                    }
                 }
             }
-
-
             document.addEventListener('DOMContentLoaded', function () {
                 header.init();
-
                 if (countMessages == 0) {
                     window.jQuery('#notifications-count').remove();
                 } else {
