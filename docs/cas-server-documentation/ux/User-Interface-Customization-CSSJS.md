@@ -17,7 +17,9 @@ cas.standard.js.file=/js/cas.js
 
 ## Responsive Design
 
-CSS media queries bring responsive design features to CAS which would allow the adopter to focus on one theme for all appropriate devices and platforms. These queries are defined in the same `cas.css` file. They follow the Twitter Bootstrap breakpoints and grid.
+CSS media queries bring responsive design features to CAS which would allow the adopter to focus 
+on one theme for all appropriate devices and platforms. These queries are defined in the 
+same `cas.css` file. They follow the Twitter Bootstrap breakpoints and grid.
 
 # Javascript
 
