@@ -586,6 +586,8 @@ jobs:
     needs: [tests]
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
       - name: "Download coverage files"
         uses: "actions/download-artifact@v2"
         with:
