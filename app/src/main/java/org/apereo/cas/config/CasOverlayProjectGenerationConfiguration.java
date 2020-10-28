@@ -6,6 +6,7 @@ import org.apereo.cas.overlay.contrib.CasOverlayApplicationYamlPropertiesContrib
 import org.apereo.cas.overlay.contrib.CasOverlayCasReferencePropertiesContributor;
 import org.apereo.cas.overlay.contrib.CasOverlayConfigurationDirectoriesContributor;
 import org.apereo.cas.overlay.contrib.CasOverlayConfigurationPropertiesContributor;
+import org.apereo.cas.overlay.contrib.CasOverlayIgnoreRulesContributor;
 import org.apereo.cas.overlay.contrib.CasOverlayLoggingConfigurationContributor;
 import org.apereo.cas.overlay.contrib.CasOverlayOverrideConfigurationContributor;
 import org.apereo.cas.overlay.contrib.CasOverlayProjectLicenseContributor;
@@ -87,6 +88,7 @@ public class CasOverlayProjectGenerationConfiguration {
         chain.addContributor(new CasOverlayWebXmlContributor());
         chain.addContributor(new CasOverlayLoggingConfigurationContributor());
         chain.addContributor(new CasOverlayReadMeContributor(applicationContext));
+        chain.addContributor(new CasOverlayIgnoreRulesContributor());
         return chain;
     }
 
