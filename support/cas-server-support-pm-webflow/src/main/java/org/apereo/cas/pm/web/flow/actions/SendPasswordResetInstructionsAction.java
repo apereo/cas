@@ -90,10 +90,11 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
                 ExpirationPolicy.class.getName(), HardTimeoutExpirationPolicy.builder().timeToKillInSeconds(expirationSeconds).build());
             val ticket = transientFactory.create(service, properties);
             this.ticketRegistry.addTicket(ticket);
-            
+
             StringBuilder resetUrl = new StringBuilder(casProperties.getServer().getPrefix())
                 .append('/').append(CasWebflowConfigurer.FLOW_ID_LOGIN).append('?')
-                .append(PasswordManagementWebflowUtils.REQUEST_PARAMETER_NAME_PASSWORD_RESET_TOKEN).append('=').append(ticket.getId());
+                .append(PasswordManagementWebflowUtils.REQUEST_PARAMETER_NAME_PASSWORD_RESET_TOKEN).append('=').append(ticket.getId())
+                .append('&').append(CasProtocolConstants.PARAMETER_RENEW).append('=').append(true);
 
             if (service != null) {
                 val encodeServiceUrl = UriUtils.encode(service.getOriginalUrl(), StandardCharsets.UTF_8);
