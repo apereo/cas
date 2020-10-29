@@ -105,6 +105,11 @@ latest versions of each system. These include the following systems:
 
 Furthermore, the test infrastructure is updated to also support OpenLDAP in addition to 389-ds and Samba (AD).
 
+### Optional (Mixed) X.509 Authentication
+
+[X.509 authentication](../installation/X509-Authentication.html), when running an embedded Apache Tomcat, is enhanced to provide for mixed-mode authentication.
+In this mode, the user is given an additional option to login via X.509 without being prompted for a certificate preemptively.
+
 ## Other Stuff
 
 - LDAP trust managers can now be specified in CAS properties.
