@@ -738,6 +738,26 @@ public class WebUtils {
     }
 
     /**
+     * Put Password Management Auto-Login enabled.
+     *
+     * @param context the context
+     * @param value the value
+     */
+    public static void putPasswordManagementAutoLoginEnabled(final RequestContext context, final Boolean value) {
+        context.getFlowScope().put("passwordManagementAutoLoginEnabled", value);
+    }
+
+    /**
+     * Put Allow Missing Service Parameter enabled.
+     *
+     * @param context the context
+     * @param value the value
+     */
+    public static void putAllowMissingServiceParameterEnabled(final RequestContext context, final Boolean value) {
+        context.getFlowScope().put("allowMissingServiceParameterEnabled", value);
+    }
+
+    /**
      * Put principal.
      *
      * @param requestContext          the request context
@@ -946,7 +966,7 @@ public class WebUtils {
         request.setAttribute("error", HttpStatus.BAD_REQUEST.name());
         request.setAttribute("message", "Unable to verify registration record");
     }
-    
+
     /**
      * Produce error view model and view.
      *

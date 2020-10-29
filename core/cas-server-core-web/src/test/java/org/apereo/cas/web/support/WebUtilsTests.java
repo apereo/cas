@@ -69,6 +69,8 @@ public class WebUtilsTests {
                 WebUtils.putExistingSingleSignOnSessionPrincipal(context, CoreAuthenticationTestUtils.getPrincipal());
                 WebUtils.putAvailableAuthenticationHandleNames(context, List.of());
                 WebUtils.putPasswordManagementEnabled(context, true);
+                WebUtils.putPasswordManagementAutoLoginEnabled(context, true);
+                WebUtils.putAllowMissingServiceParameterEnabled(context, true);
                 WebUtils.putRecaptchaPropertiesFlowScope(context, new GoogleRecaptchaProperties());
                 WebUtils.putLogoutUrls(context, Map.of());
                 val ac = OneTimeTokenAccount.builder()
