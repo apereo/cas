@@ -503,7 +503,7 @@ jobs:
 #          - webflow-mfa-actions
 #          - attributes
 #          - services
-#          - expiration-policy
+          - expiration-policy
 #          - rest
 #          - password-ops
 #          - mfa
@@ -552,7 +552,7 @@ jobs:
 #          - cassandra
 #          - influxdb
 #          - zookeeper
-#          - jms
+          - jms
 #          - cosmosdb
     steps:
       - uses: actions/checkout@v2
