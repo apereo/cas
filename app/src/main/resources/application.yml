@@ -63,7 +63,7 @@ initializr:
       default: false
       action: /starter.tgz
   boot-versions:
-    - id: 2.3.4.RELEASE
+    - id: 2.3.5.RELEASE
       default: true
   env:
     boms:
