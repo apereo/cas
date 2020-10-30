@@ -21,7 +21,7 @@ env:
 
 on:
   push:
-    branches: [ coverage ]
+    branches: [ master ]
   pull_request:
     branches: [ master ]
 
@@ -487,73 +487,73 @@ jobs:
 
   tests:
     runs-on: ubuntu-latest
-#    needs: [cache]
+    needs: [cache]
     continue-on-error: false
     strategy:
       fail-fast: false
       matrix:
         category:
-#          - simple
-#          - groovy
-#          - filesystem
-#          - webflow
-#          - webflow-config
-#          - webflow-actions
-#          - webflow-events
-#          - webflow-mfa-actions
-#          - attributes
-#          - services
+          - simple
+          - groovy
+          - filesystem
+          - webflow
+          - webflow-config
+          - webflow-actions
+          - webflow-events
+          - webflow-mfa-actions
+          - attributes
+          - services
           - expiration-policy
-#          - rest
-#          - password-ops
-#          - mfa
-#          - web
-#          - metrics
-#          - cas
-#          - logout
-#          - util
-#          - authentication
-#          - tickets
-#          - cas-config
-#          - actuator
-#          - webapp
-#          - ldap
-#          - x509
-#          - oauth
-#          - wsfed
-#          - uma
-#          - oidc
-#          - audit
-#          - saml
-#          - infinispan
+          - rest
+          - password-ops
+          - mfa
+          - web
+          - metrics
+          - cas
+          - logout
+          - util
+          - authentication
+          - tickets
+          - cas-config
+          - actuator
+          - webapp
+          - ldap
+          - x509
+          - oauth
+          - wsfed
+          - uma
+          - oidc
+          - audit
+          - saml
+          - infinispan
           - spnego
-#          - hazelcast
+          - hazelcast
           - jmx
-#          - shell
-#          - mongo
-#          - memcached
-#          - sms
-#          - jdbc
-#          - mariadb
-#          - postgres
-#          - mssql
-#          - oracle
-#          - mysql
-#          - aws
-#          - ehcache
-#          - redis
-#          - dynamodb
-#          - radius
-#          - couchdb
-#          - couchbase
-#          - mail
-#          - kafka
-#          - ignite
-#          - cassandra
-#          - influxdb
-#          - zookeeper
+          - shell
+          - mongo
+          - memcached
+          - sms
+          - jdbc
+          - mariadb
+          - postgres
+          - mssql
+          - oracle
+          - mysql
+          - aws
+          - ehcache
+          - redis
+          - dynamodb
+          - radius
+          - couchdb
+          - couchbase
+          - mail
+          - kafka
+          - ignite
+          - cassandra
+          - influxdb
+          - zookeeper
           - jms
-#          - cosmosdb
+          - cosmosdb
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -582,7 +582,7 @@ jobs:
           path: "./build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
 ##########################################################################
   upload_coverage:
-    name: "Upload coverage to Codecov"
+    name: "Upload Coverage Results"
     runs-on: ubuntu-latest
     needs: [tests]
     steps:
@@ -599,16 +599,15 @@ jobs:
           export files="${files%?}"
           echo $files
           echo "COVERAGE_REPORTS=${files}" >> $GITHUB_ENV
-          echo "::set-env name=COVERAGE_REPORTS::$files"
       - name: Run codacy-coverage-reporter
         uses: codacy/codacy-coverage-reporter-action@master
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
           coverage-reports: ${{ env.COVERAGE_REPORTS }}
-#      - name: "Upload to Codecov"
-#        uses: "codecov/codecov-action@v1"
-#        with:
-#          directory: reports
+      - name: "Upload to Codecov"
+        uses: "codecov/codecov-action@v1"
+        with:
+          directory: reports
   ##########################################################################
   
   tests-performance-locust:
