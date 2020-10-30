@@ -1,11 +1,11 @@
 package org.apereo.cas.web.tomcat;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.web.flow.X509TomcatServletFactoryInitialAction;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
@@ -29,16 +29,7 @@ public class X509TomcatServletWebServiceFactoryWebflowConfigurer extends Abstrac
     protected void doInitialize() {
         val flow = getLoginFlow();
         if (flow != null) {
-            flow.getStartActionList().add(requestContext -> {
-                val webflow = casProperties.getAuthn().getX509().getWebflow();
-                val endpoint = UriComponentsBuilder
-                    .fromUriString(casProperties.getServer().getLoginUrl())
-                    .port(webflow.getPort())
-                    .build()
-                    .toUriString();
-                requestContext.getFlowScope().put("x509ClientAuthLoginEndpointUrl", endpoint);
-                return null;
-            });
+            flow.getStartActionList().add(new X509TomcatServletFactoryInitialAction(casProperties));
         }
     }
 }
