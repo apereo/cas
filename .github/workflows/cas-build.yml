@@ -598,8 +598,8 @@ jobs:
           for file in $(find . -type f -name 'jacocoRootReport.xml'); do export files="$file,${files}"; done
           export files="${files%?}"
           echo $files
+          echo "COVERAGE_REPORTS=${files}" >> $GITHUB_ENV
           echo "::set-env name=COVERAGE_REPORTS::$files"
-        working-directory: reports
       - name: Run codacy-coverage-reporter
         uses: codacy/codacy-coverage-reporter-action@master
         with:
