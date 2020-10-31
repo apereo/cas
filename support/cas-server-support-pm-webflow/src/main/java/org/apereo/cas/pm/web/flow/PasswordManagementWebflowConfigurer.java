@@ -8,7 +8,6 @@ import org.apereo.cas.web.flow.actions.StaticEventExecutionAction;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import org.apereo.cas.web.support.WebUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -26,7 +25,6 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfigurer {
     /**
      * Flow id for password reset.
