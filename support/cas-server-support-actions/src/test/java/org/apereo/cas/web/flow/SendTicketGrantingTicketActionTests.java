@@ -1,7 +1,6 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -10,7 +9,6 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -33,16 +31,14 @@ import static org.mockito.Mockito.*;
 public class SendTicketGrantingTicketActionTests extends AbstractWebflowActionsTests {
 
     private static final String LOCALHOST_IP = "127.0.0.1";
+
     private static final String TEST_STRING = "test";
+
     private static final String SUCCESS = "success";
 
     @Autowired
     @Qualifier("sendTicketGrantingTicketAction")
-    private ObjectProvider<Action> action;
-
-    @Autowired
-    @Qualifier("ticketGrantingTicketCookieGenerator")
-    private CasCookieBuilder ticketGrantingTicketCookieGenerator;
+    private Action action;
 
     private MockRequestContext context;
 
@@ -53,8 +49,10 @@ public class SendTicketGrantingTicketActionTests extends AbstractWebflowActionsT
 
     @Test
     public void verifyNoTgtToSet() throws Exception {
-        this.context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
-        assertEquals(SUCCESS, this.action.getObject().execute(this.context).getId());
+
+        this.context.setExternalContext(
+            new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
+        assertEquals(SUCCESS, this.action.execute(this.context).getId());
     }
 
     @Test
@@ -72,9 +70,9 @@ public class SendTicketGrantingTicketActionTests extends AbstractWebflowActionsT
         WebUtils.putTicketGrantingTicketInScopes(this.context, tgt);
         this.context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
-        assertEquals(SUCCESS, this.action.getObject().execute(this.context).getId());
+        assertEquals(SUCCESS, this.action.execute(this.context).getId());
         request.setCookies(response.getCookies());
-        assertEquals(tgt.getId(), this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request));
+        assertEquals(tgt.getId(), getTicketGrantingTicketCookieGenerator().retrieveCookieValue(request));
     }
 
     @Test
@@ -94,8 +92,8 @@ public class SendTicketGrantingTicketActionTests extends AbstractWebflowActionsT
         WebUtils.putTicketGrantingTicketInScopes(this.context, tgt);
         this.context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
-        assertEquals(SUCCESS, this.action.getObject().execute(this.context).getId());
+        assertEquals(SUCCESS, this.action.execute(this.context).getId());
         request.setCookies(response.getCookies());
-        assertEquals(tgt.getId(), this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request));
+        assertEquals(tgt.getId(), getTicketGrantingTicketCookieGenerator().retrieveCookieValue(request));
     }
 }

@@ -29,7 +29,7 @@ public class BasicAuthenticationWebflowConfigurer extends AbstractCasWebflowConf
     protected void doInitialize() {
         val flow = getLoginFlow();
         if (flow != null) {
-            val actionState = createActionState(flow, STATE_ID_BASIC_AUTHENTICATION_CHECK, createEvaluateAction("basicAuthenticationAction"));
+            val actionState = createActionState(flow, STATE_ID_BASIC_AUTHENTICATION_CHECK, "basicAuthenticationAction");
             val transitionSet = actionState.getTransitionSet();
             transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET));
             transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_WARN, CasWebflowConstants.TRANSITION_ID_WARN));

@@ -50,12 +50,12 @@ The following items are new improvements and enhancements presented in this rele
 
 ### Test Coverage via CodeCov
 
-CAS test coverage across all modules in the codebase has now reached `85%` and continues to climb. Additional validation rules are also applied 
+CAS test coverage across all modules in the codebase has now reached `86%` and continues to climb. Additional validation rules are also applied 
 to fail all pull requests that fall below this threshold. This area will be closely monitored and improved
 as progress is made with the goal of hopefully reaching at least `88%` before the final GA release. Of course, 
 this will not be a blocker for the final release.
 
-### WebAuthn Support
+### WebAuthn FIDO2 Support
 
 CAS can now support [WebAuthn FIDO2](../mfa/FIDO2-WebAuthn-Authentication.html) for multifactor authentication.
 
@@ -75,10 +75,25 @@ if the single sign-on session is established using a disallowed provider for the
 SAML2 application definitions whose metadata is retrieved from URLs can now specify a proxy endpoint in the application definition,
 in case the metadata is behind a proxy.
 
+### Git Service Registry Groups
+
+Service definitions managed by [Git Service Registry](../services/Git-Service-Management.html) are now given an option, on by default,
+to locate and group service definitions by their type, and store them in dedicated folders for easier management.
+
+### Registered Service Properties
+
+Assigning [custom properties](../services/Configuring-Service-Custom-Properties.html) to registered service definitions can now 
+take advantage of [Spring Expressions](../configuration/Configuration-Spring-Expressions.html).
+
 ## Other Stuff
 
 - Password reset verification attempts can now properly handle expired or invalid reset attempts in the authentication webflow.
 - Logged ascii-art statements are now routed to their own dedicated `AsciiArt` logging category. 
+- Configuration distributed session store and its replication for OAuth, OpenID Connect and Delegated Authentication is corrected to determine the cookie path automatically if CAS is set to auto-configure the cookie path based on the context. This item would be specially applicable if the `autoConfigureCookiePath` is set to false.
+- Multiple LDAP base-dns can be specified and join together for a single LDAP configuration block using a special delimiter character.
+- [Integration with Ehcache](../ticketing/Ehcache-Ticket-Registry.html) gains a new setting to allow disk persistence.
+- CAS configuration properties based on an embedded `application.yml` can now recognize settings based on 
+active profiles via `classpath:/application-{profile}.yml` configuration files.
 
 ## Library Upgrades
 
@@ -93,6 +108,7 @@ in case the metadata is behind a proxy.
 - Spring Boot
 - Spring Data
 - JGit
+- Mockito
 - Spring Security
 - Spring Cloud
 

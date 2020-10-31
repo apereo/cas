@@ -18,7 +18,7 @@ dependencies {
     implementation project(":support:cas-server-support-radius-core-mfa")
     implementation project(":support:cas-server-support-trusted-mfa-core")
 
-    compileOnly project(":support:cas-server-support-trusted-mfa")
+    compileOnlyApi  project(":support:cas-server-support-trusted-mfa")
 
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-authentication-mfa")

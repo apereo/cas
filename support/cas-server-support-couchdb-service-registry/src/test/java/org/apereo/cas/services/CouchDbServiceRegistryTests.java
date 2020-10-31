@@ -9,10 +9,13 @@ import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link CouchDbServiceRegistryTests}.
@@ -41,4 +44,12 @@ public class CouchDbServiceRegistryTests extends AbstractServiceRegistryTests {
     @Autowired
     @Qualifier("couchDbServiceRegistry")
     private ServiceRegistry newServiceRegistry;
+
+    @Test
+    public void verifyOperation() {
+        assertNull(newServiceRegistry.findServiceByExactServiceName("unknown-service"));
+        assertNull(newServiceRegistry.findServiceByExactServiceId("unknown-service"));
+        assertNull(newServiceRegistry.findServiceById(554433));
+    }
+
 }

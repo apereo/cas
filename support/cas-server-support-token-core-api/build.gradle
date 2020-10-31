@@ -16,10 +16,10 @@ dependencies {
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-services-authentication")
     
     implementation project(":support:cas-server-support-pac4j-authentication")
-    
-    
+
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":core:cas-server-core-tickets")

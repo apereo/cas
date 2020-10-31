@@ -1,8 +1,8 @@
 package org.apereo.cas.webauthn.storage;
 
+import com.yubico.core.InMemoryRegistrationStorage;
+import com.yubico.core.RegistrationStorage;
 import com.yubico.webauthn.CredentialRepository;
-import com.yubico.webauthn.core.InMemoryRegistrationStorage;
-import com.yubico.webauthn.core.RegistrationStorage;
 
 /**
  * This is {@link WebAuthnCredentialRepository}.

@@ -107,14 +107,14 @@ levels:
 
 ```xml
 ...
-<AsyncLogger name="org.pac4j" level="debug" additivity="false">
+<Logger name="org.pac4j" level="debug" additivity="false">
     <AppenderRef ref="console"/>
     <AppenderRef ref="file"/>
-</AsyncLogger>
-<AsyncLogger name="org.springframework.security" level="debug" additivity="false">
+</Logger>
+<Logger name="org.springframework.security" level="debug" additivity="false">
     <AppenderRef ref="console"/>
     <AppenderRef ref="file"/>
-</AsyncLogger>
+</Logger>
 ...
 ```
 
@@ -145,9 +145,9 @@ To see the relevant list of CAS properties, please [review this guide](../config
 To enable additional logging, modify the logging configuration file to add the following:
 
 ```xml
- <AsyncLogger name="org.springframework.cloud" level="debug" additivity="false">
+ <Logger name="org.springframework.cloud" level="debug" additivity="false">
     <AppenderRef ref="casConsole"/>
     <AppenderRef ref="casFile"/>
-</AsyncLogger>
+</Logger>
 ```
 

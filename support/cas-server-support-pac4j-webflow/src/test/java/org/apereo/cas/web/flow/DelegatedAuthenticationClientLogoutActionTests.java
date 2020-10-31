@@ -1,5 +1,8 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.logout.LogoutManager;
+import org.apereo.cas.logout.SingleLogoutExecutionRequest;
+import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockServletContext;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
@@ -19,6 +22,8 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -35,6 +40,10 @@ public class DelegatedAuthenticationClientLogoutActionTests {
     @Qualifier("delegatedAuthenticationClientLogoutAction")
     private Action delegatedAuthenticationClientLogoutAction;
 
+    @Autowired
+    @Qualifier("logoutManager")
+    private LogoutManager logoutManager;
+
     @Test
     public void verifyOperationWithProfile() throws Exception {
         val context = new MockRequestContext();
@@ -49,6 +58,14 @@ public class DelegatedAuthenticationClientLogoutActionTests {
         val result = delegatedAuthenticationClientLogoutAction.execute(context);
         assertNull(result);
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, response.getStatus());
+        val tgt = new MockTicketGrantingTicket("casuser");
+
+        logoutManager.performLogout(SingleLogoutExecutionRequest.builder()
+            .httpServletRequest(Optional.of(request))
+            .httpServletResponse(Optional.of(response))
+            .ticketGrantingTicket(tgt)
+            .build());
+        assertNull(request.getSession(false));
     }
 
     @Test

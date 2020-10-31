@@ -2,6 +2,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.consent.AttributeConsentReportEndpointTests;
+import org.apereo.cas.consent.DefaultConsentActivationStrategyDisabledTests;
 import org.apereo.cas.consent.DefaultConsentActivationStrategyTests;
 import org.apereo.cas.consent.DefaultConsentDecisionBuilderTests;
 import org.apereo.cas.consent.DefaultConsentEngineTests;
@@ -25,6 +26,7 @@ import org.junit.runner.RunWith;
     GroovyConsentActivationStrategyTests.class,
     DefaultConsentActivationStrategyTests.class,
     GroovyConsentRepositoryTests.class,
+    DefaultConsentActivationStrategyDisabledTests.class,
     DefaultConsentDecisionBuilderTests.class,
     InMemoryConsentRepositoryTests.class,
     JsonConsentRepositoryTests.class,

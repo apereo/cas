@@ -37,12 +37,10 @@ public class CasCoreUtilSerializationConfiguration {
         val plan = new DefaultComponentSerializationPlan();
         plan.registerSerializableClass(TriStateBoolean.class);
 
-        configurers.ifAvailable(cfgs -> {
-            cfgs.forEach(c -> {
-                LOGGER.trace("Configuring component serialization plan [{}]", c.getName());
-                c.configureComponentSerializationPlan(plan);
-            });
-        });
+        configurers.ifAvailable(cfgs -> cfgs.forEach(c -> {
+            LOGGER.trace("Configuring component serialization plan [{}]", c.getName());
+            c.configureComponentSerializationPlan(plan);
+        }));
 
         return plan;
     }

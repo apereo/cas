@@ -31,6 +31,7 @@ public class GrouperFacadeTests {
         assertNotNull(GrouperFacade.getGrouperGroupAttribute(GrouperGroupField.DISPLAY_NAME, group));
         assertNotNull(GrouperFacade.getGrouperGroupAttribute(GrouperGroupField.EXTENSION, group));
         assertNotNull(GrouperFacade.getGrouperGroupAttribute(GrouperGroupField.NAME, group));
+
     }
 
     @Test
@@ -52,6 +53,12 @@ public class GrouperFacadeTests {
             }
         };
         assertFalse(facade.getGroupsForSubjectId("casuser").isEmpty());
+    }
+
+    @Test
+    public void verifyGroupsFails() {
+        val facade = new GrouperFacade();
+        assertThrows(ExceptionInInitializerError.class, () -> facade.fetchGroupsFor("casuser"));
     }
 
     @Test

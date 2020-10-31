@@ -6,7 +6,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
-    <title layout:title-pattern="$CONTENT_TITLE - $LAYOUT_TITLE">CAS &#8211; Central Authentication Service</title>
+    <title layout:title-pattern="$LAYOUT_TITLE"
+           th:text="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS - Central Authentication Service')}" />
+    </title>
 
     <!--/* Core CAS CSS */-->
     <link rel="stylesheet" type="text/css" href="../static/css/normalize.css" th:href="@{#{webjars.normalize.css}}" />
@@ -15,7 +17,8 @@
     <link rel="stylesheet" type="text/css" href="../static/css/mdi-font.css" th:href="@{#{webjars.mdi-font.css}}" />
     <link rel="stylesheet" type="text/css" href="../static/css/cas.css" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
 
-    <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon"/>
+    <link rel="shortcut icon"
+          th:href="@{${#strings.defaultString(#themes.code('cas.favicon.file'), '/favicon.ico')}}" />
 </head>
 
 <body>

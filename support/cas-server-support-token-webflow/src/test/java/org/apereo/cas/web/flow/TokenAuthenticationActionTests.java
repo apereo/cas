@@ -18,7 +18,6 @@ import org.apereo.cas.web.support.WebUtils;
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWSAlgorithm;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -82,8 +81,7 @@ public class TokenAuthenticationActionTests extends AbstractCentralAuthenticatio
     }
 
     @Test
-    @SneakyThrows
-    public void verifyAction() {
+    public void verifyAction() throws Exception {
         val g = new JwtGenerator<CommonProfile>();
 
         g.setSignatureConfiguration(new SecretSignatureConfiguration(SIGNING_SECRET, JWSAlgorithm.HS256));

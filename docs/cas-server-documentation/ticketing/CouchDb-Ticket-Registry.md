@@ -41,9 +41,9 @@ levels:
 
 ```xml
 ...
-<AsyncLogger name="org.apache.couchdb" level="debug" additivity="false">
+<Logger name="org.apache.couchdb" level="debug" additivity="false">
     <AppenderRef ref="console"/>
     <AppenderRef ref="file"/>
-</AsyncLogger>
+</Logger>
 ...
 ```

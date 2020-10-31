@@ -113,12 +113,12 @@ public class LdapUtilsTests {
     }
 
     @Test
-    public void verifyLdapAuthnDirect() throws Exception {
+    public void verifyLdapAuthnDirect() {
         val ldap = new Ldap();
         ldap.setLdapUrl("ldap://localhost:10389");
         ldap.setBindDn("cn=Directory Manager");
         ldap.setBindCredential("password");
-        ldap.setBaseDn("ou=people,dc=example,dc=org");
+        ldap.setBaseDn("ou=people,dc=example,dc=org|ou=users,dc=example,dc=org");
         ldap.setSearchFilter("cn=invalid-user");
         ldap.setDerefAliases(DerefAliases.FINDING.name());
         ldap.setFailFast(false);
@@ -171,7 +171,7 @@ public class LdapUtilsTests {
     @Test
     public void verifyComparePooling() throws Exception {
         val ldap = new Ldap();
-        ldap.setBaseDn("ou=people,dc=example,dc=org");
+        ldap.setBaseDn("ou=people,dc=example,dc=org|ou=users,dc=example,dc=org");
         ldap.setLdapUrl("ldap://localhost:10389");
         ldap.setBindDn("cn=Directory Manager");
         ldap.setBindCredential("password");
@@ -183,8 +183,7 @@ public class LdapUtilsTests {
             LdapUtils.newLdaptiveSearchFilter(ldap.getSearchFilter()), 10, "cn");
         assertNotNull(response);
         assertFalse(LdapUtils.containsResultEntry(response));
-
-
+        
         val config1 = LdapUtils.newLdaptiveConnectionConfig(ldap);
         assertNotNull(config1);
         Arrays.stream(LdapSearchEntryHandlersProperties.SearchEntryHandlerTypes.values())
@@ -204,7 +203,7 @@ public class LdapUtilsTests {
     @Test
     public void verifyConnectionConfig() throws Exception {
         val ldap = new Ldap();
-        ldap.setBaseDn("ou=people,dc=example,dc=org");
+        ldap.setBaseDn("ou=people,dc=example,dc=org|ou=users,dc=example,dc=org");
         ldap.setLdapUrl("ldap://localhost:10389");
         ldap.setBindDn("cn=Directory Manager");
         ldap.setBindCredential("password");

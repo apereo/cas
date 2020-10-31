@@ -70,8 +70,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
 
     @ParameterizedTest
     @MethodSource("getParameters")
-    @SneakyThrows
-    public void verifyClientNoClientId(final OAuthRegisteredService registeredService) {
+    public void verifyClientNoClientId(final OAuthRegisteredService registeredService) throws Exception {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, CLIENT_SECRET);
@@ -105,10 +104,10 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
         assertEquals(HttpStatus.SC_BAD_REQUEST, mockResponse.getStatus());
         assertEquals(OAuth20Constants.INVALID_REQUEST, mv.getModel().get("error"));
     }
+    
 
     @Test
-    @SneakyThrows
-    public void verifyClientNoAuthorizationCode() {
+    public void verifyClientNoAuthorizationCode() throws Exception {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
@@ -126,8 +125,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
     }
 
     @Test
-    @SneakyThrows
-    public void verifyClientBadGrantType() {
+    public void verifyClientBadGrantType() throws Exception {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
@@ -166,8 +164,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
     }
 
     @Test
-    @SneakyThrows
-    public void verifyClientNoClientSecret() {
+    public void verifyClientNoClientSecret() throws Exception {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
@@ -205,8 +202,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
 
     @ParameterizedTest
     @MethodSource("getParameters")
-    @SneakyThrows
-    public void verifyClientNoCasService(final OAuthRegisteredService registeredService) {
+    public void verifyClientNoCasService(final OAuthRegisteredService registeredService) throws Exception {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
@@ -265,8 +261,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
     }
 
     @Test
-    @SneakyThrows
-    public void verifyClientEmptySecret() {
+    public void verifyClientEmptySecret() throws Exception {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
@@ -285,8 +280,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
     }
 
     @Test
-    @SneakyThrows
-    public void verifyPKCECodeVerifier() {
+    public void verifyPKCECodeVerifier() throws Exception {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
@@ -308,8 +302,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
 
     @ParameterizedTest
     @MethodSource("getParameters")
-    @SneakyThrows
-    public void verifyPKCEInvalidCodeVerifier(final OAuthRegisteredService registeredService) {
+    public void verifyPKCEInvalidCodeVerifier(final OAuthRegisteredService registeredService) throws Exception {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
@@ -330,8 +323,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
     }
 
     @Test
-    @SneakyThrows
-    public void verifyPKCEEmptySecret() {
+    public void verifyPKCEEmptySecret() throws Exception {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
@@ -353,8 +345,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
 
     @ParameterizedTest
     @MethodSource("getParameters")
-    @SneakyThrows
-    public void verifyPKCEWrongSecret(final OAuthRegisteredService registeredService) {
+    public void verifyPKCEWrongSecret(final OAuthRegisteredService registeredService) throws Exception {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
@@ -455,7 +446,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
         mockRequest.setParameter(OAuth20Constants.CODE, devCode);
         val approveResp = new MockHttpServletResponse();
         requiresAuthenticationInterceptor.preHandle(mockRequest, approveResp, null);
-        val mvApproved = accessTokenController.handleRequest(mockRequest, approveResp);
+        val mvApproved = accessTokenController.handleGetRequest(mockRequest, approveResp);
         assertTrue(mvApproved.getModel().containsKey(OAuth20Constants.ACCESS_TOKEN));
         assertEquals(getDefaultAccessTokenExpiration(), mvApproved.getModel().get(OAuth20Constants.EXPIRES_IN));
         assertTrue(mvApproved.getModel().containsKey(OAuth20Constants.TOKEN_TYPE));
@@ -499,8 +490,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
     }
 
     @Test
-    @SneakyThrows
-    public void ensureOnlyRefreshTokenIsAcceptedForRefreshGrant() {
+    public void ensureOnlyRefreshTokenIsAcceptedForRefreshGrant() throws Exception {
         addRegisteredService(true, CollectionUtils.wrapSet(OAuth20GrantTypes.PASSWORD,
             OAuth20GrantTypes.REFRESH_TOKEN));
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
@@ -663,8 +653,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
     }
 
     @Test
-    @SneakyThrows
-    public void verifyRefreshTokenExpiredToken() {
+    public void verifyRefreshTokenExpiredToken() throws Exception {
         val principal = createPrincipal();
         val registeredService = addRegisteredService(
             CollectionUtils.wrapSet(OAuth20GrantTypes.REFRESH_TOKEN));

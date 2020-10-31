@@ -27,7 +27,7 @@ public class ImmutableNativeJavaMapSerializer extends Serializer<Map<Object, ? e
     }
 
     @Override
-    public Map<Object, ? extends Object> read(final Kryo kryo, final Input input, final Class<Map<Object, ?>> aClass) {
+    public Map<Object, ? extends Object> read(final Kryo kryo, final Input input, final Class<? extends Map<Object, ? extends Object>> aClass) {
         val map = kryo.readObject(input, HashMap.class);
         return new HashMap<>(map);
     }

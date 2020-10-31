@@ -2,9 +2,10 @@ package org.apereo.cas.support.saml;
 
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
-import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
+import org.apereo.cas.authentication.BaseAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.LoggingUtils;
@@ -12,13 +13,11 @@ import org.apereo.cas.web.support.WebUtils;
 
 import com.google.common.base.Splitter;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.client.utils.URIBuilder;
-import org.springframework.core.Ordered;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -30,20 +29,21 @@ import java.util.Optional;
  * @since 5.0.0
  */
 @Slf4j
-@RequiredArgsConstructor
 @Getter
-public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy implements AuthenticationServiceSelectionStrategy {
+public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy extends BaseAuthenticationServiceSelectionStrategy {
     private static final long serialVersionUID = -2059445756475980894L;
-
-    private final int order = Ordered.HIGHEST_PRECEDENCE;
-
-    private final transient ServiceFactory webApplicationServiceFactory;
 
     private final String idpServerPrefix;
 
-    private final transient ServicesManager servicesManager;
-
     private final transient AuditableExecution registeredServiceAccessStrategyEnforcer;
+
+    public ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy(final ServicesManager servicesManager,
+        final ServiceFactory<WebApplicationService> webApplicationServiceFactory, final String idpServerPrefix,
+        final AuditableExecution registeredServiceAccessStrategyEnforcer) {
+        super(servicesManager, webApplicationServiceFactory);
+        this.idpServerPrefix = idpServerPrefix;
+        this.registeredServiceAccessStrategyEnforcer = registeredServiceAccessStrategyEnforcer;
+    }
 
     /**
      * Method attempts to resolve the service from the entityId parameter.  If present, an attempt is made
@@ -60,8 +60,8 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy impleme
         if (result.isPresent()) {
             val entityId = result.get();
             LOGGER.debug("Located entity id [{}] from service authentication request at [{}]", entityId, service.getId());
-            if (isEntityIdServiceRegistered(entityId)) {
-                return this.webApplicationServiceFactory.createService(entityId);
+            if (isEntityIdServiceRegistered(entityId, service)) {
+                return createService(entityId, service);
             }
             LOGGER.debug("Entity id [{}] not registered as individual service", entityId);
         }
@@ -73,14 +73,6 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy impleme
     public boolean supports(final Service service) {
         val casPattern = "^".concat(idpServerPrefix).concat(".*");
         return service != null && service.getId().matches(casPattern) && getEntityIdAsParameter(service).isPresent();
-    }
-
-    private boolean isEntityIdServiceRegistered(final String entityId) {
-        val registeredService = servicesManager.findServiceBy(entityId);
-        val audit = AuditableContext.builder()
-            .registeredService(registeredService)
-            .build();
-        return !registeredServiceAccessStrategyEnforcer.execute(audit).isExecutionFailure();
     }
 
     /**
@@ -120,5 +112,14 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy impleme
             LoggingUtils.error(LOGGER, e);
         }
         return Optional.empty();
+    }
+
+    private boolean isEntityIdServiceRegistered(final String entityId, final Service original) {
+        val service = createService(entityId, original);
+        val registeredService = getServicesManager().findServiceBy(service);
+        val audit = AuditableContext.builder()
+            .registeredService(registeredService)
+            .build();
+        return !registeredServiceAccessStrategyEnforcer.execute(audit).isExecutionFailure();
     }
 }

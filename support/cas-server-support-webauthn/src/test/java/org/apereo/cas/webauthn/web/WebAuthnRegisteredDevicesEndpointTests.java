@@ -6,9 +6,9 @@ import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.web.flow.BaseWebAuthnWebflowTests;
 
+import com.yubico.data.CredentialRegistration;
 import com.yubico.webauthn.RegisteredCredential;
 import com.yubico.webauthn.data.ByteArray;
-import com.yubico.webauthn.data.CredentialRegistration;
 import com.yubico.webauthn.data.exception.Base64UrlException;
 import lombok.val;
 import org.junit.jupiter.api.Tag;

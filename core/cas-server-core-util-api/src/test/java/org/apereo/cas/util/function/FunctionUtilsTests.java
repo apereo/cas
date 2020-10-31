@@ -6,6 +6,8 @@ import org.jooq.lambda.fi.util.function.CheckedFunction;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -18,6 +20,16 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Utility")
 public class FunctionUtilsTests {
+
+    @Test
+    public void verifyDoIf0() {
+        val result = new AtomicBoolean();
+        FunctionUtils.doIf(true, input -> result.set(true), (Consumer<String>) s -> result.set(false)).accept("input");
+        assertTrue(result.get());
+
+        FunctionUtils.doIf(false, input -> result.set(true), (Consumer<String>) s -> result.set(false)).accept("input");
+        assertFalse(result.get());
+    }
 
     @Test
     public void verifyDoIf1() {

@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.support.pac4j.DelegatedClientJacksonModuleTests;
 import org.apereo.cas.support.pac4j.authentication.ClientAuthenticationMetaDataPopulatorTests;
 import org.apereo.cas.support.pac4j.authentication.DefaultDelegatedClientFactoryTests;
 import org.apereo.cas.support.pac4j.authentication.RestfulDelegatedClientFactoryTests;
@@ -19,6 +20,7 @@ import org.junit.runner.RunWith;
 @SelectClasses({
     DelegatedClientAuthenticationHandlerTests.class,
     RestfulDelegatedClientFactoryTests.class,
+    DelegatedClientJacksonModuleTests.class,
     ClientAuthenticationMetaDataPopulatorTests.class,
     DefaultDelegatedClientFactoryTests.class
 })

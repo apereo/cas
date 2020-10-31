@@ -1,6 +1,8 @@
 package org.apereo.cas.ws.idp.services;
 
 import org.apereo.cas.BaseCoreWsSecurityIdentityProviderConfigurationTests;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.PartialRegexRegisteredServiceMatchingStrategy;
 import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
 
@@ -27,6 +29,10 @@ public class WsFederationServicesManagerRegisteredServiceLocatorTests extends Ba
     @Qualifier("wsFederationServicesManagerRegisteredServiceLocator")
     private ServicesManagerRegisteredServiceLocator wsFederationServicesManagerRegisteredServiceLocator;
 
+    @Autowired
+    @Qualifier("webApplicationServiceFactory")
+    private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
+
     @Test
     public void verifyOperation() {
         assertNotNull(wsFederationServicesManagerRegisteredServiceLocator);
@@ -40,7 +46,7 @@ public class WsFederationServicesManagerRegisteredServiceLocatorTests extends Ba
         service.setWsdlLocation("classpath:wsdl/ws-trust-1.4-service.wsdl");
         service.setMatchingStrategy(new PartialRegexRegisteredServiceMatchingStrategy());
         val result = wsFederationServicesManagerRegisteredServiceLocator.locate(List.of(service),
-            "http://app.example.org/wsfed-whatever",
+            webApplicationServiceFactory.createService("http://app.example.org/wsfed-whatever"),
             r -> r.matches("http://app.example.org/wsfed-whatever"));
         assertNotNull(result);
     }

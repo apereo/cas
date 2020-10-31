@@ -392,22 +392,36 @@ server.port=8443
 server.ssl.key-store=file:/etc/cas/thekeystore
 server.ssl.key-store-password=changeit
 server.ssl.key-password=changeit
+
+# server.ssl.enabled=true
 # server.ssl.ciphers=
-# server.ssl.client-auth=
-# server.ssl.enabled=
 # server.ssl.key-alias=
 # server.ssl.key-store-provider=
 # server.ssl.key-store-type=
 # server.ssl.protocol=
-# server.ssl.trust-store=
-# server.ssl.trust-store-password=
-# server.ssl.trust-store-provider=
-# server.ssl.trust-store-type=
 
 # server.max-http-header-size=2097152
 # server.use-forward-headers=true
 # server.connection-timeout=20000
 ```
+
+### X.509 Client Authentication
+
+```properties
+# server.ssl.trust-store=
+# server.ssl.trust-store-password=
+# server.ssl.trust-store-provider=
+# server.ssl.trust-store-type=
+# server.ssl.client-auth=NEED|NONE|WANT
+```
+
+The following values are supported for client authentication type:
+
+| Type                 | Description
+|----------------------|-------------------------------------------------------
+| `NEED`               | Client authentication is needed and mandatory. 
+| `NONE`               | Client authentication is not wanted.
+| `WANT`               | Client authentication is wanted but not mandatory.
 
 ### Embedded Jetty Container
 
@@ -615,11 +629,11 @@ Enable in-memory session replication to replicate web application session deltas
 | `DEFAULT`            | Discovers cluster members via multicast discovery and optionally via staticly defined cluster members using the `clusterMembers`. [SimpleTcpCluster with McastService](http://tomcat.apache.org/tomcat-9.0-doc/cluster-howto.html) 
 | `CLOUD`              | For use in Kubernetes where members are discovered via accessing the Kubernetes API or doing a DNS lookup of the members of a Kubernetes service. [Documentation](https://cwiki.apache.org/confluence/display/TOMCAT/ClusteringCloud) is currently light, see code for details.
 
-| `CLOUD` Membership Providers   | Description
+| Membership Providers   | Description
 |----------------------|-------------------------------------------------------
 | `kubernetes`         | Uses [Kubernetes API](https://github.com/apache/tomcat/blob/master/java/org/apache/catalina/tribes/membership/cloud/KubernetesMembershipProvider.java) to find other pods in a deployment. API is discovered and accessed via information in environment variables set in the container. The KUBERNETES_NAMESPACE environment variable is used to query the pods in the namespace and it will treat other pods in that namespace as potential cluster members but they can be filtered using the KUBERNETES_LABELS environment variable which are used as a [label selector](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#api).
 | `dns`                | Uses [DNS lookups](https://github.com/apache/tomcat/blob/master/java/org/apache/catalina/tribes/membership/cloud/DNSMembershipProvider.java) to find addresses of the cluster members behind a DNS name specified by DNS_MEMBERSHIP_SERVICE_NAME environment variable. Works in Kubernetes but doesn't rely on Kubernetes.
-| [MembershipProvider impl classname](https://github.com/apache/tomcat/blob/master/java/org/apache/catalina/tribes/MembershipProvider.java) | Use a membership provider implementation of your choice.
+| `MembershipProvider` class | Use a [membership provider implementation](https://github.com/apache/tomcat/blob/master/java/org/apache/catalina/tribes/MembershipProvider.java) of your choice.
 
 Most settings apply to the `DEFAULT` clustering type, which requires members to be defined via `clusterMembers` if multicast discovery doesn't work. The `cloudMembershipProvider` setting applies to the `CLOUD` type.
 
@@ -1237,6 +1251,7 @@ Retrieve attributes from a JDBC source. Database settings for this feature are a
 # cas.authn.attribute-repository.jdbc[0].require-all-attributes=true
 # cas.authn.attribute-repository.jdbc[0].case-canonicalization=NONE|LOWER|UPPER
 # cas.authn.attribute-repository.jdbc[0].query-type=OR|AND
+# cas.authn.attribute-repository.jdbc[0].case-insensitive-query-attributes=username
 
 # Used only when there is a mapping of many rows to one user
 # cas.authn.attribute-repository.jdbc[0].column-mappings.column-attr-name1=columnAttrValue1
@@ -2511,6 +2526,11 @@ To learn more about this topic, [please review this guide](../installation/X509-
 Webflow auto-configuration settings for this feature are available [here](Configuration-Properties-Common.html#webflow-auto-configuration) under 
 the configuration key `cas.authn.x509.webflow`.
 
+```properties
+# cas.authn.x509.webflow.port=8446
+# cas.authn.x509.webflow.client-auth=want
+```
+
 ### Principal Resolution
 
 X.509 principal resolution can act on the following principal types:
@@ -2987,6 +3007,16 @@ Additionally, tokens can be managed via REST using the following settings:
 # cas.authn.mfa.gauth.mongo.token-collection=MongoDbGoogleAuthenticatorTokenRepository
 ```
 
+#### Google Authenticator LDAP
+
+LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.authn.mfa.gauth.ldap`. 
+
+The following settings are additionally available for this feature:
+
+```properties
+# cas.authn.mfa.gauth.ldap.account-attribute-name=gauthRecord
+```
+
 #### Google Authenticator Redis
 
  Configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration) 
@@ -3162,6 +3192,14 @@ under the configuration key `cas.authn.mfa.web-authn.jpa`.
 
 Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration)
 under the configuration key `cas.authn.mfa.web-authn`.
+
+### FIDO2 WebAuthn DynamoDb
+
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#dynamodb-configuration)
+under the configuration key `cas.authn.mfa.web-authn`.
+
+AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings) 
+under the configuration key `cas.authn.mfa.web-authn.dynamo-db`.
 
 ### FIDO U2F
 
@@ -4132,9 +4170,9 @@ destination that the logging system supports.
 The logger name is fixed at `org.apereo.inspektr.audit.support`.
 
 ```xml
-<AsyncLogger name="org.apereo.inspektr.audit.support" level="info">
+<Logger name="org.apereo.inspektr.audit.support" level="info">
     <!-- Route the audit data to any number of appenders supported by the logging framework. -->
-</AsyncLogger>
+</Logger>
 ```
 
 <div class="alert alert-info"><strong></strong><p>Audit records routed to the Slf4j log are not
@@ -4514,6 +4552,11 @@ Works with git repository to fetch and manage service registry definitions.
 Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#git-configuration) 
 under the configuration key `cas.service-registry`.
 
+```properties
+# cas.service-registry.git.group-by-type=true
+# cas.service-registry.git.root-directory=
+```
+
 To learn more about this topic, [please review this guide](../services/Git-Service-Management.html).
 
 ### RESTful Service Registry
@@ -4834,6 +4877,7 @@ To learn more about this topic, [please review this guide](../ticketing/Ehcache-
 # cas.ticket.registry.ehcache3.resource-pool-name=cas-ticket-pool
 # cas.ticket.registry.ehcache3.resource-pool-size=15MB
 # cas.ticket.registry.ehcache3.root-directory=/tmp/cas/ehcache3
+# cas.ticket.registry.ehcache3.persist-on-disk=true
 # cas.ticket.registry.ehcache3.cluster-connection-timeout=150
 # cas.ticket.registry.ehcache3.cluster-read-write-timeout=5
 # cas.ticket.registry.ehcache3.clustered-cache-consistency=STRONG
@@ -5470,7 +5514,7 @@ To learn more about this topic, [please review this guide](../installation/Servi
 # spring.cloud.consul.host=localhost
 
 # spring.cloud.consul.discovery.health-check-path=<health-endpoint-url>
-# spring.cloud.consul.discovery.health-check-path=15s
+# spring.cloud.consul.discovery.health-check-interval=15s
 # spring.cloud.consul.discovery.instance-id=${spring.application.name}:${random.value}
 
 # spring.cloud.consul.discovery.heartbeat.enabled=true

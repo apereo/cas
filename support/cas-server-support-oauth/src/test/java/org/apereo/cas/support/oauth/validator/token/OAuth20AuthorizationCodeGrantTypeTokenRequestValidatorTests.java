@@ -135,11 +135,62 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests extends
     }
 
     @Test
+    public void verifyBadToken() {
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        val profile = new CommonProfile();
+        profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
+        profile.setId(RequestValidatorTestUtils.SUPPORTING_CLIENT_ID);
+        val session = request.getSession(true);
+        assertNotNull(session);
+        session.setAttribute(Pac4jConstants.USER_PROFILES,
+            CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
+        request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
+        request.setParameter(OAuth20Constants.REDIRECT_URI, RegisteredServiceTestUtils.CONST_TEST_URL);
+
+        request.setParameter(OAuth20Constants.CODE, "UnknownToken");
+        assertFalse(this.validator.validate(new JEEContext(request, response)));
+    }
+
+    @Test
+    public void verifyBadService() {
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        val profile = new CommonProfile();
+        profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
+        profile.setId(RequestValidatorTestUtils.SUPPORTING_CLIENT_ID);
+        val session = request.getSession(true);
+        assertNotNull(session);
+        session.setAttribute(Pac4jConstants.USER_PROFILES,
+            CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
+        request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
+        request.setParameter(OAuth20Constants.REDIRECT_URI, RegisteredServiceTestUtils.CONST_TEST_URL);
+
+        request.setParameter(OAuth20Constants.CODE, NON_SUPPORTING_SERVICE_TICKET);
+        assertFalse(this.validator.validate(new JEEContext(request, response)));
+    }
+
+    @Test
+    public void verifyBadRequest() {
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        val profile = new CommonProfile();
+        profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
+        profile.setId(RequestValidatorTestUtils.SUPPORTING_CLIENT_ID);
+        val session = request.getSession(true);
+        assertNotNull(session);
+        session.setAttribute(Pac4jConstants.USER_PROFILES,
+            CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
+        request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
+        request.setParameter(OAuth20Constants.REDIRECT_URI, RegisteredServiceTestUtils.CONST_TEST_URL);
+        assertFalse(this.validator.validate(new JEEContext(request, response)));
+    }
+
+    @Test
     public void verifyOperation() {
 
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
-
         val profile = new CommonProfile();
         profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
         profile.setId(RequestValidatorTestUtils.SUPPORTING_CLIENT_ID);

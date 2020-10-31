@@ -58,7 +58,13 @@ public class ThemeClassLoaderTemplateResolverTests {
         ExternalContextHolder.setExternalContext(mock);
         verifyThemeFile();
     }
-    
+
+    @Test
+    public void verifyOperationByDefaultValue() throws Exception {
+        casProperties.getTheme().setDefaultThemeName("test");
+        verifyThemeFile();
+    }
+
     private void verifyThemeFile() {
         val resolver = new ThemeClassLoaderTemplateResolver(casProperties);
         resolver.setSuffix(".html");

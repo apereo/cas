@@ -25,7 +25,6 @@ import software.amazon.awssdk.services.s3.model.ListBucketsRequest;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -39,15 +38,18 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class AmazonS3ServiceRegistry extends AbstractServiceRegistry {
-    private static final String BUCKET_NAME_PREFIX = "cas";
+    /**
+     * Bucket name prefix.
+     */
+    static final String BUCKET_NAME_PREFIX = "cas";
 
     private final S3Client s3Client;
 
     private final StringSerializer<RegisteredService> registeredServiceSerializer;
 
     public AmazonS3ServiceRegistry(final ConfigurableApplicationContext applicationContext,
-                                   final Collection<ServiceRegistryListener> serviceRegistryListeners,
-                                   final S3Client s3Client) {
+        final Collection<ServiceRegistryListener> serviceRegistryListeners,
+        final S3Client s3Client) {
         super(applicationContext, serviceRegistryListeners);
         this.s3Client = s3Client;
         this.registeredServiceSerializer = new RegisteredServiceJsonSerializer(new MinimalPrettyPrinter());
@@ -59,8 +61,8 @@ public class AmazonS3ServiceRegistry extends AbstractServiceRegistry {
             LOGGER.trace("Saving registered service [{}]", rs);
             invokeServiceRegistryListenerPreSave(rs);
             val bucketNameToUse = determineBucketName(rs);
-            if (!s3Client.listBuckets(ListBucketsRequest.builder().build())
-                .buckets().stream().anyMatch(b -> b.name().equalsIgnoreCase(bucketNameToUse))) {
+            if (s3Client.listBuckets(ListBucketsRequest.builder().build())
+                .buckets().stream().noneMatch(b -> b.name().equalsIgnoreCase(bucketNameToUse))) {
                 LOGGER.trace("Bucket [{}] does not exist. Creating...", bucketNameToUse);
                 val bucket = s3Client.createBucket(CreateBucketRequest.builder().bucket(bucketNameToUse).build());
                 LOGGER.debug("Created bucket [{}]", bucket.location());
@@ -72,6 +74,7 @@ public class AmazonS3ServiceRegistry extends AbstractServiceRegistry {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .metadata(Map.of(
                     "name", rs.getName(),
+                    "id", String.valueOf(rs.getId()),
                     "description", rs.getDescription()))
                 .build();
             val body = this.registeredServiceSerializer.toString(rs);
@@ -96,7 +99,8 @@ public class AmazonS3ServiceRegistry extends AbstractServiceRegistry {
             if (result.isPresent()) {
                 val bucket = result.get();
                 val objects = s3Client.listObjectsV2(ListObjectsV2Request.builder().bucket(bucket.name()).build());
-                objects.contents().forEach(object -> s3Client.deleteObject(DeleteObjectRequest.builder().bucket(bucket.name()).key(object.key()).build()));
+                objects.contents().forEach(object -> s3Client.deleteObject(DeleteObjectRequest.builder().bucket(bucket.name()).key(object.key())
+                    .build()));
                 val bucketName = determineBucketName(registeredService);
                 s3Client.deleteBucket(DeleteBucketRequest.builder().bucket(bucketName).build());
                 LOGGER.trace("Deleted registered service [{}]", registeredService);
@@ -110,57 +114,33 @@ public class AmazonS3ServiceRegistry extends AbstractServiceRegistry {
     }
 
     @Override
-    public long size() {
-        try {
-            val buckets = s3Client.listBuckets(ListBucketsRequest.builder().build()).buckets();
-            return buckets
-                .stream()
-                .filter(AmazonS3ServiceRegistry::getRegisteredServiceBucketPredicate)
-                .count();
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return 0;
-    }
-
-    @Override
     public Collection<RegisteredService> load() {
-        try {
-            val buckets = s3Client.listBuckets(ListBucketsRequest.builder().build()).buckets();
-            return buckets
-                .stream()
-                .filter(AmazonS3ServiceRegistry::getRegisteredServiceBucketPredicate)
-                .map(this::fetchRegisteredServiceFromBucket)
-                .collect(Collectors.toList());
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return new ArrayList<>(0);
+        val buckets = s3Client.listBuckets(ListBucketsRequest.builder().build()).buckets();
+        return buckets
+            .stream()
+            .filter(AmazonS3ServiceRegistry::getRegisteredServiceBucketPredicate)
+            .map(this::fetchRegisteredServiceFromBucket)
+            .collect(Collectors.toList());
     }
 
     @Override
     public RegisteredService findServiceById(final long id) {
-        try {
-            val buckets = s3Client.listBuckets(ListBucketsRequest.builder().build()).buckets();
-            return buckets
-                .stream()
-                .filter(getRegisteredServiceBucketPredicate(id))
-                .map(this::fetchRegisteredServiceFromBucket)
-                .findFirst()
-                .orElse(null);
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        LOGGER.trace("Registered service by identifier [{}] cannot be found", id);
-        return null;
+        val buckets = s3Client.listBuckets(ListBucketsRequest.builder().build()).buckets();
+        return buckets
+            .stream()
+            .filter(getRegisteredServiceBucketPredicate(id))
+            .map(this::fetchRegisteredServiceFromBucket)
+            .findFirst()
+            .orElse(null);
     }
 
-    private static boolean getRegisteredServiceBucketPredicate(final Bucket bucket) {
-        return bucket.name().startsWith(BUCKET_NAME_PREFIX);
-    }
-
-    private static Predicate<Bucket> getRegisteredServiceBucketPredicate(final long id) {
-        return bucket -> bucket.name().startsWith(BUCKET_NAME_PREFIX) && bucket.name().contains(String.valueOf(id));
+    @Override
+    public long size() {
+        val buckets = s3Client.listBuckets(ListBucketsRequest.builder().build()).buckets();
+        return buckets
+            .stream()
+            .filter(AmazonS3ServiceRegistry::getRegisteredServiceBucketPredicate)
+            .count();
     }
 
     private RegisteredService fetchRegisteredServiceFromBucket(final Bucket bucket) {
@@ -171,6 +151,14 @@ public class AmazonS3ServiceRegistry extends AbstractServiceRegistry {
         LOGGER.debug("Fetching object [{}] from bucket [{}]", objectKey, bucket.name());
         val object = s3Client.getObject(GetObjectRequest.builder().bucket(bucket.name()).key(objectKey).build());
         return registeredServiceSerializer.from(object);
+    }
+
+    private static boolean getRegisteredServiceBucketPredicate(final Bucket bucket) {
+        return bucket.name().startsWith(BUCKET_NAME_PREFIX);
+    }
+
+    private static Predicate<Bucket> getRegisteredServiceBucketPredicate(final long id) {
+        return bucket -> bucket.name().startsWith(BUCKET_NAME_PREFIX) && bucket.name().contains(String.valueOf(id));
     }
 
     private static String determineBucketName(final RegisteredService registeredService) {

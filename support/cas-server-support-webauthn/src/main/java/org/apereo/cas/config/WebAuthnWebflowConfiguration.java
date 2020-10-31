@@ -28,8 +28,9 @@ import org.apereo.cas.webauthn.web.flow.WebAuthnMultifactorWebflowConfigurer;
 import org.apereo.cas.webauthn.web.flow.WebAuthnStartAuthenticationAction;
 import org.apereo.cas.webauthn.web.flow.WebAuthnStartRegistrationAction;
 
-import com.yubico.webauthn.core.RegistrationStorage;
-import com.yubico.webauthn.core.SessionManager;
+
+import com.yubico.core.RegistrationStorage;
+import com.yubico.core.SessionManager;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;

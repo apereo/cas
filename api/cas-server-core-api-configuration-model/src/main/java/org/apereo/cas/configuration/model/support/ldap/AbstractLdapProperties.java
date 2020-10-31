@@ -246,6 +246,12 @@ public abstract class AbstractLdapProperties implements Serializable {
     private LdapHostnameVerifierOptions hostnameVerifier = LdapHostnameVerifierOptions.DEFAULT;
 
     /**
+     * Trust Manager options.
+     * Accepted values are {@link LdapTrustManagerOptions#ANY}, {@link LdapTrustManagerOptions#DEFAULT}.
+     */
+    private String trustManager;
+
+    /**
      * Name of the LDAP handler.
      */
     private String name;
@@ -337,6 +343,21 @@ public abstract class AbstractLdapProperties implements Serializable {
         DEFAULT,
         /**
          * Skip hostname verification and allow all.
+         */
+        ANY
+    }
+
+    /**
+     * Describe trust manager strategies.
+     */
+    public enum LdapTrustManagerOptions {
+        /**
+         * Loads the trust managers from the
+         * default {@link javax.net.ssl.TrustManagerFactory} and delegates to those.
+         */
+        DEFAULT,
+        /**
+         * Trusts any client or server.
          */
         ANY
     }

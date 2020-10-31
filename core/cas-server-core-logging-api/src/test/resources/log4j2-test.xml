@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<Configuration shutdownHook="disable">
+<Configuration shutdownHook="disable" status="debug" >
     <Appenders>
         <Console name="console" target="SYSTEM_OUT">
             <PatternLayout pattern="%highlight{%d %p [%c] - &lt;%m&gt;%n}" />
@@ -7,7 +7,7 @@
 
         <!-- Required by CasLoggerFactoryTests. Filename is linked to the test. -->
         <RollingFile name="slf4j" fileName="build/slf4j.log" append="true"
-                     filePattern="slf4j-%d{yyyy-MM-dd-HH}-%i.log.gz">
+                     filePattern="build/slf4j-%d{yyyy-MM-dd-HH}-%i.log.gz">
             <PatternLayout pattern="%highlight{%d %p [%c] - %m%n}" />
             <Policies>
                 <OnStartupTriggeringPolicy />
@@ -15,6 +15,23 @@
                 <TimeBasedTriggeringPolicy />
             </Policies>
         </RollingFile>
+
+        <!-- Required by CasLoggerFactoryTests. Filename is linked to the test. -->
+        <!-- Setting mmediateFlush so test can check contents -->
+        <RollingFile name="stacktracefile" fileName="build/slf4j-exceptions.log" append="true"
+                     filePattern="build/slf4j-%d{yyyy-MM-dd-HH}-%i.log.gz" bufferedIO="false" immediateFlush="true">
+            <PatternLayout pattern="%highlight{%d %p [%c] - %m%n}" />
+            <Policies>
+                <OnStartupTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="10 MB"/>
+                <TimeBasedTriggeringPolicy />
+            </Policies>
+        </RollingFile>
+
+        <CasAppender name="CasStackTraceFile">
+            <AppenderRef ref="stacktracefile" />
+            <ExceptionOnlyFilter/>
+        </CasAppender>
 
         <CasAppender name="CasAppender">
             <AppenderRef ref="console" />
@@ -25,6 +42,9 @@
         <Logger name="org.apereo" level="off"  />
         <Logger name="org.apereo.cas.logging.CasAppender" level="trace" additivity="false">
             <AppenderRef ref="CasAppender"/>
+        </Logger>
+        <Logger name="org.apereo.cas.logging.ExceptionOnlyFilterTests" level="trace" additivity="false">
+            <AppenderRef ref="CasStackTraceFile"/>
         </Logger>
         <Root level="off">
             <AppenderRef ref="console"/>

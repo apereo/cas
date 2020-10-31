@@ -5,11 +5,14 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategyConfi
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.ServiceFactoryConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.authentication.SamlIdPServiceFactory;
 import org.apereo.cas.support.saml.services.SamlIdPEntityIdAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.util.CollectionUtils;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -28,10 +31,16 @@ public class SamlIdPAuthenticationServiceSelectionStrategyConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    @Qualifier("servicesManager")
+    private ObjectProvider<ServicesManager> servicesManager;
+
     @ConditionalOnMissingBean(name = "samlIdPEntityIdValidationServiceSelectionStrategy")
     @Bean
     public AuthenticationServiceSelectionStrategy samlIdPEntityIdValidationServiceSelectionStrategy() {
-        return new SamlIdPEntityIdAuthenticationServiceSelectionStrategy(samlIdPServiceFactory(),
+        return new SamlIdPEntityIdAuthenticationServiceSelectionStrategy(
+            servicesManager.getObject(),
+            samlIdPServiceFactory(),
             casProperties.getServer().getPrefix());
     }
 

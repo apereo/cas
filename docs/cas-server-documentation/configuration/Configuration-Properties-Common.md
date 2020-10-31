@@ -976,6 +976,8 @@ The following options are shared and apply when CAS is configured to integrate w
 # ${configurationKey}.view-timeout=PT30S
 # ${configurationKey}.kv-timeout=PT30S 
 # ${configurationKey}.max-http-connections=PT30S
+# ${configurationKey}.idle-connection-timeout=PT30S
+# ${configurationKey}.query-threshold=PT30S
 # ${configurationKey}.scan-consistency=NOT_BOUNDED|REQUEST_PLUS
 ```
 
@@ -1184,7 +1186,8 @@ to an external OpenID Connect provider such as Azure AD, given the provider's *c
 # ${configurationKey}.logout-url=
 # ${configurationKey}.max-clock-skew=
 # ${configurationKey}.scope=
-# ${configurationKey}.use-nonce=
+# ${configurationKey}.use-nonce=false
+# ${configurationKey}.disable-nonce=false
 # ${configurationKey}.preferred-jws-algorithm=
 # ${configurationKey}.response-mode=
 # ${configurationKey}.response-type=
@@ -1319,6 +1322,20 @@ The following LDAP validators can be used to test connection health status:
 #${configurationKey}.hostname-verifier=DEFAULT|ANY
 ```
 
+### LDAP SSL Trust Managers
+
+Trust managers are responsible for managing the trust material that is used when making LDAP trust decisions, 
+and for deciding whether credentials presented by a peer should be accepted.
+
+| Type                    | Description
+|-------------------------|---------------------------------------------------------------------------------------------
+| `DEFAULT`               | Enable and force the default JVM trust managers.
+| `ANY`                   | Trust any client or server.
+
+```properties
+#${configurationKey}.trust-manager=DEFAULT|ANY
+```
+
 ### LDAP Types
 
 A number of components/features in CAS allow you to explicitly indicate a `type` for the LDAP server, specially in cases where CAS needs to update an attribute, etc in LDAP (i.e. consent, password management, etc). The relevant setting would be:
@@ -1404,3 +1421,14 @@ The following types are supported:
 | `PRIMARY_GROUP` | Constructs the primary group SID and then searches for that group and puts it's DN in the 'memberOf' attribute of the original search entry. 
 | `RANGE_ENTRY` |  Rewrites attributes returned from Active Directory to include all values by performing additional searches.
 | `RECURSIVE_ENTRY` | This recursively searches based on a supplied attribute and merges those results into the original entry.
+
+### LDAP Multiple Base DNs
+
+There may be scenarios where different parts of a single LDAP tree could be considered as base-dns. Rather than duplicating 
+the LDAP configuration block for each individual base-dn, each entry can be specified and joined together using a special delimiter character.
+The user DN is retrieved using the combination of all base-dn and DN resolvers in the order defined. DN resolution should fail if multiple DNs 
+are found. Otherwise the first DN found is returned.
+
+```properties
+# ${configurationKey}.base-dn=subtreeA,dc=example,dc=net|subtreeC,dc=example,dc=net
+```

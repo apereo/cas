@@ -5,7 +5,7 @@
 
 echo "Running CouchDb docker image..."
 docker stop couchdb-server || true && docker rm couchdb-server || true
-docker run -d -e COUCHDB_USER=admin -e COUCHDB_PASSWORD=password -p 5984:5984 -p 9100:9100 -p 3469:4369 --name="couchdb-server" apache/couchdb:3.0.0
+docker run -d -e COUCHDB_USER=admin -e COUCHDB_PASSWORD=password -p 5984:5984 -p 9100:9100 -p 3469:4369 --name="couchdb-server" apache/couchdb:3.1.1
 
 docker ps | grep "couchdb-server"
 retVal=$?

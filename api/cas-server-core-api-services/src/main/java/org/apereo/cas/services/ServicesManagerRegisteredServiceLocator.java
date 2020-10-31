@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.principal.Service;
+
 import org.springframework.core.Ordered;
 
 import java.util.Collection;
@@ -17,12 +19,12 @@ public interface ServicesManagerRegisteredServiceLocator extends Ordered {
      * Locate registered service.
      *
      * @param candidates      the candidates
-     * @param serviceId       the service id
+     * @param service         the service id
      * @param predicateFilter the predicate filter
      * @return the registered service
      */
-    RegisteredService locate(Collection<RegisteredService> candidates, String serviceId,
-                             Predicate<RegisteredService> predicateFilter);
+    RegisteredService locate(Collection<RegisteredService> candidates, Service service,
+        Predicate<RegisteredService> predicateFilter);
 
     @Override
     default int getOrder() {

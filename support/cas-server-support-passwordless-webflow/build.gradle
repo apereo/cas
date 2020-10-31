@@ -21,7 +21,7 @@ dependencies {
     implementation project(":support:cas-server-support-pac4j-core")
     implementation project(":support:cas-server-support-pac4j-api")
 
-    compileOnly project(":support:cas-server-support-pac4j-webflow")
+    compileOnlyApi  project(":support:cas-server-support-pac4j-webflow")
 
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-util")

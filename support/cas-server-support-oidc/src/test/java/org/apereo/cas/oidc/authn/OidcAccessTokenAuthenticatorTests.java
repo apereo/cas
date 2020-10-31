@@ -44,4 +44,17 @@ public class OidcAccessTokenAuthenticatorTests extends AbstractOidcTests {
         assertTrue(userProfile.containsAttribute("aud"));
         assertTrue(userProfile.containsAttribute("email"));
     }
+
+    @Test
+    public void verifyFailsOperation() {
+        val request = new MockHttpServletRequest();
+        val ctx = new JEEContext(request, new MockHttpServletResponse());
+        val auth = new OidcAccessTokenAuthenticator(ticketRegistry, oidcTokenSigningAndEncryptionService,
+            servicesManager, oidcAccessTokenJwtBuilder);
+        val at = getAccessToken("helloworld", "clientid");
+        ticketRegistry.addTicket(at);
+        val credentials = new TokenCredentials(at.getId());
+        auth.validate(credentials, ctx);
+        assertNull(credentials.getUserProfile());
+    }
 }

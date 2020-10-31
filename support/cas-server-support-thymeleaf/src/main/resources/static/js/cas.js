@@ -12,7 +12,7 @@
                 div = divs[i];
                 field = material.textField.MDCTextField.attachTo(div);
                 if (div.classList.contains('caps-check')) {
-                    field.foundation_.adapter_.registerInputInteractionHandler('keypress', cas.checkCaps);
+                    field.foundation.adapter.registerInputInteractionHandler('keypress', cas.checkCaps);
                 }
             }
 

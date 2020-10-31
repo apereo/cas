@@ -555,7 +555,7 @@ public abstract class AbstractServiceRegistryTests {
      * @param randomId addition to service name for uniqueness.
      * @return new registered service object
      */
-    protected static AbstractRegisteredService buildRegisteredServiceInstance(final int randomId,
+    protected static AbstractRegisteredService buildRegisteredServiceInstance(final long randomId,
                                                                               final Class<? extends RegisteredService> registeredServiceClass) {
         val id = String.format("^http://www.serviceid%s.org", randomId);
         val rs = RegisteredServiceTestUtils.getRegisteredService(id, registeredServiceClass);

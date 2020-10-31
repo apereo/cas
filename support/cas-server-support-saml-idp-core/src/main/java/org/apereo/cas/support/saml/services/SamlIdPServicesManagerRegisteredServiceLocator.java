@@ -16,10 +16,10 @@ import org.springframework.core.Ordered;
 public class SamlIdPServicesManagerRegisteredServiceLocator extends DefaultServicesManagerRegisteredServiceLocator {
     public SamlIdPServicesManagerRegisteredServiceLocator(final SamlRegisteredServiceCachingMetadataResolver resolver) {
         setOrder(Ordered.HIGHEST_PRECEDENCE);
-        setRegisteredServiceFilter((registeredService, serviceId) -> {
+        setRegisteredServiceFilter((registeredService, service) -> {
             if (registeredService.getClass().equals(SamlRegisteredService.class)) {
                 val samlService = SamlRegisteredService.class.cast(registeredService);
-                val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, samlService, serviceId);
+                val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, samlService, service.getId());
                 return adaptor.isPresent();
             }
             return false;

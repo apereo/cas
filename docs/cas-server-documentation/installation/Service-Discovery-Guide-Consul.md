@@ -67,8 +67,8 @@ please [review this guide](../configuration/Configuration-Properties.html#consul
 To enable additional logging, configure the log4j configuration file to add the following levels:
 
 ```xml
-<AsyncLogger name="org.springframework.cloud.consul" level="debug" additivity="false">
+<Logger name="org.springframework.cloud.consul" level="debug" additivity="false">
   <AppenderRef ref="casConsole"/>
   <AppenderRef ref="casFile"/>
-</AsyncLogger>
+</Logger>
 ```

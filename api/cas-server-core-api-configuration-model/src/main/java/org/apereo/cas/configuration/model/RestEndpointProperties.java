@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model;
 
-import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
@@ -24,6 +23,5 @@ public class RestEndpointProperties extends BaseRestEndpointProperties {
      * HTTP method to use when contacting the rest endpoint.
      * Examples include {@code GET, POST}, etc.
      */
-    @RequiredProperty
     private String method = "GET";
 }

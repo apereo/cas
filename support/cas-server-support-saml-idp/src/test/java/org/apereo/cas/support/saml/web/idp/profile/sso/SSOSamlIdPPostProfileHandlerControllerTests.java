@@ -81,9 +81,7 @@ public class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConf
         encoder.doEncode();
         val queryStrings = StringUtils.remove(encoder.getRedirectUrl(), "https://cas.example.org/login?");
         new URLBuilder(encoder.getRedirectUrl())
-            .getQueryParams().forEach(param -> {
-            request.addParameter(param.getFirst(), param.getSecond());
-        });
+            .getQueryParams().forEach(param -> request.addParameter(param.getFirst(), param.getSecond()));
         request.setQueryString(queryStrings);
 
         controller.handleSaml2ProfileSsoRedirectRequest(response, request);

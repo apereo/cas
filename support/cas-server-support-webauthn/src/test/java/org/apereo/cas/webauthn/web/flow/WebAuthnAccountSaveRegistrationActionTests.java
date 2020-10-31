@@ -7,10 +7,10 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 
+import com.yubico.core.SessionManager;
+import com.yubico.data.CredentialRegistration;
 import com.yubico.webauthn.RegisteredCredential;
-import com.yubico.webauthn.core.SessionManager;
 import com.yubico.webauthn.data.ByteArray;
-import com.yubico.webauthn.data.CredentialRegistration;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("WebflowActions")
+@Tag("WebflowMfaActions")
 @SpringBootTest(classes = BaseWebAuthnWebflowTests.SharedTestConfiguration.class)
 public class WebAuthnAccountSaveRegistrationActionTests {
     @Autowired

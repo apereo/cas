@@ -26,5 +26,8 @@ public class JdbcPasswordHistoryServiceTests extends BaseJdbcPasswordManagementS
         assertTrue(passwordHistoryService.exists(request));
         assertFalse(passwordHistoryService.fetchAll().isEmpty());
         assertFalse(passwordHistoryService.fetch("casuser").isEmpty());
+        
+        passwordHistoryService.remove("casuser");
+        assertFalse(passwordHistoryService.exists(request));
     }
 }

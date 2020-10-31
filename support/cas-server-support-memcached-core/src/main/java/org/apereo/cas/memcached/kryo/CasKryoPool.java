@@ -1,9 +1,6 @@
 package org.apereo.cas.memcached.kryo;
 
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.pool.KryoCallback;
-import com.esotericsoftware.kryo.pool.KryoPool;
-import lombok.val;
+import com.esotericsoftware.kryo.util.Pool;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -14,43 +11,40 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class CasKryoPool implements KryoPool {
+public class CasKryoPool extends Pool<CloseableKryo> implements KryoPool<CloseableKryo> {
+    private static final int CAPACITY = 1024;
 
-    private final KryoPool kryoPoolRef;
+    private final CloseableKryoFactory factory;
 
     public CasKryoPool() {
         this(new ArrayList<>(0), true, true, false, false);
     }
 
-    public CasKryoPool(final Collection<Class> classesToRegister,
-                       final boolean warnUnregisteredClasses,
-                       final boolean registrationRequired,
-                       final boolean replaceObjectsByReferences,
-                       final boolean autoReset) {
+    public CasKryoPool(final Collection<Class> classesToRegister, final boolean warnUnregisteredClasses,
+        final boolean registrationRequired, final boolean replaceObjectsByReferences,
+        final boolean autoReset) {
+        super(true, false, CAPACITY);
 
-        val factory = new CloseableKryoFactory(this);
+        factory = new CloseableKryoFactory(this);
         factory.setWarnUnregisteredClasses(warnUnregisteredClasses);
         factory.setReplaceObjectsByReferences(replaceObjectsByReferences);
         factory.setAutoReset(autoReset);
         factory.setRegistrationRequired(registrationRequired);
         factory.setClassesToRegister(classesToRegister);
-        this.kryoPoolRef = new KryoPool.Builder(factory).softReferences().build();
     }
 
     @Override
     public CloseableKryo borrow() {
-        return (CloseableKryo) kryoPoolRef.borrow();
+        return obtain();
     }
 
     @Override
-    public void release(final Kryo kryo) {
-        kryoPoolRef.release(kryo);
+    public void release(final CloseableKryo kryo) {
+        free(kryo);
     }
 
     @Override
-    public <T> T run(final KryoCallback<T> callback) {
-        try (CloseableKryo kryo = borrow()) {
-            return callback.execute(kryo);
-        }
+    protected CloseableKryo create() {
+        return factory.getObject();
     }
 }

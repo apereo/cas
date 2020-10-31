@@ -32,8 +32,7 @@ public class AcceptUsersAuthenticationHandlerTests {
     private static final String RUTGERS = "rutgers";
 
     @Test
-    @SneakyThrows
-    public void verifySupportsSpecialCharacters() {
+    public void verifySupportsSpecialCharacters() throws Exception {
         val c = new UsernamePasswordCredential();
         c.setUsername("brian");
         c.setPassword("t�st");

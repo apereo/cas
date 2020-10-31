@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("WebflowActions")
+@Tag("WebflowMfaActions")
 public class OneTimeTokenAccountCreateRegistrationActionTests {
     @Test
     public void verifyCreateAccount() {
@@ -54,6 +54,6 @@ public class OneTimeTokenAccountCreateRegistrationActionTests {
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication("casuser"), context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_REGISTER, action.doExecute(context).getId());
         assertTrue(context.getFlowScope().contains(OneTimeTokenAccountCreateRegistrationAction.FLOW_SCOPE_ATTR_ACCOUNT));
-        assertTrue(context.getFlowScope().contains(OneTimeTokenAccountCreateRegistrationAction.FLOW_SCOPE_ATTR_ACCOUNT_URI));
+        assertTrue(context.getFlowScope().contains(OneTimeTokenAccountCreateRegistrationAction.FLOW_SCOPE_ATTR_QR_IMAGE_BASE64));
     }
 }

@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.principal.Service;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,15 +25,15 @@ import java.util.function.Predicate;
 public class DefaultServicesManagerRegisteredServiceLocator implements ServicesManagerRegisteredServiceLocator {
     private int order = Ordered.LOWEST_PRECEDENCE;
 
-    private BiPredicate<RegisteredService, String> registeredServiceFilter =
-        (registeredService, serviceId) -> registeredService.getClass().equals(RegexRegisteredService.class);
+    private BiPredicate<RegisteredService, Service> registeredServiceFilter =
+        (registeredService, service) -> registeredService.getClass().equals(RegexRegisteredService.class);
 
     @Override
-    public RegisteredService locate(final Collection<RegisteredService> candidates, final String serviceId,
-                                    final Predicate<RegisteredService> requestedFilter) {
+    public RegisteredService locate(final Collection<RegisteredService> candidates, final Service service,
+        final Predicate<RegisteredService> requestedFilter) {
         return candidates
             .stream()
-            .filter(entry -> registeredServiceFilter.test(entry, serviceId))
+            .filter(entry -> registeredServiceFilter.test(entry, service))
             .filter(requestedFilter::test)
             .findFirst()
             .orElse(null);

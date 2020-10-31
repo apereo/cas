@@ -4,6 +4,8 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.nio.charset.StandardCharsets;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -17,7 +19,7 @@ public class CompressionUtilsTests {
 
     @Test
     public void verifyInflation() {
-        final String source = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+        val source = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
             + "<samlp:AuthnRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" "
             + "ID=\"5545454455\" Version=\"2.0\" IssueInstant=\"Value\" "
             + "ProtocolBinding=\"urn:oasis:names.tc:SAML:2.0:bindings:HTTP-Redirect\" "
@@ -26,6 +28,8 @@ public class CompressionUtilsTests {
         val decoded = EncodingUtils.decodeBase64(deflated);
         val results = CompressionUtils.decodeByteArrayToString(decoded);
         assertEquals(source, results);
+
+        assertNotNull(CompressionUtils.deflate(source.getBytes(StandardCharsets.UTF_8)));
     }
     
     @Test

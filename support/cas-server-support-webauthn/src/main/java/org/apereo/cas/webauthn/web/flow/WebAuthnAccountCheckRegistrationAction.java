@@ -3,7 +3,7 @@ package org.apereo.cas.webauthn.web.flow;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
-import com.yubico.webauthn.core.RegistrationStorage;
+import com.yubico.core.RegistrationStorage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;

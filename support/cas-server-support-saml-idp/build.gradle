@@ -34,8 +34,8 @@ dependencies {
     implementation project(":support:cas-server-support-pac4j-api")
     implementation project(":support:cas-server-support-actions")
 
-    compileOnly project(":support:cas-server-support-jpa-util")
-    compileOnly project(":support:cas-server-support-consent-api")
+    compileOnlyApi  project(":support:cas-server-support-jpa-util")
+    compileOnlyApi  project(":support:cas-server-support-consent-api")
 
     implementation libraries.casclient
     implementation libraries.pac4jcore

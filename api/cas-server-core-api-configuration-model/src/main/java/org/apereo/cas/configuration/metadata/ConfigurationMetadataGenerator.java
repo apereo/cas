@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.metadata;
 
+import org.apereo.cas.configuration.support.PropertyOwner;
 import org.apereo.cas.configuration.support.RelaxedPropertyNames;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -7,6 +8,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,7 +30,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -56,6 +57,9 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class ConfigurationMetadataGenerator {
+    private static final ObjectMapper MAPPER = new ObjectMapper()
+        .setDefaultPrettyPrinter(new MinimalPrettyPrinter())
+        .findAndRegisterModules();
 
     private static final Pattern PATTERN_GENERICS = Pattern.compile(".+\\<(.+)\\>");
 
@@ -75,83 +79,11 @@ public class ConfigurationMetadataGenerator {
      */
     public static void main(final String[] args) throws Exception {
         if (args.length != 2) {
-            throw new RuntimeException("Invalid build configuration. No command-line arguments specified");
+            throw new RuntimeException("Invalid build configuration. Incorrect command-line arguments specified");
         }
         val buildDir = args[0];
         val projectDir = args[1];
         new ConfigurationMetadataGenerator(buildDir, projectDir).execute();
-    }
-
-    private static Set<ConfigurationMetadataHint> processHints(final Collection<ConfigurationMetadataProperty> props,
-                                                               final Collection<ConfigurationMetadataProperty> groups) {
-
-        final Set<ConfigurationMetadataHint> hints = new LinkedHashSet<>(0);
-
-        val nonDeprecatedErrors = props.stream()
-            .filter(p -> p.getDeprecation() == null
-                || !Deprecation.Level.ERROR.equals(p.getDeprecation().getLevel()))
-            .collect(Collectors.toList());
-
-        for (val entry : nonDeprecatedErrors) {
-            try {
-                val propName = StringUtils.substringAfterLast(entry.getName(), ".");
-                val groupName = StringUtils.substringBeforeLast(entry.getName(), ".");
-                val grp = groups
-                    .stream()
-                    .filter(g -> g.getName().equalsIgnoreCase(groupName))
-                    .findFirst()
-                    .orElseThrow(() -> new IllegalArgumentException("Cant locate group " + groupName));
-
-                val matcher = PATTERN_GENERICS.matcher(grp.getType());
-                val className = matcher.find() ? matcher.group(1) : grp.getType();
-                val clazz = ClassUtils.getClass(className);
-
-                val hint = new ConfigurationMetadataHint();
-                hint.setName(entry.getName());
-
-                if (clazz.isAnnotationPresent(RequiresModule.class)) {
-                    val annotation = Arrays.stream(clazz.getAnnotations())
-                        .filter(a -> a.annotationType().equals(RequiresModule.class))
-                        .findFirst()
-                        .map(RequiresModule.class::cast)
-                        .get();
-
-                    val valueHint = new ValueHint();
-                    valueHint.setValue(List.of(RequiresModule.class.getName(), annotation.automated()));
-                    valueHint.setDescription(annotation.name());
-                    hint.getValues().add(valueHint);
-                }
-
-                val names = RelaxedPropertyNames.forCamelCase(propName);
-                names.getValues().forEach(name -> {
-                    val f = ReflectionUtils.findField(clazz, name);
-                    if (f != null && f.isAnnotationPresent(RequiredProperty.class)) {
-                        val annotation = Arrays.stream(f.getAnnotations())
-                            .filter(a -> a.annotationType().equals(RequiredProperty.class))
-                            .findFirst()
-                            .map(RequiredProperty.class::cast)
-                            .get();
-                        val valueHint = new ValueHint();
-                        valueHint.setValue(RequiredProperty.class.getName());
-                        valueHint.setDescription(clazz.getName());
-                        valueHint.setShortDescription(annotation.message());
-                        hint.getValues().add(valueHint);
-                    }
-                });
-                if (!hint.getValues().isEmpty()) {
-                    hints.add(hint);
-                }
-            } catch (final Exception e) {
-                LOGGER.error(e.getMessage(), e);
-            }
-        }
-        return hints;
-    }
-
-    private static void processDeprecatedProperties(final Set<ConfigurationMetadataProperty> properties) {
-        properties.stream()
-            .filter(p -> p.getDeprecation() != null)
-            .forEach(property -> property.getDeprecation().setLevel(Deprecation.Level.ERROR));
     }
 
     /**
@@ -290,5 +222,79 @@ public class ConfigurationMetadataGenerator {
                 throw new RuntimeException(ex);
             }
         }
+    }
+
+    private static Set<ConfigurationMetadataHint> processHints(final Collection<ConfigurationMetadataProperty> props,
+        final Collection<ConfigurationMetadataProperty> groups) {
+
+        final Set<ConfigurationMetadataHint> hints = new LinkedHashSet<>(0);
+
+        val allValidProps = props.stream()
+            .filter(p -> p.getDeprecation() == null
+                || !Deprecation.Level.ERROR.equals(p.getDeprecation().getLevel()))
+            .collect(Collectors.toList());
+
+        for (val entry : allValidProps) {
+            try {
+                val propName = StringUtils.substringAfterLast(entry.getName(), ".");
+                val groupName = StringUtils.substringBeforeLast(entry.getName(), ".");
+                val grp = groups
+                    .stream()
+                    .filter(g -> g.getName().equalsIgnoreCase(groupName))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException("Cant locate group " + groupName));
+
+                val matcher = PATTERN_GENERICS.matcher(grp.getType());
+                val className = matcher.find() ? matcher.group(1) : grp.getType();
+                val clazz = ClassUtils.getClass(className);
+
+                val hint = new ConfigurationMetadataHint();
+                hint.setName(entry.getName());
+
+                val annotation = Arrays.stream(clazz.getAnnotations())
+                    .filter(a -> a.annotationType().equals(RequiresModule.class))
+                    .findFirst()
+                    .map(RequiresModule.class::cast)
+                    .orElseThrow(() -> new RuntimeException(clazz.getCanonicalName() + " is missing @RequiresModule"));
+
+                val valueHint = new ValueHint();
+                valueHint.setValue(toJson(Map.of("module", annotation.name(), "automated", annotation.automated())));
+                valueHint.setDescription(RequiresModule.class.getName());
+                hint.getValues().add(valueHint);
+
+                val grpHint = new ValueHint();
+                grpHint.setValue(toJson(Map.of("owner", clazz.getCanonicalName())));
+                grpHint.setDescription(PropertyOwner.class.getName());
+                hint.getValues().add(grpHint);
+
+                val names = RelaxedPropertyNames.forCamelCase(propName);
+                names.getValues().forEach(Unchecked.consumer(name -> {
+                    val f = ReflectionUtils.findField(clazz, name);
+                    if (f != null && f.isAnnotationPresent(RequiredProperty.class)) {
+                        val propertyHint = new ValueHint();
+                        propertyHint.setValue(toJson(Map.of("owner", clazz.getName())));
+                        propertyHint.setDescription(RequiredProperty.class.getName());
+                        hint.getValues().add(propertyHint);
+                    }
+                }));
+
+                if (!hint.getValues().isEmpty()) {
+                    hints.add(hint);
+                }
+            } catch (final Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+        }
+        return hints;
+    }
+
+    private static void processDeprecatedProperties(final Set<ConfigurationMetadataProperty> properties) {
+        properties.stream()
+            .filter(p -> p.getDeprecation() != null)
+            .forEach(property -> property.getDeprecation().setLevel(Deprecation.Level.ERROR));
+    }
+
+    private static String toJson(final Object value) throws Exception {
+        return MAPPER.writeValueAsString(value);
     }
 }

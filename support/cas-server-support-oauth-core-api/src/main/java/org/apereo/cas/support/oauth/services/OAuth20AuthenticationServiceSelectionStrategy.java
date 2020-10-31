@@ -1,6 +1,6 @@
 package org.apereo.cas.support.oauth.services;
 
-import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
+import org.apereo.cas.authentication.BaseAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -12,14 +12,12 @@ import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.LoggingUtils;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
-import org.springframework.core.Ordered;
 
 import java.util.Optional;
 
@@ -31,17 +29,17 @@ import java.util.Optional;
  */
 @Slf4j
 @Getter
-@RequiredArgsConstructor
-public class OAuth20AuthenticationServiceSelectionStrategy implements AuthenticationServiceSelectionStrategy {
+public class OAuth20AuthenticationServiceSelectionStrategy extends BaseAuthenticationServiceSelectionStrategy {
     private static final long serialVersionUID = 8517547235465666978L;
-
-    private final transient ServicesManager servicesManager;
-
-    private final transient ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
     private final String callbackUrl;
 
-    private final int order = Ordered.HIGHEST_PRECEDENCE;
+    public OAuth20AuthenticationServiceSelectionStrategy(final ServicesManager servicesManager,
+        final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+        final String callbackUrl) {
+        super(servicesManager, webApplicationServiceFactory);
+        this.callbackUrl = callbackUrl;
+    }
 
     @Override
     public Service resolveServiceFrom(final Service service) {
@@ -50,7 +48,7 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
         if (clientId.isPresent()) {
             val redirectUri = resolveRedirectUri(service);
             if (redirectUri.isPresent()) {
-                return this.webApplicationServiceFactory.createService(redirectUri.get().getValue());
+                return createService(redirectUri.get().getValue(), service);
             }
             val grantType = resolveGrantType(service);
             if (grantType.isPresent()) {
@@ -65,7 +63,7 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
                     id = clientId.get().getValue();
                 }
                 LOGGER.debug("Built web application service based on identifier [{}]", id);
-                return this.webApplicationServiceFactory.createService(id);
+                return createService(id, service);
             }
         }
         return service;
@@ -73,7 +71,7 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
 
     @Override
     public boolean supports(final Service service) {
-        val svc = this.servicesManager.findServiceBy(service);
+        val svc = getServicesManager().findServiceBy(service);
         val res = svc != null && service.getId().startsWith(this.callbackUrl);
         LOGGER.trace("Authentication request is{} identified as an OAuth request",
             BooleanUtils.toString(res, StringUtils.EMPTY, " not"));

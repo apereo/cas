@@ -75,10 +75,13 @@
             <property name="severity" value="error"/>
         </module>
         <module name="CyclomaticComplexity">
-            <property name="max" value="25"/>
-            <property name="severity" value="error"/>
+            <property name="max" value="30"/>
+            <property name="severity" value="info"/>
         </module>
         <module name="DefaultComesLast">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="PatternVariableName">
             <property name="severity" value="error"/>
         </module>
         <!--

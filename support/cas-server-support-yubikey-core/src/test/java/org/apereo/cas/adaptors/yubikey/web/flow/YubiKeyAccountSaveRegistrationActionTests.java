@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("WebflowActions")
+@Tag("WebflowMfaActions")
 public class YubiKeyAccountSaveRegistrationActionTests {
     @Test
     public void verifyActionSuccess() throws Exception {

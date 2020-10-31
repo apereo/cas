@@ -26,16 +26,22 @@ public class GoogleAppsProperties implements Serializable {
 
     /**
      * The public key location that is also shared with google apps.
+     * @deprecated Since 6.2
      */
+    @Deprecated(since = "6.2.0")
     private String publicKeyLocation = "file:/etc/cas/public.key";
 
     /**
      * The private key location that is used to sign responses, etc.
+     * @deprecated Since 6.2
      */
+    @Deprecated(since = "6.2.0")
     private String privateKeyLocation = "file:/etc/cas/private.key";
 
     /**
      * Signature algorithm used to generate keys.
+     * @deprecated Since 6.2
      */
+    @Deprecated(since = "6.2.0")
     private String keyAlgorithm = "RSA";
 }

@@ -49,7 +49,7 @@ public class JcifsConfig {
                 }
             } else {
                 val effectiveLoginConf = StringUtils.isBlank(loginConf) ? "/login.conf" : loginConf;
-                LOGGER.debug("Attempting to load login config from [{}]", loginConf);
+                LOGGER.debug("Attempting to load login config from [{}]", effectiveLoginConf);
 
                 val res = resourceLoader.getResource(effectiveLoginConf);
                 if (res.exists()) {

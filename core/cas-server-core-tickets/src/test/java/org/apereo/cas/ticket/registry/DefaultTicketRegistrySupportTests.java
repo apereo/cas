@@ -32,6 +32,7 @@ public class DefaultTicketRegistrySupportTests {
         val support = new DefaultTicketRegistrySupport(registry);
         assertNotNull(support.getTicketState(tgt.getId()));
         assertNull(support.getTicketState(null));
+        assertNull(support.getAuthenticationFrom(null));
         assertFalse(support.getPrincipalAttributesFrom(tgt.getId()).isEmpty());
 
         val authn = CoreAuthenticationTestUtils.getAuthentication("new-authn", Map.of("newAuthN", List.of("CAS-new")));

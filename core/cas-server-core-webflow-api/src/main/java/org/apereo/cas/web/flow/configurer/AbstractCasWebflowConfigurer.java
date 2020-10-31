@@ -466,9 +466,9 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
                                                final Map<String, Object> attributes, final Action... actions) {
         try {
             if (removeExisting) {
-                val success = (Transition) state.getTransition(criteriaOutcome);
-                if (success != null) {
-                    state.getTransitionSet().remove(success);
+                val transition = (Transition) state.getTransition(criteriaOutcome);
+                if (transition != null) {
+                    state.getTransitionSet().remove(transition);
                 }
             }
             val transition = createTransition(criteriaOutcome, targetState, actions);
@@ -630,7 +630,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
 
     @Override
     public void createStateModelBinding(final TransitionableState state, final String modelName, final Class modelType) {
-        LOGGER.trace("Creating model binding [{}] with type [{}} for [{}]", modelName, modelType, state.getId());
+        LOGGER.trace("Creating model binding [{}] with type [{}] for [{}]", modelName, modelType, state.getId());
         state.getAttributes().put("model", createExpression(modelName, modelType));
     }
 

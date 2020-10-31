@@ -16,6 +16,17 @@ Log data can be automatically routed to [Splunk](https://splunk.com/). Support i
 </dependency>
 ```
 
+You may also need to declare the following repository in your CAS overlay to be able to resolve dependencies:
+
+```groovy       
+repositories {
+    maven { 
+        mavenContent { releasesOnly() }
+        url "https://splunk.jfrog.io/splunk/ext-releases-local" 
+    }
+}
+```
+
 With the above module, you may then declare a specific appender to communicate with Splunk. 
 Following is an example that assumes that you have Splunk Enterprise running locally (with an IP address of `127.0.0.1`), 
 with a TCP input configured on port `15000`. TCP inputs do not have the same port number as the 
@@ -33,9 +44,9 @@ Splunk Enterprise management port.
 </Appenders>
 ...
 <Loggers>
-   <AsyncLogger name="org.apereo" level="debug">
+   <Logger name="org.apereo" level="debug">
       <AppenderRef ref="SplunkAppender"/>
-   </AsyncLogger>
+   </Logger>
 </Loggers>
 ```
 

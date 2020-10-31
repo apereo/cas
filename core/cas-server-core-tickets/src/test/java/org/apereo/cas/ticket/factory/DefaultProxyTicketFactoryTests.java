@@ -15,6 +15,7 @@ import org.apereo.cas.ticket.proxy.ProxyTicketFactory;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("Tickets")
+@TestPropertySource(properties = "cas.ticket.crypto.enabled=true")
 public class DefaultProxyTicketFactoryTests extends BaseTicketFactoryTests {
     @Test
     public void verifyCustomExpirationPolicy() {

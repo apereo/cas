@@ -3,6 +3,9 @@ package org.apereo.cas.authentication.principal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * Marker interface for Services. Services are generally either remote
  * applications utilizing CAS or applications that principals wish to gain
@@ -12,7 +15,6 @@ import org.slf4j.LoggerFactory;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@FunctionalInterface
 public interface Service extends Principal {
     Logger LOGGER = LoggerFactory.getLogger(Service.class);
 
@@ -23,4 +25,11 @@ public interface Service extends Principal {
      */
     default void setPrincipal(final String principal) {
     }
+
+    /**
+     * Sets the attributes.
+     *
+     * @param attributes the new attributes
+     */
+    void setAttributes(Map<String, List<Object>> attributes);
 }

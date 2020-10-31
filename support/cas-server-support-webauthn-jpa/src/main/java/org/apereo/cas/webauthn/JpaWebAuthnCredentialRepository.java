@@ -5,7 +5,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.webauthn.storage.BaseWebAuthnCredentialRepository;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.yubico.webauthn.data.CredentialRegistration;
+import com.yubico.data.CredentialRegistration;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.jooq.lambda.Unchecked;

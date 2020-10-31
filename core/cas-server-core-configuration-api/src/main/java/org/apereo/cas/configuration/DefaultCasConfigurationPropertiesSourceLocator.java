@@ -33,9 +33,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfigurationPropertiesSourceLocator {
     private static final List<String> EXTENSIONS = Arrays.asList("properties", "yml", "yaml");
+
     private static final List<String> PROFILE_PATTERNS = Arrays.asList("application-%s.%s", "%s.%s");
 
     private final CasConfigurationPropertiesEnvironmentManager casConfigurationPropertiesEnvironmentManager;
+
     private final ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory;
 
 
@@ -68,7 +70,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
             LOGGER.info("Configuration directory [{}] is not a directory or cannot be found at the specific path", config);
         }
 
-        val sourceYaml = loadEmbeddedYamlOverriddenProperties(resourceLoader);
+        val sourceYaml = loadEmbeddedYamlOverriddenProperties(resourceLoader, environment);
         compositePropertySource.addPropertySource(sourceYaml);
 
         return compositePropertySource;
@@ -148,8 +150,25 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
         return composite;
     }
 
-    private PropertySource<?> loadEmbeddedYamlOverriddenProperties(final ResourceLoader resourceLoader) {
-        val resource = resourceLoader.getResource("classpath:/application.yml");
-        return configurationPropertiesLoaderFactory.getLoader(resource, "embeddedYamlOverriddenProperties").load();
+    private PropertySource<?> loadEmbeddedYamlOverriddenProperties(final ResourceLoader resourceLoader,
+        final Environment environment) {
+        val profiles = ConfigurationPropertiesLoaderFactory.getApplicationProfiles(environment);
+        val yamlFiles = profiles.stream()
+            .map(profile -> String.format("classpath:/application-%s.yml", profile))
+            .sorted()
+            .map(resourceLoader::getResource)
+            .collect(Collectors.toList());
+        yamlFiles.add(resourceLoader.getResource("classpath:/application.yml"));
+
+        LOGGER.debug("Loading embedded YAML configuration files [{}]", yamlFiles);
+
+        val composite = new CompositePropertySource("embeddedYamlOverriddenCompositeProperties");
+        yamlFiles.forEach(resource -> {
+            LOGGER.trace("Loading YAML properties from [{}]", resource);
+            val source = configurationPropertiesLoaderFactory.getLoader(resource,
+                String.format("embeddedYamlOverriddenProperties-%s", resource.getFilename())).load();
+            composite.addPropertySource(source);
+        });
+        return composite;
     }
 }

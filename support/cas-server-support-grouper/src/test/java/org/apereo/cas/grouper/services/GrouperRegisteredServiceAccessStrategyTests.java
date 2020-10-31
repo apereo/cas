@@ -92,4 +92,17 @@ public class GrouperRegisteredServiceAccessStrategyTests {
         val attrs = (Map) RegisteredServiceTestUtils.getTestAttributes("banderson");
         assertTrue(strategy.doPrincipalAttributesAllowServiceAccess("banderson", attrs));
     }
+
+    @Test
+    public void checkGrouperNoGroups() {
+        val strategy = new GrouperRegisteredServiceAccessStrategy() {
+            private static final long serialVersionUID = 8533229193475808261L;
+            @Override
+            protected Collection<WsGetGroupsResult> getWsGetGroupsResults(final String principal) {
+                return List.of();
+            }
+        };
+        val attrs = (Map) RegisteredServiceTestUtils.getTestAttributes("banderson");
+        assertFalse(strategy.doPrincipalAttributesAllowServiceAccess("banderson", attrs));
+    }
 }

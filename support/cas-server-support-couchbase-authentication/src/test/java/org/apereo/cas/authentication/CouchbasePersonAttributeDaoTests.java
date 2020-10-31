@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -28,11 +30,11 @@ import static org.junit.jupiter.api.Assertions.*;
     properties = {
         "cas.authn.couchbase.cluster-username=admin",
         "cas.authn.couchbase.cluster-password=password",
-        "cas.authn.couchbase.bucket=testbucket",
+        "cas.authn.couchbase.bucket=pplbucket",
 
         "cas.authn.attribute-repository.couchbase.cluster-password=password",
         "cas.authn.attribute-repository.couchbase.cluster-username=admin",
-        "cas.authn.attribute-repository.couchbase.bucket=testbucket",
+        "cas.authn.attribute-repository.couchbase.bucket=pplbucket",
         "cas.authn.attribute-repository.couchbase.username-attribute=username"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -49,5 +51,17 @@ public class CouchbasePersonAttributeDaoTests {
         assertTrue(attributes.containsKey("firstname"));
         assertTrue(attributes.containsKey("lastname"));
         assertEquals("casuser", person.getName());
+    }
+
+    @Test
+    public void verifyUnknown() {
+        val person = attributeRepository.getPerson("unknown", IPersonAttributeDaoFilter.alwaysChoose());
+        assertNull(person);
+        
+        val persons = attributeRepository.getPeople(Map.of("username", "casuser"), IPersonAttributeDaoFilter.alwaysChoose());
+        assertFalse(persons.isEmpty());
+
+        assertTrue(attributeRepository.getPossibleUserAttributeNames(IPersonAttributeDaoFilter.alwaysChoose()).isEmpty());
+        assertTrue(attributeRepository.getAvailableQueryAttributes(IPersonAttributeDaoFilter.alwaysChoose()).isEmpty());
     }
 }

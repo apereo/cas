@@ -41,13 +41,11 @@ To see the relevant list of CAS properties, please [review this guide](../config
 You may also need to declare the following repository in
 your CAS overlay to be able to resolve dependencies:
 
-```xml
-<repositories>
-    ...
-    <repository>
-        <id>jitpack</id>
-        <url>https://jitpack.io</url>
-    </repository>
-    ...
-</repositories>
+```xml 
+repositories {
+    maven { 
+        mavenContent { releasesOnly() }
+        url "https://jitpack.io" 
+    }
+}
 ```

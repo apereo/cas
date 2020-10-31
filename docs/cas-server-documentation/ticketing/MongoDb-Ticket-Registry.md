@@ -31,9 +31,9 @@ levels:
 
 ```xml
 ...
-<AsyncLogger name="com.mongo" level="debug" additivity="false">
+<Logger name="com.mongo" level="debug" additivity="false">
     <AppenderRef ref="console"/>
     <AppenderRef ref="file"/>
-</AsyncLogger>
+</Logger>
 ...
 ```

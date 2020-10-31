@@ -36,27 +36,17 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     @Override
     @SuppressWarnings("java:S2583")
     public long deleteAll() {
-        val redisKeys = this.client.keys(getPatternTicketRedisKey());
-        if (redisKeys == null) {
-            LOGGER.warn("Unable to locate tickets via redis key");
-            return 0;
-        }
-        val size = redisKeys.size();
+        val redisKeys = client.keys(getPatternTicketRedisKey());
+        val size = Objects.requireNonNull(redisKeys).size();
         this.client.delete(redisKeys);
         return size;
     }
 
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
-        try {
-            val redisKey = getTicketRedisKey(encodeTicketId(ticketId));
-            this.client.delete(redisKey);
-            return true;
-        } catch (final Exception e) {
-            LOGGER.error("Ticket not found or is already removed. Failed deleting [{}]", ticketId);
-            LoggingUtils.error(LOGGER, e);
-        }
-        return false;
+        val redisKey = getTicketRedisKey(encodeTicketId(ticketId));
+        this.client.delete(redisKey);
+        return true;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
@@ -40,6 +41,10 @@ import org.springframework.core.Ordered;
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 @Slf4j
 public class TokenCoreConfiguration {
+    @Autowired
+    @Qualifier("webApplicationServiceFactory")
+    private ObjectProvider<ServiceFactory> webApplicationServiceFactory;
+    
     @Autowired
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
@@ -104,6 +109,9 @@ public class TokenCoreConfiguration {
     @Bean
     @ConditionalOnAvailableEndpoint
     public JwtTokenCipherSigningPublicKeyEndpoint jwtTokenCipherSigningPublicKeyEndpoint() {
-        return new JwtTokenCipherSigningPublicKeyEndpoint(casProperties, tokenCipherExecutor(), this.servicesManager.getObject());
+        return new JwtTokenCipherSigningPublicKeyEndpoint(casProperties,
+            tokenCipherExecutor(),
+            servicesManager.getObject(),
+            webApplicationServiceFactory.getObject());
     }
 }

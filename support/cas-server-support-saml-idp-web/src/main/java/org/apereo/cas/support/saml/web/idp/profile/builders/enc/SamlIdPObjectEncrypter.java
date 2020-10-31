@@ -3,6 +3,8 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
+import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataCredentialResolver;
+import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPSamlRegisteredServiceCriterion;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.util.CollectionUtils;
@@ -25,7 +27,6 @@ import org.opensaml.saml.saml2.core.EncryptedID;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.encryption.Encrypter;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
-import org.opensaml.saml.security.impl.MetadataCredentialResolver;
 import org.opensaml.security.credential.Credential;
 import org.opensaml.security.credential.UsageType;
 import org.opensaml.security.criteria.UsageCriterion;
@@ -70,8 +71,8 @@ public class SamlIdPObjectEncrypter {
      */
     @SneakyThrows
     public EncryptedAssertion encode(final Assertion samlObject,
-                                     final SamlRegisteredService service,
-                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
+        final SamlRegisteredService service,
+        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
         val encrypter = buildEncrypterForSamlObject(samlObject, service, adaptor);
         if (encrypter != null) {
             return encrypter.encrypt(samlObject);
@@ -94,8 +95,8 @@ public class SamlIdPObjectEncrypter {
      */
     @SneakyThrows
     public EncryptedID encode(final NameID samlObject,
-                              final SamlRegisteredService service,
-                              final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
+        final SamlRegisteredService service,
+        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
         val encrypter = buildEncrypterForSamlObject(samlObject, service, adaptor);
         if (encrypter != null) {
             return encrypter.encrypt(samlObject);
@@ -118,8 +119,8 @@ public class SamlIdPObjectEncrypter {
      */
     @SneakyThrows
     public EncryptedAttribute encode(final Attribute samlObject,
-                                     final SamlRegisteredService service,
-                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
+        final SamlRegisteredService service,
+        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
         val encrypter = buildEncrypterForSamlObject(samlObject, service, adaptor);
         if (encrypter != null) {
             return encrypter.encrypt(samlObject);
@@ -142,8 +143,8 @@ public class SamlIdPObjectEncrypter {
      */
     @SneakyThrows
     protected Encrypter buildEncrypterForSamlObject(final Object samlObject,
-                                                    final SamlRegisteredService service,
-                                                    final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
+        final SamlRegisteredService service,
+        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
         val entityId = adaptor.getEntityId();
         LOGGER.trace("Calculating encryption security configuration for [{}] based on service [{}]", entityId, service.getName());
         val encryptionConfiguration = configureEncryptionSecurityConfiguration(service);
@@ -177,10 +178,10 @@ public class SamlIdPObjectEncrypter {
      * @return the encrypter
      */
     protected Encrypter getEncrypter(final Object samlObject,
-                                     final SamlRegisteredService service,
-                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                                     final KeyEncryptionParameters keyEncParams,
-                                     final DataEncryptionParameters dataEncParams) {
+        final SamlRegisteredService service,
+        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+        final KeyEncryptionParameters keyEncParams,
+        final DataEncryptionParameters dataEncParams) {
         val entityId = adaptor.getEntityId();
         if (keyEncParams == null || dataEncParams == null) {
             LOGGER.warn("No key/data encryption parameters could be determined for [{}]", entityId);
@@ -203,9 +204,9 @@ public class SamlIdPObjectEncrypter {
      * @return the data encryption parameters
      */
     protected DataEncryptionParameters getDataEncryptionParameters(final Object samlObject,
-                                                                   final SamlRegisteredService service,
-                                                                   final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                                                                   final BasicEncryptionConfiguration encryptionConfiguration) {
+        final SamlRegisteredService service,
+        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+        final BasicEncryptionConfiguration encryptionConfiguration) {
         try {
             val params = resolveEncryptionParameters(service, encryptionConfiguration);
             if (params != null) {
@@ -229,9 +230,9 @@ public class SamlIdPObjectEncrypter {
      * @return the key encryption parameters
      */
     protected KeyEncryptionParameters getKeyEncryptionParameters(final Object samlObject,
-                                                                 final SamlRegisteredService service,
-                                                                 final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                                                                 final BasicEncryptionConfiguration encryptionConfiguration) {
+        final SamlRegisteredService service,
+        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+        final BasicEncryptionConfiguration encryptionConfiguration) {
         try {
             val params = resolveEncryptionParameters(service, encryptionConfiguration);
             if (params != null) {
@@ -255,12 +256,11 @@ public class SamlIdPObjectEncrypter {
      * @throws Exception the exception
      */
     protected Credential configureKeyEncryptionCredential(final String peerEntityId,
-                                                          final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                                                          final SamlRegisteredService service,
-                                                          final BasicEncryptionConfiguration encryptionConfiguration) throws Exception {
+        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+        final SamlRegisteredService service,
+        final BasicEncryptionConfiguration encryptionConfiguration) throws Exception {
 
-        val kekCredentialResolver = new MetadataCredentialResolver();
-
+        val mdCredentialResolver = new SamlIdPMetadataCredentialResolver();
         val providers = new ArrayList<KeyInfoProvider>(5);
         providers.add(new RSAKeyValueProvider());
         providers.add(new DSAKeyValueProvider());
@@ -269,21 +269,23 @@ public class SamlIdPObjectEncrypter {
         providers.add(new KeyInfoReferenceProvider());
 
         val keyInfoResolver = new BasicProviderKeyInfoCredentialResolver(providers);
-        kekCredentialResolver.setKeyInfoCredentialResolver(keyInfoResolver);
+        mdCredentialResolver.setKeyInfoCredentialResolver(keyInfoResolver);
 
-        val roleDescriptorResolver = SamlIdPUtils.getRoleDescriptorResolver(adaptor, samlIdPProperties.getMetadata().isRequireValidMetadata());
+        val roleDescriptorResolver = SamlIdPUtils.getRoleDescriptorResolver(adaptor,
+            samlIdPProperties.getMetadata().isRequireValidMetadata());
 
-        kekCredentialResolver.setRoleDescriptorResolver(roleDescriptorResolver);
-        kekCredentialResolver.initialize();
+        mdCredentialResolver.setRoleDescriptorResolver(roleDescriptorResolver);
+        mdCredentialResolver.initialize();
 
         val criteriaSet = new CriteriaSet();
         criteriaSet.add(new EncryptionConfigurationCriterion(encryptionConfiguration));
         criteriaSet.add(new EntityIdCriterion(peerEntityId));
         criteriaSet.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
         criteriaSet.add(new UsageCriterion(UsageType.ENCRYPTION));
+        criteriaSet.add(new SamlIdPSamlRegisteredServiceCriterion(service));
 
         LOGGER.debug("Attempting to resolve the encryption key for entity id [{}]", peerEntityId);
-        val credential = kekCredentialResolver.resolveSingle(criteriaSet);
+        val credential = mdCredentialResolver.resolveSingle(criteriaSet);
 
         if (credential == null || credential.getPublicKey() == null) {
             throw new IllegalArgumentException("Unable to resolve the encryption [public] key for entity id " + peerEntityId);
@@ -304,7 +306,7 @@ public class SamlIdPObjectEncrypter {
      * @throws ResolverException the exception
      */
     protected EncryptionParameters resolveEncryptionParameters(final SamlRegisteredService service,
-                                                               final BasicEncryptionConfiguration encryptionConfiguration) throws ResolverException {
+        final BasicEncryptionConfiguration encryptionConfiguration) throws ResolverException {
         val criteria = new CriteriaSet();
         criteria.add(new EncryptionConfigurationCriterion(encryptionConfiguration));
         criteria.add(new EncryptionOptionalCriterion(service.isEncryptionOptional()));

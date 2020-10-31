@@ -11,7 +11,9 @@
 <script type="text/javascript" th:src="@{${#themes.code('cas.standard.js.file')}}"></script>
 
 <script th:inline="javascript">
-    resourceLoadedSuccessfully();
+    if (typeof resourceLoadedSuccessfully === "function") {
+        resourceLoadedSuccessfully();
+    }
     cssVars({});
 </script>
 

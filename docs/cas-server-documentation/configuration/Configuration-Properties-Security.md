@@ -128,8 +128,8 @@ To learn more about how configuration is managed and profiled by CAS, please [re
 To enable additional logging, modify the logging configuration file to add the following:
 
 ```xml
-<AsyncLogger name="org.springframework.cloud.vault" level="debug" additivity="false">
+<Logger name="org.springframework.cloud.vault" level="debug" additivity="false">
     <AppenderRef ref="console"/>
     <AppenderRef ref="file"/>
-</AsyncLogger>
+</Logger>
 ```

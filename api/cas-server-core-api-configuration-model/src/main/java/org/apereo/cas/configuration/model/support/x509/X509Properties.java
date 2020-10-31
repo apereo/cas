@@ -1,8 +1,6 @@
 package org.apereo.cas.configuration.model.support.x509;
 
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
-import org.apereo.cas.configuration.model.core.web.flow.WebflowAutoConfigurationProperties;
-import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
@@ -37,7 +35,7 @@ public class X509Properties implements Serializable {
     /**
      * Default setting whether to allow unspecified number of intermediate certificates.
      */
-    private static final boolean DEFAULT_MAXPATHLENGTH_ALLOW_UNSPECIFIED = false;
+    private static final boolean DEFAULT_MAX_PATHLENGTH_ALLOW_UNSPECIFIED = false;
 
     /**
      * Default setting to check keyUsage extension.
@@ -209,7 +207,8 @@ public class X509Properties implements Serializable {
     /**
      * LDAP settings when fetching CRLs from LDAP.
      */
-    private Ldap ldap = new Ldap();
+    @NestedConfigurationProperty
+    private X509LdapProperties ldap = new X509LdapProperties();
 
     /**
      * The compiled pattern supplied by the deployer.
@@ -226,7 +225,7 @@ public class X509Properties implements Serializable {
      * Deployer supplied setting to allow unlimited pathLength in a SUPPLIED
      * certificate.
      */
-    private boolean maxPathLengthAllowUnspecified = DEFAULT_MAXPATHLENGTH_ALLOW_UNSPECIFIED;
+    private boolean maxPathLengthAllowUnspecified = DEFAULT_MAX_PATHLENGTH_ALLOW_UNSPECIFIED;
 
     /**
      * Deployer supplied setting to check the KeyUsage extension.
@@ -309,7 +308,7 @@ public class X509Properties implements Serializable {
      * The webflow configuration.
      */
     @NestedConfigurationProperty
-    private WebflowAutoConfigurationProperties webflow = new WebflowAutoConfigurationProperties(100);
+    private X509WebflowAutoConfigurationProperties webflow = new X509WebflowAutoConfigurationProperties(100);
 
     /**
      * The  Principal types.
@@ -346,17 +345,5 @@ public class X509Properties implements Serializable {
          * address. This will return the first e-mail address that is found (if there are more than one).
          */
         RFC822_EMAIL
-    }
-
-    @Getter
-    @Setter
-    public static class Ldap extends AbstractLdapSearchProperties {
-
-        private static final long serialVersionUID = -1655068554291000206L;
-
-        /**
-         * The LDAP attribute that holds the certificate revocation list.
-         */
-        private String certificateAttribute = "certificateRevocationList";
     }
 }

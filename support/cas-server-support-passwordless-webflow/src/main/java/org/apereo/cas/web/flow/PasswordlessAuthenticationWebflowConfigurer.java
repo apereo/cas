@@ -63,7 +63,7 @@ public class PasswordlessAuthenticationWebflowConfigurer extends AbstractCasWebf
 
     protected void createStateInitialPasswordless(final Flow flow) {
         val state = getState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);
-        createTransitionForState(state, TRANSITION_ID_PASSWORDLESS_GET_USERID, STATE_ID_PASSWORDLESS_GET_USERID);
+        createTransitionForState(state, TRANSITION_ID_PASSWORDLESS_GET_USERID, STATE_ID_PASSWORDLESS_GET_USERID, true);
     }
 
     protected void createStateAcceptPasswordless(final Flow flow) {
@@ -107,9 +107,9 @@ public class PasswordlessAuthenticationWebflowConfigurer extends AbstractCasWebf
         createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_ERROR, STATE_ID_PASSWORDLESS_GET_USERID);
 
         val cfgs = applicationContext.getBeansOfType(CasMultifactorWebflowConfigurer.class).values();
-        cfgs.forEach(cfg -> cfg.getMultifactorAuthenticationFlowDefinitionRegistries().forEach(registry -> {
-            Arrays.stream(registry.getFlowDefinitionIds()).forEach(id -> createTransitionForState(verifyAccountState, id, id));
-        }));
+        cfgs.forEach(cfg -> cfg.getMultifactorAuthenticationFlowDefinitionRegistries()
+            .forEach(registry -> Arrays.stream(registry.getFlowDefinitionIds())
+                .forEach(id -> createTransitionForState(verifyAccountState, id, id))));
     }
 
     protected void createStateGetUserIdentifier(final Flow flow) {

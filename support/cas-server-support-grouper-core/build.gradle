@@ -12,7 +12,7 @@ dependencies {
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-services-registry")
     
-    compileOnly project(":core:cas-server-core-webflow")
+    compileOnlyApi project(":core:cas-server-core-webflow")
     
     testImplementation project(":core:cas-server-core-authentication-api")
     testImplementation project(":support:cas-server-support-json-service-registry")

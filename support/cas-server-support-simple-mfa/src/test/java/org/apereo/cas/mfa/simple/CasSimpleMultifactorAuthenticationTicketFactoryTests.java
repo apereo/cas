@@ -3,6 +3,8 @@ package org.apereo.cas.mfa.simple;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.BaseAbstractMultifactorAuthenticationProviderTests;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket;
+import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicketFactory;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;

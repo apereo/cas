@@ -14,7 +14,7 @@ function tabify(material) {
         $('#consent-tab-' + index).removeClass('d-none');
     });
 
-    tabs.foundation_.adapter_.activateTabAtIndex(0);
+    tabs.foundation.adapter.activateTabAtIndex(0);
 
     return tabs;
 }

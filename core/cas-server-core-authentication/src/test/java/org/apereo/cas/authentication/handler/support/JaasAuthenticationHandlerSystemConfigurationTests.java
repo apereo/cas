@@ -56,8 +56,7 @@ public class JaasAuthenticationHandlerSystemConfigurationTests {
     }
 
     @Test
-    @SneakyThrows
-    public void verifyWithAlternativeRealmAndValidCredentials() {
+    public void verifyWithAlternativeRealmAndValidCredentials() throws Exception {
         handler.setRealm("TEST");
         assertNotNull(handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(USERNAME, USERNAME)));
     }
