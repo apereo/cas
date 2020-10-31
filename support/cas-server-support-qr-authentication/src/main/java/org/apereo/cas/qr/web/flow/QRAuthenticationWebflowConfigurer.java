@@ -2,7 +2,6 @@ package org.apereo.cas.qr.web.flow;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.otp.util.QRUtils;
-import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 
@@ -13,8 +12,6 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
-import java.io.ByteArrayOutputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 /**
@@ -44,11 +41,8 @@ public class QRAuthenticationWebflowConfigurer extends AbstractCasWebflowConfigu
             state.getEntryActionList().add(requestContext -> {
                 val id = UUID.randomUUID().toString();
                 LOGGER.debug("Generating QR code with channel id [{}]", id);
-
-                val stream = new ByteArrayOutputStream();
-                QRUtils.generateQRCode(stream, id, QRUtils.WIDTH_LARGE, QRUtils.WIDTH_LARGE);
-                val image = EncodingUtils.encodeBase64ToByteArray(stream.toByteArray());
-                requestContext.getFlowScope().put("qrCode", new String(image, StandardCharsets.UTF_8));
+                val qrCodeBase64 = QRUtils.generateQRCode(id, QRUtils.WIDTH_LARGE, QRUtils.WIDTH_LARGE);
+                requestContext.getFlowScope().put("qrCode", qrCodeBase64);
                 requestContext.getFlowScope().put("qrChannel", id);
                 return null;
             });
