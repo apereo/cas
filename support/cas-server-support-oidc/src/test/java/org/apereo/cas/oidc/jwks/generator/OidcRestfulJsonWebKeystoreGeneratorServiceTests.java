@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.jwks.generator;
 
+import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtils;
 import org.apereo.cas.util.MockWebServer;
@@ -37,7 +38,6 @@ public class OidcRestfulJsonWebKeystoreGeneratorServiceTests extends AbstractOid
     public static void setup() {
         val webkey = OidcJsonWebKeyStoreUtils.generateJsonWebKey("rsa", 2048);
         val data = webkey.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
-
         SERVER = new MockWebServer(9521,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_JSON_VALUE);
@@ -53,5 +53,11 @@ public class OidcRestfulJsonWebKeystoreGeneratorServiceTests extends AbstractOid
     public void verifyOperation() {
         val resource = oidcJsonWebKeystoreGeneratorService.generate();
         assertTrue(resource.exists());
+    }
+
+    @Test
+    public void verifyFailsOperation() {
+        val resource = new OidcRestfulJsonWebKeystoreGeneratorService(new OidcProperties()).generate();
+        assertNull(resource);
     }
 }

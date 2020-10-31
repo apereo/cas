@@ -2,9 +2,7 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.git.GitRepository;
 import org.apereo.cas.git.PathRegexPatternTreeFilter;
-import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
-import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.RegexUtils;
+import org.apereo.cas.services.locator.GitRepositoryRegisteredServiceLocator;
 import org.apereo.cas.util.serialization.StringSerializer;
 
 import lombok.SneakyThrows;
@@ -23,7 +21,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -34,32 +31,27 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class GitServiceRegistry extends AbstractServiceRegistry {
-    private static final List<String> FILE_EXTENSIONS = CollectionUtils.wrapList("json", "yaml", "yml");
-
-    private static final Pattern PATTERN_ACCEPTED_REPOSITORY_FILES = RegexUtils.createPattern(".+\\.("
-        + String.join("|", FILE_EXTENSIONS) + ')', Pattern.CASE_INSENSITIVE);
-
     private final GitRepository gitRepository;
 
     private final Collection<StringSerializer<RegisteredService>> registeredServiceSerializers;
 
-    private final RegisteredServiceResourceNamingStrategy resourceNamingStrategy;
-
     private final boolean pushChanges;
+
+    private final List<GitRepositoryRegisteredServiceLocator> registeredServiceLocators;
 
     private Collection<RegisteredService> registeredServices = new ArrayList<>(0);
 
     public GitServiceRegistry(final ConfigurableApplicationContext applicationContext,
-                              final GitRepository gitRepository,
-                              final Collection<StringSerializer<RegisteredService>> registeredServiceSerializers,
-                              final RegisteredServiceResourceNamingStrategy resourceNamingStrategy,
-                              final boolean pushChanges,
-                              final Collection<ServiceRegistryListener> serviceRegistryListeners) {
+        final GitRepository gitRepository,
+        final Collection<StringSerializer<RegisteredService>> registeredServiceSerializers,
+        final boolean pushChanges,
+        final Collection<ServiceRegistryListener> serviceRegistryListeners,
+        final List<GitRepositoryRegisteredServiceLocator> registeredServiceLocators) {
         super(applicationContext, serviceRegistryListeners);
         this.gitRepository = gitRepository;
         this.registeredServiceSerializers = registeredServiceSerializers;
-        this.resourceNamingStrategy = resourceNamingStrategy;
         this.pushChanges = pushChanges;
+        this.registeredServiceLocators = registeredServiceLocators;
     }
 
     @Override
@@ -70,11 +62,11 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
         }
 
         val message = "Saved changes to registered service " + registeredService.getName();
-        val result = getRegisteredServiceFileName(registeredService);
+        val result = locateExistingRegisteredServiceFile(registeredService);
         result.ifPresentOrElse(file -> writeRegisteredServiceToFile(registeredService, file),
             () -> {
-                val fileName = resourceNamingStrategy.build(registeredService, FILE_EXTENSIONS.get(0));
-                val file = new File(gitRepository.getRepositoryDirectory(), fileName);
+                val file = registeredServiceLocators.get(0).determine(registeredService,
+                    GitRepositoryRegisteredServiceLocator.FILE_EXTENSIONS.get(0));
                 writeRegisteredServiceToFile(registeredService, file);
             });
 
@@ -87,7 +79,7 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
     @SneakyThrows
     @Override
     public boolean delete(final RegisteredService registeredService) {
-        val file = getRegisteredServiceFileName(registeredService);
+        val file = locateExistingRegisteredServiceFile(registeredService);
         if (file.isPresent()) {
             val message = "Deleted registered service " + registeredService.getName();
             FileUtils.forceDelete(file.get());
@@ -107,7 +99,8 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
             LOGGER.warn("Unable to pull changes from the remote repository. Service definition files may be stale.");
         }
 
-        val objects = this.gitRepository.getObjectsInRepository(new PathRegexPatternTreeFilter(PATTERN_ACCEPTED_REPOSITORY_FILES));
+        val objects = this.gitRepository.getObjectsInRepository(
+            new PathRegexPatternTreeFilter(GitRepositoryRegisteredServiceLocator.PATTERN_ACCEPTED_REPOSITORY_FILES));
         registeredServices = objects
             .stream()
             .filter(Objects::nonNull)
@@ -122,6 +115,14 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
     @Override
     public RegisteredService findServiceById(final long id) {
         return this.registeredServices.stream().filter(r -> r.getId() == id).findFirst().orElse(null);
+    }
+
+    private Optional<File> locateExistingRegisteredServiceFile(final RegisteredService registeredService) {
+        return registeredServiceLocators.stream()
+            .map(locator -> locator.locate(registeredService))
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .findFirst();
     }
 
     private void commitAndPush(final String message) {
@@ -141,16 +142,6 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
             .collect(Collectors.toList());
     }
 
-    @SneakyThrows
-    private Optional<File> getRegisteredServiceFileName(final RegisteredService service) {
-        return FILE_EXTENSIONS.stream()
-            .map(ext -> {
-                val fileName = resourceNamingStrategy.build(service, ext);
-                return new File(gitRepository.getRepositoryDirectory(), fileName);
-            })
-            .filter(File::exists)
-            .findFirst();
-    }
 
     private boolean writeRegisteredServiceToFile(final RegisteredService registeredService, final File file) {
         try (val out = Files.newOutputStream(file.toPath())) {

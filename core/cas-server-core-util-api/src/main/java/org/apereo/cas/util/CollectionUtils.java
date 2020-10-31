@@ -80,7 +80,7 @@ public class CollectionUtils {
      */
     @SuppressWarnings("JdkObsolete")
     public static Set<Object> toCollection(final Object obj) {
-        val c = new LinkedHashSet<Object>(MAP_SIZE);
+        val c = new LinkedHashSet<>(MAP_SIZE);
         if (obj == null) {
             LOGGER.trace("Converting null obj to empty collection");
         } else if (obj instanceof Collection) {
@@ -592,7 +592,7 @@ public class CollectionUtils {
             .stream()
             .map(s -> {
                 val bits = Splitter.on("->").splitToList(s);
-                return Pair.of(bits.get(0), bits.get(1));
+                return Pair.of(bits.get(0), bits.size() > 1 ? bits.get(1) : StringUtils.EMPTY);
             })
             .forEach(p -> mappings.put(p.getKey(), p.getValue()));
         return mappings;

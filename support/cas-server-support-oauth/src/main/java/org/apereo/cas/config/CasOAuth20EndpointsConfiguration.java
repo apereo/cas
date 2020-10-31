@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -12,7 +13,6 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20IntrospectionEndpointCo
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20RevocationEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20UserProfileEndpointController;
 import org.apereo.cas.support.oauth.web.mgmt.OAuth20TokenManagementEndpoint;
-import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.web.ProtocolEndpointConfigurer;
 
@@ -47,8 +47,8 @@ public class CasOAuth20EndpointsConfiguration {
     private ObjectProvider<JwtBuilder> accessTokenJwtBuilder;
 
     @Autowired
-    @Qualifier("ticketRegistry")
-    private ObjectProvider<TicketRegistry> ticketRegistry;
+    @Qualifier("centralAuthenticationService")
+    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
 
     @Autowired
     @Qualifier("accessTokenGrantAuditableRequestExtractor")
@@ -89,10 +89,10 @@ public class CasOAuth20EndpointsConfiguration {
     }
 
 
-    @ConditionalOnMissingBean(name = "profileController")
+    @ConditionalOnMissingBean(name = "oauthProfileController")
     @Bean
     @Autowired
-    public OAuth20UserProfileEndpointController profileController(
+    public OAuth20UserProfileEndpointController oauthProfileController(
         @Qualifier("oauth20ConfigurationContext") final OAuth20ConfigurationContext context) {
         return new OAuth20UserProfileEndpointController(context);
     }
@@ -118,7 +118,7 @@ public class CasOAuth20EndpointsConfiguration {
     @ConditionalOnAvailableEndpoint
     public OAuth20TokenManagementEndpoint oauth20TokenManagementEndpoint() {
         return new OAuth20TokenManagementEndpoint(casProperties,
-            ticketRegistry.getObject(), accessTokenJwtBuilder.getObject());
+            centralAuthenticationService.getObject(), accessTokenJwtBuilder.getObject());
     }
 
     @Bean

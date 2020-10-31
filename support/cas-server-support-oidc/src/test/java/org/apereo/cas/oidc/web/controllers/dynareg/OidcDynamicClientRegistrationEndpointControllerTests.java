@@ -41,6 +41,21 @@ public class OidcDynamicClientRegistrationEndpointControllerTests extends Abstra
     }
 
     @Test
+    public void verifyBadRedirect() {
+        val registrationReq = '{'
+            + "   \"redirect_uris\":"
+            + "     [\"https://client.example.org/callback#something\","
+            + "      \"https://client.example.org/callback2\"],"
+            + "   \"request_uris\":"
+            + "     [\"https://client.example.org/rf.txt#qpXaRLh_n93TTR9F252ValdatUQvQiJi5BDub2BeznA\"]"
+            + "  }";
+
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        assertEquals(HttpStatus.SC_BAD_REQUEST, controller.handleRequestInternal(registrationReq, request, response).getStatusCodeValue());
+    }
+
+    @Test
     public void verifyOperation() throws Exception {
         val registrationReq = '{'
             + "   \"application_type\": \"web\","
@@ -53,11 +68,16 @@ public class OidcDynamicClientRegistrationEndpointControllerTests extends Abstra
             + "   \"client_name#ja-Jpan-JP\":"
             + "     \"クライアント名\","
             + "   \"logo_uri\": \"https://client.example.org/logo.png\","
+            + "   \"policy_uri\": \"https://client.example.org/policy\","
+            + "   \"tos_uri\": \"https://client.example.org/tos\","
             + "   \"subject_type\": \"pairwise\","
             + "   \"sector_identifier_uri\":"
             + "     \"http://localhost:7711\","
             + "   \"token_endpoint_auth_method\": \"client_secret_basic\","
             + "   \"jwks_uri\": \"https://client.example.org/my_public_keys.jwks\","
+            + "   \"id_token_signed_response_alg\": \"RS256\","
+            + "   \"id_token_encrypted_response_alg\": \"RSA1_5\","
+            + "   \"id_token_encrypted_response_enc\": \"A128CBC-HS256\","
             + "   \"userinfo_encrypted_response_alg\": \"RSA1_5\","
             + "   \"userinfo_encrypted_response_enc\": \"A128CBC-HS256\","
             + "   \"contacts\": [\"ve7jtb@example.org\", \"mary@example.org\"],"

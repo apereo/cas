@@ -1,5 +1,7 @@
 package org.apereo.cas.web.report;
 
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
@@ -27,17 +29,13 @@ import java.util.Collection;
 @Slf4j
 public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
     private final ServicesManager servicesManager;
+    private final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
-    /**
-     * Instantiates a new mvc endpoint.
-     * Endpoints are by default sensitive.
-     *
-     * @param casProperties   the cas properties
-     * @param servicesManager the services manager
-     */
-    public RegisteredServicesEndpoint(final CasConfigurationProperties casProperties, final ServicesManager servicesManager) {
+    public RegisteredServicesEndpoint(final CasConfigurationProperties casProperties, final ServicesManager servicesManager,
+        final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {
         super(casProperties);
         this.servicesManager = servicesManager;
+        this.webApplicationServiceFactory = webApplicationServiceFactory;
     }
 
     /**
@@ -61,7 +59,7 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
         if (NumberUtils.isDigits(id)) {
             return this.servicesManager.findServiceBy(Long.parseLong(id));
         }
-        return this.servicesManager.findServiceBy(id);
+        return this.servicesManager.findServiceBy(webApplicationServiceFactory.createService(id));
     }
 
     /**
@@ -78,7 +76,7 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
                 return this.servicesManager.delete(svc);
             }
         } else {
-            val svc = this.servicesManager.findServiceBy(id);
+            val svc = this.servicesManager.findServiceBy(webApplicationServiceFactory.createService(id));
             if (svc != null) {
                 return this.servicesManager.delete(svc);
             }

@@ -6,6 +6,7 @@ defaultTasks "clean", "build"
 buildscript {
     repositories {
         jcenter()
+        gradlePluginPortal()
         maven {
             url "https://maven.eveoh.nl/content/repositories/releases"
             mavenContent { releasesOnly() }
@@ -23,7 +24,7 @@ buildscript {
             mavenContent { releasesOnly() }
         }
         maven {
-            url "http://repo.spring.io/snapshot"
+            url "https://repo.spring.io/snapshot"
             mavenContent { snapshotsOnly() }
         }
     }
@@ -41,6 +42,8 @@ buildscript {
         classpath "org.owasp:dependency-check-gradle:$gradleDependencyCheckVersion"
         classpath "gradle.plugin.com.github.spotbugs.snom:spotbugs-gradle-plugin:$gradleSpotbugsVersion"
         classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:$gradleSonarqubeVersion"
+        classpath "com.github.jengelman.gradle.plugins:shadow:$gradleShadowVersion"
+        classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:$gradleNexusStagingVersion"
     }
 }
 
@@ -56,8 +59,6 @@ ext {
     skipBootifulArtifact = providers.systemProperty("skipBootifulArtifact").forUseAtConfigurationTime().present
     skipErrorProneCompiler = providers.systemProperty("skipErrorProneCompiler").forUseAtConfigurationTime().present
 
-    forceBom = Boolean.getBoolean("forceBom")
-
     enableRemoteDebugging = Boolean.getBoolean("enableRemoteDebugging")
     remoteDebuggingSuspend = Boolean.getBoolean("remoteDebuggingSuspend") ? "y" : "n"
     generateGitProperties = Boolean.getBoolean("generateGitProperties")
@@ -68,6 +69,8 @@ ext {
         '**/**ConfigurationMetadata**',
         '**/**NtlmAuthenticationHandler**',
         '**/**CosmosDbServiceRegistry**',
+        '**/**NimbusOAuthJacksonModule**',
+        '**/**DelegatedClientJacksonModuleTests**',
         '**/**Application**',
         '**/**Application$**',
         '**/**Exception$**',
@@ -78,6 +81,16 @@ ext {
 
 def isArtifactSigningRequired = {
     return publishReleases
+}
+
+apply plugin: "io.codearte.nexus-staging"
+nexusStaging {
+    username = "${sonatypeUsername}"
+    password = "${sonatypePassword}"
+    packageGroup = "org.apereo"
+    stagingProfileId = "11d1ddbbdeae9d"
+    numberOfRetries = 50
+    delayBetweenRetriesInMillis = 5000
 }
 
 apply from: rootProject.file("gradle/dependencies.gradle")
@@ -111,7 +124,7 @@ dependencyCheck {
     skipTestGroups = true
     skipConfigurations = ['jacocoAgent', 'jacocoAnt', 'optional', 'provided', 'providedCompile', 'providedRuntime',
                           'signatures', 'spotbugs', 'spotbugsPlugins', 'checkstyle', 'errorprone', 'errorproneJavac',
-                          'annotationProcessor', 'archives', 'compileOnly',
+                          'annotationProcessor', 'archives', 'compileOnlyApi ',
                           'tests', 'testRuntimeOnly', 'testRuntimeClasspath', 'testRuntime', 'testImplementation',
                           'testCompileOnly', 'testCompileClasspath', 'testCompile', 'testAnnotationProcessor',
                           'bootArchives', 'bootRunAnnotationProcessor']
@@ -165,6 +178,12 @@ allprojects {
     afterEvaluate { project ->
         jacoco {
             toolVersion = "$gradleJacocoVersion"
+        }
+    }
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(project.targetCompatibility)
         }
     }
 
@@ -255,9 +274,6 @@ subprojects {
         }
         maven {
             url "https://dl.bintray.com/apereocas/webauthn-cas/"
-            content {
-                includeGroupByRegex ".*java-webauthn-server.*"
-            }
             mavenContent { releasesOnly() }
         }
         maven {
@@ -286,6 +302,9 @@ subprojects {
         }
         maven {
             url "https://splunk.jfrog.io/splunk/ext-releases-local"
+            content {
+                includeGroupByRegex ".*splunk.*"
+            }
             mavenContent { releasesOnly() }
         }
         maven {
@@ -534,6 +553,7 @@ subprojects {
     checkLicense.finalizedBy outputDependenciesWithoutLicense
     
     dependencies {
+        
         implementation libraries.aspectj
         implementation libraries.validationapi
 
@@ -570,7 +590,7 @@ subprojects {
         }
         testImplementation libraries.tests
         testImplementation libraries.log4j
-        compileOnly libraries.spotbugsannotations
+        compileOnlyApi  libraries.spotbugsannotations
     }
 }
 
@@ -588,7 +608,7 @@ task aggregateJavadocsIntoJar(type: Jar, dependsOn: javadoc, description: "Aggre
 }
 
 task rootSourcesJar(type: Jar, description: "Build JAR for the root CAS module") {
-    baseName = "${project.archivesBaseName}"
+    archiveBaseName = "${project.archivesBaseName}"
     from rootProject.file("src")
 }
 

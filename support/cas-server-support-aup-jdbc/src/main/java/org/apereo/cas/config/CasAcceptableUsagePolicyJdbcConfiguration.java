@@ -7,8 +7,6 @@ import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -52,16 +50,6 @@ public class CasAcceptableUsagePolicyJdbcConfiguration {
     @RefreshScope
     @Bean
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository() {
-        val properties = casProperties.getAcceptableUsagePolicy();
-
-        if (StringUtils.isBlank(properties.getJdbc().getTableName())) {
-            throw new BeanCreationException("Database table for acceptable usage policy must be specified.");
-        }
-
-        if (StringUtils.isBlank(properties.getJdbc().getSqlUpdate())) {
-            throw new BeanCreationException("SQL to update acceptable usage policy must be specified.");
-        }
-
         return new JdbcAcceptableUsagePolicyRepository(ticketRegistrySupport.getObject(),
             casProperties.getAcceptableUsagePolicy(),
             acceptableUsagePolicyDataSource());

@@ -69,14 +69,6 @@ public interface ServicesManager extends Ordered {
     /**
      * Find a {@link RegisteredService} by matching with the supplied service.
      *
-     * @param serviceId the service to match with.
-     * @return the {@link RegisteredService} that matches the supplied service.
-     */
-    RegisteredService findServiceBy(String serviceId);
-    
-    /**
-     * Find a {@link RegisteredService} by matching with the supplied service.
-     *
      * @param service the service to match with.
      * @return the {@link RegisteredService} that matches the supplied service.
      */
@@ -99,17 +91,7 @@ public interface ServicesManager extends Ordered {
      * @return the t
      */
     <T extends RegisteredService> T findServiceBy(Service serviceId, Class<T> clazz);
-
-    /**
-     * Find service by type.
-     *
-     * @param <T>       the type parameter
-     * @param serviceId the service id
-     * @param clazz     the clazz
-     * @return the t
-     */
-    <T extends RegisteredService> T findServiceBy(String serviceId, Class<T> clazz);
-
+    
     /**
      * Find a {@link RegisteredService} by matching with the supplied id.
      *
@@ -133,14 +115,6 @@ public interface ServicesManager extends Ordered {
         }
         return null;
     }
-    
-    /**
-     * Find a {@link RegisteredService} by exact service id.
-     *
-     * @param serviceId the service
-     * @return the {@link RegisteredService} defention or null
-     */
-    RegisteredService findServiceByExactServiceId(String serviceId);
     
     /**
      * Find a {@link RegisteredService} by matching with the supplied name.

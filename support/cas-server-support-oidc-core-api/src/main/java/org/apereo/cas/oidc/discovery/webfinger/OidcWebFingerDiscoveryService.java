@@ -79,11 +79,6 @@ public class OidcWebFingerDiscoveryService {
                 return buildNotFoundResponseEntity("Unable to normalize provided resource");
             }
             val issuerUri = normalize(issuer);
-            if (issuerUri == null) {
-                LOGGER.error("Unable to parse and normalize issuer: [{}]", issuer);
-                return buildNotFoundResponseEntity("Unable to normalize issuer");
-            }
-
             if (!"acct".equals(resourceUri.getScheme())) {
                 LOGGER.error("Unable to accept resource scheme: [{}]", resourceUri.toUriString());
                 return buildNotFoundResponseEntity("Unable to recognize/accept resource scheme " + resourceUri.getScheme());

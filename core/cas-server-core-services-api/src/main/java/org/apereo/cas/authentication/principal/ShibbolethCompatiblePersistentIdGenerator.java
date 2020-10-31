@@ -20,7 +20,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * Generates PersistentIds based on the Shibboleth algorithm.
@@ -73,13 +72,11 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
     }
 
     @Override
-    public String generate(final Principal principal, final Service service) {
+    public String generate(final Principal principal, final String service) {
         val attributes = principal.getAttributes();
         LOGGER.debug("Found principal attributes [{}] to use when generating persistent identifiers", attributes);
-
         val principalId = determinePrincipalIdFromAttributes(principal.getId(), attributes);
-        return generate(principalId, Optional.ofNullable(service).map(Principal::getId).orElse(null));
-
+        return generate(principalId, service);
     }
 
     /**
@@ -102,7 +99,15 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
                 LOGGER.debug("Using principal id [{}] to generate persistent identifier", defaultId);
                 return defaultId;
             }
-        ).get();
+            ).get();
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+            .append("attribute", attribute)
+            .append("salt", StringUtils.abbreviate(salt, CONST_SALT_ABBREV_LENGTH))
+            .toString();
     }
 
     /**
@@ -134,13 +139,5 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
         md.update(principal.getBytes(StandardCharsets.UTF_8));
         md.update(CONST_SEPARATOR);
         return md;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-            .append("attribute", attribute)
-            .append("salt", StringUtils.abbreviate(salt, CONST_SALT_ABBREV_LENGTH))
-            .toString();
     }
 }

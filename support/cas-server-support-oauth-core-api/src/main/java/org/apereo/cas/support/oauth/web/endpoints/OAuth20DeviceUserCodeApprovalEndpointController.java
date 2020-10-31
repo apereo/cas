@@ -1,8 +1,11 @@
 package org.apereo.cas.support.oauth.web.endpoints;
 
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.device.OAuth20DeviceUserCode;
+import org.apereo.cas.util.LoggingUtils;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
@@ -21,6 +24,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
+@Slf4j
 public class OAuth20DeviceUserCodeApprovalEndpointController extends BaseOAuth20Controller {
     /**
      * User code parameter name.
@@ -39,7 +43,7 @@ public class OAuth20DeviceUserCodeApprovalEndpointController extends BaseOAuth20
      * @return the model and view
      */
     @GetMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.DEVICE_AUTHZ_URL)
-    public static ModelAndView handleGetRequest(final HttpServletRequest request, final HttpServletResponse response) {
+    public ModelAndView handleGetRequest(final HttpServletRequest request, final HttpServletResponse response) {
         val model = getApprovalModel(StringUtils.EMPTY);
         return new ModelAndView(OAuth20Constants.DEVICE_CODE_APPROVAL_VIEW, model);
     }
@@ -59,19 +63,18 @@ public class OAuth20DeviceUserCodeApprovalEndpointController extends BaseOAuth20
             return codeNotfound;
         }
         val codeId = getOAuthConfigurationContext().getDeviceUserCodeFactory().generateDeviceUserCode(userCode);
-        val deviceUserCode = getOAuthConfigurationContext().getTicketRegistry().getTicket(codeId, OAuth20DeviceUserCode.class);
-        if (deviceUserCode == null) {
+        try {
+            val deviceUserCode = getOAuthConfigurationContext().getCentralAuthenticationService().getTicket(codeId, OAuth20DeviceUserCode.class);
+            if (deviceUserCode.isUserCodeApproved()) {
+                return getModelAndViewForFailure("codeapproved");
+            }
+            deviceUserCode.approveUserCode();
+            getOAuthConfigurationContext().getTicketRegistry().updateTicket(deviceUserCode);
+            return new ModelAndView(OAuth20Constants.DEVICE_CODE_APPROVED_VIEW, HttpStatus.OK);
+        } catch (final InvalidTicketException e) {
+            LoggingUtils.warn(LOGGER, e);
             return codeNotfound;
         }
-        if (deviceUserCode.isExpired()) {
-            return getModelAndViewForFailure("codeexpired");
-        }
-        if (deviceUserCode.isUserCodeApproved()) {
-            return getModelAndViewForFailure("codeapproved");
-        }
-        deviceUserCode.approveUserCode();
-        getOAuthConfigurationContext().getTicketRegistry().updateTicket(deviceUserCode);
-        return new ModelAndView(OAuth20Constants.DEVICE_CODE_APPROVED_VIEW, HttpStatus.OK);
     }
 
     private static ModelAndView getModelAndViewForFailure(final String code) {

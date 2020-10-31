@@ -2,6 +2,7 @@ package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
@@ -63,6 +64,23 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractorTests extends Abst
         val extractor = new AccessTokenAuthorizationCodeGrantRequestExtractor(oauth20ConfigurationContext);
         val result = extractor.extract(request, response);
         assertNotNull(result);
+    }
+
+    @Test
+    public void verifyUnknownService() {
+        val request = new MockHttpServletRequest();
+        request.addParameter(OAuth20Constants.REDIRECT_URI, "unknown.org/abc");
+        request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
+        request.addParameter(OAuth20Constants.CLIENT_ID, "Unknown");
+
+        val service = getRegisteredService(REDIRECT_URI, CLIENT_ID, CLIENT_SECRET);
+        val principal = RegisteredServiceTestUtils.getPrincipal();
+        val code = addCode(principal, service);
+        request.addParameter(OAuth20Constants.CODE, code.getId());
+
+        val response = new MockHttpServletResponse();
+        val extractor = new AccessTokenAuthorizationCodeGrantRequestExtractor(oauth20ConfigurationContext);
+        assertThrows(UnauthorizedServiceException.class, () -> extractor.extract(request, response));
     }
 
 }

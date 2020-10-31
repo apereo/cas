@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
     BaseU2FWebflowActionTests.U2FTestConfiguration.class,
     BaseU2FWebflowActionTests.SharedTestConfiguration.class
 })
-@Tag("WebflowActions")
+@Tag("WebflowMfaActions")
 public class U2FAccountSaveRegistrationActionTests extends BaseU2FWebflowActionTests {
 
     @Test

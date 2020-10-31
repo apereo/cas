@@ -31,6 +31,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.core.Ordered;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,6 +84,7 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategyTests {
         val svc = RegisteredServiceTestUtils.getService("https://www.example.org?entityId=https://idp.example.org");
         val result = shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy.resolveServiceFrom(svc);
         assertEquals("https://idp.example.org", result.getId());
+        assertEquals(Ordered.HIGHEST_PRECEDENCE, shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy.getOrder());
     }
 
     @Test

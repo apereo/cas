@@ -24,7 +24,7 @@ import org.apereo.cas.config.CasSimpleMultifactorAuthenticationTicketCatalogConf
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.mfa.simple.web.flow.CasSimpleSendTokenActionTests.CasSimpleMultifactorTestConfiguration;
+import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorSendTokenActionTests.CasSimpleMultifactorTestConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustWebflowConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;

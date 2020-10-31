@@ -217,6 +217,7 @@ public class MonitorProperties implements Serializable {
 
         @Getter
         @Setter
+        @RequiresModule(name = "cas-server-core-monitor", automated = true)
         public static class JaasSecurity implements Serializable {
 
             private static final long serialVersionUID = -3024678577827371641L;
@@ -248,6 +249,7 @@ public class MonitorProperties implements Serializable {
 
         @Getter
         @Setter
+        @RequiresModule(name = "cas-server-core-monitor", automated = true)
         public static class LdapSecurity extends AbstractLdapAuthenticationProperties {
 
             private static final long serialVersionUID = -7333244539096172557L;
@@ -262,6 +264,7 @@ public class MonitorProperties implements Serializable {
 
         @Getter
         @Setter
+        @RequiresModule(name = "cas-server-core-monitor", automated = true)
         public static class JdbcSecurity extends AbstractJpaProperties {
 
             private static final long serialVersionUID = 2625666117528467867L;

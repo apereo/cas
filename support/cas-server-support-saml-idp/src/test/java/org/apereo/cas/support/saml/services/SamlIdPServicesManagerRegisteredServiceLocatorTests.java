@@ -50,7 +50,7 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
 
         val result = samlIdPServicesManagerRegisteredServiceLocator.locate(
             (List) candidateServices,
-            "https://sp.testshib.org/shibboleth-sp",
+            webApplicationServiceFactory.createService("https://sp.testshib.org/shibboleth-sp"),
             r -> r.matches("https://sp.testshib.org/shibboleth-sp"));
         assertNotNull(result);
     }
@@ -64,7 +64,8 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
         service2.setEvaluationOrder(10);
 
         servicesManager.save(service1, service2);
-        val result = servicesManager.findServiceBy("https://sp.testshib.org/shibboleth-sp");
+        val service = webApplicationServiceFactory.createService("https://sp.testshib.org/shibboleth-sp");
+        val result = servicesManager.findServiceBy(service);
         assertNotNull(result);
         assertTrue(result instanceof SamlRegisteredService);
     }

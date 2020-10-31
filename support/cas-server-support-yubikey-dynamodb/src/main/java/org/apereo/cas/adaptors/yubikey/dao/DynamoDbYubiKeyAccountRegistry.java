@@ -19,10 +19,10 @@ import java.util.stream.Collectors;
  * @since 6.3.0
  */
 public class DynamoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
-    private final YubiKeyDynamoDbFacilitator dynamoDbFacilitator;
+    private final DynamoDbYubiKeyFacilitator dynamoDbFacilitator;
 
     public DynamoDbYubiKeyAccountRegistry(final YubiKeyAccountValidator accountValidator,
-                                          final YubiKeyDynamoDbFacilitator dynamoDbFacilitator) {
+                                          final DynamoDbYubiKeyFacilitator dynamoDbFacilitator) {
         super(accountValidator);
         this.dynamoDbFacilitator = dynamoDbFacilitator;
     }

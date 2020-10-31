@@ -40,7 +40,8 @@ public class OAuth20DefaultDeviceUserCodeFactory implements OAuth20DeviceUserCod
     @Override
     public OAuth20DeviceUserCode createDeviceUserCode(final OAuth20DeviceToken deviceToken) {
         val userCode = generateDeviceUserCode(RandomUtils.randomAlphanumeric(userCodeLength));
-        val expirationPolicyToUse = OAuth20DeviceTokenUtils.determineExpirationPolicyForService(servicesManager, expirationPolicy, deviceToken.getService());
+        val expirationPolicyToUse = OAuth20DeviceTokenUtils.determineExpirationPolicyForService(servicesManager,
+            expirationPolicy, deviceToken.getService());
         val deviceUserCode = new OAuth20DefaultDeviceUserCode(userCode, deviceToken.getId(), expirationPolicyToUse);
         deviceToken.assignUserCode(deviceUserCode);
         return deviceUserCode;

@@ -1,5 +1,6 @@
 package org.apereo.cas.token;
 
+import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
@@ -173,7 +174,7 @@ public class JwtBuilder {
      * @return the registered service
      */
     protected RegisteredService locateRegisteredService(final String serviceAudience) {
-        return this.servicesManager.findServiceBy(serviceAudience);
+        return servicesManager.findServiceBy(new WebApplicationServiceFactory().createService(serviceAudience));
     }
 
     /**

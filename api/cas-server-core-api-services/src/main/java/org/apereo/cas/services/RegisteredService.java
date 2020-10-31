@@ -188,7 +188,7 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
      * An empty set indicates that there are no requirements on particular authentication handlers; any will suffice.
      *
      * @return Non -null set of required handler names.
-     * @deprecated Since 6.2
+     * @deprecated Since 6.2, replaced by {@link org.apereo.cas.services.RegisteredServiceAuthenticationPolicy#getRequiredAuthenticationHandlers()}.
      */
     @Deprecated(since = "6.2.0")
     Set<String> getRequiredHandlers();
@@ -349,6 +349,8 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
     default String getFriendlyName() {
         return this.getClass().getSimpleName();
     }
+    
+    
 
     /**
      * Initialize the registered service instance by defaulting fields to specific

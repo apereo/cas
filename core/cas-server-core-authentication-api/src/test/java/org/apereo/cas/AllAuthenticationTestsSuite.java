@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.CredentialCustomFieldsAttributeMetaDataPopu
 import org.apereo.cas.authentication.DefaultAuthenticationBuilderTests;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResultTests;
 import org.apereo.cas.authentication.DefaultAuthenticationResultBuilderTests;
+import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategyTests;
 import org.apereo.cas.authentication.DefaultPrincipalFactoryTests;
 import org.apereo.cas.authentication.GroovyAuthenticationPostProcessorTests;
 import org.apereo.cas.authentication.GroovyAuthenticationPreProcessorTests;
@@ -63,6 +64,7 @@ import org.junit.runner.RunWith;
     CredentialTests.class,
     DefaultAuthenticationHandlerExecutionResultTests.class,
     OneTimeTokenTests.class,
+    DefaultAuthenticationServiceSelectionStrategyTests.class,
     ProxyingPrincipalResolverTests.class,
     CredentialCustomFieldsAttributeMetaDataPopulatorTests.class,
     AuthenticationDateAttributeMetaDataPopulatorTests.class,

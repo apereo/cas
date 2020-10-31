@@ -124,7 +124,7 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledGroovySc
     @Override
     public void close() {
         if (watcherService != null) {
-            LOGGER.trace("Shutting down watcher service for [{}}", this.resource);
+            LOGGER.trace("Shutting down watcher service for [{}]", this.resource);
             this.watcherService.close();
         }
     }

@@ -3,9 +3,9 @@ package org.apereo.cas.webauthn.web;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
-import com.yubico.webauthn.core.RegistrationStorage;
+import com.yubico.core.RegistrationStorage;
+import com.yubico.data.CredentialRegistration;
 import com.yubico.webauthn.data.ByteArray;
-import com.yubico.webauthn.data.CredentialRegistration;
 import lombok.val;
 import org.springframework.boot.actuate.endpoint.annotation.DeleteOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;

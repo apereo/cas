@@ -56,6 +56,9 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
     @GetMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.AUTHORIZE_URL)
     public ModelAndView handleRequest(final HttpServletRequest request,
                                       final HttpServletResponse response) throws Exception {
+
+        ensureSessionReplicationIsAutoconfiguredIfNeedBe(request);
+
         val context = new JEEContext(request, response, getOAuthConfigurationContext().getSessionStore());
         val manager = new ProfileManager<CommonProfile>(context, context.getSessionStore());
 
@@ -83,6 +86,25 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
         }
 
         return redirectToCallbackRedirectUrl(manager, registeredService, context, clientId);
+    }
+
+    protected void ensureSessionReplicationIsAutoconfiguredIfNeedBe(final HttpServletRequest request) {
+        val casProperties = getOAuthConfigurationContext().getCasProperties();
+        val replicationRequested = casProperties.getAuthn().getOauth().isReplicateSessions();
+        val cookieAutoconfigured = casProperties.getSessionReplication().getCookie().isAutoConfigureCookiePath();
+        if (replicationRequested && cookieAutoconfigured) {
+            val contextPath = request.getContextPath();
+            val cookiePath = StringUtils.isNotBlank(contextPath) ? contextPath + '/' : "/";
+
+            val path = getOAuthConfigurationContext().getOauthDistributedSessionCookieGenerator().getCookiePath();
+            if (StringUtils.isBlank(path)) {
+                LOGGER.debug("Setting path for cookies for OAuth distributed session cookie generator to: [{}]", cookiePath);
+                getOAuthConfigurationContext().getOauthDistributedSessionCookieGenerator().setCookiePath(cookiePath);
+            } else {
+                LOGGER.trace("OAuth distributed cookie domain is [{}] with path [{}]",
+                        getOAuthConfigurationContext().getOauthDistributedSessionCookieGenerator().getCookieDomain(), path);
+            }
+        }
     }
 
     /**

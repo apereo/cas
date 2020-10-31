@@ -168,7 +168,8 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
 
     @Override
     public boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> principalAttributes) {
-        if ((this.rejectedAttributes == null || this.rejectedAttributes.isEmpty()) && (this.requiredAttributes == null || this.requiredAttributes.isEmpty())) {
+        if ((this.rejectedAttributes == null || this.rejectedAttributes.isEmpty())
+            && (this.requiredAttributes == null || this.requiredAttributes.isEmpty())) {
             LOGGER.trace("Skipping access strategy policy, since no attributes rules are defined");
             return true;
         }
@@ -181,7 +182,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
             return false;
         }
         if (!doRequiredAttributesAllowPrincipalAccess(principalAttributes, this.requiredAttributes)) {
-            LOGGER.debug("Access is denied. The principal does not have the required attributes [{}] specified by this strategy", this.requiredAttributes);
+            LOGGER.debug("Access is denied. The principal does not have the required attributes [{}]", this.requiredAttributes);
             return false;
         }
         return true;

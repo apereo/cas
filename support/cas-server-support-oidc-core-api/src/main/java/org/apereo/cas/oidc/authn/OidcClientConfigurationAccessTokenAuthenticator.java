@@ -27,7 +27,8 @@ public class OidcClientConfigurationAccessTokenAuthenticator extends OAuth20Acce
     }
 
     @Override
-    protected CommonProfile buildUserProfile(final TokenCredentials tokenCredentials, final WebContext webContext, final OAuth20AccessToken accessToken) {
+    protected CommonProfile buildUserProfile(final TokenCredentials tokenCredentials,
+        final WebContext webContext, final OAuth20AccessToken accessToken) {
         try {
             val profile = super.buildUserProfile(tokenCredentials, webContext, accessToken);
             LOGGER.trace("Examining access token [{}] for required scope [{}]", accessToken, OidcConstants.CLIENT_REGISTRATION_SCOPE);

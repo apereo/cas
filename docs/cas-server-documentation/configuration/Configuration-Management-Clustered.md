@@ -38,10 +38,10 @@ The transport mechanism for the bus to broadcast events is handled via one of th
 To enable additional logging, modify the logging configuration file to add the following:
 
 ```xml
-<AsyncLogger name="org.springframework.amqp" level="debug" additivity="false">
+<Logger name="org.springframework.amqp" level="debug" additivity="false">
     <AppenderRef ref="console"/>
     <AppenderRef ref="file"/>
-</AsyncLogger>
+</Logger>
 ```
 
 ## RabbitMQ

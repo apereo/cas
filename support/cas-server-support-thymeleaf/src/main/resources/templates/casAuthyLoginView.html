@@ -22,12 +22,25 @@
 
                 <div class="cas-field my-3 mdc-input-group">
                     <div class="mdc-input-group-field mdc-input-group-field-append">
-                        <div class="mdc-text-field  mdc-text-field--with-trailing-icon d-flex caps-check">
-                            <input class="mdc-text-field__input pwd" type="password" id="token" size="25" th:field="*{token}"
-                                autocomplete="off" th:accesskey="#{screen.welcome.label.password.accesskey}" required />
-                            <label for="username" class="mdc-floating-label"
-                                th:utext="#{screen.welcome.label.password}">Password</label>
-                            <i class="mdi mdi-alert mdc-text-field__icon text-danger caps-warn"></i>
+                        <div class="d-flex caps-check">
+                            <label for="token" class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">
+                                <input class="mdc-text-field__input pwd"
+                                       type="password"
+                                       name="token"
+                                       id="token"
+                                       th:field="*{token}"
+                                       size="25"
+                                       autocomplete="off" required />
+
+                                <span class="mdc-notched-outline">
+                                    <span class="mdc-notched-outline__leading"></span>
+                                    <span class="mdc-notched-outline__notch">
+                                      <span class="mdc-floating-label" th:utext="#{screen.welcome.label.password}">Token</span>
+                                    </span>
+                                    <span class="mdc-notched-outline__trailing"></span>
+                                </span>
+                            </label>
+
                         </div>
                     </div>
                     <button class="reveal-password mdc-button mdc-button--raised mdc-input-group-append mdc-icon-button"

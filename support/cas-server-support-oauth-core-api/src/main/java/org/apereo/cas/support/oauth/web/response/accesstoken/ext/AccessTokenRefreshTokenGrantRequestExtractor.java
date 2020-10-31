@@ -91,9 +91,11 @@ public class AccessTokenRefreshTokenGrantRequestExtractor extends AccessTokenAut
      * @return scopes
      */
     @Override
-    protected Set<String> extractRequestedScopesByToken(final Set<String> requestedScopes, final OAuth20Token token, final HttpServletRequest request) {
+    protected Set<String> extractRequestedScopesByToken(final Set<String> requestedScopes, final OAuth20Token token,
+        final HttpServletRequest request) {
         if (!requestedScopes.isEmpty() && !requestedScopes.equals(token.getScopes())) {
-            LOGGER.error("Requested scopes [{}} exceed the granted scopes [{}} for token [{}}", requestedScopes, token.getScopes(), token.getId());
+            LOGGER.error("Requested scopes [{}] exceed the granted scopes [{}] for token [{}]",
+                requestedScopes, token.getScopes(), token.getId());
             throw new OAuth20UnauthorizedScopeRequestException(token.getId());
         }
         return new TreeSet<>(token.getScopes());

@@ -308,6 +308,16 @@ if (hasTestsOfCategory(project, "WebflowActions")) {
     }
 }
 
+if (hasTestsOfCategory(project, "WebflowMfaActions")) {
+    task testWebflowMfaActions(type: Test) {
+        enabled = shouldTest(project, "WebflowMfaActions")
+        //finalizedBy jacocoTestReport
+        useJUnitPlatform {
+            includeTags "WebflowMfaActions"
+        }
+    }
+}
+
 if (hasTestsOfCategory(project, "CosmosDb")) {
     task testCosmosDb(type: Test) {
         enabled = shouldTest(project, "CosmosDb")
@@ -615,6 +625,9 @@ tasks.withType(Test) {
         if (maxParallelForks != 2) {
             logger.info "Maximum number of parallel forks is set to ${maxParallelForks}"
         }
+    }
+    if (System.getenv().containsKey("CI")) {
+        outputs.upToDateWhen { false }
     }
     systemProperty("spring.main.banner-mode", "off")
 //    systemProperty("spring.main.lazy-initialization", "true")

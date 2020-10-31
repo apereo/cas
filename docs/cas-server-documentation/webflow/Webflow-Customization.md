@@ -90,9 +90,9 @@ To see the relevant list of CAS properties, please [review this guide](../config
 To enable additional logging, modify the logging configuration file to add the following:
 
 ```xml
-<AsyncLogger name="org.springframework.webflow" level="debug" additivity="false">
+<Logger name="org.springframework.webflow" level="debug" additivity="false">
     <AppenderRef ref="casConsole"/>
     <AppenderRef ref="casFile"/>
-</AsyncLogger>
+</Logger>
 ```
 

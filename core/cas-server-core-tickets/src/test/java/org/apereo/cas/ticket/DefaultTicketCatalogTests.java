@@ -29,6 +29,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link DefaultTicketCatalogTests}.
@@ -67,6 +68,14 @@ public class DefaultTicketCatalogTests {
         val tickets = ticketCatalog.findAll();
         assertFalse(tickets.isEmpty());
         assertEquals(5, tickets.size());
+    }
+
+    @Test
+    public void verifyUpdateAndFind() {
+        val defn = mock(TicketDefinition.class);
+        when(defn.getPrefix()).thenReturn("MOCK");
+        ticketCatalog.update(defn);
+        assertTrue(ticketCatalog.contains(defn.getPrefix()));
     }
 
     @Test

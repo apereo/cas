@@ -4,6 +4,7 @@ import org.apereo.cas.util.RandomUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.io.FileUtils;
 import org.springframework.expression.ParserContext;
 import org.springframework.expression.common.TemplateParserContext;
 import org.springframework.expression.spel.SpelCompilerMode;
@@ -51,7 +52,8 @@ public class SpringExpressionLanguageValueResolver implements Function {
         EVALUATION_CONTEXT.setVariable("randomString4", RandomUtils.randomAlphabetic(4));
         EVALUATION_CONTEXT.setVariable("randomString6", RandomUtils.randomAlphabetic(6));
         EVALUATION_CONTEXT.setVariable("randomString8", RandomUtils.randomAlphabetic(8));
-
+        
+        EVALUATION_CONTEXT.setVariable("tempDir", FileUtils.getTempDirectoryPath());
         EVALUATION_CONTEXT.setVariable("uuid", UUID.randomUUID().toString());
     }
 

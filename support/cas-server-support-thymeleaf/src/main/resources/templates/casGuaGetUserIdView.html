@@ -17,10 +17,25 @@
                     <input type="hidden" name="_eventId_submit" value="LOGIN" />
                     <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
                     <div class="cas-field my-3">
-                        <div class="mdc-text-field  w-100">
-                            <input class="mdc-text-field__input" id="username" name="username" size="25"
-                                th:accesskey="#{screen.welcome.label.netid.accesskey}" autocomplete="off" required />
-                            <label for="username" class="mdc-floating-label" th:utext="#{screen.welcome.label.netid}">Username</label>
+                        <div class="w-100">
+
+                            <label for="username" class="mdc-text-field mdc-text-field--outlined">
+                                <input class="mdc-text-field__input"
+                                       name="username"
+                                       id="username"
+                                       size="25"
+                                       th:accesskey="#{screen.welcome.label.netid.accesskey}"
+                                       autocomplete="off" required />
+
+                                <span class="mdc-notched-outline">
+                                    <span class="mdc-notched-outline__leading"></span>
+                                    <span class="mdc-notched-outline__notch">
+                                      <span class="mdc-floating-label" th:utext="#{screen.welcome.label.netid}">Username</span>
+                                    </span>
+                                    <span class="mdc-notched-outline__trailing"></span>
+                                </span>
+                            </label>
+
                         </div>
                     </div>
                     <button class="mdc-button mdc-button--raised" accesskey="l" type="submit">

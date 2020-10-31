@@ -16,21 +16,50 @@
             <p th:text="#{cas.mfa.registerdevice.label.intro}">Please name the current device.</p>
 
             <form method="post" id="registerform" th:object="${mfaTrustRecord}" th:action="@{/login}">
-                <div
-                    class="mdc-text-field mdc-text-field--with-trailing-icon d-flex caps-check">
-                    <input class="mdc-text-field__input pwd" type="text" id="deviceName" name="deviceName" size="25"
-                        autocomplete="off" th:field="*{deviceName}" />
-                    <label for="deviceName" class="mdc-floating-label" th:utext="#{cas.mfa.registerdevice.label.name}">Name</label>
+                <div class="d-flex caps-check">
+                    <label for="deviceName"
+                           class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">
+
+                        <input class="mdc-text-field__input pwd"
+                               type="password"
+                               name="deviceName"
+                               id="deviceName"
+                               th:field="*{deviceName}"
+                               size="25"
+                               autocomplete="off" />
+
+                        <span class="mdc-notched-outline">
+                            <span class="mdc-notched-outline__leading"></span>
+                            <span class="mdc-notched-outline__notch">
+                              <span class="mdc-floating-label" th:utext="#{cas.mfa.registerdevice.label.name}">Name</span>
+                            </span>
+                            <span class="mdc-notched-outline__trailing"></span>
+                        </span>
+                    </label>
                     <script>document.getElementById("deviceName").value = randomWord();</script>
                 </div>
 
                 <div><p>How long should we remember this device?</p></div>
                 <div class="d-flex mt-2">
-                    <div class="mdc-text-field  mr-2">
-                        <input class="mdc-text-field__input" name="expiration" id="expiration"
-                               type="number" th:field="*{expiration}">
-                        <label for="expiration" class="mdc-floating-label">Expiration</label>
+                    <div class="mr-2">
+                        <label for="expiration" class="mdc-text-field mdc-text-field--outlined">
+                            <input class="mdc-text-field__input"
+                                   type="number"
+                                   name="expiration"
+                                   id="expiration"
+                                   th:field="*{expiration}"
+                                   autocomplete="off" required />
+
+                            <span class="mdc-notched-outline">
+                                    <span class="mdc-notched-outline__leading"></span>
+                                    <span class="mdc-notched-outline__notch">
+                                      <span class="mdc-floating-label">Expiration</span>
+                                    </span>
+                                    <span class="mdc-notched-outline__trailing"></span>
+                                </span>
+                        </label>
                     </div>
+                    
                     <select name="timeUnit" id="timeUnit" class="custom-select" th:field="*{timeUnit}"
                             onchange="let hide = this.value!=='FOREVER'; $('#expiration').toggle(hide)">
                         <option value="SECONDS">Seconds</option>

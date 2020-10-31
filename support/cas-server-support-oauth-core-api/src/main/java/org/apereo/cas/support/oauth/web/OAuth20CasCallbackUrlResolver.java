@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.message.BasicNameValuePair;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.http.url.UrlResolver;
 
@@ -24,22 +25,13 @@ import java.util.Optional;
 public class OAuth20CasCallbackUrlResolver implements UrlResolver {
     private final String callbackUrl;
 
-    @SneakyThrows
-    private static Optional<NameValuePair> getQueryParameter(final WebContext context, final String name) {
-        val builderContext = new URIBuilder(context.getFullRequestURL());
-        return builderContext.getQueryParams()
-            .stream()
-            .filter(p -> p.getName().equalsIgnoreCase(name))
-            .findFirst();
-    }
-
     @Override
     @SneakyThrows
     public String compute(final String url, final WebContext context) {
         if (!url.startsWith(callbackUrl)) {
             return url;
         }
-        
+
         val builder = new URIBuilder(url);
 
         addUrlParameter(context, builder, OAuth20Constants.CLIENT_ID);
@@ -57,8 +49,22 @@ public class OAuth20CasCallbackUrlResolver implements UrlResolver {
         return callbackResolved;
     }
 
+    @SneakyThrows
+    private static Optional<NameValuePair> getQueryParameter(final WebContext context, final String name) {
+        val builderContext = new URIBuilder(context.getFullRequestURL());
+        val result = builderContext.getQueryParams()
+            .stream()
+            .filter(p -> p.getName().equalsIgnoreCase(name))
+            .findFirst();
+        if (result.isEmpty()) {
+            val value = context.getRequestParameter(name);
+            return value.map(v -> new BasicNameValuePair(name, v));
+        }
+        return result;
+    }
+
     private static void addUrlParameter(final WebContext context, final URIBuilder builder, final String parameterName) {
-        var parameter = getQueryParameter(context, parameterName);
+        val parameter = getQueryParameter(context, parameterName);
         parameter.ifPresent(basicNameValuePair ->
             builder.addParameter(basicNameValuePair.getName(), basicNameValuePair.getValue()));
     }

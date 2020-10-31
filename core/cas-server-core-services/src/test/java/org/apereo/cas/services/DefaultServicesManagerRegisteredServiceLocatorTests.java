@@ -1,8 +1,11 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -28,6 +31,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     CasCoreNotificationsConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreServicesConfiguration.class
 })
@@ -35,6 +39,10 @@ public class DefaultServicesManagerRegisteredServiceLocatorTests {
     @Autowired
     @Qualifier("defaultServicesManagerRegisteredServiceLocator")
     private ServicesManagerRegisteredServiceLocator defaultServicesManagerRegisteredServiceLocator;
+
+    @Autowired
+    @Qualifier("webApplicationServiceFactory")
+    private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
     @Test
     public void verifyDefaultOperation() {
@@ -51,7 +59,7 @@ public class DefaultServicesManagerRegisteredServiceLocatorTests {
         assertEquals(Ordered.LOWEST_PRECEDENCE, defaultServicesManagerRegisteredServiceLocator.getOrder());
         val service = RegisteredServiceTestUtils.getRegisteredService("https://example.org.+");
         val result = defaultServicesManagerRegisteredServiceLocator.locate(List.of(service),
-            "https://example.org/test",
+            webApplicationServiceFactory.createService("https://example.org/test"),
             r -> r.matches("https://example.org/test"));
         assertNotNull(result);
     }

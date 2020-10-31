@@ -16,6 +16,7 @@ be considered to achieve suitable security.
 
 ## Announcements
 
+- [Oct 14 2020 Vulnerability Disclosure](https://apereo.github.io/2020/10/14/gauthvuln/)
 - [July 24 2020 Vulnerability Disclosure](https://apereo.github.io/2020/07/24/credvuln/)
 - [Feb 8 2020 Vulnerability Disclosure](https://apereo.github.io/2020/02/08/webflowcrypto/)
 - [Dec 20 2019 Vulnerability Disclosure](https://apereo.github.io/2019/12/20/surrogatevuln/)

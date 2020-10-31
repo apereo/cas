@@ -146,6 +146,12 @@ public class WebAuthnMultifactorProperties extends BaseMultifactorProviderProper
     private WebAuthnRedisMultifactorProperties redis = new WebAuthnRedisMultifactorProperties();
 
     /**
+     * Store device registration records inside a dynamodb resource.
+     */
+    @NestedConfigurationProperty
+    private WebAuthnDynamoDbMultifactorProperties dynamoDb = new WebAuthnDynamoDbMultifactorProperties();
+
+    /**
      * Store device registration records inside a JDBC resource.
      */
     @NestedConfigurationProperty

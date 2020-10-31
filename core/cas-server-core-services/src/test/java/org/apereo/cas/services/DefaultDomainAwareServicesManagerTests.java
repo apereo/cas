@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
 
 import java.util.HashSet;
-import java.util.stream.Collectors;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 @NoArgsConstructor
 @Tag("RegisteredService")
 public class DefaultDomainAwareServicesManagerTests extends AbstractServicesManagerTests<DefaultDomainAwareServicesManager> {
-    private DefaultDomainAwareServicesManager defaultDomainAwareServicesManager;
+    private DefaultDomainAwareServicesManager domainAwareServicesManager;
 
     @Test
     public void verifyOperation() {
@@ -34,19 +34,28 @@ public class DefaultDomainAwareServicesManagerTests extends AbstractServicesMana
 
     @Test
     public void verifyDeleteEmptyDomains() {
+        servicesManager.deleteAll();
+        
         var r = new RegexRegisteredService();
         r.setId(10);
         r.setName("domainService1");
         r.setServiceId("https://www.example.com/one");
-        this.servicesManager.save(r);
+        servicesManager.save(r);
+
+        assertTrue(domainAwareServicesManager.getServicesForDomain("nothing.com").isEmpty());
+        assertFalse(domainAwareServicesManager.getServicesForDomain("www.example.com").isEmpty());
 
         r = new RegexRegisteredService();
         r.setId(20);
         r.setName("domainService2");
         r.setServiceId("https://www.example.com/two");
         servicesManager.save(r);
+
+        assertNull(domainAwareServicesManager.findServiceBy(serviceFactory.createService("https://whatever.com")));
+        assertNotNull(domainAwareServicesManager.findServiceBy(serviceFactory.createService("https://www.example.com/one")));
+        
         servicesManager.deleteAll();
-        assertTrue(this.defaultDomainAwareServicesManager.getDomains().collect(Collectors.toList()).isEmpty());
+        assertTrue(domainAwareServicesManager.getDomains().count() == 0);
     }
 
     @Override
@@ -59,8 +68,9 @@ public class DefaultDomainAwareServicesManagerTests extends AbstractServicesMana
             .applicationContext(applicationContext)
             .environments(new HashSet<>(0))
             .servicesCache(Caffeine.newBuilder().build())
+            .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))
             .build();
-        defaultDomainAwareServicesManager = new DefaultDomainAwareServicesManager(context, new DefaultRegisteredServiceDomainExtractor());
-        return defaultDomainAwareServicesManager;
+        domainAwareServicesManager = new DefaultDomainAwareServicesManager(context, new DefaultRegisteredServiceDomainExtractor());
+        return domainAwareServicesManager;
     }
 }

@@ -106,10 +106,8 @@ public class CasOAuth20ThrottleConfiguration {
         @Override
         public void addInterceptors(final InterceptorRegistry registry) {
             Objects.requireNonNull(authenticationThrottlingExecutionPlan.getObject()).getAuthenticationThrottleInterceptors()
-                .forEach(handler -> {
-                    registry.addInterceptor(handler)
-                        .addPathPatterns(BASE_OAUTH20_URL.concat("/*"));
-                });
+                .forEach(handler -> registry.addInterceptor(handler)
+                    .addPathPatterns(BASE_OAUTH20_URL.concat("/*")));
         }
     }
 

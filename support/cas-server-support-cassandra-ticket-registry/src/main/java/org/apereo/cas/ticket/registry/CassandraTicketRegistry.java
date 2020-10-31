@@ -138,7 +138,7 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
 
     @Override
     public long deleteAll() {
-        this.ticketCatalog.findAll()
+        ticketCatalog.findAll()
             .forEach(definition -> {
                 val delete = QueryBuilder
                     .truncate(this.properties.getKeyspace(), definition.getProperties().getStorageName())

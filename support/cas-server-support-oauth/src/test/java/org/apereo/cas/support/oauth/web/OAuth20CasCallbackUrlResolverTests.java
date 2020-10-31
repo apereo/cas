@@ -1,6 +1,9 @@
 package org.apereo.cas.support.oauth.web;
 
 import org.apereo.cas.AbstractOAuth20Tests;
+import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -30,7 +33,10 @@ public class OAuth20CasCallbackUrlResolverTests extends AbstractOAuth20Tests {
     public void verifyOperation() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
-        val output = casCallbackUrlResolver.compute(casProperties.getServer().getPrefix(),
+        request.addParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        request.addParameter(OAuth20Constants.RESPONSE_MODE, OAuth20ResponseModeTypes.FORM_POST.getType());
+        val output = casCallbackUrlResolver.compute(
+            OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()),
             new JEEContext(request, response));
         assertNotNull(output);
     }

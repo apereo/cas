@@ -63,7 +63,7 @@ public class JdbcPasswordHistoryService extends BasePasswordHistoryService {
 
     @Override
     public void remove(final String username) {
-        this.entityManager.createQuery("DELETE FROM PasswordHistoryEntity p WHERE p.username = :username")
+        this.entityManager.createQuery("DELETE FROM JdbcPasswordHistoryEntity p WHERE p.username = :username")
             .setParameter("username", username)
             .executeUpdate();
     }

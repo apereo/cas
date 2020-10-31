@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.consent.ConsentableAttributeBuilder;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
@@ -12,6 +13,9 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -29,11 +33,28 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("WebflowActions")
+@Import(CheckConsentRequiredActionTests.ConsentTestConfiguration.class)
 public class CheckConsentRequiredActionTests extends BaseConsentActionTests {
 
     @BeforeEach
     public void beforeEach() {
         servicesManager.deleteAll();
+    }
+
+    @Test
+    public void verifyNoConsentWithoutServiceOrAuthn() throws Exception {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+
+        assertNull(checkConsentRequiredAction.execute(context));
+
+        val id = UUID.randomUUID().toString();
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService(id);
+        servicesManager.save(registeredService);
+        WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService(registeredService.getServiceId()));
+
+        assertNull(checkConsentRequiredAction.execute(context));
     }
 
     @Test
@@ -92,6 +113,14 @@ public class CheckConsentRequiredActionTests extends BaseConsentActionTests {
         registeredService.setAttributeReleasePolicy(attrPolicy);
         servicesManager.save(registeredService);
         return registeredService;
+    }
+
+    @TestConfiguration
+    static class ConsentTestConfiguration {
+        @Bean
+        public ConsentableAttributeBuilder testConsentableAttributeBuilder() {
+            return attribute -> attribute;
+        }
     }
 }
 

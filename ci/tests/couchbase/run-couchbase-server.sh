@@ -4,7 +4,7 @@
 
 echo "Running Couchbase docker image..."
 docker stop couchbase || true && docker rm couchbase || true
-docker run -d --name couchbase -p 8091-8094:8091-8094 -p 11210:11210 couchbase/server:6.5.0
+docker run -d --name couchbase -p 8091-8094:8091-8094 -p 11210:11210 couchbase/server:6.6.0
 echo "Waiting for Couchbase server to come online..."
 sleep 20
 until $(curl --output /dev/null --silent --head --fail http://localhost:8091); do
@@ -49,8 +49,20 @@ curl -u 'admin:password' -X PUT --data "roles=bucket_full_access[testbucket]&pas
              -H "Content-Type: application/x-www-form-urlencoded" \
              http://localhost:8091/settings/rbac/users/local/testbucket
 
-curl -u 'admin:password' -d name=casbucket -d bucketType=couchbase -d 'ramQuotaMB=120' -d authType='none' http://localhost:8091/pools/default/buckets
+curl -u 'admin:password' -d 'name=pplbucket' -d 'bucketType=couchbase' -d 'ramQuotaMB=220' -d 'authType=sasl' -d \
+'saslPassword=password' http://localhost:8091/pools/default/buckets
 
+curl -u 'admin:password' -X PUT --data "roles=bucket_full_access[pplbucket]&password=password" \
+       -H "Content-Type: application/x-www-form-urlencoded" \
+       http://localhost:8091/settings/rbac/users/local/pplbucket
+
+curl -u 'admin:password' -d 'name=casbucket' -d 'bucketType=couchbase' -d 'ramQuotaMB=120' -d authType='none' \
+http://localhost:8091/pools/default/buckets
+
+curl -u 'admin:password' -X PUT --data "roles=bucket_full_access[casbucket]&password=password" \
+       -H "Content-Type: application/x-www-form-urlencoded" \
+       http://localhost:8091/settings/rbac/users/local/casbucket
+       
 echo -e "\n*************************************************************"
 echo -e "Loading Couchbase buckets..."
 echo -e "*************************************************************"
@@ -59,28 +71,39 @@ curl -u 'admin:password' http://localhost:8091/pools/default/buckets
 echo -e "\n*************************************************************"
 echo -e "Creating index settings..."
 echo -e "*************************************************************"
-curl  -u 'admin:password' 'http://localhost:8091/settings/indexes' -d 'indexerThreads=0' -d 'logLevel=info' -d \
+curl -u 'admin:password' 'http://localhost:8091/settings/indexes' -d 'indexerThreads=0' -d 'logLevel=info' -d \
 'maxRollbackPoints=5' -d 'memorySnapshotInterval=200' -d 'stableSnapshotInterval=5000' -d 'storageMode=memory_optimized'
-sleep 2
+sleep 10
 echo -e "\n*************************************************************"
 echo -e "Creating index..."
 echo -e "*************************************************************"
-curl -u 'admin:password'  http://localhost:8093/query/service -d 'statement=CREATE INDEX accounts_idx ON testbucket(username)' \
+curl -u 'admin:password' http://localhost:8093/query/service -d 'statement=CREATE INDEX accounts_idx ON testbucket(username)' \
 -d 'namespace=default'
-sleep 2
+curl -u 'admin:password' http://localhost:8093/query/service -d 'statement=CREATE INDEX accounts_idx ON pplbucket(username)' \
+-d 'namespace=default'
+sleep 5
 echo -e "\n*************************************************************"
 echo -e "Creating primary index..."
 echo -e "*************************************************************"
 curl -u 'admin:password'  http://localhost:8093/query/service -d \
 'statement=CREATE PRIMARY INDEX `primary-idx` ON `testbucket` USING GSI;' \
 -d 'namespace=default'
-sleep 2
+curl -u 'admin:password'  http://localhost:8093/query/service -d \
+'statement=CREATE PRIMARY INDEX `primary-idx` ON `pplbucket` USING GSI;' \
+-d 'namespace=default'
+curl -u 'admin:password'  http://localhost:8093/query/service -d \
+'statement=CREATE PRIMARY INDEX `primary-idx` ON `casbucket` USING GSI;' \
+-d 'namespace=default'
+sleep 5
 
 echo -e "\n*************************************************************"
 echo -e "Creating document/accounts..."
 echo -e "*************************************************************"
 curl -u 'admin:password'  http://localhost:8093/query/service \
--d 'statement=INSERT INTO `testbucket` (KEY,VALUE) VALUES("accounts", {"username": "casuser", "psw": "Mellon", "firstname": "CAS", "lastname":"User"})'
+-d 'statement=INSERT INTO `pplbucket` (KEY,VALUE) VALUES("accounts", {"username": "casuser", "psw": "Mellon", "firstname": "CAS", "lastname":"User"})'
+
+curl -u 'admin:password'  http://localhost:8093/query/service \
+-d 'statement=INSERT INTO `pplbucket` (KEY,VALUE) VALUES("bad-accounts", {"username": "nopsw", "firstname": "hello", "lastname":"world"})'
 
 docker ps | grep "couchbase"
 retVal=$?

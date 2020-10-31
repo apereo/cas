@@ -22,6 +22,23 @@ import static org.junit.jupiter.api.Assertions.*;
 public class WebApplicationServiceFactoryTests {
 
     @Test
+    public void verifyServiceAttributes() {
+        val request = new MockHttpServletRequest();
+        request.addParameter("p1", "v1");
+        request.addParameter("p2", "v2");
+        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, "https://example.org?p3=v3&p4=v4");
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, new MockHttpServletResponse()));
+        val factory = new WebApplicationServiceFactory();
+        val service = factory.createService(request);
+        assertNotNull(service);
+        assertEquals(4, service.getAttributes().size());
+        assertTrue(service.getAttributes().containsKey("p1"));
+        assertTrue(service.getAttributes().containsKey("p2"));
+        assertTrue(service.getAttributes().containsKey("p3"));
+        assertTrue(service.getAttributes().containsKey("p4"));
+    }
+
+    @Test
     public void verifyServiceCreationSuccessfullyById() {
         val request = new MockHttpServletRequest();
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, new MockHttpServletResponse()));

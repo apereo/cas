@@ -21,10 +21,6 @@ public abstract class AbstractTicketException extends RootCasException {
         super(code);
     }
 
-    protected AbstractTicketException(final String code, final String msg) {
-        super(code, msg);
-    }
-
     protected AbstractTicketException(final String code, final String msg, final List<Object> args) {
         super(code, msg, args);
     }

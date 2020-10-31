@@ -110,7 +110,7 @@ public class MultifactorAuthenticationUtils {
                         events.add(event);
                     }
                 } catch (final Exception e) {
-                    LOGGER.debug("Ignoring [{}] since no matching transition could be found for provider [{}}", value, id);
+                    LOGGER.debug("Ignoring [{}] since no matching transition could be found for provider [{}]", value, id);
                 }
             });
             return events;

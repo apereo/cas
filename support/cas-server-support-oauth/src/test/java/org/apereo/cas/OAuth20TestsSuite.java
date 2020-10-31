@@ -16,10 +16,14 @@ import org.apereo.cas.support.oauth.util.OAuth20UtilsTests;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests;
 import org.apereo.cas.support.oauth.validator.token.OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests;
 import org.apereo.cas.support.oauth.validator.token.OAuth20ClientCredentialsGrantTypeTokenRequestValidatorTests;
+import org.apereo.cas.support.oauth.validator.token.OAuth20DeviceCodeResponseTypeRequestValidatorTests;
 import org.apereo.cas.support.oauth.validator.token.OAuth20PasswordGrantTypeTokenRequestValidatorTests;
 import org.apereo.cas.support.oauth.validator.token.OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests;
 import org.apereo.cas.support.oauth.validator.token.OAuth20RevocationRequestValidatorTests;
+import org.apereo.cas.support.oauth.validator.token.device.InvalidOAuth20DeviceTokenExceptionTests;
+import org.apereo.cas.support.oauth.validator.token.device.UnapprovedOAuth20DeviceUserCodeExceptionTests;
 import org.apereo.cas.support.oauth.web.OAuth20CasCallbackUrlResolverTests;
+import org.apereo.cas.support.oauth.web.OAuth20HandlerInterceptorAdapterTests;
 import org.apereo.cas.support.oauth.web.OAuth20RefreshTokenTests;
 import org.apereo.cas.support.oauth.web.audit.OAuth20AccessTokenGrantRequestAuditResourceResolverTests;
 import org.apereo.cas.support.oauth.web.audit.OAuth20AccessTokenResponseAuditResourceResolverTests;
@@ -28,15 +32,19 @@ import org.apereo.cas.support.oauth.web.audit.OAuth20UserProfileDataAuditResourc
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointControllerTests;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AuthorizeEndpointControllerTests;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20CallbackAuthorizeEndpointControllerTests;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20DeviceUserCodeApprovalEndpointControllerTests;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20IntrospectionEndpointControllerTests;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20RevocationEndpointControllerTests;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20UserProfileEndpointControllerTests;
 import org.apereo.cas.support.oauth.web.mgmt.OAuth20TokenManagementEndpointTests;
+import org.apereo.cas.support.oauth.web.response.OAuth20DefaultCasClientRedirectActionBuilderTests;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20AccessTokenAtHashGeneratorTests;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20DefaultAccessTokenResponseGeneratorTests;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20DefaultTokenGeneratorTests;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20JwtAccessTokenEncoderTests;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenAuthorizationCodeGrantRequestExtractorTests;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenPasswordGrantRequestExtractorTests;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtractorTests;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenCipherExecutorTests;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationCodeAuthorizationResponseBuilderTests;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResourceOwnerCredentialsResponseBuilderTests;
@@ -105,8 +113,16 @@ import org.junit.runner.RunWith;
     OAuth20DefaultAccessTokenResponseGeneratorTests.class,
     OAuth20CasCallbackUrlResolverTests.class,
     OAuth20RefreshTokenTests.class,
+    OAuth20DeviceUserCodeApprovalEndpointControllerTests.class,
+    AccessTokenPasswordGrantRequestExtractorTests.class,
+    AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtractorTests.class,
+    OAuth20DefaultCasClientRedirectActionBuilderTests.class,
+    OAuth20DeviceCodeResponseTypeRequestValidatorTests.class,
+    OAuth20HandlerInterceptorAdapterTests.class,
     AccessTokenAuthorizationCodeGrantRequestExtractorTests.class,
     OAuth20DeviceTokenUtilsTests.class,
+    UnapprovedOAuth20DeviceUserCodeExceptionTests.class,
+    InvalidOAuth20DeviceTokenExceptionTests.class,
     DefaultOAuth20UserProfileDataCreatorTests.class,
     CasServerApiBasedTicketValidatorTests.class,
     DefaultOAuth20ProfileScopeToAttributesFilterTests.class,

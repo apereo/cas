@@ -46,15 +46,13 @@ SPNEGO support is enabled by including the following dependency in the WAR overl
 
 You may also need to declare the following repository in your CAS overlay to be able to resolve dependencies:
 
-```xml
-<repositories>
-    ...
-    <repository>
-        <id>uniconiam</id>
-        <url>https://dl.bintray.com/uniconiam/maven</url>
-    </repository>
-    ...
-</repositories>
+```groovy
+repositories {
+    maven { 
+        mavenContent { releasesOnly() }
+        url "https://dl.bintray.com/uniconiam/maven" 
+    }
+}
 ```
 
 ## Configuration
@@ -217,10 +215,10 @@ To enable additional logging, configure the log4j configuration file to add the 
 
 ```xml
 ...
-<AsyncLogger name="jcifs.spnego" level="debug" additivity="false">
+<Logger name="jcifs.spnego" level="debug" additivity="false">
     <AppenderRef ref="console"/>
     <AppenderRef ref="file"/>
-</AsyncLogger>
+</Logger>
 ...
 ```
 

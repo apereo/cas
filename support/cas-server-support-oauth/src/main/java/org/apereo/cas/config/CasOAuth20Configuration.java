@@ -10,7 +10,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.integration.pac4j.DistributedJEESessionStore;
+import org.apereo.cas.pac4j.DistributedJEESessionStore;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20ClientIdAwareProfileManager;
@@ -197,6 +197,10 @@ public class CasOAuth20Configuration {
     @Qualifier("ticketGrantingTicketCookieGenerator")
     private ObjectProvider<CasCookieBuilder> ticketGrantingTicketCookieGenerator;
 
+    @Autowired
+    @Qualifier("oauthDistributedSessionCookieGenerator")
+    private ObjectProvider<CasCookieBuilder> oauthDistributedSessionCookieGenerator;
+
     @ConditionalOnMissingBean(name = "accessTokenResponseGenerator")
     @Bean
     @RefreshScope
@@ -253,7 +257,8 @@ public class CasOAuth20Configuration {
         val server = casProperties.getServer();
 
         val cfg = new CasConfiguration(server.getLoginUrl());
-        cfg.setDefaultTicketValidator(new CasServerApiBasedTicketValidator(centralAuthenticationService.getObject()));
+        val validator = new CasServerApiBasedTicketValidator(centralAuthenticationService.getObject(), webApplicationServiceFactory.getObject());
+        cfg.setDefaultTicketValidator(validator);
 
         val oauthCasClient = new CasClient(cfg);
         oauthCasClient.setRedirectionActionBuilder(webContext ->
@@ -811,15 +816,20 @@ public class CasOAuth20Configuration {
         return CipherExecutor.noOp();
     }
 
+    @ConditionalOnMissingBean(name = "oauthDistributedSessionCookieGenerator")
+    @Bean
+    public CasCookieBuilder oauthDistributedSessionCookieGenerator() {
+        val cookie = casProperties.getSessionReplication().getCookie();
+        return CookieUtils.buildCookieRetrievingGenerator(cookie);
+    }
+
     @ConditionalOnMissingBean(name = "oauthDistributedSessionStore")
     @Bean
     public SessionStore<JEEContext> oauthDistributedSessionStore() {
         val replicate = casProperties.getAuthn().getOauth().isReplicateSessions();
         if (replicate) {
-            val cookie = casProperties.getSessionReplication().getCookie();
-            val cookieGenerator = CookieUtils.buildCookieRetrievingGenerator(cookie);
             return new DistributedJEESessionStore(centralAuthenticationService.getObject(),
-                ticketFactory.getObject(), cookieGenerator);
+                ticketFactory.getObject(), oauthDistributedSessionCookieGenerator());
         }
         return new JEESessionStore();
     }
@@ -865,6 +875,7 @@ public class CasOAuth20Configuration {
             .webApplicationServiceServiceFactory(webApplicationServiceFactory.getObject())
             .casProperties(casProperties)
             .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator.getObject())
+            .oauthDistributedSessionCookieGenerator(oauthDistributedSessionCookieGenerator.getObject())
             .oauthConfig(oauthSecConfig())
             .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getObject())
             .centralAuthenticationService(centralAuthenticationService.getObject())

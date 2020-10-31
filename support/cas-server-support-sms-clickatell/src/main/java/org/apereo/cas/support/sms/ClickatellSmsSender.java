@@ -65,7 +65,6 @@ public class ClickatellSmsSender implements SmsSender {
                     LOGGER.error("Response body does not contain any messages");
                     return false;
                 }
-                val messages = (List<Map>) body.get("messages");
 
                 val error = (String) body.get("error");
                 if (StringUtils.isNotBlank(error)) {
@@ -73,6 +72,7 @@ public class ClickatellSmsSender implements SmsSender {
                     return false;
                 }
 
+                val messages = (List<Map>) body.get("messages");
                 val errors = messages.stream()
                     .filter(m -> m.containsKey("accepted") && !Boolean.parseBoolean(m.get("accepted").toString()) && m.containsKey("error"))
                     .map(m -> (String) m.get("error"))

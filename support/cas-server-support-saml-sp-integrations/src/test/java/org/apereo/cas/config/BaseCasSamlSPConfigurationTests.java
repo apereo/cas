@@ -1,11 +1,14 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +44,10 @@ public abstract class BaseCasSamlSPConfigurationTests {
     @Qualifier("servicesManager")
     protected ServicesManager servicesManager;
 
+    @Autowired
+    @Qualifier("webApplicationServiceFactory")
+    protected ServiceFactory<WebApplicationService> webApplicationServiceFactory;
+
     @AfterEach
     public void afterEach() {
         servicesManager.deleteAll();
@@ -49,7 +56,8 @@ public abstract class BaseCasSamlSPConfigurationTests {
     @Test
     public void verifyOperation() {
         LOGGER.debug("Looking for service id [{}]", getServiceProviderId());
-        assertNotNull(servicesManager.findServiceBy(getServiceProviderId(), SamlRegisteredService.class));
+        val service = webApplicationServiceFactory.createService(getServiceProviderId());
+        assertNotNull(servicesManager.findServiceBy(service, SamlRegisteredService.class));
     }
 
     protected String getServiceProviderId() {

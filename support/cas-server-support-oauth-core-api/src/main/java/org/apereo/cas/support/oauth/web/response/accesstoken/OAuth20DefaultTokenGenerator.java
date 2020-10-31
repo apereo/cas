@@ -75,17 +75,6 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
      */
     protected final CasConfigurationProperties casProperties;
 
-    private static OAuth20TokenGeneratedResult generateAccessTokenResult(final AccessTokenRequestDataHolder holder,
-                                                                         final Pair<OAuth20AccessToken, OAuth20RefreshToken> pair) {
-        return OAuth20TokenGeneratedResult.builder()
-            .registeredService(holder.getRegisteredService())
-            .accessToken(pair.getKey())
-            .refreshToken(pair.getValue())
-            .grantType(holder.getGrantType())
-            .responseType(holder.getResponseType())
-            .build();
-    }
-
     @Override
     public OAuth20TokenGeneratedResult generate(final AccessTokenRequestDataHolder holder) {
         if (OAuth20ResponseTypes.DEVICE_CODE.equals(holder.getResponseType())) {
@@ -150,51 +139,6 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             .deviceCode(deviceTokens.getLeft().getId())
             .userCode(deviceTokens.getValue().getId())
             .build();
-    }
-
-    private OAuth20DeviceUserCode getDeviceUserCodeFromRegistry(final OAuth20DeviceToken deviceCodeTicket) {
-        val userCode = this.centralAuthenticationService.getTicket(deviceCodeTicket.getUserCode(), OAuth20DeviceUserCode.class);
-        if (userCode == null) {
-            LOGGER.error("Provided user code [{}] is invalid or expired and cannot be found in the ticket registry", deviceCodeTicket.getUserCode());
-            throw new InvalidOAuth20DeviceTokenException(deviceCodeTicket.getUserCode());
-        }
-        if (userCode.isExpired()) {
-            this.centralAuthenticationService.deleteTicket(userCode.getId());
-            LOGGER.error("Provided device code [{}] has expired and will be removed from the ticket registry", deviceCodeTicket.getUserCode());
-            throw new InvalidOAuth20DeviceTokenException(deviceCodeTicket.getUserCode());
-        }
-        return userCode;
-    }
-
-    private OAuth20DeviceToken getDeviceTokenFromTicketRegistry(final String deviceCode) {
-        try {
-            val deviceCodeTicket = this.centralAuthenticationService.getTicket(deviceCode, OAuth20DeviceToken.class);
-            if (deviceCodeTicket == null || deviceCodeTicket.isExpired()) {
-                LOGGER.error("Provided device code [{}] is invalid or expired and cannot be found in the ticket registry", deviceCode);
-                this.centralAuthenticationService.deleteTicket(deviceCode);
-                throw new InvalidOAuth20DeviceTokenException(deviceCode);
-            }
-            return deviceCodeTicket;
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-            throw new InvalidOAuth20DeviceTokenException(deviceCode);
-        }
-    }
-
-    private Pair<OAuth20DeviceToken, OAuth20DeviceUserCode> createDeviceTokensInTicketRegistry(final AccessTokenRequestDataHolder holder) {
-        val deviceToken = deviceTokenFactory.createDeviceCode(holder.getService());
-        LOGGER.debug("Created device code token [{}]", deviceToken.getId());
-
-        val deviceUserCode = deviceUserCodeFactory.createDeviceUserCode(deviceToken);
-        LOGGER.debug("Created device user code token [{}]", deviceUserCode.getId());
-
-        addTicketToRegistry(deviceToken);
-        LOGGER.debug("Added device token [{}] to registry", deviceToken);
-
-        addTicketToRegistry(deviceUserCode);
-        LOGGER.debug("Added device user token [{}] to registry", deviceUserCode);
-
-        return Pair.of(deviceToken, deviceUserCode);
     }
 
     /**
@@ -309,10 +253,56 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         return refreshToken;
     }
 
+    private OAuth20DeviceUserCode getDeviceUserCodeFromRegistry(final OAuth20DeviceToken deviceCodeTicket) {
+        try {
+            return centralAuthenticationService.getTicket(deviceCodeTicket.getUserCode(), OAuth20DeviceUserCode.class);
+        } catch (final Exception e) {
+            LOGGER.error("Provided user code [{}] is invalid or expired and cannot be found in the ticket registry",
+                deviceCodeTicket.getUserCode());
+            throw new InvalidOAuth20DeviceTokenException(deviceCodeTicket.getUserCode());
+        }
+    }
+
+    private OAuth20DeviceToken getDeviceTokenFromTicketRegistry(final String deviceCode) {
+        try {
+            return centralAuthenticationService.getTicket(deviceCode, OAuth20DeviceToken.class);
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+            throw new InvalidOAuth20DeviceTokenException(deviceCode);
+        }
+    }
+
+    private Pair<OAuth20DeviceToken, OAuth20DeviceUserCode> createDeviceTokensInTicketRegistry(final AccessTokenRequestDataHolder holder) {
+        val deviceToken = deviceTokenFactory.createDeviceCode(holder.getService());
+        LOGGER.debug("Created device code token [{}]", deviceToken.getId());
+
+        val deviceUserCode = deviceUserCodeFactory.createDeviceUserCode(deviceToken);
+        LOGGER.debug("Created device user code token [{}]", deviceUserCode.getId());
+
+        addTicketToRegistry(deviceToken);
+        LOGGER.debug("Added device token [{}] to registry", deviceToken);
+
+        addTicketToRegistry(deviceUserCode);
+        LOGGER.debug("Added device user token [{}] to registry", deviceUserCode);
+
+        return Pair.of(deviceToken, deviceUserCode);
+    }
+
     private void expireOldRefreshToken(final AccessTokenRequestDataHolder responseHolder) {
         val oldRefreshToken = responseHolder.getToken();
         LOGGER.debug("Expiring old refresh token [{}]", oldRefreshToken);
         oldRefreshToken.markTicketExpired();
         centralAuthenticationService.deleteTicket(oldRefreshToken);
+    }
+
+    private static OAuth20TokenGeneratedResult generateAccessTokenResult(final AccessTokenRequestDataHolder holder,
+        final Pair<OAuth20AccessToken, OAuth20RefreshToken> pair) {
+        return OAuth20TokenGeneratedResult.builder()
+            .registeredService(holder.getRegisteredService())
+            .accessToken(pair.getKey())
+            .refreshToken(pair.getValue())
+            .grantType(holder.getGrantType())
+            .responseType(holder.getResponseType())
+            .build();
     }
 }

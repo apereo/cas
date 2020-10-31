@@ -47,7 +47,8 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
 
     private void handleLogoutRequest(final HttpServletResponse response, final HttpServletRequest request,
                                      final Pair<? extends SignableSAMLObject, MessageContext> pair) throws Exception {
-        val logout = getSamlProfileHandlerConfigurationContext().getCasProperties().getAuthn().getSamlIdp().getLogout();
+        val configContext = getSamlProfileHandlerConfigurationContext();
+        val logout = configContext.getCasProperties().getAuthn().getSamlIdp().getLogout();
         val logoutRequest = (LogoutRequest) pair.getKey();
         val ctx = pair.getValue();
 
@@ -57,17 +58,19 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
 
         val entityId = SamlIdPUtils.getIssuerFromSamlObject(logoutRequest);
         LOGGER.trace("SAML logout request from entity id [{}] is signed", entityId);
-        val registeredService = getSamlProfileHandlerConfigurationContext()
-            .getServicesManager().findServiceBy(entityId, SamlRegisteredService.class);
+
+        val service = configContext.getWebApplicationServiceFactory().createService(entityId);
+        val registeredService = configContext
+            .getServicesManager().findServiceBy(service, SamlRegisteredService.class);
         LOGGER.trace("SAML registered service tied to [{}] is [{}]", entityId, registeredService);
         val facade = SamlRegisteredServiceServiceProviderMetadataFacade.get(
-            getSamlProfileHandlerConfigurationContext().getSamlRegisteredServiceCachingMetadataResolver(), registeredService, entityId).get();
+            configContext.getSamlRegisteredServiceCachingMetadataResolver(), registeredService, entityId).get();
         if (SAMLBindingSupport.isMessageSigned(ctx)) {
             LOGGER.trace("Verifying signature on the SAML logout request for [{}]", entityId);
-            getSamlProfileHandlerConfigurationContext().getSamlObjectSignatureValidator()
+            configContext.getSamlObjectSignatureValidator()
                 .verifySamlProfileRequestIfNeeded(logoutRequest, facade, request, ctx);
         }
-        SamlUtils.logSamlObject(getSamlProfileHandlerConfigurationContext().getOpenSamlConfigBean(), logoutRequest);
+        SamlUtils.logSamlObject(configContext.getOpenSamlConfigBean(), logoutRequest);
 
         val logoutUrls = SingleLogoutUrl.from(registeredService);
         if (!logoutUrls.isEmpty()) {

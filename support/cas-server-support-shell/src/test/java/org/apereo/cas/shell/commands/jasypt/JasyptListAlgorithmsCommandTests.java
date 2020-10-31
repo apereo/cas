@@ -19,6 +19,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class JasyptListAlgorithmsCommandTests extends BaseCasShellCommandTests {
     @Test
     public void verifyOperation() {
-        assertDoesNotThrow(() -> shell.evaluate(() -> "jasypt-list-providers --includeBC"));
+        assertDoesNotThrow(() -> shell.evaluate(() -> "jasypt-list-algorithms --includeBC"));
     }
 }

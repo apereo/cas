@@ -64,28 +64,14 @@ public class OAuth20TokenAuthorizationResponseBuilderTests extends AbstractOAuth
             .grantType(OAuth20GrantTypes.NONE)
             .responseType(OAuth20ResponseTypes.TOKEN)
             .ticketGrantingTicket(new MockTicketGrantingTicket(ID))
+            .generateRefreshToken(true)
             .build();
-        val generatedToken = oauthTokenGenerator.generate(holder);
-
-        if (generatedToken
-            .getAccessToken()
-            .isEmpty()) {
-            fail("Expected access token");
-        }
-
-        val oAuth20AccessToken = generatedToken.getAccessToken().get();
         val tokenAuthorizationResponseBuilder = new OAuth20TokenAuthorizationResponseBuilder(oauthTokenGenerator,
-            servicesManager,
-            accessTokenJwtBuilder,
-            casProperties);
-
-        val modelAndView = tokenAuthorizationResponseBuilder.buildCallbackUrlResponseType(holder,
-            REDIRECT_URI,
-            oAuth20AccessToken,
-            Collections.emptyList(),
-            null,
-            new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse()));
-
+            servicesManager, accessTokenJwtBuilder, casProperties);
+        val modelAndView = tokenAuthorizationResponseBuilder.build(
+            new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse()),
+            CLIENT_ID,
+            holder);
         assertTrue(modelAndView.getView() instanceof RedirectView, "Expected RedirectView");
 
         val redirectUrl = ((RedirectView) modelAndView.getView()).getUrl();

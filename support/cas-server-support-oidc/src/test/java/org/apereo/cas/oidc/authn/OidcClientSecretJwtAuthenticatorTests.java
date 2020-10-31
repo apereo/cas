@@ -56,18 +56,57 @@ public class OidcClientSecretJwtAuthenticatorTests extends AbstractOidcTests {
         val key = EncodingUtils.generateJsonWebKey(512);
         val jwt = EncodingUtils.signJwsHMACSha512(new AesKey(key.getBytes(StandardCharsets.UTF_8)),
             claims.toJson().getBytes(StandardCharsets.UTF_8), Map.of());
-        val credentials = new UsernamePasswordCredentials(OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER,
-            new String(jwt, StandardCharsets.UTF_8));
 
+        val credentials = getCredentials(request, OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER,
+            new String(jwt, StandardCharsets.UTF_8), registeredService.getClientId());
+        auth.validate(credentials, context);
+        assertNotNull(credentials.getUserProfile());
+    }
+
+    @Test
+    public void verifyNoUserAction() {
+        val auth = new OidcClientSecretJwtAuthenticator(servicesManager,
+            registeredServiceAccessStrategyEnforcer, ticketRegistry,
+            webApplicationServiceFactory, casProperties, applicationContext);
+
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        val context = new JEEContext(request, response);
+
+        val registeredService = getOidcRegisteredService();
+        val credentials = getCredentials(request, "unknown", "----", registeredService.getClientId());
+        auth.validate(credentials, context);
+        assertNull(credentials.getUserProfile());
+    }
+
+    @Test
+    public void verifyBadJwt() {
+        val auth = new OidcClientSecretJwtAuthenticator(servicesManager,
+            registeredServiceAccessStrategyEnforcer, ticketRegistry,
+            webApplicationServiceFactory, casProperties, applicationContext);
+
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        val context = new JEEContext(request, response);
+
+        val registeredService = getOidcRegisteredService();
+        val credentials = getCredentials(request, OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER,
+            "----", registeredService.getClientId());
+        auth.validate(credentials, context);
+        assertNull(credentials.getUserProfile());
+    }
+
+    private UsernamePasswordCredentials getCredentials(final MockHttpServletRequest request,
+        final String uid, final String password, final String clientId) {
+        val credentials = new UsernamePasswordCredentials(uid, password);
         val code = defaultOAuthCodeFactory.create(RegisteredServiceTestUtils.getService(),
             RegisteredServiceTestUtils.getAuthentication(),
             new MockTicketGrantingTicket("casuser"),
             new ArrayList<>(),
             StringUtils.EMPTY, StringUtils.EMPTY,
-            registeredService.getClientId(), new HashMap<>());
+            clientId, new HashMap<>());
         ticketRegistry.addTicket(code);
         request.addParameter(OAuth20Constants.CODE, code.getId());
-        auth.validate(credentials, context);
-        assertNotNull(credentials.getUserProfile());
+        return credentials;
     }
 }
