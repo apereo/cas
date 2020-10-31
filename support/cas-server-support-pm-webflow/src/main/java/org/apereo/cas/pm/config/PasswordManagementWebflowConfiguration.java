@@ -6,6 +6,7 @@ import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordValidationService;
 import org.apereo.cas.pm.web.flow.PasswordManagementCaptchaWebflowConfigurer;
+import org.apereo.cas.pm.web.flow.PasswordManagementSingleSignOnParticipationStrategy;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowConfigurer;
 import org.apereo.cas.pm.web.flow.actions.HandlePasswordExpirationWarningMessagesAction;
 import org.apereo.cas.pm.web.flow.actions.InitPasswordChangeAction;
@@ -20,6 +21,8 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.InitializeCaptchaAction;
+import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
+import org.apereo.cas.web.flow.SingleSignOnParticipationStrategyConfigurer;
 import org.apereo.cas.web.flow.ValidateCaptchaAction;
 import org.apereo.cas.web.flow.actions.StaticEventExecutionAction;
 
@@ -94,6 +97,20 @@ public class PasswordManagementWebflowConfiguration {
     @Autowired
     @Qualifier("passwordChangeService")
     private ObjectProvider<PasswordManagementService> passwordManagementService;
+
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "passwordManagementSingleSignOnParticipationStrategy")
+    public SingleSignOnParticipationStrategy passwordManagementSingleSignOnParticipationStrategy() {
+        return new PasswordManagementSingleSignOnParticipationStrategy();
+    }
+
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "passwordManagementSingleSignOnParticipationStrategyConfigurer")
+    public SingleSignOnParticipationStrategyConfigurer passwordManagementSingleSignOnParticipationStrategyConfigurer() {
+        return chain -> chain.addStrategy(passwordManagementSingleSignOnParticipationStrategy());
+    }
 
     @RefreshScope
     @Bean
@@ -227,6 +244,3 @@ public class PasswordManagementWebflowConfiguration {
         }
     }
 }
-
-
-
