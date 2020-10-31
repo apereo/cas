@@ -22,6 +22,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class QRAuthenticationChannelController {
 
+    /**
+     * Topic name for QR authentication.
+     */
+    public static final String QR_SIMPLE_BROKER_DESTINATION_PREFIX = "/qrtopic";
+
     private final MessageSendingOperations<String> messageTemplate;
 
     @MessageMapping("/accept")
@@ -30,8 +35,9 @@ public class QRAuthenticationChannelController {
         val channelId = message.getHeaders()
             .get("nativeHeaders", LinkedMultiValueMap.class)
             .get("QR_AUTHENTICATION_CHANNEL_ID").get(0);
+        LOGGER.debug("Current channel id is [{}]", channelId);
         val outcome = QRAuthenticationResult.builder().build();
-        messageTemplate.convertAndSend(String.format("/%s/verify", channelId), outcome);
+        messageTemplate.convertAndSend(String.format("%s/%s/verify", QR_SIMPLE_BROKER_DESTINATION_PREFIX, channelId), outcome);
     }
 
     @Getter

@@ -81,7 +81,7 @@ public class QRAuthenticationConfiguration implements WebSocketMessageBrokerConf
 
     @Override
     public void configureMessageBroker(final MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/qrtopic");
+        config.enableSimpleBroker(QRAuthenticationChannelController.QR_SIMPLE_BROKER_DESTINATION_PREFIX);
         config.setApplicationDestinationPrefixes("/qr");
     }
 }

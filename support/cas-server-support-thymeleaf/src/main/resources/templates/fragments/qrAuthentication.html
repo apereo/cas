@@ -44,13 +44,15 @@
             /*<![CDATA[*/
             var endpoint = /*[[@{/qr-websocket}]]*/  ;
             var topic = /*[[${qrChannel}]]*/  ;
+            var prefix = /*[[${qrPrefix}]]*/  ;
 
             var stompClient = null;
             $(function () {
                 var socket = new SockJS(endpoint);
                 stompClient = Stomp.over(socket);
                 stompClient.connect({}, function (frame) {
-                    stompClient.subscribe('/' + topic + '/verify', function (result) {
+                    stompClient.subscribe(prefix + '/' + topic + '/verify', function (result) {
+                        console.log(result.body);
                         let body = JSON.parse(result.body);
                         if (body.success) {
                             stompClient.disconnect();
