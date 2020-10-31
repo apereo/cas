@@ -89,6 +89,8 @@ nexusStaging {
     password = "${sonatypePassword}"
     packageGroup = "org.apereo"
     stagingProfileId = "11d1ddbbdeae9d"
+    numberOfRetries = 50
+    delayBetweenRetriesInMillis = 5000
 }
 
 apply from: rootProject.file("gradle/dependencies.gradle")
