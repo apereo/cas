@@ -11,7 +11,7 @@ management.endpoints.web.exposure.include=health,info,env,loggers
 management.endpoint.health.enabled=true
 management.endpoint.info.enabled=true
 cas.monitor.endpoints.endpoint.defaults.access[0]=IP_ADDRESS
-cas.monitor.endpoints.endpoint.defaults.requiredIpAddresses[0]=127\\\\.0\\\\.0\\\\.1|0:0:0:0:0:0:0:1
+cas.monitor.endpoints.endpoint.defaults.required-ip-addresses[0]=.*
 management.endpoint.health.show-details=always
 spring.cloud.discovery.client.composite-indicator.enabled=false
 management.health.defaults.enabled=false
@@ -19,7 +19,6 @@ management.health.ping.enabled=true
 management.health.diskSpace.enabled=true
 management.endpoint.env.enabled=true
 management.endpoint.loggers.enabled=true
-# memoryHealthIndicator requires cas-server-core-monitor which is not present by default
 management.health.memoryHealthIndicator.enabled=true
 EOF
 cat ${configDir}/cas.properties
