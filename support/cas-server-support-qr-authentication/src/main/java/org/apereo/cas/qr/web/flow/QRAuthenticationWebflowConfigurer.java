@@ -2,6 +2,7 @@ package org.apereo.cas.qr.web.flow;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.otp.util.QRUtils;
+import org.apereo.cas.qr.web.QRAuthenticationChannelController;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 
@@ -44,6 +45,7 @@ public class QRAuthenticationWebflowConfigurer extends AbstractCasWebflowConfigu
                 val qrCodeBase64 = QRUtils.generateQRCode(id, QRUtils.WIDTH_LARGE, QRUtils.WIDTH_LARGE);
                 requestContext.getFlowScope().put("qrCode", qrCodeBase64);
                 requestContext.getFlowScope().put("qrChannel", id);
+                requestContext.getFlowScope().put("qrPrefix", QRAuthenticationChannelController.QR_SIMPLE_BROKER_DESTINATION_PREFIX);
                 return null;
             });
         }
