@@ -31,6 +31,7 @@ their availability and accuracy may vary.
 - [Go CLI for CAS admin endpoints](https://github.com/cas-projects/casctl)
 - [Smoke Testing CAS HA Deployments](https://github.com/cas-projects/duct)
 - [CASified Bootiful Java web application](https://github.com/cas-projects/bootiful-cas-client)
+- [CASified Bootiful Java web application via Spring Security](https://github.com/cas-projects/springsecurity-bootiful-cas-client)
 
 ## Framework Support
 

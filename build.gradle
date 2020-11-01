@@ -6,6 +6,7 @@ defaultTasks "clean", "build"
 buildscript {
     repositories {
         jcenter()
+        gradlePluginPortal()
         maven {
             url "https://maven.eveoh.nl/content/repositories/releases"
             mavenContent { releasesOnly() }
@@ -88,6 +89,8 @@ nexusStaging {
     password = "${sonatypePassword}"
     packageGroup = "org.apereo"
     stagingProfileId = "11d1ddbbdeae9d"
+    numberOfRetries = 50
+    delayBetweenRetriesInMillis = 5000
 }
 
 apply from: rootProject.file("gradle/dependencies.gradle")
@@ -106,7 +109,6 @@ if (!Boolean.getBoolean("skipSonarqube")) {
             property "sonar.organization", "apereo"
             property "sonar.login", token
             property "sonar.java.coveragePlugin", "jacoco"
-            property "sonar.coverage.jacoco.xmlReportPaths", "${rootProject.buildDir}/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
         }
     }
 }

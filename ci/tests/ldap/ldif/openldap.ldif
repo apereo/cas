@@ -1,0 +1,15 @@
+dn: ou=People,dc=example,dc=org
+objectClass: organizationalUnit
+objectClass: top
+ou: People
+
+dn: uid=casuser,ou=People,dc=example,dc=org
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+objectClass: inetOrgPerson
+givenName: CAS
+uid: casuser
+sn: User
+cn: CAS User
+userPassword: Mellon
