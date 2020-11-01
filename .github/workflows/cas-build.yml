@@ -587,6 +587,10 @@ jobs:
     needs: [tests]
     steps:
       - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
       - name: "Download coverage files"
         uses: "actions/download-artifact@v2"
         with:
@@ -600,6 +604,9 @@ jobs:
           echo $files
           echo "COVERAGE_REPORTS=${files}" >> $GITHUB_ENV
       - name: Upload Coverage to SonarCloud
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONARCLOUD_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
         run: ./gradlew --build-cache --configure-on-demand --no-daemon \
           --parallel sonarqube -x javadoc -Dsonar.organization=apereo -Dsonar.host.url=https://sonarcloud.io \
           -Dsonar.login="${SONARCLOUD_TOKEN}" -DskipNestedConfigMetadataGen=true -DshowStandardStreams=true \
