@@ -1,5 +1,7 @@
 package org.apereo.cas.services.web;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -35,13 +37,18 @@ public class ThemeViewResolver extends AbstractCachingViewResolver {
     private final String theme;
 
     @Override
+    protected Object getCacheKey(final String viewName, final Locale locale) {
+        return String.format("%s#%s", theme, super.getCacheKey(viewName, locale));
+    }
+
+    @Override
     protected View loadView(final String viewName, final Locale locale) throws Exception {
         LOGGER.trace("Attempting to resolve view [{}] via locale [{}]", viewName, locale);
         val applicationContext = obtainApplicationContext();
         val view = applicationContext.containsBean(viewName)
             ? applicationContext.getBean(viewName, View.class)
             : delegate.resolveViewName(viewName, locale);
-        
+
         if (view instanceof AbstractThymeleafView) {
             val thymeleafView = (AbstractThymeleafView) view;
             configureTemplateThemeDefaultLocation(thymeleafView);
@@ -74,6 +81,8 @@ public class ThemeViewResolver extends AbstractCachingViewResolver {
         private final ViewResolver delegate;
 
         private final ThymeleafProperties thymeleafProperties;
+
+        private final CasConfigurationProperties casProperties;
 
         private ApplicationContext applicationContext;
 

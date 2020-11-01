@@ -69,9 +69,15 @@ public class ValidateRegisteredServiceCommand {
                     case "yaml":
                         validator = new RegisteredServiceYamlSerializer();
                         break;
+                    default:
+                        LOGGER.debug("Unknown file [{}]", filePath.getCanonicalPath());
+                        break;
                 }
-                val svc = Objects.requireNonNull(validator).from(filePath);
-                LOGGER.info("Service [{}] is valid at [{}].", svc.getName(), filePath.getCanonicalPath());
+
+                if (validator != null) {
+                    val svc = Objects.requireNonNull(validator).from(filePath);
+                    LOGGER.info("Service [{}] is valid at [{}].", svc.getName(), filePath.getCanonicalPath());
+                }
             } else {
                 LOGGER.warn("File [{}] is does not exist, is not readable or is empty", filePath.getCanonicalPath());
             }

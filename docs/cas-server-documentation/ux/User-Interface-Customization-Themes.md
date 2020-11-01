@@ -16,11 +16,33 @@ CAS is configured to decorate views based on the `theme` property of a given reg
 
 ### Configuration
 
-- Add a `[theme_name].properties` placed to the root of `src/main/resources` folder. Contents of this file should match the following:
+- Add a `[theme_name].properties` placed to the root of `src/main/resources` folder. 
+Contents of this file should match the following:
 
-```properties
+```properties 
+# Path to theme CSS file
 cas.standard.css.file=/themes/[theme_name]/css/cas.css
+
+# Path to theme JS file
 cas.standard.js.file=/themes/[theme_name]/js/cas.js
+
+# Path to theme logo to display via the common layout
+# cas.logo.file=/images/logo.png     
+
+# Decide whether drawer menu should be displayed
+# cas.drawer-menu.enabled=true                    
+
+# Theme name used in various titles/captions
+# cas.theme.name=Example Theme
+
+# Path to theme favicon file.
+# cas.favicon.file=/themes/example/images/favicon.ico
+
+# Enable and display the notifications menu
+# cas.notifications-menu.enabled=true
+
+# Enable and display the drawer menu
+# cas.drawer-menu.enabled=true
 ```
 
 - Create the directory `src/main/resources/static/themes/[theme_name]`. Put the theme-specific `cas.css` and `cas.js` inside the appropriate directories for `css` and `js`.
@@ -36,13 +58,20 @@ cas.standard.js.file=/themes/[theme_name]/js/cas.js
 }
 ```
 
+Values can use the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.
+
 ## Themed Views
 
-CAS can also utilize a service's associated theme to selectively choose which set of UI views will be used to generate the standard views (`casLoginView.html`, etc). This is specially useful in cases where the set of pages for a theme that are targeted for a different type of audience are entirely different structurally that using a simple theme is not practical to augment the default views. In such cases, new view pages may be required.
+CAS can also utilize a service's associated theme to selectively choose which set of UI views will be used to generate 
+the standard views (`casLoginView.html`, etc). This is specially useful in cases where the set of pages for a theme that are targeted 
+for a different type of audience are entirely different structurally that using a simple theme is not practical to augment the default views. In such cases, new view pages may be required.
 
-Views associated with a particular theme by default are expected to be found at: `src/main/resources/templates/<theme-id>`. Note that CAS views and theme-based views may both be externalized out of the web application context. When externalized, themed views are expected to be found at the specified path via CAS properties under a directory named after the theme. For instance, if the external path for CAS views is `/etc/cas/templates`, view template files for theme `sample` may be located `/etc/cas/templates/sample/`.
+Views associated with a particular theme by default are expected to be found at: `src/main/resources/templates/<theme-id>`. Note that CAS 
+views and theme-based views may both be externalized out of the web application context. When externalized, themed views are expected to be found at the specified path via CAS properties under a 
+directory named after the theme. For instance, if the external path for CAS views is `/etc/cas/templates`, view template files for 
+theme `sample` may be located `/etc/cas/templates/sample/`.
 
-  To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#views).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#views).
 
 ### Configuration
 
@@ -55,6 +84,31 @@ cas.standard.js.file=/themes/[theme_name]/js/cas.js
 
 - Clone the default set of view pages into a new directory based on the theme id (i.e. `src/main/resources/templates/<theme-id>`).
 - Specify the name of your theme for the service definition under the `theme` property.
+
+## Theme Collections
+
+CAS provides a module that presents a number of ready-made themes. The intention for each themes
+to account for common and provide for common use cases when it comes to user interface modifications
+and samples, and attempt to automate much of the configuration.
+
+Support is enabled by including the following module in the WAR overlay:
+
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-support-theme-collections</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```       
+
+The following themes are provided by this module and can be assigned to service definitions:
+
+| Theme              | Description    
+|--------------------|----------------------------------------------------------------------------
+| `example`          | A reference example theme that combines customized CSS, Javascript and views
+
+The collection of themes above can also serve as reference examples of how to define a theme with
+custom CSS, Javascript and associated views and fragments.
 
 ## Groovy Themes
 

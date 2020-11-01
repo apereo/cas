@@ -1,0 +1,9 @@
+@import "../../../css/cas.css";
+
+body {
+    background-color: rgb(12, 71, 112);
+}
+
+body, p, span, div, a, h1, h2, h3, h4, h5, h6 {
+    font-family: Bookerly, Tahoma;
+}

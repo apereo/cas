@@ -34,7 +34,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAu
     protected Event doPreExecute(final RequestContext context) throws Exception {
         val credential = constructCredentialsFromRequest(context);
         if (credential == null) {
-            LOGGER.warn("No credentials detected. Navigating to error...");
+            LOGGER.info("No credentials could be extracted/detected from the current request");
             return error();
         }
         WebUtils.putCredential(context, credential);

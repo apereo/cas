@@ -1,7 +1,6 @@
 package org.apereo.cas.web.view;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.web.support.WebUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -48,15 +47,6 @@ public class ThemeFileTemplateResolver extends FileTemplateResolver {
      * @return the current theme
      */
     protected String getCurrentTheme() {
-        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
-        if (request != null) {
-            val session = request.getSession(false);
-            val paramName = casProperties.getTheme().getParamName();
-            if (session != null) {
-                return (String) session.getAttribute(paramName);
-            }
-            return (String) request.getAttribute(paramName);
-        }
-        return null;
+        return ThemeUtils.getCurrentTheme(casProperties);
     }
 }
