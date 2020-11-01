@@ -19,6 +19,7 @@ public class CasOverlayGradlePropertiesContributor extends TemplatedProjectContr
     @Override
     protected Object contributeInternal(final ProjectDescription project) {
         val provider = applicationContext.getBean(InitializrMetadataProvider.class);
+        
         val defaults = provider.get().defaults();
 
         val dependencies = project.getRequestedDependencies();
@@ -29,6 +30,7 @@ public class CasOverlayGradlePropertiesContributor extends TemplatedProjectContr
             appServer = "-undertow";
         }
         defaults.put("appServer", appServer);
+        defaults.put("casVersion", provider.get().getConfiguration().getEnv().getBoms().get("cas-bom").getVersion());
         return defaults;
     }
 

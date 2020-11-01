@@ -28,12 +28,14 @@ import org.apereo.cas.overlay.contrib.util.ChainingMultipleResourcesProjectContr
 import org.apereo.cas.overlay.contrib.util.ChainingSingleResourceProjectContributor;
 import org.apereo.cas.overlay.customize.DefaultDependenciesBuildCustomizer;
 import org.apereo.cas.overlay.info.DependencyAliasesInfoContributor;
+import org.apereo.cas.overlay.metadata.CasOverlayInitializrMetadataUpdateStrategy;
 import org.apereo.cas.overlay.rate.RateLimitInterceptor;
 import io.spring.initializr.generator.buildsystem.BuildItemResolver;
 import io.spring.initializr.generator.project.ProjectGenerationConfiguration;
 import io.spring.initializr.generator.project.contributor.ProjectContributor;
 import io.spring.initializr.generator.spring.build.BuildCustomizer;
 import io.spring.initializr.metadata.InitializrMetadataProvider;
+import io.spring.initializr.web.support.InitializrMetadataUpdateStrategy;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -112,6 +114,11 @@ public class CasOverlayProjectGenerationConfiguration {
     @Bean
     public BuildCustomizer<CasOverlayGradleBuild> defaultDependenciesBuildCustomizer() {
         return new DefaultDependenciesBuildCustomizer(applicationContext);
+    }
+
+    @Bean
+    public InitializrMetadataUpdateStrategy initializrMetadataUpdateStrategy() {
+        return new CasOverlayInitializrMetadataUpdateStrategy();
     }
 
     @Bean

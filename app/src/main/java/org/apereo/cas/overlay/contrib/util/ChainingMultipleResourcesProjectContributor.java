@@ -9,12 +9,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-/**
- * This is {@link ChainingMultipleResourcesProjectContributor}.
- *
- * @author Misagh Moayyed
- * @since 6.3.0
- */
 public class ChainingMultipleResourcesProjectContributor implements ProjectContributor {
     private final List<MultipleResourcesProjectContributor> contributors = new ArrayList<>();
 

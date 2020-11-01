@@ -1,20 +1,9 @@
 buildscript {
     repositories {
+        mavenLocal()
         gradlePluginPortal()
         mavenCentral()
         jcenter()
-        maven { 
-            url "https://repo.spring.io/libs-milestone" 
-            mavenContent { releasesOnly() }
-        }
-        maven { 
-            url "https://repo.spring.io/libs-snapshot" 
-            mavenContent { snapshotsOnly() }
-        }
-        maven { 
-            url "https://plugins.gradle.org/m2/" 
-            mavenContent { releasesOnly() }
-        }
     }
     dependencies {
         classpath "de.undercouch:gradle-download-task:${project.gradleDownloadTaskVersion}"
@@ -27,6 +16,7 @@ buildscript {
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
     jcenter()
     maven { 
@@ -36,14 +26,6 @@ repositories {
     maven { 
         mavenContent { releasesOnly() }
         url "https://build.shibboleth.net/nexus/content/repositories/releases/" 
-    }
-    maven { 
-        mavenContent { releasesOnly() }
-        url "https://repo.spring.io/milestone/" 
-    }
-    maven { 
-        url "https://repo.spring.io/snapshot/" 
-        mavenContent { snapshotsOnly() }
     }
     maven { 
         mavenContent { snapshotsOnly() }
