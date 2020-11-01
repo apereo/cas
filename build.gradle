@@ -12,20 +12,8 @@ buildscript {
             mavenContent { releasesOnly() }
         }
         maven {
-            url "https://plugins.gradle.org/m2/"
-            mavenContent { releasesOnly() }
-        }
-        maven {
             url "https://repo.spring.io/plugins-release"
             mavenContent { releasesOnly() }
-        }
-        maven {
-            url "https://repo.spring.io/libs-milestone"
-            mavenContent { releasesOnly() }
-        }
-        maven {
-            url "https://repo.spring.io/snapshot"
-            mavenContent { snapshotsOnly() }
         }
     }
 
@@ -203,10 +191,6 @@ allprojects {
         mavenCentral()
         jcenter()
         maven {
-            url "https://repo.spring.io/libs-milestone"
-            mavenContent { releasesOnly() }
-        }
-        maven {
             url "$sonatypeReleasesRepositoryUrl"
             mavenContent { releasesOnly() }
         }
@@ -285,18 +269,6 @@ subprojects {
         }
         maven {
             url "https://repo.spring.io/plugins-release/"
-            mavenContent { releasesOnly() }
-        }
-        maven {
-            url "https://repo.spring.io/milestone/"
-            mavenContent { releasesOnly() }
-        }
-        maven {
-            url "https://repo.spring.io/snapshot/"
-            mavenContent { snapshotsOnly() }
-        }
-        maven {
-            url "https://repo.spring.io/libs-milestone"
             mavenContent { releasesOnly() }
         }
         maven {
