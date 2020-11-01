@@ -599,6 +599,11 @@ jobs:
           export files="${files%?}"
           echo $files
           echo "COVERAGE_REPORTS=${files}" >> $GITHUB_ENV
+      - name: Upload Coverage to SonarCloud
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon \
+          --parallel sonarqube -x javadoc -Dsonar.organization=apereo -Dsonar.host.url=https://sonarcloud.io \
+          -Dsonar.login="${SONARCLOUD_TOKEN}" -DskipNestedConfigMetadataGen=true -DshowStandardStreams=true \
+          -Dsonar.coverage.jacoco.xmlReportPaths="${COVERAGE_REPORTS}"
       - name: Run codacy-coverage-reporter
         uses: codacy/codacy-coverage-reporter-action@master
         with:

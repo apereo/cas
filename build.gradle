@@ -109,7 +109,6 @@ if (!Boolean.getBoolean("skipSonarqube")) {
             property "sonar.organization", "apereo"
             property "sonar.login", token
             property "sonar.java.coveragePlugin", "jacoco"
-            property "sonar.coverage.jacoco.xmlReportPaths", "${rootProject.buildDir}/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
         }
     }
 }
