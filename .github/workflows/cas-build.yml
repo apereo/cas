@@ -608,7 +608,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONARCLOUD_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
         run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel sonarqube -x javadoc -Dsonar.organization=apereo -Dsonar.host.url=https://sonarcloud.io -Dsonar.login="${SONARCLOUD_TOKEN}" -DskipNestedConfigMetadataGen=true -DshowStandardStreams=true -Dsonar.coverage.jacoco.xmlReportPaths="${COVERAGE_REPORTS}"
-      - name: Run codacy-coverage-reporter
+      - name: Upload Coverage to Codacy
         uses: codacy/codacy-coverage-reporter-action@master
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
