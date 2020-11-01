@@ -1,11 +1,16 @@
-node github actions:
-  npm i puppeteer
-
 #!/bin/bash
 
+dependencies="$1"
+scriptPath="$2"
+
+echo -e "*************************************"
+echo -e "CAS dependencies: ${dependencies}"
+echo -e "Script path: ${scriptPath}\n"
+echo -e "*************************************\n"
+
 rm -Rf work && mkdir work && cd work
-echo -e "\nFetching CAS for dependencies ${dependencies} ..."
 curl https://casinit.herokuapp.com/starter.tgz -d dependencies="${dependencies}" | tar -xzvf -
+# curl http://localhost:8080/starter.tgz -d dependencies="${dependencies}" | tar -xzvf -
 echo -e "\nBuilding CAS..."
 ./gradlew clean build --no-daemon
 
@@ -26,7 +31,11 @@ until curl -k -L --output /dev/null --silent --fail https://localhost:8443/cas/l
 done
 echo -e "\n\nReady!"
 
+echo -e "*************************************"
+echo -e "Running ${scriptPath}\n"
 node ${scriptPath}
+echo -e "*************************************\n"
 
 echo -e "\nKilling process ${pid} ..."
 kill -9 $pid
+cd .. && rm -Rf work
