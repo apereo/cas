@@ -16,7 +16,7 @@ echo -e "\nBuilding CAS found in $PWD..."
 
 echo -e "\nLaunching CAS..."
 #java -jar build/libs/cas.war --server.ssl.key-store="${keystore}" &> /dev/null &
-java -jar build/libs/cas.war --server.ssl.key-store="${keystore}" &
+java -jar build/libs/cas.war --server.ssl.key-store="./thekeystore" &
 pid=$!
 echo -e "\nWaiting for CAS under pid ${pid}"
 #until curl -k -L --output /dev/null --silent --fail https://localhost:8443/cas/login; do
