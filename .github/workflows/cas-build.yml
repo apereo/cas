@@ -782,5 +782,5 @@ jobs:
       - name: Prepare Puppeteer
         run: ./ci/tests/puppeteer/prepare.sh
       - name: Run Tests
-        run: ./ci/tests/puppeteer/run.sh ${{matrix.scenario}} ./ci/tests/puppeteer/login-successful.js
+        run: ./ci/tests/puppeteer/run.sh ${{matrix.scenario}} $PWD/ci/tests/puppeteer/login-successful.js
 ##########################################################################
