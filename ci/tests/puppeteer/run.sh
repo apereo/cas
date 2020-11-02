@@ -18,9 +18,17 @@ echo -e "\nLaunching CAS..."
 java -jar build/libs/cas.war --server.ssl.key-store="${keystore}" &> /dev/null &
 pid=$!
 echo -e "\nWaiting for CAS under pid ${pid}"
-until curl -k -L --output /dev/null --silent --fail https://localhost:8443/cas/login; do
+i=0
+#until curl -k -L --output /dev/null --silent --fail https://localhost:8443/cas/login; do
+until curl -k -L https://localhost:8443/cas/login; do
     printf '.'
+    i++
     sleep 1
+
+#    if [[ (("$i" -gt 30 )) ]] ; then
+#      echo "Unable to launch CAS"
+#      exit 1
+#    fi
 done
 echo -e "\n\nReady!"
 
