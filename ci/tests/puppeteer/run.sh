@@ -13,11 +13,12 @@ config="${scenario}/script.json"
 echo "Using scenario configuration: ${config}"
 
 dependencies=$(cat "${config}" | jq -j '.dependencies')
-echo -e "\nBuilding CAS found in $PWD for dependencies ${dependencies}..."
+echo -e "\nBuilding CAS found in $PWD for dependencies ${dependencies}"
 ./gradlew clean build --no-daemon -PcasModules="${dependencies}"
 
-echo -e "\nLaunching CAS..."
-java -jar build/libs/cas.war --server.ssl.key-store=./thekeystore &> /dev/null &
+properties=$(cat "${config}" | jq -j '.properties // empty | join(" ")')
+echo -e "\nLaunching CAS with properties ${properties}"
+java -jar build/libs/cas.war ${properties} --server.ssl.key-store=./thekeystore &> /dev/null &
 pid=$!
 echo -e "\nWaiting for CAS under pid ${pid}"
 until curl -k -L --output /dev/null --silent --fail https://localhost:8443/cas/login; do
