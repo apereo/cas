@@ -487,7 +487,7 @@ jobs:
 
   tests:
     runs-on: ubuntu-latest
-    needs: [cache]
+    # needs: [cache]
     continue-on-error: false
     strategy:
       fail-fast: false
@@ -584,7 +584,7 @@ jobs:
   upload_coverage:
     name: "Upload Coverage Results"
     runs-on: ubuntu-latest
-    # needs: [tests]
+    needs: [tests]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
