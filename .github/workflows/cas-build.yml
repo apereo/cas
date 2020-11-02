@@ -599,21 +599,28 @@ jobs:
         run: |
           find $PWD -type f -name 'jacocoRootReport.xml'
           export files=''
-          for file in $(find . -type f -name 'jacocoRootReport.xml'); do export files="$file,${files}"; done
+          for file in $(find $PWD -type f -name 'jacocoRootReport.xml'); do export files="$file,${files}"; done
           export files="${files%?}"
           echo $files
-          echo "COVERAGE_REPORTS=${files}" >> $GITHUB_ENV
-      # - name: Upload Coverage to SonarCloud
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     SONARCLOUD_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
-      #   if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' && env.SONARCLOUD_TOKEN != null }}
-      #   run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel sonarqube -x javadoc -Dsonar.login="${SONARCLOUD_TOKEN}" -DskipNestedConfigMetadataGen=true -DshowStandardStreams=true -Dsonar.coverage.jacoco.xmlReportPaths="${COVERAGE_REPORTS}"
+          echo "SONAR_COVERAGE_REPORTS=${files}" >> $GITHUB_ENV
+       - name: Upload Coverage to SonarCloud
+         env:
+           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+           SONARCLOUD_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
+         if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' && env.SONARCLOUD_TOKEN != null }}
+         run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel sonarqube -x javadoc -Dsonar.login="${SONARCLOUD_TOKEN}" -DskipNestedConfigMetadataGen=true -DshowStandardStreams=true -Dsonar.coverage.jacoco.xmlReportPaths="${SONAR_COVERAGE_REPORTS}"
+      run: |
+        find $PWD -type f -name 'jacocoRootReport.xml'
+        export files=''
+        for file in $(find . -type f -name 'jacocoRootReport.xml'); do export files="$file,${files}"; done
+        export files="${files%?}"
+        echo $files
+        echo "CODACY_COVERAGE_REPORTS=${files}" >> $GITHUB_ENV
       - name: Upload Coverage to Codacy
         uses: codacy/codacy-coverage-reporter-action@master
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-          coverage-reports: ${{ env.COVERAGE_REPORTS }}
+          coverage-reports: ${{ env.CODACY_COVERAGE_REPORTS }}
       - name: "Upload to Codecov"
         uses: "codecov/codecov-action@v1"
         with:
