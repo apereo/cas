@@ -770,7 +770,7 @@ jobs:
       fail-fast: false
       matrix:
         scenario:
-          - ${{ env.PWD }}/ci/tests/puppeteer/scenarios/login-success
+          - $PWD/ci/tests/puppeteer/scenarios/login-success
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
