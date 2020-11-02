@@ -493,67 +493,67 @@ jobs:
       fail-fast: false
       matrix:
         category:
-          # - simple
-          # - groovy
-          # - filesystem
-          # - webflow
-          # - webflow-config
-          # - webflow-actions
-          # - webflow-events
-          # - webflow-mfa-actions
-          # - attributes
-          # - services
-          # - expiration-policy
-          # - rest
-          # - password-ops
-          # - mfa
-          # - web
-          # - metrics
-          # - cas
-          # - logout
+          - simple
+          - groovy
+          - filesystem
+          - webflow
+          - webflow-config
+          - webflow-actions
+          - webflow-events
+          - webflow-mfa-actions
+          - attributes
+          - services
+          - expiration-policy
+          - rest
+          - password-ops
+          - mfa
+          - web
+          - metrics
+          - cas
+          - logout
           - util
-          # - authentication
-          # - tickets
-          # - cas-config
-          # - actuator
-          # - webapp
-          # - ldap
-          # - x509
-          # - oauth
-          # - wsfed
-          # - uma
-          # - oidc
-          # - audit
-          # - saml
-          # - infinispan
-          # - spnego
-          # - hazelcast
-          # - jmx
-          # - shell
-          # - mongo
-          # - memcached
-          # - sms
-          # - jdbc
-          # - mariadb
-          # - postgres
-          # - mssql
-          # - oracle
-          # - mysql
-          # - aws
-          # - ehcache
-          # - redis
-          # - dynamodb
-          # - radius
-          # - couchdb
-          # - couchbase
-          # - mail
-          # - kafka
-          # - ignite
-          # - cassandra
-          # - influxdb
-          # - zookeeper
+          - authentication
+          - tickets
+          - cas-config
+          - actuator
+          - webapp
+          - ldap
+          - x509
+          - oauth
+          - wsfed
+          - uma
+          - oidc
+          - audit
+          - saml
+          - infinispan
+          - spnego
+          - hazelcast
+          - jmx
+          - shell
+          - mongo
+          - memcached
+          - sms
+          - jdbc
+          - mariadb
+          - postgres
+          - mssql
+          - oracle
+          - mysql
+          - aws
+          - ehcache
+          - redis
+          - dynamodb
+          - radius
+          - couchdb
+          - couchbase
+          - mail
+          - kafka
+          - ignite
+          - cassandra
+          - influxdb
+          - zookeeper
           - jms
-          # - cosmosdb
+          - cosmosdb
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -595,7 +595,7 @@ jobs:
         uses: "actions/download-artifact@v2"
         with:
           path: "reports"
-      - name: "Display structure of downloaded files"
+      - name: "Collect Files for Sonar"
         run: |
           find $PWD -type f -name 'jacocoRootReport.xml'
           export files=''
@@ -609,13 +609,14 @@ jobs:
            SONARCLOUD_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
          if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' && env.SONARCLOUD_TOKEN != null }}
          run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel sonarqube -x javadoc -Dsonar.login="${SONARCLOUD_TOKEN}" -DskipNestedConfigMetadataGen=true -DshowStandardStreams=true -Dsonar.coverage.jacoco.xmlReportPaths="${SONAR_COVERAGE_REPORTS}"
-      run: |
-        find $PWD -type f -name 'jacocoRootReport.xml'
-        export files=''
-        for file in $(find . -type f -name 'jacocoRootReport.xml'); do export files="$file,${files}"; done
-        export files="${files%?}"
-        echo $files
-        echo "CODACY_COVERAGE_REPORTS=${files}" >> $GITHUB_ENV
+      - name: "Collect Files for Codacy"
+        run: |
+          find $PWD -type f -name 'jacocoRootReport.xml'
+          export files=''
+          for file in $(find . -type f -name 'jacocoRootReport.xml'); do export files="$file,${files}"; done
+          export files="${files%?}"
+          echo $files
+          echo "CODACY_COVERAGE_REPORTS=${files}" >> $GITHUB_ENV
       - name: Upload Coverage to Codacy
         uses: codacy/codacy-coverage-reporter-action@master
         with:
