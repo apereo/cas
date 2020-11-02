@@ -15,19 +15,12 @@ echo -e "\nBuilding CAS found in $PWD..."
 ./gradlew clean build --no-daemon -PcasModules="${dependencies}"
 
 echo -e "\nLaunching CAS..."
-#java -jar build/libs/cas.war --server.ssl.key-store="${keystore}" &> /dev/null &
-java -jar build/libs/cas.war --server.ssl.key-store="./thekeystore" &
+java -jar build/libs/cas.war --server.ssl.key-store=./thekeystore &> /dev/null &
 pid=$!
 echo -e "\nWaiting for CAS under pid ${pid}"
-#until curl -k -L --output /dev/null --silent --fail https://localhost:8443/cas/login; do
-until curl -k -L https://localhost:8443/cas/login; do
+until curl -k -L --output /dev/null --silent --fail https://localhost:8443/cas/login; do
     printf '.'
     sleep 2
-
-#    if [[ (("$i" -gt 30 )) ]] ; then
-#      echo "Unable to launch CAS"
-#      exit 1
-#    fi
 done
 echo -e "\n\nReady!"
 
