@@ -52,5 +52,9 @@ cas.version=6.3.0-RC5
 The following items are new improvements and enhancements presented in this release.
 
 ## Other Stuff
- 
+
+- [Maven repositories](https://spring.io/blog/2020/10/29/notice-of-permissions-changes-to-repo-spring-io-fall-and-winter-2020) managed by the Spring project are removed from the CAS gradle build. 
+
 ## Library Upgrades
+
+- JRadius
