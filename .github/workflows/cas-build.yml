@@ -771,6 +771,7 @@ jobs:
       matrix:
         scenario:
           - login-success
+          - block-missing-service
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
