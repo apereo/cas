@@ -88,6 +88,7 @@ if (!Boolean.getBoolean("skipSonarqube")) {
     apply plugin: "org.sonarqube"
 
     sonarqube {
+        def exclusions = rootProject.excludedFilesFromTestCoverage.join(",")
         def token = providers.systemProperty("SONARCLOUD_TOKEN").forUseAtConfigurationTime().getOrElse(System.getenv("SONARCLOUD_TOKEN"))
         properties {
             property "sonar.host.url", "https://sonarcloud.io"
@@ -96,6 +97,7 @@ if (!Boolean.getBoolean("skipSonarqube")) {
             property "sonar.java.source", project.targetCompatibility
             property "sonar.organization", "apereo"
             property "sonar.login", token
+            property "sonar.coverage.exclusions", exclusions
             property "sonar.java.coveragePlugin", "jacoco"
         }
     }
