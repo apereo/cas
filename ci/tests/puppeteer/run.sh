@@ -1,17 +1,19 @@
 #!/bin/bash
 
-dependencies="$1"
-scriptPath="$2"
+scenario="$1"
 
 echo -e "*************************************"
-echo -e "CAS dependencies: ${dependencies}"
-echo -e "Script path: ${scriptPath}\n"
+echo -e "Scenario: ${scenario}"
 echo -e "*************************************\n"
 
 cd ./ci/tests/puppeteer/overlay
 ls
 
-echo -e "\nBuilding CAS found in $PWD..."
+config="${scenario}/script.json"
+echo "Using scenario configuration: ${config}"
+
+dependencies=$(cat "${config}" | jq -j '.dependencies')
+echo -e "\nBuilding CAS found in $PWD for dependencies ${dependencies}..."
 ./gradlew clean build --no-daemon -PcasModules="${dependencies}"
 
 echo -e "\nLaunching CAS..."
@@ -20,10 +22,11 @@ pid=$!
 echo -e "\nWaiting for CAS under pid ${pid}"
 until curl -k -L --output /dev/null --silent --fail https://localhost:8443/cas/login; do
     printf '.'
-    sleep 2
+    sleep 3
 done
 echo -e "\n\nReady!"
 
+scriptPath="${scenario}/script.js"
 echo -e "*************************************"
 echo -e "Running ${scriptPath}\n"
 node ${scriptPath}
