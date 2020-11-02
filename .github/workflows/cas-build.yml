@@ -487,7 +487,7 @@ jobs:
 
   tests:
     runs-on: ubuntu-latest
-    # needs: [cache]
+    needs: [cache]
     continue-on-error: false
     strategy:
       fail-fast: false
@@ -599,7 +599,7 @@ jobs:
         run: |
           find $PWD -type f -name 'jacocoRootReport.xml'
           export files=''
-          for file in $(find $PWD -type f -name 'jacocoRootReport.xml'); do export files="$file,${files}"; done
+          for file in $(find . -type f -name 'jacocoRootReport.xml'); do export files="$file,${files}"; done
           export files="${files%?}"
           echo $files
           echo "COVERAGE_REPORTS=${files}" >> $GITHUB_ENV

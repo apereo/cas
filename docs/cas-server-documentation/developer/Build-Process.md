@@ -156,7 +156,7 @@ creating a *Run Configuration* that roughly matches the following screenshot:
 ![image](https://user-images.githubusercontent.com/1205228/41805461-9ea25b76-765f-11e8-9a36-fa82d286cf09.png)
 
 This setup allows the developer to run the CAS web 
-application via an [embedded servlet container](Build-Process.html##embedded-containers).
+application via an [embedded servlet container](Build-Process.html#embedded-containers).
 
 ### Eclipse
 
@@ -205,7 +205,7 @@ bc -PcasModules=support-ldap,support-x509
 
 ...where `bc` is an [alias for building CAS](Build-Process.html#sample-build-aliases).
 
-Prepare [the embedded container](Build-Process.html##embedded-containers), to run and deploy the web application.
+Prepare [the embedded container](Build-Process.html#embedded-containers), to run and deploy the web application.
 
 ## Embedded Containers
 
