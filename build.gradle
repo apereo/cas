@@ -260,6 +260,10 @@ subprojects {
             mavenContent { releasesOnly() }
         }
         maven {
+            url "https://dl.bintray.com/apereocas/jradius/"
+            mavenContent { releasesOnly() }
+        }
+        maven {
             url "https://oss.sonatype.org/content/repositories/snapshots"
             mavenContent { snapshotsOnly() }
         }

@@ -198,8 +198,13 @@ ext.createPomRepositories = { node ->
     repository.appendNode("releases").appendNode("enabled", "true")
 
     repository = repositories.appendNode("repository")
-    repository.appendNode("id", "apereocas")
+    repository.appendNode("id", "apereocaswebauthn")
     repository.appendNode("url", "https://dl.bintray.com/apereocas/webauthn-cas")
+    repository.appendNode("releases").appendNode("enabled", "true")
+
+    repository = repositories.appendNode("repository")
+    repository.appendNode("id", "apereocasjradius")
+    repository.appendNode("url", "https://dl.bintray.com/apereocas/jradius/")
     repository.appendNode("releases").appendNode("enabled", "true")
 
     repository = repositories.appendNode("repository")
