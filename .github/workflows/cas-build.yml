@@ -780,6 +780,5 @@ jobs:
           cd ./ci/tests/puppeteer
           npm i puppeteer
       - name: Run Tests
-        working-directory: $PWD/ci/tests/puppeteer
-        run: ./init.sh "core" $PWD/login-successful.js
+        run: ./ci/tests/puppeteer/init.sh "core" $PWD/login-successful.js
 ##########################################################################
