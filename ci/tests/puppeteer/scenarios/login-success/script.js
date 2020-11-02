@@ -2,7 +2,6 @@ const puppeteer = require('puppeteer');
 const assert = require('assert');
 
 (async () => {
-    
     const browser = await puppeteer.launch({
         ignoreHTTPSErrors: true
     });

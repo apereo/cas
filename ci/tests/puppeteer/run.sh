@@ -21,7 +21,7 @@ java -jar build/libs/cas.war --server.ssl.key-store=./thekeystore &> /dev/null &
 pid=$!
 echo -e "\nWaiting for CAS under pid ${pid}"
 until curl -k -L --output /dev/null --silent --fail https://localhost:8443/cas/login; do
-    printf '.'
+    echo -n '.'
     sleep 3
 done
 echo -e "\n\nReady!"
