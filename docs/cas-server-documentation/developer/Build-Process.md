@@ -142,17 +142,21 @@ Once you have installed the Lombok plugin, you will also need to ensure Annotati
 
 ![image](https://user-images.githubusercontent.com/1205228/35231112-287f625a-ffad-11e7-8c1a-af23ff33918d.png)
 
-Note that the CAS-provided Checkstyle rules can be imported into idea to automate a number of formatting rules specially related to package imports and layouts. Once imported, the rules
+Note that the CAS-provided Checkstyle rules can be imported into idea to automate a number of 
+formatting rules specially related to package imports and layouts. Once imported, the rules
 should look something like the below screenshot:
 
 ![image](https://user-images.githubusercontent.com/1205228/42846621-b99539fc-8a2e-11e8-8128-9344bda7224d.png)
 
 #### Running CAS
 
-It is possible to run the CAS web application directly from IDEA by creating a *Run Configuration* that roughly matches the following screenshot:
+It is possible to run the CAS web application directly from IDEA by 
+creating a *Run Configuration* that roughly matches the following screenshot:
 
 ![image](https://user-images.githubusercontent.com/1205228/41805461-9ea25b76-765f-11e8-9a36-fa82d286cf09.png)
 
+This setup allows the developer to run the CAS web 
+application via an [embedded servlet container](Build-Process.html##embedded-containers).
 
 ### Eclipse
 
@@ -163,9 +167,13 @@ cd cas-server
 ./gradlew eclipse
 ```
 
-Then, import the project into eclipse using "General\Existing Projects into Workspace" and choose "Add Gradle Nature" from the "Configure" context menu of the project.
+Then, import the project into eclipse using "General\Existing Projects into Workspace" 
+and choose "Add Gradle Nature" from the "Configure" context menu of the project.
 
-<div class="alert alert-warning"><strong>YMMV</strong><p>We have had a less than ideal experience with Eclipse and its support for Gradle-based projects. While time changes everything and docs grow old, it is likely that you may experience issues with how Eclipse manages to resolve Gradle dependencies and build the project. In the end, you're welcome to use what works best for you as the ultimate goal is to find the appropriate tooling to build and contribute to CAS.</p></div>
+<div class="alert alert-warning"><strong>YMMV</strong><p>We have had a less than ideal experience with Eclipse and its support for Gradle-based 
+projects. While time changes everything and docs grow old, it is likely that you may experience issues with how Eclipse manages to 
+resolve Gradle dependencies and build the project. In the end, you're welcome to use what works best for you as the ultimate goal 
+is to find the appropriate tooling to build and contribute to CAS.</p></div>
 
 ## Testing Modules
 
@@ -177,7 +185,8 @@ To test the functionality provided by a given CAS module, execute the following 
 implementation project(":support:cas-server-support-modulename")
 ```
 
-Alternatively, set a `casModules` property in the root project's `gradle.properties` or `~/.gradle/gradle.properties` to a comma separated list of modules without the `cas-server-` prefix:
+Alternatively, set a `casModules` property in the root project's `gradle.properties` or `~/.gradle/gradle.properties` to a 
+comma separated list of modules without the `cas-server-` prefix:
 
 For example:
 
@@ -196,22 +205,29 @@ bc -PcasModules=support-ldap,support-x509
 
 ...where `bc` is an [alias for building CAS](Build-Process.html#sample-build-aliases).
 
-- Prepare the embedded container, as described below, to run and deploy the web application
+Prepare [the embedded container](Build-Process.html##embedded-containers), to run and deploy the web application.
 
 ## Embedded Containers
 
-The CAS project comes with a number of built-in modules that are pre-configured with embedded servlet containers such as Apache Tomcat, Jetty, etc for the server web application, the management web application and others. These modules are found in the `webapp` folder of the CAS project.
+The CAS project comes with a number of built-in modules that are pre-configured with embedded servlet containers such as 
+Apache Tomcat, Jetty, etc for the server web application, the management web application and others. These modules are found in the `webapp` folder of the CAS project.
 
 ### Configure SSL
 
-The `thekeystore` file must include the SSL private/public keys that are issued for your CAS server domain. You will need to use the `keytool` command of the JDK to create the keystore and the certificate. 
+The `thekeystore` file must include the SSL private/public keys that are issued for your CAS server domain. You 
+will need to use the `keytool` command of the JDK to create the keystore and the certificate. 
+
 The following commands may serve as an example:
 
 ```bash
-keytool -genkey -alias cas -keyalg RSA -validity 999 -keystore /etc/cas/thekeystore -ext san=dns:$REPLACE_WITH_FULL_MACHINE_NAME
+keytool -genkey -alias cas -keyalg RSA -validity 999 \
+    -keystore /etc/cas/thekeystore -ext san=dns:$REPLACE_WITH_FULL_MACHINE_NAME
 ```
 
-Note that the validity parameter allows you to specify, in the number of days, how long the certificate should be valid for. The longer the time period, the less likely you are to need to recreate it. To recreate it, you'd need to delete the old one and then follow these instructions again. You may also need to provide the *Subject Alternative Name* field, which can be done with `keytool` via `-ext san=dns:$REPLACE_WITH_FULL_MACHINE_NAME`.
+Note that the validity parameter allows you to specify, in the number of days, how long the certificate should be 
+valid for. The longer the time period, the less likely you are to need to recreate it. To recreate it, you'd need 
+to delete the old one and then follow these instructions again. You may also need to provide 
+the *Subject Alternative Name* field, which can be done with `keytool` via `-ext san=dns:$REPLACE_WITH_FULL_MACHINE_NAME`.
 
 The response will look something like this:
 
@@ -252,7 +268,8 @@ sudo keytool -import -file /etc/cas/config/cas.crt -alias cas -keystore $JAVA_HO
 
 ...where `JAVA_HOME` is where you have the JDK installed (i.e `/Library/Java/JavaVirtualMachines/jdk[version].jdk/Contents/Home`).
 
-On Windows, Administration right should be granted to the console instead of sudo, and `$JAVA_HOME/lib/security/cacerts` should be changed to `"%JAVA_HOME%/lib/security/cacerts"` instead.
+On Windows, Administration right should be granted to the console instead 
+of `sudo`, and `$JAVA_HOME/lib/security/cacerts` should be changed to `"%JAVA_HOME%/lib/security/cacerts"` instead.
 
 ### Deploy
 
@@ -276,7 +293,10 @@ By default CAS will be available at `https://mymachine.domain.edu:8443/cas`
 
 ### Remote Debugging
 
-The embedded container instance is pre-configured to listen to debugger requests on port `5000` provided you specify the `enableRemoteDebugging` parameter. For external container deployments, [such as Apache Tomcat](https://wiki.apache.org/tomcat/FAQ/Developing#Q1), the following example shows what needs configuring in the `bin/startup.sh|bat` file:
+The embedded container instance is pre-configured to listen to debugger requests on port `5000` provided you 
+specify the `enableRemoteDebugging` parameter. For external container 
+deployments, [such as Apache Tomcat](https://wiki.apache.org/tomcat/FAQ/Developing#Q1), the following example 
+shows what needs configuring in the `bin/startup.sh|bat` file:
 
 ```bash
 export JPDA_ADDRESS=5000
@@ -309,19 +329,21 @@ Below are some examples of convenient build aliases for quickly running a local 
 installing dependencies from the project for use in the cas-overlay.
 
 ```bash
-# adjust the cas alias to the location of cas project folder
+# Adjust the cas alias to the location of cas project folder
 alias cas='cd ~/Workspace/cas'
 
 # test cas directly from project rather than using the CAS overlay
 alias bc='clear; cas; cd webapp/cas-server-webapp-tomcat ; \
     ../../gradlew build bootRun --configure-on-demand --build-cache --parallel \
-    -x test -x javadoc -x check -DremoteDebuggingSuspend=false -DenableRemoteDebugging=true --stacktrace \
-    -DskipNestedConfigMetadataGen=true -DskipGradleLint=true -Dcas.standalone.configurationDirectory=/etc/cas/config'
+    -x test -x javadoc -x check -DremoteDebuggingSuspend=false \
+    -DenableRemoteDebugging=true --stacktrace \
+    -DskipNestedConfigMetadataGen=true'
 
-# install jars for use with a CAS overlay project
+# Install jars for use with a CAS overlay project
 alias bci='clear; cas; \
-    ./gradlew clean build install --configure-on-demand --build-cache --parallel \
+    ./gradlew clean build install --configure-on-demand \
+    --build-cache --parallel \
     -x test -x javadoc -x check --stacktrace \
-    -DskipNestedConfigMetadataGen=true -DskipGradleLint=true \
+    -DskipNestedConfigMetadataGen=true \
     -DskipBootifulArtifact=true'
 ```

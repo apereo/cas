@@ -21,4 +21,4 @@ echo -e "\nGenerating keystore ${keystore} for CAS with DN=${dname}, SAN=${subje
 [ -f "${keystore}" ] && rm "${keystore}"
 keytool -genkey -noprompt -alias cas -keyalg RSA -keypass changeit -storepass changeit \
   -keystore "${keystore}" -dname "${dname}" -ext SAN="${subjectAltName}"
-[ -f "${keystore}" ] && echo "Creates ${keystore}"
+[ -f "${keystore}" ] && echo "Created ${keystore}"
