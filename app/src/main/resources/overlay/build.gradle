@@ -19,9 +19,21 @@ repositories {
     mavenLocal()
     mavenCentral()
     jcenter()
+    maven {
+        url "https://dl.bintray.com/apereocas/webauthn-cas/"
+        mavenContent { releasesOnly() }
+    }
+    maven {
+        url "https://dl.bintray.com/apereocas/jradius/"
+        mavenContent { releasesOnly() }
+    }
     maven { 
         url "https://oss.sonatype.org/content/repositories/snapshots" 
         mavenContent { snapshotsOnly() }
+    }
+    maven {
+        url "https://dl.bintray.com/uniconiam/maven"
+        mavenContent { releasesOnly() }
     }
     maven { 
         mavenContent { releasesOnly() }
