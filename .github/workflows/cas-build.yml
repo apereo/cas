@@ -766,6 +766,10 @@ jobs:
   puppeteer-tests:
     runs-on: ubuntu-latest
 #    needs: [build]
+    strategy:
+      fail-fast: false
+      matrix:
+        modules: "core"
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -773,12 +777,9 @@ jobs:
         with:
           java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - name: Install Puppeteer
-        run: |
-          sudo apt-get install jq
-          cd ./ci/tests/puppeteer
-          npm i puppeteer
+        run: chmod -R 777 ./ci/*.sh
+      - name: Prepare Puppeteer
+        run: ./ci/tests/puppeteer/prepare.sh
       - name: Run Tests
-        run: ./ci/tests/puppeteer/init.sh "core" $PWD/login-successful.js
+        run: ./ci/tests/puppeteer/run.sh ${{matrix.modules}} ./ci/tests/puppeteer/login-successful.js
 ##########################################################################
