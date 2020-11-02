@@ -21,7 +21,7 @@ env:
 
 on:
   push:
-    branches: [ puppeteer ]
+    branches: [ master ]
   pull_request:
     branches: [ master ]
 
@@ -765,7 +765,7 @@ jobs:
 
   puppeteer-tests:
     runs-on: ubuntu-latest
-#    needs: [build]
+    needs: [build]
     strategy:
       fail-fast: false
       matrix:
