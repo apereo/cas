@@ -30,7 +30,7 @@ end
 # file_ignore - ignore CAS spec b/c it has lots of bad anchor links, only *.html files are processed
 options = {
             :file_ignore =>  [ %r{.*/CAS-Protocol-Specification.html} ],
-            :disable_external => true,
+            :disable_external => false,
             :only_4xx => true,
             :empty_alt_ignore => true,
             :url_ignore => [ %r{^/cas}, %r{^../images/}, %r{^../../developer/} ],

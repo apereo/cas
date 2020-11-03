@@ -319,7 +319,7 @@ and will route the flow to execute MFA. See [this guide](Configuring-Adaptive-Au
 
 ## Grouper
 
-MFA can be triggered by [Grouper](https://www.internet2.edu/products-services/trust-identity-middleware/grouper/)
+MFA can be triggered by [Grouper](https://incommon.org/software/grouper/)
 groups to which the authenticated principal is assigned.
 Groups are collected by CAS and then cross-checked against all available/configured MFA providers.
 The group's comparing factor **MUST** be defined in CAS to activate this behavior
@@ -452,7 +452,9 @@ value can be an arbitrary regex pattern. See below to learn about how to configu
 
 ## Entity Id Request Parameter
 
-In situations where authentication is delegated to CAS, most commonly via a [Shibboleth Identity Provider](https://shibboleth.net/products/identity-provider.html),  the entity id may be passed as a request parameter to CAS to be treated as a CAS registered service.
+In situations where authentication is delegated to CAS, most commonly 
+via a [Shibboleth Identity Provider](https://www.shibboleth.net/products/),  the entity id may be passed as 
+a request parameter to CAS to be treated as a CAS registered service.
 This allows one to activate multifactor authentication policies based on the entity id that is registered
 This allows one to [activate multifactor authentication policies](#Per Application) based on the entity id that is registered
 in the CAS service registry. As a side benefit, the entity id can take advantage of all other CAS features

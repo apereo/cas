@@ -1264,7 +1264,7 @@ Retrieve attributes from a JDBC source. Database settings for this feature are a
 
 ### Grouper
 
-This option reads all the groups from [a Grouper instance](http://www.internet2.edu/grouper/software.html) for the given CAS principal and adopts them
+This option reads all the groups from [a Grouper instance](https://incommon.org/software/grouper/) for the given CAS principal and adopts them
 as CAS attributes under a `grouperGroups` multi-valued attribute.
 To learn more about this topic, [please review this guide](../integration/Attribute-Resolution.html).
 
