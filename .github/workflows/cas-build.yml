@@ -584,7 +584,6 @@ jobs:
           path: "./build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
 ##########################################################################
   upload_coverage:
-    name: "Upload Coverage Results"
     runs-on: ubuntu-latest
     needs: [tests]
     steps:
@@ -698,7 +697,7 @@ jobs:
 
   report-dependency-updates:
     runs-on: ubuntu-latest
-    needs: [build]
+    needs: [cache]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -715,7 +714,8 @@ jobs:
             ${{ runner.os }}-gradle-
       - name: Report Dependency Updates
         if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' && contains(github.event.head_commit.message, 'dependency') }}
-        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel -x test -x javadoc dependencyUpdates -Drevision=release -DskipNestedConfigMetadataGen=true -DgradleReleaseChannel=current
+        run: |
+          ./gradlew --build-cache --configure-on-demand --no-daemon --parallel -x test -x javadoc dependencyUpdates -Drevision=release -DskipNestedConfigMetadataGen=true -DgradleReleaseChannel=current
 
 ##########################################################################
 
