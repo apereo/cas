@@ -67,4 +67,14 @@ to account for advanced use cases such as ensuring protocol compatibility and ot
 ## Library Upgrades
 
 - JRadius
+- Hazelcast
+- MySQL Driver
+- MongoDb Driver
+- HSQL Driver
+- MariaDb Driver
+- Groovy
+- Caffeine
+- Hibernate
+- Infinispan
+- Thymeleaf Dialect
 - Micrometer
