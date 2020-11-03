@@ -265,6 +265,7 @@ layout: null
     *   [Code Conventions](/cas/developer/Code-Conventions.html)
     *   [Release Process](/$version/developer/Release-Process.html)
     *   [Build Process](/$version/developer/Build-Process.html)
+    *   [Test Process](/$version/developer/Test-Process.html)
 
 * [Project](#projectpolicy)
     *   [PMC](/cas/developer/Project-Commitee.html)

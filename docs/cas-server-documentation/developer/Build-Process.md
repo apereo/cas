@@ -177,35 +177,7 @@ is to find the appropriate tooling to build and contribute to CAS.</p></div>
 
 ## Testing Modules
 
-To test the functionality provided by a given CAS module, execute the following steps:
-
-- For the tomcat, undertow or jetty webapp, add the module reference to the `webapp.gradle` build script of web application you intend to run:
-
-```gradle
-implementation project(":support:cas-server-support-modulename")
-```
-
-Alternatively, set a `casModules` property in the root project's `gradle.properties` or `~/.gradle/gradle.properties` to a 
-comma separated list of modules without the `cas-server-` prefix:
-
-For example:
-
-```properties
-casModules=core-monitor,\
-    support-ldap,\
-    support-x509,\
-    support-bootadmin-client
-```
-
-Or set the property on the command-line:
-
-```bash
-bc -PcasModules=support-ldap,support-x509
-```
-
-...where `bc` is an [alias for building CAS](Build-Process.html#sample-build-aliases).
-
-Prepare [the embedded container](Build-Process.html#embedded-containers), to run and deploy the web application.
+Please [see this page](Test-Process.html) to learn more about the testing process and guidelines.
 
 ## Embedded Containers
 
@@ -310,18 +282,7 @@ When you're done, create a remote debugger configuration in your IDE that connec
 
 ## Manual Submodule Testing
 
-To simplify the test execution process, you may take advantage of the `testcas.sh` script found at the root of the repository as such:
-
-```bash
-# chmod +x ./testcas.sh
-./testcas.sh --category <category> [--test <test-class>] [--debug] [--coverage]
-```
-
-To learn more about the script, use:
-
-```bash
-./testcas.sh --help
-```
+Please [see this page](Test-Process.html) to learn more about the testing process and guidelines.
 
 ## Sample Build Aliases
 
