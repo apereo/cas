@@ -5,6 +5,7 @@ defaultTasks "clean", "build"
 
 buildscript {
     repositories {
+        mavenCentral()
         jcenter()
         gradlePluginPortal()
         maven {
