@@ -56,9 +56,7 @@ To learn more about the script, use:
 ./testcas.sh --help
 ```
 
-## Continuous Integration
-
-Unit and integration tests are automatically executed by the CAS CI system, [GitHub Actions](https://github.com/apereo/cas/actions).
+All unit and integration tests are executed by the [continuous integration system](Test-Process.html#Continuous-Integration).
 
 ## Code Coverage & Metrics
 
@@ -78,3 +76,18 @@ Quality metrics are collected and reported by the following platforms:
 | SonarCloud Quality Gate           | [![Sonarqube Quality](https://sonarcloud.io/api/project_badges/measure?project=org.apereo.cas%3Acas-server&metric=alert_status)](https://sonarcloud.io/dashboard?id=org.apereo.cas%3Acas-server)
 | SonarCloud Maintainability            | [![Sonarqube Quality](https://sonarcloud.io/api/project_badges/measure?project=org.apereo.cas%3Acas-server&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=org.apereo.cas%3Acas-server) 
 
+## Browser & Functional Testing
+
+Automated browser testing is done via the [Puppeteer framework](https://pptr.dev/). Puppeteer is a Node library which provides a high-level 
+API to control Chrome or Chromium over the DevTools Protocol and runs headless by default.
+
+Functional tests start by generating a plain CAS overlay as a baseline that is able to run under HTTPS using a pre-generated keystore.
+This overlay is supplied the test scenario configuration that explain the required modules, properties, etc to use when CAS is deployed
+inside an embedded Apache Tomcat container. Once running, the Puppeteer script is executed by Node for the given test scenario to verify
+specific functionality such as successful logins, generation of tickets, etc.
+
+All functional tests are executed by the [continuous integration system](Test-Process.html#Continuous-Integration).
+
+## Continuous Integration
+
+Unit and integration tests are automatically executed by the CAS CI system, [GitHub Actions](https://github.com/apereo/cas/actions).
