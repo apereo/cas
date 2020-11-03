@@ -127,7 +127,7 @@ and if the release process here had you create a new branch.
 
 ## Update Maintenance Policy
 
-Update the [Maintenance Policy](https://github.com/apereo/cas/edit/gh-pages/Maintenance-Policy.md/) to note the release schedule and EOL timeline. 
+Update the [Maintenance Policy](https://github.com/apereo/cas/edit/gh-pages/developer/Maintenance-Policy.md/) to note the release schedule and EOL timeline. 
 This task is only relevant when dealing with major or minor releases.
 
 ## Update Demos

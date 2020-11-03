@@ -112,7 +112,7 @@ class PredicateExample implements Predicate<Credential> {
 ## Password Encoding
 
 Certain aspects of CAS such as authentication handling support configuration of
-password encoding. Most options are based on Spring Security's [support for password encoding](http://docs.spring.io/spring-security/site/docs/current/apidocs/org/springframework/security/crypto/password/PasswordEncoder.html).
+password encoding. Most options are based on Spring Security's [support for password encoding](https://docs.spring.io/spring-security/site/docs/current/reference/html5/).
 
 The following options related to password encoding support in CAS apply equally to a number of CAS components (authentication handlers, etc) given the component's *configuration key*:
 

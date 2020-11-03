@@ -90,7 +90,7 @@ The same sort of configuration needs to be applied to your `$CATALINA_OPTS` envi
 
 #### Faster Startup
 
-[This guide](https://wiki.apache.org/tomcat/HowTo/FasterStartUp) provides several recommendations on how to make 
+[This guide](https://cwiki.apache.org/confluence/display/TOMCAT/HowTo+FasterStartUp) provides several recommendations on how to make 
 web applications and Apache Tomcat as a whole to start up faster.
 
 #### Logging

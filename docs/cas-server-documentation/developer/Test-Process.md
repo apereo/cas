@@ -56,7 +56,7 @@ To learn more about the script, use:
 ./testcas.sh --help
 ```
 
-All unit and integration tests are executed by the [continuous integration system](Test-Process.html#Continuous-Integration).
+All unit and integration tests are executed by the [continuous integration system](Test-Process.html#continuous-integration).
 
 ## Code Coverage & Metrics
 
@@ -86,7 +86,7 @@ This overlay is supplied the test scenario configuration that explain the requir
 inside an embedded Apache Tomcat container. Once running, the Puppeteer script is executed by Node for the given test scenario to verify
 specific functionality such as successful logins, generation of tickets, etc.
 
-All functional tests are executed by the [continuous integration system](Test-Process.html#Continuous-Integration).
+All functional tests are executed by the [continuous integration system](Test-Process.html#continuous-integration).
 
 ## Continuous Integration
 

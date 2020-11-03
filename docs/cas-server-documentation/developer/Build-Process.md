@@ -267,7 +267,7 @@ By default CAS will be available at `https://mymachine.domain.edu:8443/cas`
 
 The embedded container instance is pre-configured to listen to debugger requests on port `5000` provided you 
 specify the `enableRemoteDebugging` parameter. For external container 
-deployments, [such as Apache Tomcat](https://wiki.apache.org/tomcat/FAQ/Developing#Q1), the following example 
+deployments, [such as Apache Tomcat](https://wiki.apache.org/tomcat/FAQ), the following example 
 shows what needs configuring in the `bin/startup.sh|bat` file:
 
 ```bash
