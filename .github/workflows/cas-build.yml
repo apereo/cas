@@ -785,6 +785,7 @@ jobs:
         scenario:
           - login-success
           - block-missing-service
+          - default-service
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
