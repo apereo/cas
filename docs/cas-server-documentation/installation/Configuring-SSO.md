@@ -135,7 +135,7 @@ please [review this guide](../configuration/Configuration-Properties.html#views)
 ## Required Service
 
 CAS may be configured to require the user to authenticate from an application before
-access can be granted to all other registered services. Once CAS find a record for the required
+access can be granted to all other registered services. Once CAS finds a record for the required
 application as part of the single sign-on session records, it will permit authentication attempts
 by all other services until the single sign-on session is destroyed.
 
