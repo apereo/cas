@@ -115,7 +115,8 @@ public class CoreWsSecurityIdentityProviderConfiguration {
     @Autowired
     @Bean
     public WSFederationValidateRequestCallbackController federationValidateRequestCallbackController(
-        @Qualifier("wsFederationRelyingPartyTokenProducer") final WSFederationRelyingPartyTokenProducer wsFederationRelyingPartyTokenProducer) {
+        @Qualifier("wsFederationRelyingPartyTokenProducer")
+        final WSFederationRelyingPartyTokenProducer wsFederationRelyingPartyTokenProducer) {
         val context = getConfigurationContext()
             .relyingPartyTokenProducer(wsFederationRelyingPartyTokenProducer)
             .build();
@@ -138,8 +139,10 @@ public class CoreWsSecurityIdentityProviderConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "wsFederationRelyingPartyTokenProducer")
     public WSFederationRelyingPartyTokenProducer wsFederationRelyingPartyTokenProducer(
-        @Qualifier("securityTokenServiceCredentialCipherExecutor") final CipherExecutor securityTokenServiceCredentialCipherExecutor,
-        @Qualifier("securityTokenServiceClientBuilder") final SecurityTokenServiceClientBuilder securityTokenServiceClientBuilder) {
+        @Qualifier("securityTokenServiceCredentialCipherExecutor")
+        final CipherExecutor securityTokenServiceCredentialCipherExecutor,
+        @Qualifier("securityTokenServiceClientBuilder")
+        final SecurityTokenServiceClientBuilder securityTokenServiceClientBuilder) {
         return new DefaultRelyingPartyTokenProducer(securityTokenServiceClientBuilder,
             securityTokenServiceCredentialCipherExecutor,
             new HashSet<>(casProperties.getAuthn().getWsfedIdp().getSts().getCustomClaims()));
