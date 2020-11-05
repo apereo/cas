@@ -16,6 +16,7 @@ import java.util.Objects;
 
 /**
  * This is {@link SamlRegisteredServiceMetadataHealthIndicator}.
+ * Only need 1 valid resolver for metadata to be 'available'.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
@@ -26,13 +27,7 @@ public class SamlRegisteredServiceMetadataHealthIndicator extends AbstractHealth
     private final SamlRegisteredServiceMetadataResolutionPlan metadataResolutionPlan;
 
     private final ServicesManager servicesManager;
-
-    /**
-     * Check for availability of metadata sources.
-     * Only need 1 valid resolver for metadata to be 'available'.
-     *
-     * @param builder the health builder to report back status
-     */
+    
     @Override
     protected void doHealthCheck(final Health.Builder builder) {
         val samlServices = servicesManager.findServiceBy(registeredService -> registeredService instanceof SamlRegisteredService);
