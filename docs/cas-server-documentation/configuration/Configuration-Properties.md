@@ -585,7 +585,8 @@ Enable basic authentication for the embedded Apache Tomcat.
 
 #### Apache Portable Runtime (APR)
 
-Tomcat can use the [Apache Portable Runtime](https://tomcat.apache.org/tomcat-9.0-doc/apr.html) to provide superior scalability, performance, and better integration with native server technologies.
+Tomcat can use the [Apache Portable Runtime](https://tomcat.apache.org/tomcat-9.0-doc/apr.html) to provide superior 
+scalability, performance, and better integration with native server technologies.
 
 ```properties
 # cas.server.tomcat.apr.enabled=false
@@ -1046,7 +1047,8 @@ if explicit attribute mappings are defined, then *only mapped attributes* are re
 
 ### Multimapped Attribute
 
-Attributes may be allowed to be virtually renamed and remapped. The following definition, for instance, attempts to grab the attribute `uid` from the attribute source and rename it to `userId`:
+Attributes may be allowed to be virtually renamed and remapped. The following definition, for instance, attempts to 
+grab the attribute `uid` from the attribute source and rename it to `userId`:
 
 ```properties
 # cas.authn.attribute-repository.[type-placeholder].attributes.uid=userId
@@ -1088,7 +1090,9 @@ Static attributes that need to be mapped to a hardcoded value belong here.
 
 ### LDAP
 
-If you wish to directly and separately retrieve attributes from an LDAP source, LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.authn.attribute-repository.ldap[0]`.
+If you wish to directly and separately retrieve attributes from an LDAP source, LDAP settings for this 
+feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the 
+configuration key `cas.authn.attribute-repository.ldap[0]`.
 
 ```properties
 # cas.authn.attribute-repository.ldap[0].id=
@@ -1157,7 +1161,9 @@ The format of the file may be:
 
 ### REST
 
-Retrieve attributes from a REST endpoint. RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.authn.attribute-repository.rest[0]`.
+Retrieve attributes from a REST endpoint. RESTful settings for this feature 
+are available [here](Configuration-Properties-Common.html#restful-integrations) under 
+the configuration key `cas.authn.attribute-repository.rest[0]`.
 
 ```properties
 # cas.authn.attribute-repository.rest[0].order=0
@@ -1237,7 +1243,9 @@ function run(uid, logger) {
 
 ### JDBC
 
-Retrieve attributes from a JDBC source. Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.attribute-repository.jdbc[0]`.
+Retrieve attributes from a JDBC source. Database settings for this feature 
+are available [here](Configuration-Properties-Common.html#database-settings) under 
+the configuration key `cas.authn.attribute-repository.jdbc[0]`.
 
 ```properties
 # cas.authn.attribute-repository.jdbc[0].attributes.uid=uid
@@ -1285,7 +1293,8 @@ with the following configured properties:
 
 ### Couchbase
 
-This option will fetch attributes from a Couchbase database for a given CAS principal. To learn more about this topic, [please review this guide](../installation/Couchbase-Authentication.html). 
+This option will fetch attributes from a Couchbase database for a given CAS principal. To 
+learn more about this topic, [please review this guide](../installation/Couchbase-Authentication.html). 
 Database settings for this feature are available [here](Configuration-Properties-Common.html#couchbase-integration-settings) under the configuration key `cas.authn.attribute-repository.couchbase`.
 
 ```properties
@@ -1730,9 +1739,20 @@ Email notifications settings for this feature are available [here](Configuration
 under the configuration key `cas.authn.surrogate`. SMS notifications settings for this feature are 
 available [here](Configuration-Properties-Common.html#sms-notifications) under the configuration key `cas.authn.surrogate`.
 
+## QR Authentication
+
+Attempt to login via a mobile device via a QR code. To learn more about this 
+topic, [please review this guide](../installation/QRCode-Authentication.html).
+
+```properties   
+# Configure allowed Origin header values for browser clients.
+# cas.authn.qr.allowed-origins=*
+```
+
 ## Risk-based Authentication
 
-Evaluate suspicious authentication requests and take action. To learn more about this topic, [please review this guide](../installation/Configuring-RiskBased-Authentication.html).
+Evaluate suspicious authentication requests and take action. To learn 
+more about this topic, [please review this guide](../installation/Configuring-RiskBased-Authentication.html).
 
 ```properties
 # cas.authn.adaptive.risk.threshold=0.6
@@ -3306,7 +3326,8 @@ To learn more about this topic, [please review this guide](../mfa/AuthyAuthentic
 # cas.authn.mfa.authy.order=
 ```
 
-Multifactor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.authy`.
+Multifactor authentication bypass settings for this provider are 
+available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.authy`.
 
 
 ### Acceptto

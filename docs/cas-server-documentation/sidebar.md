@@ -60,6 +60,7 @@ layout: null
         *   [Couchbase](/$version/installation/Couchbase-Authentication.html)
         *   [Basic](/$version/installation/Basic-Authentication.html)
         *   [Groovy](/$version/installation/Groovy-Authentication.html)
+        *   [QR Code](/$version/installation/QRCode-Authentication.html)
         *   [Digest](/$version/installation/Digest-Authentication.html)
         *   [MongoDb](/$version/installation/MongoDb-Authentication.html)
         *   [Redis](/$version/installation/Redis-Authentication.html)
