@@ -57,7 +57,6 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
 
 import javax.servlet.http.HttpServletResponse;
-
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -83,13 +82,6 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
     @Autowired
     @Qualifier("casAuthenticationManager")
     protected AuthenticationManager authenticationManager;
-
-    private static UsernamePasswordCredential badCredentials(final String username) {
-        val credentials = new UsernamePasswordCredential();
-        credentials.setUsername(username);
-        credentials.setPassword("badpassword");
-        return credentials;
-    }
 
     @BeforeEach
     public void initialize() {
@@ -117,6 +109,8 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
         Thread.sleep(1000);
         failLoop(3, 1000, HttpStatus.SC_UNAUTHORIZED);
     }
+
+    public abstract ThrottledSubmissionHandlerInterceptor getThrottle();
 
     @SneakyThrows
     protected void failLoop(final int trials, final int period, final int expected) {
@@ -158,7 +152,12 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
         throw new AssertionError("Expected AbstractAuthenticationException");
     }
 
-    public abstract ThrottledSubmissionHandlerInterceptor getThrottle();
+    private static UsernamePasswordCredential badCredentials(final String username) {
+        val credentials = new UsernamePasswordCredential();
+        credentials.setUsername(username);
+        credentials.setPassword("badpassword");
+        return credentials;
+    }
 
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
