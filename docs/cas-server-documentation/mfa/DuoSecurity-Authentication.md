@@ -25,16 +25,17 @@ Duo offers several options for authenticating users:
 
 You may need to add the following repositories to the WAR overlay:
 
-```xml
-<repository>
-    <id>uniconiam</id>
-    <url>https://dl.bintray.com/uniconiam/maven</url>
-</repository>
-
-<repository>
-    <id>duo-jitpack</id>
-    <url>https://jitpack.io</url>
-</repository>
+```groovy
+repositories {
+    maven { 
+        mavenContent { releasesOnly() }
+        url "https://dl.bintray.com/uniconiam/maven" 
+    }
+    maven { 
+        mavenContent { releasesOnly() }
+        url "https://jitpack.io" 
+    }
+}
 ```
 
 ## Administrative Endpoints
