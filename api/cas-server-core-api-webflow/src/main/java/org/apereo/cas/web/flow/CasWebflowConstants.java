@@ -46,6 +46,11 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_FINALIZE = "finalize";
 
     /**
+     * The transition state 'validate'.
+     */
+    String TRANSITION_ID_VALIDATE = "validate";
+
+    /**
      * The transition state 'warn'.
      */
     String TRANSITION_ID_WARN = "warn";

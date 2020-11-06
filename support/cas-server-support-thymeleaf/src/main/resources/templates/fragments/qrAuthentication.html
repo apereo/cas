@@ -32,14 +32,19 @@
                         <img th:src="@{'data:image/jpeg;base64,' + ${qrCode}}"/>
                         <p>
                             Your mobile device must communicate with CAS using the following channel id:
-                            <p th:utext="${qrChannel}"></p>
+                            <p th:utext="${qrChannel}" />
                         </p>
                     </center>
                 </div>
             </div>
         </div>
-
-
+        
+        <form method="post" id="qrform">
+            <input id="token" name="token" type="hidden" />
+            <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+            <input type="hidden" name="_eventId" value="validate"/>
+        </form>
+        
         <script th:inline="javascript">
             /*<![CDATA[*/
             var endpoint = /*[[@{/qr-websocket}]]*/  ;
@@ -56,6 +61,8 @@
                         let body = JSON.parse(result.body);
                         if (body.success) {
                             stompClient.disconnect();
+                            $("#qrform #token").val(body.token);
+                            $("#qrform").submit();
                         }
                     });
                 });
