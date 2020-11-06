@@ -39,6 +39,12 @@ public class QRAuthenticationWebflowConfigurer extends AbstractCasWebflowConfigu
             val setAction = createSetAction("flowScope.qrAuthenticationEnabled", "true");
             state.getEntryActionList().add(setAction);
 
+            val qrSubmission = getState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
+            createTransitionForState(qrSubmission, CasWebflowConstants.TRANSITION_ID_VALIDATE, "validateQRToken");
+
+            val validateAction = createActionState(flow, "validateQRToken", "qrAuthenticationValidateWebSocketChannelAction");
+            createTransitionForState(validateAction, CasWebflowConstants.TRANSITION_ID_FINALIZE, CasWebflowConstants.STATE_ID_REAL_SUBMIT);
+
             state.getEntryActionList().add(requestContext -> {
                 val id = UUID.randomUUID().toString();
                 LOGGER.debug("Generating QR code with channel id [{}]", id);
@@ -48,6 +54,7 @@ public class QRAuthenticationWebflowConfigurer extends AbstractCasWebflowConfigu
                 requestContext.getFlowScope().put("qrPrefix", QRAuthenticationChannelController.QR_SIMPLE_BROKER_DESTINATION_PREFIX);
                 return null;
             });
+
         }
     }
 }

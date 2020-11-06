@@ -45,7 +45,7 @@ public class JwtTicketGrantingTicketResourceEntityResponseFactory extends Defaul
         val headers = new HttpHeaders();
         headers.setContentType(MediaType.TEXT_PLAIN);
 
-        val entity = new ResponseEntity<String>(jwt, headers, HttpStatus.CREATED);
+        val entity = new ResponseEntity<>(jwt, headers, HttpStatus.CREATED);
         LOGGER.debug("Created response entity [{}]", entity);
         return entity;
 
