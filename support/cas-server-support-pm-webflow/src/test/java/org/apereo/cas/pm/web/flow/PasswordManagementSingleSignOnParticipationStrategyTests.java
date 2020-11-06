@@ -1,9 +1,23 @@
 package org.apereo.cas.pm.web.flow;
 
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.pm.PasswordManagementService;
+import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.ticket.TransientSessionTicketFactory;
+import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.CollectionUtils;
+
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.webflow.test.MockRequestContext;
+
+import java.io.Serializable;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -17,17 +31,53 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Tag("Webflow")
 public class PasswordManagementSingleSignOnParticipationStrategyTests {
 
+    @Autowired
+    @Qualifier("ticketRegistry")
+    protected TicketRegistry ticketRegistry;
+
+    @Autowired
+    @Qualifier("defaulticketFactory")
+    protected TicketFactory ticketFactory;
+
+    @Autowired
+    protected CasConfigurationProperties casProperties;
+
+    @Autowired
+    @Qualifier("passwordChangeService")
+    protected PasswordManagementService passwordManagementService;
+
+    @Autowired
+    @Qualifier("webApplicationServiceFactory")
+    protected ServiceFactory<WebApplicationService> webApplicationServiceFactory;
+
     @Test
     public void verifyStrategyWithANonPmRequest() {
-        val s = new PasswordManagementSingleSignOnParticipationStrategy();
+        val s = new PasswordManagementSingleSignOnParticipationStrategy(ticketRegistry);
         assertFalse(s.supports(new MockRequestContext()));
     }
 
     @Test
-    public void verifyStrategyWithAPmRequest() {
-        val s = new PasswordManagementSingleSignOnParticipationStrategy();
+    public void verifyStrategyWithAInvalidPmRequest() {
+        val s = new PasswordManagementSingleSignOnParticipationStrategy(ticketRegistry);
         val ctx = new MockRequestContext();
-        ctx.putRequestParameter(PasswordManagementWebflowUtils.REQUEST_PARAMETER_NAME_PASSWORD_RESET_TOKEN, "resetToken");
+        ctx.putRequestParameter(PasswordManagementWebflowUtils.REQUEST_PARAMETER_NAME_PASSWORD_RESET_TOKEN, "invalidResetToken");
+
+        assertFalse(s.supports(ctx));
+    }
+
+    @Test
+    public void verifyStrategyWithAValidPmRequest() {
+        val s = new PasswordManagementSingleSignOnParticipationStrategy(ticketRegistry);
+        val ctx = new MockRequestContext();
+
+        val token = passwordManagementService.createToken("casuser");
+        val transientFactory = (TransientSessionTicketFactory) ticketFactory.get(TransientSessionTicket.class);
+        val serverPrefix = casProperties.getServer().getPrefix();
+        val service = webApplicationServiceFactory.createService(serverPrefix);
+        val properties = CollectionUtils.<String, Serializable>wrap(PasswordManagementWebflowUtils.FLOWSCOPE_PARAMETER_NAME_TOKEN, token);
+        val ticket = transientFactory.create(service, properties);
+        ticketRegistry.addTicket(ticket);
+        ctx.putRequestParameter(PasswordManagementWebflowUtils.REQUEST_PARAMETER_NAME_PASSWORD_RESET_TOKEN, ticket.getId());
 
         assertTrue(s.supports(ctx));
         assertFalse(s.isParticipating(ctx));

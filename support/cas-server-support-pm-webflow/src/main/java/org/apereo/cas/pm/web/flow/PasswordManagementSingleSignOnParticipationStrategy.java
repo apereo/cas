@@ -1,8 +1,9 @@
 package org.apereo.cas.pm.web.flow;
 
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 
-import lombok.val;
+import lombok.RequiredArgsConstructor;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -11,12 +12,13 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Julien Huon
  * @since 6.3.0
  */
+@RequiredArgsConstructor
 public class PasswordManagementSingleSignOnParticipationStrategy implements SingleSignOnParticipationStrategy {
+    private final TicketRegistry ticketRegistry;
 
     @Override
     public boolean supports(final RequestContext requestContext) {
-        val params = requestContext.getRequestParameters();
-        return params.contains(PasswordManagementWebflowUtils.REQUEST_PARAMETER_NAME_PASSWORD_RESET_TOKEN);
+        return PasswordManagementWebflowUtils.isPasswordResetRequestIsValid(requestContext, ticketRegistry);
     }
 
     @Override
