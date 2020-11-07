@@ -7,6 +7,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.uma.ticket.resource.ResourceSetPolicy;
 import org.apereo.cas.uma.ticket.resource.ResourceSetPolicyPermission;
 import org.apereo.cas.uma.web.controllers.authz.UmaAuthorizationRequestEndpointController;
+import org.apereo.cas.uma.web.controllers.claims.UmaRequestingPartyClaimsCollectionEndpointController;
 import org.apereo.cas.uma.web.controllers.permission.UmaPermissionRegistrationEndpointController;
 import org.apereo.cas.uma.web.controllers.permission.UmaPermissionRegistrationRequest;
 import org.apereo.cas.uma.web.controllers.policy.UmaCreatePolicyForResourceSetEndpointController;
@@ -60,6 +61,10 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
     protected UmaPermissionRegistrationEndpointController umaPermissionRegistrationEndpointController;
 
     @Autowired
+    @Qualifier("umaRequestingPartyClaimsCollectionEndpointController")
+    protected UmaRequestingPartyClaimsCollectionEndpointController umaRequestingPartyClaimsCollectionEndpointController;
+
+    @Autowired
     @Qualifier("umaCreateResourceSetRegistrationEndpointController")
     protected UmaCreateResourceSetRegistrationEndpointController umaCreateResourceSetRegistrationEndpointController;
 
@@ -107,11 +112,11 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
     @Qualifier("umaAuthorizationApiTokenSecurityInterceptor")
     protected SecurityInterceptor umaAuthorizationApiTokenSecurityInterceptor;
 
-    protected Triple<HttpServletRequest, HttpServletResponse, String> authenticateUmaRequestWithProtectionScope() throws Exception {
+    protected Triple<HttpServletRequest, HttpServletResponse, String> authenticateUmaRequestWithProtectionScope() {
         return authenticateUmaRequestWithScope(OAuth20Constants.UMA_PROTECTION_SCOPE, umaRequestingPartyTokenSecurityInterceptor);
     }
 
-    protected Triple<HttpServletRequest, HttpServletResponse, String> authenticateUmaRequestWithAuthorizationScope() throws Exception {
+    protected Triple<HttpServletRequest, HttpServletResponse, String> authenticateUmaRequestWithAuthorizationScope() {
         return authenticateUmaRequestWithScope(OAuth20Constants.UMA_AUTHORIZATION_SCOPE, umaAuthorizationApiTokenSecurityInterceptor);
     }
 

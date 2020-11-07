@@ -1393,32 +1393,6 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "commons-lang", module: "commons-lang")
                     exclude(group: "net.sf.ehcache", module: "ehcache-core")
-                },
-                dependencies.create("org.testcontainers:testcontainers:$testContainersVersion") {
-                },
-                dependencies.create("org.testcontainers:junit-jupiter:$testContainersVersion") {
-                },
-                dependencies.create("org.testcontainers:influxdb:$testContainersVersion") {
-                },
-                dependencies.create("org.testcontainers:mysql:$testContainersVersion") {
-                },
-                dependencies.create("org.testcontainers:postgresql:$testContainersVersion") {
-                },
-                dependencies.create("org.testcontainers:mariadb:$testContainersVersion") {
-                },
-                dependencies.create("org.testcontainers:mongodb:$testContainersVersion") {
-                },
-                dependencies.create("org.testcontainers:couchbase:$testContainersVersion") {
-                },
-                dependencies.create("org.testcontainers:mssqlserver:$testContainersVersion") {
-                },
-                dependencies.create("org.testcontainers:kafka:$testContainersVersion") {
-                },
-                dependencies.create("org.testcontainers:rabbitmq:$testContainersVersion") {
-                },
-                dependencies.create("org.testcontainers:cassandra:$testContainersVersion") {
-                },
-                dependencies.create("org.testcontainers:jdbc:$testContainersVersion") {
                 }
         ],
         tests                   : [
