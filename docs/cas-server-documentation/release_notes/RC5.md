@@ -51,6 +51,30 @@ cas.version=6.3.0-RC5
 
 The following items are new improvements and enhancements presented in this release.
 
+## Puppeteer Tests
+
+Documentation is now available to highlight [test processes](../developer/Test-Process.html) used by the 
+CAS project and developers/contributors. The newest addition is the availability of functional/browser testing 
+mechanisms that are backed by the Puppeteer framework. The test scenarios that are designed are 
+executed by the CAS continuous integration system and will be improved over time
+to account for advanced use cases such as ensuring protocol compatibility and other variations of the authentication webflow.  
+
 ## Other Stuff
- 
+
+- [Maven repositories](https://spring.io/blog/2020/10/29/notice-of-permissions-changes-to-repo-spring-io-fall-and-winter-2020) managed by the Spring project are removed from the CAS gradle build. 
+- All external links found in the CAS documentation are corrected to point to valid resources. Validation processes are also adjusted to prevent bad links. 
+
 ## Library Upgrades
+
+- JRadius
+- Hazelcast
+- MySQL Driver
+- MongoDb Driver
+- HSQL Driver
+- MariaDb Driver
+- Groovy
+- Caffeine
+- Hibernate
+- Infinispan
+- Thymeleaf Dialect
+- Micrometer

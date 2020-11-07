@@ -5,6 +5,7 @@ defaultTasks "clean", "build"
 
 buildscript {
     repositories {
+        mavenCentral()
         jcenter()
         gradlePluginPortal()
         maven {
@@ -12,20 +13,8 @@ buildscript {
             mavenContent { releasesOnly() }
         }
         maven {
-            url "https://plugins.gradle.org/m2/"
-            mavenContent { releasesOnly() }
-        }
-        maven {
             url "https://repo.spring.io/plugins-release"
             mavenContent { releasesOnly() }
-        }
-        maven {
-            url "https://repo.spring.io/libs-milestone"
-            mavenContent { releasesOnly() }
-        }
-        maven {
-            url "https://repo.spring.io/snapshot"
-            mavenContent { snapshotsOnly() }
         }
     }
 
@@ -100,6 +89,7 @@ if (!Boolean.getBoolean("skipSonarqube")) {
     apply plugin: "org.sonarqube"
 
     sonarqube {
+        def exclusions = rootProject.excludedFilesFromTestCoverage.join(",")
         def token = providers.systemProperty("SONARCLOUD_TOKEN").forUseAtConfigurationTime().getOrElse(System.getenv("SONARCLOUD_TOKEN"))
         properties {
             property "sonar.host.url", "https://sonarcloud.io"
@@ -108,8 +98,8 @@ if (!Boolean.getBoolean("skipSonarqube")) {
             property "sonar.java.source", project.targetCompatibility
             property "sonar.organization", "apereo"
             property "sonar.login", token
+            property "sonar.coverage.exclusions", exclusions
             property "sonar.java.coveragePlugin", "jacoco"
-            property "sonar.coverage.jacoco.xmlReportPaths", "${rootProject.buildDir}/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
         }
     }
 }
@@ -204,10 +194,6 @@ allprojects {
         mavenCentral()
         jcenter()
         maven {
-            url "https://repo.spring.io/libs-milestone"
-            mavenContent { releasesOnly() }
-        }
-        maven {
             url "$sonatypeReleasesRepositoryUrl"
             mavenContent { releasesOnly() }
         }
@@ -277,6 +263,10 @@ subprojects {
             mavenContent { releasesOnly() }
         }
         maven {
+            url "https://dl.bintray.com/apereocas/jradius/"
+            mavenContent { releasesOnly() }
+        }
+        maven {
             url "https://oss.sonatype.org/content/repositories/snapshots"
             mavenContent { snapshotsOnly() }
         }
@@ -286,18 +276,6 @@ subprojects {
         }
         maven {
             url "https://repo.spring.io/plugins-release/"
-            mavenContent { releasesOnly() }
-        }
-        maven {
-            url "https://repo.spring.io/milestone/"
-            mavenContent { releasesOnly() }
-        }
-        maven {
-            url "https://repo.spring.io/snapshot/"
-            mavenContent { snapshotsOnly() }
-        }
-        maven {
-            url "https://repo.spring.io/libs-milestone"
             mavenContent { releasesOnly() }
         }
         maven {
@@ -506,6 +484,7 @@ subprojects {
         apply plugin: "io.franzbecker.gradle-lombok"
         lombok {
             version = "$lombokVersion"
+            sha256 = ""
         }
     }
 

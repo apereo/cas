@@ -100,13 +100,10 @@ You should also switch back to the main development branch (i.e. `master`) and f
 
 ## Housekeeping
 
-- Close [the milestone](https://github.com/apereo/cas/milestones) for this release.
-- Find [the release](https://github.com/apereo/cas/releases) that is mapped to the released tag and update the description.
-
 <div class="alert alert-info"><strong>Remember</strong><p>When updating the release description, try to be keep 
 consistent and follow the same layout as previous releases.</p></div>
 
-- Mark the release as pre-release, when releasing RC versions of the project. 
+- Mark the release tag as pre-release, when releasing RC versions of the project on GitHub. 
 - Send an announcement message to [@cas-announce, @cas-user and @cas-dev](/cas/Mailing-Lists.html) mailing lists, linking to the new release page.
 
 ## Update Overlays
@@ -130,7 +127,7 @@ and if the release process here had you create a new branch.
 
 ## Update Maintenance Policy
 
-Update the [Maintenance Policy](https://github.com/apereo/cas/edit/gh-pages/Maintenance-Policy.md/) to note the release schedule and EOL timeline. 
+Update the [Maintenance Policy](https://github.com/apereo/cas/edit/gh-pages/developer/Maintenance-Policy.md/) to note the release schedule and EOL timeline. 
 This task is only relevant when dealing with major or minor releases.
 
 ## Update Demos

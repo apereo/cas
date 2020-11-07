@@ -12,6 +12,7 @@ import org.apereo.cas.web.support.InMemoryThrottledSubmissionByIpAddressAndUsern
 import org.apereo.cas.web.support.InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter;
 import org.apereo.cas.web.support.InMemoryThrottledSubmissionCleaner;
 import org.apereo.cas.web.support.ThrottledSubmissionHandlerConfigurationContext;
+import org.apereo.cas.web.support.ThrottledSubmissionHandlerEndpoint;
 import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -107,7 +109,8 @@ public class CasThrottlingConfiguration {
     @Autowired
     @ConditionalOnMissingBean(name = "authenticationThrottlingExecutionPlan")
     @Bean
-    public AuthenticationThrottlingExecutionPlan authenticationThrottlingExecutionPlan(final List<AuthenticationThrottlingExecutionPlanConfigurer> configurers) {
+    public AuthenticationThrottlingExecutionPlan authenticationThrottlingExecutionPlan(
+        final List<AuthenticationThrottlingExecutionPlanConfigurer> configurers) {
         val plan = new DefaultAuthenticationThrottlingExecutionPlan();
         configurers.forEach(c -> {
             LOGGER.trace("Registering authentication throttler [{}]", c.getName());
@@ -118,7 +121,9 @@ public class CasThrottlingConfiguration {
 
     @Bean
     @Autowired
-    public Runnable throttleSubmissionCleaner(@Qualifier("authenticationThrottlingExecutionPlan") final AuthenticationThrottlingExecutionPlan plan) {
+    public Runnable throttleSubmissionCleaner(
+        @Qualifier("authenticationThrottlingExecutionPlan")
+        final AuthenticationThrottlingExecutionPlan plan) {
         return new InMemoryThrottledSubmissionCleaner(plan);
     }
 
@@ -127,5 +132,12 @@ public class CasThrottlingConfiguration {
     @Order(0)
     public AuthenticationThrottlingExecutionPlanConfigurer authenticationThrottlingExecutionPlanConfigurer() {
         return plan -> plan.registerAuthenticationThrottleInterceptor(authenticationThrottle());
+    }
+
+    @Bean
+    @ConditionalOnAvailableEndpoint
+    public ThrottledSubmissionHandlerEndpoint throttledSubmissionHandlerEndpoint(
+        @Qualifier("authenticationThrottlingExecutionPlan") final AuthenticationThrottlingExecutionPlan plan) {
+        return new ThrottledSubmissionHandlerEndpoint(casProperties, plan);
     }
 }

@@ -17,6 +17,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-audit-api")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-authentication-api")
+    testImplementation project(":core:cas-server-core-authentication-mfa")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-logout")
@@ -24,7 +25,11 @@ dependencies {
     testImplementation project(":core:cas-server-core-monitor")
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(":core:cas-server-core-logging")
     testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-webflow-mfa")
+    testImplementation project(":core:cas-server-core-webflow")
+    testImplementation project(":support:cas-server-support-reports")
     testImplementation project(":support:cas-server-support-person-directory")
 
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
@@ -32,5 +37,7 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
-
+    testImplementation project(path: ":core:cas-server-core-webflow-mfa", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-audit-api", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-reports", configuration: "tests")
 }

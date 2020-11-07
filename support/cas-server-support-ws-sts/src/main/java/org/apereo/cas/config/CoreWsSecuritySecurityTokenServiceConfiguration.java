@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
+import org.apereo.cas.authentication.DefaultSecurityTokenServiceTokenFetcher;
 import org.apereo.cas.authentication.SecurityTokenServiceClientBuilder;
 import org.apereo.cas.authentication.SecurityTokenServiceTokenFetcher;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -405,7 +406,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @Bean
     @RefreshScope
     public SecurityTokenServiceTokenFetcher securityTokenServiceTokenFetcher() {
-        return new SecurityTokenServiceTokenFetcher(servicesManager.getObject(),
+        return new DefaultSecurityTokenServiceTokenFetcher(servicesManager.getObject(),
             wsFederationAuthenticationServiceSelectionStrategy.getObject(),
             securityTokenServiceCredentialCipherExecutor(),
             securityTokenServiceClientBuilder());
