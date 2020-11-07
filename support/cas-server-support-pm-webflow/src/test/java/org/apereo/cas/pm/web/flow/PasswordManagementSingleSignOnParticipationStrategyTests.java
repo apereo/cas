@@ -1,5 +1,6 @@
 package org.apereo.cas.pm.web.flow;
 
+import org.apereo.cas.pm.web.flow.actions.BasePasswordManagementActionTests;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -29,26 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @since 6.3.0
  */
 @Tag("WebflowConfig")
-public class PasswordManagementSingleSignOnParticipationStrategyTests {
-
-    @Autowired
-    @Qualifier("ticketRegistry")
-    protected TicketRegistry ticketRegistry;
-
-    @Autowired
-    @Qualifier("defaulticketFactory")
-    protected TicketFactory ticketFactory;
-
-    @Autowired
-    protected CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("passwordChangeService")
-    protected PasswordManagementService passwordManagementService;
-
-    @Autowired
-    @Qualifier("webApplicationServiceFactory")
-    protected ServiceFactory<WebApplicationService> webApplicationServiceFactory;
+public class PasswordManagementSingleSignOnParticipationStrategyTests extends BasePasswordManagementActionTests {
 
     @Test
     public void verifyStrategyWithANonPmRequest() {
@@ -57,7 +39,7 @@ public class PasswordManagementSingleSignOnParticipationStrategyTests {
     }
 
     @Test
-    public void verifyStrategyWithAInvalidPmRequest() {
+    public void verifyStrategyWithAnInvalidPmRequest() {
         val s = new PasswordManagementSingleSignOnParticipationStrategy(ticketRegistry);
         val ctx = new MockRequestContext();
         ctx.putRequestParameter(PasswordManagementWebflowUtils.REQUEST_PARAMETER_NAME_PASSWORD_RESET_TOKEN, "invalidResetToken");

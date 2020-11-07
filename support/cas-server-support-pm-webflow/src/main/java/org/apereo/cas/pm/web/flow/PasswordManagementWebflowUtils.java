@@ -1,11 +1,7 @@
 package org.apereo.cas.pm.web.flow;
 
-import org.apereo.cas.ticket.TransientSessionTicket;
-import org.apereo.cas.ticket.registry.TicketRegistry;
-
 import lombok.experimental.UtilityClass;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.List;
@@ -27,25 +23,6 @@ public class PasswordManagementWebflowUtils {
      * Flowscope param name for token.
      */
     public static final String FLOWSCOPE_PARAMETER_NAME_TOKEN = "token";
-
-    /**
-     * Is reset request submited is valid? Does it contain a valid tst token?
-     *
-     * @param requestContext the request context
-     * @param ticketRegistry the ticket registry
-     * @return true/false
-     */
-    public boolean isPasswordResetRequestIsValid(final RequestContext requestContext, final TicketRegistry ticketRegistry) {
-        val transientTicket = requestContext
-            .getRequestParameters()
-            .get(PasswordManagementWebflowUtils.REQUEST_PARAMETER_NAME_PASSWORD_RESET_TOKEN);
-
-        if (StringUtils.isBlank(transientTicket)) {
-            return false;
-        }
-
-        return ticketRegistry.getTicket(transientTicket, TransientSessionTicket.class) != null;
-    }
 
     /**
      * Put password reset token.
