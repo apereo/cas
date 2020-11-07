@@ -147,7 +147,7 @@ layout: null
         *   [MongoDb](/$version/ticketing/MongoDb-Ticket-Registry.html)
         *   [DynamoDb](/$version/ticketing/DynamoDb-Ticket-Registry.html)
 
-* [Services](#service_management)
+* [Services & Applications](#service_management)
     *   [Overview](/$version/services/Service-Management.html)
     *   [Management Web Application](/$version/services/Installing-ServicesMgmt-Webapp.html)
     *   [Access Strategy](/$version/services/Configuring-Service-Access-Strategy.html)
