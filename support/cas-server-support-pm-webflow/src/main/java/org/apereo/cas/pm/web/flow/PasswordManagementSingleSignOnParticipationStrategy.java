@@ -3,9 +3,9 @@ package org.apereo.cas.pm.web.flow;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import lombok.RequiredArgsConstructor;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
