@@ -23,6 +23,11 @@
                             <i class="mdi mdi-qrcode-scan"></i>
                             <span>Login with QR Code</span>
                         </h3>
+                        <section>
+                            <div id="qrerror" class="banner banner-danger banner-dismissible" style="display:none;">
+                                <p th:utext="#{cas.authn.qr.fail}">Error</p>
+                            </div>
+                        </section>
                         <p>Scan the QR code with your mobile device to begin the login flow. If your credentials
                             are accepted, you will automatically proceed to the next step.</p>
                     </div>
@@ -63,6 +68,7 @@
                                     <span class="sr-only">Copy</span>
                                 </button>
                             </section>
+
                         </p>
                     </center>
                 </div>
@@ -89,8 +95,11 @@
                     stompClient.subscribe(prefix + '/' + topic + '/verify', function (result) {
                         console.log(result.body);
                         let body = JSON.parse(result.body);
-                        if (body.success) {
+                        if (body.error) {
+                            $("#qrerror").show();
+                        } else if (body.success) {
                             stompClient.disconnect();
+                            $("#qrerror").hide();
                             $("#qrform #token").val(body.token);
                             $("#qrform").submit();
                         }

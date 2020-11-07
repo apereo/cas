@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessin
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.qr.validation.QRAuthenticationTokenValidatorService;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -27,7 +28,9 @@ public class QRAuthenticationTokenAuthenticationHandler extends AbstractPreAndPo
     private final QRAuthenticationTokenValidatorService tokenValidatorService;
 
     public QRAuthenticationTokenAuthenticationHandler(final ServicesManager servicesManager,
-        final PrincipalFactory principalFactory, final QRAuthenticationTokenValidatorService tokenValidatorService) {
+        final PrincipalFactory principalFactory,
+        final QRAuthenticationTokenValidatorService tokenValidatorService) {
+        
         super(StringUtils.EMPTY, servicesManager, principalFactory, 0);
         this.tokenValidatorService = tokenValidatorService;
     }
@@ -45,13 +48,15 @@ public class QRAuthenticationTokenAuthenticationHandler extends AbstractPreAndPo
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
         val tokenCredential = (QRAuthenticationTokenCredential) credential;
-        LOGGER.debug("Received token [{}]", tokenCredential.getId());
-        val result = tokenValidatorService.validate(Optional.empty(), tokenCredential.getId());
-        if (result.isSuccess()) {
+        try {
+            LOGGER.debug("Received token [{}]", tokenCredential.getId());
+            val result = tokenValidatorService.validate(Optional.empty(), tokenCredential.getId());
             val principal = result.getAuthentication().getPrincipal();
             return createHandlerResult(tokenCredential, principal);
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
         }
-        throw new FailedLoginException("Unable to verify QR code");
+        throw new FailedLoginException("Unable to verify QR code " + tokenCredential.getId());
     }
 }
 

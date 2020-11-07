@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.Authentication;
 
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
-import net.minidev.json.annotate.JsonIgnore;
 
 import java.io.Serializable;
 
@@ -20,14 +19,4 @@ public class QRAuthenticationTokenValidationResult implements Serializable {
     private static final long serialVersionUID = -2010576443419962855L;
 
     private final Authentication authentication;
-
-    /**
-     * Is result a success?
-     *
-     * @return true/false
-     */
-    @JsonIgnore
-    public boolean isSuccess() {
-        return authentication != null;
-    }
 }
