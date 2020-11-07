@@ -1,4 +1,4 @@
-description = "Apereo CAS FIDO2 WebAuthn Support"
+description = "Apereo CAS FIDO2 WebAuthn Webflow Support"
 dependencies {
     api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-util")
@@ -9,7 +9,6 @@ dependencies {
     
     implementation project(":support:cas-server-support-trusted-mfa-core")
     implementation project(":support:cas-server-support-webauthn-core")
-    implementation project(":support:cas-server-support-webauthn-core-webflow")
 
     implementation project(":core:cas-server-core-authentication-mfa-api")
     implementation project(":core:cas-server-core-authentication-mfa")

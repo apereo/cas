@@ -100,7 +100,7 @@ public class U2FMongoDbDeviceRepository extends BaseU2FDeviceRepository {
     public void removeAll() {
         val query = new Query();
         query.addCriteria(Criteria.where("createdDate").exists(true));
-        this.mongoTemplate.remove(query, U2FDeviceRegistration.class, this.collectionName);
+        mongoTemplate.remove(query, U2FDeviceRegistration.class, this.collectionName);
     }
 
     private Collection<? extends U2FDeviceRegistration> queryDeviceRegistrations(final Query query) {
