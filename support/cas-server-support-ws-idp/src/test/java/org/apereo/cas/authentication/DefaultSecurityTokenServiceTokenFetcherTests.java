@@ -15,13 +15,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link SecurityTokenServiceTokenFetcherTests}.
+ * This is {@link DefaultSecurityTokenServiceTokenFetcherTests}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
  */
 @Tag("WSFederation")
-public class SecurityTokenServiceTokenFetcherTests extends BaseCoreWsSecurityIdentityProviderConfigurationTests {
+public class DefaultSecurityTokenServiceTokenFetcherTests extends BaseCoreWsSecurityIdentityProviderConfigurationTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 

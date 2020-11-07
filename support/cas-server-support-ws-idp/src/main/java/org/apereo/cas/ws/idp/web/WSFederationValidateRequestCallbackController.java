@@ -15,7 +15,6 @@ import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
-import org.jasig.cas.client.util.CommonUtils;
 import org.jasig.cas.client.validation.Assertion;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,34 +37,6 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
         super(wsFederationRequestConfigurationContext);
     }
 
-    private static ModelAndView postResponseBackToRelyingParty(final String rpToken,
-                                                               final WSFederationRequest fedRequest) {
-        val postUrl = StringUtils.isNotBlank(fedRequest.getWreply()) ? fedRequest.getWreply() : fedRequest.getWtrealm();
-
-        val parameters = new HashMap<String, Object>();
-        parameters.put(WSFederationConstants.WA, WSFederationConstants.WSIGNIN10);
-        parameters.put(WSFederationConstants.WRESULT, StringEscapeUtils.unescapeHtml4(rpToken));
-        parameters.put(WSFederationConstants.WTREALM, fedRequest.getWtrealm());
-
-        if (StringUtils.isNotBlank(fedRequest.getWctx())) {
-            parameters.put(WSFederationConstants.WCTX, fedRequest.getWctx());
-        }
-
-        LOGGER.trace("Posting relying party token to [{}]", postUrl);
-        return new ModelAndView(CasWebflowConstants.VIEW_ID_POST_RESPONSE,
-            CollectionUtils.wrap("originalUrl", postUrl, "parameters", parameters));
-    }
-
-    private SecurityToken fetchSecurityTokenFromAssertion(final Assertion assertion, final Service targetService) {
-        val principal = assertion.getPrincipal().getName();
-        val token = getConfigContext().getSecurityTokenServiceTokenFetcher().fetch(targetService, principal);
-        if (token.isEmpty()) {
-            LOGGER.warn("No security token could be retrieved for service [{}] and principal [{}]", targetService, principal);
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
-        }
-        return token.get();
-    }
-
     /**
      * Handle federation request.
      *
@@ -85,7 +56,7 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
         val service = findAndValidateFederationRequestForRegisteredService(targetService, fedRequest);
         LOGGER.debug("Located matching service [{}]", service);
 
-        val ticket = CommonUtils.safeGetParameter(request, CasProtocolConstants.PARAMETER_TICKET);
+        val ticket = request.getParameter(CasProtocolConstants.PARAMETER_TICKET);
         if (StringUtils.isBlank(ticket)) {
             LOGGER.error("Can not validate the request because no [{}] is provided via the request", CasProtocolConstants.PARAMETER_TICKET);
             return new ModelAndView(CasWebflowConstants.VIEW_ID_ERROR, new HashMap<>(0), HttpStatus.FORBIDDEN);
@@ -105,36 +76,65 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
         return postResponseBackToRelyingParty(rpToken, fedRequest);
     }
 
+    private SecurityToken fetchSecurityTokenFromAssertion(final Assertion assertion, final Service targetService) {
+        val principal = assertion.getPrincipal().getName();
+        val token = getConfigContext().getSecurityTokenServiceTokenFetcher().fetch(targetService, principal);
+        if (token.isEmpty()) {
+            LOGGER.warn("No security token could be retrieved for service [{}] and principal [{}]", targetService, principal);
+            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
+        }
+        return token.get();
+    }
+
     private void addSecurityTokenTicketToRegistry(final HttpServletRequest request, final SecurityToken securityToken) {
         LOGGER.trace("Creating security token as a ticket to CAS ticket registry...");
+        val ticketRegistry = getConfigContext().getTicketRegistry();
         val tgt = CookieUtils.getTicketGrantingTicketFromRequest(getConfigContext().getTicketGrantingTicketCookieGenerator(),
-            getConfigContext().getTicketRegistry(), request);
+            ticketRegistry, request);
 
         val serializedToken = SerializationUtils.serialize(securityToken);
         val ticket = getConfigContext().getSecurityTokenTicketFactory().create(tgt, serializedToken);
         LOGGER.trace("Created security token ticket [{}]", ticket);
-        getConfigContext().getTicketRegistry().addTicket(ticket);
+        ticketRegistry.addTicket(ticket);
         LOGGER.trace("Added security token as a ticket to CAS ticket registry...");
-        getConfigContext().getTicketRegistry().updateTicket(tgt);
+        ticketRegistry.updateTicket(tgt);
     }
 
     private String produceRelyingPartyToken(final HttpServletRequest request, final Service targetService,
-                                            final WSFederationRequest fedRequest, final SecurityToken securityToken,
-                                            final Assertion assertion) {
+        final WSFederationRequest fedRequest, final SecurityToken securityToken,
+        final Assertion assertion) {
         val service = findAndValidateFederationRequestForRegisteredService(targetService, fedRequest);
         LOGGER.debug("Located registered service [{}] to create relying-party tokens...", service);
         return getConfigContext().getRelyingPartyTokenProducer().produce(securityToken, service, fedRequest, request, assertion);
     }
 
     private Assertion validateRequestAndBuildCasAssertion(final HttpServletResponse response,
-                                                          final HttpServletRequest request,
-                                                          final WSFederationRequest fedRequest) throws Exception {
-        val ticket = CommonUtils.safeGetParameter(request, CasProtocolConstants.PARAMETER_TICKET);
+        final HttpServletRequest request,
+        final WSFederationRequest fedRequest) throws Exception {
+        val ticket = request.getParameter(CasProtocolConstants.PARAMETER_TICKET);
         val serviceUrl = constructServiceUrl(request, response, fedRequest);
         LOGGER.trace("Created service url for validation: [{}]", serviceUrl);
         val assertion = getConfigContext().getTicketValidator().validate(ticket, serviceUrl);
         LOGGER.debug("Located CAS assertion [{}]", assertion);
         return assertion;
+    }
+
+    private static ModelAndView postResponseBackToRelyingParty(final String rpToken,
+        final WSFederationRequest fedRequest) {
+        val postUrl = StringUtils.isNotBlank(fedRequest.getWreply()) ? fedRequest.getWreply() : fedRequest.getWtrealm();
+
+        val parameters = new HashMap<String, Object>();
+        parameters.put(WSFederationConstants.WA, WSFederationConstants.WSIGNIN10);
+        parameters.put(WSFederationConstants.WRESULT, StringEscapeUtils.unescapeHtml4(rpToken));
+        parameters.put(WSFederationConstants.WTREALM, fedRequest.getWtrealm());
+
+        if (StringUtils.isNotBlank(fedRequest.getWctx())) {
+            parameters.put(WSFederationConstants.WCTX, fedRequest.getWctx());
+        }
+
+        LOGGER.trace("Posting relying party token to [{}]", postUrl);
+        return new ModelAndView(CasWebflowConstants.VIEW_ID_POST_RESPONSE,
+            CollectionUtils.wrap("originalUrl", postUrl, "parameters", parameters));
     }
 
 }
