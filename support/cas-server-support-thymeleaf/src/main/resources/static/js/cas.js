@@ -57,6 +57,12 @@ function randomWord() {
     return n1 + "_" + n2
 }
 
+function copyClipboard(element) {
+    element.select();
+    element.setSelectionRange(0, 99999);
+    document.execCommand("copy");
+}
+
 function requestGeoPosition() {
     // console.log('Requesting GeoLocation data from the browser...');
     if (navigator.geolocation) {
