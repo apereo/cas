@@ -7,7 +7,6 @@ import org.apereo.cas.util.junit.EnabledIfPortOpen;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -52,11 +51,6 @@ public class MonitorEndpointLdapAuthenticationProviderGroupsBasedTests extends B
         val authenticator = LdapUtils.newLdaptiveAuthenticator(ldap);
         val provider = new MonitorEndpointLdapAuthenticationProvider(ldap, securityProperties, connectionFactory, authenticator);
         assertNotNull(provider.authenticate(new UsernamePasswordAuthenticationToken("authzcas", "123456")));
-        assertAll(new Executable() {
-            @Override
-            public void execute() {
-                provider.destroy();
-            }
-        });
+        assertAll(provider::destroy);
     }
 }

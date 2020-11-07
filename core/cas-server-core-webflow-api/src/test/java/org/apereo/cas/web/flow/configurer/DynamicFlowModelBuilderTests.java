@@ -3,7 +3,6 @@ package org.apereo.cas.web.flow.configurer;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 
 import java.util.List;
 
@@ -24,12 +23,7 @@ public class DynamicFlowModelBuilderTests {
         builder.setGlobalTransitions(List.of());
         assertFalse(builder.hasFlowModelResourceChanged());
         assertNotNull(builder.getFlowModelResource());
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                builder.dispose();
-            }
-        });
+        assertDoesNotThrow(builder::dispose);
     }
 
 }

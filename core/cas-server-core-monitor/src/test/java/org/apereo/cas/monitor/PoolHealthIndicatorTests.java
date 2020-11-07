@@ -3,7 +3,6 @@ package org.apereo.cas.monitor;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.Status;
@@ -45,12 +44,7 @@ public class PoolHealthIndicatorTests {
         val health = monitor.health();
         assertEquals(health.getStatus(), Status.UP);
 
-        assertAll(new Executable() {
-            @Override
-            public void execute() throws Exception {
-                ((DisposableBean) monitor).destroy();
-            }
-        });
+        assertAll(((DisposableBean) monitor)::destroy);
     }
 
     @Test
@@ -75,12 +69,7 @@ public class PoolHealthIndicatorTests {
         val health = monitor.health();
         assertEquals(Status.DOWN, health.getStatus());
 
-        assertAll(new Executable() {
-                @Override
-                public void execute() throws Exception {
-                    ((DisposableBean) monitor).destroy();
-                }
-        });
+        assertAll(((DisposableBean) monitor)::destroy);
     }
 
     @Test
@@ -103,11 +92,6 @@ public class PoolHealthIndicatorTests {
         };
         val health = monitor.health();
         assertEquals(health.getStatus(), Status.OUT_OF_SERVICE);
-        assertAll(new Executable() {
-                @Override
-                public void execute() throws Exception {
-                    ((DisposableBean) monitor).destroy();
-                }
-        });
+        assertAll(((DisposableBean) monitor)::destroy);
     }
 }
