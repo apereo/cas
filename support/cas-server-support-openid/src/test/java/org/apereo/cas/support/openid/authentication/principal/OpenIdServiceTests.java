@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.ServiceRegistry;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.support.openid.AbstractOpenIdTests;
 import org.apereo.cas.support.openid.OpenIdProtocolConstants;
@@ -175,7 +176,7 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
         assertFalse(o1.equals(new Object()));
     }
 
-    private DefaultServicesManager getServicesManager() {
+    private ServicesManager getServicesManager() {
         val context = ServicesManagerConfigurationContext.builder()
             .serviceRegistry(mock(ServiceRegistry.class))
             .applicationContext(applicationContext)
