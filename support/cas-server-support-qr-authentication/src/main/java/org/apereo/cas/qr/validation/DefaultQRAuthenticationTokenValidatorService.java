@@ -1,6 +1,7 @@
 package org.apereo.cas.qr.validation;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -33,26 +34,32 @@ public class DefaultQRAuthenticationTokenValidatorService implements QRAuthentic
     @Override
     public QRAuthenticationTokenValidationResult validate(final Optional<RegisteredService> service, final String token) {
         val claims = jwtBuilder.unpack(service, token);
+        LOGGER.trace("Unpacked QR token as [{}]", claims);
+
         val tgt = centralAuthenticationService.getTicket(claims.getJWTID(), TicketGrantingTicket.class);
         val dt = DateTimeUtils.localDateTimeOf(claims.getExpirationTime());
 
-        if (LocalDateTime.now(Clock.systemUTC()).isAfter(dt)) {
-            LOGGER.warn("Token with id [{}] has expired", tgt.getId());
-            return QRAuthenticationTokenValidationResult.builder().build();
+        val now = LocalDateTime.now(Clock.systemUTC());
+        if (now.isAfter(dt)) {
+            LOGGER.trace("Comparing now at [{}] with token's expiration time [{}]", now, dt);
+            throw new AuthenticationException(String.format("Token %s has expired", tgt.getId()));
         }
 
-        if (!tgt.getAuthentication().getPrincipal().getId().equals(claims.getSubject())) {
-            LOGGER.warn("Token with id [{}] does not belong to the assigned principal", claims.getSubject());
-            return QRAuthenticationTokenValidationResult.builder().build();
+        val authentication = tgt.getAuthentication();
+        LOGGER.trace("Authentication attempt linked to [{}] is [{}]", tgt.getId(), authentication);
+
+        if (!authentication.getPrincipal().getId().equals(claims.getSubject())) {
+            val message = String.format("Token %s does not belong to the assigned principal", claims.getSubject());
+            throw new AuthenticationException(message);
         }
 
         if (!claims.getIssuer().equals(casProperties.getServer().getPrefix())) {
-            LOGGER.warn("Token with id [{}] has an invalid issuer [{}] that does not match [{}]", tgt.getId(),
+            val message = String.format("Token %s has an invalid issuer %s that does not match %s", tgt.getId(),
                 claims.getIssuer(), casProperties.getServer().getPrefix());
-            return QRAuthenticationTokenValidationResult.builder().build();
+            throw new AuthenticationException(message);
         }
         return QRAuthenticationTokenValidationResult.builder()
-            .authentication(tgt.getAuthentication())
+            .authentication(authentication)
             .build();
     }
 }
