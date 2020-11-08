@@ -6,7 +6,6 @@ import org.apereo.cas.support.openid.OpenIdProtocolConstants;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
 import org.openid4java.message.VerifyResponse;
 import org.openid4java.server.ServerManager;
 import org.springframework.beans.factory.annotation.Autowired;
