@@ -2,7 +2,7 @@ server:
   port: ${PORT:8080}
   ssl:
     enabled: false
-
+debug: false
 management:
   endpoint:
     info:
@@ -1828,6 +1828,7 @@ initializr:
           aliases:
             - saml2
             - saml
+            - saml-idp
         - name: cas-server-support-saml-idp-core
           id: support-saml-idp-core
           groupId: org.apereo.cas
@@ -1840,6 +1841,8 @@ initializr:
           artifactId: cas-server-support-saml-idp-discovery
           description: Apereo CAS SAML Identity Provider Discovery Support
           bom: cas-bom
+          aliases:
+            - idp-discovery
         - name: cas-server-support-saml-idp-metadata
           id: support-saml-idp-metadata
           groupId: org.apereo.cas
@@ -2387,6 +2390,12 @@ initializr:
           artifactId: cas-server-support-webauthn-core
           description: Apereo CAS FIDO2 WebAuthn Core
           bom: cas-bom
+        - name: cas-server-support-webauthn-core-webflow
+          id: support-webauthn-core-webflow
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-webauthn-core-webflow
+          description: Apereo CAS FIDO2 WebAuthn Core Webflow
+          bom: cas-bom
         - name: cas-server-support-webauthn-jpa
           id: support-webauthn-jpa
           groupId: org.apereo.cas
@@ -2532,6 +2541,12 @@ initializr:
           groupId: org.apereo.cas
           artifactId: cas-server-support-yubikey-redis
           description: Apereo CAS YubiKey Redis Support
+          bom: cas-bom
+        - name: cas-server-support-qr-authentication
+          id: support-qr-authentication
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-qr-authentication
+          description: Apereo CAS QR Authentication Support
           bom: cas-bom
     - name: webapp
       content:
