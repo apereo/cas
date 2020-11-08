@@ -1,0 +1,135 @@
+# Default values for cas-server.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  registry: ""
+  repository: "org.apereo.cas/cas"
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+# There are two valid stateful set update strategies, RollingUpdate and the (legacy) OnDelete
+updateStrategy: RollingUpdate
+
+# OrderedReady: Pods are created in increasing order (pod-0, then pod-1, etc) and the controller will wait until each pod is ready before continuing. 
+#   When scaling down, the pods are removed in the opposite order.
+# Parallel: Creates pods in parallel to match the desired scale without waiting, and on scale down will delete all pods at once.
+podManagementPolicy: OrderedReady
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+# Map folder for logs directory from host or pvc, or leave both blank to use emptyDir volume
+# In docker for windows hostPath could be '/host_mnt/c/opt/cas/logs'
+# Windows: Give full access local Users group to the  to ~/.docker folder if getting permission denied)
+logdir:
+#  hostPath: '/host_mnt/c/opt/cas/logs'
+  hostPath: ''
+  claimName: ''
+  mountPath: '/var/log'
+
+# CAS Server container properties
+casServerContainer:
+  ## Override cmd
+  ##
+  command:
+  ## Override args
+  ##
+  args:
+  ## extraVolumes and extraVolumeMounts allows you to mount other volumes
+  ## Examples:
+  ## extraVolumeMounts:
+  ##   - name: extras
+  ##     mountPath: /usr/share/extras
+  ##     readOnly: true
+  ## extraVolumes:
+  ##   - name: extras
+  ##     emptyDir: {}
+  ##
+  extraVolumeMounts: []
+  extraVolumes: []
+  ## Url to use for readiness, startupprobe, and liveliness check, change to health actuator if the module is available
+  ## Naming it "default" in case in future template supports individual urls for the different checks, with this as default if they aren't specified
+  defaultStatusUrl: '/cas/login'
+
+# name of secret containing server keystore
+serverKeystoreExistingSecret: cas-server-keystore
+# folder that should container the keystore
+serverKeystoreMountPath: '/etc/cas/thekeystore'
+# name of keystore file in container and in secret
+serverKeystoreSubPath: 'thekeystore'
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 8443
+
+cas:
+  listenPortHttps: 8443
+
+
+ingress:
+  enabled: true
+  annotations: 
+    nginx.ingress.kubernetes.io/session-cookie-samesite: "None"
+    nginx.ingress.kubernetes.io/session-cookie-conditional-samesite-none: "true"
+    nginx.ingress.kubernetes.io/affinity: "cookie"
+    nginx.ingress.kubernetes.io/session-cookie-name: "sticky-session-route"
+    nginx.ingress.kubernetes.io/session-cookie-hash: "sha1"
+    nginx.ingress.kubernetes.io/rewrite-target: "/cas"
+    nginx.ingress.kubernetes.io/secure-backends: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"    
+  hosts:
+    - host: cas.example.org
+      paths: 
+        - "/cas"
+    - host: kubernetes.docker.internal
+      paths:
+        - "/cas"
+  tls: 
+    - secretName: cas-server-tls
+      hosts:
+        - cas.example.org
+        - kubernetes.docker.internal
+
+# Request some resources so kubernetes will schedule somewhere with enough resources
+# Limits can also be set if desired
+resources: 
+  requests:
+    cpu: 100m
+    memory: 512Mi
+#  limits:
+#    cpu: 100m
+#    memory: 128Mi
+
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

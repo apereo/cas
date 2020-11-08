@@ -3,6 +3,8 @@
 #echo -e "\nChecking java..."
 #java -version
 
+JAVA_OPTS=${JAVA_OPTS:-Xms512m -Xmx2048M}
+
 #echo -e "\nCreating CAS configuration directories..."
 mkdir -p /etc/cas/config
 mkdir -p /etc/cas/services
@@ -19,4 +21,4 @@ mv docker/cas/services/*.* /etc/cas/services 2>/dev/null
 #ls -R /etc/cas
 
 echo -e "\nRunning CAS..."
-exec java -Xms512m -Xmx2048M -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -jar docker/cas/war/cas.war
+exec java $JAVA_OPTS -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -jar docker/cas/war/cas.war "$@"

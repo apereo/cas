@@ -1,0 +1,109 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "cas-server.fullname" . }}
+  labels: {{- include "cas-server.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  updateStrategy:
+    type: {{ .Values.updateStrategy | quote}}
+  serviceName: {{ include "cas-server.fullname" . }}
+  podManagementPolicy: {{ .Values.podManagementPolicy | quote}}
+  selector:
+    matchLabels:
+      {{- include "cas-server.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+    {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      labels:
+        {{- include "cas-server.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "cas-server.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      volumes:
+        - name: logdir
+          {{- include "cas-server.logdir" . | nindent 10 }}
+        {{- if .Values.serverKeystoreExistingSecret }}
+        - name: cas-server-keystore
+          secret:
+            secretName: {{ .Values.serverKeystoreExistingSecret }}
+            items:
+              - key: {{ .Values.serverKeystoreSubPath }}
+                path: {{ .Values.serverKeystoreSubPath }}
+        {{- end }}
+        {{- if .Values.casServerContainer.extraVolumes }}
+        {{- include "cas-server.tplvalues.render" ( dict "value" .Values.casServerContainer.extraVolumes "context" $ ) | nindent 8 }}
+        {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: {{ include "cas-server.imageName" . }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.casServerContainer.command }}
+          command: {{- include "cas-server.tplvalues.render" (dict "value" .Values.casServerContainer.command "context" $) | nindent 12 }}
+          {{- else }}
+          command:
+            - /docker/entrypoint.sh
+          {{- end }}
+          {{- if .Values.casServerContainer.args }}
+          args: {{- include "cas-server.tplvalues.render" (dict "value" .Values.casServerContainer.args "context" $) | nindent 12 }}
+          {{- end }}
+          ports:
+            - name: https
+              containerPort: {{ .Values.cas.listenPortHttps }}
+              protocol: TCP
+          volumeMounts:
+            - name: logdir
+              mountPath: {{ .Values.logdir.mountPath }}
+            {{- if .Values.serverKeystoreExistingSecret }}
+            - name: cas-server-keystore
+              mountPath: {{ .Values.serverKeystoreMountPath }}
+              subPath: {{ .Values.serverKeystoreSubPath }}
+            {{- end }}
+            {{- if .Values.casServerContainer.extraVolumeMounts }}
+            {{- include "cas-server.tplvalues.render" ( dict "value" .Values.casServerContainer.extraVolumeMounts "context" $ ) | nindent 12 }}
+            {{- end }}
+          startupProbe:
+            httpGet:
+              path: {{ .Values.casServerContainer.defaultStatusUrl }}
+              port: https
+              scheme: HTTPS
+            failureThreshold: 15
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.casServerContainer.defaultStatusUrl }}
+              port: https
+              scheme: HTTPS
+            initialDelaySeconds: 20
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.casServerContainer.defaultStatusUrl }}
+              port: https
+              scheme: HTTPS
+            initialDelaySeconds: 30
+            periodSeconds: 15
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
