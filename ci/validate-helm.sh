@@ -9,6 +9,8 @@ curl http://localhost:8080/starter.tgz -d dependencies=core | tar -xzvf -
 echo "Building Overlay"
 chmod -R 777 ./*.sh
 ./gradlew clean build jibDockerBuild --refresh-dependencies
+docker image ls
+kubectl get pods -A
 
 echo "Creating Keystore"
 ./gradlew -P certDir=etc/cas createKeystore
