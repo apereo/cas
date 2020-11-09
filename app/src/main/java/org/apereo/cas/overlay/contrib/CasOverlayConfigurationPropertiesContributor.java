@@ -24,7 +24,7 @@ public class CasOverlayConfigurationPropertiesContributor extends TemplatedProje
         val repository = new CasConfigurationMetadataRepository();
         return repository.query(ConfigurationMetadataCatalogQuery.builder()
             .modules(modules)
-            .casExclusive(false)
+            .casExclusive(true)
             .build());
     }
 

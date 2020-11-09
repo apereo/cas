@@ -38,7 +38,7 @@ The service will be available on `http://localhost:8080`.
 Generate a vanilla CAS overlay:
 
 ```bash
-curl https://start.spring.io/starter.zip -o cas.zip
+curl http://localhost:8080/starter.zip -o cas.zip
 ```
 
 Generate a CAS overlay package as a compressed tarball 
