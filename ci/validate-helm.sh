@@ -33,7 +33,8 @@ kubectl wait --namespace ingress-nginx \
   --timeout=120s
 
 echo "Install cas-server helm chart"
-helm upgrade --install cas-server --set image.tag=$imageTag ./cas-server
+echo "Using latest tag until can figure out how to get local images to k3s"
+helm upgrade --install cas-server --set image.tag=latest ./cas-server
 sleep 15
 kubectl describe pod cas-server-0
 kubectl logs cas-server-0
