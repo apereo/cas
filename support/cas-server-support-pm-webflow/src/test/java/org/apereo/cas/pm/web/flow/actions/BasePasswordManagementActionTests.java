@@ -118,6 +118,10 @@ public class BasePasswordManagementActionTests {
     protected Action verifyPasswordResetRequestAction;
 
     @Autowired
+    @Qualifier("validatePasswordResetTokenAction")
+    protected Action validatePasswordResetTokenAction;
+
+    @Autowired
     @Qualifier("sendPasswordResetInstructionsAction")
     protected Action sendPasswordResetInstructionsAction;
 
