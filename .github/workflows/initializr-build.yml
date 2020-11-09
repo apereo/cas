@@ -78,7 +78,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        k3s-version: [v1.19.2, v1.18.9, v1.17.11, v1.16.15]
+        k3s-version: [v1.19.2] #, v1.18.9, v1.17.11, v1.16.15
     env:
       GOPATH: /home/runner/go
     steps:
@@ -105,27 +105,10 @@ jobs:
       - name: Add /usr/local/bin to PATH
         run: |
           echo "/usr/local/bin" >> $GITHUB_PATH
-      - name: Build Docker Image and create keystore
-        run: |
-          ./gradlew bootBuildImage
-          ./gradlew createKeystore
-          kubectl create secret generic cas-server-keystore --from-file=thekeystore=/etc/cas/thekeystore
       - name: Install helm 3
         uses: azure/setup-helm@v1
         with:
           version: 'v3.4.0'
         id: install
-      - name: Install helm chart
-        timeout-minutes: 10
-        run: |
-          set -x
-          cd helm
-          helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-          helm install --namespace ingress-nginx ingress-nginx ingress-nginx/ingress-nginx
-          kubectl wait --namespace ingress-nginx \
-            --for=condition=ready pod \
-            --selector=app.kubernetes.io/component=controller \
-            --timeout=120s
-          helm upgrade --install cas-server ./cas-server
-          sleep 10
-          kubectl logs cas-server-0
+      - name: Build Docker Image and create keystore
+        run: ./ci/validate-helm.sh
