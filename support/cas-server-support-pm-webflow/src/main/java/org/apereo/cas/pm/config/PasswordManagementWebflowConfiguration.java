@@ -13,6 +13,7 @@ import org.apereo.cas.pm.web.flow.actions.InitPasswordResetAction;
 import org.apereo.cas.pm.web.flow.actions.PasswordChangeAction;
 import org.apereo.cas.pm.web.flow.actions.SendForgotUsernameInstructionsAction;
 import org.apereo.cas.pm.web.flow.actions.SendPasswordResetInstructionsAction;
+import org.apereo.cas.pm.web.flow.actions.ValidatePasswordResetTokenAction;
 import org.apereo.cas.pm.web.flow.actions.VerifyPasswordResetRequestAction;
 import org.apereo.cas.pm.web.flow.actions.VerifySecurityQuestionsAction;
 import org.apereo.cas.ticket.TicketFactory;
@@ -189,6 +190,14 @@ public class PasswordManagementWebflowConfiguration {
         return new VerifySecurityQuestionsAction(passwordManagementService.getObject());
     }
 
+    @ConditionalOnMissingBean(name = "validatePasswordResetTokenAction")
+    @Bean
+    @RefreshScope
+    public Action validatePasswordResetTokenAction() {
+        return new ValidatePasswordResetTokenAction(passwordManagementService.getObject(),
+            centralAuthenticationService.getObject());
+    }
+
     @ConditionalOnMissingBean(name = "passwordManagementWebflowConfigurer")
     @RefreshScope
     @Bean
@@ -196,7 +205,7 @@ public class PasswordManagementWebflowConfiguration {
     public CasWebflowConfigurer passwordManagementWebflowConfigurer() {
         return new PasswordManagementWebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getObject(),
-            applicationContext, casProperties, initPasswordChangeAction());
+            applicationContext, casProperties);
     }
 
     @Bean
@@ -234,7 +243,7 @@ public class PasswordManagementWebflowConfiguration {
         public Action passwordResetInitializeCaptchaAction() {
             return new InitializeCaptchaAction(casProperties);
         }
-        
+
         @Bean
         @ConditionalOnMissingBean(name = "passwordManagementCaptchaWebflowExecutionPlanConfigurer")
         public CasWebflowExecutionPlanConfigurer passwordManagementCaptchaWebflowExecutionPlanConfigurer() {
