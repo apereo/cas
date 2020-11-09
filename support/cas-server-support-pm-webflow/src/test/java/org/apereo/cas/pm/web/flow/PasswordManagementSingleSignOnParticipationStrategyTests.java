@@ -26,13 +26,13 @@ public class PasswordManagementSingleSignOnParticipationStrategyTests extends Ba
 
     @Test
     public void verifyStrategyWithANonPmRequest() {
-        val s = new PasswordManagementSingleSignOnParticipationStrategy(ticketRegistry);
+        val s = new PasswordManagementSingleSignOnParticipationStrategy(centralAuthenticationService);
         assertFalse(s.supports(new MockRequestContext()));
     }
 
     @Test
     public void verifyStrategyWithAnInvalidPmRequest() {
-        val s = new PasswordManagementSingleSignOnParticipationStrategy(ticketRegistry);
+        val s = new PasswordManagementSingleSignOnParticipationStrategy(centralAuthenticationService);
         val ctx = new MockRequestContext();
         ctx.putRequestParameter(PasswordManagementWebflowUtils.REQUEST_PARAMETER_NAME_PASSWORD_RESET_TOKEN, "invalidResetToken");
 
@@ -41,7 +41,7 @@ public class PasswordManagementSingleSignOnParticipationStrategyTests extends Ba
 
     @Test
     public void verifyStrategyWithAValidPmRequest() {
-        val s = new PasswordManagementSingleSignOnParticipationStrategy(ticketRegistry);
+        val s = new PasswordManagementSingleSignOnParticipationStrategy(centralAuthenticationService);
         val ctx = new MockRequestContext();
 
         val token = passwordManagementService.createToken("casuser");

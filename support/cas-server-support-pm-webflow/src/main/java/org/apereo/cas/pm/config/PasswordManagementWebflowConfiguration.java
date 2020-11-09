@@ -102,7 +102,7 @@ public class PasswordManagementWebflowConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "passwordManagementSingleSignOnParticipationStrategy")
     public SingleSignOnParticipationStrategy passwordManagementSingleSignOnParticipationStrategy() {
-        return new PasswordManagementSingleSignOnParticipationStrategy(ticketRegistry.getObject());
+        return new PasswordManagementSingleSignOnParticipationStrategy(centralAuthenticationService.getObject());
     }
 
     @Bean
