@@ -11,10 +11,10 @@ chmod -R 777 ./*.sh
 ./gradlew clean build jibDockerBuild --refresh-dependencies
 
 echo "Creating Keystore"
-./gradlew createKeystore
+./gradlew -P certDir=etc/cas createKeystore
 
 echo "Create secret for keystore"
-kubectl create secret generic cas-server-keystore --from-file=thekeystore=/etc/cas/thekeystore
+kubectl create secret generic cas-server-keystore --from-file=thekeystore=etc/cas/thekeystore
 
 cd helm
 
