@@ -1,5 +1,6 @@
 package org.apereo.cas.pm.web.flow.actions;
 
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -75,7 +76,7 @@ import org.springframework.webflow.execution.Action;
 }, properties = {
     "spring.mail.host=localhost",
     "spring.mail.port=25000",
-    
+
     "cas.authn.pm.enabled=true",
     "cas.authn.pm.groovy.location=classpath:PasswordManagementService.groovy",
     "cas.authn.pm.reset.mail.from=cas@example.org",
@@ -90,6 +91,10 @@ public class BasePasswordManagementActionTests {
     @Autowired
     @Qualifier("ticketRegistry")
     protected TicketRegistry ticketRegistry;
+
+    @Autowired
+    @Qualifier("centralAuthenticationService")
+    protected CentralAuthenticationService centralAuthenticationService;
 
     @Autowired
     @Qualifier("passwordChangeService")
