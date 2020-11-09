@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -22,7 +21,7 @@ import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link LdapPasswordManagementServiceTests}.
+ * This is {@link OpenLdapPasswordManagementServiceTests}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
@@ -30,30 +29,29 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Ldap")
 @TestPropertySource(properties = {
     "cas.authn.pm.reset.sms.attribute-name=telephoneNumber",
-    "cas.authn.pm.ldap[0].ldap-url=ldap://localhost:10389",
-    "cas.authn.pm.ldap[0].bind-dn=cn=Directory Manager",
-    "cas.authn.pm.ldap[0].bind-credential=password",
+    "cas.authn.pm.ldap[0].ldap-url=ldap://localhost:11389",
+    "cas.authn.pm.ldap[0].bind-dn=cn=admin,dc=example,dc=org",
+    "cas.authn.pm.ldap[0].bind-credential=P@ssw0rd",
     "cas.authn.pm.ldap[0].base-dn=ou=people,dc=example,dc=org",
-    "cas.authn.pm.ldap[0].search-filter=cn={user}",
+    "cas.authn.pm.ldap[0].search-filter=cn={0}",
     "cas.authn.pm.ldap[0].type=GENERIC",
-    "cas.authn.pm.ldap[0].security-questions-attributes.registeredAddress=roomNumber",
-    "cas.authn.pm.ldap[0].security-questions-attributes.postalCode=teletexTerminalIdentifier"
+    "cas.authn.pm.ldap[0].trust-manager=ANY",
+    "cas.authn.pm.ldap[0].security-questions-attributes.registeredAddress=roomNumber"
 })
 @DirtiesContext
-@EnabledIfPortOpen(port = 10389)
-public class LdapPasswordManagementServiceTests extends BaseLdapPasswordManagementServiceTests {
-    private static final int LDAP_PORT = 10389;
+@EnabledIfPortOpen(port = 11389)
+public class OpenLdapPasswordManagementServiceTests extends BaseLdapPasswordManagementServiceTests {
+    private static final int LDAP_PORT = 11389;
 
     @BeforeAll
-    @SneakyThrows
-    public static void bootstrap() {
+    public static void bootstrap() throws Exception {
         ClientInfoHolder.setClientInfo(new ClientInfo(new MockHttpServletRequest()));
         val localhost = new LDAPConnection("localhost", LDAP_PORT,
-            "cn=Directory Manager", "password");
+            "cn=admin,dc=example,dc=org", "P@ssw0rd");
         LdapIntegrationTestsOperations.populateEntries(localhost,
-            new ClassPathResource("ldif/ldap-pm.ldif").getInputStream(),
+            new ClassPathResource("ldif/openldap-pm.ldif").getInputStream(),
             "ou=people,dc=example,dc=org",
-            new BindConnectionInitializer("cn=Directory Manager", new Credential("password")));
+            new BindConnectionInitializer("cn=admin,dc=example,dc=org", new Credential("P@ssw0rd")));
     }
 
     @Test
@@ -71,7 +69,7 @@ public class LdapPasswordManagementServiceTests extends BaseLdapPasswordManageme
         bean.setConfirmedPassword("Mellon");
         bean.setPassword("Mellon");
         bean.setUsername(credential.getUsername());
-        assertFalse(passwordChangeService.change(credential, bean));
+        assertTrue(passwordChangeService.change(credential, bean));
     }
 
     @Test
@@ -89,10 +87,8 @@ public class LdapPasswordManagementServiceTests extends BaseLdapPasswordManageme
     @Test
     public void verifyFindSecurityQuestions() {
         val questions = passwordChangeService.getSecurityQuestions("caspm");
-        assertEquals(2, questions.size());
+        assertEquals(1, questions.size());
         assertTrue(questions.containsKey("RegisteredAddressQuestion"));
         assertEquals("666", questions.get("RegisteredAddressQuestion"));
-        assertTrue(questions.containsKey("PostalCodeQuestion"));
-        assertEquals("1776", questions.get("PostalCodeQuestion"));
     }
 }
