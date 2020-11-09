@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
  * @since 3.3.5
  */
 @Slf4j
+@SuppressWarnings("JdkObsolete")
 public class JdbcThrottledSubmissionHandlerInterceptorAdapter extends AbstractInspektrAuditHandlerInterceptorAdapter {
     private final String sqlQueryAudit;
     private final JdbcTemplate jdbcTemplate;
@@ -39,7 +40,6 @@ public class JdbcThrottledSubmissionHandlerInterceptorAdapter extends AbstractIn
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-    @SuppressWarnings("JdkObsolete")
     @Override
     public boolean exceedsThreshold(final HttpServletRequest request) {
         val clientInfo = ClientInfoHolder.getClientInfo();
