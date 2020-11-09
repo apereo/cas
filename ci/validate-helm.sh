@@ -27,6 +27,7 @@ kubectl wait --namespace ingress-nginx \
   --timeout=120s
 
 echo "Install cas-server helm chart"
-helm upgrade --install cas-server ./cas-server
-sleep 10
+imageTag=(`./gradlew casVersion --q`)
+helm upgrade --install cas-server --set image.tag=$imageTag ./cas-server
+sleep 15
 kubectl logs cas-server-0
