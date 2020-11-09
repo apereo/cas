@@ -788,6 +788,7 @@ jobs:
           - login-success
           - block-missing-service
           - default-service
+          - invalid-pswd-reset
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK

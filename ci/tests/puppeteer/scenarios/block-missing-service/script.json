@@ -1,6 +1,6 @@
 {
-  "dependencies": "core",
+  "dependencies": "core,pm-webflow",
   "properties": [
-    "--cas.sso.allow-missing-service-parameter=false"
+    "--cas.authn.pm.enabled=true"
   ]
 }
