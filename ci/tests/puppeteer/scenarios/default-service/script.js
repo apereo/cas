@@ -15,6 +15,6 @@ const assert = require('assert');
     
     const url = await page.url()
     console.log(`Page url: ${url}`)
-    assert(url == "https://github.com/")
+    assert(url === "https://github.com/")
     await browser.close();
 })();
