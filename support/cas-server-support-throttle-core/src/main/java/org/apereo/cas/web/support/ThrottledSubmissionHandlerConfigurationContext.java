@@ -25,6 +25,7 @@ public class ThrottledSubmissionHandlerConfigurationContext {
     private final int failureRangeInSeconds;
 
     private final String usernameParameter;
+
     private final String authenticationFailureCode;
 
     private final AuditTrailExecutionPlan auditTrailExecutionPlan;
