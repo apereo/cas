@@ -16,7 +16,8 @@ echo "Creating Keystore"
 echo "Create secret for keystore"
 kubectl create secret generic cas-server-keystore --from-file=thekeystore=etc/cas/thekeystore
 
-imageTag=(`./gradlew casVersion --q`)
+imageTag=(v`./gradlew casVersion --q`)
+echo "Image tag is ${imageTag}"
 
 cd helm
 
