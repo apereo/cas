@@ -4,6 +4,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
 
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Pattern;
+
 
 /**
  * This is {@link OAuth20HandlerInterceptorAdapter}.
@@ -41,6 +44,8 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
     private final ServicesManager servicesManager;
 
     private final SessionStore<JEEContext> sessionStore;
+
+    private final Set<OAuth20AuthorizationRequestValidator> oauthAuthorizationRequestValidators;
 
     @Override
     public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response,
@@ -162,7 +167,12 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
      */
     protected boolean isAuthorizationRequest(final HttpServletRequest request, final HttpServletResponse response) {
         val requestPath = request.getRequestURI();
-        return doesUriMatchPattern(requestPath, OAuth20Constants.AUTHORIZE_URL);
+
+        if (doesUriMatchPattern(requestPath, OAuth20Constants.AUTHORIZE_URL)) {
+            return isValidAuthorizeRequest(new JEEContext(request, response, sessionStore));
+        }
+
+        return false;
     }
 
     /**
@@ -175,5 +185,23 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
     protected boolean doesUriMatchPattern(final String requestPath, final String patternUrl) {
         val pattern = Pattern.compile('/' + patternUrl + "(/)*$");
         return pattern.matcher(requestPath).find();
+    }
+
+    /**
+     * Is the Authorize Request valid?
+     *
+     * @param context the context
+     * @return whether the authorize request is valid
+     */
+    protected boolean isValidAuthorizeRequest(final JEEContext context) {
+        val validator = oauthAuthorizationRequestValidators
+            .stream()
+            .filter(b -> b.supports(context))
+            .findFirst()
+            .orElse(null);
+        if (validator == null) {
+            return false;
+        }
+        return validator.validate(context);
     }
 }
