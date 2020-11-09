@@ -90,7 +90,6 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder implements OAu
         if (StringUtils.isNotBlank(nonce)) {
             params.put(OAuth20Constants.NONCE, nonce);
         }
-        params.put(OAuth20Constants.CLIENT_ID, clientId);
         LOGGER.debug("Redirecting to URL [{}] with params [{}] for clientId [{}]", redirectUri, params.keySet(), clientId);
         return buildResponseModelAndView(context, servicesManager, clientId, redirectUri, params);
     }
