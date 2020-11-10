@@ -3819,13 +3819,27 @@ The following settings specifically apply to this provider:
 
 #### KeyCloak
 
-Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-openid-connect-settings) 
+Common settings for this identity provider are 
+available [here](Configuration-Properties-Common.html#delegated-authentication-openid-connect-settings) 
 under the configuration key `cas.authn.pac4j.oidc[0].keycloak`.
 
 ```properties
 # cas.authn.pac4j.oidc[0].keycloak.realm=
 # cas.authn.pac4j.oidc[0].keycloak.base-uri=
 ```                                     
+
+#### Apple Signin
+
+Common settings for this identity provider are 
+available [here](Configuration-Properties-Common.html#delegated-authentication-openid-connect-settings) 
+under the configuration key `cas.authn.pac4j.oidc[0].apple`.
+
+```properties
+# cas.authn.pac4j.oidc[0].apple.private-key=
+# cas.authn.pac4j.oidc[0].apple.private-key-id=
+# cas.authn.pac4j.oidc[0].apple.team-id=
+# cas.authn.pac4j.oidc[0].apple.timeout=PT30S
+```  
 
 #### Generic
 

@@ -42,6 +42,12 @@ public class Pac4jOidcClientProperties implements Serializable {
     private Pac4jKeyCloakOidcClientProperties keycloak = new Pac4jKeyCloakOidcClientProperties();
 
     /**
+     * Settings specific to delegating authentication to apple signin.
+     */
+    @NestedConfigurationProperty
+    private Pac4jAppleOidcClientProperties apple = new Pac4jAppleOidcClientProperties();
+
+    /**
      * Settings specific to delegating authentication to generic oidc.
      */
     @NestedConfigurationProperty

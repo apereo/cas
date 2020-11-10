@@ -33,11 +33,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Simple")
 public class DefaultDelegatedClientFactoryTests {
 
-    private static void configureIdentifiableClient(final Pac4jIdentifiableClientProperties props) {
-        props.setId("TestId");
-        props.setSecret("TestSecret");
-    }
-
     @Test
     public void verifyFactoryForIdentifiableClients() {
         val props = new Pac4jDelegatedAuthenticationProperties();
@@ -171,6 +166,30 @@ public class DefaultDelegatedClientFactoryTests {
     }
 
     @Test
+    public void verifyFactoryForAppleOidcClients() {
+        val props = new Pac4jDelegatedAuthenticationProperties();
+
+        val oidc1 = new Pac4jOidcClientProperties();
+        configureIdentifiableClient(oidc1.getGeneric());
+        oidc1.getApple().setPrivateKey("classpath:apple.pem");
+        oidc1.getApple().setPrivateKeyId("VB4MYGJ3TQ");
+        oidc1.getApple().setTeamId("67D9XQG2LJ");
+        oidc1.getApple().setResponseType("code id_token");
+        oidc1.getApple().setResponseMode("form_post");
+        oidc1.getApple().setScope("openid name email");
+        oidc1.getApple().setId("org.pac4j.test");
+        oidc1.getApple().setUseNonce(true);
+        oidc1.getApple().setEnabled(true);
+        props.getOidc().add(oidc1);
+
+        val casSettings = new CasConfigurationProperties();
+        casSettings.getAuthn().setPac4j(props);
+        val factory = new DefaultDelegatedClientFactory(casSettings, List.of());
+        val clients = factory.build();
+        assertEquals(1, clients.size());
+    }
+
+    @Test
     public void verifyFactoryForOidcClients() {
         val props = new Pac4jDelegatedAuthenticationProperties();
 
@@ -205,5 +224,10 @@ public class DefaultDelegatedClientFactoryTests {
         val factory = new DefaultDelegatedClientFactory(casSettings, List.of());
         val clients = factory.build();
         assertEquals(4, clients.size());
+    }
+
+    private static void configureIdentifiableClient(final Pac4jIdentifiableClientProperties props) {
+        props.setId("TestId");
+        props.setSecret("TestSecret");
     }
 }
