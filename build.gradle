@@ -171,11 +171,11 @@ allprojects {
         }
     }
 
-    java {
-        toolchain {
-            languageVersion = JavaLanguageVersion.of(project.targetCompatibility)
-        }
-    }
+//    java {
+//        toolchain {
+//            languageVersion = JavaLanguageVersion.of(project.targetCompatibility)
+//        }
+//    }
 
     idea {
         module {
