@@ -8,7 +8,6 @@ import org.apereo.cas.configuration.model.core.authentication.passwordsync.LdapP
 import lombok.SneakyThrows;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -44,8 +43,8 @@ public class LdapPasswordSynchronizationConfiguration {
             @Override
             protected void destroyInstance(final List list) {
                 Objects.requireNonNull(list).forEach(Unchecked.consumer(postProcessor ->
-                    ((DisposableBean) postProcessor).destroy()
-                ));
+                        ((DisposableBean) postProcessor).destroy()
+                                                                       ));
             }
         };
         bean.setSourceList(new ArrayList<>());
@@ -55,23 +54,21 @@ public class LdapPasswordSynchronizationConfiguration {
     @ConditionalOnMissingBean(name = "ldapPasswordSynchronizationAuthenticationEventExecutionPlanConfigurer")
     @Bean
     @Autowired
+    @SneakyThrows
     public AuthenticationEventExecutionPlanConfigurer ldapPasswordSynchronizationAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("ldapPasswordSynchronizationAuthenticationPostProcessorListFactoryBean")
         final ListFactoryBean ldapPasswordSynchronizationAuthenticationPostProcessorListFactoryBean) {
+        val postProcessorList = Objects.requireNonNull(ldapPasswordSynchronizationAuthenticationPostProcessorListFactoryBean.getObject());
+
         return plan -> {
-            try {
-                val postProcessorList = Objects.requireNonNull(ldapPasswordSynchronizationAuthenticationPostProcessorListFactoryBean.getObject());
-                val ldap = casProperties.getAuthn().getPasswordSync().getLdap();
-                ldap.stream()
-                    .filter(LdapPasswordSynchronizationProperties::isEnabled)
-                    .forEach(instance -> {
-                        val postProcessor = new LdapPasswordSynchronizationAuthenticationPostProcessor(instance);
-                        postProcessorList.add(postProcessor);
-                        plan.registerAuthenticationPostProcessor(postProcessor);
-                    });
-            } catch (final Exception e) {
-                throw new BeanCreationException("Error creating ldapPasswordSynchronizationAuthenticationEventExecutionPlanConfigurer: " + e.getMessage(), e);
-            }
+            val ldap = casProperties.getAuthn().getPasswordSync().getLdap();
+            ldap.stream()
+                .filter(LdapPasswordSynchronizationProperties::isEnabled)
+                .forEach(instance -> {
+                    val postProcessor = new LdapPasswordSynchronizationAuthenticationPostProcessor(instance);
+                    postProcessorList.add(postProcessor);
+                    plan.registerAuthenticationPostProcessor(postProcessor);
+                });
         };
     }
 }

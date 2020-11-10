@@ -41,7 +41,6 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.audit.rest.asynchronous=false"
 })
 @Tag("RestfulApi")
-@Slf4j
 @Getter
 @SuppressWarnings("JdkObsolete")
 public class RestAuditTrailManagerTests {
