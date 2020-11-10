@@ -54,4 +54,9 @@ public class OAuth20TokenManagementEndpointTests extends AbstractOAuth20Tests {
         val token = tokenManagementEndpoint.getToken(at);
         assertNotNull(token);
     }
+
+    @Test
+    public void verifyBadOperation() {
+        assertNull(tokenManagementEndpoint.getToken("unknown"));
+    }
 }
