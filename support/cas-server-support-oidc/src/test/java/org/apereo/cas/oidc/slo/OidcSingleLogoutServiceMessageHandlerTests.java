@@ -1,7 +1,6 @@
 package org.apereo.cas.oidc.slo;
 
 import org.apereo.cas.logout.SingleLogoutExecutionRequest;
-import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
 import org.apereo.cas.logout.slo.SingleLogoutServiceMessageHandler;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.oidc.AbstractOidcTests;
@@ -15,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -49,7 +47,7 @@ public class OidcSingleLogoutServiceMessageHandlerTests extends AbstractOidcTest
     public void setup() {
         this.servicesManager.deleteAll();
     }
-    
+
     private void verifyCreateLogoutRequests(final RegisteredServiceLogoutType type) {
         val registeredService = getOidcRegisteredService("clientid", LOGOUT_URL + ".*");
         registeredService.setLogoutType(type);
@@ -63,6 +61,5 @@ public class OidcSingleLogoutServiceMessageHandlerTests extends AbstractOidcTest
         assertTrue(oidcSingleLogoutServiceMessageHandler.supports(executionRequest, service));
         val requests = oidcSingleLogoutServiceMessageHandler.handle(service, UUID.randomUUID().toString(), executionRequest);
         assertEquals(1, requests.size());
-        val request = ((List<SingleLogoutRequestContext>) requests).get(0);
     }
 }
