@@ -135,12 +135,7 @@ public class DistributedJEESessionStore implements SessionStore<JEEContext> {
             val ticketId = TransientSessionTicketFactory.normalizeTicketId(sessionId);
 
             LOGGER.trace("fetching ticket: {}", ticketId);
-            val ticket = this.centralAuthenticationService.getTicket(ticketId, TransientSessionTicket.class);
-            if (ticket == null || ticket.isExpired()) {
-                LOGGER.trace("Ticket [{}] does not exist or is expired", ticketId);
-                return null;
-            }
-            return ticket;
+            return centralAuthenticationService.getTicket(ticketId, TransientSessionTicket.class);
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);
         }

@@ -57,11 +57,6 @@ public class CasSimpleMultifactorAuthenticationHandler extends AbstractPreAndPos
             deleteToken(acct);
             throw new FailedLoginException("Failed to authenticate code " + tokenCredential.getId());
         }
-        if (acct.isExpired()) {
-            LOGGER.warn("Authorization of token [{}] has failed. Token found in registry has expired", tokenCredential.getId());
-            deleteToken(acct);
-            throw new FailedLoginException("Failed to authenticate code " + tokenCredential.getId());
-        }
         deleteToken(acct);
 
         LOGGER.debug("Validated token [{}] successfully for [{}]. Creating authentication result and building principal...", tokenCredential.getId(), uid);

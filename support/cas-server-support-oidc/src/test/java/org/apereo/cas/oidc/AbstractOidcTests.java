@@ -316,6 +316,10 @@ public abstract class AbstractOidcTests {
         return getOidcRegisteredService("clientid", "https://oauth\\.example\\.org.*", sign, encrypt);
     }
 
+    protected static OidcRegisteredService getOidcRegisteredService(final String clientid, final String redirectUri) {
+        return getOidcRegisteredService(clientid, redirectUri, true, true);
+    }
+
     protected static OidcRegisteredService getOidcRegisteredService(final String clientid) {
         return getOidcRegisteredService(clientid, "https://oauth\\.example\\.org.*", true, true);
     }
