@@ -34,11 +34,10 @@ public class PasswordManagementSingleSignOnParticipationStrategy implements Sing
         }
 
         try {
-            val ticket = centralAuthenticationService.getTicket(transientTicket, TransientSessionTicket.class);
-            if (ticket != null || !ticket.isExpired()) {
-                LOGGER.trace("Token ticket [{}] is valid, SSO will be disabled", transientTicket);
-                return true;
-            }
+            centralAuthenticationService.getTicket(transientTicket, TransientSessionTicket.class);
+
+            LOGGER.trace("Token ticket [{}] is valid, SSO will be disabled", transientTicket);
+            return true;
         } catch (final Exception e) {
             LOGGER.trace("Token ticket [{}] is not found or has expired, SSO will not be disabled", transientTicket);
         }
