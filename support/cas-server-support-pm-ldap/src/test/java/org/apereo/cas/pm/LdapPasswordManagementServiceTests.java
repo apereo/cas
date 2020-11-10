@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pm.ldap[0].bind-dn=cn=Directory Manager",
     "cas.authn.pm.ldap[0].bind-credential=password",
     "cas.authn.pm.ldap[0].base-dn=ou=people,dc=example,dc=org",
-    "cas.authn.pm.ldap[0].search-filter=cn={user}",
+    "cas.authn.pm.ldap[0].search-filter=(|(cn={user})(mail={user}))",
     "cas.authn.pm.ldap[0].type=GENERIC",
     "cas.authn.pm.ldap[0].security-questions-attributes.registeredAddress=roomNumber",
     "cas.authn.pm.ldap[0].security-questions-attributes.postalCode=teletexTerminalIdentifier"
@@ -78,12 +78,21 @@ public class LdapPasswordManagementServiceTests extends BaseLdapPasswordManageme
     public void verifyFindEmail() {
         val email = passwordChangeService.findEmail("caspm");
         assertEquals("caspm@example.org", email);
+        assertNull(passwordChangeService.findEmail("unknown"));
+    }
+
+    @Test
+    public void verifyUser() {
+        val uid = passwordChangeService.findUsername("caspm@example.org");
+        assertEquals("CasPasswordManagement", uid);
+        assertNull(passwordChangeService.findUsername("unknown"));
     }
 
     @Test
     public void verifyFindPhone() {
         val ph = passwordChangeService.findPhone("caspm");
         assertEquals("1234567890", ph);
+        assertNull(passwordChangeService.findPhone("unknown"));
     }
 
     @Test

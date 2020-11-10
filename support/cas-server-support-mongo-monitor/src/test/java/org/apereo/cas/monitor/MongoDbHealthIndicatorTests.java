@@ -112,8 +112,8 @@ public class MongoDbHealthIndicatorTests {
                 assertTrue(map.containsKey("capacity"));
                 assertTrue(map.containsKey("evictions"));
                 assertTrue(map.containsKey("percentFree"));
+                assertTrue(map.containsKey("state"));
             }
         });
-        assertNotNull(mongoHealthIndicator.toString());
     }
 }
