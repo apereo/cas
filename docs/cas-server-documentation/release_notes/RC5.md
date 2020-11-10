@@ -59,9 +59,15 @@ mechanisms that are backed by the Puppeteer framework. The test scenarios that a
 executed by the CAS continuous integration system and will be improved over time
 to account for advanced use cases such as ensuring protocol compatibility and other variations of the authentication webflow.  
 
+## Apple Signin
+
+[Delegated authentication](../integration/Delegate-Authentication.html) can now hand off 
+authentication requests to [sign in with Apple](https://developer.apple.com/sign-in-with-apple/).
+
 ## Other Stuff
 
 - [Maven repositories](https://spring.io/blog/2020/10/29/notice-of-permissions-changes-to-repo-spring-io-fall-and-winter-2020) managed by the Spring project are removed from the CAS gradle build. 
+- Improvements to [password management](../password_management/Password-Management.html) flows to handle invalid tokens more gracefully, and allow password reset with or without single signon sessions.
 - All external links found in the CAS documentation are corrected to point to valid resources. Validation processes are also adjusted to prevent bad links. 
 
 ## Library Upgrades
@@ -74,6 +80,7 @@ to account for advanced use cases such as ensuring protocol compatibility and ot
 - MariaDb Driver
 - Groovy
 - Caffeine
+- Pac4j
 - Hibernate
 - Infinispan
 - Thymeleaf Dialect
