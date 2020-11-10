@@ -22,31 +22,25 @@ public class PasswordManagementSingleSignOnParticipationStrategy implements Sing
     private final CentralAuthenticationService centralAuthenticationService;
 
     @Override
-    public boolean supports(final RequestContext requestContext) {
-        LOGGER.trace("Evaluating if the Password Reset request is valid");
+    public boolean isParticipating(final RequestContext requestContext) {
         val transientTicket = requestContext
             .getRequestParameters()
             .get(PasswordManagementWebflowUtils.REQUEST_PARAMETER_NAME_PASSWORD_RESET_TOKEN);
-
-        if (StringUtils.isBlank(transientTicket)) {
-            LOGGER.trace("Password reset token is missing");
-            return false;
-        }
-
         try {
-            centralAuthenticationService.getTicket(transientTicket, TransientSessionTicket.class);
-
-            LOGGER.trace("Token ticket [{}] is valid, SSO will be disabled", transientTicket);
-            return true;
+            val ticket = centralAuthenticationService.getTicket(transientTicket, TransientSessionTicket.class);
+            LOGGER.trace("Token ticket [{}] is valid. SSO will be disabled to allow password-resets", ticket);
+            return false;
         } catch (final Exception e) {
-            LOGGER.trace("Token ticket [{}] is not found or has expired, SSO will not be disabled", transientTicket);
+            LOGGER.trace("Token ticket [{}] is not found or has expired. SSO will not be disabled", transientTicket);
         }
-
-        return false;
+        return true;
     }
 
     @Override
-    public boolean isParticipating(final RequestContext requestContext) {
-        return false;
+    public boolean supports(final RequestContext requestContext) {
+        val transientTicket = requestContext
+            .getRequestParameters()
+            .get(PasswordManagementWebflowUtils.REQUEST_PARAMETER_NAME_PASSWORD_RESET_TOKEN);
+        return StringUtils.isNotBlank(transientTicket);
     }
 }

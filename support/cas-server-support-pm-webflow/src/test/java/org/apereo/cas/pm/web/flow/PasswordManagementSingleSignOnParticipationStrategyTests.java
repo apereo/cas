@@ -12,8 +12,7 @@ import org.springframework.webflow.test.MockRequestContext;
 
 import java.io.Serializable;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link PasswordManagementSingleSignOnParticipationStrategyTests}.
@@ -35,8 +34,7 @@ public class PasswordManagementSingleSignOnParticipationStrategyTests extends Ba
         val s = new PasswordManagementSingleSignOnParticipationStrategy(centralAuthenticationService);
         val ctx = new MockRequestContext();
         ctx.putRequestParameter(PasswordManagementWebflowUtils.REQUEST_PARAMETER_NAME_PASSWORD_RESET_TOKEN, "invalidResetToken");
-
-        assertFalse(s.supports(ctx));
+        assertTrue(s.isParticipating(ctx));
     }
 
     @Test
@@ -52,8 +50,6 @@ public class PasswordManagementSingleSignOnParticipationStrategyTests extends Ba
         val ticket = transientFactory.create(service, properties);
         ticketRegistry.addTicket(ticket);
         ctx.putRequestParameter(PasswordManagementWebflowUtils.REQUEST_PARAMETER_NAME_PASSWORD_RESET_TOKEN, ticket.getId());
-
-        assertTrue(s.supports(ctx));
         assertFalse(s.isParticipating(ctx));
     }
 }
