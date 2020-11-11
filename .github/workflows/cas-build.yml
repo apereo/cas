@@ -789,6 +789,7 @@ jobs:
           - block-missing-service
           - default-service
           - invalid-pswd-reset
+          - locale-param
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
