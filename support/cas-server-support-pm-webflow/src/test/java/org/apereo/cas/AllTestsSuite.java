@@ -1,11 +1,13 @@
 
 package org.apereo.cas;
 
+import org.apereo.cas.pm.web.flow.PasswordManagementSingleSignOnParticipationStrategyTests;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowConfigurerDisabledTests;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowConfigurerEnabledTests;
 import org.apereo.cas.pm.web.flow.actions.HandlePasswordExpirationWarningMessagesActionTests;
 import org.apereo.cas.pm.web.flow.actions.InitPasswordResetActionTests;
 import org.apereo.cas.pm.web.flow.actions.SendPasswordResetInstructionsActionTests;
+import org.apereo.cas.pm.web.flow.actions.ValidatePasswordResetTokenActionTests;
 import org.apereo.cas.pm.web.flow.actions.VerifyPasswordResetRequestActionTests;
 import org.apereo.cas.pm.web.flow.actions.VerifySecurityQuestionsActionTests;
 
@@ -23,8 +25,10 @@ import org.junit.runner.RunWith;
     VerifySecurityQuestionsActionTests.class,
     SendPasswordResetInstructionsActionTests.class,
     InitPasswordResetActionTests.class,
+    PasswordManagementSingleSignOnParticipationStrategyTests.class,
     PasswordManagementWebflowConfigurerEnabledTests.class,
     PasswordManagementWebflowConfigurerDisabledTests.class,
+    ValidatePasswordResetTokenActionTests.class,
     VerifyPasswordResetRequestActionTests.class,
     HandlePasswordExpirationWarningMessagesActionTests.class
 })

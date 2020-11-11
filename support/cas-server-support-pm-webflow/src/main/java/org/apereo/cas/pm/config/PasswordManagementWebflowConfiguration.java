@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordValidationService;
 import org.apereo.cas.pm.web.flow.PasswordManagementCaptchaWebflowConfigurer;
+import org.apereo.cas.pm.web.flow.PasswordManagementSingleSignOnParticipationStrategy;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowConfigurer;
 import org.apereo.cas.pm.web.flow.actions.HandlePasswordExpirationWarningMessagesAction;
 import org.apereo.cas.pm.web.flow.actions.InitPasswordChangeAction;
@@ -12,6 +13,7 @@ import org.apereo.cas.pm.web.flow.actions.InitPasswordResetAction;
 import org.apereo.cas.pm.web.flow.actions.PasswordChangeAction;
 import org.apereo.cas.pm.web.flow.actions.SendForgotUsernameInstructionsAction;
 import org.apereo.cas.pm.web.flow.actions.SendPasswordResetInstructionsAction;
+import org.apereo.cas.pm.web.flow.actions.ValidatePasswordResetTokenAction;
 import org.apereo.cas.pm.web.flow.actions.VerifyPasswordResetRequestAction;
 import org.apereo.cas.pm.web.flow.actions.VerifySecurityQuestionsAction;
 import org.apereo.cas.ticket.TicketFactory;
@@ -20,6 +22,8 @@ import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.InitializeCaptchaAction;
+import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
+import org.apereo.cas.web.flow.SingleSignOnParticipationStrategyConfigurer;
 import org.apereo.cas.web.flow.ValidateCaptchaAction;
 import org.apereo.cas.web.flow.actions.StaticEventExecutionAction;
 
@@ -94,6 +98,20 @@ public class PasswordManagementWebflowConfiguration {
     @Autowired
     @Qualifier("passwordChangeService")
     private ObjectProvider<PasswordManagementService> passwordManagementService;
+
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "passwordManagementSingleSignOnParticipationStrategy")
+    public SingleSignOnParticipationStrategy passwordManagementSingleSignOnParticipationStrategy() {
+        return new PasswordManagementSingleSignOnParticipationStrategy(centralAuthenticationService.getObject());
+    }
+
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "passwordManagementSingleSignOnParticipationStrategyConfigurer")
+    public SingleSignOnParticipationStrategyConfigurer passwordManagementSingleSignOnParticipationStrategyConfigurer() {
+        return chain -> chain.addStrategy(passwordManagementSingleSignOnParticipationStrategy());
+    }
 
     @RefreshScope
     @Bean
@@ -172,6 +190,14 @@ public class PasswordManagementWebflowConfiguration {
         return new VerifySecurityQuestionsAction(passwordManagementService.getObject());
     }
 
+    @ConditionalOnMissingBean(name = "validatePasswordResetTokenAction")
+    @Bean
+    @RefreshScope
+    public Action validatePasswordResetTokenAction() {
+        return new ValidatePasswordResetTokenAction(passwordManagementService.getObject(),
+            centralAuthenticationService.getObject());
+    }
+
     @ConditionalOnMissingBean(name = "passwordManagementWebflowConfigurer")
     @RefreshScope
     @Bean
@@ -179,7 +205,7 @@ public class PasswordManagementWebflowConfiguration {
     public CasWebflowConfigurer passwordManagementWebflowConfigurer() {
         return new PasswordManagementWebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getObject(),
-            applicationContext, casProperties, initPasswordChangeAction());
+            applicationContext, casProperties);
     }
 
     @Bean
@@ -217,7 +243,7 @@ public class PasswordManagementWebflowConfiguration {
         public Action passwordResetInitializeCaptchaAction() {
             return new InitializeCaptchaAction(casProperties);
         }
-        
+
         @Bean
         @ConditionalOnMissingBean(name = "passwordManagementCaptchaWebflowExecutionPlanConfigurer")
         public CasWebflowExecutionPlanConfigurer passwordManagementCaptchaWebflowExecutionPlanConfigurer() {
@@ -225,6 +251,3 @@ public class PasswordManagementWebflowConfiguration {
         }
     }
 }
-
-
-

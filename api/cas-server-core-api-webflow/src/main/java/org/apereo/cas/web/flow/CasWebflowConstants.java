@@ -199,6 +199,10 @@ public interface CasWebflowConstants {
      * Transition id 'resetPassword'.
      */
     String TRANSITION_ID_RESET_PASSWORD = "resetPassword";
+    /**
+     * Transition id 'invalidPasswordResetToken'.
+     */
+    String TRANSITION_ID_INVALID_PASSWORD_RESET_TOKEN = "invalidPasswordResetToken";
 
     /**
      * Transition id 'forgotUsername'.
@@ -559,6 +563,11 @@ public interface CasWebflowConstants {
      */
     String STATE_ID_PASSWORD_CHANGE_ACTION = "passwordChangeAction";
 
+    /**
+     * The view state 'passwordResetErrorView'.
+     */
+    String STATE_ID_PASSWORD_RESET_ERROR_VIEW = "passwordResetErrorView";
+    
     /*
      ****************************************
      * Views.

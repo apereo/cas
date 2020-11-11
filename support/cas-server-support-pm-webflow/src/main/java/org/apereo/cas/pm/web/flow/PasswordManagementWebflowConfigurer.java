@@ -16,7 +16,6 @@ import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
-import org.springframework.webflow.execution.Action;
 
 /**
  * This is {@link PasswordManagementWebflowConfigurer}.
@@ -39,16 +38,12 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
      * Name of parameter that can be supplied to login url to force display of password change during login.
      */
     public static final String DO_CHANGE_PASSWORD_PARAMETER = "doChangePassword";
-    
-    private final Action initPasswordChangeAction;
 
     public PasswordManagementWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                final ConfigurableApplicationContext applicationContext,
-                                               final CasConfigurationProperties casProperties,
-                                               final Action initPasswordChangeAction) {
+                                               final CasConfigurationProperties casProperties) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
-        this.initPasswordChangeAction = initPasswordChangeAction;
         setOrder(casProperties.getAuthn().getPm().getWebflow().getOrder());
     }
 
@@ -79,6 +74,14 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
             configurePasswordMustChangeForAuthnWarnings(flow);
             configurePasswordExpirationWarning(flow);
             createPasswordResetFlow();
+
+            val startState = (ActionState) flow.getStartState();
+            prependActionsToActionStateExecutionList(flow, startState.getId(), "validatePasswordResetTokenAction");
+            createTransitionForState(startState, CasWebflowConstants.TRANSITION_ID_INVALID_PASSWORD_RESET_TOKEN,
+                CasWebflowConstants.STATE_ID_PASSWORD_RESET_ERROR_VIEW);
+            createViewState(flow, CasWebflowConstants.STATE_ID_PASSWORD_RESET_ERROR_VIEW,
+                CasWebflowConstants.VIEW_ID_PASSWORD_RESET_ERROR);
+
         } else {
             createViewState(flow, CasWebflowConstants.VIEW_ID_EXPIRED_PASSWORD, CasWebflowConstants.VIEW_ID_EXPIRED_PASSWORD);
             createViewState(flow, CasWebflowConstants.VIEW_ID_MUST_CHANGE_PASSWORD, CasWebflowConstants.VIEW_ID_MUST_CHANGE_PASSWORD);
@@ -191,7 +194,7 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
         val viewState = createViewState(flow, id, id, binder);
         createStateModelBinding(viewState, FLOW_VAR_ID_PASSWORD, PasswordChangeRequest.class);
 
-        viewState.getEntryActionList().add(this.initPasswordChangeAction);
+        viewState.getEntryActionList().add(createEvaluateAction("initPasswordChangeAction"));
         val transition = createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SUBMIT, CasWebflowConstants.STATE_ID_PASSWORD_CHANGE_ACTION);
         transition.getAttributes().put("bind", Boolean.TRUE);
         transition.getAttributes().put("validate", Boolean.TRUE);
