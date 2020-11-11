@@ -4,14 +4,13 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.gua.api.UserGraphicalAuthenticationRepository;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
-import org.apereo.cas.util.LoggingUtils;
 
 import com.google.common.io.ByteSource;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.ldaptive.ConnectionFactory;
-import org.ldaptive.LdapException;
 import org.ldaptive.ReturnAttributes;
 import org.ldaptive.SearchResponse;
 import org.springframework.beans.factory.DisposableBean;
@@ -38,23 +37,20 @@ public class LdapUserGraphicalAuthenticationRepository implements UserGraphicalA
 
     @Override
     public ByteSource getGraphics(final String username) {
-        try {
-            val gua = casProperties.getAuthn().getGua();
-            val response = searchForId(username);
-            if (LdapUtils.containsResultEntry(response)) {
-                val entry = response.getEntry();
-                val attribute = entry.getAttribute(gua.getLdap().getImageAttribute());
-                if (attribute != null && attribute.isBinary()) {
-                    return ByteSource.wrap(attribute.getBinaryValue());
-                }
+        val gua = casProperties.getAuthn().getGua();
+        val response = searchForId(username);
+        if (LdapUtils.containsResultEntry(response)) {
+            val entry = response.getEntry();
+            val attribute = entry.getAttribute(gua.getLdap().getImageAttribute());
+            if (attribute != null && attribute.isBinary()) {
+                return ByteSource.wrap(attribute.getBinaryValue());
             }
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
         }
         return ByteSource.empty();
     }
 
-    private SearchResponse searchForId(final String id) throws LdapException {
+    @SneakyThrows
+    private SearchResponse searchForId(final String id) {
         val gua = casProperties.getAuthn().getGua();
         val filter = LdapUtils.newLdaptiveSearchFilter(gua.getLdap().getSearchFilter(),
             LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,

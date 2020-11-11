@@ -2351,7 +2351,8 @@ LDAP settings for this feature are available [here](Configuration-Properties-Com
 ### Static Resource Repository
 
 ```properties
-# cas.authn.gua.resource.location=file:/path/to/image.jpg
+# cas.authn.gua.simple.[username1]=file:/path/to/image.jpg
+# cas.authn.gua.simple.[username2]=file:/path/to/image.jpg
 ```
 
 ## JWT/Token Authentication
