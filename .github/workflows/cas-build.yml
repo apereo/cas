@@ -790,6 +790,7 @@ jobs:
           - default-service
           - invalid-pswd-reset
           - locale-param
+          - generate-service-ticket
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
