@@ -8,7 +8,6 @@ import org.apereo.cas.util.LdapUtils;
 import com.google.common.io.ByteSource;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.ReturnAttributes;
@@ -21,7 +20,6 @@ import org.springframework.beans.factory.DisposableBean;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 @RequiredArgsConstructor
 public class LdapUserGraphicalAuthenticationRepository implements UserGraphicalAuthenticationRepository, DisposableBean {
     private static final long serialVersionUID = 421732017215881244L;

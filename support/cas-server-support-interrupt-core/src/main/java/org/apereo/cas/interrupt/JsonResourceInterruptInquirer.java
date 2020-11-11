@@ -10,7 +10,6 @@ import org.apereo.cas.util.io.FileWatcherService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.hjson.JsonValue;
 import org.springframework.beans.factory.DisposableBean;
@@ -28,7 +27,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 public class JsonResourceInterruptInquirer extends BaseInterruptInquirer implements DisposableBean {
 
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();

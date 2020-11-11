@@ -32,15 +32,14 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidator extends BaseOAuth
         final ProfileManager manager, final UserProfile uProfile) {
         val request = context.getNativeRequest();
         val clientId = OAuth20Utils.getClientIdAndClientSecret(context).getLeft();
-        if (!HttpRequestUtils.doesParameterExist(request, OAuth20Constants.REFRESH_TOKEN)
-            || clientId.isEmpty()) {
+        if (!HttpRequestUtils.doesParameterExist(request, OAuth20Constants.REFRESH_TOKEN) || clientId.isEmpty()) {
             return false;
         }
 
         val token = request.getParameter(OAuth20Constants.REFRESH_TOKEN);
         try {
             val refreshToken = getConfigurationContext().getCentralAuthenticationService().getTicket(token, OAuth20RefreshToken.class);
-            LOGGER.trace("Found valid refresh token [{}] in the registry", refreshToken.getId());
+            LOGGER.trace("Found valid refresh token [{}] in the registry", refreshToken);
         } catch (final InvalidTicketException e) {
             LOGGER.warn("Provided refresh token [{}] cannot be found in the registry or has expired", token);
             return false;

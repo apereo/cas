@@ -48,7 +48,6 @@ public class OAuth20DeviceTokenUtilsTests extends AbstractOAuth20Tests {
         val builder = new TicketGrantingTicketExpirationPolicyBuilder(casProperties);
         val policy = OAuth20DeviceTokenUtils.determineExpirationPolicyForService(servicesManager, builder, service);
         assertEquals(60, policy.getTimeToLive());
-
     }
 
 }
