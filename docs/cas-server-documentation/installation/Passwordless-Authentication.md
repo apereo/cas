@@ -6,16 +6,20 @@ category: Authentication
 
 # Passwordless Authentication
 
-Passwordless Authentication is a form of authentication in CAS where passwords take the form of tokens that expire after a configurable period of time. 
-Using this strategy, users are asked for an identifier (i.e. username) which is used to locate the user record that contains forms of contact such as email and phone
-number. Once located, the CAS-generated token is sent to the user via the configured notification strategies (i.e. email, sms, etc) where the user is then expected to 
+Passwordless Authentication is a form of authentication in CAS where passwords take the 
+form of tokens that expire after a configurable period of time. 
+Using this strategy, users are asked for an identifier (i.e. username) which is used to locate the user record 
+that contains forms of contact such as email and phone
+number. Once located, the CAS-generated token is sent to the user via the configured notification 
+strategies (i.e. email, sms, etc) where the user is then expected to 
 provide the token back to CAS in order to proceed. 
 
 <div class="alert alert-info"><strong>No Magic Link</strong><p>
 Presently, there is no support for magic links that would remove the task of providing the token back to CAS allowing the user to proceed automagically.
 This variant may be worked out in future releases.</p></div>
 
-In order to successfully implement this feature, configuration needs to be in place to contact account stores that hold user records who qualify for passwordless authentication. 
+In order to successfully implement this feature, configuration needs to be in place to contact 
+account stores that hold user records who qualify for passwordless authentication. 
 Similarly, CAS must be configured to manage issued tokens in order to execute find, validate, expire or save operations in appropriate data stores.
 
 ## Overview
@@ -31,6 +35,11 @@ Support is enabled by including the following module in the overlay:
 ```
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#passwordless-authentication).
+
+## WebAuthN FIDO2
+
+Passwordless authentication can also be achieved via [FIDO2 WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) which lets users 
+verify their identities without passwords and login using FIDO2-enabled devices.
 
 ## Account Stores
 
@@ -206,8 +215,10 @@ on each individual account store implementation.
 
 ## Multifactor Authentication Integration
 
-Passwordless authentication can be integrated with [CAS multifactor authentication providers](../mfa/Configuring-Multifactor-Authentication.html). In this scenario,
-once CAS configuration is enabled to support this behavior via settings or the located passwordless user account is considered *eligible* for multifactor authentication,
+Passwordless authentication can be integrated 
+with [CAS multifactor authentication providers](../mfa/Configuring-Multifactor-Authentication.html). In this scenario,
+once CAS configuration is enabled to support this behavior via settings 
+or the located passwordless user account is considered *eligible* for multifactor authentication,
 CAS will allow passwordless authentication to skip its own *intended normal* flow (i.e. as described above with token generation, etc) in favor of 
 multifactor authentication providers that may be available and defined in CAS.
 
