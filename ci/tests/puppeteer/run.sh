@@ -30,7 +30,7 @@ echo "Using scenario configuration file: ${config}"
 
 dependencies=$(cat "${config}" | jq -j '.dependencies')
 echo -e "\nBuilding CAS found in $PWD for dependencies [${dependencies}]"
-./gradlew :webapp:cas-server-webapp-tomcat:clean :webapp:cas-server-webapp-tomcat:build --no-daemon -PcasModules="${dependencies}"
+./gradlew :webapp:cas-server-webapp-tomcat:build --no-daemon --build-cache --configure-on-demand --parallel -PcasModules="${dependencies}"
 mv "$PWD"/webapp/cas-server-webapp-tomcat/build/libs/cas-server-webapp-tomcat-*.war "$PWD"/cas.war
 
 properties=$(cat "${config}" | jq -j '.properties // empty | join(" ")')
