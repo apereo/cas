@@ -43,6 +43,17 @@ logdir:
 
 # CAS Server container properties
 casServerContainer:
+  ## JVM Settings
+  ## JVM settings only used if command not set, use args to set app arguments
+  jvm:
+    ## Extra JVM options
+    ##
+    extraOpts:
+    ## Memory settings: If these aren't defined, java will calc values automatically, but requires setting limits on pod
+    ## so it doesn't base heap size on host memory
+    maxHeapOpt: -Xmx2G
+    newHeapOpt: -Xms600M
+  casWarPath: 'cas.war'
   ## Override cmd
   ##
   command:
@@ -64,6 +75,21 @@ casServerContainer:
   ## Url to use for readiness, startupprobe, and liveliness check, change to health actuator if the module is available
   ## Naming it "default" in case in future template supports individual urls for the different checks, with this as default if they aren't specified
   defaultStatusUrl: '/cas/login'
+  ## An array to add extra env vars
+  ## For example:
+  ## extraEnvVars:
+  ##  - name: MY_ENV_VAR
+  ##    value: env_var_value
+  ##
+  extraEnvVars: []
+
+  ## Name of a ConfigMap containing extra env vars
+  ##
+  extraEnvVarsConfigMap: ''
+
+  ## Name of a Secret containing extra env vars
+  ##
+  extraEnvVarsSecret: ''
 
 # name of secret containing server keystore
 serverKeystoreExistingSecret: cas-server-keystore

@@ -3,22 +3,11 @@
 #echo -e "\nChecking java..."
 #java -version
 
-JAVA_OPTS=${JAVA_OPTS:-Xms512m -Xmx2048M}
-
-#echo -e "\nCreating CAS configuration directories..."
-mkdir -p /etc/cas/config
-mkdir -p /etc/cas/services
-
-#echo "Listing provided CAS docker artifacts..."
-#ls -R docker/cas
-
-#echo -e "\nMoving CAS configuration artifacts..."
-mv docker/cas/thekeystore /etc/cas 2>/dev/null
-mv docker/cas/config/*.* /etc/cas/config 2>/dev/null
-mv docker/cas/services/*.* /etc/cas/services 2>/dev/null
+JVM_MEM_OPTS=${JVM_MEM_OPTS:-Xms512m -Xmx2048M}
+JVM_EXTRA_OPTS==${JVM_EXTRA_OPTS:-server -noverify -XX:+TieredCompilation -XX:TieredStopAtLevel=1}
 
 #echo -e "\nListing CAS configuration under /etc/cas..."
 #ls -R /etc/cas
 
 echo -e "\nRunning CAS..."
-exec java $JAVA_OPTS -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -jar docker/cas/war/cas.war "$@"
+exec java $JVM_EXTRA_OPTS $JVM_MEM_OPTS -jar cas.war "$@"

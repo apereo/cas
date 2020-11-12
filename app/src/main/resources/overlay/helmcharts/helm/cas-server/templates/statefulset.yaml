@@ -29,6 +29,10 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       volumes:
+        - name: scripts
+          configMap:
+            name: {{ include "cas-server.fullname" . }}-scripts
+            defaultMode: 0755
         - name: logdir
           {{- include "cas-server.logdir" . | nindent 10 }}
         {{- if .Values.serverKeystoreExistingSecret }}
@@ -48,11 +52,40 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: {{ include "cas-server.imageName" . }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            {{- if .Values.casServerContainer.casWarPath }}
+            - name: CAS_WAR
+              value: {{ .Values.casServerContainer.casWarPath | quote }}
+            {{- end }}
+            {{- if .Values.casServerContainer.jvm.maxHeapOpt }}
+            - name: MAX_HEAP_OPT
+              value: {{ .Values.casServerContainer.jvm.maxHeapOpt | quote }}
+            {{- end }}
+            {{- if .Values.casServerContainer.jvm.minHeapOpt }}
+            - name: MIN_HEAP_OPT
+              value: {{ .Values.casServerContainer.jvm.minHeapOpt | quote }}
+            {{- end }}
+            {{- if .Values.casServerContainer.jvm.extraOpts }}
+            - name: JVM_EXTRA_OPTS
+              value: {{ .Values.casServerContainer.jvm.extraOpts | quote }}
+            {{- end }}
+            {{- if .Values.casServerContainer.extraEnvVars }}
+              {{- include "cas-server.tplvalues.render" (dict "value" .Values.casServerContainer.extraEnvVars "context" $) | nindent 12 }}
+            {{- end }}
+          envFrom:
+            {{- if .Values.casServerContainer.extraEnvVarsConfigMap }}
+            - configMapRef:
+                name: {{ .Values.casServerContainer.extraEnvVarsConfigMap }}
+            {{- end }}
+            {{- if .Values.casServerContainer.extraEnvVarsSecret }}
+            - secretRef:
+                name: {{ .Values.casServerContainer.extraEnvVarsSecret }}
+            {{- end }}
           {{- if .Values.casServerContainer.command }}
           command: {{- include "cas-server.tplvalues.render" (dict "value" .Values.casServerContainer.command "context" $) | nindent 12 }}
           {{- else }}
           command:
-            - /docker/entrypoint.sh
+            - '/entrypoint.sh'
           {{- end }}
           {{- if .Values.casServerContainer.args }}
           args: {{- include "cas-server.tplvalues.render" (dict "value" .Values.casServerContainer.args "context" $) | nindent 12 }}
@@ -62,6 +95,9 @@ spec:
               containerPort: {{ .Values.cas.listenPortHttps }}
               protocol: TCP
           volumeMounts:
+            - name: scripts
+              mountPath: /entrypoint.sh
+              subPath: entrypoint.sh
             - name: logdir
               mountPath: {{ .Values.logdir.mountPath }}
             {{- if .Values.serverKeystoreExistingSecret }}

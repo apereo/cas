@@ -5,7 +5,7 @@ jib {
         image = project.baseDockerImage
     }
     to {
-        image = "${project.group}/${project.name}"
+        image = "${project.imageorg}/${project.name}"
         /**
          ecr-login: Amazon Elastic Container Registry (ECR)
          gcr: Google Container Registry (GCR)
@@ -22,9 +22,10 @@ jib {
     }
     container {
         creationTime = "USE_CURRENT_TIMESTAMP"
-        entrypoint = ['docker/entrypoint.sh']
+        entrypoint = ['/docker/entrypoint.sh']
         ports = ['80', '443', '8080', '8443']
-        labels = [version:casServerVersion, name:project.name, group:project.group]
+        labels = [version:casServerVersion, name:project.name, group:project.group, org:project.imageorg]
+        workingDirectory = '/docker/cas/war'
     }
     extraDirectories {
         paths {
