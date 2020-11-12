@@ -8,9 +8,12 @@ curl http://localhost:8080/starter.tgz -d dependencies=core | tar -xzvf -
 
 echo "Building Overlay"
 chmod -R 777 ./*.sh
-./gradlew clean build jibDockerBuild --refresh-dependencies
+./gradlew clean build jibBuildTar --refresh-dependencies
 docker image ls
 kubectl get pods -A
+
+echo "Loading image into k3s"
+sudo k3s ctr images import build/jib-image.tar
 
 echo "Creating Keystore"
 ./gradlew -P certDir=etc/cas createKeystore
@@ -33,8 +36,10 @@ kubectl wait --namespace ingress-nginx \
   --timeout=120s
 
 echo "Install cas-server helm chart"
-echo "Using latest tag until can figure out how to get local images to k3s"
-helm upgrade --install cas-server --set image.tag=latest ./cas-server
+echo "Using local jib image imported into k3s"
+helm upgrade --install cas-server --set image.pullPolicy=Never --set image.tag=latest ./cas-server
 sleep 15
 kubectl describe pod cas-server-0
+sleep 60
 kubectl logs cas-server-0
+curl -k -v https://localhost/cas/login
