@@ -1,4 +1,4 @@
-package org.apereo.cas.webauthn.web.flow;
+package org.apereo.cas.webauthn;
 
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessin
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
-import org.apereo.cas.webauthn.WebAuthnCredential;
 
 import com.yubico.core.RegistrationStorage;
 import com.yubico.core.SessionManager;

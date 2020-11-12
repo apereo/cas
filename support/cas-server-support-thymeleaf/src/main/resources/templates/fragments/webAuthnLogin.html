@@ -24,7 +24,12 @@
             var appId = /*[[${webauthnApplicationId}]]*/;
             /*]]>*/
         </script>
-        
+
+        <script type="text/javascript" th:inline="javascript">
+            var authFailTitle = [[#{ screen.authentication.webauthn.authn.fail.title }]];
+            var authFailDesc = [[#{ screen.authentication.webauthn.authn.fail.desc }]];
+        </script>
+
         <script th:src="@{/js/webauthn/webauthn.js}"></script>
 
         <div style="display: none" id="diagnostics">
@@ -63,9 +68,12 @@
             </div>
         </div>
 
-        <div class="d-flex justify-content-center flex-column align-items-center">
-            <h2 id="status">Login with FIDO2-enabled Device</h2>
-
+        <div class="d-flex justify-content-center flex-column">
+            <div class="d-flex justify-content-center flex-column align-items-center">
+                <h2 id="status" th:text="#{screen.authentication.webauthn.login.title}" />
+            </div>
+            <p th:text="#{screen.authentication.webauthn.login.desc}">Login</p>
+            
             <div id="errorPanel" class="banner banner-danger alert-dismissible mb-4"
                  th:if="${flowRequestContext.messageContext.hasErrorMessages()}">
                 <p th:each="message : ${flowRequestContext.messageContext.allMessages}"
@@ -82,13 +90,13 @@
                     <br>
                     <span id="device-name"></span>
                 </div>
-                <br>
-                <p>Use your registered FIDO2-enabled device to login.</p>
             </div>
-            <div>
+            <div class="d-flex justify-content-center flex-column align-items-center">
                 <button class="mdc-button mdc-button--raised mr-2"
                         name="authnButton" id="authnButton" accesskey="a" type="button">
-                    <span id="authnButtonText" class="mdc-button__label" th:text="#{screen.welcome.button.login}">Login</span>
+                    <i class="mdi mdi-fingerprint"></i>
+                    <span id="authnButtonText" class="mdc-button__label"
+                          th:text="#{screen.welcome.button.login}">Login</span>
                 </button>
             </div>
         </div>
@@ -129,6 +137,7 @@
                     authenticate(username);
                 }
             }, false);
+
         </script>
 
     </div>

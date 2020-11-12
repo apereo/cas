@@ -538,7 +538,7 @@ function authenticate(username = null, getRequest = getAuthenticateRequest) {
         }
         return data;
     }).catch((err) => {
-        setStatus('Authentication failed.');
+        setStatus(authFailTitle);
         if (err.name === 'InvalidStateError') {
             addMessage(`This authenticator is not registered for the account "${username}".`)
         } else if (err.message) {
@@ -547,7 +547,7 @@ function authenticate(username = null, getRequest = getAuthenticateRequest) {
             addMessages(err.messages);
         }
         console.error('Authentication failed', err);
-        addMessage(`Unable to complete authentication attempt for "${username}"`)
+        addMessage(authFailDesc);
         return rejected(err);
     });
 }

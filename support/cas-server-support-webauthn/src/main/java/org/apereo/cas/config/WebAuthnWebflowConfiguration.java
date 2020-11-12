@@ -28,7 +28,7 @@ import org.apereo.cas.webauthn.web.flow.WebAuthnMultifactorTrustWebflowConfigure
 import org.apereo.cas.webauthn.web.flow.WebAuthnMultifactorWebflowConfigurer;
 import org.apereo.cas.webauthn.web.flow.WebAuthnStartAuthenticationAction;
 import org.apereo.cas.webauthn.web.flow.WebAuthnStartRegistrationAction;
-import org.apereo.cas.webauthn.web.flow.WebAuthnValidateTokenAction;
+import org.apereo.cas.webauthn.web.flow.WebAuthnValidateSessionCredentialTokenAction;
 
 import com.yubico.core.RegistrationStorage;
 import com.yubico.core.SessionManager;
@@ -189,11 +189,11 @@ public class WebAuthnWebflowConfiguration {
             webAuthnSessionManager.getObject());
     }
 
-    @ConditionalOnMissingBean(name = "webAuthnValidateTokenAction")
+    @ConditionalOnMissingBean(name = "webAuthnValidateSessionCredentialTokenAction")
     @Bean
     @RefreshScope
-    public Action webAuthnValidateTokenAction() {
-        return new WebAuthnValidateTokenAction(webAuthnCredentialRepository.getObject(),
+    public Action webAuthnValidateSessionCredentialTokenAction() {
+        return new WebAuthnValidateSessionCredentialTokenAction(webAuthnCredentialRepository.getObject(),
             webAuthnSessionManager.getObject(), webAuthnPrincipalFactory.getObject());
     }
 

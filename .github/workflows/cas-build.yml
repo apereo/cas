@@ -791,6 +791,7 @@ jobs:
           - invalid-pswd-reset
           - locale-param
           - generate-service-ticket
+          - webauthn-primary-authn
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK

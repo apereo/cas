@@ -15,6 +15,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.webauthn.WebAuthnAuthenticationHandler;
 import org.apereo.cas.webauthn.WebAuthnCredential;
 import org.apereo.cas.webauthn.WebAuthnCredentialRegistrationCipherExecutor;
 import org.apereo.cas.webauthn.WebAuthnMultifactorAuthenticationProvider;
@@ -22,7 +23,6 @@ import org.apereo.cas.webauthn.storage.JsonResourceWebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.web.WebAuthnController;
 import org.apereo.cas.webauthn.web.WebAuthnRegisteredDevicesEndpoint;
-import org.apereo.cas.webauthn.web.flow.WebAuthnAuthenticationHandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.cache.Cache;
