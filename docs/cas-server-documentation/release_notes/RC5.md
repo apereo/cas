@@ -64,6 +64,14 @@ to account for advanced use cases such as ensuring protocol compatibility and ot
 [Delegated authentication](../integration/Delegate-Authentication.html) can now hand off 
 authentication requests to [sign in with Apple](https://developer.apple.com/sign-in-with-apple/).
 
+## WebAuthN for Primary Authentication
+
+[WebAuthn FIDO2](../mfa/FIDO2-WebAuthn-Authentication.html) multifactor authentication 
+can now, optionally, act as a standalone factor for primary authentication, for user accounts 
+and devices that have an existing registration record with CAS.
+
+![image](https://user-images.githubusercontent.com/1205228/98920646-96243c80-24e5-11eb-9ebc-b7eb5ac755af.png)
+
 ## Other Stuff
 
 - [Maven repositories](https://spring.io/blog/2020/10/29/notice-of-permissions-changes-to-repo-spring-io-fall-and-winter-2020) managed by the Spring project are removed from the CAS gradle build. 
