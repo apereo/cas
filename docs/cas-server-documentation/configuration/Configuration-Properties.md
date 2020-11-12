@@ -3148,6 +3148,7 @@ To learn more about this topic, [please review this guide](../mfa/FIDO2-WebAuthn
 # cas.authn.mfa.web-authn.relying-party-id=
 
 # cas.authn.mfa.web-authn.display-name-attribute=displayName
+# cas.authn.mfa.web-authn.allow-primary-authentication=false
 
 # cas.authn.mfa.web-authn.allow-unrequested-extensions=false
 # cas.authn.mfa.web-authn.allow-untrusted-attestation=false
