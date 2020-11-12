@@ -450,8 +450,9 @@ function register(username, displayName, credentialNickname, requireResidentKey 
                 } else {
                     setTimeout(function () {
                         $('#sessionToken').val(session.sessionToken);
+                        console.log("Submitting registration form");
                         $('#form').submit();
-                    }, 1000);
+                    }, 1500);
                 }
             }
         })
@@ -531,8 +532,9 @@ function authenticate(username = null, getRequest = getAuthenticateRequest) {
 
             setTimeout(function () {
                 $('#token').val(data.sessionToken);
-                $('#form').submit();
-            }, 1000);
+                console.log("Submitting authentication form");
+                $('#webauthnLoginForm').submit();
+            }, 1500);
         }
         return data;
     }).catch((err) => {
@@ -545,6 +547,7 @@ function authenticate(username = null, getRequest = getAuthenticateRequest) {
             addMessages(err.messages);
         }
         console.error('Authentication failed', err);
+        addMessage(`Unable to complete authentication attempt for "${username}"`)
         return rejected(err);
     });
 }

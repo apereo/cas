@@ -5,6 +5,7 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -27,7 +28,7 @@ import org.apereo.cas.webauthn.web.flow.WebAuthnMultifactorTrustWebflowConfigure
 import org.apereo.cas.webauthn.web.flow.WebAuthnMultifactorWebflowConfigurer;
 import org.apereo.cas.webauthn.web.flow.WebAuthnStartAuthenticationAction;
 import org.apereo.cas.webauthn.web.flow.WebAuthnStartRegistrationAction;
-
+import org.apereo.cas.webauthn.web.flow.WebAuthnValidateTokenAction;
 
 import com.yubico.core.RegistrationStorage;
 import com.yubico.core.SessionManager;
@@ -62,6 +63,10 @@ public class WebAuthnWebflowConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    @Qualifier("webAuthnPrincipalFactory")
+    private ObjectProvider<PrincipalFactory> webAuthnPrincipalFactory;
 
     @Autowired
     @Qualifier("webAuthnSessionManager")
@@ -137,8 +142,9 @@ public class WebAuthnWebflowConfiguration {
     @Bean
     @RefreshScope
     @Autowired
-    public Action webAuthnAuthenticationWebflowAction(@Qualifier("webAuthnAuthenticationWebflowEventResolver")
-                                                      final CasWebflowEventResolver webAuthnAuthenticationWebflowEventResolver) {
+    public Action webAuthnAuthenticationWebflowAction(
+        @Qualifier("webAuthnAuthenticationWebflowEventResolver")
+        final CasWebflowEventResolver webAuthnAuthenticationWebflowEventResolver) {
         return new WebAuthnAuthenticationWebflowAction(webAuthnAuthenticationWebflowEventResolver);
     }
 
@@ -183,6 +189,14 @@ public class WebAuthnWebflowConfiguration {
             webAuthnSessionManager.getObject());
     }
 
+    @ConditionalOnMissingBean(name = "webAuthnValidateTokenAction")
+    @Bean
+    @RefreshScope
+    public Action webAuthnValidateTokenAction() {
+        return new WebAuthnValidateTokenAction(webAuthnCredentialRepository.getObject(),
+            webAuthnSessionManager.getObject(), webAuthnPrincipalFactory.getObject());
+    }
+
     @ConditionalOnMissingBean(name = "webAuthnAuthenticationWebflowEventResolver")
     @Bean
     @RefreshScope
@@ -208,8 +222,9 @@ public class WebAuthnWebflowConfiguration {
     @ConditionalOnMissingBean(name = "webAuthnCasWebflowExecutionPlanConfigurer")
     @Bean
     @Autowired
-    public CasWebflowExecutionPlanConfigurer webAuthnCasWebflowExecutionPlanConfigurer(@Qualifier("webAuthnMultifactorWebflowConfigurer")
-                                                                                       final CasWebflowConfigurer webAuthnMultifactorWebflowConfigurer) {
+    public CasWebflowExecutionPlanConfigurer webAuthnCasWebflowExecutionPlanConfigurer(
+        @Qualifier("webAuthnMultifactorWebflowConfigurer")
+        final CasWebflowConfigurer webAuthnMultifactorWebflowConfigurer) {
         return plan -> plan.registerWebflowConfigurer(webAuthnMultifactorWebflowConfigurer);
     }
 
