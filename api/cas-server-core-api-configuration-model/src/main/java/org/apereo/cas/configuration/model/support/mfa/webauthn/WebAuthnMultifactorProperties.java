@@ -128,6 +128,15 @@ public class WebAuthnMultifactorProperties extends BaseMultifactorProviderProper
     private String attestationConveyancePreference = "DIRECT";
 
     /**
+     * Configure the authentication flow to allow
+     * web-authn to be used as the first primary factor
+     * for authentication. Registered accounts with a valid
+     * webauthn registration record can choose to login
+     * using their device as the first step.
+     */
+    private boolean allowPrimaryAuthentication;
+
+    /**
      * Store device registration records inside a static JSON resource.
      */
     @NestedConfigurationProperty
