@@ -10,8 +10,6 @@ import org.apereo.cas.webauthn.WebAuthnCredential;
 
 import com.yubico.core.RegistrationStorage;
 import com.yubico.core.SessionManager;
-import com.yubico.webauthn.data.ByteArray;
-import lombok.SneakyThrows;
 import lombok.val;
 
 import javax.security.auth.login.AccountNotFoundException;
@@ -30,18 +28,13 @@ public class WebAuthnAuthenticationHandler extends AbstractPreAndPostProcessingA
     private final SessionManager sessionManager;
 
     public WebAuthnAuthenticationHandler(final String name, final ServicesManager servicesManager,
-                                         final PrincipalFactory principalFactory,
-                                         final RegistrationStorage webAuthnCredentialRepository,
-                                         final SessionManager sessionManager,
-                                         final Integer order) {
+        final PrincipalFactory principalFactory,
+        final RegistrationStorage webAuthnCredentialRepository,
+        final SessionManager sessionManager,
+        final Integer order) {
         super(name, servicesManager, principalFactory, order);
         this.webAuthnCredentialRepository = webAuthnCredentialRepository;
         this.sessionManager = sessionManager;
-    }
-
-    @Override
-    public boolean supports(final Class<? extends Credential> clazz) {
-        return WebAuthnCredential.class.isAssignableFrom(clazz);
     }
 
     @Override
@@ -49,9 +42,9 @@ public class WebAuthnAuthenticationHandler extends AbstractPreAndPostProcessingA
         return WebAuthnCredential.class.isAssignableFrom(credential.getClass());
     }
 
-    @SneakyThrows
-    private static ByteArray parseTokenFromCredential(final WebAuthnCredential webAuthnCredential) {
-        return ByteArray.fromBase64Url(webAuthnCredential.getToken());
+    @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return WebAuthnCredential.class.isAssignableFrom(clazz);
     }
 
     @Override
@@ -67,7 +60,7 @@ public class WebAuthnAuthenticationHandler extends AbstractPreAndPostProcessingA
         if (credentials.isEmpty()) {
             throw new AccountNotFoundException("Unable to locate registration record for " + uid);
         }
-        val token = parseTokenFromCredential(webAuthnCredential);
+        val token = WebAuthnCredential.from(webAuthnCredential);
         if (sessionManager.getSession(token).isEmpty()) {
             throw new FailedLoginException("Unable to validate session token " + webAuthnCredential);
         }
