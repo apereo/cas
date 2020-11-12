@@ -6,13 +6,11 @@ mkdir tmp
 cd tmp
 curl http://localhost:8080/starter.tgz -d dependencies=core | tar -xzvf -
 
-echo "Building Overlay"
+echo "Building War and Jib Docker Image"
 chmod -R 777 ./*.sh
 ./gradlew clean build jibBuildTar --refresh-dependencies
-docker image ls
-kubectl get pods -A
 
-echo "Loading image into k3s"
+echo "Loading CAS image into k3s"
 sudo k3s ctr images import build/jib-image.tar
 
 echo "Creating Keystore"
@@ -26,6 +24,7 @@ echo "Image tag is ${imageTag}"
 
 cd helm
 
+# k3s comes with Traefik so we could try using that instead at some point
 echo "Installing ingress controller and waiting for it to start"
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 kubectl create namespace ingress-nginx
@@ -37,9 +36,9 @@ kubectl wait --namespace ingress-nginx \
 
 echo "Install cas-server helm chart"
 echo "Using local jib image imported into k3s"
-helm upgrade --install cas-server --set image.pullPolicy=Never --set image.tag=latest ./cas-server
+helm upgrade --install cas-server --set image.pullPolicy=Never --set image.tag=${imageTag} ./cas-server
 sleep 15
 kubectl describe pod cas-server-0
 sleep 60
 kubectl logs cas-server-0
-curl -k -v https://localhost/cas/login
+curl -k -H "Host: cas.example.org" https://localhost/cas/login
