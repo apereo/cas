@@ -216,8 +216,8 @@ public class OidcConfiguration implements WebMvcConfigurer {
     private ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
 
     @Autowired
-    @Qualifier("oauthAuthorizationRequestValidators")
-    private ObjectProvider<Set<OAuth20AuthorizationRequestValidator>> oauthRequestValidators;
+    @Qualifier("oidcAuthorizationRequestValidators")
+    private ObjectProvider<Set<OAuth20AuthorizationRequestValidator>> oidcAuthorizationRequestValidators;
 
     @Autowired
     @Qualifier("grantingTicketExpirationPolicy")
@@ -736,7 +736,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
             accessTokenGrantRequestExtractors.getObject(),
             servicesManager.getObject(),
             oauthDistributedSessionStore.getObject(),
-            oauthRequestValidators.getObject());
+            oidcAuthorizationRequestValidators.getObject());
     }
 
     @RefreshScope
@@ -1006,7 +1006,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
             .consentApprovalViewResolver(consentApprovalViewResolver())
             .authenticationBuilder(authenticationBuilder.getObject())
             .oauthAuthorizationResponseBuilders(oidcAuthorizationResponseBuilders())
-            .oauthRequestValidators(oauthRequestValidators.getObject())
+            .oauthRequestValidators(oidcAuthorizationRequestValidators.getObject())
             .singleLogoutServiceLogoutUrlBuilder(singleLogoutServiceLogoutUrlBuilder.getObject())
             .idTokenSigningAndEncryptionService(oidcTokenSigningAndEncryptionService())
             .accessTokenJwtBuilder(oidcAccessTokenJwtBuilder())
