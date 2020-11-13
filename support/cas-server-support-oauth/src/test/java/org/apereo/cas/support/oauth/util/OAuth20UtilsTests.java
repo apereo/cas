@@ -6,6 +6,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuth20RegisteredServiceCipherExecutor;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.OAuth20Token;
@@ -19,6 +20,7 @@ import org.pac4j.core.context.JEEContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -122,5 +124,26 @@ public class OAuth20UtilsTests {
         registeredService.setClientSecret(secret);
         val result = OAuth20Utils.checkClientSecret(registeredService, secret, cipher);
         assertTrue(result);
+    }
+
+    @Test
+    public void verifyIsAuthorizedResponseTypeForService() {
+        val request = new MockHttpServletRequest();
+        request.addParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.ID_TOKEN.getType());
+        val response = new MockHttpServletResponse();
+        val context = new JEEContext(request, response);
+        val registeredService = new OAuthRegisteredService();
+        val supportedResponseTypes = new HashSet<String>();
+
+        registeredService.setSupportedResponseTypes(supportedResponseTypes);
+        assertTrue(OAuth20Utils.isAuthorizedResponseTypeForService(context, registeredService));
+
+        supportedResponseTypes.add(OAuth20ResponseTypes.IDTOKEN_TOKEN.getType());
+        registeredService.setSupportedResponseTypes(supportedResponseTypes);
+        assertFalse(OAuth20Utils.isAuthorizedResponseTypeForService(context, registeredService));
+
+        supportedResponseTypes.add(OAuth20ResponseTypes.ID_TOKEN.getType());
+        registeredService.setSupportedResponseTypes(supportedResponseTypes);
+        assertTrue(OAuth20Utils.isAuthorizedResponseTypeForService(context, registeredService));
     }
 }
