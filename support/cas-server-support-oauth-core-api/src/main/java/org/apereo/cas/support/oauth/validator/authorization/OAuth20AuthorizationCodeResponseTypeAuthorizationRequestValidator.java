@@ -20,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.JEEContext;
 import org.springframework.core.Ordered;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.stream.Stream;
 
 /**
@@ -51,10 +52,8 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator i
     @Override
     public boolean validate(final JEEContext context) {
         val request = context.getNativeRequest();
-        val checkParameterExist = Stream.of(OAuth20Constants.CLIENT_ID, OAuth20Constants.REDIRECT_URI, OAuth20Constants.RESPONSE_TYPE)
-            .allMatch(s -> HttpRequestUtils.doesParameterExist(request, s));
 
-        if (!checkParameterExist) {
+        if (!doRequiredParametersExist(request)) {
             LOGGER.warn("Missing required parameters (client id, redirect uri, etc) for response type [{}].", getResponseType());
             return false;
         }
@@ -74,7 +73,7 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator i
 
         val clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
         LOGGER.debug("Locating registered service for client id [{}]", clientId);
-        
+
         val registeredService = getRegisteredServiceByClientId(clientId);
         val audit = AuditableContext.builder()
             .registeredService(registeredService)
@@ -93,6 +92,17 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator i
         }
 
         return OAuth20Utils.isAuthorizedResponseTypeForService(context, registeredService);
+    }
+
+    /**
+     * Check if required parameters exist in the request?
+     *
+     * @param request the request
+     * @return whether the required parameters exist
+     */
+    protected boolean doRequiredParametersExist(final HttpServletRequest request) {
+        return Stream.of(OAuth20Constants.CLIENT_ID, OAuth20Constants.REDIRECT_URI, OAuth20Constants.RESPONSE_TYPE)
+            .allMatch(s -> HttpRequestUtils.doesParameterExist(request, s));
     }
 
     /**
