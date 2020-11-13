@@ -32,8 +32,6 @@ import org.apereo.cas.support.oauth.services.OAuth20RegisteredServiceCipherExecu
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
-import org.apereo.cas.support.oauth.validator.authorization.OAuth20IdTokenAndTokenResponseTypeAuthorizationRequestValidator;
-import org.apereo.cas.support.oauth.validator.authorization.OAuth20IdTokenResponseTypeAuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20ProofKeyCodeExchangeResponseTypeAuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20TokenResponseTypeAuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.token.OAuth20AuthorizationCodeGrantTypeProofKeyCodeExchangeTokenRequestValidator;
@@ -556,12 +554,10 @@ public class CasOAuth20Configuration {
     @Bean
     @RefreshScope
     public Set<OAuth20AuthorizationRequestValidator> oauthAuthorizationRequestValidators() {
-        val validators = new LinkedHashSet<OAuth20AuthorizationRequestValidator>(5);
+        val validators = new LinkedHashSet<OAuth20AuthorizationRequestValidator>(3);
         validators.add(oauthProofKeyCodeExchangeResponseTypeAuthorizationRequestValidator());
         validators.add(oauthAuthorizationCodeResponseTypeRequestValidator());
-        validators.add(oauthIdTokenResponseTypeRequestValidator());
         validators.add(oauthTokenResponseTypeRequestValidator());
-        validators.add(oauthIdTokenAndTokenResponseTypeRequestValidator());
         return validators;
     }
 
@@ -659,22 +655,6 @@ public class CasOAuth20Configuration {
     @RefreshScope
     public OAuth20AuthorizationRequestValidator oauthTokenResponseTypeRequestValidator() {
         return new OAuth20TokenResponseTypeAuthorizationRequestValidator(servicesManager.getObject(),
-            webApplicationServiceFactory.getObject(), registeredServiceAccessStrategyEnforcer.getObject());
-    }
-
-    @ConditionalOnMissingBean(name = "oauthIdTokenResponseTypeRequestValidator")
-    @Bean
-    @RefreshScope
-    public OAuth20AuthorizationRequestValidator oauthIdTokenResponseTypeRequestValidator() {
-        return new OAuth20IdTokenResponseTypeAuthorizationRequestValidator(servicesManager.getObject(),
-            webApplicationServiceFactory.getObject(), registeredServiceAccessStrategyEnforcer.getObject());
-    }
-
-    @ConditionalOnMissingBean(name = "oauthIdTokenAndTokenResponseTypeRequestValidator")
-    @Bean
-    @RefreshScope
-    public OAuth20AuthorizationRequestValidator oauthIdTokenAndTokenResponseTypeRequestValidator() {
-        return new OAuth20IdTokenAndTokenResponseTypeAuthorizationRequestValidator(servicesManager.getObject(),
             webApplicationServiceFactory.getObject(), registeredServiceAccessStrategyEnforcer.getObject());
     }
 
