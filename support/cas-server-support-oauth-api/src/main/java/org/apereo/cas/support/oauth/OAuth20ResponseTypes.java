@@ -34,8 +34,19 @@ public enum OAuth20ResponseTypes {
     /**
      * For implicit response type.
      */
-    ID_TOKEN("id_token");
-
+    ID_TOKEN("id_token"),
+    /**
+     * For Hybrid response type.
+     */
+    CODE_TOKEN("code token"),
+    /**
+     * For Hybrid response type.
+     */
+    CODE_ID_TOKEN("code id_token"),
+    /**
+     * For Hybrid response type.
+     */
+    CODE_ID_TOKEN_TOKEN("code id_token token");
 
     private final String type;
 
