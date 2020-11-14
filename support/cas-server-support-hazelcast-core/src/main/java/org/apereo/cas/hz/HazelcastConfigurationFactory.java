@@ -144,7 +144,7 @@ public class HazelcastConfigurationFactory {
      * @param hz the hz
      * @param config the config
      */
-        private static void buildManagementCenterConfig(final BaseHazelcastProperties hz, final Config config) {
+    private static void buildManagementCenterConfig(final BaseHazelcastProperties hz, final Config config) {
         val managementCenter = new ManagementCenterConfig();
         managementCenter.setScriptingEnabled(hz.isEnableManagementCenterScripting());
         config.setManagementCenterConfig(managementCenter);

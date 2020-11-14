@@ -76,7 +76,7 @@ public class BaseHazelcastProperties implements Serializable {
     private boolean enableCompression;
 
     /**
-     * Enables scripting from Management Center
+     * Enables scripting from Management Center.
      */
     private boolean enableManagementCenterScripting = true;
 
