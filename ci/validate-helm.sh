@@ -1,5 +1,6 @@
 #!/bin/bash
 
+echo "Running casinit"
 java -jar app/build/libs/app.jar &
 sleep 30
 mkdir tmp
@@ -41,4 +42,4 @@ sleep 15
 kubectl describe pod cas-server-0
 sleep 60
 kubectl logs cas-server-0
-curl -k -H "Host: cas.example.org" https://localhost/cas/login
+curl -k -v -H "Host: cas.example.org" https://127.0.0.1/cas/login
