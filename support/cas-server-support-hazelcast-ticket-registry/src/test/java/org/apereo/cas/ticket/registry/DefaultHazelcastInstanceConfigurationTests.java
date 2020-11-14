@@ -87,6 +87,7 @@ public class DefaultHazelcastInstanceConfigurationTests {
         assertFalse(config.getNetworkConfig().getJoin().getMulticastConfig().isEnabled());
         assertEquals(List.of("localhost"), config.getNetworkConfig().getJoin().getTcpIpConfig().getMembers());
         assertTrue(config.getNetworkConfig().isPortAutoIncrement());
+        assertTrue(config.getManagementCenterConfig().isScriptingEnabled());
         assertEquals(5701, config.getNetworkConfig().getPort());
         assertEquals(5, config.getMapConfigs().size());
     }
