@@ -62,6 +62,8 @@ helm upgrade --install cas-server ./cas-server
 helm upgrade --install cas-server --values values-local.yaml ./cas-server
 # see kubernetes yaml without installing  
 helm upgrade --install cas-server --values values-local.yaml ./cas-server --dry-run --debug
+# sometimes dry-run fails b/c yaml can't convert to json so use template instead to see problem
+helm template cas-server --values values-local.yaml ./cas-server --debug
 ```
 
 ### Useful `kubectl` Commands 

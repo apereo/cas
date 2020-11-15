@@ -29,6 +29,13 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       volumes:
+        {{- range $.Values.casServerContainer.casConfigMounts }}
+        {{- $configMount := printf "%s-%s" "cas-config" . }}
+        - name: {{ $configMount | quote }}
+          configMap:
+            name: {{ include "cas-server.fullname" $ }}-casconfig
+            defaultMode: 0644
+        {{- end }}
         - name: scripts
           configMap:
             name: {{ include "cas-server.fullname" . }}-scripts
@@ -95,6 +102,13 @@ spec:
               containerPort: {{ .Values.cas.listenPortHttps }}
               protocol: TCP
           volumeMounts:
+            {{- range $.Values.casServerContainer.casConfigMounts }}
+            {{- $configMount := printf "%s-%s" "cas-config" . }}
+            {{- $configMountPath := printf "%s/%s" "/etc/cas/config" . }}
+            - name: {{ $configMount | quote }}
+              mountPath: {{ $configMountPath }}
+              subPath: {{ . | quote }}
+            {{- end }}
             - name: scripts
               mountPath: /entrypoint.sh
               subPath: entrypoint.sh

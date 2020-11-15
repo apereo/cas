@@ -2,6 +2,8 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+casServerName: www.example.org
+
 replicaCount: 1
 
 image:
@@ -90,6 +92,18 @@ casServerContainer:
   ## Name of a Secret containing extra env vars
   ##
   extraEnvVarsSecret: ''
+  ## Choose which config files from casConfig to mount
+  casConfigMounts:
+    - 'cas.properties'
+    - 'cas.yaml'
+  ## Create various config files from casConfig that may or may not be mounted
+  casConfig:
+    cas.properties: |-
+      cas.server.name=https://{{ .Values.casServerName }}
+      cas.server.prefix=${cas.server.name}/cas
+    cas.yaml: |-
+      logging:
+        config: 'file:/etc/cas/config/log4j2.xml'
 
 # name of secret containing server keystore
 serverKeystoreExistingSecret: cas-server-keystore
@@ -118,7 +132,8 @@ service:
 cas:
   listenPortHttps: 8443
 
-
+## Override parts of this ingress in your own values file with appropriate host names
+## This currently is only set up to work with Nginx Ingress Controller from Kubernetes project
 ingress:
   enabled: true
   annotations: 
@@ -131,8 +146,8 @@ ingress:
     nginx.ingress.kubernetes.io/secure-backends: "true"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"    
   hosts:
-    - host: cas.example.org
-      paths: 
+    - host: www.example.org
+      paths:
         - "/cas"
     - host: kubernetes.docker.internal
       paths:
@@ -140,7 +155,7 @@ ingress:
   tls:
     - secretName: cas-server-tls
       hosts:
-        - cas.example.org
+        - www.example.org
         - kubernetes.docker.internal
 
 # Request some resources so kubernetes will schedule somewhere with enough resources
