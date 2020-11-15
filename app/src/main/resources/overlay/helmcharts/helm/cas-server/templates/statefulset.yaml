@@ -30,7 +30,7 @@ spec:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       volumes:
         {{- range $.Values.casServerContainer.casConfigMounts }}
-        {{- $configMount := printf "%s-%s" "cas-config" . }}
+        {{- $configMount := printf "%s-%s" "cas-config" . | replace "." "-" }}
         - name: {{ $configMount | quote }}
           configMap:
             name: {{ include "cas-server.fullname" $ }}-casconfig
@@ -103,7 +103,7 @@ spec:
               protocol: TCP
           volumeMounts:
             {{- range $.Values.casServerContainer.casConfigMounts }}
-            {{- $configMount := printf "%s-%s" "cas-config" . }}
+            {{- $configMount := printf "%s-%s" "cas-config" . | replace "." "-" }}
             {{- $configMountPath := printf "%s/%s" "/etc/cas/config" . }}
             - name: {{ $configMount | quote }}
               mountPath: {{ $configMountPath }}

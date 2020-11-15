@@ -2,7 +2,7 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-casServerName: www.example.org
+casServerName: cas.example.org
 
 replicaCount: 1
 
@@ -146,7 +146,7 @@ ingress:
     nginx.ingress.kubernetes.io/secure-backends: "true"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"    
   hosts:
-    - host: www.example.org
+    - host: cas.example.org
       paths:
         - "/cas"
     - host: kubernetes.docker.internal
@@ -155,7 +155,7 @@ ingress:
   tls:
     - secretName: cas-server-tls
       hosts:
-        - www.example.org
+        - cas.example.org
         - kubernetes.docker.internal
 
 # Request some resources so kubernetes will schedule somewhere with enough resources
