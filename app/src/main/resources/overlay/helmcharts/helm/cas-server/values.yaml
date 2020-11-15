@@ -137,7 +137,7 @@ ingress:
     - host: kubernetes.docker.internal
       paths:
         - "/cas"
-  tls: 
+  tls:
     - secretName: cas-server-tls
       hosts:
         - cas.example.org

@@ -8,7 +8,24 @@ The chart supports mapping in arbitrary volumes but should probably support a co
 
 ### Install Kubernetes (Docker for Windows/Mac, Minikube, K3S, Rancher, etc)
 [Docker Desktop](https://www.docker.com/products/docker-desktop)
+
 [Minikube](https://minikube.sigs.k8s.io/docs/start/)
+
+[k3s](https://k3s.io/) - Works on linux, very light weight and easy to install
+```shell script
+curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --disable traefik" sh
+# the following export is for helm
+export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+./gradlew clean build jibBuildTar --refresh-dependencies
+k3s ctr images import build/jib-image.tar
+k3s ctr images ls | grep cas
+./gradlew createKeystore
+cd helm 
+kubectl create secret generic cas-server-keystore --from-file=thekeystore=/etc/cas/thekeystore
+helm upgrade --install cas-server ./cas-server
+``` 
+
+
 
 ### Install Helm and Kubectl
 Helm v3 and Kubectl are just single binary programs. Kubectl may come with your kubernetes 

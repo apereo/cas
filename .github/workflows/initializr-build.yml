@@ -96,7 +96,7 @@ jobs:
           INSTALL_K3S_VERSION: ${{ matrix.k3s-version }}+k3s1
         run: |
           set -x
-          curl -sfL https://get.k3s.io | sh -
+          curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --disable traefik" sh
           sudo chmod -R a+rw /etc/rancher/k3s
           sudo mkdir -p $HOME/.kube && sudo chown -R runner $HOME/.kube
           sudo k3s kubectl config view --raw > $HOME/.kube/config
