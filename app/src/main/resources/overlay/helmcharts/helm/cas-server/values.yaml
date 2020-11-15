@@ -137,12 +137,12 @@ cas:
 ingress:
   enabled: true
   annotations: 
+    kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/session-cookie-samesite: "None"
     nginx.ingress.kubernetes.io/session-cookie-conditional-samesite-none: "true"
     nginx.ingress.kubernetes.io/affinity: "cookie"
     nginx.ingress.kubernetes.io/session-cookie-name: "sticky-session-route"
     nginx.ingress.kubernetes.io/session-cookie-hash: "sha1"
-    nginx.ingress.kubernetes.io/rewrite-target: "/cas"
     nginx.ingress.kubernetes.io/secure-backends: "true"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"    
   hosts:
