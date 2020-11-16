@@ -137,13 +137,6 @@ public class HazelcastConfigurationFactory {
             .setProperty(BaseHazelcastProperties.MAX_HEARTBEAT_SECONDS_PROP, String.valueOf(cluster.getMaxNoHeartbeatSeconds()));
     }
 
-    /**
-     * Build Management Center config.
-     * Enables scripting. For more on scripting config see {@link com.hazelcast.config.ManagementCenterConfig#setScriptingEnabled(boolean)}
-     *
-     * @param hz the hz
-     * @param config the config
-     */
     private static void buildManagementCenterConfig(final BaseHazelcastProperties hz, final Config config) {
         val managementCenter = new ManagementCenterConfig();
 
