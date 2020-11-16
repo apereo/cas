@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProviderFactoryTests;
 import org.apereo.cas.adaptors.duo.web.flow.DuoSecurityAuthenticationWebflowActionTests;
 import org.apereo.cas.adaptors.duo.web.flow.DuoSecurityAuthenticationWebflowEventResolverTests;
 import org.apereo.cas.adaptors.duo.web.flow.DuoSecurityDetermineUserAccountActionTests;
@@ -19,6 +20,7 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     DuoSecurityAuthenticationWebflowEventResolverTests.class,
+    DuoSecurityMultifactorAuthenticationProviderFactoryTests.class,
     DuoSecurityMultifactorWebflowConfigurerTests.class,
     DuoSecurityPrepareWebLoginFormActionTests.class,
     DuoSecurityDirectAuthenticationActionTests.class,
