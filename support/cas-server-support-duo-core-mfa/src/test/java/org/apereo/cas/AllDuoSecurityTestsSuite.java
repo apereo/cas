@@ -1,4 +1,8 @@
-package org.apereo.cas.adaptors.duo;
+package org.apereo.cas;
+
+import org.apereo.cas.adaptors.duo.DefaultDuoSecurityMultifactorAuthenticationProviderTests;
+import org.apereo.cas.adaptors.duo.DuoSecurityHealthIndicatorTests;
+import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationResultTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -13,6 +17,7 @@ import org.junit.runner.RunWith;
 
 @SelectClasses({
     DefaultDuoSecurityMultifactorAuthenticationProviderTests.class,
+    DuoSecurityAuthenticationResultTests.class,
     DuoSecurityHealthIndicatorTests.class
 })
 @RunWith(JUnitPlatform.class)
