@@ -25,7 +25,8 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 @AllArgsConstructor
 @NoArgsConstructor
 @RefreshScope
-public class DefaultDuoSecurityMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider implements DuoSecurityMultifactorAuthenticationProvider {
+public class DefaultDuoSecurityMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider
+    implements DuoSecurityMultifactorAuthenticationProvider {
 
     private static final long serialVersionUID = 4789727148634156909L;
 

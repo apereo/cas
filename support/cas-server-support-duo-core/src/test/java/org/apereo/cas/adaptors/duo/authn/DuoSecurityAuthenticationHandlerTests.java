@@ -7,7 +7,6 @@ import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProp
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
-import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +28,9 @@ public class DuoSecurityAuthenticationHandlerTests {
     public void verifyDuoSecurityDirectCredential() throws Exception {
         val authentication = CoreAuthenticationTestUtils.getAuthentication();
         val duoService = mock(DuoSecurityAuthenticationService.class);
-        when(duoService.authenticate(any(Credential.class))).thenReturn(Pair.of(Boolean.TRUE, authentication.getPrincipal().getId()));
+        when(duoService.authenticate(any(Credential.class)))
+            .thenReturn(DuoSecurityAuthenticationResult.builder()
+                .success(true).username(authentication.getPrincipal().getId()).build());
         val provider = mock(DuoSecurityMultifactorAuthenticationProvider.class);
         when(provider.getId()).thenReturn(DuoSecurityMultifactorProperties.DEFAULT_IDENTIFIER);
         when(provider.getDuoAuthenticationService()).thenReturn(duoService);
@@ -46,7 +47,9 @@ public class DuoSecurityAuthenticationHandlerTests {
     public void verifyDuoSecurityCredential() throws Exception {
         val authentication = CoreAuthenticationTestUtils.getAuthentication();
         val duoService = mock(DuoSecurityAuthenticationService.class);
-        when(duoService.authenticate(any(Credential.class))).thenReturn(Pair.of(Boolean.TRUE, authentication.getPrincipal().getId()));
+        when(duoService.authenticate(any(Credential.class)))
+            .thenReturn(DuoSecurityAuthenticationResult.builder()
+                .success(true).username(authentication.getPrincipal().getId()).build());
         val provider = mock(DuoSecurityMultifactorAuthenticationProvider.class);
         when(provider.getId()).thenReturn(DuoSecurityMultifactorProperties.DEFAULT_IDENTIFIER);
         when(provider.getDuoAuthenticationService()).thenReturn(duoService);
@@ -82,7 +85,9 @@ public class DuoSecurityAuthenticationHandlerTests {
     public void verifyBadDuoSecurityCredential() throws Exception {
         val authentication = CoreAuthenticationTestUtils.getAuthentication();
         val duoService = mock(DuoSecurityAuthenticationService.class);
-        when(duoService.authenticate(any(Credential.class))).thenReturn(Pair.of(Boolean.TRUE, authentication.getPrincipal().getId()));
+        when(duoService.authenticate(any(Credential.class)))
+            .thenReturn(DuoSecurityAuthenticationResult.builder()
+                .success(true).username(authentication.getPrincipal().getId()).build());
         val provider = mock(DuoSecurityMultifactorAuthenticationProvider.class);
         when(provider.getId()).thenReturn(DuoSecurityMultifactorProperties.DEFAULT_IDENTIFIER);
         when(provider.getDuoAuthenticationService()).thenReturn(duoService);
@@ -113,7 +118,10 @@ public class DuoSecurityAuthenticationHandlerTests {
     public void verifySupports() throws Exception {
         val authentication = CoreAuthenticationTestUtils.getAuthentication();
         val duoService = mock(DuoSecurityAuthenticationService.class);
-        when(duoService.authenticate(any(Credential.class))).thenReturn(Pair.of(Boolean.TRUE, authentication.getPrincipal().getId()));
+
+        when(duoService.authenticate(any(Credential.class)))
+            .thenReturn(DuoSecurityAuthenticationResult.builder().success(true)
+                .username(authentication.getPrincipal().getId()).build());
         val provider = mock(DuoSecurityMultifactorAuthenticationProvider.class);
         when(provider.getId()).thenReturn(DuoSecurityMultifactorProperties.DEFAULT_IDENTIFIER);
         when(provider.getDuoAuthenticationService()).thenReturn(duoService);

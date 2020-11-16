@@ -17,7 +17,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpMethod;
 
-import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
@@ -44,22 +43,6 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
 
     private static final int USER_ACCOUNT_CACHE_EXPIRATION_SECONDS = 5;
 
-    private static final String RESULT_KEY_RESPONSE = "response";
-
-    private static final String RESULT_KEY_STAT = "stat";
-
-    private static final String RESULT_KEY_RESULT = "result";
-
-    private static final String RESULT_KEY_ENROLL_PORTAL_URL = "enroll_portal_url";
-
-    private static final String RESULT_KEY_STATUS_MESSAGE = "status_msg";
-
-    private static final String RESULT_KEY_CODE = "code";
-
-    private static final String RESULT_KEY_MESSAGE = "message";
-
-    private static final String RESULT_KEY_MESSAGE_DETAIL = "message_detail";
-
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     /**
@@ -67,14 +50,17 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
      */
     protected final DuoSecurityMultifactorProperties duoProperties;
 
-    private final transient HttpClient httpClient;
+    /**
+     * Http client used to make calls to duo.
+     */
+    protected final transient HttpClient httpClient;
 
     private final transient Map<String, DuoSecurityUserAccount> userAccountCachedMap;
 
     private final transient Cache<String, DuoSecurityUserAccount> userAccountCache;
 
     protected BaseDuoSecurityAuthenticationService(final DuoSecurityMultifactorProperties duoProperties,
-                                                final HttpClient httpClient) {
+        final HttpClient httpClient) {
         this.duoProperties = duoProperties;
         this.httpClient = httpClient;
 
@@ -84,38 +70,6 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
             .expireAfterWrite(Duration.ofSeconds(USER_ACCOUNT_CACHE_EXPIRATION_SECONDS))
             .build();
         this.userAccountCachedMap = this.userAccountCache.asMap();
-    }
-
-    private static String buildUrlHttpScheme(final String url) {
-        if (!url.startsWith("http")) {
-            return "https://" + url;
-        }
-        return url;
-    }
-
-    @Override
-    public boolean ping() {
-        try {
-            val url = buildUrlHttpScheme(getApiHost().concat("/rest/v1/ping"));
-            LOGGER.debug("Contacting Duo @ [{}]", url);
-
-            val msg = this.httpClient.sendMessageToEndPoint(new URL(url));
-            if (msg != null) {
-                val response = URLDecoder.decode(msg.getMessage(), StandardCharsets.UTF_8.name());
-                LOGGER.debug("Received Duo ping response [{}]", response);
-
-                val result = MAPPER.readTree(response);
-                if (result.has(RESULT_KEY_RESPONSE) && result.has(RESULT_KEY_STAT)
-                    && result.get(RESULT_KEY_RESPONSE).asText().equalsIgnoreCase("pong")
-                    && result.get(RESULT_KEY_STAT).asText().equalsIgnoreCase("OK")) {
-                    return true;
-                }
-                LOGGER.warn("Could not reach/ping Duo. Response returned is [{}]", result);
-            }
-        } catch (final Exception e) {
-            LOGGER.warn("Pinging Duo has failed with error: [{}]", e.getMessage(), e);
-        }
-        return false;
     }
 
     @Override

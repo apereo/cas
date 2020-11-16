@@ -56,13 +56,15 @@ public class BasicDuoSecurityAuthenticationServiceTests {
     @Test
     public void verifySign() {
         val service = new BasicDuoSecurityAuthenticationService(casProperties.getAuthn().getMfa().getDuo().get(0), httpClient);
-        assertNotNull(service.signRequestToken("casuser"));
+        assertTrue(service.getDuoClient().isEmpty());
+        assertTrue(service.signRequestToken("casuser").isPresent());
     }
 
     @Test
     public void verifyAuthN() {
         val service = new BasicDuoSecurityAuthenticationService(casProperties.getAuthn().getMfa().getDuo().get(0), httpClient);
-        val token = service.signRequestToken("casuser");
+        assertTrue(service.getDuoClient().isEmpty());
+        val token = service.signRequestToken("casuser").get();
         val creds = new DuoSecurityCredential("casuser", token + ":casuser", "mfa-duo");
         assertThrows(DuoWebException.class, () -> service.authenticate(creds));
     }
@@ -70,6 +72,7 @@ public class BasicDuoSecurityAuthenticationServiceTests {
     @Test
     public void verifyAuthNNoToken() {
         val service = new BasicDuoSecurityAuthenticationService(casProperties.getAuthn().getMfa().getDuo().get(0), httpClient);
+        assertTrue(service.getDuoClient().isEmpty());
         val creds = new DuoSecurityCredential("casuser", StringUtils.EMPTY, "mfa-duo");
         assertThrows(IllegalArgumentException.class, () -> service.authenticate(creds));
     }

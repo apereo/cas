@@ -17,7 +17,6 @@ import java.lang.annotation.Target;
 @ConditionalOnProperty({
     "cas.authn.mfa.duo[0].duo-api-host",
     "cas.authn.mfa.duo[0].duo-integration-key",
-    "cas.authn.mfa.duo[0].duo-application-key",
     "cas.authn.mfa.duo[0].duo-secret-key"
 })
 @Retention(RetentionPolicy.RUNTIME)

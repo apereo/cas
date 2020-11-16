@@ -3479,16 +3479,21 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
                     exclude(group: "com.google.guava", module: "guava")
-
                 },
         duojava                 : [
-                dependencies.create("net.unicon.iam:duo-java:$duoVersion") {
+                dependencies.create("net.unicon.iam:duo-java:$duoWebSdkVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
-
                 },
-                dependencies.create("net.unicon.iam:duo-client:0.2.2") {
+                dependencies.create("com.duosecurity:duo-client:$duoClientVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
-
+                },
+                dependencies.create("com.duosecurity:duo-universal-sdk:$duoUniversalSdkVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.squareup.retrofit", module: "retrofit")
+                    exclude(group: "org.projectlombok", module: "lombok")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "com.squareup.okhttp3", module: "logging-interceptor")
                 }
         ],
         authyjava               : [
