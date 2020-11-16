@@ -16,16 +16,6 @@ import java.util.Map;
  */
 public interface CasSimpleMultifactorAuthenticationTicketFactory extends TicketFactory {
     /**
-     * Normalize ticket id string.
-     *
-     * @param id the id
-     * @return the string
-     */
-    static String normalizeTicketId(final String id) {
-        return CasSimpleMultifactorAuthenticationTicket.PREFIX + '-' + id;
-    }
-
-    /**
      * Build expiration policy expiration policy.
      *
      * @param expirationPolicyBuilder the expiration policy builder
@@ -33,14 +23,14 @@ public interface CasSimpleMultifactorAuthenticationTicketFactory extends TicketF
      * @return the expiration policy
      */
     static ExpirationPolicy buildExpirationPolicy(final ExpirationPolicyBuilder expirationPolicyBuilder,
-                                                  final Map<String, Serializable> properties) {
+        final Map<String, Serializable> properties) {
         var expirationPolicy = expirationPolicyBuilder.buildTicketExpirationPolicy();
         if (properties.containsKey(ExpirationPolicy.class.getName())) {
             expirationPolicy = ExpirationPolicy.class.cast(properties.remove(ExpirationPolicy.class.getName()));
         }
         return expirationPolicy;
     }
-    
+
     /**
      * Create ticket.
      *

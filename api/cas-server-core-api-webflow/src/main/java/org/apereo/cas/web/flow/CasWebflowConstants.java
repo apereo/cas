@@ -491,7 +491,7 @@ public interface CasWebflowConstants {
     /**
      * Delegated authentication state id.
      */
-    String STATE_ID_DELEGATED_AUTHENTICATION = "delegatedAuthenticationAction";
+    String STATE_ID_DELEGATED_AUTHENTICATION = "delegatedAuthentication";
 
     /**
      * State id 'frontLogout'.

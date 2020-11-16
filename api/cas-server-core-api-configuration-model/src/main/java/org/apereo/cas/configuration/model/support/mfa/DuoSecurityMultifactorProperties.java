@@ -75,7 +75,31 @@ public class DuoSecurityMultifactorProperties extends BaseMultifactorProviderPro
      */
     private boolean trustedDeviceEnabled;
 
+    /**
+     * Duo integration mode to indicate whether
+     * duo-web or duo universal prompt should be used.
+     * <p>
+     * Accepted values are:
+     * {@code BASIC}: Uses the web-sdk to handle duo integrations inside an iFrame.
+     * {@code UNIVERSAL}: Handles the integration using Universal Prompt.
+     */
+    private DuoSecurityIntegrationModes mode = DuoSecurityIntegrationModes.BASIC;
+
     public DuoSecurityMultifactorProperties() {
         setId(DEFAULT_IDENTIFIER);
+    }
+
+    /**
+     * Duo Security integration modes and options.
+     */
+    public enum DuoSecurityIntegrationModes {
+        /**
+         * Default integration mode using the web-sdk and iFrames.
+         */
+        BASIC,
+        /**
+         * Universal Prompt mode via OIDC.
+         */
+        UNIVERSAL
     }
 }

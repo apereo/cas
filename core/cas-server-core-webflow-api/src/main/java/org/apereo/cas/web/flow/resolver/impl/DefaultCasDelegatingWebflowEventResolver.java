@@ -64,7 +64,7 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
             LOGGER.trace("Attempting to resolve candidate authentication events for service [{}]", service);
             val resolvedEvents = resolveCandidateAuthenticationEvents(context, service, registeredService);
             if (!resolvedEvents.isEmpty()) {
-                LOGGER.trace("The set of authentication events resolved for [{}] are [{}]. Beginning to select the final event...", service, resolvedEvents);
+                LOGGER.trace("Authentication events resolved for [{}] are [{}]. Selecting final event...", service, resolvedEvents);
                 WebUtils.putResolvedEventsAsAttribute(context, resolvedEvents);
                 val finalResolvedEvent = this.selectiveResolver.resolveSingle(context);
                 LOGGER.debug("The final authentication event resolved for [{}] is [{}]", service, finalResolvedEvent);
