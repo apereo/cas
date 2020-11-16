@@ -9,7 +9,8 @@ metadata:
 spec:
   containers:
     - name: wget
-      image: busybox
+      image: alpine
       command: ['wget']
-      args: ['{{ include "cas-server.fullname" . }}:{{ .Values.service.port }}']
+      args: [ '--no-check-certificate', 'https://{{ include "cas-server.fullname" . }}:{{ .Values.service.port }}/cas/actuator/health' ]
   restartPolicy: Never
+

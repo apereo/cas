@@ -45,6 +45,8 @@ logdir:
 
 # CAS Server container properties
 casServerContainer:
+  ## Roll on upgrade changes deployment when helm upgrade runs, forcing pod to restart
+  alwaysRoll: true
   ## JVM Settings
   ## JVM settings only used if command not set, use args to set app arguments
   jvm:
@@ -76,7 +78,7 @@ casServerContainer:
   extraVolumes: []
   ## Url to use for readiness, startupprobe, and liveliness check, change to health actuator if the module is available
   ## Naming it "default" in case in future template supports individual urls for the different checks, with this as default if they aren't specified
-  defaultStatusUrl: '/cas/login'
+  defaultStatusUrl: '/cas/actuator/health'
   ## An array to add extra env vars
   ## For example:
   ## extraEnvVars:
@@ -101,6 +103,58 @@ casServerContainer:
     cas.properties: |-
       cas.server.name=https://{{ .Values.casServerName }}
       cas.server.prefix=${cas.server.name}/cas
+      
+      # put web access logs in same directory as cas logs
+      cas.server.tomcat.ext-access-log.directory=/var/log
+      cas.server.tomcat.ext-access-log.enabled=true
+
+      # uncomment the folowing to not allow login of built-in users
+      # cas.authn.accept.users= 
+ 
+      # since we are behind ingress controller, need to use x-forwarded-for to get client ip
+      # if nginx ingress controller is behind another proxy, it needs to be configured globally with the following settings in the ingress controller configmap
+      #  use-forwarded-headers: "true"   # very important for CAS or any app that compares IP being used against IP that initiated sessions (session fixation)
+      #  enable-underscores-in-headers: "true" # while you are at it, allow underscores in headers, can't recall if important for cas but no need to have nginx dropping your headers with underscores
+      cas.audit.alternateClientAddrHeaderName=X-Forwarded-For
+      server.tomcat.remoteip.remote-ip-header=X-FORWARDED-FOR
+
+      # expose endpoints via http
+      management.endpoints.web.exposure.include=health,info,prometheus,metrics,env,loggers,statistics,status,loggingConfig,events,configurationMetadata,caches
+      management.endpoints.web.base-path=/actuator
+      management.endpoints.web.cors.allowed-origins=https://${cas-host}
+      management.endpoints.web.cors.allowed-methods=GET,POST
+
+      # enable endpoints
+      management.endpoint.metrics.enabled=true
+      management.endpoint.health.enabled=true
+      management.endpoint.info.enabled=true
+      management.endpoint.env.enabled=true
+      management.endpoint.loggers.enabled=true
+      management.endpoint.status.enabled=true
+      management.endpoint.statistics.enabled=true
+      management.endpoint.prometheus.enabled=true
+      management.endpoint.events.enabled=true
+      management.endpoint.loggingConfig.enabled=true
+      management.endpoint.configurationMetadata.enabled=true
+      # configure health endpoint
+      management.health.defaults.enabled=false
+      management.health.ping.enabled=true
+
+      # secure endpoints to localhost
+
+      cas.monitor.endpoints.endpoint.defaults.access[0]=AUTHENTICATED
+      cas.monitor.endpoints.endpoint.defaults.requiredRoles[0]=admin
+      cas.monitor.endpoints.endpoint.health.access[0]=IP_ADDRESS
+      cas.monitor.endpoints.endpoint.health.requiredIpAddresses[0]=127.0.0.1
+      cas.monitor.endpoints.endpoint.health.requiredIpAddresses[1]=0:0:0:0:0:0:0:1
+      cas.monitor.endpoints.endpoint.health.requiredIpAddresses[2]=10.0.0.0/8
+      cas.monitor.endpoints.endpoint.health.requiredIpAddresses[3]=172.16.0.0/12
+      cas.monitor.endpoints.endpoint.health.requiredIpAddresses[4]=192.168.0.0/16
+
+      spring.security.user.name=casadmin
+      #spring.security.user.password=
+      spring.security.user.roles=admin
+
     cas.yaml: |-
       logging:
         config: 'file:/etc/cas/config/log4j2.xml'

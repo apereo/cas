@@ -14,9 +14,14 @@ spec:
       {{- include "cas-server.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-    {{- with .Values.podAnnotations }}
       annotations:
+    {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{ if .Values.casServerContainer.alwaysRoll }}
+        rollme: {{ randAlphaNum 5 | quote }}
+    {{- else }}
+        rollme: "rolldisabled"
     {{- end }}
       labels:
         {{- include "cas-server.selectorLabels" . | nindent 8 }}
