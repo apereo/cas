@@ -147,7 +147,7 @@ public class HazelcastConfigurationFactory {
     private static void buildManagementCenterConfig(final BaseHazelcastProperties hz, final Config config) {
         val managementCenter = new ManagementCenterConfig();
 
-        LOGGER.trace("Enables management center scripting: {}", hz.isEnableManagementCenterScripting());
+        LOGGER.trace("Enables management center scripting: [{}]", hz.isEnableManagementCenterScripting());
         managementCenter.setScriptingEnabled(hz.isEnableManagementCenterScripting());
 
         config.setManagementCenterConfig(managementCenter);
