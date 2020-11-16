@@ -536,6 +536,7 @@ The following options related to Hazelcast support in CAS apply equally to a num
 
 # ${configurationKey}.license-key=
 # ${configurationKey}.enable-compression=false
+# ${configurationKey}.enable-management-center-scripting=true
 ```
 
 More advanced Hazelcast configuration settings are listed below, given the component's *configuration key*:
