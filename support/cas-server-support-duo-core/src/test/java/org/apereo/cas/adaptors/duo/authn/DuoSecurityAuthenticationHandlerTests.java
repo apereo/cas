@@ -25,6 +25,30 @@ import static org.mockito.Mockito.*;
 public class DuoSecurityAuthenticationHandlerTests {
 
     @Test
+    public void verifyDuoSecurityUniversalPromptCredential() throws Exception {
+        val authentication = CoreAuthenticationTestUtils.getAuthentication();
+        val duoService = mock(UniversalPromptDuoSecurityAuthenticationService.class);
+        when(duoService.authenticate(any(Credential.class)))
+            .thenReturn(DuoSecurityAuthenticationResult.builder()
+                .success(true).username(authentication.getPrincipal().getId()).build());
+        val provider = mock(DuoSecurityMultifactorAuthenticationProvider.class);
+        when(provider.getId()).thenReturn(DuoSecurityMultifactorProperties.DEFAULT_IDENTIFIER);
+        when(provider.getDuoAuthenticationService()).thenReturn(duoService);
+        when(provider.createUniqueId()).thenReturn(DuoSecurityMultifactorProperties.DEFAULT_IDENTIFIER);
+        when(provider.validateId(anyString())).thenReturn(Boolean.TRUE);
+
+        val handler = new DuoSecurityAuthenticationHandler(null,
+            mock(ServicesManager.class), PrincipalFactoryUtils.newPrincipalFactory(),
+            provider, 0);
+        val credential = new DuoSecurityUniversalPromptCredential("token", authentication);
+        credential.setProviderId(DuoSecurityMultifactorProperties.DEFAULT_IDENTIFIER);
+        assertTrue(handler.supports(credential));
+
+        val result = handler.authenticate(credential);
+        assertNotNull(result);
+    }
+
+    @Test
     public void verifyDuoSecurityDirectCredential() throws Exception {
         val authentication = CoreAuthenticationTestUtils.getAuthentication();
         val duoService = mock(DuoSecurityAuthenticationService.class);
