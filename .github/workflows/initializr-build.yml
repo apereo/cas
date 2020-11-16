@@ -74,11 +74,10 @@ jobs:
           docker push apereo/cas-initializr:"$imageTag"
   helm:
     needs: [build]
-    name: Install Helm Chart
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        k3s-version: [v1.19.2] #, v1.18.9, v1.17.11, v1.16.15
+        k3s-version: [v1.19.2, v1.16.15] #, v1.18.9, v1.17.11,
     env:
       GOPATH: /home/runner/go
     steps:
@@ -110,5 +109,5 @@ jobs:
         with:
           version: 'v3.4.0'
         id: install
-      - name: Build Docker Image and create keystore
+      - name: Validate Helm Chart
         run: ./ci/validate-helm.sh

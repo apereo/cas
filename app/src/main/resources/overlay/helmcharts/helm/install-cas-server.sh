@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
-
-helm upgrade --install cas-server ./cas-server
+NAMESPACE=${1:-default}
+helm upgrade --install cas-server --namespace $NAMESPACE ./cas-server

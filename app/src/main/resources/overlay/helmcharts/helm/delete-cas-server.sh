@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
-
-helm delete cas-server
+NAMESPACE=${1:-default}
+helm delete --namespace $NAMESPACE cas-server

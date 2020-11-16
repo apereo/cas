@@ -4,14 +4,14 @@ The current helm chart for cas-server is a WIP.
 It needs work and probably won't maintain backwards compatibility.
 Contributions welcome. Eventually it would be nice to support running containers with bootadmin and config-server
 pre-configured to work, and to have cas-management available as its own helm chart (or running as part of this one).
-The chart supports mapping in arbitrary volumes but should probably support a configmap in the values file with properties.  
+The chart supports mapping in arbitrary volumes and cas config can be specified in values files.  
 
 ### Install Kubernetes (Docker for Windows/Mac, Minikube, K3S, Rancher, etc)
 [Docker Desktop](https://www.docker.com/products/docker-desktop)
 
 [Minikube](https://minikube.sigs.k8s.io/docs/start/)
 
-[k3s](https://k3s.io/) - Works on linux, very light weight and easy to install
+[k3s](https://k3s.io/) - Works on linux, very light-weight and easy to install for development
 ```shell script
 curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --disable traefik" sh
 # the following export is for helm
@@ -21,7 +21,11 @@ k3s ctr images import build/jib-image.tar
 k3s ctr images ls | grep cas
 ./gradlew createKeystore
 cd helm 
+# create secret for tomcat
 kubectl create secret generic cas-server-keystore --from-file=thekeystore=/etc/cas/thekeystore
+# create secret for ingress controller to use with CAS ingress (nginx-ingress will use default if you don't create)
+./create-ingress-tls.sh
+# install cas-server helm chart
 helm upgrade --install cas-server ./cas-server
 ``` 
 
@@ -81,17 +85,17 @@ Make sure you have host entries for whatever host is listed in values file for t
 ```
 ingress:
   hosts:
-    - host: kubernetes.docker.internal
+    - host: cas.example.org
       paths: 
         - "/cas"
   tls: 
     - secretName: cas-server-tls
       hosts:
-        - kubernetes.docker.internal
+        - cas.example.org
 ```
 
 ```
 # host entry
-127.0.0.1 kubernetes.docker.internal
+127.0.0.1 cas.example.org 
 ```
-Browse to `https://kubernetes.docker.internal/cas/login`
+Browse to `https://cas.example.org/cas/login`

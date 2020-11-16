@@ -43,3 +43,5 @@ kubectl describe pod cas-server-0
 sleep 60
 kubectl logs cas-server-0
 curl -k -v -H "Host: cas.example.org" https://127.0.0.1/cas/login
+helm test cas-server
+kubectl get pods
