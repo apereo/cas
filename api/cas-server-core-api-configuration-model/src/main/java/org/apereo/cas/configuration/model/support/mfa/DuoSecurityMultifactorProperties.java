@@ -83,7 +83,7 @@ public class DuoSecurityMultifactorProperties extends BaseMultifactorProviderPro
      * {@code BASIC}: Uses the web-sdk to handle duo integrations inside an iFrame.
      * {@code UNIVERSAL}: Handles the integration using Universal Prompt.
      */
-    private DuoSecurityIntegrationModes mode = DuoSecurityIntegrationModes.BASIC;
+    private DuoSecurityIntegrationModes mode = DuoSecurityIntegrationModes.WEBSDK;
 
     public DuoSecurityMultifactorProperties() {
         setId(DEFAULT_IDENTIFIER);
@@ -96,7 +96,7 @@ public class DuoSecurityMultifactorProperties extends BaseMultifactorProviderPro
         /**
          * Default integration mode using the web-sdk and iFrames.
          */
-        BASIC,
+        WEBSDK,
         /**
          * Universal Prompt mode via OIDC.
          */
