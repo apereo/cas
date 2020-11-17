@@ -33,9 +33,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class DuoSecurityMultifactorAuthenticationProviderFactoryTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
     @Qualifier("duoProviderFactory")
     private MultifactorAuthenticationProviderFactoryBean<
         DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorProperties>
