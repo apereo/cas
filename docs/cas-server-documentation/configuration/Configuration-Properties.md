@@ -3124,18 +3124,35 @@ To learn more about this topic, [please review this guide](../mfa/DuoSecurity-Au
 # cas.authn.mfa.duo[0].registration-url=https://registration.example.org/duo-enrollment
 # cas.authn.mfa.duo[0].name=
 # cas.authn.mfa.duo[0].order=
+# cas.authn.mfa.duo[0].mode=WEBSDK|UNIVERSAL
 ```
 
-The `duo-application-key` is a string, at least 40 characters long, that you generate and keep secret from Duo.
-You can generate a random string in Python with:
+Multifactor authentication bypass settings for this provider are 
+available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under 
+the configuration key `cas.authn.mfa.duo[0]`.
+
+The following modes are supported:
+
+| Scope        | Description
+|--------------|-----------------------------------------------------------------------------------------
+| `WEBSDK`     | Use Duo Security's WebSDK to embed an iFrame to handle multifactor authentication exchanges. 
+| `UNIVERSAL`  | Use Duo Security's *OIDC Auth API* to display Duo Prompts in the browser. This option no longer displays the Duo Prompt in an iFrame controlled and owned by CAS. Rather, the prompt is now hosted on Duo’s servers and displayed via browser redirects.
+
+#### Web SDK
+
+The `duo-application-key` is a required string, at least 40 characters long, that you 
+generate and keep secret from Duo. You can generate a random string in Python with:
 
 ```python
 import os, hashlib
 print hashlib.sha1(os.urandom(32)).hexdigest()
 ```
 
-Multifactor authentication bypass settings for this provider are 
-available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.duo[0]`.
+#### Universal Prompt
+
+Universal Prompt no longer requires you to generate and use a application key value. Instead, it requires a *client id* and *client secret*,
+which are known and taught CAS using the integration key and secret key configuration settings. You will need get your integration key, 
+secret key, and API hostname from Duo Security when you register CAS as a protected application. 
 
 ### FIDO2 WebAuthn
 

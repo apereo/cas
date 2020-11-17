@@ -72,6 +72,10 @@ and devices that have an existing registration record with CAS.
 
 ![image](https://user-images.githubusercontent.com/1205228/98920646-96243c80-24e5-11eb-9ebc-b7eb5ac755af.png)
 
+## Duo Security Universal Prompt
+
+Support for Duo Security's [Universal Prompt](../mfa/DuoSecurity-Authentication.html) for multifactor authentication is now available.
+
 ## Other Stuff
 
 - [Maven repositories](https://spring.io/blog/2020/10/29/notice-of-permissions-changes-to-repo-spring-io-fall-and-winter-2020) managed by the Spring project are removed from the CAS gradle build. 
