@@ -1,4 +1,4 @@
-package org.apereo.cas.adaptors.duo.web.flow;
+package org.apereo.cas.adaptors.duo.web.flow.action;
 
 import org.apereo.cas.BaseCasWebflowMultifactorAuthenticationTests;
 import org.apereo.cas.adaptors.duo.BaseDuoSecurityTests;
@@ -46,9 +46,6 @@ public class DuoSecurityUniversalPromptPrepareLoginActionTests extends BaseCasWe
     @Qualifier("duoUniversalPromptPrepareLoginAction")
     private Action duoUniversalPromptPrepareLoginAction;
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @Test
     public void verifyOperation() throws Exception {
         val context = new MockRequestContext();
@@ -66,7 +63,8 @@ public class DuoSecurityUniversalPromptPrepareLoginActionTests extends BaseCasWe
         WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService());
         WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, provider);
         val result = duoUniversalPromptPrepareLoginAction.execute(context);
-        assertNull(result);
+        assertNotNull(result);
+        assertNotNull(result.getAttributes().get("result"));
         assertTrue(context.getFlowScope().contains("duoUniversalPromptLoginUrl"));
     }
 
