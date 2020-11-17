@@ -74,7 +74,8 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
     }
 
     /**
-     * serviceLocator should not trigger metadata lookups when requested entityID does not match pattern for service in question.
+     * serviceLocator should not trigger metadata lookups when requested
+     * entityID does not match pattern for service in question.
      *
      * This test first verifies that, in the case of one service entry that does not match the requested entityID, no
      * metadata lookups are performed. It then verifies that, in the case of two service entries, one matching the
@@ -94,7 +95,7 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
             val res1 = servicesManager.findServiceBy(service);
             assertNull(res1);
 
-            mockFacade.verify(never(), () -> SamlRegisteredServiceServiceProviderMetadataFacade.get(any(), service1, anyString()));
+            mockFacade.verify(never(), () -> SamlRegisteredServiceServiceProviderMetadataFacade.get(any(), eq(service1), anyString()));
 
             val service2 = getSamlRegisteredServiceFor(false, false, false, ".+");
             service2.setEvaluationOrder(10);
@@ -102,8 +103,7 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
 
             val res2 = servicesManager.findServiceBy(service);
             assertNotNull(res2);
-
-            mockFacade.verify(() -> SamlRegisteredServiceServiceProviderMetadataFacade.get(any(), service2, entityID));
+            mockFacade.verify(() -> SamlRegisteredServiceServiceProviderMetadataFacade.get(any(), eq(service2), eq(entityID)));
         }
 
     }
