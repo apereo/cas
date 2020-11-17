@@ -372,7 +372,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
     @RefreshScope
     public MultifactorAuthenticationTrigger registeredServicePrincipalAttributeMultifactorAuthenticationTrigger() {
         return new RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger(casProperties,
-            multifactorAuthenticationProviderResolver(), applicationContext);
+            multifactorAuthenticationProviderResolver(), applicationContext, multifactorAuthenticationProviderSelector());
     }
 
     @ConditionalOnMissingBean(name = "registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver")
