@@ -11,11 +11,8 @@ and referenced using its name without any additional *metadata* or decorations. 
 and references using its name without any additional *metadata* or decorations. For example, you may wish to retrieve a `uid` attribute and virtually
 rename and map it to a `userIdentifier` attribute either globally or for specific application integrations. For most use cases, this configuration
 works quite comfortably and yet, depending on the nature of the target application and the authentication protocol used to complete the integration,
-additional requirements could be imposed and may have to be specified to define an attribute with additional pointers, when shared and released with a relying party. For example, a SAML2 service provider may require a *scoped* attribute for an `eduPersonPrincipalName` whose value 
-is always determined from the `uid` attribute with a special friendly-name that is always provided regardless of the target application. 
-additional requirements are imposed and may have to be specified to define an attribute, when shared and released with a relying party. For example,
-a SAML2 service provider may require a scoped attribute for a `eduPersonPrincipalName` whose value is always determined from the `uid` attribute 
-with a special friendly-name that is always provided regardless of the target application. 
+additional requirements could be imposed and may have to be specified to define an attribute with additional pointers, when shared and released 
+with a relying party. For example, a SAML2 service provider may require a *scoped* attribute for an `eduPersonPrincipalName` whose value 
 
 While bits and pieces of metadata about a given attribute can be defined either globally in CAS configuration settings 
 or defined inside a service definition, an attribute definition store allows one to describe metadata about necessary attributes 
