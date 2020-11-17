@@ -438,7 +438,7 @@ jobs:
         with:
           name: binary-artifacts
       - name: Publish SNAPSHOTs
-        run: [[ ! -z "SONATYPE_USER" ]] && [[ ! -z "SONATYPE_PWD" ]] && ./gradlew -DpublishSnapshots=true --build-cache --configure-on-demand --no-daemon --parallel -Dorg.gradle.internal.http.socketTimeout=180000 -Dorg.gradle.internal.http.connectionTimeout=180000 build publish -x test -x javadoc -x check -DsonatypeUsername="${SONATYPE_USER}" -DsonatypePassword="${SONATYPE_PWD}"
+        run: ./gradlew -DpublishSnapshots=true --build-cache --configure-on-demand --no-daemon --parallel -Dorg.gradle.internal.http.socketTimeout=180000 -Dorg.gradle.internal.http.connectionTimeout=180000 build publish -x test -x javadoc -x check -DsonatypeUsername="${SONATYPE_USER}" -DsonatypePassword="${SONATYPE_PWD}"
 
   ##########################################################################
 
@@ -485,7 +485,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Publish Documentation
-        run: [[ ! -z "$GH_PAGES_TOKEN" ]] && ./ci/push-docs-ghpages.sh
+        run: ./ci/push-docs-ghpages.sh
 
 ##########################################################################
 
