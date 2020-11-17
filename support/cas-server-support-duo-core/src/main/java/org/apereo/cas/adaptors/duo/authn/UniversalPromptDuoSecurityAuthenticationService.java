@@ -32,7 +32,6 @@ public class UniversalPromptDuoSecurityAuthenticationService extends BaseDuoSecu
 
     private final Client duoClient;
 
-    @SneakyThrows
     public UniversalPromptDuoSecurityAuthenticationService(
         final DuoSecurityMultifactorProperties duoProperties,
         final HttpClient httpClient,

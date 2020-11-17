@@ -1,4 +1,4 @@
-package org.apereo.cas.adaptors.duo.web.flow;
+package org.apereo.cas.adaptors.duo.web.flow.action;
 
 import org.apereo.cas.BaseCasWebflowMultifactorAuthenticationTests;
 import org.apereo.cas.adaptors.duo.BaseDuoSecurityTests;

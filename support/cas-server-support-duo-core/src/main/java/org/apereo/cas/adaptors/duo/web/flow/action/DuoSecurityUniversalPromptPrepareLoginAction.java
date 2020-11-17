@@ -66,6 +66,6 @@ public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractAction
         val authUrl = client.createAuthUrl(authentication.getPrincipal().getId(), ticket.getId());
         requestContext.getFlowScope().put("duoUniversalPromptLoginUrl", authUrl);
         LOGGER.debug("Redirecting to Duo Security url at [{}]", authUrl);
-        return null;
+        return success(ticket);
     }
 }
