@@ -419,7 +419,7 @@ jobs:
   publish-snapshots:
     runs-on: ubuntu-latest
     needs: [build]
-    if: ${{ github.event_name == 'push' && secrets.SONATYPE_USER != null && secrets.SONATYPE_PWD != null }}
+    if: ${{ github.event_name == 'push' && env.SONATYPE_USER != null && env.SONATYPE_PWD != null }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -438,7 +438,7 @@ jobs:
         with:
           name: binary-artifacts
       - name: Publish SNAPSHOTs
-        run: ./gradlew -DpublishSnapshots=true --build-cache --configure-on-demand --no-daemon --parallel -Dorg.gradle.internal.http.socketTimeout=180000 -Dorg.gradle.internal.http.connectionTimeout=180000 build publish -x test -x javadoc -x check -DsonatypeUsername="${SONATYPE_USER}" -DsonatypePassword="${SONATYPE_PWD}"
+        run: [[ ! -z "SONATYPE_USER" ]] && [[ ! -z "SONATYPE_PWD" ]] && ./gradlew -DpublishSnapshots=true --build-cache --configure-on-demand --no-daemon --parallel -Dorg.gradle.internal.http.socketTimeout=180000 -Dorg.gradle.internal.http.connectionTimeout=180000 build publish -x test -x javadoc -x check -DsonatypeUsername="${SONATYPE_USER}" -DsonatypePassword="${SONATYPE_PWD}"
 
   ##########################################################################
 
@@ -469,7 +469,7 @@ jobs:
   publish-docs:
     runs-on: ubuntu-latest
     needs: [validate-docs]
-    if: ${{ github.event_name == 'push' && secrets.GH_PAGES_TOKEN != null  }}
+    if: ${{ github.event_name == 'push' && env.GH_PAGES_TOKEN != null  }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -485,7 +485,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Publish Documentation
-        run: ./ci/push-docs-ghpages.sh
+        run: [[ ! -z "$GH_PAGES_TOKEN" ]] && ./ci/push-docs-ghpages.sh
 
 ##########################################################################
 
@@ -614,7 +614,7 @@ jobs:
           echo $files
           echo "SONAR_COVERAGE_REPORTS=${files}" >> $GITHUB_ENV
       - name: Upload Coverage to SonarCloud
-        if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' && secrets.SONARCLOUD_TOKEN != null }}
+        if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' && env.SONARCLOUD_TOKEN != null }}
         run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel sonarqube -x javadoc -Dsonar.login="${SONARCLOUD_TOKEN}" -DskipNestedConfigMetadataGen=true -DshowStandardStreams=true -Dsonar.coverage.jacoco.xmlReportPaths="${SONAR_COVERAGE_REPORTS}"
       - name: "Collect Files for Codacy"
         run: |
@@ -625,7 +625,7 @@ jobs:
           echo $files
           echo "CODACY_COVERAGE_REPORTS=${files}" >> $GITHUB_ENV
       - name: Upload Coverage to Codacy
-        if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' && secrets.CODACY_PROJECT_TOKEN != null }}
+        if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' && env.CODACY_PROJECT_TOKEN != null }}
         uses: codacy/codacy-coverage-reporter-action@master
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
@@ -728,7 +728,7 @@ jobs:
 #  renovate-dependency-updates:
 #    runs-on: ubuntu-latest
 #    needs: [cache]
-#    if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' && secrets.RENOVATE_TOKEN != null }}
+#    if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' && env.RENOVATE_TOKEN != null }}
 #    steps:
 #      - uses: actions/checkout@v2
 #      - name: Set up JDK
