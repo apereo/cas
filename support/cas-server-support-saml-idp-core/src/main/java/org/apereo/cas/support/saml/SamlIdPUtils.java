@@ -104,7 +104,7 @@ public class SamlIdPUtils {
                 } else {
                     if (acsEndpointFromMetadata == null
                         || !adaptor.getAssertionConsumerServiceLocations(binding).contains(acsEndpointFromReq.getLocation())) {
-                          throw new SamlException(String.format("Assertion consumer service from unsigned request [%s], does not match ACS from SP metadata [%s]",
+                        throw new SamlException(String.format("Assertion consumer service from unsigned request [%s], does not match ACS from SP metadata [%s]",
                             acsEndpointFromReq.getLocation(), adaptor.getAssertionConsumerServiceLocations(binding)));
                     }
                     endpoint = acsEndpointFromReq;
