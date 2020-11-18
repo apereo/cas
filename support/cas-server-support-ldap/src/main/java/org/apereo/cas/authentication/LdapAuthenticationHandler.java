@@ -55,6 +55,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * Performs LDAP authentication given username/password.
      **/
     private final Authenticator authenticator;
+    
     /**
      * Name of attribute to be used for resolved principal.
      */
@@ -241,9 +242,6 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * Initialize the handler, setup the authentication entry attributes.
      */
     public void initialize() {
-        /*
-         * Use a set to ensure we ignore duplicates.
-         */
         val attributes = new HashSet<String>();
         LOGGER.debug("Initializing LDAP attribute configuration...");
         if (StringUtils.isNotBlank(this.principalIdAttribute)) {
@@ -254,13 +252,6 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             val attrs = this.principalAttributeMap.keySet();
             attributes.addAll(attrs);
             LOGGER.debug("Configured to retrieve principal attribute collection of [{}]", attrs);
-        }
-        if (authenticator.getReturnAttributes() != null) {
-            val authenticatorAttributes = CollectionUtils.wrapList(authenticator.getReturnAttributes());
-            if (!authenticatorAttributes.isEmpty()) {
-                LOGGER.debug("Filtering authentication entry attributes [{}] based on authenticator attributes [{}]", authenticatedEntryAttributes, authenticatorAttributes);
-                attributes.removeIf(authenticatorAttributes::contains);
-            }
         }
         this.authenticatedEntryAttributes = attributes.toArray(ArrayUtils.EMPTY_STRING_ARRAY);
         LOGGER.debug("LDAP authentication entry attributes for the authentication request are [{}]", (Object[]) this.authenticatedEntryAttributes);

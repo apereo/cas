@@ -13,7 +13,8 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * This is {@link OAuth20HandlerInterceptorAdapterTests}.
@@ -23,6 +24,24 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OAuth")
 public class OAuth20HandlerInterceptorAdapterTests extends AbstractOAuth20Tests {
+    @Test
+    public void verifyAuthorizationAuth() throws Exception {
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+
+        request.setRequestURI('/' + OAuth20Constants.AUTHORIZE_URL);
+        request.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        request.setParameter(OAuth20Constants.REDIRECT_URI, "https://oauth.example.org");
+        request.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.getType());
+
+        val service = getRegisteredService(CLIENT_ID, CLIENT_SECRET);
+        servicesManager.save(service);
+        assertFalse(oauthHandlerInterceptorAdapter.preHandle(request, response, new Object()));
+
+        request.removeAllParameters();
+        assertTrue(oauthHandlerInterceptorAdapter.preHandle(request, response, new Object()));
+    }
+
     @Test
     public void verifyRevocationAuth() throws Exception {
         val request = new MockHttpServletRequest();

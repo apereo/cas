@@ -2371,7 +2371,8 @@ LDAP settings for this feature are available [here](Configuration-Properties-Com
 ### Static Resource Repository
 
 ```properties
-# cas.authn.gua.resource.location=file:/path/to/image.jpg
+# cas.authn.gua.simple.[username1]=file:/path/to/image.jpg
+# cas.authn.gua.simple.[username2]=file:/path/to/image.jpg
 ```
 
 ## JWT/Token Authentication
@@ -3143,18 +3144,35 @@ To learn more about this topic, [please review this guide](../mfa/DuoSecurity-Au
 # cas.authn.mfa.duo[0].registration-url=https://registration.example.org/duo-enrollment
 # cas.authn.mfa.duo[0].name=
 # cas.authn.mfa.duo[0].order=
+# cas.authn.mfa.duo[0].mode=WEBSDK|UNIVERSAL
 ```
 
-The `duo-application-key` is a string, at least 40 characters long, that you generate and keep secret from Duo.
-You can generate a random string in Python with:
+Multifactor authentication bypass settings for this provider are 
+available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under 
+the configuration key `cas.authn.mfa.duo[0]`.
+
+The following modes are supported:
+
+| Scope        | Description
+|--------------|-----------------------------------------------------------------------------------------
+| `WEBSDK`     | Use Duo Security's WebSDK to embed an iFrame to handle multifactor authentication exchanges. 
+| `UNIVERSAL`  | Use Duo Security's *OIDC Auth API* to display Duo Prompts in the browser. This option no longer displays the Duo Prompt in an iFrame controlled and owned by CAS. Rather, the prompt is now hosted on Duo’s servers and displayed via browser redirects.
+
+#### Web SDK
+
+The `duo-application-key` is a required string, at least 40 characters long, that you 
+generate and keep secret from Duo. You can generate a random string in Python with:
 
 ```python
 import os, hashlib
 print hashlib.sha1(os.urandom(32)).hexdigest()
 ```
 
-Multifactor authentication bypass settings for this provider are 
-available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.duo[0]`.
+#### Universal Prompt
+
+Universal Prompt no longer requires you to generate and use a application key value. Instead, it requires a *client id* and *client secret*,
+which are known and taught CAS using the integration key and secret key configuration settings. You will need get your integration key, 
+secret key, and API hostname from Duo Security when you register CAS as a protected application. 
 
 ### FIDO2 WebAuthn
 
@@ -3167,6 +3185,7 @@ To learn more about this topic, [please review this guide](../mfa/FIDO2-WebAuthn
 # cas.authn.mfa.web-authn.relying-party-id=
 
 # cas.authn.mfa.web-authn.display-name-attribute=displayName
+# cas.authn.mfa.web-authn.allow-primary-authentication=false
 
 # cas.authn.mfa.web-authn.allow-unrequested-extensions=false
 # cas.authn.mfa.web-authn.allow-untrusted-attestation=false
@@ -3840,13 +3859,27 @@ The following settings specifically apply to this provider:
 
 #### KeyCloak
 
-Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-openid-connect-settings) 
+Common settings for this identity provider are 
+available [here](Configuration-Properties-Common.html#delegated-authentication-openid-connect-settings) 
 under the configuration key `cas.authn.pac4j.oidc[0].keycloak`.
 
 ```properties
 # cas.authn.pac4j.oidc[0].keycloak.realm=
 # cas.authn.pac4j.oidc[0].keycloak.base-uri=
 ```                                     
+
+#### Apple Signin
+
+Common settings for this identity provider are 
+available [here](Configuration-Properties-Common.html#delegated-authentication-openid-connect-settings) 
+under the configuration key `cas.authn.pac4j.oidc[0].apple`.
+
+```properties
+# cas.authn.pac4j.oidc[0].apple.private-key=
+# cas.authn.pac4j.oidc[0].apple.private-key-id=
+# cas.authn.pac4j.oidc[0].apple.team-id=
+# cas.authn.pac4j.oidc[0].apple.timeout=PT30S
+```  
 
 #### Generic
 

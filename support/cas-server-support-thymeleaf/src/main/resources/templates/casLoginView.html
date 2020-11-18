@@ -21,7 +21,8 @@
                     <a href="fragments/loginform.html">Login Form goes here</a>
                 </div>
             </section>
-            <section id="providers" class="login-section login-providers" th:if="${delegatedAuthenticationProviderConfigurations} OR ${wsfedUrls}">
+            <section id="providers" class="login-section login-providers"
+                     th:if="${delegatedAuthenticationProviderConfigurations} OR ${wsfedUrls}">
                 <div th:replace="fragments/loginProviders :: loginProviders">
                     <a href="fragments/loginProviders.html">loginProviders</a>
                 </div>
@@ -38,6 +39,7 @@
                     <a href="fragments/qrAuthentication.html">qrAuthentication</a>
                 </div>
             </section>
+
         </div>
     </div>
 </body>

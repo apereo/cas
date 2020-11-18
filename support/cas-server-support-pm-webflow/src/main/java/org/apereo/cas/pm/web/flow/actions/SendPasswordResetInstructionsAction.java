@@ -91,7 +91,7 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
             val ticket = transientFactory.create(service, properties);
             this.ticketRegistry.addTicket(ticket);
             
-            StringBuilder resetUrl = new StringBuilder(casProperties.getServer().getPrefix())
+            val resetUrl = new StringBuilder(casProperties.getServer().getPrefix())
                 .append('/').append(CasWebflowConfigurer.FLOW_ID_LOGIN).append('?')
                 .append(PasswordManagementWebflowUtils.REQUEST_PARAMETER_NAME_PASSWORD_RESET_TOKEN).append('=').append(ticket.getId());
 
@@ -139,7 +139,7 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
             val sendEmail = sendPasswordResetEmailToAccount(email, url);
             val sendSms = sendPasswordResetSmsToAccount(phone, url);
             if (sendEmail || sendSms) {
-                return success();
+                return success(url);
             }
         } else {
             LOGGER.error("No password reset URL could be built and sent to [{}]", email);

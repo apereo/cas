@@ -27,7 +27,7 @@ public class OAuth20DeviceTokenUtilsTests extends AbstractOAuth20Tests {
     public void setup() {
         this.servicesManager.deleteAll();
     }
-    
+
     @Test
     public void verifyDefault() {
         val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
@@ -37,7 +37,6 @@ public class OAuth20DeviceTokenUtilsTests extends AbstractOAuth20Tests {
         val builder = new TicketGrantingTicketExpirationPolicyBuilder(casProperties);
         val policy = OAuth20DeviceTokenUtils.determineExpirationPolicyForService(servicesManager, builder, service);
         assertEquals(28800, policy.getTimeToLive());
-
     }
 
     @Test
@@ -49,7 +48,6 @@ public class OAuth20DeviceTokenUtilsTests extends AbstractOAuth20Tests {
         val builder = new TicketGrantingTicketExpirationPolicyBuilder(casProperties);
         val policy = OAuth20DeviceTokenUtils.determineExpirationPolicyForService(servicesManager, builder, service);
         assertEquals(60, policy.getTimeToLive());
-
     }
 
 }

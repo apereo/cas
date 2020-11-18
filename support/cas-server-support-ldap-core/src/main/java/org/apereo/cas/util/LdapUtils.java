@@ -984,7 +984,7 @@ public class LdapUtils {
         val auth = StringUtils.isBlank(l.getPrincipalAttributePassword())
             ? new Authenticator(resolver, getBindAuthenticationHandler(newLdaptiveConnectionFactory(l)))
             : new Authenticator(resolver, getCompareAuthenticationHandler(l, newLdaptiveConnectionFactory(l)));
-
+        
         if (l.isEnhanceWithEntryResolver()) {
             auth.setEntryResolver(newLdaptiveSearchEntryResolver(l, newLdaptiveConnectionFactory(l)));
         }

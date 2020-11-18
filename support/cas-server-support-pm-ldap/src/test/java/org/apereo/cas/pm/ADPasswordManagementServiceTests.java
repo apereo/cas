@@ -1,10 +1,6 @@
 package org.apereo.cas.pm;
 
-import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.LdapPasswordManagementConfiguration;
-import org.apereo.cas.pm.config.PasswordManagementConfiguration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.SneakyThrows;
@@ -15,12 +11,9 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -32,13 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("Ldap")
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    LdapPasswordManagementConfiguration.class,
-    PasswordManagementConfiguration.class,
-    CasCoreAuditConfiguration.class,
-    CasCoreUtilConfiguration.class
-}, properties = {
+@TestPropertySource(properties = {
     "cas.authn.pm.reset.sms.attributeName=telephoneNumber",
     "cas.authn.pm.ldap[0].ldap-url=ldaps://localhost:10636",
     "cas.authn.pm.ldap[0].bind-dn=CN=admin,CN=Users,DC=cas,DC=example,DC=org",
@@ -56,11 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @DirtiesContext
 @EnabledIfPortOpen(port = 10636)
-public class ADPasswordManagementServiceTests {
-
-    @Autowired
-    @Qualifier("passwordChangeService")
-    private PasswordManagementService passwordChangeService;
+public class ADPasswordManagementServiceTests extends BaseLdapPasswordManagementServiceTests {
 
     @BeforeAll
     @SneakyThrows

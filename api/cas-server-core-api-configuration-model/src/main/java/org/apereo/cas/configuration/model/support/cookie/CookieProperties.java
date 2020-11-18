@@ -57,12 +57,14 @@ public class CookieProperties implements Serializable {
     private String comment = "CAS Cookie";
 
     /**
-     * True if sending this cookie should be restricted to a secure protocol, or false if the it can be sent using any protocol.
+     * True if sending this cookie should be restricted to a secure protocol, or
+     * false if the it can be sent using any protocol.
      */
     private boolean secure = true;
 
     /**
-     * true if this cookie contains the HttpOnly attribute. This means that the cookie should not be accessible to scripting engines, like javascript.
+     * true if this cookie contains the HttpOnly attribute. This means that the cookie should
+     * not be accessible to scripting engines, like javascript.
      */
     private boolean httpOnly = true;
 

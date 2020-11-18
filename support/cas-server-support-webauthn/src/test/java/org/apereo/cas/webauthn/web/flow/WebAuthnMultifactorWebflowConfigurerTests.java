@@ -20,7 +20,8 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
         "cas.authn.mfa.web-authn.allowed-origins=https://localhost:8443",
         "cas.authn.mfa.web-authn.application-id=https://localhost:8443",
         "cas.authn.mfa.web-authn.relying-party-name=CAS WebAuthn Demo",
-        "cas.authn.mfa.web-authn.relying-party-id=example.org"
+        "cas.authn.mfa.web-authn.relying-party-id=example.org",
+        "cas.authn.mfa.web-authn.allow-primary-authentication=true"
     })
 @Tag("WebflowConfig")
 @Getter

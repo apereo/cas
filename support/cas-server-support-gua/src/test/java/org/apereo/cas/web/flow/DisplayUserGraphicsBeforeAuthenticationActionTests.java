@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.AbstractGraphicalAuthenticationTests;
+import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -33,4 +34,13 @@ public class DisplayUserGraphicsBeforeAuthenticationActionTests extends Abstract
         assertTrue(WebUtils.containsGraphicalUserAuthenticationImage(context));
         assertTrue(WebUtils.containsGraphicalUserAuthenticationUsername(context));
     }
+
+    @Test
+    public void verifyMissingUser() {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        assertThrows(UnauthorizedServiceException.class, () -> displayUserGraphicsBeforeAuthenticationAction.execute(context));
+    }
+
 }

@@ -11,6 +11,7 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.Resource;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Map;
 
 /**
  * This is {@link StaticUserGraphicalAuthenticationRepository}.
@@ -23,13 +24,13 @@ import java.io.ByteArrayOutputStream;
 public class StaticUserGraphicalAuthenticationRepository implements UserGraphicalAuthenticationRepository {
     private static final long serialVersionUID = 421732017215881244L;
 
-    private final transient Resource graphicResource;
+    private final Map<String, Resource> graphicResource;
 
     @Override
     public ByteSource getGraphics(final String username) {
         try {
             val bos = new ByteArrayOutputStream();
-            IOUtils.copy(this.graphicResource.getInputStream(), bos);
+            IOUtils.copy(graphicResource.get(username).getInputStream(), bos);
             return ByteSource.wrap(bos.toByteArray());
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);

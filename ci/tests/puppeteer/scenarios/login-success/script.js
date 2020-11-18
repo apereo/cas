@@ -7,12 +7,15 @@ const assert = require('assert');
     });
     const page = await browser.newPage();
     await page.goto("https://localhost:8443/cas/login");
-    //await page.screenshot({ path: 'login.png' });
+
     await page.type('#username', "casuser");
     await page.type('#password', "Mellon");
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
 
+    const tgc = (await page.cookies()).filter(value => value.name === "TGC")
+    assert(tgc != null);
+    
     const title = await page.title();
     console.log(title)
     assert(title == "CAS - Central Authentication Service")

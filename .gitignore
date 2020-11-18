@@ -52,3 +52,4 @@ webapp/resources/static/js/*-bundle.js
 **/k/
 **/dist/
 **/.sts4-cache/*
+ci/tests/puppeteer/overlay

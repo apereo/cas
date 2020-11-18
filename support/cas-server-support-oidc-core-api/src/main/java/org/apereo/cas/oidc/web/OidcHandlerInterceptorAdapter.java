@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.web;
 
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.web.OAuth20HandlerInterceptorAdapter;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
 
@@ -13,6 +14,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collection;
+import java.util.Set;
 
 /**
  * This is {@link OidcHandlerInterceptorAdapter}.
@@ -35,8 +37,10 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
                                          final OidcConstants.DynamicClientRegistrationMode dynamicClientRegistrationMode,
                                          final Collection<AccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors,
                                          final ServicesManager servicesManager,
-                                         final SessionStore<JEEContext> sessionStore) {
-        super(requiresAuthenticationAccessTokenInterceptor, requiresAuthenticationAuthorizeInterceptor, accessTokenGrantRequestExtractors, servicesManager, sessionStore);
+                                         final SessionStore<JEEContext> sessionStore,
+                                         final Set<OAuth20AuthorizationRequestValidator> oauthAuthorizationRequestValidators) {
+        super(requiresAuthenticationAccessTokenInterceptor, requiresAuthenticationAuthorizeInterceptor,
+              accessTokenGrantRequestExtractors, servicesManager, sessionStore, oauthAuthorizationRequestValidators);
         this.requiresAuthenticationDynamicRegistrationInterceptor = requiresAuthenticationDynamicRegistrationInterceptor;
         this.dynamicClientRegistrationMode = dynamicClientRegistrationMode;
         this.requiresAuthenticationClientConfigurationInterceptor = requiresAuthenticationClientConfigurationInterceptor;
