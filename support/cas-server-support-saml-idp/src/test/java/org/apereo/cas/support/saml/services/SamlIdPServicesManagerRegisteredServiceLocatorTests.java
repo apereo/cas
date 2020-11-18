@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.services;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
+import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -16,6 +17,7 @@ import org.springframework.core.Ordered;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -51,10 +53,12 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
         val candidateServices = CollectionUtils.wrapList(service1, service2);
         Collections.sort(candidateServices);
 
+        val service = webApplicationServiceFactory.createService("https://sp.testshib.org/shibboleth-sp");
+        service.setAttributes(Map.of(SamlProtocolConstants.PARAMETER_SAML_REQUEST, List.of("SamlRequest")));
+
         val result = samlIdPServicesManagerRegisteredServiceLocator.locate(
             (List) candidateServices,
-            webApplicationServiceFactory.createService("https://sp.testshib.org/shibboleth-sp"),
-            r -> r.matches("https://sp.testshib.org/shibboleth-sp"));
+            service, r -> r.matches("https://sp.testshib.org/shibboleth-sp"));
         assertNotNull(result);
     }
 
@@ -68,6 +72,7 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
 
         servicesManager.save(service1, service2);
         val service = webApplicationServiceFactory.createService("https://sp.testshib.org/shibboleth-sp");
+        service.setAttributes(Map.of(SamlProtocolConstants.PARAMETER_SAML_REQUEST, List.of("SamlRequest")));
         val result = servicesManager.findServiceBy(service);
         assertNotNull(result);
         assertTrue(result instanceof SamlRegisteredService);
@@ -76,7 +81,7 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
     /**
      * serviceLocator should not trigger metadata lookups when requested
      * entityID does not match pattern for service in question.
-     *
+     * <p>
      * This test first verifies that, in the case of one service entry that does not match the requested entityID, no
      * metadata lookups are performed. It then verifies that, in the case of two service entries, one matching the
      * requested entityID, exactly one metadata lookup is performed.
@@ -92,6 +97,7 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
 
             val entityID = "https://sp.testshib.org/shibboleth-sp";
             val service = webApplicationServiceFactory.createService(entityID);
+            service.setAttributes(Map.of(SamlProtocolConstants.PARAMETER_SAML_REQUEST, List.of("SamlRequest")));
             val res1 = servicesManager.findServiceBy(service);
             assertNull(res1);
 
