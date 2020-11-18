@@ -767,6 +767,7 @@ jobs:
           - locale-param
           - generate-service-ticket
           - webauthn-primary-authn
+          - authn-throttle
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
