@@ -188,14 +188,17 @@ public class MultifactorAuthenticationUtils {
     /**
      * Gets authentication provider for service.
      *
-     * @param service the service
+     * @param service            the service
+     * @param applicationContext the application context
      * @return the authentication provider for service
      */
-    public Collection<MultifactorAuthenticationProvider> getMultifactorAuthenticationProviderForService(final RegisteredService service) {
+    public Collection<MultifactorAuthenticationProvider> getMultifactorAuthenticationProviderForService(final RegisteredService service,
+        final ApplicationContext applicationContext) {
         val policy = service.getMultifactorPolicy();
         if (policy != null) {
             return policy.getMultifactorAuthenticationProviders().stream()
-                .map(MultifactorAuthenticationUtils::getMultifactorAuthenticationProviderFromApplicationContext)
+                .map(provider ->
+                    MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderFromApplicationContext(provider, applicationContext))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toSet());
@@ -210,8 +213,19 @@ public class MultifactorAuthenticationUtils {
      * @return the registered service multifactor authentication provider
      */
     public static Optional<MultifactorAuthenticationProvider> getMultifactorAuthenticationProviderFromApplicationContext(final String providerId) {
+        return getMultifactorAuthenticationProviderFromApplicationContext(providerId, ApplicationContextProvider.getApplicationContext());
+    }
+
+    /**
+     * Gets multifactor authentication provider from application context.
+     *
+     * @param providerId         the provider id
+     * @param applicationContext the application context
+     * @return the multifactor authentication provider from application context
+     */
+    public static Optional<MultifactorAuthenticationProvider> getMultifactorAuthenticationProviderFromApplicationContext(final String providerId,
+        final ApplicationContext applicationContext) {
         LOGGER.trace("Locating bean definition for [{}]", providerId);
-        val applicationContext = ApplicationContextProvider.getApplicationContext();
         return getAvailableMultifactorAuthenticationProviders(applicationContext).values().stream()
             .filter(p -> p.matches(providerId))
             .findFirst();
