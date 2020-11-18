@@ -93,7 +93,7 @@ you may determine the multifactor authentication policy for a registered service
   "id" : 100,
   "name": "test",
   "multifactorPolicy" : {
-    "@class" : "org.apereo.cas.services.GroovyRegisteredServiceMultifactorPolicy",
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
     "script" : "groovy { ... }"
   }
 }
