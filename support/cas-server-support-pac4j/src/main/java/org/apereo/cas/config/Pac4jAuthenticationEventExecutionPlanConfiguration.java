@@ -95,8 +95,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
         if (StringUtils.isNotBlank(rest.getUrl())) {
             return new RestfulDelegatedClientFactory(casProperties);
         }
-        val customizers = applicationContext.getBeansOfType(DelegatedClientFactoryCustomizer.class,
-            false, true).values();
+        val customizers = applicationContext.getBeansOfType(DelegatedClientFactoryCustomizer.class, false, true).values();
         AnnotationAwareOrderComparator.sortIfNecessary(customizers);
         return new DefaultDelegatedClientFactory(casProperties, customizers);
     }

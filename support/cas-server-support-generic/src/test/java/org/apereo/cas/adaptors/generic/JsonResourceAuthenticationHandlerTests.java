@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.generic;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
@@ -15,6 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.SneakyThrows;
 import lombok.val;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
@@ -24,8 +26,8 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
-
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.LinkedHashMap;
@@ -114,8 +116,7 @@ public class JsonResourceAuthenticationHandlerTests {
     }
 
     @Test
-    @SneakyThrows
-    public void verifyOkAccountFromExternalFile() {
+    public void verifyOkAccountFromExternalFile() throws Exception {
         val resource = new ClassPathResource("sample-users.json");
         val creds = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
         val jsonHandler = new JsonResourceAuthenticationHandler(null, mock(ServicesManager.class),
@@ -127,18 +128,26 @@ public class JsonResourceAuthenticationHandlerTests {
         assertTrue(result.getPrincipal().getAttributes().containsKey("firstName"));
         assertEquals("Apereo", result.getPrincipal().getAttributes().get("firstName").get(0));
     }
-    
+
     @Test
-    @SneakyThrows
-    public void verifyExpiringAccount() {
+    public void verifyInvalidAccounts() throws Exception {
+        val resource = new FileSystemResource(File.createTempFile("bad-account", ".json"));
+        FileUtils.write(resource.getFile(), "invalid-data", StandardCharsets.UTF_8);
+        val jsonHandler = new JsonResourceAuthenticationHandler(null, mock(ServicesManager.class),
+            PrincipalFactoryUtils.newPrincipalFactory(), null, resource);
+        assertThrows(PreventedException.class, () -> jsonHandler.authenticate(
+            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casexpiring", "Mellon")));
+    }
+
+    @Test
+    public void verifyExpiringAccount() throws Exception {
         val result = handler.authenticate(
             CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casexpiring", "Mellon"));
         assertFalse(result.getWarnings().isEmpty());
     }
 
     @Test
-    @SneakyThrows
-    public void verifyOkAccount() {
+    public void verifyOkAccount() throws Exception {
         assertNotNull(handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon")));
     }
 

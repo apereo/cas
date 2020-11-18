@@ -463,7 +463,7 @@ public class HttpUtils {
     public static HttpResponse executeDelete(final String url,
         final String basicAuthUsername,
         final String basicAuthPassword) {
-        return executeDelete(url, basicAuthUsername, basicAuthPassword, null, null, null);
+        return executeDelete(url, basicAuthUsername, basicAuthPassword, null, new HashMap<>(0), new HashMap<>(0));
     }
 
     /**

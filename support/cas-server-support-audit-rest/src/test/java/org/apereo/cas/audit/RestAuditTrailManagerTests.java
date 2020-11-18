@@ -1,15 +1,13 @@
 package org.apereo.cas.audit;
 
-import org.apereo.cas.audit.spi.BaseAuditConfigurationTests;
 import org.apereo.cas.config.CasSupportRestAuditConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.junit.jupiter.api.Tag;
@@ -19,9 +17,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,37 +40,41 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.audit.rest.asynchronous=false"
 })
 @Tag("RestfulApi")
-@Slf4j
 @Getter
 @SuppressWarnings("JdkObsolete")
-public class RestAuditTrailManagerTests extends BaseAuditConfigurationTests {
+public class RestAuditTrailManagerTests {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
-
-    private static final String DATA;
-
-    static {
-        val audit = new AuditActionContext("casuser", "resource", "action",
-            "CAS", new Date(), "123.456.789.000", "123.456.789.000");
-        try {
-            DATA = MAPPER.writeValueAsString(CollectionUtils.wrapSet(audit));
-            LOGGER.debug("DATA: [{}]", DATA);
-        } catch (final JsonProcessingException e) {
-            throw new AssertionError(e);
-        }
-    }
 
     @Autowired
     @Qualifier("restAuditTrailManager")
     private AuditTrailManager auditTrailManager;
 
+
     @Test
-    @Override
-    public void verifyAuditManager() {
+    public void verifyRemoval() {
         try (val webServer = new MockWebServer(9296,
-            new ByteArrayResource(DATA.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
+            new ByteArrayResource(ArrayUtils.EMPTY_BYTE_ARRAY), HttpStatus.OK)) {
             webServer.start();
             assertTrue(webServer.isRunning());
-            super.verifyAuditManager();
+            auditTrailManager.removeAll();
+        }
+    }
+
+    @Test
+    public void verifyGet() throws Exception {
+        val audit = new AuditActionContext("casuser", "resource", "action",
+            "CAS", new Date(), "123.456.789.000", "123.456.789.000");
+        val data = MAPPER.writeValueAsString(CollectionUtils.wrapSet(audit));
+
+        try (val webServer = new MockWebServer(9296,
+            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8)), HttpStatus.OK)) {
+            webServer.start();
+            assertTrue(webServer.isRunning());
+            auditTrailManager.record(audit);
+
+            val time = LocalDate.now(ZoneOffset.UTC).minusDays(2);
+            val results = auditTrailManager.getAuditRecordsSince(time);
+            assertFalse(results.isEmpty());
         }
     }
 }

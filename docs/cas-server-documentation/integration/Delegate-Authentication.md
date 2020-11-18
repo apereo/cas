@@ -6,13 +6,13 @@ category: Authentication
 
 # Delegated Authentication
 
-CAS can act as a client (i.e. service provider or proxy) using the [Pac4j library](https://github.com/pac4j/pac4j) and delegate the authentication to:
+CAS can act as a client (i.e. service provider or proxy) using 
+the [Pac4j library](https://github.com/pac4j/pac4j) and delegate the authentication to:
 
 * CAS servers
 * SAML2 identity providers
-* OAuth2 providers such as Facebook, Twitter, Google, LinkedIn, Yahoo, etc
-* OpenID providers
-* OpenID Connect identity providers
+* OAuth2 providers such as Facebook, Twitter, GitHub, Google, LinkedIn, etc
+* OpenID Connect identity providers such as Google, Apple
 * [ADFS](ADFS-Integration.html)
 
 Support is enabled by including the following dependency in the WAR overlay:

@@ -89,7 +89,7 @@ public class HazelcastConfigurationFactory {
 
         config.setLicenseKey(hz.getLicenseKey());
 
-        buildManagementCenterConfig(config);
+        buildManagementCenterConfig(hz, config);
 
         val networkConfig = new NetworkConfig()
             .setPort(cluster.getPort())
@@ -137,9 +137,12 @@ public class HazelcastConfigurationFactory {
             .setProperty(BaseHazelcastProperties.MAX_HEARTBEAT_SECONDS_PROP, String.valueOf(cluster.getMaxNoHeartbeatSeconds()));
     }
 
-    private static void buildManagementCenterConfig(final Config config) {
+    private static void buildManagementCenterConfig(final BaseHazelcastProperties hz, final Config config) {
         val managementCenter = new ManagementCenterConfig();
-        managementCenter.setScriptingEnabled(true);
+
+        LOGGER.trace("Enables management center scripting: [{}]", hz.isEnableManagementCenterScripting());
+        managementCenter.setScriptingEnabled(hz.isEnableManagementCenterScripting());
+
         config.setManagementCenterConfig(managementCenter);
     }
 

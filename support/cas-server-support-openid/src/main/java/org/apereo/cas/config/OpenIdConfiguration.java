@@ -116,6 +116,7 @@ public class OpenIdConfiguration {
 
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "serverManager")
     public ServerManager serverManager() {
         val manager = new ServerManager();
         manager.setOPEndpointUrl(casProperties.getServer().getLoginUrl());
@@ -129,7 +130,9 @@ public class OpenIdConfiguration {
     @Bean
     public ResponseBuilder openIdServiceResponseBuilder() {
         val openIdPrefixUrl = casProperties.getServer().getPrefix().concat("/openid");
-        return new OpenIdServiceResponseBuilder(openIdPrefixUrl, serverManager(), centralAuthenticationService.getObject(), servicesManager.getObject());
+        return new OpenIdServiceResponseBuilder(openIdPrefixUrl, serverManager(),
+            centralAuthenticationService.getObject(),
+            servicesManager.getObject());
     }
 
     @Bean
@@ -146,7 +149,7 @@ public class OpenIdConfiguration {
     }
 
     @Bean
-    public OpenIdPostUrlHandlerMapping openIdPostUrlHandlerMapping() {
+    public OpenIdValidateController openIdValidateController() {
         val context = ServiceValidateConfigurationContext.builder()
             .validationSpecifications(CollectionUtils.wrapSet(cas20WithoutProxyProtocolValidationSpecification.getObject()))
             .authenticationSystemSupport(authenticationSystemSupport.getObject())
@@ -161,9 +164,13 @@ public class OpenIdConfiguration {
             .validationViewFactory(serviceValidationViewFactory.getObject())
             .build();
 
-        val c = new OpenIdValidateController(context, serverManager());
+        return new OpenIdValidateController(context, serverManager());
+    }
+
+    @Bean
+    public OpenIdPostUrlHandlerMapping openIdPostUrlHandlerMapping() {
         val controller = new DelegatingController();
-        controller.setDelegates(CollectionUtils.wrapList(smartOpenIdAssociationController(), c));
+        controller.setDelegates(CollectionUtils.wrapList(smartOpenIdAssociationController(), openIdValidateController()));
 
         val m = new OpenIdPostUrlHandlerMapping();
         m.setOrder(1);

@@ -666,6 +666,15 @@ tasks.withType(Test) {
                 println "Started running test suite [${desc.displayName}] @ ${new java.util.Date()} "
             }
         }
+        beforeTest { desc ->
+            println "Started running test [${desc.className}:${desc.displayName}] @ ${new java.util.Date()} "
+        }
+        afterTest { desc, result ->
+            println """
+Results for test [${desc.className}:${desc.displayName}]: ${result.resultType} @ ${new java.util.Date()} 
+(${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)
+"""
+        }
         afterSuite { desc, result ->
             if (!desc.parent) {
                 println """

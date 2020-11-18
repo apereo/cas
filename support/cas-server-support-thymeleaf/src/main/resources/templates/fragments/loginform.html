@@ -178,6 +178,22 @@
 
                 <hr class="my-4" />
 
+                <span id="webauthnLoginPanel" th:if="${webAuthnPrimaryAuthenticationEnabled}">
+                    <script type="text/javascript">
+                        $("#fm1 #username").on("input", function() {
+                            let user = $("#fm1 #username").val();
+                            if (user !== '') {
+                                $('#webauthnLoginPanel').show();
+                            } else {
+                                $('#webauthnLoginPanel').hide();
+                            }
+                        });
+                    </script>
+
+                    <div th:replace="fragments/webAuthnLogin :: webAuthnLogin" />
+                    <hr class="my-4" />
+                </span>
+
                 <div th:replace="fragments/pmlinks :: pmlinks" />
 
                 <script type="text/javascript" th:inline="javascript">
@@ -197,7 +213,6 @@
                         });
                     });
                 </script>
-
                 
             </div>
             <div th:replace="fragments/loginsidebar :: loginsidebar" />

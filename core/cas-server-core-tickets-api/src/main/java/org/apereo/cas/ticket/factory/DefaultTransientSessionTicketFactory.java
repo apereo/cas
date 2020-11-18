@@ -42,10 +42,10 @@ public class DefaultTransientSessionTicketFactory implements TransientSessionTic
     }
 
     @Override
-    public TransientSessionTicket create(final String id, final Map<String, Serializable> properties) {
+    public TransientSessionTicket create(final String id, final Service service, final Map<String, Serializable> properties) {
         val expirationPolicy = TransientSessionTicketFactory.buildExpirationPolicy(this.expirationPolicyBuilder, properties);
         return new TransientSessionTicketImpl(TransientSessionTicketFactory.normalizeTicketId(id),
-            expirationPolicy, null, properties);
+            expirationPolicy, service, properties);
     }
 
     @Override

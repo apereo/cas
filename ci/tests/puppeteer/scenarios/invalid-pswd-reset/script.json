@@ -1,0 +1,6 @@
+{
+  "dependencies": "pm-webflow",
+  "properties": [
+    "--cas.authn.pm.enabled=true"
+  ]
+}

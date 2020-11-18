@@ -33,6 +33,7 @@ public class RestAuditTrailManager extends AbstractAuditTrailManager {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     private final AuditActionContextJsonSerializer serializer = new AuditActionContextJsonSerializer();
+
     private final AuditRestProperties properties;
 
     public RestAuditTrailManager(final AuditRestProperties properties) {
@@ -46,16 +47,11 @@ public class RestAuditTrailManager extends AbstractAuditTrailManager {
         try {
             val auditJson = serializer.toString(audit);
             LOGGER.trace("Sending audit action context to REST endpoint [{}]", properties.getUrl());
-            response = HttpUtils.executePost(properties.getUrl(), properties.getBasicAuthUsername(), properties.getBasicAuthPassword(), auditJson);
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
+            response = HttpUtils.executePost(properties.getUrl(),
+                properties.getBasicAuthUsername(), properties.getBasicAuthPassword(), auditJson);
         } finally {
             HttpUtils.close(response);
         }
-    }
-
-    @Override
-    public void removeAll() {
     }
 
     @Override
@@ -77,5 +73,21 @@ public class RestAuditTrailManager extends AbstractAuditTrailManager {
             HttpUtils.close(response);
         }
         return new HashSet<>(0);
+    }
+
+    @Override
+    public void removeAll() {
+        HttpResponse response = null;
+        try {
+            LOGGER.debug("Sending query to audit REST endpoint to delete records");
+            response = HttpUtils.executeDelete(properties.getUrl(),
+                properties.getBasicAuthUsername(),
+                properties.getBasicAuthPassword());
+            if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                LOGGER.debug("Deleted audit records successfully");
+            }
+        } finally {
+            HttpUtils.close(response);
+        }
     }
 }

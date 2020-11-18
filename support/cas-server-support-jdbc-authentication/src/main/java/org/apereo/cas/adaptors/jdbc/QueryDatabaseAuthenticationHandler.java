@@ -76,11 +76,6 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
                                                                                         final String originalPassword)
         throws GeneralSecurityException, PreventedException {
-        if (StringUtils.isBlank(this.sql) || getJdbcTemplate() == null) {
-            throw new GeneralSecurityException("Authentication handler is not configured correctly. "
-                + "No SQL statement or JDBC template is found.");
-        }
-
         val attributes = Maps.<String, List<Object>>newHashMapWithExpectedSize(this.principalAttributeMap.size());
         val username = credential.getUsername();
         val password = credential.getPassword();

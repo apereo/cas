@@ -26,7 +26,7 @@ import java.nio.charset.StandardCharsets;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Controller("saml2ClientMetadataController")
+@Controller("delegatedSaml2ClientMetadataController")
 @RequestMapping
 @RequiredArgsConstructor
 public class Saml2ClientMetadataController {

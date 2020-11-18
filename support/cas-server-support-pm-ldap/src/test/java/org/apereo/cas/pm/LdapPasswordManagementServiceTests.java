@@ -1,11 +1,7 @@
 package org.apereo.cas.pm;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
-import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.LdapPasswordManagementConfiguration;
-import org.apereo.cas.pm.config.PasswordManagementConfiguration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
@@ -18,13 +14,10 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.Credential;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -35,31 +28,21 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("Ldap")
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    LdapPasswordManagementConfiguration.class,
-    PasswordManagementConfiguration.class,
-    CasCoreAuditConfiguration.class,
-    CasCoreUtilConfiguration.class
-}, properties = {
+@TestPropertySource(properties = {
     "cas.authn.pm.reset.sms.attribute-name=telephoneNumber",
     "cas.authn.pm.ldap[0].ldap-url=ldap://localhost:10389",
     "cas.authn.pm.ldap[0].bind-dn=cn=Directory Manager",
     "cas.authn.pm.ldap[0].bind-credential=password",
     "cas.authn.pm.ldap[0].base-dn=ou=people,dc=example,dc=org",
-    "cas.authn.pm.ldap[0].search-filter=cn={user}",
+    "cas.authn.pm.ldap[0].search-filter=(|(cn={user})(mail={user}))",
     "cas.authn.pm.ldap[0].type=GENERIC",
     "cas.authn.pm.ldap[0].security-questions-attributes.registeredAddress=roomNumber",
     "cas.authn.pm.ldap[0].security-questions-attributes.postalCode=teletexTerminalIdentifier"
 })
 @DirtiesContext
 @EnabledIfPortOpen(port = 10389)
-public class LdapPasswordManagementServiceTests {
+public class LdapPasswordManagementServiceTests extends BaseLdapPasswordManagementServiceTests {
     private static final int LDAP_PORT = 10389;
-
-    @Autowired
-    @Qualifier("passwordChangeService")
-    private PasswordManagementService passwordChangeService;
 
     @BeforeAll
     @SneakyThrows
@@ -95,12 +78,21 @@ public class LdapPasswordManagementServiceTests {
     public void verifyFindEmail() {
         val email = passwordChangeService.findEmail("caspm");
         assertEquals("caspm@example.org", email);
+        assertNull(passwordChangeService.findEmail("unknown"));
+    }
+
+    @Test
+    public void verifyUser() {
+        val uid = passwordChangeService.findUsername("caspm@example.org");
+        assertEquals("CasPasswordManagement", uid);
+        assertNull(passwordChangeService.findUsername("unknown"));
     }
 
     @Test
     public void verifyFindPhone() {
         val ph = passwordChangeService.findPhone("caspm");
         assertEquals("1234567890", ph);
+        assertNull(passwordChangeService.findPhone("unknown"));
     }
 
     @Test

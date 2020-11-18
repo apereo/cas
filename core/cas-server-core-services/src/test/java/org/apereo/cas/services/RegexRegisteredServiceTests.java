@@ -10,7 +10,6 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -127,12 +126,7 @@ public class RegexRegisteredServiceTests {
 
         assertNotNull(service.getDescription());
         assertNotNull(service.getFriendlyName());
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                service.initialize();
-            }
-        });
+        assertDoesNotThrow(service::initialize);
     }
 
     private static RegexRegisteredService newService(final String id) {

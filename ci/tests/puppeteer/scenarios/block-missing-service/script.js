@@ -10,7 +10,7 @@ const assert = require('assert');
     
     const header = await page.$eval('#content h2', el => el.innerText)
     console.log(header)
-    assert(header == "Application Not Authorized to Use CAS")
+    assert(header === "Application Not Authorized to Use CAS")
 
     await browser.close();
 })();

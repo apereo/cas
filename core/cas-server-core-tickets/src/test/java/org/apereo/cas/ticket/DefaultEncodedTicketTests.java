@@ -5,7 +5,6 @@ import org.apereo.cas.ticket.registry.DefaultEncodedTicket;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 
 import java.util.UUID;
 
@@ -32,11 +31,6 @@ public class DefaultEncodedTicketTests {
         assertNull(ticket1.getExpirationPolicy());
         assertEquals(0, ticket1.compareTo(ticket2));
         assertEquals(0, ticket1.getCountOfUses());
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                ticket1.markTicketExpired();
-            }
-        });
+        assertDoesNotThrow(ticket1::markTicketExpired);
     }
 }

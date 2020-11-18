@@ -536,6 +536,7 @@ The following options related to Hazelcast support in CAS apply equally to a num
 
 # ${configurationKey}.license-key=
 # ${configurationKey}.enable-compression=false
+# ${configurationKey}.enable-management-center-scripting=true
 ```
 
 More advanced Hazelcast configuration settings are listed below, given the component's *configuration key*:
@@ -1196,7 +1197,6 @@ to an external OpenID Connect provider such as Azure AD, given the provider's *c
 # ${configurationKey}.connect-timeout=PT5S
 # ${configurationKey}.expire-session-with-token=false
 # ${configurationKey}.token-expiration-advance=0
-
 ```
 
 ## LDAP Connection Settings

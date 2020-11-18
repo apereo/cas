@@ -8,7 +8,6 @@ import org.apereo.cas.util.MockWebServer;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,8 +36,7 @@ public class RestEndpointInterruptInquirerTests {
     private MockWebServer webServer;
 
     @BeforeEach
-    @SneakyThrows
-    public void initialize() {
+    public void initialize() throws Exception {
         val response = new InterruptResponse();
         response.setSsoEnabled(true);
         response.setInterrupt(true);
@@ -68,10 +66,12 @@ public class RestEndpointInterruptInquirerTests {
         val restProps = new InterruptProperties.Rest();
         restProps.setUrl("http://localhost:8888");
         val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        request.addHeader("accept-language", "fr");
         context.setExternalContext(new ServletExternalContext(
-                new MockServletContext(),
-                new MockHttpServletRequest(),
-                new MockHttpServletResponse()));
+            new MockServletContext(),
+            request,
+            new MockHttpServletResponse()));
         val q = new RestEndpointInterruptInquirer(restProps);
         val response = q.inquire(CoreAuthenticationTestUtils.getAuthentication("casuser"),
             CoreAuthenticationTestUtils.getRegisteredService(),
@@ -83,5 +83,23 @@ public class RestEndpointInterruptInquirerTests {
         assertTrue(response.isSsoEnabled());
         assertEquals(2, response.getLinks().size());
         assertEquals(getClass().getSimpleName(), response.getMessage());
+    }
+
+    @Test
+    public void verifyBadAttempt() {
+        val restProps = new InterruptProperties.Rest();
+        restProps.setUrl("http://localhost:8888");
+        val context = new MockRequestContext();
+        context.setExternalContext(new ServletExternalContext(
+            new MockServletContext(),
+            new MockHttpServletRequest(),
+            new MockHttpServletResponse()));
+        val q = new RestEndpointInterruptInquirer(restProps);
+        val response = q.inquire(null,
+            CoreAuthenticationTestUtils.getRegisteredService(),
+            CoreAuthenticationTestUtils.getService(),
+            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
+            context);
+        assertFalse(response.isInterrupt());
     }
 }

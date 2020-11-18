@@ -48,7 +48,7 @@ import org.springframework.webflow.execution.Action;
  * @since 5.3.0
  */
 @SpringBootTest(classes = AbstractGraphicalAuthenticationTests.SharedTestConfiguration.class,
-    properties = "cas.authn.gua.resource.location=classpath:image.jpg")
+    properties = "cas.authn.gua.simple.casuser=classpath:image.jpg")
 public abstract class AbstractGraphicalAuthenticationTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_INIT_LOGIN_ACTION)

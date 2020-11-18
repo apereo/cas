@@ -6,7 +6,6 @@ import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -82,11 +81,6 @@ public class FilterAndDelegateAuditTrailManagerTests {
         mgr.record(ctx);
         assertFalse(mock.getAuditRecords().isEmpty());
         assertEquals(1, mgr.getAuditRecordsSince(LocalDate.now(ZoneOffset.UTC)).size());
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                mgr.removeAll();
-            }
-        });
+        assertDoesNotThrow(mgr::removeAll);
     }
 }

@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
+import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.web.OAuth20HandlerInterceptorAdapter;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
 import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
@@ -29,6 +30,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.apereo.cas.support.oauth.OAuth20Constants.BASE_OAUTH20_URL;
@@ -54,6 +56,10 @@ public class CasOAuth20ThrottleConfiguration {
     @Autowired
     @Qualifier("accessTokenGrantRequestExtractors")
     private Collection<AccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors;
+
+    @Autowired
+    @Qualifier("oauthAuthorizationRequestValidators")
+    private Set<OAuth20AuthorizationRequestValidator> oauthAuthorizationRequestValidators;
 
     @ConditionalOnMissingBean(name = "requiresAuthenticationAuthorizeInterceptor")
     @Bean
@@ -88,7 +94,8 @@ public class CasOAuth20ThrottleConfiguration {
             requiresAuthenticationAuthorizeInterceptor(),
             accessTokenGrantRequestExtractors,
             servicesManager.getObject(),
-            oauthSecConfig.getObject().getSessionStore());
+            oauthSecConfig.getObject().getSessionStore(),
+            oauthAuthorizationRequestValidators);
     }
 
     @Bean

@@ -2,7 +2,6 @@ package org.apereo.cas.audit;
 
 import org.apereo.cas.audit.spi.AbstractAuditTrailManager;
 import org.apereo.cas.util.DateTimeUtils;
-import org.apereo.cas.util.LoggingUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -12,7 +11,6 @@ import org.apereo.inspektr.audit.AuditActionContext;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -40,37 +38,32 @@ public class RedisAuditTrailManager extends AbstractAuditTrailManager {
     }
 
     @Override
-    protected void saveAuditRecord(final AuditActionContext audit) {
-        try {
-            val redisKey = getAuditRedisKey(audit);
-            this.redisTemplate.boundValueOps(redisKey).set(audit);
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-    }
-
-    @Override
     @SuppressWarnings("JdkObsolete")
     public Set<? extends AuditActionContext> getAuditRecordsSince(final LocalDate localDate) {
-        try {
-            val dt = DateTimeUtils.dateOf(localDate);
-            LOGGER.debug("Retrieving audit records since [{}]", dt);
-            return getAuditRedisKeys()
-                .stream()
-                .map(redisKey -> this.redisTemplate.boundValueOps(redisKey).get())
-                .filter(Objects::nonNull)
-                .map(AuditActionContext.class::cast)
-                .filter(audit -> audit.getWhenActionWasPerformed().compareTo(dt) >= 0)
-                .collect(Collectors.toSet());
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return new HashSet<>(0);
+        val dt = DateTimeUtils.dateOf(localDate);
+        LOGGER.debug("Retrieving audit records since [{}]", dt);
+        return getAuditRedisKeys()
+            .stream()
+            .map(redisKey -> this.redisTemplate.boundValueOps(redisKey).get())
+            .filter(Objects::nonNull)
+            .map(AuditActionContext.class::cast)
+            .filter(audit -> audit.getWhenActionWasPerformed().compareTo(dt) >= 0)
+            .collect(Collectors.toSet());
     }
 
     @Override
     public void removeAll() {
-        getAuditRedisKeys().forEach(this.redisTemplate::delete);
+        getAuditRedisKeys().forEach(redisTemplate::delete);
+    }
+
+    @Override
+    protected void saveAuditRecord(final AuditActionContext audit) {
+        val redisKey = getAuditRedisKey(audit);
+        this.redisTemplate.boundValueOps(redisKey).set(audit);
+    }
+
+    private Set<String> getAuditRedisKeys() {
+        return this.redisTemplate.keys(getPatternAuditRedisKey());
     }
 
     @SuppressWarnings("JdkObsolete")
@@ -80,9 +73,5 @@ public class RedisAuditTrailManager extends AbstractAuditTrailManager {
 
     private static String getPatternAuditRedisKey() {
         return CAS_AUDIT_CONTEXT_PREFIX + '*';
-    }
-
-    private Set<String> getAuditRedisKeys() {
-        return this.redisTemplate.keys(getPatternAuditRedisKey());
     }
 }

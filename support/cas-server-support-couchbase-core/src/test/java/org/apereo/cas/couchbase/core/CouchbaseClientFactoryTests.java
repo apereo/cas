@@ -7,7 +7,6 @@ import com.couchbase.client.java.query.QueryOptions;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -49,12 +48,7 @@ public class CouchbaseClientFactoryTests {
         assertNotNull(factory.select("1=1", QueryOptions.queryOptions()));
         assertNotNull(factory.removeAll());
 
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                factory.shutdown();
-            }
-        });
+        assertDoesNotThrow(factory::shutdown);
 
     }
 }

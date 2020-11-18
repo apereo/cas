@@ -450,8 +450,9 @@ function register(username, displayName, credentialNickname, requireResidentKey 
                 } else {
                     setTimeout(function () {
                         $('#sessionToken').val(session.sessionToken);
+                        console.log("Submitting registration form");
                         $('#form').submit();
-                    }, 1000);
+                    }, 1500);
                 }
             }
         })
@@ -531,12 +532,13 @@ function authenticate(username = null, getRequest = getAuthenticateRequest) {
 
             setTimeout(function () {
                 $('#token').val(data.sessionToken);
-                $('#form').submit();
-            }, 1000);
+                console.log("Submitting authentication form");
+                $('#webauthnLoginForm').submit();
+            }, 1500);
         }
         return data;
     }).catch((err) => {
-        setStatus('Authentication failed.');
+        setStatus(authFailTitle);
         if (err.name === 'InvalidStateError') {
             addMessage(`This authenticator is not registered for the account "${username}".`)
         } else if (err.message) {
@@ -545,6 +547,7 @@ function authenticate(username = null, getRequest = getAuthenticateRequest) {
             addMessages(err.messages);
         }
         console.error('Authentication failed', err);
+        addMessage(authFailDesc);
         return rejected(err);
     });
 }

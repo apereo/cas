@@ -1,6 +1,7 @@
 description = "Apereo CAS Service Registry Streaming Support with Hazelcast"
 dependencies {
     implementation libraries.hazelcast
+
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-services-registry")
     implementation project(":core:cas-server-core-services-api")

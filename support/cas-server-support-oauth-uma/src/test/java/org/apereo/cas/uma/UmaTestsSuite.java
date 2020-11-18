@@ -1,6 +1,9 @@
 package org.apereo.cas.uma;
 
+import org.apereo.cas.uma.discovery.UmaServerDiscoverySettingsFactoryTests;
 import org.apereo.cas.uma.web.controllers.authz.UmaAuthorizationRequestEndpointControllerTests;
+import org.apereo.cas.uma.web.controllers.claims.DefaultUmaResourceSetClaimPermissionExaminerTests;
+import org.apereo.cas.uma.web.controllers.claims.UmaRequestingPartyClaimsCollectionEndpointControllerTests;
 import org.apereo.cas.uma.web.controllers.permission.UmaPermissionRegistrationEndpointControllerTests;
 import org.apereo.cas.uma.web.controllers.policy.UmaCreatePolicyForResourceSetEndpointControllerTests;
 import org.apereo.cas.uma.web.controllers.policy.UmaDeletePolicyForResourceSetEndpointControllerTests;
@@ -22,6 +25,8 @@ import org.junit.runner.RunWith;
  * @since 6.0.0
  */
 @SelectClasses({
+    UmaServerDiscoverySettingsFactoryTests.class,
+    DefaultUmaResourceSetClaimPermissionExaminerTests.class,
     UmaPermissionRegistrationEndpointControllerTests.class,
     UmaCreateResourceSetRegistrationEndpointControllerTests.class,
     UmaDeleteResourceSetRegistrationEndpointControllerTests.class,
@@ -31,6 +36,7 @@ import org.junit.runner.RunWith;
     UmaDeletePolicyForResourceSetEndpointControllerTests.class,
     UmaFindPolicyForResourceSetEndpointControllerTests.class,
     UmaUpdatePolicyForResourceSetEndpointControllerTests.class,
+    UmaRequestingPartyClaimsCollectionEndpointControllerTests.class,
     UmaAuthorizationRequestEndpointControllerTests.class
 })
 @RunWith(JUnitPlatform.class)

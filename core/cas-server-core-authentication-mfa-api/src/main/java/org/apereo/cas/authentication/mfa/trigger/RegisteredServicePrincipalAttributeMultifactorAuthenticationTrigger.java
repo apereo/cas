@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.mfa.trigger;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderResolver;
+import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Service;
@@ -41,13 +42,15 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger
 
     private final ApplicationContext applicationContext;
 
+    private final MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector;
+
     private int order = Ordered.LOWEST_PRECEDENCE;
 
     @Override
     public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
-                                                                   final RegisteredService registeredService,
-                                                                   final HttpServletRequest httpServletRequest,
-                                                                   final Service service) {
+        final RegisteredService registeredService,
+        final HttpServletRequest httpServletRequest,
+        final Service service) {
         if (authentication == null || registeredService == null) {
             LOGGER.debug("No authentication or service is available to determine event for principal");
             return Optional.empty();
@@ -66,11 +69,18 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger
         }
 
         val principal = authentication.getPrincipal();
-        val providers = MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderForService(registeredService);
+        val providers = MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderForService(registeredService, applicationContext);
+        if (providers.size() > 1) {
+            val resolvedProvider = multifactorAuthenticationProviderSelector.resolve(providers, registeredService, principal);
+            providers.clear();
+            providers.add(resolvedProvider);
+        }
+        LOGGER.debug("Resolved multifactor providers are [{}]", providers);
         val result = multifactorAuthenticationProviderResolver.resolveEventViaPrincipalAttribute(principal,
             org.springframework.util.StringUtils.commaDelimitedListToSet(policy.getPrincipalAttributeNameTrigger()),
             registeredService, Optional.empty(), providers,
-            (attributeValue, mfaProvider) -> attributeValue != null && RegexUtils.matches(Pattern.compile(policy.getPrincipalAttributeValueToMatch()), attributeValue));
+            (attributeValue, mfaProvider) ->
+                attributeValue != null && RegexUtils.matches(Pattern.compile(policy.getPrincipalAttributeValueToMatch()), attributeValue));
 
         if (result != null && !result.isEmpty()) {
             val id = CollectionUtils.firstElement(result);

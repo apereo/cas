@@ -4,14 +4,12 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.io.FileWatcherService;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.hjson.JsonValue;
 import org.springframework.beans.factory.DisposableBean;
@@ -29,40 +27,43 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 public class JsonResourceInterruptInquirer extends BaseInterruptInquirer implements DisposableBean {
 
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
-    private FileWatcherService keystorePatchWatcherService;
-
     private final Resource resource;
+
     private final Map<String, InterruptResponse> interrupts = new ConcurrentHashMap<>();
 
+    private FileWatcherService keystorePatchWatcherService;
+
+    @SneakyThrows
     public JsonResourceInterruptInquirer(final Resource resource) {
         this.resource = resource;
-        try {
-            if (ResourceUtils.isFile(this.resource)) {
-                val resourceFile = this.resource.getFile();
-                keystorePatchWatcherService = new FileWatcherService(resourceFile, file -> readResourceForInterrupts());
-            }
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
+        if (ResourceUtils.isFile(this.resource)) {
+            keystorePatchWatcherService = new FileWatcherService(resource.getFile(), file -> readResourceForInterrupts());
         }
     }
 
     @Override
     public InterruptResponse inquireInternal(final Authentication authentication,
-                                             final RegisteredService registeredService,
-                                             final Service service,
-                                             final Credential credential,
-                                             final RequestContext requestContext) {
+        final RegisteredService registeredService,
+        final Service service,
+        final Credential credential,
+        final RequestContext requestContext) {
         readResourceForInterrupts();
         val user = authentication.getPrincipal().getId();
         if (interrupts.containsKey(user)) {
             return interrupts.get(user);
         }
         return InterruptResponse.none();
+    }
+
+    @Override
+    public void destroy() {
+        if (this.keystorePatchWatcherService != null) {
+            this.keystorePatchWatcherService.close();
+        }
     }
 
     @SneakyThrows
@@ -75,13 +76,6 @@ public class JsonResourceInterruptInquirer extends BaseInterruptInquirer impleme
                 val data = (Map) MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);
                 this.interrupts.putAll(data);
             }
-        }
-    }
-
-    @Override
-    public void destroy() {
-        if (this.keystorePatchWatcherService != null) {
-            this.keystorePatchWatcherService.close();
         }
     }
 }

@@ -29,8 +29,8 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
     private final CipherExecutor cipherExecutor;
 
     public RestfulPasswordlessTokenRepository(final int tokenExpirationInSeconds,
-                                              final PasswordlessAuthenticationRestTokensProperties restProperties,
-                                              final CipherExecutor<Serializable, String> cipherExecutor) {
+        final PasswordlessAuthenticationRestTokensProperties restProperties,
+        final CipherExecutor<Serializable, String> cipherExecutor) {
         super(tokenExpirationInSeconds);
         this.restProperties = restProperties;
         this.cipherExecutor = cipherExecutor;
@@ -67,8 +67,6 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
             response = HttpUtils.execute(restProperties.getUrl(), HttpMethod.DELETE.name(),
                 restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
                 parameters, new HashMap<>(0));
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }
@@ -84,8 +82,6 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
             response = HttpUtils.execute(restProperties.getUrl(), HttpMethod.DELETE.name(),
                 restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
                 parameters, new HashMap<>(0));
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }
@@ -101,8 +97,6 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
             response = HttpUtils.execute(restProperties.getUrl(), HttpMethod.POST.name(),
                 restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
                 parameters, new HashMap<>(0));
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }
@@ -115,8 +109,6 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
             response = HttpUtils.execute(restProperties.getUrl(), HttpMethod.DELETE.name(),
                 restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
                 new HashMap<>(0), new HashMap<>(0));
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }

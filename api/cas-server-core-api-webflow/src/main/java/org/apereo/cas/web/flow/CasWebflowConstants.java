@@ -76,6 +76,11 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_ERROR = "error";
 
     /**
+     * The transition state 'validate'.
+     */
+    String TRANSITION_ID_VALIDATE = "validate";
+
+    /**
      * The transition state 'resume'.
      */
     String TRANSITION_ID_RESUME = "resume";
@@ -219,6 +224,10 @@ public interface CasWebflowConstants {
      * Transition id 'resetPassword'.
      */
     String TRANSITION_ID_RESET_PASSWORD = "resetPassword";
+    /**
+     * Transition id 'invalidPasswordResetToken'.
+     */
+    String TRANSITION_ID_INVALID_PASSWORD_RESET_TOKEN = "invalidPasswordResetToken";
 
     /**
      * Transition id 'forgotUsername'.
@@ -487,7 +496,7 @@ public interface CasWebflowConstants {
     /**
      * Delegated authentication state id.
      */
-    String STATE_ID_DELEGATED_AUTHENTICATION = "delegatedAuthenticationAction";
+    String STATE_ID_DELEGATED_AUTHENTICATION = "delegatedAuthentication";
 
     /**
      * State id 'frontLogout'.
@@ -608,6 +617,11 @@ public interface CasWebflowConstants {
      * The view state 'passwordChangeAction'.
      */
     String STATE_ID_PASSWORD_CHANGE_ACTION = "passwordChangeAction";
+
+    /**
+     * The view state 'passwordResetErrorView'.
+     */
+    String STATE_ID_PASSWORD_RESET_ERROR_VIEW = "passwordResetErrorView";
 
     /*
      ****************************************
