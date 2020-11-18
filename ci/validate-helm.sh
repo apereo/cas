@@ -25,6 +25,9 @@ echo "Image tag is ${imageTag}"
 
 cd helm
 
+# Lint chart
+helm lint cas-server
+
 # k3s comes with Traefik so we could try using that instead at some point
 echo "Installing ingress controller and waiting for it to start"
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
