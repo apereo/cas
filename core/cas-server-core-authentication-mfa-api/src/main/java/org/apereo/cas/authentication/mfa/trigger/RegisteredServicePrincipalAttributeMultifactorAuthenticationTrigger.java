@@ -41,15 +41,16 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger
     private final MultifactorAuthenticationProviderResolver multifactorAuthenticationProviderResolver;
 
     private final ApplicationContext applicationContext;
+
     private final MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector;
 
     private int order = Ordered.LOWEST_PRECEDENCE;
 
     @Override
     public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
-                                                                   final RegisteredService registeredService,
-                                                                   final HttpServletRequest httpServletRequest,
-                                                                   final Service service) {
+        final RegisteredService registeredService,
+        final HttpServletRequest httpServletRequest,
+        final Service service) {
         if (authentication == null || registeredService == null) {
             LOGGER.debug("No authentication or service is available to determine event for principal");
             return Optional.empty();
@@ -68,7 +69,7 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger
         }
 
         val principal = authentication.getPrincipal();
-        val providers = MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderForService(registeredService);
+        val providers = MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderForService(registeredService, applicationContext);
         if (providers.size() > 1) {
             val resolvedProvider = multifactorAuthenticationProviderSelector.resolve(providers, registeredService, principal);
             providers.clear();

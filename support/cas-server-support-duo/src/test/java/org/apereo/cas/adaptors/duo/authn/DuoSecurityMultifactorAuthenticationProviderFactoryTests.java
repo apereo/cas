@@ -41,6 +41,7 @@ public class DuoSecurityMultifactorAuthenticationProviderFactoryTests extends Ba
     @Test
     public void verifyBasicProvider() {
         val props = casProperties.getAuthn().getMfa().getDuo().get(0);
+        props.setMode(DuoSecurityMultifactorProperties.DuoSecurityIntegrationModes.WEBSDK);
         val provider = duoProviderFactory.createProvider(props);
         assertTrue(provider.getDuoAuthenticationService() instanceof BasicDuoSecurityAuthenticationService);
     }
