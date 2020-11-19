@@ -57,9 +57,6 @@ public class OAuth20InvalidAuthorizationResponseBuilder {
         val state = context.getRequestParameter(OAuth20Constants.STATE)
             .map(String::valueOf)
             .orElse(StringUtils.EMPTY);
-        val nonce = context.getRequestParameter(OAuth20Constants.NONCE)
-            .map(String::valueOf)
-            .orElse(StringUtils.EMPTY);
 
         val params = new LinkedHashMap<String, String>();
         params.put(OAuth20Constants.ERROR, error);
@@ -68,9 +65,6 @@ public class OAuth20InvalidAuthorizationResponseBuilder {
         }
         if (StringUtils.isNotBlank(state)) {
             params.put(OAuth20Constants.STATE, state);
-        }
-        if (StringUtils.isNotBlank(nonce)) {
-            params.put(OAuth20Constants.NONCE, nonce);
         }
 
         LOGGER.debug("Redirecting to URL [{}] with params [{}] for clientId [{}]", redirectUri, params.keySet(), clientId);
