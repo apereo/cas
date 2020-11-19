@@ -21,4 +21,12 @@ public class QRAuthenticationTokenCredentialTests {
         assertNotNull(c.toString());
     }
 
+    @Test
+    public void verifyCtor() {
+        val c = new QRAuthenticationTokenCredential("token");
+        val c1 = new QRAuthenticationTokenCredential();
+        c1.setId("token");
+        assertNotNull(c.getId());
+        assertEquals(c1, c);
+    }
 }

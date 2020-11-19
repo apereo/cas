@@ -46,6 +46,13 @@ public class QRAuthenticationTokenAuthenticationHandlerTests {
     private CasConfigurationProperties casProperties;
 
     @Test
+    public void verifySupports() {
+        val credential = new QRAuthenticationTokenCredential("token");
+        assertTrue(qrAuthenticationTokenAuthenticationHandler.supports(credential));
+        assertTrue(qrAuthenticationTokenAuthenticationHandler.supports(QRAuthenticationTokenCredential.class));
+    }
+
+    @Test
     public void verifyOperation() throws Exception {
         assertNotNull(qrAuthenticationTokenAuthenticationHandler);
 

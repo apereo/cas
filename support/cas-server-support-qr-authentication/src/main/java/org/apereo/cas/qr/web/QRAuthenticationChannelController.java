@@ -7,7 +7,6 @@ import org.apereo.cas.util.LoggingUtils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.messaging.Message;
@@ -35,9 +34,12 @@ public class QRAuthenticationChannelController {
      */
     public static final String QR_SIMPLE_BROKER_DESTINATION_PREFIX = "/qrtopic";
 
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    /**
+     * The Qr authentication channel id.
+     */
+    static final String QR_AUTHENTICATION_CHANNEL_ID = "QR_AUTHENTICATION_CHANNEL_ID";
 
-    private static final String QR_AUTHENTICATION_CHANNEL_ID = "QR_AUTHENTICATION_CHANNEL_ID";
+    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     private final MessageSendingOperations<String> messageTemplate;
 
@@ -47,11 +49,10 @@ public class QRAuthenticationChannelController {
      * Verify.
      *
      * @param message the message
+     * @return the boolean
      */
     @MessageMapping("/accept")
-    @SneakyThrows
-    public void verify(final Message<String> message) {
-
+    public boolean verify(final Message<String> message) {
         val payload = message.getPayload();
         LOGGER.trace("Received payload [{}]", payload);
         val nativeHeaders = Objects.requireNonNull(message.getHeaders().get("nativeHeaders", LinkedMultiValueMap.class));
@@ -69,11 +70,13 @@ public class QRAuthenticationChannelController {
                 LOGGER.debug("Current channel id is [{}]", channelId);
                 convertAndSend(endpoint, Map.of("success", Boolean.TRUE.toString(),
                     TokenConstants.PARAMETER_NAME_TOKEN, token));
+                return true;
             } catch (final Exception e) {
                 LoggingUtils.error(LOGGER, e);
                 convertAndSend(endpoint, Map.of("error", "cas.authn.qr.fail"));
             }
         }
+        return false;
     }
 
     private void convertAndSend(final String endpoint, final Map data) {
