@@ -11,6 +11,7 @@ import com.amazonaws.auth.EnvironmentVariableCredentialsProvider;
 import com.amazonaws.auth.InstanceProfileCredentialsProvider;
 import com.amazonaws.auth.PropertiesFileCredentialsProvider;
 import com.amazonaws.auth.SystemPropertiesCredentialsProvider;
+import com.amazonaws.auth.WebIdentityTokenCredentialsProvider;
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -85,6 +86,12 @@ public class ChainingAWSCredentialsProvider implements AWSCredentialsProvider {
         LOGGER.debug("Attempting to locate AWS credentials...");
 
         val chain = new ArrayList<AWSCredentialsProvider>();
+
+        addProviderToChain(nothing -> {
+            chain.add(WebIdentityTokenCredentialsProvider.create());
+            return null;
+        });
+
         chain.add(new InstanceProfileCredentialsProvider(false));
 
         if (credentialPropertiesFile != null) {
