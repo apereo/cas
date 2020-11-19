@@ -9,7 +9,6 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.util.HttpRequestUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +18,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.JEEContext;
 import org.springframework.core.Ordered;
-
-import java.util.stream.Stream;
 
 /**
  * This is {@link OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator}.
@@ -51,30 +48,32 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator i
     @Override
     public boolean validate(final JEEContext context) {
         val request = context.getNativeRequest();
-        val checkParameterExist = Stream.of(OAuth20Constants.CLIENT_ID, OAuth20Constants.REDIRECT_URI, OAuth20Constants.RESPONSE_TYPE)
-            .allMatch(s -> HttpRequestUtils.doesParameterExist(request, s));
-
-        if (!checkParameterExist) {
-            LOGGER.warn("Missing required parameters (client id, redirect uri, etc) for response type [{}].", getResponseType());
-            return false;
-        }
-
-        val authnRequest = request.getParameter(OAuth20Constants.REQUEST);
-        if (StringUtils.isNotBlank(authnRequest)) {
-            LOGGER.warn("Self-contained authentication requests as JWTs are not accepted");
-            return false;
-        }
-
-        val responseType = request.getParameter(OAuth20Constants.RESPONSE_TYPE);
-        if (!OAuth20Utils.checkResponseTypes(responseType, OAuth20ResponseTypes.values())) {
-            LOGGER.warn("Response type [{}] is not found in the list of supported values [{}].",
-                responseType, OAuth20ResponseTypes.values());
-            return false;
-        }
 
         val clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
+        if (StringUtils.isBlank(clientId)) {
+            LOGGER.warn("Missing required parameter [{}]", OAuth20Constants.CLIENT_ID);
+
+            setErrorDetails(context,
+                OAuth20Constants.INVALID_REQUEST,
+                String.format("Missing required parameter: [%s]", OAuth20Constants.CLIENT_ID),
+                false);
+
+            return false;
+        }
+
+        val redirectUri = request.getParameter(OAuth20Constants.REDIRECT_URI);
+        if (StringUtils.isBlank(redirectUri)) {
+            LOGGER.warn("Missing required parameter [{}]", OAuth20Constants.CLIENT_ID);
+
+            setErrorDetails(context,
+                OAuth20Constants.INVALID_REQUEST,
+                String.format("Missing required parameter: [%s]", OAuth20Constants.REDIRECT_URI),
+                false);
+
+            return false;
+        }
+
         LOGGER.debug("Locating registered service for client id [{}]", clientId);
-        
         val registeredService = getRegisteredServiceByClientId(clientId);
         val audit = AuditableContext.builder()
             .registeredService(registeredService)
@@ -83,16 +82,76 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator i
 
         if (accessResult.isExecutionFailure()) {
             LOGGER.warn("Registered service [{}] is not found or is not authorized for access.", registeredService);
+
+            setErrorDetails(context,
+                OAuth20Constants.INVALID_REQUEST,
+                StringUtils.EMPTY,
+                false);
+
             return false;
         }
 
-        val redirectUri = request.getParameter(OAuth20Constants.REDIRECT_URI);
         if (!OAuth20Utils.checkCallbackValid(registeredService, redirectUri)) {
             LOGGER.warn("Callback URL [{}] is not authorized for registered service [{}].", redirectUri, registeredService);
+
+            setErrorDetails(context,
+                OAuth20Constants.INVALID_REQUEST,
+                StringUtils.EMPTY,
+                false);
+
             return false;
         }
 
-        return OAuth20Utils.isAuthorizedResponseTypeForService(context, registeredService);
+        val authnRequest = request.getParameter(OAuth20Constants.REQUEST);
+        if (StringUtils.isNotBlank(authnRequest)) {
+            LOGGER.warn("Self-contained authentication requests as JWTs are not accepted");
+
+            setErrorDetails(context,
+                OAuth20Constants.REQUEST_NOT_SUPPORTED,
+                StringUtils.EMPTY,
+                true);
+
+            return false;
+        }
+
+        val responseType = request.getParameter(OAuth20Constants.RESPONSE_TYPE);
+        if (!OAuth20Utils.checkResponseTypes(responseType, OAuth20ResponseTypes.values())) {
+            LOGGER.warn("Response type [{}] is not found in the list of supported values [{}].",
+                responseType, OAuth20ResponseTypes.values());
+
+            setErrorDetails(context,
+                OAuth20Constants.UNSUPPORTED_RESPONSE_TYPE,
+                String.format("Unsupported response_type: [%s]", responseType),
+                true);
+
+            return false;
+        }
+
+        if (!OAuth20Utils.isAuthorizedResponseTypeForService(context, registeredService)) {
+            setErrorDetails(context,
+                OAuth20Constants.UNAUTHORIZED_CLIENT,
+                String.format("Client is not allowed to use the [%s] response_type", responseType),
+                true);
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Set the OAuth Error details in the context.
+     *
+     * @param context the context
+     * @param error the OAuth error
+     * @param errorDescription the OAuth error description
+     * @param errorWithCallBack does the error will redirect the end-user to the client
+     */
+    public void setErrorDetails(final JEEContext context, final String error,
+                                final String errorDescription, final boolean errorWithCallBack) {
+        context.setRequestAttribute(OAuth20Constants.ERROR, error);
+        context.setRequestAttribute(OAuth20Constants.ERROR_DESCRIPTION, errorDescription);
+        context.setRequestAttribute(OAuth20Constants.ERROR_WITH_CALLBACK, errorWithCallBack);
     }
 
     /**
@@ -104,6 +163,7 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator i
     protected OAuthRegisteredService getRegisteredServiceByClientId(final String clientId) {
         return OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
     }
+
 
     @Override
     public boolean supports(final JEEContext context) {
