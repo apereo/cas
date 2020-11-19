@@ -768,6 +768,7 @@ jobs:
           - generate-service-ticket
           - webauthn-primary-authn
           - authn-throttle
+          - qrauthn-login
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
