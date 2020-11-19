@@ -26,6 +26,7 @@ dependencies {
     implementation project(":support:cas-server-support-rest-tokens")
     implementation project(":support:cas-server-support-otp-mfa-core")
     implementation project(":support:cas-server-support-websockets")
+    implementation project(":support:cas-server-support-actions")
     
     implementation libraries.jose4j
     implementation libraries.nimbus

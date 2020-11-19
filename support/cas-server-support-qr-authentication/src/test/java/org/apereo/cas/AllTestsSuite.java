@@ -3,6 +3,8 @@ package org.apereo.cas;
 import org.apereo.cas.qr.authentication.QRAuthenticationTokenCredentialTests;
 import org.apereo.cas.qr.validation.DefaultQRAuthenticationTokenValidatorServiceTests;
 import org.apereo.cas.qr.validation.QRAuthenticationTokenValidationResultTests;
+import org.apereo.cas.qr.web.flow.QRAuthenticationGenerateCodeActionTests;
+import org.apereo.cas.qr.web.flow.QRAuthenticationWebflowConfigurerTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -16,6 +18,8 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     QRAuthenticationTokenCredentialTests.class,
+    QRAuthenticationGenerateCodeActionTests.class,
+    QRAuthenticationWebflowConfigurerTests.class,
     DefaultQRAuthenticationTokenValidatorServiceTests.class,
     QRAuthenticationTokenValidationResultTests.class
 })

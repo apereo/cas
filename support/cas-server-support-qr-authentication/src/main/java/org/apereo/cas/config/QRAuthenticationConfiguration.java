@@ -12,6 +12,7 @@ import org.apereo.cas.qr.authentication.QRAuthenticationTokenCredential;
 import org.apereo.cas.qr.validation.DefaultQRAuthenticationTokenValidatorService;
 import org.apereo.cas.qr.validation.QRAuthenticationTokenValidatorService;
 import org.apereo.cas.qr.web.QRAuthenticationChannelController;
+import org.apereo.cas.qr.web.flow.QRAuthenticationGenerateCodeAction;
 import org.apereo.cas.qr.web.flow.QRAuthenticationValidateTokenAction;
 import org.apereo.cas.qr.web.flow.QRAuthenticationWebflowConfigurer;
 import org.apereo.cas.services.ServicesManager;
@@ -106,6 +107,13 @@ public class QRAuthenticationConfiguration implements WebSocketMessageBrokerConf
         return new QRAuthenticationValidateTokenAction();
     }
 
+    @Bean
+    @ConditionalOnMissingBean(name = "qrAuthenticationGenerateCodeAction")
+    @RefreshScope
+    public Action qrAuthenticationGenerateCodeAction() {
+        return new QRAuthenticationGenerateCodeAction();
+    }
+    
     @Bean
     @ConditionalOnMissingBean(name = "qrAuthenticationTokenValidatorService")
     @RefreshScope
