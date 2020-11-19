@@ -101,12 +101,14 @@ public class QRAuthenticationConfiguration implements WebSocketMessageBrokerConf
 
     @Bean
     @ConditionalOnMissingBean(name = "qrAuthenticationValidateWebSocketChannelAction")
+    @RefreshScope
     public Action qrAuthenticationValidateWebSocketChannelAction() {
         return new QRAuthenticationValidateTokenAction();
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "qrAuthenticationTokenValidatorService")
+    @RefreshScope
     public QRAuthenticationTokenValidatorService qrAuthenticationTokenValidatorService() {
         return new DefaultQRAuthenticationTokenValidatorService(jwtBuilder.getObject(),
             centralAuthenticationService.getObject(), casProperties);
