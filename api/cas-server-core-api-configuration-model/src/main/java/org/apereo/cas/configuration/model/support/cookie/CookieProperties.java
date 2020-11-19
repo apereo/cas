@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.cookie;
 
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -19,6 +20,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("CookieProperties")
 public class CookieProperties implements Serializable {
 
     private static final long serialVersionUID = 6804770601645126835L;

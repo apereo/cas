@@ -11,6 +11,7 @@ import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -29,6 +30,7 @@ import java.time.temporal.ChronoUnit;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("ConsentProperties")
 public class ConsentProperties implements Serializable {
 
     private static final long serialVersionUID = 5201308051524438384L;

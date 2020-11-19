@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.qr;
 
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -9,8 +10,6 @@ import lombok.experimental.Accessors;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * This is {@link QRAuthenticationProperties}.
@@ -22,6 +21,7 @@ import java.util.stream.Stream;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("QRAuthenticationProperties")
 public class QRAuthenticationProperties implements Serializable {
     private static final long serialVersionUID = 8726382874579042117L;
 

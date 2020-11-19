@@ -1,7 +1,6 @@
 package org.apereo.cas.web.flow.configurer;
 
 import org.apereo.cas.authentication.PrincipalException;
-import org.apereo.cas.authentication.RootCasException;
 import org.apereo.cas.authentication.adaptive.UnauthorizedAuthenticationException;
 import org.apereo.cas.authentication.credential.RememberMeUsernamePasswordCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
