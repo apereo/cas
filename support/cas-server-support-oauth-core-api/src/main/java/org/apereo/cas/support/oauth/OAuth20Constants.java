@@ -129,11 +129,6 @@ public interface OAuth20Constants {
     String REQUEST_NOT_SUPPORTED = "request_not_supported";
 
     /**
-     * Request_uri parameter is not supported.
-     */
-    String REQUEST_URI_NOT_SUPPORTED = "request_uri_not_supported";
-
-    /**
      * Unsupported response_type error.
      */
     String UNSUPPORTED_RESPONSE_TYPE = "unsupported_response_type";
