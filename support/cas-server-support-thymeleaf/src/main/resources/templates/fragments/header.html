@@ -29,7 +29,7 @@
                               th:text="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS')}">CAS</span>
                         <img class="cas-logo"
                              th:title="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS')}"
-                             th:src="@{${#strings.defaultString(#themes.code('cas.logo.file'), 'images/cas-logo.png')}}" />
+                             th:src="@{${#strings.defaultString(#themes.code('cas.logo.file'), '/images/cas-logo.png')}}" />
                     </span>
             </section>
             <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end">

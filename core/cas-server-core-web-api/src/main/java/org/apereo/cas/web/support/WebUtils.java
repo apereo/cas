@@ -917,10 +917,12 @@ public class WebUtils {
     /**
      * Produce unauthorized error view model and view.
      *
+     * @param ex the ex
      * @return the model and view
      */
-    public static ModelAndView produceUnauthorizedErrorView() {
-        return produceErrorView(new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY));
+    public static ModelAndView produceUnauthorizedErrorView(final Exception ex) {
+        val error = new UnauthorizedServiceException(ex, UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
+        return produceErrorView(error);
     }
 
     /**
@@ -946,7 +948,7 @@ public class WebUtils {
         request.setAttribute("error", HttpStatus.BAD_REQUEST.name());
         request.setAttribute("message", "Unable to verify registration record");
     }
-    
+
     /**
      * Produce error view model and view.
      *

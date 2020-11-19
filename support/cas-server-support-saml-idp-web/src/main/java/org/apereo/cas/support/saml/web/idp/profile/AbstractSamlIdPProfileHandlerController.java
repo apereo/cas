@@ -83,9 +83,9 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * @param ex  the ex
      * @return the model and view
      */
-    @ExceptionHandler(UnauthorizedServiceException.class)
+    @ExceptionHandler({UnauthorizedServiceException.class, SamlException.class})
     public ModelAndView handleUnauthorizedServiceException(final HttpServletRequest req, final Exception ex) {
-        return WebUtils.produceUnauthorizedErrorView();
+        return WebUtils.produceUnauthorizedErrorView(ex);
     }
 
     /**
