@@ -1,8 +1,6 @@
 package org.apereo.cas.qr.web.flow;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.otp.util.QRUtils;
-import org.apereo.cas.qr.web.QRAuthenticationChannelController;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 
@@ -13,8 +11,6 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
-import java.util.UUID;
-
 /**
  * This is {@link QRAuthenticationWebflowConfigurer}.
  *
@@ -23,6 +19,8 @@ import java.util.UUID;
  */
 @Slf4j
 public class QRAuthenticationWebflowConfigurer extends AbstractCasWebflowConfigurer {
+
+    static final String STATE_ID_VALIDATE_QR_TOKEN = "validateQRToken";
 
     public QRAuthenticationWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
         final FlowDefinitionRegistry loginFlowDefinitionRegistry,
@@ -40,21 +38,11 @@ public class QRAuthenticationWebflowConfigurer extends AbstractCasWebflowConfigu
             state.getEntryActionList().add(setAction);
 
             val qrSubmission = getState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
-            createTransitionForState(qrSubmission, CasWebflowConstants.TRANSITION_ID_VALIDATE, "validateQRToken");
+            createTransitionForState(qrSubmission, CasWebflowConstants.TRANSITION_ID_VALIDATE, STATE_ID_VALIDATE_QR_TOKEN);
 
-            val validateAction = createActionState(flow, "validateQRToken", "qrAuthenticationValidateWebSocketChannelAction");
+            val validateAction = createActionState(flow, STATE_ID_VALIDATE_QR_TOKEN, "qrAuthenticationValidateWebSocketChannelAction");
             createTransitionForState(validateAction, CasWebflowConstants.TRANSITION_ID_FINALIZE, CasWebflowConstants.STATE_ID_REAL_SUBMIT);
-
-            state.getEntryActionList().add(requestContext -> {
-                val id = UUID.randomUUID().toString();
-                LOGGER.debug("Generating QR code with channel id [{}]", id);
-                val qrCodeBase64 = QRUtils.generateQRCode(id, QRUtils.WIDTH_LARGE, QRUtils.WIDTH_LARGE);
-                requestContext.getFlowScope().put("qrCode", qrCodeBase64);
-                requestContext.getFlowScope().put("qrChannel", id);
-                requestContext.getFlowScope().put("qrPrefix", QRAuthenticationChannelController.QR_SIMPLE_BROKER_DESTINATION_PREFIX);
-                return null;
-            });
-
+            state.getEntryActionList().add(createEvaluateAction("qrAuthenticationGenerateCodeAction"));
         }
     }
 }

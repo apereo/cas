@@ -93,6 +93,8 @@ Support for Duo Security's [Universal Prompt](../mfa/DuoSecurity-Authentication.
 - Groovy
 - Caffeine
 - Pac4j
+- Apache Tomcat
+- Spring Boot
 - Hibernate
 - Infinispan
 - Thymeleaf Dialect
