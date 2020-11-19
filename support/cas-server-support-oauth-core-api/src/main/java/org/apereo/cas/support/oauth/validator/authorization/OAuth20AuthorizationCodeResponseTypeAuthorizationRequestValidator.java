@@ -63,7 +63,7 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator i
 
         val redirectUri = request.getParameter(OAuth20Constants.REDIRECT_URI);
         if (StringUtils.isBlank(redirectUri)) {
-            LOGGER.warn("Missing required parameter [{}]", OAuth20Constants.CLIENT_ID);
+            LOGGER.warn("Missing required parameter [{}]", OAuth20Constants.REDIRECT_URI);
 
             setErrorDetails(context,
                 OAuth20Constants.INVALID_REQUEST,
