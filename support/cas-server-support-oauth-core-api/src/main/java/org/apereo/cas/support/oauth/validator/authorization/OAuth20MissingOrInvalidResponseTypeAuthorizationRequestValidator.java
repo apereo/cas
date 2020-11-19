@@ -30,6 +30,6 @@ public class OAuth20MissingOrInvalidResponseTypeAuthorizationRequestValidator ex
         val responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE)
             .map(String::valueOf)
             .orElse(StringUtils.EMPTY);
-        return OAuth20Utils.checkResponseTypes(responseType, OAuth20ResponseTypes.values());
+        return !OAuth20Utils.checkResponseTypes(responseType, OAuth20ResponseTypes.values());
     }
 }
