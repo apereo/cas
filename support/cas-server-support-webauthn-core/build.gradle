@@ -2,6 +2,10 @@ description = "Apereo CAS FIDO2 WebAuthn Core"
 dependencies {
     api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-util")
+    api project(":api:cas-server-core-api")
+    api project(":api:cas-server-core-api-ticket")
+    api project(":api:cas-server-core-api-services")
+    api project(":api:cas-server-core-api-validation")
 
     api libraries.webauthn
     
