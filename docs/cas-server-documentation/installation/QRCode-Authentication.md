@@ -31,7 +31,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 To see the relevant list of CAS 
 properties, please [review this guide](../configuration/Configuration-Properties.html#qr-authentication).
 
-## Web Socket Connection
+## Web Socket Communication
 
 The process of connecting to a web socket connection certainly varies for each mobile app framework. At a high level, 
 mobile devices should establish a web socket connection to the CAS server via the `/cas/qr-websocket` endpoint.
@@ -47,13 +47,47 @@ let stompClient = Stomp.over(socket);
 let payload = JSON.stringify({'token': '...'});
 let channelId = "...";
 stompClient.send("/qr/accept", {'QR_AUTHENTICATION_CHANNEL_ID': channelId}, payload);
+```   
+
+The following code snippet demonstrates this process for 
+the Android platform based on [StompProtocolAndroid](https://github.com/NaikSoftware/StompProtocolAndroid):
+
+```java
+import ua.naiksoftware.stomp.*;
+import ua.naiksoftware.stomp.dto.*;
+
+String jwt = "...";
+JSONStringer jsonWebToken = new JSONStringer().object()
+	.key("token").value(jwt).endObject();
+
+String channel = "...";
+List<StompHeader> headers = new ArrayList<>();
+headers.add(new StompHeader("QR_AUTHENTICATION_CHANNEL_ID", channel));
+headers.add(new StompHeader(StompHeader.DESTINATION, "/qr/accept"));
+
+StompClient client = Stomp.over(Stomp.ConnectionProvider.OKHTTP, 
+	"wss://10.0.2.2:8443/cas/qr-websocket/websocket", null, httpClient);
+
+client.connect();
+StompMessage stompMessage = 
+	new StompMessage(StompCommand.SEND, headers, jsonWebToken.toString());
+client.send(stompMessage).subscribe();
 ```
+
+## Obtaining Web Socket Channel
+
+The QR code contains a special identifier embedded within that allows the mobile device to establish 
+a communication channel using web sockets to the CAS server. The mobile device must be able to scan the QR code
+to extract the channel id in order to establish a communication route between CAS and the device.
 
 ## Obtaining JWT 
 
 The mobile device should ask for and then submit user credentials to the CAS 
 server using the [REST protocol](../protocol/REST-Protocol.html#jwt-ticket-granting-tickets) to 
 obtain a JWT. Once received, the device may cache the JWT and establish a *session* for code reuse later. 
-The JWT should be sent to the CAS server's web socket channel for validation and login. The generated
+The JWT should be sent to the CAS server's web socket channel for validation and login as demonstrated above. The generated
 JWT is automatically signed and encrypted by CAS and can only be decoded by the CAS server.
 
+## Mobile Device Authorization
+
+TBD.
