@@ -2,7 +2,7 @@
 
 tomcatVersion="9.0.40"
 tomcatVersionTag="v${tomcatVersion}"
-tomcatUrl="https://downloads.apache.org/tomcat/tomcat-9/${tomcatVersionTag}/bin/apache-tomcat-${tomcatVersion}.zip
+tomcatUrl="https://downloads.apache.org/tomcat/tomcat-9/${tomcatVersionTag}/bin/apache-tomcat-${tomcatVersion}.zip"
 
 export CATALINA_HOME=./apache-tomcat-${tomcatVersion}
 rm -Rf ${CATALINA_HOME}
