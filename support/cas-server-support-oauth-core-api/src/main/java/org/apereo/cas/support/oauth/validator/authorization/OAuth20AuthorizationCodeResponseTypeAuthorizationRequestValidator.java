@@ -115,6 +115,18 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator i
         }
 
         val responseType = request.getParameter(OAuth20Constants.RESPONSE_TYPE);
+        if (StringUtils.isBlank(responseType)) {
+            LOGGER.warn("Response type is missing.",
+                responseType, OAuth20ResponseTypes.values());
+
+            setErrorDetails(context,
+                OAuth20Constants.UNSUPPORTED_RESPONSE_TYPE,
+                String.format("Missing required parameter: [%s]", OAuth20Constants.RESPONSE_TYPE),
+                true);
+
+            return false;
+        }
+
         if (!OAuth20Utils.checkResponseTypes(responseType, OAuth20ResponseTypes.values())) {
             LOGGER.warn("Response type [{}] is not found in the list of supported values [{}].",
                 responseType, OAuth20ResponseTypes.values());
