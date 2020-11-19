@@ -4,6 +4,7 @@ import org.apereo.cas.qr.authentication.QRAuthenticationTokenAuthenticationHandl
 import org.apereo.cas.qr.authentication.QRAuthenticationTokenCredentialTests;
 import org.apereo.cas.qr.validation.DefaultQRAuthenticationTokenValidatorServiceTests;
 import org.apereo.cas.qr.validation.QRAuthenticationTokenValidationResultTests;
+import org.apereo.cas.qr.web.QRAuthenticationChannelControllerTests;
 import org.apereo.cas.qr.web.flow.QRAuthenticationGenerateCodeActionTests;
 import org.apereo.cas.qr.web.flow.QRAuthenticationValidateTokenActionTests;
 import org.apereo.cas.qr.web.flow.QRAuthenticationWebflowConfigurerTests;
@@ -20,6 +21,7 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     QRAuthenticationTokenCredentialTests.class,
+    QRAuthenticationChannelControllerTests.class,
     QRAuthenticationTokenAuthenticationHandlerTests.class,
     QRAuthenticationValidateTokenActionTests.class,
     QRAuthenticationGenerateCodeActionTests.class,
