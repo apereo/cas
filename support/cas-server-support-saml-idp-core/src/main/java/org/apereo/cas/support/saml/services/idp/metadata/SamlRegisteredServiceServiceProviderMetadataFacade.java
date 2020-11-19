@@ -245,6 +245,20 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
     }
 
     /**
+     * Get locations of all assertion consumer services for the given binding.
+     *
+     * @param binding the binding
+     * @return the assertion consumer service
+     */
+    public List<String> getAssertionConsumerServiceLocations(final String binding) {
+        return getAssertionConsumerServices()
+            .stream()
+            .filter(acs -> acs.getBinding().equalsIgnoreCase(binding))
+            .map(acs -> acs.getLocation())
+            .collect(Collectors.toList());
+    }
+
+    /**
      * Gets assertion consumer service for paos binding.
      *
      * @return the assertion consumer service for paos binding
