@@ -12,6 +12,7 @@ import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -28,6 +29,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-support-trusted-mfa")
 @Getter
 @Setter
+@JsonFilter("TrustedDevicesMultifactorProperties")
 public class TrustedDevicesMultifactorProperties implements Serializable {
 
     private static final long serialVersionUID = 1505013239016790473L;
