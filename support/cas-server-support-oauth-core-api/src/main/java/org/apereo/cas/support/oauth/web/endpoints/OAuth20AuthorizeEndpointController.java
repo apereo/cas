@@ -34,7 +34,8 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * This controller is in charge of responding to the authorize call in OAuth v2 protocol.
- * This url is protected by a CAS authentication. It returns an OAuth code or directly an access token.
+ * When the request is valid, this endpoint is protected by a CAS authentication.
+ * It returns an OAuth code or directly an access token.
  *
  * @author Jerome Leleu
  * @since 3.5.0
@@ -62,9 +63,13 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
         val context = new JEEContext(request, response, getOAuthConfigurationContext().getSessionStore());
         val manager = new ProfileManager<CommonProfile>(context, context.getSessionStore());
 
-        if (!verifyAuthorizeRequest(context) || !isRequestAuthenticated(manager)) {
-            LOGGER.error("Authorize request verification failed. Authorization request is missing required parameters, "
-                + "or the request is not authenticated and contains no authenticated profile/principal.");
+        if (context.getRequestAttribute(OAuth20Constants.ERROR).isPresent()) {
+            LOGGER.error("Authorize request verification failed");
+
+            val mv = getOAuthConfigurationContext().getOauthInvalidAuthorizationResponseBuilder().build(context);
+            if (!mv.isEmpty() && mv.hasView()) {
+                return mv;
+            }
             return OAuth20Utils.produceUnauthorizedErrorView();
         }
 
@@ -79,32 +84,15 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
             return OAuth20Utils.produceUnauthorizedErrorView();
         }
 
-        val mv = getOAuthConfigurationContext().getConsentApprovalViewResolver().resolve(context, registeredService);
-        if (!mv.isEmpty() && mv.hasView()) {
-            LOGGER.debug("Redirecting to consent-approval view with model [{}]", mv.getModel());
-            return mv;
+        if (isRequestAuthenticated(manager)) {
+            val mv = getOAuthConfigurationContext().getConsentApprovalViewResolver().resolve(context, registeredService);
+            if (!mv.isEmpty() && mv.hasView()) {
+                LOGGER.debug("Redirecting to consent-approval view with model [{}]", mv.getModel());
+                return mv;
+            }
         }
 
         return redirectToCallbackRedirectUrl(manager, registeredService, context, clientId);
-    }
-
-    protected void ensureSessionReplicationIsAutoconfiguredIfNeedBe(final HttpServletRequest request) {
-        val casProperties = getOAuthConfigurationContext().getCasProperties();
-        val replicationRequested = casProperties.getAuthn().getOauth().isReplicateSessions();
-        val cookieAutoconfigured = casProperties.getSessionReplication().getCookie().isAutoConfigureCookiePath();
-        if (replicationRequested && cookieAutoconfigured) {
-            val contextPath = request.getContextPath();
-            val cookiePath = StringUtils.isNotBlank(contextPath) ? contextPath + '/' : "/";
-
-            val path = getOAuthConfigurationContext().getOauthDistributedSessionCookieGenerator().getCookiePath();
-            if (StringUtils.isBlank(path)) {
-                LOGGER.debug("Setting path for cookies for OAuth distributed session cookie generator to: [{}]", cookiePath);
-                getOAuthConfigurationContext().getOauthDistributedSessionCookieGenerator().setCookiePath(cookiePath);
-            } else {
-                LOGGER.trace("OAuth distributed cookie domain is [{}] with path [{}]",
-                        getOAuthConfigurationContext().getOauthDistributedSessionCookieGenerator().getCookieDomain(), path);
-            }
-        }
     }
 
     /**
@@ -120,28 +108,28 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
         return handleRequest(request, response);
     }
 
-    private static boolean isRequestAuthenticated(final ProfileManager manager) {
-        val opt = manager.get(true);
-        return opt.isPresent();
-    }
-
     /**
-     * Verify the authorize request.
+     * Ensure Session Replication Is Auto-Configured If needed.
      *
-     * @param context the context
-     * @return whether the authorize request is valid
+     * @param request the request
      */
-    private boolean verifyAuthorizeRequest(final JEEContext context) {
-        val validator = getOAuthConfigurationContext().getOauthRequestValidators()
-            .stream()
-            .filter(b -> b.supports(context))
-            .findFirst()
-            .orElse(null);
-        if (validator == null) {
-            LOGGER.warn("Ignoring malformed request [{}] since it cannot be validated/recognized.", context.getFullRequestURL());
-            return false;
+    protected void ensureSessionReplicationIsAutoconfiguredIfNeedBe(final HttpServletRequest request) {
+        val casProperties = getOAuthConfigurationContext().getCasProperties();
+        val replicationRequested = casProperties.getAuthn().getOauth().isReplicateSessions();
+        val cookieAutoconfigured = casProperties.getSessionReplication().getCookie().isAutoConfigureCookiePath();
+        if (replicationRequested && cookieAutoconfigured) {
+            val contextPath = request.getContextPath();
+            val cookiePath = StringUtils.isNotBlank(contextPath) ? contextPath + '/' : "/";
+
+            val path = getOAuthConfigurationContext().getOauthDistributedSessionCookieGenerator().getCookiePath();
+            if (StringUtils.isBlank(path)) {
+                LOGGER.debug("Setting path for cookies for OAuth distributed session cookie generator to: [{}]", cookiePath);
+                getOAuthConfigurationContext().getOauthDistributedSessionCookieGenerator().setCookiePath(cookiePath);
+            } else {
+                LOGGER.trace("OAuth distributed cookie domain is [{}] with path [{}]",
+                    getOAuthConfigurationContext().getOauthDistributedSessionCookieGenerator().getCookieDomain(), path);
+            }
         }
-        return validator.validate(context);
     }
 
     /**
@@ -152,6 +140,18 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
      */
     protected OAuthRegisteredService getRegisteredServiceByClientId(final String clientId) {
         return OAuth20Utils.getRegisteredOAuthServiceByClientId(getOAuthConfigurationContext().getServicesManager(), clientId);
+    }
+
+
+    /**
+     * Is the request authenticated?
+     *
+     * @param manager the Profile Manager
+     * @return whether the request is authenticated or not
+     */
+    private static boolean isRequestAuthenticated(final ProfileManager manager) {
+        val opt = manager.get(true);
+        return opt.isPresent();
     }
 
     /**
@@ -273,5 +273,3 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
         return builder.build(context, clientId, holder);
     }
 }
-
-
