@@ -24,7 +24,6 @@ echo "Exploding WAR"
 
 echo "Running CAS Overlay with bootRun"
 ./gradlew bootRun -Dserver.ssl.enabled=false -Dserver.port=8080 &
-
 pid=$!
 echo "Launched CAS with pid ${pid} using bootRun. Waiting for CAS server to come online..."
 until curl -k -L --output /dev/null --silent --fail http://localhost:8080/cas/login; do
@@ -32,6 +31,9 @@ until curl -k -L --output /dev/null --silent --fail http://localhost:8080/cas/lo
     sleep 3
 done
 echo -e "\n\nReady!"
+
+echo "Building Container Image via Spring Boot"
+./gradlew bootBuildImage
 
 echo "Build Container Image w/ Docker"
 ./docker-build.sh

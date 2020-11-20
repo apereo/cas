@@ -66,7 +66,7 @@ apply from: rootProject.file("gradle/dockerjib.gradle")
 
 dependencyManagement {
     imports {
-        mavenBom "org.apereo.cas:cas-server-support-bom:${casServerVersion}"
+        mavenBom "org.apereo.cas:cas-server-support-bom:${project.ext.casServerVersion}"
     }
 }
 
@@ -77,8 +77,8 @@ java {
 }
 
 dependencies {
-    compileOnly "org.apereo.cas:cas-server-core-api-configuration-model"
-    compileOnly "org.apereo.cas:cas-server-webapp-init"
+    implementation "org.apereo.cas:cas-server-core-api-configuration-model:${project.ext.casServerVersion}"
+    implementation "org.apereo.cas:cas-server-webapp-init:${project.ext.casServerVersion}"
 
     if (project.hasProperty("casModules")) {
         def dependencies = project.getProperty("casModules").split(",")
