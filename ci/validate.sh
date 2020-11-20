@@ -1,10 +1,12 @@
 #!/bin/bash
 
 java -jar app/build/libs/app.jar &
+pid=$!
 sleep 30
 mkdir tmp
 cd tmp
 curl http://localhost:8080/starter.tgz | tar -xzvf -
+kill -9 $pid
 
 echo "Running CAS Overlay with bootRun"
 ./gradlew bootRun --no-daemon -Dserver.ssl.enabled=false -Dserver.port=8090 &
