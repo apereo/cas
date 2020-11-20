@@ -1,7 +1,7 @@
 package org.apereo.cas.qr.web.flow;
 
 import org.apereo.cas.otp.util.QRUtils;
-import org.apereo.cas.qr.web.QRAuthenticationChannelController;
+import org.apereo.cas.qr.QRAuthenticationConstants;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +29,7 @@ public class QRAuthenticationGenerateCodeAction extends AbstractAction {
         val flowScope = requestContext.getFlowScope();
         flowScope.put("qrCode", qrCodeBase64);
         flowScope.put("qrChannel", id);
-        flowScope.put("qrPrefix", QRAuthenticationChannelController.QR_SIMPLE_BROKER_DESTINATION_PREFIX);
+        flowScope.put("qrPrefix", QRAuthenticationConstants.QR_SIMPLE_BROKER_DESTINATION_PREFIX);
         return null;
     }
 }

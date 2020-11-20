@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.qr.validation.QRAuthenticationTokenValidationRequest;
 import org.apereo.cas.qr.validation.QRAuthenticationTokenValidatorService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.LoggingUtils;
@@ -50,7 +51,14 @@ public class QRAuthenticationTokenAuthenticationHandler extends AbstractPreAndPo
         val tokenCredential = (QRAuthenticationTokenCredential) credential;
         try {
             LOGGER.debug("Received token [{}]", tokenCredential.getId());
-            val result = tokenValidatorService.validate(Optional.empty(), tokenCredential.getId());
+
+            val request = QRAuthenticationTokenValidationRequest.builder()
+                .token(tokenCredential.getId())
+                .registeredService(Optional.empty())
+                .deviceId(tokenCredential.getDeviceId())
+                .build();
+
+            val result = tokenValidatorService.validate(request);
             val principal = result.getAuthentication().getPrincipal();
             return createHandlerResult(tokenCredential, principal);
         } catch (final Exception e) {

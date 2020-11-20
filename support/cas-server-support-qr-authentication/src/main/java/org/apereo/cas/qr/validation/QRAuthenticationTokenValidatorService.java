@@ -1,9 +1,5 @@
 package org.apereo.cas.qr.validation;
 
-import org.apereo.cas.services.RegisteredService;
-
-import java.util.Optional;
-
 /**
  * This is {@link QRAuthenticationTokenValidatorService}.
  *
@@ -16,9 +12,8 @@ public interface QRAuthenticationTokenValidatorService {
     /**
      * Validate.
      *
-     * @param service the service
-     * @param token   the token
+     * @param request the request
      * @return validation result
      */
-    QRAuthenticationTokenValidationResult validate(Optional<RegisteredService> service, String token);
+    QRAuthenticationTokenValidationResult validate(QRAuthenticationTokenValidationRequest request);
 }

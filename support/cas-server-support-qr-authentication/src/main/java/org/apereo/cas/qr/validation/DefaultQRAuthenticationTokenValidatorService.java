@@ -3,18 +3,20 @@ package org.apereo.cas.qr.validation;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.qr.QRAuthenticationConstants;
+import org.apereo.cas.qr.authentication.QRAuthenticationDeviceRepository;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.DateTimeUtils;
 
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 /**
  * This is {@link QRAuthenticationTokenValidatorService}.
@@ -31,9 +33,12 @@ public class DefaultQRAuthenticationTokenValidatorService implements QRAuthentic
 
     private final CasConfigurationProperties casProperties;
 
+    private final QRAuthenticationDeviceRepository deviceRepository;
+
     @Override
-    public QRAuthenticationTokenValidationResult validate(final Optional<RegisteredService> service, final String token) {
-        val claims = jwtBuilder.unpack(service, token);
+    @SneakyThrows
+    public QRAuthenticationTokenValidationResult validate(final QRAuthenticationTokenValidationRequest request) {
+        val claims = jwtBuilder.unpack(request.getRegisteredService(), request.getToken());
         LOGGER.trace("Unpacked QR token as [{}]", claims);
 
         val tgt = centralAuthenticationService.getTicket(claims.getJWTID(), TicketGrantingTicket.class);
@@ -58,6 +63,17 @@ public class DefaultQRAuthenticationTokenValidatorService implements QRAuthentic
                 claims.getIssuer(), casProperties.getServer().getPrefix());
             throw new AuthenticationException(message);
         }
+
+        val tokenDeviceId = claims.getStringClaim(QRAuthenticationConstants.QR_AUTHENTICATION_DEVICE_ID);
+        if (!StringUtils.equals(tokenDeviceId, request.getDeviceId())) {
+            throw new AuthenticationException("Request is assigned an invalid device identifier");
+        }
+
+        if (!deviceRepository.isAuthorizedDeviceFor(request.getDeviceId(), claims.getSubject())) {
+            val message = String.format("Token is not authorized for device identifier [%s]", request.getDeviceId());
+            throw new AuthenticationException(message);
+        }
+
         return QRAuthenticationTokenValidationResult.builder()
             .authentication(authentication)
             .build();

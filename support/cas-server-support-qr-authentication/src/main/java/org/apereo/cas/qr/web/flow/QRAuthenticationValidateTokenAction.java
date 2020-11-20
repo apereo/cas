@@ -27,8 +27,10 @@ public class QRAuthenticationValidateTokenAction extends AbstractAction {
     protected Event doExecute(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val token = request.getParameter(TokenConstants.PARAMETER_NAME_TOKEN);
-        LOGGER.debug("Received QR token [{}]", token);
-        WebUtils.putCredential(requestContext, new QRAuthenticationTokenCredential(token));
+        val deviceId = request.getParameter("deviceId");
+        LOGGER.debug("Received QR token [{}] with device identifier [{}]", token, deviceId);
+        val credential = new QRAuthenticationTokenCredential(token, deviceId);
+        WebUtils.putCredential(requestContext, credential);
         return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_FINALIZE);
     }
 }

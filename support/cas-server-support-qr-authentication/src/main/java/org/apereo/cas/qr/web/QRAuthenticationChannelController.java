@@ -1,5 +1,7 @@
 package org.apereo.cas.qr.web;
 
+import org.apereo.cas.qr.QRAuthenticationConstants;
+import org.apereo.cas.qr.validation.QRAuthenticationTokenValidationRequest;
 import org.apereo.cas.qr.validation.QRAuthenticationTokenValidatorService;
 import org.apereo.cas.token.TokenConstants;
 import org.apereo.cas.util.LoggingUtils;
@@ -29,16 +31,6 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 public class QRAuthenticationChannelController {
-    /**
-     * Topic name for QR authentication.
-     */
-    public static final String QR_SIMPLE_BROKER_DESTINATION_PREFIX = "/qrtopic";
-
-    /**
-     * The Qr authentication channel id.
-     */
-    static final String QR_AUTHENTICATION_CHANNEL_ID = "QR_AUTHENTICATION_CHANNEL_ID";
-
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     private final MessageSendingOperations<String> messageTemplate;
@@ -56,25 +48,41 @@ public class QRAuthenticationChannelController {
         val payload = message.getPayload();
         LOGGER.trace("Received payload [{}]", payload);
         val nativeHeaders = Objects.requireNonNull(message.getHeaders().get("nativeHeaders", LinkedMultiValueMap.class));
-        if (!nativeHeaders.containsKey(QR_AUTHENTICATION_CHANNEL_ID)) {
-            LOGGER.warn("Unable to locate [{}] in the message header", QR_AUTHENTICATION_CHANNEL_ID);
-        } else {
-            val channelId = Objects.requireNonNull(nativeHeaders.get(QR_AUTHENTICATION_CHANNEL_ID)).get(0);
-            val endpoint = String.format("%s/%s/verify", QR_SIMPLE_BROKER_DESTINATION_PREFIX, channelId);
-            try {
-                LOGGER.debug("Current channel id is [{}]", channelId);
-                val resultMap = MAPPER.readValue(payload, new TypeReference<Map<String, String>>() {
-                });
-                val token = resultMap.get(TokenConstants.PARAMETER_NAME_TOKEN);
-                tokenValidatorService.validate(Optional.empty(), token);
-                LOGGER.debug("Current channel id is [{}]", channelId);
-                convertAndSend(endpoint, Map.of("success", Boolean.TRUE.toString(),
-                    TokenConstants.PARAMETER_NAME_TOKEN, token));
-                return true;
-            } catch (final Exception e) {
-                LoggingUtils.error(LOGGER, e);
-                convertAndSend(endpoint, Map.of("error", "cas.authn.qr.fail"));
-            }
+        if (!nativeHeaders.containsKey(QRAuthenticationConstants.QR_AUTHENTICATION_CHANNEL_ID)) {
+            LOGGER.warn("Unable to locate [{}] in the message header", QRAuthenticationConstants.QR_AUTHENTICATION_CHANNEL_ID);
+            return false;
+        }
+        if (!nativeHeaders.containsKey(QRAuthenticationConstants.QR_AUTHENTICATION_DEVICE_ID)) {
+            LOGGER.warn("Unable to locate [{}] in the message header", QRAuthenticationConstants.QR_AUTHENTICATION_DEVICE_ID);
+            return false;
+        }
+
+        val channelId = Objects.requireNonNull(nativeHeaders.get(QRAuthenticationConstants.QR_AUTHENTICATION_CHANNEL_ID)).get(0);
+        val endpoint = String.format("%s/%s/verify", QRAuthenticationConstants.QR_SIMPLE_BROKER_DESTINATION_PREFIX, channelId);
+        try {
+            LOGGER.debug("Current channel id is [{}]", channelId);
+            val resultMap = MAPPER.readValue(payload, new TypeReference<Map<String, String>>() {
+            });
+            val token = resultMap.get(TokenConstants.PARAMETER_NAME_TOKEN);
+
+            val deviceId = Objects.requireNonNull(nativeHeaders.get(QRAuthenticationConstants.QR_AUTHENTICATION_DEVICE_ID)).get(0).toString();
+            val validationRequest = QRAuthenticationTokenValidationRequest.builder()
+                .deviceId(deviceId)
+                .token(token)
+                .registeredService(Optional.empty())
+                .build();
+
+            tokenValidatorService.validate(validationRequest);
+            LOGGER.debug("Current channel id is [{}]", channelId);
+            val body = Map.of("success", Boolean.TRUE.toString(),
+                TokenConstants.PARAMETER_NAME_TOKEN, token,
+                "deviceId", deviceId);
+
+            convertAndSend(endpoint, body);
+            return true;
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+            convertAndSend(endpoint, Map.of("error", "cas.authn.qr.fail"));
         }
         return false;
     }

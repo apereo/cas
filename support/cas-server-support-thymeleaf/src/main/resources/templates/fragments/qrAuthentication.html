@@ -77,6 +77,7 @@
         
         <form method="post" id="qrform">
             <input id="token" name="token" type="hidden" />
+            <input id="deviceId" name="deviceId" type="hidden" />
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
             <input type="hidden" name="_eventId" value="validate"/>
         </form>
@@ -101,6 +102,7 @@
                             stompClient.disconnect();
                             $("#qrerror").hide();
                             $("#qrform #token").val(body.token);
+                            $("#qrform #deviceId").val(body.deviceId);
                             $("#qrform").submit();
                         }
                     });
