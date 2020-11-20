@@ -47,6 +47,7 @@ public class QRAuthenticationValidateTokenActionTests {
         ExternalContextHolder.setExternalContext(context.getExternalContext());
 
         request.addParameter(TokenConstants.PARAMETER_NAME_TOKEN, "token");
+        request.addParameter("deviceId", "abcdefgh987654321");
         val result = qrAuthenticationValidateWebSocketChannelAction.execute(context);
         assertEquals(result.getId(), CasWebflowConstants.TRANSITION_ID_FINALIZE);
         assertTrue(WebUtils.getCredential(context) instanceof QRAuthenticationTokenCredential);
