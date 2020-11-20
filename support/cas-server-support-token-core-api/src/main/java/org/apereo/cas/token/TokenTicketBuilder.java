@@ -3,6 +3,9 @@ package org.apereo.cas.token;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * This is {@link TokenTicketBuilder}.
  *
@@ -23,7 +26,8 @@ public interface TokenTicketBuilder {
      * Build token for a ticket-granting ticket.
      *
      * @param ticketGrantingTicket the ticket granting ticket
+     * @param claims               the claims
      * @return the string
      */
-    String build(TicketGrantingTicket ticketGrantingTicket);
+    String build(TicketGrantingTicket ticketGrantingTicket, Map<String, List<Object>> claims);
 }

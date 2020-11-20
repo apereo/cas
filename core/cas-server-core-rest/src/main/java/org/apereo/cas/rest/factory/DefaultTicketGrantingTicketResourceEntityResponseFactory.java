@@ -64,7 +64,7 @@ public class DefaultTicketGrantingTicketResourceEntityResponseFactory implements
         val headers = new HttpHeaders();
         headers.setLocation(ticketReference);
         val response = getResponse(ticketGrantingTicket, request, ticketReference, headers);
-        val entity = new ResponseEntity<String>(response, headers, HttpStatus.CREATED);
+        val entity = new ResponseEntity<>(response, headers, HttpStatus.CREATED);
         LOGGER.debug("Created response entity [{}]", entity);
         return entity;
     }

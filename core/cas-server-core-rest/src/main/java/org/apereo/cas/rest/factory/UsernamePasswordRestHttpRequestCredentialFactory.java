@@ -11,7 +11,6 @@ import lombok.val;
 import org.springframework.util.MultiValueMap;
 
 import javax.servlet.http.HttpServletRequest;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,9 +24,6 @@ import java.util.List;
 @Getter
 @Setter
 public class UsernamePasswordRestHttpRequestCredentialFactory implements RestHttpRequestCredentialFactory {
-    private static final String USERNAME = "username";
-    private static final String PASSWORD = "password";
-
     private int order = Integer.MAX_VALUE;
 
     @Override
@@ -36,10 +32,10 @@ public class UsernamePasswordRestHttpRequestCredentialFactory implements RestHtt
             LOGGER.debug("Skipping [{}] because the requestBody is null or empty", getClass().getSimpleName());
             return new ArrayList<>(0);
         }
-        val username = requestBody.getFirst(USERNAME);
-        val password = requestBody.getFirst(PASSWORD);
+        val username = requestBody.getFirst(RestHttpRequestCredentialFactory.PARAMETER_USERNAME);
+        val password = requestBody.getFirst(RestHttpRequestCredentialFactory.PARAMETER_PASSWORD);
         if (username == null || password == null) {
-            LOGGER.debug("Invalid payload. 'username' and 'password' form fields are required.");
+            LOGGER.debug("Invalid payload; missing required fields.");
             return new ArrayList<>(0);
         }
         val c = new UsernamePasswordCredential(username, password);
