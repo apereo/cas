@@ -63,7 +63,7 @@ initializr:
       default: false
       action: /starter.tgz
   boot-versions:
-    - id: 2.3.5.RELEASE
+    - id: 2.3.6.RELEASE
       default: true
   env:
     force-ssl: true
