@@ -1,6 +1,3 @@
 {
-  "dependencies": "core",
-  "properties": [
-    "--cas.service-registry.init-from-json=true"
-  ]
+  "dependencies": "gauth"
 }

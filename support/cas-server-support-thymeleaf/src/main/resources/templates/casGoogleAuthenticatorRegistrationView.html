@@ -142,13 +142,13 @@
                 </td>
 
                 <td>
-                    <div class="my-2">
+                    <div class="my-2" id="seckeypanel">
                         <p th:utext="#{screen.authentication.gauth.key(${key.getSecretKey()})}">Secret key to register is...</p>
                     </div>
                     <hr>
                     <p>Scratch codes:</p>
                     <div class="d-flex align-items-start mb-4">
-                        <div class="mdc-chip-set" role="grid">
+                        <div class="mdc-chip-set" role="grid" id="scratchcodes">
                             <div th:each="code : ${key.getScratchCodes()}" class="mdc-chip" role="row">
                                 <div class="mdc-chip__ripple"></div>
                                 <span role="gridcell">
