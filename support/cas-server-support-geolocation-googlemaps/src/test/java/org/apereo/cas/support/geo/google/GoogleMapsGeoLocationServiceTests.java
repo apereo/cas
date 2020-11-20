@@ -47,7 +47,7 @@ public class GoogleMapsGeoLocationServiceTests {
     }
 
     @Test
-    public void verifyGeocode() throws Exception {
+    public void verifyGeocode() {
         val service = new GoogleMapsGeoLocationService(mock(GeoApiContext.class)) {
             @Override
             protected GeocodingResult[] reverseGeocode(final LatLng latlng) {
