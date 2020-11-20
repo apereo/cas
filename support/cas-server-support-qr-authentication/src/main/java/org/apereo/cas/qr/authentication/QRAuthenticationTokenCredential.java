@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -17,12 +18,15 @@ import lombok.ToString;
 @ToString(callSuper = true)
 @Getter
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @EqualsAndHashCode(callSuper = true)
 public class QRAuthenticationTokenCredential extends BasicIdentifiableCredential {
     private static final long serialVersionUID = -8234522701132144037L;
 
-    public QRAuthenticationTokenCredential(final String token) {
+    private String deviceId;
+
+    public QRAuthenticationTokenCredential(final String token, @NonNull final String deviceId) {
         super(token);
+        this.deviceId = deviceId;
     }
 }

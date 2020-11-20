@@ -11,12 +11,12 @@ import org.apereo.cas.util.RegexUtilsTests;
 import org.apereo.cas.util.ResourceUtilsTests;
 import org.apereo.cas.util.ScriptingUtilsTests;
 import org.apereo.cas.util.SystemUtilsTests;
-import org.apereo.cas.util.cipher.BaseStringCipherExecutorTests;
 import org.apereo.cas.util.cipher.BinaryCipherExecutorTests;
 import org.apereo.cas.util.cipher.DefaultTicketCipherExecutorTests;
 import org.apereo.cas.util.cipher.JsonWebKeySetStringCipherExecutorTests;
 import org.apereo.cas.util.cipher.ProtocolTicketCipherExecutorTests;
 import org.apereo.cas.util.cipher.RsaKeyPairCipherExecutorTests;
+import org.apereo.cas.util.cipher.StringCipherExecutorTests;
 import org.apereo.cas.util.cipher.TicketGrantingCookieCipherExecutorTests;
 import org.apereo.cas.util.cipher.WebflowConversationStateCipherExecutorTests;
 import org.apereo.cas.util.gen.ChainingPrincipalNameTransformerTests;
@@ -57,7 +57,7 @@ import org.junit.runner.RunWith;
     EncodingUtilsTests.class,
     HexRandomStringGeneratorTests.class,
     RegexUtilsTests.class,
-    BaseStringCipherExecutorTests.class,
+    StringCipherExecutorTests.class,
     BinaryCipherExecutorTests.class,
     ResourceUtilsTests.class,
     ScriptingUtilsTests.class,

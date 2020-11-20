@@ -1,6 +1,7 @@
 package org.apereo.cas.tokens;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
 import org.apereo.cas.token.TokenConstants;
 
 import com.nimbusds.jwt.JWTClaimsSet;
@@ -54,6 +55,10 @@ public class JwtTicketGrantingTicketResourceEntityResponseFactoryTests extends B
         val jwt = this.tokenCipherExecutor.decode(response.getBody());
         val claims = JWTClaimsSet.parse(jwt.toString());
         assertEquals(claims.getSubject(), tgt.getAuthentication().getPrincipal().getId());
+        assertEquals(2, claims.getStringArrayClaim("customParameter").length);
+        assertNull(claims.getStringClaim(TokenConstants.PARAMETER_NAME_TOKEN));
+        assertNull(claims.getStringClaim(RestHttpRequestCredentialFactory.PARAMETER_USERNAME));
+        assertNull(claims.getStringClaim(RestHttpRequestCredentialFactory.PARAMETER_PASSWORD));
         assertEquals(2, claims.getStringArrayClaim("customParameter").length);
     }
 

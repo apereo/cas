@@ -7,6 +7,8 @@ import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandl
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.qr.QRAuthenticationConstants;
+import org.apereo.cas.qr.authentication.QRAuthenticationDeviceRepository;
 import org.apereo.cas.qr.authentication.QRAuthenticationTokenAuthenticationHandler;
 import org.apereo.cas.qr.authentication.QRAuthenticationTokenCredential;
 import org.apereo.cas.qr.validation.DefaultQRAuthenticationTokenValidatorService;
@@ -119,7 +121,14 @@ public class QRAuthenticationConfiguration implements WebSocketMessageBrokerConf
     @RefreshScope
     public QRAuthenticationTokenValidatorService qrAuthenticationTokenValidatorService() {
         return new DefaultQRAuthenticationTokenValidatorService(jwtBuilder.getObject(),
-            centralAuthenticationService.getObject(), casProperties);
+            centralAuthenticationService.getObject(), casProperties, qrAuthenticationDeviceRepository());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "qrAuthenticationDeviceRepository")
+    @RefreshScope
+    public QRAuthenticationDeviceRepository qrAuthenticationDeviceRepository() {
+        return QRAuthenticationDeviceRepository.permitAll();
     }
 
     @ConditionalOnMissingBean(name = "qrAuthenticationPrincipalFactory")
@@ -158,7 +167,7 @@ public class QRAuthenticationConfiguration implements WebSocketMessageBrokerConf
 
     @Override
     public void configureMessageBroker(final MessageBrokerRegistry config) {
-        config.enableSimpleBroker(QRAuthenticationChannelController.QR_SIMPLE_BROKER_DESTINATION_PREFIX);
+        config.enableSimpleBroker(QRAuthenticationConstants.QR_SIMPLE_BROKER_DESTINATION_PREFIX);
         config.setApplicationDestinationPrefixes("/qr");
     }
 }
