@@ -769,6 +769,7 @@ jobs:
           - webauthn-primary-authn
           - authn-throttle
           - qrauthn-login
+          - gauth-register
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
