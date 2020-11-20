@@ -22,6 +22,7 @@ public class QRAuthenticationDeviceRepositoryTests {
         permitAll.removeDevice(UUID.randomUUID().toString());
         permitAll.removeAll();
         permitAll.authorizeDeviceFor("any", "any");
+        assertTrue(permitAll.getAuthorizedDevicesFor("any").isEmpty());
         assertTrue(permitAll.isAuthorizedDeviceFor("anything", "anyuser"));
     }
 

@@ -14,6 +14,7 @@ import org.apereo.cas.qr.authentication.QRAuthenticationTokenCredential;
 import org.apereo.cas.qr.validation.DefaultQRAuthenticationTokenValidatorService;
 import org.apereo.cas.qr.validation.QRAuthenticationTokenValidatorService;
 import org.apereo.cas.qr.web.QRAuthenticationChannelController;
+import org.apereo.cas.qr.web.QRAuthenticationDeviceRepositoryEndpoint;
 import org.apereo.cas.qr.web.flow.QRAuthenticationGenerateCodeAction;
 import org.apereo.cas.qr.web.flow.QRAuthenticationValidateTokenAction;
 import org.apereo.cas.qr.web.flow.QRAuthenticationWebflowConfigurer;
@@ -26,6 +27,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -157,6 +159,12 @@ public class QRAuthenticationConfiguration implements WebSocketMessageBrokerConf
         };
     }
 
+    @Bean
+    @ConditionalOnAvailableEndpoint
+    public QRAuthenticationDeviceRepositoryEndpoint qrAuthenticationDeviceRepositoryEndpoint() {
+        return new QRAuthenticationDeviceRepositoryEndpoint(casProperties, qrAuthenticationDeviceRepository());
+    }
+    
     @Override
     public void registerStompEndpoints(final StompEndpointRegistry registry) {
         registry.addEndpoint("/qr-websocket")
