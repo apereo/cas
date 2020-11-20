@@ -1,5 +1,7 @@
 package org.apereo.cas.qr.authentication;
 
+import java.util.List;
+
 /**
  * This is {@link QRAuthenticationDeviceRepository}.
  *
@@ -47,5 +49,15 @@ public interface QRAuthenticationDeviceRepository {
      * Remove all.
      */
     default void removeAll() {
+    }
+
+    /**
+     * Gets authorized devices for user.
+     *
+     * @param subject the subject
+     * @return the authorized devices for
+     */
+    default List<String> getAuthorizedDevicesFor(final String subject) {
+        return List.of();
     }
 }
