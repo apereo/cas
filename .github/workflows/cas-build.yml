@@ -770,6 +770,7 @@ jobs:
           - authn-throttle
           - qrauthn-login
           - gauth-register
+          - duo-websdk-login
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
