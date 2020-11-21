@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.qr;
 
+import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -39,4 +40,17 @@ public class QRAuthenticationProperties implements Serializable {
      * allowed (empty list).
      */
     private List<String> allowedOrigins = new ArrayList<>();
+
+    /**
+     * Track registered devices in a repository backed by a JSON resource.
+     */
+    private Json json = new Json();
+
+    @RequiresModule(name = "cas-server-support-qr-authentication", automated = true)
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    public static class Json extends SpringResourceProperties {
+        private static final long serialVersionUID = 7179027843747126083L;
+    }
 }

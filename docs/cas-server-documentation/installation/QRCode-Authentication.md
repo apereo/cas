@@ -56,11 +56,12 @@ The following code snippet demonstrates this process as an example:
 ```javascript 
 let socket = new SockJS('https://sso.example.org/cas/qr-websocket');
 let stompClient = Stomp.over(socket);
-let payload = JSON.stringify({'token': '...'});
+let payload = JSON.stringify({'token': '...'});   
 let channelId = "...";      
 let deviceId = "...";
 stompClient.send("/qr/accept", 
-    {'QR_AUTHENTICATION_CHANNEL_ID': channelId, 'QR_AUTHENTICATION_DEVICE_ID': deviceId}, 
+    {'QR_AUTHENTICATION_CHANNEL_ID': channelId, 
+     'QR_AUTHENTICATION_DEVICE_ID': deviceId}, 
     payload);
 ```   
 
@@ -73,7 +74,7 @@ import ua.naiksoftware.stomp.dto.*;
 
 String jwt = "...";
 JSONStringer jsonWebToken = new JSONStringer().object()
-    .key("token").value(jwt).endObject();
+  .key("token").value(jwt).endObject();
 
 String channel = "...";      
 String deviceId = "...";
@@ -82,12 +83,13 @@ headers.add(new StompHeader("QR_AUTHENTICATION_CHANNEL_ID", channel));
 headers.add(new StompHeader("QR_AUTHENTICATION_DEVICE_ID", deviceId));
 headers.add(new StompHeader(StompHeader.DESTINATION, "/qr/accept"));
 
+// wss://10.0.2.2 for ssl and localhost
 StompClient client = Stomp.over(Stomp.ConnectionProvider.OKHTTP, 
-    "wss://10.0.2.2:8443/cas/qr-websocket/websocket", null, httpClient);
+  "wss://10.0.2.2:8443/cas/qr-websocket/websocket", null, httpClient);
 
 client.connect();
 StompMessage stompMessage = 
-    new StompMessage(StompCommand.SEND, headers, jsonWebToken.toString());
+  new StompMessage(StompCommand.SEND, headers, jsonWebToken.toString());
 client.send(stompMessage).subscribe();
 ```
 
@@ -118,9 +120,14 @@ external registration mechanism or via available CAS-provided APIs.
 By default, all devices can authenticate using the QR code. Different device repository
 implementations can be supplied using one of the strategies outlined below.
 
+### JSON
+
+Authorized devices can be managed and tracked inside a single JSON resource, whose path is taught to CAS via settings. To see the 
+relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#qr-authentication).
+
 ### Custom
 
-Provide an implementation of `QRAuthenticationDeviceRepository` to define a custom strategy for managing registered devices.
+Provide the appropriate bean implementation below to define a custom strategy for managing registered devices.
 
 ```java 
 @Bean

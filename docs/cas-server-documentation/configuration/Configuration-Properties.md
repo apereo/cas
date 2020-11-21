@@ -1749,6 +1749,15 @@ topic, [please review this guide](../installation/QRCode-Authentication.html).
 # cas.authn.qr.allowed-origins=*
 ```
 
+### JSON Device Repository
+
+Attempt to login via a mobile device via a QR code. To learn more about this 
+topic, [please review this guide](../installation/QRCode-Authentication.html).
+
+```properties
+# cas.authn.qr.json.location=file:/etc/cas/config/qrdevices.json
+```
+
 ## Risk-based Authentication
 
 Evaluate suspicious authentication requests and take action. To learn 

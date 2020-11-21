@@ -35,7 +35,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Authentication")
-@SpringBootTest(classes = BaseQRAuthenticationTokenValidatorServiceTests.SharedTestConfiguration.class)
+@SpringBootTest(classes = BaseQRAuthenticationTokenValidatorServiceTests.SharedTestConfiguration.class,
+    properties = "cas.authn.qr.json.location=file:/tmp/cas-qr-devices.json")
 public class DefaultQRAuthenticationTokenValidatorServiceTests {
     @Autowired
     @Qualifier("tokenTicketJwtBuilder")
@@ -60,7 +61,7 @@ public class DefaultQRAuthenticationTokenValidatorServiceTests {
     public void beforeEach() {
         qrAuthenticationDeviceRepository.removeAll();
     }
-    
+
     @Test
     public void verifyUnknownTicket() {
         val payload = JwtBuilder.JwtRequest.builder()
@@ -143,13 +144,37 @@ public class DefaultQRAuthenticationTokenValidatorServiceTests {
     }
 
     @Test
+    public void verifyUnauhzDevice() {
+        val tgt = new MockTicketGrantingTicket("casuser");
+        ticketRegistry.addTicket(tgt);
+        val deviceId = UUID.randomUUID().toString();
+        val payload = JwtBuilder.JwtRequest.builder()
+            .subject(tgt.getAuthentication().getPrincipal().getId())
+            .jwtId(tgt.getId())
+            .issuer(casProperties.getServer().getPrefix())
+            .serviceAudience("https://example.com/normal/")
+            .validUntilDate(DateTimeUtils.dateOf(LocalDate.now(Clock.systemUTC()).plusDays(1)))
+            .attributes(Map.of(QRAuthenticationConstants.QR_AUTHENTICATION_DEVICE_ID, List.of(deviceId)))
+            .build();
+        val jwt = jwtBuilder.build(payload);
+
+        val request = QRAuthenticationTokenValidationRequest.builder()
+            .registeredService(Optional.empty())
+            .token(jwt)
+            .deviceId(deviceId)
+            .build();
+        assertThrows(AuthenticationException.class,
+            () -> qrAuthenticationTokenValidatorService.validate(request));
+    }
+
+    @Test
     public void verifySuccess() {
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
 
         val deviceId = UUID.randomUUID().toString();
         qrAuthenticationDeviceRepository.authorizeDeviceFor(deviceId, tgt.getAuthentication().getPrincipal().getId());
-        
+
         val payload = JwtBuilder.JwtRequest.builder()
             .subject(tgt.getAuthentication().getPrincipal().getId())
             .jwtId(tgt.getId())
@@ -195,5 +220,5 @@ public class DefaultQRAuthenticationTokenValidatorServiceTests {
         assertThrows(AuthenticationException.class,
             () -> qrAuthenticationTokenValidatorService.validate(request));
     }
-    
+
 }
