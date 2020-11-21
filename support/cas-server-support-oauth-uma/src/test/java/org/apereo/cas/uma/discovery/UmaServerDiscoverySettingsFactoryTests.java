@@ -25,7 +25,6 @@ public class UmaServerDiscoverySettingsFactoryTests extends BaseUmaEndpointContr
         assertNotNull(discoverySettings.getRequestingPartyClaimsEndpoint());
         assertNotNull(discoverySettings.getResourceSetRegistrationEndpoint());
         assertNotNull(discoverySettings.getTokenEndpoint());
-
     }
 
 }

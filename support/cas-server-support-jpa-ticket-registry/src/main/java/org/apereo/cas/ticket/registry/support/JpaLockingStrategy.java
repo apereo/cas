@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.registry.support;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,7 @@ import java.time.ZonedDateTime;
 @Slf4j
 @ToString
 @Getter
+@RequiredArgsConstructor
 public class JpaLockingStrategy implements LockingStrategy {
     /**
      * Transactional entity manager from Spring context.
@@ -43,52 +45,16 @@ public class JpaLockingStrategy implements LockingStrategy {
      * a single application.
      */
     private final String applicationId;
+
     /**
      * Unique identifier that identifies the client using this lock instance.
      */
     private final String uniqueId;
+
     /**
      * Amount of time in seconds lock may be held.
      */
     private final long lockTimeout;
-
-    /**
-     * @param applicationId Application identifier that identifies a row in the lock
-     *                      table for which multiple clients vie to hold the lock.
-     *                      This must be the same for all clients contending for a
-     *                      particular lock.
-     * @param uniqueId      Identifier used to identify this instance in a row of the
-     *                      lock table.  Must be unique across all clients vying for
-     *                      locks for a given application ID.
-     * @param lockTimeout   Maximum amount of time in seconds lock may be held.
-     *                      A value of zero indicates that locks are held indefinitely.
-     *                      Use of a reasonable timeout facilitates recovery from node failures,
-     *                      so setting to zero is discouraged.
-     */
-    public JpaLockingStrategy(final String applicationId, final String uniqueId, final long lockTimeout) {
-        this.applicationId = applicationId;
-        this.uniqueId = uniqueId;
-        if (lockTimeout < 0) {
-            throw new IllegalArgumentException("Lock timeout must be non-negative.");
-        }
-        this.lockTimeout = lockTimeout;
-    }
-
-    @Override
-    public void release() {
-        val lock = this.entityManager.find(Lock.class, this.applicationId, LockModeType.OPTIMISTIC);
-        if (lock == null) {
-            return;
-        }
-        val owner = lock.getUniqueId();
-        if (!this.uniqueId.equals(owner)) {
-            throw new IllegalStateException("Cannot release lock owned by " + owner);
-        }
-        lock.setUniqueId(null);
-        lock.setExpirationDate(null);
-        LOGGER.debug("Releasing [{}] lock held by [{}].", this.applicationId, this.uniqueId);
-        this.entityManager.persist(lock);
-    }
 
     /**
      * Acquire the lock object.
@@ -148,6 +114,22 @@ public class JpaLockingStrategy implements LockingStrategy {
         }
     }
 
+    @Override
+    public void release() {
+        val lock = this.entityManager.find(Lock.class, this.applicationId, LockModeType.OPTIMISTIC);
+        if (lock == null) {
+            return;
+        }
+        val owner = lock.getUniqueId();
+        if (!this.uniqueId.equals(owner)) {
+            throw new IllegalStateException("Cannot release lock owned by " + owner);
+        }
+        lock.setUniqueId(null);
+        lock.setExpirationDate(null);
+        LOGGER.debug("Releasing [{}] lock held by [{}].", this.applicationId, this.uniqueId);
+        this.entityManager.persist(lock);
+    }
+
     /**
      * Describes a database lock.
      *
@@ -161,9 +143,11 @@ public class JpaLockingStrategy implements LockingStrategy {
     public static class Lock implements Serializable {
 
         private static final long serialVersionUID = -5750740484289616656L;
+
         @Version
         @Column(name = "lockVer", columnDefinition = "integer DEFAULT 0", nullable = false)
         private final Long version = 0L;
+
         /**
          * column name that holds application identifier.
          */
@@ -171,11 +155,13 @@ public class JpaLockingStrategy implements LockingStrategy {
         @Id
         @Column(name = "application_id")
         private String applicationId;
+
         /**
          * Database column name that holds unique identifier.
          */
         @Column(name = "unique_id")
         private String uniqueId;
+
         /**
          * Database column name that holds expiration date.
          */

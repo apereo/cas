@@ -24,6 +24,7 @@ public class OidcGroovyWebFingerUserInfoRepositoryTests {
         assertNotNull(results);
         assertTrue(results.containsKey("email"));
         assertEquals("cas@example.org", results.get("email"));
+        repo.destroy();
     }
 
     @Test
@@ -33,5 +34,6 @@ public class OidcGroovyWebFingerUserInfoRepositoryTests {
         assertNotNull(results);
         assertTrue(results.containsKey("username"));
         assertEquals("cas", results.get("username"));
+        repo.destroy();
     }
 }

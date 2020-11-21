@@ -3,7 +3,6 @@ package org.apereo.cas.mongo;
 import org.apereo.cas.configuration.model.support.mongo.BaseMongoDbProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.LoggingUtils;
 
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
@@ -18,6 +17,7 @@ import com.mongodb.connection.ConnectionPoolSettings;
 import com.mongodb.connection.ServerSettings;
 import com.mongodb.connection.SocketSettings;
 import com.mongodb.connection.SslSettings;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -218,6 +218,10 @@ public class MongoDbConnectionFactory {
         return new MongoTemplate(mongoDbFactory, mappingMongoConverter(mongoDbFactory));
     }
 
+    protected Collection<String> getMappingBasePackages() {
+        return CollectionUtils.wrap(getClass().getPackage().getName());
+    }
+
     private MongoMappingContext mongoMappingContext() {
         val mappingContext = new MongoMappingContext();
         mappingContext.setInitialEntitySet(getInitialEntitySet());
@@ -233,14 +237,6 @@ public class MongoDbConnectionFactory {
         converter.setMapKeyDotReplacement("_#_");
         converter.afterPropertiesSet();
         return converter;
-    }
-
-    private static MongoDatabaseFactory mongoDbFactory(final MongoClient mongo, final BaseMongoDbProperties props) {
-        if (StringUtils.isNotBlank(props.getDatabaseName())) {
-            return new SimpleMongoClientDatabaseFactory(mongo, props.getDatabaseName());
-        }
-        val connectionString = new ConnectionString(props.getClientUri());
-        return new SimpleMongoClientDatabaseFactory(mongo, Objects.requireNonNull(connectionString.getDatabase()));
     }
 
     private Set<Class<?>> getInitialEntitySet() {
@@ -261,18 +257,29 @@ public class MongoDbConnectionFactory {
             val componentProvider = new ClassPathScanningCandidateComponentProvider(false);
             componentProvider.addIncludeFilter(new AnnotationTypeFilter(Document.class));
             componentProvider.addIncludeFilter(new AnnotationTypeFilter(Persistent.class));
-
-            for (val candidate : componentProvider.findCandidateComponents(basePackage)) {
-                try {
-                    val beanClassName = Objects.requireNonNull(candidate.getBeanClassName());
-                    initialEntitySet.add(ClassUtils.forName(beanClassName, getClass().getClassLoader()));
-                } catch (final Exception e) {
-                    LoggingUtils.error(LOGGER, e);
-                }
-            }
+            initialEntitySet.addAll(findAndLoadComponents(basePackage, componentProvider));
         }
 
         return initialEntitySet;
+    }
+
+    @SneakyThrows
+    private Set<Class<?>> findAndLoadComponents(final String basePackage,
+        final ClassPathScanningCandidateComponentProvider componentProvider) {
+        val initialEntitySet = new HashSet<Class<?>>();
+        for (val candidate : componentProvider.findCandidateComponents(basePackage)) {
+            val beanClassName = Objects.requireNonNull(candidate.getBeanClassName());
+            initialEntitySet.add(ClassUtils.forName(beanClassName, getClass().getClassLoader()));
+        }
+        return initialEntitySet;
+    }
+
+    private static MongoDatabaseFactory mongoDbFactory(final MongoClient mongo, final BaseMongoDbProperties props) {
+        if (StringUtils.isNotBlank(props.getDatabaseName())) {
+            return new SimpleMongoClientDatabaseFactory(mongo, props.getDatabaseName());
+        }
+        val connectionString = new ConnectionString(props.getClientUri());
+        return new SimpleMongoClientDatabaseFactory(mongo, Objects.requireNonNull(connectionString.getDatabase()));
     }
 
     private static FieldNamingStrategy fieldNamingStrategy() {
@@ -282,9 +289,5 @@ public class MongoDbConnectionFactory {
     private static MongoCredential buildMongoCredential(final BaseMongoDbProperties mongo) {
         val dbName = StringUtils.defaultIfBlank(mongo.getAuthenticationDatabaseName(), mongo.getDatabaseName());
         return MongoCredential.createCredential(mongo.getUserId(), dbName, mongo.getPassword().toCharArray());
-    }
-
-    protected Collection<String> getMappingBasePackages() {
-        return CollectionUtils.wrap(getClass().getPackage().getName());
     }
 }

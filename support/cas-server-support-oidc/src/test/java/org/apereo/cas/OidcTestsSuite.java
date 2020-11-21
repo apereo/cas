@@ -16,6 +16,7 @@ import org.apereo.cas.oidc.discovery.webfinger.OidcEchoingWebFingerUserInfoRepos
 import org.apereo.cas.oidc.discovery.webfinger.OidcGroovyWebFingerUserInfoRepositoryTests;
 import org.apereo.cas.oidc.discovery.webfinger.OidcRestfulWebFingerUserInfoRepositoryTests;
 import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerDiscoveryServiceTests;
+import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerUserInfoRepositoryTests;
 import org.apereo.cas.oidc.dynareg.OidcClientRegistrationResponseTests;
 import org.apereo.cas.oidc.jwks.OidcDefaultJsonWebKeystoreCacheLoaderTests;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreJacksonDeserializerTests;
@@ -126,6 +127,7 @@ import org.junit.runner.RunWith;
     OidcWebFingerDiscoveryServiceTests.class,
     OidcCasClientRedirectActionBuilderTests.class,
     OidcConsentApprovalViewResolverTests.class,
+    OidcWebFingerUserInfoRepositoryTests.class,
     OidcClientRegistrationResponseTests.class,
     OidcCallbackAuthorizeViewResolverTests.class,
     OidcImplicitIdTokenAndTokenAuthorizationResponseBuilderTests.class,
