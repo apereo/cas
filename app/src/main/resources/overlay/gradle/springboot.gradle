@@ -5,9 +5,12 @@ configurations {
 }
 
 dependencies {
-    bootRunConfig "org.apereo.cas:cas-server-webapp-init:${casServerVersion}"
-    bootRunConfig "org.apereo.cas:cas-server-webapp-tomcat:${casServerVersion}"
-    bootRunConfig "org.springframework.boot:spring-boot-devtools:${project.springBootVersion}"
+    bootRunConfig "org.apereo.cas:cas-server-webapp-init:${project.ext.casServerVersion}"
+    bootRunConfig "org.apereo.cas:cas-server-webapp-tomcat:${project.ext.casServerVersion}"
+    bootRunConfig("org.springframework.boot:spring-boot-devtools:${project.springBootVersion}") {
+        exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+    }
+    bootRunConfig("org.springframework.boot:spring-boot-starter-log4j2:${project.springBootVersion}")
 }
 
 sourceSets {
