@@ -5,6 +5,7 @@ env:
   GRADLE_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server -XX:+UseG1GC"
   TERM: xterm-256color
   JDK_CURRENT: 11.0.8
+  HELM_CURRENT: v3.4.1
   DOCKER_USER: ${{ secrets.DOCKER_USER }}
   DOCKER_PWD: ${{ secrets.DOCKER_PWD }}
 
@@ -105,10 +106,10 @@ jobs:
       - name: Add /usr/local/bin to PATH
         run: |
           echo "/usr/local/bin" >> $GITHUB_PATH
-      - name: Install helm 3
+      - name: Install helm
         uses: azure/setup-helm@v1
         with:
-          version: 'v3.4.0'
+          version: ${{ env.HELM_CURRENT }}
         id: install
       - name: Validate Helm Chart
         run: ./ci/validate-helm.sh
