@@ -9,6 +9,7 @@ test-output/
 bin/
 *.ignore
 *.ipr
+*.war
 *.iml
 *.iws
 **/.history
