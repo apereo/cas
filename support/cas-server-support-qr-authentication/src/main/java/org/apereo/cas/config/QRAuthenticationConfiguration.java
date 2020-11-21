@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.qr.QRAuthenticationConstants;
+import org.apereo.cas.qr.authentication.JsonResourceQRAuthenticationDeviceRepository;
 import org.apereo.cas.qr.authentication.QRAuthenticationDeviceRepository;
 import org.apereo.cas.qr.authentication.QRAuthenticationTokenAuthenticationHandler;
 import org.apereo.cas.qr.authentication.QRAuthenticationTokenCredential;
@@ -23,6 +24,7 @@ import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 
+import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,8 +86,7 @@ public class QRAuthenticationConfiguration implements WebSocketMessageBrokerConf
     @Autowired
     @Bean
     public QRAuthenticationChannelController qrAuthenticationChannelController(
-        @Qualifier("brokerMessagingTemplate")
-        final SimpMessagingTemplate template) {
+        @Qualifier("brokerMessagingTemplate") final SimpMessagingTemplate template) {
         return new QRAuthenticationChannelController(template, qrAuthenticationTokenValidatorService());
     }
 
@@ -117,7 +118,7 @@ public class QRAuthenticationConfiguration implements WebSocketMessageBrokerConf
     public Action qrAuthenticationGenerateCodeAction() {
         return new QRAuthenticationGenerateCodeAction();
     }
-    
+
     @Bean
     @ConditionalOnMissingBean(name = "qrAuthenticationTokenValidatorService")
     @RefreshScope
@@ -130,6 +131,10 @@ public class QRAuthenticationConfiguration implements WebSocketMessageBrokerConf
     @ConditionalOnMissingBean(name = "qrAuthenticationDeviceRepository")
     @RefreshScope
     public QRAuthenticationDeviceRepository qrAuthenticationDeviceRepository() {
+        val qr = casProperties.getAuthn().getQr();
+        if (qr.getJson().getLocation() != null) {
+            return new JsonResourceQRAuthenticationDeviceRepository(qr.getJson().getLocation());
+        }
         return QRAuthenticationDeviceRepository.permitAll();
     }
 
@@ -164,7 +169,7 @@ public class QRAuthenticationConfiguration implements WebSocketMessageBrokerConf
     public QRAuthenticationDeviceRepositoryEndpoint qrAuthenticationDeviceRepositoryEndpoint() {
         return new QRAuthenticationDeviceRepositoryEndpoint(casProperties, qrAuthenticationDeviceRepository());
     }
-    
+
     @Override
     public void registerStompEndpoints(final StompEndpointRegistry registry) {
         registry.addEndpoint("/qr-websocket")

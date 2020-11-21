@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.qr.authentication.JsonResourceQRAuthenticationDeviceRepositoryTests;
 import org.apereo.cas.qr.authentication.QRAuthenticationDeviceRepositoryTests;
 import org.apereo.cas.qr.authentication.QRAuthenticationTokenAuthenticationHandlerTests;
 import org.apereo.cas.qr.authentication.QRAuthenticationTokenCredentialTests;
@@ -31,7 +32,8 @@ import org.junit.runner.RunWith;
     QRAuthenticationDeviceRepositoryEndpointTests.class,
     QRAuthenticationDeviceRepositoryTests.class,
     DefaultQRAuthenticationTokenValidatorServiceTests.class,
-    QRAuthenticationTokenValidationResultTests.class
+    QRAuthenticationTokenValidationResultTests.class,
+    JsonResourceQRAuthenticationDeviceRepositoryTests.class
 })
 @RunWith(JUnitPlatform.class)
 public class AllTestsSuite {
