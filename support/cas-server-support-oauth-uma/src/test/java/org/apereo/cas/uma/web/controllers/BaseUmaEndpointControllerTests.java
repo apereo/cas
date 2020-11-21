@@ -10,6 +10,7 @@ import org.apereo.cas.uma.ticket.resource.ResourceSetPolicy;
 import org.apereo.cas.uma.ticket.resource.ResourceSetPolicyPermission;
 import org.apereo.cas.uma.web.controllers.authz.UmaAuthorizationRequestEndpointController;
 import org.apereo.cas.uma.web.controllers.claims.UmaRequestingPartyClaimsCollectionEndpointController;
+import org.apereo.cas.uma.web.controllers.discovery.UmaWellKnownEndpointController;
 import org.apereo.cas.uma.web.controllers.permission.UmaPermissionRegistrationEndpointController;
 import org.apereo.cas.uma.web.controllers.permission.UmaPermissionRegistrationRequest;
 import org.apereo.cas.uma.web.controllers.policy.UmaCreatePolicyForResourceSetEndpointController;
@@ -21,6 +22,7 @@ import org.apereo.cas.uma.web.controllers.resource.UmaDeleteResourceSetRegistrat
 import org.apereo.cas.uma.web.controllers.resource.UmaFindResourceSetRegistrationEndpointController;
 import org.apereo.cas.uma.web.controllers.resource.UmaResourceRegistrationRequest;
 import org.apereo.cas.uma.web.controllers.resource.UmaUpdateResourceSetRegistrationEndpointController;
+import org.apereo.cas.uma.web.controllers.rpt.UmaRequestingPartyTokenJwksEndpointController;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -55,12 +57,21 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Import({CasOAuthUmaConfiguration.class, CasOAuthUmaComponentSerializationConfiguration.class})
-@TestPropertySource(properties = "cas.authn.uma.requestingPartyToken.jwksFile=classpath:uma-keystore.jwks")
+@TestPropertySource(properties = "cas.authn.uma.requesting-party-token.jwks-file=classpath:uma-keystore.jwks")
 @Slf4j
 public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Tests {
+
+    @Autowired
+    @Qualifier("umaWellKnownEndpointController")
+    protected UmaWellKnownEndpointController umaWellKnownEndpointController;
+
     @Autowired
     @Qualifier("umaPermissionRegistrationEndpointController")
     protected UmaPermissionRegistrationEndpointController umaPermissionRegistrationEndpointController;
+
+    @Autowired
+    @Qualifier("umaRequestingPartyTokenJwksEndpointController")
+    protected UmaRequestingPartyTokenJwksEndpointController umaRequestingPartyTokenJwksEndpointController;
 
     @Autowired
     @Qualifier("umaRequestingPartyClaimsCollectionEndpointController")
