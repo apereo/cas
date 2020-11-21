@@ -49,6 +49,7 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20Jwt
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationCodeAuthorizationResponseBuilderTests;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResourceOwnerCredentialsResponseBuilderTests;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20TokenAuthorizationResponseBuilderTests;
+import org.apereo.cas.support.oauth.web.response.callback.OAuth20InvalidAuthorizationResponseBuilderTests;
 import org.apereo.cas.support.oauth.web.views.OAuth20DefaultUserProfileViewRendererFlatTests;
 import org.apereo.cas.support.oauth.web.views.OAuth20DefaultUserProfileViewRendererNestedTests;
 import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionServiceTests;
@@ -134,7 +135,8 @@ import org.junit.runner.RunWith;
     OAuth20CodeResponseAuditResourceResolverTests.class,
     OAuth20AuthorizationCodeAuthorizationResponseBuilderTests.class,
     OAuth20RegisteredServiceCipherExecutorTests.class,
-    OAuth20TokenAuthorizationResponseBuilderTests.class
+    OAuth20TokenAuthorizationResponseBuilderTests.class,
+    OAuth20InvalidAuthorizationResponseBuilderTests.class
 })
 @RunWith(JUnitPlatform.class)
 public class OAuth20TestsSuite {

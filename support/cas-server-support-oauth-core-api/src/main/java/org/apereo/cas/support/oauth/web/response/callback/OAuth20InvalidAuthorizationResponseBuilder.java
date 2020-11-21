@@ -82,8 +82,8 @@ public class OAuth20InvalidAuthorizationResponseBuilder {
      * @return the model and view
      */
     public ModelAndView buildResponseModelAndView(final JEEContext context, final ServicesManager servicesManager,
-                                                   final String clientId, final String redirectUrl,
-                                                   final Map<String, String> parameters) {
+                                                  final String clientId, final String redirectUrl,
+                                                  final Map<String, String> parameters) {
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId);
         val responseType = OAuth20Utils.getResponseModeType(context);
         if (OAuth20Utils.isResponseModeTypeFormPost(registeredService, responseType)) {
