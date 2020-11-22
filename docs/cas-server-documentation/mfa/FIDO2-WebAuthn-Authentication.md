@@ -67,6 +67,7 @@ The following endpoints are provided by CAS:
 | `webAuthnDevices/{username}`                  | `GET` request to fetch device registration records for the user.
 | `webAuthnDevices/{username}`                  | `DELETE` request to delete all device registration records for the user.
 | `webAuthnDevices/{username}/{credential}`     | `DELETE` request to delete a device registration record for the user.
+| `webAuthnDevices/{username}` | `POST` request to add a device registration record for the user with request body parameter `record`.
 
 ### Default
 
