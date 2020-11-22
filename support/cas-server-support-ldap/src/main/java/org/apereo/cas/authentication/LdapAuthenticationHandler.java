@@ -188,7 +188,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                     });
                 }
             } else {
-                LOGGER.warn("Requested LDAP attribute [{}] could not be found on the resolved LDAP entry for [{}]", key, ldapEntry.getDn());
+                LOGGER.warn("Requested LDAP attribute [{}] could not be found on LDAP entry for [{}]", key, ldapEntry.getDn());
             }
         });
         if (this.collectDnAttribute) {
