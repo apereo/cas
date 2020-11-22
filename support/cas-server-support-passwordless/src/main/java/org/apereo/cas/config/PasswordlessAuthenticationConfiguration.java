@@ -105,7 +105,7 @@ public class PasswordlessAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "passwordlessCipherExecutor")
     public CipherExecutor passwordlessCipherExecutor() {
         val tokens = casProperties.getAuthn().getPasswordless().getTokens();
-        val crypto = tokens.getRest().getCrypto();
+        val crypto = tokens.getCrypto();
         if (crypto.isEnabled()) {
             return CipherExecutorUtils.newStringCipherExecutor(crypto, PasswordlessTokenCipherExecutor.class);
         }

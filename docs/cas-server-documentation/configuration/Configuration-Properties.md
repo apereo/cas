@@ -1819,7 +1819,7 @@ RESTful settings for this feature are available [here](Configuration-Properties-
 under the configuration key `cas.authn.passwordless.tokens.rest`. The signing key and the encryption 
 key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. 
 Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under 
-the configuration key `cas.authn.passwordless.tokens.rest`.
+the configuration key `cas.authn.passwordless.tokens`.
 
 Email notifications settings for this feature are available [here](Configuration-Properties-Common.html#email-notifications) 
 under the configuration key `cas.authn.passwordless.tokens`. SMS notifications settings for this feature are 

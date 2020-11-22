@@ -2,13 +2,13 @@ package org.apereo.cas.uma.web.controllers.resource;
 
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.uma.UmaConfigurationContext;
-import org.apereo.cas.uma.ticket.resource.InvalidResourceSetException;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointController;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.hjson.JsonValue;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -50,7 +50,7 @@ public class UmaCreateResourceSetRegistrationEndpointController extends BaseUmaE
             val profileResult = getAuthenticatedProfile(request, response, OAuth20Constants.UMA_PROTECTION_SCOPE);
 
             val umaRequest = MAPPER.readValue(JsonValue.readHjson(body).toString(), UmaResourceRegistrationRequest.class);
-            if (umaRequest == null) {
+            if (umaRequest == null || StringUtils.isBlank(umaRequest.getName())) {
                 val model = buildResponseEntityErrorModel(HttpStatus.NOT_FOUND, "UMA request cannot be found or parsed");
                 return new ResponseEntity(model, model, HttpStatus.BAD_REQUEST);
             }
@@ -65,12 +65,10 @@ public class UmaCreateResourceSetRegistrationEndpointController extends BaseUmaE
                 "code", HttpStatus.CREATED,
                 "resourceId", saved.getId(),
                 "location", location);
-            return new ResponseEntity(model, HttpStatus.OK);
-        } catch (final InvalidResourceSetException e) {
-            return new ResponseEntity(buildResponseEntityErrorModel(e), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(model, HttpStatus.OK);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
-        return new ResponseEntity("Unable to complete the resource-set registration request.", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("Unable to complete the resource-set registration request.", HttpStatus.BAD_REQUEST);
     }
 }
