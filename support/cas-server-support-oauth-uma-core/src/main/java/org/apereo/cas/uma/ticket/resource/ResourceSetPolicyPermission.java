@@ -4,6 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -27,6 +28,7 @@ import java.util.LinkedHashMap;
 @Table(name = "UMA_ResourceSetPolicyPermission")
 @EqualsAndHashCode(of = "id")
 @NoArgsConstructor
+@Accessors(chain = true)
 public class ResourceSetPolicyPermission implements Serializable {
     private static final int MAP_SIZE = 8;
 

@@ -94,7 +94,6 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
             }
 
             return handleMismatchedClaims(request, response, resourceSet, profileResult, results, permissionTicket);
-
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }

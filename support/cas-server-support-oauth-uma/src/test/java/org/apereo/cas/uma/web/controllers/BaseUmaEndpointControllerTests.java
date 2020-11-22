@@ -47,6 +47,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -141,25 +142,15 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
         return authenticateUmaRequestWithScope(OAuth20Constants.UMA_AUTHORIZATION_SCOPE, umaAuthorizationApiTokenSecurityInterceptor);
     }
 
-    private Triple<HttpServletRequest, HttpServletResponse, String> authenticateUmaRequestWithScope(
-        final String scope, final SecurityInterceptor interceptor) {
-        val service = addRegisteredService();
-        val pair = assertClientOK(service, false, scope);
-        assertNotNull(pair.getKey());
-        val accessToken = pair.getKey();
-
-        val mockRequest = new MockHttpServletRequest(HttpMethod.POST.name(), CONTEXT + OAuth20Constants.UMA_REGISTRATION_URL);
-        mockRequest.addHeader(HttpHeaders.AUTHORIZATION, String.format("%s %s", OAuth20Constants.TOKEN_TYPE_BEARER, accessToken));
-        val mockResponse = new MockHttpServletResponse();
-        interceptor.preHandle(mockRequest, mockResponse, null);
-        return Triple.of(mockRequest, mockResponse, accessToken);
-    }
-
     protected static UmaResourceRegistrationRequest createUmaResourceRegistrationRequest() {
         return createUmaResourceRegistrationRequest(-1);
     }
 
     protected static UmaResourceRegistrationRequest createUmaResourceRegistrationRequest(final long id) {
+        return createUmaResourceRegistrationRequest(id, CollectionUtils.wrapList("read", "write"));
+    }
+
+    protected static UmaResourceRegistrationRequest createUmaResourceRegistrationRequest(final long id, final List<String> scopes) {
         val resRequest = new UmaResourceRegistrationRequest();
         resRequest.setUri("http://rs.example.com/alice/myresource");
         resRequest.setName("my-resource");
@@ -167,7 +158,7 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
         if (id >= 0) {
             resRequest.setId(id);
         }
-        resRequest.setScopes(CollectionUtils.wrapList("read", "write"));
+        resRequest.setScopes(scopes);
         return resRequest;
     }
 
@@ -209,5 +200,19 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
             return null;
         }
         return userProfileResult.get();
+    }
+
+    private Triple<HttpServletRequest, HttpServletResponse, String> authenticateUmaRequestWithScope(
+        final String scope, final SecurityInterceptor interceptor) {
+        val service = addRegisteredService();
+        val pair = assertClientOK(service, false, scope);
+        assertNotNull(pair.getKey());
+        val accessToken = pair.getKey();
+
+        val mockRequest = new MockHttpServletRequest(HttpMethod.POST.name(), CONTEXT + OAuth20Constants.UMA_REGISTRATION_URL);
+        mockRequest.addHeader(HttpHeaders.AUTHORIZATION, String.format("%s %s", OAuth20Constants.TOKEN_TYPE_BEARER, accessToken));
+        val mockResponse = new MockHttpServletResponse();
+        interceptor.preHandle(mockRequest, mockResponse, null);
+        return Triple.of(mockRequest, mockResponse, accessToken);
     }
 }

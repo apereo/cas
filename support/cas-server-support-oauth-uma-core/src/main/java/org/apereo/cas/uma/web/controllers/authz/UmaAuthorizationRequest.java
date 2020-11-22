@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import lombok.SneakyThrows;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
@@ -15,6 +16,7 @@ import java.io.Serializable;
  * @since 6.0.0
  */
 @Data
+@Accessors(chain = true)
 public class UmaAuthorizationRequest implements Serializable {
     private static final ObjectMapper MAPPER = new ObjectMapper()
         .findAndRegisterModules();
