@@ -28,6 +28,7 @@ public class UmaCreatePolicyForResourceSetEndpointControllerTests extends BaseUm
         var response = umaCreateResourceSetRegistrationEndpointController.registerResourceSet(body, results.getLeft(), results.getMiddle());
 
         var model = (Map) response.getBody();
+        assertNotNull(model);
         val resourceId = (long) model.get("resourceId");
 
         body = createUmaPolicyRegistrationRequest(getCurrentProfile(results.getLeft(), results.getMiddle())).toJson();
@@ -44,8 +45,7 @@ public class UmaCreatePolicyForResourceSetEndpointControllerTests extends BaseUm
     @Test
     public void verifyMissingOperation() {
         val results = authenticateUmaRequestWithProtectionScope();
-        var body = createUmaResourceRegistrationRequest().toJson();
-        body = createUmaPolicyRegistrationRequest(getCurrentProfile(results.getLeft(), results.getMiddle())).toJson();
+        val body = createUmaPolicyRegistrationRequest(getCurrentProfile(results.getLeft(), results.getMiddle())).toJson();
         val response = umaCreatePolicyForResourceSetEndpointController.createPolicyForResourceSet(210, body,
             results.getLeft(), results.getMiddle());
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -53,8 +53,8 @@ public class UmaCreatePolicyForResourceSetEndpointControllerTests extends BaseUm
 
     @Test
     public void verifyNoAuthOperation() throws Exception {
-        var body = createUmaResourceRegistrationRequest().toJson();
-        var response = umaCreatePolicyForResourceSetEndpointController.createPolicyForResourceSet(100, body,
+        val body = createUmaResourceRegistrationRequest().toJson();
+        val response = umaCreatePolicyForResourceSetEndpointController.createPolicyForResourceSet(100, body,
             new MockHttpServletRequest(), new MockHttpServletResponse());
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
