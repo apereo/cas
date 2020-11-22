@@ -29,6 +29,9 @@ validate, expire or save operations in appropriate data stores.
 Passwordless authentication can also be activated using [QR Code Authentication](QRCode-Authentication.html),
 allowing end users to login by scanning a QR code using a mobile device.
 
+Passwordless authentication can also be achieved via [FIDO2 WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) which lets users 
+verify their identities without passwords and login using FIDO2-enabled devices.
+
 ## Overview
 
 Support is enabled by including the following module in the overlay:
@@ -42,11 +45,6 @@ Support is enabled by including the following module in the overlay:
 ```
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#passwordless-authentication).
-
-## WebAuthN FIDO2
-
-Passwordless authentication can also be achieved via [FIDO2 WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) which lets users 
-verify their identities without passwords and login using FIDO2-enabled devices.
 
 ## Account Stores
 
