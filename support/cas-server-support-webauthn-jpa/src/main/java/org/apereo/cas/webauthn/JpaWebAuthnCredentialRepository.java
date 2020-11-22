@@ -60,7 +60,7 @@ public class JpaWebAuthnCredentialRepository extends BaseWebAuthnCredentialRepos
 
         return records.stream()
             .map(record -> getCipherExecutor().decode(record.getRecords()))
-            .map(Unchecked.function(record -> getObjectMapper().readValue(record, new TypeReference<Set<CredentialRegistration>>() {
+            .map(Unchecked.function(record -> WebAuthnUtils.getObjectMapper().readValue(record, new TypeReference<Set<CredentialRegistration>>() {
             })))
             .flatMap(Collection::stream)
             .collect(Collectors.toList());
@@ -71,7 +71,7 @@ public class JpaWebAuthnCredentialRepository extends BaseWebAuthnCredentialRepos
         val records = entityManager.createQuery(SELECT_QUERY, JpaWebAuthnCredentialRegistration.class).getResultList();
         return records.stream()
             .map(record -> getCipherExecutor().decode(record.getRecords()))
-            .map(Unchecked.function(record -> getObjectMapper().readValue(record, new TypeReference<Set<CredentialRegistration>>() {
+            .map(Unchecked.function(record -> WebAuthnUtils.getObjectMapper().readValue(record, new TypeReference<Set<CredentialRegistration>>() {
             })))
             .flatMap(Collection::stream);
     }
@@ -79,7 +79,7 @@ public class JpaWebAuthnCredentialRepository extends BaseWebAuthnCredentialRepos
     @Override
     @SneakyThrows
     public void update(final String username, final Collection<CredentialRegistration> records) {
-        val jsonRecords = getCipherExecutor().encode(getObjectMapper().writeValueAsString(records));
+        val jsonRecords = getCipherExecutor().encode(WebAuthnUtils.getObjectMapper().writeValueAsString(records));
         new TransactionTemplate(transactionManager).execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(final TransactionStatus status) {
