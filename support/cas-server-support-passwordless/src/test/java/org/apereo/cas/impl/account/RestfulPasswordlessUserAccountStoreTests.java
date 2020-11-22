@@ -6,7 +6,6 @@ import org.apereo.cas.impl.BasePasswordlessUserAccountStoreTests;
 import org.apereo.cas.util.MockWebServer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -38,8 +37,7 @@ public class RestfulPasswordlessUserAccountStoreTests extends BasePasswordlessUs
     private PasswordlessUserAccountStore passwordlessUserAccountStore;
 
     @Test
-    @SneakyThrows
-    public void verifyAction() {
+    public void verifyAction() throws Exception {
         val u = PasswordlessUserAccount.builder()
             .email("casuser@example.org")
             .phone("1234567890")
@@ -53,6 +51,16 @@ public class RestfulPasswordlessUserAccountStoreTests extends BasePasswordlessUs
             webServer.start();
             val user = passwordlessUserAccountStore.findUser("casuser");
             assertTrue(user.isPresent());
+        }
+    }
+
+    @Test
+    public void verifyFailsAction() {
+        try (val webServer = new MockWebServer(9291,
+            new ByteArrayResource("###".getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
+            webServer.start();
+            val user = passwordlessUserAccountStore.findUser("casuser");
+            assertTrue(user.isEmpty());
         }
     }
 }

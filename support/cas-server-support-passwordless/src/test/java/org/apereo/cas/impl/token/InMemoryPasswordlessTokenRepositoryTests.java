@@ -27,6 +27,8 @@ public class InMemoryPasswordlessTokenRepositoryTests extends BasePasswordlessUs
 
     @Test
     public void verifyToken() {
+        repository.clean();
+        
         val token = repository.createToken(CAS_USER);
         assertTrue(repository.findToken(CAS_USER).isEmpty());
 

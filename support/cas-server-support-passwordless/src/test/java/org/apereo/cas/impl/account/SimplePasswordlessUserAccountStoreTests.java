@@ -31,6 +31,7 @@ public class SimplePasswordlessUserAccountStoreTests extends BasePasswordlessUse
     @Test
     @SneakyThrows
     public void verifyAction() {
-        assertNotNull(passwordlessUserAccountStore.findUser("casuser"));
+        assertTrue(passwordlessUserAccountStore.findUser("casuser").isPresent());
+        assertTrue(passwordlessUserAccountStore.findUser("other").isEmpty());
     }
 }
