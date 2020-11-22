@@ -2,7 +2,6 @@ package org.apereo.cas.impl.token;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import lombok.extern.slf4j.Slf4j;
 
 import java.time.Duration;
 import java.util.Optional;
@@ -13,7 +12,6 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Slf4j
 public class InMemoryPasswordlessTokenRepository extends BasePasswordlessTokenRepository {
     private static final int INITIAL_CACHE_SIZE = 50;
 
