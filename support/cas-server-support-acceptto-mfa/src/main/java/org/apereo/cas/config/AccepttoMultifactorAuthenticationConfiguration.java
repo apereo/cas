@@ -83,7 +83,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
     @Autowired
     @Qualifier("singleSignOnParticipationStrategy")
     private ObjectProvider<SingleSignOnParticipationStrategy> webflowSingleSignOnParticipationStrategy;
-    
+
     @Autowired
     @Qualifier("authenticationEventExecutionPlan")
     private ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
@@ -274,7 +274,6 @@ public class AccepttoMultifactorAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationHandler casAccepttoQRCodeAuthenticationHandler() {
-        val props = casProperties.getAuthn().getMfa().getAcceptto();
         return new AccepttoQRCodeAuthenticationHandler(
             servicesManager.getObject(),
             casAccepttoQRCodePrincipalFactory());

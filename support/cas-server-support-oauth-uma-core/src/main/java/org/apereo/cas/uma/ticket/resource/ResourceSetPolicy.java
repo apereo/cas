@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
+import lombok.experimental.Accessors;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -29,6 +30,7 @@ import java.util.HashSet;
 @Table(name = "UMA_ResourceSetPolicy")
 @EqualsAndHashCode(of = "id")
 @NoArgsConstructor
+@Accessors(chain = true)
 public class ResourceSetPolicy implements Serializable {
     private static final ObjectMapper MAPPER = new ObjectMapper()
         .findAndRegisterModules();
