@@ -14,7 +14,7 @@ pid=$!
 echo "Launched CAS with pid ${pid} using bootRun. Waiting for CAS server to come online..."
 until curl -k -L --output /dev/null --silent --fail http://localhost:8090/cas/login; do
     echo -n '.'
-    sleep 3
+    sleep 5
 done
 echo -e "\n\nReady!"
 kill -9 $pid
@@ -34,8 +34,6 @@ echo "Configuration Metadata Export"
 
 echo "Exploding WAR"
 ./gradlew explodeWar
-
-
 
 echo "Building Container Image via Spring Boot"
 ./gradlew bootBuildImage
