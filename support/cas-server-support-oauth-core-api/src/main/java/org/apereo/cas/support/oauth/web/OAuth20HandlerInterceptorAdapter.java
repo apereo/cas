@@ -199,6 +199,11 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
             .filter(b -> b.supports(context))
             .findFirst()
             .orElse(null);
+
+        if (validator == null) {
+            context.setRequestAttribute(OAuth20Constants.ERROR, OAuth20Constants.INVALID_REQUEST);
+            return false;
+        }
         return validator.validate(context);
     }
 }
