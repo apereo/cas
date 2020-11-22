@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.session.JEESessionStore;
+import org.pac4j.core.credentials.AnonymousCredentials;
 import org.pac4j.oauth.client.FacebookClient;
 import org.pac4j.oauth.credentials.OAuth20Credentials;
 import org.pac4j.oauth.profile.facebook.FacebookProfile;
@@ -38,10 +39,13 @@ import static org.mockito.Mockito.*;
 public class DelegatedClientAuthenticationHandlerTests {
 
     private static final String CALLBACK_URL = "http://localhost:8080/callback";
+
     private static final String ID = "123456789";
 
     private FacebookClient fbClient;
+
     private DelegatedClientAuthenticationHandler handler;
+
     private ClientCredential clientCredential;
 
     @BeforeEach
@@ -68,6 +72,16 @@ public class DelegatedClientAuthenticationHandlerTests {
         val result = this.handler.authenticate(this.clientCredential);
         val principal = result.getPrincipal();
         assertEquals(FacebookProfile.class.getName() + '#' + ID, principal.getId());
+    }
+
+    @Test
+    public void verifyMissingClient() {
+        val facebookProfile = new FacebookProfile();
+        facebookProfile.setId(ID);
+        this.fbClient.setProfileCreator((oAuth20Credentials, webContext) -> Optional.of(facebookProfile));
+
+        val cc = new ClientCredential(new AnonymousCredentials(), "UnknownClient");
+        assertThrows(PreventedException.class, () -> this.handler.authenticate(cc));
     }
 
     @Test
