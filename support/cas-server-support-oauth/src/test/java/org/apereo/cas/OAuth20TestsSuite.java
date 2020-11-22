@@ -47,9 +47,9 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenPass
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtractorTests;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenCipherExecutorTests;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationCodeAuthorizationResponseBuilderTests;
+import org.apereo.cas.support.oauth.web.response.callback.OAuth20InvalidAuthorizationResponseBuilderTests;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResourceOwnerCredentialsResponseBuilderTests;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20TokenAuthorizationResponseBuilderTests;
-import org.apereo.cas.support.oauth.web.response.callback.OAuth20InvalidAuthorizationResponseBuilderTests;
 import org.apereo.cas.support.oauth.web.views.OAuth20DefaultUserProfileViewRendererFlatTests;
 import org.apereo.cas.support.oauth.web.views.OAuth20DefaultUserProfileViewRendererNestedTests;
 import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionServiceTests;
