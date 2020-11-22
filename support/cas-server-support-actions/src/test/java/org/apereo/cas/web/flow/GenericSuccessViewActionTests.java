@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.InvalidTicketException;
@@ -15,12 +16,20 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.webflow.context.ExternalContextHolder;
+import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
+
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -32,7 +41,41 @@ import static org.mockito.Mockito.*;
  * @since 4.1.0
  */
 @Tag("WebflowActions")
-public class GenericSuccessViewActionTests {
+public class GenericSuccessViewActionTests extends AbstractWebflowActionsTests {
+    @Autowired
+    @Qualifier("genericSuccessViewAction")
+    private Action genericSuccessViewAction;
+    
+    @BeforeEach
+    public void setup() {
+        getServicesManager().deleteAll();
+    }
+
+    @Test
+    public void verifyAuthzServices() throws Exception {
+        val registeredService1 = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), Map.of());
+        getServicesManager().save(registeredService1);
+
+        val registeredService2 = RegisteredServiceTestUtils.getRegisteredService();
+        registeredService2.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(false, false));
+        getServicesManager().save(registeredService2);
+
+        val context = new MockRequestContext();
+        val tgt = new MockTicketGrantingTicket("casuser");
+        WebUtils.putTicketGrantingTicketInScopes(context, tgt);
+        getCentralAuthenticationService().addTicket(tgt);
+
+        context.setExternalContext(new MockExternalContext());
+        RequestContextHolder.setRequestContext(context);
+        ExternalContextHolder.setExternalContext(context.getExternalContext());
+
+        val result = genericSuccessViewAction.execute(context);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());
+        assertTrue(context.getFlowScope().contains("authorizedServices"));
+        val list = context.getFlowScope().get("authorizedServices", List.class);
+        assertEquals(1, list.size());
+    }
+    
     @Test
     public void verifyRedirect() throws Exception {
         val cas = mock(CentralAuthenticationService.class);
@@ -75,7 +118,7 @@ public class GenericSuccessViewActionTests {
         val tgt = new MockTicketGrantingTicket(CoreAuthenticationTestUtils.getAuthentication());
         when(cas.getTicket(any(String.class), any())).thenReturn(tgt);
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
-        
+
         val result = action.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());
         assertNotNull(WebUtils.getAuthentication(context));
