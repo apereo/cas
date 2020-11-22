@@ -89,10 +89,17 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, "badvalue");
+        mockRequest.setAttribute(OAuth20Constants.ERROR, OAuth20Constants.INVALID_REQUEST);
+        mockRequest.setAttribute(OAuth20Constants.ERROR_WITH_CALLBACK, true);
         val mockResponse = new MockHttpServletResponse();
 
         val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
-        assertEquals(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, modelAndView.getViewName());
+        assertTrue(modelAndView.getView() instanceof RedirectView);
+        val modelView = (RedirectView) modelAndView.getView();
+        assertEquals(modelView.getUrl(), REDIRECT_URI);
+
+        assertTrue(modelAndView.getModel().containsKey(OAuth20Constants.ERROR));
+        assertEquals(modelAndView.getModel().get(OAuth20Constants.ERROR).toString(), OAuth20Constants.INVALID_REQUEST);
     }
 
     @Test
