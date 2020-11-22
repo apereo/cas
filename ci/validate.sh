@@ -9,7 +9,7 @@ curl http://localhost:8080/starter.tgz | tar -xzvf -
 kill -9 $pid
 
 echo "Running CAS Overlay with bootRun"
-./gradlew clean build bootRun --refresh-dependencies --no-daemon -Dserver.ssl.enabled=false -Dserver.port=8090 &
+./gradlew clean build bootRun --no-daemon -Dserver.ssl.enabled=false -Dserver.port=8090 &> /dev/null &
 pid=$!
 echo "Launched CAS with pid ${pid} using bootRun. Waiting for CAS server to come online..."
 until curl -k -L --output /dev/null --silent --fail http://localhost:8090/cas/login; do
