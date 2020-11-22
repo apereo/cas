@@ -69,7 +69,7 @@ public class AccepttoMultifactorValidateUserDeviceRegistrationActionTests {
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-           
+
             WebUtils.putAuthentication(authentication, context);
             RequestContextHolder.setRequestContext(context);
 
@@ -77,6 +77,36 @@ public class AccepttoMultifactorValidateUserDeviceRegistrationActionTests {
             val result = action.doExecute(context);
             assertEquals(result.getId(), CasWebflowConstants.TRANSITION_ID_FINALIZE);
             assertTrue(WebUtils.getCredential(context) instanceof AccepttoEmailCredential);
+        }
+    }
+
+    @Test
+    public void verifyNotPaired() throws Exception {
+        val principal = CoreAuthenticationTestUtils.getPrincipal(Map.of(
+            "email", List.of("cas@example.org"),
+            "group", List.of("staff")));
+        val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
+
+        val data = MAPPER.writeValueAsString(Map.of("device_paired", "false"));
+        try (val webServer = new MockWebServer(5011,
+            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
+            webServer.start();
+
+            val context = new MockRequestContext();
+            val request = new MockHttpServletRequest();
+            val response = new MockHttpServletResponse();
+            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+
+            WebUtils.putAuthentication(authentication, context);
+            RequestContextHolder.setRequestContext(context);
+
+            val action = new AccepttoMultifactorValidateUserDeviceRegistrationAction(casProperties);
+            assertThrows(
+                AccepttoMultifactorValidateUserDeviceRegistrationAction.AccepttoUserDeviceRegistrationException.class,
+                action::verifyUserDeviceIsPaired);
+
+            val result = action.execute(context);
+            assertEquals(result.getId(), CasWebflowConstants.TRANSITION_ID_DENY);
         }
     }
 }

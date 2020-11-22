@@ -23,6 +23,7 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
 
+import javax.security.auth.login.FailedLoginException;
 import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -70,6 +71,58 @@ public class AccepttoMultifactorAuthenticationHandlerTests {
             assertTrue(handler.supports(AccepttoMultifactorTokenCredential.class));
             val result = handler.authenticate(credential);
             assertNotNull(result.getPrincipal());
+        }
+    }
+
+    @Test
+    public void verifyOperationForbidden() throws Exception {
+        val data = MAPPER.writeValueAsString(CollectionUtils.wrap("device_id", "deviceid-test", "status", "approved"));
+        try (val webServer = new MockWebServer(5002,
+            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.FORBIDDEN)) {
+            webServer.start();
+            val handler = buildHandler();
+
+            val credential = new AccepttoMultifactorTokenCredential("test-channel");
+            assertThrows(FailedLoginException.class, () -> handler.authenticate(credential));
+        }
+    }
+
+    @Test
+    public void verifyOperationUnAuthz() throws Exception {
+        val data = MAPPER.writeValueAsString(CollectionUtils.wrap("device_id", "deviceid-test", "status", "approved"));
+        try (val webServer = new MockWebServer(5002,
+            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.UNAUTHORIZED)) {
+            webServer.start();
+            val handler = buildHandler();
+
+            val credential = new AccepttoMultifactorTokenCredential("test-channel");
+            assertThrows(FailedLoginException.class, () -> handler.authenticate(credential));
+        }
+    }
+
+    @Test
+    public void verifyOperationExpired() throws Exception {
+        val data = MAPPER.writeValueAsString(CollectionUtils.wrap("device_id", "deviceid-test", "status", "expired"));
+        try (val webServer = new MockWebServer(5002,
+            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
+            webServer.start();
+            val handler = buildHandler();
+
+            val credential = new AccepttoMultifactorTokenCredential("test-channel");
+            assertThrows(FailedLoginException.class, () -> handler.authenticate(credential));
+        }
+    }
+
+    @Test
+    public void verifyOperationDeclined() throws Exception {
+        val data = MAPPER.writeValueAsString(CollectionUtils.wrap("device_id", "deviceid-test", "status", "declined"));
+        try (val webServer = new MockWebServer(5002,
+            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
+            webServer.start();
+            val handler = buildHandler();
+
+            val credential = new AccepttoMultifactorTokenCredential("test-channel");
+            assertThrows(FailedLoginException.class, () -> handler.authenticate(credential));
         }
     }
 

@@ -79,7 +79,9 @@ public class AccepttoQRCodeValidateWebSocketChannelAction extends AbstractAction
                     val result = IOUtils.toString(apiResponse.getEntity().getContent(), StandardCharsets.UTF_8);
                     val results = MAPPER.readValue(JsonValue.readHjson(result).toString(), Map.class);
                     LOGGER.debug("Received API results for channel [{}] as [{}]", channel, results);
-
+                    if (results.isEmpty()) {
+                        throw new AuthenticationException("No API results were returned for channel " + channel);
+                    }
                     val success = BooleanUtils.toBoolean(results.get("success").toString());
                     if (success) {
                         val email = results.get("user_email").toString();
@@ -101,7 +103,6 @@ public class AccepttoQRCodeValidateWebSocketChannelAction extends AbstractAction
             }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
-            return returnError(e.getMessage());
         } finally {
             HttpUtils.close(apiResponse);
         }

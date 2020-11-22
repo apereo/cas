@@ -171,10 +171,6 @@ public class AccepttoApiUtils {
             val authzPayload = buildAuthorizationHeaderPayloadForAuthentication(acceptto);
             val headers = CollectionUtils.<String, Object>wrap("Authorization", "Bearer " + authzPayload);
             response = HttpUtils.executePost(url, parameters, headers);
-            if (response == null) {
-                LOGGER.error("Unable to extract response from API at [{}]", url);
-                return new HashMap<>(0);
-            }
             val status = response.getStatusLine().getStatusCode();
             LOGGER.debug("Authentication response status code is [{}]", status);
             val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);

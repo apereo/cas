@@ -45,7 +45,6 @@ import org.apereo.cas.web.support.CookieUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.jose4j.keys.RsaKeyUtil;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
@@ -276,11 +275,6 @@ public class AccepttoMultifactorAuthenticationConfiguration {
     @RefreshScope
     public AuthenticationHandler casAccepttoQRCodeAuthenticationHandler() {
         val props = casProperties.getAuthn().getMfa().getAcceptto();
-        if (StringUtils.isBlank(props.getApiUrl()) || StringUtils.isBlank(props.getApplicationId())
-            || StringUtils.isBlank(props.getSecret())) {
-            throw new BeanCreationException("No API url, application id or secret "
-                + "is defined for the Acceptto integration. Examine your CAS configuration and adjust for correct values.");
-        }
         return new AccepttoQRCodeAuthenticationHandler(
             servicesManager.getObject(),
             casAccepttoQRCodePrincipalFactory());
