@@ -227,7 +227,8 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
      * @param auth the auth
      * @param ldap the ldap
      */
-    protected void configureLdapAuthenticationProvider(final AuthenticationManagerBuilder auth, final MonitorProperties.Endpoints.LdapSecurity ldap) {
+    protected void configureLdapAuthenticationProvider(final AuthenticationManagerBuilder auth,
+        final MonitorProperties.Endpoints.LdapSecurity ldap) {
         if (isLdapAuthorizationActive()) {
             val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
             val authenticator = LdapUtils.newLdaptiveAuthenticator(ldap);

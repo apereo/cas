@@ -274,7 +274,7 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
         if (handler != null) {
             ReflectionUtils.makeAccessible(handler);
             if ("HTTP/2".equalsIgnoreCase(proxy.getProtocol())) {
-                ReflectionUtils.setField(handler, connector, new Http2Protocol());
+                connector.addUpgradeProtocol(new Http2Protocol());
             } else {
                 var protocolHandlerInstance = (AbstractProtocol) null;
                 switch (proxy.getProtocol()) {
