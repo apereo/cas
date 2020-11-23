@@ -48,7 +48,7 @@ public class UniversalPromptDuoSecurityAuthenticationService extends BaseDuoSecu
     }
 
     @Override
-    public DuoSecurityAuthenticationResult authenticate(final Credential c) throws Exception {
+    public DuoSecurityAuthenticationResult authenticateInternal(final Credential c) throws Exception {
         val credential = (DuoSecurityUniversalPromptCredential) c;
         LOGGER.trace("Exchanging Duo Security authorization code [{}]", credential.getId());
         val result = duoClient.exchangeAuthorizationCodeFor2FAResult(credential.getId(),
