@@ -1104,6 +1104,12 @@ configuration key `cas.authn.attribute-repository.ldap[0]`.
 # cas.authn.attribute-repository.ldap[0].attributes.affiliation=groupMembership
 ```
 
+To fetch and resolve attributes that carry tags/options, consider tagging the mapped attribute as such:
+
+```properties
+# cas.authn.attribute-repository.ldap[0].attributes.affiliation=affiliation;
+```
+                                  
 ### Groovy
 
 If you wish to directly and separately retrieve attributes from a Groovy script,
@@ -2202,7 +2208,6 @@ To learn more about this topic, [please review this guide](../installation/LDAP-
 LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.authn.ldap[0]`.
 
 ```properties
-#
 # Define attributes to be retrieved from LDAP as part of the same authentication transaction
 # The left-hand size notes the source while the right-hand size indicate an optional renaming/remapping
 # of the attribute definition. The same attribute name is allowed to be mapped multiple times to
@@ -2215,6 +2220,12 @@ LDAP settings for this feature are available [here](Configuration-Properties-Com
 # cas.authn.ldap[0].allow-multiple-principal-attribute-values=true
 # cas.authn.ldap[0].allow-missing-principal-attribute-value=true
 # cas.authn.ldap[0].credential-criteria=
+```
+
+To fetch and resolve attributes that carry tags/options, consider tagging the mapped attribute as such:
+
+```properties
+# cas.authn.ldap[0].principal-attribute-list=homePostalAddress:homePostalAddress;
 ```
 
 ### LDAP Password Policy
