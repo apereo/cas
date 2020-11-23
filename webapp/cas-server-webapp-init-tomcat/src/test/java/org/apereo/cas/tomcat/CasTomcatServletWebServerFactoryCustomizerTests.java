@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import lombok.val;
 import org.apache.catalina.connector.Connector;
 import org.apache.commons.io.FileUtils;
+import org.apache.coyote.http11.Http11AprProtocol;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -16,6 +17,7 @@ import org.springframework.boot.web.embedded.tomcat.TomcatConnectorCustomizer;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -83,7 +85,7 @@ public class CasTomcatServletWebServerFactoryCustomizerTests {
         val factory = execCustomize(customizer);
         factory.getTomcatConnectorCustomizers().forEach(c -> c.customize(new Connector()));
     }
-    
+
     @Test
     public void verifyHttp12ProtocolProxy() {
         val casProperties = new CasConfigurationProperties();
@@ -99,7 +101,39 @@ public class CasTomcatServletWebServerFactoryCustomizerTests {
         casProperties.getServer().getTomcat().getHttpProxy().setEnabled(true).setProtocol("HTTP/1.1");
         val customizer = new CasTomcatServletWebServerFactoryCustomizer(serverProperties, casProperties);
         val factory = execCustomize(customizer);
-        factory.getTomcatConnectorCustomizers().forEach(c -> c.customize(new Connector()));
+        factory.getTomcatConnectorCustomizers().forEach(c ->
+            assertDoesNotThrow(new Executable() {
+                @Override
+                public void execute() {
+                    c.customize(new Connector());
+                }
+            }));
+    }
+
+    @Test
+    public void verifyAprSettings() throws Exception {
+        val casProperties = new CasConfigurationProperties();
+        casProperties.getServer().getTomcat().getApr()
+            .setEnabled(true)
+            .setSslCaCertificateFile(File.createTempFile("cert1", ".crt"))
+            .setSslCertificateFile(File.createTempFile("cert2", ".crt"))
+            .setSslCertificateKeyFile(File.createTempFile("cert3", ".crt"))
+            .setSslCertificateChainFile(File.createTempFile("cert4", ".crt"))
+            .setSslCaRevocationFile(File.createTempFile("cert5", ".crt"));
+
+        serverProperties.setPort(1234);
+        val factory = new CasTomcatServletWebServerFactory(casProperties, serverProperties);
+        factory.getTomcatConnectorCustomizers().forEach(c -> {
+            val connector = new Connector(Http11AprProtocol.class.getCanonicalName());
+            connector.setPort(serverProperties.getPort());
+            assertDoesNotThrow(new Executable() {
+                @Override
+                public void execute() {
+                    c.customize(connector);
+                }
+            });
+
+        });
     }
 
     private static TomcatServletWebServerFactory execCustomize(final CasTomcatServletWebServerFactoryCustomizer customizer) {
