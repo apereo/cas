@@ -262,7 +262,9 @@ subprojects {
         }
         maven {
             url "https://dl.bintray.com/apereocas/jradius/"
-            mavenContent { releasesOnly() }
+            content {
+                includeGroupByRegex "net\\.jradius.*"
+            }
         }
         maven {
             url "https://oss.sonatype.org/content/repositories/snapshots"
@@ -270,10 +272,6 @@ subprojects {
         }
         maven {
             url "https://oss.sonatype.org/content/repositories/releases"
-            mavenContent { releasesOnly() }
-        }
-        maven {
-            url "https://repo.spring.io/plugins-release/"
             mavenContent { releasesOnly() }
         }
         maven {
