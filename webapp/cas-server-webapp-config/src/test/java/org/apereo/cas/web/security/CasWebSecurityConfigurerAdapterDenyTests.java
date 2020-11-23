@@ -21,7 +21,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 /**
- * This is {@link CasWebSecurityConfigurerAdapterTests}.
+ * This is {@link CasWebSecurityConfigurerAdapterDenyTests}.
  *
  * @author Misagh Moayyed
  * @since 6.1.0
@@ -42,43 +42,19 @@ import org.springframework.test.context.web.WebAppConfiguration;
     properties = {
         "management.endpoint.info.enabled=true",
         "management.endpoint.beans.enabled=true",
+        "management.endpoint.env.enabled=true",
         "management.endpoints.web.exposure.include=*",
+
+        "cas.monitor.endpoints.endpoint.beans.access=DENY",
+        "cas.monitor.endpoints.endpoint.info.access=DENY",
+        "cas.monitor.endpoints.endpoint.env.access=AUTHENTICATED",
         
-        "cas.monitor.endpoints.jaas.login-config=classpath:/jaas-endpoints.conf",
-        "cas.monitor.endpoints.jaas.login-context-name=CAS",
-
-        "cas.monitor.endpoints.ldap.ldap-url=ldap://localhost:10389",
-        "cas.monitor.endpoints.ldap.base-dn=ou=people,dc=example,dc=org",
-        "cas.monitor.endpoints.ldap.search-filter=uid={user}",
-        "cas.monitor.endpoints.ldap.bind-dn=cn=Directory Manager",
-        "cas.monitor.endpoints.ldap.bind-credential=password",
-
-        "cas.monitor.endpoints.jdbc.query=SELECT * FROM USERS",
-        "cas.monitor.endpoints.jdbc.role-prefix=USER_",
-
-        "cas.monitor.endpoints.default-endpoint-properties.required-ip-addresses=127.+",
-        "cas.monitor.endpoints.default-endpoint-properties.access=IP_ADDRESS",
-
-        "cas.monitor.endpoints.endpoint.health.access=IP_ADDRESS",
-        "cas.monitor.endpoints.endpoint.health.required-ip-addresses=196.+",
-
-        "cas.monitor.endpoints.endpoint.status.access=AUTHENTICATED",
-
-        "cas.monitor.endpoints.endpoint.env.access=PERMIT",
-
-        "cas.monitor.endpoints.endpoint.springWebflow.access=ANONYMOUS",
-
-        "cas.monitor.endpoints.endpoint.sso.access=AUTHORITY",
-        "cas.monitor.endpoints.endpoint.sso.required-authorities=EXAMPLE",
-
-        "cas.monitor.endpoints.endpoint.info.access=ROLE",
-        "cas.monitor.endpoints.endpoint.info.required-roles=EXAMPLE"
+        "cas.monitor.endpoints.form-login-enabled=true"
     })
 @WebAppConfiguration
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("Ldap")
-@EnabledIfPortOpen(port = 10389)
-public class CasWebSecurityConfigurerAdapterTests {
+@Tag("WebApp")
+public class CasWebSecurityConfigurerAdapterDenyTests {
     @Test
     public void verifyOperation() {
     }
