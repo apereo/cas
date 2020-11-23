@@ -243,11 +243,7 @@ subprojects {
     ext.libraries = rootProject.ext.libraries
 
     repositories {
-        mavenLocal {
-            content {
-                includeGroup "org.apereo.service.persondir"
-            }
-        }
+        mavenLocal()
         mavenCentral()
         maven {
             url "https://build.shibboleth.net/nexus/content/repositories/releases"

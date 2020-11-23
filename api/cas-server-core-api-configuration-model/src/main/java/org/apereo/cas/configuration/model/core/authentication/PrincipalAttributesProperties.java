@@ -89,6 +89,15 @@ public class PrincipalAttributesProperties implements Serializable {
     private String aggregation = "MERGE";
 
     /**
+     * In the event that multiple attribute repositories are defined,
+     * setting this option to {@code true} forces all repositories
+     * to produce a person object. If any of the repositories fails to produce
+     * a person or person attributes, the resolution engine will halt to
+     * short-circuit the process, failing to resolve the person altogether.
+     */
+    private boolean requireAllRepositorySources;
+
+    /**
      * CAS provides the ability to release a bundle of principal attributes to all services by default.
      * This bundle is not defined on a per-service basis and is always combined with attributes
      * produced by the specific release policy of the service, such that for instance,
@@ -154,11 +163,10 @@ public class PrincipalAttributesProperties implements Serializable {
      * You will also need to ensure {@code grouper.client.properties}
      * is available on the classpath (i.e. {@code src/main/resources})
      * and it contains the following:
-     *
+     * <p>
      * {@code grouperClient.webService.url = http://192.168.99.100:32768/grouper-ws/servicesRest}
      * {@code grouperClient.webService.login = banderson}
      * {@code grouperClient.webService.password = password}
-     *
      */
     private GrouperPrincipalAttributesProperties grouper = new GrouperPrincipalAttributesProperties();
 }
