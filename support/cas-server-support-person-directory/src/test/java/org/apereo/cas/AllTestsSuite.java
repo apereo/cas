@@ -23,6 +23,7 @@ import org.junit.runner.RunWith;
     PersonDirectoryPrincipalResolverConcurrencyTests.class,
     PrincipalAttributeRepositoryFetcherCascadeTests.class,
     CachingAttributeRepositoryTests.class,
+    PrincipalAttributeRepositoryFetcherTests.class,
     CasPersonDirectoryConfigurationCachingAttributeRepositoryTests.class,
     CasPersonDirectoryConfigurationMergeAggregationTests.class,
     CasPersonDirectoryConfigurationCascadeAggregationTests.class,
