@@ -17,7 +17,15 @@ import java.util.List;
  */
 @FunctionalInterface
 public interface RestHttpRequestCredentialFactory extends Ordered {
-    
+    /**
+     * Username parameter.
+     */
+    String PARAMETER_USERNAME = "username";
+    /**
+     * Password parameter.
+     */
+    String PARAMETER_PASSWORD = "password";
+
     /**
      * Create new Credential instances from HTTP request or requestBody.
      * 

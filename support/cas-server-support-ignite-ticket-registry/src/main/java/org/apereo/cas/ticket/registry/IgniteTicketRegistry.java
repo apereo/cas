@@ -178,13 +178,9 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
     }
 
     @ToString
+    @RequiredArgsConstructor
     private static class IgniteInternalTicketExpiryPolicy implements ExpiryPolicy {
-
         private final ExpirationPolicy expirationPolicy;
-
-        IgniteInternalTicketExpiryPolicy(final ExpirationPolicy ticket) {
-            this.expirationPolicy = ticket;
-        }
 
         @Override
         public Duration getExpiryForCreation() {

@@ -31,7 +31,7 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.*;
 
 /**
  * This is {@link RestfulYubiKeyAccountRegistryTests}.
@@ -61,15 +61,13 @@ public class RestfulYubiKeyAccountRegistryTests {
     private CipherExecutor yubikeyAccountCipherExecutor;
 
     @Test
-    public void verifyRegistration() throws Exception {
+    public void verifyRegistration() {
         try (val webServer = new MockWebServer(6591,
             new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "Output"), OK)) {
             webServer.start();
-
             val request = YubiKeyDeviceRegistrationRequest.builder().username("casuser")
                 .token(AbstractYubiKeyAccountRegistryTests.OTP).name(UUID.randomUUID().toString()).build();
             assertTrue(getYubiKeyAccountRegistry().registerAccountFor(request));
-
             assertDoesNotThrow(new Executable() {
                 @Override
                 public void execute() throws Throwable {
@@ -128,6 +126,15 @@ public class RestfulYubiKeyAccountRegistryTests {
                 .getBytes(StandardCharsets.UTF_8), "Output"), OK)) {
             webServer.start();
             assertFalse(getYubiKeyAccountRegistry().getAccounts().isEmpty());
+        }
+    }
+
+    @Test
+    public void verifyFailsAccount() {
+        try (val webServer = new MockWebServer(6591,
+            new ByteArrayResource("...".getBytes(StandardCharsets.UTF_8), "Output"), OK)) {
+            webServer.start();
+            assertTrue(getYubiKeyAccountRegistry().getAccounts().isEmpty());
         }
     }
 }

@@ -13,6 +13,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -31,6 +33,23 @@ public class DefaultTransientSessionTicketFactoryTests extends BaseTicketFactory
         val ticket = factory.create(RegisteredServiceTestUtils.getService("example"), new HashMap<>(0));
         assertNotNull(ticket);
         assertEquals(20, ticket.getExpirationPolicy().getTimeToLive());
+    }
+
+    @Test
+    public void verifyById() {
+        val factory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
+        val ticket = factory.create(UUID.randomUUID().toString(), Map.of());
+        assertNotNull(ticket);
+        assertNull(ticket.getService());
+    }
+
+    @Test
+    public void verifyByServiceById() {
+        val factory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
+        val ticket = factory.create(UUID.randomUUID().toString(),
+            RegisteredServiceTestUtils.getService("example"), Map.of("key", "value"));
+        assertNotNull(ticket);
+        assertNotNull(ticket.getService());
     }
 
     @Test

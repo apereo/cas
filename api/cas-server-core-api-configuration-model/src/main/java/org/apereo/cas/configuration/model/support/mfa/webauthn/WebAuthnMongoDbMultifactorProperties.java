@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.mfa.webauthn;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -17,6 +18,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("WebAuthnMongoDbMultifactorProperties")
 public class WebAuthnMongoDbMultifactorProperties extends SingleCollectionMongoDbProperties {
 
     private static final long serialVersionUID = 6876845341227039713L;

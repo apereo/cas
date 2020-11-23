@@ -10,11 +10,9 @@ buildscript {
         gradlePluginPortal()
         maven {
             url "https://maven.eveoh.nl/content/repositories/releases"
-            mavenContent { releasesOnly() }
         }
         maven {
             url "https://repo.spring.io/plugins-release"
-            mavenContent { releasesOnly() }
         }
     }
 

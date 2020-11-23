@@ -60,6 +60,7 @@ layout: null
         *   [Couchbase](/$version/installation/Couchbase-Authentication.html)
         *   [Basic](/$version/installation/Basic-Authentication.html)
         *   [Groovy](/$version/installation/Groovy-Authentication.html)
+        *   [QR Code](/$version/installation/QRCode-Authentication.html)
         *   [Digest](/$version/installation/Digest-Authentication.html)
         *   [MongoDb](/$version/installation/MongoDb-Authentication.html)
         *   [Redis](/$version/installation/Redis-Authentication.html)
@@ -146,7 +147,7 @@ layout: null
         *   [MongoDb](/$version/ticketing/MongoDb-Ticket-Registry.html)
         *   [DynamoDb](/$version/ticketing/DynamoDb-Ticket-Registry.html)
 
-* [Services](#service_management)
+* [Services & Applications](#service_management)
     *   [Overview](/$version/services/Service-Management.html)
     *   [Management Web Application](/$version/services/Installing-ServicesMgmt-Webapp.html)
     *   [Access Strategy](/$version/services/Configuring-Service-Access-Strategy.html)

@@ -419,7 +419,7 @@ jobs:
   publish-snapshots:
     runs-on: ubuntu-latest
     needs: [build]
-    if: ${{ github.event_name == 'push' }} && env.SONATYPE_USER != null && env.SONATYPE_PWD != null
+    if: ${{ github.event_name == 'push' }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -438,6 +438,7 @@ jobs:
         with:
           name: binary-artifacts
       - name: Publish SNAPSHOTs
+        if: ${{ env.SONATYPE_USER != null && env.SONATYPE_PWD != null }}
         run: ./gradlew -DpublishSnapshots=true --build-cache --configure-on-demand --no-daemon --parallel -Dorg.gradle.internal.http.socketTimeout=180000 -Dorg.gradle.internal.http.connectionTimeout=180000 build publish -x test -x javadoc -x check -DsonatypeUsername="${SONATYPE_USER}" -DsonatypePassword="${SONATYPE_PWD}"
 
   ##########################################################################
@@ -469,7 +470,7 @@ jobs:
   publish-docs:
     runs-on: ubuntu-latest
     needs: [validate-docs]
-    if: ${{ github.event_name == 'push' }} && env.GH_PAGES_TOKEN != null
+    if: ${{ github.event_name == 'push' }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -485,6 +486,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Publish Documentation
+        if: ${{ env.GH_PAGES_TOKEN != null  }}
         run: ./ci/push-docs-ghpages.sh
 
 ##########################################################################
@@ -728,7 +730,7 @@ jobs:
 #  renovate-dependency-updates:
 #    runs-on: ubuntu-latest
 #    needs: [cache]
-#    if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' }} && env.RENOVATE_TOKEN != null
+#    if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' && env.RENOVATE_TOKEN != null }}
 #    steps:
 #      - uses: actions/checkout@v2
 #      - name: Set up JDK
@@ -746,32 +748,7 @@ jobs:
 #      - uses: renovatebot/github-action@v23.79.0
 #        with:
 #          configurationFile: .github/renovate.js
-
-##########################################################################
-
-#  validate-quality:
-#    runs-on: ubuntu-latest
-#    needs: [build]
-#    steps:
-#      - uses: actions/checkout@v2
-#      - name: Set up JDK
-#        uses: actions/setup-java@v1.4.3
-#        with:
-#          java-version: ${{ env.JDK_CURRENT }}
-#      - name: Initialize
-#        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-#      - uses: actions/cache@v2
-#        with:
-#          path: ~/.gradle/caches
-#          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-#          restore-keys: |
-#            ${{ runner.os }}-gradle-
-#      - name: Validate Code Quality via SonarCloud
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#          SONARCLOUD_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
-#        if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' && env.SONARCLOUD_TOKEN != null }}
-#        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel sonarqube -x javadoc -Dsonar.organization=apereo -Dsonar.host.url=https://sonarcloud.io -Dsonar.login="${SONARCLOUD_TOKEN}" -DskipNestedConfigMetadataGen=true --parallel -DshowStandardStreams=true
+#          token: ${{ secrets.RENOVATE_TOKEN }}
 
 ##########################################################################
 
@@ -790,6 +767,10 @@ jobs:
           - locale-param
           - generate-service-ticket
           - webauthn-primary-authn
+          - authn-throttle
+          - qrauthn-login
+          - gauth-register
+          - duo-websdk-login
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK

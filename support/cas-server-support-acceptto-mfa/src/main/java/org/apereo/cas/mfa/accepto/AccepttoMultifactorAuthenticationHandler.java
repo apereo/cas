@@ -111,11 +111,7 @@ public class AccepttoMultifactorAuthenticationHandler extends AbstractPreAndPost
                     if (status == HttpStatus.SC_UNAUTHORIZED) {
                         throw new AccountLockedException("Email address provided is not a valid registered account");
                     }
-                } else {
-                    LOGGER.warn("Unable to fetch a response from [{}]", url);
                 }
-            } catch (final Exception e) {
-                LoggingUtils.error(LOGGER, e);
             } finally {
                 HttpUtils.close(response);
             }

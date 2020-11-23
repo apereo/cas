@@ -6,7 +6,8 @@ category: Multifactor Authentication
 
 # Duo Security Authentication
 
-[Duo Security](https://www.duo.com) is a two-step verification service the provides additional security for access to institutional and personal data.  
+[Duo Security](https://www.duo.com) is a two-step verification service the provides 
+additional security for access to institutional and personal data.  
 
 Duo offers several options for authenticating users:
 
@@ -25,15 +26,11 @@ Duo offers several options for authenticating users:
 
 You may need to add the following repositories to the WAR overlay:
 
-```xml
+```groovy
 repositories {
     maven { 
         mavenContent { releasesOnly() }
         url "https://dl.bintray.com/uniconiam/maven" 
-    }
-    maven { 
-        mavenContent { releasesOnly() }
-        url "https://jitpack.io" 
     }
 }
 ```
@@ -61,27 +58,48 @@ flows as necessary. The provider id need not be defined if there is only a singl
 
 ## User Account Status
 
-If users are unregistered with Duo Security or allowed through via a direct bypass, CAS will query Duo Security for the user account apriori to learn
+If users are unregistered with Duo Security or allowed through via a direct bypass, 
+CAS will query Duo Security for the user account apriori to learn
 whether user is registered or configured for direct bypass. If the account is configured for direct bypass or the
 user account is not registered yet the new-user enrollment policy allows the user to skip registration, CAS will bypass
-Duo Security altogether and shall not challenge the user and will also **NOT** report back a multifactor-enabled authentication context back to the application.
+Duo Security altogether and shall not challenge the user and will also **NOT** report back a multifactor-enabled 
+authentication context back to the application.
 
-<div class="alert alert-warning"><strong>YMMV</strong><p>In recent conversations with Duo Security, it turns out that the API behavior has changed (for security reasons) where it may no longer accurately report back account status. This means even if the above conditions hold true, CAS may continue to route the user to Duo Security having received an eligibility status from the API. Duo Security is reportedly working on a fix to restore the API behavior in a more secure way. In the meanwhile, YMMV.</p></div>
+<div class="alert alert-warning"><strong>YMMV</strong><p>In recent conversations with Duo Security, it 
+turns out that the API behavior has changed (for security reasons) where it may no longer accurately 
+report back account status. This means even if the above conditions hold true, CAS may continue to route 
+the user to Duo Security having received an eligibility status from the API. Duo Security is reportedly 
+working on a fix to restore the API behavior in a more secure way. In the meanwhile, YMMV.</p></div>
 
 ## Health Status
 
 CAS is able to contact Duo Security, on demand, in order to inquire the health status of the service using Duo Security's `ping` API. 
-The results of the operations are recorded and reported using `health` endpoint provided by [CAS Monitoring endpoints](../monitoring/Monitoring-Statistics.html).
+The results of the operations are recorded and reported using `health` endpoint 
+provided by [CAS Monitoring endpoints](../monitoring/Monitoring-Statistics.html).
 Of course, the same result throughout the Duo authentication flow is also used to determine failure modes.
+ 
+## Universal Prompt
+
+Universal Prompt is a variation of Duo Multifactor Authentication that uses the [Duo OIDC Auth API](https://duo.com/docs/oauthapi). This is 
+an OIDC standards-based API for adding strong two-factor authentication to CAS. This option no longer displays the Duo Prompt 
+in an iFrame controlled and owned by CAS. Rather, the prompt is now hosted on Duo’s servers and displayed via browser redirects. The
+response from Duo Security is passed to CAS as a browser redirect and CAS will begin to negotiate and exchange that response in favor of
+a JWT that contains the multifactor authentication user profile details.
+
+This option only required settings for integration key, secret key, and API hostname. To see the relevant list of CAS 
+properties, please [review this guide](../configuration/Configuration-Properties.html#duosecurity).
  
 ## Non-Browser MFA
 
 The Duo Security module of CAS is able to also support [non-browser based multifactor authentication](https://duo.com/docs/authapi) requests.
 In order to trigger this behavior, applications (i.e. `curl`, REST APIs, etc) need to specify a special
-`Content-Type` to signal to CAS that the request is submitted from a non-web based environment. The multifactor authentication request is [submitted to Duo Security](https://duo.com/docs/authapi#/auth) in `auto` mode which effectively may translate into an out-of-band factor (push or phone) recommended by Duo as the best for the user's devices.
+`Content-Type` to signal to CAS that the request is submitted from a non-web based environment. 
+The multifactor authentication request is [submitted to Duo Security](https://duo.com/docs/authapi#/auth) in `auto` mode which effectively may 
+translate into an out-of-band factor (push or phone) recommended by Duo as the best for the user's devices.
 
 In order to successfully complete the authentication flow, CAS must also be configured with a method
-of primary authentication that is able to support non-web based environments such as [Basic Authentication](../installation/Basic-Authentication.html).
+of primary authentication that is able to support non-web based environments 
+such as [Basic Authentication](../installation/Basic-Authentication.html).
 
 Here is an example using `curl` that attempts to authenticate into a service by first exercising
 basic authentication while identifying the request content type as `application/cas`. It is assumed that the
@@ -95,3 +113,22 @@ curl --location --header "Content-Type: application/cas" https://apps.example.or
 ## Configuration
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#duosecurity).
+
+## Troubleshooting
+
+To enable additional logging, configure the log4j configuration file to add the following
+levels:
+
+```xml
+...
+<Logger name="com.duosecurity" level="debug" additivity="false">
+    <AppenderRef ref="console"/>
+    <AppenderRef ref="file"/>
+</Logger>
+...
+``` 
+
+You should also use NTP to ensure that your CAS server's time is correct. Furthermore, CAS typically communicates with 
+Duo's service on TCP port 443. Firewall configurations that restrict outbound access to 
+Duo's service with rules using destination IP addresses or IP address ranges are not recommended per Duo Security, 
+since these may change over time to maintain our service's high availability.

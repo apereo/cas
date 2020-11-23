@@ -47,7 +47,7 @@ To simplify the test execution process, you may take advantage of the `testcas.s
 
 ```bash
 # chmod +x ./testcas.sh
-./testcas.sh --category <category> [--test <test-class>] [--debug] [--coverage]
+./testcas.sh --category <category> [--test <test-class>] [--debug] [--with-coverage]
 ```
 
 To learn more about the script, use:

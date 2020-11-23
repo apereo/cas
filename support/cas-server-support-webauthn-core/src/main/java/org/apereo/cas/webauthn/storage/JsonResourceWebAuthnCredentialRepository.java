@@ -2,6 +2,7 @@ package org.apereo.cas.webauthn.storage;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.webauthn.WebAuthnUtils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.yubico.data.CredentialRegistration;
@@ -58,7 +59,7 @@ public class JsonResourceWebAuthnCredentialRepository extends BaseWebAuthnCreden
         }
         if (location.getFile().length() > 0) {
             LOGGER.trace("Reading JSON repository file at [{}]", location.getFile());
-            return new ConcurrentHashMap<>(getObjectMapper().readValue(location.getFile(), new TypeReference<>() {
+            return new ConcurrentHashMap<>(WebAuthnUtils.getObjectMapper().readValue(location.getFile(), new TypeReference<>() {
             }));
         }
         return new ConcurrentHashMap<>(0);
@@ -74,6 +75,6 @@ public class JsonResourceWebAuthnCredentialRepository extends BaseWebAuthnCreden
     protected void update(final String username, final Collection<CredentialRegistration> records) {
         val storage = readFromJsonRepository();
         storage.put(username, new LinkedHashSet<>(records));
-        getObjectMapper().writerWithDefaultPrettyPrinter().writeValue(location.getFile(), storage);
+        WebAuthnUtils.getObjectMapper().writerWithDefaultPrettyPrinter().writeValue(location.getFile(), storage);
     }
 }
