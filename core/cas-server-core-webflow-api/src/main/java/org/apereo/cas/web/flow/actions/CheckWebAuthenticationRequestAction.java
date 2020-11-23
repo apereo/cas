@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions;
 
+import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -25,11 +26,10 @@ public class CheckWebAuthenticationRequestAction extends AbstractAction {
     protected Event doExecute(final RequestContext context) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         LOGGER.trace("Checking request content type [{}] against [{}]", request.getContentType(), this.contentType);
-        if (this.contentType.equalsIgnoreCase(request.getContentType())) {
+        if (RegexUtils.find(contentType, request.getContentType())) {
             LOGGER.debug("Authentication request via type [{}] is not web-based", this.contentType);
             return new EventFactorySupport().no(this);
         }
-
         LOGGER.debug("Authenticated request is identified as web-based via type [{}]", request.getContentType());
         return new EventFactorySupport().yes(this);
     }

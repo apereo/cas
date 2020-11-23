@@ -140,6 +140,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
     /**
      * Content-type that is expected to be specified by non-web clients such as curl, etc in the
      * event that the provider supports variations of non-browser based MFA.
+     * The value is treated as a regular expression.
      */
     private String contentType = "application/cas";
 

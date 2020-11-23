@@ -9,7 +9,9 @@ dependencies {
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-webflow-api")
     implementation project(":core:cas-server-core-web-api")
+    implementation project(":core:cas-server-core-webflow-mfa-api")
     implementation project(":core:cas-server-core-notifications")
+    implementation project(":core:cas-server-core-authentication-mfa")
 
     implementation libraries.pac4jcore
 
@@ -25,7 +27,6 @@ dependencies {
     testImplementation project(":core:cas-server-core-webflow-mfa")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-authentication")
-    testImplementation project(":core:cas-server-core-authentication-mfa")
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core-authentication-attributes")
     testImplementation project(":support:cas-server-support-themes")

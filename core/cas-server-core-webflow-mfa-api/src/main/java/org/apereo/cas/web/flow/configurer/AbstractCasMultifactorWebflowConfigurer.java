@@ -261,7 +261,7 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
     }
 
     private void registerMultifactorProviderAvailableAction(final Flow mfaFlow, final String targetStateId) {
-        val availableAction = createActionState(mfaFlow, CasWebflowConstants.STATE_ID_MFA_CHECK_AVAILABLE, createEvaluateAction(MFA_CHECK_AVAILABLE_BEAN_ID));
+        val availableAction = createActionState(mfaFlow, CasWebflowConstants.STATE_ID_MFA_CHECK_AVAILABLE, MFA_CHECK_AVAILABLE_BEAN_ID);
         if (mfaFlow.containsState(CasWebflowConstants.STATE_ID_MFA_PRE_AUTH)) {
             createTransitionForState(availableAction, CasWebflowConstants.TRANSITION_ID_YES, CasWebflowConstants.STATE_ID_MFA_PRE_AUTH);
         } else {

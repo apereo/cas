@@ -2,7 +2,6 @@ package org.apereo.cas.adaptors.duo.authn;
 
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
-import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.http.HttpClient;
 
@@ -12,7 +11,6 @@ import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONObject;
 
 import java.net.URL;
 import java.net.URLDecoder;
@@ -41,10 +39,7 @@ public class BasicDuoSecurityAuthenticationService extends BaseDuoSecurityAuthen
     }
 
     @Override
-    public DuoSecurityAuthenticationResult authenticate(final Credential creds) throws Exception {
-        if (creds instanceof DuoSecurityDirectCredential) {
-            return authenticateDuoCredentialDirect(creds);
-        }
+    public DuoSecurityAuthenticationResult authenticateInternal(final Credential creds) throws Exception {
         return authenticateDuoCredential(creds);
     }
 
@@ -78,23 +73,6 @@ public class BasicDuoSecurityAuthenticationService extends BaseDuoSecurityAuthen
         return Optional.of(DuoWeb.signRequest(duoProperties.getDuoIntegrationKey(),
             duoProperties.getDuoSecretKey(),
             duoProperties.getDuoApplicationKey(), uid));
-    }
-
-    private DuoSecurityAuthenticationResult authenticateDuoCredentialDirect(final Credential crds) {
-        try {
-            val credential = DuoSecurityDirectCredential.class.cast(crds);
-            val p = credential.getAuthentication().getPrincipal();
-            val request = buildHttpPostAuthRequest();
-            signHttpAuthRequest(request, p.getId());
-            val result = (JSONObject) request.executeRequest();
-            LOGGER.debug("Duo authentication response: [{}]", result);
-            if ("allow".equalsIgnoreCase(result.getString("result"))) {
-                return DuoSecurityAuthenticationResult.builder().success(true).username(crds.getId()).build();
-            }
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return DuoSecurityAuthenticationResult.builder().success(false).username(crds.getId()).build();
     }
 
     private DuoSecurityAuthenticationResult authenticateDuoCredential(final Credential creds) throws Exception {
