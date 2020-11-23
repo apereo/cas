@@ -44,7 +44,9 @@ helm upgrade --install cas-server --set image.pullPolicy=Never --set image.tag=$
 sleep 15
 kubectl describe pod cas-server-0
 sleep 60
-kubectl logs cas-server-0
-curl -k -v -H "Host: cas.example.org" https://127.0.0.1/cas/login
+kubectl logs cas-server-0 | tee cas.out
+grep "Started CasWebApplication" cas.out
+curl -k -v -H "Host: cas.example.org" https://127.0.0.1/cas/login > login.txt
+grep "password" login.txt
 helm test cas-server
 kubectl get pods
