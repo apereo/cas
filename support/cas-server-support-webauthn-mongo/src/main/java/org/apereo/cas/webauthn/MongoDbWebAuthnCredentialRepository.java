@@ -44,8 +44,9 @@ public class MongoDbWebAuthnCredentialRepository extends BaseWebAuthnCredentialR
             getProperties().getAuthn().getMfa().getWebAuthn().getMongo().getCollection());
         return records.stream()
             .map(record -> getCipherExecutor().decode(record.getRecords()))
-            .map(Unchecked.function(record -> WebAuthnUtils.getObjectMapper().readValue(record, new TypeReference<Set<CredentialRegistration>>() {
-            })))
+            .map(Unchecked.function(record -> WebAuthnUtils.getObjectMapper()
+                .readValue(record, new TypeReference<Set<CredentialRegistration>>() {
+                })))
             .flatMap(Collection::stream)
             .collect(Collectors.toList());
     }
@@ -58,8 +59,8 @@ public class MongoDbWebAuthnCredentialRepository extends BaseWebAuthnCredentialR
         return records.stream()
             .map(record -> getCipherExecutor().decode(record.getRecords()))
             .map(Unchecked.function(record -> WebAuthnUtils.getObjectMapper()
-                    .readValue(record, new TypeReference<Set<CredentialRegistration>>() {
-                    })))
+                .readValue(record, new TypeReference<Set<CredentialRegistration>>() {
+                })))
             .flatMap(Collection::stream);
     }
 
