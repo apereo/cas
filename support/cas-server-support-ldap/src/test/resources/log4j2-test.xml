@@ -7,7 +7,7 @@
     </Appenders>
     <Loggers>
         <Logger name="org.apereo.cas" level="error"  />
-        <Logger name="org.ldaptive" level="error" />
+        <Logger name="org.ldaptive" level="info" />
         <Logger name="com.unboundid" level="error" />
         <Logger name="org.springframework" level="error" />
         <Logger name="org.springframework.boot" level="error" />

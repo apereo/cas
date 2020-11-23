@@ -10,8 +10,10 @@ import org.apereo.cas.authentication.DisabledPoolingLdapAuthenticationHandlerTes
 import org.apereo.cas.authentication.EDirectoryPasswordPolicyLdapAuthenticationHandlerTests;
 import org.apereo.cas.authentication.FreeIPAPasswordPolicyLdapAuthenticationHandlerTests;
 import org.apereo.cas.authentication.LdapPasswordSynchronizationAuthenticationPostProcessorTests;
+import org.apereo.cas.authentication.OpenLdapAuthenticationHandlerTests;
 import org.apereo.cas.authentication.principal.PersonDirectoryPrincipalResolverActiveDirectoryTests;
 import org.apereo.cas.authentication.principal.PersonDirectoryPrincipalResolverLdapTests;
+import org.apereo.cas.authentication.principal.PersonDirectoryPrincipalResolverOpenLdapTests;
 import org.apereo.cas.config.LdapPasswordSynchronizationConfigurationTests;
 
 import org.junit.platform.runner.JUnitPlatform;
@@ -31,6 +33,8 @@ import org.junit.runner.RunWith;
     AuthenticatedLdapAuthenticationHandlerTests.class,
     PersonDirectoryPrincipalResolverLdapTests.class,
     DirectLdapAuthenticationHandlerTests.class,
+    OpenLdapAuthenticationHandlerTests.class,
+    PersonDirectoryPrincipalResolverOpenLdapTests.class,
     DisabledPoolingLdapAuthenticationHandlerTests.class,
     PersonDirectoryPrincipalResolverActiveDirectoryTests.class,
     LdapPasswordSynchronizationConfigurationTests.class,
