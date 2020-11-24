@@ -156,8 +156,8 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator i
      * @param errorDescription the OAuth error description
      * @param errorWithCallBack does the error will redirect the end-user to the client
      */
-    public void setErrorDetails(final JEEContext context, final String error,
-                                final String errorDescription, final boolean errorWithCallBack) {
+    protected void setErrorDetails(final JEEContext context, final String error,
+                                   final String errorDescription, final boolean errorWithCallBack) {
         context.setRequestAttribute(OAuth20Constants.ERROR, error);
         context.setRequestAttribute(OAuth20Constants.ERROR_DESCRIPTION, errorDescription);
         context.setRequestAttribute(OAuth20Constants.ERROR_WITH_CALLBACK, errorWithCallBack);
