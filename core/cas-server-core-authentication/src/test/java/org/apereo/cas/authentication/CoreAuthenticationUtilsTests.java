@@ -194,15 +194,18 @@ public class CoreAuthenticationUtilsTests {
 
     @Test
     public void verifyIpIntelligenceService() {
-        val properties = new AdaptiveAuthenticationProperties();
+        var properties = new AdaptiveAuthenticationProperties();
         assertNotNull(CoreAuthenticationUtils.newIpAddressIntelligenceService(properties));
 
+        properties = new AdaptiveAuthenticationProperties();
         properties.getIpIntel().getRest().setUrl("http://localhost:1234");
         assertNotNull(CoreAuthenticationUtils.newIpAddressIntelligenceService(properties));
 
+        properties = new AdaptiveAuthenticationProperties();
         properties.getIpIntel().getGroovy().setLocation(new ClassPathResource("GroovyIPService.groovy"));
         assertNotNull(CoreAuthenticationUtils.newIpAddressIntelligenceService(properties));
 
+        properties = new AdaptiveAuthenticationProperties();
         properties.getIpIntel().getBlackDot().setEmailAddress("cas@example.org");
         assertNotNull(CoreAuthenticationUtils.newIpAddressIntelligenceService(properties));
     }

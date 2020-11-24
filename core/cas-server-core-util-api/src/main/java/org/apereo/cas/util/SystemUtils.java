@@ -83,8 +83,6 @@ public class SystemUtils {
         info.put("JVM Maximum Memory", FileUtils.byteCountToDisplaySize(runtime.maxMemory()));
         info.put("JVM Total Memory", FileUtils.byteCountToDisplaySize(runtime.totalMemory()));
 
-        info.put("JCE Installed", StringUtils.capitalize(BooleanUtils.toStringYesNo(EncodingUtils.isJceInstalled())));
-
         info.put("OS Architecture", properties.get("os.arch"));
         info.put("OS Name", properties.get("os.name"));
         info.put("OS Version", properties.get("os.version"));
