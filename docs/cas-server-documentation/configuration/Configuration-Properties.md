@@ -2316,7 +2316,6 @@ Webflow auto-configuration settings for this feature are available [here](Config
 # cas.authn.spnego.properties[0].timeout=300000
 # cas.authn.spnego.properties[0].jcifs-service-principal=HTTP/cas.example.com@EXAMPLE.COM
 # cas.authn.spnego.properties[0].jcifs-netbios-wins=
-
 ```
 
 ### SPNEGO Client Selection Strategy
