@@ -17,6 +17,7 @@ import org.apereo.services.persondir.support.MergingPersonAttributeDaoImpl;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -193,9 +194,10 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         val registeredService = CoreAttributesTestUtils.getRegisteredService();
         when(registeredService.getUsernameAttributeProvider()).thenReturn(new RegisteredServiceUsernameAttributeProvider() {
             private static final long serialVersionUID = 771643288929352964L;
+
             @Override
             public String resolveUsername(final Principal principal, final Service service, final RegisteredService registeredService) {
-                    return principal.getId();
+                return principal.getId();
             }
         });
         val attr = policy.getAttributes(p, CoreAttributesTestUtils.getService(), registeredService);
@@ -290,11 +292,19 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         assertTrue(policy.isAuthorizedToReleaseAuthenticationAttributes());
         assertFalse(policy.isAuthorizedToReleaseCredentialPassword());
         assertFalse(policy.isAuthorizedToReleaseProxyGrantingTicket());
+        assertEquals(0, policy.getOrder());
 
         val p = PrincipalFactoryUtils.newPrincipalFactory()
             .createPrincipal("uid", Collections.singletonMap("mail", List.of("final@example.com")));
         val attrs = policy.getConsentableAttributes(p, CoreAttributesTestUtils.getService(), CoreAttributesTestUtils.getRegisteredService());
         assertEquals(p.getAttributes(), attrs);
+
+        assertDoesNotThrow(new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                policy.setAttributeFilter(null);
+            }
+        });
 
     }
 }

@@ -1,10 +1,16 @@
 package org.apereo.cas;
 
 import org.apereo.cas.authentication.AuthenticationHandlerTests;
+import org.apereo.cas.authentication.AuthenticationMetaDataPopulatorTests;
+import org.apereo.cas.authentication.AuthenticationPolicyTests;
 import org.apereo.cas.authentication.AuthenticationPostProcessorTests;
 import org.apereo.cas.authentication.AuthenticationPreProcessorTests;
 import org.apereo.cas.authentication.AuthenticationTransactionTests;
+import org.apereo.cas.authentication.PrincipalElectionStrategyTests;
 import org.apereo.cas.authentication.adaptive.UnauthorizedAuthenticationExceptionTests;
+import org.apereo.cas.authentication.principal.PersistentIdGeneratorTests;
+import org.apereo.cas.authentication.principal.ServiceMatchingStrategyTests;
+import org.apereo.cas.authentication.principal.ServiceTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -19,6 +25,12 @@ import org.junit.runner.RunWith;
 @SelectClasses({
     UnauthorizedAuthenticationExceptionTests.class,
     AuthenticationHandlerTests.class,
+    AuthenticationPolicyTests.class,
+    ServiceTests.class,
+    PersistentIdGeneratorTests.class,
+    ServiceMatchingStrategyTests.class,
+    PrincipalElectionStrategyTests.class,
+    AuthenticationMetaDataPopulatorTests.class,
     AuthenticationPreProcessorTests.class,
     AuthenticationPostProcessorTests.class,
     AuthenticationTransactionTests.class
