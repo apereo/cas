@@ -20,6 +20,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
 
 import javax.security.auth.login.FailedLoginException;
+import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -56,6 +57,15 @@ public class PolicyBasedAuthenticationManagerTests {
 
         val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
         authenticationExecutionPlan.registerAuthenticationPreProcessor(transaction -> false);
+        val manager = new PolicyBasedAuthenticationManager(authenticationExecutionPlan,
+            false, mock(ConfigurableApplicationContext.class));
+        assertThrows(AuthenticationException.class, () -> manager.authenticate(transaction));
+    }
+
+    @Test
+    public void verifyNoHandlers() {
+        val map = new HashMap<AuthenticationHandler, PrincipalResolver>();
+        val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
         val manager = new PolicyBasedAuthenticationManager(authenticationExecutionPlan,
             false, mock(ConfigurableApplicationContext.class));
         assertThrows(AuthenticationException.class, () -> manager.authenticate(transaction));
@@ -180,6 +190,38 @@ public class PolicyBasedAuthenticationManagerTests {
     }
 
     @Test
+    public void verifyAuthenticatePolicyFailsGeneric() throws Exception {
+        val map = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>();
+        map.put(newMockHandler(true), null);
+
+        val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
+        val policy = mock(AuthenticationPolicy.class);
+        when(policy.isSatisfiedBy(any(), any(), any(), any()))
+            .thenThrow(new GeneralSecurityException(new FailedLoginException()));
+        authenticationExecutionPlan.registerAuthenticationPolicy(policy);
+        val manager = new PolicyBasedAuthenticationManager(authenticationExecutionPlan,
+            false, mock(ConfigurableApplicationContext.class));
+
+        assertThrows(AuthenticationException.class, () -> manager.authenticate(transaction));
+    }
+
+    @Test
+    public void verifyAuthenticatePolicyFails() throws Exception {
+        val map = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>();
+        map.put(newMockHandler(true), null);
+
+        val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
+        val policy = mock(AuthenticationPolicy.class);
+        when(policy.isSatisfiedBy(any(), any(), any(), any()))
+            .thenThrow(new IllegalArgumentException());
+        authenticationExecutionPlan.registerAuthenticationPolicy(policy);
+        val manager = new PolicyBasedAuthenticationManager(authenticationExecutionPlan,
+            false, mock(ConfigurableApplicationContext.class));
+
+        assertThrows(AuthenticationException.class, () -> manager.authenticate(transaction));
+    }
+
+    @Test
     public void verifyAuthenticateAllFailure() {
         val map = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>();
         map.put(newMockHandler(false), null);
@@ -239,6 +281,14 @@ public class PolicyBasedAuthenticationManagerTests {
         assertEquals(1, auth.getSuccesses().size());
         assertEquals(1, auth.getFailures().size());
         assertEquals(2, auth.getCredentials().size());
+    }
+
+    protected static ServicesManager mockServicesManager() {
+        val svc = mock(ServicesManager.class);
+        val reg = CoreAuthenticationTestUtils.getRegisteredService();
+        when(svc.findServiceBy(any(Service.class))).thenReturn(reg);
+        when(svc.getAllServices()).thenReturn(List.of(reg));
+        return svc;
     }
 
     /**
@@ -312,13 +362,5 @@ public class PolicyBasedAuthenticationManagerTests {
         plan.registerAuthenticationHandlerResolver(new DefaultAuthenticationHandlerResolver());
         plan.registerAuthenticationPostProcessor((builder, transaction) -> LOGGER.trace("Running authentication post processor"));
         return plan;
-    }
-
-    protected static ServicesManager mockServicesManager() {
-        val svc = mock(ServicesManager.class);
-        val reg = CoreAuthenticationTestUtils.getRegisteredService();
-        when(svc.findServiceBy(any(Service.class))).thenReturn(reg);
-        when(svc.getAllServices()).thenReturn(List.of(reg));
-        return svc;
     }
 }
