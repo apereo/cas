@@ -3242,6 +3242,15 @@ available [here](Configuration-Properties-Common.html#job-scheduling) under the 
 Common configuration settings for this feature are 
 available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.web-authn`.
 
+### FIDO2 WebAuthn LDAP
+
+Common configuration settings for this feature are 
+available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.authn.mfa.web-authn.ldap`.
+
+```properties
+# cas.authn.mfa.web-authn.ldap.account-attribute-name=casWebAuthnRecord
+```
+
 ### FIDO2 WebAuthn JPA
 
 Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) 

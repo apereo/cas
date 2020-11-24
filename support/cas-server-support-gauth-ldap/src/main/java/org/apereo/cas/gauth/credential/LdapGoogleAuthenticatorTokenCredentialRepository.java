@@ -196,7 +196,7 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
     private boolean executeModifyOperation(final Set<String> accounts, final LdapEntry entry) {
         val attrMap = new HashMap<String, Set<String>>();
         attrMap.put(ldapProperties.getAccountAttributeName(), accounts);
-        LOGGER.debug("Storing decisions [{}] at LDAP attribute [{}] for [{}]", accounts, attrMap.keySet(), entry.getDn());
+        LOGGER.debug("Storing records [{}] at LDAP attribute [{}] for [{}]", accounts, attrMap.keySet(), entry.getDn());
         return LdapUtils.executeModifyOperation(entry.getDn(), connectionFactory, CollectionUtils.wrap(attrMap));
     }
 
@@ -229,7 +229,7 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
                 filter, ldapProperties.getPageSize(), ldapProperties.getAccountAttributeName());
             if (LdapUtils.containsResultEntry(response)) {
                 val entry = response.getEntry();
-                LOGGER.debug("Locating LDAP entry [{}]", entry);
+                LOGGER.debug("Located LDAP entry [{}]", entry);
                 return entry;
             }
         } catch (final LdapException e) {
