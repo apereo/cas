@@ -149,6 +149,15 @@ public class CoreAuthenticationUtils {
                         return new LinkedHashMap<>(toModify);
                     }
                 };
+            case "all":
+                return new BaseAdditiveAttributeMerger() {
+                    @Override
+                    protected Map<String, List<Object>> mergePersonAttributes(final Map<String, List<Object>> map,
+                        final Map<String, List<Object>> map1) {
+                        return null;
+                    }
+                };
+                
             default:
                 throw new IllegalArgumentException("Unsupported merging policy [" + mergingPolicy + ']');
         }

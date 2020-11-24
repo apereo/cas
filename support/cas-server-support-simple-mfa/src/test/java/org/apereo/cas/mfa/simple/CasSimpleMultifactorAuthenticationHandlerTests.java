@@ -8,7 +8,6 @@ import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicketFactory;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.support.WebUtils;
@@ -16,7 +15,6 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -34,7 +32,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link CasSimpleMultifactorAuthenticationHandlerTests}.
@@ -49,6 +46,10 @@ public class CasSimpleMultifactorAuthenticationHandlerTests {
     @Autowired
     @Qualifier("casSimpleMultifactorAuthenticationHandler")
     private AuthenticationHandler casSimpleMultifactorAuthenticationHandler;
+
+    @Autowired
+    @Qualifier("centralAuthenticationService")
+    private CentralAuthenticationService centralAuthenticationService;
 
     @Autowired
     @Qualifier("ticketRegistry")
@@ -75,7 +76,8 @@ public class CasSimpleMultifactorAuthenticationHandlerTests {
 
         val id = UUID.randomUUID().toString();
         val credential = new CasSimpleMultifactorTokenCredential(id);
-        assertThrows(InvalidTicketException.class, () -> casSimpleMultifactorAuthenticationHandler.authenticate(credential));
+        assertThrows(FailedLoginException.class,
+            () -> casSimpleMultifactorAuthenticationHandler.authenticate(credential));
     }
 
     @Test
@@ -115,8 +117,6 @@ public class CasSimpleMultifactorAuthenticationHandlerTests {
         val credential = new CasSimpleMultifactorTokenCredential(ticket.getId());
         ticket.markTicketExpired();
 
-        val centralAuthenticationService = mock(CentralAuthenticationService.class);
-        when(centralAuthenticationService.getTicket(ArgumentMatchers.eq(ticket.getId()), any())).thenReturn(ticket);
         val handler = new CasSimpleMultifactorAuthenticationHandler(getClass().getSimpleName(),
             servicesManager, PrincipalFactoryUtils.newPrincipalFactory(), centralAuthenticationService, 0);
         assertThrows(FailedLoginException.class, () -> handler.authenticate(credential));

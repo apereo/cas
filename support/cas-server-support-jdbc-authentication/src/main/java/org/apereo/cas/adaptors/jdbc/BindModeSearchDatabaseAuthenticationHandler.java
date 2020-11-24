@@ -6,12 +6,12 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import javax.security.auth.login.FailedLoginException;
 import javax.sql.DataSource;
 import java.security.GeneralSecurityException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
@@ -25,27 +25,27 @@ import java.util.ArrayList;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
+@Slf4j
 public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
 
     public BindModeSearchDatabaseAuthenticationHandler(final String name, final ServicesManager servicesManager,
-                                                       final PrincipalFactory principalFactory,
-                                                       final Integer order, final DataSource dataSource) {
+        final PrincipalFactory principalFactory,
+        final Integer order, final DataSource dataSource) {
         super(name, servicesManager, principalFactory, order, dataSource);
     }
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
-                                                                                        final String originalPassword)
+        final String originalPassword)
         throws GeneralSecurityException, PreventedException {
         val username = credential.getUsername();
         val password = credential.getPassword();
-        try (val connection = getDataSource().getConnection(username, password)) {
+        try (val c = getDataSource().getConnection(username, password)) {
+            LOGGER.trace("Established connection to schema [{}]", c.getSchema());
             val principal = this.principalFactory.createPrincipal(username);
             return createHandlerResult(credential, principal, new ArrayList<>(0));
-        } catch (final SQLException e) {
-            throw new FailedLoginException(e.getMessage());
         } catch (final Exception e) {
-            throw new PreventedException(e);
+            throw new FailedLoginException(e.getMessage());
         }
     }
 }

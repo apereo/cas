@@ -585,7 +585,8 @@ Enable basic authentication for the embedded Apache Tomcat.
 
 #### Apache Portable Runtime (APR)
 
-Tomcat can use the [Apache Portable Runtime](https://tomcat.apache.org/tomcat-9.0-doc/apr.html) to provide superior scalability, performance, and better integration with native server technologies.
+Tomcat can use the [Apache Portable Runtime](https://tomcat.apache.org/tomcat-9.0-doc/apr.html) to provide superior 
+scalability, performance, and better integration with native server technologies.
 
 ```properties
 # cas.server.tomcat.apr.enabled=false
@@ -1046,7 +1047,8 @@ if explicit attribute mappings are defined, then *only mapped attributes* are re
 
 ### Multimapped Attribute
 
-Attributes may be allowed to be virtually renamed and remapped. The following definition, for instance, attempts to grab the attribute `uid` from the attribute source and rename it to `userId`:
+Attributes may be allowed to be virtually renamed and remapped. The following definition, for instance, attempts to 
+grab the attribute `uid` from the attribute source and rename it to `userId`:
 
 ```properties
 # cas.authn.attribute-repository.[type-placeholder].attributes.uid=userId
@@ -1088,7 +1090,9 @@ Static attributes that need to be mapped to a hardcoded value belong here.
 
 ### LDAP
 
-If you wish to directly and separately retrieve attributes from an LDAP source, LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.authn.attribute-repository.ldap[0]`.
+If you wish to directly and separately retrieve attributes from an LDAP source, LDAP settings for this 
+feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the 
+configuration key `cas.authn.attribute-repository.ldap[0]`.
 
 ```properties
 # cas.authn.attribute-repository.ldap[0].id=
@@ -1100,6 +1104,12 @@ If you wish to directly and separately retrieve attributes from an LDAP source, 
 # cas.authn.attribute-repository.ldap[0].attributes.affiliation=groupMembership
 ```
 
+To fetch and resolve attributes that carry tags/options, consider tagging the mapped attribute as such:
+
+```properties
+# cas.authn.attribute-repository.ldap[0].attributes.affiliation=affiliation;
+```
+                                  
 ### Groovy
 
 If you wish to directly and separately retrieve attributes from a Groovy script,
@@ -1157,7 +1167,9 @@ The format of the file may be:
 
 ### REST
 
-Retrieve attributes from a REST endpoint. RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.authn.attribute-repository.rest[0]`.
+Retrieve attributes from a REST endpoint. RESTful settings for this feature 
+are available [here](Configuration-Properties-Common.html#restful-integrations) under 
+the configuration key `cas.authn.attribute-repository.rest[0]`.
 
 ```properties
 # cas.authn.attribute-repository.rest[0].order=0
@@ -1237,7 +1249,9 @@ function run(uid, logger) {
 
 ### JDBC
 
-Retrieve attributes from a JDBC source. Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.attribute-repository.jdbc[0]`.
+Retrieve attributes from a JDBC source. Database settings for this feature 
+are available [here](Configuration-Properties-Common.html#database-settings) under 
+the configuration key `cas.authn.attribute-repository.jdbc[0]`.
 
 ```properties
 # cas.authn.attribute-repository.jdbc[0].attributes.uid=uid
@@ -1285,7 +1299,8 @@ with the following configured properties:
 
 ### Couchbase
 
-This option will fetch attributes from a Couchbase database for a given CAS principal. To learn more about this topic, [please review this guide](../installation/Couchbase-Authentication.html). 
+This option will fetch attributes from a Couchbase database for a given CAS principal. To 
+learn more about this topic, [please review this guide](../installation/Couchbase-Authentication.html). 
 Database settings for this feature are available [here](Configuration-Properties-Common.html#couchbase-integration-settings) under the configuration key `cas.authn.attribute-repository.couchbase`.
 
 ```properties
@@ -1730,9 +1745,29 @@ Email notifications settings for this feature are available [here](Configuration
 under the configuration key `cas.authn.surrogate`. SMS notifications settings for this feature are 
 available [here](Configuration-Properties-Common.html#sms-notifications) under the configuration key `cas.authn.surrogate`.
 
+## QR Authentication
+
+Attempt to login via a mobile device via a QR code. To learn more about this 
+topic, [please review this guide](../installation/QRCode-Authentication.html).
+
+```properties   
+# Configure allowed Origin header values for browser clients.
+# cas.authn.qr.allowed-origins=*
+```
+
+### JSON Device Repository
+
+Attempt to login via a mobile device via a QR code. To learn more about this 
+topic, [please review this guide](../installation/QRCode-Authentication.html).
+
+```properties
+# cas.authn.qr.json.location=file:/etc/cas/config/qrdevices.json
+```
+
 ## Risk-based Authentication
 
-Evaluate suspicious authentication requests and take action. To learn more about this topic, [please review this guide](../installation/Configuring-RiskBased-Authentication.html).
+Evaluate suspicious authentication requests and take action. To learn 
+more about this topic, [please review this guide](../installation/Configuring-RiskBased-Authentication.html).
 
 ```properties
 # cas.authn.adaptive.risk.threshold=0.6
@@ -1790,7 +1825,7 @@ RESTful settings for this feature are available [here](Configuration-Properties-
 under the configuration key `cas.authn.passwordless.tokens.rest`. The signing key and the encryption 
 key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. 
 Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under 
-the configuration key `cas.authn.passwordless.tokens.rest`.
+the configuration key `cas.authn.passwordless.tokens`.
 
 Email notifications settings for this feature are available [here](Configuration-Properties-Common.html#email-notifications) 
 under the configuration key `cas.authn.passwordless.tokens`. SMS notifications settings for this feature are 
@@ -2173,7 +2208,6 @@ To learn more about this topic, [please review this guide](../installation/LDAP-
 LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.authn.ldap[0]`.
 
 ```properties
-#
 # Define attributes to be retrieved from LDAP as part of the same authentication transaction
 # The left-hand size notes the source while the right-hand size indicate an optional renaming/remapping
 # of the attribute definition. The same attribute name is allowed to be mapped multiple times to
@@ -2186,6 +2220,12 @@ LDAP settings for this feature are available [here](Configuration-Properties-Com
 # cas.authn.ldap[0].allow-multiple-principal-attribute-values=true
 # cas.authn.ldap[0].allow-missing-principal-attribute-value=true
 # cas.authn.ldap[0].credential-criteria=
+```
+
+To fetch and resolve attributes that carry tags/options, consider tagging the mapped attribute as such:
+
+```properties
+# cas.authn.ldap[0].principal-attribute-list=homePostalAddress:homePostalAddress;
 ```
 
 ### LDAP Password Policy
@@ -2351,7 +2391,8 @@ LDAP settings for this feature are available [here](Configuration-Properties-Com
 ### Static Resource Repository
 
 ```properties
-# cas.authn.gua.resource.location=file:/path/to/image.jpg
+# cas.authn.gua.simple.[username1]=file:/path/to/image.jpg
+# cas.authn.gua.simple.[username2]=file:/path/to/image.jpg
 ```
 
 ## JWT/Token Authentication
@@ -3123,18 +3164,35 @@ To learn more about this topic, [please review this guide](../mfa/DuoSecurity-Au
 # cas.authn.mfa.duo[0].registration-url=https://registration.example.org/duo-enrollment
 # cas.authn.mfa.duo[0].name=
 # cas.authn.mfa.duo[0].order=
+# cas.authn.mfa.duo[0].mode=WEBSDK|UNIVERSAL
 ```
 
-The `duo-application-key` is a string, at least 40 characters long, that you generate and keep secret from Duo.
-You can generate a random string in Python with:
+Multifactor authentication bypass settings for this provider are 
+available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under 
+the configuration key `cas.authn.mfa.duo[0]`.
+
+The following modes are supported:
+
+| Scope        | Description
+|--------------|-----------------------------------------------------------------------------------------
+| `WEBSDK`     | Use Duo Security's WebSDK to embed an iFrame to handle multifactor authentication exchanges. 
+| `UNIVERSAL`  | Use Duo Security's *OIDC Auth API* to display Duo Prompts in the browser. This option no longer displays the Duo Prompt in an iFrame controlled and owned by CAS. Rather, the prompt is now hosted on Duo’s servers and displayed via browser redirects.
+
+#### Web SDK
+
+The `duo-application-key` is a required string, at least 40 characters long, that you 
+generate and keep secret from Duo. You can generate a random string in Python with:
 
 ```python
 import os, hashlib
 print hashlib.sha1(os.urandom(32)).hexdigest()
 ```
 
-Multifactor authentication bypass settings for this provider are 
-available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.duo[0]`.
+#### Universal Prompt
+
+Universal Prompt no longer requires you to generate and use a application key value. Instead, it requires a *client id* and *client secret*,
+which are known and taught CAS using the integration key and secret key configuration settings. You will need get your integration key, 
+secret key, and API hostname from Duo Security when you register CAS as a protected application. 
 
 ### FIDO2 WebAuthn
 
@@ -3147,6 +3205,7 @@ To learn more about this topic, [please review this guide](../mfa/FIDO2-WebAuthn
 # cas.authn.mfa.web-authn.relying-party-id=
 
 # cas.authn.mfa.web-authn.display-name-attribute=displayName
+# cas.authn.mfa.web-authn.allow-primary-authentication=false
 
 # cas.authn.mfa.web-authn.allow-unrequested-extensions=false
 # cas.authn.mfa.web-authn.allow-untrusted-attestation=false
@@ -3182,6 +3241,15 @@ available [here](Configuration-Properties-Common.html#job-scheduling) under the 
 
 Common configuration settings for this feature are 
 available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.web-authn`.
+
+### FIDO2 WebAuthn LDAP
+
+Common configuration settings for this feature are 
+available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.authn.mfa.web-authn.ldap`.
+
+```properties
+# cas.authn.mfa.web-authn.ldap.account-attribute-name=casWebAuthnRecord
+```
 
 ### FIDO2 WebAuthn JPA
 
@@ -3306,7 +3374,8 @@ To learn more about this topic, [please review this guide](../mfa/AuthyAuthentic
 # cas.authn.mfa.authy.order=
 ```
 
-Multifactor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.authy`.
+Multifactor authentication bypass settings for this provider are 
+available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.authy`.
 
 
 ### Acceptto
@@ -3819,13 +3888,27 @@ The following settings specifically apply to this provider:
 
 #### KeyCloak
 
-Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-openid-connect-settings) 
+Common settings for this identity provider are 
+available [here](Configuration-Properties-Common.html#delegated-authentication-openid-connect-settings) 
 under the configuration key `cas.authn.pac4j.oidc[0].keycloak`.
 
 ```properties
 # cas.authn.pac4j.oidc[0].keycloak.realm=
 # cas.authn.pac4j.oidc[0].keycloak.base-uri=
 ```                                     
+
+#### Apple Signin
+
+Common settings for this identity provider are 
+available [here](Configuration-Properties-Common.html#delegated-authentication-openid-connect-settings) 
+under the configuration key `cas.authn.pac4j.oidc[0].apple`.
+
+```properties
+# cas.authn.pac4j.oidc[0].apple.private-key=
+# cas.authn.pac4j.oidc[0].apple.private-key-id=
+# cas.authn.pac4j.oidc[0].apple.team-id=
+# cas.authn.pac4j.oidc[0].apple.timeout=PT30S
+```  
 
 #### Generic
 

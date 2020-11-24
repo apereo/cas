@@ -44,6 +44,7 @@ public interface CasWebflowConstants {
      * The transition state 'finalize'.
      */
     String TRANSITION_ID_FINALIZE = "finalize";
+    
 
     /**
      * The transition state 'warn'.
@@ -69,6 +70,11 @@ public interface CasWebflowConstants {
      * The transition state 'error'.
      */
     String TRANSITION_ID_ERROR = "error";
+
+    /**
+     * The transition state 'validate'.
+     */
+    String TRANSITION_ID_VALIDATE = "validate";
 
     /**
      * The transition state 'resume'.
@@ -486,7 +492,7 @@ public interface CasWebflowConstants {
     /**
      * Delegated authentication state id.
      */
-    String STATE_ID_DELEGATED_AUTHENTICATION = "delegatedAuthenticationAction";
+    String STATE_ID_DELEGATED_AUTHENTICATION = "delegatedAuthentication";
 
     /**
      * State id 'frontLogout'.

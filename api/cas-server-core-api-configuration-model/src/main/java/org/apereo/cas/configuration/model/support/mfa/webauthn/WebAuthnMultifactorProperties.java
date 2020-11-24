@@ -9,6 +9,7 @@ import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -24,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 @RequiresModule(name = "cas-server-support-webauthn")
 @Getter
 @Setter
+@JsonFilter("WebAuthnMultifactorProperties")
 public class WebAuthnMultifactorProperties extends BaseMultifactorProviderProperties {
 
     /**
@@ -128,6 +130,15 @@ public class WebAuthnMultifactorProperties extends BaseMultifactorProviderProper
     private String attestationConveyancePreference = "DIRECT";
 
     /**
+     * Configure the authentication flow to allow
+     * web-authn to be used as the first primary factor
+     * for authentication. Registered accounts with a valid
+     * webauthn registration record can choose to login
+     * using their device as the first step.
+     */
+    private boolean allowPrimaryAuthentication;
+
+    /**
      * Store device registration records inside a static JSON resource.
      */
     @NestedConfigurationProperty
@@ -150,6 +161,12 @@ public class WebAuthnMultifactorProperties extends BaseMultifactorProviderProper
      */
     @NestedConfigurationProperty
     private WebAuthnDynamoDbMultifactorProperties dynamoDb = new WebAuthnDynamoDbMultifactorProperties();
+
+    /**
+     * Store device registration records inside an LDAP directory..
+     */
+    @NestedConfigurationProperty
+    private WebAuthnLdapMultifactorProperties ldap = new WebAuthnLdapMultifactorProperties();
 
     /**
      * Store device registration records inside a JDBC resource.

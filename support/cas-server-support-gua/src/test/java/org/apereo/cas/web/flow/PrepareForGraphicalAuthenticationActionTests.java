@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.AbstractGraphicalAuthenticationTests;
+import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -28,5 +29,15 @@ public class PrepareForGraphicalAuthenticationActionTests extends AbstractGraphi
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         val event = initializeLoginAction.execute(context);
         assertEquals(GraphicalUserAuthenticationWebflowConfigurer.TRANSITION_ID_GUA_GET_USERID, event.getId());
+    }
+
+    @Test
+    public void verifyMissingAction() throws Exception {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        WebUtils.putGraphicalUserAuthenticationUsername(context, "casuser");
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        val event = initializeLoginAction.execute(context);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
     }
 }

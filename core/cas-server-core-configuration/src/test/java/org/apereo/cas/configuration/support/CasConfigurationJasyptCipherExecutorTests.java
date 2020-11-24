@@ -52,6 +52,13 @@ public class CasConfigurationJasyptCipherExecutorTests {
     }
 
     @Test
+    public void verifyEncodeOps() {
+        assertNotNull(jasypt.getName());
+        val result = jasypt.encode(getClass().getSimpleName());
+        assertNotNull(result);
+    }
+
+    @Test
     public void verifyDecryptionEncryptionPairNotNeeded() {
         val result = jasypt.decryptValue("keyValue");
         assertNotNull(result);

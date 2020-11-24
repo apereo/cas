@@ -24,7 +24,7 @@ public class WebAuthnStartAuthenticationAction extends AbstractAction {
     private final RegistrationStorage webAuthnCredentialRepository;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecute(final RequestContext requestContext) {
         val authentication = WebUtils.getAuthentication(requestContext);
         val principal = authentication.getPrincipal();
         LOGGER.trace("Checking registration record for [{}]", principal.getId());

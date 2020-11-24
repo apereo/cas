@@ -28,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.ldap[0].search-filter=cn={user}",
     "cas.authn.ldap[0].bind-dn=cn=Directory Manager",
     "cas.authn.ldap[0].bind-credential=password",
+    "cas.authn.ldap[0].collect-dn-attribute=true",
     "cas.authn.ldap[0].principal-attribute-list=description,cn"
     })
 @EnabledIfPortOpen(port = 10389)

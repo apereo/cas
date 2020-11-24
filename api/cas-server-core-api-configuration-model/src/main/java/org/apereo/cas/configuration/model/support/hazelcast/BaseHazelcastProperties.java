@@ -76,6 +76,11 @@ public class BaseHazelcastProperties implements Serializable {
     private boolean enableCompression;
 
     /**
+     * Enables scripting from Management Center.
+     */
+    private boolean enableManagementCenterScripting = true;
+
+    /**
      * Hazelcast cluster settings if CAS is able to auto-create caches.
      */
     @NestedConfigurationProperty

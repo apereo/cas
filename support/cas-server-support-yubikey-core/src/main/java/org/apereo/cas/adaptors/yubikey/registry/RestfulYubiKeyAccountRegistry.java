@@ -39,7 +39,7 @@ public class RestfulYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     private final YubiKeyRestfulMultifactorProperties restProperties;
 
     public RestfulYubiKeyAccountRegistry(final YubiKeyRestfulMultifactorProperties restProperties,
-                                         final YubiKeyAccountValidator validator) {
+        final YubiKeyAccountValidator validator) {
         super(validator);
         this.restProperties = restProperties;
     }
@@ -73,42 +73,6 @@ public class RestfulYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
             HttpUtils.close(response);
         }
         return false;
-    }
-
-    @Override
-    public void delete(final String username, final long deviceId) {
-        HttpResponse response = null;
-        try {
-            val url = StringUtils.appendIfMissing(restProperties.getUrl(), "/")
-                .concat(username).concat("/").concat(String.valueOf(deviceId));
-            response = HttpUtils.executeDelete(url,
-                restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword());
-        } finally {
-            HttpUtils.close(response);
-        }
-    }
-
-    @Override
-    public void delete(final String username) {
-        HttpResponse response = null;
-        try {
-            val url = StringUtils.appendIfMissing(restProperties.getUrl(), "/").concat(username);
-            response = HttpUtils.executeDelete(url,
-                restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword());
-        } finally {
-            HttpUtils.close(response);
-        }
-    }
-
-    @Override
-    public void deleteAll() {
-        HttpResponse response = null;
-        try {
-            response = HttpUtils.executeDelete(restProperties.getUrl(),
-                restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword());
-        } finally {
-            HttpUtils.close(response);
-        }
     }
 
     @Override
@@ -153,5 +117,41 @@ public class RestfulYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
             HttpUtils.close(response);
         }
         return new ArrayList<>(0);
+    }
+
+    @Override
+    public void delete(final String username, final long deviceId) {
+        HttpResponse response = null;
+        try {
+            val url = StringUtils.appendIfMissing(restProperties.getUrl(), "/")
+                .concat(username).concat("/").concat(String.valueOf(deviceId));
+            response = HttpUtils.executeDelete(url,
+                restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword());
+        } finally {
+            HttpUtils.close(response);
+        }
+    }
+
+    @Override
+    public void delete(final String username) {
+        HttpResponse response = null;
+        try {
+            val url = StringUtils.appendIfMissing(restProperties.getUrl(), "/").concat(username);
+            response = HttpUtils.executeDelete(url,
+                restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword());
+        } finally {
+            HttpUtils.close(response);
+        }
+    }
+
+    @Override
+    public void deleteAll() {
+        HttpResponse response = null;
+        try {
+            response = HttpUtils.executeDelete(restProperties.getUrl(),
+                restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword());
+        } finally {
+            HttpUtils.close(response);
+        }
     }
 }

@@ -25,7 +25,7 @@ public class DefaultUmaResourceSetClaimPermissionExaminer implements UmaResource
                 if (!permission.getScopes().containsAll(ticket.getScopes())) {
                     LOGGER.debug("Policy permission [{}] does not contain all requested scopes [{}] from ticket [{}]",
                         permission.getId(), ticket.getScopes(), ticket.getId());
-                    val delta = Sets.difference(permission.getScopes(), ticket.getScopes());
+                    val delta = Sets.difference(ticket.getScopes(), permission.getScopes());
                     details.getUnmatchedScopes().addAll(delta);
                 }
 

@@ -3,9 +3,9 @@ package org.apereo.cas.tomcat;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatHttpProxyProperties;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.catalina.authenticator.BasicAuthenticator;
@@ -67,8 +67,6 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
             configureSSLValve(tomcat);
             configureBasicAuthn(tomcat);
             finalizeConnectors(tomcat);
-        } else {
-            LOGGER.error("Servlet web server factory [{}] does not support Apache Tomcat and cannot be customized.", factory);
         }
     }
 
@@ -252,16 +250,13 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
 
             val valve = new RewriteValve() {
                 @Override
+                @SneakyThrows
                 public synchronized void startInternal() {
-                    try {
-                        super.startInternal();
-                        try (val is = res.getInputStream();
-                             val isr = new InputStreamReader(is, StandardCharsets.UTF_8);
-                             val buffer = new BufferedReader(isr)) {
-                            parse(buffer);
-                        }
-                    } catch (final Exception e) {
-                        LoggingUtils.error(LOGGER, e);
+                    super.startInternal();
+                    try (val is = res.getInputStream();
+                         val isr = new InputStreamReader(is, StandardCharsets.UTF_8);
+                         val buffer = new BufferedReader(isr)) {
+                        parse(buffer);
                     }
                 }
             };
@@ -279,7 +274,7 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
         if (handler != null) {
             ReflectionUtils.makeAccessible(handler);
             if ("HTTP/2".equalsIgnoreCase(proxy.getProtocol())) {
-                ReflectionUtils.setField(handler, connector, new Http2Protocol());
+                connector.addUpgradeProtocol(new Http2Protocol());
             } else {
                 var protocolHandlerInstance = (AbstractProtocol) null;
                 switch (proxy.getProtocol()) {

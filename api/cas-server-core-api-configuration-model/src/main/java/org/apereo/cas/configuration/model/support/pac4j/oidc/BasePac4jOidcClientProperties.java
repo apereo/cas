@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.support.pac4j.Pac4jIdentifiableClientP
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -21,6 +22,7 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("BasePac4jOidcClientProperties")
 public abstract class BasePac4jOidcClientProperties extends Pac4jIdentifiableClientProperties {
 
     private static final long serialVersionUID = 3359382317533639638L;
