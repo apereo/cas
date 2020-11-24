@@ -52,7 +52,7 @@ Changes in CAS configuration settings and properties can be reloaded using the s
 #### Standalone
 
 In the event that the [standalone configuration profile](Configuration-Server-Management.html#standalone)
-is used to control and direct settings and Spring Cloud configuration server is disabled,
+is used to control and direct settings, `cas.events.track-configuration-modifications` is set to `true` and Spring Cloud configuration server is disabled,
 CAS will begin to automatically watch and monitor the configuration files indicated by the profile and will auto-reload the state of the runtime
 application context automatically. You may also attempt to [refresh settings manually](../monitoring/Monitoring-Statistics.html)
 via the CAS admin endpoints.
