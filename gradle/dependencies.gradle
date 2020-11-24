@@ -1406,6 +1406,13 @@ ext.libraries = [
                     exclude(group: "junit", module: "junit")
                     exclude(group: "net.bytebuddy", module: "byte-buddy")
                 },
+                dependencies.create("org.mockito:mockito-inline:$mockitoVersion") {
+                    exclude(group: "org.hamcrest", module: "hamcrest-core")
+                    exclude(group: "org.objenesis", module: "objenesis")
+                    exclude(group: "junit", module: "junit")
+                    exclude(group: "org.mockito", module: "mockito-core")
+                    exclude(group: "net.bytebuddy", module: "byte-buddy")
+                },
                 dependencies.create("org.mockito:mockito-junit-jupiter:$mockitoVersion") {
                     exclude(group: "org.mockito", module: "mockito-core")
                     exclude(group: "org.junit.jupiter", module: "junit-jupiter-api")
@@ -3479,16 +3486,21 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
                     exclude(group: "com.google.guava", module: "guava")
-
                 },
         duojava                 : [
-                dependencies.create("net.unicon.iam:duo-java:$duoVersion") {
+                dependencies.create("net.unicon.iam:duo-java:$duoWebSdkVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
-
                 },
-                dependencies.create("net.unicon.iam:duo-client:0.2.2") {
+                dependencies.create("com.duosecurity:duo-client:$duoClientVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
-
+                },
+                dependencies.create("com.duosecurity:duo-universal-sdk:$duoUniversalSdkVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.squareup.retrofit", module: "retrofit")
+                    exclude(group: "org.projectlombok", module: "lombok")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "com.squareup.okhttp3", module: "logging-interceptor")
                 }
         ],
         authyjava               : [

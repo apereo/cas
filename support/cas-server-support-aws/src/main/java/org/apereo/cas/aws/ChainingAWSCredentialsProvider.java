@@ -16,6 +16,7 @@ import software.amazon.awssdk.auth.credentials.InstanceProfileCredentialsProvide
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.SystemPropertyCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.WebIdentityTokenFileCredentialsProvider;
 import software.amazon.awssdk.profiles.ProfileFile;
 
 import java.nio.file.Path;
@@ -71,6 +72,12 @@ public class ChainingAWSCredentialsProvider {
         LOGGER.debug("Attempting to locate AWS credentials...");
 
         val chain = new ArrayList<AwsCredentialsProvider>();
+
+        addProviderToChain(nothing -> {
+            chain.add(WebIdentityTokenFileCredentialsProvider.create());
+            return null;
+        });
+
         chain.add(InstanceProfileCredentialsProvider.create());
 
         if (StringUtils.isNotBlank(profilePath) && StringUtils.isNotBlank(profileName)) {

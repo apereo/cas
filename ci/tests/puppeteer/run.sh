@@ -1,10 +1,10 @@
 #!/bin/bash
 
-echo "Installing jq"
-sudo apt-get install jq
-
-echo "Installing Puppeteer"
-npm i --prefix "$PWD"/ci/tests/puppeteer puppeteer
+#echo "Installing jq"
+#sudo apt-get install jq
+#
+#echo "Installing Puppeteer"
+#npm i --prefix "$PWD"/ci/tests/puppeteer puppeteer
 
 echo "Creating overlay work directory"
 rm -Rf "$PWD"/ci/tests/puppeteer/overlay
@@ -30,7 +30,8 @@ echo "Using scenario configuration file: ${config}"
 
 dependencies=$(cat "${config}" | jq -j '.dependencies')
 echo -e "\nBuilding CAS found in $PWD for dependencies [${dependencies}]"
-./gradlew :webapp:cas-server-webapp-tomcat:build --no-daemon --build-cache --configure-on-demand --parallel -PcasModules="${dependencies}"
+./gradlew :webapp:cas-server-webapp-tomcat:build -x check -x javadoc \
+  --no-daemon --build-cache --configure-on-demand --parallel -PcasModules="${dependencies}"
 mv "$PWD"/webapp/cas-server-webapp-tomcat/build/libs/cas-server-webapp-tomcat-*.war "$PWD"/cas.war
 
 properties=$(cat "${config}" | jq -j '.properties // empty | join(" ")')

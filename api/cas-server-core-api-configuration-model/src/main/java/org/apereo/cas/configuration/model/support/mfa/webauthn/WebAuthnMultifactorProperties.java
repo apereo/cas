@@ -9,6 +9,7 @@ import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -24,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 @RequiresModule(name = "cas-server-support-webauthn")
 @Getter
 @Setter
+@JsonFilter("WebAuthnMultifactorProperties")
 public class WebAuthnMultifactorProperties extends BaseMultifactorProviderProperties {
 
     /**
@@ -159,6 +161,12 @@ public class WebAuthnMultifactorProperties extends BaseMultifactorProviderProper
      */
     @NestedConfigurationProperty
     private WebAuthnDynamoDbMultifactorProperties dynamoDb = new WebAuthnDynamoDbMultifactorProperties();
+
+    /**
+     * Store device registration records inside an LDAP directory..
+     */
+    @NestedConfigurationProperty
+    private WebAuthnLdapMultifactorProperties ldap = new WebAuthnLdapMultifactorProperties();
 
     /**
      * Store device registration records inside a JDBC resource.

@@ -1,6 +1,7 @@
 package org.apereo.cas.tokens;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
 import org.apereo.cas.token.TokenConstants;
 
 import com.nimbusds.jwt.JWTClaimsSet;
@@ -20,11 +21,12 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Tickets")
 public class JwtTicketGrantingTicketResourceEntityResponseFactoryTests extends BaseTicketResourceEntityResponseFactoryTests {
+
     @Test
     public void verifyTicketGrantingTicketAsDefault() throws Exception {
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService(CoreAuthenticationTestUtils.getService().getId());
         servicesManager.save(registeredService);
-        
+
         val result = CoreAuthenticationTestUtils.getAuthenticationResult(authenticationSystemSupport);
         val tgt = centralAuthenticationService.createTicketGrantingTicket(result);
 
@@ -37,13 +39,15 @@ public class JwtTicketGrantingTicketResourceEntityResponseFactoryTests extends B
     public void verifyTicketGrantingTicketAsJwt() throws Exception {
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService(CoreAuthenticationTestUtils.getService().getId());
         servicesManager.save(registeredService);
-        
+
         val result = CoreAuthenticationTestUtils.getAuthenticationResult(authenticationSystemSupport,
             CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
         val tgt = centralAuthenticationService.createTicketGrantingTicket(result);
 
         val request = new MockHttpServletRequest();
         request.addParameter(TokenConstants.PARAMETER_NAME_TOKEN, Boolean.TRUE.toString());
+        request.addParameter("customParameter", "customParameterValue1");
+        request.addParameter("customParameter", "customParameterValue2");
         val response = ticketGrantingTicketResourceEntityResponseFactory.build(tgt, request);
         assertNotNull(response);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
@@ -51,6 +55,11 @@ public class JwtTicketGrantingTicketResourceEntityResponseFactoryTests extends B
         val jwt = this.tokenCipherExecutor.decode(response.getBody());
         val claims = JWTClaimsSet.parse(jwt.toString());
         assertEquals(claims.getSubject(), tgt.getAuthentication().getPrincipal().getId());
+        assertEquals(2, claims.getStringArrayClaim("customParameter").length);
+        assertNull(claims.getStringClaim(TokenConstants.PARAMETER_NAME_TOKEN));
+        assertNull(claims.getStringClaim(RestHttpRequestCredentialFactory.PARAMETER_USERNAME));
+        assertNull(claims.getStringClaim(RestHttpRequestCredentialFactory.PARAMETER_PASSWORD));
+        assertEquals(2, claims.getStringArrayClaim("customParameter").length);
     }
 
     @Test

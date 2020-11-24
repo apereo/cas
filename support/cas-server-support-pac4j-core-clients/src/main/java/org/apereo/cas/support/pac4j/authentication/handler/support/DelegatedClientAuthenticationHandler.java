@@ -17,7 +17,6 @@ import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
-import org.pac4j.core.exception.http.HttpAction;
 import org.pac4j.core.profile.CommonProfile;
 
 import java.security.GeneralSecurityException;
@@ -88,7 +87,7 @@ public class DelegatedClientAuthenticationHandler extends AbstractPac4jAuthentic
             LOGGER.debug("Final user profile is: [{}]", userProfile);
             storeUserProfile(webContext, userProfile);
             return createResult(clientCredentials, userProfile, client);
-        } catch (final HttpAction e) {
+        } catch (final Exception e) {
             throw new PreventedException(e);
         }
     }

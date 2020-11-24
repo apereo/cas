@@ -18,6 +18,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -68,11 +69,13 @@ public class JwtTokenTicketBuilder implements TokenTicketBuilder {
 
     @Override
     @SneakyThrows
-    public String build(final TicketGrantingTicket ticketGrantingTicket) {
+    public String build(final TicketGrantingTicket ticketGrantingTicket, final Map<String, List<Object>> claims) {
         val authentication = ticketGrantingTicket.getAuthentication();
-        val attributes = new HashMap<String, List<Object>>(authentication.getAttributes());
+        
+        val attributes = new HashMap<>(authentication.getAttributes());
         attributes.putAll(authentication.getPrincipal().getAttributes());
-
+        attributes.putAll(claims);
+        
         val dt = ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(getTimeToLive());
         val validUntilDate = DateTimeUtils.dateOf(dt);
 

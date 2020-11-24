@@ -30,6 +30,7 @@ import org.apereo.cas.configuration.model.support.openid.OpenIdProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.passwordless.PasswordlessAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
+import org.apereo.cas.configuration.model.support.qr.QRAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.radius.RadiusProperties;
 import org.apereo.cas.configuration.model.support.redis.RedisAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.rest.RestAuthenticationProperties;
@@ -84,6 +85,12 @@ public class AuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private PasswordlessAuthenticationProperties passwordless = new PasswordlessAuthenticationProperties();
+
+    /**
+     * QR authentication settings.
+     */
+    @NestedConfigurationProperty
+    private QRAuthenticationProperties qr = new QRAuthenticationProperties();
 
     /**
      * Passwordless sync settings.

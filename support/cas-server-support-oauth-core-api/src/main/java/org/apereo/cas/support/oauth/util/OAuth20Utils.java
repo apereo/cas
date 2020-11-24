@@ -294,11 +294,10 @@ public class OAuth20Utils {
             val responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE).map(String::valueOf).orElse(StringUtils.EMPTY);
             if (registeredService.getSupportedResponseTypes().stream().anyMatch(s -> s.equalsIgnoreCase(responseType))) {
                 return true;
-            } else {
-                LOGGER.warn("Response type not authorized for service: [{}] not listed in supported response types: [{}]",
-                        responseType, registeredService.getSupportedResponseTypes());
-                return false;
             }
+            LOGGER.warn("Response type not authorized for service: [{}] not listed in supported response types: [{}]",
+                responseType, registeredService.getSupportedResponseTypes());
+            return false;
         }
 
         LOGGER.warn("Registered service [{}] does not define any authorized/supported response types. "

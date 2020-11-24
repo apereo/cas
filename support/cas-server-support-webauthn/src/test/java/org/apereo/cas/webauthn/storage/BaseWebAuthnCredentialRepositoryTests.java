@@ -47,7 +47,7 @@ public abstract class BaseWebAuthnCredentialRepositoryTests {
 
     @Test
     public void verifyOperation() throws Exception {
-        val id = UUID.randomUUID().toString();
+        val id = getUsername();
         val registration = getCredentialRegistration(id);
 
         assertTrue(webAuthnCredentialRepository.addRegistrationByUsername(id, registration));
@@ -78,6 +78,10 @@ public abstract class BaseWebAuthnCredentialRepositoryTests {
                 webAuthnCredentialRepository.clean();
             }
         });
+    }
+
+    protected String getUsername() {
+        return UUID.randomUUID().toString();
     }
 
     @SneakyThrows

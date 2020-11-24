@@ -19,12 +19,7 @@ function publish {
 }
 
 function instructions {
-    echo -e "\n${YELLOW}Done! You may now finalize the release process via Sonatype:"
-    echo -e "  Log into https://oss.sonatype.org"
-    echo -e "  Click on 'Staged Repositories' and find the CAS release."
-    echo -e "  'Close' the repository via the toolbar button and ensure all checks pass."
-    echo -e "  'Release' the repository via the toolbar button when the repository is successfully closed."
-    echo -e "\nThank you!${NORMAL}"
+    echo -e "\n${YELLOW}Done!\nThe release should be automatically closed and published on Sonatype.\nThank you!${NORMAL}"
 }
 
 clear
