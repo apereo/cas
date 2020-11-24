@@ -21,9 +21,13 @@ import org.apereo.cas.authentication.adaptive.intel.RestfulIPAddressIntelligence
 import org.apereo.cas.authentication.credential.CredentialTests;
 import org.apereo.cas.authentication.handler.ByCredentialSourceAuthenticationHandlerResolverTests;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolverTests;
+import org.apereo.cas.authentication.policy.ExcludedAuthenticationHandlerAuthenticationPolicyTests;
 import org.apereo.cas.authentication.policy.GroovyScriptAuthenticationPolicyTests;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtilsTests;
 import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtilsTests;
+import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolverTests;
 import org.apereo.cas.authentication.principal.resolvers.InternalGroovyScriptDaoTests;
+import org.apereo.cas.authentication.principal.resolvers.NullPrincipalTests;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolverTests;
 import org.apereo.cas.authentication.principal.resolvers.ProxyingPrincipalResolverTests;
 import org.apereo.cas.authentication.support.password.DefaultPasswordPolicyHandlingStrategyTests;
@@ -62,6 +66,10 @@ import org.junit.runner.RunWith;
     PasswordExpiringWarningMessageDescriptorTests.class,
     OneTimeTokenAccountTests.class,
     CredentialTests.class,
+    ExcludedAuthenticationHandlerAuthenticationPolicyTests.class,
+    NullPrincipalTests.class,
+    EchoingPrincipalResolverTests.class,
+    PrincipalFactoryUtilsTests.class,
     DefaultAuthenticationHandlerExecutionResultTests.class,
     OneTimeTokenTests.class,
     DefaultAuthenticationServiceSelectionStrategyTests.class,
