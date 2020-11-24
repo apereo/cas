@@ -11,13 +11,13 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
-import org.apereo.cas.util.LoggingUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -104,6 +104,7 @@ public class RestEndpointMultifactorAuthenticationTrigger implements Multifactor
      * @param resolvedService the resolved service
      * @return return the rest response, typically the mfa id.
      */
+    @SneakyThrows
     protected String callRestEndpointForMultifactor(final Principal principal, final Service resolvedService) {
         HttpResponse response = null;
         try {
@@ -118,8 +119,6 @@ public class RestEndpointMultifactorAuthenticationTrigger implements Multifactor
                 val content = response.getEntity().getContent();
                 return IOUtils.toString(content, StandardCharsets.UTF_8);
             }
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }

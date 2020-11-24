@@ -9,7 +9,9 @@ import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProp
 import org.apereo.cas.util.http.HttpClient;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Implementation of {@link MultifactorAuthenticationProviderFactoryBean} that provides instances of
@@ -19,6 +21,7 @@ import lombok.val;
  * @since 6.0
  */
 @RequiredArgsConstructor
+@Slf4j
 public class DuoSecurityMultifactorAuthenticationProviderFactory implements
     MultifactorAuthenticationProviderFactoryBean<DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorProperties> {
 
@@ -61,7 +64,8 @@ public class DuoSecurityMultifactorAuthenticationProviderFactory implements
      * @return the duo authentication service
      */
     protected DuoSecurityAuthenticationService getDuoAuthenticationService(final DuoSecurityMultifactorProperties properties) {
-        if (properties.getMode() == DuoSecurityMultifactorProperties.DuoSecurityIntegrationModes.UNIVERSAL) {
+        if (StringUtils.isBlank(properties.getDuoApplicationKey())) {
+            LOGGER.trace("Activating universal prompt authentication service for duo security");
             return new UniversalPromptDuoSecurityAuthenticationService(properties, httpClient, casProperties);
         }
         return new BasicDuoSecurityAuthenticationService(properties, httpClient);
