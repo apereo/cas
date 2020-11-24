@@ -5,6 +5,8 @@ import org.apereo.cas.util.LoggingUtils;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.jooq.lambda.Unchecked;
+import org.jooq.lambda.fi.util.function.CheckedConsumer;
 import org.jooq.lambda.fi.util.function.CheckedFunction;
 
 import java.util.function.Consumer;
@@ -34,7 +36,7 @@ public class FunctionUtils {
      */
     @SneakyThrows
     public static <T, R> Function<T, R> doIf(final Predicate<Object> condition, final Supplier<R> trueFunction,
-                                             final Supplier<R> falseFunction) {
+        final Supplier<R> falseFunction) {
         return t -> {
             try {
                 if (condition.test(t)) {
@@ -59,7 +61,7 @@ public class FunctionUtils {
      */
     @SneakyThrows
     public static <T> Consumer<T> doIf(final boolean condition, final Consumer<T> trueFunction,
-                                       final Consumer<T> falseFunction) {
+        final Consumer<T> falseFunction) {
         return account -> {
             if (condition) {
                 trueFunction.accept(account);
@@ -80,7 +82,7 @@ public class FunctionUtils {
      */
     @SneakyThrows
     public static <R> Supplier<R> doIf(final boolean condition, final Supplier<R> trueFunction,
-                                       final Supplier<R> falseFunction) {
+        final Supplier<R> falseFunction) {
         return () -> {
             try {
                 if (condition) {
@@ -105,7 +107,7 @@ public class FunctionUtils {
      * @return the function
      */
     public static <T, R> Function<T, R> doIf(final Predicate<T> condition, final CheckedFunction<T, R> trueFunction,
-                                             final CheckedFunction<T, R> falseFunction) {
+        final CheckedFunction<T, R> falseFunction) {
         return t -> {
             try {
                 if (condition.test(t)) {
@@ -134,8 +136,8 @@ public class FunctionUtils {
      */
     @SneakyThrows
     public static <R> Supplier<R> doIfNotNull(final Object input,
-                                              final Supplier<R> trueFunction,
-                                              final Supplier<R> falseFunction) {
+        final Supplier<R> trueFunction,
+        final Supplier<R> falseFunction) {
         return () -> {
             try {
                 if (input != null) {
@@ -158,7 +160,7 @@ public class FunctionUtils {
      */
     @SneakyThrows
     public static <T> void doIfNotNull(final T input,
-                                       final Consumer<T> trueFunction) {
+        final Consumer<T> trueFunction) {
         try {
             if (input != null) {
                 trueFunction.accept(input);
@@ -179,8 +181,8 @@ public class FunctionUtils {
      */
     @SneakyThrows
     public static <R> Supplier<R> doIfNull(final Object input,
-                                           final Supplier<R> trueFunction,
-                                           final Supplier<R> falseFunction) {
+        final Supplier<R> trueFunction,
+        final Supplier<R> falseFunction) {
         return () -> {
             try {
                 if (input == null) {
@@ -248,7 +250,7 @@ public class FunctionUtils {
      *
      * @param func   the func
      * @param params the params
-     * @return true/false
+     * @return true /false
      */
     public static boolean doWithoutThrows(final Consumer<Object> func, final Object... params) {
         try {
@@ -258,5 +260,15 @@ public class FunctionUtils {
             LoggingUtils.warn(LOGGER, e);
             return false;
         }
+    }
+
+    /**
+     * Do and ignore.
+     *
+     * @param consumer the consumer
+     * @param params   the params
+     */
+    public static void doAndIgnore(final CheckedConsumer<Object> consumer, final Object... params) {
+        Unchecked.consumer(s -> consumer.accept(params)).accept(null);
     }
 }
