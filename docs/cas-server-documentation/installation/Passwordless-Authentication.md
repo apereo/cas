@@ -15,12 +15,22 @@ strategies (i.e. email, sms, etc) where the user is then expected to
 provide the token back to CAS in order to proceed. 
 
 <div class="alert alert-info"><strong>No Magic Link</strong><p>
-Presently, there is no support for magic links that would remove the task of providing the token back to CAS allowing the user to proceed automagically.
+Presently, there is no support for magic links that would remove the task of providing the token 
+back to CAS allowing the user to proceed automagically.
 This variant may be worked out in future releases.</p></div>
 
 In order to successfully implement this feature, configuration needs to be in place to contact 
 account stores that hold user records who qualify for passwordless authentication. 
-Similarly, CAS must be configured to manage issued tokens in order to execute find, validate, expire or save operations in appropriate data stores.
+Similarly, CAS must be configured to manage issued tokens in order to execute find, 
+validate, expire or save operations in appropriate data stores.
+
+## Passwordless Variants
+
+Passwordless authentication can also be activated using [QR Code Authentication](QRCode-Authentication.html),
+allowing end users to login by scanning a QR code using a mobile device.
+
+Passwordless authentication can also be achieved via [FIDO2 WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) which lets users 
+verify their identities without passwords and login using FIDO2-enabled devices.
 
 ## Overview
 
@@ -35,11 +45,6 @@ Support is enabled by including the following module in the overlay:
 ```
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#passwordless-authentication).
-
-## WebAuthN FIDO2
-
-Passwordless authentication can also be achieved via [FIDO2 WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) which lets users 
-verify their identities without passwords and login using FIDO2-enabled devices.
 
 ## Account Stores
 

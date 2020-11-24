@@ -5,13 +5,7 @@ import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.yubico.data.CredentialRegistration;
-import com.yubico.internal.util.JacksonCodecs;
 import com.yubico.webauthn.AssertionResult;
 import com.yubico.webauthn.RegisteredCredential;
 import com.yubico.webauthn.data.ByteArray;
@@ -21,7 +15,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDate;
 import java.time.ZoneOffset;
@@ -44,32 +37,23 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseWebAuthnCredentialRepository implements WebAuthnCredentialRepository {
 
-    private final ObjectMapper objectMapper = JacksonCodecs
-        .json()
-        .addMixIn(CredentialRegistration.class, CredentialRegistrationMixin.class)
-        .addMixIn(CredentialRegistration.CredentialRegistrationBuilder.class, CredentialRegistrationBuilderMixin.class)
-        .addMixIn(RegisteredCredential.class, RegisteredCredentialMixin.class)
-        .addMixIn(RegisteredCredential.RegisteredCredentialBuilder.class, RegisteredCredentialBuilderMixin.class)
-        .findAndRegisterModules()
-        .setDefaultPrettyPrinter(new DefaultPrettyPrinter())
-        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
     private final CasConfigurationProperties properties;
 
     private final CipherExecutor<String, String> cipherExecutor;
 
     @Override
-    public Optional<CredentialRegistration> getRegistrationByUsernameAndCredentialId(final String username, final ByteArray id) {
+    public boolean addRegistrationByUsername(final String username, final CredentialRegistration credentialRegistration) {
         val registrations = getRegistrationsByUsername(username);
-        return registrations.stream().filter(credReg -> id.equals(credReg.getCredential().getCredentialId())).findFirst();
+        registrations.add(credentialRegistration);
+        update(username, new HashSet<>(registrations));
+        return true;
     }
 
     @Override
-    public boolean addRegistrationByUsername(final String username, final CredentialRegistration credentialRegistration) {
+    public Optional<CredentialRegistration> getRegistrationByUsernameAndCredentialId(final String username, final ByteArray id) {
         val registrations = getRegistrationsByUsername(username);
-        val result = registrations.add(credentialRegistration);
-        update(username, new HashSet<>(registrations));
-        return result;
+        return registrations.stream().filter(credReg -> id.equals(credReg.getCredential().getCredentialId())).findFirst();
     }
 
     @Override
@@ -174,22 +158,6 @@ public abstract class BaseWebAuthnCredentialRepository implements WebAuthnCreden
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
-    }
-
-    @JsonDeserialize(builder = CredentialRegistration.CredentialRegistrationBuilder.class)
-    private static class CredentialRegistrationMixin {
-    }
-
-    @JsonPOJOBuilder(withPrefix = StringUtils.EMPTY)
-    private static class CredentialRegistrationBuilderMixin {
-    }
-
-    @JsonDeserialize(builder = RegisteredCredential.RegisteredCredentialBuilder.class)
-    private static class RegisteredCredentialMixin {
-    }
-
-    @JsonPOJOBuilder(withPrefix = StringUtils.EMPTY)
-    private static class RegisteredCredentialBuilderMixin {
     }
 
     /**

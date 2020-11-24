@@ -52,7 +52,7 @@ public class WebUtilsTests {
         assertNull(WebUtils.getHttpServletRequestGeoLocationFromRequestContext());
         assertNull(WebUtils.getAcceptableUsagePolicyTermsFromFlowScope(context, Object.class));
 
-        assertNotNull(WebUtils.produceUnauthorizedErrorView());
+        assertNotNull(WebUtils.produceUnauthorizedErrorView(new RuntimeException()));
         assertNotNull(WebUtils.produceErrorView(new IllegalArgumentException()));
         assertNotNull(WebUtils.produceErrorView("error-view", new IllegalArgumentException()));
         assertNotNull(WebUtils.getHttpRequestFullUrl(context));

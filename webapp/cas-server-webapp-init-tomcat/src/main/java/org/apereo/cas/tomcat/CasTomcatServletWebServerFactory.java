@@ -2,7 +2,7 @@ package org.apereo.cas.tomcat;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatClusteringProperties;
-import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.Getter;
 import lombok.ToString;
@@ -30,6 +30,7 @@ import org.apache.catalina.tribes.transport.nio.NioReceiver;
 import org.apache.catalina.tribes.transport.nio.PooledParallelSender;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.coyote.http11.Http11AprProtocol;
+import org.jooq.lambda.Unchecked;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.embedded.tomcat.TomcatWebServer;
@@ -49,7 +50,7 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
     private final CasConfigurationProperties casProperties;
 
     public CasTomcatServletWebServerFactory(final CasConfigurationProperties casProperties,
-                                            final ServerProperties serverProperties) {
+        final ServerProperties serverProperties) {
         super(serverProperties.getPort());
         if (StringUtils.isNotBlank(serverProperties.getServlet().getContextPath())) {
             setContextPath(serverProperties.getServlet().getContextPath());
@@ -60,6 +61,12 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
         configureContextForSessionClustering();
     }
 
+    @Override
+    protected TomcatWebServer getTomcatWebServer(final Tomcat tomcat) {
+        configureSessionClustering(tomcat);
+        return super.getTomcatWebServer(tomcat);
+    }
+
     private void configureConnectorForApr() {
         val apr = casProperties.getServer().getTomcat().getApr();
         if (apr.isEnabled()) {
@@ -67,8 +74,6 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
             val arpLifecycle = new AprLifecycleListener();
             setProtocol(Http11AprProtocol.class.getName());
             addContextLifecycleListeners(arpLifecycle);
-
-
             addConnectorCustomizers(c -> {
                 if (c.getPort() == getPort()) {
                     LOGGER.debug("Enabling APR on connector port [{}]", c.getPort());
@@ -95,34 +100,23 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
                     handler.setSSLDisableCompression(apr.isSslDisableCompression());
                     handler.setSSLHonorCipherOrder(apr.isSslHonorCipherOrder());
 
-                    try {
-                        if (apr.getSslCaCertificateFile() != null) {
-                            handler.setSSLCACertificateFile(apr.getSslCaCertificateFile().getCanonicalPath());
-                        }
-                        if (apr.getSslCertificateFile() != null) {
-                            handler.setSSLCertificateFile(apr.getSslCertificateFile().getCanonicalPath());
-                        }
-                        if (apr.getSslCertificateKeyFile() != null) {
-                            handler.setSSLCertificateKeyFile(apr.getSslCertificateKeyFile().getCanonicalPath());
-                        }
-                        if (apr.getSslCertificateChainFile() != null) {
-                            handler.setSSLCertificateChainFile(apr.getSslCertificateChainFile().getCanonicalPath());
-                        }
-                        if (apr.getSslCaRevocationFile() != null) {
-                            handler.setSSLCARevocationFile(apr.getSslCaRevocationFile().getCanonicalPath());
-                        }
-                    } catch (final Exception e) {
-                        LoggingUtils.error(LOGGER, e);
-                    }
+                    FunctionUtils.doIfNotNull(apr.getSslCaCertificateFile(),
+                        Unchecked.consumer(f -> handler.setSSLCACertificateFile(apr.getSslCaCertificateFile().getCanonicalPath())));
+
+                    FunctionUtils.doIfNotNull(apr.getSslCertificateFile(),
+                        Unchecked.consumer(f -> handler.setSSLCertificateFile(apr.getSslCertificateFile().getCanonicalPath())));
+                    
+                    FunctionUtils.doIfNotNull(apr.getSslCertificateKeyFile(),
+                        Unchecked.consumer(f -> handler.setSSLCertificateKeyFile(apr.getSslCertificateKeyFile().getCanonicalPath())));
+
+                    FunctionUtils.doIfNotNull(apr.getSslCertificateChainFile(),
+                        Unchecked.consumer(f -> handler.setSSLCertificateChainFile(apr.getSslCertificateChainFile().getCanonicalPath())));
+
+                    FunctionUtils.doIfNotNull(apr.getSslCaRevocationFile(),
+                        Unchecked.consumer(f -> handler.setSSLCARevocationFile(apr.getSslCaRevocationFile().getCanonicalPath())));
                 }
             });
         }
-    }
-
-    @Override
-    protected TomcatWebServer getTomcatWebServer(final Tomcat tomcat) {
-        configureSessionClustering(tomcat);
-        return super.getTomcatWebServer(tomcat);
     }
 
     private void configureSessionClustering(final Tomcat tomcat) {
@@ -228,9 +222,13 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
     @ToString
     private static class ClusterMemberDesc {
         private static final int UNIQUE_ID_LIMIT = 255;
+
         private static final int UNIQUE_ID_ITERATIONS = 16;
+
         private final String address;
+
         private final int port;
+
         private String uniqueId;
 
         ClusterMemberDesc(final String spec) {

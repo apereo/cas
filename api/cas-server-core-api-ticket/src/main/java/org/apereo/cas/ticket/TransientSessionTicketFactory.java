@@ -10,6 +10,7 @@ import java.util.Map;
  * This is {@link TransientSessionTicketFactory}.
  *
  * @author Misagh Moayyed
+ * @param <T> the type parameter
  * @since 5.3.0
  */
 public interface TransientSessionTicketFactory<T extends TransientSessionTicket> extends TicketFactory {
@@ -31,7 +32,7 @@ public interface TransientSessionTicketFactory<T extends TransientSessionTicket>
      * @return the expiration policy
      */
     static ExpirationPolicy buildExpirationPolicy(final ExpirationPolicyBuilder expirationPolicyBuilder,
-                                                  final Map<String, Serializable> properties) {
+        final Map<String, Serializable> properties) {
         var expirationPolicy = expirationPolicyBuilder.buildTicketExpirationPolicy();
         if (properties.containsKey(ExpirationPolicy.class.getName())) {
             expirationPolicy = ExpirationPolicy.class.cast(properties.remove(ExpirationPolicy.class.getName()));
@@ -55,7 +56,19 @@ public interface TransientSessionTicketFactory<T extends TransientSessionTicket>
      * @param properties the properties
      * @return the transient session ticket
      */
-    T create(String id, Map<String, Serializable> properties);
+    default T create(String id, Map<String, Serializable> properties) {
+        return create(id, null, properties);
+    }
+
+    /**
+     * Create transient ticket.
+     *
+     * @param id         the id
+     * @param service    the service
+     * @param properties the properties
+     * @return the t
+     */
+    T create(String id, Service service, Map<String, Serializable> properties);
 
     /**
      * Create delegated authentication request ticket.

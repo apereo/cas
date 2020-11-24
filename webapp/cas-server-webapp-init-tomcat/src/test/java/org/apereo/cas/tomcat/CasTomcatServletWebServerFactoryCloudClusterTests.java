@@ -5,11 +5,20 @@ import org.apereo.cas.config.CasEmbeddedContainerTomcatFiltersConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.val;
+import org.apache.catalina.Container;
+import org.apache.catalina.Context;
+import org.apache.catalina.Engine;
+import org.apache.catalina.Host;
+import org.apache.catalina.LifecycleState;
+import org.apache.catalina.Service;
+import org.apache.catalina.connector.Connector;
 import org.apache.catalina.ha.tcp.SimpleTcpCluster;
+import org.apache.catalina.startup.Tomcat;
 import org.apache.catalina.tribes.group.GroupChannel;
 import org.apache.catalina.tribes.membership.cloud.CloudMembershipService;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
@@ -19,7 +28,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.embedded.tomcat.TomcatWebServer;
 import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link CasTomcatServletWebServerFactoryCloudClusterTests}.
@@ -45,6 +55,9 @@ public class CasTomcatServletWebServerFactoryCloudClusterTests {
     protected CasConfigurationProperties casProperties;
 
     @Autowired
+    protected ServerProperties serverProperties;
+
+    @Autowired
     @Qualifier("casServletWebServerFactory")
     private ConfigurableServletWebServerFactory casServletWebServerFactory;
 
@@ -67,6 +80,36 @@ public class CasTomcatServletWebServerFactoryCloudClusterTests {
         } finally {
             server.stop();
         }
+    }
+
+    @Test
+    public void verifyStaticCloud() {
+        val props = new CasConfigurationProperties();
+        props.getServer().getTomcat().getClustering()
+            .setEnabled(true)
+            .setClusteringType("STATIC")
+            .setClusterMembers("127.0.0.1:1234:0,127.0.0.2:1235:0")
+            .setManagerType("DEFAULT");
+        val factory = new CasTomcatServletWebServerFactory(props, serverProperties);
+        val tc = mock(Tomcat.class);
+        when(tc.getEngine()).thenReturn(mock(Engine.class));
+        val service = mock(Service.class);
+        when(service.findConnectors()).thenReturn(new Connector[] {});
+
+        val host = mock(Host.class);
+        val context = mock(Context.class);
+        when(context.getBaseName()).thenReturn("cas");
+        when(context.getState()).thenReturn(LifecycleState.STARTED);
+        when(host.findChildren()).thenReturn(new Container[] {context});
+        
+        when(tc.getHost()).thenReturn(host);
+        when(tc.getService()).thenReturn(service);
+        assertDoesNotThrow(new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                factory.getTomcatWebServer(tc);
+            }
+        });
     }
 }
 

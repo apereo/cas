@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.mfa.u2f;
 import org.apereo.cas.configuration.model.support.couchdb.BaseAsynchronousCouchDbProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -17,6 +18,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("U2FCouchDbMultifactorProperties")
 public class U2FCouchDbMultifactorProperties extends BaseAsynchronousCouchDbProperties {
 
     private static final long serialVersionUID = 2751957521987245445L;

@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationFailureModeEvaluat
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderFactoryBean;
 import org.apereo.cas.authentication.bypass.ChainingMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
 import org.apereo.cas.util.http.HttpClient;
 
@@ -22,8 +23,12 @@ public class DuoSecurityMultifactorAuthenticationProviderFactory implements
     MultifactorAuthenticationProviderFactoryBean<DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorProperties> {
 
     private final HttpClient httpClient;
+
     private final ChainingMultifactorAuthenticationProviderBypassEvaluator bypassEvaluator;
+
     private final MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator;
+
+    private final CasConfigurationProperties casProperties;
 
     @Override
     public DuoSecurityMultifactorAuthenticationProvider createProvider(final DuoSecurityMultifactorProperties properties) {
@@ -44,7 +49,8 @@ public class DuoSecurityMultifactorAuthenticationProviderFactory implements
      * @param properties the properties
      * @return the multifactor authentication provider bypass
      */
-    protected MultifactorAuthenticationProviderBypassEvaluator getMultifactorAuthenticationProviderBypass(final DuoSecurityMultifactorProperties properties) {
+    protected MultifactorAuthenticationProviderBypassEvaluator getMultifactorAuthenticationProviderBypass(
+        final DuoSecurityMultifactorProperties properties) {
         return bypassEvaluator.filterMultifactorAuthenticationProviderBypassEvaluatorsBy(properties.getId());
     }
 
@@ -55,6 +61,9 @@ public class DuoSecurityMultifactorAuthenticationProviderFactory implements
      * @return the duo authentication service
      */
     protected DuoSecurityAuthenticationService getDuoAuthenticationService(final DuoSecurityMultifactorProperties properties) {
+        if (properties.getMode() == DuoSecurityMultifactorProperties.DuoSecurityIntegrationModes.UNIVERSAL) {
+            return new UniversalPromptDuoSecurityAuthenticationService(properties, httpClient, casProperties);
+        }
         return new BasicDuoSecurityAuthenticationService(properties, httpClient);
     }
 }

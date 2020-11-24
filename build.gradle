@@ -10,11 +10,9 @@ buildscript {
         gradlePluginPortal()
         maven {
             url "https://maven.eveoh.nl/content/repositories/releases"
-            mavenContent { releasesOnly() }
         }
         maven {
             url "https://repo.spring.io/plugins-release"
-            mavenContent { releasesOnly() }
         }
     }
 
@@ -245,11 +243,7 @@ subprojects {
     ext.libraries = rootProject.ext.libraries
 
     repositories {
-        mavenLocal {
-            content {
-                includeGroup "org.apereo.service.persondir"
-            }
-        }
+        mavenLocal()
         mavenCentral()
         maven {
             url "https://build.shibboleth.net/nexus/content/repositories/releases"
@@ -264,7 +258,9 @@ subprojects {
         }
         maven {
             url "https://dl.bintray.com/apereocas/jradius/"
-            mavenContent { releasesOnly() }
+            content {
+                includeGroupByRegex "net\\.jradius.*"
+            }
         }
         maven {
             url "https://oss.sonatype.org/content/repositories/snapshots"
@@ -272,10 +268,6 @@ subprojects {
         }
         maven {
             url "https://oss.sonatype.org/content/repositories/releases"
-            mavenContent { releasesOnly() }
-        }
-        maven {
-            url "https://repo.spring.io/plugins-release/"
             mavenContent { releasesOnly() }
         }
         maven {

@@ -42,13 +42,15 @@ echo -e "\n*************************************************************"
 echo -e "Creating Couchbase buckets..."
 echo -e "*************************************************************"
 
+echo -e "Creating Couchbase testbucket bucket..."
 curl -u 'admin:password' -d 'name=testbucket' -d 'bucketType=couchbase' -d 'ramQuotaMB=220' -d 'authType=sasl' -d \
 'saslPassword=password' http://localhost:8091/pools/default/buckets
 
 curl -u 'admin:password' -X PUT --data "roles=bucket_full_access[testbucket]&password=password" \
-             -H "Content-Type: application/x-www-form-urlencoded" \
-             http://localhost:8091/settings/rbac/users/local/testbucket
+       -H "Content-Type: application/x-www-form-urlencoded" \
+       http://localhost:8091/settings/rbac/users/local/testbucket
 
+echo -e "Creating Couchbase pplbucket bucket..."
 curl -u 'admin:password' -d 'name=pplbucket' -d 'bucketType=couchbase' -d 'ramQuotaMB=220' -d 'authType=sasl' -d \
 'saslPassword=password' http://localhost:8091/pools/default/buckets
 
@@ -56,9 +58,9 @@ curl -u 'admin:password' -X PUT --data "roles=bucket_full_access[pplbucket]&pass
        -H "Content-Type: application/x-www-form-urlencoded" \
        http://localhost:8091/settings/rbac/users/local/pplbucket
 
+echo -e "Creating Couchbase casbucket bucket..."
 curl -u 'admin:password' -d 'name=casbucket' -d 'bucketType=couchbase' -d 'ramQuotaMB=120' -d authType='none' \
-http://localhost:8091/pools/default/buckets
-
+      http://localhost:8091/pools/default/buckets
 curl -u 'admin:password' -X PUT --data "roles=bucket_full_access[casbucket]&password=password" \
        -H "Content-Type: application/x-www-form-urlencoded" \
        http://localhost:8091/settings/rbac/users/local/casbucket
@@ -79,6 +81,7 @@ echo -e "Creating index..."
 echo -e "*************************************************************"
 curl -u 'admin:password' http://localhost:8093/query/service -d 'statement=CREATE INDEX accounts_idx ON testbucket(username)' \
 -d 'namespace=default'
+sleep 5
 curl -u 'admin:password' http://localhost:8093/query/service -d 'statement=CREATE INDEX accounts_idx ON pplbucket(username)' \
 -d 'namespace=default'
 sleep 5
@@ -88,9 +91,11 @@ echo -e "*************************************************************"
 curl -u 'admin:password'  http://localhost:8093/query/service -d \
 'statement=CREATE PRIMARY INDEX `primary-idx` ON `testbucket` USING GSI;' \
 -d 'namespace=default'
+sleep 5
 curl -u 'admin:password'  http://localhost:8093/query/service -d \
 'statement=CREATE PRIMARY INDEX `primary-idx` ON `pplbucket` USING GSI;' \
 -d 'namespace=default'
+sleep 5
 curl -u 'admin:password'  http://localhost:8093/query/service -d \
 'statement=CREATE PRIMARY INDEX `primary-idx` ON `casbucket` USING GSI;' \
 -d 'namespace=default'

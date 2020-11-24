@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.support;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.SneakyThrows;
 import lombok.val;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.util.ClassUtils;
@@ -39,7 +40,7 @@ public interface CasFeatureModule {
                 if (ClassUtils.hasMethod(getClass(), getter)) {
                     val method = ClassUtils.getMethod(getClass(), getter);
                     val value = method.invoke(this);
-                    return value != null && StringUtils.isNotBlank(value.toString());
+                    return value != null && BooleanUtils.toBoolean(value.toString());
                 }
                 return false;
             }));

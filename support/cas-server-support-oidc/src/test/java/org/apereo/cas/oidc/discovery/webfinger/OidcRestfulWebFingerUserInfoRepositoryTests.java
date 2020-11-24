@@ -33,6 +33,21 @@ public class OidcRestfulWebFingerUserInfoRepositoryTests {
     private MockWebServer webServer;
 
     @Test
+    public void verifyBadPayload() throws Exception {
+        try (val webServer = new MockWebServer(9312,
+            new ByteArrayResource("-@@-".getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
+            this.webServer = webServer;
+            this.webServer.start();
+            assertTrue(this.webServer.isRunning());
+            val props = new RestEndpointProperties();
+            props.setUrl("http://localhost:9312");
+            val repo = new OidcRestfulWebFingerUserInfoRepository(props);
+            val results = repo.findByEmailAddress("cas@example.org");
+            assertTrue(results.isEmpty());
+        }
+    }
+
+    @Test
     public void verifyFindByEmail() throws Exception {
         var data = MAPPER.writeValueAsString(CollectionUtils.wrap("email", "cas@example.org"));
         try (val webServer = new MockWebServer(9312,
