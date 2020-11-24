@@ -163,6 +163,12 @@ public class WebAuthnMultifactorProperties extends BaseMultifactorProviderProper
     private WebAuthnDynamoDbMultifactorProperties dynamoDb = new WebAuthnDynamoDbMultifactorProperties();
 
     /**
+     * Store device registration records inside an LDAP directory..
+     */
+    @NestedConfigurationProperty
+    private WebAuthnLdapMultifactorProperties ldap = new WebAuthnLdapMultifactorProperties();
+
+    /**
      * Store device registration records inside a JDBC resource.
      */
     @NestedConfigurationProperty
