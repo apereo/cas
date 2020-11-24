@@ -25,14 +25,17 @@ import java.util.Set;
  * @since 5.0.0
  */
 @Slf4j
+
 public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflowEventResolver {
     public ServiceTicketRequestWebflowEventResolver(final CasWebflowEventResolutionConfigurationContext configContext) {
         super(configContext);
+        isCreateNewTgtOnRenewAuthn = configContext.getCasProperties().getSso().isCreateNewTgtOnRenewAuthn();
     }
 
+    private boolean isCreateNewTgtOnRenewAuthn = true;
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
-        if (isRequestAskingForServiceTicket(context)) {
+        if (!isCreateNewTgtOnRenewAuthn && isRequestAskingForServiceTicket(context)) {
             LOGGER.debug("Authentication request is asking for service tickets");
             val source = grantServiceTicket(context);
             return source != null ? CollectionUtils.wrapSet(source) : null;

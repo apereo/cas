@@ -3913,6 +3913,7 @@ If the user changes the language, a special cookie is created by CAS to contain 
 ```properties
 # cas.sso.allow-missing-service-parameter=true
 # cas.sso.create-sso-cookie-on-renew-authn=true
+# cas.sso.create-new-tgt-on-renew-authn=false
 # cas.sso.proxy-authn-enabled=true
 # cas.sso.renew-authn-enabled=true
 # cas.sso.required-service-pattern=

@@ -26,6 +26,11 @@ public class SingleSignOnProperties implements Serializable {
      * Flag that indicates whether to create SSO session on re-newed authentication event.
      */
     private boolean createSsoCookieOnRenewAuthn = true;
+    
+    /**
+     * Flag that indicates whether Authentication attributes should be updated on re-newed authentication event
+     */
+    private boolean createNewTgtOnRenewAuthn = false;
 
     /**
      * Flag that indicates whether to allow SSO session with a missing target service.
