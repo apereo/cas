@@ -25,7 +25,17 @@ utilize a full range of native CAS protocol features such as `renew` and `gatewa
 
 The plugin is available for both
 Shibboleth Identity Provider [v2](https://github.com/Unicon/shib-cas-authn2)
-and [v3](https://github.com/Unicon/shib-cas-authn3).
+and [v3](https://github.com/Unicon/shib-cas-authn3) and [v4](https://github.com/Unicon/shib-cas-authn).
+
+Support is enabled by including the following dependency in the WAR overlay:
+
+```xml
+<dependency>
+  <groupId>org.apereo.cas</groupId>
+  <artifactId>cas-server-support-shibboleth</artifactId>
+  <version>${cas.version}</version>
+</dependency>
+```
 
 ### Relying Party EntityId
 
