@@ -1,6 +1,5 @@
 package org.apereo.cas.util.cipher;
 
-import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.io.FileWatcherService;
 
 import lombok.Setter;
@@ -9,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jooq.lambda.Unchecked;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.jwk.HttpsJwks;
@@ -58,14 +58,10 @@ public class JsonWebKeySetStringCipherExecutor extends BaseStringCipherExecutor 
                                              final String httpsJwksEndpointUrl) {
 
         val json = FileUtils.readFileToString(jwksKeystore, StandardCharsets.UTF_8);
-        keystorePatchWatcherService = new FileWatcherService(jwksKeystore, file -> {
-            try {
-                val reloadedJson = FileUtils.readFileToString(jwksKeystore, StandardCharsets.UTF_8);
-                this.webKeySet = new JsonWebKeySet(reloadedJson);
-            } catch (final Exception e) {
-                LoggingUtils.error(LOGGER, e);
-            }
-        });
+        keystorePatchWatcherService = new FileWatcherService(jwksKeystore, Unchecked.consumer(file -> {
+            val reloadedJson = FileUtils.readFileToString(jwksKeystore, StandardCharsets.UTF_8);
+            this.webKeySet = new JsonWebKeySet(reloadedJson);
+        }));
 
         this.webKeySet = new JsonWebKeySet(json);
         this.keyIdToUse = keyId;

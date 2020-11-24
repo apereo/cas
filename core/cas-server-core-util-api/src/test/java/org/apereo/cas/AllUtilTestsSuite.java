@@ -3,6 +3,7 @@ package org.apereo.cas;
 import org.apereo.cas.util.DigestUtilsTests;
 import org.apereo.cas.util.HttpRequestUtilsTests;
 import org.apereo.cas.util.HttpUtilsTests;
+import org.apereo.cas.util.InetAddressUtilsTests;
 import org.apereo.cas.util.LoggingUtilsTests;
 import org.apereo.cas.util.cache.DistributedCacheManagerTests;
 import org.apereo.cas.util.cache.DistributedCacheObjectTests;
@@ -53,6 +54,7 @@ import org.junit.runner.RunWith;
     HttpUtilsTests.class,
     GroovyScriptResourceCacheManagerTests.class,
     LoggingUtilsTests.class,
+    InetAddressUtilsTests.class,
     CompositeX509TrustManagerTests.class,
     CompositeX509KeyManagerTests.class,
     HttpRequestUtilsTests.class,

@@ -41,6 +41,21 @@ public class DefaultAttributeDefinitionTests {
     }
 
     @Test
+    public void verifyBadScript() {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
+
+        val defn = DefaultAttributeDefinition.builder()
+            .key("computedAttribute")
+            .script("badformat ()")
+            .build();
+        val values = defn.resolveAttributeValues(List.of("v1", "v2"), "example.org",
+            CoreAuthenticationTestUtils.getRegisteredService());
+        assertTrue(values.isEmpty());
+    }
+
+    @Test
     public void verifyCachedEmbeddedScriptOperation() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.registerSingleton(ApplicationContextProvider.BEAN_NAME_SCRIPT_RESOURCE_CACHE_MANAGER, GroovyScriptResourceCacheManager.class);

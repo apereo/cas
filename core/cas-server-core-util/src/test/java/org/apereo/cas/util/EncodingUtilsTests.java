@@ -103,6 +103,7 @@ public class EncodingUtilsTests {
         assertFalse(EncodingUtils.encodeBase64("one".getBytes(StandardCharsets.UTF_8), true).isEmpty());
 
         assertFalse(EncodingUtils.encodeBase32("one".getBytes(StandardCharsets.UTF_8), true).isEmpty());
+        assertFalse(EncodingUtils.encodeBase32("one".getBytes(StandardCharsets.UTF_8), false).isEmpty());
         assertFalse(EncodingUtils.encodeBase64("one".getBytes(StandardCharsets.UTF_8), false).isEmpty());
     }
 

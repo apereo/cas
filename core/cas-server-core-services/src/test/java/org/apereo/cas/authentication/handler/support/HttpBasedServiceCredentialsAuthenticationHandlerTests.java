@@ -32,6 +32,7 @@ public class HttpBasedServiceCredentialsAuthenticationHandlerTests {
     @Test
     public void verifySupportsProperUserCredentials() {
         assertTrue(this.authenticationHandler.supports(RegisteredServiceTestUtils.getHttpBasedServiceCredentials()));
+        assertTrue(this.authenticationHandler.supports(RegisteredServiceTestUtils.getHttpBasedServiceCredentials().getClass()));
     }
 
     @Test

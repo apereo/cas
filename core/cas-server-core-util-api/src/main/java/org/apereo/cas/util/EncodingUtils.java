@@ -23,13 +23,11 @@ import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
 
-import javax.crypto.Cipher;
 import java.io.Serializable;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -575,20 +573,6 @@ public class EncodingUtils {
                 throw new DecryptionException(e);
             }
             throw new DecryptionException();
-        }
-    }
-
-    /**
-     * Is jce installed ?
-     *
-     * @return true/false
-     */
-    public static boolean isJceInstalled() {
-        try {
-            val maxKeyLen = Cipher.getMaxAllowedKeyLength("AES");
-            return maxKeyLen == Integer.MAX_VALUE;
-        } catch (final NoSuchAlgorithmException e) {
-            return false;
         }
     }
 }
