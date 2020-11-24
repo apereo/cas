@@ -83,6 +83,11 @@ CAS server, using a mobile device and subsequently login after having successful
 
 ![image](https://user-images.githubusercontent.com/1205228/100055418-111c1a00-2e39-11eb-840f-e9c9b866f106.png)
 
+## WebAuthN LDAP Repository
+
+[WebAuthn FIDO2](../mfa/FIDO2-WebAuthn-Authentication.html) multifactor authentication 
+can now, manage and track device registration records inside LDAP directories.
+
 ## Other Stuff
 
 - [Attribute resolution](../integration/Attribute-Resolution.html) has gained a new option to force all attribute repositories to produce a data and short-circuit the resolution logic if any repository fails to resolve the person details.
