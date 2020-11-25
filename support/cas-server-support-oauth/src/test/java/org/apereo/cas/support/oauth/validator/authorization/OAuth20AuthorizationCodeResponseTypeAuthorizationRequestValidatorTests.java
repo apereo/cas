@@ -49,6 +49,7 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTe
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
 
+        assertFalse(v.supports(context));
         assertFalse(v.validate(context));
         assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR).isPresent());
         assertEquals(context.getRequestAttribute(OAuth20Constants.ERROR).get().toString(), OAuth20Constants.INVALID_REQUEST);
@@ -94,6 +95,7 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTe
 
         request.removeAttribute(OAuth20Constants.ERROR);
         service.setSupportedResponseTypes(CollectionUtils.wrapHashSet(OAuth20ResponseTypes.CODE.getType()));
+        assertTrue(v.supports(context));
         assertTrue(v.validate(context));
         assertFalse(context.getRequestAttribute(OAuth20Constants.ERROR).isPresent());
 

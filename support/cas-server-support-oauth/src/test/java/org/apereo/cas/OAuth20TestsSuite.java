@@ -14,6 +14,10 @@ import org.apereo.cas.support.oauth.services.OAuth20ServicesManagerRegisteredSer
 import org.apereo.cas.support.oauth.services.OAuth20WebApplicationServiceTests;
 import org.apereo.cas.support.oauth.util.OAuth20UtilsTests;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests;
+import org.apereo.cas.support.oauth.validator.authorization.OAuth20IdTokenAndTokenResponseTypeAuthorizationRequestValidatorTests;
+import org.apereo.cas.support.oauth.validator.authorization.OAuth20IdTokenResponseTypeAuthorizationRequestValidatorTests;
+import org.apereo.cas.support.oauth.validator.authorization.OAuth20ProofKeyCodeExchangeResponseTypeAuthorizationRequestValidatorTests;
+import org.apereo.cas.support.oauth.validator.authorization.OAuth20TokenResponseTypeAuthorizationRequestValidatorTests;
 import org.apereo.cas.support.oauth.validator.token.OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests;
 import org.apereo.cas.support.oauth.validator.token.OAuth20ClientCredentialsGrantTypeTokenRequestValidatorTests;
 import org.apereo.cas.support.oauth.validator.token.OAuth20DeviceCodeResponseTypeRequestValidatorTests;
@@ -81,6 +85,10 @@ import org.junit.runner.RunWith;
     OAuth20RefreshTokenExpirationPolicyTests.class,
     OAuth20DefaultTokenGeneratorTests.class,
     OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests.class,
+    OAuth20IdTokenResponseTypeAuthorizationRequestValidatorTests.class,
+    OAuth20IdTokenAndTokenResponseTypeAuthorizationRequestValidatorTests.class,
+    OAuth20ProofKeyCodeExchangeResponseTypeAuthorizationRequestValidatorTests.class,
+    OAuth20TokenResponseTypeAuthorizationRequestValidatorTests.class,
     OAuth20PasswordGrantTypeTokenRequestValidatorTests.class,
     OAuth20ClientCredentialsGrantTypeTokenRequestValidatorTests.class,
     OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests.class,
