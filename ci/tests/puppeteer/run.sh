@@ -2,9 +2,9 @@
 
 #echo "Installing jq"
 #sudo apt-get install jq
-#
-#echo "Installing Puppeteer"
-#npm i --prefix "$PWD"/ci/tests/puppeteer puppeteer
+
+echo "Installing Puppeteer"
+npm i --prefix "$PWD"/ci/tests/puppeteer puppeteer
 
 echo "Creating overlay work directory"
 rm -Rf "$PWD"/ci/tests/puppeteer/overlay
@@ -21,36 +21,37 @@ keytool -genkey -noprompt -alias cas -keyalg RSA -keypass changeit -storepass ch
 
 scenario="$1"
 
-echo -e "*************************************"
+echo -e "******************************************************"
 echo -e "Scenario: ${scenario}"
-echo -e "*************************************\n"
+echo -e "******************************************************\n"
 
 config="${scenario}/script.json"
 echo "Using scenario configuration file: ${config}"
 
 dependencies=$(cat "${config}" | jq -j '.dependencies')
 echo -e "\nBuilding CAS found in $PWD for dependencies [${dependencies}]"
-./gradlew :webapp:cas-server-webapp-tomcat:build -x check -x javadoc \
+./gradlew :webapp:cas-server-webapp-tomcat:build -DskipNestedConfigMetadataGen=true -x check -x javadoc \
   --no-daemon --build-cache --configure-on-demand --parallel -PcasModules="${dependencies}"
 mv "$PWD"/webapp/cas-server-webapp-tomcat/build/libs/cas-server-webapp-tomcat-*.war "$PWD"/cas.war
 
 properties=$(cat "${config}" | jq -j '.properties // empty | join(" ")')
 echo -e "\nLaunching CAS with properties [${properties}] and dependencies [${dependencies}]"
-java -jar "$PWD"/cas.war ${properties} --server.ssl.key-store="$keystore" &> /dev/null &
+java -jar "$PWD"/cas.war ${properties} --spring.profiles.active=none --server.ssl.key-store="$keystore" &> /dev/null &
 pid=$!
 echo -e "\nWaiting for CAS under pid ${pid}"
 until curl -k -L --output /dev/null --silent --fail https://localhost:8443/cas/login; do
     echo -n '.'
-    sleep 3
+    sleep 2
 done
 echo -e "\n\nReady!"
 
 scriptPath="${scenario}/script.js"
 echo -e "*************************************"
 echo -e "Running ${scriptPath}\n"
-node ${scriptPath}
+node ${scriptPath} ${config}
 echo -e "*************************************\n"
 
 echo -e "\nKilling process ${pid} ..."
 kill -9 $pid
+rm "$PWD"/cas.war
 

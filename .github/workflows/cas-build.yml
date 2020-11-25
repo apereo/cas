@@ -771,6 +771,7 @@ jobs:
           - qrauthn-login
           - gauth-register
           - duo-websdk-login
+          - duo-universal-login
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
