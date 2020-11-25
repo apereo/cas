@@ -1,7 +1,7 @@
 <p align="center">
 <img src="https://user-images.githubusercontent.com/2813838/66173345-91b00380-e604-11e9-95f4-546767cc134c.png">
 </p>
-
+ 
 # Central Authentication Service (CAS)
 
 [![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/apereo/cas/blob/master/LICENSE)
