@@ -32,8 +32,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
     "cas.authn.attribute-repository.groovy[0].location=classpath:/GroovyAttributeRepository.groovy",
     "cas.authn.attribute-repository.groovy[0].order=2",
-
-    "cas.authn.attribute-repository.merger=all",
     "cas.authn.attribute-repository.require-all-repository-sources=true"
 })
 @Tag("Attributes")

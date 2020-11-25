@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.services.DefaultChainingServiceRegistryTests;
 import org.apereo.cas.services.ServiceRegistryInitializerEventListenerTests;
 import org.apereo.cas.services.ServiceRegistryInitializerTests;
 import org.apereo.cas.services.replication.DefaultRegisteredServiceReplicationStrategyTests;
@@ -20,6 +21,7 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     ServiceRegistryInitializerTests.class,
+    DefaultChainingServiceRegistryTests.class,
     DefaultRegisteredServiceReplicationStrategyTests.class,
     ServiceRegistryInitializerEventListenerTests.class,
     DefaultRegisteredServiceResourceNamingStrategyTests.class,
