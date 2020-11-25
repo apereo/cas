@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.core.Ordered;
 
 import java.io.File;
 import java.io.IOException;
@@ -126,6 +127,13 @@ public class RegisteredServiceRegexAttributeFilterTests {
         val data = SerializationUtils.serialize(this.filter);
         val secondFilter = SerializationUtils.deserializeAndCheckObject(data, RegisteredServiceAttributeFilter.class);
         assertEquals(secondFilter, this.filter);
+    }
+
+    @Test
+    public void verifyDefault() {
+        val data = mock(RegisteredServiceAttributeFilter.class);
+        when(data.getOrder()).thenCallRealMethod();
+        assertEquals(Ordered.HIGHEST_PRECEDENCE, data.getOrder());
     }
 
     @Test

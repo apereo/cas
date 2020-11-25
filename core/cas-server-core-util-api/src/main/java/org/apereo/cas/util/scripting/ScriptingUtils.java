@@ -379,11 +379,6 @@ public class ScriptingUtils {
                 return null;
             }
             val engine = new ScriptEngineManager().getEngineByName(engineName);
-            if (engine == null) {
-                LOGGER.warn("Script engine is not available for [{}]", engineName);
-                return null;
-            }
-
             val resourceFrom = ResourceUtils.getResourceFrom(scriptFile);
             val theScriptFile = resourceFrom.getFile();
             if (theScriptFile.exists()) {
@@ -419,10 +414,6 @@ public class ScriptingUtils {
                                                   final Class<T> clazz) {
         try {
             val engine = new ScriptEngineManager().getEngineByName("groovy");
-            if (engine == null) {
-                LOGGER.warn("Script engine is not available for Groovy");
-                return null;
-            }
             val binding = new SimpleBindings();
             if (variables != null && !variables.isEmpty()) {
                 binding.putAll(variables);
@@ -448,7 +439,8 @@ public class ScriptingUtils {
      */
     public static <T> T getObjectInstanceFromGroovyResource(final Resource resource,
                                                             final Class<T> expectedType) {
-        return getObjectInstanceFromGroovyResource(resource, ArrayUtils.EMPTY_CLASS_ARRAY, ArrayUtils.EMPTY_OBJECT_ARRAY, expectedType);
+        return getObjectInstanceFromGroovyResource(resource, ArrayUtils.EMPTY_CLASS_ARRAY,
+            ArrayUtils.EMPTY_OBJECT_ARRAY, expectedType);
     }
 
     /**

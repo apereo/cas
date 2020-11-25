@@ -9,6 +9,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -36,6 +37,23 @@ public class DefaultAuthenticationEventExecutionPlanTests {
             DefaultAuthenticationTransaction.of(
                 CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword())).isEmpty());
     }
+
+    @Test
+    public void verifyMismatchedCount() {
+        val plan = new DefaultAuthenticationEventExecutionPlan();
+        plan.registerAuthenticationHandlerWithPrincipalResolvers(List.of(new SimpleTestUsernamePasswordAuthenticationHandler()), List.of());
+        assertTrue(plan.getAuthenticationHandlers().isEmpty());
+    }
+
+
+    @Test
+    public void verifyNoHandlerResolves() {
+        val transaction = new DefaultAuthenticationTransaction(CoreAuthenticationTestUtils.getService(),
+            List.of(mock(Credential.class)));
+        val plan = new DefaultAuthenticationEventExecutionPlan();
+        assertThrows(AuthenticationException.class, () -> plan.getAuthenticationHandlers(transaction));
+    }
+
 
     @Test
     public void verifyDefaults() {

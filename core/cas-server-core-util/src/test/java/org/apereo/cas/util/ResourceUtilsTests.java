@@ -10,6 +10,9 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.UrlResource;
 
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -57,11 +60,16 @@ public class ResourceUtilsTests {
     }
 
     @Test
-    public void verifyExport() {
+    public void verifyExport() throws Exception {
         val url = getClass().getClassLoader().getResource("META-INF/additional-spring-configuration-metadata.json");
         assertNotNull(url);
         val parent = FileUtils.getTempDirectory();
         assertNull(ResourceUtils.exportClasspathResourceToFile(parent, null));
         assertNotNull(ResourceUtils.exportClasspathResourceToFile(parent, new UrlResource(url)));
+
+        val res = new ClassPathResource("valid.json");
+        val file = new File(FileUtils.getTempDirectory(), "/one/two");
+        FileUtils.write(new File(file, res.getFilename()), "data", StandardCharsets.UTF_8);
+        assertNotNull(ResourceUtils.exportClasspathResourceToFile(file, res));
     }
 }

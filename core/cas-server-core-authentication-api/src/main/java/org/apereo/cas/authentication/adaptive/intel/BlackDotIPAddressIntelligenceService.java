@@ -62,10 +62,6 @@ public class BlackDotIPAddressIntelligenceService extends BaseIPAddressIntellige
             val url = builder.toString();
             LOGGER.debug("Sending IP check request to [{}]", url);
             response = HttpUtils.execute(url, HttpMethod.GET.name());
-            if (response == null) {
-                return bannedResponse;
-            }
-
             if (response.getStatusLine().getStatusCode() == HttpStatus.TOO_MANY_REQUESTS.value()) {
                 LOGGER.error("Exceeded the number of allowed queries");
                 return bannedResponse;

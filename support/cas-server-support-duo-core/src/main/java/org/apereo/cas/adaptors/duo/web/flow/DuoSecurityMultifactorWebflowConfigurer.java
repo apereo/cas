@@ -12,6 +12,7 @@ import org.apereo.cas.web.flow.configurer.DynamicFlowModelBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
@@ -123,7 +124,7 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
         createDuoFlowStartActions(modelBuilder);
         createDuoFlowStates(modelBuilder, properties);
 
-        if (properties.getMode() == DuoSecurityMultifactorProperties.DuoSecurityIntegrationModes.UNIVERSAL) {
+        if (StringUtils.isBlank(properties.getDuoApplicationKey())) {
             createDuoFlowUniversalPromptActions(getLoginFlow());
         }
 
@@ -161,7 +162,7 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
         createDuoDoNonWebAuthenticationAction(states);
         createDuoFinalizeAuthenticationAction(states);
 
-        if (properties.getMode() == DuoSecurityMultifactorProperties.DuoSecurityIntegrationModes.UNIVERSAL) {
+        if (StringUtils.isBlank(properties.getDuoApplicationKey())) {
             createDuoUniversalPromptLoginViewState(states);
         } else {
             createDuoLoginViewState(states);

@@ -13,6 +13,7 @@ import org.apereo.cas.support.spnego.authentication.handler.support.JcifsConfig;
 import org.apereo.cas.support.spnego.authentication.handler.support.JcifsSpnegoAuthenticationHandler;
 import org.apereo.cas.support.spnego.authentication.handler.support.NtlmAuthenticationHandler;
 import org.apereo.cas.support.spnego.authentication.principal.SpnegoPrincipalResolver;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import jcifs.spnego.Authentication;
 import lombok.val;
@@ -25,9 +26,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ResourceLoader;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,9 +45,6 @@ import java.util.stream.Collectors;
 public class SpnegoConfiguration {
 
     @Autowired
-    private ResourceLoader resourceLoader;
-
-    @Autowired
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
 
@@ -57,14 +55,20 @@ public class SpnegoConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "spnegoAuthentications")
     public List<Authentication> spnegoAuthentications() {
         val spnegoSystem = casProperties.getAuthn().getSpnego().getSystem();
 
-        JcifsConfig.SystemSettings.initialize(resourceLoader, spnegoSystem.getLoginConf());
-        JcifsConfig.SystemSettings.setKerberosConf(spnegoSystem.getKerberosConf());
+        JcifsConfig.SystemSettings.initialize(applicationContext, spnegoSystem.getLoginConf());
+
+        val kerbConf = applicationContext.getResource(spnegoSystem.getKerberosConf());
+        FunctionUtils.doAndIgnore(o -> JcifsConfig.SystemSettings.setKerberosConf(kerbConf.getFile().getCanonicalPath()));
+        
         JcifsConfig.SystemSettings.setKerberosDebug(spnegoSystem.getKerberosDebug());
         JcifsConfig.SystemSettings.setKerberosKdc(spnegoSystem.getKerberosKdc());
         JcifsConfig.SystemSettings.setKerberosRealm(spnegoSystem.getKerberosRealm());

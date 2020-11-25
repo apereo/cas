@@ -22,7 +22,7 @@ import org.springframework.dao.annotation.PersistenceExceptionTranslationPostPro
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Configuration("LdapWebAuthnConfiguration")
+@Configuration(value = "LdapWebAuthnConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class LdapWebAuthnConfiguration {
 
