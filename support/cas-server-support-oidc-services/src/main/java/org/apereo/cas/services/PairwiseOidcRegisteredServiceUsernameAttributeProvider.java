@@ -44,7 +44,7 @@ public class PairwiseOidcRegisteredServiceUsernameAttributeProvider extends Base
 
     private static final long serialVersionUID = 469929103943101717L;
 
-    private PersistentIdGenerator persistentIdGenerator = new OidcPairwisePersistentIdGenerator();
+    protected PersistentIdGenerator persistentIdGenerator = new OidcPairwisePersistentIdGenerator();
 
     @Override
     public String resolveUsernameInternal(final Principal principal, final Service service, final RegisteredService registeredService) {
@@ -64,7 +64,7 @@ public class PairwiseOidcRegisteredServiceUsernameAttributeProvider extends Base
         return id;
     }
 
-    private static String getSectorIdentifier(final OidcRegisteredService client) {
+    protected String getSectorIdentifier(final OidcRegisteredService client) {
         if (!StringUtils.isBlank(client.getSectorIdentifierUri())) {
             val uri = UriComponentsBuilder.fromUriString(client.getSectorIdentifierUri()).build();
             return uri.getHost();
