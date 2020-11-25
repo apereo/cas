@@ -26,13 +26,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * This is {@link AbstractResourceBasedServiceRegistryTests}.
+ * This is {@link BaseResourceBasedServiceRegistryTests}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
 @Getter
-public abstract class AbstractResourceBasedServiceRegistryTests extends AbstractServiceRegistryTests {
+public abstract class BaseResourceBasedServiceRegistryTests extends AbstractServiceRegistryTests {
     public static final ClassPathResource RESOURCE = new ClassPathResource("services");
 
     protected ResourceBasedServiceRegistry newServiceRegistry;
