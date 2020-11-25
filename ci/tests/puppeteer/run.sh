@@ -54,4 +54,5 @@ echo -e "*************************************\n"
 echo -e "\nKilling process ${pid} ..."
 kill -9 $pid
 rm "$PWD"/cas.war
-
+rm "$PWD"/ci/tests/puppeteer/overlay/thekeystore
+rm -Rf "$PWD"/ci/tests/puppeteer/overlay
