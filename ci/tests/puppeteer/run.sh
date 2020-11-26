@@ -41,7 +41,7 @@ pid=$!
 echo -e "\nWaiting for CAS under pid ${pid}"
 until curl -k -L --output /dev/null --silent --fail https://localhost:8443/cas/login; do
     echo -n '.'
-    sleep 2
+    sleep 1
 done
 echo -e "\n\nReady!"
 
