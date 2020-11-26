@@ -248,7 +248,6 @@ public class CasPersonDirectoryConfiguration {
     }
 
     @ConditionalOnClass(value = JpaBeans.class)
-    @ConditionalOnProperty(name = "cas.authn.attribute-repository.jdbc[0].sql")
     @Configuration("CasPersonDirectoryJdbcConfiguration")
     public class CasPersonDirectoryJdbcConfiguration implements PersonDirectoryAttributeRepositoryPlanConfigurer {
 
@@ -306,7 +305,6 @@ public class CasPersonDirectoryConfiguration {
         }
     }
 
-    @ConditionalOnProperty(name = "cas.authn.attribute-repository.ldap[0].ldap-url")
     @Configuration("CasPersonDirectoryLdapConfiguration")
     public class CasPersonDirectoryLdapConfiguration implements PersonDirectoryAttributeRepositoryPlanConfigurer {
 
@@ -380,7 +378,6 @@ public class CasPersonDirectoryConfiguration {
         }
     }
 
-    @ConditionalOnProperty(name = "cas.authn.attribute-repository.rest[0].url")
     @Configuration("CasPersonDirectoryRestConfiguration")
     public class CasPersonDirectoryRestConfiguration implements PersonDirectoryAttributeRepositoryPlanConfigurer {
         @ConditionalOnMissingBean(name = "restfulAttributeRepositories")
@@ -449,7 +446,6 @@ public class CasPersonDirectoryConfiguration {
         }
     }
 
-    @ConditionalOnProperty(name = "cas.authn.attribute-repository.script[0].location")
     @Configuration("CasPersonDirectoryScriptedConfiguration")
     @Deprecated(since = "6.2.0")
     public class CasPersonDirectoryScriptedConfiguration implements PersonDirectoryAttributeRepositoryPlanConfigurer {

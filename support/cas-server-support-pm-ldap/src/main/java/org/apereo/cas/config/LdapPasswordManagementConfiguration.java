@@ -12,7 +12,6 @@ import org.ldaptive.ConnectionFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -27,7 +26,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 5.2.0
  */
 @Configuration(value = "ldapPasswordManagementConfiguration", proxyBeanMethods = false)
-@ConditionalOnProperty(name = "cas.authn.pm.ldap[0].ldap-url")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class LdapPasswordManagementConfiguration {
     @Autowired
