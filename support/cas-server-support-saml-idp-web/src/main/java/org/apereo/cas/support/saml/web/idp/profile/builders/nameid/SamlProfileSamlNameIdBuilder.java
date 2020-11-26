@@ -172,17 +172,18 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
                                     final SamlRegisteredService service,
                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
 
-        if (StringUtils.isNotBlank(service.getNameIdQualifier())) {
-            nameid.setNameQualifier(service.getNameIdQualifier());
-        } else {
-            val issuer = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
-            nameid.setNameQualifier(issuer);
-        }
-
-        if (StringUtils.isNotBlank(service.getServiceProviderNameIdQualifier())) {
-            nameid.setSPNameQualifier(service.getServiceProviderNameIdQualifier());
-        } else {
-            nameid.setSPNameQualifier(adaptor.getEntityId());
+        if (nameid != null) {
+            if (StringUtils.isNotBlank(service.getNameIdQualifier())) {
+                nameid.setNameQualifier(service.getNameIdQualifier());
+            } else {
+                val issuer = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
+                nameid.setNameQualifier(issuer);
+            }
+            if (StringUtils.isNotBlank(service.getServiceProviderNameIdQualifier())) {
+                nameid.setSPNameQualifier(service.getServiceProviderNameIdQualifier());
+            } else {
+                nameid.setSPNameQualifier(adaptor.getEntityId());
+            }
         }
         return nameid;
     }
