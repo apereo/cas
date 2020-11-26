@@ -8,34 +8,34 @@ The chart supports mapping in arbitrary volumes and cas config can be specified 
 
 ### Install Kubernetes (Docker for Windows/Mac, Minikube, K3S, Rancher, etc)
 
-[Docker Desktop](https://www.docker.com/products/docker-desktop)
+  - [Docker Desktop](https://www.docker.com/products/docker-desktop)
 
-[Minikube](https://minikube.sigs.k8s.io/docs/start/)
+  - [Minikube](https://minikube.sigs.k8s.io/docs/start/)
 
-[k3s](https://k3s.io/) - Works on linux, very light-weight and easy to install for development
-```shell script
-curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --disable traefik" sh
-# the following export is for helm
-export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
-./gradlew clean build jibBuildTar --refresh-dependencies
-k3s ctr images import build/jib-image.tar
-k3s ctr images ls | grep cas
-./gradlew createKeystore
-cd helm 
-# create secret for tomcat
-kubectl create secret generic cas-server-keystore --from-file=thekeystore=/etc/cas/thekeystore
-# create secret for ingress controller to use with CAS ingress (nginx-ingress will use default if you don't create)
-./create-ingress-tls.sh
-# install cas-server helm chart
-helm upgrade --install cas-server ./cas-server
-``` 
+  - [k3s](https://k3s.io/) - Works on linux, very light-weight and easy to install for development
+    ```shell script
+    curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --disable traefik" sh
+    # the following export is for helm
+    export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+    ./gradlew clean build jibBuildTar --refresh-dependencies
+    k3s ctr images import build/jib-image.tar
+    k3s ctr images ls | grep cas
+    ./gradlew createKeystore
+    cd helm 
+    # create secret for tomcat
+    kubectl create secret generic cas-server-keystore --from-file=thekeystore=/etc/cas/thekeystore
+    # create secret for ingress controller to use with CAS ingress (nginx-ingress will use default if you don't create)
+    ./create-ingress-tls.sh
+    # install cas-server helm chart
+    helm upgrade --install cas-server ./cas-server
+    ``` 
 
 ### Install Helm and Kubectl
 
 Helm v3 and Kubectl are just single binary programs. Kubectl may come with your kubernetes 
 installation, but you can download both of programs and put them in your path.
-- Install [Helm](https://helm.sh/docs/intro/install/)
-- Install [Kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
+  - Install [Helm](https://helm.sh/docs/intro/install/)
+  - Install [Kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 
 ### Install ingress controller
 
@@ -47,7 +47,7 @@ CAS helm chart only tested with Kubernetes ingress-nginx, feel free to add suppo
 
 Assuming you have run `./gradlew createKeystore` or put you server keystore in `/etc/cas/thekeystore`,
 run the following to create a secret containing the keystore: 
-```
+```shell script
 kubectl create secret generic cas-server-keystore --from-file=thekeystore=/etc/cas/thekeystore
 ```
 

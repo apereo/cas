@@ -20,7 +20,7 @@ echo "Creating Keystore"
 echo "Create secret for keystore"
 kubectl create secret generic cas-server-keystore --from-file=thekeystore=etc/cas/thekeystore
 
-imageTag=(v`./gradlew casVersion --q`)
+imageTag=(v$(./gradlew casVersion --q))
 echo "Image tag is ${imageTag}"
 
 cd helm
@@ -40,7 +40,7 @@ kubectl wait --namespace ingress-nginx \
 
 echo "Install cas-server helm chart"
 echo "Using local jib image imported into k3s"
-helm upgrade --install cas-server --set image.pullPolicy=Never --set image.tag=${imageTag} ./cas-server
+helm upgrade --install cas-server --set image.pullPolicy=Never --set image.tag="${imageTag}" ./cas-server
 sleep 15
 kubectl describe pod cas-server-0
 sleep 60
