@@ -1,5 +1,7 @@
 package org.apereo.cas.validation;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Collection;
 import java.util.Map;
 
@@ -15,11 +17,20 @@ import java.util.Map;
 public interface CasProtocolAttributesRenderer {
 
     /**
+     * Sanitize attribute name string.
+     *
+     * @param name the name
+     * @return the string
+     */
+    static String sanitizeAttributeName(final String name) {
+        return StringUtils.replace(name.trim(), " ", "_");
+    }
+
+    /**
      * Render attributes.
      *
      * @param attributes the attributes, expected to be finalized and encoded.
      * @return the collection
      */
     Collection<String> render(Map<String, Object> attributes);
-
 }

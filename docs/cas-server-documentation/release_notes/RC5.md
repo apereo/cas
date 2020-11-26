@@ -93,6 +93,8 @@ can now, manage and track device registration records inside LDAP directories.
 - [Attribute resolution](../integration/Attribute-Resolution.html) has gained a new option to force all attribute repositories to produce a data and short-circuit the resolution logic if any repository fails to resolve the person details.
 - [Maven repositories](https://spring.io/blog/2020/10/29/notice-of-permissions-changes-to-repo-spring-io-fall-and-winter-2020) managed by the Spring project are removed from the CAS gradle build. 
 - Improvements to [password management](../password_management/Password-Management.html) flows to handle invalid tokens more gracefully, and allow password reset with or without single sign-on sessions.
+- Releasing attributes with a space in the attribute name, due to misconfiguration, will force CAS to replace the space with `_` upon release.
+- Loading Kerberos and JAAS configuration files for [SPNEGO authentication](../installation/SPNEGO-Authentication.html) is changed to use Spring resources for syntax. You may need to ensure paths in the CAS configuration start with the `file:` prefix.
 - [Attribute resolution](../integration/Attribute-Resolution.html) for LDAP has been improved to support fetching and mapping attributes with tags/options.
 - All external links found in the CAS documentation are corrected to point to valid resources. Validation processes are also adjusted to prevent bad links. 
 
