@@ -4,7 +4,6 @@ import org.apereo.cas.adaptors.duo.authn.DuoSecurityCredential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
 import org.apereo.cas.trusted.web.flow.AbstractMultifactorTrustedDeviceWebflowConfigurer;
-import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
@@ -106,14 +105,9 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
             .filter(DuoSecurityMultifactorProperties::isTrustedDeviceEnabled)
             .forEach(duo -> {
                 val id = duo.getId();
-                try {
-                    LOGGER.debug("Activating multifactor trusted authentication for webflow [{}]", id);
-                    val registry = applicationContext.getBean(id, FlowDefinitionRegistry.class);
-                    registerMultifactorTrustedAuthentication(registry);
-                } catch (final Exception e) {
-                    LOGGER.error("Failed to register multifactor trusted authentication for [{}]", id);
-                    LoggingUtils.error(LOGGER, e);
-                }
+                LOGGER.debug("Activating multifactor trusted authentication for webflow [{}]", id);
+                val registry = applicationContext.getBean(id, FlowDefinitionRegistry.class);
+                registerMultifactorTrustedAuthentication(registry);
             });
     }
 

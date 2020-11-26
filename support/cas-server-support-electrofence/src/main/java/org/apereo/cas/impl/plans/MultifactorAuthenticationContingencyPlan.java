@@ -26,7 +26,8 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 public class MultifactorAuthenticationContingencyPlan extends BaseAuthenticationRiskContingencyPlan {
 
-    public MultifactorAuthenticationContingencyPlan(final CasConfigurationProperties casProperties, final ApplicationContext applicationContext) {
+    public MultifactorAuthenticationContingencyPlan(final CasConfigurationProperties casProperties,
+        final ApplicationContext applicationContext) {
         super(casProperties, applicationContext);
     }
 

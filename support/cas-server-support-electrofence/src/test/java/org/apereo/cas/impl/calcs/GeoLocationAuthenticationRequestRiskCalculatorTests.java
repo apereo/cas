@@ -1,6 +1,7 @@
 package org.apereo.cas.impl.calcs;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.impl.mock.MockTicketGrantingTicketCreatedEventProducer;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 
 import lombok.val;
@@ -10,6 +11,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
+
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -29,6 +32,18 @@ public class GeoLocationAuthenticationRequestRiskCalculatorTests extends BaseAut
         val authentication = CoreAuthenticationTestUtils.getAuthentication("geoperson");
         val service = RegisteredServiceTestUtils.getRegisteredService("test");
         val request = new MockHttpServletRequest();
+        val score = authenticationRiskEvaluator.eval(authentication, service, request);
+        assertTrue(score.isHighestRisk());
+    }
+
+    @Test
+    public void verifyTestWithGeoLoc() {
+        val id = UUID.randomUUID().toString();
+        MockTicketGrantingTicketCreatedEventProducer.createEvent(id, casEventRepository);
+        val authentication = CoreAuthenticationTestUtils.getAuthentication(id);
+        val service = RegisteredServiceTestUtils.getRegisteredService("test");
+        val request = new MockHttpServletRequest();
+        request.setParameter("geolocation", "40,70,1000,100");
         val score = authenticationRiskEvaluator.eval(authentication, service, request);
         assertTrue(score.isHighestRisk());
     }
