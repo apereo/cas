@@ -1,6 +1,5 @@
 package org.apereo.cas.util.scripting;
 
-import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.io.FileWatcherService;
 
@@ -9,6 +8,7 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.jooq.lambda.Unchecked;
 import org.springframework.core.io.Resource;
 
 /**
@@ -33,14 +33,10 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledGroovySc
 
         if (ResourceUtils.doesResourceExist(script) && enableWatcher) {
             if (ResourceUtils.isFile(script)) {
-                this.watcherService = new FileWatcherService(script.getFile(), file -> {
-                    try {
-                        LOGGER.debug("Reloading script at [{}]", file);
-                        compileScriptResource(script);
-                    } catch (final Exception e) {
-                        LoggingUtils.error(LOGGER, e);
-                    }
-                });
+                this.watcherService = new FileWatcherService(script.getFile(), Unchecked.consumer(file -> {
+                    LOGGER.debug("Reloading script at [{}]", file);
+                    compileScriptResource(script);
+                }));
                 this.watcherService.start(script.getFilename());
                 compileScriptResource(script);
             }

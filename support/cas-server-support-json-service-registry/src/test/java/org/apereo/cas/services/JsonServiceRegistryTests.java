@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     CasCoreUtilConfiguration.class
 })
-public class JsonServiceRegistryTests extends AbstractResourceBasedServiceRegistryTests {
+public class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
     @SneakyThrows
     @Override
     public ResourceBasedServiceRegistry getNewServiceRegistry() {

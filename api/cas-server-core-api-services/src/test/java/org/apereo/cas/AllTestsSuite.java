@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttributesRepositoryTests;
 import org.apereo.cas.services.RegisteredServiceAcceptableUsagePolicyTests;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyTests;
 import org.apereo.cas.services.RegisteredServiceCipherExecutorTests;
@@ -26,6 +27,7 @@ import org.junit.runner.RunWith;
     RegisteredServiceConsentPolicyTests.class,
     RegisteredServicePropertyTests.class,
     ServiceRegistryTests.class,
+    RegisteredServicePrincipalAttributesRepositoryTests.class,
     RegisteredServiceDelegatedAuthenticationPolicyTests.class,
     ServicesManagerTests.class,
     RegisteredServiceCipherExecutorTests.class,

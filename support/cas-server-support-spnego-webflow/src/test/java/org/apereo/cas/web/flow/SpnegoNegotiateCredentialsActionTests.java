@@ -32,7 +32,7 @@ public class SpnegoNegotiateCredentialsActionTests extends AbstractSpnegoTests {
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         negociateSpnegoAction.execute(context);
         assertNotNull(response.getHeader(SpnegoConstants.HEADER_AUTHENTICATE));
-        assertTrue(response.getStatus() == HttpServletResponse.SC_UNAUTHORIZED);
+        assertEquals(HttpServletResponse.SC_UNAUTHORIZED, response.getStatus());
     }
 
     @Test
