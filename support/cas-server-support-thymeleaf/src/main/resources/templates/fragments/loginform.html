@@ -141,6 +141,11 @@
                     
                     <div th:replace="fragments/submitbutton :: submitButton (messageKey='screen.welcome.button.login')" />
 
+                    <p th:if="${x509ClientAuthLoginEndpointUrl}">
+                        <a class="mdc-button mdc-button--raised"
+                           th:href="${x509ClientAuthLoginEndpointUrl}"
+                           th:text="#{screen.welcome.button.loginx509}">X509 Login</a>
+                    </p>
                 </form>
 
                 <hr class="my-4" />

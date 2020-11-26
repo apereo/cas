@@ -7,15 +7,23 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.X509CertificateCredentialsNonInteractiveAction;
 import org.apereo.cas.web.flow.X509CertificateCredentialsRequestHeaderAction;
+import org.apereo.cas.web.flow.X509TomcatServletWebServiceFactoryCustomizer;
+import org.apereo.cas.web.flow.X509TomcatServletWebServiceFactoryWebflowConfigurer;
 import org.apereo.cas.web.flow.X509WebflowConfigurer;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
 import lombok.val;
+import org.apache.catalina.startup.Tomcat;
+import org.apache.coyote.http2.Http2Protocol;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
+import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryCustomizer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -91,5 +99,35 @@ public class X509AuthenticationWebflowConfiguration {
     @ConditionalOnMissingBean(name = "x509CasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer x509CasWebflowExecutionPlanConfigurer() {
         return plan -> plan.registerWebflowConfigurer(x509WebflowConfigurer());
+    }
+
+    @Configuration("X509TomcatServletWebServiceFactoryConfiguration")
+    @ConditionalOnClass(value = {Tomcat.class, Http2Protocol.class})
+    @ConditionalOnProperty(value = "cas.authn.x509.webflow.port")
+    public class X509TomcatServletWebServiceFactoryConfiguration {
+        @Autowired
+        private ServerProperties serverProperties;
+
+        @ConditionalOnMissingBean(name = "x509TomcatServletWebServiceFactoryCustomizer")
+        @Bean
+        public ServletWebServerFactoryCustomizer x509TomcatServletWebServiceFactoryCustomizer() {
+            return new X509TomcatServletWebServiceFactoryCustomizer(serverProperties, casProperties);
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "x509TomcatWebflowExecutionPlanConfigurer")
+        public CasWebflowExecutionPlanConfigurer x509TomcatWebflowExecutionPlanConfigurer() {
+            return plan -> plan.registerWebflowConfigurer(x509TomcatServletWebServiceFactoryWebflowConfigurer());
+        }
+
+        @ConditionalOnMissingBean(name = "x509TomcatServletWebServiceFactoryWebflowConfigurer")
+        @Bean
+        @DependsOn("defaultWebflowConfigurer")
+        public CasWebflowConfigurer x509TomcatServletWebServiceFactoryWebflowConfigurer() {
+            return new X509TomcatServletWebServiceFactoryWebflowConfigurer(
+                flowBuilderServices.getObject(),
+                loginFlowDefinitionRegistry.getObject(),
+                applicationContext, casProperties);
+        }
     }
 }

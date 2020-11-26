@@ -1,7 +1,6 @@
 package org.apereo.cas.configuration.model.support.x509;
 
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
-import org.apereo.cas.configuration.model.core.web.flow.WebflowAutoConfigurationProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -207,6 +206,12 @@ public class X509Properties implements Serializable {
     private PersonDirectoryPrincipalResolverProperties principal = new PersonDirectoryPrincipalResolverProperties();
 
     /**
+     * The webflow configuration.
+     */
+    @NestedConfigurationProperty
+    private X509WebflowAutoConfigurationProperties webflow = new X509WebflowAutoConfigurationProperties(100);
+    
+    /**
      * LDAP settings when fetching CRLs from LDAP.
      */
     private Ldap ldap = new Ldap();
@@ -304,12 +309,6 @@ public class X509Properties implements Serializable {
      */
     @NestedConfigurationProperty
     private SerialNoPrincipalResolverProperties serialNo = new SerialNoPrincipalResolverProperties();
-
-    /**
-     * The webflow configuration.
-     */
-    @NestedConfigurationProperty
-    private WebflowAutoConfigurationProperties webflow = new WebflowAutoConfigurationProperties(100);
 
     /**
      * The  Principal types.
