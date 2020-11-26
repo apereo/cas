@@ -772,6 +772,7 @@ jobs:
           - gauth-register
           - duo-websdk-login
           - duo-universal-login
+          - mfa-provider-selection
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK

@@ -15,7 +15,7 @@
             <h2 class="card-title">Multifactor Authentication Provider Selection</h2>
             <hr>
             <div class="card-text">
-                <div th:each="provider: ${mfaSelectableProviders}" class="border-bottom py-4">
+                <div th:id="${provider}" th:each="provider: ${mfaSelectableProviders}" class="border-bottom py-4">
                     <form name="fm1" method="post" th:action="@{/login}">
                         <h4 class="d-flex align-items-center">
                             <i class="mdi mdi-laptop mr-2"></i>
