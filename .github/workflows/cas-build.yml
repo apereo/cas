@@ -763,6 +763,7 @@ jobs:
           - login-success
           - block-missing-service
           - default-service
+          - requiredattrs-service
           - invalid-pswd-reset
           - locale-param
           - generate-service-ticket
