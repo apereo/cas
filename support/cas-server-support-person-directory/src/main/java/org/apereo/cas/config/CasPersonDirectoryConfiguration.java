@@ -21,6 +21,7 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.FileWatcherService;
+import org.apereo.cas.util.spring.boot.ConditionalOnMultiValuedProperty;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
@@ -251,7 +252,7 @@ public class CasPersonDirectoryConfiguration {
     }
 
     @ConditionalOnClass(value = JpaBeans.class)
-    @ConditionalOnProperty(name = "cas.authn.attribute-repository.jdbc[0].sql")
+    @ConditionalOnMultiValuedProperty(name = "cas.authn.attribute-repository.jdbc[0]", value = "sql")
     @Configuration("CasPersonDirectoryJdbcConfiguration")
     public class CasPersonDirectoryJdbcConfiguration implements PersonDirectoryAttributeRepositoryPlanConfigurer {
 
@@ -309,7 +310,7 @@ public class CasPersonDirectoryConfiguration {
         }
     }
 
-    @ConditionalOnProperty(name = "cas.authn.attribute-repository.ldap[0].ldap-url")
+    @ConditionalOnMultiValuedProperty(name = "cas.authn.attribute-repository.ldap[0]", value = "ldap-url")
     @Configuration("CasPersonDirectoryLdapConfiguration")
     public class CasPersonDirectoryLdapConfiguration implements PersonDirectoryAttributeRepositoryPlanConfigurer {
 
@@ -383,7 +384,7 @@ public class CasPersonDirectoryConfiguration {
         }
     }
 
-    @ConditionalOnProperty(name = "cas.authn.attribute-repository.rest[0].url")
+    @ConditionalOnMultiValuedProperty(name = "cas.authn.attribute-repository.rest[0]", value = "url")
     @Configuration("CasPersonDirectoryRestConfiguration")
     public class CasPersonDirectoryRestConfiguration implements PersonDirectoryAttributeRepositoryPlanConfigurer {
         @ConditionalOnMissingBean(name = "restfulAttributeRepositories")
@@ -423,7 +424,7 @@ public class CasPersonDirectoryConfiguration {
         }
     }
 
-    @ConditionalOnProperty(name = "cas.authn.attribute-repository.groovy[0].location")
+    @ConditionalOnMultiValuedProperty(name = "cas.authn.attribute-repository.groovy[0]", value = "location")
     @Configuration("CasPersonDirectoryGroovyConfiguration")
     public class CasPersonDirectoryGroovyConfiguration implements PersonDirectoryAttributeRepositoryPlanConfigurer {
 
@@ -452,7 +453,7 @@ public class CasPersonDirectoryConfiguration {
         }
     }
 
-    @ConditionalOnProperty(name = "cas.authn.attribute-repository.script[0].location")
+    @ConditionalOnMultiValuedProperty(name = "cas.authn.attribute-repository.script[0]", value = "location")
     @Configuration("CasPersonDirectoryScriptedConfiguration")
     @Deprecated(since = "6.2.0")
     public class CasPersonDirectoryScriptedConfiguration implements PersonDirectoryAttributeRepositoryPlanConfigurer {

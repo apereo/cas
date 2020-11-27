@@ -32,7 +32,7 @@
                         <span th:utext="#{screen.welcome.instructions}">Enter your Username and Password:</span>
                     </h3>
 
-                    <div class="banner banner-danger banner-dismissible" th:if="${#fields.hasErrors('*')}">
+                    <div id="loginErrorsPanel" class="banner banner-danger banner-dismissible" th:if="${#fields.hasErrors('*')}">
                         <p th:each="err : ${#fields.errors('*')}" th:utext="${err + ' '}">Example error</p>
                         <!--<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>-->
                     </div>
@@ -169,12 +169,23 @@
                     
                     <div th:replace="fragments/submitbutton :: submitButton (messageKey='screen.welcome.button.login')" />
 
-                    <p th:if="${x509ClientAuthLoginEndpointUrl}">
-                        <a class="mdc-button mdc-button--raised"
-                           th:href="${x509ClientAuthLoginEndpointUrl}"
-                           th:text="#{screen.welcome.button.loginx509}">X509 Login</a>
-                    </p>
                 </form>
+
+                <div id="x509Login" th:if="${x509ClientAuthLoginEndpointUrl}">
+                    <hr class="my-4" />
+                    <script th:inline="javascript">
+                        /*<![CDATA[*/
+                        function x509login() {
+                            var url =  /*[[${x509ClientAuthLoginEndpointUrl}]]*/;
+                            url += window.location.search;
+                            window.location.assign(url)
+                        }
+                        /*]]>*/
+                    </script>
+                    <a class="mdc-button mdc-button--raised"
+                       onclick="javascript:x509login();"
+                       th:text="#{screen.welcome.button.loginx509}">X509 Login</a>
+                </div>
 
                 <hr class="my-4" />
 

@@ -172,8 +172,8 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
         val o1 = openIdServiceFactory.createService(request);
         val o2 = openIdServiceFactory.createService(request);
 
-        assertTrue(o1.equals(o2));
-        assertFalse(o1.equals(new Object()));
+        assertEquals(o2, o1);
+        assertNotEquals(new Object(), o1);
     }
 
     private ServicesManager getServicesManager() {

@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.bypass;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties;
@@ -37,7 +38,8 @@ public class CredentialMultifactorAuthenticationProviderBypassEvaluatorTests {
         val eval = new DefaultChainingMultifactorAuthenticationBypassProvider();
         val bypassProps = new MultifactorAuthenticationProviderBypassProperties();
         bypassProps.setCredentialClassType(UsernamePasswordCredential.class.getName());
-        eval.addMultifactorAuthenticationProviderBypassEvaluator(new CredentialMultifactorAuthenticationProviderBypassEvaluator(bypassProps, TestMultifactorAuthenticationProvider.ID));
+        eval.addMultifactorAuthenticationProviderBypassEvaluator(
+            new CredentialMultifactorAuthenticationProviderBypassEvaluator(bypassProps, TestMultifactorAuthenticationProvider.ID));
 
         val principal = CoreAuthenticationTestUtils.getPrincipal(Map.of("cn", List.of("example")));
         val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
@@ -45,5 +47,9 @@ public class CredentialMultifactorAuthenticationProviderBypassEvaluatorTests {
         val policy = new DefaultRegisteredServiceMultifactorPolicy();
         when(registeredService.getMultifactorPolicy()).thenReturn(policy);
         assertFalse(eval.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, new MockHttpServletRequest()));
+
+        bypassProps.setCredentialClassType(BasicIdentifiableCredential.class.getName());
+        assertTrue(eval.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, new MockHttpServletRequest()));
+
     }
 }

@@ -763,6 +763,7 @@ jobs:
           - login-success
           - block-missing-service
           - default-service
+          - requiredattrs-service
           - invalid-pswd-reset
           - locale-param
           - generate-service-ticket
@@ -771,6 +772,16 @@ jobs:
           - qrauthn-login
           - gauth-register
           - duo-websdk-login
+          - duo-universal-login
+          - mfa-provider-selection
+          - x509-optional-login
+          - actuator-form-login
+          - unauthz-service
+          - account-locked-login
+          - account-disabled-login
+          - account-expired-login
+          - account-change-pswd
+          - account-invalidloc-login
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK

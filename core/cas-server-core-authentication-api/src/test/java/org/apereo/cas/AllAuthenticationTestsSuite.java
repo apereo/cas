@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.authentication.AcceptAnyAuthenticationPolicyFactoryTests;
 import org.apereo.cas.authentication.AuthenticationCredentialTypeMetaDataPopulatorTests;
 import org.apereo.cas.authentication.AuthenticationDateAttributeMetaDataPopulatorTests;
 import org.apereo.cas.authentication.CredentialCustomFieldsAttributeMetaDataPopulatorTests;
@@ -13,6 +14,7 @@ import org.apereo.cas.authentication.GroovyAuthenticationPreProcessorTests;
 import org.apereo.cas.authentication.GroovyPrincipalFactoryTests;
 import org.apereo.cas.authentication.OneTimeTokenAccountTests;
 import org.apereo.cas.authentication.OneTimeTokenTests;
+import org.apereo.cas.authentication.RequiredHandlerAuthenticationPolicyFactoryTests;
 import org.apereo.cas.authentication.RestfulPrincipalFactoryTests;
 import org.apereo.cas.authentication.adaptive.DefaultAdaptiveAuthenticationPolicyTests;
 import org.apereo.cas.authentication.adaptive.intel.BlackDotIPAddressIntelligenceServiceTests;
@@ -73,6 +75,8 @@ import org.junit.runner.RunWith;
     PrincipalFactoryUtilsTests.class,
     DefaultAuthenticationHandlerExecutionResultTests.class,
     OneTimeTokenTests.class,
+    AcceptAnyAuthenticationPolicyFactoryTests.class,
+    RequiredHandlerAuthenticationPolicyFactoryTests.class,
     DefaultIPAddressIntelligenceServiceTests.class,
     DefaultAuthenticationServiceSelectionStrategyTests.class,
     ProxyingPrincipalResolverTests.class,

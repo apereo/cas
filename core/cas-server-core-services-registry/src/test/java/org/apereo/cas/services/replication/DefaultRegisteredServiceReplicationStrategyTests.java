@@ -77,7 +77,7 @@ public class DefaultRegisteredServiceReplicationStrategyTests {
 
         val svc = strategy.getRegisteredServiceFromCacheIfAny(service, 1000, serviceRegistry);
         assertNotNull(svc);
-        assertTrue(serviceRegistry.size() == 0);
+        assertEquals(serviceRegistry.size(), 0);
     }
 
     @Test
@@ -99,7 +99,7 @@ public class DefaultRegisteredServiceReplicationStrategyTests {
 
         val svc = strategy.getRegisteredServiceFromCacheIfAny(null, 1000, serviceRegistry);
         assertNotNull(svc);
-        assertTrue(serviceRegistry.size() == 1);
+        assertEquals(serviceRegistry.size(), 1);
     }
 
     @Test
@@ -122,7 +122,7 @@ public class DefaultRegisteredServiceReplicationStrategyTests {
 
         var svc = strategy.getRegisteredServiceFromCacheIfAny(service, 1000, serviceRegistry);
         assertNotNull(svc);
-        assertTrue(serviceRegistry.size() == 1);
+        assertEquals(serviceRegistry.size(), 1);
         svc = serviceRegistry.findServiceById(1000);
         assertEquals("Test1", svc.getName());
     }
@@ -147,7 +147,7 @@ public class DefaultRegisteredServiceReplicationStrategyTests {
 
         var svc = strategy.getRegisteredServiceFromCacheIfAny(service, 1000, serviceRegistry);
         assertNotNull(svc);
-        assertTrue(serviceRegistry.size() == 0);
+        assertEquals(serviceRegistry.size(), 0);
     }
 
     @Test

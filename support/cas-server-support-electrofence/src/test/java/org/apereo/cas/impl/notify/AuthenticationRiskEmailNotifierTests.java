@@ -54,4 +54,19 @@ public class AuthenticationRiskEmailNotifierTests extends BaseAuthenticationRequ
             }
         });
     }
+
+    @Test
+    public void verifyNoMailAttr() {
+        authenticationRiskEmailNotifier.setRegisteredService(CoreAuthenticationTestUtils.getRegisteredService());
+        val principal = CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("nothing", List.of("cas@example.org")));
+        val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
+        authenticationRiskEmailNotifier.setAuthentication(authentication);
+        authenticationRiskEmailNotifier.setAuthenticationRiskScore(new AuthenticationRiskScore(BigDecimal.ONE));
+        assertDoesNotThrow(new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                authenticationRiskEmailNotifier.publish();
+            }
+        });
+    }
 }
