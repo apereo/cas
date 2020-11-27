@@ -2,7 +2,7 @@
 
 ENTRYPOINT_DEBUG=${ENTRYPOINT_DEBUG:-false}
 JVM_MEM_OPTS=${JVM_MEM_OPTS:-Xms512m -Xmx2048M}
-JVM_EXTRA_OPTS==${JVM_EXTRA_OPTS:-server -noverify -XX:+TieredCompilation -XX:TieredStopAtLevel=1}
+JVM_EXTRA_OPTS=${JVM_EXTRA_OPTS:-server -noverify -XX:+TieredCompilation -XX:TieredStopAtLevel=1}
 
 if [[ $ENTRYPOINT_DEBUG == "true" ]]; then
   echo -e "\nChecking java..."
