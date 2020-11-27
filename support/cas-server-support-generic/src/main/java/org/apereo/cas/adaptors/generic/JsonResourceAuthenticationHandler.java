@@ -7,10 +7,12 @@ import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
+import org.apereo.cas.authentication.exceptions.InvalidLoginLocationException;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.RegexUtils;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -18,6 +20,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.core.io.Resource;
 
 import javax.security.auth.login.AccountExpiredException;
@@ -84,6 +88,12 @@ public class JsonResourceAuthenticationHandler extends AbstractUsernamePasswordA
                     LOGGER.debug("Account status is OK");
             }
 
+            val clientInfo = ClientInfoHolder.getClientInfo();
+            if (clientInfo != null && StringUtils.isNotBlank(account.getLocation())
+                && !RegexUtils.find(account.getLocation(), clientInfo.getClientIpAddress())) {
+                throw new InvalidLoginLocationException("Unable to login from this location");
+            }
+            
             val warnings = new ArrayList<MessageDescriptor>();
             if (account.getExpirationDate() != null) {
                 val now = LocalDate.now(ZoneOffset.UTC);
