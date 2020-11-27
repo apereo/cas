@@ -25,7 +25,7 @@ public class SamlRequestAuditResourceResolverTests {
         val r = new SamlRequestAuditResourceResolver();
         val result = r.resolveFrom(mock(JoinPoint.class), new Object());
         assertNotNull(result);
-        assertTrue(result.length == 0);
+        assertEquals(result.length, 0);
     }
 
 

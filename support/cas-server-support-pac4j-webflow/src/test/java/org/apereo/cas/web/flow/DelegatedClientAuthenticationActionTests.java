@@ -163,7 +163,7 @@ public class DelegatedClientAuthenticationActionTests {
         assertEquals(service.getId(), ((Service) flowScope.get(CasProtocolConstants.PARAMETER_SERVICE)).getId());
         val credential = flowScope.get(CasWebflowConstants.VAR_ID_CREDENTIAL, ClientCredential.class);
         assertNotNull(credential);
-        assertTrue(credential.getId().equals("casuser"));
+        assertEquals(credential.getId(), "casuser");
     }
 
     @Test

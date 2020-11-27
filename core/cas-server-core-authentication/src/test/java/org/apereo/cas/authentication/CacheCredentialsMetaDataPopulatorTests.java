@@ -27,7 +27,7 @@ public class CacheCredentialsMetaDataPopulatorTests {
         populator.populateAttributes(builder, DefaultAuthenticationTransaction.of(c));
         val authn = builder.build();
         assertTrue(authn.getAttributes().containsKey(UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD));
-        assertTrue(authn.getAttributes().get(UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD).get(0).toString().equals(c.getPassword()));
+        assertEquals(c.getPassword(), authn.getAttributes().get(UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD).get(0).toString());
     }
 
 

@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.userinfo.client.UserInfo;
@@ -50,6 +51,7 @@ public abstract class AbstractGeoLocationService implements GeoLocationService {
             }
             return null;
         } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
             return locateByIpStack(address);
         }
     }
