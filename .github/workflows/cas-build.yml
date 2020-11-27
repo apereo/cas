@@ -775,6 +775,7 @@ jobs:
           - mfa-provider-selection
           - x509-optional-login
           - actuator-form-login
+          - unauthz-service
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
