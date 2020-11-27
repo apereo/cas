@@ -20,6 +20,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.hjson.JsonValue;
+import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -65,13 +66,8 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
             loadAttributeDefinitionsFromInputStream(resource);
 
             if (ResourceUtils.isFile(resource)) {
-                this.storeWatcherService = new FileWatcherService(resource.getFile(), file -> {
-                    try {
-                        loadAttributeDefinitionsFromInputStream(new FileSystemResource(file));
-                    } catch (final Exception e) {
-                        LoggingUtils.error(LOGGER, e);
-                    }
-                });
+                this.storeWatcherService = new FileWatcherService(resource.getFile(),
+                    Unchecked.consumer(file -> loadAttributeDefinitionsFromInputStream(new FileSystemResource(file))));
                 this.storeWatcherService.start(getClass().getSimpleName());
             }
         }

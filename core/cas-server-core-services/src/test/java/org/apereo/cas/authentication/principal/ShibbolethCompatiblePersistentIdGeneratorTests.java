@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -22,6 +24,7 @@ import static org.mockito.Mockito.*;
 public class ShibbolethCompatiblePersistentIdGeneratorTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "shibbolethCompatiblePersistentIdGenerator.json");
+
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     @Test
@@ -32,6 +35,18 @@ public class ShibbolethCompatiblePersistentIdGeneratorTests {
         when(p.getId()).thenReturn("testuser");
         val value = generator.generate(p, RegisteredServiceTestUtils.getService());
 
+        assertNotNull(value);
+    }
+
+    @Test
+    public void verifyGeneratorByPrincipal() {
+        val generator = new ShibbolethCompatiblePersistentIdGenerator();
+        generator.setAttribute("uid");
+        assertNotNull(generator.toString());
+        val p = mock(Principal.class);
+        when(p.getAttributes()).thenReturn(Map.of("uid", List.of("testuser")));
+        when(p.getId()).thenReturn("testuser");
+        val value = generator.generate(p, RegisteredServiceTestUtils.getService());
         assertNotNull(value);
     }
 

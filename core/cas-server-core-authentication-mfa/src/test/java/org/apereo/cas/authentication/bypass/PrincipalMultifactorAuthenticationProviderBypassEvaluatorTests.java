@@ -26,6 +26,26 @@ import static org.mockito.Mockito.*;
 @Tag("MFA")
 public class PrincipalMultifactorAuthenticationProviderBypassEvaluatorTests {
 
+    @Test
+    public void verifyNoMatchOperation() {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+        val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
+
+        val eval = new DefaultChainingMultifactorAuthenticationBypassProvider();
+        eval.addMultifactorAuthenticationProviderBypassEvaluator(
+            new PrincipalMultifactorAuthenticationProviderBypassEvaluator("cn", "exam.+", TestMultifactorAuthenticationProvider.ID));
+
+        val principal = CoreAuthenticationTestUtils.getPrincipal(Map.of("cn", List.of("unknown")));
+        val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
+        val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
+        val policy = new DefaultRegisteredServiceMultifactorPolicy();
+        policy.setBypassEnabled(true);
+        when(registeredService.getMultifactorPolicy()).thenReturn(policy);
+        assertTrue(eval.shouldMultifactorAuthenticationProviderExecute(authentication,
+            registeredService, provider, new MockHttpServletRequest()));
+    }
+
 
     @Test
     public void verifyOperation() {
@@ -34,7 +54,8 @@ public class PrincipalMultifactorAuthenticationProviderBypassEvaluatorTests {
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
 
         val eval = new DefaultChainingMultifactorAuthenticationBypassProvider();
-        eval.addMultifactorAuthenticationProviderBypassEvaluator(new PrincipalMultifactorAuthenticationProviderBypassEvaluator("cn", "exam.+", TestMultifactorAuthenticationProvider.ID));
+        eval.addMultifactorAuthenticationProviderBypassEvaluator(
+            new PrincipalMultifactorAuthenticationProviderBypassEvaluator("cn", "exam.+", TestMultifactorAuthenticationProvider.ID));
 
         val principal = CoreAuthenticationTestUtils.getPrincipal(Map.of("cn", List.of("example")));
         val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);

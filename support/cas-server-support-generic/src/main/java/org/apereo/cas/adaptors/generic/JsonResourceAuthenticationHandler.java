@@ -93,7 +93,6 @@ public class JsonResourceAuthenticationHandler extends AbstractUsernamePasswordA
                 && !RegexUtils.find(account.getLocation(), clientInfo.getClientIpAddress())) {
                 throw new InvalidLoginLocationException("Unable to login from this location");
             }
-            
             val warnings = new ArrayList<MessageDescriptor>();
             if (account.getExpirationDate() != null) {
                 val now = LocalDate.now(ZoneOffset.UTC);
