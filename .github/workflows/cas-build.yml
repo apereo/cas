@@ -776,6 +776,9 @@ jobs:
           - x509-optional-login
           - actuator-form-login
           - unauthz-service
+          - account-locked-login
+          - account-disabled-login
+          - account-expired-login
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
