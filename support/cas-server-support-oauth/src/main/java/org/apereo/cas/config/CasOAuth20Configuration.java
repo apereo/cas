@@ -34,7 +34,6 @@ import org.apereo.cas.support.oauth.validator.authorization.OAuth20Authorization
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20IdTokenAndTokenResponseTypeAuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20IdTokenResponseTypeAuthorizationRequestValidator;
-import org.apereo.cas.support.oauth.validator.authorization.OAuth20MissingOrInvalidResponseTypeAuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20ProofKeyCodeExchangeResponseTypeAuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20TokenResponseTypeAuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.token.OAuth20AuthorizationCodeGrantTypeProofKeyCodeExchangeTokenRequestValidator;
@@ -560,7 +559,6 @@ public class CasOAuth20Configuration {
     @RefreshScope
     public Set<OAuth20AuthorizationRequestValidator> oauthAuthorizationRequestValidators() {
         val validators = new LinkedHashSet<OAuth20AuthorizationRequestValidator>(6);
-        validators.add(oauthMissingOrInvalidResponseTypeAuthorizationRequestValidator());
         validators.add(oauthProofKeyCodeExchangeResponseTypeAuthorizationRequestValidator());
         validators.add(oauthAuthorizationCodeResponseTypeRequestValidator());
         validators.add(oauthIdTokenResponseTypeRequestValidator());
@@ -647,14 +645,6 @@ public class CasOAuth20Configuration {
     @RefreshScope
     public OAuth20AuthorizationRequestValidator oauthAuthorizationCodeResponseTypeRequestValidator() {
         return new OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator(servicesManager.getObject(),
-            webApplicationServiceFactory.getObject(), registeredServiceAccessStrategyEnforcer.getObject());
-    }
-
-    @ConditionalOnMissingBean(name = "oauthMissingOrInvalidResponseTypeAuthorizationRequestValidator")
-    @Bean
-    @RefreshScope
-    public OAuth20AuthorizationRequestValidator oauthMissingOrInvalidResponseTypeAuthorizationRequestValidator() {
-        return new OAuth20MissingOrInvalidResponseTypeAuthorizationRequestValidator(servicesManager.getObject(),
             webApplicationServiceFactory.getObject(), registeredServiceAccessStrategyEnforcer.getObject());
     }
 
