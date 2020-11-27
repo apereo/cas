@@ -1,0 +1,15 @@
+{
+  "@class": "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId": "https://credtype.userpswd.example.com",
+  "name": "Sample",
+  "id": 2,
+  "description": "Sample Service",
+  "evaluationOrder": 10000,
+  "accessStrategy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "requiredAttributes" : {
+      "@class" : "java.util.HashMap",
+      "credentialType" : [ "java.util.HashSet", [ "X509CertificateCredential" ] ]
+    }
+  }
+}
