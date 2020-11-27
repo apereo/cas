@@ -208,10 +208,6 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
             logException(new IllegalArgumentException('[' + initParamValue + "] had no tokens but should have had at least one token."));
         }
         val tokens = Splitter.onPattern("\\s+").splitToList(initParamValue.trim());
-        if (tokens.isEmpty()) {
-            logException(new IllegalArgumentException('[' + initParamValue + "] had no tokens but should have had at least one token."));
-        }
-
         if (allowWildcard && 1 == tokens.size() && "*".equals(tokens.get(0))) {
             return new HashSet<>(0);
         }
@@ -249,13 +245,7 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
             return charactersToForbid;
         }
 
-        var tokens = Splitter.onPattern("\\s+").splitToList(paramValue);
-
-        if (tokens.isEmpty()) {
-            logException(new IllegalArgumentException("Expected tokens when parsing [" + paramValue + "] but found no tokens."
-                + " If you really want to configure no characters, use the magic value 'none'."));
-        }
-
+        val tokens = Splitter.onPattern("\\s+").splitToList(paramValue);
         for (val token : tokens) {
             if (token.length() > 1) {
                 logException(new IllegalArgumentException("Expected tokens of length 1 but found [" + token + "] when parsing [" + paramValue + ']'));
