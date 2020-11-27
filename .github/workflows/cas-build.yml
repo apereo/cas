@@ -779,6 +779,8 @@ jobs:
           - account-locked-login
           - account-disabled-login
           - account-expired-login
+          - account-change-pswd
+          - account-invalidloc-login
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK

@@ -4,24 +4,28 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
+import org.apereo.cas.authentication.exceptions.InvalidLoginLocationException;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.RegexUtils;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.apereo.inspektr.common.web.ClientInfo;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
@@ -45,8 +49,7 @@ import static org.mockito.Mockito.*;
 public class JsonResourceAuthenticationHandlerTests {
     private final JsonResourceAuthenticationHandler handler;
 
-    @SneakyThrows
-    public JsonResourceAuthenticationHandlerTests() {
+    public JsonResourceAuthenticationHandlerTests() throws Exception {
         val accounts = new LinkedHashMap<String, CasUserAccount>();
 
         var acct = new CasUserAccount();
@@ -97,6 +100,15 @@ public class JsonResourceAuthenticationHandlerTests {
             CollectionUtils.wrapList("CAS")));
         accounts.put("casexpired", acct);
 
+        acct = new CasUserAccount();
+        acct.setPassword("Mellon");
+        acct.setLocation(RegexUtils.MATCH_NOTHING_PATTERN.pattern());
+        acct.setStatus(CasUserAccount.AccountStatus.OK);
+        acct.setAttributes(CollectionUtils.wrap("firstName",
+            CollectionUtils.wrapList("Apereo"), "lastName",
+            CollectionUtils.wrapList("CAS")));
+        accounts.put("badlocation", acct);
+
         val resource = new FileSystemResource(File.createTempFile("account", ".json"));
 
         val mapper = Jackson2ObjectMapperBuilder.json()
@@ -113,6 +125,11 @@ public class JsonResourceAuthenticationHandlerTests {
         this.handler = new JsonResourceAuthenticationHandler(null, mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), null, resource);
         this.handler.setPasswordPolicyConfiguration(new PasswordPolicyContext(15));
+
+        val request = new MockHttpServletRequest();
+        request.setRemoteAddr("185.86.151.11");
+        request.setLocalAddr("185.88.151.11");
+        ClientInfoHolder.setClientInfo(new ClientInfo(request));
     }
 
     @Test
@@ -179,5 +196,11 @@ public class JsonResourceAuthenticationHandlerTests {
     public void verifyMustChangePswAccount() {
         assertThrows(AccountPasswordMustChangeException.class,
             () -> handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casmustchange", "Mellon")));
+    }
+
+    @Test
+    public void verifyInvalidLocation() {
+        assertThrows(InvalidLoginLocationException.class,
+            () -> handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("badlocation", "Mellon")));
     }
 }
