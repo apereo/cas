@@ -30,7 +30,7 @@ public class SamlResponseAuditResourceResolverTests {
         val r = new SamlResponseAuditResourceResolver();
         val result = r.resolveFrom(mock(JoinPoint.class), new Object());
         assertNotNull(result);
-        assertTrue(result.length == 0);
+        assertEquals(result.length, 0);
     }
 
     @Test
@@ -43,7 +43,7 @@ public class SamlResponseAuditResourceResolverTests {
         when(envelope.getBody()).thenReturn(body);
         val result = r.resolveFrom(mock(JoinPoint.class), envelope);
         assertNotNull(result);
-        assertTrue(result.length == 0);
+        assertEquals(result.length, 0);
     }
 
     @Test

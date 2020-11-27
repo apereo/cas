@@ -32,7 +32,7 @@ public class UmaFindResourceSetRegistrationEndpointControllerTests extends BaseU
         val response = umaFindResourceSetRegistrationEndpointController.findResourceSets(results.getLeft(), results.getMiddle());
         assertNotNull(response.getBody());
         val model = (Collection) response.getBody();
-        assertTrue(model.size() == 1);
+        assertEquals(model.size(), 1);
     }
 
     @Test

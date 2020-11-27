@@ -35,8 +35,8 @@ public class CredentialTests {
         assertNotNull(c1.getCredentialClass());
         assertTrue(c1.isValid());
         assertTrue(Math.abs(c1.hashCode()) > 0);
-        assertFalse(c1.equals(c2));
-        assertTrue(c1.equals(c1));
+        assertNotEquals(c2, c1);
+        assertEquals(c1, c1);
     }
 
     @Test

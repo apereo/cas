@@ -42,7 +42,8 @@ public class EduPersonTargetedIdAttributeReleasePolicyTests extends BaseSamlIdPC
         val attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal("casuser"),
             CoreAuthenticationTestUtils.getService("https://sp.testshib.org/shibboleth-sp"), registeredService);
         assertTrue(attributes.containsKey(EduPersonTargetedIdAttributeReleasePolicy.ATTRIBUTE_NAME_EDU_PERSON_TARGETED_ID));
-        assertTrue(attributes.get(EduPersonTargetedIdAttributeReleasePolicy.ATTRIBUTE_NAME_EDU_PERSON_TARGETED_ID).equals(List.of("bhb1if0QzFdkKSS5xkcNCALXtGE=")));
+        assertEquals(List.of("bhb1if0QzFdkKSS5xkcNCALXtGE="),
+            attributes.get(EduPersonTargetedIdAttributeReleasePolicy.ATTRIBUTE_NAME_EDU_PERSON_TARGETED_ID));
     }
 
     @Test
@@ -74,7 +75,7 @@ public class EduPersonTargetedIdAttributeReleasePolicyTests extends BaseSamlIdPC
         val attributes = chain.getAttributes(CoreAuthenticationTestUtils.getPrincipal("casuser"),
             CoreAuthenticationTestUtils.getService("https://sp.testshib.org/shibboleth-sp"), registeredService);
 
-        assertTrue(attributes.get(EduPersonTargetedIdAttributeReleasePolicy.ATTRIBUTE_NAME_EDU_PERSON_TARGETED_ID)
-            .equals(List.of("bhb1if0QzFdkKSS5xkcNCALXtGE=")));
+        assertEquals(List.of("bhb1if0QzFdkKSS5xkcNCALXtGE="),
+            attributes.get(EduPersonTargetedIdAttributeReleasePolicy.ATTRIBUTE_NAME_EDU_PERSON_TARGETED_ID));
     }
 }

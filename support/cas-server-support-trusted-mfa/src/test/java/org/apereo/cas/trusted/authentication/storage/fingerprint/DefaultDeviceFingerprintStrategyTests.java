@@ -47,7 +47,7 @@ public class DefaultDeviceFingerprintStrategyTests extends AbstractMultifactorAu
 
         val f3 = deviceFingerprintStrategy.determineFingerprint("casuser", context, true);
         assertNotNull(response.getCookies());
-        assertTrue(response.getCookies().length == 1);
+        assertEquals(response.getCookies().length, 1);
         request.setCookies(response.getCookies());
 
         val f4 = deviceFingerprintStrategy.determineFingerprint("casuser", context, false);

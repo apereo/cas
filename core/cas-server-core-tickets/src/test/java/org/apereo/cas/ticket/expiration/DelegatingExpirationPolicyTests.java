@@ -38,14 +38,14 @@ public class DelegatingExpirationPolicyTests {
         var ticketState = mock(TicketState.class);
         when(ticketState.getAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication("cas"));
         assertTrue(policy.isExpired(ticketState));
-        assertTrue(policy.getTimeToLive(ticketState) == 0);
-        assertTrue(policy.getTimeToLive() == 0);
-        assertTrue(policy.getTimeToIdle() == 0);
+        assertEquals((long) policy.getTimeToLive(ticketState), 0);
+        assertEquals((long) policy.getTimeToLive(), 0);
+        assertEquals((long) policy.getTimeToIdle(), 0);
 
         ticketState = mock(TicketState.class);
         when(ticketState.getAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication("expired"));
         assertFalse(policy.isExpired(ticketState));
-        assertTrue(policy.getTimeToLive(ticketState) == 0);
+        assertEquals((long) policy.getTimeToLive(ticketState), 0);
         assertNotNull(policy.toString());
     }
 }

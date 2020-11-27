@@ -96,12 +96,12 @@ public class OidcAuthorizationRequestSupportTests {
         when(context.getFullRequestURL()).thenReturn("https://tralala.whapi.com/something?" + OidcConstants.MAX_AGE + "=1000");
         val age = OidcAuthorizationRequestSupport.getOidcMaxAgeFromAuthorizationRequest(context);
         assertTrue(age.isPresent());
-        assertTrue(1000 == age.get());
+        assertEquals((long) age.get(), 1000);
 
         when(context.getFullRequestURL()).thenReturn("https://tralala.whapi.com/something?" + OidcConstants.MAX_AGE + "=NA");
         val age2 = OidcAuthorizationRequestSupport.getOidcMaxAgeFromAuthorizationRequest(context);
         assertTrue(age2.isPresent());
-        assertTrue(-1 == age2.get());
+        assertEquals((long) age2.get(), -1);
 
         when(context.getFullRequestURL()).thenReturn("https://tralala.whapi.com/something?");
         val age3 = OidcAuthorizationRequestSupport.getOidcMaxAgeFromAuthorizationRequest(context);
