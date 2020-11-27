@@ -1,5 +1,7 @@
 package org.apereo.cas.audit.spi.resource;
 
+import org.apereo.cas.services.RegisteredServiceTestUtils;
+
 import lombok.val;
 import org.aspectj.lang.JoinPoint;
 import org.junit.jupiter.api.Tag;
@@ -23,5 +25,22 @@ public class TicketAsFirstParameterResourceResolverTests {
         val resolver = new TicketAsFirstParameterResourceResolver();
         val input = resolver.resolveFrom(jp, null);
         assertTrue(input.length > 0);
+    }
+
+    @Test
+    public void verifyTicketWithService() {
+        val jp = mock(JoinPoint.class);
+        when(jp.getArgs()).thenReturn(new Object[]{"ST-123434", RegisteredServiceTestUtils.getService()});
+        val resolver = new TicketAsFirstParameterResourceResolver();
+        val input = resolver.resolveFrom(jp, null);
+        assertTrue(input.length > 0);
+    }
+
+    @Test
+    public void verifyNullOperation() {
+        val jp = mock(JoinPoint.class);
+        val resolver = new TicketAsFirstParameterResourceResolver();
+        val input = resolver.resolveFrom(jp, null);
+        assertEquals(input.length, 0);
     }
 }

@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.validation.Assertion;
 
@@ -30,6 +31,19 @@ public class DefaultAuthenticationAttributeReleasePolicyTests {
         attrPolicy.setAuthorizedToReleaseAuthenticationAttributes(false);
         when(service.getAttributeReleasePolicy()).thenReturn(attrPolicy);
         assertTrue(policy.getAuthenticationAttributesForRelease(CoreAuthenticationTestUtils.getAuthentication(),
+            mock(Assertion.class), Map.of(), service).isEmpty());
+    }
+
+    @Test
+    public void verifyNoReleaseCredential() {
+        val policy = new DefaultAuthenticationAttributeReleasePolicy("authnContext");
+        val service = CoreAuthenticationTestUtils.getRegisteredService();
+        val attrPolicy = new ReturnAllowedAttributeReleasePolicy();
+        attrPolicy.setAuthorizedToReleaseCredentialPassword(false);
+        when(service.getAttributeReleasePolicy()).thenReturn(attrPolicy);
+        val authentication = CoreAuthenticationTestUtils.getAuthentication(
+            Map.of(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL, List.of("Password")));
+        assertFalse(policy.getAuthenticationAttributesForRelease(authentication,
             mock(Assertion.class), Map.of(), service).isEmpty());
     }
 

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,5 +26,15 @@ public class ChainingAuditPrincipalIdProviderTests {
         assertTrue(chain.supports(RegisteredServiceTestUtils.getAuthentication(), new Object(), null));
         val principal = chain.getPrincipalIdFrom(RegisteredServiceTestUtils.getAuthentication(), new Object(), null);
         assertEquals("test", principal);
+    }
+
+    @Test
+    public void verifyAll() {
+        val chain = new ChainingAuditPrincipalIdProvider(new ArrayList<>());
+        chain.addProviders(List.of(new DefaultAuditPrincipalIdProvider()));
+        assertTrue(chain.supports(RegisteredServiceTestUtils.getAuthentication(), new Object(), null));
+        val principal = chain.getPrincipalIdFrom(RegisteredServiceTestUtils.getAuthentication(), new Object(), null);
+        assertEquals("test", principal);
+        assertEquals(Integer.MAX_VALUE, chain.getOrder());
     }
 }

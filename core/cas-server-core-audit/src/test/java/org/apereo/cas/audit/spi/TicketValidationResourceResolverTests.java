@@ -31,4 +31,21 @@ public class TicketValidationResourceResolverTests {
         when(assertion.getPrimaryAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
         assertTrue(r.resolveFrom(jp, assertion).length > 0);
     }
+
+    @Test
+    public void verifyTicketId() {
+        val jp = mock(JoinPoint.class);
+        when(jp.getArgs()).thenReturn(new Object[]{"ticket-id"});
+        val assertion = mock(Assertion.class);
+        when(assertion.getPrimaryAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
+        assertTrue(r.resolveFrom(jp, assertion).length > 0);
+    }
+
+    @Test
+    public void verifyEmpty() {
+        val jp = mock(JoinPoint.class);
+        when(jp.getArgs()).thenReturn(ArrayUtils.EMPTY_OBJECT_ARRAY);
+        val assertion = mock(Assertion.class);
+        assertEquals(r.resolveFrom(jp, assertion).length, 0);
+    }
 }

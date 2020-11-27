@@ -29,6 +29,21 @@ import static org.mockito.Mockito.*;
 @Tag("MFA")
 public class DefaultChainingMultifactorAuthenticationBypassProviderTests {
 
+    @Test
+    public void verifyEmptyChainOperation() {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+
+        val p = new DefaultChainingMultifactorAuthenticationBypassProvider();
+        val res = p.filterMultifactorAuthenticationProviderBypassEvaluatorsBy("unknown");
+
+        val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
+        val principal = MultifactorAuthenticationTestUtils.getPrincipal("casuser");
+        val authentication = MultifactorAuthenticationTestUtils.getAuthentication(principal);
+        val service = MultifactorAuthenticationTestUtils.getRegisteredService();
+        assertTrue(res.shouldMultifactorAuthenticationProviderExecute(authentication, service,
+            provider, new MockHttpServletRequest()));
+    }
 
     @Test
     public void verifyOperation() {
@@ -45,7 +60,8 @@ public class DefaultChainingMultifactorAuthenticationBypassProviderTests {
         val authentication = MultifactorAuthenticationTestUtils.getAuthentication(principal);
 
         val p = new DefaultChainingMultifactorAuthenticationBypassProvider();
-        p.addMultifactorAuthenticationProviderBypassEvaluator(new HttpRequestMultifactorAuthenticationProviderBypassEvaluator(props, provider.getId()));
+        p.addMultifactorAuthenticationProviderBypassEvaluator(
+            new HttpRequestMultifactorAuthenticationProviderBypassEvaluator(props, provider.getId()));
         assertFalse(p.isEmpty());
         assertNotNull(p.getId());
         assertNotNull(p.getProviderId());

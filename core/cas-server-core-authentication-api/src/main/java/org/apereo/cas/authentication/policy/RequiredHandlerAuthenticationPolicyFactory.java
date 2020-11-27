@@ -33,7 +33,8 @@ public class RequiredHandlerAuthenticationPolicyFactory implements ContextualAut
             public boolean isSatisfiedBy(final Authentication authentication) {
                 val registeredService = context.getRegisteredService();
                 val requiredHandlers = registeredService.getAuthenticationPolicy().getRequiredAuthenticationHandlers();
-                LOGGER.debug("Required authentication handlers for this service [{}] are [{}]", registeredService.getName(), requiredHandlers);
+                LOGGER.debug("Required authentication handlers for this service [{}] are [{}]",
+                    registeredService.getName(), requiredHandlers);
                 return requiredHandlers.stream().allMatch(required -> authentication.getSuccesses().containsKey(required));
             }
         };
