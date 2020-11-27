@@ -774,6 +774,7 @@ jobs:
           - duo-universal-login
           - mfa-provider-selection
           - x509-optional-login
+          - actuator-form-login
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
