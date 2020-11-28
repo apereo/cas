@@ -11,6 +11,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Test cases for {@link WebApplicationServiceFactory}.
@@ -94,5 +95,21 @@ public class WebApplicationServiceFactoryTests {
         val factory = new WebApplicationServiceFactory();
         val service = factory.createService("testservice");
         assertNotNull(service);
+    }
+
+    @Test
+    public void verifyServiceByClass() {
+        val factory = new WebApplicationServiceFactory();
+        assertThrows(ClassCastException.class, () -> factory.createService("testservice", mock(Service.class).getClass()));
+        assertNotNull(factory.createService("testservice", WebApplicationService.class));
+    }
+
+    @Test
+    public void verifyServiceByClassReq() {
+        val request = new MockHttpServletRequest();
+        request.addParameter(CasProtocolConstants.PARAMETER_TARGET_SERVICE, "test");
+        val factory = new WebApplicationServiceFactory();
+        assertThrows(ClassCastException.class, () -> factory.createService(request, mock(Service.class).getClass()));
+        assertNotNull(factory.createService(request, WebApplicationService.class));
     }
 }

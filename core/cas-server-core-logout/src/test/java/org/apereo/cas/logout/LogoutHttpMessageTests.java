@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Tag("Simple")
+@Tag("Logout")
 public class LogoutHttpMessageTests {
     @Test
     public void verifyOperation() throws Exception {

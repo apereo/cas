@@ -1,5 +1,6 @@
 package org.apereo.cas.util.spring;
 
+import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -15,8 +16,10 @@ import static org.junit.jupiter.api.Assertions.*;
 public class SpringExpressionLanguageValueResolverTests {
     @Test
     public void verifyOperation() {
-        var resolver = SpringExpressionLanguageValueResolver.getInstance();
+        val resolver = SpringExpressionLanguageValueResolver.getInstance();
 
+        assertNotNull(resolver.apply("HelloWorld"));
+        
         assertEquals("Hello World", resolver.resolve("${'Hello World'}"));
         assertEquals("Literal Value", resolver.resolve("Literal Value"));
         assertEquals("Hello World!", resolver.resolve("${'Hello World'.concat('!')}"));

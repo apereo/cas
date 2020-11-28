@@ -25,7 +25,9 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Attributes")
 public class DefaultCasProtocolAttributeEncoderTests {
-    private final ProtocolAttributeEncoder encoder = new DefaultCasProtocolAttributeEncoder(mock(ServicesManager.class), CipherExecutor.noOpOfStringToString());
+    private final ProtocolAttributeEncoder encoder = new DefaultCasProtocolAttributeEncoder(mock(ServicesManager.class),
+        CipherExecutor.noOpOfStringToString());
+
     private RegisteredService registeredService;
 
     @BeforeEach
@@ -44,6 +46,15 @@ public class DefaultCasProtocolAttributeEncoderTests {
         val results = encoder.encodeAttributes(attributes, registeredService);
         assertFalse(results.containsKey("user@name"));
         assertFalse(results.containsKey("user:name"));
+    }
+
+    @Test
+    public void verifyEncodeNamesWithNoService() {
+        val attributes = new LinkedHashMap<String, Object>();
+        attributes.put("user@name", "casuser");
+        attributes.put("user:name", "casuser");
+        val results = encoder.encodeAttributes(attributes, null);
+        assertEquals(2, results.size());
     }
 
     @Test

@@ -22,4 +22,12 @@ public class RegexPrincipalNameTransformerTests {
         val result = chain.transform("cas@example.org");
         assertEquals("CAS", result);
     }
+
+    @Test
+    public void verifyNoOperation() {
+        val chain = new ChainingPrincipalNameTransformer();
+        chain.addTransformer(new RegexPrincipalNameTransformer("(\\w+)@\\w+.org"));
+        val result = chain.transform(" cas  ");
+        assertEquals("cas", result);
+    }
 }

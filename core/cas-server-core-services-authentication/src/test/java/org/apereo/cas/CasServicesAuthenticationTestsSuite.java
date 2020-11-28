@@ -1,6 +1,8 @@
 package org.apereo.cas;
 
 import org.apereo.cas.authentication.WebApplicationServiceResponseBuilderTests;
+import org.apereo.cas.authentication.principal.DefaultResponseTests;
+import org.apereo.cas.authentication.principal.DefaultServiceMatchingStrategyTests;
 import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoderTests;
 import org.apereo.cas.authentication.support.ProtocolAttributeEncoderTests;
 import org.apereo.cas.services.RegisteredServicePublicKeyCipherExecutorTests;
@@ -16,7 +18,9 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     DefaultCasProtocolAttributeEncoderTests.class,
+    DefaultResponseTests.class,
     ProtocolAttributeEncoderTests.class,
+    DefaultServiceMatchingStrategyTests.class,
     RegisteredServicePublicKeyCipherExecutorTests.class,
     WebApplicationServiceResponseBuilderTests.class
 })
