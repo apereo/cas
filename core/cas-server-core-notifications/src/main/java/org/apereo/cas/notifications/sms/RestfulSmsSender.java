@@ -2,7 +2,6 @@ package org.apereo.cas.notifications.sms;
 
 import org.apereo.cas.configuration.model.support.sms.SmsProvidersProperties;
 import org.apereo.cas.util.HttpUtils;
-import org.apereo.cas.util.LoggingUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -48,8 +47,6 @@ public class RestfulSmsSender implements SmsSender {
                 val status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
                 return status.is2xxSuccessful();
             }
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }

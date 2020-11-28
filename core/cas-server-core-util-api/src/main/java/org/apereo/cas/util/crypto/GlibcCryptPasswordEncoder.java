@@ -76,9 +76,6 @@ public class GlibcCryptPasswordEncoder implements PasswordEncoder {
     }
 
     private String generateCryptSalt() {
-        if (StringUtils.isBlank(this.encodingAlgorithm)) {
-            return null;
-        }
         val cryptSalt = new StringBuilder();
         if ("1".equals(this.encodingAlgorithm) || "MD5".equals(this.encodingAlgorithm.toUpperCase())) {
             cryptSalt.append("$1$");
@@ -99,7 +96,7 @@ public class GlibcCryptPasswordEncoder implements PasswordEncoder {
             val keygen = new HexRandomStringGenerator(SALT_LENGTH);
             this.secret = keygen.getNewString();
         } else {
-            LOGGER.debug("The provided secrect is used as a salt");
+            LOGGER.trace("The provided secret is used as a salt");
         }
         cryptSalt.append(this.secret);
         return cryptSalt.toString();
