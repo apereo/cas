@@ -104,7 +104,6 @@ You should also switch back to the main development branch (i.e. `master`) and f
 consistent and follow the same layout as previous releases.</p></div>
 
 - Mark the release tag as pre-release, when releasing RC versions of the project on GitHub. 
-- Send an announcement message to [@cas-announce, @cas-user and @cas-dev](/cas/Mailing-Lists.html) mailing lists, linking to the new release page.
 
 ## Update Overlays
 
