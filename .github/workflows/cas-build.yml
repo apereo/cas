@@ -786,6 +786,7 @@ jobs:
           - ticket-validation-casv2
           - ticket-validation-casv3
           - ticket-validation-casv3-json
+          - aup-login
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
