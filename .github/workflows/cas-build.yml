@@ -782,6 +782,7 @@ jobs:
           - account-expired-login
           - account-change-pswd
           - account-invalidloc-login
+          - account-invalidtime-login
           - ticket-validation-casv1
           - ticket-validation-casv2
           - ticket-validation-casv3

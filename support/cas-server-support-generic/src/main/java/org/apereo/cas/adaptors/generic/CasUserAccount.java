@@ -26,6 +26,8 @@ public class CasUserAccount implements Serializable {
 
     private String password;
 
+    private String availability;
+    
     private String location;
 
     private Map<String, List<Object>> attributes = new LinkedHashMap<>(MAP_SIZE);
