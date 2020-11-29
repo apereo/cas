@@ -784,6 +784,8 @@ jobs:
           - account-invalidloc-login
           - ticket-validation-casv1
           - ticket-validation-casv2
+          - ticket-validation-casv3
+          - ticket-validation-casv3-json
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
