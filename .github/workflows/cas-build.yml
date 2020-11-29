@@ -782,6 +782,8 @@ jobs:
           - account-expired-login
           - account-change-pswd
           - account-invalidloc-login
+          - ticket-validation-casv1
+          - ticket-validation-casv2
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
