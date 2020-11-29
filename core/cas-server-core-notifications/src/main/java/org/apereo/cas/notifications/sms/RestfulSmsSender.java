@@ -5,7 +5,6 @@ import org.apereo.cas.util.HttpUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.http.HttpResponse;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -21,7 +20,6 @@ import java.util.HashMap;
  */
 @Getter
 @RequiredArgsConstructor
-@Slf4j
 public class RestfulSmsSender implements SmsSender {
     private final SmsProvidersProperties.Rest restProperties;
 
