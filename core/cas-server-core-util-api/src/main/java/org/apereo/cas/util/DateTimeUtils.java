@@ -307,12 +307,12 @@ public class DateTimeUtils {
      * @return the zoned date time
      */
     public static ZonedDateTime convertToZonedDateTime(final String value) {
-        val dt = DateTimeUtils.zonedDateTimeOf(value);
+        val dt = zonedDateTimeOf(value);
         if (dt != null) {
             return dt;
         }
-        val lt = DateTimeUtils.localDateTimeOf(value);
-        return DateTimeUtils.zonedDateTimeOf(lt.atZone(ZoneOffset.UTC));
+        val lt = localDateTimeOf(value);
+        return zonedDateTimeOf(lt.atZone(ZoneOffset.UTC));
     }
 
     /**

@@ -1,0 +1,9 @@
+{
+  "@class" : "java.util.LinkedHashMap",
+  "invalidtime" : {
+    "@class" : "org.apereo.cas.adaptors.generic.CasUserAccount",
+    "password" : "invalidtime",
+    "status" : "OK",
+    "availability": "2020-10-20~2020-11-20"
+  }
+}
