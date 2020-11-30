@@ -1805,16 +1805,37 @@ To learn more about this topic, [please review this guide](../installation/Passw
 ```properties   
 # cas.authn.passwordless.multifactor-authentication-activated=false
 # cas.authn.passwordless.delegated-authentication-activated=false
+```
 
+#### Simple Account Store
+
+```properties
 # cas.authn.passwordless.accounts.simple.casuser=cas@example.org
+```
+
+#### Groovy Account Store
+
+```properties
 # cas.authn.passwordless.accounts.groovy.location=file:/etc/cas/config/pwdless.groovy
 ```
+
+#### JSON Account Store
+
+```properties
+# cas.authn.passwordless.accounts.json.location=file:/etc/cas/config/pwdless-accounts.json
+```
+
+#### RESTful Account Store
 
 RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) 
 under the configuration key `cas.authn.passwordless.accounts.rest`.
 
+#### LDAP Account Store
+
 LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) 
 under the configuration key `cas.authn.passwordless.accounts.ldap`.
+
+#### MongoDb Account Store
 
 MongoDb settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) 
 under the configuration key `cas.authn.passwordless.accounts.mongo`.
