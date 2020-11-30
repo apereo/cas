@@ -30,5 +30,6 @@ public class GroovyAuthenticationPostProcessorTests {
         val successes = authenticationBuilder.getSuccesses();
         assertFalse(successes.isEmpty());
         assertFalse(successes.get("SimpleTestUsernamePasswordAuthenticationHandler").getWarnings().isEmpty());
+        g.destroy();
     }
 }

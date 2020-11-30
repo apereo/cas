@@ -12,10 +12,14 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
@@ -41,6 +45,7 @@ import static org.mockito.Mockito.*;
     RefreshAutoConfiguration.class,
     CasCoreUtilConfiguration.class
 })
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ReturnMappedAttributeReleasePolicyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "returnMappedAttributeReleasePolicy.json");
@@ -53,6 +58,7 @@ public class ReturnMappedAttributeReleasePolicyTests {
     }
 
     @Test
+    @Order(0)
     public void verifyAttributeMappingWorksForCollections() throws IOException {
         val map = new TreeMap();
         map.put("test1", "newTest1");
@@ -77,6 +83,7 @@ public class ReturnMappedAttributeReleasePolicyTests {
     }
 
     @Test
+    @Order(1)
     public void verifySerializeAndReturnMappedAttributeReleasePolicyToJson() throws IOException {
         val allowedAttributes = ArrayListMultimap.<String, Object>create();
         allowedAttributes.put("keyOne", "valueOne");
@@ -89,6 +96,7 @@ public class ReturnMappedAttributeReleasePolicyTests {
     }
 
     @Test
+    @Order(2)
     public void verifyInlinedGroovyAttributes() {
         val allowedAttributes = ArrayListMultimap.<String, Object>create();
         allowedAttributes.put("attr1", "groovy { logger.debug('Running script...'); return 'DOMAIN\\\\' + attributes['uid'][0] }");
@@ -106,6 +114,7 @@ public class ReturnMappedAttributeReleasePolicyTests {
     }
 
     @Test
+    @Order(3)
     public void verifyInlinedGroovyMultipleAttributes() {
         val allowedAttributes = ArrayListMultimap.<String, Object>create();
         allowedAttributes.put("attr1", "groovy { logger.debug('Running script...'); return ['one', 'two'] }");
@@ -123,6 +132,7 @@ public class ReturnMappedAttributeReleasePolicyTests {
     }
 
     @Test
+    @Order(4)
     public void verifyExternalGroovyAttributes() throws Exception {
         val file = new File(FileUtils.getTempDirectoryPath(), "script.groovy");
         val script = IOUtils.toString(
@@ -148,6 +158,7 @@ public class ReturnMappedAttributeReleasePolicyTests {
 
 
     @Test
+    @Order(5)
     public void verifyMappingWithoutAttributeValue() {
         val allowedAttributes = ArrayListMultimap.<String, Object>create();
         val mappedAttribute = "urn:oid:0.9.2342.19200300.100.1.3";
@@ -172,6 +183,7 @@ public class ReturnMappedAttributeReleasePolicyTests {
     }
 
     @Test
+    @Order(6)
     public void verifyClasspathGroovy() {
         val allowedAttributes = ArrayListMultimap.<String, Object>create();
         val attributeName = UUID.randomUUID().toString();
@@ -191,7 +203,9 @@ public class ReturnMappedAttributeReleasePolicyTests {
         assertTrue(attr1.contains("testing"));
     }
 
+
     @Test
+    @Order(7)
     public void verifyInlinedGroovyWithCache() {
         val allowed1 = ArrayListMultimap.<String, Object>create();
         val attributeName = UUID.randomUUID().toString();
@@ -226,4 +240,59 @@ public class ReturnMappedAttributeReleasePolicyTests {
         assertTrue(result2.containsKey(attributeName));
         assertTrue(result2.containsValue(List.of("v2")));
     }
+
+    @Test
+    @Order(8)
+    public void verifyExternalGroovyWithCache() {
+        val allowed1 = ArrayListMultimap.<String, Object>create();
+        val attributeName = UUID.randomUUID().toString();
+
+        allowed1.put(attributeName, "classpath:GroovyMappedAttribute.groovy");
+        val p1 = new ReturnMappedAttributeReleasePolicy(CollectionUtils.wrap(allowed1));
+
+        val service1 = CoreAttributesTestUtils.getRegisteredService();
+        when(service1.getAttributeReleasePolicy()).thenReturn(p1);
+
+        val attributes = new HashMap<String, List<Object>>();
+        attributes.put("uid", List.of(CoreAttributesTestUtils.CONST_USERNAME));
+        var result = p1.getAttributes(
+            CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, attributes),
+            CoreAttributesTestUtils.getService(), service1);
+        assertTrue(result.containsKey(attributeName));
+
+        result = p1.getAttributes(
+            CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, attributes),
+            CoreAttributesTestUtils.getService(), service1);
+        assertTrue(result.containsKey(attributeName));
+    }
+
+    @Test
+    @Order(1000)
+    public void verifyNoCacheMgr() {
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+
+        ApplicationContextProvider.holdApplicationContext(appCtx);
+
+        val allowed = ArrayListMultimap.<String, Object>create();
+        val attributeName = UUID.randomUUID().toString();
+        allowed.put(attributeName, "groovy { return 'v1' }");
+        val p1 = new ReturnMappedAttributeReleasePolicy(CollectionUtils.wrap(allowed));
+
+        val service1 = CoreAttributesTestUtils.getRegisteredService();
+        when(service1.getAttributeReleasePolicy()).thenReturn(p1);
+
+        val attributes = new HashMap<String, List<Object>>();
+        attributes.put("uid", List.of(CoreAttributesTestUtils.CONST_USERNAME));
+        assertThrows(RuntimeException.class, () -> p1.getAttributes(
+            CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, attributes),
+            CoreAttributesTestUtils.getService(), service1));
+
+
+        allowed.put(attributeName, "classpath:GroovyMappedAttribute.groovy");
+        assertThrows(RuntimeException.class, () -> p1.getAttributes(
+            CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, attributes),
+            CoreAttributesTestUtils.getService(), service1));
+    }
+
 }

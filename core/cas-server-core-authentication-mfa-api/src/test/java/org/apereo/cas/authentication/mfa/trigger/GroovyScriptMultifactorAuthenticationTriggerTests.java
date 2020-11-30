@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.mfa.trigger;
 
 import org.apereo.cas.authentication.AuthenticationException;
+import org.apereo.cas.authentication.mfa.MultifactorAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
@@ -37,8 +38,12 @@ public class GroovyScriptMultifactorAuthenticationTriggerTests extends BaseMulti
         val props = new CasConfigurationProperties();
         props.getAuthn().getMfa().setGroovyScript(new ClassPathResource("GroovyMfaTrigger.groovy"));
         val trigger = new GroovyScriptMultifactorAuthenticationTrigger(props, applicationContext);
-        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        var result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
         assertTrue(result.isPresent());
+
+        val service = MultifactorAuthenticationTestUtils.getService("nomfa");
+        result = trigger.isActivated(authentication, registeredService, this.httpRequest, service);
+        assertFalse(result.isPresent());
     }
 
     @Test

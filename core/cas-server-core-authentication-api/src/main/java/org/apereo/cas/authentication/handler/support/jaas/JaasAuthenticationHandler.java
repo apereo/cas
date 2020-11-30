@@ -17,7 +17,6 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
-import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.Configuration;
 import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginContext;
@@ -41,16 +40,16 @@ import java.util.Arrays;
  * authentication:
  * &lt;pre&gt;
  * CAS {
- *   com.sun.security.auth.module.Krb5LoginModule sufficient
- *     client=TRUE
- *     debug=FALSE
- *     useTicketCache=FALSE;
- *   edu.uconn.netid.jaas.LDAPLoginModule sufficient
- *     java.naming.provider.url="ldap://ldapserver.my.edu:389/dc=my,dc=edu"
- *     java.naming.security.principal="uid=jaasauth,dc=my,dc=edu"
- *     java.naming.security.credentials="password"
- *     Attribute="uid"
- *     startTLS="true";
+ * com.sun.security.auth.module.Krb5LoginModule sufficient
+ * client=TRUE
+ * debug=FALSE
+ * useTicketCache=FALSE;
+ * edu.uconn.netid.jaas.LDAPLoginModule sufficient
+ * java.naming.provider.url="ldap://ldapserver.my.edu:389/dc=my,dc=edu"
+ * java.naming.security.principal="uid=jaasauth,dc=my,dc=edu"
+ * java.naming.security.credentials="password"
+ * Attribute="uid"
+ * startTLS="true";
  * };
  * &lt;/pre&gt;
  *
@@ -104,13 +103,14 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @param principalFactory the principal factory
      * @param order            the order
      */
-    public JaasAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory, final Integer order) {
+    public JaasAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+        final Integer order) {
         super(name, servicesManager, principalFactory, order);
     }
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
-                                                                                        final String originalPassword) throws GeneralSecurityException {
+        final String originalPassword) throws GeneralSecurityException {
         if (StringUtils.isNotBlank(this.kerberosKdcSystemProperty)) {
             LOGGER.debug("Configured kerberos system property [{}] to [{}]", SYS_PROP_KERB5_KDC, this.kerberosKdcSystemProperty);
             System.setProperty(SYS_PROP_KERB5_KDC, this.kerberosKdcSystemProperty);
@@ -183,26 +183,18 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     @RequiredArgsConstructor
     protected static class UsernamePasswordCallbackHandler implements CallbackHandler {
         private final String userName;
+
         private final String password;
 
         @Override
         public void handle(final Callback[] callbacks) {
-            Arrays.stream(callbacks)
-                .filter(callback -> {
-                    if (callback.getClass().equals(NameCallback.class)) {
-                        ((NameCallback) callback).setName(this.userName);
-                        return false;
-                    }
-                    if (callback.getClass().equals(PasswordCallback.class)) {
-                        ((PasswordCallback) callback).setPassword(this.password.toCharArray());
-                        return false;
-                    }
-                    return true;
-                })
-                .findFirst()
-                .ifPresent(callback -> {
-                    throw new IllegalArgumentException(new UnsupportedCallbackException(callback, "Unrecognized Callback"));
-                });
+            Arrays.stream(callbacks).forEach(callback -> {
+                if (callback.getClass().equals(NameCallback.class)) {
+                    ((NameCallback) callback).setName(this.userName);
+                } else if (callback.getClass().equals(PasswordCallback.class)) {
+                    ((PasswordCallback) callback).setPassword(this.password.toCharArray());
+                }
+            });
         }
     }
 }

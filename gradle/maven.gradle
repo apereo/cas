@@ -183,11 +183,6 @@ ext.createPomRepositories = { node ->
     repository.appendNode("releases").appendNode("enabled", "true")
 
     repository = repositories.appendNode("repository")
-    repository.appendNode("id", "spring-plugins")
-    repository.appendNode("url", "https://repo.spring.io/plugins-release/")
-    repository.appendNode("releases").appendNode("enabled", "true")
-
-    repository = repositories.appendNode("repository")
     repository.appendNode("id", "couchbase")
     repository.appendNode("url", "https://files.couchbase.com/maven2/")
     repository.appendNode("releases").appendNode("enabled", "true")

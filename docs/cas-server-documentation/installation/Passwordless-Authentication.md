@@ -88,6 +88,27 @@ Support is enabled by including the following module in the overlay:
 </dependency>
 ```
 
+### JSON
+
+This strategy allows one to locate user records via a JSON resource, as such:
+
+```json 
+{
+  "@class" : "java.util.LinkedHashMap",
+  "casuser" : {
+    "@class": "org.apereo.cas.api.PasswordlessUserAccount",
+    "username": "casuser",
+    "attributes": {
+        "@class": "java.util.LinkedHashMap",
+        "name": [ "java.util.ArrayList", ["value"] ]
+    },
+    "multifactorAuthenticationEligible": "TRUE",
+    "delegatedAuthenticationEligible": "TRUE",
+    "requestPassword": false
+  }
+}
+```
+
 ### Groovy
 
 This strategy allows one to locate user records via a Groovy script. The body of the script may be defined as such:

@@ -68,4 +68,17 @@ public class RegisteredServiceMultifactorAuthenticationTriggerTests extends Base
         val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
         assertTrue(result.isPresent());
     }
+
+    @Test
+    public void verifyOperationByNoKnownProvider() {
+        val policy = mock(RegisteredServiceMultifactorPolicy.class);
+        when(policy.getMultifactorAuthenticationProviders()).thenReturn(Set.of("unknown"));
+        when(this.registeredService.getMultifactorPolicy()).thenReturn(policy);
+
+        val props = new CasConfigurationProperties();
+        val trigger = new RegisteredServiceMultifactorAuthenticationTrigger(props,
+            (providers, service, principal) -> providers.iterator().next(), applicationContext);
+        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        assertTrue(result.isEmpty());
+    }
 }

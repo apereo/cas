@@ -8,6 +8,9 @@ class SampleGroovyEventResolver {
         def httpRequest = args[3]
         def logger = args[4]
 
+        if ("nomfa".equalsIgnoreCase(service.id)) {
+            return null
+        }
         return TestMultifactorAuthenticationProvider.ID
     }
 }

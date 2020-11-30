@@ -85,4 +85,16 @@ public class ScriptedRegisteredServiceMultifactorAuthenticationTriggerTests exte
         val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
         assertTrue(result.isPresent());
     }
+
+    @Test
+    public void verifyOperationByProviderScriptUnknown() {
+        val policy = mock(RegisteredServiceMultifactorPolicy.class);
+        when(policy.getScript()).thenReturn("classpath:Unknown.groovy");
+        when(this.registeredService.getMultifactorPolicy()).thenReturn(policy);
+
+        val props = new CasConfigurationProperties();
+        val trigger = new ScriptedRegisteredServiceMultifactorAuthenticationTrigger(props, applicationContext);
+        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        assertFalse(result.isPresent());
+    }
 }

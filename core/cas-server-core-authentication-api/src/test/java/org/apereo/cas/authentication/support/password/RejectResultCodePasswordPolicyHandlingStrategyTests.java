@@ -19,8 +19,8 @@ public class RejectResultCodePasswordPolicyHandlingStrategyTests {
     public void verifyOperation() {
         val s = new RejectResultCodePasswordPolicyHandlingStrategy<Object>();
         assertFalse(s.supports(null));
-
         val response = new Object();
         assertFalse(s.supports(response));
+        assertTrue(s.getAuthenticationResponseResultCodes(new Object()).isEmpty());
     }
 }

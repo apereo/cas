@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.CredentialCustomFieldsAttributeMetaDataPopu
 import org.apereo.cas.authentication.DefaultAuthenticationBuilderTests;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResultTests;
 import org.apereo.cas.authentication.DefaultAuthenticationResultBuilderTests;
+import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlanTests;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategyTests;
 import org.apereo.cas.authentication.DefaultPrincipalFactoryTests;
 import org.apereo.cas.authentication.GroovyAuthenticationPostProcessorTests;
@@ -22,8 +23,10 @@ import org.apereo.cas.authentication.adaptive.intel.DefaultIPAddressIntelligence
 import org.apereo.cas.authentication.adaptive.intel.GroovyIPAddressIntelligenceServiceTests;
 import org.apereo.cas.authentication.adaptive.intel.RestfulIPAddressIntelligenceServiceTests;
 import org.apereo.cas.authentication.credential.CredentialTests;
+import org.apereo.cas.authentication.exceptions.UniquePrincipalRequiredExceptionTests;
 import org.apereo.cas.authentication.handler.ByCredentialSourceAuthenticationHandlerResolverTests;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolverTests;
+import org.apereo.cas.authentication.metadata.SuccessfulHandlerMetaDataPopulatorTests;
 import org.apereo.cas.authentication.policy.ExcludedAuthenticationHandlerAuthenticationPolicyTests;
 import org.apereo.cas.authentication.policy.GroovyScriptAuthenticationPolicyTests;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtilsTests;
@@ -75,6 +78,9 @@ import org.junit.runner.RunWith;
     PrincipalFactoryUtilsTests.class,
     DefaultAuthenticationHandlerExecutionResultTests.class,
     OneTimeTokenTests.class,
+    SuccessfulHandlerMetaDataPopulatorTests.class,
+    UniquePrincipalRequiredExceptionTests.class,
+    DefaultAuthenticationServiceSelectionPlanTests.class,
     AcceptAnyAuthenticationPolicyFactoryTests.class,
     RequiredHandlerAuthenticationPolicyFactoryTests.class,
     DefaultIPAddressIntelligenceServiceTests.class,
