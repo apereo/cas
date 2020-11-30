@@ -1,6 +1,6 @@
-#!/usr/bin/env bash
+#!/bin/sh
 NAMESPACE=${1:-default}
-KEYSTORE=/etc/cas/thekeystore
+KEYSTORE=../etc/cas/thekeystore
 
 # it's important that the service names are supported in the cert used for tomcat in cas-server and boot-admin
 SUBJECT=CN=cas.example.org,OU=Example,OU=Org,C=US
@@ -8,7 +8,7 @@ SAN=dns:cas.example.org,dns:casadmin.example.org,dns:cas-server-boot-admin,dns:c
 
 if [ ! -f "$KEYSTORE" ] ; then
   pushd ..
-  ./gradlew createKeyStore -PcertificateDn="${SUBJECT}" -PcertificateSubAltName="${SAN}"
+  ./gradlew createKeyStore -PcertDir=etc/cas -PcertificateDn="${SUBJECT}" -PcertificateSubAltName="${SAN}"
   popd
 fi
 

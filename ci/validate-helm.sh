@@ -11,19 +11,23 @@ echo "Building War and Jib Docker Image"
 chmod -R 777 ./*.sh
 ./gradlew clean build jibBuildTar --refresh-dependencies
 
-echo "Loading CAS image into k3s"
-sudo k3s ctr images import build/jib-image.tar
-
-echo "Creating Keystore"
-./gradlew -P certDir=etc/cas createKeystore
-
-echo "Create secret for keystore"
-kubectl create secret generic cas-server-keystore --from-file=thekeystore=etc/cas/thekeystore
-
 imageTag=(v$(./gradlew casVersion --q))
 echo "Image tag is ${imageTag}"
 
+echo "Loading CAS image into k3s"
+sudo k3s ctr images import build/jib-image.tar
+
 cd helm
+chmod +x *.sh
+
+echo "Creating Keystore and secret for keystore"
+./create-cas-server-keystore-secret.sh
+
+echo "Creating tls secret for ingress to use"
+./create-ingress-tls.sh
+
+echo "Creating truststore with server/ingress certs and put in configmap"
+./create-truststore.sh
 
 # Lint chart
 helm lint cas-server
