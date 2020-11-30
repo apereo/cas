@@ -7,7 +7,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 
 import java.util.Map;
@@ -18,7 +17,6 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Slf4j
 public class JsonPasswordlessUserAccountStore extends SimplePasswordlessUserAccountStore {
     private static final ObjectMapper MAPPER = new ObjectMapper()
         .findAndRegisterModules()
