@@ -5,7 +5,7 @@ CAS_CERT_FILE=cas.crt
 CAS_KEYSTORE=/etc/cas/thekeystore
 TRUST_STORE=truststore
 
-
+set -e
 # create truststore that trusts ingress cert
 if [ -f "${INGRESS_CERT_FILE}" ] ; then
   keytool -importcert -noprompt -keystore truststore -storepass changeit -alias cas-ingress -file "${INGRESS_CERT_FILE}" -storetype PKCS12
@@ -20,5 +20,5 @@ if [ -f "${CAS_KEYSTORE}" ] ; then
 else
   echo "Missing keystore ${CAS_KEYSTORE} to put cas cert in trust bundle"
 fi
-kubectl delete configmap cas-truststore --namespace "${NAMESPACE}"
+kubectl delete configmap cas-truststore --namespace "${NAMESPACE}" || true
 kubectl create configmap cas-truststore --namespace "${NAMESPACE}" --from-file=truststore=${TRUST_STORE}

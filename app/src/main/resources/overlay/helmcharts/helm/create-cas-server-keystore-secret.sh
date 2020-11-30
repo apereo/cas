@@ -1,4 +1,6 @@
-#!/bin/sh
+#!/usr/bin/env bash
+# This script needs bash for pushd/popd
+set -e
 NAMESPACE=${1:-default}
 KEYSTORE=../etc/cas/thekeystore
 
@@ -8,9 +10,9 @@ SAN=dns:cas.example.org,dns:casadmin.example.org,dns:cas-server-boot-admin,dns:c
 
 if [ ! -f "$KEYSTORE" ] ; then
   pushd ..
-  ./gradlew createKeyStore -PcertDir=etc/cas -PcertificateDn="${SUBJECT}" -PcertificateSubAltName="${SAN}"
+  ./gradlew createKeyStore -PcertificateDn="${SUBJECT}" -PcertificateSubAltName="${SAN}"
   popd
 fi
 
-kubectl delete secret cas-server-keystore
+kubectl delete secret cas-server-keystore || true
 kubectl create secret generic cas-server-keystore --namespace "${NAMESPACE}" --from-file=thekeystore=$KEYSTORE
