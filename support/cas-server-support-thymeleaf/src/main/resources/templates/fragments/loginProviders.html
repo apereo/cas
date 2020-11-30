@@ -32,9 +32,12 @@
                             th:each="entry: ${delegatedAuthenticationProviderConfigurations}"
                             th:switch="${entry.type}">
                             <a class="mdc-button mdc-button--raised w-100"
+                                th:id="${entry.name}"
                                 th:classappend="'mdc-button-' + ${entry.type}"
-                                th:href="@{${entry.redirectUrl}}" th:attr="autoredirect=${entry.autoRedirect}"
-                                th:inline="text" th:title="${entry.name + ' ' + entry.type}">
+                                th:href="@{${entry.redirectUrl}}"
+                                th:attr="autoredirect=${entry.autoRedirect}"
+                                th:inline="text"
+                                th:title="${entry.name + ' ' + entry.type}">
 
                                 <span th:case="twitter" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-twitter')}"></span>
                                 <span th:case="windowslive" th:class="${#strings.defaultString(entry.cssClass,'mdi mdi-windows')}"></span>
