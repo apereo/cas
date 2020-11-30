@@ -788,6 +788,7 @@ jobs:
           - ticket-validation-casv3
           - ticket-validation-casv3-json
           - aup-login
+          - pac4j-delegated-login
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK

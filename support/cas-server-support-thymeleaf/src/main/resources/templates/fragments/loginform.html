@@ -24,7 +24,7 @@
 
                     <div th:if="${existingSingleSignOnSessionAvailable}">
                         <i class="mdi mdi-alert-decagram"></i>&nbsp;
-                        <span class="mdc-button__label"
+                        <span id="existingSsoMsg" class="mdc-button__label"
                               th:utext="#{screen.welcome.forcedsso(${existingSingleSignOnSessionPrincipal.id},${registeredService.name})}" />
                     </div>
                     <h3 th:unless="${existingSingleSignOnSessionAvailable}" class="text-center">
