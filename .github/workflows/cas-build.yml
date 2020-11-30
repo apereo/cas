@@ -790,6 +790,7 @@ jobs:
           - aup-login
           - pac4j-delegated-login
           - renew-existing-sso
+          - passwordless-requirepswd-login
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK

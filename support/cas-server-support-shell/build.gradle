@@ -6,7 +6,7 @@ apply from: rootProject.file("gradle/springboot.gradle")
 description = "Apereo CAS Shell Support via Spring Shell"
 
 dependencies {
-    implementation project(":api:cas-server-core-api-services")
+    api project(":api:cas-server-core-api-services")
 
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-authentication-api")
