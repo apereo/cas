@@ -789,6 +789,7 @@ jobs:
           - ticket-validation-casv3-json
           - aup-login
           - pac4j-delegated-login
+          - renew-existing-sso
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
