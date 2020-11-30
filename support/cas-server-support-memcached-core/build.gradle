@@ -8,8 +8,10 @@ dependencies {
     implementation project(":core:cas-server-core-services-authentication")
 
     implementation libraries.kryo
-    
+
     provided project(":support:cas-server-support-memcached-spy")
+    
+    testImplementation libraries.memcached
 
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-tickets")

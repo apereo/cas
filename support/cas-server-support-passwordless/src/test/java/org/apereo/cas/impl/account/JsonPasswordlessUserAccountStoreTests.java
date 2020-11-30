@@ -3,9 +3,6 @@ package org.apereo.cas.impl.account;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.impl.BasePasswordlessUserAccountStoreTests;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -24,10 +21,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = "cas.authn.passwordless.accounts.json.location=classpath:PasswordlessAccount.json")
 @Tag("FileSystem")
 public class JsonPasswordlessUserAccountStoreTests extends BasePasswordlessUserAccountStoreTests {
-    private static final ObjectMapper MAPPER = new ObjectMapper()
-        .enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY)
-        .setSerializationInclusion(JsonInclude.Include.NON_NULL)
-        .findAndRegisterModules();
 
     @Autowired
     @Qualifier("passwordlessUserAccountStore")
