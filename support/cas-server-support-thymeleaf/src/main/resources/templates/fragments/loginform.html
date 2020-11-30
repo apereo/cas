@@ -60,8 +60,7 @@
                         </span>
                     </section>
 
-
-                    <section class="cas-field my-3">
+                    <section class="cas-field my-3" id="usernameSection">
 
                         <div class="d-flex">
 
@@ -71,10 +70,8 @@
                                     size="25"
                                     type="text"
                                     th:readonly="!${@casThymeleafLoginFormDirector.isLoginFormUsernameInputVisible(#vars)}"
-                                    th:disabled="${@casThymeleafLoginFormDirector.isLoginFormUsernameInputDisabled(#vars)}"
                                     th:field="*{username}"
                                     th:accesskey="#{screen.welcome.label.netid.accesskey}"
-                                    th:value="${@casThymeleafLoginFormDirector.getLoginFormUsername(#vars)}"
                                     autocomplete="off" />
 
                                 <span class="mdc-notched-outline">
@@ -85,6 +82,20 @@
                                 <span class="mdc-notched-outline__trailing"></span>
                               </span>
                             </label>
+
+                            <script type="text/javascript" th:inline="javascript">
+                                /*<![CDATA[*/
+                                var username = /*[[${@casThymeleafLoginFormDirector.getLoginFormUsername(#vars)}]]*/ ;
+                                var disabled = /*[[${@casThymeleafLoginFormDirector.isLoginFormUsernameInputDisabled(#vars)}]]*/ ;
+
+                                if (username != null && username !== '') {
+                                    $('#username').val(username);
+                                    if (disabled) {
+                                        $('#usernameSection').hide();
+                                    }
+                                }
+                                /*]]>*/
+                            </script>
                         </div>
                     </section>
 
