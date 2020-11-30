@@ -47,13 +47,14 @@ spec:
             defaultMode: 0755
         - name: logdir
           {{- include "cas-server.logdir" . | nindent 10 }}
-        {{- if .Values.serverKeystoreExistingSecret }}
+        {{- if .Values.casServerContainer.serverKeystoreExistingSecret }}
         - name: cas-server-keystore
           secret:
-            secretName: {{ .Values.serverKeystoreExistingSecret }}
+            secretName: {{ .Values.casServerContainer.serverKeystoreExistingSecret }}
+            defaultMode: 0444
             items:
-              - key: {{ .Values.serverKeystoreSubPath }}
-                path: {{ .Values.serverKeystoreSubPath }}
+              - key: {{ .Values.casServerContainer.serverKeystoreSubPath }}
+                path: {{ .Values.casServerContainer.serverKeystoreSubPath }}
         {{- end }}
         {{- if .Values.casServerContainer.extraVolumes }}
         {{- include "cas-server.tplvalues.render" ( dict "value" .Values.casServerContainer.extraVolumes "context" $ ) | nindent 8 }}
@@ -65,9 +66,9 @@ spec:
           image: {{ include "cas-server.imageName" . }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
-            {{- if .Values.casServerContainer.casWarPath }}
+            {{- if .Values.casServerContainer.warPath }}
             - name: CAS_WAR
-              value: {{ .Values.casServerContainer.casWarPath | quote }}
+              value: {{ .Values.casServerContainer.warPath | quote }}
             {{- end }}
             {{- if .Values.casServerContainer.jvm.maxHeapOpt }}
             - name: MAX_HEAP_OPT
@@ -81,6 +82,10 @@ spec:
             - name: JVM_EXTRA_OPTS
               value: {{ .Values.casServerContainer.jvm.extraOpts | quote }}
             {{- end }}
+            - name: JAVA_ENABLE_DEBUG
+              value: {{ .Values.casServerContainer.jvm.debugEnabled | quote }}
+            - name: JAVA_DEBUG_SUSPEND
+              value: {{ .Values.casServerContainer.jvm.debugSuspend | quote }}
             {{- if .Values.casServerContainer.extraEnvVars }}
               {{- include "cas-server.tplvalues.render" (dict "value" .Values.casServerContainer.extraEnvVars "context" $) | nindent 12 }}
             {{- end }}
@@ -106,6 +111,9 @@ spec:
             - name: https
               containerPort: {{ .Values.cas.listenPortHttps }}
               protocol: TCP
+            - name: jvm-debug
+              containerPort: {{ .Values.cas.listenPortJvmDebug }}
+              protocol: TCP
           volumeMounts:
             {{- range $.Values.casServerContainer.casConfigMounts }}
             {{- $configMount := printf "%s-%s" "cas-config" . | replace "." "-" }}
@@ -119,10 +127,10 @@ spec:
               subPath: entrypoint.sh
             - name: logdir
               mountPath: {{ .Values.logdir.mountPath }}
-            {{- if .Values.serverKeystoreExistingSecret }}
+            {{- if .Values.casServerContainer.serverKeystoreExistingSecret }}
             - name: cas-server-keystore
-              mountPath: {{ .Values.serverKeystoreMountPath }}
-              subPath: {{ .Values.serverKeystoreSubPath }}
+              mountPath: {{ .Values.casServerContainer.serverKeystoreMountPath }}
+              subPath: {{ .Values.casServerContainer.serverKeystoreSubPath }}
             {{- end }}
             {{- if .Values.casServerContainer.extraVolumeMounts }}
             {{- include "cas-server.tplvalues.render" ( dict "value" .Values.casServerContainer.extraVolumeMounts "context" $ ) | nindent 12 }}
@@ -132,22 +140,24 @@ spec:
               path: {{ .Values.casServerContainer.defaultStatusUrl }}
               port: https
               scheme: HTTPS
-            failureThreshold: 15
-            periodSeconds: 10
+            failureThreshold: {{ .Values.casServerContainer.startupFailureThreshold }}
+            periodSeconds: 20
           readinessProbe:
             httpGet:
               path: {{ .Values.casServerContainer.defaultStatusUrl }}
               port: https
               scheme: HTTPS
-            initialDelaySeconds: 20
+            initialDelaySeconds: {{ .Values.casServerContainer.readinessInitialDelaySeconds }}
             periodSeconds: 5
+            failureThreshold: {{ .Values.casServerContainer.readinessFailureThreshold }}
           livenessProbe:
             httpGet:
               path: {{ .Values.casServerContainer.defaultStatusUrl }}
               port: https
               scheme: HTTPS
-            initialDelaySeconds: 30
+            initialDelaySeconds: {{ .Values.casServerContainer.livenessInitialDelaySeconds }}
             periodSeconds: 15
+            failureThreshold: {{ .Values.casServerContainer.livenessFailureThreshold }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

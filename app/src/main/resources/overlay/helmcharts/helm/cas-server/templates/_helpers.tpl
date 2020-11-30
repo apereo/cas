@@ -24,6 +24,14 @@ If release name contains chart name it will be used as a full name.
 {{- end }}
 
 {{/*
+Create a name for boot admin deployment
+*/}}
+{{- define "cas-server.bootadminname" -}}
+{{- $bootadminsuffix := default "boot-admin" .Values.bootadminSuffixOverride }}
+{{- printf "%s-%s" (include "cas-server.fullname" . | trunc 43 | trimSuffix "-") $bootadminsuffix }}
+{{- end }}
+
+{{/*
 Create chart name and version as used by the chart label.
 */}}
 {{- define "cas-server.chart" -}}
@@ -51,6 +59,22 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
+Bootadmin Selector labels
+*/}}
+{{- define "cas-bootadmin.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "cas-server.bootadminname" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+
+{{/*
+Bootadmin Pod labels
+*/}}
+{{- define "cas-bootadmin.labels" -}}
+cas.server-type: bootadmin
+{{- end }}
+
+
+{{/*
 Create the name of the service account to use
 */}}
 {{- define "cas-server.serviceAccountName" -}}
@@ -74,6 +98,21 @@ Return the proper cas-server image name
     {{- printf "%s:%s" $repositoryName $tag -}}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Return the proper cas-server boot admin image name
+*/}}
+{{- define "cas-server.bootadminImageName" -}}
+{{- $repositoryName := .Values.bootadminimage.repository  | toString -}}
+{{- $registryName := default "" .Values.bootadminimage.registry  | toString -}}
+{{- $tag := default .Chart.AppVersion .Values.bootadminimage.tag  | toString -}}
+{{- if ne $registryName "" }}
+    {{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
+{{- else -}}
+    {{- printf "%s:%s" $repositoryName $tag -}}
+{{- end -}}
+{{- end -}}
+
 
 {{/*
 Return log directory volume

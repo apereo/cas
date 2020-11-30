@@ -94,7 +94,7 @@ ingress:
       paths: 
         - "/cas"
   tls: 
-    - secretName: cas-server-tls
+    - secretName: cas-server-ingress-tls
       hosts:
         - cas.example.org
 ```

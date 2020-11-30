@@ -197,8 +197,10 @@ task createKeystore(group: "CAS", description: "Create CAS keystore") {
         def certDir = project.getProperty("certDir")
         def serverKeyStore = project.getProperty("serverKeystore")
         def exportedServerCert = project.getProperty("exportedServerCert")
+        def storeType = project.getProperty("storeType")
         def keystorePath = "$certDir/$serverKeyStore"
         def serverCert = "$certDir/$exportedServerCert"
+
 
         mkdir certDir
 
@@ -218,7 +220,8 @@ task createKeystore(group: "CAS", description: "Create CAS keystore") {
                     "-keyalg", "RSA",
                     "-keypass", "changeit", "-storepass", "changeit",
                     "-keystore", keystorePath,
-                    "-dname", dn, "-ext", "SAN=${subjectAltName}"
+                    "-dname", dn, "-ext", "SAN=${subjectAltName}",
+                    "-storetype", storeType
         }
         logger.info "Exporting cert from keystore..."
         exec {

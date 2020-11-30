@@ -7,5 +7,24 @@ data:
   entrypoint.sh: |-
     #!/bin/sh
     echo Working Directory: $(pwd)
-    echo java -server -noverify $MAX_HEAP_OPT $NEW_HEAP_OPT $JVM_EXTRA_OPTS -jar $CAS_WAR $@
-    exec java -server -noverify $MAX_HEAP_OPT $NEW_HEAP_OPT $JVM_EXTRA_OPTS -jar $CAS_WAR $@
+    # Set debug options if required
+    JAVA_DEBUG_ARGS=
+    if [ "${JAVA_ENABLE_DEBUG}" == "true" ]; then
+        JAVA_DEBUG_ARGS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=${JAVA_DEBUG_SUSPEND:-n},address=${JAVA_DEBUG_PORT:-5005}"
+        echo "Run the following to forward local port to pod:"
+        echo "kubectl port-forward $HOSTNAME ${JAVA_DEBUG_PORT:-5005}:${JAVA_DEBUG_PORT:-5005}"
+    fi
+    echo java -server -noverify $JAVA_DEBUG_ARGS $MAX_HEAP_OPT $NEW_HEAP_OPT $JVM_EXTRA_OPTS -jar $CAS_WAR $@
+    exec java -server -noverify $JAVA_DEBUG_ARGS $MAX_HEAP_OPT $NEW_HEAP_OPT $JVM_EXTRA_OPTS -jar $CAS_WAR $@
+  bootadmin-entrypoint.sh: |-
+    #!/bin/sh
+    echo Working Directory: $(pwd)
+    # Set debug options if required
+    JAVA_DEBUG_ARGS=
+    if [ "${JAVA_ENABLE_DEBUG}" == "true" ]; then
+        echo "Run the following to forward local port to pod:"
+        echo "kubectl port-forward $HOSTNAME ${JAVA_DEBUG_PORT:-5005}:${JAVA_DEBUG_PORT:-5005}"
+        JAVA_DEBUG_ARGS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=${JAVA_DEBUG_SUSPEND:-n},address=${JAVA_DEBUG_PORT:-5005}"
+    fi
+    echo java -server -noverify $JAVA_DEBUG_ARGS $MAX_HEAP_OPT $NEW_HEAP_OPT $JVM_EXTRA_OPTS -jar $CAS_BOOTADMIN_WAR $@
+    exec java -server -noverify $JAVA_DEBUG_ARGS $MAX_HEAP_OPT $NEW_HEAP_OPT $JVM_EXTRA_OPTS -jar $CAS_BOOTADMIN_WAR $@
