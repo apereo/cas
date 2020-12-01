@@ -32,7 +32,7 @@ public class AuditTrailEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id = -1;
 
-    @Column(name = "AUD_USER", length = 2048)
+    @Column(name = "AUD_USER")
     private String user;
 
     @Column(name = "AUD_CLIENT_IP")
@@ -44,7 +44,7 @@ public class AuditTrailEntity {
     @Column(name = "AUD_RESOURCE", length = 2048)
     private String resource;
 
-    @Column(name = "AUD_ACTION", length = 2048)
+    @Column(name = "AUD_ACTION")
     private String action;
 
     @Column(name = "APPLIC_CD")
