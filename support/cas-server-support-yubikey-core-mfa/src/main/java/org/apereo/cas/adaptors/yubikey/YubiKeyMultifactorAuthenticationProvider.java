@@ -32,7 +32,18 @@ public class YubiKeyMultifactorAuthenticationProvider extends AbstractMultifacto
     private static final long serialVersionUID = 4789727148634156909L;
 
     private transient YubicoClient client;
+
     private transient HttpClient httpClient;
+
+    @Override
+    public String getFriendlyName() {
+        return "YubiKey";
+    }
+
+    @Override
+    public String getId() {
+        return StringUtils.defaultIfBlank(super.getId(), YubiKeyMultifactorProperties.DEFAULT_IDENTIFIER);
+    }
 
     @Override
     public boolean isAvailable(final RegisteredService service) {
@@ -52,15 +63,5 @@ public class YubiKeyMultifactorAuthenticationProvider extends AbstractMultifacto
             LoggingUtils.warn(LOGGER, e);
         }
         return false;
-    }
-
-    @Override
-    public String getFriendlyName() {
-        return "YubiKey";
-    }
-
-    @Override
-    public String getId() {
-        return StringUtils.defaultIfBlank(super.getId(), YubiKeyMultifactorProperties.DEFAULT_IDENTIFIER);
     }
 }

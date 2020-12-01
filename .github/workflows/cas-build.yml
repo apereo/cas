@@ -794,6 +794,7 @@ jobs:
           - passwordless-delegated-login
           - passwordless-mfa-login
           - passwordless-login
+          - mfa-provider-unavailable
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
