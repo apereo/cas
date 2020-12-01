@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 echo "Running casinit"
 java -jar app/build/libs/app.jar &
 sleep 30
@@ -30,6 +32,7 @@ echo "Creating truststore with server/ingress certs and put in configmap"
 ./create-truststore.sh
 
 # Lint chart
+echo Lint check on cas-server helm chart
 helm lint cas-server
 
 # k3s comes with Traefik so we could try using that instead at some point
@@ -54,7 +57,7 @@ kubectl logs cas-server-0 | tee cas.out
 echo "CAS Boot Admin Server Logs..."
 kubectl logs -l cas.server-type=bootadmin | tee cas-bootadmin.out
 grep "Started CasWebApplication" cas.out
-grep "Started " cas-bootadmin.out
+grep "Started CasWebApplication" cas-bootadmin.out
 
 curl -k -v -H "Host: cas.example.org" https://127.0.0.1/cas/login > login.txt
 grep "password" login.txt

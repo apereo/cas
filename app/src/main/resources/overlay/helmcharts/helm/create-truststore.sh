@@ -2,8 +2,8 @@
 NAMESPACE=${1:-default}
 INGRESS_CERT_FILE=cas-ingress.crt
 CAS_CERT_FILE=cas.crt
-CAS_KEYSTORE=/etc/cas/thekeystore
-TRUST_STORE=truststore
+CAS_KEYSTORE=../etc/cas/thekeystore
+TRUST_STORE=../etc/cas/truststore
 
 set -e
 # create truststore that trusts ingress cert
