@@ -121,6 +121,15 @@ public class PullRequest {
         return this.base.getRef().equalsIgnoreCase("master");
     }
 
+    public boolean isTargetBranchOnHeroku() {
+        return this.base.getRef().toLowerCase().startsWith("heroku");
+    }
+
+    public boolean isWorkInProgress() {
+        return isLabeledAs(CasLabels.LABEL_WIP) || this.title.startsWith("WIP -");
+    }
+
+
     public boolean isLabeledAs(final CasLabels labelName) {
         return this.labels.stream().anyMatch(l -> l.getName().equalsIgnoreCase(labelName.getTitle()));
     }

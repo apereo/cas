@@ -37,6 +37,11 @@ public class CasPullRequestListener implements PullRequestListener {
     }
 
     private void checkForPullRequestTestCases(final PullRequest pr) {
+        if (pr.isTargetBranchOnHeroku()) {
+            log.info("Pull request {} is targeted at a Heroku branch", pr);
+            return;
+        }
+        
         val files = repository.getPullRequestFiles(pr);
         val modifiesJava = files.stream().anyMatch(file -> !file.getFilename().contains("Tests") && file.getFilename().endsWith(".java"));
         if (modifiesJava) {
@@ -136,7 +141,8 @@ public class CasPullRequestListener implements PullRequestListener {
     }
 
     private boolean processLabelSeeMaintenancePolicy(final PullRequest pr) {
-        if (!pr.isTargetedAtMasterBranch() && !pr.isLabeledAs(CasLabels.LABEL_SEE_MAINTENANCE_POLICY)) {
+        if (!pr.isTargetedAtMasterBranch() && !pr.isLabeledAs(CasLabels.LABEL_SEE_MAINTENANCE_POLICY)
+            && !pr.isTargetBranchOnHeroku() && !pr.isWorkInProgress()) {
             val milestone = repository.getMilestoneForBranch(pr.getBase().getRef());
             if (milestone.isEmpty()) {
                 log.info("{} is targeted at a branch {} that is no longer maintained. See maintenance policy", pr, pr.getBase());
@@ -155,14 +161,15 @@ public class CasPullRequestListener implements PullRequestListener {
     }
 
     private void processLabelPendingPortForward(final PullRequest pr) {
-        if (!pr.getBase().isRefMaster() && !pr.isLabeledAs(CasLabels.LABEL_PENDING_PORT_FORWARD)) {
-            log.info("{} is targeted at a branch {} and should be ported forward to the master branch in a separate pull request.", pr, pr.getBase());
+        if (!pr.isTargetBranchOnHeroku() && !pr.getBase().isRefMaster()
+            && !pr.isLabeledAs(CasLabels.LABEL_PENDING_PORT_FORWARD)) {
+            log.info("{} is targeted at a branch {} and should be ported forward to the master branch", pr, pr.getBase());
             repository.labelPullRequestAs(pr, CasLabels.LABEL_PENDING_PORT_FORWARD);
         }
     }
 
     private void processMilestoneAssignment(final PullRequest pr) {
-        if (pr.getMilestone() == null) {
+        if (pr.getMilestone() == null && !pr.isTargetBranchOnHeroku()) {
             if (pr.isTargetedAtMasterBranch()) {
                 val milestoneForMaster = repository.getMilestoneForMaster();
                 milestoneForMaster.ifPresent(milestone -> {
