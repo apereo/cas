@@ -793,6 +793,7 @@ jobs:
           - passwordless-requirepswd-login
           - passwordless-delegated-login
           - passwordless-mfa-login
+          - passwordless-login
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
