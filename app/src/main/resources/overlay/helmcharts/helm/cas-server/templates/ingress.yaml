@@ -34,7 +34,9 @@ spec:
         paths:
           {{- range .paths }}
           - path: {{ . }}
+            {{- if semverCompare ">=1.18.0" $kubeVersion }}
             pathType: Prefix
+            {{- end }}
             {{- if semverCompare ">=1.19.0" $kubeVersion }}
             backend:
               service:
