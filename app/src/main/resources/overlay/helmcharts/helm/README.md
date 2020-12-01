@@ -1,10 +1,18 @@
-## Helm Charts for CAS
+## Helm Chart for CAS
 
-The current helm chart for cas-server is a and it is expected that enhancements will be contributed
-as it is used for more installations.  Eventually it would be nice to support running containers with bootadmin and 
-config-server pre-configured to work, and to have cas-management available as its own helm chart 
-(or running as part of this one). 
-The chart supports mapping in arbitrary volumes and cas config can be specified in values files.  
+The current helm chart for cas-server demonstrates standing up CAS with a Spring Boot Admin Server.
+The chart functionality will grow over time, hopefully with contributions from real world deployments. 
+Eventually it might be nice to support a config-server and have cas-management available.  
+The chart supports mapping in arbitrary volumes and cas config can be specified in values files. 
+The config could be in cloud config rather than kubernetes config maps, the service registry 
+could be in a database, git, or a simple json registry in a kubernetes persistent volume. The ticket registry could use a standard helm chart for redis, 
+postgresql, or mongo, etc. 
+Currently the chart is attempting to use SSL between ingress controller and the CAS and Boot Admin servers. 
+This is probably overkill and involves all the pain that comes with SSL (e.g. trust & hostname verification).
+This chart uses stateful set for CAS rather than a deployment and this may change in the future.
+The bootadmin CAS server discovery method should probably change to "cloud" method eventually.  
+
+#### Warning: semver versioning will not be employed until published to a repository.
 
 ### Install Kubernetes (Docker for Windows/Mac, Minikube, K3S, Rancher, etc)
 
