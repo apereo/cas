@@ -61,7 +61,7 @@ kubectl logs -l cas.server-type=bootadmin --tail=-1 | tee cas-bootadmin.out
 echo "Checking cas server log for startup message"
 grep "Started CasWebApplication" cas.out
 echo "Checking bootadmin server log for startup message"
-grep "Started CasWebApplication" cas-bootadmin.out
+grep "Started CasSpringBootAdminServerWebApplication" cas-bootadmin.out
 
 echo "Checking login page"
 curl -k -H "Host: cas.example.org" https://127.0.0.1/cas/login > login.txt
