@@ -180,7 +180,7 @@ public class SamlUtils {
      */
     public static <T extends XMLObject> T transformSamlObject(final OpenSamlConfigBean configBean, final byte[] data,
                                                               final Class<T> clazz) {
-        try (InputStream in = new ByteArrayInputStream(data)) {
+        try (val in = new ByteArrayInputStream(data)) {
             val document = configBean.getParserPool().parse(in);
             val root = document.getDocumentElement();
             val marshaller = configBean.getUnmarshallerFactory().getUnmarshaller(root);
