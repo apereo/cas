@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * This is {@link OAuth20InvalidAuthorizationResponseBuilderTests}.
  *
  * @author Julien Huon
- * @since 6.3.0
+ * @since 6.4.0
  */
 @Tag("OAuth")
 public class OAuth20InvalidAuthorizationResponseBuilderTests extends AbstractOAuth20Tests {

@@ -64,8 +64,6 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
         val manager = new ProfileManager<CommonProfile>(context, context.getSessionStore());
 
         if (context.getRequestAttribute(OAuth20Constants.ERROR).isPresent()) {
-            LOGGER.error("Authorize request verification failed");
-
             val mv = getOAuthConfigurationContext().getOauthInvalidAuthorizationResponseBuilder().build(context);
             if (!mv.isEmpty() && mv.hasView()) {
                 return mv;

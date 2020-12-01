@@ -20,7 +20,7 @@ import java.util.Map;
  * This is {@link OAuth20InvalidAuthorizationResponseBuilder}.
  *
  * @author Julien Huon
- * @since 6.3.0
+ * @since 6.4.0
  */
 @Slf4j
 @RequiredArgsConstructor

@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
  * This is {@link OAuth20TokenResponseTypeAuthorizationRequestValidatorTests}.
  *
  * @author Julien Huon
- * @since 6.3.0
+ * @since 6.4.0
  */
 @Tag("OAuth")
 public class OAuth20TokenResponseTypeAuthorizationRequestValidatorTests {
