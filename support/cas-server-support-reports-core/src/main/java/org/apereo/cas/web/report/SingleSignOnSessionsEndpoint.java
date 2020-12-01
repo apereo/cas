@@ -118,7 +118,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
         val totalTicketGrantingTickets = new AtomicLong();
         val totalProxyGrantingTickets = new AtomicLong();
         val totalUsageCount = new AtomicLong();
-        val uniquePrincipals = new HashSet<Object>(activeSsoSessions.size());
+        val uniquePrincipals = new HashSet<>(activeSsoSessions.size());
         for (val activeSsoSession : activeSsoSessions) {
             if (activeSsoSession.containsKey(SsoSessionAttributeKeys.IS_PROXIED.getAttributeKey())) {
                 val isProxied = Boolean.valueOf(activeSsoSession.get(SsoSessionAttributeKeys.IS_PROXIED.getAttributeKey()).toString());
@@ -197,7 +197,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
         val collection = getActiveSsoSessions(option);
         collection
             .stream()
-            .map(sso -> sso.get(SsoSessionAttributeKeys.TICKET_GRANTING_TICKET.toString()).toString())
+            .map(sso -> sso.get(SsoSessionAttributeKeys.TICKET_GRANTING_TICKET.getAttributeKey()).toString())
             .forEach(ticketGrantingTicket -> {
                 try {
                     centralAuthenticationService.deleteTicket(ticketGrantingTicket);
