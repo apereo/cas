@@ -1,0 +1,12 @@
+{
+  "@class" : "java.util.LinkedHashMap",
+  "casuser" : {
+    "@class" : "org.apereo.cas.api.PasswordlessUserAccount",
+    "username": "casuser",
+    "email": "cas@example.org",
+    "phoneNumber": "1234567890",
+    "name" : "CAS",
+    "delegatedAuthenticationEligible": "TRUE"
+  }
+}
+

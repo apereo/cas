@@ -791,6 +791,8 @@ jobs:
           - pac4j-delegated-login
           - renew-existing-sso
           - passwordless-requirepswd-login
+          - passwordless-delegated-login
+          - passwordless-mfa-login
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
