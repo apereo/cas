@@ -49,18 +49,26 @@ echo "Install cas-server helm chart"
 echo "Using local jib image imported into k3s"
 helm upgrade --install cas-server --set image.pullPolicy=Never --set image.tag="${imageTag}" ./cas-server
 sleep 15
+echo "Describing cas-server pod"
 kubectl describe pod cas-server-0
+echo "Describing cas bootadmin pod"
 kubectl describe pod -l cas.server-type=bootadmin
 sleep 60
 echo "CAS Server Logs..."
 kubectl logs cas-server-0 | tee cas.out
 echo "CAS Boot Admin Server Logs..."
 kubectl logs -l cas.server-type=bootadmin | tee cas-bootadmin.out
+echo "Checking cas server log for startup message"
 grep "Started CasWebApplication" cas.out
+echo "Checking bootadmin server log for startup message"
 grep "Started CasWebApplication" cas-bootadmin.out
 
-curl -k -v -H "Host: cas.example.org" https://127.0.0.1/cas/login > login.txt
+echo "Checking login page"
+curl -k -H "Host: cas.example.org" https://127.0.0.1/cas/login > login.txt
 grep "password" login.txt
 
+echo "Running chart built-in test"
 helm test cas-server
+
+echo "Pod Status:"
 kubectl get pods
