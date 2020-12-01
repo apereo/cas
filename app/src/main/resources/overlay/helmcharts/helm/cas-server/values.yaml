@@ -15,7 +15,7 @@ image:
 
 bootadminimage:
   registry: "docker.io"
-  repository: "apereo/cas-bootadmin-server"
+  repository: "hdeadman/cas-bootadmin-server"
   pullPolicy: IfNotPresent
   tag: "latest"
 
