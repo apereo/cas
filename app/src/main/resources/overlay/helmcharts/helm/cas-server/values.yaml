@@ -188,6 +188,7 @@ casServerContainer:
       # configure health endpoint
       management.health.defaults.enabled=false
       management.health.ping.enabled=true
+      management.health.caches.enabled=true
 
       # secure endpoints to localhost
 
@@ -274,7 +275,16 @@ bootAdminContainer:
 
   ## Url to use for readiness, startupprobe, and liveliness check, change to health actuator if the module is available
   ## Naming it "default" in case in future template supports individual urls for the different checks, with this as default if they aren't specified
-  defaultStatusUrl: '/cas/actuator/health'
+  defaultStatusUrl: '/login'
+
+  # number of startup probe failures before it will be killed, set high if trying to debug startup issues
+  # liveness and readiness failure threshold might be 1 but startup failure threshold accounts for
+  # failures while server is starting up
+  startupFailureThreshold: 30
+  livenessFailureThreshold: 1
+  readinessFailureThreshold: 1
+  readinessInitialDelaySeconds: 45
+  livenessInitialDelaySeconds: 120
 
   ## An array to add extra env vars
   ## For example:
@@ -368,43 +378,69 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-service:
-  type: ClusterIP
-  port: 8443
-
+## Override parts of this ingress in your own values file with appropriate host names
+## This currently is only set up to work with Nginx Ingress Controller from Kubernetes project
 cas:
+  service:
+    type: ClusterIP
+    port: 8443
   listenPortHttps: 8443
   listenPortJvmDebug: 5005
-
-bootadmin:
-  listenPortHttps: 8444
-  listenPortJvmDebug: 5005
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/session-cookie-samesite: "None"
+      nginx.ingress.kubernetes.io/session-cookie-conditional-samesite-none: "true"
+      nginx.ingress.kubernetes.io/affinity: "cookie"
+      nginx.ingress.kubernetes.io/session-cookie-name: "sticky-session-route"
+      nginx.ingress.kubernetes.io/session-cookie-hash: "sha1"
+      nginx.ingress.kubernetes.io/secure-backends: "true"
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    hosts:
+      - host: cas.example.org
+        paths:
+          - "/cas"
+      - host: kubernetes.docker.internal
+        paths:
+          - "/cas"
+    tls:
+      - secretName: cas-server-ingress-tls
+        hosts:
+          - cas.example.org
+          - kubernetes.docker.internal
 
 ## Override parts of this ingress in your own values file with appropriate host names
 ## This currently is only set up to work with Nginx Ingress Controller from Kubernetes project
-ingress:
-  enabled: true
-  annotations: 
-    kubernetes.io/ingress.class: nginx
-    nginx.ingress.kubernetes.io/session-cookie-samesite: "None"
-    nginx.ingress.kubernetes.io/session-cookie-conditional-samesite-none: "true"
-    nginx.ingress.kubernetes.io/affinity: "cookie"
-    nginx.ingress.kubernetes.io/session-cookie-name: "sticky-session-route"
-    nginx.ingress.kubernetes.io/session-cookie-hash: "sha1"
-    nginx.ingress.kubernetes.io/secure-backends: "true"
-    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"    
-  hosts:
-    - host: cas.example.org
-      paths:
-        - "/cas"
-    - host: kubernetes.docker.internal
-      paths:
-        - "/cas"
-  tls:
-    - secretName: cas-server-ingress-tls
-      hosts:
-        - cas.example.org
-        - kubernetes.docker.internal
+bootadmin:
+  service:
+    type: ClusterIP
+    port: 8443
+  listenPortHttps: 8444
+  listenPortJvmDebug: 5005
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/session-cookie-samesite: "None"
+      nginx.ingress.kubernetes.io/session-cookie-conditional-samesite-none: "true"
+      nginx.ingress.kubernetes.io/affinity: "cookie"
+      nginx.ingress.kubernetes.io/session-cookie-name: "sticky-session-route"
+      nginx.ingress.kubernetes.io/session-cookie-hash: "sha1"
+      nginx.ingress.kubernetes.io/secure-backends: "true"
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    hosts:
+      - host: casadmin.example.org
+        paths:
+          - "/"
+      - host: kubernetes.docker.internal
+        paths:
+          - "/"
+    tls:
+      - secretName: cas-server-ingress-tls
+        hosts:
+          - cas.example.org
+          - kubernetes.docker.internal
 
 # Request some resources so kubernetes will schedule somewhere with enough resources
 # Limits can also be set if desired
@@ -424,9 +460,10 @@ tolerations: []
 affinity: {}
 
 
-# credentials for boot admin server (only accessible internally)
+# credentials for boot admin server (ideally you should make boot admin accessible internally )
 bootAdminUser: 'casadmin'
-bootAdminPassword: 'e3f98098-edb5-4217-9dcb-ad04999a8794'
+bootAdminPassword: 'ChangeThisSecretPassword'
 
+# spring boot admin uses these credentials to hit actuators in cas (and it could be used externally)
 casAdminUser: 'casuser'
 casAdminPassword: 'Mellon'

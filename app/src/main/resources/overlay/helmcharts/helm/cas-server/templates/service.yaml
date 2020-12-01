@@ -5,9 +5,9 @@ metadata:
   labels:
     {{- include "cas-server.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.service.type }}
+  type: {{ .Values.cas.service.type }}
   ports:
-    - port: {{ .Values.service.port }}
+    - port: {{ .Values.cas.service.port }}
       targetPort: https
       protocol: TCP
       name: https

@@ -128,6 +128,29 @@ spec:
             {{- if .Values.bootAdminContainer.extraVolumeMounts }}
             {{- include "cas-server.tplvalues.render" ( dict "value" .Values.bootAdminContainer.extraVolumeMounts "context" $ ) | nindent 12 }}
           {{- end }}
+          startupProbe:
+            httpGet:
+              path: {{ .Values.bootAdminContainer.defaultStatusUrl }}
+              port: https
+              scheme: HTTPS
+            failureThreshold: {{ .Values.bootAdminContainer.startupFailureThreshold }}
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.bootAdminContainer.defaultStatusUrl }}
+              port: https
+              scheme: HTTPS
+            initialDelaySeconds: {{ .Values.bootAdminContainer.readinessInitialDelaySeconds }}
+            periodSeconds: 5
+            failureThreshold: {{ .Values.bootAdminContainer.readinessFailureThreshold }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.bootAdminContainer.defaultStatusUrl }}
+              port: https
+              scheme: HTTPS
+            initialDelaySeconds: {{ .Values.bootAdminContainer.livenessInitialDelaySeconds }}
+            periodSeconds: 15
+            failureThreshold: {{ .Values.bootAdminContainer.livenessFailureThreshold }}
           resources:
       {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

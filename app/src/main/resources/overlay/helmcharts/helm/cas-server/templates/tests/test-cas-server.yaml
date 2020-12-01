@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: "{{ include "cas-server.fullname" . }}-test-connection"
+  name: "{{ include "cas-server.fullname" . }}-test"
   labels:
     {{- include "cas-server.labels" . | nindent 4 }}
   annotations:
@@ -11,6 +11,6 @@ spec:
     - name: wget
       image: alpine
       command: ['wget']
-      args: [ '--no-check-certificate', 'https://{{ include "cas-server.fullname" . }}:{{ .Values.service.port }}/cas/actuator/health' ]
+      args: [ '--no-check-certificate', 'https://{{ include "cas-server.fullname" . }}:{{ .Values.cas.service.port }}{{ .Values.casServerContainer.defaultStatusUrl }}' ]
   restartPolicy: Never
 

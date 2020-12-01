@@ -7,7 +7,7 @@ java -jar app/build/libs/app.jar &
 sleep 30
 mkdir tmp
 cd tmp
-curl http://localhost:8080/starter.tgz -d dependencies=core,bootadmin | tar -xzvf -
+curl http://localhost:8080/starter.tgz -d dependencies=core,bootadmin,metrics | tar -xzvf -
 
 echo "Building War and Jib Docker Image"
 chmod -R 777 ./*.sh
