@@ -57,7 +57,7 @@ sleep 60
 echo "CAS Server Logs..."
 kubectl logs cas-server-0 | tee cas.out
 echo "CAS Boot Admin Server Logs..."
-kubectl logs -l cas.server-type=bootadmin | tee cas-bootadmin.out
+kubectl logs -l cas.server-type=bootadmin --tail=-1 | tee cas-bootadmin.out
 echo "Checking cas server log for startup message"
 grep "Started CasWebApplication" cas.out
 echo "Checking bootadmin server log for startup message"
