@@ -224,7 +224,7 @@ The following common properties configure cookie generator support in CAS.
 
 ```properties
 # ${configurationKey}.path=
-# ${configurationKey}.maxAge=-1
+# ${configurationKey}.max-age=-1
 # ${configurationKey}.domain=
 # ${configurationKey}.name=
 # ${configurationKey}.secure=true
