@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.Resource;
+import org.yaml.snakeyaml.error.YAMLException;
 
 import java.util.Properties;
 
@@ -24,16 +25,29 @@ public class YamlConfigurationPropertiesLoader extends BaseConfigurationProperti
         super(configurationCipherExecutor, name, resource);
     }
 
+
+    /**
+     * Load property source.
+     *
+     * It is important that failure to parse yaml is logged or the server is likely to die and
+     * message may not be logged by global handler, making problem identification difficult.
+     * @return the property source
+     */
     @Override
     public PropertySource load() {
         val props = new Properties();
         if (ResourceUtils.doesResourceExist(getResource())) {
-            val pp = CasCoreConfigurationUtils.loadYamlProperties(getResource());
-            if (pp.isEmpty()) {
-                LOGGER.debug("No properties were located inside [{}]", getResource());
-            } else {
-                LOGGER.info("Found settings [{}] in YAML file [{}]", pp.keySet(), getResource());
-                props.putAll(decryptProperties(pp));
+            try {
+                val pp = CasCoreConfigurationUtils.loadYamlProperties(getResource());
+                if (pp.isEmpty()) {
+                    LOGGER.debug("No properties were located inside [{}]", getResource());
+                } else {
+                    LOGGER.info("Found settings [{}] in YAML file [{}]", pp.keySet(), getResource());
+                    props.putAll(decryptProperties(pp));
+                }
+            } catch (final YAMLException e) {
+                LOGGER.warn("Error parsing yaml configuration in [{}]: [{}]", getResource(), e.getMessage());
+                throw e;
             }
         }
         return finalizeProperties(props);
