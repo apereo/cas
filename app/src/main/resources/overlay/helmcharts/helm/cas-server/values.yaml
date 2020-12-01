@@ -136,6 +136,8 @@ casServerContainer:
     - 'cas.yaml'
   ## Create various config files from casConfig that may or may not be mounted
   casConfig:
+    # issue with line breaks? means can't use {{}} variables after first line
+    # workaround is to use {{}} variables in yaml version of properties file
     cas.properties: |-
       cas.server.name=https://{{ .Values.casServerName }}
       context.path=/cas
@@ -190,7 +192,6 @@ casServerContainer:
       # secure endpoints to localhost
 
       cas.monitor.endpoints.endpoint.defaults.access[0]=AUTHENTICATED
-      cas.monitor.endpoints.endpoint.defaults.requiredRoles[0]=admin
       cas.monitor.endpoints.endpoint.health.access[0]=IP_ADDRESS
       cas.monitor.endpoints.endpoint.health.requiredIpAddresses[0]=127.0.0.1
       cas.monitor.endpoints.endpoint.health.requiredIpAddresses[1]=0:0:0:0:0:0:0:1
@@ -198,17 +199,18 @@ casServerContainer:
       cas.monitor.endpoints.endpoint.health.requiredIpAddresses[3]=172.16.0.0/12
       cas.monitor.endpoints.endpoint.health.requiredIpAddresses[4]=192.168.0.0/16
 
-      spring.security.user.name=casadmin
-      #spring.security.user.password=
-      spring.security.user.roles=admin
-
       spring.boot.admin.client.enabled=true
       #eof
 
     cas.yaml: |-
+      ---
       logging:
         config: 'file:/etc/cas/config/log4j2.xml'
       spring:
+        security:
+          user:
+            name: "{{ .Values.casAdminUser }}"
+            password: "{{ .Values.casAdminPassword }}"
         boot:
           admin:
             client:
@@ -216,7 +218,11 @@ casServerContainer:
               password: {{ .Values.bootAdminPassword }}
               url: https://{{ include "cas-server.bootadminname" . }}:8443
               instance:
-                management-base-url: https://${HOSTNAME}.{{ include "cas-server.fullname" . }}:8443${context.path}
+                metadata:
+                  user:
+                    name: "{{ .Values.casAdminUser }}"
+                    password: "{{ .Values.casAdminPassword }}"
+                management-base-url: https://${HOSTNAME}.{{ include "cas-server.fullname" . }}.{{ .Release.Namespace }}.svc:8443${context.path}
       #eof
 
 # CAS Boot-Admin Server container properties
@@ -313,9 +319,8 @@ bootAdminContainer:
       spring:
         security:
           user:
-            name: {{ .Values.bootAdminUser }}
-            password: {{ .Values.bootAdminPassword }}
-            roles: admin
+            name: "{{ .Values.bootAdminUser }}"
+            password: "{{ .Values.bootAdminPassword }}"
 
     log4j2.xml: |-
       <?xml version="1.0" encoding="UTF-8" ?>
@@ -422,3 +427,6 @@ affinity: {}
 # credentials for boot admin server (only accessible internally)
 bootAdminUser: 'casadmin'
 bootAdminPassword: 'e3f98098-edb5-4217-9dcb-ad04999a8794'
+
+casAdminUser: 'casuser'
+casAdminPassword: 'Mellon'

@@ -8,7 +8,7 @@ TRUST_STORE=../etc/cas/truststore
 set -e
 # create truststore that trusts ingress cert
 if [ -f "${INGRESS_CERT_FILE}" ] ; then
-  keytool -importcert -noprompt -keystore truststore -storepass changeit -alias cas-ingress -file "${INGRESS_CERT_FILE}" -storetype PKCS12
+  keytool -importcert -noprompt -keystore "${TRUST_STORE}" -storepass changeit -alias cas-ingress -file "${INGRESS_CERT_FILE}" -storetype PKCS12
 else
   echo "Missing ingress cert file to put in trust bundle: ${INGRESS_CERT_FILE}"
 fi
