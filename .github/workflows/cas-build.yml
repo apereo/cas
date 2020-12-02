@@ -796,6 +796,7 @@ jobs:
           - passwordless-login
           - mfa-provider-unavailable
           - source-selection-login
+          - custom-fields-login
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
