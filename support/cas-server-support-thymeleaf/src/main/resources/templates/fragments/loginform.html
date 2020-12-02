@@ -185,11 +185,23 @@
                 
                 <section class="cas-field my-3">
                     <div th:each="entry: ${customLoginFormFields}">
-                        <div>
-                            <span th:text="#{${entry.value.messageBundleKey}}">Label</span>
-                            <input class="form-control required" type="text" name="data" th:field="*{customFields[__${entry.key}__]}">
-                            <p/>
-                        </div>
+                        <label class="mdc-text-field mdc-text-field--outlined">
+                            <input class="mdc-text-field__input"
+                                   th:id="${entry.key + '-customField'}"
+                                   th:name="${entry.key + '-customField'}"
+                                   size="25"
+                                   type="text"
+                                   th:field="*{customFields[__${entry.key}__]}"
+                                   autocomplete="off"/>
+
+                            <span class="mdc-notched-outline">
+                                <span class="mdc-notched-outline__leading"></span>
+                                <span class="mdc-notched-outline__notch">
+                                  <span class="mdc-floating-label" th:text="#{${entry.value.messageBundleKey}}">Label</span>
+                                </span>
+                                <span class="mdc-notched-outline__trailing"></span>
+                              </span>
+                        </label>
                     </div>
                 </section>
 
