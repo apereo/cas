@@ -153,7 +153,6 @@ Allow the CAS Spring Cloud configuration server to load settings from [HashiCorp
 
 # spring.cloud.consul.config.watch.delay=1000
 # spring.cloud.consul.config.watch.enabled=false
-
 ```
 
 ### Vault
@@ -608,6 +607,25 @@ Enabling APR requires the following JVM system property that indicates the locat
 
 ```bash
 -Djava.library.path=/path/to/tomcat-native/lib
+```
+   
+The APR connector can be assigned an SSLHostConfig element as such:
+
+```properties
+# cas.server.tomcat.apr.ssl-host-config.enabled=false
+# cas.server.tomcat.apr.ssl-host-config.revocation-enabled=false
+# cas.server.tomcat.apr.ssl-host-config.ca-certificate-file=false
+# cas.server.tomcat.apr.ssl-host-config.host-name=
+# cas.server.tomcat.apr.ssl-host-config.ssl-protocol=
+# cas.server.tomcat.apr.ssl-host-config.protocols=all
+# cas.server.tomcat.apr.ssl-host-config.insecure-renegotiation=false
+# cas.server.tomcat.apr.ssl-host-config.certificate-verification-depth=10
+
+# cas.server.tomcat.apr.ssl-host-config.certificates[0].certificate-file=
+# cas.server.tomcat.apr.ssl-host-config.certificates[0].certificate-key-file=
+# cas.server.tomcat.apr.ssl-host-config.certificates[0].certificate-key-password=
+# cas.server.tomcat.apr.ssl-host-config.certificates[0].certificate-chain-file=
+# cas.server.tomcat.apr.ssl-host-config.certificates[0].type=UNDEFINED
 ```
 
 #### Connector IO
@@ -3480,7 +3498,6 @@ A given attribute that is to be encoded in the final SAML response may contain a
 # cas.authn.saml-idp.metadata.basic-authn-username=
 # cas.authn.saml-idp.metadata.basic-authn-password=
 # cas.authn.saml-idp.metadata.supported-content-types=
-
 ```
 
 #### SAML Metadata JPA
@@ -4116,7 +4133,6 @@ To learn more about this topic, [please review this guide](../installation/OAuth
 # cas.authn.oauth.device-user-code.time-to-kill-in-seconds=2592000
 # cas.authn.oauth.device-user-code.user-code-length=8
 ```
-
 
 ### OAuth2 JWT Access Tokens
 
