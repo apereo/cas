@@ -14,8 +14,12 @@ data:
         echo "Run the following to forward local port to pod:"
         echo "kubectl port-forward $HOSTNAME ${JAVA_DEBUG_PORT:-5005}:${JAVA_DEBUG_PORT:-5005}"
     fi
-    echo java -server -noverify $JAVA_DEBUG_ARGS $MAX_HEAP_OPT $NEW_HEAP_OPT $JVM_EXTRA_OPTS -jar $CAS_WAR $@
-    exec java -server -noverify $JAVA_DEBUG_ARGS $MAX_HEAP_OPT $NEW_HEAP_OPT $JVM_EXTRA_OPTS -jar $CAS_WAR $@
+    PROFILE_OPT=
+    if [ ! -z $SPRING_PROFILES ]; then
+      PROFILE_OPT="--spring.profiles.active=$SPRING_PROFILES"
+    fi
+    echo java -server -noverify $JAVA_DEBUG_ARGS $MAX_HEAP_OPT $NEW_HEAP_OPT $JVM_EXTRA_OPTS -jar $CAS_WAR $PROFILE_OPT $@
+    exec java -server -noverify $JAVA_DEBUG_ARGS $MAX_HEAP_OPT $NEW_HEAP_OPT $JVM_EXTRA_OPTS -jar $CAS_WAR $PROFILE_OPT $@
   bootadmin-entrypoint.sh: |-
     #!/bin/sh
     echo Working Directory: $(pwd)
@@ -26,5 +30,9 @@ data:
         echo "kubectl port-forward $HOSTNAME ${JAVA_DEBUG_PORT:-5005}:${JAVA_DEBUG_PORT:-5005}"
         JAVA_DEBUG_ARGS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=${JAVA_DEBUG_SUSPEND:-n},address=${JAVA_DEBUG_PORT:-5005}"
     fi
-    echo java -server -noverify $JAVA_DEBUG_ARGS $MAX_HEAP_OPT $NEW_HEAP_OPT $JVM_EXTRA_OPTS -jar $CAS_BOOTADMIN_WAR $@
-    exec java -server -noverify $JAVA_DEBUG_ARGS $MAX_HEAP_OPT $NEW_HEAP_OPT $JVM_EXTRA_OPTS -jar $CAS_BOOTADMIN_WAR $@
+    PROFILE_OPT=
+    if [ ! -z $SPRING_PROFILES ]; then
+      PROFILE_OPT="--spring.profiles.active=$SPRING_PROFILES"
+    fi
+    echo java -server -noverify $JAVA_DEBUG_ARGS $MAX_HEAP_OPT $NEW_HEAP_OPT $JVM_EXTRA_OPTS -jar $CAS_BOOTADMIN_WAR $PROFILE_OPT $@
+    exec java -server -noverify $JAVA_DEBUG_ARGS $MAX_HEAP_OPT $NEW_HEAP_OPT $JVM_EXTRA_OPTS -jar $CAS_BOOTADMIN_WAR $PROFILE_OPT $@

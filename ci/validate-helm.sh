@@ -7,7 +7,8 @@ java -jar app/build/libs/app.jar &
 sleep 30
 mkdir tmp
 cd tmp
-curl http://localhost:8080/starter.tgz -d dependencies=core,bootadmin,metrics | tar -xzvf -
+# create project dir from initializer with support boot admin, metrics, and git service registry
+curl http://localhost:8080/starter.tgz -d dependencies=core,bootadmin,metrics,gitsvc | tar -xzvf -
 
 echo "Building War and Jib Docker Image"
 chmod -R 777 ./*.sh

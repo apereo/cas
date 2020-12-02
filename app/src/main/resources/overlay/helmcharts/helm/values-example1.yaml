@@ -1,0 +1,34 @@
+---
+
+# This is example of a values file that can override and add to the default values.yaml
+# Deployers might have one or more values files of their own per deployment environment.
+
+# CAS Server container properties
+casServerContainer:
+
+  # override profiles to include gitsvc
+  profiles: 'standalone,gitsvc'
+
+  ## Override list of config files from casConfig to mount, include some from default values file
+  casConfigMounts:
+    - 'cas.properties'
+    - 'cas.yaml'
+    - 'application-gitsvc.yaml'
+  casConfig:
+    application-gitsvc.yaml: |-
+      ---
+      cas:
+        service-registry:
+          git:
+            repository-url: "{{- .Values.gitsvcRepoUrl -}}"
+            branches-to-clone: "{{- .Values.gitsvcBranchesToClone -}}"
+            active-branch: "{{- .Values.gitsvcActiveBranch -}}"
+            clone-directory: "{{- .Values.gitsvcCloneDirectory -}}"
+            root-directory: "{{- .Values.gitsvcRootDirectory -}}"
+      #eof
+
+gitsvcRepoUrl: 'https://github.com/apereo/cas.git' # need smaller repo with services
+gitsvcBranchesToClone: 'master'
+gitsvcActiveBranch: 'master'
+gitsvcCloneDirectory: '/tmp/cas/services'
+gitsvcRootDirectory: 'etc' # only supports one level

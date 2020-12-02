@@ -70,6 +70,10 @@ spec:
             - name: CAS_WAR
               value: {{ .Values.casServerContainer.warPath | quote }}
             {{- end }}
+            {{- if .Values.casServerContainer.profiles }}
+            - name: SPRING_PROFILES
+              value: {{ .Values.casServerContainer.profiles | quote }}
+            {{- end }}
             {{- if .Values.casServerContainer.jvm.maxHeapOpt }}
             - name: MAX_HEAP_OPT
               value: {{ .Values.casServerContainer.jvm.maxHeapOpt | quote }}

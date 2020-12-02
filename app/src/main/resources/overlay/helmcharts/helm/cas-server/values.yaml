@@ -83,6 +83,8 @@ casServerContainer:
   ##   - name: extras
   ##     emptyDir: {}
   ##
+  profiles: 'standalone'
+
   extraVolumeMounts:
     - name: truststore
       mountPath: /etc/cas/truststore
@@ -226,6 +228,8 @@ casServerContainer:
                 management-base-url: https://${HOSTNAME}.{{ include "cas-server.fullname" . }}.{{ .Release.Namespace }}.svc:8443${context.path}
       #eof
 
+
+
 # CAS Boot-Admin Server container properties
 bootAdminContainer:
   ## Roll on upgrade changes deployment when helm upgrade runs, forcing pod to restart
@@ -251,6 +255,8 @@ bootAdminContainer:
   args:
     - '--spring.config.additional-location=file:/etc/cas/config/' # directories should end in / and have protocol
     - '--logging.config=file:/etc/cas/config/log4j2.xml'
+
+  profiles: 'standalone'
 
   ## extraVolumes and extraVolumeMounts allows you to mount other volumes
   ## Examples:

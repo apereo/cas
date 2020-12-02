@@ -65,6 +65,10 @@ spec:
             - name: CAS_BOOTADMIN_WAR
               value: {{ .Values.bootAdminContainer.warPath | quote }}
             {{- end }}
+            {{- if .Values.bootAdminContainer.profiles }}
+            - name: SPRING_PROFILES
+              value: {{ .Values.bootAdminContainer.profiles | quote }}
+            {{- end }}
             {{- if .Values.bootAdminContainer.jvm.maxHeapOpt }}
             - name: MAX_HEAP_OPT
               value: {{ .Values.bootAdminContainer.jvm.maxHeapOpt | quote }}
