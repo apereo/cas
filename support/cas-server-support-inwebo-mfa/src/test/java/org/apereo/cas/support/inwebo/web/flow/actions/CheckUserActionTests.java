@@ -8,6 +8,7 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.MessageSource;
 
@@ -21,6 +22,7 @@ import static org.mockito.Mockito.when;
  * @author Jerome LELEU
  * @since 6.3.0
  */
+@Tag("WebflowMfaActions")
 public class CheckUserActionTests extends BaseActionTests {
 
     private static final String SITE_ALIAS = "7845zesf357dsq89s74za6z4e5df";

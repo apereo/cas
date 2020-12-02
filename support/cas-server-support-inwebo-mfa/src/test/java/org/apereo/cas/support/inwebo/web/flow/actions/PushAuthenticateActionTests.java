@@ -6,6 +6,7 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,6 +18,7 @@ import static org.mockito.Mockito.*;
  * @author Jerome LELEU
  * @since 6.3.0
  */
+@Tag("WebflowMfaActions")
 public class PushAuthenticateActionTests extends BaseActionTests {
 
     private PushAuthenticateAction action;
