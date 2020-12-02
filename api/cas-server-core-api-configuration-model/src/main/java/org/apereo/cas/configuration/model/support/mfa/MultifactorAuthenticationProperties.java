@@ -245,6 +245,12 @@ public class MultifactorAuthenticationProperties implements Serializable {
     @NestedConfigurationProperty
     private AccepttoMultifactorProperties acceptto = new AccepttoMultifactorProperties();
 
+    /**
+     * Activate and configure a multifactor authentication provider via Inwebo.
+     */
+    @NestedConfigurationProperty
+    private InweboMultifactorProperties inwebo = new InweboMultifactorProperties();
+
     @RequiresModule(name = "cas-server-core-authentication", automated = true)
     @Getter
     @Setter

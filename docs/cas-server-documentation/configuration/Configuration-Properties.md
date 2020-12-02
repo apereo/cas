@@ -3401,6 +3401,24 @@ To learn more about this topic, [please review this guide](../mfa/Acceptto-Authe
 
 Multifactor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.acceptto`.
 
+### Inwebo
+
+To learn more about this topic, [please review this guide](../mfa/Inwebo-Authentication.html).
+
+```properties
+# cas.authn.mfa.inwebo.service-id=
+# cas.authn.mfa.inwebo.client-certificate=
+# cas.authn.mfa.inwebo.certificate-passphrase=
+# cas.authn.mfa.inwebo.site-alias=
+# cas.authn.mfa.inwebo.site-description=my secured site
+#
+# cas.authn.mfa.inwebo.name=
+# cas.authn.mfa.inwebo.order=
+# cas.authn.mfa.inwebo.rank=0
+```
+
+Multifactor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.inwebo`.
+
 ## SAML Core
 
 Control core SAML functionality within CAS.

@@ -1,0 +1,19 @@
+description = "Apereo CAS Inwebo MFA Support"
+dependencies {
+    api project(":api:cas-server-core-api-webflow")
+
+    implementation libraries.springwsclient
+
+    implementation project(":api:cas-server-core-api-mfa")
+    implementation project(":core:cas-server-core-authentication-mfa-api")
+    implementation project(":core:cas-server-core-webflow-mfa-api")
+    implementation project(":core:cas-server-core-webflow-api")
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-web-api")
+    implementation project(":support:cas-server-support-trusted-mfa-core")
+
+    compileOnlyApi project(":support:cas-server-support-trusted-mfa")
+
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+}
