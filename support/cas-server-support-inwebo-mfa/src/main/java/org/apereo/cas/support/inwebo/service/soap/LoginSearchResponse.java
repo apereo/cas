@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.*;
  * </pre>
  *
  * @author Jerome LELEU
- * @since 6.3.0
+ * @since 6.4.0
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

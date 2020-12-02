@@ -14,7 +14,7 @@ import lombok.val;
  * The Inwebo authentication handler.
  *
  * @author Jerome LELEU
- * @since 6.3.0
+ * @since 6.4.0
  */
 @Slf4j
 public class InweboAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {

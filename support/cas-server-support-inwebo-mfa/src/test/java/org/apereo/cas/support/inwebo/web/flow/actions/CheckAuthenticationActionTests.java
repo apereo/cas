@@ -16,7 +16,7 @@ import static org.mockito.Mockito.*;
  * Tests {@link CheckAuthenticationAction}.
  *
  * @author Jerome LELEU
- * @since 6.3.0
+ * @since 6.4.0
  */
 @Tag("WebflowMfaActions")
 public class CheckAuthenticationActionTests extends BaseActionTests {

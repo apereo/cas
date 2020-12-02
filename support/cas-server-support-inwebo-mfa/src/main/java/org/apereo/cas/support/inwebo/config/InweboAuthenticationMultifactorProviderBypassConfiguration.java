@@ -25,7 +25,7 @@ import org.springframework.context.annotation.Configuration;
  * The Inwebo MFA provider bypass configuration.
  *
  * @author Jerome LELEU
- * @since 6.3.0
+ * @since 6.4.0
  */
 @Configuration("inweboMultifactorProviderBypassConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)

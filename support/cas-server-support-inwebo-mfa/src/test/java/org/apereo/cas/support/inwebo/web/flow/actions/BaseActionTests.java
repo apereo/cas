@@ -40,7 +40,7 @@ import static org.springframework.webflow.execution.RequestContextHolder.setRequ
  * This is the base class for action tests.
  *
  * @author Jerome LELEU
- * @since 6.3.0
+ * @since 6.4.0
  */
 public abstract class BaseActionTests {
 

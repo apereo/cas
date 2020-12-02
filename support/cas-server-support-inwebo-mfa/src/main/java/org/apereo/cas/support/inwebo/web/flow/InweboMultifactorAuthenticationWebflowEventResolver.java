@@ -13,7 +13,7 @@ import java.util.Set;
  * The webflow event resolver to terminate the MFA login process.
  *
  * @author Jerome LELEU
- * @since 6.3.0
+ * @since 6.4.0
  */
 public class InweboMultifactorAuthenticationWebflowEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
     public InweboMultifactorAuthenticationWebflowEventResolver(final CasWebflowEventResolutionConfigurationContext webflowEventResolutionConfigurationContext) {

@@ -51,7 +51,7 @@ import org.springframework.webflow.execution.Action;
  * The Inwebo MFA webflow configuration.
  *
  * @author Jerome LELEU
- * @since 6.3.0
+ * @since 6.4.0
  */
 @Configuration("inweboWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)

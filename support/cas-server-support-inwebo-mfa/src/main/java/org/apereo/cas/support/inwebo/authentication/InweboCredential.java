@@ -12,7 +12,7 @@ import lombok.ToString;
  * The Inwebo credentials.
  *
  * @author Jerome LELEU
- * @since 6.3.0
+ * @since 6.4.0
  */
 @ToString(callSuper = true)
 @Getter

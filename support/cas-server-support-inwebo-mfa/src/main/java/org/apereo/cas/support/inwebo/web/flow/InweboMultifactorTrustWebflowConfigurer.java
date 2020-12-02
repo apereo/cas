@@ -15,7 +15,7 @@ import java.util.Optional;
  * The Inwebo trust webflow configurer.
  *
  * @author Jerome LELEU
- * @since 6.3.0
+ * @since 6.4.0
  */
 public class InweboMultifactorTrustWebflowConfigurer extends AbstractMultifactorTrustedDeviceWebflowConfigurer {
 

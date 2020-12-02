@@ -12,7 +12,7 @@ import org.springframework.core.io.Resource;
  * The Inwebo MFA properties.
  *
  * @author Jerome LELEU
- * @since 6.3.0
+ * @since 6.4.0
  */
 @RequiresModule(name = "cas-server-support-inwebo-mfa")
 @Getter

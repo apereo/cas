@@ -12,7 +12,7 @@ import org.springframework.webflow.execution.RequestContext;
  * A web action to enable the enrollment.
  *
  * @author Jerome LELEU
- * @since 6.3.0
+ * @since 6.4.0
  */
 @RequiredArgsConstructor
 public class MustEnrollAction extends AbstractAction implements WebflowConstants {

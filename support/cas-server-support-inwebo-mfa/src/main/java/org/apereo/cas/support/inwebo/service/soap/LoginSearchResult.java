@@ -38,7 +38,7 @@ import java.util.List;
  * </pre>
  *
  * @author Jerome LELEU
- * @since 6.3.0
+ * @since 6.4.0
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LoginSearchResult", propOrder = {

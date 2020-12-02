@@ -7,7 +7,7 @@ import lombok.Setter;
  * The abstract JSON response.
  *
  * @author Jerome LELEU
- * @since 6.3.0
+ * @since 6.4.0
  */
 @Getter
 @Setter

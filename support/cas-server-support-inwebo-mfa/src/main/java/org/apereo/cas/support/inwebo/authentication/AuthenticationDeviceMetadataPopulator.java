@@ -13,7 +13,7 @@ import lombok.val;
  * The Inwebo metadata populator which adds the authentication device as an authentication attribute.
  *
  * @author Jerome LELEU
- * @since 6.3.0
+ * @since 6.4.0
  */
 @ToString(callSuper = true)
 @RequiredArgsConstructor

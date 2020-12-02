@@ -33,7 +33,7 @@ import java.util.Arrays;
  * The Inwebo MFA authentication configuration.
  *
  * @author Jerome LELEU
- * @since 6.3.0
+ * @since 6.4.0
  */
 @Configuration("inweboAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
