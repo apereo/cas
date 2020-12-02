@@ -1,0 +1,8 @@
+{
+  "@class" : "java.util.LinkedHashMap",
+  "json" : {
+    "@class" : "org.apereo.cas.adaptors.generic.CasUserAccount",
+    "password" : "json",
+    "status" : "OK"
+  }
+}

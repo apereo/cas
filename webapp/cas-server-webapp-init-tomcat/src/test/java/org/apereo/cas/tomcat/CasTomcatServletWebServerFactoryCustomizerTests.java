@@ -1,6 +1,8 @@
 package org.apereo.cas.tomcat;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheSslHostConfigCertificateProperties;
+import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheSslHostConfigProperties;
 
 import lombok.val;
 import org.apache.catalina.connector.Connector;
@@ -19,6 +21,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -113,13 +116,28 @@ public class CasTomcatServletWebServerFactoryCustomizerTests {
     @Test
     public void verifyAprSettings() throws Exception {
         val casProperties = new CasConfigurationProperties();
+
+        val hostConfig = new CasEmbeddedApacheSslHostConfigProperties()
+            .setCaCertificateFile(File.createTempFile("cert1", ".crt").getCanonicalPath())
+            .setHostName("hostfile")
+            .setCertificateVerification("optional")
+            .setCertificateVerificationDepth(5)
+            .setCertificates(List.of(
+                new CasEmbeddedApacheSslHostConfigCertificateProperties()
+                    .setCertificateChainFile(File.createTempFile("cert1", ".crt").getCanonicalPath())
+                    .setCertificateFile(File.createTempFile("cert1", ".crt").getCanonicalPath())
+                    .setCertificateKeyFile(File.createTempFile("cert1", ".crt").getCanonicalPath())
+                    .setCertificateKeyPassword("changeit")))
+            .setEnabled(true);
+
         casProperties.getServer().getTomcat().getApr()
             .setEnabled(true)
             .setSslCaCertificateFile(File.createTempFile("cert1", ".crt"))
             .setSslCertificateFile(File.createTempFile("cert2", ".crt"))
             .setSslCertificateKeyFile(File.createTempFile("cert3", ".crt"))
             .setSslCertificateChainFile(File.createTempFile("cert4", ".crt"))
-            .setSslCaRevocationFile(File.createTempFile("cert5", ".crt"));
+            .setSslCaRevocationFile(File.createTempFile("cert5", ".crt"))
+            .setSslHostConfig(hostConfig);
 
         serverProperties.setPort(1234);
         val factory = new CasTomcatServletWebServerFactory(casProperties, serverProperties);

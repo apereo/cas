@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.File;
 import java.io.Serializable;
@@ -88,4 +89,10 @@ public class CasEmbeddedApacheTomcatApachePortableRuntimeProperties implements S
      * SSL certificate file.
      */
     private File sslCertificateFile;
+
+    /**
+     * Configure the SSL host config for this connector.
+     */
+    @NestedConfigurationProperty
+    private CasEmbeddedApacheSslHostConfigProperties sslHostConfig = new CasEmbeddedApacheSslHostConfigProperties();
 }

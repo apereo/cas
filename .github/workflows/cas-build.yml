@@ -795,6 +795,7 @@ jobs:
           - passwordless-mfa-login
           - passwordless-login
           - mfa-provider-unavailable
+          - source-selection-login
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK

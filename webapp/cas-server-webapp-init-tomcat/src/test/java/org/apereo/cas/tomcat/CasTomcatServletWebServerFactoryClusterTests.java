@@ -52,7 +52,6 @@ public class CasTomcatServletWebServerFactoryClusterTests {
     @Qualifier("casTomcatEmbeddedServletContainerCustomizer")
     private ServletWebServerFactoryCustomizer casTomcatEmbeddedServletContainerCustomizer;
 
-
     @Test
     public void verifyOperation() {
         casTomcatEmbeddedServletContainerCustomizer.customize(casServletWebServerFactory);

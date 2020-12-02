@@ -15,8 +15,14 @@
                     field.foundation.adapter.registerInputInteractionHandler('keypress', cas.checkCaps);
                 }
             }
-
-            //MDCTextFieldIconAdapter
+            let selector = document.querySelector('.mdc-select.authn-source');
+            if (selector != null) {
+                const select = new material.select.MDCSelect(selector);
+                select.listen('MDCSelect:change', () => {
+                    $('#source').val(select.value);
+                });
+                $('#source').val(select.value);
+            }
         },
         checkCaps: function (ev) {
             var s = String.fromCharCode(ev.which);
