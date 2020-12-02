@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.support;
 import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
 import org.apereo.cas.configuration.config.CasCoreBootstrapStandaloneConfiguration;
 import org.apereo.cas.configuration.config.CasCoreBootstrapStandaloneLocatorConfiguration;
+import org.apereo.cas.configuration.loader.ConfigurationPropertiesLoaderFactory;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -14,6 +15,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
+import org.yaml.snakeyaml.error.YAMLException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -41,6 +43,9 @@ public class DefaultCasConfigurationPropertiesSourceLocatorTests {
     @Autowired
     @Qualifier("casConfigurationPropertiesSourceLocator")
     private CasConfigurationPropertiesSourceLocator casConfigurationPropertiesSourceLocator;
+
+    @Autowired
+    private ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory;
 
     @Autowired
     private Environment environment;
@@ -78,5 +83,12 @@ public class DefaultCasConfigurationPropertiesSourceLocatorTests {
         val composite = (CompositePropertySource) source;
         assertEquals("Static", composite.getProperty("cas.authn.accept.name"));
         assertEquals("test::dev", composite.getProperty("cas.authn.accept.users"));
+    }
+
+    @Test
+    public void verifyYamlLoaderThrows() {
+        val loader = configurationPropertiesLoaderFactory.getLoader(
+                resourceLoader.getResource("classpath:/badyaml.yml"), "test");
+        assertThrows(YAMLException.class, () ->loader.load());
     }
 }
