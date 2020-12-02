@@ -482,7 +482,7 @@ The following options related to Git integration support in CAS when it attempts
 # ${configurationKey}.git.sign-commits=false
 # ${configurationKey}.git.username=
 # ${configurationKey}.git.password=
-# ${configurationKey}.git.clone-directory=file:/tmp/cas-service-registry
+# ${configurationKey}.git.clone-directory=/tmp/cas-service-registry
 # ${configurationKey}.git.push-changes=false
 # ${configurationKey}.git.private-key-passphrase=
 # ${configurationKey}.git.private-key-path=
