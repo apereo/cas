@@ -115,7 +115,8 @@ public class LoginSearchResult {
 
     /**
      * Obtient la valeur de la propriété n.
-     * 
+     *
+     * @return the n property
      */
     public int getN() {
         return n;
@@ -123,7 +124,8 @@ public class LoginSearchResult {
 
     /**
      * Définit la valeur de la propriété n.
-     * 
+     *
+     * @param value the n property
      */
     public void setN(int value) {
         this.n = value;
@@ -149,7 +151,7 @@ public class LoginSearchResult {
      * Objects of the following type(s) are allowed in the list
      * {@link Long }
      * 
-     * 
+     * @return the ids
      */
     public List<Long> getId() {
         if (id == null) {
@@ -178,7 +180,7 @@ public class LoginSearchResult {
      * Objects of the following type(s) are allowed in the list
      * {@link String }
      * 
-     * 
+     * @return the logins
      */
     public List<String> getLogin() {
         if (login == null) {
@@ -207,7 +209,7 @@ public class LoginSearchResult {
      * Objects of the following type(s) are allowed in the list
      * {@link String }
      * 
-     * 
+     * @return the codes
      */
     public List<String> getCode() {
         if (code == null) {
@@ -236,7 +238,7 @@ public class LoginSearchResult {
      * Objects of the following type(s) are allowed in the list
      * {@link Long }
      * 
-     * 
+     * @return the statuses
      */
     public List<Long> getStatus() {
         if (status == null) {
@@ -265,7 +267,7 @@ public class LoginSearchResult {
      * Objects of the following type(s) are allowed in the list
      * {@link Long }
      * 
-     * 
+     * @return the roles
      */
     public List<Long> getRole() {
         if (role == null) {
@@ -294,7 +296,7 @@ public class LoginSearchResult {
      * Objects of the following type(s) are allowed in the list
      * {@link String }
      * 
-     * 
+     * @return the first names
      */
     public List<String> getFirstname() {
         if (firstname == null) {
@@ -323,7 +325,7 @@ public class LoginSearchResult {
      * Objects of the following type(s) are allowed in the list
      * {@link String }
      * 
-     * 
+     * @return the names
      */
     public List<String> getName() {
         if (name == null) {
@@ -352,7 +354,7 @@ public class LoginSearchResult {
      * Objects of the following type(s) are allowed in the list
      * {@link String }
      * 
-     * 
+     * @return the emails
      */
     public List<String> getMail() {
         if (mail == null) {
@@ -381,7 +383,7 @@ public class LoginSearchResult {
      * Objects of the following type(s) are allowed in the list
      * {@link String }
      * 
-     * 
+     * @return the phones
      */
     public List<String> getPhone() {
         if (phone == null) {
@@ -410,7 +412,7 @@ public class LoginSearchResult {
      * Objects of the following type(s) are allowed in the list
      * {@link String }
      * 
-     * 
+     * @return the extra fields
      */
     public List<String> getExtrafields() {
         if (extrafields == null) {
@@ -439,7 +441,7 @@ public class LoginSearchResult {
      * Objects of the following type(s) are allowed in the list
      * {@link Long }
      * 
-     * 
+     * @return the created by properties
      */
     public List<Long> getCreatedby() {
         if (createdby == null) {
@@ -468,7 +470,7 @@ public class LoginSearchResult {
      * Objects of the following type(s) are allowed in the list
      * {@link Long }
      * 
-     * 
+     * @return the activation statuses
      */
     public List<Long> getActivationStatus() {
         if (activationStatus == null) {
@@ -479,7 +481,8 @@ public class LoginSearchResult {
 
     /**
      * Obtient la valeur de la propriété count.
-     * 
+     *
+     * @return the count
      */
     public long getCount() {
         return count;
@@ -487,7 +490,8 @@ public class LoginSearchResult {
 
     /**
      * Définit la valeur de la propriété count.
-     * 
+     *
+     * @param value the count
      */
     public void setCount(long value) {
         this.count = value;

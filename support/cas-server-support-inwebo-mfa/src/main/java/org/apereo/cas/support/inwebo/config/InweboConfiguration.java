@@ -9,6 +9,7 @@ import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
@@ -42,6 +43,7 @@ public class InweboConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "consoleAdmin")
+    @RefreshScope
     public ConsoleAdmin consoleAdmin() {
         val client = new ConsoleAdmin();
         client.setDefaultUri("https://api.myinwebo.com/v2/services/ConsoleAdmin");
@@ -64,6 +66,7 @@ public class InweboConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "inweboService")
+    @RefreshScope
     public InweboService inweboService() {
         return new InweboService(casProperties, consoleAdmin());
     }

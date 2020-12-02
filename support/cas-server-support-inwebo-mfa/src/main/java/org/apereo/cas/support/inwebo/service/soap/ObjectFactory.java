@@ -22,7 +22,8 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LoginSearch }
-     * 
+     *
+     * @return the LoginSearch
      */
     public LoginSearch createLoginSearch() {
         return new LoginSearch();
@@ -30,7 +31,8 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LoginSearchResponse }
-     * 
+     *
+     * @return the LoginSearchResponse
      */
     public LoginSearchResponse createLoginSearchResponse() {
         return new LoginSearchResponse();
@@ -38,7 +40,8 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LoginSearchResult }
-     * 
+     *
+     * @return the LoginSearchResult
      */
     public LoginSearchResult createLoginSearchResult() {
         return new LoginSearchResult();

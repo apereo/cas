@@ -55,7 +55,8 @@ public class LoginSearch {
 
     /**
      * Obtient la valeur de la propriété userid.
-     * 
+     *
+     * @return the user id
      */
     public long getUserid() {
         return userid;
@@ -63,7 +64,8 @@ public class LoginSearch {
 
     /**
      * Définit la valeur de la propriété userid.
-     * 
+     *
+     * @param value the user id
      */
     public void setUserid(long value) {
         this.userid = value;
@@ -71,7 +73,8 @@ public class LoginSearch {
 
     /**
      * Obtient la valeur de la propriété serviceid.
-     * 
+     *
+     * @return the service id
      */
     public long getServiceid() {
         return serviceid;
@@ -79,7 +82,8 @@ public class LoginSearch {
 
     /**
      * Définit la valeur de la propriété serviceid.
-     * 
+     *
+     * @param value the service id
      */
     public void setServiceid(long value) {
         this.serviceid = value;
@@ -111,7 +115,8 @@ public class LoginSearch {
 
     /**
      * Obtient la valeur de la propriété exactmatch.
-     * 
+     *
+     * @return whether we want an exact match
      */
     public long getExactmatch() {
         return exactmatch;
@@ -119,7 +124,8 @@ public class LoginSearch {
 
     /**
      * Définit la valeur de la propriété exactmatch.
-     * 
+     *
+     * @param value the exact match
      */
     public void setExactmatch(long value) {
         this.exactmatch = value;
@@ -127,7 +133,8 @@ public class LoginSearch {
 
     /**
      * Obtient la valeur de la propriété offset.
-     * 
+     *
+     * @return the offset
      */
     public long getOffset() {
         return offset;
@@ -135,7 +142,8 @@ public class LoginSearch {
 
     /**
      * Définit la valeur de la propriété offset.
-     * 
+     *
+     * @param value the offset
      */
     public void setOffset(long value) {
         this.offset = value;
@@ -143,7 +151,8 @@ public class LoginSearch {
 
     /**
      * Obtient la valeur de la propriété nmax.
-     * 
+     *
+     * @return the number max of results
      */
     public long getNmax() {
         return nmax;
@@ -151,7 +160,8 @@ public class LoginSearch {
 
     /**
      * Définit la valeur de la propriété nmax.
-     * 
+     *
+     * @param value the max
      */
     public void setNmax(long value) {
         this.nmax = value;
@@ -159,7 +169,8 @@ public class LoginSearch {
 
     /**
      * Obtient la valeur de la propriété sort.
-     * 
+     *
+     * @return the sort
      */
     public long getSort() {
         return sort;
@@ -167,7 +178,8 @@ public class LoginSearch {
 
     /**
      * Définit la valeur de la propriété sort.
-     * 
+     *
+     * @param value the sort
      */
     public void setSort(long value) {
         this.sort = value;

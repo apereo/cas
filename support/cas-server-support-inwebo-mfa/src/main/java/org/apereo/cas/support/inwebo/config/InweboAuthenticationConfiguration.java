@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -55,6 +56,7 @@ public class InweboAuthenticationConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "inweboMultifactorAuthenticationProvider")
+    @RefreshScope
     public MultifactorAuthenticationProvider inweboMultifactorAuthenticationProvider() {
         val inwebo = casProperties.getAuthn().getMfa().getInwebo();
         val p = new InweboMultifactorAuthenticationProvider();
@@ -74,12 +76,14 @@ public class InweboAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "inweboAuthenticationHandler")
     @Bean
+    @RefreshScope
     public AuthenticationHandler inweboAuthenticationHandler() {
         return new InweboAuthenticationHandler(servicesManager.getObject(), inweboPrincipalFactory(), casProperties.getAuthn().getMfa().getInwebo());
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "inweboAuthenticationMetaDataPopulator")
+    @RefreshScope
     public AuthenticationMetaDataPopulator inweboAuthenticationMetaDataPopulator() {
         return new AuthenticationContextAttributeMetaDataPopulator(
                 casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),

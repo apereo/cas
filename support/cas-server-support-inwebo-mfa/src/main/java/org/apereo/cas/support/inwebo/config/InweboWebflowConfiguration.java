@@ -35,6 +35,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -126,6 +127,7 @@ public class InweboWebflowConfiguration {
     @ConditionalOnMissingBean(name = "inweboMultifactorWebflowConfigurer")
     @Bean
     @DependsOn("defaultWebflowConfigurer")
+    @RefreshScope
     public CasWebflowConfigurer inweboMultifactorWebflowConfigurer() {
         val cfg = new InweboMultifactorWebflowConfigurer(flowBuilderServices.getObject(),
                 loginFlowDefinitionRegistry.getObject(),
@@ -145,6 +147,7 @@ public class InweboWebflowConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "inweboMultifactorAuthenticationWebflowEventResolver")
+    @RefreshScope
     public CasWebflowEventResolver inweboMultifactorAuthenticationWebflowEventResolver() {
         val context = CasWebflowEventResolutionConfigurationContext.builder()
                 .authenticationSystemSupport(authenticationSystemSupport.getObject())
@@ -165,12 +168,14 @@ public class InweboWebflowConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "pushAuthenticateAction")
+    @RefreshScope
     public Action pushAuthenticateAction() {
         return new PushAuthenticateAction(inweboService.getObject());
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "checkUserAction")
+    @RefreshScope
     public Action checkUserAction() {
         return new CheckUserAction(messageSource.getObject(), inweboService.getObject(), casProperties);
     }
@@ -183,6 +188,7 @@ public class InweboWebflowConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "checkAuthenticationAction")
+    @RefreshScope
     public Action checkAuthenticationAction() {
         return new CheckAuthenticationAction(messageSource.getObject(), inweboService.getObject(), inweboMultifactorAuthenticationWebflowEventResolver());
     }
@@ -204,6 +210,7 @@ public class InweboWebflowConfiguration {
         @ConditionalOnMissingBean(name = "inweboMultifactorTrustWebflowConfigurer")
         @Bean
         @DependsOn({"defaultWebflowConfigurer", "inweboMultifactorWebflowConfigurer"})
+        @RefreshScope
         public CasWebflowConfigurer inweboMultifactorTrustWebflowConfigurer() {
             val cfg = new InweboMultifactorTrustWebflowConfigurer(flowBuilderServices.getObject(),
                     loginFlowDefinitionRegistry.getObject(),
