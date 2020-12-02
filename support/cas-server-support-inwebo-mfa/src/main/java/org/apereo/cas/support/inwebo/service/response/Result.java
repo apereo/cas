@@ -4,7 +4,7 @@ package org.apereo.cas.support.inwebo.service.response;
  * The JSON response result.
  *
  * @author Jerome LELEU
- * @since 6.3.0
+ * @since 6.4.0
  */
 public enum Result {
     /**

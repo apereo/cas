@@ -12,7 +12,7 @@ import java.security.KeyStore;
  * An SSL utility class to use a client certificate.
  *
  * @author Jerome LELEU
- * @since 6.3.0
+ * @since 6.4.0
  */
 public class SSLUtil {
 

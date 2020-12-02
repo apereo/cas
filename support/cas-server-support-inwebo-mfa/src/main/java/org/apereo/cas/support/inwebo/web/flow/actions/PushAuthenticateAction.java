@@ -15,7 +15,7 @@ import org.springframework.webflow.execution.RequestContext;
  * A web action to request a push notification (mobile/desktop).
  *
  * @author Jerome LELEU
- * @since 6.3.0
+ * @since 6.4.0
  */
 @RequiredArgsConstructor
 @Slf4j

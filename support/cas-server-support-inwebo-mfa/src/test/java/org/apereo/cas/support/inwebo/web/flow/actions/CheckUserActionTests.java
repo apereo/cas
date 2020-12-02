@@ -20,7 +20,7 @@ import static org.mockito.Mockito.when;
  * Tests {@link CheckUserAction}.
  *
  * @author Jerome LELEU
- * @since 6.3.0
+ * @since 6.4.0
  */
 @Tag("WebflowMfaActions")
 public class CheckUserActionTests extends BaseActionTests {

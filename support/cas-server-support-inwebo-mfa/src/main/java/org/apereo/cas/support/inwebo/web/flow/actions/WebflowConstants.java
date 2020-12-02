@@ -4,7 +4,7 @@ package org.apereo.cas.support.inwebo.web.flow.actions;
  * The webflow constants.
  *
  * @author Jerome LELEU
- * @since 6.3.0
+ * @since 6.4.0
  */
 public interface WebflowConstants {
     /**

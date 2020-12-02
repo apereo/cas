@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlRegistry;
  * The generated SOAP class.
  *
  * @author Jerome LELEU
- * @since 6.3.0
+ * @since 6.4.0
  */
 @XmlRegistry
 public class ObjectFactory {

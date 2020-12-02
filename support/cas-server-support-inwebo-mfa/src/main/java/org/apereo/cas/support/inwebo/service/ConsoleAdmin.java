@@ -11,7 +11,7 @@ import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
  * The Inwebo SOAP client for user management.
  *
  * @author Jerome LELEU
- * @since 6.3.0
+ * @since 6.4.0
  */
 public class ConsoleAdmin extends WebServiceGatewaySupport {
 

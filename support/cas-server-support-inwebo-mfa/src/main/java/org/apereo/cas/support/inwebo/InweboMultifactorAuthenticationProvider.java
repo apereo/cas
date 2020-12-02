@@ -10,7 +10,7 @@ import org.apache.commons.lang3.StringUtils;
  * The Inwebo MFA provider definition.
  *
  * @author Jerome LELEU
- * @since 6.3.0
+ * @since 6.4.0
  */
 @NoArgsConstructor
 public class InweboMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider {

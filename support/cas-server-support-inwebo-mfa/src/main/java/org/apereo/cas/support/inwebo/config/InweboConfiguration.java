@@ -23,7 +23,7 @@ import java.security.KeyStore;
  * The Inwebo services configuration.
  *
  * @author Jerome LELEU
- * @since 6.3.0
+ * @since 6.4.0
  */
 @Configuration("inweboConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
