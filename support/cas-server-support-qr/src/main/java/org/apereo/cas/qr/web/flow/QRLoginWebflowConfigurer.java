@@ -39,7 +39,7 @@ public class QRLoginWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
             //val validateAction = createActionState(flow, STATE_ID_VALIDATE_QR_TOKEN, "qrAuthenticationValidateWebSocketChannelAction");
             //createTransitionForState(validateAction, CasWebflowConstants.TRANSITION_ID_FINALIZE, CasWebflowConstants.STATE_ID_REAL_SUBMIT);
-            //state.getEntryActionList().add(createEvaluateAction("qrLoginGenerateCodeAction"));
+            state.getEntryActionList().add(createEvaluateAction("qrLoginGenerateCodeAction"));
         }
 	LOGGER.debug("~!~ exiting doInitialize()");
     }
