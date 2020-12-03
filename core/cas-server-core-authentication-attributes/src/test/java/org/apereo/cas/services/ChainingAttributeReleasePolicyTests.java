@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.test.annotation.DirtiesContext;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,26 +25,13 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     CasCoreUtilConfiguration.class
 })
+@DirtiesContext
 public class ChainingAttributeReleasePolicyTests {
     private ChainingAttributeReleasePolicy chain;
 
     @BeforeEach
     public void initialize() {
         configureChainingReleasePolicy(0, 0);
-    }
-
-    private void configureChainingReleasePolicy(final int order1, final int order2) {
-        chain = new ChainingAttributeReleasePolicy();
-
-        val p1 = new ReturnMappedAttributeReleasePolicy();
-        p1.setOrder(order1);
-        p1.setAllowedAttributes(CollectionUtils.wrap("givenName", "groovy {return ['CasUserPolicy1']}"));
-
-        val p2 = new ReturnMappedAttributeReleasePolicy();
-        p2.setOrder(order2);
-        p2.setAllowedAttributes(CollectionUtils.wrap("givenName", "groovy {return ['CasUserPolicy2']}"));
-
-        chain.addPolicies(p1, p2);
     }
 
     @Test
@@ -105,5 +93,19 @@ public class ChainingAttributeReleasePolicyTests {
         assertTrue(results.containsKey("givenName"));
         val values = CollectionUtils.toCollection(results.get("givenName"));
         assertEquals(2, values.size());
+    }
+
+    private void configureChainingReleasePolicy(final int order1, final int order2) {
+        chain = new ChainingAttributeReleasePolicy();
+
+        val p1 = new ReturnMappedAttributeReleasePolicy();
+        p1.setOrder(order1);
+        p1.setAllowedAttributes(CollectionUtils.wrap("givenName", "groovy {return ['CasUserPolicy1']}"));
+
+        val p2 = new ReturnMappedAttributeReleasePolicy();
+        p2.setOrder(order2);
+        p2.setAllowedAttributes(CollectionUtils.wrap("givenName", "groovy {return ['CasUserPolicy2']}"));
+
+        chain.addPolicies(p1, p2);
     }
 }
