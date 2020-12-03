@@ -54,7 +54,11 @@ echo "Describing cas-server pod"
 kubectl describe pod cas-server-0
 echo "Describing cas bootadmin pod"
 kubectl describe pod -l cas.server-type=bootadmin
-sleep 60
+sleep 75
+
+echo "Pod Status:"
+kubectl get pods
+
 echo "CAS Server Logs..."
 kubectl logs cas-server-0 | tee cas.out
 echo "CAS Boot Admin Server Logs..."
@@ -64,12 +68,10 @@ grep "Started CasWebApplication" cas.out
 echo "Checking bootadmin server log for startup message"
 grep "Started CasSpringBootAdminServerWebApplication" cas-bootadmin.out
 
+echo "Running chart built-in test"
+helm test cas-server
+
 echo "Checking login page"
 curl -k -H "Host: cas.example.org" https://127.0.0.1/cas/login > login.txt
 grep "password" login.txt
 
-echo "Running chart built-in test"
-helm test cas-server
-
-echo "Pod Status:"
-kubectl get pods
