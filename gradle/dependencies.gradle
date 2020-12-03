@@ -3407,28 +3407,12 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "slf4j-log4j12")
 
-                }
-        ],
-        springwsclient          : [
-                dependencies.create("org.springframework.boot:spring-boot-starter-web-services:$springBootVersion") {
-                    exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-dom")
-                    exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-common")
-                    exclude(group: "org.jvnet.mimepull", module: "mimepull")
-                    exclude(group: "ch.qos.logback", module: "logback-core")
-                    exclude(group: "ch.qos.logback", module: "logback-classic")
-                    exclude(group: "log4j", module: "log4j")
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "org.slf4j", module: "slf4j-log4j12")
-                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
-                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-validation")
-                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
-                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
-                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
-
                 },
                 dependencies.create("org.springframework.ws:spring-ws-support:$springWsVersion") {
+
                 },
                 dependencies.create("com.sun.xml.messaging.saaj:saaj-impl:$saajImplVersion") {
+
                 },
         ],
         wss4j                   : [

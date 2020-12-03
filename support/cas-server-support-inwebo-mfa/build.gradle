@@ -2,7 +2,7 @@ description = "Apereo CAS Inwebo MFA Support"
 dependencies {
     api project(":api:cas-server-core-api-webflow")
 
-    implementation libraries.springwsclient
+    implementation libraries.springws
 
     implementation project(":api:cas-server-core-api-mfa")
     implementation project(":core:cas-server-core-authentication-mfa-api")

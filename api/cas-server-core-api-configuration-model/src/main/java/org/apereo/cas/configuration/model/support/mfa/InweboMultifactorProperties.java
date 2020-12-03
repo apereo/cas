@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
+import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -37,7 +38,7 @@ public class InweboMultifactorProperties extends BaseMultifactorProviderProperti
      * The location of the client certificate (PKCS12 format).
      */
     @RequiredProperty
-    private transient Resource clientCertificate;
+    private transient SpringResourceProperties clientCertificate;
 
     /**
      * The passphrase of the client certificate.

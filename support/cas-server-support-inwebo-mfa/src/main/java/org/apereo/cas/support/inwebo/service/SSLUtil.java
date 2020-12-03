@@ -20,7 +20,7 @@ public class SSLUtil {
         val keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
         val keyStore = KeyStore.getInstance("PKCS12");
 
-        try (InputStream keyInput = properties.getClientCertificate().getInputStream()) {
+        try (InputStream keyInput = properties.getClientCertificate().getLocation().getInputStream()) {
             keyStore.load(keyInput, properties.getCertificatePassphrase().toCharArray());
 
             keyInput.close();
