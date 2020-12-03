@@ -49,7 +49,6 @@ public class HazelcastTicketRegistryConfiguration {
     private ObjectProvider<TicketCatalog> ticketCatalog;
 
     @Bean
-    @RefreshScope
     public TicketRegistry ticketRegistry() {
         val hz = casProperties.getTicket().getRegistry().getHazelcast();
         val hazelcastInstance = casTicketRegistryHazelcastInstance();
