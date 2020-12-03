@@ -5,7 +5,7 @@ import io.spring.initializr.generator.project.contributor.MultipleResourcesProje
 public class CasOverlayHelmContributor extends MultipleResourcesProjectContributor {
 
     public CasOverlayHelmContributor() {
-        super("classpath:overlay/helmcharts/", filename -> true);
+        super("classpath:overlay/helmcharts/", filename -> filename.endsWith(".sh"));
     }
 
 }

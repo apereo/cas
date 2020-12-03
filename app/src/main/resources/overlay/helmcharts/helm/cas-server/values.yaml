@@ -31,15 +31,6 @@ updateStrategy: RollingUpdate
 # Parallel: Creates pods in parallel to match the desired scale without waiting, and on scale down will delete all pods at once.
 podManagementPolicy: OrderedReady
 
-serviceAccount:
-  # Specifies whether a service account should be created
-  create: true
-  # Annotations to add to the service account
-  annotations: {}
-  # The name of the service account to use.
-  # If not set and create is true, a name is generated using the fullname template
-  name: ""
-
 # Map folder for logs directory from host or pvc, or leave both blank to use emptyDir volume
 # In docker for windows hostPath could be '/host_mnt/c/opt/cas/logs'
 # Windows: Give full access local Users group to the  to ~/.docker folder if getting permission denied)
@@ -473,3 +464,17 @@ bootAdminPassword: 'ChangeThisSecretPassword'
 # spring boot admin uses these credentials to hit actuators in cas (and it could be used externally)
 casAdminUser: 'casuser'
 casAdminPassword: 'Mellon'
+
+# rbac may or may not be necessary, but it can allow for certain types of discovery (e.g. tomcat cloud session replication)
+rbac:
+  # specified whether RBAC resources should be created
+  create: true
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
