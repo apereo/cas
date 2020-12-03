@@ -5,6 +5,10 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.qr.web.flow.QRLoginWebflowConfigurer;
+import org.apereo.cas.qr.web.flow.QRLoginGenerateCodeAction;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -16,11 +20,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.SetFactoryBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import org.springframework.webflow.execution.Action;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -32,7 +41,7 @@ import java.util.Set;
  * @author Ben Winston
  * @since 6.2.0
  */
-@Configuration("qrConfiguration")
+@Configuration("QrConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class QrConfiguration {
@@ -44,6 +53,14 @@ public class QrConfiguration {
 	private ConfigurableApplicationContext applicationContext;
 
 	@Autowired
+	@Qualifier("loginFlowRegistry")
+	private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
+
+	@Autowired
+	@Qualifier("flowBuilderServices")
+	private ObjectProvider<FlowBuilderServices> flowBuilderServices;
+
+	@Autowired
 	@Qualifier("defaultPrincipalResolver")
 	private ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
 
@@ -51,50 +68,26 @@ public class QrConfiguration {
 	@Qualifier("servicesManager")
 	private ObjectProvider<ServicesManager> servicesManager;
 
+	@ConditionalOnMissingBean(name = "qrLoginWebflowConfigurer")
 	@Bean
-	public SetFactoryBean qrAuthenticationHandlerSetFactoryBean() {
-        val bean = new SetFactoryBean() {
-            @Override
-            protected void destroyInstance(final Set set) {
-                set.forEach(Unchecked.consumer(handler ->
-                    ((DisposableBean) handler).destroy()
-                ));
-            }
-        	};
-        	bean.setSourceSet(new HashSet<>());
-        	return bean;
-    	}
+	@DependsOn("defaultWebflowConfigurer")
+	public CasWebflowConfigurer qrLoginWebflowConfigurer() {
+		return new QRLoginWebflowConfigurer(flowBuilderServices.getObject(),
+			loginFlowDefinitionRegistry.getObject(),
+			applicationContext, casProperties);
+	}
 
-	@ConditionalOnMissingBean(name = "qrAuthenticationEventExecutionPlanConfigurer")
 	@Bean
-	@Autowired
+	@ConditionalOnMissingBean(name = "qrLoginGenerateCodeAction")
 	@RefreshScope
-	public AuthenticationEventExecutionPlanConfigurer qrAuthenticationEventExecutionPlanConfigurer(
-            @Qualifier("qrAuthenticationHandlerSetFactoryBean")
-            final SetFactoryBean qrAuthenticationHandlerSetFactoryBean) {
+	public Action qrLoginGenerateCodeAction() {
+		return new QRLoginGenerateCodeAction();
+	}
 
-		LOGGER.warn("~!~!~ in the Executor");
-
-		return null;
-		/*
-		return plan -> ldapAuthenticationHandlers(ldapAuthenticationHandlerSetFactoryBean).forEach(handler -> {
-            LOGGER.info("Registering LDAP authentication for [{}]", handler.getName());
-            plan.registerAuthenticationHandlerWithPrincipalResolver(handler, defaultPrincipalResolver.getObject());
-        });
-	*/
-    }
-
-    @Bean
-    @SneakyThrows
-    @RefreshScope
-    public Collection<AuthenticationHandler> qrAuthenticationHandlers(
-            @Qualifier("qrAuthenticationHandlerSetFactoryBean")
-            final SetFactoryBean qrAuthenticationHandlerSetFactoryBean) {
-        val handlers = new HashSet<AuthenticationHandler>();
-
-	LOGGER.warn("~?~?~ in the Authentication Handlers bit");
-
-	return handlers;
-    }
+	@Bean
+	@ConditionalOnMissingBean(name = "qrLoginCasWebflowExecutionPlanConfigurer")
+	public CasWebflowExecutionPlanConfigurer qrLoginCasWebflowExecutionPlanConfigurer() {
+		return plan -> plan.registerWebflowConfigurer(qrLoginWebflowConfigurer());
+	}
 
 }

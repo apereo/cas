@@ -40,6 +40,12 @@
                 </div>
             </section>
 
+            <section id="qr" class="login-section login-qr d-xs-none d-md-block" th:if="${qrLoginEnabled}">
+                <div th:replace="fragments/qrLogin :: qrLogin">
+                    <a href="fragments/qrLogin.html">qrLogin</a>
+                </div>
+            </section>
+
         </div>
     </div>
 </body>
