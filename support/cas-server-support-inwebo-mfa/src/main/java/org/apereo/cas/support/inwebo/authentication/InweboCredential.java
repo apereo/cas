@@ -21,10 +21,17 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 public class InweboCredential extends BasicIdentifiableCredential {
 
+    private String otp;
+
     private String deviceName;
 
-    public InweboCredential(final String login, final String deviceName) {
+    private boolean alreadyAuthenticated;
+
+    public InweboCredential(final String login) {
         super(login);
-        this.deviceName = deviceName;
+    }
+
+    public String getLogin() {
+        return getId();
     }
 }

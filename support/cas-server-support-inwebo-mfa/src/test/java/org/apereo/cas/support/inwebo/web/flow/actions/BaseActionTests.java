@@ -22,14 +22,20 @@ import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurat
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
+import org.springframework.binding.message.DefaultMessageContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.support.AbstractMessageSource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
+
+import java.text.MessageFormat;
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
@@ -65,12 +71,18 @@ public abstract class BaseActionTests {
         requestContext.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         setRequestContext(requestContext);
         setExternalContext(requestContext.getExternalContext());
+        ((DefaultMessageContext) requestContext.getMessageContext()).setMessageSource(new AbstractMessageSource() {
+            @Override
+            protected MessageFormat resolveCode(final String code, final Locale locale) {
+                return new MessageFormat(StringUtils.EMPTY);
+            }
+        });
 
         service = mock(InweboService.class);
 
         val authenticationEventExecutionPlan = new DefaultAuthenticationEventExecutionPlan();
         authenticationEventExecutionPlan.registerAuthenticationHandler(new InweboAuthenticationHandler(mock(ServicesManager.class),
-                PrincipalFactoryUtils.newPrincipalFactory(), new InweboMultifactorProperties()));
+                PrincipalFactoryUtils.newPrincipalFactory(), new InweboMultifactorProperties(), service));
         authenticationEventExecutionPlan.registerAuthenticationMetadataPopulator(new AuthenticationDeviceMetadataPopulator());
         val authenticationManager = new PolicyBasedAuthenticationManager(authenticationEventExecutionPlan, true, mock(ConfigurableApplicationContext.class));
         val authenticationTransactionManager = new DefaultAuthenticationTransactionManager(mock(ApplicationEventPublisher.class), authenticationManager);

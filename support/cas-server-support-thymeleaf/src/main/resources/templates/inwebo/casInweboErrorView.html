@@ -14,6 +14,18 @@
     <div layout:fragment="content" class="banner banner-danger mdc-card p-4 m-auto w-lg-66">
         <h2 th:utext="#{cas.inwebo.error.heading}">An Inwebo error has occured.</h2>
         <p th:unless="${#strings.isEmpty(inweboErrorMessage)}" th:utext="${inweboErrorMessage}">Custom error</p>
+        <p />
+        <div class="form-wrapper">
+            <form id="retryForm" method="POST">
+                <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
+                <input type="hidden" name="_eventId" value="retry" />
+                <button class="mdc-button mdc-button--raised" name="retry"
+                        type="submit" value="retry"
+                        th:value="#{cas.inwebo.retry.button}">
+                    <span class="mdc-button__label" th:text="#{cas.inwebo.retry.button}">Retry the Inwebo multi-factor authentication</span>
+                </button>
+            </form>
+        </div>
         <div th:if="${mustEnroll}">
             <p />
             <script src="https://ult-inwebo.com/neon/3.6.0/simple-neon-lib.js " type="text/javascript"></script>

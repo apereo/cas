@@ -41,20 +41,21 @@ public class CheckAuthenticationAction extends AbstractAction implements Webflow
         val flowScope = requestContext.getFlowScope();
         val sessionId = (String) flowScope.get(INWEBO_SESSION_ID);
         if (StringUtils.isNotBlank(otp)) {
-            val response = service.authenticateExtended(login, otp);
-            if (response.isOk()) {
-                val deviceName = response.getDeviceName();
-                LOGGER.info("User: {} validated OTP on device: {}", login, deviceName);
-                WebUtils.putCredential(requestContext, new InweboCredential(login, deviceName));
-                return this.casWebflowEventResolver.resolveSingle(requestContext);
-            }
+            val credential = new InweboCredential(login);
+            credential.setOtp(otp);
+            LOGGER.debug("Received OTP: {} for login: {}", otp, login);
+            WebUtils.putCredential(requestContext, credential);
+            return this.casWebflowEventResolver.resolveSingle(requestContext);
         } else if (StringUtils.isNotBlank(sessionId)) {
             val response = service.checkPushResult(login, sessionId);
             val result = response.getResult();
             if (response.isOk()) {
                 val deviceName = response.getDeviceName();
-                LOGGER.info("User: {} validated push on device: {}", login, deviceName);
-                WebUtils.putCredential(requestContext, new InweboCredential(login, deviceName));
+                val credential = new InweboCredential(login);
+                credential.setDeviceName(deviceName);
+                credential.setAlreadyAuthenticated(true);
+                LOGGER.debug("User: {} validated push for sessionId: {} and device: {}", login, sessionId, deviceName);
+                WebUtils.putCredential(requestContext, credential);
                 return this.casWebflowEventResolver.resolveSingle(requestContext);
             } else if (result == Result.WAITING) {
                 LOGGER.debug("Waiting for user to validate on mobile/desktop");

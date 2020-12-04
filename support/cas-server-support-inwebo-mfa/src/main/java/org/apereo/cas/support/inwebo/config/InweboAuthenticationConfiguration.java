@@ -16,6 +16,7 @@ import org.apereo.cas.support.inwebo.InweboMultifactorAuthenticationProvider;
 import org.apereo.cas.support.inwebo.authentication.AuthenticationDeviceMetadataPopulator;
 import org.apereo.cas.support.inwebo.authentication.InweboAuthenticationHandler;
 import org.apereo.cas.support.inwebo.authentication.InweboCredential;
+import org.apereo.cas.support.inwebo.service.InweboService;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -54,6 +55,10 @@ public class InweboAuthenticationConfiguration {
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
 
+    @Autowired
+    @Qualifier("inweboService")
+    private ObjectProvider<InweboService> inweboService;
+
     @Bean
     @ConditionalOnMissingBean(name = "inweboMultifactorAuthenticationProvider")
     @RefreshScope
@@ -78,7 +83,8 @@ public class InweboAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationHandler inweboAuthenticationHandler() {
-        return new InweboAuthenticationHandler(servicesManager.getObject(), inweboPrincipalFactory(), casProperties.getAuthn().getMfa().getInwebo());
+        return new InweboAuthenticationHandler(servicesManager.getObject(), inweboPrincipalFactory(),
+                casProperties.getAuthn().getMfa().getInwebo(), inweboService.getObject());
     }
 
     @Bean
