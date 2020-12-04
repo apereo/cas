@@ -11,11 +11,11 @@ import org.apereo.cas.support.inwebo.service.InweboService;
 import org.apereo.cas.support.inwebo.web.flow.InweboMultifactorAuthenticationWebflowEventResolver;
 import org.apereo.cas.support.inwebo.web.flow.InweboMultifactorTrustWebflowConfigurer;
 import org.apereo.cas.support.inwebo.web.flow.InweboMultifactorWebflowConfigurer;
-import org.apereo.cas.support.inwebo.web.flow.actions.CheckAuthenticationAction;
-import org.apereo.cas.support.inwebo.web.flow.actions.CheckUserAction;
-import org.apereo.cas.support.inwebo.web.flow.actions.MustEnrollAction;
-import org.apereo.cas.support.inwebo.web.flow.actions.PushAuthenticateAction;
-import org.apereo.cas.support.inwebo.web.flow.actions.SuccessAction;
+import org.apereo.cas.support.inwebo.web.flow.actions.InweboCheckAuthenticationAction;
+import org.apereo.cas.support.inwebo.web.flow.actions.InweboCheckUserAction;
+import org.apereo.cas.support.inwebo.web.flow.actions.InweboMustEnrollAction;
+import org.apereo.cas.support.inwebo.web.flow.actions.InweboPushAuthenticateAction;
+import org.apereo.cas.support.inwebo.web.flow.actions.InweboSuccessAction;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
@@ -167,36 +167,36 @@ public class InweboWebflowConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(name = "pushAuthenticateAction")
+    @ConditionalOnMissingBean(name = "inweboPushAuthenticateAction")
     @RefreshScope
-    public Action pushAuthenticateAction() {
-        return new PushAuthenticateAction(inweboService.getObject());
+    public Action inweboPushAuthenticateAction() {
+        return new InweboPushAuthenticateAction(inweboService.getObject());
     }
 
     @Bean
-    @ConditionalOnMissingBean(name = "checkUserAction")
+    @ConditionalOnMissingBean(name = "inweboCheckUserAction")
     @RefreshScope
-    public Action checkUserAction() {
-        return new CheckUserAction(messageSource.getObject(), inweboService.getObject(), casProperties);
+    public Action inweboCheckUserAction() {
+        return new InweboCheckUserAction(messageSource.getObject(), inweboService.getObject(), casProperties);
     }
 
     @Bean
-    @ConditionalOnMissingBean(name = "mustEnrollAction")
-    public Action mustEnrollAction() {
-        return new MustEnrollAction(messageSource.getObject());
+    @ConditionalOnMissingBean(name = "inweboMustEnrollAction")
+    public Action inweboMustEnrollAction() {
+        return new InweboMustEnrollAction(messageSource.getObject());
     }
 
     @Bean
-    @ConditionalOnMissingBean(name = "checkAuthenticationAction")
+    @ConditionalOnMissingBean(name = "inweboCheckAuthenticationAction")
     @RefreshScope
-    public Action checkAuthenticationAction() {
-        return new CheckAuthenticationAction(messageSource.getObject(), inweboService.getObject(), inweboMultifactorAuthenticationWebflowEventResolver());
+    public Action inweboCheckAuthenticationAction() {
+        return new InweboCheckAuthenticationAction(messageSource.getObject(), inweboService.getObject(), inweboMultifactorAuthenticationWebflowEventResolver());
     }
 
     @Bean
-    @ConditionalOnMissingBean(name = "successAction")
-    public Action successAction() {
-        return new SuccessAction();
+    @ConditionalOnMissingBean(name = "inweboSuccessAction")
+    public Action inweboSuccessAction() {
+        return new InweboSuccessAction();
     }
 
     /**

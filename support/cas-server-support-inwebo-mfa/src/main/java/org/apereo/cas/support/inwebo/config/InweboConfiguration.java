@@ -34,21 +34,16 @@ public class InweboConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Bean
-    @ConditionalOnMissingBean(name = "marshaller")
-    public Jaxb2Marshaller marshaller() {
-        val marshaller = new Jaxb2Marshaller();
-        marshaller.setContextPath(this.getClass().getPackageName().replaceAll("config", "service.soap"));
-        return marshaller;
-    }
-
-    @Bean
     @ConditionalOnMissingBean(name = "consoleAdmin")
     @RefreshScope
     public ConsoleAdmin consoleAdmin() {
+        val marshaller = new Jaxb2Marshaller();
+        marshaller.setContextPath(this.getClass().getPackageName().replaceAll("config", "service.soap"));
+
         val client = new ConsoleAdmin();
         client.setDefaultUri("https://api.myinwebo.com/v2/services/ConsoleAdmin");
-        client.setMarshaller(marshaller());
-        client.setUnmarshaller(marshaller());
+        client.setMarshaller(marshaller);
+        client.setUnmarshaller(marshaller);
 
         try {
             val messageSender = new HttpsUrlConnectionMessageSender();

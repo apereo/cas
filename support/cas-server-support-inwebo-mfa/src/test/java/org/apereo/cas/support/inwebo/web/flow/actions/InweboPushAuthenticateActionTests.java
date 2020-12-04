@@ -13,21 +13,21 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * Tests {@link PushAuthenticateAction}.
+ * Tests {@link InweboPushAuthenticateAction}.
  *
  * @author Jerome LELEU
  * @since 6.4.0
  */
 @Tag("WebflowMfaActions")
-public class PushAuthenticateActionTests extends BaseActionTests {
+public class InweboPushAuthenticateActionTests extends BaseActionTests {
 
-    private PushAuthenticateAction action;
+    private InweboPushAuthenticateAction action;
 
     @BeforeEach
     public void setUp() {
         super.setUp();
 
-        action = new PushAuthenticateAction(service);
+        action = new InweboPushAuthenticateAction(service);
     }
 
     private PushAuthenticateResponse pushAuthenticateResponse(final Result result) {

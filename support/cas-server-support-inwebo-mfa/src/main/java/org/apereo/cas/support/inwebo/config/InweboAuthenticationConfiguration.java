@@ -13,7 +13,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.inwebo.InweboMultifactorAuthenticationProvider;
-import org.apereo.cas.support.inwebo.authentication.AuthenticationDeviceMetadataPopulator;
+import org.apereo.cas.support.inwebo.authentication.InweboAuthenticationDeviceMetadataPopulator;
 import org.apereo.cas.support.inwebo.authentication.InweboAuthenticationHandler;
 import org.apereo.cas.support.inwebo.authentication.InweboCredential;
 import org.apereo.cas.support.inwebo.service.InweboService;
@@ -101,7 +101,7 @@ public class InweboAuthenticationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "inweboAuthenticationDeviceMetadataPopulator")
     public AuthenticationMetaDataPopulator inweboAuthenticationDeviceMetadataPopulator() {
-        return new AuthenticationDeviceMetadataPopulator();
+        return new InweboAuthenticationDeviceMetadataPopulator();
     }
 
     @ConditionalOnMissingBean(name = "inweboAuthenticationEventExecutionPlanConfigurer")

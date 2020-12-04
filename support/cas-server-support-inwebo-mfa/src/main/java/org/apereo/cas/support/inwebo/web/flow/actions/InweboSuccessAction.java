@@ -10,7 +10,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Jerome LELEU
  * @since 6.4.0
  */
-public class SuccessAction extends AbstractAction {
+public class InweboSuccessAction extends AbstractAction {
 
     @Override
     public Event doExecute(final RequestContext requestContext) {

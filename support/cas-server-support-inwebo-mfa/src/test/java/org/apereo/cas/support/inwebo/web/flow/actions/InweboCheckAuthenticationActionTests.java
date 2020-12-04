@@ -13,23 +13,23 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * Tests {@link CheckAuthenticationAction}.
+ * Tests {@link InweboCheckAuthenticationAction}.
  *
  * @author Jerome LELEU
  * @since 6.4.0
  */
 @Tag("WebflowMfaActions")
-public class CheckAuthenticationActionTests extends BaseActionTests {
+public class InweboCheckAuthenticationActionTests extends BaseActionTests {
 
     private static final String OTP = "4q5dslf";
 
-    private CheckAuthenticationAction action;
+    private InweboCheckAuthenticationAction action;
 
     @BeforeEach
     public void setUp() {
         super.setUp();
 
-        action = new CheckAuthenticationAction(mock(MessageSource.class), service, resolver);
+        action = new InweboCheckAuthenticationAction(mock(MessageSource.class), service, resolver);
     }
 
     @Test

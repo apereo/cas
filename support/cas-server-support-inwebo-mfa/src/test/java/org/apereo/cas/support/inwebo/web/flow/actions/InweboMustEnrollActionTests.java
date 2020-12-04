@@ -12,21 +12,21 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * Tests {@link MustEnrollAction}.
+ * Tests {@link InweboMustEnrollAction}.
  *
  * @author Jerome LELEU
  * @since 6.4.0
  */
 @Tag("WebflowMfaActions")
-public class MustEnrollActionTests extends BaseActionTests {
+public class InweboMustEnrollActionTests extends BaseActionTests {
 
-    private MustEnrollAction action;
+    private InweboMustEnrollAction action;
 
     @BeforeEach
     public void setUp() {
         super.setUp();
 
-        action = new MustEnrollAction(mock(MessageSource.class));
+        action = new InweboMustEnrollAction(mock(MessageSource.class));
     }
 
     @Test

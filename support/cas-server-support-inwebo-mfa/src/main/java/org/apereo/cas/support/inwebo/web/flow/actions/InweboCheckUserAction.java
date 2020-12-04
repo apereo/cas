@@ -21,7 +21,7 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @RequiredArgsConstructor
 @Slf4j
-public class CheckUserAction extends AbstractAction implements WebflowConstants {
+public class InweboCheckUserAction extends AbstractAction implements WebflowConstants {
 
     private final MessageSource messageSource;
 

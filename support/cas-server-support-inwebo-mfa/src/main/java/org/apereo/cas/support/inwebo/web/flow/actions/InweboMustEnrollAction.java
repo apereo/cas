@@ -15,7 +15,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 6.4.0
  */
 @RequiredArgsConstructor
-public class MustEnrollAction extends AbstractAction implements WebflowConstants {
+public class InweboMustEnrollAction extends AbstractAction implements WebflowConstants {
 
     private final MessageSource messageSource;
 

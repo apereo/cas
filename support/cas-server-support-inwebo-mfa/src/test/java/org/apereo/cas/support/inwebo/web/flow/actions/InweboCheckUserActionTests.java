@@ -17,18 +17,18 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Tests {@link CheckUserAction}.
+ * Tests {@link InweboCheckUserAction}.
  *
  * @author Jerome LELEU
  * @since 6.4.0
  */
 @Tag("WebflowMfaActions")
-public class CheckUserActionTests extends BaseActionTests {
+public class InweboCheckUserActionTests extends BaseActionTests {
 
     private static final String SITE_ALIAS = "7845zesf357dsq89s74za6z4e5df";
     private static final int USER_ID = 123456;
 
-    private CheckUserAction action;
+    private InweboCheckUserAction action;
 
     @BeforeEach
     public void setUp() {
@@ -38,7 +38,7 @@ public class CheckUserActionTests extends BaseActionTests {
         inwebo.setSiteAlias(SITE_ALIAS);
         val casProperties = new CasConfigurationProperties();
         casProperties.getAuthn().getMfa().setInwebo(inwebo);
-        action = new CheckUserAction(mock(MessageSource.class), service, casProperties);
+        action = new InweboCheckUserAction(mock(MessageSource.class), service, casProperties);
     }
 
     private LoginSearchResponse loginSearchOk(final int activationStatus, final int userId) {

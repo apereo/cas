@@ -17,7 +17,7 @@ import lombok.val;
  */
 @ToString(callSuper = true)
 @RequiredArgsConstructor
-public class AuthenticationDeviceMetadataPopulator extends BaseAuthenticationMetaDataPopulator {
+public class InweboAuthenticationDeviceMetadataPopulator extends BaseAuthenticationMetaDataPopulator {
 
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {

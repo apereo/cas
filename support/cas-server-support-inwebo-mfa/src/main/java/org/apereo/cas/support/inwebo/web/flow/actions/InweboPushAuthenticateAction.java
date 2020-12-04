@@ -19,7 +19,7 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @RequiredArgsConstructor
 @Slf4j
-public class PushAuthenticateAction extends AbstractAction implements WebflowConstants {
+public class InweboPushAuthenticateAction extends AbstractAction implements WebflowConstants {
 
     private final InweboService service;
 

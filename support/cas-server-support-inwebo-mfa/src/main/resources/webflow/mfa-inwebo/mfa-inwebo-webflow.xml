@@ -9,12 +9,12 @@
     </on-start>
 
     <action-state id="initializeLoginForm">
-        <evaluate expression="successAction" />
+        <evaluate expression="inweboSuccessAction" />
         <transition on="success" to="checkUser" />
     </action-state>
 
     <action-state id="checkUser">
-        <evaluate expression="checkUserAction" />
+        <evaluate expression="inweboCheckUserAction" />
         <transition on="push" to="startPush" />
         <transition on="browser" to="startBrowser" />
         <transition on="select" to="selectAuthent" />
@@ -33,12 +33,12 @@
     </view-state>
 
     <action-state id="mustEnroll">
-        <evaluate expression="mustEnrollAction" />
+        <evaluate expression="inweboMustEnrollAction" />
         <transition on="success" to="inweboError" />
     </action-state>
 
     <action-state id="startPush">
-        <evaluate expression="pushAuthenticateAction" />
+        <evaluate expression="inweboPushAuthenticateAction" />
         <transition on="success" to="pendingCheckResult"/>
         <transition on="error" to="inweboError"/>
     </action-state>
@@ -48,7 +48,7 @@
     </view-state>
 
     <action-state id="realSubmit">
-        <evaluate expression="checkAuthenticationAction" />
+        <evaluate expression="inweboCheckAuthenticationAction" />
         <transition on="success" to="success"/>
         <transition on="pending" to="pendingCheckResult" />
         <transition on="error" to="inweboError" />
