@@ -4,7 +4,7 @@ const assert = require('assert');
 (async () => {
     const browser = await puppeteer.launch({
         ignoreHTTPSErrors: true,
-        headless: true
+        headless: false
     });
     const page = await browser.newPage();
     await page.goto("https://localhost:8443/cas/login");
@@ -16,10 +16,12 @@ const assert = require('assert');
     console.log(link)
     assert(link === "Forgot your username?")
 
-    await page.click('#forgotUsernameLink');
+    await click(page, "#forgotUsernameLink")
+    
+    // await page.click('#forgotUsernameLink');
     // await page.waitForNavigation();
     
-    // await page.waitForTimeout(1000)
+    await page.waitForTimeout(1000)
 
     element = await page.$('#reset #fm1 h3');
     var header = await page.evaluate(element => element.textContent, element);
@@ -47,3 +49,9 @@ const assert = require('assert');
 
     await browser.close();
 })();
+
+async function click(page, button) {
+    await page.evaluate((button) => {
+        document.querySelector(button).click();
+    }, button);
+}
