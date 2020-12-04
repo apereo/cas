@@ -82,6 +82,5 @@ public class GrouperFacadeTests {
         };
         assertTrue(facade.getGroupsForSubjectId("casuser").isEmpty());
     }
-
 }
 

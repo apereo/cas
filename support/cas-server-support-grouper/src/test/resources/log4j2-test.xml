@@ -6,11 +6,10 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="org.apache.xml.security" level="off" />
-        <Logger name="org.springframework.test" level="off" />
-
-        <Logger name="edu.internet2.middleware" level="off" />
-        <Logger name="org.apereo" level="off"  />
+        <Logger name="org.apache.xml.security" level="error" />
+        <Logger name="org.springframework.test" level="error" />
+        <Logger name="edu.internet2.middleware" level="error" />
+        <Logger name="org.apereo" level="error"  />
         <Root level="off">
             <AppenderRef ref="console"/>
         </Root>
