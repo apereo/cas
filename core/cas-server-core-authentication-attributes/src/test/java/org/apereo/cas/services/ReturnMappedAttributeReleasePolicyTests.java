@@ -19,7 +19,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
@@ -266,33 +265,5 @@ public class ReturnMappedAttributeReleasePolicyTests {
         assertTrue(result.containsKey(attributeName));
     }
 
-    @Test
-    @Order(1000)
-    public void verifyNoCacheMgr() {
-        val appCtx = new StaticApplicationContext();
-        appCtx.refresh();
-
-        ApplicationContextProvider.holdApplicationContext(appCtx);
-
-        val allowed = ArrayListMultimap.<String, Object>create();
-        val attributeName = UUID.randomUUID().toString();
-        allowed.put(attributeName, "groovy { return 'v1' }");
-        val p1 = new ReturnMappedAttributeReleasePolicy(CollectionUtils.wrap(allowed));
-
-        val service1 = CoreAttributesTestUtils.getRegisteredService();
-        when(service1.getAttributeReleasePolicy()).thenReturn(p1);
-
-        val attributes = new HashMap<String, List<Object>>();
-        attributes.put("uid", List.of(CoreAttributesTestUtils.CONST_USERNAME));
-        assertThrows(RuntimeException.class, () -> p1.getAttributes(
-            CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, attributes),
-            CoreAttributesTestUtils.getService(), service1));
-
-
-        allowed.put(attributeName, "classpath:GroovyMappedAttribute.groovy");
-        assertThrows(RuntimeException.class, () -> p1.getAttributes(
-            CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, attributes),
-            CoreAttributesTestUtils.getService(), service1));
-    }
 
 }
