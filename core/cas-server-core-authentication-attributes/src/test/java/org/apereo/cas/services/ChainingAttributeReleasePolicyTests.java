@@ -3,13 +3,19 @@ package org.apereo.cas.services;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
+import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,10 +33,20 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @DirtiesContext
 public class ChainingAttributeReleasePolicyTests {
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
+    @Autowired
+    @Qualifier("scriptResourceCacheManager")
+    private ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript> scriptResourceCacheManager;
+
+
     private ChainingAttributeReleasePolicy chain;
 
     @BeforeEach
     public void initialize() {
+        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
+            scriptResourceCacheManager, ApplicationContextProvider.BEAN_NAME_SCRIPT_RESOURCE_CACHE_MANAGER);
         configureChainingReleasePolicy(0, 0);
     }
 

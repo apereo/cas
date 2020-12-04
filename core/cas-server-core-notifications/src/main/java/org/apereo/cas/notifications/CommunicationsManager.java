@@ -89,6 +89,8 @@ public class CommunicationsManager {
      */
     public boolean email(final EmailProperties emailProperties, final String to, final String body) {
         try {
+            LOGGER.trace("Attempting to send email [{}] to [{}]", body, to);
+            
             if (!isMailSenderDefined() || emailProperties.isUndefined() || StringUtils.isBlank(to)) {
                 throw new IllegalAccessException("Could not send email; from/to/subject/text or email settings are undefined.");
             }

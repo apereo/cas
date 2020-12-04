@@ -34,6 +34,9 @@ echo -e "\nBuilding CAS found in $PWD for dependencies [${dependencies}]"
   --no-daemon --build-cache --configure-on-demand --parallel -PcasModules="${dependencies}"
 mv "$PWD"/webapp/cas-server-webapp-tomcat/build/libs/cas-server-webapp-tomcat-*.war "$PWD"/cas.war
 
+initScript=$(cat "${config}" | jq -j '.initScript // empty')
+[ -z "$result" ] && echo "Initialization script is: ${initScript}" && eval "$initScript"
+
 properties=$(cat "${config}" | jq -j '.properties // empty | join(" ")')
 echo -e "\nLaunching CAS with properties [${properties}] and dependencies [${dependencies}]"
 java -jar "$PWD"/cas.war ${properties} --spring.profiles.active=none --server.ssl.key-store="$keystore" &
@@ -50,6 +53,9 @@ echo -e "*************************************"
 echo -e "Running ${scriptPath}\n"
 node ${scriptPath} ${config}
 echo -e "*************************************\n"
+
+docker container stop $(docker container ls -aq) >/dev/null 2>&1
+docker container rm $(docker container ls -aq) >/dev/null 2>&1
 
 echo -e "\nKilling process ${pid} ..."
 kill -9 $pid
