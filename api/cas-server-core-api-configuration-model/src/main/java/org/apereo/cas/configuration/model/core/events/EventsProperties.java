@@ -40,7 +40,7 @@ public class EventsProperties implements Serializable {
      * When running in standalone mode, this typically translates to CAS monitoring
      * configuration files and reloading context conditionally if there are any changes.
      */
-    private boolean trackConfigurationModifications = true;
+    private boolean trackConfigurationModifications;
 
     /**
      * Track authentication events inside a database.
