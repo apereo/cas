@@ -4,6 +4,9 @@ description = "Apereo CAS Web Application via Apache Tomcat"
 dependencies {
     implementation project(":webapp:cas-server-webapp-init-tomcat")
 
+    // TODO: don't merge this in
+    implementation project(":support:cas-server-support-qr")
+
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
