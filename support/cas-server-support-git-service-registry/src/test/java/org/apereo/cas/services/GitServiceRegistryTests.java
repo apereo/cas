@@ -5,6 +5,7 @@ import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.GitServiceRegistryConfiguration;
+import org.apereo.cas.configuration.model.support.git.services.GitServiceRegistryProperties;
 import org.apereo.cas.util.LoggingUtils;
 
 import lombok.Getter;
@@ -59,7 +60,7 @@ public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
     public static void setup() {
         try {
             FileUtils.deleteDirectory(new File("/tmp/cas-sample-data"));
-            val gitDir = new File(FileUtils.getTempDirectory(), "cas-service-registry");
+            val gitDir = new File(FileUtils.getTempDirectory(), GitServiceRegistryProperties.DEFAULT_CAS_SERVICE_REGISTRY_NAME);
             if (gitDir.exists()) {
                 FileUtils.deleteDirectory(gitDir);
             }
@@ -75,7 +76,7 @@ public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
     @AfterAll
     public static void cleanUp() throws Exception {
         FileUtils.deleteDirectory(new File("/tmp/cas-sample-data"));
-        val gitDir = new File(FileUtils.getTempDirectory(), "cas-service-registry");
+        val gitDir = new File(FileUtils.getTempDirectory(), GitServiceRegistryProperties.DEFAULT_CAS_SERVICE_REGISTRY_NAME);
         if (gitDir.exists()) {
             FileUtils.deleteDirectory(gitDir);
         }

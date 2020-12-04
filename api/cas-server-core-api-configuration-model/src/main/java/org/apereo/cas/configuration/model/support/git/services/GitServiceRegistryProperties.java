@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.apache.commons.io.FileUtils;
+import org.springframework.core.io.FileSystemResource;
 
 import java.io.File;
 
@@ -20,6 +21,12 @@ import java.io.File;
 @Setter
 @Accessors(chain = true)
 public class GitServiceRegistryProperties extends BaseGitProperties {
+
+    /**
+     * Default name used for git service registry clone directory.
+     */
+    public static final String DEFAULT_CAS_SERVICE_REGISTRY_NAME = "cas-service-registry2";
+
     private static final long serialVersionUID = 4194689836396653458L;
 
     /**
@@ -44,6 +51,6 @@ public class GitServiceRegistryProperties extends BaseGitProperties {
     private boolean groupByType = true;
 
     public GitServiceRegistryProperties() {
-        setCloneDirectory(new File(FileUtils.getTempDirectory(), "cas-service-registry"));
+        setCloneDirectory(new FileSystemResource(new File(FileUtils.getTempDirectory(), DEFAULT_CAS_SERVICE_REGISTRY_NAME)));
     }
 }

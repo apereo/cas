@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.apache.commons.io.FileUtils;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import org.springframework.core.io.FileSystemResource;
 
 import java.io.File;
 
@@ -33,7 +34,7 @@ public class GitSamlMetadataProperties extends BaseGitProperties {
     private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
 
     public GitSamlMetadataProperties() {
-        setCloneDirectory(new File(FileUtils.getTempDirectory(), "cas-saml-metadata"));
+        setCloneDirectory(new FileSystemResource(new File(FileUtils.getTempDirectory(), "cas-saml-metadata")));
         crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
         crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
     }

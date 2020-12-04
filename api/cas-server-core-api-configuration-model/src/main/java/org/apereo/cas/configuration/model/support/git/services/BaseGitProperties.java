@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.apache.commons.io.FileUtils;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 
 import java.io.File;
 import java.io.Serializable;
@@ -86,5 +88,5 @@ public abstract class BaseGitProperties implements Serializable {
     /**
      * Directory into which the repository would be cloned.
      */
-    private File cloneDirectory = new File(FileUtils.getTempDirectory(), "cas-git-clone");
+    private Resource cloneDirectory = new FileSystemResource(new File(FileUtils.getTempDirectory(), "cas-git-clone"));
 }
