@@ -25,7 +25,7 @@ public class GitServiceRegistryProperties extends BaseGitProperties {
     /**
      * Default name used for git service registry clone directory.
      */
-    public static final String DEFAULT_CAS_SERVICE_REGISTRY_NAME = "cas-service-registry2";
+    public static final String DEFAULT_CAS_SERVICE_REGISTRY_NAME = "cas-service-registry";
 
     private static final long serialVersionUID = 4194689836396653458L;
 
