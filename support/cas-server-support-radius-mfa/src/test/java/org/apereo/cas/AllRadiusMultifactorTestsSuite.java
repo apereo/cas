@@ -1,6 +1,8 @@
 package org.apereo.cas;
 
 import org.apereo.cas.adaptors.radius.authentication.RadiusTokenAuthenticationHandlerTests;
+import org.apereo.cas.adaptors.radius.web.flow.RadiusAuthenticationWebflowEventResolverFailureTests;
+import org.apereo.cas.adaptors.radius.web.flow.RadiusAuthenticationWebflowEventResolverTests;
 import org.apereo.cas.adaptors.radius.web.flow.RadiusMultifactorWebflowConfigurerTests;
 
 import org.junit.platform.runner.JUnitPlatform;
@@ -15,6 +17,8 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     RadiusTokenAuthenticationHandlerTests.class,
+    RadiusAuthenticationWebflowEventResolverFailureTests.class,
+    RadiusAuthenticationWebflowEventResolverTests.class,
     RadiusMultifactorWebflowConfigurerTests.class
 })
 @RunWith(JUnitPlatform.class)
