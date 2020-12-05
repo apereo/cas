@@ -39,6 +39,8 @@
 	    qrButton.setAttribute("onclick", "startQr()");
 
 	    var qrScannerElem = document.getElementById("qrVideo");
+	    var qrCredentialElem = document.getElementById("qrCredential");
+	    var loginForm = document.getElementById("fm1");
 
 	    /*<![CDATA[*/
 	    //import QrScanner from '[[@{#{webjars.qr-scanner.js}}]]';
@@ -56,8 +58,8 @@
 
 	    function onScan(result) {
 		console.log('decoded qr:', result);
-		var qrCredentialElem = document.getElementById("qrCredential");
 		qrCredentialElem.value = result;
+		HTMLFormElement.prototype.submit.call(loginForm);
 	    }
 	    
 	    function startQr() {
