@@ -17,13 +17,66 @@
                     <div class="text-center">
                         <h3 class="mt-md-0 mt-4">
                             <i class="mdi mdi-qrcode-scan"></i>
-                            <span>This is static</span>
+                            <span>QR Key</span>
                         </h3>
 			<p th:utext="${qrMessage}">Error</p>
+			<video id="qrVideo" style="display: none; width: 100%; height: 100%;"></video>
+        <button
+                class="mdc-button mdc-button--raised"
+                name="qrLogin"
+                id="qrLogin"
+                accesskey="z">
+            <span class="mdc-button__label">Click here!</span>
+        </button>
 		    </div>
 		</div>
 	    </div>
 	</div>
+	<script type="text/javascript">
+
+	    // this runs on page load
+	    var qrButton = document.getElementById("qrLogin");
+	    qrButton.setAttribute("onclick", "startQr()");
+
+	    var qrScannerElem = document.getElementById("qrVideo");
+
+	    /*<![CDATA[*/
+	    //import QrScanner from '[[@{#{webjars.qr-scanner.js}}]]';
+	    //QrScanner.WORKER_PATH = '[[@{#{webjars.qr-scanner-worker.js}}]]';
+
+	    var qrScannerPath = '[[@{#{webjars.qr-scanner.js}}]]';
+	    var qrScannerWorkerPath = '[[@{#{webjars.qr-scanner-worker.js}}]]';
+	    /*]]>*/
+
+	    import(qrScannerPath).then((module) => {
+		var QrScanner = module.default;
+		QrScanner.WORKER_PATH = qrScannerWorkerPath;
+		window.scanner = new QrScanner(qrScannerElem, result => onScan(result));
+	    });
+
+	    function onScan(result) {
+		console.log('decoded qr:', result);
+		var qrCredentialElem = document.getElementById("qrCredential");
+		qrCredentialElem.value = result;
+	    }
+	    
+	    function startQr() {
+		scanner.start();
+	    	var qrScannerElem = document.getElementById("qrVideo");
+		qrScannerElem.style.display = "block";
+	    	var qrButton = document.getElementById("qrLogin");
+	    	qrButton.setAttribute("onclick", "stopQr()");
+	    }
+
+	    function stopQr() {
+		scanner.stop();
+	    	var qrScannerElem = document.getElementById("qrVideo");
+		qrScannerElem.style.display = "none";
+	    	var qrButton = document.getElementById("qrLogin");
+	    	qrButton.setAttribute("onclick", "startQr()");
+	    }
+
+	</script>
     </div>
 </main>
 </body>
