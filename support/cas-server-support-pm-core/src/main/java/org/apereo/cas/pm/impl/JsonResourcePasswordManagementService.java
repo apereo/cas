@@ -6,7 +6,6 @@ import org.apereo.cas.configuration.model.support.pm.PasswordManagementPropertie
 import org.apereo.cas.pm.BasePasswordManagementService;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordHistoryService;
-import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -42,10 +41,10 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
     private Map<String, JsonBackedAccount> jsonBackedAccounts;
 
     public JsonResourcePasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
-                                                 final String issuer,
-                                                 final PasswordManagementProperties passwordManagementProperties,
-                                                 final Resource jsonResource,
-                                                 final PasswordHistoryService passwordHistoryService) {
+        final String issuer,
+        final PasswordManagementProperties passwordManagementProperties,
+        final Resource jsonResource,
+        final PasswordHistoryService passwordHistoryService) {
         super(passwordManagementProperties, cipherExecutor, issuer, passwordHistoryService);
         this.jsonResource = jsonResource;
         readAccountsFromJsonResource();
@@ -70,13 +69,6 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
         account.setPassword(bean.getPassword());
         this.jsonBackedAccounts.put(c.getId(), account);
         return writeAccountToJsonResource();
-    }
-
-    @SneakyThrows
-    private boolean writeAccountToJsonResource() {
-        MAPPER.writerWithDefaultPrettyPrinter().writeValue(this.jsonResource.getFile(), this.jsonBackedAccounts);
-        readAccountsFromJsonResource();
-        return true;
     }
 
     @Override
@@ -109,13 +101,19 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
         return new HashMap<>(0);
     }
 
+    @SneakyThrows
+    private boolean writeAccountToJsonResource() {
+        MAPPER.writerWithDefaultPrettyPrinter().writeValue(this.jsonResource.getFile(), this.jsonBackedAccounts);
+        readAccountsFromJsonResource();
+        return true;
+    }
+
+    @SneakyThrows
     private void readAccountsFromJsonResource() {
         try (val reader = new InputStreamReader(jsonResource.getInputStream(), StandardCharsets.UTF_8)) {
             final TypeReference<Map<String, JsonBackedAccount>> personList = new TypeReference<>() {
             };
             this.jsonBackedAccounts = MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);
-        } catch (final Exception e) {
-            LoggingUtils.warn(LOGGER, e);
         }
     }
 
@@ -128,7 +126,7 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
         private String password;
 
         private String phone;
-        
+
         private Map<String, String> securityQuestions = new HashMap<>(0);
     }
 }

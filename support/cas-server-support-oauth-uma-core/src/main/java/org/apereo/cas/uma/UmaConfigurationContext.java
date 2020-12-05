@@ -1,5 +1,6 @@
 package org.apereo.cas.uma;
 
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
@@ -40,4 +41,5 @@ public class UmaConfigurationContext {
     private final UmaResourceSetClaimPermissionExaminer claimPermissionExaminer;
     private final IdTokenGeneratorService requestingPartyTokenGenerator;
     private final SessionStore<JEEContext> sessionStore;
+    private final CentralAuthenticationService centralAuthenticationService;
 }

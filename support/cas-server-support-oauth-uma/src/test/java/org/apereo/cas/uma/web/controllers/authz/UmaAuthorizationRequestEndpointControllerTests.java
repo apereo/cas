@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +25,26 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("UMA")
 public class UmaAuthorizationRequestEndpointControllerTests extends BaseUmaEndpointControllerTests {
+    @Test
+    public void verifyPermTicketNoPolicy() {
+        val permissionTicket = getPermissionTicketWith(List.of("read", "write"));
+
+        var results = authenticateUmaRequestWithAuthorizationScope();
+
+        val authzRequest = new UmaAuthorizationRequest();
+        authzRequest.setGrantType(OAuth20GrantTypes.UMA_TICKET.getType());
+        authzRequest.setTicket(permissionTicket);
+        var body = authzRequest.toJson();
+
+        val ticket = ticketRegistry.getTicket(permissionTicket, UmaPermissionTicket.class);
+        ticket.getResourceSet().setPolicies(new HashSet<>());
+        ticketRegistry.updateTicket(ticket);
+
+        var response = umaAuthorizationRequestEndpointController.handleAuthorizationRequest(body,
+            results.getLeft(), results.getMiddle());
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
     @Test
     public void verifyAuthorizationOperation() {
         val permissionTicket = getPermissionTicketWith(List.of("read", "write"));

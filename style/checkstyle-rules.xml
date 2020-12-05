@@ -396,7 +396,14 @@
             <property name="message"
                       value="Do not create a standalone instance of SecureRandom. Use RandomUtils instead."/>
         </module>
-        
+        <module name="RegexpSinglelineJava">
+            <property name="id" value="logParameters"/>
+            <metadata name="net.sf.eclipsecs.core.comment" value="Log parameters must be enclosed between brackets"/>
+            <property name="severity" value="error"/>
+            <property name="format" value="(LOGGER|log|logger)+\.\w+\(&quot;.+((?&lt;!\[)\{|(\}(?!\]))).+&quot;"/>
+            <property name="message" value="Log parameters must be enclosed between brackets: [{}]"/>
+        </module>
+
         <module name="RegexpSinglelineJava">
             <property name="id" value="externalProperties"/>
             <metadata name="net.sf.eclipsecs.core.comment" value="Consider using inline properties instead"/>
@@ -482,7 +489,7 @@
         </module>
 
         <module name="RegexpSinglelineJava">
-            <metadata name="net.sf.eclipsecs.core.comment" value="Emoty String constants"/>
+            <metadata name="net.sf.eclipsecs.core.comment" value="Empty String constants"/>
             <property name="severity" value="error"/>
             <property name="format" value="(?&lt;!\\)&quot;(?&lt;!\\)&quot;"/>
             <property name="message" value="Consider using StringUtils.EMPTY instead"/>
