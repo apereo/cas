@@ -867,11 +867,15 @@ The following access levels are allowed for each individual endpoint:
 To learn more about this topic, [please review this guide](../monitoring/Configuring-Monitoring-Administration.html).
 
 ```properties
-# spring.boot.admin.url=https://bootadmin.example.org:8444
-# spring.boot.admin.client.management-url=${cas.server.prefix}/status
-# spring.boot.admin.client.name=Apereo CAS
-# spring.boot.admin.client.metadata.user.name=
-# spring.boot.admin.client.metadata.user.password=
+# spring.boot.admin.client.url=https://bootadmin.example.org:8444
+# spring.boot.admin.client.instance.service-base-url=${cas.server.prefix}
+# spring.boot.admin.client.instance.name=Apereo CAS
+# In case Spring Boot Admin endpoints are protected via basic authn :
+# spring.boot.admin.client.username=
+# spring.boot.admin.client.password=
+# In case CAS endpoints are protected via basic authn :
+# spring.boot.admin.client.instance.metadata.user.name=
+# spring.boot.admin.client.instance.metadata.user.password=
 ```
 
 ### JavaMelody
