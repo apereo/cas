@@ -64,14 +64,16 @@ public abstract class BaseGitProperties implements Serializable {
     private boolean signCommits;
 
     /**
-     * Path to the SSH private key identity.
+     * Password for the SSH private key.
      */
     private String privateKeyPassphrase;
 
     /**
-     * Password for the SSH private key.
+     * Path to the SSH private key identity.
+     * Must be a resource that can resolve to an absolute file on disk due to Jsch library needing String path.
+     * Classpath resource would work if file on disk rather than inside archive.
      */
-    private File privateKeyPath;
+    private Resource privateKeyPath;
 
     /**
      * As with using SSH with public keys, an SSH session
@@ -82,7 +84,7 @@ public abstract class BaseGitProperties implements Serializable {
 
     /**
      * Whether on not to turn on strict host key checking.
-     * true will be "yes", false will be "no", "ask" not supported
+     * true will be "yes", false will be "no", "ask" not supported.
      */
     private boolean strictHostKeyChecking = true;
 

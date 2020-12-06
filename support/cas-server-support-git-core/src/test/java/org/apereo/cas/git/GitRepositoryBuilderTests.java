@@ -47,7 +47,7 @@ public class GitRepositoryBuilderTests {
                 FileUtils.getTempDirectoryPath() + File.separator + UUID.randomUUID().toString()));
         props.setPrivateKeyPassphrase("something");
         props.setSshSessionPassword("more-password");
-        props.setPrivateKeyPath(new ClassPathResource("priv.key").getFile());
+        props.setPrivateKeyPath(new ClassPathResource("priv.key"));
         props.setStrictHostKeyChecking(false);
         val builder = GitRepositoryBuilder.newInstance(props);
         assertThrows(IllegalArgumentException.class, builder::build);

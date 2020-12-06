@@ -92,7 +92,7 @@ public class GitRepositoryBuilder {
             builder.credentialsProviders(providers);
         }
         if (props.getPrivateKeyPath() != null) {
-            builder.privateKeyPath(props.getPrivateKeyPath().getCanonicalPath());
+            builder.privateKeyPath(props.getPrivateKeyPath().getFile().getCanonicalPath());
         }
         return builder.build();
     }

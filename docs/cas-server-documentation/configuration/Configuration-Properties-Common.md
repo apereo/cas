@@ -485,7 +485,7 @@ The following options related to Git integration support in CAS when it attempts
 # ${configurationKey}.git.clone-directory=file:/tmp/cas-service-registry
 # ${configurationKey}.git.push-changes=false
 # ${configurationKey}.git.private-key-passphrase=
-# ${configurationKey}.git.private-key-path=
+# ${configurationKey}.git.private-key-path=file:/tmp/privkey.pem
 # ${configurationKey}.git.ssh-session-password=
 # ${configurationKey}.git.timeout=PT10S
 # ${configurationKey}.git.strict-host-key-checking=true
