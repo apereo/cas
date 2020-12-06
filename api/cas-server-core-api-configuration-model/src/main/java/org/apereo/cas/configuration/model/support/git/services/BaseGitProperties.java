@@ -88,5 +88,5 @@ public abstract class BaseGitProperties implements Serializable {
     /**
      * Directory into which the repository would be cloned.
      */
-    private Resource cloneDirectory = new FileSystemResource(new File(FileUtils.getTempDirectory(), "cas-git-clone"));
+    private transient Resource cloneDirectory = new FileSystemResource(new File(FileUtils.getTempDirectory(), "cas-git-clone"));
 }
