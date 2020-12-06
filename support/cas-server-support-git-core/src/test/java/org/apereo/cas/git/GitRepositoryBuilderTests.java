@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.apereo.cas.util.ResourceUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ClassPathResource;
 
-import java.io.File;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -38,10 +38,32 @@ public class GitRepositoryBuilderTests {
         props.setUsername("casuser");
         props.setPassword("password");
         props.setBranchesToClone("master");
-        props.setCloneDirectory(new File(FileUtils.getTempDirectory(), UUID.randomUUID().toString()));
+        props.setCloneDirectory(ResourceUtils.getRawResourceFrom(
+                FileUtils.getTempDirectoryPath() + UUID.randomUUID().toString()));
         props.setPrivateKeyPassphrase("something");
         props.setSshSessionPassword("more-password");
         props.setPrivateKeyPath(new ClassPathResource("priv.key").getFile());
-        assertThrows(IllegalArgumentException.class, () -> GitRepositoryBuilder.newInstance(props).build());
+        val builder = GitRepositoryBuilder.newInstance(props);
+        assertDoesNotThrow(builder::build);
+    }
+
+    @Test
+    /**
+     * Test that clone directory works with file: prefix.
+     * Uses the file:// prefix because it should work on windows or linux.
+     */
+    public void verifyBuildWithFilePrefix() throws Exception {
+        val props = casProperties.getServiceRegistry().getGit();
+        props.setRepositoryUrl("git@github.com:mmoayyed/sample-data.git");
+        props.setUsername("casuser");
+        props.setPassword("password");
+        props.setBranchesToClone("master");
+        props.setCloneDirectory(ResourceUtils.getRawResourceFrom(
+                "file://" + FileUtils.getTempDirectoryPath() + UUID.randomUUID().toString()));
+        props.setPrivateKeyPassphrase("something");
+        props.setSshSessionPassword("more-password");
+        props.setPrivateKeyPath(new ClassPathResource("priv.key").getFile());
+        val builder = GitRepositoryBuilder.newInstance(props);
+        assertDoesNotThrow(builder::build);
     }
 }
