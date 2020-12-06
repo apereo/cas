@@ -73,7 +73,7 @@ public abstract class BaseGitProperties implements Serializable {
      * Must be a resource that can resolve to an absolute file on disk due to Jsch library needing String path.
      * Classpath resource would work if file on disk rather than inside archive.
      */
-    private Resource privateKeyPath;
+    private transient Resource privateKeyPath;
 
     /**
      * As with using SSH with public keys, an SSH session
