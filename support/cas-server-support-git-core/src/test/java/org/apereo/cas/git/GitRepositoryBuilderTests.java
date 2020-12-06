@@ -33,6 +33,10 @@ public class GitRepositoryBuilderTests {
     private CasConfigurationProperties casProperties;
 
     @Test
+    /**
+     * Verify GitRepositoryBuilder.
+     * Build method throws IllegalArgumentException due to authentication failure since key is invalid.
+     */
     public void verifyBuild() throws Exception {
         val props = casProperties.getServiceRegistry().getGit();
         props.setRepositoryUrl("git@github.com:mmoayyed/sample-data.git");
@@ -52,7 +56,7 @@ public class GitRepositoryBuilderTests {
     @Test
     /**
      * Test that clone directory works with file: prefix.
-     * Uses the file:// prefix because it should work on windows or linux.
+     * Uses the file:// prefix rather than file: because it should work on windows or linux.
      */
     public void verifyBuildWithFilePrefix() throws Exception {
         val props = casProperties.getServiceRegistry().getGit();
