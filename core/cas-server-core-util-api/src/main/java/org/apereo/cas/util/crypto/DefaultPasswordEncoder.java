@@ -57,7 +57,9 @@ public class DefaultPasswordEncoder implements PasswordEncoder {
     public boolean matches(final CharSequence rawPassword, final String encodedPassword) {
         val encodedRawPassword = StringUtils.isNotBlank(rawPassword) ? encode(rawPassword.toString()) : null;
         val matched = StringUtils.equals(encodedRawPassword, encodedPassword);
-        LOGGER.debug("Provided password does{}match the encoded password", BooleanUtils.toString(matched, StringUtils.EMPTY, " not "));
+        val msg = String.format("Provided password does%smatch the encoded password",
+            BooleanUtils.toString(matched, StringUtils.EMPTY, " not "));
+        LOGGER.debug(msg);
         return matched;
     }
 }

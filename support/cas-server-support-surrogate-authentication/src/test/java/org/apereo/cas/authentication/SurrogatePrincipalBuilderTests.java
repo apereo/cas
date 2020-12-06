@@ -42,4 +42,24 @@ public class SurrogatePrincipalBuilderTests {
         val p = surrogatePrincipalBuilder.buildSurrogatePrincipal("surrogate", CoreAuthenticationTestUtils.getPrincipal(), registeredService);
         assertNotNull(p);
     }
+
+    @Test
+    public void verifyOperationWithSurrogate() {
+        val surrogatePrincipalBuilder = new SurrogatePrincipalBuilder(
+            PrincipalFactoryUtils.newPrincipalFactory(), CoreAuthenticationTestUtils.getAttributeRepository(),
+            new SimpleSurrogateAuthenticationService(Map.of("test", List.of("surrogate")), mock(ServicesManager.class)));
+        val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
+        when(registeredService.getAttributeReleasePolicy()).thenReturn(new DenyAllAttributeReleasePolicy());
+
+        val principal = surrogatePrincipalBuilder.buildSurrogatePrincipal("surrogate",
+            CoreAuthenticationTestUtils.getPrincipal("unknown"), registeredService);
+
+        val resultBuilder = new DefaultAuthenticationResultBuilder();
+        resultBuilder.collect(CoreAuthenticationTestUtils.getAuthentication(principal));
+
+        assertThrows(SurrogateAuthenticationException.class,
+            () -> surrogatePrincipalBuilder.buildSurrogateAuthenticationResult(
+                resultBuilder, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
+                "surrogate", registeredService));
+    }
 }

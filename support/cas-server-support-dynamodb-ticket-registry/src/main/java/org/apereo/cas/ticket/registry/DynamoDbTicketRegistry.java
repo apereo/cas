@@ -30,7 +30,8 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
     @Override
     public void addTicket(final Ticket ticket) {
         try {
-            LOGGER.debug("Adding ticket [{}] with ttl [{}s]", ticket.getId(), ticket.getExpirationPolicy().getTimeToLive());
+            LOGGER.debug("Adding ticket [{}] with ttl [{}s]", ticket.getId(),
+                ticket.getExpirationPolicy().getTimeToLive());
             val encTicket = encodeTicket(ticket);
             this.dbTableService.put(ticket, encTicket);
         } catch (final Exception e) {

@@ -12,7 +12,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.glassfish.jersey.client.oauth2.OAuth2ClientSupport;
@@ -35,9 +34,6 @@ public class ScimV2PrincipalProvisioner implements PrincipalProvisioner {
                                       final String username, final String password,
                                       final ScimV2PrincipalAttributeMapper mapper) {
         val config = new ClientConfig();
-        val connectorProvider = new ApacheConnectorProvider();
-        config.connectorProvider(connectorProvider);
-
         val client = ClientBuilder.newClient(config);
 
         if (StringUtils.isNotBlank(oauthToken)) {

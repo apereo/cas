@@ -197,7 +197,7 @@ public class Ehcache3TicketRegistryConfiguration {
     private static class CasCacheEventListener implements CacheEventListener<String, Ticket> {
         @Override
         public void onEvent(final CacheEvent<? extends String, ? extends Ticket> event) {
-            LOGGER.trace("Event Type: {}, Ticket Id: {}", event.getType().name(), event.getKey());
+            LOGGER.trace("Event Type: [{}], Ticket Id: [{}]", event.getType().name(), event.getKey());
         }
     }
 }

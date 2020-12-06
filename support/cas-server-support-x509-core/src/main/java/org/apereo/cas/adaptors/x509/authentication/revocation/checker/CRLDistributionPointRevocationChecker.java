@@ -90,7 +90,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
         try {
             this.crlCache.close();
         } catch (final StateTransitionException e) {
-            LOGGER.warn("Error closing CRL cache {}", e.getMessage(), e);
+            LOGGER.warn("Error closing CRL cache [{}]", e.getMessage(), e);
         }
     }
 

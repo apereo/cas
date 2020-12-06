@@ -152,7 +152,7 @@ public class GenerateJwtCommand {
         }
 
         val signingSecret = RandomUtils.randomAlphanumeric(signingSecretSize);
-        LOGGER.info("==== Signing Secret ====\n{}\n", signingSecret);
+        LOGGER.info("==== Signing Secret ====\n[{}]\n", signingSecret);
 
         val acceptedSigningAlgs = Arrays.stream(JWSAlgorithm.class.getDeclaredFields())
             .filter(f -> f.getType().equals(JWSAlgorithm.class))

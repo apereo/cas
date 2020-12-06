@@ -11,9 +11,11 @@ import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreUtilSerializationConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
+import org.apereo.cas.config.CasRestConfiguration;
 import org.apereo.cas.config.SurrogateAuthenticationAuditConfiguration;
 import org.apereo.cas.config.SurrogateAuthenticationConfiguration;
 import org.apereo.cas.config.SurrogateAuthenticationRestConfiguration;
@@ -54,8 +56,10 @@ import static org.mockito.Mockito.*;
     CasCoreUtilConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreWebConfiguration.class,
+    CasRestConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,
     CasCoreTicketsConfiguration.class,
+    CasCoreUtilSerializationConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
