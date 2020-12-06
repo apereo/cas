@@ -1,10 +1,10 @@
 package org.apereo.cas.git;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.ResourceUtils;
 
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.apereo.cas.util.ResourceUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ClassPathResource;
 
+import java.io.File;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,7 +40,7 @@ public class GitRepositoryBuilderTests {
         props.setPassword("password");
         props.setBranchesToClone("master");
         props.setCloneDirectory(ResourceUtils.getRawResourceFrom(
-                FileUtils.getTempDirectoryPath() + UUID.randomUUID().toString()));
+                FileUtils.getTempDirectoryPath() + File.separator + UUID.randomUUID().toString()));
         props.setPrivateKeyPassphrase("something");
         props.setSshSessionPassword("more-password");
         props.setPrivateKeyPath(new ClassPathResource("priv.key").getFile());
@@ -59,7 +60,7 @@ public class GitRepositoryBuilderTests {
         props.setPassword("password");
         props.setBranchesToClone("master");
         props.setCloneDirectory(ResourceUtils.getRawResourceFrom(
-                "file://" + FileUtils.getTempDirectoryPath() + UUID.randomUUID().toString()));
+                "file://" + FileUtils.getTempDirectoryPath() + File.separator + UUID.randomUUID().toString()));
         props.setPrivateKeyPassphrase("something");
         props.setSshSessionPassword("more-password");
         props.setPrivateKeyPath(new ClassPathResource("priv.key").getFile());
