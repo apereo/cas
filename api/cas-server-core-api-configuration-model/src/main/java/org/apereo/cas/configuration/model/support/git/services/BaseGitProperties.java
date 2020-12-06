@@ -81,6 +81,12 @@ public abstract class BaseGitProperties implements Serializable {
     private String sshSessionPassword;
 
     /**
+     * Whether on not to turn on strict host key checking.
+     * true will be "yes", false will be "no", "ask" not supported
+     */
+    private boolean strictHostKeyChecking = true;
+
+    /**
      * Timeout for git operations such as push and pull in seconds.
      */
     private String timeout = "PT10S";

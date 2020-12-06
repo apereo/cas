@@ -44,6 +44,7 @@ public class GitRepositoryBuilderTests {
         props.setPrivateKeyPassphrase("something");
         props.setSshSessionPassword("more-password");
         props.setPrivateKeyPath(new ClassPathResource("priv.key").getFile());
+        props.setStrictHostKeyChecking(false);
         val builder = GitRepositoryBuilder.newInstance(props);
         assertDoesNotThrow(builder::build);
     }
@@ -64,6 +65,7 @@ public class GitRepositoryBuilderTests {
         props.setPrivateKeyPassphrase("something");
         props.setSshSessionPassword("more-password");
         props.setPrivateKeyPath(new ClassPathResource("priv.key").getFile());
+        props.setStrictHostKeyChecking(false);
         val builder = GitRepositoryBuilder.newInstance(props);
         assertDoesNotThrow(builder::build);
     }

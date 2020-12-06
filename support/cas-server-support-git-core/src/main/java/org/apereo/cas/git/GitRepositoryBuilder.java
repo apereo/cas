@@ -60,6 +60,8 @@ public class GitRepositoryBuilder {
 
     private final boolean signCommits;
 
+    private final boolean strictHostKeyChecking;
+
     private static String getBranchPath(final String branchName) {
         return "refs/heads/" + branchName;
     }
@@ -81,7 +83,8 @@ public class GitRepositoryBuilder {
             .privateKeyPassphrase(props.getPrivateKeyPassphrase())
             .sshSessionPassword(props.getSshSessionPassword())
             .timeoutInSeconds(Beans.newDuration(props.getTimeout()).toSeconds())
-            .signCommits(props.isSignCommits());
+            .signCommits(props.isSignCommits())
+            .strictHostKeyChecking(props.isStrictHostKeyChecking());
         if (StringUtils.hasText(props.getUsername())) {
             val providers = CollectionUtils.wrapList(
                 new UsernamePasswordCredentialsProvider(props.getUsername(), props.getPassword()),
@@ -105,6 +108,9 @@ public class GitRepositoryBuilder {
             protected void configure(final OpenSshConfig.Host host, final Session session) {
                 if (StringUtils.hasText(sshSessionPassword)) {
                     session.setPassword(sshSessionPassword);
+                }
+                if (!strictHostKeyChecking) {
+                    session.setConfig("StrictHostKeyChecking", "no");
                 }
             }
 
