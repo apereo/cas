@@ -46,7 +46,7 @@ public class GitRepositoryBuilderTests {
         props.setPrivateKeyPath(new ClassPathResource("priv.key").getFile());
         props.setStrictHostKeyChecking(false);
         val builder = GitRepositoryBuilder.newInstance(props);
-        assertThrows(IllegalAccessException.class, builder::build);
+        assertThrows(IllegalArgumentException.class, builder::build);
     }
 
     @Test
