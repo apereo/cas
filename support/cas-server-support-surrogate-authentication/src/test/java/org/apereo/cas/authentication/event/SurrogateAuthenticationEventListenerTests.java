@@ -66,7 +66,21 @@ public class SurrogateAuthenticationEventListenerTests {
         val listener = new SurrogateAuthenticationEventListener(communicationsManager, casProperties);
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser",
             Map.of("phone", List.of("1234567890"), "mail", List.of("cas@example.org")));
+        assertDoesNotThrow(new Executable() {
+            @Override
+            public void execute() {
+                listener.handleSurrogateAuthenticationFailureEvent(new CasSurrogateAuthenticationFailureEvent(this,
+                    principal, "surrogate"));
+                listener.handleSurrogateAuthenticationSuccessEvent(new CasSurrogateAuthenticationSuccessfulEvent(this,
+                    principal, "surrogate"));
+            }
+        });
+    }
 
+    @Test
+    public void verifyFailsOperation() {
+        val listener = new SurrogateAuthenticationEventListener(communicationsManager, casProperties);
+        val principal = CoreAuthenticationTestUtils.getPrincipal("casuser", Map.of());
         assertDoesNotThrow(new Executable() {
             @Override
             public void execute() {

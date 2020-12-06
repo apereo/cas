@@ -6,6 +6,8 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -36,11 +38,9 @@ public class PrincipalScimProvisionerAction extends AbstractAction {
         val p = authentication.getPrincipal();
         LOGGER.debug("Starting to provision principal [{}]", p);
         val res = this.scimProvisioner.create(authentication, p, c);
-        if (res) {
-            LOGGER.debug("Provisioning of principal [{}] executed successfully", p);
-        } else {
-            LOGGER.warn("Provisioning of principal [{}] has failed", p);
-        }
+        val msg = String.format("Provisioning of principal %s is%s done successfully", p,
+            BooleanUtils.toString(res, StringUtils.EMPTY, " not"));
+        LOGGER.debug(msg);
         return success();
     }
 }

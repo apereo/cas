@@ -9,6 +9,7 @@ import org.apereo.cas.util.LoggingUtils;
 import com.unboundid.scim.data.UserResource;
 import com.unboundid.scim.schema.CoreSchema;
 import com.unboundid.scim.sdk.OAuthToken;
+import com.unboundid.scim.sdk.ResourceNotFoundException;
 import com.unboundid.scim.sdk.SCIMEndpoint;
 import com.unboundid.scim.sdk.SCIMService;
 import lombok.SneakyThrows;
@@ -59,6 +60,8 @@ public class ScimV1PrincipalProvisioner implements PrincipalProvisioner {
                 return updateUserResource(user, p, credential);
             }
             return createUserResource(p, credential);
+        } catch (final ResourceNotFoundException e) {
+            LOGGER.debug("User [{}] not found", p.getId());
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }

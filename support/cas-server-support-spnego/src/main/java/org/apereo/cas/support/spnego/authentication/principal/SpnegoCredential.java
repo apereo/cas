@@ -2,7 +2,6 @@ package org.apereo.cas.support.spnego.authentication.principal;
 
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.util.LoggingUtils;
 
 import com.google.common.io.ByteSource;
 import lombok.AllArgsConstructor;
@@ -11,10 +10,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 
-import java.io.IOException;
 import java.util.stream.IntStream;
 
 /**
@@ -24,7 +22,6 @@ import java.util.stream.IntStream;
  * @author Marc-Antoine Garrigue
  * @since 3.1
  */
-@Slf4j
 @ToString
 @Setter
 @Getter
@@ -80,6 +77,11 @@ public class SpnegoCredential implements Credential {
         this.isNtlm = isTokenNtlm(this.initToken);
     }
 
+    @Override
+    public String getId() {
+        return this.principal != null ? this.principal.getId() : UNKNOWN_ID;
+    }
+
     /**
      * Checks if is token ntlm.
      *
@@ -99,20 +101,11 @@ public class SpnegoCredential implements Credential {
      * @param source the byte array source
      * @return the byte[] read from the source or null
      */
+    @SneakyThrows
     private static byte[] consumeByteSourceOrNull(final ByteSource source) {
-        try {
-            if (source == null || source.isEmpty()) {
-                return null;
-            }
-            return source.read();
-        } catch (final IOException e) {
-            LoggingUtils.warn(LOGGER, "Could not consume the byte array source", e);
+        if (source == null || source.isEmpty()) {
             return null;
         }
-    }
-
-    @Override
-    public String getId() {
-        return this.principal != null ? this.principal.getId() : UNKNOWN_ID;
+        return source.read();
     }
 }

@@ -32,6 +32,6 @@ public class SurrogateAuthenticationExpirationPolicyBuilderTests {
         val builder = new SurrogateAuthenticationExpirationPolicyBuilder(
             new TicketGrantingTicketExpirationPolicyBuilder(casProperties), casProperties);
         assertEquals(TicketGrantingTicket.class, builder.getTicketType());
-        assertNotNull(builder.toTicketExpirationPolicy());
+        assertNotNull(builder.buildTicketExpirationPolicy());
     }
 }

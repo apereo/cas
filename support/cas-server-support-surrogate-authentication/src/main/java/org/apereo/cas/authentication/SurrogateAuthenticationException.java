@@ -1,7 +1,5 @@
 package org.apereo.cas.authentication;
 
-import java.util.Map;
-
 /**
  * This is {@link SurrogateAuthenticationException}.
  *
@@ -13,9 +11,5 @@ public class SurrogateAuthenticationException extends AuthenticationException {
 
     public SurrogateAuthenticationException(final String msg) {
         super(msg);
-    }
-
-    public SurrogateAuthenticationException(final Map<String, Throwable> handlerErrors) {
-        super(handlerErrors);
     }
 }

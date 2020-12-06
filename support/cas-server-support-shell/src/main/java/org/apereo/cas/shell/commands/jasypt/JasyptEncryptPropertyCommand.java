@@ -60,6 +60,6 @@ public class JasyptEncryptPropertyCommand {
         cipher.setProviderName(provider);
         cipher.setKeyObtentionIterations(iterations);
         val encrypted = cipher.encryptValue(value);
-        LOGGER.info("==== Encrypted Value ====\n{}", encrypted);
+        LOGGER.info("==== Encrypted Value ====\n[{}]", encrypted);
     }
 }

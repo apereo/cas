@@ -134,7 +134,8 @@ public class SpnegoConfiguration {
         val personDirectory = casProperties.getPersonDirectory();
         val spnegoProperties = casProperties.getAuthn().getSpnego();
         val spnegoPrincipal = spnegoProperties.getPrincipal();
-        val principalAttribute = StringUtils.defaultIfBlank(spnegoPrincipal.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
+        val principalAttribute = StringUtils.defaultIfBlank(spnegoPrincipal.getPrincipalAttribute(),
+            personDirectory.getPrincipalAttribute());
         return new SpnegoPrincipalResolver(attributeRepository.getObject(),
             spnegoPrincipalFactory(),
             spnegoPrincipal.isReturnNull() || personDirectory.isReturnNull(),

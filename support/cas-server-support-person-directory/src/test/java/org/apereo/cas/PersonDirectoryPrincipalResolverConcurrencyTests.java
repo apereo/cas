@@ -159,7 +159,7 @@ public class PersonDirectoryPrincipalResolverConcurrencyTests {
                     LOGGER.debug("Fetched person: [{}] [{}], last-name [{}]", attributes.get("uid"),
                         attributes.get("lastName"), attributes.get("nickname"));
                 } catch (final Exception e) {
-                    LOGGER.warn("Error getting person: {}", e.getMessage(), e);
+                    LOGGER.warn("Error getting person: [{}]", e.getMessage(), e);
                     throw e;
                 }
             }

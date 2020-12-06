@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link SurrogateAuthenticationMetaDataPopulatorTests}.
@@ -27,6 +28,8 @@ public class SurrogateAuthenticationMetaDataPopulatorTests {
         c.setPassword("password");
 
         val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
+        assertThrows(SurrogateAuthenticationException.class,
+            () -> p.populateAttributes(builder, mock(AuthenticationTransaction.class)));
         p.populateAttributes(builder, DefaultAuthenticationTransaction.of(c));
         val auth = builder.build();
         assertTrue(auth.getAttributes().containsKey(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED));

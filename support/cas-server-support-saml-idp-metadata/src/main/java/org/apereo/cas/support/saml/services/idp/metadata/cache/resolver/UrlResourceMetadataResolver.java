@@ -172,7 +172,8 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
      * @return the metadata resolver from response
      * @throws Exception the exception
      */
-    protected AbstractMetadataResolver getMetadataResolverFromResponse(final HttpResponse response, final File backupFile) throws Exception {
+    protected AbstractMetadataResolver getMetadataResolverFromResponse(final HttpResponse response,
+        final File backupFile) throws Exception {
         val entity = response.getEntity();
         val result = IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8);
         val path = backupFile.toPath();

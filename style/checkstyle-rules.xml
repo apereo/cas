@@ -400,8 +400,8 @@
             <property name="id" value="logParameters"/>
             <metadata name="net.sf.eclipsecs.core.comment" value="Log parameters must be enclosed between brackets"/>
             <property name="severity" value="error"/>
-            <property name="format" value="(LOGGER|log|logger)+\.\w+\(&quot;.+((?&lt;!\[)\{|(\}(?!\]))).+&quot;"/>
-            <property name="message" value="Log parameters must be enclosed between brackets: [{}]"/>
+            <property name="format" value="(LOGGER|log|logger)+\.\w+\(&quot;.+((?&lt;!\[)\{|(\}(?!s)(?!\]))).+&quot;"/>
+            <property name="message" value="Log parameters must be enclosed between brackets"/>
         </module>
 
         <module name="RegexpSinglelineJava">

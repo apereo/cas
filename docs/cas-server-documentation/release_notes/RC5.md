@@ -88,9 +88,13 @@ CAS server, using a mobile device and subsequently login after having successful
 [WebAuthn FIDO2](../mfa/FIDO2-WebAuthn-Authentication.html) multifactor authentication 
 can now, manage and track device registration records inside LDAP directories.
 
+### Test Coverage
+
+CAS test coverage across all modules in the codebase has now reached `90%` and continues to climb. Additional validation rules are also applied to fail all pull requests that fall below this threshold. 
+
 ## Other Stuff
 
-- [Attribute resolution](../integration/Attribute-Resolution.html) has gained a new option to force all attribute repositories to produce a data and short-circuit the resolution logic if any repository fails to resolve the person details.
+- [Attribute resolution](../integration/Attribute-Resolution.html) has gained a new option to force all attribute repositories to produce data and short-circuit the resolution logic if any repository fails to resolve the person details.
 - [Maven repositories](https://spring.io/blog/2020/10/29/notice-of-permissions-changes-to-repo-spring-io-fall-and-winter-2020) managed by the Spring project are removed from the CAS gradle build. 
 - Improvements to [password management](../password_management/Password-Management.html) flows to handle invalid tokens more gracefully, and allow password reset with or without single sign-on sessions.
 - Releasing attributes with a space in the attribute name, due to misconfiguration, will force CAS to replace the space with `_` upon release.

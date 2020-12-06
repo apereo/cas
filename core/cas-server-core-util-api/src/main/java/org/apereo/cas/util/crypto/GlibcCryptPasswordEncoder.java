@@ -71,7 +71,9 @@ public class GlibcCryptPasswordEncoder implements PasswordEncoder {
         }
         var encodedRawPassword = Crypt.crypt(rawPassword.toString(), providedSalt);
         var matched = StringUtils.equals(encodedRawPassword, encodedPassword);
-        LOGGER.debug("Provided password does {}match the encoded password", BooleanUtils.toString(matched, StringUtils.EMPTY, "not "));
+        val msg = String.format("Provided password does %smatch the encoded password",
+            BooleanUtils.toString(matched, StringUtils.EMPTY, "not "));
+        LOGGER.debug(msg);
         return matched;
     }
 

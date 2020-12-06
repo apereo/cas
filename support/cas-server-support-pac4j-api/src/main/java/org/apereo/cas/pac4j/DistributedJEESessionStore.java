@@ -134,7 +134,7 @@ public class DistributedJEESessionStore implements SessionStore<JEEContext> {
             val sessionId = getOrCreateSessionId(context);
             val ticketId = TransientSessionTicketFactory.normalizeTicketId(sessionId);
 
-            LOGGER.trace("fetching ticket: {}", ticketId);
+            LOGGER.trace("fetching ticket: [{}]", ticketId);
             return centralAuthenticationService.getTicket(ticketId, TransientSessionTicket.class);
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);
