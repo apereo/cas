@@ -75,7 +75,9 @@ public class GitSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
     @Override
     public boolean supports(final SamlRegisteredService service) {
         try {
-            if (service == null) { return false; }
+            if (service == null) {
+                return false;
+            }
             val metadataLocation = service.getMetadataLocation();
             return metadataLocation != null && metadataLocation.trim().startsWith("git://");
         } catch (final Exception e) {
