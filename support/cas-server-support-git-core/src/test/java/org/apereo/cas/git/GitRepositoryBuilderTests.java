@@ -46,7 +46,7 @@ public class GitRepositoryBuilderTests {
         props.setPrivateKeyPath(new ClassPathResource("priv.key").getFile());
         props.setStrictHostKeyChecking(false);
         val builder = GitRepositoryBuilder.newInstance(props);
-        assertDoesNotThrow(builder::build);
+        assertThrows(IllegalAccessException.class, builder::build);
     }
 
     @Test
@@ -56,16 +56,12 @@ public class GitRepositoryBuilderTests {
      */
     public void verifyBuildWithFilePrefix() throws Exception {
         val props = casProperties.getServiceRegistry().getGit();
-        props.setRepositoryUrl("git@github.com:mmoayyed/sample-data.git");
+        props.setRepositoryUrl("https://github.com/mmoayyed/sample-data.git");
         props.setUsername("casuser");
         props.setPassword("password");
         props.setBranchesToClone("master");
         props.setCloneDirectory(ResourceUtils.getRawResourceFrom(
                 "file://" + FileUtils.getTempDirectoryPath() + File.separator + UUID.randomUUID().toString()));
-        props.setPrivateKeyPassphrase("something");
-        props.setSshSessionPassword("more-password");
-        props.setPrivateKeyPath(new ClassPathResource("priv.key").getFile());
-        props.setStrictHostKeyChecking(false);
         val builder = GitRepositoryBuilder.newInstance(props);
         assertDoesNotThrow(builder::build);
     }
