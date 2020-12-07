@@ -39,10 +39,15 @@ public class JpaConsentRepository implements ConsentRepository {
     public ConsentDecision findConsentDecision(final Service service,
                                                final RegisteredService registeredService,
                                                final Authentication authentication) {
-        val query = SELECT_QUERY.concat("WHERE r.principal = :principal AND r.service = :service");
-        return this.entityManager.createQuery(query, JpaConsentDecision.class)
-            .setParameter("principal", authentication.getPrincipal().getId())
-            .setParameter("service", service.getId()).getSingleResult();
+        try {
+            val query = SELECT_QUERY.concat("WHERE r.principal = :principal AND r.service = :service");
+            return this.entityManager.createQuery(query, JpaConsentDecision.class)
+                .setParameter("principal", authentication.getPrincipal().getId())
+                .setParameter("service", service.getId()).getSingleResult();
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        }
+        return null;
     }
 
     @Override
