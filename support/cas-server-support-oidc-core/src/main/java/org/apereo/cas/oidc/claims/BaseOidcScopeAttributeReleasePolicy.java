@@ -69,7 +69,7 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
         val properties = applicationContext.getBean(CasConfigurationProperties.class);
         val supportedClaims = properties.getAuthn().getOidc().getClaims();
         
-        val allowedClaims = new LinkedHashSet<String>(getAllowedAttributes());
+        val allowedClaims = new LinkedHashSet<>(getAllowedAttributes());
         allowedClaims.retainAll(supportedClaims);
         LOGGER.debug("[{}] is designed to allow claims [{}] for scope [{}]. After cross-checking with "
                 + "supported claims [{}], the final collection of allowed attributes is [{}]", getClass().getSimpleName(),
