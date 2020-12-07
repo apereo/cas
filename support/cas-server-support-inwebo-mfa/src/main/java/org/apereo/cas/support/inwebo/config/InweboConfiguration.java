@@ -3,7 +3,7 @@ package org.apereo.cas.support.inwebo.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.inwebo.service.ConsoleAdmin;
 import org.apereo.cas.support.inwebo.service.InweboService;
-import org.apereo.cas.support.inwebo.service.SSLUtil;
+import org.apereo.cas.util.ssl.SSLUtils;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +47,7 @@ public class InweboConfiguration {
 
         try {
             val messageSender = new HttpsUrlConnectionMessageSender();
-            messageSender.setKeyManagers(SSLUtil.buildKeystore(casProperties.getAuthn().getMfa().getInwebo()).getKeyManagers());
+            messageSender.setKeyManagers(SSLUtils.buildKeystore(casProperties.getAuthn().getMfa().getInwebo().getClientCertificate()).getKeyManagers());
             val tmFactory = TrustManagerFactory.getInstance("PKIX");
             tmFactory.init((KeyStore) null);
             messageSender.setTrustManagers(tmFactory.getTrustManagers());

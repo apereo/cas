@@ -3407,8 +3407,8 @@ To learn more about this topic, [please review this guide](../mfa/Inwebo-Authent
 
 ```properties
 # cas.authn.mfa.inwebo.service-id=
-# cas.authn.mfa.inwebo.client-certificate.location=
-# cas.authn.mfa.inwebo.certificate-passphrase=
+# cas.authn.mfa.inwebo.client-certificate.certificate.location=
+# cas.authn.mfa.inwebo.client-certificate.passphrase=
 # cas.authn.mfa.inwebo.site-alias=
 # cas.authn.mfa.inwebo.site-description=my secured site
 #

@@ -1,13 +1,12 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
-import org.apereo.cas.configuration.model.SpringResourceProperties;
+import org.apereo.cas.configuration.model.core.util.ClientCertificateProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.springframework.core.io.Resource;
 
 /**
  * The Inwebo MFA properties.
@@ -35,16 +34,10 @@ public class InweboMultifactorProperties extends BaseMultifactorProviderProperti
     private Long serviceId;
 
     /**
-     * The location of the client certificate (PKCS12 format).
+     * The client certificate.
      */
     @RequiredProperty
-    private transient SpringResourceProperties clientCertificate;
-
-    /**
-     * The passphrase of the client certificate.
-     */
-    @RequiredProperty
-    private String certificatePassphrase;
+    private ClientCertificateProperties clientCertificate;
 
     /**
      * The alias of the secured site.

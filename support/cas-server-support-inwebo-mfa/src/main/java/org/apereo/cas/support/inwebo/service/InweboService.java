@@ -7,6 +7,7 @@ import org.apereo.cas.support.inwebo.service.response.LoginSearchResponse;
 import org.apereo.cas.support.inwebo.service.response.PushAuthenticateResponse;
 import org.apereo.cas.support.inwebo.service.response.Result;
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.ssl.SSLUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -44,7 +45,7 @@ public class InweboService {
 
         val inwebo = casProperties.getAuthn().getMfa().getInwebo();
         try {
-            val keyManagerFactory = SSLUtil.buildKeystore(inwebo);
+            val keyManagerFactory = SSLUtils.buildKeystore(inwebo.getClientCertificate());
             this.context = SSLContext.getInstance("TLS");
             context.init(keyManagerFactory.getKeyManagers(), null, RandomUtils.getNativeInstance());
         } catch (final Exception e) {
