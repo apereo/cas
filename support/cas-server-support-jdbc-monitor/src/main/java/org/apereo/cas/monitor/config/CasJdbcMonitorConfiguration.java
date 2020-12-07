@@ -1,25 +1,23 @@
 package org.apereo.cas.monitor.config;
 
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.monitor.JdbcDataSourceHealthIndicator;
-
-import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
-import org.springframework.boot.actuate.health.HealthIndicator;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.actuate.health.CompositeHealthContributor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
 
-import javax.sql.DataSource;
-import java.util.concurrent.ExecutorService;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.UUID;
+
 
 /**
  * This is {@link CasJdbcMonitorConfiguration}.
@@ -30,30 +28,30 @@ import java.util.concurrent.ExecutorService;
 @Configuration("casJdbcMonitorConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasJdbcMonitorConfiguration {
+    private static final int MAP_SIZE = 8;
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Lazy
-    @Bean
-    public ThreadPoolExecutorFactoryBean pooledJdbcMonitorExecutorService() {
-        return Beans.newThreadPoolExecutorFactoryBean(casProperties.getMonitor().getJdbc().getPool());
-    }
 
     @Autowired
     @Bean
     @RefreshScope
     @ConditionalOnEnabledHealthIndicator("dataSourceHealthIndicator")
-    public HealthIndicator dataSourceHealthIndicator(@Qualifier("pooledJdbcMonitorExecutorService") final ExecutorService executor) {
-        val jdbc = casProperties.getMonitor().getJdbc();
-        return new JdbcDataSourceHealthIndicator(Beans.newDuration(jdbc.getMaxWait()).toMillis(),
-            monitorDataSource(), executor, jdbc.getValidationQuery());
-    }
+    public HealthIndicator dataSourceHealthIndicator() {
+        val jdbcs = casProperties.getMonitor().getJdbc();
+        val contributors = new LinkedHashMap<>(MAP_SIZE);
+        jdbcs.stream()
+            .filter(jdbc -> jdbc.getValidationQuery() != null)
+            .map(jdbc -> {
+                val executor = Beans.newThreadPoolExecutorFactoryBean(jdbc.getPool());
+                executor.afterPropertiesSet();
+                val healthIndicator = new JdbcDataSourceHealthIndicator(Beans.newDuration(jdbc.getMaxWait()).toMillis(),
+                        JpaBeans.newDataSource(jdbc), executor.getObject(), jdbc.getValidationQuery());
 
-    @ConditionalOnMissingBean(name = "monitorDataSource")
-    @Bean
-    @RefreshScope
-    public DataSource monitorDataSource() {
-        return JpaBeans.newDataSource(casProperties.getMonitor().getJdbc());
+                val name = StringUtils.defaultIfBlank(jdbc.getUrl(), UUID.randomUUID().toString());
+                return Pair.of(name, healthIndicator);
+            })
+            .forEach(it -> contributors.put(it.getKey(), it.getValue()));    
+        return CompositeHealthContributor.fromMap((Map) contributors);    
     }
 }
