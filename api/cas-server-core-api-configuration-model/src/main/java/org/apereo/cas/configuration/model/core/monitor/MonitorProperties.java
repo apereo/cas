@@ -71,7 +71,7 @@ public class MonitorProperties implements Serializable {
     /**
      * Options for monitoring JDBC resources.
      */
-    private Jdbc jdbc = new Jdbc();
+    private List<Jdbc> jdbc = new ArrayList<>(0);
 
     /**
      * Options for monitoring LDAP resources.
