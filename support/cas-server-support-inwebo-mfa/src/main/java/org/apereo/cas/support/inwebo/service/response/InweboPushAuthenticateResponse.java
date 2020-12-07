@@ -11,7 +11,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class PushAuthenticateResponse extends AbstractResponse {
+public class InweboPushAuthenticateResponse extends AbstractInweboResponse {
 
     private String sessionId;
 }

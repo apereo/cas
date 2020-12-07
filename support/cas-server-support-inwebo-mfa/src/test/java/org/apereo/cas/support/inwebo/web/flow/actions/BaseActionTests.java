@@ -14,8 +14,8 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.inwebo.authentication.InweboAuthenticationDeviceMetadataPopulator;
 import org.apereo.cas.support.inwebo.authentication.InweboAuthenticationHandler;
 import org.apereo.cas.support.inwebo.service.InweboService;
-import org.apereo.cas.support.inwebo.service.response.DeviceNameResponse;
-import org.apereo.cas.support.inwebo.service.response.Result;
+import org.apereo.cas.support.inwebo.service.response.InweboDeviceNameResponse;
+import org.apereo.cas.support.inwebo.service.response.InweboResult;
 import org.apereo.cas.support.inwebo.web.flow.InweboMultifactorAuthenticationWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
@@ -103,10 +103,10 @@ public abstract class BaseActionTests {
         WebUtils.putAuthenticationResultBuilder(resultBuilder, requestContext);
     }
 
-    protected DeviceNameResponse deviceResponse(final Result result) {
-        val response = new DeviceNameResponse();
+    protected InweboDeviceNameResponse deviceResponse(final InweboResult result) {
+        val response = new InweboDeviceNameResponse();
         response.setResult(result);
-        if (result == Result.OK) {
+        if (result == InweboResult.OK) {
             response.setDeviceName(DEVICE_NAME);
         }
         return response;

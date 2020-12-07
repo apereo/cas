@@ -2,8 +2,8 @@ package org.apereo.cas.support.inwebo.web.flow.actions;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.InweboMultifactorProperties;
-import org.apereo.cas.support.inwebo.service.response.LoginSearchResponse;
-import org.apereo.cas.support.inwebo.service.response.Result;
+import org.apereo.cas.support.inwebo.service.response.InweboLoginSearchResponse;
+import org.apereo.cas.support.inwebo.service.response.InweboResult;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import lombok.val;
@@ -41,9 +41,9 @@ public class InweboCheckUserActionTests extends BaseActionTests {
         action = new InweboCheckUserAction(mock(MessageSource.class), service, casProperties);
     }
 
-    private LoginSearchResponse loginSearchOk(final int activationStatus, final int userId) {
-        val response = new LoginSearchResponse();
-        response.setResult(Result.OK);
+    private InweboLoginSearchResponse loginSearchOk(final int activationStatus, final int userId) {
+        val response = new InweboLoginSearchResponse();
+        response.setResult(InweboResult.OK);
         response.setCount(1);
         response.setUserId(userId);
         response.setActivationStatus(activationStatus);

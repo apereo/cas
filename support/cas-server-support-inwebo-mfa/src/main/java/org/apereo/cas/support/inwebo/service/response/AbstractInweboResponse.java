@@ -11,11 +11,11 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public abstract class AbstractResponse {
+public abstract class AbstractInweboResponse {
 
-    private Result result;
+    private InweboResult result;
 
     public boolean isOk() {
-        return result == Result.OK;
+        return result == InweboResult.OK;
     }
 }

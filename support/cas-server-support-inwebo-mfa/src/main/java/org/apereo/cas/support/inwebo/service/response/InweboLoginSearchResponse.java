@@ -11,7 +11,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class LoginSearchResponse extends AbstractResponse {
+public class InweboLoginSearchResponse extends AbstractInweboResponse {
 
     private long count;
 

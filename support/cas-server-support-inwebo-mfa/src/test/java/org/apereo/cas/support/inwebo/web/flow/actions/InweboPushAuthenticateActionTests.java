@@ -1,7 +1,7 @@
 package org.apereo.cas.support.inwebo.web.flow.actions;
 
-import org.apereo.cas.support.inwebo.service.response.PushAuthenticateResponse;
-import org.apereo.cas.support.inwebo.service.response.Result;
+import org.apereo.cas.support.inwebo.service.response.InweboPushAuthenticateResponse;
+import org.apereo.cas.support.inwebo.service.response.InweboResult;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import lombok.val;
@@ -30,10 +30,10 @@ public class InweboPushAuthenticateActionTests extends BaseActionTests {
         action = new InweboPushAuthenticateAction(service);
     }
 
-    private PushAuthenticateResponse pushAuthenticateResponse(final Result result) {
-        val response = new PushAuthenticateResponse();
+    private InweboPushAuthenticateResponse pushAuthenticateResponse(final InweboResult result) {
+        val response = new InweboPushAuthenticateResponse();
         response.setResult(result);
-        if (result == Result.OK) {
+        if (result == InweboResult.OK) {
             response.setSessionId(SESSION_ID);
         }
         return response;
@@ -41,7 +41,7 @@ public class InweboPushAuthenticateActionTests extends BaseActionTests {
 
     @Test
     public void verifyPushAuthenticateOk() {
-        when(service.pushAuthenticate(LOGIN)).thenReturn(pushAuthenticateResponse(Result.OK));
+        when(service.pushAuthenticate(LOGIN)).thenReturn(pushAuthenticateResponse(InweboResult.OK));
 
         val event = action.doExecute(requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
@@ -50,7 +50,7 @@ public class InweboPushAuthenticateActionTests extends BaseActionTests {
 
     @Test
     public void verifyPushAuthenticateFailed() {
-        when(service.pushAuthenticate(LOGIN)).thenReturn(pushAuthenticateResponse(Result.TIMEOUT));
+        when(service.pushAuthenticate(LOGIN)).thenReturn(pushAuthenticateResponse(InweboResult.TIMEOUT));
 
         val event = action.doExecute(requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());

@@ -15,15 +15,15 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 6.4.0
  */
 @RequiredArgsConstructor
-public class InweboMustEnrollAction extends AbstractAction implements WebflowConstants {
+public class InweboMustEnrollAction extends AbstractAction {
 
     private final MessageSource messageSource;
 
     @Override
     public Event doExecute(final RequestContext requestContext) {
         val flowScope = requestContext.getFlowScope();
-        flowScope.put(MUST_ENROLL, true);
-        flowScope.put(INWEBO_ERROR_MESSAGE, messageSource.getMessage("cas.inwebo.error.usernotregistered", null, LocaleContextHolder.getLocale()));
+        flowScope.put(WebflowConstants.MUST_ENROLL, true);
+        flowScope.put(WebflowConstants.INWEBO_ERROR_MESSAGE, messageSource.getMessage("cas.inwebo.error.usernotregistered", null, LocaleContextHolder.getLocale()));
         return success();
     }
 }

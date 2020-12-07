@@ -13,7 +13,7 @@ import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
  * @author Jerome LELEU
  * @since 6.4.0
  */
-public class ConsoleAdmin extends WebServiceGatewaySupport {
+public class InweboConsoleAdmin extends WebServiceGatewaySupport {
 
     public LoginSearchResult loginSearch(final String login, final long serviceId) {
         val loginSearch = new LoginSearch();

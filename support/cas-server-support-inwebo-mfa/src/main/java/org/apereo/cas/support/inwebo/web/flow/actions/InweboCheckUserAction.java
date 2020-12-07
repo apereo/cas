@@ -2,6 +2,7 @@ package org.apereo.cas.support.inwebo.web.flow.actions;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.inwebo.service.InweboService;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,7 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @RequiredArgsConstructor
 @Slf4j
-public class InweboCheckUserAction extends AbstractAction implements WebflowConstants {
+public class InweboCheckUserAction extends AbstractAction {
 
     private final MessageSource messageSource;
 
@@ -34,13 +35,13 @@ public class InweboCheckUserAction extends AbstractAction implements WebflowCons
 
         val authentication = WebUtils.getInProgressAuthentication();
         val login = authentication.getPrincipal().getId();
-        LOGGER.debug("Login: {}", login);
+        LOGGER.trace("Login: [{}]", login);
 
         val flowScope = requestContext.getFlowScope();
         val inwebo = casProperties.getAuthn().getMfa().getInwebo();
-        flowScope.put(SITE_ALIAS, inwebo.getSiteAlias());
-        flowScope.put(SITE_DESCRIPTION, inwebo.getSiteDescription());
-        flowScope.put(LOGIN, login);
+        flowScope.put(WebflowConstants.SITE_ALIAS, inwebo.getSiteAlias());
+        flowScope.put(WebflowConstants.SITE_DESCRIPTION, inwebo.getSiteDescription());
+        flowScope.put(WebflowConstants.LOGIN, login);
 
         try {
             val response = service.loginSearch(login);
@@ -48,31 +49,31 @@ public class InweboCheckUserAction extends AbstractAction implements WebflowCons
             if (oneUser) {
                 val userIsBlocked = response.getUserStatus() == 1;
                 if (userIsBlocked) {
-                    LOGGER.error("User is blocked: {}", login);
+                    LOGGER.error("User is blocked: [{}]", login);
                     return error();
                 }
                 val activationStatus = response.getActivationStatus();
                 if (activationStatus == 0) {
-                    LOGGER.debug("User is not registered: {}", login);
-                    flowScope.put(MUST_ENROLL, true);
-                    flowScope.put(INWEBO_ERROR_MESSAGE, messageSource.getMessage("cas.inwebo.error.usernotregistered", null, LocaleContextHolder.getLocale()));
+                    LOGGER.debug("User is not registered: [{}]", login);
+                    flowScope.put(WebflowConstants.MUST_ENROLL, true);
+                    flowScope.put(WebflowConstants.INWEBO_ERROR_MESSAGE, messageSource.getMessage("cas.inwebo.error.usernotregistered", null, LocaleContextHolder.getLocale()));
                 } else if (activationStatus == 1) {
-                    LOGGER.debug("User can only handle push notifications: {}", login);
-                    return getEventFactorySupport().event(this, PUSH);
+                    LOGGER.debug("User can only handle push notifications: [{}]", login);
+                    return getEventFactorySupport().event(this, WebflowConstants.PUSH);
                 } else if (activationStatus == 2) {
-                    LOGGER.debug("User can only handle browser authentication: {}", login);
-                    return getEventFactorySupport().event(this, BROWSER);
+                    LOGGER.debug("User can only handle browser authentication: [{}]", login);
+                    return getEventFactorySupport().event(this, WebflowConstants.BROWSER);
                 } else if (activationStatus == 3 || activationStatus == 5) {
-                    LOGGER.debug("User must select the authentication method: {}", login);
-                    return getEventFactorySupport().event(this, SELECT);
+                    LOGGER.debug("User must select the authentication method: [{}]", login);
+                    return getEventFactorySupport().event(this, WebflowConstants.SELECT);
                 } else {
-                    LOGGER.error("Unknown activation status: {} for: {}", activationStatus, login);
+                    LOGGER.error("Unknown activation status: [{}] for: [{}]", activationStatus, login);
                 }
             } else {
-                LOGGER.error("No user found for: {}", login);
+                LOGGER.error("No user found for: [{}]", login);
             }
         } catch (final Exception e) {
-            LOGGER.error("Cannot search authentication methods", e);
+            LoggingUtils.error(LOGGER, "Cannot search authentication methods", e);
         }
         return error();
     }

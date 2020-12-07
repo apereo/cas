@@ -1,7 +1,7 @@
 package org.apereo.cas.support.inwebo.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.support.inwebo.service.ConsoleAdmin;
+import org.apereo.cas.support.inwebo.service.InweboConsoleAdmin;
 import org.apereo.cas.support.inwebo.service.InweboService;
 import org.apereo.cas.util.ssl.SSLUtils;
 
@@ -34,13 +34,13 @@ public class InweboConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Bean
-    @ConditionalOnMissingBean(name = "consoleAdmin")
+    @ConditionalOnMissingBean(name = "inweboConsoleAdmin")
     @RefreshScope
-    public ConsoleAdmin consoleAdmin() {
+    public InweboConsoleAdmin inweboConsoleAdmin() {
         val marshaller = new Jaxb2Marshaller();
         marshaller.setContextPath(this.getClass().getPackageName().replaceAll("config", "service.soap"));
 
-        val client = new ConsoleAdmin();
+        val client = new InweboConsoleAdmin();
         client.setDefaultUri("https://api.myinwebo.com/v2/services/ConsoleAdmin");
         client.setMarshaller(marshaller);
         client.setUnmarshaller(marshaller);
@@ -63,6 +63,6 @@ public class InweboConfiguration {
     @ConditionalOnMissingBean(name = "inweboService")
     @RefreshScope
     public InweboService inweboService() {
-        return new InweboService(casProperties, consoleAdmin());
+        return new InweboService(casProperties, inweboConsoleAdmin());
     }
 }

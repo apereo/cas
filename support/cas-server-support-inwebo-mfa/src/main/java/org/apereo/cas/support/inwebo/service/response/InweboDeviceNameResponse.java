@@ -11,7 +11,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class DeviceNameResponse extends AbstractResponse {
+public class InweboDeviceNameResponse extends AbstractInweboResponse {
 
     private String deviceName;
 }

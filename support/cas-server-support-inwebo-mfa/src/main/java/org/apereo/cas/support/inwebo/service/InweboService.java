@@ -1,11 +1,11 @@
 package org.apereo.cas.support.inwebo.service;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.support.inwebo.service.response.AbstractResponse;
-import org.apereo.cas.support.inwebo.service.response.DeviceNameResponse;
-import org.apereo.cas.support.inwebo.service.response.LoginSearchResponse;
-import org.apereo.cas.support.inwebo.service.response.PushAuthenticateResponse;
-import org.apereo.cas.support.inwebo.service.response.Result;
+import org.apereo.cas.support.inwebo.service.response.AbstractInweboResponse;
+import org.apereo.cas.support.inwebo.service.response.InweboDeviceNameResponse;
+import org.apereo.cas.support.inwebo.service.response.InweboLoginSearchResponse;
+import org.apereo.cas.support.inwebo.service.response.InweboPushAuthenticateResponse;
+import org.apereo.cas.support.inwebo.service.response.InweboResult;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.ssl.SSLUtils;
 
@@ -35,11 +35,11 @@ public class InweboService {
 
     private final CasConfigurationProperties casProperties;
 
-    private final ConsoleAdmin consoleAdmin;
+    private final InweboConsoleAdmin consoleAdmin;
 
     private SSLContext context;
 
-    public InweboService(final CasConfigurationProperties casProperties, final ConsoleAdmin consoleAdmin) {
+    public InweboService(final CasConfigurationProperties casProperties, final InweboConsoleAdmin consoleAdmin) {
         this.casProperties = casProperties;
         this.consoleAdmin = consoleAdmin;
 
@@ -53,10 +53,10 @@ public class InweboService {
         }
     }
 
-    public LoginSearchResponse loginSearch(final String login) {
+    public InweboLoginSearchResponse loginSearch(final String login) {
         val soap = consoleAdmin.loginSearch(login, casProperties.getAuthn().getMfa().getInwebo().getServiceId());
         val err = soap.getErr();
-        val response = (LoginSearchResponse) buildResponse(new LoginSearchResponse(), "loginSearch(" + login + ")", err);
+        val response = (InweboLoginSearchResponse) buildResponse(new InweboLoginSearchResponse(), "loginSearch(" + login + ")", err);
         if (response.isOk()) {
             val count = soap.getCount();
             response.setCount(count);
@@ -69,7 +69,7 @@ public class InweboService {
         return response;
     }
 
-    public PushAuthenticateResponse pushAuthenticate(final String login) {
+    public InweboPushAuthenticateResponse pushAuthenticate(final String login) {
         val inwebo = casProperties.getAuthn().getMfa().getInwebo();
         val url = UriComponentsBuilder.fromHttpUrl(API_URL)
                 .queryParam("action", "pushAuthenticate")
@@ -80,7 +80,7 @@ public class InweboService {
 
         val json = call(url);
         val err = json.get("err").asText("OK");
-        val response = (PushAuthenticateResponse) buildResponse(new PushAuthenticateResponse(), "pushAuthenticate(" + login + ")", err);
+        val response = (InweboPushAuthenticateResponse) buildResponse(new InweboPushAuthenticateResponse(), "pushAuthenticate(" + login + ")", err);
         if (response.isOk()) {
             val sessionId = json.get("sessionId");
             if (sessionId != null) {
@@ -90,7 +90,7 @@ public class InweboService {
         return response;
     }
 
-    public DeviceNameResponse checkPushResult(final String login, final String sessionId) {
+    public InweboDeviceNameResponse checkPushResult(final String login, final String sessionId) {
         val inwebo = casProperties.getAuthn().getMfa().getInwebo();
         val url = UriComponentsBuilder.fromHttpUrl(API_URL)
                 .queryParam("action", "checkPushResult")
@@ -102,12 +102,12 @@ public class InweboService {
 
         val json = call(url);
         val err = json.get("err").asText("OK");
-        val response = (DeviceNameResponse) buildResponse(new DeviceNameResponse(), "checkPushResult(" + login + ")", err);
+        val response = (InweboDeviceNameResponse) buildResponse(new InweboDeviceNameResponse(), "checkPushResult(" + login + ")", err);
         retrieveDeviceName(json, response);
         return response;
     }
 
-    protected void retrieveDeviceName(final JsonNode json, final DeviceNameResponse response) {
+    protected void retrieveDeviceName(final JsonNode json, final InweboDeviceNameResponse response) {
         if (response.isOk()) {
             val name = json.get("name");
             if (name != null) {
@@ -116,7 +116,7 @@ public class InweboService {
         }
     }
 
-    public DeviceNameResponse authenticateExtended(final String login, final String token) {
+    public InweboDeviceNameResponse authenticateExtended(final String login, final String token) {
         val inwebo = casProperties.getAuthn().getMfa().getInwebo();
         val url = UriComponentsBuilder.fromHttpUrl(API_URL)
                 .queryParam("action", "authenticateExtended")
@@ -128,7 +128,7 @@ public class InweboService {
 
         val json = call(url);
         val err = json.get("err").asText("OK");
-        val response = (DeviceNameResponse) buildResponse(new DeviceNameResponse(), "authenticateExtended(" + login + ")", err);
+        val response = (InweboDeviceNameResponse) buildResponse(new InweboDeviceNameResponse(), "authenticateExtended(" + login + ")", err);
         retrieveDeviceName(json, response);
         return response;
     }
@@ -145,29 +145,29 @@ public class InweboService {
         }
     }
 
-    protected AbstractResponse buildResponse(final AbstractResponse response, final String operation, final String err) {
+    protected AbstractInweboResponse buildResponse(final AbstractInweboResponse response, final String operation, final String err) {
         if ("OK".equals(err)) {
-            response.setResult(Result.OK);
+            response.setResult(InweboResult.OK);
         } else {
             LOGGER.debug("Inwebo call: {} returned error: {}", operation, err);
             if ("NOK:NOPUSH".equals(err)) {
-                response.setResult(Result.NOPUSH);
+                response.setResult(InweboResult.NOPUSH);
             } else if ("NOK:NOMA".equals(err)) {
-                response.setResult(Result.NOMA);
+                response.setResult(InweboResult.NOMA);
             } else if ("NOK:NOLOGIN".equals(err)) {
-                response.setResult(Result.NOLOGIN);
+                response.setResult(InweboResult.NOLOGIN);
             } else if ("NOK:SN".equals(err)) {
-                response.setResult(Result.SN);
+                response.setResult(InweboResult.SN);
             } else if ("NOK:srv unknown".equals(err)) {
-                response.setResult(Result.UNKNOWN_SERVICE);
+                response.setResult(InweboResult.UNKNOWN_SERVICE);
             } else if ("NOK:WAITING".equals(err)) {
-                response.setResult(Result.WAITING);
+                response.setResult(InweboResult.WAITING);
             } else if ("NOK:REFUSED".equals(err)) {
-                response.setResult(Result.REFUSED);
+                response.setResult(InweboResult.REFUSED);
             } else if ("NOK:TIMEOUT".equals(err)) {
-                response.setResult(Result.TIMEOUT);
+                response.setResult(InweboResult.TIMEOUT);
             } else {
-                response.setResult(Result.NOK);
+                response.setResult(InweboResult.NOK);
             }
         }
         return response;

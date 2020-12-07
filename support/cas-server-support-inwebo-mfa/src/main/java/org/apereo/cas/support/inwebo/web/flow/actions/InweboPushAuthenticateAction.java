@@ -1,7 +1,7 @@
 package org.apereo.cas.support.inwebo.web.flow.actions;
 
 import org.apereo.cas.support.inwebo.service.InweboService;
-import org.apereo.cas.support.inwebo.service.response.Result;
+import org.apereo.cas.support.inwebo.service.response.InweboResult;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @RequiredArgsConstructor
 @Slf4j
-public class InweboPushAuthenticateAction extends AbstractAction implements WebflowConstants {
+public class InweboPushAuthenticateAction extends AbstractAction {
 
     private final InweboService service;
 
@@ -27,13 +27,13 @@ public class InweboPushAuthenticateAction extends AbstractAction implements Webf
     public Event doExecute(final RequestContext requestContext) {
         val authentication = WebUtils.getInProgressAuthentication();
         val login = authentication.getPrincipal().getId();
-        LOGGER.debug("Login: {}", login);
+        LOGGER.trace("Login: [{}]", login);
         var response = service.pushAuthenticate(login);
-        if (response.getResult() == Result.NOK) {
+        if (response.getResult() == InweboResult.NOK) {
             response = service.pushAuthenticate(login);
         }
         if (response.isOk()) {
-            requestContext.getFlowScope().put(INWEBO_SESSION_ID, response.getSessionId());
+            requestContext.getFlowScope().put(WebflowConstants.INWEBO_SESSION_ID, response.getSessionId());
             return success();
         }
         return error();

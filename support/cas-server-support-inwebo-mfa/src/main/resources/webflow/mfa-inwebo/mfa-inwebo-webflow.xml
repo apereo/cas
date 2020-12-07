@@ -21,12 +21,12 @@
         <transition on="error" to="inweboError" />
     </action-state>
 
-    <view-state id="selectAuthent" view="inwebo/casInweboSelectAuthentView">
+    <view-state id="selectAuthent" view="inwebo/casInweboSelectAuthnView">
         <transition on="push" to="startPush" />
         <transition on="browser" to="startBrowser" />
     </view-state>
 
-    <view-state id="startBrowser" view="inwebo/casInweboBrowserAuthentView">
+    <view-state id="startBrowser" view="inwebo/casInweboBrowserAuthnView">
         <transition on="enroll" to="mustEnroll" />
         <transition on="error" to="inweboError" />
         <transition on="otp" to="realSubmit" />
