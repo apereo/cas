@@ -48,7 +48,7 @@ public class SendForgotUsernameInstructionsAction extends AbstractAction {
             return getErrorEvent("email.failed", "Unable to send email as no mail sender is defined", requestContext);
         }
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        val email = request.getParameter("email");
+        val email = request.getParameter("username");
 
         if (StringUtils.isBlank(email)) {
             return getErrorEvent("email.required", "No email is provided", requestContext);
