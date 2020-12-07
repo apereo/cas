@@ -9,39 +9,35 @@ const assert = require('assert');
     const page = await browser.newPage();
     await page.goto("https://localhost:8443/cas/login");
 
-    // await page.waitForTimeout(1000)
+    await page.waitForTimeout(2000)
 
-    var element = await page.$('#forgotUsernameLink');
+    var element = await page.$('#forgotPasswordLink');
     const link = await page.evaluate(element => element.textContent, element);
     console.log(link)
-    assert(link === "Forgot your username?")
+    assert(link === "Reset your password")
 
-    await click(page, "#forgotUsernameLink")
-    
-    // await page.click('#forgotUsernameLink');
-    // await page.waitForNavigation();
-    
+    await click(page, "#forgotPasswordLink")
     await page.waitForTimeout(1000)
 
     element = await page.$('#reset #fm1 h3');
     var header = await page.evaluate(element => element.textContent, element);
     console.log(header)
-    assert(header === "Forgot your username?")
-
-    let uid = await page.$('#email');
+    assert(header === "Reset your password")
+    
+    let uid = await page.$('#username');
     assert(await uid.boundingBox() != null);
 
-    await page.type('#email', "casuser@example.org");
+    await page.type('#username', "casuser");
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
 
-    // await page.waitForTimeout(3000)
+    await page.waitForTimeout(1000)
 
     element = await page.$('#content h2');
     header = await page.evaluate(element => element.textContent, element);
     console.log(header)
-    assert(header === "Instructions Sent Successfully.")
-
+    assert(header === "Password Reset Instructions Sent Successfully.")
+    
     element = await page.$('#content p');
     header = await page.evaluate(element => element.textContent, element);
     console.log(header)
