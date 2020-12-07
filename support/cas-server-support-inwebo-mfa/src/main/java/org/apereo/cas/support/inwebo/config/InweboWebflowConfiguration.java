@@ -15,7 +15,6 @@ import org.apereo.cas.support.inwebo.web.flow.actions.InweboCheckAuthenticationA
 import org.apereo.cas.support.inwebo.web.flow.actions.InweboCheckUserAction;
 import org.apereo.cas.support.inwebo.web.flow.actions.InweboMustEnrollAction;
 import org.apereo.cas.support.inwebo.web.flow.actions.InweboPushAuthenticateAction;
-import org.apereo.cas.support.inwebo.web.flow.actions.InweboSuccessAction;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
@@ -23,6 +22,7 @@ import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.actions.StaticEventExecutionAction;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
@@ -196,7 +196,7 @@ public class InweboWebflowConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "inweboSuccessAction")
     public Action inweboSuccessAction() {
-        return new InweboSuccessAction();
+        return StaticEventExecutionAction.SUCCESS;
     }
 
     /**

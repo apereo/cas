@@ -12,14 +12,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import java.io.IOException;
 import java.net.URL;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 
 /**
  * The Inwebo service.
@@ -30,6 +28,8 @@ import java.nio.charset.StandardCharsets;
 @Slf4j
 public class InweboService {
 
+    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+
     private static final String API_URL = "https://api.myinwebo.com/FS?";
 
     private final CasConfigurationProperties casProperties;
@@ -37,8 +37,6 @@ public class InweboService {
     private final ConsoleAdmin consoleAdmin;
 
     private SSLContext context;
-
-    private final ObjectMapper mapper = new ObjectMapper();
 
     public InweboService(final CasConfigurationProperties casProperties, final ConsoleAdmin consoleAdmin) {
         this.casProperties = casProperties;
@@ -72,10 +70,12 @@ public class InweboService {
 
     public PushAuthenticateResponse pushAuthenticate(final String login) {
         val inwebo = casProperties.getAuthn().getMfa().getInwebo();
-        val url = API_URL + "action=pushAuthenticate"
-                + "&serviceId=" + URLEncoder.encode(StringUtils.EMPTY + inwebo.getServiceId(), StandardCharsets.UTF_8)
-                + "&userId=" + URLEncoder.encode(login, StandardCharsets.UTF_8)
-                + "&format=json";
+        val url = UriComponentsBuilder.fromHttpUrl(API_URL)
+                .queryParam("action", "pushAuthenticate")
+                .queryParam("serviceId", inwebo.getServiceId())
+                .queryParam("userId", login)
+                .queryParam("format", "json")
+                .toUriString();
 
         val json = call(url);
         val err = json.get("err").asText("OK");
@@ -91,11 +91,13 @@ public class InweboService {
 
     public DeviceNameResponse checkPushResult(final String login, final String sessionId) {
         val inwebo = casProperties.getAuthn().getMfa().getInwebo();
-        val url = API_URL + "action=checkPushResult"
-                + "&serviceId=" + URLEncoder.encode(StringUtils.EMPTY + inwebo.getServiceId(), StandardCharsets.UTF_8)
-                + "&userId=" + URLEncoder.encode(login, StandardCharsets.UTF_8)
-                + "&sessionId=" + URLEncoder.encode(sessionId, StandardCharsets.UTF_8)
-                + "&format=json";
+        val url = UriComponentsBuilder.fromHttpUrl(API_URL)
+                .queryParam("action", "checkPushResult")
+                .queryParam("serviceId", inwebo.getServiceId())
+                .queryParam("userId", login)
+                .queryParam("sessionId", sessionId)
+                .queryParam("format", "json")
+                .toUriString();
 
         val json = call(url);
         val err = json.get("err").asText("OK");
@@ -115,11 +117,13 @@ public class InweboService {
 
     public DeviceNameResponse authenticateExtended(final String login, final String token) {
         val inwebo = casProperties.getAuthn().getMfa().getInwebo();
-        val url = API_URL + "action=authenticateExtended"
-                + "&serviceId=" + URLEncoder.encode(StringUtils.EMPTY + inwebo.getServiceId(), StandardCharsets.UTF_8)
-                + "&userId=" + URLEncoder.encode(login, StandardCharsets.UTF_8)
-                + "&token=" + URLEncoder.encode(token, StandardCharsets.UTF_8)
-                + "&format=json";
+        val url = UriComponentsBuilder.fromHttpUrl(API_URL)
+                .queryParam("action", "authenticateExtended")
+                .queryParam("serviceId", inwebo.getServiceId())
+                .queryParam("userId", login)
+                .queryParam("token", token)
+                .queryParam("format", "json")
+                .toUriString();
 
         val json = call(url);
         val err = json.get("err").asText("OK");
@@ -134,7 +138,7 @@ public class InweboService {
             conn.setSSLSocketFactory(this.context.getSocketFactory());
 
             conn.setRequestMethod("GET");
-            return mapper.readTree(conn.getInputStream());
+            return MAPPER.readTree(conn.getInputStream());
         } catch (final IOException e) {
             throw new RuntimeException("Inwebo call failed: " + url, e);
         }
