@@ -798,6 +798,7 @@ jobs:
           - source-selection-login
           - custom-fields-login
           - forgot-username
+          - forgot-password
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
