@@ -5,6 +5,7 @@ import org.apereo.cas.util.ResourceUtils;
 
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.eclipse.jgit.util.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,9 @@ public class GitRepositoryBuilderTests {
     /**
      * Verify GitRepositoryBuilder.
      * Build method throws IllegalArgumentException due to authentication failure since key is invalid.
+     * This test will pass on cicd server because there is no known_hosts, and no ssh keys setup for github.com.
+     * The underlying ssh library will use .ssh/known_hosts and use .ssh/config to find keys and .ssh/id_rsa,
+     * etc when connecting.
      */
     public void verifyBuild() throws Exception {
         val props = casProperties.getServiceRegistry().getGit();
@@ -48,9 +52,16 @@ public class GitRepositoryBuilderTests {
         props.setPrivateKeyPassphrase("something");
         props.setSshSessionPassword("more-password");
         props.setPrivateKeyPath(new ClassPathResource("priv.key"));
-        props.setStrictHostKeyChecking(false);
+        props.setStrictHostKeyChecking(true);
         val builder = GitRepositoryBuilder.newInstance(props);
-        assertThrows(IllegalArgumentException.class, builder::build);
+        val e = assertThrows(IllegalArgumentException.class, builder::build);
+        assertTrue(StringUtils.toLowerCase(e.getMessage()).contains("reject hostkey"),
+                    "[" + e.getMessage() + "] doesn't contain reject hostkey");
+        props.setStrictHostKeyChecking(false);
+        val builder2 = GitRepositoryBuilder.newInstance(props);
+        val e2 = assertThrows(IllegalArgumentException.class, builder2::build);
+        assertTrue(StringUtils.toLowerCase(e2.getMessage()).contains("auth fail"),
+                "[" + e2.getMessage() + "] doesn't contain auth fail");
     }
 
     @Test

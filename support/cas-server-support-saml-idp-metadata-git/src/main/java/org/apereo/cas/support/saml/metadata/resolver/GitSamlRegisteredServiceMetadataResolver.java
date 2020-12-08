@@ -79,7 +79,9 @@ public class GitSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
                 return false;
             }
             val metadataLocation = service.getMetadataLocation();
-            return metadataLocation != null && metadataLocation.trim().startsWith("git://");
+            return metadataLocation != null
+                    && (metadataLocation.trim().startsWith("git://")
+                            || (metadataLocation.trim().startsWith("http") && metadataLocation.trim().endsWith(".git")));
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
