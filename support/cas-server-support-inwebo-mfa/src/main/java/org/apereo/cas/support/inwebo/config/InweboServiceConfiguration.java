@@ -28,7 +28,7 @@ import java.security.KeyStore;
 @Configuration("inweboConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
-public class InweboConfiguration {
+public class InweboServiceConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
