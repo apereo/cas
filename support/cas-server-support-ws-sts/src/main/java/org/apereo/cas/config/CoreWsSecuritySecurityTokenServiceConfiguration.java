@@ -223,7 +223,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @RefreshScope
     @Bean
     public List transportTokenValidators() {
-        val list = new ArrayList<Object>(4);
+        val list = new ArrayList<>(4);
         list.add(transportSamlTokenValidator());
         list.add(transportJwtTokenValidator());
         list.add(transportSecureContextTokenValidator());
@@ -235,7 +235,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @RefreshScope
     @Bean
     public List transportTokenProviders() {
-        val list = new ArrayList<Object>(3);
+        val list = new ArrayList<>(3);
         list.add(transportSamlTokenProvider());
         list.add(transportJwtTokenProvider());
         list.add(transportSecureContextTokenProvider());

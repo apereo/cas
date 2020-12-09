@@ -76,7 +76,7 @@ public class GenerateJwtCommand {
         @ShellOption(value = {"subject", "--subject"},
             help = "Subject to use for the JWT") final String subject) {
 
-        val g = new JwtGenerator<CommonProfile>();
+        val g = new JwtGenerator<>();
 
         configureJwtSigning(signingSecretSize, signingAlgorithm, g);
         configureJwtEncryption(encryptionSecretSize, encryptionAlgorithm, encryptionMethod, g);

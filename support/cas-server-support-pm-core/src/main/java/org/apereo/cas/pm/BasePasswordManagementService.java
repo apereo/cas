@@ -50,7 +50,7 @@ public class BasePasswordManagementService implements PasswordManagementService 
      * @return A list of questions in a consistent order
      */
     public static List<String> canonicalizeSecurityQuestions(final Map<String, String> questionMap) {
-        val keys = new ArrayList<String>(questionMap.keySet());
+        val keys = new ArrayList<>(questionMap.keySet());
         keys.sort(String.CASE_INSENSITIVE_ORDER);
         return keys;
     }

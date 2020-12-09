@@ -54,7 +54,7 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
         try {
             invokeServiceRegistryListenerPreSave(registeredService);
             val result = registeredServiceEntityMapper.fromRegisteredService(registeredService);
-            val requestEntity = new HttpEntity<Serializable>(result, this.headers);
+            val requestEntity = new HttpEntity<>(result, this.headers);
             val responseEntity = restTemplate.exchange(this.url, HttpMethod.POST, requestEntity, Serializable.class);
             if (responseEntity.getStatusCode().is2xxSuccessful()) {
                 return registeredServiceEntityMapper.toRegisteredService(responseEntity.getBody());

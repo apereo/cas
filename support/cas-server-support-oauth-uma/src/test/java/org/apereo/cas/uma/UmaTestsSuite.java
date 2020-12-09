@@ -2,8 +2,10 @@ package org.apereo.cas.uma;
 
 import org.apereo.cas.uma.discovery.UmaServerDiscoverySettingsFactoryTests;
 import org.apereo.cas.uma.ticket.resource.ResourceSetTests;
+import org.apereo.cas.uma.ticket.resource.repository.impl.DefaultResourceSetRepositoryTests;
 import org.apereo.cas.uma.ticket.rpt.UmaRequestingPartyTokenSigningServiceTests;
 import org.apereo.cas.uma.web.authn.UmaRequestingPartyTokenAuthenticatorTests;
+import org.apereo.cas.uma.web.controllers.authz.UmaAuthorizationNeedInfoResponseTests;
 import org.apereo.cas.uma.web.controllers.authz.UmaAuthorizationRequestEndpointControllerTests;
 import org.apereo.cas.uma.web.controllers.claims.DefaultUmaResourceSetClaimPermissionExaminerTests;
 import org.apereo.cas.uma.web.controllers.claims.UmaRequestingPartyClaimsCollectionEndpointControllerTests;
@@ -39,6 +41,8 @@ import org.junit.runner.RunWith;
     UmaFindResourceSetRegistrationEndpointControllerTests.class,
     UmaWellKnownEndpointControllerTests.class,
     ResourceSetTests.class,
+    DefaultResourceSetRepositoryTests.class,
+    UmaAuthorizationNeedInfoResponseTests.class,
     UmaRequestingPartyTokenAuthenticatorTests.class,
     UmaRequestingPartyTokenSigningServiceTests.class,
     UmaUpdateResourceSetRegistrationEndpointControllerTests.class,

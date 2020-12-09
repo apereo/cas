@@ -147,7 +147,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
             }
 
             val properties = getOAuthConfigurationContext().getCasProperties();
-            val supportedScopes = new HashSet<String>(properties.getAuthn().getOidc().getScopes());
+            val supportedScopes = new HashSet<>(properties.getAuthn().getOidc().getScopes());
             val prefix = properties.getServer().getPrefix();
             val clientResponse = OidcClientRegistrationUtils.getClientRegistrationResponse(registeredService, prefix);
 
@@ -165,7 +165,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
             clientResponse.setRegistrationAccessToken(encodedAccessToken);
 
             registeredService.setScopes(supportedScopes);
-            val processedScopes = new LinkedHashSet<String>(supportedScopes);
+            val processedScopes = new LinkedHashSet<>(supportedScopes);
             registeredService.setScopes(processedScopes);
 
             if (!registrationRequest.getDefaultAcrValues().isEmpty()) {

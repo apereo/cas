@@ -6,6 +6,7 @@ import org.apereo.cas.consent.LdapConsentRepository;
 import org.apereo.cas.util.LdapUtils;
 
 import lombok.val;
+import org.ldaptive.ConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -17,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Arnold Bergner
  * @since 5.2.0
  */
-@Configuration(value = "casConsentLdapConfiguration", proxyBeanMethods = false)
+@Configuration(value = "casConsentLdapConfiguration", proxyBeanMethods = true)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasConsentLdapConfiguration {
 
@@ -27,7 +28,12 @@ public class CasConsentLdapConfiguration {
     @Bean
     public ConsentRepository consentRepository() {
         val ldap = casProperties.getConsent().getLdap();
-        val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
-        return new LdapConsentRepository(connectionFactory, ldap);
+        return new LdapConsentRepository(consentLdapConnectionFactory(), ldap);
+    }
+
+    @Bean
+    public ConnectionFactory consentLdapConnectionFactory() {
+        val ldap = casProperties.getConsent().getLdap();
+        return LdapUtils.newLdaptiveConnectionFactory(ldap);
     }
 }

@@ -74,7 +74,7 @@ public class PersonDirectoryPrincipalResolverTests {
 
     @Test
     public void verifyNullAttributeValues() {
-        val attributes = new ArrayList<Object>();
+        val attributes = new ArrayList<>();
         attributes.add(null);
         val resolver = new PersonDirectoryPrincipalResolver(
             new StubPersonAttributeDao(Map.of("a", attributes))

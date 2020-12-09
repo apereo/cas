@@ -139,14 +139,14 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
     @Test
     public void verifyFlowExecutorByClient() {
         val ctx = getMockRequestContext();
-        val map = new LocalAttributeMap<Object>();
+        val map = new LocalAttributeMap<>();
         getFlowExecutor().launchExecution("login", map, ctx.getExternalContext());
     }
 
     @Test
     public void verifyCasPropertiesAreAvailableInView() {
         val ctx = getMockRequestContext();
-        val map = new LocalAttributeMap<Object>();
+        val map = new LocalAttributeMap<>();
         getFlowExecutor().launchExecution("login", map, ctx.getExternalContext());
         assertResponseWrittenEquals("classpath:expected/end.html", ctx);
     }

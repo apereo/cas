@@ -96,4 +96,20 @@ public class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthen
             assertTrue(result);
         }
     }
+
+    @Test
+    public void verifyBadResponse() throws Exception {
+        var data = MAPPER.writeValueAsString("@@@");
+        try (val webServer = new MockWebServer(9310,
+            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
+            webServer.start();
+
+            val props = new CasConfigurationProperties();
+            props.getAuthn().getSurrogate().getRest().setUrl("http://localhost:9310");
+            val surrogateService = new SurrogateRestAuthenticationService(props.getAuthn().getSurrogate().getRest(), servicesManager);
+
+            val result = surrogateService.getEligibleAccountsForSurrogateToProxy("cassurrogate");
+            assertTrue(result.isEmpty());
+        }
+    }
 }

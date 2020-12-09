@@ -41,7 +41,7 @@ public class SurrogateRestAuthenticationService extends BaseSurrogateAuthenticat
     private final SurrogateRestfulAuthenticationProperties properties;
 
     public SurrogateRestAuthenticationService(final SurrogateRestfulAuthenticationProperties properties,
-                                              final ServicesManager servicesManager) {
+        final ServicesManager servicesManager) {
         super(servicesManager);
         this.properties = properties;
     }
@@ -55,12 +55,9 @@ public class SurrogateRestAuthenticationService extends BaseSurrogateAuthenticat
                 CollectionUtils.wrap("surrogate", surrogate, "principal", principal.getId()), new HashMap<>(0));
             val statusCode = response.getStatusLine().getStatusCode();
             return HttpStatus.valueOf(statusCode).is2xxSuccessful();
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }
-        return false;
     }
 
     @Override

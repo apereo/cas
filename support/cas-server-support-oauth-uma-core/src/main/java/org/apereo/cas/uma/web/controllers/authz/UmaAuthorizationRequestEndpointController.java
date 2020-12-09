@@ -163,7 +163,7 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(getUmaConfigurationContext().getServicesManager(),
             OAuth20Utils.getClientIdFromAuthenticatedProfile(profileResult));
 
-        val scopes = new LinkedHashSet<String>(permissionTicket.getScopes());
+        val scopes = new LinkedHashSet<>(permissionTicket.getScopes());
         scopes.add(OAuth20Constants.UMA_AUTHORIZATION_SCOPE);
         scopes.addAll(resourceSet.getScopes());
 

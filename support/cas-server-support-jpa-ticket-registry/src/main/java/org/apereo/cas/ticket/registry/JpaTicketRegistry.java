@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityNotFoundException;
 import javax.persistence.LockModeType;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
@@ -212,15 +211,10 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
             totalCount = deleteTicketGrantingTickets(encTicketId);
         } else {
             val ticketEntityName = getTicketEntityName(md);
-            try {
-                val sql = String.format("DELETE FROM %s o WHERE o.id = :id", ticketEntityName);
-                val query = entityManager.createQuery(sql);
-                query.setParameter("id", encTicketId);
-                totalCount = query.executeUpdate();
-            } catch (final EntityNotFoundException e) {
-                LOGGER.debug("Entity [{}] for ticket id [{}] is not found and may have already been deleted", ticketEntityName, encTicketId);
-                LOGGER.trace(e.getMessage(), e);
-            }
+            val sql = String.format("DELETE FROM %s o WHERE o.id = :id", ticketEntityName);
+            val query = entityManager.createQuery(sql);
+            query.setParameter("id", encTicketId);
+            totalCount = query.executeUpdate();
         }
         return totalCount != 0;
     }

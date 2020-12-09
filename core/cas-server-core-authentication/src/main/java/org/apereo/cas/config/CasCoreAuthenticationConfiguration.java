@@ -74,7 +74,7 @@ public class CasCoreAuthenticationConfiguration {
     @RefreshScope
     public AuthenticationEventExecutionPlan authenticationEventExecutionPlan(final List<AuthenticationEventExecutionPlanConfigurer> configurers) {
         val plan = new DefaultAuthenticationEventExecutionPlan();
-        val sortedConfigurers = new ArrayList<AuthenticationEventExecutionPlanConfigurer>(configurers);
+        val sortedConfigurers = new ArrayList<>(configurers);
         AnnotationAwareOrderComparator.sortIfNecessary(sortedConfigurers);
 
         sortedConfigurers.forEach(c -> {

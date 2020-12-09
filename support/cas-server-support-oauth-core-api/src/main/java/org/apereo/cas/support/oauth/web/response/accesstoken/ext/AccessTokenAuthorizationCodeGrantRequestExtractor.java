@@ -79,7 +79,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
      */
     protected Set<String> extractRequestedScopesByToken(final Set<String> requestedScopes,
                                                         final OAuth20Token token, final HttpServletRequest request) {
-        val scopes = new TreeSet<String>(requestedScopes);
+        val scopes = new TreeSet<>(requestedScopes);
         scopes.addAll(token.getScopes());
         return scopes;
     }

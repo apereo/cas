@@ -50,10 +50,10 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
     @Override
     public String resolveUsernameInternal(final Principal principal, final Service service, final RegisteredService registeredService) {
         var principalId = principal.getId();
-        val originalPrincipalAttributes = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
+        val originalPrincipalAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         originalPrincipalAttributes.putAll(principal.getAttributes());
         LOGGER.debug("Original principal attributes available for selection of username attribute [{}] are [{}].", this.usernameAttribute, originalPrincipalAttributes);
-        val releasePolicyAttributes = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
+        val releasePolicyAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         releasePolicyAttributes.putAll(getPrincipalAttributesFromReleasePolicy(principal, service, registeredService));
         LOGGER.debug("Attributes resolved by the release policy available for selection of username attribute [{}] are [{}].",
             this.usernameAttribute, releasePolicyAttributes);

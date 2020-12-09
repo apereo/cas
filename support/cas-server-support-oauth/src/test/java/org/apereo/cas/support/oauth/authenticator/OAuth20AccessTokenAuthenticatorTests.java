@@ -49,6 +49,23 @@ public class OAuth20AccessTokenAuthenticatorTests extends BaseOAuth20Authenticat
     }
 
     @Test
+    public void verifyAuthenticationFailsWithNoToken() {
+        val accessToken = getAccessToken();
+        val encoder = OAuth20JwtAccessTokenEncoder.builder()
+            .accessToken(accessToken)
+            .registeredService(serviceJwtAccessToken)
+            .service(accessToken.getService())
+            .accessTokenJwtBuilder(accessTokenJwtBuilder)
+            .casProperties(casProperties)
+            .build();
+        val credentials = new TokenCredentials(encoder.encode());
+        val request = new MockHttpServletRequest();
+        val ctx = new JEEContext(request, new MockHttpServletResponse());
+        authenticator.validate(credentials, ctx);
+        assertNull(credentials.getUserProfile());
+    }
+
+    @Test
     public void verifyAuthentication() {
         val accessToken = getAccessToken();
         this.ticketRegistry.addTicket(accessToken);

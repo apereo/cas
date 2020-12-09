@@ -79,7 +79,7 @@ public class JsonYubiKeyAccountRegistry extends PermissiveYubiKeyAccountRegistry
         if (ResourceUtils.doesResourceExist(jsonResource)) {
             val file = jsonResource.getFile();
             if (file.canRead() && file.length() > 0) {
-                return MAPPER.readValue(file, new TypeReference<Map<String, YubiKeyAccount>>() {
+                return MAPPER.readValue(file, new TypeReference<>() {
                 });
             }
         } else {

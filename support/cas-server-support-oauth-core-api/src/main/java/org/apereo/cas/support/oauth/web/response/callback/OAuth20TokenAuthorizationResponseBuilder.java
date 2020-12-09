@@ -134,7 +134,7 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
         val url = builder.toString();
 
         LOGGER.debug("Redirecting to URL [{}]", url);
-        return buildResponseModelAndView(context, servicesManager, accessToken.getClientId(), url, new LinkedHashMap<String, String>());
+        return buildResponseModelAndView(context, servicesManager, accessToken.getClientId(), url, new LinkedHashMap<>());
     }
 
     @Override
