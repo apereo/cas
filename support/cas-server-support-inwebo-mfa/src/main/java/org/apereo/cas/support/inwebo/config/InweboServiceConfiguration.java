@@ -1,12 +1,15 @@
 package org.apereo.cas.support.inwebo.config;
 
+import org.apereo.cas.authentication.DefaultCasSslContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.inwebo.service.InweboConsoleAdmin;
 import org.apereo.cas.support.inwebo.service.InweboService;
 import org.apereo.cas.util.ssl.SSLUtils;
 
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -33,6 +36,10 @@ public class InweboServiceConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    @Qualifier("casSslContext")
+    private ObjectProvider<DefaultCasSslContext> casSslContext;
+
     @Bean
     @ConditionalOnMissingBean(name = "inweboConsoleAdmin")
     @RefreshScope
@@ -48,9 +55,13 @@ public class InweboServiceConfiguration {
         try {
             val messageSender = new HttpsUrlConnectionMessageSender();
             messageSender.setKeyManagers(SSLUtils.buildKeystore(casProperties.getAuthn().getMfa().getInwebo().getClientCertificate()).getKeyManagers());
-            val tmFactory = TrustManagerFactory.getInstance("PKIX");
-            tmFactory.init((KeyStore) null);
-            messageSender.setTrustManagers(tmFactory.getTrustManagers());
+            if (casSslContext.getIfAvailable() != null) {
+                messageSender.setTrustManagers(casSslContext.getIfAvailable().getTrustManagers());
+            } else {
+                val tmFactory = TrustManagerFactory.getInstance("PKIX");
+                tmFactory.init((KeyStore) null);
+                messageSender.setTrustManagers(tmFactory.getTrustManagers());
+            }
             client.setMessageSender(messageSender);
         } catch (final Exception e) {
             throw new RuntimeException("Cannot initialize ConsoleAdmin", e);

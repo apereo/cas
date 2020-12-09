@@ -48,17 +48,25 @@ public class CasCoreHttpConfiguration {
         return new SSLConnectionSocketFactory(sslContext(), hostnameVerifier());
     }
 
+    @ConditionalOnMissingBean(name = "casSslContext")
+    @Bean
+    public DefaultCasSslContext casSslContext() {
+        val client = casProperties.getHttpClient().getTruststore();
+        if (client.getFile() != null && client.getFile().exists() && StringUtils.isNotBlank(client.getPsw())) {
+            return new DefaultCasSslContext(client.getFile(), client.getPsw(), KeyStore.getDefaultType());
+        }
+        return null;
+    }
+
     @ConditionalOnMissingBean(name = "sslContext")
     @Bean
     @SneakyThrows
     public SSLContext sslContext() {
-        val client = casProperties.getHttpClient().getTruststore();
-        if (client.getFile() != null && client.getFile().exists() && StringUtils.isNotBlank(client.getPsw())) {
-            val ctx = new DefaultCasSslContext(client.getFile(), client.getPsw(), KeyStore.getDefaultType());
-            return ctx.getSslContext();
+        val casSslContext = casSslContext();
+        if (casSslContext != null) {
+            return casSslContext.getSslContext();
         }
         return SSLContexts.createSystemDefault();
-
     }
 
     @ConditionalOnMissingBean(name = "httpClient")

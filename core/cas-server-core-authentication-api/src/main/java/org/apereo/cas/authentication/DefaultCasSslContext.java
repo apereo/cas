@@ -35,6 +35,8 @@ public class DefaultCasSslContext {
 
     private final SSLContext sslContext;
 
+    private final TrustManager[] trustManagers;
+
     @SneakyThrows
     public DefaultCasSslContext(final Resource trustStoreFile, final String trustStorePassword, final String trustStoreType) {
         val casTrustStore = KeyStore.getInstance(trustStoreType);
@@ -57,7 +59,7 @@ public class DefaultCasSslContext {
         };
         val allManagers = new ArrayList<X509TrustManager>(customTrustManager);
         allManagers.addAll(jvmTrustManagers);
-        val trustManagers = new TrustManager[]{new CompositeX509TrustManager(allManagers)};
+        trustManagers = new TrustManager[]{new CompositeX509TrustManager(allManagers)};
 
         this.sslContext = SSLContexts.custom().setProtocol("SSL").build();
         this.sslContext.init(keyManagers, trustManagers, null);
