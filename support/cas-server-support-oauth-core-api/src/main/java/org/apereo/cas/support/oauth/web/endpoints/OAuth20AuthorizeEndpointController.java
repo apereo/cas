@@ -72,13 +72,8 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
             .map(String::valueOf)
             .orElse(StringUtils.EMPTY);
         val registeredService = getRegisteredServiceByClientId(clientId);
-        try {
-            RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(clientId, registeredService);
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-            return OAuth20Utils.produceUnauthorizedErrorView();
-        }
-
+        RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(clientId, registeredService);
+        
         val mv = getOAuthConfigurationContext().getConsentApprovalViewResolver().resolve(context, registeredService);
         if (!mv.isEmpty() && mv.hasView()) {
             LOGGER.debug("Redirecting to consent-approval view with model [{}]", mv.getModel());
