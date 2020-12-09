@@ -1,5 +1,6 @@
 package org.apereo.cas.support.inwebo;
 
+import org.apereo.cas.support.inwebo.service.InweboServiceTests;
 import org.apereo.cas.support.inwebo.web.flow.actions.InweboCheckAuthenticationActionTests;
 import org.apereo.cas.support.inwebo.web.flow.actions.InweboCheckUserActionTests;
 import org.apereo.cas.support.inwebo.web.flow.actions.InweboMustEnrollActionTests;
@@ -19,7 +20,8 @@ import org.junit.runner.RunWith;
         InweboCheckAuthenticationActionTests.class,
         InweboCheckUserActionTests.class,
         InweboMustEnrollActionTests.class,
-        InweboPushAuthenticateActionTests.class
+        InweboPushAuthenticateActionTests.class,
+        InweboServiceTests.class
 })
 @RunWith(JUnitPlatform.class)
 public class AllInweboTestsSuite {

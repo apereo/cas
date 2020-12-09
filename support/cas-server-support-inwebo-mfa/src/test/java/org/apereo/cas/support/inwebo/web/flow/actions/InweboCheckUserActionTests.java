@@ -75,13 +75,25 @@ public class InweboCheckUserActionTests extends BaseActionTests {
     }
 
     @Test
-    public void verifyUserBlocked() {
+    public void verifyMustEnroll() {
         when(service.loginSearch(LOGIN)).thenReturn(loginSearchOk(0, USER_ID));
 
         val event = action.doExecute(requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
         assertTrue((Boolean) requestContext.getFlowScope().get(WebflowConstants.MUST_ENROLL));
         assertTrue(requestContext.getFlowScope().contains(WebflowConstants.INWEBO_ERROR_MESSAGE));
+    }
+
+    @Test
+    public void verifyUserBlocked() {
+        val loginSearch = loginSearchOk(3, USER_ID);
+        loginSearch.setUserStatus(1);
+        when(service.loginSearch(LOGIN)).thenReturn(loginSearch);
+
+        val event = action.doExecute(requestContext);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
+        assertFalse(requestContext.getFlowScope().contains(WebflowConstants.MUST_ENROLL));
+        assertFalse(requestContext.getFlowScope().contains(WebflowConstants.INWEBO_ERROR_MESSAGE));
     }
 
     @Test
@@ -97,6 +109,16 @@ public class InweboCheckUserActionTests extends BaseActionTests {
     @Test
     public void verifyNoUser() {
         when(service.loginSearch(LOGIN)).thenReturn(loginSearchOk(3, 0));
+
+        val event = action.doExecute(requestContext);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
+        assertFalse(requestContext.getFlowScope().contains(WebflowConstants.MUST_ENROLL));
+        assertFalse(requestContext.getFlowScope().contains(WebflowConstants.INWEBO_ERROR_MESSAGE));
+    }
+
+    @Test
+    public void verifyInweboException() {
+        when(service.loginSearch(LOGIN)).thenThrow(new RuntimeException());
 
         val event = action.doExecute(requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
