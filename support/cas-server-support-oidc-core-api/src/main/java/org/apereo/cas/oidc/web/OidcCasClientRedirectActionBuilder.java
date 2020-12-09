@@ -28,12 +28,14 @@ public class OidcCasClientRedirectActionBuilder extends OAuth20DefaultCasClientR
     public Optional<RedirectionAction> build(final CasClient casClient, final WebContext context) {
         var renew = casClient.getConfiguration().isRenew();
         var gateway = casClient.getConfiguration().isGateway();
+        val authentication = oidcAuthorizationRequestSupport.isCasAuthenticationAvailable(context);
 
         val prompts = OidcAuthorizationRequestSupport.getOidcPromptFromAuthorizationRequest(context);
         if (prompts.contains(OidcConstants.PROMPT_NONE)) {
             renew = false;
             gateway = true;
-        } else if (prompts.contains(OidcConstants.PROMPT_LOGIN)
+        } else if ((prompts.contains(OidcConstants.PROMPT_LOGIN)
+            && !authentication.isEmpty())
             || oidcAuthorizationRequestSupport.isCasAuthenticationOldForMaxAgeAuthorizationRequest(context)) {
             renew = true;
         }
