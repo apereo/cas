@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.springframework.core.io.FileSystemResource;
 
@@ -51,6 +52,8 @@ public class GitServiceRegistryProperties extends BaseGitProperties {
     private boolean groupByType = true;
 
     public GitServiceRegistryProperties() {
-        setCloneDirectory(new FileSystemResource(new File(FileUtils.getTempDirectory(), DEFAULT_CAS_SERVICE_REGISTRY_NAME)));
+        val cloneDirectory = new CloneDirectory();
+        cloneDirectory.setLocation(
+                new FileSystemResource(new File(FileUtils.getTempDirectory(), DEFAULT_CAS_SERVICE_REGISTRY_NAME)));
     }
 }

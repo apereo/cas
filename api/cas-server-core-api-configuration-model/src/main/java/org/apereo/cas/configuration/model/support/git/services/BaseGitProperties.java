@@ -1,13 +1,14 @@
 package org.apereo.cas.configuration.model.support.git.services;
 
+import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.apache.commons.io.FileUtils;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
 
 import java.io.File;
 import java.io.Serializable;
@@ -73,7 +74,8 @@ public abstract class BaseGitProperties implements Serializable {
      * Must be a resource that can resolve to an absolute file on disk due to Jsch library needing String path.
      * Classpath resource would work if file on disk rather than inside archive.
      */
-    private transient Resource privateKeyPath;
+    @NestedConfigurationProperty
+    private SpringResourceProperties privateKey = new SpringResourceProperties();
 
     /**
      * As with using SSH with public keys, an SSH session
@@ -96,5 +98,18 @@ public abstract class BaseGitProperties implements Serializable {
     /**
      * Directory into which the repository would be cloned.
      */
-    private transient Resource cloneDirectory = new FileSystemResource(new File(FileUtils.getTempDirectory(), "cas-git-clone"));
+    @NestedConfigurationProperty
+    private CloneDirectory cloneDirectory = new CloneDirectory();
+
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    public static class CloneDirectory extends SpringResourceProperties {
+
+        private static final long serialVersionUID = 2070414250350989144L;
+
+        public CloneDirectory() {
+            setLocation(new FileSystemResource(new File(FileUtils.getTempDirectory(), "cas-git-clone")));
+        }
+    }
 }

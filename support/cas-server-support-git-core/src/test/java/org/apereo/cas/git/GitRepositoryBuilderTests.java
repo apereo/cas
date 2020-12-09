@@ -33,7 +33,6 @@ public class GitRepositoryBuilderTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Test
     /**
      * Verify GitRepositoryBuilder.
      * Build method throws IllegalArgumentException due to authentication failure since key is invalid.
@@ -41,17 +40,18 @@ public class GitRepositoryBuilderTests {
      * The underlying ssh library will use .ssh/known_hosts and use .ssh/config to find keys and .ssh/id_rsa,
      * etc when connecting.
      */
+    @Test
     public void verifyBuild() throws Exception {
         val props = casProperties.getServiceRegistry().getGit();
         props.setRepositoryUrl("git@github.com:mmoayyed/sample-data.git");
         props.setUsername("casuser");
         props.setPassword("password");
         props.setBranchesToClone("master");
-        props.setCloneDirectory(ResourceUtils.getRawResourceFrom(
+        props.getCloneDirectory().setLocation(ResourceUtils.getRawResourceFrom(
                 FileUtils.getTempDirectoryPath() + File.separator + UUID.randomUUID().toString()));
         props.setPrivateKeyPassphrase("something");
         props.setSshSessionPassword("more-password");
-        props.setPrivateKeyPath(new ClassPathResource("priv.key"));
+        props.getPrivateKey().setLocation(new ClassPathResource("priv.key"));
         props.setStrictHostKeyChecking(true);
         val builder = GitRepositoryBuilder.newInstance(props);
         val e = assertThrows(IllegalArgumentException.class, builder::build);
@@ -64,18 +64,18 @@ public class GitRepositoryBuilderTests {
                 "[" + e2.getMessage() + "] doesn't contain auth fail");
     }
 
-    @Test
     /**
      * Test that clone directory works with file: prefix.
      * Uses the file:// prefix rather than file: because it should work on windows or linux.
      */
+    @Test
     public void verifyBuildWithFilePrefix() throws Exception {
         val props = casProperties.getServiceRegistry().getGit();
         props.setRepositoryUrl("https://github.com/mmoayyed/sample-data.git");
         props.setUsername("casuser");
         props.setPassword("password");
         props.setBranchesToClone("master");
-        props.setCloneDirectory(ResourceUtils.getRawResourceFrom(
+        props.getCloneDirectory().setLocation(ResourceUtils.getRawResourceFrom(
                 "file://" + FileUtils.getTempDirectoryPath() + File.separator + UUID.randomUUID().toString()));
         val builder = GitRepositoryBuilder.newInstance(props);
         assertDoesNotThrow(builder::build);

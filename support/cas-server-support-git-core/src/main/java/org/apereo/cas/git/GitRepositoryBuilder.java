@@ -26,6 +26,7 @@ import org.eclipse.jgit.util.FS;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StringUtils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -79,7 +80,7 @@ public class GitRepositoryBuilder {
             .repositoryUri(resolver.resolve(props.getRepositoryUrl()))
             .activeBranch(resolver.resolve(props.getActiveBranch()))
             .branchesToClone(props.getBranchesToClone())
-            .repositoryDirectory(props.getCloneDirectory())
+            .repositoryDirectory(props.getCloneDirectory().getLocation())
             .privateKeyPassphrase(props.getPrivateKeyPassphrase())
             .sshSessionPassword(props.getSshSessionPassword())
             .timeoutInSeconds(Beans.newDuration(props.getTimeout()).toSeconds())
@@ -91,8 +92,12 @@ public class GitRepositoryBuilder {
                 new NetRCCredentialsProvider());
             builder.credentialsProviders(providers);
         }
-        if (props.getPrivateKeyPath() != null) {
-            builder.privateKeyPath(props.getPrivateKeyPath().getFile().getCanonicalPath());
+        if (props.getPrivateKey().getLocation() != null) {
+            try {
+                builder.privateKeyPath(props.getPrivateKey().getLocation().getFile().getCanonicalPath());
+            } catch (final IOException e) {
+                LOGGER.warn("Error reading private key for git repository: {}", e.getMessage());
+            }
         }
         return builder.build();
     }
