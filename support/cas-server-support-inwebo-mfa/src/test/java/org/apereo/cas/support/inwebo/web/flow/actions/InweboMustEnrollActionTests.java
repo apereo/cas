@@ -6,10 +6,8 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.MessageSource;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * Tests {@link InweboMustEnrollAction}.
@@ -26,7 +24,7 @@ public class InweboMustEnrollActionTests extends BaseActionTests {
     public void setUp() {
         super.setUp();
 
-        action = new InweboMustEnrollAction(mock(MessageSource.class));
+        action = new InweboMustEnrollAction();
     }
 
     @Test

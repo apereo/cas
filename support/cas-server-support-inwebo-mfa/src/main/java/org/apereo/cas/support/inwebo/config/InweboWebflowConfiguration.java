@@ -37,7 +37,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
@@ -71,10 +70,6 @@ public class InweboWebflowConfiguration {
 
     @Autowired
     private ObjectProvider<FlowBuilderServices> flowBuilderServices;
-
-    @Autowired
-    @Qualifier("messageSource")
-    private ObjectProvider<MessageSource> messageSource;
 
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
@@ -177,20 +172,20 @@ public class InweboWebflowConfiguration {
     @ConditionalOnMissingBean(name = "inweboCheckUserAction")
     @RefreshScope
     public Action inweboCheckUserAction() {
-        return new InweboCheckUserAction(messageSource.getObject(), inweboService.getObject(), casProperties);
+        return new InweboCheckUserAction(inweboService.getObject(), casProperties);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "inweboMustEnrollAction")
     public Action inweboMustEnrollAction() {
-        return new InweboMustEnrollAction(messageSource.getObject());
+        return new InweboMustEnrollAction();
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "inweboCheckAuthenticationAction")
     @RefreshScope
     public Action inweboCheckAuthenticationAction() {
-        return new InweboCheckAuthenticationAction(messageSource.getObject(), inweboService.getObject(), inweboMultifactorAuthenticationWebflowEventResolver());
+        return new InweboCheckAuthenticationAction(inweboService.getObject(), inweboMultifactorAuthenticationWebflowEventResolver());
     }
 
     @Bean

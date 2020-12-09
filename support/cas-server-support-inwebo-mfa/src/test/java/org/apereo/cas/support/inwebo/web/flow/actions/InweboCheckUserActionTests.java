@@ -10,10 +10,8 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.MessageSource;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
@@ -38,7 +36,7 @@ public class InweboCheckUserActionTests extends BaseActionTests {
         inwebo.setSiteAlias(SITE_ALIAS);
         val casProperties = new CasConfigurationProperties();
         casProperties.getAuthn().getMfa().setInwebo(inwebo);
-        action = new InweboCheckUserAction(mock(MessageSource.class), service, casProperties);
+        action = new InweboCheckUserAction(service, casProperties);
     }
 
     private InweboLoginSearchResponse loginSearchOk(final int activationStatus, final int userId) {

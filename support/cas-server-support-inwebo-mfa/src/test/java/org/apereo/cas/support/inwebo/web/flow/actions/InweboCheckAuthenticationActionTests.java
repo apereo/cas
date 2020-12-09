@@ -7,7 +7,6 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.MessageSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -29,7 +28,7 @@ public class InweboCheckAuthenticationActionTests extends BaseActionTests {
     public void setUp() {
         super.setUp();
 
-        action = new InweboCheckAuthenticationAction(mock(MessageSource.class), service, resolver);
+        action = new InweboCheckAuthenticationAction(service, resolver);
     }
 
     @Test
