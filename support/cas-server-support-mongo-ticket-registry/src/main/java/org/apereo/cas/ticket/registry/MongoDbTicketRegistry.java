@@ -195,18 +195,12 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     public boolean deleteSingleTicket(final String ticketIdToDelete) {
         val ticketId = encodeTicketId(ticketIdToDelete);
         LOGGER.debug("Deleting ticket [{}]", ticketId);
-        try {
-            val metadata = this.ticketCatalog.find(ticketIdToDelete);
-            val collectionName = getTicketCollectionInstanceByMetadata(metadata);
-            val query = new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).is(ticketId));
-            val res = this.mongoTemplate.remove(query, collectionName);
-            LOGGER.debug("Deleted ticket [{}] with result [{}]", ticketIdToDelete, res);
-            return true;
-        } catch (final Exception e) {
-            LOGGER.error("Failed deleting [{}]", ticketId);
-            LoggingUtils.error(LOGGER, e);
-        }
-        return false;
+        val metadata = this.ticketCatalog.find(ticketIdToDelete);
+        val collectionName = getTicketCollectionInstanceByMetadata(metadata);
+        val query = new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).is(ticketId));
+        val res = this.mongoTemplate.remove(query, collectionName);
+        LOGGER.debug("Deleted ticket [{}] with result [{}]", ticketIdToDelete, res);
+        return true;
     }
 
     private long countTicketsByTicketType(final Class<? extends Ticket> ticketType) {
@@ -250,12 +244,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     private String serializeTicketForMongoDocument(final Ticket ticket) {
-        try {
-            return ticketSerializationManager.serializeTicket(ticket);
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return null;
+        return ticketSerializationManager.serializeTicket(ticket);
     }
 
     private Ticket deserializeTicketFromMongoDocument(final TicketHolder holder) {
