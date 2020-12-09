@@ -120,7 +120,7 @@ public class LoggingConfigurationEndpoint extends BaseCasActuatorEndpoint implem
      */
     @ReadOperation
     public Map<String, Object> configuration() {
-        val configuredLoggers = new HashSet<Object>();
+        val configuredLoggers = new HashSet<>();
         getLoggerConfigurations().forEach(config -> {
             val loggerMap = new HashMap<String, Object>();
             loggerMap.put("name", StringUtils.defaultIfBlank(config.getName(), LOGGER_NAME_ROOT));
@@ -130,7 +130,7 @@ public class LoggingConfigurationEndpoint extends BaseCasActuatorEndpoint implem
             }
             loggerMap.put("additive", config.isAdditive());
             loggerMap.put("level", config.getLevel().name());
-            val appenders = new HashSet<Object>();
+            val appenders = new HashSet<>();
             config.getAppenders().keySet().stream().map(key -> config.getAppenders().get(key)).forEach(appender -> {
                 val builder = new ToStringBuilder(this, ToStringStyle.JSON_STYLE);
                 builder.append("name", appender.getName());

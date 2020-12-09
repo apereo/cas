@@ -47,14 +47,19 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.LockModeType;
 import javax.sql.DataSource;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.time.Clock;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -63,6 +68,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit test for {@link JpaLockingStrategy}.
@@ -230,6 +236,26 @@ public class JpaLockingStrategyTests {
         } finally {
             executor.shutdownNow();
         }
+    }
+
+    @Test
+    public void verifyAcquireFails() {
+        val strategy = new JpaLockingStrategy("CAS", UUID.randomUUID().toString(), 0);
+        val mgr = mock(EntityManager.class);
+        doThrow(new RuntimeException()).when(mgr).persist(any());
+        when(mgr.merge(any())).thenThrow(new RuntimeException());
+        strategy.setEntityManager(mgr);
+        val lock = mock(JpaLockingStrategy.Lock.class);
+        assertFalse(strategy.acquire(lock));
+
+        when(mgr.find(any(), anyString(), any(LockModeType.class)))
+            .thenThrow(new RuntimeException());
+        assertFalse(strategy.acquire());
+
+        when(lock.getExpirationDate()).thenReturn(ZonedDateTime.now(Clock.systemUTC()).minusDays(1));
+        when(lock.getUniqueId()).thenReturn(UUID.randomUUID().toString());
+        when(mgr.find(any(), anyString(), any(LockModeType.class))).thenReturn(lock);
+        assertFalse(strategy.acquire());
     }
 
     private LockingStrategy[] getConcurrentLocks(final String appId) {

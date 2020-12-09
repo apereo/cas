@@ -80,7 +80,7 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
         val certificate = ((X509CertificateCredential) credential).getCertificate();
         val certificateAttributes = extractPersonAttributes(certificate);
         queryAttributes.putAll(certificateAttributes);
-        val attributes = new LinkedHashMap<String, List<Object>>(
+        val attributes = new LinkedHashMap<>(
             super.retrievePersonAttributes(principalId, credential, currentPrincipal, queryAttributes));
         attributes.putAll(certificateAttributes);
         return attributes;

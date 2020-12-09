@@ -78,7 +78,7 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
         throws SamlException {
 
         val assertion = Assertion.class.cast(casAssertion);
-        val attributes = new HashMap<String, Object>(assertion.getAttributes());
+        val attributes = new HashMap<>(assertion.getAttributes());
         attributes.putAll(assertion.getPrincipal().getAttributes());
         val encodedAttrs = this.samlAttributeEncoder.encodeAttributes(attributes, service);
 
@@ -100,11 +100,11 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
         val attrStatement = SamlUtils.newSamlObject(AttributeStatement.class);
 
         val resp = samlIdPProperties.getResponse();
-        val nameFormats = new HashMap<String, String>(resp.configureAttributeNameFormats());
+        val nameFormats = new HashMap<>(resp.configureAttributeNameFormats());
         nameFormats.putAll(samlRegisteredService.getAttributeNameFormats());
 
         val globalFriendlyNames = samlIdPProperties.getAttributeFriendlyNames();
-        val friendlyNames = new HashMap<String, String>(CollectionUtils.convertDirectedListToMap(globalFriendlyNames));
+        val friendlyNames = new HashMap<>(CollectionUtils.convertDirectedListToMap(globalFriendlyNames));
 
         attributeDefinitionStore.getAttributeDefinitions()
             .stream()

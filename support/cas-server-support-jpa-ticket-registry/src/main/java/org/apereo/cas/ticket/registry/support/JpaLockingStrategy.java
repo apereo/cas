@@ -31,6 +31,7 @@ import java.time.ZonedDateTime;
 @Slf4j
 @ToString
 @Getter
+@Setter
 @RequiredArgsConstructor
 public class JpaLockingStrategy implements LockingStrategy {
     /**
@@ -69,7 +70,6 @@ public class JpaLockingStrategy implements LockingStrategy {
         } else {
             lock.setExpirationDate(null);
         }
-        var success = false;
         try {
             if (lock.getApplicationId() != null) {
                 this.entityManager.merge(lock);
@@ -77,16 +77,15 @@ public class JpaLockingStrategy implements LockingStrategy {
                 lock.setApplicationId(this.applicationId);
                 this.entityManager.persist(lock);
             }
-            success = true;
+            return true;
         } catch (final Exception e) {
-            success = false;
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("[{}] could not obtain [{}] lock.", this.uniqueId, this.applicationId, e);
             } else {
                 LOGGER.info("[{}] could not obtain [{}] lock.", this.uniqueId, this.applicationId);
             }
         }
-        return success;
+        return false;
     }
 
     @Override

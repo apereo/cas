@@ -240,7 +240,7 @@ public class CasValidationConfiguration {
     public ServiceValidationViewFactory serviceValidationViewFactory() {
         val viewFactory = new ServiceValidationViewFactory();
         val configurers = applicationContext.getBeansOfType(ServiceValidationViewFactoryConfigurer.class, false, true);
-        val results = new ArrayList<ServiceValidationViewFactoryConfigurer>(configurers.values());
+        val results = new ArrayList<>(configurers.values());
         AnnotationAwareOrderComparator.sort(results);
         results.forEach(cfg -> cfg.configureViewFactory(viewFactory));
         return viewFactory;

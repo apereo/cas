@@ -228,7 +228,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
                     BaseResourceBasedRegisteredServiceWatcher.LOG_SERVICE_DUPLICATE.accept(s2);
                     return s1;
                 }, LinkedHashMap::new));
-        val listedServices = new ArrayList<RegisteredService>(this.services.values());
+        val listedServices = new ArrayList<>(this.services.values());
         val results = this.registeredServiceReplicationStrategy.updateLoadedRegisteredServicesFromCache(listedServices, this);
         results.forEach(service -> publishEvent(new CasRegisteredServiceLoadedEvent(this, service)));
         return results;

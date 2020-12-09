@@ -10,8 +10,15 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.ldaptive.ConnectionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.TestPropertySource;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for {@link LdapConsentRepository} class.
@@ -33,17 +40,19 @@ import org.springframework.test.context.TestPropertySource;
 public class LdapConsentRepositoryTests extends BaseLdapConsentRepositoryTests {
     private static final int LDAP_PORT = 10389;
 
+    @Autowired
+    @Qualifier("consentLdapConnectionFactory")
+    private ConnectionFactory consentLdapConnectionFactory;
+
     @BeforeAll
-    @SneakyThrows
-    public static void bootstrap() {
+    public static void bootstrap() throws Exception {
         @Cleanup
         val localhost = new LDAPConnection("localhost", LDAP_PORT, "cn=Directory Manager", "password");
         val resource = new ClassPathResource("ldif/ldap-consent.ldif");
         LOGGER.debug("Populating LDAP entries from [{}]", resource);
         LdapIntegrationTestsOperations.populateEntries(localhost, resource.getInputStream(), "ou=people,dc=example,dc=org");
     }
-
-
+    
     @Override
     @SneakyThrows
     public LDAPConnection getConnection() {
@@ -51,5 +60,23 @@ public class LdapConsentRepositoryTests extends BaseLdapConsentRepositoryTests {
         return new LDAPConnection("localhost", LDAP_PORT,
             ldap.getBindDn(),
             ldap.getBindCredential());
+    }
+
+    @Test
+    public void verifyConsentNotFound() {
+        assertNotNull(consentLdapConnectionFactory);
+        assertTrue(getRepository().findConsentDecisions("unknown-user").isEmpty());
+    }
+
+    @Test
+    public void verifyNoConsent() {
+        val ldap = casProperties.getConsent().getLdap();
+        val factory = mock(ConnectionFactory.class);
+        val repo = new LdapConsentRepository(factory, ldap);
+        assertTrue(repo.findConsentDecisions().isEmpty());
+
+        val decision = BUILDER.build(SVC, REG_SVC, "unknown", ATTR);
+        assertNull(repo.storeConsentDecision(decision));
+
     }
 }
