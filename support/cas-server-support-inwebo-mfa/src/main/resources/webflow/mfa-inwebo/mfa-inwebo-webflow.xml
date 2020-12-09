@@ -4,62 +4,6 @@
       xsi:schemaLocation="http://www.springframework.org/schema/webflow
                           http://www.springframework.org/schema/webflow/spring-webflow.xsd">
 
-    <on-start>
-        <evaluate expression="initialFlowSetupAction" />
-    </on-start>
-
-    <action-state id="initializeLoginForm">
-        <evaluate expression="inweboSuccessAction" />
-        <transition on="success" to="checkUser" />
-    </action-state>
-
-    <action-state id="checkUser">
-        <evaluate expression="inweboCheckUserAction" />
-        <transition on="push" to="startPush" />
-        <transition on="browser" to="startBrowser" />
-        <transition on="select" to="selectAuthent" />
-        <transition on="error" to="inweboError" />
-    </action-state>
-
-    <view-state id="selectAuthent" view="inwebo/casInweboSelectAuthnView">
-        <transition on="push" to="startPush" />
-        <transition on="browser" to="startBrowser" />
-    </view-state>
-
-    <view-state id="startBrowser" view="inwebo/casInweboBrowserAuthnView">
-        <transition on="enroll" to="mustEnroll" />
-        <transition on="error" to="inweboError" />
-        <transition on="otp" to="realSubmit" />
-    </view-state>
-
-    <action-state id="mustEnroll">
-        <evaluate expression="inweboMustEnrollAction" />
-        <transition on="success" to="inweboError" />
-    </action-state>
-
-    <action-state id="startPush">
-        <evaluate expression="inweboPushAuthenticateAction" />
-        <transition on="success" to="pendingCheckResult"/>
-        <transition on="error" to="inweboError"/>
-    </action-state>
-
-    <view-state id="pendingCheckResult" view="inwebo/casInweboCheckResultView">
-        <transition on="success" to="realSubmit" />
-    </view-state>
-
-    <action-state id="realSubmit">
-        <evaluate expression="inweboCheckAuthenticationAction" />
-        <transition on="success" to="success"/>
-        <transition on="pending" to="pendingCheckResult" />
-        <transition on="error" to="inweboError" />
-    </action-state>
-
-    <view-state id="inweboError" view="inwebo/casInweboErrorView">
-        <transition on="browser" to="startBrowser" />
-        <transition on="retry" to="initializeLoginForm" />
-        <transition on="error" to="inweboError" />
-    </view-state>
-
     <end-state id="success" />
 
 </flow>
