@@ -117,7 +117,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
 
         this.servicesManager.save(getRegisteredService(OTHER_REDIRECT_URI, CLIENT_ID));
 
-        val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
+        val modelAndView = oAuth20AuthorizeEndpointController.handleRequestPost(mockRequest, mockResponse);
         assertEquals(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, modelAndView.getViewName());
     }
 
