@@ -55,7 +55,7 @@ public class SamlIdPMetadataResolver extends DOMMetadataResolver {
             .map(Unchecked.function(defn -> resolveMetadata(criteria, defn)))
             .filter(results -> results != null && Iterables.size(results) > 0)
             .findFirst()
-            .orElse(new ArrayList<>(0));
+            .orElseGet(() -> new ArrayList<>(0));
     }
 
     @Override

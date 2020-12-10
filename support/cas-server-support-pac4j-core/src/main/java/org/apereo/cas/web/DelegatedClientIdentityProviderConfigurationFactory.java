@@ -78,7 +78,7 @@ public class DelegatedClientIdentityProviderConfigurationFactory {
         }
         LOGGER.debug("Processing locale parameter [{}]", casProperties.getLocale().getParamName());
         val localeParam = webContext.getRequestParameter(casProperties.getLocale().getParamName())
-            .map(String::valueOf).orElse(casProperties.getLocale().getDefaultValue());
+            .map(String::valueOf).orElseGet(() -> casProperties.getLocale().getDefaultValue());
         if (StringUtils.isNotBlank(localeParam)) {
             LOGGER.debug("Processing locale parameter [{}] with value [{}]",
                 casProperties.getLocale().getParamName(), localeParam);

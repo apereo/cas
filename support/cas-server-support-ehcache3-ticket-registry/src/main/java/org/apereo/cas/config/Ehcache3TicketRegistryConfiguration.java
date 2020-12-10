@@ -115,7 +115,7 @@ public class Ehcache3TicketRegistryConfiguration {
         val ehcacheProperties = casProperties.getTicket().getRegistry().getEhcache3();
         val terracottaClusterUri = ehcacheProperties.getTerracottaClusterUri();
 
-        CacheEventListenerConfigurationBuilder cacheEventListenerConfiguration = CacheEventListenerConfigurationBuilder
+        val cacheEventListenerConfiguration = CacheEventListenerConfigurationBuilder
             .newEventListenerConfiguration(new CasCacheEventListener(),
                 EventType.CREATED, EventType.UPDATED, EventType.EXPIRED, EventType.REMOVED, EventType.EVICTED)
             .ordered().asynchronous();

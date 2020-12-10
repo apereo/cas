@@ -75,7 +75,7 @@ public class CouchDbAcceptableUsagePolicyRepository extends BaseAcceptableUsageP
         var success = false;
         profile.setAttribute(aupProperties.getAupAttributeName(), List.of(Boolean.TRUE));
         UpdateConflictException exception = null;
-        for (int retries = 0; !success && retries < conflictRetries; retries++) {
+        for (var retries = 0; !success && retries < conflictRetries; retries++) {
             try {
                 couchDb.update(profile);
                 success = true;

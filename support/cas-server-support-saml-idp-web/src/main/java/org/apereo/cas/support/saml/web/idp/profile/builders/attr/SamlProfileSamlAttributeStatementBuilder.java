@@ -120,7 +120,7 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
             val name = attributeDefinitionStore.locateAttributeDefinition(e.getKey())
                 .map(AttributeDefinition::getName)
                 .filter(StringUtils::isNotBlank)
-                .orElse(e.getKey());
+                .orElseGet(e::getKey);
 
             LOGGER.trace("Creating SAML attribute [{}] with value [{}], friendlyName [{}]", name, e.getValue(), friendlyName);
             val attribute = newAttribute(friendlyName, name, e.getValue(),
