@@ -830,6 +830,7 @@ jobs:
           - custom-fields-login
           - forgot-username
           - forgot-password
+          - attribute-consent
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
