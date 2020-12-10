@@ -9,9 +9,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.NoArgsConstructor;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.springframework.http.MediaType;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 /**
  * Serializes registered services to JSON based on the Jackson JSON library.
@@ -54,5 +56,10 @@ public class RegisteredServiceJsonSerializer extends AbstractJacksonBackedString
     @Override
     public Class<RegisteredService> getTypeToSerialize() {
         return RegisteredService.class;
+    }
+
+    @Override
+    public List<MediaType> getContentTypes() {
+        return List.of(MediaType.APPLICATION_JSON);
     }
 }

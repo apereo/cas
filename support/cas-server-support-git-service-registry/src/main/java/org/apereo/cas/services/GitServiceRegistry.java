@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.git.GitRepository;
 import org.apereo.cas.git.PathRegexPatternTreeFilter;
 import org.apereo.cas.services.locator.GitRepositoryRegisteredServiceLocator;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
 
 import lombok.SneakyThrows;
@@ -10,6 +11,8 @@ import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.jooq.lambda.Unchecked;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.File;
@@ -93,23 +96,52 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
     @Synchronized
     @Override
     public Collection<RegisteredService> load() {
-        if (gitRepository.pull()) {
-            LOGGER.debug("Successfully pulled changes from the remote repository");
-        } else {
-            LOGGER.warn("Unable to pull changes from the remote repository. Service definition files may be stale.");
-        }
+        try {
+            if (gitRepository.pull()) {
+                LOGGER.debug("Successfully pulled changes from the remote repository");
+            } else {
+                LOGGER.info("Unable to pull changes from the remote repository. Service definition files may be stale.");
+            }
+            val objects = gitRepository.getObjectsInRepository(
+                new PathRegexPatternTreeFilter(GitRepositoryRegisteredServiceLocator.PATTERN_ACCEPTED_REPOSITORY_FILES));
+            registeredServices = objects
+                .stream()
+                .filter(Objects::nonNull)
+                .map(this::parseGitObjectContentIntoRegisteredService)
+                .flatMap(Collection::stream)
+                .map(this::invokeServiceRegistryListenerPostLoad)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+            return registeredServices;
+        } catch (final Exception e) {
+            LoggingUtils.warn(LOGGER, e);
+            val files = FileUtils.listFiles(gitRepository.getRepositoryDirectory(),
+                GitRepositoryRegisteredServiceLocator.FILE_EXTENSIONS.toArray(ArrayUtils.EMPTY_STRING_ARRAY), true);
+            LOGGER.debug("Located [{}] files(s)", files.size());
 
-        val objects = this.gitRepository.getObjectsInRepository(
-            new PathRegexPatternTreeFilter(GitRepositoryRegisteredServiceLocator.PATTERN_ACCEPTED_REPOSITORY_FILES));
-        registeredServices = objects
-            .stream()
-            .filter(Objects::nonNull)
-            .map(this::parseGitObjectContentIntoRegisteredService)
-            .flatMap(Collection::stream)
-            .map(this::invokeServiceRegistryListenerPostLoad)
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
-        return registeredServices;
+            registeredServices = files
+                .stream()
+                .filter(file -> file.isFile() && file.canRead() && file.canWrite() && file.length() > 0)
+                .map(Unchecked.function(file -> {
+                    try (val in = Files.newBufferedReader(file.toPath())) {
+                        return registeredServiceSerializers
+                            .stream()
+                            .filter(s -> s.supports(file))
+                            .map(s -> s.load(in))
+                            .filter(Objects::nonNull)
+                            .flatMap(Collection::stream)
+                            .map(this::invokeServiceRegistryListenerPostLoad)
+                            .filter(Objects::nonNull)
+                            .collect(Collectors.toList());
+                    }
+                }))
+                .flatMap(List::stream)
+                .sorted()
+                .map(this::invokeServiceRegistryListenerPostLoad)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+            return registeredServices;
+        }
     }
 
     @Override
