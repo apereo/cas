@@ -44,7 +44,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
-        uses: actions/setup-java@v1.4.3
+        uses: actions/setup-java@v1
         with:
           java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
@@ -57,7 +57,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
-        uses: actions/setup-java@v1.4.3
+        uses: actions/setup-java@v1
         with:
           java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
@@ -87,7 +87,7 @@ jobs:
 #      - name: Setup tmate session
 #        uses: mxschmitt/action-tmate@v2
       - name: Set up JDK
-        uses: actions/setup-java@v1.4.3
+        uses: actions/setup-java@v1
         with:
           java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
@@ -115,7 +115,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
-        uses: actions/setup-java@v1.4.3
+        uses: actions/setup-java@v1
         with:
           java-version: ${{ env.JDK_LATEST }}
       - name: Initialize
@@ -155,8 +155,9 @@ jobs:
     continue-on-error: true
     if: ${{ !contains(github.head_ref, 'renovate') }}
     steps:
+      - uses: actions/checkout@v2
       - name: Set up JDK
-        uses: actions/setup-java@v1.4.3
+        uses: actions/setup-java@v1
         with:
           java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
@@ -195,7 +196,7 @@ jobs:
 #      - name: Setup tmate session
 #        uses: mxschmitt/action-tmate@v2
       - name: Set up JDK
-        uses: actions/setup-java@v1.4.3
+        uses: actions/setup-java@v1
         with:
           java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
@@ -235,7 +236,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
-        uses: actions/setup-java@v1.4.3
+        uses: actions/setup-java@v1
         with:
           java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
@@ -258,7 +259,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
-        uses: actions/setup-java@v1.4.3
+        uses: actions/setup-java@v1
         with:
           java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
@@ -284,7 +285,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
-        uses: actions/setup-java@v1.4.3
+        uses: actions/setup-java@v1
         with:
           java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
@@ -319,7 +320,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
-        uses: actions/setup-java@v1.4.3
+        uses: actions/setup-java@v1
         with:
           java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
@@ -345,7 +346,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
-        uses: actions/setup-java@v1.4.3
+        uses: actions/setup-java@v1
         with:
           java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
@@ -371,7 +372,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
-        uses: actions/setup-java@v1.4.3
+        uses: actions/setup-java@v1
         with:
           java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
@@ -397,7 +398,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
-        uses: actions/setup-java@v1.4.3
+        uses: actions/setup-java@v1
         with:
           java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
@@ -423,7 +424,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
-        uses: actions/setup-java@v1.4.3
+        uses: actions/setup-java@v1
         with:
           java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
@@ -450,7 +451,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
-        uses: actions/setup-java@v1.4.3
+        uses: actions/setup-java@v1
         with:
           java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
@@ -501,7 +502,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
-        uses: actions/setup-java@v1.4.3
+        uses: actions/setup-java@v1
         with:
           java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
@@ -591,7 +592,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
-        uses: actions/setup-java@v1.4.3
+        uses: actions/setup-java@v1
         with:
           java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
@@ -627,7 +628,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
-        uses: actions/setup-java@v1.4.3
+        uses: actions/setup-java@v1
         with:
           java-version: ${{ env.JDK_CURRENT }}
       - name: "Download coverage files"
@@ -675,7 +676,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
-        uses: actions/setup-java@v1.4.3
+        uses: actions/setup-java@v1
         with:
           java-version: ${{ env.JDK_CURRENT }}
       - uses: actions/setup-python@v2
@@ -711,7 +712,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
-        uses: actions/setup-java@v1.4.3
+        uses: actions/setup-java@v1
         with:
           java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
@@ -737,7 +738,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
-        uses: actions/setup-java@v1.4.3
+        uses: actions/setup-java@v1
         with:
           java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
@@ -761,7 +762,7 @@ jobs:
 #    steps:
 #      - uses: actions/checkout@v2
 #      - name: Set up JDK
-#        uses: actions/setup-java@v1.4.3
+#        uses: actions/setup-java@v1
 #        with:
 #          java-version: ${{ env.JDK_CURRENT }}
 #      - name: Initialize
@@ -830,7 +831,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
-        uses: actions/setup-java@v1.4.3
+        uses: actions/setup-java@v1
         with:
           java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize

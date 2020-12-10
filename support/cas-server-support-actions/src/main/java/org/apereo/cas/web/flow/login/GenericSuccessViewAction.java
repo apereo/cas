@@ -47,7 +47,7 @@ public class GenericSuccessViewAction extends AbstractAction {
      */
     public Optional<Authentication> getAuthentication(final String ticketGrantingTicketId) {
         try {
-            val ticketGrantingTicket = this.centralAuthenticationService.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
+            val ticketGrantingTicket = centralAuthenticationService.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
             return Optional.of(ticketGrantingTicket.getAuthentication());
         } catch (final InvalidTicketException e) {
             LOGGER.debug(e.getMessage(), e);
