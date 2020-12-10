@@ -1,5 +1,6 @@
 package org.apereo.cas.token;
 
+import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
@@ -114,7 +115,9 @@ public abstract class BaseJwtTokenTicketBuilderTests {
 
                 @Override
                 protected Assertion parseResponseFromServer(final String s) {
-                    return new AssertionImpl(new AttributePrincipalImpl("casuser", CollectionUtils.wrap("name", "value")));
+                    return new AssertionImpl(new AttributePrincipalImpl("casuser",
+                        CollectionUtils.wrap("name", "value",
+                            ProtocolAttributeEncoder.encodeAttribute("custom:name"), List.of("custom:value"))));
                 }
 
                 @Override

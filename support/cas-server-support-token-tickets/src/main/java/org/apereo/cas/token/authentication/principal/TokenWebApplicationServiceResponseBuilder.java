@@ -62,7 +62,7 @@ public class TokenWebApplicationServiceResponseBuilder extends WebApplicationSer
         return jwtService;
     }
     
-    private boolean isTicketIdAvailable(final Map<String, String> parameters){
+    private static boolean isTicketIdAvailable(final Map<String, String> parameters){
         return StringUtils.isNotBlank(parameters.get(CasProtocolConstants.PARAMETER_TICKET));
     }
 
