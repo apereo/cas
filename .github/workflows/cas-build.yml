@@ -128,7 +128,7 @@ jobs:
             ${{ runner.os }}-gradle-
       - name: Build with Gradle
         run: ./gradlew --build-cache --configure-on-demand --no-daemon build -x test -x javadoc -x check --parallel
-        
+
 ##########################################################################
 
   validate-docs:
@@ -176,6 +176,8 @@ jobs:
         with:
           languages: java
           queries: security-and-quality
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v1
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v1
   static-analysis:

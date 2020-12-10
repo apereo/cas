@@ -45,7 +45,7 @@ public class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests 
     public void setup() {
         val result = CoreAuthenticationTestUtils.getAuthenticationResult();
         val tgt = centralAuthenticationService.createTicketGrantingTicket(result);
-        val st = centralAuthenticationService.grantServiceTicket(tgt.getId(), CoreAuthenticationTestUtils.getService(), result);
+        val st = centralAuthenticationService.grantServiceTicket(tgt.getId(), CoreAuthenticationTestUtils.getWebApplicationService(), result);
         assertNotNull(st);
     }
 
@@ -54,7 +54,7 @@ public class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests 
         var results = singleSignOnSessionsEndpoint.destroySsoSessions(null, null);
         assertEquals(HttpStatus.BAD_REQUEST.value(), results.get("status"));
         results = singleSignOnSessionsEndpoint.destroySsoSessions(null, CoreAuthenticationTestUtils.CONST_USERNAME);
-        assertEquals(1, results.size());
+        assertFalse(results.isEmpty());
 
         results = singleSignOnSessionsEndpoint.destroySsoSession("unknown-ticket");
         assertTrue(results.containsKey("status"));
@@ -96,7 +96,7 @@ public class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests 
     @Test
     public void verifyProxies() {
         val tgt = new MockTicketGrantingTicket("casuser");
-        tgt.setProxiedBy(CoreAuthenticationTestUtils.getService());
+        tgt.setProxiedBy(CoreAuthenticationTestUtils.getWebApplicationService());
         centralAuthenticationService.addTicket(tgt);
         val results = singleSignOnSessionsEndpoint.getSsoSessions(SingleSignOnSessionsEndpoint.SsoSessionReportOptions.ALL.getType());
         assertFalse(results.isEmpty());
@@ -105,7 +105,7 @@ public class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests 
     @Test
     public void verifyDirect() {
         val tgt = new MockTicketGrantingTicket("casuser");
-        tgt.setProxiedBy(CoreAuthenticationTestUtils.getService());
+        tgt.setProxiedBy(CoreAuthenticationTestUtils.getWebApplicationService());
         centralAuthenticationService.addTicket(tgt);
         val results = singleSignOnSessionsEndpoint.getSsoSessions(SingleSignOnSessionsEndpoint.SsoSessionReportOptions.DIRECT.getType());
         assertFalse(results.isEmpty());

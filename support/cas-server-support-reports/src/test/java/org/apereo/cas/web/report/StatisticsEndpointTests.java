@@ -35,12 +35,12 @@ public class StatisticsEndpointTests extends AbstractCasEndpointTests {
         val result = CoreAuthenticationTestUtils.getAuthenticationResult();
         val tgt1 = centralAuthenticationService.createTicketGrantingTicket(result);
         val st1 = centralAuthenticationService.grantServiceTicket(tgt1.getId(),
-            CoreAuthenticationTestUtils.getService(), result);
+            CoreAuthenticationTestUtils.getWebApplicationService(), result);
         assertNotNull(st1);
 
         val tgt2 = centralAuthenticationService.createTicketGrantingTicket(result);
         val st2 = centralAuthenticationService.grantServiceTicket(tgt2.getId(),
-            CoreAuthenticationTestUtils.getService(), result);
+            CoreAuthenticationTestUtils.getWebApplicationService(), result);
         assertNotNull(st2);
         tgt2.markTicketExpired();
         st2.markTicketExpired();
