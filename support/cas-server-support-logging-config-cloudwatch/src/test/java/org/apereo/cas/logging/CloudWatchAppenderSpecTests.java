@@ -4,9 +4,7 @@ package org.apereo.cas.logging;
 import lombok.val;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.config.Configurator;
-import org.apache.logging.log4j.core.config.builder.api.ConfigurationBuilder;
 import org.apache.logging.log4j.core.config.builder.api.ConfigurationBuilderFactory;
-import org.apache.logging.log4j.core.config.builder.impl.BuiltConfiguration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -64,7 +62,7 @@ public class CloudWatchAppenderSpecTests {
     }
 
     public static ArrayList<TestCase> generateTestCases() {
-        ArrayList<TestCase> testCases = new ArrayList<>();
+        val testCases = new ArrayList<TestCase>();
 
         testCases.add(new TestCase(null, null, null, true, true));
         testCases.add(new TestCase(null, null, false, false, false, true));
@@ -104,7 +102,7 @@ public class CloudWatchAppenderSpecTests {
     @Test
     @DisplayName("make sure that log4j plugin file is generated")
     public void fileGenerated() {
-        ConfigurationBuilder<BuiltConfiguration> builder = ConfigurationBuilderFactory.newConfigurationBuilder();
+        val builder = ConfigurationBuilderFactory.newConfigurationBuilder();
         builder.add(builder.newAppender("cloudwatch", "CloudWatchAppender"));
         var configuration = builder.build();
         Configurator.initialize(configuration);
@@ -130,16 +128,18 @@ public class CloudWatchAppenderSpecTests {
         } else {
             appender.initialize();
 
-            ConfigurationBuilder<BuiltConfiguration> builder = ConfigurationBuilderFactory.newConfigurationBuilder();
-            var configuration = builder.build();
+            val builder = ConfigurationBuilderFactory.newConfigurationBuilder();
+            val configuration = builder.build();
             configuration.addAppender(appender);
             Configurator.initialize(configuration);
 
-            var logger = LogManager.getLogger("test");
+            val logger = LogManager.getLogger("test");
             logger.info("here is a message");
 
-            createLogGroup(mock, Objects.requireNonNullElse(tC.resultCreateLogGroupIfNeeded, Objects.requireNonNullElse(tC.createIfNeeded, true)));
-            createLogStream(mock, Objects.requireNonNullElse(tC.resultCreateLogStreamIfNeeded, Objects.requireNonNullElse(tC.createIfNeeded, true)));
+            createLogGroup(mock, Objects.requireNonNullElseGet(tC.resultCreateLogGroupIfNeeded,
+                () -> Objects.requireNonNullElse(tC.createIfNeeded, true)));
+            createLogStream(mock, Objects.requireNonNullElseGet(tC.resultCreateLogStreamIfNeeded,
+                () -> Objects.requireNonNullElse(tC.createIfNeeded, true)));
         }
 
     }

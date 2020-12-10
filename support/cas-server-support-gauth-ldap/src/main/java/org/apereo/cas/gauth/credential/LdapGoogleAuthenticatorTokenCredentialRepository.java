@@ -126,7 +126,7 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
         LOGGER.debug("Storing account [{}]", account);
         val entry = locateLdapEntryFor(account.getUsername());
         val ldapAttribute = Objects.requireNonNull(entry,
-            String.format("Unable to locate LDAP entry for %s", account.getUsername()))
+            () -> String.format("Unable to locate LDAP entry for %s", account.getUsername()))
             .getAttribute(ldapProperties.getAccountAttributeName());
 
         if (ldapAttribute == null || ldapAttribute.getStringValues().isEmpty()) {

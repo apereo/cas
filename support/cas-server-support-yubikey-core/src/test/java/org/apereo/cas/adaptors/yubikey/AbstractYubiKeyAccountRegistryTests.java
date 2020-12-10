@@ -80,7 +80,7 @@ public abstract class AbstractYubiKeyAccountRegistryTests {
     @Test
     public void verifyDeviceRemoval() {
         val username = "casuser-registered-device";
-        for (int i = 0; i < 4; i++) {
+        for (var i = 0; i < 4; i++) {
             val request = YubiKeyDeviceRegistrationRequest.builder()
                 .username("casuser-registered-device")
                 .token(OTP)

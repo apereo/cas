@@ -152,7 +152,7 @@ public class GoogleAuthenticatorAuthenticationHandlerTests {
     @Test
     public void verifyMultipleDevices() throws Exception {
         val credential = getGoogleAuthenticatorTokenCredential();
-        for (int i = 0; i < 2; i++) {
+        for (var i = 0; i < 2; i++) {
             val toSave = GoogleAuthenticatorAccount.builder()
                 .username("casuser")
                 .name(String.format("deviceName-%s", i))

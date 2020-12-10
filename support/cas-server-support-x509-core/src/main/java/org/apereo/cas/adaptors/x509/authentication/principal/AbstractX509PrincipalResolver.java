@@ -194,7 +194,7 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
         if (subjectAltNames == null) {
             return null;
         }
-        Optional<List<?>> email = subjectAltNames
+        val email = subjectAltNames
             .stream()
             .filter(s -> s.size() == 2 && (Integer) s.get(0) == SAN_RFC822_EMAIL_TYPE)
             .findFirst();

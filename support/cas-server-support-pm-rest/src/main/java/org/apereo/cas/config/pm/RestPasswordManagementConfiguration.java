@@ -1,7 +1,6 @@
 package org.apereo.cas.config.pm;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.rest.RestPasswordManagementService;
@@ -53,7 +52,7 @@ public class RestPasswordManagementConfiguration {
     }
 
     private RestTemplate buildRestTemplateBuilder(final RestTemplateBuilder restTemplateBuilder) {
-        final PasswordManagementProperties.Rest pmRest = casProperties.getAuthn().getPm().getRest();
+        val pmRest = casProperties.getAuthn().getPm().getRest();
         val username = pmRest.getEndpointUsername();
         val password = pmRest.getEndpointPassword();
 

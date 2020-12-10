@@ -32,7 +32,6 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -96,7 +95,7 @@ public abstract class AbstractServiceRegistryTests {
     @ParameterizedTest
     @MethodSource(GET_PARAMETERS)
     public void verifySaveAndLoad(final Class<? extends RegisteredService> registeredServiceClass) {
-        for (int i = 0; i < getLoadSize(); i++) {
+        for (var i = 0; i < getLoadSize(); i++) {
             val svc = buildRegisteredServiceInstance(i, registeredServiceClass);
             this.serviceRegistry.save(svc);
             val svc2 = this.serviceRegistry.findServiceByExactServiceName(svc.getName());
@@ -152,8 +151,7 @@ public abstract class AbstractServiceRegistryTests {
         assertEquals(rs3.getServiceId(), rs.getServiceId());
         assertEquals(rs3.getTheme(), rs.getTheme());
 
-        Collection<RegisteredService> rs4 =
-            this.serviceRegistry.findServicePredicate(registeredService -> registeredService.getId() == rs.getId());
+        val rs4 = this.serviceRegistry.findServicePredicate(registeredService -> registeredService.getId() == rs.getId());
         assertTrue(rs4.stream().map(rs5 -> rs5.getName().equals(rs.getName())).findFirst().isPresent());
     }
 
