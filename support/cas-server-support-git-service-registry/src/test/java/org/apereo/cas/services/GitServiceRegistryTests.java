@@ -18,6 +18,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -29,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link GitServiceRegistryTests}.
- *
+ * When running on Windows, needs -Dtmpdir=c:/tmp - java.io.tmpdir doesn't work b/c slashes need to be forward.
  * @author Misagh Moayyed
  * @since 6.1.0
  */
@@ -45,12 +46,15 @@ import static org.junit.jupiter.api.Assertions.*;
     properties = {
         "cas.service-registry.git.sign-commits=false",
         "cas.service-registry.git.root-directory=svc-cfg",
-        "cas.service-registry.git.repository-url=file:/tmp/cas-sample-data.git"
+        "cas.service-registry.git.repository-url=file://${tmpdir:/tmp}/cas-sample-data"
     })
 @Slf4j
 @Tag("FileSystem")
 @Getter
 public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
+
+    @Value("${tmpdir:/tmp}")
+    private static String TMPDIR;
 
     @Autowired
     @Qualifier("serviceRegistry")
@@ -59,11 +63,20 @@ public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
     @BeforeAll
     public static void setup() {
         try {
-            FileUtils.deleteDirectory(new File("/tmp/cas-sample-data"));
+            val gitRepoSampleDir = new File(TMPDIR +"/cas-sample-data");
+            if (gitRepoSampleDir.exists()) {
+                deleteDirectory(gitRepoSampleDir);
+                FileUtils.deleteDirectory(gitRepoSampleDir);
+            }
             val gitDir = new File(FileUtils.getTempDirectory(), GitServiceRegistryProperties.DEFAULT_CAS_SERVICE_REGISTRY_NAME);
             if (gitDir.exists()) {
+                deleteDirectory(gitDir);
                 FileUtils.deleteDirectory(gitDir);
             }
+            val gitSampleRepo = Git.init().setDirectory(gitDir).setBare(false).call();
+            FileUtils.write(new File(gitDir, "readme.txt"), "text", StandardCharsets.UTF_8);
+            gitSampleRepo.commit().setSign(false).setMessage("Initial commit").call();
+
             val git = Git.init().setDirectory(gitDir).setBare(false).call();
             FileUtils.write(new File(gitDir, "readme.txt"), "text", StandardCharsets.UTF_8);
             git.commit().setSign(false).setMessage("Initial commit").call();
@@ -75,10 +88,30 @@ public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @AfterAll
     public static void cleanUp() throws Exception {
-        FileUtils.deleteDirectory(new File("/tmp/cas-sample-data"));
+        FileUtils.deleteDirectory(new File(TMPDIR +"/cas-sample-data"));
         val gitDir = new File(FileUtils.getTempDirectory(), GitServiceRegistryProperties.DEFAULT_CAS_SERVICE_REGISTRY_NAME);
         if (gitDir.exists()) {
+            deleteDirectory(gitDir);
             FileUtils.deleteDirectory(gitDir);
         }
+    }
+
+    /**
+     * Extra deleteDirectory method b/c FileUtils.deleteDirectory wasn't working reliably on Windows.
+     * @param path path to folder to be recursively deleted
+     * @return
+     */
+    private static boolean deleteDirectory(final File path) {
+        if (path.exists()) {
+            File[] files = path.listFiles();
+            for (int i = 0; i < files.length; i++) {
+                if (files[i].isDirectory()) {
+                    deleteDirectory(files[i]);
+                } else {
+                    files[i].delete();
+                }
+            }
+        }
+        return path.delete();
     }
 }
