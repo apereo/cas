@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
 import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionStrategy;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategy;
@@ -35,8 +36,8 @@ import static org.mockito.Mockito.*;
  */
 @UtilityClass
 public class MultifactorAuthenticationTestUtils {
-    public static Service getService(final String id) {
-        val svc = mock(Service.class);
+    public static WebApplicationService getService(final String id) {
+        val svc = mock(WebApplicationService.class);
         when(svc.getId()).thenReturn(id);
         return svc;
     }

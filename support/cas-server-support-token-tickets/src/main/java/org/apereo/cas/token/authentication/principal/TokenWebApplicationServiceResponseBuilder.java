@@ -2,7 +2,6 @@ package org.apereo.cas.token.authentication.principal;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.Response;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceResponseBuilder;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
@@ -74,7 +73,7 @@ public class TokenWebApplicationServiceResponseBuilder extends WebApplicationSer
      * @return the jwt
      */
     @SneakyThrows
-    protected String generateToken(final Service service, final Map<String, String> parameters) {
+    protected String generateToken(final WebApplicationService service, final Map<String, String> parameters) {
         val ticketId = parameters.get(CasProtocolConstants.PARAMETER_TICKET);
         return this.tokenTicketBuilder.build(ticketId, service);
     }
