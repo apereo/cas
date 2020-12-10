@@ -1,6 +1,7 @@
 package org.apereo.cas.util.serialization;
 
 import lombok.val;
+import org.springframework.http.MediaType;
 
 import java.io.File;
 import java.io.InputStream;
@@ -10,6 +11,7 @@ import java.io.Serializable;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Interface to define operations needed to map objects from/to  clobs.
@@ -154,5 +156,9 @@ public interface StringSerializer<T> extends Serializable {
             return list;
         }
         return new ArrayList<>(0);
+    }
+
+    default List<MediaType> getContentTypes() {
+        return List.of(MediaType.TEXT_PLAIN);
     }
 }
