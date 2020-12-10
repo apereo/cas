@@ -99,7 +99,7 @@ public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
     /**
      * Extra deleteDirectory method b/c FileUtils.deleteDirectory wasn't working reliably on Windows.
      * @param path path to folder to be recursively deleted
-     * @return
+     * @return <code>true</code> if the file or directory is successfully deleted; <code>false</code> otherwise
      */
     private static boolean deleteDirectory(final File path) {
         if (path.exists()) {
