@@ -27,14 +27,14 @@
 
 <body>
 <main role="main" class="container mt-3 mb-3">
-    <div layout:fragment="content">
+    <div id="content" layout:fragment="content">
         <h2 th:text="#{screen.consent.title}" class="text-center">Attribute Consent</h2>
 
         <div id="consent-tabs" class="mdc-tab-bar" role="tablist">
             <div class="mdc-tab-scroller">
                 <div class="mdc-tab-scroller__scroll-area">
                     <div class="mdc-tab-scroller__scroll-content">
-                        <button class="mdc-tab" role="tab" aria-selected="true">
+                        <button id="attributsButton" class="mdc-tab" role="tab" aria-selected="true">
                             <span class="mdc-tab__content">
                                 <span class="mdc-tab__text-label" th:text="#{screen.consent.attributes}">Attributes</span>
                             </span>
@@ -43,7 +43,7 @@
                             </span>
                             <span class="mdc-tab__ripple"></span>
                         </button>
-                        <button class="mdc-tab" role="tab" aria-selected="true">
+                        <button id="optionsButton" class="mdc-tab" role="tab" aria-selected="true">
                             <span class="mdc-tab__content">
                                 <span class="mdc-tab__text-label" th:text="#{screen.consent.options}">Options</span>
                             </span>
@@ -59,7 +59,8 @@
         <form method="post" id="fm1" th:action="@{/login}" class="mdc-card p-4 m-auto d-block mb-4">
             <section id="consent-tab-0" class="consent-tab">
                 <div class="" id="attributesPanel" role="tabpanel" aria-labelledby="attributes-tab">
-                    <p th:utext="#{screen.consent.attributes.header(${service.id})}">The following attributes will be released to</p>
+                    <p id="appTitle" th:utext="#{screen.consent.attributes.header(${service.id})}">
+                        The following attributes will be released to application</p>
 
 
                     <div class="w-100 mdc-data-table mx-auto my-4" id="divAttributes">
@@ -71,15 +72,17 @@
                             </tr>
                             </thead>
                             <tbody class="mdc-data-table__content">
-                            <tr th:each="attribute : ${attributes}" class="mdc-data-table__row">
-                                <td class="mdc-data-table__cell">
-                                    <code>
-                                        <span th:if="${attribute.friendlyName}" th:utext="${attribute.friendlyName}"/>
-                                        <span th:unless="${attribute.friendlyName}" th:utext="${attribute.name}"/>
-                                    </code>
-                                </td>
-                                <td class="mdc-data-table__cell"><code><span th:utext="${attribute.values}"/></code></td>
-                            </tr>
+                                <tr th:each="attribute : ${attributes}" class="mdc-data-table__row">
+                                    <td class="mdc-data-table__cell">
+                                        <code th:id="${attribute.name}">
+                                            <span th:if="${attribute.friendlyName}" th:utext="${attribute.friendlyName}"/>
+                                            <span th:unless="${attribute.friendlyName}" th:utext="${attribute.name}"/>
+                                        </code>
+                                    </td>
+                                    <td class="mdc-data-table__cell">
+                                        <code th:id="${attribute.name + '-value'}"><span th:utext="${attribute.values}"/></code>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -88,7 +91,8 @@
 
             <section id="consent-tab-1" class="d-none consent-tab">
                 <div class="mb-4">
-                    <h3 class="bg-primary p-2 mdc-typography mdc-typography--headline6 mb-2" th:text="#{screen.consent.options.header}">
+                    <h3 class="bg-primary p-2 mdc-typography mdc-typography--headline6 mb-2"
+                        th:text="#{screen.consent.options.header}">
                         How should I be prompted for consent again?
                     </h3>
                     <div class="mdc-check-help">
@@ -170,7 +174,7 @@
 
                 </div>
                 <div id="reminderPanel">
-                    <h3 class="bg-primary p-2 mdc-typography mdc-typography--headline6 mb-2"
+                    <h3 id="reminderTitle" class="bg-primary p-2 mdc-typography mdc-typography--headline6 mb-2"
                         th:text="#{screen.consent.options.reminder.header}">
                         How often should I be reminded to consent again?
                     </h3>
@@ -237,6 +241,7 @@
             <section class="cas-section form-actions mt-4 d-flex justify-content-center">
                 <button class="mdc-button mdc-button--raised mr-2"
                         name="confirm"
+                        id="confirm"
                         accesskey="l"
                         type="submit">
                     <span class="mdc-button__label" th:text="#{screen.consent.confirm}">Confirm</span>
