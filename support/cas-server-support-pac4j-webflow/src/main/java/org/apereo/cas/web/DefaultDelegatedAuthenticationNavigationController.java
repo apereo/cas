@@ -1,5 +1,6 @@
 package org.apereo.cas.web;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.util.LoggingUtils;
 
@@ -32,8 +33,9 @@ public class DefaultDelegatedAuthenticationNavigationController extends BaseDele
 
     public DefaultDelegatedAuthenticationNavigationController(final Clients clients,
                                                               final DelegatedClientWebflowManager delegatedClientWebflowManager,
-                                                              final SessionStore<JEEContext> sessionStore) {
-        super(clients, delegatedClientWebflowManager, sessionStore);
+                                                              final SessionStore<JEEContext> sessionStore,
+                                                              final CasConfigurationProperties casProperties) {
+        super(clients, delegatedClientWebflowManager, sessionStore, casProperties);
     }
 
     /**

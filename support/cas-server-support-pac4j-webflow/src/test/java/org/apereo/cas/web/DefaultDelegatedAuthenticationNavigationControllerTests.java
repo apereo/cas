@@ -64,7 +64,7 @@ public class DefaultDelegatedAuthenticationNavigationControllerTests {
     @Test
     public void redirectResponseToFlow() {
         val request = new MockHttpServletRequest();
-        request.setRequestURI("https://sso.example.org");
+        request.setRequestURI("https://sso.example.org/cas/login/CasClient");
         request.addParameter("param1", "value1");
         val response = new MockHttpServletResponse();
         assertNotNull(controller.redirectResponseToFlow("CasClient", request, response));

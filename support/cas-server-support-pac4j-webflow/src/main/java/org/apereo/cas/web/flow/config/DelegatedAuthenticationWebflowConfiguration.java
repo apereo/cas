@@ -222,7 +222,8 @@ public class DelegatedAuthenticationWebflowConfiguration {
     public DefaultDelegatedAuthenticationNavigationController delegatedClientNavigationController() {
         return new DefaultDelegatedAuthenticationNavigationController(builtClients.getObject(),
             delegatedClientWebflowManager(),
-            delegatedClientDistributedSessionStore.getObject());
+            delegatedClientDistributedSessionStore.getObject(),
+            casProperties);
     }
 
     @Bean
