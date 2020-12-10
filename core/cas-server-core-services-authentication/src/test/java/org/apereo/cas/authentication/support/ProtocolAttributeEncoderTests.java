@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.support;
 
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 
 import lombok.val;
@@ -25,7 +26,7 @@ public class ProtocolAttributeEncoderTests {
         };
         val attributes = new LinkedHashMap<String, Object>();
         attributes.put(ProtocolAttributeEncoder.encodeAttribute("user@name"), "casuser");
-        val results = encoder.encodeAttributes(attributes, mock(RegisteredService.class));
+        val results = encoder.encodeAttributes(attributes, mock(RegisteredService.class), mock(WebApplicationService.class));
         assertTrue(results.containsKey("user@name"));
     }
 }

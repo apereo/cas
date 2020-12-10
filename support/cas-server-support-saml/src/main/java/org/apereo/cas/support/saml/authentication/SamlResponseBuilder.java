@@ -3,7 +3,6 @@ package org.apereo.cas.support.saml.authentication;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
@@ -35,11 +34,17 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class SamlResponseBuilder {
     private final Saml10ObjectBuilder samlObjectBuilder;
+
     private final String issuer;
+
     private final String defaultAttributeNamespace;
+
     private final int issueLength;
+
     private final int skewAllowance;
+
     private final ProtocolAttributeEncoder protocolAttributeEncoder;
+
     private final ServicesManager servicesManager;
 
     /**
@@ -75,7 +80,7 @@ public class SamlResponseBuilder {
      * @param authnAttributes     the authn attributes
      * @param principalAttributes the principal attributes
      */
-    public void prepareSuccessfulResponse(final Response response, final Service service,
+    public void prepareSuccessfulResponse(final Response response, final WebApplicationService service,
                                           final Authentication authentication, final Principal principal,
                                           final Map<String, List<Object>> authnAttributes,
                                           final Map<String, List<Object>> principalAttributes) {
@@ -116,7 +121,20 @@ public class SamlResponseBuilder {
         response.getAssertions().add(assertion);
     }
 
-    private Map<String, Object> prepareSamlAttributes(final Service service,
+    /**
+     * Encode saml response.
+     *
+     * @param samlResponse the saml response
+     * @param request      the request
+     * @param response     the response
+     * @throws Exception the exception
+     */
+    public void encodeSamlResponse(final Response samlResponse, final HttpServletRequest request, final HttpServletResponse response)
+        throws Exception {
+        this.samlObjectBuilder.encodeSamlResponse(response, request, samlResponse);
+    }
+
+    private Map<String, Object> prepareSamlAttributes(final WebApplicationService service,
                                                       final Map<String, List<Object>> authnAttributes,
                                                       final Map<String, List<Object>> principalAttributes) {
         val registeredService = this.servicesManager.findServiceBy(service);
@@ -128,21 +146,9 @@ public class SamlResponseBuilder {
         attributesToReturn.putAll(authnAttributes);
 
         LOGGER.debug("Beginning to encode attributes [{}] for service [{}]", attributesToReturn, registeredService.getServiceId());
-        val finalAttributes = this.protocolAttributeEncoder.encodeAttributes(attributesToReturn, registeredService);
+        val finalAttributes = protocolAttributeEncoder.encodeAttributes(attributesToReturn, registeredService, service);
         LOGGER.debug("Final collection of attributes are [{}]", finalAttributes);
 
         return finalAttributes;
-    }
-
-    /**
-     * Encode saml response.
-     *
-     * @param samlResponse the saml response
-     * @param request      the request
-     * @param response     the response
-     * @throws Exception the exception
-     */
-    public void encodeSamlResponse(final Response samlResponse, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        this.samlObjectBuilder.encodeSamlResponse(response, request, samlResponse);
     }
 }

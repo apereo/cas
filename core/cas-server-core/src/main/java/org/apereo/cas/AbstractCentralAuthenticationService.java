@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.ContextualAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceMatchingStrategy;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceContext;
 import org.apereo.cas.services.ServicesManager;
@@ -249,8 +250,8 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * @param service the service
      * @return the service
      */
-    protected Service resolveServiceFromAuthenticationRequest(final Service service) {
-        return authenticationRequestServiceSelectionStrategies.resolveService(service);
+    protected WebApplicationService resolveServiceFromAuthenticationRequest(final Service service) {
+        return authenticationRequestServiceSelectionStrategies.resolveService(service, WebApplicationService.class);
     }
 
     /**

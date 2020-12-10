@@ -50,7 +50,7 @@ public class DefaultCasAttributeEncoderTests extends BaseCasCoreTests {
     public void checkNoPublicKeyDefined() {
         val service = RegisteredServiceTestUtils.getService("testDefault");
         val encoder = new DefaultCasProtocolAttributeEncoder(this.servicesManager, CipherExecutor.noOpOfStringToString());
-        val encoded = encoder.encodeAttributes(this.attributes, this.servicesManager.findServiceBy(service));
+        val encoded = encoder.encodeAttributes(this.attributes, servicesManager.findServiceBy(service), service);
         assertEquals(this.attributes.size() - 2, encoded.size());
     }
 
@@ -58,7 +58,7 @@ public class DefaultCasAttributeEncoderTests extends BaseCasCoreTests {
     public void checkAttributesEncodedCorrectly() {
         val service = RegisteredServiceTestUtils.getService("testencryption");
         val encoder = new DefaultCasProtocolAttributeEncoder(this.servicesManager, CipherExecutor.noOpOfStringToString());
-        val encoded = encoder.encodeAttributes(this.attributes, this.servicesManager.findServiceBy(service));
+        val encoded = encoder.encodeAttributes(this.attributes, servicesManager.findServiceBy(service), service);
         assertEquals(encoded.size(), this.attributes.size());
         checkEncryptedValues(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL, encoded);
         checkEncryptedValues(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET, encoded);

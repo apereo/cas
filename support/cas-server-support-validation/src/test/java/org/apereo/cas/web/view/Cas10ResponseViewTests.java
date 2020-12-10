@@ -42,7 +42,7 @@ public class Cas10ResponseViewTests {
         list.add(CoreAuthenticationTestUtils.getAuthentication("someothername"));
         this.model.put("assertion", new DefaultAssertionBuilder(
             CoreAuthenticationTestUtils.getAuthentication()).with(list).with(
-            CoreAuthenticationTestUtils.getService("TestService")).with(true).build());
+            CoreAuthenticationTestUtils.getWebApplicationService("TestService")).with(true).build());
     }
 
     @Test

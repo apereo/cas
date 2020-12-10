@@ -3,7 +3,6 @@ package org.apereo.cas.config;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditTrailConstants;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
-import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.PersistentIdGenerator;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -28,7 +27,6 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.authn.SamlProfileSam
 import org.apereo.cas.support.saml.web.idp.profile.builders.conditions.SamlProfileSamlConditionsBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.attribute.SamlAttributeEncoder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.nameid.SamlProfileSamlNameIdBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSaml2ResponseBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSamlResponseBuilderConfigurationContext;
@@ -294,17 +292,10 @@ public class SamlIdPConfiguration {
     public SamlProfileObjectBuilder<AttributeStatement> samlProfileSamlAttributeStatementBuilder() {
         return new SamlProfileSamlAttributeStatementBuilder(
             openSamlConfigBean.getObject(),
-            samlAttributeEncoder(),
             casProperties.getAuthn().getSamlIdp(),
             samlObjectEncrypter(),
-            attributeDefinitionStore.getObject());
-    }
-
-    @ConditionalOnMissingBean(name = "samlAttributeEncoder")
-    @Bean
-    @RefreshScope
-    public ProtocolAttributeEncoder samlAttributeEncoder() {
-        return new SamlAttributeEncoder();
+            attributeDefinitionStore.getObject(),
+            samlIdPServiceFactory.getObject());
     }
 
     @ConditionalOnMissingBean(name = "samlObjectEncrypter")

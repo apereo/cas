@@ -25,7 +25,7 @@ public class JwtTokenTicketBuilderTests extends BaseJwtTokenTicketBuilderTests {
 
     @Test
     public void verifyJwtForServiceTicket() throws Exception {
-        var jwt = tokenTicketBuilder.build("ST-123455", CoreAuthenticationTestUtils.getService());
+        var jwt = tokenTicketBuilder.build("ST-123455", CoreAuthenticationTestUtils.getWebApplicationService());
         assertNotNull(jwt);
         val result = tokenCipherExecutor.decode(jwt);
         val claims = JWTClaimsSet.parse(result.toString());
@@ -34,7 +34,7 @@ public class JwtTokenTicketBuilderTests extends BaseJwtTokenTicketBuilderTests {
 
     @Test
     public void verifyJwtForServiceTicketWithOwnKeys() throws Exception {
-        val service = CoreAuthenticationTestUtils.getService("https://jwt.example.org/cas");
+        val service = CoreAuthenticationTestUtils.getWebApplicationService("https://jwt.example.org/cas");
         val jwt = tokenTicketBuilder.build("ST-123455", service);
         assertNotNull(jwt);
         val result = tokenCipherExecutor.decode(jwt);

@@ -1,6 +1,6 @@
 package org.apereo.cas.token;
 
-import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import java.util.List;
@@ -20,7 +20,7 @@ public interface TokenTicketBuilder {
      * @param service         the service
      * @return the token identifier
      */
-    String build(String serviceTicketId, Service service);
+    String build(String serviceTicketId, WebApplicationService service);
 
     /**
      * Build token for a ticket-granting ticket.

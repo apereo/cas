@@ -27,7 +27,7 @@ public class JwtTokenTicketBuilderWithoutEncryptionTests extends BaseJwtTokenTic
 
     @Test
     public void verifyJwtForServiceTicket() throws ParseException {
-        val jwt = tokenTicketBuilder.build("ST-123456", CoreAuthenticationTestUtils.getService());
+        val jwt = tokenTicketBuilder.build("ST-123456", CoreAuthenticationTestUtils.getWebApplicationService());
         assertNotNull(jwt);
         val result = tokenCipherExecutor.decode(jwt);
         val claims = JWTClaimsSet.parse(result.toString());
@@ -36,7 +36,7 @@ public class JwtTokenTicketBuilderWithoutEncryptionTests extends BaseJwtTokenTic
 
     @Test
     public void verifyJwtForServiceTicketEncoding() {
-        val jwt = tokenTicketBuilder.build("ST-123456", CoreAuthenticationTestUtils.getService());
+        val jwt = tokenTicketBuilder.build("ST-123456", CoreAuthenticationTestUtils.getWebApplicationService());
         assertNotNull(jwt);
         val jwtDec = EncodingUtils.decodeBase64ToString(jwt);
         assertNotNull(jwtDec);
@@ -44,7 +44,7 @@ public class JwtTokenTicketBuilderWithoutEncryptionTests extends BaseJwtTokenTic
 
     @Test
     public void verifyJwtForServiceTicketWithoutEncryptionKey() throws Exception {
-        val service = CoreAuthenticationTestUtils.getService("https://jwt.no-encryption-key.example.org/cas");
+        val service = CoreAuthenticationTestUtils.getWebApplicationService("https://jwt.no-encryption-key.example.org/cas");
         val jwt = tokenTicketBuilder.build("ST-123456", service);
         assertNotNull(jwt);
         val result = tokenCipherExecutor.decode(jwt);

@@ -58,6 +58,7 @@ import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.jasig.cas.client.validation.Cas10TicketValidator;
 import org.jasig.cas.client.validation.Cas20ServiceTicketValidator;
 import org.jasig.cas.client.validation.Cas30ServiceTicketValidator;
+import org.jasig.cas.client.validation.json.Cas30JsonServiceTicketValidator;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -130,7 +131,8 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @ConditionalOnMissingBean(name = "casClientTicketValidator")
     @Bean
     public AbstractUrlBasedTicketValidator casClientTicketValidator() {
-        val prefix = StringUtils.defaultString(casProperties.getClient().getPrefix(), casProperties.getServer().getPrefix());
+        val prefix = StringUtils.defaultString(casProperties.getClient().getPrefix(),
+            casProperties.getServer().getPrefix());
         val validator = buildCasClientTicketValidator(prefix);
 
         val factory = new HttpURLConnectionFactory() {
@@ -411,6 +413,9 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
         }
         if (validatorType == CasJavaClientProperties.ClientTicketValidatorTypes.CAS20) {
             return new Cas20ServiceTicketValidator(prefix);
+        }
+        if (validatorType == CasJavaClientProperties.ClientTicketValidatorTypes.JSON) {
+            return new Cas30JsonServiceTicketValidator(prefix);
         }
         return new Cas30ServiceTicketValidator(prefix);
     }
