@@ -66,11 +66,15 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
 
         val attrs = attributes.keySet().stream()
             .filter(DefaultCasProtocolAttributeEncoder::getSanitizingAttributeNamePredicate)
-            .map(s -> Pair.of(ProtocolAttributeEncoder.encodeAttribute(s), attributes.get(s)))
+            .map(s -> {
+                var values = attributes.get(s);
+                LOGGER.trace("Encoding attribute [{}] with value(s) [{}]", s, values);
+                return Pair.of(ProtocolAttributeEncoder.encodeAttribute(s), values);
+            })
             .collect(Collectors.toSet());
 
         if (!attrs.isEmpty()) {
-            LOGGER.info("Found [{}] attribute(s) that need to be sanitized/encoded.", attrs);
+            LOGGER.info("Found [{}] attribute(s) that need to be sanitized/encoded.", attrs.size());
             attributes.keySet().removeIf(DefaultCasProtocolAttributeEncoder::getSanitizingAttributeNamePredicate);
             attrs.forEach(p -> {
                 val key = p.getKey();
