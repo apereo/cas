@@ -18,7 +18,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -53,8 +52,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Getter
 public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
 
-    @Value("${tmpdir:/tmp}")
-    private static String TMPDIR;
+    private static String TMPDIR = "/tmp";
 
     @Autowired
     @Qualifier("serviceRegistry")
@@ -73,8 +71,8 @@ public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
                 deleteDirectory(gitDir);
                 FileUtils.deleteDirectory(gitDir);
             }
-            val gitSampleRepo = Git.init().setDirectory(gitDir).setBare(false).call();
-            FileUtils.write(new File(gitDir, "readme.txt"), "text", StandardCharsets.UTF_8);
+            val gitSampleRepo = Git.init().setDirectory(gitRepoSampleDir).setBare(false).call();
+            FileUtils.write(new File(gitRepoSampleDir, "readme.txt"), "text", StandardCharsets.UTF_8);
             gitSampleRepo.commit().setSign(false).setMessage("Initial commit").call();
 
             val git = Git.init().setDirectory(gitDir).setBare(false).call();
@@ -99,7 +97,7 @@ public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
     /**
      * Extra deleteDirectory method b/c FileUtils.deleteDirectory wasn't working reliably on Windows.
      * @param path path to folder to be recursively deleted
-     * @return <code>true</code> if the file or directory is successfully deleted; <code>false</code> otherwise
+     * @return {@code true} if the file or directory is successfully deleted; {@code false} otherwise
      */
     private static boolean deleteDirectory(final File path) {
         if (path.exists()) {
