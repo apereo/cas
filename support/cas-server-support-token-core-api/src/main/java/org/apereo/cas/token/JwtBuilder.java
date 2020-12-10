@@ -16,6 +16,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.hjson.JsonValue;
@@ -185,6 +186,7 @@ public class JwtBuilder {
      */
     @Builder
     @Getter
+    @ToString
     public static class JwtRequest {
         private final String jwtId;
 

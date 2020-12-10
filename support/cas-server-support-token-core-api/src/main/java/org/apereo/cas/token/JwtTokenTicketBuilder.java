@@ -1,6 +1,7 @@
 package org.apereo.cas.token;
 
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
+import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
@@ -8,9 +9,11 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
+import com.google.common.collect.Maps;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jasig.cas.client.validation.TicketValidator;
 
@@ -28,6 +31,7 @@ import java.util.Optional;
  */
 @Getter
 @RequiredArgsConstructor
+@Slf4j
 public class JwtTokenTicketBuilder implements TokenTicketBuilder {
     private final TicketValidator ticketValidator;
 
@@ -43,6 +47,13 @@ public class JwtTokenTicketBuilder implements TokenTicketBuilder {
         val assertion = this.ticketValidator.validate(serviceTicketId, service.getId());
         val attributes = CoreAuthenticationUtils.convertAttributeValuesToMultiValuedObjects(assertion.getAttributes());
         attributes.putAll(CoreAuthenticationUtils.convertAttributeValuesToMultiValuedObjects(assertion.getPrincipal().getAttributes()));
+
+        val finalAttributes = Maps.<String, List<Object>>newHashMapWithExpectedSize(attributes.size());
+        attributes.forEach((k, v) -> {
+            val attributeName = ProtocolAttributeEncoder.decodeAttribute(k);
+            LOGGER.debug("Decoded attribute [{}] to [{}] with value(s) [{}]", k, attributeName, v);
+            finalAttributes.put(attributeName, v);
+        });
 
         val validUntilDate = FunctionUtils.doIf(
             assertion.getValidUntilDate() != null,
@@ -61,8 +72,9 @@ public class JwtTokenTicketBuilder implements TokenTicketBuilder {
             .jwtId(serviceTicketId)
             .subject(assertion.getPrincipal().getName())
             .validUntilDate(validUntilDate)
-            .attributes(attributes)
+            .attributes(finalAttributes)
             .build();
+        LOGGER.debug("Building JWT using [{}]", request);
         return jwtBuilder.build(request);
     }
 
@@ -70,7 +82,7 @@ public class JwtTokenTicketBuilder implements TokenTicketBuilder {
     @SneakyThrows
     public String build(final TicketGrantingTicket ticketGrantingTicket) {
         val authentication = ticketGrantingTicket.getAuthentication();
-        val attributes = new HashMap<String, List<Object>>(authentication.getAttributes());
+        val attributes = new HashMap<>(authentication.getAttributes());
         attributes.putAll(authentication.getPrincipal().getAttributes());
 
         val dt = ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(getTimeToLive());
