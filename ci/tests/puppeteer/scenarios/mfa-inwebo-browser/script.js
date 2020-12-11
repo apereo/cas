@@ -19,8 +19,16 @@ const assert = require('assert');
 
     // asking for the PIN code
     await page.$eval('button[name=browser]', button => button.click());
-    var header = await page.$eval('main h2', el => el.innerText)
+    const header = await page.$eval('main h2', el => el.innerText)
     assert(header === "Fill in your PIN code:")
+
+    // let's wait for Inwebo javascript to execute
+    // and redirect to error/registration
+    await page.waitForTimeout(5000);
+    const header2 = await page.$eval('main h2', el => el.innerText)
+    assert(header2 === "An error has occured.")
+    const enrollForm = await page.$('#enrollForm');
+    assert(enrollForm != null);
 
     await browser.close();
 })();
