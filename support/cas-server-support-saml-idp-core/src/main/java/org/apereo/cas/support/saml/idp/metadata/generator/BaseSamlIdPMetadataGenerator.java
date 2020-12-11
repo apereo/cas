@@ -37,24 +37,31 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
         LOGGER.debug("Preparing to generate metadata for entityId [{}]", idp.getEntityId());
         val samlIdPMetadataLocator = configurationContext.getSamlIdPMetadataLocator();
         if (!samlIdPMetadataLocator.exists(registeredService)) {
-            LOGGER.trace("Metadata does not exist. Creating...");
+            val owner = SamlIdPMetadataGenerator.getAppliesToFor(registeredService);
+            LOGGER.trace("Metadata does not exist for [{}]", owner);
 
-            LOGGER.info("Creating self-signed certificate for signing...");
-            val signing = buildSelfSignedSigningCert(registeredService);
+            if (samlIdPMetadataLocator.shouldGenerateMetadataFor(registeredService)) {
+                LOGGER.trace("Creating metadata artifacts for [{}]...", owner);
 
-            LOGGER.info("Creating self-signed certificate for encryption...");
-            val encryption = buildSelfSignedEncryptionCert(registeredService);
+                LOGGER.info("Creating self-signed certificate for signing...");
+                val signing = buildSelfSignedSigningCert(registeredService);
 
-            LOGGER.info("Creating metadata...");
-            val metadata = buildMetadataGeneratorParameters(signing, encryption, registeredService);
+                LOGGER.info("Creating self-signed certificate for encryption...");
+                val encryption = buildSelfSignedEncryptionCert(registeredService);
 
-            val doc = newSamlIdPMetadataDocument();
-            doc.setEncryptionCertificate(encryption.getKey());
-            doc.setEncryptionKey(encryption.getValue());
-            doc.setSigningCertificate(signing.getKey());
-            doc.setSigningKey(signing.getValue());
-            doc.setMetadata(metadata);
-            return finalizeMetadataDocument(doc, registeredService);
+                LOGGER.info("Creating metadata...");
+                val metadata = buildMetadataGeneratorParameters(signing, encryption, registeredService);
+
+                val doc = newSamlIdPMetadataDocument();
+                doc.setEncryptionCertificate(encryption.getKey());
+                doc.setEncryptionKey(encryption.getValue());
+                doc.setSigningCertificate(signing.getKey());
+                doc.setSigningKey(signing.getValue());
+                doc.setMetadata(metadata);
+                return finalizeMetadataDocument(doc, registeredService);
+            } else {
+                LOGGER.debug("Skipping metadata generation process for [{}]", owner);
+            }
         }
 
         return samlIdPMetadataLocator.fetch(registeredService);

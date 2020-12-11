@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
 import org.apereo.cas.support.saml.idp.metadata.generator.BaseSamlIdPMetadataGenerator;
+import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGeneratorConfigurationContext;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
@@ -33,14 +34,6 @@ public class RestfulSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerato
         super(samlIdPMetadataGeneratorConfigurationContext);
     }
 
-    private static String getAppliesToFor(final Optional<SamlRegisteredService> result) {
-        if (result.isPresent()) {
-            val registeredService = result.get();
-            return registeredService.getName() + '-' + registeredService.getId();
-        }
-        return "CAS";
-    }
-
     @Override
     public void afterPropertiesSet() {
         generate(Optional.empty());
@@ -49,7 +42,7 @@ public class RestfulSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerato
     @Override
     protected SamlIdPMetadataDocument finalizeMetadataDocument(final SamlIdPMetadataDocument doc,
                                                                final Optional<SamlRegisteredService> registeredService) {
-        doc.setAppliesTo(getAppliesToFor(registeredService));
+        doc.setAppliesTo(SamlIdPMetadataGenerator.getAppliesToFor(registeredService));
         val properties = getConfigurationContext().getCasProperties().getAuthn().getSamlIdp().getMetadata().getRest();
         val url = StringUtils.appendIfMissing(properties.getUrl(), "/").concat("idp");
         HttpResponse response = null;

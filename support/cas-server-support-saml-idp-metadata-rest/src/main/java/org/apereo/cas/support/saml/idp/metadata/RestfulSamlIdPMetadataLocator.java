@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
 import org.apereo.cas.configuration.model.support.saml.idp.metadata.RestSamlMetadataProperties;
+import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.locator.AbstractSamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
@@ -39,21 +40,14 @@ public class RestfulSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocato
         this.properties = properties;
     }
 
-    private static String getAppliesToFor(final Optional<SamlRegisteredService> result) {
-        if (result.isPresent()) {
-            val registeredService = result.get();
-            return registeredService.getName() + '-' + registeredService.getId();
-        }
-        return "CAS";
-    }
-
     @Override
     public SamlIdPMetadataDocument fetchInternal(final Optional<SamlRegisteredService> registeredService) {
         val url = StringUtils.appendIfMissing(properties.getUrl(), "/").concat("idp");
         HttpResponse response = null;
         try {
             val parameters = new HashMap<String, Object>();
-            registeredService.ifPresent(service -> parameters.put("appliesTo", getAppliesToFor(registeredService)));
+            registeredService.ifPresent(service -> parameters.put("appliesTo",
+                SamlIdPMetadataGenerator.getAppliesToFor(registeredService)));
             response = HttpUtils.executeGet(url, properties.getBasicAuthUsername(),
                 properties.getBasicAuthPassword(), parameters);
             if (response != null) {

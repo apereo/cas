@@ -3526,7 +3526,12 @@ settings for this feature are available [here](Configuration-Properties-Common.h
 
 #### SAML Metadata Git
 
-Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#git-configuration) under the configuration key `cas.authn.saml-idp.metadata`.
+```properties
+# cas.authn.saml-idp.metadata.git.idp-metadata-enabled=true
+```
+
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#git-configuration) 
+under the configuration key `cas.authn.saml-idp.metadata`.
  
 The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. Signing & 
 encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the 

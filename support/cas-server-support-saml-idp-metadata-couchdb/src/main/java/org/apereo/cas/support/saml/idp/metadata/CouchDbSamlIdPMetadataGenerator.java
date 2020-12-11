@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.idp.metadata;
 import org.apereo.cas.couchdb.saml.CouchDbSamlIdPMetadataDocument;
 import org.apereo.cas.couchdb.saml.SamlIdPMetadataCouchDbRepository;
 import org.apereo.cas.support.saml.idp.metadata.generator.BaseSamlIdPMetadataGenerator;
+import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGeneratorConfigurationContext;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
@@ -36,7 +37,7 @@ public class CouchDbSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerato
             : couchDb.getForAll();
         if (couchDoc == null) {
             couchDoc = new CouchDbSamlIdPMetadataDocument(doc);
-            couchDoc.setAppliesTo(couchDb.getAppliesToFor(registeredService));
+            couchDoc.setAppliesTo(SamlIdPMetadataGenerator.getAppliesToFor(registeredService));
             couchDb.add(couchDoc);
         } else {
             couchDb.update(couchDoc.merge(doc));

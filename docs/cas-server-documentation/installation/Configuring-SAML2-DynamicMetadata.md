@@ -135,7 +135,7 @@ SAML service definitions must then be designed as follows to allow CAS to fetch 
   "serviceId" : "the-entity-id-of-the-sp",
   "name" : "SAMLService",
   "id" : 10000003,
-  "description" : "A MongoDb-based metadata resolver",
+  "description" : "A Git-based metadata resolver",
   "metadataLocation" : "git://"
 }
 ```

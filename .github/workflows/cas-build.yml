@@ -175,7 +175,7 @@ jobs:
         uses: github/codeql-action/init@v1
         with:
           languages: java
-          queries: security-and-quality,-java/unused-parameter,-java/class-name-matches-super-class
+          queries: security-and-quality,-github/codeql/main/java/ql/src/DeadCode/UselessParameter.ql@main
       - name: Autobuild
         uses: github/codeql-action/autobuild@v1
       - name: Perform CodeQL Analysis

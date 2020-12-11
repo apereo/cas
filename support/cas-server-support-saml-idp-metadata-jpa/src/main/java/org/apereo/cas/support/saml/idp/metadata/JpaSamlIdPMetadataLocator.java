@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
+import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.locator.AbstractSamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
@@ -35,14 +36,6 @@ public class JpaSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocator {
         super(metadataCipherExecutor);
     }
 
-    private static String getAppliesToFor(final Optional<SamlRegisteredService> result) {
-        if (result.isPresent()) {
-            val registeredService = result.get();
-            return registeredService.getName() + '-' + registeredService.getId();
-        }
-        return "CAS";
-    }
-
     @Override
     public SamlIdPMetadataDocument fetchInternal(final Optional<SamlRegisteredService> registeredService) {
         try {
@@ -67,7 +60,7 @@ public class JpaSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocator {
         }
         val query = this.entityManager.createQuery(sql, SamlIdPMetadataDocument.class);
         if (registeredService.isPresent()) {
-            query.setParameter("appliesTo", getAppliesToFor(registeredService));
+            query.setParameter("appliesTo", SamlIdPMetadataGenerator.getAppliesToFor(registeredService));
         }
         return query.setMaxResults(1);
     }
