@@ -17,7 +17,7 @@
         <form method="POST" id="startBrowserForm">
             <input type="hidden" name="_eventId" value="browser" />
             <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
-            <button name="push" type="submit" class="mdc-button mdc-button--raised">
+            <button id="browser" name="browser" type="submit" class="mdc-button mdc-button--raised">
                 <span class="mdc-button__label" th:text="#{cas.inwebo.selectauthent.browser}">Browser authentication</span>
             </button>
         </form>
@@ -25,7 +25,7 @@
         <form method="POST" id="startPushForm">
             <input type="hidden" name="_eventId" value="push" />
             <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
-            <button name="push" type="submit" class="mdc-button mdc-button--raised">
+            <button id="push" name="push" type="submit" class="mdc-button mdc-button--raised">
                 <span class="mdc-button__label" th:text="#{cas.inwebo.selectauthent.push}">Mobile/desktop notification</span>
             </button>
         </form>
