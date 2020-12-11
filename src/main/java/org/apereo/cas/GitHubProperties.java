@@ -42,7 +42,7 @@ public class GitHubProperties {
     @NestedConfigurationProperty
     private PullRequestProperties prs = new PullRequestProperties();
 
-    private long maximumChangedFiles = 45;
+    private long maximumChangedFiles = 60;
 
     /**
      * Configuration for a GitHub repository.

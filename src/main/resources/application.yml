@@ -10,3 +10,4 @@ casbot:
       organization: apereo
       name: cas
       url: https://github.com/apereo/cas
+    maximum-changed-files: 60
