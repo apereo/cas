@@ -1,8 +1,9 @@
 package org.apereo.cas.util.ssl;
 
+import org.apereo.cas.configuration.model.core.util.ClientCertificateProperties;
+
 import lombok.experimental.UtilityClass;
 import lombok.val;
-import org.apereo.cas.configuration.model.core.util.ClientCertificateProperties;
 
 import javax.net.ssl.KeyManagerFactory;
 import java.io.InputStream;
@@ -21,7 +22,7 @@ public class SSLUtils {
         val keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
         val keyStore = KeyStore.getInstance("PKCS12");
 
-        try (final InputStream keyInput = properties.getCertificate().getLocation().getInputStream()) {
+        try (InputStream keyInput = properties.getCertificate().getLocation().getInputStream()) {
             keyStore.load(keyInput, properties.getPassphrase().toCharArray());
 
             keyInput.close();
