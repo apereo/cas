@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.idp.metadata;
 
 import org.apereo.cas.git.GitRepository;
 import org.apereo.cas.support.saml.idp.metadata.generator.FileSystemSamlIdPMetadataGenerator;
+import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGeneratorConfigurationContext;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
@@ -31,7 +32,7 @@ public class GitSamlIdPMetadataGenerator extends FileSystemSamlIdPMetadataGenera
     @Override
     protected SamlIdPMetadataDocument finalizeMetadataDocument(final SamlIdPMetadataDocument doc,
                                                                final Optional<SamlRegisteredService> registeredService) {
-        val appliesTo = getAppliesToFor(registeredService);
+        val appliesTo = SamlIdPMetadataGenerator.getAppliesToFor(registeredService);
         doc.setAppliesTo(appliesTo);
         gitRepository.commitAll("Generated metadata for " + appliesTo);
 
@@ -40,13 +41,5 @@ public class GitSamlIdPMetadataGenerator extends FileSystemSamlIdPMetadataGenera
             gitRepository.push();
         }
         return super.finalizeMetadataDocument(doc, registeredService);
-    }
-
-    private static String getAppliesToFor(final Optional<SamlRegisteredService> result) {
-        if (result.isPresent()) {
-            val registeredService = result.get();
-            return registeredService.getName() + '-' + registeredService.getId();
-        }
-        return "CAS";
     }
 }

@@ -27,6 +27,12 @@ public class GitSamlMetadataProperties extends BaseGitProperties {
     private static final long serialVersionUID = 4194689836396653458L;
 
     /**
+     * Whether identity provider metadata artifacts
+     * are expected to be found in the database.
+     */
+    private boolean idpMetadataEnabled;
+    
+    /**
      * Crypto settings that sign/encrypt the metadata records.
      */
     @NestedConfigurationProperty
