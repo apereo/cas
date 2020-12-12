@@ -55,7 +55,7 @@ const assert = require('assert');
     assert(header === "[casuser@example.org]")
 
     await page.click("#optionsButton");
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(2500)
 
     var opt = await page.$('#optionAlways');
     assert(await opt.boundingBox() != null);
