@@ -1,11 +1,14 @@
 package org.apereo.cas.configuration.model.support.git.services;
 
+import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.apache.commons.io.FileUtils;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import org.springframework.core.io.FileSystemResource;
 
 import java.io.File;
 import java.io.Serializable;
@@ -62,14 +65,17 @@ public abstract class BaseGitProperties implements Serializable {
     private boolean signCommits;
 
     /**
-     * Path to the SSH private key identity.
+     * Password for the SSH private key.
      */
     private String privateKeyPassphrase;
 
     /**
-     * Password for the SSH private key.
+     * Path to the SSH private key identity.
+     * Must be a resource that can resolve to an absolute file on disk due to Jsch library needing String path.
+     * Classpath resource would work if file on disk rather than inside archive.
      */
-    private File privateKeyPath;
+    @NestedConfigurationProperty
+    private SpringResourceProperties privateKey = new SpringResourceProperties();
 
     /**
      * As with using SSH with public keys, an SSH session
@@ -79,6 +85,12 @@ public abstract class BaseGitProperties implements Serializable {
     private String sshSessionPassword;
 
     /**
+     * Whether on not to turn on strict host key checking.
+     * true will be "yes", false will be "no", "ask" not supported.
+     */
+    private boolean strictHostKeyChecking = true;
+
+    /**
      * Timeout for git operations such as push and pull in seconds.
      */
     private String timeout = "PT10S";
@@ -86,5 +98,18 @@ public abstract class BaseGitProperties implements Serializable {
     /**
      * Directory into which the repository would be cloned.
      */
-    private File cloneDirectory = new File(FileUtils.getTempDirectory(), "cas-git-clone");
+    @NestedConfigurationProperty
+    private CloneDirectory cloneDirectory = new CloneDirectory();
+
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    public static class CloneDirectory extends SpringResourceProperties {
+
+        private static final long serialVersionUID = 2070414250350989144L;
+
+        public CloneDirectory() {
+            setLocation(new FileSystemResource(new File(FileUtils.getTempDirectory(), "cas-git-clone")));
+        }
+    }
 }
