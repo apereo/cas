@@ -1,0 +1,19 @@
+{
+  "dependencies": "simple-mfa",
+  "properties": [
+    "--cas.authn.attribute-repository.stub.attributes.phone=13477464523",
+    "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
+
+    "--spring.mail.host=localhost",
+    "--spring.mail.port=25000",
+
+    "--cas.authn.mfa.simple.mail.from=cas@example.com",
+    "--cas.authn.mfa.simple.mail.subject=CAS Token",
+    "--cas.authn.mfa.simple.mail.text=CAS token is %s"
+  ],
+  "initScript": "${PWD}/ci/tests/mail/run-mail-server.sh"
+}
+
+
+
+
