@@ -19,8 +19,7 @@ const url = require('url');
     assert(tgc.length !== 0);
 
     await page.goto("https://localhost:8443/cas/login?service=https://example.com&renew=true");
-
-    // await page.waitForTimeout(1000)
+    await page.waitForTimeout(2000)
 
     let span = await page.$('#existingSsoMsg');
     assert(await span.boundingBox() != null);
