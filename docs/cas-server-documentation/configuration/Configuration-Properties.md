@@ -4569,6 +4569,7 @@ a local truststore is provided by CAS to improve portability of configuration ac
 
 # cas.http-client.truststore.psw=changeit
 # cas.http-client.truststore.file=classpath:/truststore.jks
+# cas.http-client.truststore.type=
 ```
 
 ### Hostname Verification

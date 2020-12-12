@@ -26,7 +26,6 @@ import org.springframework.core.annotation.Order;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
-import java.security.KeyStore;
 
 /**
  * This is {@link CasCoreHttpConfiguration}.
@@ -54,7 +53,7 @@ public class CasCoreHttpConfiguration {
     public SSLContext sslContext() {
         val client = casProperties.getHttpClient().getTruststore();
         if (client.getFile() != null && client.getFile().exists() && StringUtils.isNotBlank(client.getPsw())) {
-            val ctx = new DefaultCasSslContext(client.getFile(), client.getPsw(), KeyStore.getDefaultType());
+            val ctx = new DefaultCasSslContext(client.getFile(), client.getPsw(), client.getType());
             return ctx.getSslContext();
         }
         return SSLContexts.createSystemDefault();
