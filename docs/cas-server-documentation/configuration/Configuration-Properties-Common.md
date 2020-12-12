@@ -482,12 +482,13 @@ The following options related to Git integration support in CAS when it attempts
 # ${configurationKey}.git.sign-commits=false
 # ${configurationKey}.git.username=
 # ${configurationKey}.git.password=
-# ${configurationKey}.git.clone-directory=file:/tmp/cas-service-registry
+# ${configurationKey}.git.clone-directory.location=file:/tmp/cas-service-registry
 # ${configurationKey}.git.push-changes=false
 # ${configurationKey}.git.private-key-passphrase=
-# ${configurationKey}.git.private-key-path=
+# ${configurationKey}.git.private-key.location=file:/tmp/privkey.pem
 # ${configurationKey}.git.ssh-session-password=
 # ${configurationKey}.git.timeout=PT10S
+# ${configurationKey}.git.strict-host-key-checking=true
 ```
 
 ## InfluxDb Configuration

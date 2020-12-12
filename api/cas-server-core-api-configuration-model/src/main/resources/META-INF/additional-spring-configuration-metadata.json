@@ -200,6 +200,50 @@
         "reason": "It is a duplication of cas.authn.pac4j.saml[0].sign-service-provider-logout-request.",
         "level": "error"
       }
+    },
+    {
+      "name": "cas.service-registry.git.private-key-path",
+      "type": "java.lang.String",
+      "description": "Set private key path for git service registry.",
+      "defaultValue": false,
+      "deprecation": {
+        "replacement": "cas.service-registry.git.private-key.location",
+        "reason": "Type changed from File to Resource, but still needs to resolve to File.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.service-registry.git.clone-directory",
+      "type": "java.lang.String",
+      "description": "Set the target directory for cloning the git service registry.",
+      "defaultValue": true,
+      "deprecation": {
+        "replacement": "cas.service-registry.git.clone-directory.location",
+        "reason": "Type changed from String to Resource.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.saml-idp.metadata.git.private-key-path",
+      "type": "java.lang.String",
+      "description": "Set private key path for git SAML IDP metadata.",
+      "defaultValue": false,
+      "deprecation": {
+        "replacement": "cas.authn.saml-idp.metadata.git.private-key.location",
+        "reason": "Type changed from File to Resource, but still needs to resolve to File.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.saml-idp.metadata.git.clone-directory",
+      "type": "java.lang.String",
+      "description": "Set the target directory for cloning the git SAML IDP metadata.",
+      "defaultValue": true,
+      "deprecation": {
+        "replacement": "cas.authn.saml-idp.metadata.git.clone-directory.location",
+        "reason": "Type changed from String to Resource.",
+        "level": "error"
+      }
     }
   ]
 }
