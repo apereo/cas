@@ -16,7 +16,7 @@ const url = require('url');
     await page.waitForNavigation();
 
     const tgc = (await page.cookies()).filter(value => value.name === "TGC")
-    assert(tgc != null);
+    assert(tgc.length !== 0);
 
     await page.goto("https://localhost:8443/cas/login?service=https://example.com&renew=true");
 

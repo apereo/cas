@@ -54,8 +54,8 @@ echo -e "Running ${scriptPath}\n"
 node ${scriptPath} ${config}
 echo -e "*************************************\n"
 
-docker container stop $(docker container ls -aq) >/dev/null 2>&1
-docker container rm $(docker container ls -aq) >/dev/null 2>&1
+docker container stop $(docker container ls -aq) >/dev/null 2>/dev/null
+docker container rm $(docker container ls -aq) >/dev/null 2>/dev/null
 
 echo -e "\nKilling process ${pid} ..."
 kill -9 $pid
