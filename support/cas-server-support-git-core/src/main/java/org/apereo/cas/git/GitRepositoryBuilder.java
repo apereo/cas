@@ -96,7 +96,7 @@ public class GitRepositoryBuilder {
             try {
                 builder.privateKeyPath(props.getPrivateKey().getLocation().getFile().getCanonicalPath());
             } catch (final IOException e) {
-                LOGGER.warn("Error reading private key for git repository: {}", e.getMessage());
+                LOGGER.warn("Error reading private key for git repository: [{}]", e.getMessage());
             }
         }
         return builder.build();

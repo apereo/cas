@@ -36,7 +36,7 @@ public class GitRepositoryBuilderTests {
     /**
      * Verify GitRepositoryBuilder.
      * Build method throws IllegalArgumentException due to authentication failure since key is invalid.
-     * This test will pass on cicd server because there is no known_hosts, and no ssh keys setup for github.com.
+     * This test will pass on ci/cd server because there is no known_hosts, and no ssh keys setup for github.com.
      * The underlying ssh library will use .ssh/known_hosts and use .ssh/config to find keys and .ssh/id_rsa,
      * etc when connecting.
      */
@@ -56,12 +56,12 @@ public class GitRepositoryBuilderTests {
         val builder = GitRepositoryBuilder.newInstance(props);
         val e = assertThrows(IllegalArgumentException.class, builder::build);
         assertTrue(StringUtils.toLowerCase(e.getMessage()).contains("reject hostkey"),
-                    "[" + e.getMessage() + "] doesn't contain reject hostkey");
+            '[' + e.getMessage() + "] doesn't contain reject hostkey");
         props.setStrictHostKeyChecking(false);
         val builder2 = GitRepositoryBuilder.newInstance(props);
         val e2 = assertThrows(IllegalArgumentException.class, builder2::build);
         assertTrue(StringUtils.toLowerCase(e2.getMessage()).contains("auth fail"),
-                "[" + e2.getMessage() + "] doesn't contain auth fail");
+            '[' + e2.getMessage() + "] doesn't contain auth fail");
     }
 
     /**

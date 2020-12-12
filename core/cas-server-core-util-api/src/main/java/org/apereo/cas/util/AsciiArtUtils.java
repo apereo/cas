@@ -51,7 +51,7 @@ public class AsciiArtUtils {
      */
     @SneakyThrows
     public static void printAsciiArtWarning(final Logger out, final String additional) {
-        val ascii = "\n"
+        val ascii = '\n'
             + "  ____ _____ ___  ____  _ \n"
             + " / ___|_   _/ _ \\|  _ \\| |\n"
             + " \\___ \\ | || | | | |_) | |\n"
@@ -71,7 +71,7 @@ public class AsciiArtUtils {
      */
     @SneakyThrows
     public static void printAsciiArtReady(final Logger out, final String additional) {
-        val ascii = "\n"
+        val ascii = '\n'
             + "  ____  _____    _    ______   __\n"
             + " |  _ \\| ____|  / \\  |  _ \\ \\ / /\n"
             + " | |_) |  _|   / _ \\ | | | \\ V / \n"
