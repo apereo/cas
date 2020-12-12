@@ -66,8 +66,15 @@ public abstract class AbstractAuthenticationAction extends AbstractAction {
         return finalEvent;
     }
 
-    private void fireEventHooks(final Event e, final RequestContext ctx) {
-        val id = e.getId();
+    /**
+     * Fire event hooks.
+     *
+     * @param event the event
+     * @param ctx   the ctx
+     * @return the event
+     */
+    protected Event fireEventHooks(final Event event, final RequestContext ctx) {
+        val id = event.getId();
         if (id.equals(CasWebflowConstants.TRANSITION_ID_ERROR) || id.equals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE)) {
             onError(ctx);
         }
@@ -77,6 +84,7 @@ public abstract class AbstractAuthenticationAction extends AbstractAction {
         if (id.equals(CasWebflowConstants.TRANSITION_ID_SUCCESS)) {
             onSuccess(ctx);
         }
+        return event;
     }
 
     /**
