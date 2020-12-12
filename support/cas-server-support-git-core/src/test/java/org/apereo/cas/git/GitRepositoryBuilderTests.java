@@ -1,9 +1,11 @@
 package org.apereo.cas.git;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.ResourceUtils;
 
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.eclipse.jgit.util.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,13 @@ public class GitRepositoryBuilderTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    /**
+     * Verify GitRepositoryBuilder.
+     * Build method throws IllegalArgumentException due to authentication failure since key is invalid.
+     * This test will pass on cicd server because there is no known_hosts, and no ssh keys setup for github.com.
+     * The underlying ssh library will use .ssh/known_hosts and use .ssh/config to find keys and .ssh/id_rsa,
+     * etc when connecting.
+     */
     @Test
     public void verifyBuild() throws Exception {
         val props = casProperties.getServiceRegistry().getGit();
@@ -38,10 +47,37 @@ public class GitRepositoryBuilderTests {
         props.setUsername("casuser");
         props.setPassword("password");
         props.setBranchesToClone("master");
-        props.setCloneDirectory(new File(FileUtils.getTempDirectory(), UUID.randomUUID().toString()));
+        props.getCloneDirectory().setLocation(ResourceUtils.getRawResourceFrom(
+                FileUtils.getTempDirectoryPath() + File.separator + UUID.randomUUID().toString()));
         props.setPrivateKeyPassphrase("something");
         props.setSshSessionPassword("more-password");
-        props.setPrivateKeyPath(new ClassPathResource("priv.key").getFile());
-        assertThrows(IllegalArgumentException.class, () -> GitRepositoryBuilder.newInstance(props).build());
+        props.getPrivateKey().setLocation(new ClassPathResource("priv.key"));
+        props.setStrictHostKeyChecking(true);
+        val builder = GitRepositoryBuilder.newInstance(props);
+        val e = assertThrows(IllegalArgumentException.class, builder::build);
+        assertTrue(StringUtils.toLowerCase(e.getMessage()).contains("reject hostkey"),
+                    "[" + e.getMessage() + "] doesn't contain reject hostkey");
+        props.setStrictHostKeyChecking(false);
+        val builder2 = GitRepositoryBuilder.newInstance(props);
+        val e2 = assertThrows(IllegalArgumentException.class, builder2::build);
+        assertTrue(StringUtils.toLowerCase(e2.getMessage()).contains("auth fail"),
+                "[" + e2.getMessage() + "] doesn't contain auth fail");
+    }
+
+    /**
+     * Test that clone directory works with file: prefix.
+     * Uses the file:// prefix rather than file: because it should work on windows or linux.
+     */
+    @Test
+    public void verifyBuildWithFilePrefix() throws Exception {
+        val props = casProperties.getServiceRegistry().getGit();
+        props.setRepositoryUrl("https://github.com/mmoayyed/sample-data.git");
+        props.setUsername("casuser");
+        props.setPassword("password");
+        props.setBranchesToClone("master");
+        props.getCloneDirectory().setLocation(ResourceUtils.getRawResourceFrom(
+                "file://" + FileUtils.getTempDirectoryPath() + File.separator + UUID.randomUUID().toString()));
+        val builder = GitRepositoryBuilder.newInstance(props);
+        assertDoesNotThrow(builder::build);
     }
 }

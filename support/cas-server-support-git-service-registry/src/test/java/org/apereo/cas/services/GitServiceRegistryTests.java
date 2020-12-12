@@ -5,6 +5,7 @@ import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.GitServiceRegistryConfiguration;
+import org.apereo.cas.configuration.model.support.git.services.GitServiceRegistryProperties;
 import org.apereo.cas.git.GitRepository;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
@@ -38,7 +39,7 @@ import static org.mockito.Mockito.*;
 
 /**
  * This is {@link GitServiceRegistryTests}.
- *
+ * When running on Windows, needs -Dtmpdir=c:/tmp - java.io.tmpdir doesn't work b/c slashes need to be forward.
  * @author Misagh Moayyed
  * @since 6.1.0
  */
@@ -54,12 +55,14 @@ import static org.mockito.Mockito.*;
     properties = {
         "cas.service-registry.git.sign-commits=false",
         "cas.service-registry.git.root-directory=svc-cfg",
-        "cas.service-registry.git.repository-url=file:/tmp/cas-sample-data.git"
+        "cas.service-registry.git.repository-url=file://${tmpdir:/tmp}/cas-sample-data"
     })
 @Slf4j
 @Tag("FileSystem")
 @Getter
 public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
+
+    private static String TMPDIR = "/tmp";
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
@@ -75,11 +78,18 @@ public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
     @BeforeAll
     public static void setup() {
         try {
-            FileUtils.deleteDirectory(new File("/tmp/cas-sample-data"));
-            val gitDir = new File(FileUtils.getTempDirectory(), "cas-service-registry");
+            val gitRepoSampleDir = new File(TMPDIR +"/cas-sample-data");
+            if (gitRepoSampleDir.exists()) {
+                FileUtils.deleteDirectory(gitRepoSampleDir);
+            }
+            val gitDir = new File(FileUtils.getTempDirectory(), GitServiceRegistryProperties.DEFAULT_CAS_SERVICE_REGISTRY_NAME);
             if (gitDir.exists()) {
                 FileUtils.deleteDirectory(gitDir);
             }
+            val gitSampleRepo = Git.init().setDirectory(gitRepoSampleDir).setBare(false).call();
+            FileUtils.write(new File(gitRepoSampleDir, "readme.txt"), "text", StandardCharsets.UTF_8);
+            gitSampleRepo.commit().setSign(false).setMessage("Initial commit").call();
+
             val git = Git.init().setDirectory(gitDir).setBare(false).call();
             FileUtils.write(new File(gitDir, "readme.txt"), "text", StandardCharsets.UTF_8);
             git.commit().setSign(false).setMessage("Initial commit").call();
@@ -111,8 +121,8 @@ public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @AfterAll
     public static void cleanUp() throws Exception {
-        FileUtils.deleteDirectory(new File("/tmp/cas-sample-data"));
-        val gitDir = new File(FileUtils.getTempDirectory(), "cas-service-registry");
+        FileUtils.deleteDirectory(new File(TMPDIR +"/cas-sample-data"));
+        val gitDir = new File(FileUtils.getTempDirectory(), GitServiceRegistryProperties.DEFAULT_CAS_SERVICE_REGISTRY_NAME);
         if (gitDir.exists()) {
             FileUtils.deleteDirectory(gitDir);
         }
