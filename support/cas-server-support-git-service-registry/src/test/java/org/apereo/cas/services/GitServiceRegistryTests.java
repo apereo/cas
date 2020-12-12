@@ -63,12 +63,10 @@ public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
         try {
             val gitRepoSampleDir = new File(TMPDIR +"/cas-sample-data");
             if (gitRepoSampleDir.exists()) {
-                deleteDirectory(gitRepoSampleDir);
                 FileUtils.deleteDirectory(gitRepoSampleDir);
             }
             val gitDir = new File(FileUtils.getTempDirectory(), GitServiceRegistryProperties.DEFAULT_CAS_SERVICE_REGISTRY_NAME);
             if (gitDir.exists()) {
-                deleteDirectory(gitDir);
                 FileUtils.deleteDirectory(gitDir);
             }
             val gitSampleRepo = Git.init().setDirectory(gitRepoSampleDir).setBare(false).call();
@@ -89,27 +87,7 @@ public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
         FileUtils.deleteDirectory(new File(TMPDIR +"/cas-sample-data"));
         val gitDir = new File(FileUtils.getTempDirectory(), GitServiceRegistryProperties.DEFAULT_CAS_SERVICE_REGISTRY_NAME);
         if (gitDir.exists()) {
-            deleteDirectory(gitDir);
             FileUtils.deleteDirectory(gitDir);
         }
-    }
-
-    /**
-     * Extra deleteDirectory method b/c FileUtils.deleteDirectory wasn't working reliably on Windows.
-     * @param path path to folder to be recursively deleted
-     * @return {@code true} if the file or directory is successfully deleted; {@code false} otherwise
-     */
-    private static boolean deleteDirectory(final File path) {
-        if (path.exists()) {
-            File[] files = path.listFiles();
-            for (int i = 0; i < files.length; i++) {
-                if (files[i].isDirectory()) {
-                    deleteDirectory(files[i]);
-                } else {
-                    files[i].delete();
-                }
-            }
-        }
-        return path.delete();
     }
 }
