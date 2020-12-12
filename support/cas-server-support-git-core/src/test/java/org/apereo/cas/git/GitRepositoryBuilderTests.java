@@ -7,6 +7,7 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -43,7 +44,7 @@ public class GitRepositoryBuilderTests {
         props.getPrivateKey().setLocation(new ClassPathResource("apereocasgithub"));
         props.setStrictHostKeyChecking(false);
         val builder = GitRepositoryBuilder.newInstance(props);
-        builder.build();
+        assertDoesNotThrow((Executable) builder::build);
     }
 
     @Test
@@ -54,7 +55,7 @@ public class GitRepositoryBuilderTests {
         props.setPassword("password");
         props.setBranchesToClone("master");
         props.getCloneDirectory().setLocation(ResourceUtils.getRawResourceFrom(
-                FileUtils.getTempDirectoryPath() + File.separator + UUID.randomUUID().toString()));
+            FileUtils.getTempDirectoryPath() + File.separator + UUID.randomUUID().toString()));
         props.setPrivateKeyPassphrase("something");
         props.setSshSessionPassword("more-password");
         props.getPrivateKey().setLocation(new ClassPathResource("priv.key"));
@@ -78,7 +79,7 @@ public class GitRepositoryBuilderTests {
         props.setPassword("password");
         props.setBranchesToClone("master");
         props.getCloneDirectory().setLocation(ResourceUtils.getRawResourceFrom(
-                "file://" + FileUtils.getTempDirectoryPath() + File.separator + UUID.randomUUID().toString()));
+            "file://" + FileUtils.getTempDirectoryPath() + File.separator + UUID.randomUUID().toString()));
         val builder = GitRepositoryBuilder.newInstance(props);
         assertDoesNotThrow(builder::build);
     }
