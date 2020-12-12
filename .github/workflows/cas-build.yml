@@ -821,6 +821,7 @@ jobs:
           - authy-mfa-login
           - logout-confirm
           - gua-login
+          - simple-mfa-login
           - oidc-authzcode-login
           - pac4j-delegated-login
           - renew-existing-sso
