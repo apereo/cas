@@ -822,6 +822,7 @@ jobs:
           - logout-confirm
           - gua-login
           - simple-mfa-login
+          - interrupt-login
           - oidc-authzcode-login
           - pac4j-delegated-login
           - renew-existing-sso
