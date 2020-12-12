@@ -6,8 +6,10 @@ category: Installation
 
 # WAR Overlay Installation
 
-CAS installation is a fundamentally source-oriented process, and we recommend a WAR overlay (1) project to organize customizations such as component configuration and UI design.
-The output of a WAR overlay build is a `cas.war` file that can be deployed to a servlet container like [Apache Tomcat](Configuring-Servlet-Container.html).
+CAS installation is a fundamentally source-oriented process, and we recommend a WAR overlay (1) 
+project to organize customizations such as component configuration and UI design.
+The output of a WAR overlay build is a `cas.war` file that can be deployed 
+to a servlet container like [Apache Tomcat](Configuring-Servlet-Container.html).
 
 ## Requirements
 
@@ -16,12 +18,15 @@ The output of a WAR overlay build is a `cas.war` file that can be deployed to a 
 ## What is a WAR Overlay?
 
 Overlays are a strategy to combat repetitive code and/or resources. Rather than downloading the CAS codebase and building from source,
-overlays allow you to download a pre-built vanilla CAS web application server provided by the project itself and override/insert specific behavior into it.
-At build time, the build installation process will attempt to download the provided binary artifact first. Then the tool will locate your configuration files and settings made available 
+overlays allow you to download a pre-built vanilla CAS web application server provided by the project itself and override/insert specific behavior into it. At build time, the build installation process will attempt to download the provided 
+binary artifact first. Then the tool will locate your configuration files and settings made available 
 inside the same project directory and will merge those into the downloaded artifact in order to produce
-one wholesome archive (i.e. `cas.war`) . Overridden artifacts may include resources, java classes, images, CSS and javascript files. In order for the merge
-process to successfully execute, the location and names of the overridden artifacts locally must **EXACTLY** match that of those provided by the project
-inside the originally downloaded archive. Java code in the overlay project's `src/main/java` folder and resources in `src/main/resources` will end up in the `WEB-INF\classes` 
+one wholesome archive (i.e. `cas.war`) . Overridden artifacts may include 
+resources, java classes, images, CSS and javascript files. In order for the merge
+process to successfully execute, the location and names of the overridden artifacts 
+locally must **EXACTLY** match that of those provided by the project
+inside the originally downloaded archive. Java code in the overlay project's `src/main/java` 
+folder and resources in `src/main/resources` will end up in the `WEB-INF\classes` 
 folder of cas.war and they will be loaded by the classloader instead of resources with the same names in jar files inside `WEB-INF\lib`.  
 
 It goes without saying that while up-front ramp-up time could be slightly complicated, there are significant advantages to this approach:
@@ -51,20 +56,33 @@ minimum and only grab what you actually need. Make sure the deployment environme
 
 ## CAS WAR Overlays
 
-CAS WAR overlay projects are provided for reference and study.
+CAS WAR overlay projects described below are provided for reference and study.
+
+### CAS Overlay Initializr
+
+Apereo CAS Initializr is a relatively new addition to the Apereo CAS ecosystem that allows you 
+as the deployer to generate CAS WAR Overlay projects on the fly with just what you need to start quickly.
+
+To learn more about the initializr, please [review this guide](WAR-Overlay-Initializr.html).
+
+### CAS Overlay Template
+                 
+You can download or clone the repositories below to get started with a CAS overlay template.
 
 <div class="alert alert-info"><strong>Review Branch!</strong><p>The below repositories point you towards their <code>master</code> branch.
 You should always make sure the branch you are on matches the version of CAS you wish to configure and deploy. The <code>master</code>
 branch typically points to the latest stable release of the CAS server. Check the build configuration and if inappropriate,
 use <code>git branch -a</code> to see available branches, and then <code>git checkout [branch-name]</code> to switch if necessary.</p></div>
 
-| Project                                                               | Build Directory                               | Source Directory
-|-----------------------------------------------------------------------|-----------------------------------------------|-----------------------
+| Project                                                           | Build Directory                               | Source Directory
+|-------------------------------------------------------------------|-----------------------------------------------|-----------------------
 | [CAS WAR Overlay](https://github.com/apereo/cas-overlay-template) | `cas/build/cas-resources`     | `src/main/resources`
 
-The `cas/build/cas-resources` files are unzipped from `cas.war!WEB-INF\lib\cas-server-webapp-resources-<version>.jar` via `gradle explodeWar` in the overlay. 
+The `cas/build/cas-resources` files are unzipped 
+from `cas.war!WEB-INF\lib\cas-server-webapp-resources-<version>.jar` via `gradle explodeWar` in the overlay. 
 
-To construct the overlay project, you need to copy directories and files *that you need to customize* in the build directory over to the source directory.
+To construct the overlay project, you need to copy directories and 
+files *that you need to customize* in the build directory over to the source directory.
 
 The WAR overlay also provides additional tasks to explode the binary artifact first before re-assembling it again.
 You may need to do that step manually yourself to learn what files/directories need to be copied over to the source directory.
