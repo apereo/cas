@@ -1,6 +1,5 @@
 const puppeteer = require('puppeteer');
 const assert = require('assert');
-const url = require('url');
 
 (async () => {
     const browser = await puppeteer.launch({
@@ -8,31 +7,35 @@ const url = require('url');
         headless: true
     });
     const page = await browser.newPage();
-    
     await page.goto("https://localhost:8443/cas/login");
 
     // await page.waitForTimeout(2000)
-
-    var pswd = await page.$('#password');
-    assert(pswd == null);
-
+    
     await page.type('#username', "casuser");
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
+    
+    // await page.waitForTimeout(2000)
+    
+    let element = await page.$('#login h2');
+    let header = await page.evaluate(element => element.textContent.trim(), element);
+    console.log(header)
+    assert(header === "casuser")
 
-    // await page.waitForTimeout(8000)
+    element = await page.$('#guaInfo');
+    header = await page.evaluate(element => element.textContent.trim(), element);
+    console.log(header)
+    assert(header === "If you do not recognize this image as yours, do NOT continue.")
 
-    var username = await page.$('#username');
-    assert(await username.boundingBox() == null);
+    let guaImage = await page.$('#guaImage');
+    assert(await guaImage.boundingBox() != null);
 
-    pswd = await page.$('#password');
-    assert(await pswd.boundingBox() != null);
+    await page.$eval('#fm1', form => form.submit());
+    await page.waitForTimeout(1000)
 
     await page.type('#password', "Mellon");
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
-
-    // await page.waitForTimeout(10000)
 
     const tgc = (await page.cookies()).filter(value => value.name === "TGC")
     assert(tgc.length !== 0);

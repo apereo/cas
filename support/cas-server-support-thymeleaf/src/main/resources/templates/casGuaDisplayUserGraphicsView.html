@@ -14,15 +14,15 @@
         <div layout:fragment="content" id="login" class="d-flex justify-content-center">
             <div class="mdc-card mdc-card-content w-lg-50 p-4">
                 <h2 class="text-center" th:text="${guaUsername}">guaUsername</h2>
-                <div class="banner banner-danger d-flex m-4 p-4" role="alert">
+                <div id="guaInfo" class="banner banner-danger d-flex m-4 p-4" role="alert">
                     <i class="mdi mdi-alert-octagon"></i>
-                    <strong th:utext="#{screen.gua.confirm.message}">If you do not recognize this image as yours, do NOT
-                        continue.</strong>
+                    <strong th:utext="#{screen.gua.confirm.message}">
+                        If you do not recognize this image as yours, do NOT continue.</strong>
                 </div>
 
                 <div class="d-flex align-items-center flex-column">
                     <div class="my-3">
-                        <img style="width:130px;height:130px;border-radius:20%; 
+                        <img id="guaImage" style="width:130px;height:130px;border-radius:20%;
                                 box-shadow: 0 0 2px 1px rgba(0, 140, 186, 0.5);
                                 border: 1px solid #ddd;border-radius: 4px;"
                             th:src="@{'data:image/jpeg;base64,' + ${guaUserImage}}" />

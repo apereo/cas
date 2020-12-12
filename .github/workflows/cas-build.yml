@@ -818,6 +818,9 @@ jobs:
           - ticket-validation-casv3
           - ticket-validation-casv3-json
           - aup-login
+          - authy-mfa-login
+          - logout-confirm
+          - gua-login
           - oidc-authzcode-login
           - pac4j-delegated-login
           - renew-existing-sso
