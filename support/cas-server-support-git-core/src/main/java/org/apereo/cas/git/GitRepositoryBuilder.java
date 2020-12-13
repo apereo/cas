@@ -63,6 +63,8 @@ public class GitRepositoryBuilder {
 
     private final boolean strictHostKeyChecking;
 
+    private final boolean clearExistingIdentities;
+
     private static String getBranchPath(final String branchName) {
         return "refs/heads/" + branchName;
     }
@@ -85,6 +87,7 @@ public class GitRepositoryBuilder {
             .sshSessionPassword(props.getSshSessionPassword())
             .timeoutInSeconds(Beans.newDuration(props.getTimeout()).toSeconds())
             .signCommits(props.isSignCommits())
+            .clearExistingIdentities(props.isClearExistingIdentities())
             .strictHostKeyChecking(props.isStrictHostKeyChecking());
         if (StringUtils.hasText(props.getUsername())) {
             val providers = CollectionUtils.wrapList(
@@ -121,6 +124,10 @@ public class GitRepositoryBuilder {
             @Override
             protected JSch createDefaultJSch(final FS fs) throws JSchException {
                 val defaultJSch = super.createDefaultJSch(fs);
+                if (clearExistingIdentities) {
+                    defaultJSch.removeAllIdentity();
+                }
+
                 if (StringUtils.hasText(privateKeyPath)) {
                     defaultJSch.addIdentity(privateKeyPath, privateKeyPassphrase);
                 }
