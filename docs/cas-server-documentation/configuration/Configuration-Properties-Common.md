@@ -489,6 +489,7 @@ The following options related to Git integration support in CAS when it attempts
 # ${configurationKey}.git.ssh-session-password=
 # ${configurationKey}.git.timeout=PT10S
 # ${configurationKey}.git.strict-host-key-checking=true
+# ${configurationKey}.git.clear-existing-identities=false
 ```
 
 ## InfluxDb Configuration

@@ -38,6 +38,7 @@ public class GitRepositoryBuilderTests {
         val props = casProperties.getServiceRegistry().getGit();
         props.setRepositoryUrl("git@github.com:mmoayyed/sample-data.git");
         props.setBranchesToClone("master");
+        props.setClearExistingIdentities(true);
         props.getCloneDirectory().setLocation(ResourceUtils.getRawResourceFrom(
             FileUtils.getTempDirectoryPath() + File.separator + UUID.randomUUID().toString()));
         props.setPrivateKeyPassphrase("mis@gh");

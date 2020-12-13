@@ -88,6 +88,13 @@ public abstract class BaseGitProperties implements Serializable {
     private boolean strictHostKeyChecking = true;
 
     /**
+     * When establishing an ssh session, determine if default
+     * identities loaded on the machine should be excluded/removed
+     * and identity should only be limitd to those loaded from given keys.
+     */
+    private boolean clearExistingIdentities;
+
+    /**
      * Timeout for git operations such as push and pull in seconds.
      */
     private String timeout = "PT10S";
