@@ -52,8 +52,7 @@ public class GitServiceRegistryProperties extends BaseGitProperties {
     private boolean groupByType = true;
 
     public GitServiceRegistryProperties() {
-        val cloneDirectory = new CloneDirectory();
-        cloneDirectory.setLocation(
-                new FileSystemResource(new File(FileUtils.getTempDirectory(), DEFAULT_CAS_SERVICE_REGISTRY_NAME)));
+        val location = new FileSystemResource(new File(FileUtils.getTempDirectory(), DEFAULT_CAS_SERVICE_REGISTRY_NAME));
+        getCloneDirectory().setLocation(location);
     }
 }

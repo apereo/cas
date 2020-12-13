@@ -6,11 +6,8 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.apache.commons.io.FileUtils;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import org.springframework.core.io.FileSystemResource;
 
-import java.io.File;
 import java.io.Serializable;
 
 /**
@@ -99,17 +96,5 @@ public abstract class BaseGitProperties implements Serializable {
      * Directory into which the repository would be cloned.
      */
     @NestedConfigurationProperty
-    private CloneDirectory cloneDirectory = new CloneDirectory();
-
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class CloneDirectory extends SpringResourceProperties {
-
-        private static final long serialVersionUID = 2070414250350989144L;
-
-        public CloneDirectory() {
-            setLocation(new FileSystemResource(new File(FileUtils.getTempDirectory(), "cas-git-clone")));
-        }
-    }
+    private SpringResourceProperties cloneDirectory = new SpringResourceProperties();
 }

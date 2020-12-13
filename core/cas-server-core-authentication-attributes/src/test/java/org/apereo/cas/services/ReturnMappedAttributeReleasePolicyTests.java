@@ -265,5 +265,31 @@ public class ReturnMappedAttributeReleasePolicyTests {
         assertTrue(result.containsKey(attributeName));
     }
 
+    @Test
+    @Order(9)
+    public void verifyMappedExisting() {
+        val allowed1 = CollectionUtils.<String, Object>wrap("uid", "my-userid");
+        val p1 = new ReturnMappedAttributeReleasePolicy(allowed1);
+        val service1 = CoreAttributesTestUtils.getRegisteredService();
+        when(service1.getAttributeReleasePolicy()).thenReturn(p1);
+
+        val attributes = new HashMap<String, List<Object>>();
+        attributes.put("uid", List.of(CoreAttributesTestUtils.CONST_USERNAME));
+        var result = p1.getAttributes(
+            CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, attributes),
+            CoreAttributesTestUtils.getService(), service1);
+        assertEquals(1, result.size());
+        assertFalse(result.containsKey("uid"));
+        assertTrue(result.containsKey("my-userid"));
+
+        attributes.clear();
+        attributes.put("my-userid", List.of(CoreAttributesTestUtils.CONST_USERNAME));
+        result = p1.getAttributes(
+            CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, attributes),
+            CoreAttributesTestUtils.getService(), service1);
+        assertEquals(1, result.size());
+        assertTrue(result.containsKey("my-userid"));
+    }
+
 
 }
