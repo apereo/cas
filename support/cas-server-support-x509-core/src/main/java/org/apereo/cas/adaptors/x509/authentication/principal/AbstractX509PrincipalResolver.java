@@ -125,7 +125,7 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
             LOGGER.debug("Using alternate principal attribute [{}]", alternatePrincipal);
             return alternatePrincipal;
         }
-        LOGGER.debug("Returning null principal id...");
+        LOGGER.trace("Returning null principal id...");
         return null;
     }
 
