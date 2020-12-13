@@ -415,6 +415,18 @@ bootadmin:
     port: 8443
   listenPortHttps: 8444
   listenPortJvmDebug: 5005
+  # Request some resources so kubernetes will schedule somewhere with enough resources
+  # Limits can also be set if desired
+  resources:
+    requests:
+      cpu: 50m
+      memory: 384Mi
+  #  limits:
+  #    cpu: 100m
+  #    memory: 128Mi
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
   ingress:
     enabled: true
     annotations:
@@ -449,11 +461,11 @@ resources:
 #    cpu: 100m
 #    memory: 128Mi
 
-
+# node selector for CAS server
 nodeSelector: {}
-
+# tolerations for CAS server (i.e taints on nodes that it can tolerate)
 tolerations: []
-
+# affinity config for CAS server
 affinity: {}
 
 

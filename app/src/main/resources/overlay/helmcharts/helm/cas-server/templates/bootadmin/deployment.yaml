@@ -156,16 +156,16 @@ spec:
             periodSeconds: 15
             failureThreshold: {{ .Values.bootAdminContainer.livenessFailureThreshold }}
           resources:
-      {{- toYaml .Values.resources | nindent 12 }}
-      {{- with .Values.nodeSelector }}
+      {{- toYaml .Values.bootadmin.resources | nindent 12 }}
+      {{- with .Values.bootadmin.nodeSelector }}
       nodeSelector:
       {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.affinity }}
+      {{- with .Values.bootadmin.affinity }}
       affinity:
       {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.tolerations }}
+      {{- with .Values.bootadmin.tolerations }}
       tolerations:
       {{- toYaml . | nindent 8 }}
   {{- end }}
