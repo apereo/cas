@@ -6,7 +6,7 @@ category: Installation
 
 # WAR Overlay Initializr
 
-Apereo CAS Initializr is a relatively new addition to the Apereo CAS ecosystem that allows 
+[Apereo CAS Initializr][initializr] is a relatively new addition to the Apereo CAS ecosystem that allows 
 you as the deployer to generate CAS WAR Overlay projects on the fly with just what you need to start quickly. 
 
 To get started with a CAS deployment, adopters typically 
