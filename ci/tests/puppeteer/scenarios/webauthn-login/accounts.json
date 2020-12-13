@@ -1,0 +1,35 @@
+{
+  "casuser" : [ {
+    "signatureCount" : 84,
+    "userIdentity" : {
+      "name" : "casuser",
+      "displayName" : "casuser",
+      "id" : "S6dJTogXEmVs5ErUc3GWAblQ47Ip4WyABXdppibXiaM"
+    },
+    "credentialNickname" : "blissful_lovelace",
+    "credential" : {
+      "credentialId" : "uyr5RG7NLRO2QUE_be03JnYZCLGgBUleVEvnsbqaFrRBq_cLlTOUJfkk337c-TU7SyC8KkhGEDvHRf7wDROaOg",
+      "userHandle" : "S6dJTogXEmVs5ErUc3GWAblQ47Ip4WyABXdppibXiaM",
+      "publicKeyCose" : "pQECAyYgASFYIIwQghHbBlYB1hMK2bFRs_jW2tDEyWA12CIF4L8HQwwXIlggbsHQfChVkB0hv8oqfplL5ww1bwbmPQdyBY4Y3j3W1QY",
+      "signatureCount" : 0
+    },
+    "attestationMetadata" : {
+      "trusted" : true,
+      "metadataIdentifier" : "2fb54029-7613-4f1d-94f1-fb876c14a6fe",
+      "vendorProperties" : {
+        "url" : "https://yubico.com",
+        "imageUrl" : "https://developers.yubico.com/U2F/Images/yubico.png",
+        "name" : "Yubico"
+      },
+      "deviceProperties" : {
+        "deviceId" : "1.3.6.1.4.1.41482.1.7",
+        "displayName" : "YubiKey 5 NFC",
+        "deviceUrl" : "https://support.yubico.com/support/solutions/articles/15000014174--yubikey-5-nfc",
+        "imageUrl" : "https://developers.yubico.com/U2F/Images/YK5.png"
+      },
+      "transports" : [ "USB", "NFC" ]
+    },
+    "username" : "casuser",
+    "registrationTime" : "2020-11-25T05:34:16.366768Z"
+  } ]
+}
