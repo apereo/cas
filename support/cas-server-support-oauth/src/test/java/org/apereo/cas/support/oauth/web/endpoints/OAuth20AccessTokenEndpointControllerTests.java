@@ -60,7 +60,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
         return Stream.of(
             getRegisteredService(REDIRECT_URI, CLIENT_SECRET, CollectionUtils.wrapSet(OAuth20GrantTypes.AUTHORIZATION_CODE)),
             getRegisteredService(REDIRECT_URI, CLIENT_SECRET, new HashSet<>())
-        );
+                        );
     }
 
     @BeforeEach
@@ -104,7 +104,7 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
         assertEquals(HttpStatus.SC_BAD_REQUEST, mockResponse.getStatus());
         assertEquals(OAuth20Constants.INVALID_REQUEST, mv.getModel().get("error"));
     }
-    
+
 
     @Test
     public void verifyClientNoAuthorizationCode() throws Exception {
@@ -622,36 +622,6 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
         assertUserAuth(true, true);
     }
 
-    @SneakyThrows
-    private void assertUserAuth(final boolean refreshToken, final boolean withClientSecret) {
-        val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
-        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
-        if (withClientSecret) {
-            mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, CLIENT_SECRET);
-        }
-        mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.PASSWORD.name().toLowerCase());
-        mockRequest.setParameter(USERNAME, GOOD_USERNAME);
-        mockRequest.setParameter(PASSWORD, GOOD_PASSWORD);
-        mockRequest.addHeader(CasProtocolConstants.PARAMETER_SERVICE, REDIRECT_URI);
-        val mockResponse = new MockHttpServletResponse();
-        requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
-        val mv = accessTokenController.handleRequest(mockRequest, mockResponse);
-        assertEquals(200, mockResponse.getStatus());
-        assertTrue(mv.getModel().containsKey(OAuth20Constants.ACCESS_TOKEN));
-        if (refreshToken) {
-            assertTrue(mv.getModel().containsKey(OAuth20Constants.REFRESH_TOKEN));
-        }
-        assertTrue(mv.getModel().containsKey(OAuth20Constants.EXPIRES_IN));
-
-        val accessTokenId = mv.getModel().get(OAuth20Constants.ACCESS_TOKEN).toString();
-
-        val accessToken = this.ticketRegistry.getTicket(accessTokenId, OAuth20AccessToken.class);
-        assertEquals(GOOD_USERNAME, accessToken.getAuthentication().getPrincipal().getId());
-
-        val timeLeft = Integer.parseInt(mv.getModel().get(OAuth20Constants.EXPIRES_IN).toString());
-        assertTrue(timeLeft >= TIMEOUT - 10 - DELTA);
-    }
-
     @Test
     public void verifyRefreshTokenExpiredToken() throws Exception {
         val principal = createPrincipal();
@@ -840,6 +810,36 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
 
         val accessToken = this.ticketRegistry.getTicket(accessTokenId, OAuth20AccessToken.class);
         assertEquals(principal, accessToken.getAuthentication().getPrincipal());
+
+        val timeLeft = Integer.parseInt(mv.getModel().get(OAuth20Constants.EXPIRES_IN).toString());
+        assertTrue(timeLeft >= TIMEOUT - 10 - DELTA);
+    }
+
+    @SneakyThrows
+    private void assertUserAuth(final boolean refreshToken, final boolean withClientSecret) {
+        val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        if (withClientSecret) {
+            mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, CLIENT_SECRET);
+        }
+        mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.PASSWORD.name().toLowerCase());
+        mockRequest.setParameter(USERNAME, GOOD_USERNAME);
+        mockRequest.setParameter(PASSWORD, GOOD_PASSWORD);
+        mockRequest.addHeader(CasProtocolConstants.PARAMETER_SERVICE, REDIRECT_URI);
+        val mockResponse = new MockHttpServletResponse();
+        requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
+        val mv = accessTokenController.handleRequest(mockRequest, mockResponse);
+        assertEquals(200, mockResponse.getStatus());
+        assertTrue(mv.getModel().containsKey(OAuth20Constants.ACCESS_TOKEN));
+        if (refreshToken) {
+            assertTrue(mv.getModel().containsKey(OAuth20Constants.REFRESH_TOKEN));
+        }
+        assertTrue(mv.getModel().containsKey(OAuth20Constants.EXPIRES_IN));
+
+        val accessTokenId = mv.getModel().get(OAuth20Constants.ACCESS_TOKEN).toString();
+
+        val accessToken = this.ticketRegistry.getTicket(accessTokenId, OAuth20AccessToken.class);
+        assertEquals(GOOD_USERNAME, accessToken.getAuthentication().getPrincipal().getId());
 
         val timeLeft = Integer.parseInt(mv.getModel().get(OAuth20Constants.EXPIRES_IN).toString());
         assertTrue(timeLeft >= TIMEOUT - 10 - DELTA);

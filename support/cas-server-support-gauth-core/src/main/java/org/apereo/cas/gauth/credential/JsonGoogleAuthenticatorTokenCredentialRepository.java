@@ -169,7 +169,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
     public long count(final String username) {
         try {
             val accounts = readAccountsFromJsonRepository();
-            return accounts.get(username).size();
+            return accounts.containsKey(username) ? accounts.get(username).size() : 0;
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }

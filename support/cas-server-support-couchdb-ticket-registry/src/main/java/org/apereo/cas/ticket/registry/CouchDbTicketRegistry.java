@@ -37,11 +37,7 @@ public class CouchDbTicketRegistry extends AbstractTicketRegistry {
         var exception = (DbAccessException) null;
         var success = false;
         val ticketDocument = new TicketDocument();
-        try {
-            ticketDocument.setRevision(couchDb.getCurrentRevision(ticketId));
-        } catch (final DocumentNotFoundException e) {
-            exception = e;
-        }
+        ticketDocument.setRevision(couchDb.getCurrentRevision(ticketId));
         ticketDocument.setId(ticketId);
         for (var retries = 0; retries < conflictRetries && exception == null && !success; retries++) {
             try {
@@ -77,7 +73,7 @@ public class CouchDbTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
-        LOGGER.debug("Locating ticket id [{}]", ticketId);
+        LOGGER.trace("Locating ticket id [{}]", ticketId);
         val encTicketId = encodeTicketId(ticketId);
         if (StringUtils.isBlank(encTicketId)) {
             LOGGER.trace("Ticket id [{}] could not be found", encTicketId);
@@ -114,26 +110,21 @@ public class CouchDbTicketRegistry extends AbstractTicketRegistry {
     public Ticket updateTicket(final Ticket ticket) {
         val encodedTicket = encodeTicket(ticket);
         LOGGER.trace("Updating [{}]", encodedTicket.getId());
-        var exception = (DbAccessException) null;
         var success = false;
         val doc = new TicketDocument(encodedTicket);
         doc.setRevision(couchDb.getCurrentRevision(encodedTicket.getId()));
         for (var retries = 0; retries < conflictRetries; retries++) {
             try {
-                exception = null;
                 couchDb.update(doc);
                 success = true;
             } catch (final DbAccessException e) {
                 doc.setRevision(couchDb.getCurrentRevision(encodedTicket.getId()));
-                exception = e;
+                LOGGER.warn("Could not update [{}] [{}]", encodedTicket.getId(), e.getMessage());
             }
             if (success) {
                 LOGGER.trace("Successfully updated ticket [{}].", encodedTicket.getId());
                 return ticket;
             }
-        }
-        if (exception != null) {
-            LOGGER.warn("Could not update [{}] [{}]", encodedTicket.getId(), exception.getMessage());
         }
         return null;
     }

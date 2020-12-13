@@ -68,4 +68,21 @@ public class DefaultCasDelegatingWebflowEventResolverTests extends BaseCasWebflo
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
     }
 
+    @Test
+    public void verifyNoAuthn() {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        RequestContextHolder.setRequestContext(context);
+        ExternalContextHolder.setExternalContext(context.getExternalContext());
+
+        val id = UUID.randomUUID().toString();
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService(id);
+        servicesManager.save(registeredService);
+        WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService(id));
+        val event = initialAuthenticationAttemptWebflowEventResolver.resolveSingle(context);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, event.getId());
+    }
+
 }

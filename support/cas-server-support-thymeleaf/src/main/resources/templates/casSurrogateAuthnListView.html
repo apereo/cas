@@ -11,18 +11,17 @@
 
 <body>
     <main role="main" class="container mt-3 mb-3">
-        <div layout:fragment="content" class="mdc-card p-4 m-auto w-lg-66">
+        <div id="content" layout:fragment="content" class="mdc-card p-4 m-auto w-lg-66">
             <form method="post" id="loginForm">
 
                 <div class="banner banner-danger" th:if="${flowRequestContext.messageContext.hasErrorMessages()}">
                     <span th:each="message : ${flowRequestContext.messageContext.allMessages}"
-                        th:utext="#{${message.text}}">Message
-                        Text</span>
+                        th:utext="#{${message.text}}">Message Text</span>
                 </div>
 
-                <div class="my-3">
+                <div id="titlePanel" class="my-3">
                     <h2 th:text="#{screen.surrogates.choose.account}">Choose Account</h2>
-                    <div th:utext="#{screen.surrogates.message}">
+                    <div id="surrogateInfo" th:utext="#{screen.surrogates.message}">
                         <p>You are provided with a list of accounts on behalf of which you are allowed to authenticate.
                         </p>
                         <p>Select one and continue.</p>
@@ -35,7 +34,7 @@
                 <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
                 <input type="hidden" name="_eventId" value="submit" />
                 <div class="d-flex">
-                    <button class="mdc-button mdc-button--raised mr-2" name="submit" accesskey="l"
+                    <button class="mdc-button mdc-button--raised mr-2" id="submit" name="submit" accesskey="l"
                         th:value="#{screen.welcome.button.login}" value="Login">
                         <span class="mdc-button__label" th:text="#{screen.welcome.button.login}">Login</span>
                     </button>

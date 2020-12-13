@@ -12,6 +12,7 @@ bin/
 *.war
 *.iml
 *.iws
+**/ignite/work/marshaller/
 **/.history
 *.orig
 .idea/

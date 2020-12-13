@@ -37,6 +37,12 @@ public class OidcIdTokenSigningAndEncryptionServiceTests extends AbstractOidcTes
     }
 
     @Test
+    public void verifyWrongType() {
+        assertFalse(oidcTokenSigningAndEncryptionService.shouldEncryptToken(getOAuthRegisteredService("1", "http://localhost/cas")));
+        assertFalse(oidcTokenSigningAndEncryptionService.shouldSignToken(getOAuthRegisteredService("1", "http://localhost/cas")));
+    }
+
+    @Test
     public void verifySkipSigning() {
         val oidcRegisteredService = getOidcRegisteredService(false, false);
         val result = oidcTokenSigningAndEncryptionService.shouldSignToken(oidcRegisteredService);

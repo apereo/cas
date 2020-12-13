@@ -1689,7 +1689,7 @@ under the configuration key `cas.authn.adaptive.ip-intel.rest`.
 #### Groovy Adaptive Authentication
 
 ```properties
-# cas.authn.adaptive.ipIntel.groovy.location=file:/etc/cas/config/GroovyIPAddressIntelligenceService.groovy
+# cas.authn.adaptive.ip-intel.groovy.location=file:/etc/cas/config/GroovyIPAddressIntelligenceService.groovy
 ```
 
 #### BlackDot Adaptive Authentication

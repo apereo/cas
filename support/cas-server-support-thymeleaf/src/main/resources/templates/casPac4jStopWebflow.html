@@ -11,7 +11,7 @@
 
 <body>
     <main role="main" class="container mt-3 mb-3">
-        <div layout:fragment="content" class="banner banner-danger mdc-card p-4 m-auto w-lg-66 text-justify">
+        <div id="content" layout:fragment="content" class="banner banner-danger mdc-card p-4 m-auto w-lg-66 text-justify">
             <div>
                 <h2 th:utext="#{screen.pac4j.unauthz.heading}">Unauthorized Access</h2>
                 <p th:utext="#{screen.pac4j.unauthz.message}">Either the authentication request was rejected/cancelled,
@@ -21,7 +21,7 @@
                     the issue.</p>
 
                 <div class="mdc-data-table">
-                    <table th:if="${error != null or reason != null or code != null or description != null}"
+                    <table id="errorTable" th:if="${error != null or reason != null or code != null or description != null}"
                         class="mdc-data-table__table w-100" aria-label="Error information">
                         <thead>
                             <tr class="mdc-data-table__header-row">
@@ -41,19 +41,19 @@
                                 <td class="mdc-data-table__cell" th:text="${description}">description</td>
                                 <td class="mdc-data-table__cell" th:text="${client}">client</td>
                                 <td class="mdc-data-table__cell">
-                                    <a th:href="${service}" th:text="#{screen.pac4j.unauthz.gotoapp}">Goto
-                                        Application</a>
+                                    <a th:href="${service}" th:text="#{screen.pac4j.unauthz.gotoapp}">Goto Application</a>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
+            <br/>
             <div class="d-flex">
-                <a class="mdc-button mdc-button--raised mr-2" th:href="@{/login}">
+                <a id="loginLink" class="mdc-button mdc-button--raised mr-2" th:href="@{/login}">
                     <span class="mdc-button__label" th:text="#{screen.pac4j.unauthz.login}">Back to CAS</span>
                 </a>
-                <a class="mdc-button mdc-button--outlined" th:href="${service}">
+                <a id="appLink" class="mdc-button mdc-button--outlined" th:href="${service}">
                     <span class="mdc-button__label" th:text="#{screen.pac4j.unauthz.gotoapp}">Goto Application</span>
                 </a>
             </div>

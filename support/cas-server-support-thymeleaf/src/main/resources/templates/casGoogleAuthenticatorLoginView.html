@@ -29,7 +29,6 @@
                                id="accountId" name="accountId" size="25"
                                autocomplete="off" th:field="*{accountId}"/>
                         
-
                         <label for="token" class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">
                             <input class="mdc-text-field__input pwd"
                                    type="password"
@@ -68,7 +67,7 @@
                 </button>
             </section>
 
-            <button class="mdc-button mdc-button--raised" accesskey="l">
+            <button id="login" class="mdc-button mdc-button--raised" accesskey="l">
                 <span class="mdc-button__label" th:text="#{screen.welcome.button.login}">Login</span>
             </button>
             <a class="mdc-button mdc-button--raised" id="cancel" name="cancel"
@@ -83,7 +82,7 @@
             <form method="post" id="fm3">
                 <input type="hidden" name="_eventId_select" value="select"/>
                 <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
-                <button class="mdc-button mdc-button--raised mr-2" accesskey="s">
+                <button id="selectDeviceButton" class="mdc-button mdc-button--raised mr-2" accesskey="s">
                     <span class="mdc-button__label" th:text="#{screen.authentication.gauth.selectdevice}">Select Device</span>
                 </button>
             </form>
@@ -95,7 +94,7 @@
             <p th:utext="#{screen.authentication.gauth.reganotherdevice}"></p>
             <input type="hidden" name="_eventId_register" value="register"/>
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
-            <button class="mdc-button mdc-button--raised mr-2" type="submit" name="register" accesskey="r" value="Register">
+            <button class="mdc-button mdc-button--raised mr-2" id="register" type="submit" name="register" accesskey="r" value="Register">
                 <span class="mdc-button__label" th:text="#{screen.welcome.button.register}">Register</span>
             </button>
         </form>

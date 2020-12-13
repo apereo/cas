@@ -4,13 +4,22 @@ import org.apereo.cas.config.CasCouchDbCoreConfiguration;
 import org.apereo.cas.config.CouchDbTicketRegistryConfiguration;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.tickets.TicketRepository;
+import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
+import lombok.val;
+import org.ektorp.DbAccessException;
+import org.ektorp.DocumentNotFoundException;
+import org.ektorp.UpdateConflictException;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link CouchDbTicketRegistryTests}.
@@ -53,8 +62,21 @@ public class CouchDbTicketRegistryTests extends BaseTicketRegistryTests {
     public TicketRegistry getNewTicketRegistry() {
         couchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(couchDbFactory.getCouchDbConnector().getDatabaseName());
         ticketRepository.initStandardDesignDocument();
-
         return ticketRegistry;
+    }
+
+    @RepeatedTest(1)
+    public void verifyFails() {
+        val couchDb = mock(TicketRepository.class);
+        doThrow(new DbAccessException()).when(couchDb).update(any());
+        val registry = new CouchDbTicketRegistry(couchDb, 1);
+        assertNull(registry.updateTicket(new MockTicketGrantingTicket("casuser")));
+
+        doThrow(new UpdateConflictException()).when(couchDb).remove(any());
+        assertEquals(0, registry.deleteTicket(new MockTicketGrantingTicket("casuser")));
+
+        doThrow(new DocumentNotFoundException("path")).when(couchDb).remove(any());
+        assertEquals(0, registry.deleteTicket(new MockTicketGrantingTicket("casuser")));
     }
 
     @Override

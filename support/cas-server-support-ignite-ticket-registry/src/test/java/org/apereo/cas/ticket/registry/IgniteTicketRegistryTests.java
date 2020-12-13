@@ -2,10 +2,14 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.config.IgniteTicketRegistryConfiguration;
 import org.apereo.cas.config.IgniteTicketRegistryTicketCatalogConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.ticket.TicketCatalog;
 
 import lombok.Getter;
 import lombok.val;
+import org.apache.ignite.configuration.IgniteConfiguration;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -13,6 +17,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.FileOutputStream;
 import java.security.KeyStore;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit test for {@link IgniteTicketRegistry}.
@@ -32,7 +39,7 @@ import java.security.KeyStore;
         "cas.ticket.registry.ignite.tickets-cache.atomicity-mode=ATOMIC",
         "cas.ticket.registry.ignite.tickets-cache.cache-mode=REPLICATED",
         "cas.ticket.registry.ignite.ignite-address[0]=localhost:47500",
-        
+
         "cas.ticket.registry.ignite.key-store-file-path=/tmp/ignite-keystore.jks",
         "cas.ticket.registry.ignite.key-store-type=pkcs12",
         "cas.ticket.registry.ignite.key-store-password=changeit",
@@ -49,6 +56,13 @@ public class IgniteTicketRegistryTests extends BaseTicketRegistryTests {
     @Qualifier("ticketRegistry")
     private TicketRegistry newTicketRegistry;
 
+    @Autowired
+    private CasConfigurationProperties casProperties;
+
+    @Autowired
+    @Qualifier("igniteConfiguration")
+    private IgniteConfiguration igniteConfiguration;
+
     @BeforeAll
     public static void beforeAll() throws Exception {
         val ks = KeyStore.getInstance("pkcs12");
@@ -57,5 +71,15 @@ public class IgniteTicketRegistryTests extends BaseTicketRegistryTests {
         try (val fos = new FileOutputStream("/tmp/ignite-keystore.jks")) {
             ks.store(fos, password);
         }
+    }
+
+    @RepeatedTest(1)
+    public void verifyDeleteUnknown() {
+        val catalog = mock(TicketCatalog.class);
+        val registry = new IgniteTicketRegistry(catalog, igniteConfiguration,
+            casProperties.getTicket().getRegistry().getIgnite());
+        assertTrue(registry.deleteSingleTicket("unknownticket"));
+        registry.initialize();
+        registry.destroy();
     }
 }
