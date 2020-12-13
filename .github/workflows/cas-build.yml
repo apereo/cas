@@ -841,6 +841,8 @@ jobs:
           - attribute-consent
           - u2f-register
           - u2f-login
+          - webauthn-register
+          - webauthn-login
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
