@@ -4,11 +4,13 @@ import org.apereo.cas.CasEmbeddedContainerUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.AsciiArtUtils;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeansException;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.actuate.autoconfigure.metrics.KafkaMetricsAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -76,12 +78,17 @@ public class CasWebApplication {
      */
     public static void main(final String[] args) {
         val banner = CasEmbeddedContainerUtils.getCasBannerInstance();
-        new SpringApplicationBuilder(CasWebApplication.class)
-            .banner(banner)
-            .web(WebApplicationType.SERVLET)
-            .logStartupInfo(true)
-            .contextClass(CasWebApplicationContext.class)
-            .run(args);
+        try {
+            new SpringApplicationBuilder(CasWebApplication.class)
+                    .banner(banner)
+                    .web(WebApplicationType.SERVLET)
+                    .logStartupInfo(true)
+                    .contextClass(CasWebApplicationContext.class)
+                    .run(args);
+        } catch (final BeansException e) {
+            LoggingUtils.error(LOGGER, e);
+            throw e;
+        }
     }
 
     /**
