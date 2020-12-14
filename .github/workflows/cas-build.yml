@@ -101,7 +101,7 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew --build-cache --configure-on-demand --no-daemon build -x test -x javadoc -x check --parallel
       - name: Run tests on Windows and Mac
-        run: ./test-cas.sh --category simple,mfa,files
+        run: ./testcas.sh --category simple,mfa,files
         shell: bash
         if: ${{ matrix.os != 'ubuntu-latest' }}
       - uses: actions/upload-artifact@v2
