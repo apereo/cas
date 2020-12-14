@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.springframework.core.io.Resource;
 
@@ -20,6 +21,7 @@ import java.io.Serializable;
 @Setter
 @RequiresModule(name = "cas-server-core-util", automated = true)
 @Accessors(chain = true)
+@ToString
 public class SpringResourceProperties implements Serializable {
     private static final long serialVersionUID = 4142130961445546358L;
     /**

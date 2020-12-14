@@ -5787,7 +5787,7 @@ available [here](Configuration-Properties-Common.html#sms-notifications) under t
 The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
 The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.pm.reset`.
 
-### Webflow configuration
+### Webflow Configuration
 
 Webflow auto-configuration settings for this feature are available [here](Configuration-Properties-Common.html#webflow-auto-configuration) under 
 the configuration key `cas.authn.pm.webflow`.
@@ -5855,4 +5855,21 @@ feature are available [here](Configuration-Properties-Common.html#password-encod
 # cas.authn.pm.rest.endpoint-url-change=
 # cas.authn.pm.rest.endpoint-username=
 # cas.authn.pm.rest.endpoint-password=
+```
+
+## ACME Integration
+
+To learn more about this topic, [please review this guide](../integration/ACME-Integration.html).
+    
+```properties
+# cas.acme.domains[0]=example.org
+# cas.acme.terms-of-use-accepted=true
+
+# cas.acme.key-size=2048
+
+# cas.acme.server-url=acme://letsencrypt.org/staging
+# cas.acme.user-key.location=file:/etc/cas/config/acme/user.key
+# cas.acme.domain-key.location=file:/etc/cas/config/acme/domain.key
+# cas.acme.domain-csr.location=file:/etc/cas/config/acme/domain.csr
+# cas.acme.domain-chain.location=file:/etc/cas/config/acme/domain-chain.crt
 ```
