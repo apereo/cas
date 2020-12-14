@@ -54,7 +54,7 @@ const assert = require('assert');
     console.log(header)
     assert(header === "[casuser@example.org]")
 
-    await page.click("#optionsButton");
+    await click(page,"#optionsButton");
     await page.waitForTimeout(2500)
 
     var opt = await page.$('#optionAlways');
@@ -83,3 +83,9 @@ const assert = require('assert');
 
     await browser.close();
 })();
+
+async function click(page, button) {
+    await page.evaluate((button) => {
+        document.querySelector(button).click();
+    }, button);
+}
