@@ -36,7 +36,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration("samlIdPGitIdPMetadataConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@ConditionalOnProperty(prefix = "cas.authn.saml-idp.metadata.git", name = "idp-metadata-enabled", havingValue = "true")
+@ConditionalOnProperty(prefix = "cas.authn.saml-idp.metadata.git", name = { "idp-metadata-enabled", "repository-url" })
 public class SamlIdPGitIdPMetadataConfiguration {
 
     @Autowired
