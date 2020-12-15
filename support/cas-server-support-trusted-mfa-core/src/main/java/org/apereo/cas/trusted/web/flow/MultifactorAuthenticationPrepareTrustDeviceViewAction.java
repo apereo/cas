@@ -1,7 +1,7 @@
 package org.apereo.cas.trusted.web.flow;
 
 import org.apereo.cas.audit.AuditableExecution;
-import org.apereo.cas.configuration.model.support.mfa.TrustedDevicesMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.trusteddevice.TrustedDevicesMultifactorProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustedDeviceBypassEvaluator;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
