@@ -1,7 +1,7 @@
 package org.apereo.cas.configuration.model.support.mfa.trusteddevice;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
-import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbMultifactorTrustProperties;
+import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbTrustedDevicesMultifactorProperties;
 import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -95,7 +95,13 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
      * Store devices records inside DynamoDb.
      */
     @NestedConfigurationProperty
-    private DynamoDbMultifactorTrustProperties dynamoDb = new DynamoDbMultifactorTrustProperties();
+    private DynamoDbTrustedDevicesMultifactorProperties dynamoDb = new DynamoDbTrustedDevicesMultifactorProperties();
+
+    /**
+     * Store devices records inside Redis.
+     */
+    @NestedConfigurationProperty
+    private RedisTrustedDevicesMultifactorProperties redis = new RedisTrustedDevicesMultifactorProperties();
 
     /**
      * Crypto settings that sign/encrypt the device records.

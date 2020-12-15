@@ -3,6 +3,7 @@
 # while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
 
 echo "Running Redis + Sentinel docker image..."
+docker-compose -f ./ci/tests/redis/docker-compose-sentinel.yml down >/dev/null 2>/dev/null
 docker-compose -f ./ci/tests/redis/docker-compose-sentinel.yml up -d
 
 COUNT_REDIS=$(docker ps | grep "redis_server_"| wc -l)

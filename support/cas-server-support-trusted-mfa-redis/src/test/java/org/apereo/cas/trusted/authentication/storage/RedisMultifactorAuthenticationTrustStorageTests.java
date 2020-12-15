@@ -2,7 +2,7 @@ package org.apereo.cas.trusted.authentication.storage;
 
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
-import org.apereo.cas.trusted.config.MongoDbMultifactorAuthenticationTrustConfiguration;
+import org.apereo.cas.trusted.config.RedisMultifactorAuthenticationTrustConfiguration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.Getter;
@@ -17,7 +17,9 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * This is {@link RedisMultifactorAuthenticationTrustStorageTests}.

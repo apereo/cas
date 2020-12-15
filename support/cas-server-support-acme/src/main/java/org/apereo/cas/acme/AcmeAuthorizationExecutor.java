@@ -2,7 +2,6 @@ package org.apereo.cas.acme;
 
 import org.shredzone.acme4j.Authorization;
 import org.shredzone.acme4j.Order;
-import org.shredzone.acme4j.challenge.Challenge;
 import org.shredzone.acme4j.challenge.Http01Challenge;
 import org.shredzone.acme4j.util.CSRBuilder;
 
@@ -30,7 +29,7 @@ public interface AcmeAuthorizationExecutor {
      * @param auth the auth
      * @return the http 01 challenge
      */
-    Challenge find(Authorization auth);
+    Http01Challenge find(Authorization auth);
 
     /**
      * Execute.

@@ -7,7 +7,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 /**
- * This is {@link DynamoDbMultifactorTrustProperties}.
+ * This is {@link DynamoDbTrustedDevicesMultifactorProperties}.
  *
  * @author Misagh Moayyed
  * @since 6.1.0
@@ -16,7 +16,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class DynamoDbMultifactorTrustProperties extends AbstractDynamoDbProperties {
+public class DynamoDbTrustedDevicesMultifactorProperties extends AbstractDynamoDbProperties {
 
     private static final long serialVersionUID = 102540148774854955L;
 
