@@ -1165,6 +1165,7 @@ to an external provider such as Yahoo, given the provider's *configuration key*:
 # ${configurationKey}.client-name=My Provider
 # ${configurationKey}.auto-redirect=false
 # ${configurationKey}.css-class=
+# ${configurationKey}.callback-url=
 # ${configurationKey}.principal-attribute-id=
 # ${configurationKey}.enabled=true
 # ${configurationKey}.callback-url-type=PATH_PARAMETER|QUERY_PARAMETER|NONE
