@@ -11,6 +11,7 @@ import lombok.val;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
@@ -18,21 +19,21 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * This is {@link MongoDbMultifactorAuthenticationTrustStorage}.
+ * This is {@link RedisMultifactorAuthenticationTrustStorage}.
  *
  * @author Misagh Moayyed
- * @since 5.0.0
+ * @since 6.4.0
  */
 @Slf4j
-public class MongoDbMultifactorAuthenticationTrustStorage extends BaseMultifactorAuthenticationTrustStorage {
-    private final MongoOperations mongoTemplate;
+public class RedisMultifactorAuthenticationTrustStorage extends BaseMultifactorAuthenticationTrustStorage {
+    private final RedisTemplate redisTemplate;
 
-    public MongoDbMultifactorAuthenticationTrustStorage(final TrustedDevicesMultifactorProperties properties,
+    public RedisMultifactorAuthenticationTrustStorage(final TrustedDevicesMultifactorProperties properties,
                                                         final CipherExecutor<Serializable, String> cipherExecutor,
-                                                        final MongoOperations mongoTemplate,
+                                                        final RedisTemplate redisTemplate,
                                                         final MultifactorAuthenticationTrustRecordKeyGenerator keyGenerationStrategy) {
         super(properties, cipherExecutor, keyGenerationStrategy);
-        this.mongoTemplate = mongoTemplate;
+        this.redisTemplate = redisTemplate;
     }
 
     @Override

@@ -1,13 +1,7 @@
-package org.apereo.cas.configuration.model.support.mfa;
+package org.apereo.cas.configuration.model.support.mfa.trusteddevice;
 
-import org.apereo.cas.configuration.model.RestEndpointProperties;
-import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
-import org.apereo.cas.configuration.model.support.couchdb.BaseCouchDbProperties;
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbMultifactorTrustProperties;
-import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
-import org.apereo.cas.configuration.model.support.mfa.trusteddevice.DeviceFingerprintProperties;
-import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -15,7 +9,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -59,17 +52,20 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
     /**
      * Store devices records via REST.
      */
-    private Rest rest = new Rest();
+    @NestedConfigurationProperty
+    private RestfulTrustedDevicesMultifactorProperties rest = new RestfulTrustedDevicesMultifactorProperties();
 
     /**
      * Store devices records via JDBC resources.
      */
-    private Jpa jpa = new Jpa();
+    @NestedConfigurationProperty
+    private JpaTrustedDevicesMultifactorProperties jpa = new JpaTrustedDevicesMultifactorProperties();
 
     /**
      * Record trusted devices via a JSON resource.
      */
-    private Json json = new Json();
+    @NestedConfigurationProperty
+    private JsonTrustedDevicesMultifactorProperties json = new JsonTrustedDevicesMultifactorProperties();
 
     /**
      * Configure how device fingerprints are generated.
@@ -86,16 +82,19 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
     /**
      * Store devices records inside MongoDb.
      */
-    private MongoDb mongo = new MongoDb();
+    @NestedConfigurationProperty
+    private MongoDbTrustedDevicesMultifactorProperties mongo = new MongoDbTrustedDevicesMultifactorProperties();
 
     /**
      * Store devices records inside CouchDb.
      */
-    private CouchDb couchDb = new CouchDb();
+    @NestedConfigurationProperty
+    private CouchDbTrustedDevicesMultifactorProperties couchDb = new CouchDbTrustedDevicesMultifactorProperties();
 
     /**
      * Store devices records inside DynamoDb.
      */
+    @NestedConfigurationProperty
     private DynamoDbMultifactorTrustProperties dynamoDb = new DynamoDbMultifactorTrustProperties();
 
     /**
@@ -108,55 +107,4 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
         crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
         crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
     }
-
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    @RequiresModule(name = "cas-server-support-trusted-rest")
-    public static class Rest extends RestEndpointProperties {
-        private static final long serialVersionUID = 3659099897056632608L;
-    }
-
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    @RequiresModule(name = "cas-server-support-trusted-jdbc")
-    public static class Jpa extends AbstractJpaProperties {
-        private static final long serialVersionUID = -8329950619696176349L;
-    }
-
-    @RequiresModule(name = "cas-server-support-trusted-mfa-couchdb")
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class CouchDb extends BaseCouchDbProperties {
-
-        private static final long serialVersionUID = 5887850351177564308L;
-
-        public CouchDb() {
-            setDbName("trusted_devices_multifactor");
-        }
-    }
-
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    @RequiresModule(name = "cas-server-support-trusted-mongo")
-    public static class MongoDb extends SingleCollectionMongoDbProperties {
-
-        private static final long serialVersionUID = 4940497540189318943L;
-
-        public MongoDb() {
-            setCollection("MongoDbCasTrustedAuthnMfaRepository");
-        }
-    }
-
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    @RequiresModule(name = "cas-server-support-trusted-mfa")
-    public static class Json extends SpringResourceProperties {
-        private static final long serialVersionUID = 3599367681439517829L;
-    }
-
 }
