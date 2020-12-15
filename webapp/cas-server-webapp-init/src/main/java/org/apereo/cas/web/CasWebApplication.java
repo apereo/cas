@@ -77,11 +77,11 @@ public class CasWebApplication {
     public static void main(final String[] args) {
         val banner = CasEmbeddedContainerUtils.getCasBannerInstance();
         new SpringApplicationBuilder(CasWebApplication.class)
-            .banner(banner)
-            .web(WebApplicationType.SERVLET)
-            .logStartupInfo(true)
-            .contextClass(CasWebApplicationContext.class)
-            .run(args);
+                .banner(banner)
+                .web(WebApplicationType.SERVLET)
+                .logStartupInfo(true)
+                .contextClass(CasWebApplicationContext.class)
+                .run(args);
     }
 
     /**
