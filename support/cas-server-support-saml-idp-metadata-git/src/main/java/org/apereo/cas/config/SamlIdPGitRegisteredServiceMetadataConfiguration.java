@@ -39,8 +39,8 @@ public class SamlIdPGitRegisteredServiceMetadataConfiguration {
 
     @Bean
     @RefreshScope
-    @ConditionalOnMissingBean(name = "gitRepositoryInstance")
-    public GitRepository gitRepositoryInstance() {
+    @ConditionalOnMissingBean(name = "gitSamlRegisteredServiceRepositoryInstance")
+    public GitRepository gitSamlRegisteredServiceRepositoryInstance() {
         val git = casProperties.getAuthn().getSamlIdp().getMetadata().getGit();
         return GitRepositoryBuilder.newInstance(git).build();
     }
@@ -49,7 +49,8 @@ public class SamlIdPGitRegisteredServiceMetadataConfiguration {
     @RefreshScope
     public SamlRegisteredServiceMetadataResolver gitSamlRegisteredServiceMetadataResolver() {
         val idp = casProperties.getAuthn().getSamlIdp();
-        return new GitSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean.getObject(), gitRepositoryInstance());
+        return new GitSamlRegisteredServiceMetadataResolver(idp,
+            openSamlConfigBean.getObject(), gitSamlRegisteredServiceRepositoryInstance());
     }
 
     @Bean
