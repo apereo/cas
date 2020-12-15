@@ -56,8 +56,8 @@ public class GitServiceRegistryConfiguration {
 
     @Bean
     @RefreshScope
-    @ConditionalOnMissingBean(name = "gitRepositoryInstance")
-    public GitRepository gitRepositoryInstance() {
+    @ConditionalOnMissingBean(name = "gitServiceRegistryRepositoryInstance")
+    public GitRepository gitServiceRegistryRepositoryInstance() {
         val registry = casProperties.getServiceRegistry().getGit();
         return GitRepositoryBuilder.newInstance(registry).build();
     }
@@ -67,7 +67,7 @@ public class GitServiceRegistryConfiguration {
     @ConditionalOnMissingBean(name = "gitServiceRegistry")
     public ServiceRegistry gitServiceRegistry() {
         val properties = casProperties.getServiceRegistry().getGit();
-        val gitRepository = gitRepositoryInstance();
+        val gitRepository = gitServiceRegistryRepositoryInstance();
 
         val locators = new ArrayList<GitRepositoryRegisteredServiceLocator>();
         if (properties.isGroupByType()) {
