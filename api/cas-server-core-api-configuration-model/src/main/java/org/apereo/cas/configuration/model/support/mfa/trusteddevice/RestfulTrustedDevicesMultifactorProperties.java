@@ -7,8 +7,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import java.io.Serializable;
-
 /**
  * This is {@link RestfulTrustedDevicesMultifactorProperties}.
  *

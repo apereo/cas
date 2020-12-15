@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
@@ -134,16 +135,22 @@ public class SpnegoConfiguration {
         val personDirectory = casProperties.getPersonDirectory();
         val spnegoProperties = casProperties.getAuthn().getSpnego();
         val spnegoPrincipal = spnegoProperties.getPrincipal();
+
         val principalAttribute = StringUtils.defaultIfBlank(spnegoPrincipal.getPrincipalAttribute(),
             personDirectory.getPrincipalAttribute());
-        return new SpnegoPrincipalResolver(attributeRepository.getObject(),
-            spnegoPrincipalFactory(),
-            spnegoPrincipal.isReturnNull() || personDirectory.isReturnNull(),
-            PrincipalNameTransformerUtils.newPrincipalNameTransformer(spnegoProperties.getPrincipalTransformation()),
-            principalAttribute,
-            spnegoPrincipal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId(),
-            spnegoPrincipal.isAttributeResolutionEnabled(),
-            org.springframework.util.StringUtils.commaDelimitedListToSet(spnegoPrincipal.getActiveAttributeRepositoryIds()));
+        
+        val context = PrincipalResolutionContext.builder()
+            .attributeRepository(attributeRepository.getObject())
+            .principalFactory(spnegoPrincipalFactory())
+            .returnNullIfNoAttributes(spnegoPrincipal.isReturnNull() || personDirectory.isReturnNull())
+            .principalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(spnegoProperties.getPrincipalTransformation()))
+            .principalAttributeNames(principalAttribute)
+            .useCurrentPrincipalId(spnegoPrincipal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId())
+            .resolveAttributes(spnegoPrincipal.isAttributeResolutionEnabled())
+            .activeAttributeRepositoryIdentifiers(org.springframework.util.StringUtils
+                .commaDelimitedListToSet(spnegoPrincipal.getActiveAttributeRepositoryIds()))
+            .build();
+        return new SpnegoPrincipalResolver(context);
     }
 
     @ConditionalOnMissingBean(name = "spnegoPrincipalFactory")

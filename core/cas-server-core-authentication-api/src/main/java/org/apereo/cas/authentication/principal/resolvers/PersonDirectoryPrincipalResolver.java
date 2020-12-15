@@ -3,10 +3,7 @@ package org.apereo.cas.authentication.principal.resolvers;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.attribute.PrincipalAttributeRepositoryFetcher;
-import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -19,7 +16,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.apereo.services.persondir.support.StubPersonAttributeDao;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,9 +24,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
+
 
 /**
  * Resolves principals by querying a data source using the Person Directory API.
@@ -48,107 +44,7 @@ import static java.util.stream.Collectors.toList;
 @Setter
 public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
 
-    /**
-     * Repository of principal attributes to be retrieved.
-     */
-    protected final IPersonAttributeDao attributeRepository;
-
-    /**
-     * Factory to create the principal type.
-     **/
-    protected final PrincipalFactory principalFactory;
-
-    /**
-     * return null if no attributes are found.
-     */
-    protected final boolean returnNullIfNoAttributes;
-
-    /**
-     * Transform principal name.
-     */
-    protected final PrincipalNameTransformer principalNameTransformer;
-
-    /**
-     * Optional principal attribute name.
-     */
-    protected final String principalAttributeNames;
-
-    /**
-     * Use the current principal id for extraction.
-     */
-    protected final boolean useCurrentPrincipalId;
-
-    /**
-     * Whether attributes should be fetched from attribute repositories.
-     */
-    protected final boolean resolveAttributes;
-
-    /**
-     * Active attribute repositories ids for this resolver
-     * to use for attribute resolution.
-     */
-    protected final Set<String> activeAttributeRepositoryIdentifiers;
-
-    public PersonDirectoryPrincipalResolver() {
-        this(new StubPersonAttributeDao(new HashMap<>(0)), PrincipalFactoryUtils.newPrincipalFactory(), false,
-            String::trim, null,
-            false, true,
-            CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD));
-    }
-
-    public PersonDirectoryPrincipalResolver(final IPersonAttributeDao attributeRepository, final String principalAttributeNames) {
-        this(attributeRepository, PrincipalFactoryUtils.newPrincipalFactory(),
-            false, formUserId -> formUserId, principalAttributeNames,
-            false, true, CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD));
-    }
-
-    public PersonDirectoryPrincipalResolver(final IPersonAttributeDao attributeRepository) {
-        this(attributeRepository, PrincipalFactoryUtils.newPrincipalFactory(),
-            false, formUserId -> formUserId, null,
-            false, true,
-            CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD));
-    }
-
-    public PersonDirectoryPrincipalResolver(final boolean returnNullIfNoAttributes, final String principalAttributeNames) {
-        this(new StubPersonAttributeDao(new HashMap<>(0)), PrincipalFactoryUtils.newPrincipalFactory(),
-            returnNullIfNoAttributes, String::trim, principalAttributeNames,
-            false, true,
-            CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD));
-    }
-
-    public PersonDirectoryPrincipalResolver(final IPersonAttributeDao attributeRepository,
-                                            final PrincipalFactory principalFactory,
-                                            final boolean returnNullIfNoAttributes,
-                                            final String principalAttributeNames,
-                                            final boolean useCurrentPrincipalId) {
-        this(attributeRepository, principalFactory, returnNullIfNoAttributes,
-            formUserId -> formUserId, principalAttributeNames, useCurrentPrincipalId, true,
-            CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD));
-    }
-
-    public PersonDirectoryPrincipalResolver(final IPersonAttributeDao attributeRepository,
-                                            final PrincipalFactory principalFactory,
-                                            final boolean returnNullIfNoAttributes,
-                                            final String principalAttributeNames,
-                                            final boolean useCurrentPrincipalId,
-                                            final boolean resolveAttributes) {
-        this(attributeRepository, principalFactory, returnNullIfNoAttributes,
-            formUserId -> formUserId, principalAttributeNames,
-            useCurrentPrincipalId, resolveAttributes,
-            CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD));
-    }
-
-    public PersonDirectoryPrincipalResolver(final IPersonAttributeDao attributeRepository,
-                                            final PrincipalFactory principalFactory,
-                                            final boolean returnNullIfNoAttributes,
-                                            final String principalAttributeNames,
-                                            final boolean useCurrentPrincipalId,
-                                            final boolean resolveAttributes,
-                                            final Set<String> activeAttributeRepositoryIdentifiers) {
-        this(attributeRepository, principalFactory, returnNullIfNoAttributes,
-            formUserId -> formUserId, principalAttributeNames,
-            useCurrentPrincipalId, resolveAttributes, activeAttributeRepositoryIdentifiers);
-    }
+    private final PrincipalResolutionContext context;
 
     @Override
     public Principal resolve(final Credential credential, final Optional<Principal> currentPrincipal,
@@ -160,19 +56,19 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
             LOGGER.debug("Principal id [{}] could not be found", principalId);
             return null;
         }
-        if (principalNameTransformer != null) {
-            principalId = principalNameTransformer.transform(principalId);
+        if (context.getPrincipalNameTransformer() != null) {
+            principalId = context.getPrincipalNameTransformer().transform(principalId);
         }
         LOGGER.trace("Creating principal for [{}]", principalId);
-        if (this.resolveAttributes) {
+        if (context.isResolveAttributes()) {
             val attributes = retrievePersonAttributes(principalId, credential, currentPrincipal, new HashMap<>());
             if (attributes == null || attributes.isEmpty()) {
                 LOGGER.debug("Principal id [{}] did not specify any attributes", principalId);
-                if (!this.returnNullIfNoAttributes) {
+                if (!context.isReturnNullIfNoAttributes()) {
                     LOGGER.debug("Returning the principal with id [{}] without any attributes", principalId);
-                    return this.principalFactory.createPrincipal(principalId);
+                    return context.getPrincipalFactory().createPrincipal(principalId);
                 }
-                LOGGER.debug("[{}] is configured to return null if no attributes are found for [{}]", this.getClass().getName(), principalId);
+                LOGGER.debug("[{}] is configured to return null if no attributes are found for [{}]", getClass().getName(), principalId);
                 return null;
             }
             LOGGER.debug("Retrieved [{}] attribute(s) from the repository", attributes.size());
@@ -192,6 +88,11 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         return credential != null && credential.getId() != null;
     }
 
+    @Override
+    public IPersonAttributeDao getAttributeRepository() {
+        return context.getAttributeRepository();
+    }
+
     /**
      * Build resolved principal.
      *
@@ -205,7 +106,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     protected Principal buildResolvedPrincipal(final String id, final Map<String, List<Object>> attributes,
                                                final Credential credential, final Optional<Principal> currentPrincipal,
                                                final Optional<AuthenticationHandler> handler) {
-        return this.principalFactory.createPrincipal(id, attributes);
+        return context.getPrincipalFactory().createPrincipal(id, attributes);
     }
 
     /**
@@ -230,8 +131,8 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
 
         var principalId = extractedPrincipalId;
 
-        if (StringUtils.isNotBlank(this.principalAttributeNames)) {
-            val attrNames = org.springframework.util.StringUtils.commaDelimitedListToSet(this.principalAttributeNames);
+        if (StringUtils.isNotBlank(context.getPrincipalAttributeNames())) {
+            val attrNames = org.springframework.util.StringUtils.commaDelimitedListToSet(context.getPrincipalAttributeNames());
             val result = attrNames.stream()
                 .map(String::trim)
                 .filter(attributes::containsKey)
@@ -246,8 +147,9 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
                 }
             } else {
                 LOGGER.warn("Principal resolution is set to resolve users via attribute(s) [{}], and yet "
-                    + "the collection of attributes retrieved [{}] do not contain any of those attributes. This is likely due to misconfiguration "
-                    + "and CAS will use [{}] as the final principal id", this.principalAttributeNames, attributes.keySet(), principalId);
+                    + "the collection of attributes retrieved [{}] do not contain any of those attributes. This is "
+                    + "likely due to misconfiguration and CAS will use [{}] as the final principal id",
+                    context.getPrincipalAttributeNames(), attributes.keySet(), principalId);
             }
         }
 
@@ -267,9 +169,9 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
                                                                  final Optional<Principal> currentPrincipal,
                                                                  final Map<String, List<Object>> queryAttributes) {
         return PrincipalAttributeRepositoryFetcher.builder()
-            .attributeRepository(attributeRepository)
+            .attributeRepository(context.getAttributeRepository())
             .principalId(principalId)
-            .activeAttributeRepositoryIdentifiers(activeAttributeRepositoryIdentifiers)
+            .activeAttributeRepositoryIdentifiers(context.getActiveAttributeRepositoryIdentifiers())
             .currentPrincipal(currentPrincipal.orElse(null))
             .queryAttributes(queryAttributes)
             .build()
@@ -290,7 +192,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         if (currentPrincipal.isPresent()) {
             val principal = currentPrincipal.get();
             LOGGER.debug("Principal is currently resolved as [{}]", principal);
-            if (useCurrentPrincipalId) {
+            if (context.isUseCurrentPrincipalId()) {
                 LOGGER.debug("Using the existing resolved principal id [{}]", principal.getId());
                 return principal.getId();
             } else {

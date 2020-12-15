@@ -2,21 +2,19 @@ package org.apereo.cas.support.wsfederation.authentication.principal;
 
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
+import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.services.persondir.IPersonAttributeDao;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 /**
  * This class resolves the principal id regarding the WsFederation credentials.
@@ -30,17 +28,9 @@ public class WsFederationCredentialsToPrincipalResolver extends PersonDirectoryP
 
     private final WsFederationConfiguration configuration;
 
-    public WsFederationCredentialsToPrincipalResolver(final IPersonAttributeDao attributeRepository,
-                                                      final PrincipalFactory principalFactory,
-                                                      final boolean returnNullIfNoAttributes,
-                                                      final String principalAttributeName,
-                                                      final WsFederationConfiguration configuration,
-                                                      final boolean useCurrentPrincipalId,
-                                                      final boolean resolveAttributes,
-                                                      final Set<String> activeAttributeRepositoryIdentifiers) {
-        super(attributeRepository, principalFactory, returnNullIfNoAttributes,
-            principalAttributeName, useCurrentPrincipalId, resolveAttributes,
-            activeAttributeRepositoryIdentifiers);
+    public WsFederationCredentialsToPrincipalResolver(final PrincipalResolutionContext context,
+                                                      final WsFederationConfiguration configuration) {
+        super(context);
         this.configuration = configuration;
     }
 

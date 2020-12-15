@@ -4,7 +4,11 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
+import org.apereo.cas.util.CollectionUtils;
 
+import lombok.val;
+import org.apereo.services.persondir.IPersonAttributeDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -26,7 +30,16 @@ public class SpnegoCredentialsToPrincipalResolverTests {
 
     @BeforeEach
     public void initialize() {
-        this.resolver = new SpnegoPrincipalResolver();
+        val context = PrincipalResolutionContext.builder()
+            .attributeRepository(CoreAuthenticationTestUtils.getAttributeRepository())
+            .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())
+            .returnNullIfNoAttributes(false)
+            .principalNameTransformer(formUserId -> formUserId)
+            .useCurrentPrincipalId(false)
+            .resolveAttributes(true)
+            .activeAttributeRepositoryIdentifiers(CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD))
+            .build();
+        this.resolver = new SpnegoPrincipalResolver(context);
         this.spnegoCredentials = new SpnegoCredential(new byte[]{0, 1, 2});
     }
 

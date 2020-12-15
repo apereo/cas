@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.openid.authentication.handler.support.OpenIdCredentialsAuthenticationHandler;
@@ -61,13 +62,19 @@ public class OpenIdAuthenticationEventExecutionPlanConfiguration {
         val personDirectory = casProperties.getPersonDirectory();
         val principal = casProperties.getAuthn().getOpenid().getPrincipal();
         val principalAttribute = StringUtils.defaultIfBlank(principal.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
-        return new OpenIdPrincipalResolver(attributeRepository.getObject(),
-            openidPrincipalFactory(),
-            principal.isReturnNull() || personDirectory.isReturnNull(),
-            principalAttribute,
-            principal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId(),
-            principal.isAttributeResolutionEnabled(),
-            org.springframework.util.StringUtils.commaDelimitedListToSet(principal.getActiveAttributeRepositoryIds()));
+
+        val context = PrincipalResolutionContext.builder()
+            .attributeRepository(attributeRepository.getObject())
+            .principalFactory(openidPrincipalFactory())
+            .returnNullIfNoAttributes(principal.isReturnNull() || personDirectory.isReturnNull())
+            .principalNameTransformer(String::trim)
+            .principalAttributeNames(principalAttribute)
+            .useCurrentPrincipalId(principal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId())
+            .resolveAttributes(principal.isAttributeResolutionEnabled())
+            .activeAttributeRepositoryIdentifiers(org.springframework.util.StringUtils
+                .commaDelimitedListToSet(principal.getActiveAttributeRepositoryIds()))
+            .build();
+        return new OpenIdPrincipalResolver(context);
     }
 
     @ConditionalOnMissingBean(name = "openidPrincipalFactory")

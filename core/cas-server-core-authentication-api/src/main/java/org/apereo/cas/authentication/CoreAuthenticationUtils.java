@@ -15,6 +15,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
+import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
 import org.apereo.cas.authentication.support.password.DefaultPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.support.password.GroovyPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.support.password.RejectResultCodePasswordPolicyHandlingStrategy;
@@ -307,23 +308,26 @@ public class CoreAuthenticationUtils {
         final PrincipalFactory principalFactory, final IPersonAttributeDao attributeRepository,
         final PersonDirectoryPrincipalResolverProperties... personDirectory) {
 
-        return new PersonDirectoryPrincipalResolver(
-            attributeRepository,
-            principalFactory,
-            Arrays.stream(personDirectory).anyMatch(PersonDirectoryPrincipalResolverProperties::isReturnNull),
-            Arrays.stream(personDirectory)
+        val context = PrincipalResolutionContext.builder()
+            .attributeRepository(attributeRepository)
+            .principalFactory(principalFactory)
+            .returnNullIfNoAttributes(Arrays.stream(personDirectory).anyMatch(PersonDirectoryPrincipalResolverProperties::isReturnNull))
+            .principalAttributeNames(Arrays.stream(personDirectory)
                 .filter(p -> StringUtils.isNotBlank(p.getPrincipalAttribute()))
                 .map(PersonDirectoryPrincipalResolverProperties::getPrincipalAttribute)
                 .findFirst()
-                .orElse(StringUtils.EMPTY),
-            Arrays.stream(personDirectory).anyMatch(PersonDirectoryPrincipalResolverProperties::isUseExistingPrincipalId),
-            Arrays.stream(personDirectory).anyMatch(PersonDirectoryPrincipalResolverProperties::isAttributeResolutionEnabled),
-            Arrays.stream(personDirectory)
+                .orElse(StringUtils.EMPTY))
+            .principalNameTransformer(formUserId -> formUserId)
+            .useCurrentPrincipalId(Arrays.stream(personDirectory).anyMatch(PersonDirectoryPrincipalResolverProperties::isUseExistingPrincipalId))
+            .resolveAttributes(Arrays.stream(personDirectory).anyMatch(PersonDirectoryPrincipalResolverProperties::isAttributeResolutionEnabled))
+            .activeAttributeRepositoryIdentifiers(Arrays.stream(personDirectory)
                 .filter(p -> StringUtils.isNotBlank(p.getActiveAttributeRepositoryIds()))
                 .map(p -> org.springframework.util.StringUtils.commaDelimitedListToSet(p.getActiveAttributeRepositoryIds()))
                 .flatMap(Set::stream)
-                .collect(Collectors.toSet())
-        );
+                .collect(Collectors.toSet()))
+            .build();
+
+        return new PersonDirectoryPrincipalResolver(context);
     }
 
     /**

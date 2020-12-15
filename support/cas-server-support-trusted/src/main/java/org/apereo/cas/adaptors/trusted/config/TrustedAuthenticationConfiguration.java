@@ -18,6 +18,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolver;
+import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
@@ -92,13 +93,19 @@ public class TrustedAuthenticationConfiguration {
         val personDirectory = casProperties.getPersonDirectory();
         val trusted = casProperties.getAuthn().getTrusted();
         val principalAttribute = StringUtils.defaultIfBlank(trusted.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
-        val bearingPrincipalResolver = new PrincipalBearingPrincipalResolver(attributeRepository.getObject(),
-            trustedPrincipalFactory(),
-            trusted.isReturnNull() || personDirectory.isReturnNull(),
-            principalAttribute,
-            trusted.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId(),
-            trusted.isAttributeResolutionEnabled(),
-            org.springframework.util.StringUtils.commaDelimitedListToSet(trusted.getActiveAttributeRepositoryIds()));
+
+        val context = PrincipalResolutionContext.builder()
+            .attributeRepository(attributeRepository.getObject())
+            .principalFactory(trustedPrincipalFactory())
+            .returnNullIfNoAttributes(trusted.isReturnNull() || personDirectory.isReturnNull())
+            .principalNameTransformer(String::trim)
+            .principalAttributeNames(principalAttribute)
+            .useCurrentPrincipalId(trusted.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId())
+            .resolveAttributes(trusted.isAttributeResolutionEnabled())
+            .activeAttributeRepositoryIdentifiers(org.springframework.util.StringUtils
+                .commaDelimitedListToSet(trusted.getActiveAttributeRepositoryIds()))
+            .build();
+        val bearingPrincipalResolver = new PrincipalBearingPrincipalResolver(context);
         resolver.setChain(CollectionUtils.wrapList(new EchoingPrincipalResolver(), bearingPrincipalResolver));
         return resolver;
     }

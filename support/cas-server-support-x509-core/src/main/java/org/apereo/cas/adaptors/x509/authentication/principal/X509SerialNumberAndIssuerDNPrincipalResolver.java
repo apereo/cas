@@ -1,17 +1,11 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
-import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
-import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
 
 import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.services.persondir.IPersonAttributeDao;
-import org.apereo.services.persondir.support.StubPersonAttributeDao;
 
 import java.security.cert.X509Certificate;
-import java.util.HashMap;
-import java.util.Set;
 
 /**
  * This class is targeted at usage for mapping to an existing user record. It
@@ -42,24 +36,10 @@ public class X509SerialNumberAndIssuerDNPrincipalResolver extends AbstractX509Pr
      */
     private final String valueDelimiter;
 
-    public X509SerialNumberAndIssuerDNPrincipalResolver(final String serialNumberPrefix, final String valueDelimiter) {
-        this(new StubPersonAttributeDao(new HashMap<>(0)), PrincipalFactoryUtils.newPrincipalFactory(), false,
-            null, serialNumberPrefix, valueDelimiter, false, true,
-            CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD));
-    }
-
-    public X509SerialNumberAndIssuerDNPrincipalResolver(final IPersonAttributeDao attributeRepository,
-                                                        final PrincipalFactory principalFactory,
-                                                        final boolean returnNullIfNoAttributes,
-                                                        final String principalAttributeName,
+    public X509SerialNumberAndIssuerDNPrincipalResolver(final PrincipalResolutionContext context,
                                                         final String serialNumberPrefix,
-                                                        final String valueDelimiter,
-                                                        final boolean useCurrentPrincipalId,
-                                                        final boolean resolveAttributes,
-                                                        final Set<String> activeAttributeRepositoryIdentifiers) {
-        super(attributeRepository, principalFactory, returnNullIfNoAttributes,
-            principalAttributeName, useCurrentPrincipalId, resolveAttributes,
-            activeAttributeRepositoryIdentifiers);
+                                                        final String valueDelimiter) {
+        super(context);
         this.serialNumberPrefix = StringUtils.defaultString(serialNumberPrefix, "SERIALNUMBER=");
         this.valueDelimiter = StringUtils.defaultIfBlank(valueDelimiter, ", ");
     }

@@ -1,14 +1,18 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
+import org.apereo.cas.util.CollectionUtils;
+
 import lombok.val;
+import org.apereo.services.persondir.IPersonAttributeDao;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.stream.Stream;
@@ -56,10 +60,19 @@ public class X509CommonNameEDIPIPrincipalResolverTests {
     @MethodSource("getTestParameters")
     public void verifyResolvePrincipalInternal(final String certPath,
                                                final String expectedResult,
-                                               final String alternatePrincipalAttribute) throws FileNotFoundException, CertificateException {
-        val resolver = new X509CommonNameEDIPIPrincipalResolver();
-        resolver.setAlternatePrincipalAttribute(alternatePrincipalAttribute);
+                                               final String alternatePrincipalAttribute) throws Exception {
 
+        val context = PrincipalResolutionContext.builder()
+            .attributeRepository(CoreAuthenticationTestUtils.getAttributeRepository())
+            .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())
+            .returnNullIfNoAttributes(false)
+            .principalNameTransformer(formUserId -> formUserId)
+            .useCurrentPrincipalId(false)
+            .resolveAttributes(true)
+            .activeAttributeRepositoryIdentifiers(CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD))
+            .build();
+
+        val resolver = new X509CommonNameEDIPIPrincipalResolver(context, alternatePrincipalAttribute);
         val certificate = (X509Certificate) CertificateFactory.getInstance("X509").generateCertificate(
             new FileInputStream(getClass().getResource(certPath).getPath()));
 
