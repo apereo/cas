@@ -174,6 +174,22 @@ Support is provided via the following module:
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#dynamodb-storage).
 
+### Redis
+
+User decisions may also be kept inside a Redis instance.
+
+Support is provided via the following module:
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-trusted-mfa-redis</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#redis-storage).
+
 ### REST
 
 If you wish to completely delegate the management, verification and persistence of user decisions, you may design a REST API

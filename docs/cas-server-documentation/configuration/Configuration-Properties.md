@@ -2969,7 +2969,12 @@ Configuration settings for this feature are available [here](Configuration-Prope
 #### MongoDb Storage
 
 Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.trusted`.
- 
+
+#### Redis Storage
+
+Configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration) 
+under the configuration key `cas.authn.mfa.trusted`.
+
 #### DynamoDb Storage
  
 Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#dynamodb-configuration)
