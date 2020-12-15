@@ -101,15 +101,19 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.CookieUtils;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
+import org.pac4j.cas.credentials.authenticator.CasAuthenticator;
+import org.pac4j.cas.profile.CasProfileDefinition;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.TokenCredentials;
@@ -117,6 +121,11 @@ import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.credentials.extractor.BearerAuthExtractor;
 import org.pac4j.core.http.url.UrlResolver;
+import org.pac4j.core.profile.UserProfile;
+import org.pac4j.core.profile.converter.AttributeConverter;
+import org.pac4j.core.profile.converter.Converters;
+import org.pac4j.core.profile.converter.LocaleConverter;
+import org.pac4j.core.profile.creator.ProfileCreator;
 import org.pac4j.http.client.direct.DirectBasicAuthClient;
 import org.pac4j.http.client.direct.DirectFormClient;
 import org.pac4j.http.client.direct.HeaderClient;
@@ -139,6 +148,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -266,6 +277,14 @@ public class CasOAuth20Configuration {
         oauthCasClient.setUrlResolver(casCallbackUrlResolver());
         oauthCasClient.setCallbackUrl(OAuth20Utils.casOAuthCallbackUrl(server.getPrefix()));
         oauthCasClient.init();
+        val casAuthenticator = (CasAuthenticator) oauthCasClient.getAuthenticator();
+        casAuthenticator.setProfileDefinition(new CasProfileDefinition() {
+            @Override
+            protected void configurePrimaryAttributes() {
+                super.configurePrimaryAttributes();
+                primary("locale", new ListableLocaleConverter(List.of(Converters.STRING, Converters.LOCALE)));
+            }
+        });
 
         val authenticator = oAuthClientAuthenticator();
         val basicAuthClient = new DirectBasicAuthClient(authenticator);
@@ -843,5 +862,15 @@ public class CasOAuth20Configuration {
             .oauthAuthorizationResponseBuilders(oauthAuthorizationResponseBuilders())
             .oauthRequestValidators(oauthAuthorizationRequestValidators())
             .build();
+    }
+
+    @RequiredArgsConstructor
+    private static class ListableLocaleConverter implements AttributeConverter {
+        private final List<AttributeConverter> converters;
+
+        @Override
+        public Object convert(final Object o) {
+            return converters.stream().map(c -> c.convert(o)).filter(Objects::nonNull).findFirst().orElse(null);
+        }
     }
 }
