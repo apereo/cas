@@ -22,7 +22,12 @@ hasDocker() {
     echo Docker not available
     return 1
   fi
-  return 0
+  dockerserver=$(docker version --format '{{json .Server.Os}}')
+  if [[ $dockerserver =~ "linux" ]]; then
+    return 0
+  fi
+  echo Docker server is not linux
+  return 1
 }
 
 task="cleanTest "
