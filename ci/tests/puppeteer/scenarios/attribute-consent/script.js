@@ -55,14 +55,14 @@ const assert = require('assert');
     assert(header === "[casuser@example.org]")
 
     await click(page,"#optionsButton");
-    await page.waitForTimeout(2500)
+    await page.waitForTimeout(1000)
 
     var opt = await page.$('#optionAlways');
-    assert(await opt.boundingBox() != null);
+    assert(await opt != null);
     opt = await page.$('#optionAttributeName');
-    assert(await opt.boundingBox() != null);
+    assert(await opt != null);
     opt = await page.$('#optionAttributeValue');
-    assert(await opt.boundingBox() != null);
+    assert(await opt != null);
     
     element = await page.$('#reminderTitle');
     header = await page.evaluate(element => element.textContent.trim(), element);
@@ -70,16 +70,16 @@ const assert = require('assert');
     assert(header === "How often should I be reminded to consent again?")
 
     opt = await page.$('#reminder');
-    assert(await opt.boundingBox() != null);
+    assert(await opt != null);
 
     opt = await page.$('#reminderTimeUnit');
-    assert(await opt.boundingBox() != null);
+    assert(await opt != null);
 
     opt = await page.$('#confirm');
-    assert(await opt.boundingBox() != null);
+    assert(await opt != null);
 
     opt = await page.$('#cancel');
-    assert(await opt.boundingBox() != null);
+    assert(await opt != null);
 
     await browser.close();
 })();
