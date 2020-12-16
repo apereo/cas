@@ -2616,6 +2616,8 @@ the configuration key `cas.authn.x509.webflow`.
 
 ### Principal Resolution
 
+Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.x509`.
+
 X.509 principal resolution can act on the following principal types:
 
 | Type                    | Description

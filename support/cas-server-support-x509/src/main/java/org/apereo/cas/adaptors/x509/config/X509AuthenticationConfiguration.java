@@ -23,6 +23,7 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -227,12 +228,11 @@ public class X509AuthenticationConfiguration {
         val x509 = casProperties.getAuthn().getX509();
         val principal = x509.getPrincipal();
         val principalAttribute = StringUtils.defaultIfBlank(principal.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
-
         val context = PrincipalResolutionContext.builder()
             .attributeRepository(attributeRepository.getObject())
             .principalFactory(x509PrincipalFactory())
             .returnNullIfNoAttributes(principal.isReturnNull() || personDirectory.isReturnNull())
-            .principalNameTransformer(String::trim)
+            .principalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(x509.getPrincipalTransformation()))
             .principalAttributeNames(principalAttribute)
             .useCurrentPrincipalId(principal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId())
             .resolveAttributes(principal.isAttributeResolutionEnabled())
@@ -256,7 +256,7 @@ public class X509AuthenticationConfiguration {
             .attributeRepository(attributeRepository.getObject())
             .principalFactory(x509PrincipalFactory())
             .returnNullIfNoAttributes(principal.isReturnNull() || personDirectory.isReturnNull())
-            .principalNameTransformer(String::trim)
+            .principalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(x509.getPrincipalTransformation()))
             .principalAttributeNames(principalAttribute)
             .useCurrentPrincipalId(principal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId())
             .resolveAttributes(principal.isAttributeResolutionEnabled())
@@ -280,7 +280,7 @@ public class X509AuthenticationConfiguration {
             .attributeRepository(attributeRepository.getObject())
             .principalFactory(x509PrincipalFactory())
             .returnNullIfNoAttributes(principal.isReturnNull() || personDirectory.isReturnNull())
-            .principalNameTransformer(String::trim)
+            .principalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(x509.getPrincipalTransformation()))
             .principalAttributeNames(principalAttribute)
             .useCurrentPrincipalId(principal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId())
             .resolveAttributes(principal.isAttributeResolutionEnabled())
@@ -305,7 +305,7 @@ public class X509AuthenticationConfiguration {
             .attributeRepository(attributeRepository.getObject())
             .principalFactory(x509PrincipalFactory())
             .returnNullIfNoAttributes(principal.isReturnNull() || personDirectory.isReturnNull())
-            .principalNameTransformer(String::trim)
+            .principalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(x509.getPrincipalTransformation()))
             .principalAttributeNames(principalAttribute)
             .useCurrentPrincipalId(principal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId())
             .resolveAttributes(principal.isAttributeResolutionEnabled())
@@ -345,7 +345,7 @@ public class X509AuthenticationConfiguration {
             .attributeRepository(attributeRepository.getObject())
             .principalFactory(x509PrincipalFactory())
             .returnNullIfNoAttributes(principal.isReturnNull() || personDirectory.isReturnNull())
-            .principalNameTransformer(String::trim)
+            .principalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(x509.getPrincipalTransformation()))
             .principalAttributeNames(principalAttribute)
             .useCurrentPrincipalId(principal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId())
             .resolveAttributes(principal.isAttributeResolutionEnabled())
@@ -372,7 +372,7 @@ public class X509AuthenticationConfiguration {
             .attributeRepository(attributeRepository.getObject())
             .principalFactory(x509PrincipalFactory())
             .returnNullIfNoAttributes(principal.isReturnNull() || personDirectory.isReturnNull())
-            .principalNameTransformer(String::trim)
+            .principalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(x509.getPrincipalTransformation()))
             .principalAttributeNames(principalAttribute)
             .useCurrentPrincipalId(principal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId())
             .resolveAttributes(principal.isAttributeResolutionEnabled())
@@ -422,12 +422,12 @@ public class X509AuthenticationConfiguration {
         val radix = serialNoProperties.getPrincipalSNRadix();
         val principal = x509.getPrincipal();
         val principalAttribute = StringUtils.defaultIfBlank(principal.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
-        
+
         val context = PrincipalResolutionContext.builder()
             .attributeRepository(attributeRepository.getObject())
             .principalFactory(x509PrincipalFactory())
             .returnNullIfNoAttributes(principal.isReturnNull() || personDirectory.isReturnNull())
-            .principalNameTransformer(String::trim)
+            .principalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(x509.getPrincipalTransformation()))
             .principalAttributeNames(principalAttribute)
             .useCurrentPrincipalId(principal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId())
             .resolveAttributes(principal.isAttributeResolutionEnabled())

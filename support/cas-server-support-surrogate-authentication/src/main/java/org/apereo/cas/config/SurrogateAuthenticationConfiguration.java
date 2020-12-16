@@ -162,7 +162,8 @@ public class SurrogateAuthenticationConfiguration {
     public PrincipalResolver surrogatePrincipalResolver() {
         val principal = casProperties.getAuthn().getSurrogate().getPrincipal();
         val personDirectory = casProperties.getPersonDirectory();
-        val principalAttribute = org.apache.commons.lang3.StringUtils.defaultIfBlank(principal.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
+        val principalAttribute = org.apache.commons.lang3.StringUtils.defaultIfBlank(
+            principal.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
 
         val context = PrincipalResolutionContext.builder()
             .attributeRepository(attributeRepository.getObject())
