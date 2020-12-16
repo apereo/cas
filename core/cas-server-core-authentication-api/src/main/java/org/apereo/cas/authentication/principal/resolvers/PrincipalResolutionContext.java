@@ -2,10 +2,10 @@ package org.apereo.cas.authentication.principal.resolvers;
 
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.services.persondir.IPersonAttributeDao;
 
 import lombok.Builder;
 import lombok.Getter;
+import org.apereo.services.persondir.IPersonAttributeDao;
 
 import java.util.Set;
 
