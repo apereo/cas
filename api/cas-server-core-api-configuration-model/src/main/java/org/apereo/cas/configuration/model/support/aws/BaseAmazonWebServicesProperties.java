@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.aws;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -19,6 +20,7 @@ import java.io.Serializable;
 @Setter
 @RequiresModule(name = "cas-server-support-aws")
 @Accessors(chain = true)
+@JsonFilter("BaseAmazonWebServicesProperties")
 public abstract class BaseAmazonWebServicesProperties implements Serializable {
     private static final long serialVersionUID = 6426637051495147084L;
 

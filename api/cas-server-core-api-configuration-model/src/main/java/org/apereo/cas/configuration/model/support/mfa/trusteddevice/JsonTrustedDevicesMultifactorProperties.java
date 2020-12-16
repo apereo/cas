@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.mfa.trusteddevice;
 import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -17,6 +18,7 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 @RequiresModule(name = "cas-server-support-trusted-mfa")
+@JsonFilter("JsonTrustedDevicesMultifactorProperties")
 public class JsonTrustedDevicesMultifactorProperties extends SpringResourceProperties {
     private static final long serialVersionUID = -8690563713141571620L;
 }
