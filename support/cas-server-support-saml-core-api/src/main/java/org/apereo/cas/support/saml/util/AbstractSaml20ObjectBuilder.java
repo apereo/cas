@@ -279,7 +279,6 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
 
         val classRef = newSamlObject(AuthnContextClassRef.class);
         classRef.setURI(contextClassRef);
-
         ctx.setAuthnContextClassRef(classRef);
         stmt.setAuthnContext(ctx);
         stmt.setAuthnInstant(authnInstant.toInstant());

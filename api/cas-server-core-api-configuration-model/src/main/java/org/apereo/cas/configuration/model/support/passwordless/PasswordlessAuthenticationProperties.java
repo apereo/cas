@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.passwordless.account.PasswordlessAuthenticationGroovyAccountsProperties;
+import org.apereo.cas.configuration.model.support.passwordless.account.PasswordlessAuthenticationJsonAccountsProperties;
 import org.apereo.cas.configuration.model.support.passwordless.account.PasswordlessAuthenticationLdapAccountsProperties;
 import org.apereo.cas.configuration.model.support.passwordless.account.PasswordlessAuthenticationMongoDbAccountsProperties;
 import org.apereo.cas.configuration.model.support.passwordless.account.PasswordlessAuthenticationRestAccountsProperties;
@@ -104,6 +105,12 @@ public class PasswordlessAuthenticationProperties implements Serializable {
          */
         @NestedConfigurationProperty
         private PasswordlessAuthenticationGroovyAccountsProperties groovy = new PasswordlessAuthenticationGroovyAccountsProperties();
+
+        /**
+         * Passwordless authentication settings via JSON resource.
+         */
+        @NestedConfigurationProperty
+        private PasswordlessAuthenticationJsonAccountsProperties json = new PasswordlessAuthenticationJsonAccountsProperties();
 
         /**
          * Passwordless authentication settings via MongoDb.

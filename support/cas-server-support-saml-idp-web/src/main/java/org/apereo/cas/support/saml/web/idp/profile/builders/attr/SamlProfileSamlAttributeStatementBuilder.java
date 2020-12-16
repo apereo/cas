@@ -3,6 +3,8 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.attr;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.attribute.AttributeDefinition;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
@@ -25,7 +27,6 @@ import org.opensaml.saml.saml2.core.RequestAbstractType;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,50 +41,44 @@ import java.util.Map;
 public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<AttributeStatement> {
     private static final long serialVersionUID = 1815697787562189088L;
 
-    private final transient ProtocolAttributeEncoder samlAttributeEncoder;
-
     private final SamlIdPProperties samlIdPProperties;
 
     private final SamlIdPObjectEncrypter samlObjectEncrypter;
 
     private final AttributeDefinitionStore attributeDefinitionStore;
 
+    private final ServiceFactory<WebApplicationService> serviceFactory;
+
     public SamlProfileSamlAttributeStatementBuilder(final OpenSamlConfigBean configBean,
-                                                    final ProtocolAttributeEncoder samlAttributeEncoder,
                                                     final SamlIdPProperties samlIdPProperties,
                                                     final SamlIdPObjectEncrypter samlObjectEncrypter,
-                                                    final AttributeDefinitionStore attributeDefinitionStore) {
+                                                    final AttributeDefinitionStore attributeDefinitionStore,
+                                                    final ServiceFactory<WebApplicationService> serviceFactory) {
         super(configBean);
-        this.samlAttributeEncoder = samlAttributeEncoder;
         this.samlIdPProperties = samlIdPProperties;
         this.samlObjectEncrypter = samlObjectEncrypter;
         this.attributeDefinitionStore = attributeDefinitionStore;
+        this.serviceFactory = serviceFactory;
     }
 
     @Override
     public AttributeStatement build(final RequestAbstractType authnRequest,
                                     final HttpServletRequest request,
                                     final HttpServletResponse response,
-                                    final Object assertion,
-                                    final SamlRegisteredService service,
+                                    final Object casAssertion,
+                                    final SamlRegisteredService registeredService,
                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                     final String binding,
                                     final MessageContext messageContext) throws SamlException {
-        return buildAttributeStatement(assertion, service, adaptor);
-    }
-
-    private AttributeStatement buildAttributeStatement(final Object casAssertion,
-                                                       final SamlRegisteredService service,
-                                                       final SamlRegisteredServiceServiceProviderMetadataFacade adaptor)
-        throws SamlException {
-
         val assertion = Assertion.class.cast(casAssertion);
-        val attributes = new HashMap<String, Object>(assertion.getAttributes());
+        val attributes = new HashMap<>(assertion.getAttributes());
         attributes.putAll(assertion.getPrincipal().getAttributes());
-        val encodedAttrs = this.samlAttributeEncoder.encodeAttributes(attributes, service);
 
-        val attrBuilder = new SamlProfileSamlRegisteredServiceAttributeBuilder(service, adaptor, samlObjectEncrypter);
-        return newAttributeStatement(encodedAttrs, attrBuilder, service);
+        val webApplicationService = serviceFactory.createService(adaptor.getEntityId(), WebApplicationService.class);
+        val encodedAttrs = ProtocolAttributeEncoder.decodeAttributes(attributes, registeredService, webApplicationService);
+
+        val attrBuilder = new SamlProfileSamlRegisteredServiceAttributeBuilder(registeredService, adaptor, samlObjectEncrypter);
+        return newAttributeStatement(encodedAttrs, attrBuilder, registeredService);
     }
 
     /**
@@ -100,11 +95,11 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
         val attrStatement = SamlUtils.newSamlObject(AttributeStatement.class);
 
         val resp = samlIdPProperties.getResponse();
-        val nameFormats = new HashMap<String, String>(resp.configureAttributeNameFormats());
+        val nameFormats = new HashMap<>(resp.configureAttributeNameFormats());
         nameFormats.putAll(samlRegisteredService.getAttributeNameFormats());
 
         val globalFriendlyNames = samlIdPProperties.getAttributeFriendlyNames();
-        val friendlyNames = new HashMap<String, String>(CollectionUtils.convertDirectedListToMap(globalFriendlyNames));
+        val friendlyNames = new HashMap<>(CollectionUtils.convertDirectedListToMap(globalFriendlyNames));
 
         attributeDefinitionStore.getAttributeDefinitions()
             .stream()
@@ -125,7 +120,7 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
             val name = attributeDefinitionStore.locateAttributeDefinition(e.getKey())
                 .map(AttributeDefinition::getName)
                 .filter(StringUtils::isNotBlank)
-                .orElse(e.getKey());
+                .orElseGet(e::getKey);
 
             LOGGER.trace("Creating SAML attribute [{}] with value [{}], friendlyName [{}]", name, e.getValue(), friendlyName);
             val attribute = newAttribute(friendlyName, name, e.getValue(),

@@ -58,7 +58,7 @@ public class GrouperFacadeTests {
     @Test
     public void verifyGroupsFails() {
         val facade = new GrouperFacade();
-        assertThrows(ExceptionInInitializerError.class, () -> facade.fetchGroupsFor("casuser"));
+        assertThrows(RuntimeException.class, () -> facade.fetchGroupsFor("casuser"));
     }
 
     @Test
@@ -82,6 +82,5 @@ public class GrouperFacadeTests {
         };
         assertTrue(facade.getGroupsForSubjectId("casuser").isEmpty());
     }
-
 }
 

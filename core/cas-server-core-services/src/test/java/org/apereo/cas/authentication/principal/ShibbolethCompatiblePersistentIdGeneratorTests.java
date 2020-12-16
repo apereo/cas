@@ -34,17 +34,19 @@ public class ShibbolethCompatiblePersistentIdGeneratorTests {
         val p = mock(Principal.class);
         when(p.getId()).thenReturn("testuser");
         val value = generator.generate(p, RegisteredServiceTestUtils.getService());
-
         assertNotNull(value);
     }
 
     @Test
     public void verifyGeneratorByPrincipal() {
+        val attrs = (Map) Map.of("uid", List.of("testuser"));
         val generator = new ShibbolethCompatiblePersistentIdGenerator();
         generator.setAttribute("uid");
         assertNotNull(generator.toString());
+        assertNotNull(generator.determinePrincipalIdFromAttributes("uid", attrs));
+        
         val p = mock(Principal.class);
-        when(p.getAttributes()).thenReturn(Map.of("uid", List.of("testuser")));
+        when(p.getAttributes()).thenReturn(attrs);
         when(p.getId()).thenReturn("testuser");
         val value = generator.generate(p, RegisteredServiceTestUtils.getService());
         assertNotNull(value);
@@ -64,7 +66,7 @@ public class ShibbolethCompatiblePersistentIdGeneratorTests {
     }
 
     @Test
-    public void verifySerializeAShibbolethCompatiblePersistentIdGeneratorToJson() throws IOException {
+    public void verifyJson() throws IOException {
         val generatorWritten = new ShibbolethCompatiblePersistentIdGenerator("scottssalt");
         MAPPER.writeValue(JSON_FILE, generatorWritten);
         val credentialRead = MAPPER.readValue(JSON_FILE, ShibbolethCompatiblePersistentIdGenerator.class);

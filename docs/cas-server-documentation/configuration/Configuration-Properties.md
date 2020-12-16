@@ -153,7 +153,6 @@ Allow the CAS Spring Cloud configuration server to load settings from [HashiCorp
 
 # spring.cloud.consul.config.watch.delay=1000
 # spring.cloud.consul.config.watch.enabled=false
-
 ```
 
 ### Vault
@@ -608,6 +607,25 @@ Enabling APR requires the following JVM system property that indicates the locat
 
 ```bash
 -Djava.library.path=/path/to/tomcat-native/lib
+```
+   
+The APR connector can be assigned an SSLHostConfig element as such:
+
+```properties
+# cas.server.tomcat.apr.ssl-host-config.enabled=false
+# cas.server.tomcat.apr.ssl-host-config.revocation-enabled=false
+# cas.server.tomcat.apr.ssl-host-config.ca-certificate-file=false
+# cas.server.tomcat.apr.ssl-host-config.host-name=
+# cas.server.tomcat.apr.ssl-host-config.ssl-protocol=
+# cas.server.tomcat.apr.ssl-host-config.protocols=all
+# cas.server.tomcat.apr.ssl-host-config.insecure-renegotiation=false
+# cas.server.tomcat.apr.ssl-host-config.certificate-verification-depth=10
+
+# cas.server.tomcat.apr.ssl-host-config.certificates[0].certificate-file=
+# cas.server.tomcat.apr.ssl-host-config.certificates[0].certificate-key-file=
+# cas.server.tomcat.apr.ssl-host-config.certificates[0].certificate-key-password=
+# cas.server.tomcat.apr.ssl-host-config.certificates[0].certificate-chain-file=
+# cas.server.tomcat.apr.ssl-host-config.certificates[0].type=UNDEFINED
 ```
 
 #### Connector IO
@@ -1671,7 +1689,7 @@ under the configuration key `cas.authn.adaptive.ip-intel.rest`.
 #### Groovy Adaptive Authentication
 
 ```properties
-# cas.authn.adaptive.ipIntel.groovy.location=file:/etc/cas/config/GroovyIPAddressIntelligenceService.groovy
+# cas.authn.adaptive.ip-intel.groovy.location=file:/etc/cas/config/GroovyIPAddressIntelligenceService.groovy
 ```
 
 #### BlackDot Adaptive Authentication
@@ -1805,16 +1823,37 @@ To learn more about this topic, [please review this guide](../installation/Passw
 ```properties   
 # cas.authn.passwordless.multifactor-authentication-activated=false
 # cas.authn.passwordless.delegated-authentication-activated=false
+```
 
+#### Simple Account Store
+
+```properties
 # cas.authn.passwordless.accounts.simple.casuser=cas@example.org
+```
+
+#### Groovy Account Store
+
+```properties
 # cas.authn.passwordless.accounts.groovy.location=file:/etc/cas/config/pwdless.groovy
 ```
+
+#### JSON Account Store
+
+```properties
+# cas.authn.passwordless.accounts.json.location=file:/etc/cas/config/pwdless-accounts.json
+```
+
+#### RESTful Account Store
 
 RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) 
 under the configuration key `cas.authn.passwordless.accounts.rest`.
 
+#### LDAP Account Store
+
 LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) 
 under the configuration key `cas.authn.passwordless.accounts.ldap`.
+
+#### MongoDb Account Store
 
 MongoDb settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) 
 under the configuration key `cas.authn.passwordless.accounts.mongo`.
@@ -3459,7 +3498,6 @@ A given attribute that is to be encoded in the final SAML response may contain a
 # cas.authn.saml-idp.metadata.basic-authn-username=
 # cas.authn.saml-idp.metadata.basic-authn-password=
 # cas.authn.saml-idp.metadata.supported-content-types=
-
 ```
 
 #### SAML Metadata JPA
@@ -3488,7 +3526,12 @@ settings for this feature are available [here](Configuration-Properties-Common.h
 
 #### SAML Metadata Git
 
-Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#git-configuration) under the configuration key `cas.authn.saml-idp.metadata`.
+```properties
+# cas.authn.saml-idp.metadata.git.idp-metadata-enabled=true
+```
+
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#git-configuration) 
+under the configuration key `cas.authn.saml-idp.metadata`.
  
 The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. Signing & 
 encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the 
@@ -4096,7 +4139,6 @@ To learn more about this topic, [please review this guide](../installation/OAuth
 # cas.authn.oauth.device-user-code.user-code-length=8
 ```
 
-
 ### OAuth2 JWT Access Tokens
 
 ```properties
@@ -4569,6 +4611,7 @@ a local truststore is provided by CAS to improve portability of configuration ac
 
 # cas.http-client.truststore.psw=changeit
 # cas.http-client.truststore.file=classpath:/truststore.jks
+# cas.http-client.truststore.type=
 ```
 
 ### Hostname Verification
@@ -5696,7 +5739,7 @@ Configure settings relevant to the Java CAS client configured to handle inbound 
 
 ```properties
 # cas.client.prefix=https://sso.example.org/cas
-# cas.client.validator-type=CAS10|CAS20|CAS30
+# cas.client.validator-type=CAS10|CAS20|CAS30|JSON
 ```
 
 ## Password Synchronization

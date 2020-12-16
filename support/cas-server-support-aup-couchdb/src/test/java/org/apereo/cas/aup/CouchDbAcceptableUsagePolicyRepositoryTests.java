@@ -4,8 +4,11 @@ import org.apereo.cas.config.CasAcceptableUsagePolicyCouchDbConfiguration;
 import org.apereo.cas.config.CasCouchDbCoreConfiguration;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.core.ProfileCouchDbRepository;
+import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.web.support.WebUtils;
 
 import lombok.Getter;
 import lombok.val;
@@ -19,6 +22,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -81,6 +85,16 @@ public class CouchDbAcceptableUsagePolicyRepositoryTests extends BaseAcceptableU
         val c = getCredential("casuser");
         val context = getRequestContext("casuser", attributes, c);
         acceptableUsagePolicyRepository.submit(context, c);
+        assertTrue(getAcceptableUsagePolicyRepository().verify(context, c).isAccepted());
+
+        val principal = RegisteredServiceTestUtils.getPrincipal("casuser", Map.of("aupAccepted", List.of("true")));
+        val authentication = RegisteredServiceTestUtils.getAuthentication(principal);
+        WebUtils.putAuthentication(authentication, context);
+
+        val tgt = new MockTicketGrantingTicket(authentication);
+        WebUtils.putTicketGrantingTicketInScopes(context, tgt);
+        ticketRegistry.addTicket(tgt);
+        
         assertTrue(getAcceptableUsagePolicyRepository().verify(context, c).isAccepted());
     }
 }

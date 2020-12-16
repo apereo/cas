@@ -76,7 +76,7 @@ public class GenerateJwtCommand {
         @ShellOption(value = {"subject", "--subject"},
             help = "Subject to use for the JWT") final String subject) {
 
-        val g = new JwtGenerator<CommonProfile>();
+        val g = new JwtGenerator<>();
 
         configureJwtSigning(signingSecretSize, signingAlgorithm, g);
         configureJwtEncryption(encryptionSecretSize, encryptionAlgorithm, encryptionMethod, g);
@@ -152,7 +152,7 @@ public class GenerateJwtCommand {
         }
 
         val signingSecret = RandomUtils.randomAlphanumeric(signingSecretSize);
-        LOGGER.info("==== Signing Secret ====\n{}\n", signingSecret);
+        LOGGER.info("==== Signing Secret ====\n[{}]\n", signingSecret);
 
         val acceptedSigningAlgs = Arrays.stream(JWSAlgorithm.class.getDeclaredFields())
             .filter(f -> f.getType().equals(JWSAlgorithm.class))

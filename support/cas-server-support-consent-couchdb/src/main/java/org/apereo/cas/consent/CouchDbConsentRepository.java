@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.ektorp.DbAccessException;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -65,7 +64,7 @@ public class CouchDbConsentRepository implements ConsentRepository {
                 couchDb.update(updated);
             }
             return updated;
-        } catch (final DbAccessException e) {
+        } catch (final Exception e) {
             LoggingUtils.warn(LOGGER, "Failure storing consent decision", e);
             return null;
         }
@@ -81,7 +80,7 @@ public class CouchDbConsentRepository implements ConsentRepository {
                 couchDb.remove(consent);
                 return true;
             }
-        } catch (final DbAccessException e) {
+        } catch (final Exception e) {
             LoggingUtils.warn(LOGGER, "Failure deleting consent decision", e);
         }
         return false;

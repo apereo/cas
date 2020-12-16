@@ -92,7 +92,7 @@ public class ServiceThemeResolverTests {
 
         val request = new MockHttpServletRequest();
         val ctx = mock(RequestContext.class);
-        val scope = new LocalAttributeMap<Object>();
+        val scope = new LocalAttributeMap<>();
         scope.put(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.getService(r.getServiceId()));
         when(ctx.getFlowScope()).thenReturn(scope);
         RequestContextHolder.setRequestContext(ctx);

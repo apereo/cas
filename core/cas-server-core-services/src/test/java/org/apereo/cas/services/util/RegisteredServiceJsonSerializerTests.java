@@ -31,6 +31,7 @@ public class RegisteredServiceJsonSerializerTests {
     public void verifyPrinter() {
         val zer = new RegisteredServiceJsonSerializer(new MinimalPrettyPrinter());
         assertFalse(zer.supports(new File("bad-file")));
+        assertFalse(zer.getContentTypes().isEmpty());
     }
 
     @Test

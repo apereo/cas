@@ -80,7 +80,7 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
         val certificate = ((X509CertificateCredential) credential).getCertificate();
         val certificateAttributes = extractPersonAttributes(certificate);
         queryAttributes.putAll(certificateAttributes);
-        val attributes = new LinkedHashMap<String, List<Object>>(
+        val attributes = new LinkedHashMap<>(
             super.retrievePersonAttributes(principalId, credential, currentPrincipal, queryAttributes));
         attributes.putAll(certificateAttributes);
         return attributes;
@@ -125,7 +125,7 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
             LOGGER.debug("Using alternate principal attribute [{}]", alternatePrincipal);
             return alternatePrincipal;
         }
-        LOGGER.debug("Returning null principal id...");
+        LOGGER.trace("Returning null principal id...");
         return null;
     }
 
@@ -194,7 +194,7 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
         if (subjectAltNames == null) {
             return null;
         }
-        Optional<List<?>> email = subjectAltNames
+        val email = subjectAltNames
             .stream()
             .filter(s -> s.size() == 2 && (Integer) s.get(0) == SAN_RFC822_EMAIL_TYPE)
             .findFirst();

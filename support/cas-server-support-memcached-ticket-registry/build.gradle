@@ -16,7 +16,8 @@ dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration-api")
 
-    
+    testImplementation libraries.memcached
+
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-configuration")

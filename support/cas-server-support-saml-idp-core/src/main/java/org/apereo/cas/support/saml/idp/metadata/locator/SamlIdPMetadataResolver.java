@@ -55,7 +55,7 @@ public class SamlIdPMetadataResolver extends DOMMetadataResolver {
             .map(Unchecked.function(defn -> resolveMetadata(criteria, defn)))
             .filter(results -> results != null && Iterables.size(results) > 0)
             .findFirst()
-            .orElse(new ArrayList<>(0));
+            .orElseGet(() -> new ArrayList<>(0));
     }
 
     @Override
@@ -66,11 +66,12 @@ public class SamlIdPMetadataResolver extends DOMMetadataResolver {
     }
 
     private Iterable<EntityDescriptor> resolveMetadata(final CriteriaSet criteria,
-        final Optional<SamlRegisteredService> serviceDefn) throws Exception {
-        if (!locator.exists(serviceDefn)) {
-            generator.generate(serviceDefn);
+        final Optional<SamlRegisteredService> registeredService) throws Exception {
+        if (!locator.exists(registeredService) && locator.shouldGenerateMetadataFor(registeredService)) {
+            generator.generate(registeredService);
         }
-        val resource = locator.resolveMetadata(serviceDefn);
+        val resource = locator.resolveMetadata(registeredService);
+        LOGGER.trace("Resolved metadata resource is [{}]", resource);
         if (resource.contentLength() > 0) {
             val element = SamlUtils.getRootElementFrom(resource.getInputStream(), openSamlConfigBean);
 

@@ -92,7 +92,8 @@ public class SurrogateAuthenticationRestHttpRequestCredentialFactory extends Use
         }
         val surrogateAccounts = surrogateAuthenticationService.getEligibleAccountsForSurrogateToProxy(credential.getId());
         if (!surrogateAccounts.contains(credential.getSurrogateUsername())) {
-            throw new SurrogateAuthenticationException("Unable to authorize surrogate authentication request for " + credential.getSurrogateUsername());
+            throw new SurrogateAuthenticationException(
+                "Unable to authorize surrogate authentication request for " + credential.getSurrogateUsername());
         }
         return CollectionUtils.wrapList(credential);
     }

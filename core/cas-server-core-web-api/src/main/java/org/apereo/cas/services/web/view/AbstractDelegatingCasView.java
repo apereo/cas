@@ -62,9 +62,9 @@ public abstract class AbstractDelegatingCasView extends AbstractCasView {
     /**
      * Prepare merged output model before final rendering.
      *
-     * @param model    the model
-     * @param request  the request
-     * @param response the response
+     * @param model                 the model
+     * @param request               the request
+     * @param response              the response
      * @throws Exception the exception
      */
     protected abstract void prepareMergedOutputModel(Map<String, Object> model, HttpServletRequest request,

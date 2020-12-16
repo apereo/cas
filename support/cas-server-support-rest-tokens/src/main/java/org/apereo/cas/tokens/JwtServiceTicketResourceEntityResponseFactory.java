@@ -2,7 +2,7 @@ package org.apereo.cas.tokens;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationResult;
-import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.rest.factory.CasProtocolServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
@@ -43,22 +43,23 @@ public class JwtServiceTicketResourceEntityResponseFactory extends CasProtocolSe
 
     @Override
     protected String grantServiceTicket(final String ticketGrantingTicket,
-                                        final Service service,
+                                        final WebApplicationService webApplicationService,
                                         final AuthenticationResult authenticationResult) {
-        val registeredService = this.servicesManager.findServiceBy(service);
+        val registeredService = this.servicesManager.findServiceBy(webApplicationService);
 
-        LOGGER.debug("Located registered service [{}] for [{}]", registeredService, service);
-        RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
+        LOGGER.debug("Located registered service [{}] for [{}]", registeredService, webApplicationService);
+        RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(webApplicationService, registeredService);
         val tokenAsResponse = RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET.isAssignedTo(registeredService, BooleanUtils::toBoolean);
 
         if (!tokenAsResponse) {
-            LOGGER.debug("Service [{}] does not require JWTs as tickets, given the properties assigned are [{}]", service, registeredService.getProperties());
-            return super.grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
+            LOGGER.debug("Service [{}] does not require JWT tickets; properties assigned are [{}]",
+                webApplicationService, registeredService.getProperties());
+            return super.grantServiceTicket(ticketGrantingTicket, webApplicationService, authenticationResult);
         }
 
-        val serviceTicket = super.grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
-        val jwt = this.tokenTicketBuilder.build(serviceTicket, service);
-        LOGGER.debug("Generated JWT [{}] for service [{}]", jwt, service);
+        val serviceTicket = super.grantServiceTicket(ticketGrantingTicket, webApplicationService, authenticationResult);
+        val jwt = tokenTicketBuilder.build(serviceTicket, webApplicationService);
+        LOGGER.debug("Generated JWT [{}] for service [{}]", jwt, webApplicationService);
         return jwt;
     }
 

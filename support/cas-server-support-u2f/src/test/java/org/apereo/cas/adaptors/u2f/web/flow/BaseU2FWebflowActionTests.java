@@ -142,7 +142,7 @@ public abstract class BaseU2FWebflowActionTests {
             val cert = CertUtils.readCertificate(new ClassPathResource("cert.crt"));
             val r1 = new DeviceRegistration("keyhandle11", "publickey1", cert, 20);
             val u2f = mock(U2F.class);
-            when(u2f.startRegistration(any(), any())).thenAnswer(new Answer<Object>() {
+            when(u2f.startRegistration(any(), any())).thenAnswer(new Answer<>() {
                 @Override
                 public Object answer(final InvocationOnMock invocationOnMock) throws Throwable {
                     return new U2F().startRegistration(invocationOnMock.getArgument(0), invocationOnMock.getArgument(1));

@@ -1,6 +1,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.services.DefaultRegisteredServicePropertyTests;
+import org.apereo.cas.services.NeverRegisteredServiceSingleSignOnParticipationPolicyTests;
 import org.apereo.cas.services.util.CasAddonsRegisteredServicesJsonSerializerTests;
 import org.apereo.cas.services.util.RegisteredServiceAccessStrategyAuditableEnforcerTests;
 import org.apereo.cas.services.util.RegisteredServiceNoOpCipherExecutorTests;
@@ -21,6 +22,7 @@ import org.junit.runner.RunWith;
     CasAddonsRegisteredServicesJsonSerializerTests.class,
     RegisteredServiceAccessStrategyAuditableEnforcerTests.class,
     RegisteredServiceYamlHttpMessageConverterTests.class,
+    NeverRegisteredServiceSingleSignOnParticipationPolicyTests.class,
     RegisteredServiceNoOpCipherExecutorTests.class
 })
 @RunWith(JUnitPlatform.class)
