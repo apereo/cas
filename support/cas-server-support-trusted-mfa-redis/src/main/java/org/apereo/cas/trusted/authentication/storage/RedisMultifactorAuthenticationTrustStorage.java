@@ -61,24 +61,24 @@ public class RedisMultifactorAuthenticationTrustStorage extends BaseMultifactorA
     public void remove(final String key) {
         val principal = getKeyGenerationStrategy().getPrincipalFromRecordKey(getCipherExecutor().decode(key));
         val keys = redisTemplate.keys(buildRedisKeyForRecord(principal));
-        if (keys != null) {
+        if (keys != null && !keys.isEmpty()) {
             val redisKey = keys.iterator().next();
-            this.redisTemplate.boundValueOps(redisKey).set(new ArrayList<>());
+            redisTemplate.delete(redisKey);
         }
     }
 
     @Override
     public void remove(final ZonedDateTime expirationDate) {
         val keys = redisTemplate.keys(getPatternRedisKey());
-        if (keys != null) {
+        if (keys != null && !keys.isEmpty()) {
             keys.stream()
                 .map(redisKey -> redisTemplate.boundValueOps(redisKey).get())
                 .filter(Objects::nonNull)
                 .flatMap(List::stream)
                 .filter(record -> DateTimeUtils.zonedDateTimeOf(record.getExpirationDate()).isBefore(expirationDate))
                 .forEach(record -> {
-                    val redisKey = buildRedisKeyForRecord(record);
-                    this.redisTemplate.boundValueOps(redisKey).set(new ArrayList<>());
+                    val recordKeys = redisTemplate.keys(buildRedisKeyForRecord(record));
+                    redisTemplate.delete(Objects.requireNonNull(recordKeys));
                 });
         }
     }
@@ -110,7 +110,7 @@ public class RedisMultifactorAuthenticationTrustStorage extends BaseMultifactorA
     public Set<? extends MultifactorAuthenticationTrustRecord> get(final String principal) {
         remove();
         val keys = redisTemplate.keys(buildRedisKeyForRecord(principal));
-        if (keys != null) {
+        if (keys != null && !keys.isEmpty()) {
             val redisKey = keys.iterator().next();
             val results = (List<MultifactorAuthenticationTrustRecord>)
                 ObjectUtils.defaultIfNull(redisTemplate.boundValueOps(redisKey).get(), new ArrayList<>());
