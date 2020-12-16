@@ -19,7 +19,7 @@ cosmosdb,config,sms,util,services,web,audits,password-ops,webflow-mfa-actions"
 hasDocker() {
   type docker &> /dev/null
   if [[ $? -ne 0 ]] ; then
-    echo Docker not available, skipping $0
+    echo Docker not available
     return 1
   fi
   return 0

@@ -620,6 +620,7 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
       - name: Run Tests without Coverage
         run: ./testcas.sh --category ${{ matrix.category }}
+        shell: bash
         if: matrix.os != 'ubuntu-latest'
       - name: "Upload to Codecov"
         uses: "codecov/codecov-action@v1"
