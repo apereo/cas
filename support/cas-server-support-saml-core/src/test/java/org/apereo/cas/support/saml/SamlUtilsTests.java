@@ -53,8 +53,11 @@ public class SamlUtilsTests {
         assertThrows(SamlException.class, () -> SamlUtils.transformSamlObject(openSamlConfigBean,
             xml.getBytes(StandardCharsets.UTF_8), AuthnRequest.class));
 
-        assertThrows(SamlException.class, () -> SamlUtils.transformSamlObject(mock(OpenSamlConfigBean.class),
+        assertNull(SamlUtils.transformSamlObject(mock(OpenSamlConfigBean.class),
             ArrayUtils.EMPTY_BYTE_ARRAY, XMLObject.class));
+
+        assertThrows(SamlException.class, () -> SamlUtils.transformSamlObject(mock(OpenSamlConfigBean.class),
+            "whatever".getBytes(StandardCharsets.UTF_8), XMLObject.class));
         assertThrows(SamlException.class, () -> SamlUtils.transformSamlObject(mock(OpenSamlConfigBean.class), mock(XMLObject.class)));
         assertThrows(SamlException.class, () -> SamlUtils.logSamlObject(mock(OpenSamlConfigBean.class), mock(XMLObject.class)));
     }

@@ -41,7 +41,7 @@ properties=$(cat "${config}" | jq -j '.properties // empty | join(" ")')
 echo -e "\nLaunching CAS with properties [${properties}] and dependencies [${dependencies}]"
 java -jar "$PWD"/cas.war ${properties} --spring.profiles.active=none --server.ssl.key-store="$keystore" &
 pid=$!
-echo -e "\nWaiting for CAS under pid ${pid}"
+echo -e "\nWaiting for CAS under process id ${pid}"
 until curl -k -L --output /dev/null --silent --fail https://localhost:8443/cas/login; do
     echo -n '.'
     sleep 1
@@ -51,7 +51,7 @@ echo -e "\n\nReady!"
 scriptPath="${scenario}/script.js"
 echo -e "*************************************"
 echo -e "Running ${scriptPath}\n"
-node ${scriptPath} ${config}
+node --unhandled-rejections=strict ${scriptPath} ${config}
 echo -e "*************************************\n"
 
 docker container stop $(docker container ls -aq) >/dev/null 2>/dev/null
