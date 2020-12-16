@@ -18,6 +18,7 @@ import javax.persistence.Column;
 import javax.persistence.Lob;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
+import java.io.Serializable;
 
 /**
  * This is {@link SamlIdPMetadataDocument}.
@@ -31,8 +32,9 @@ import javax.persistence.Transient;
 @AllArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Builder
-public class SamlIdPMetadataDocument {
+public class SamlIdPMetadataDocument implements Serializable {
 
+    private static final long serialVersionUID = -705737727407407083L;
     /**
      * The Id.
      */

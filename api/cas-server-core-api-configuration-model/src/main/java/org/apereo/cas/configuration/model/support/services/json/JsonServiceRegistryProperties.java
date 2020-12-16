@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.services.json;
 import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -18,6 +19,7 @@ import org.springframework.core.io.ClassPathResource;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("JsonServiceRegistryProperties")
 public class JsonServiceRegistryProperties extends SpringResourceProperties {
 
     private static final long serialVersionUID = -3022199446494732533L;

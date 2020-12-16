@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.saml.idp.metadata;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -23,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("SamlIdPMetadataProperties")
 public class SamlIdPMetadataProperties implements Serializable {
 
     private static final long serialVersionUID = -1020542741768471305L;
@@ -70,6 +72,12 @@ public class SamlIdPMetadataProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private MongoDbSamlMetadataProperties mongo = new MongoDbSamlMetadataProperties();
+
+    /**
+     * Properties pertaining to redis saml metadata resolvers.
+     */
+    @NestedConfigurationProperty
+    private RedisSamlMetadataProperties redis = new RedisSamlMetadataProperties();
 
     /**
      * Properties pertaining to git saml metadata resolvers.

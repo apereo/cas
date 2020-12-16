@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.RestEndpointProperties;
 import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -20,6 +21,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("Pac4jDelegatedAuthenticationProvisioningProperties")
 public class Pac4jDelegatedAuthenticationProvisioningProperties implements Serializable {
     private static final long serialVersionUID = 3478567744591488495L;
 

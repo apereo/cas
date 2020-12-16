@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.model.core.authentication.PrincipalTransform
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -20,6 +21,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("CassandraAuthenticationProperties")
 public class CassandraAuthenticationProperties extends BaseCassandraProperties {
 
     private static final long serialVersionUID = 1369405266376125234L;
