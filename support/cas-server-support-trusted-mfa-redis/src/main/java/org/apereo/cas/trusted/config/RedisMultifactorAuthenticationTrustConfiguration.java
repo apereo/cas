@@ -2,6 +2,7 @@ package org.apereo.cas.trusted.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.redis.core.RedisObjectFactory;
+import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecordKeyGenerator;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.RedisMultifactorAuthenticationTrustStorage;
@@ -18,6 +19,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+
+import java.util.List;
 
 /**
  * This is {@link RedisMultifactorAuthenticationTrustConfiguration}.
@@ -50,7 +53,8 @@ public class RedisMultifactorAuthenticationTrustConfiguration {
 
     @RefreshScope
     @Bean
-    public RedisTemplate redisMfaTrustedAuthnTemplate() {
+    @ConditionalOnMissingBean(name = "redisMfaTrustedAuthnTemplate")
+    public RedisTemplate<String, List<MultifactorAuthenticationTrustRecord>> redisMfaTrustedAuthnTemplate() {
         return RedisObjectFactory.newRedisTemplate(redisMfaTrustedConnectionFactory());
     }
 
