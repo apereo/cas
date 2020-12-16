@@ -526,13 +526,13 @@ jobs:
 ##########################################################################
 
   tests:
-    runs-on: ubuntu-latest
     if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') }}
     needs: [cache]
     continue-on-error: false
     strategy:
       fail-fast: false
       matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
         category:
           - simple
           - groovy
@@ -595,6 +595,7 @@ jobs:
           - zookeeper
           - jms
           - cosmosdb
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -614,19 +615,25 @@ jobs:
 #          name: binary-artifacts
 #      - name: Setup tmate session
 #        uses: mxschmitt/action-tmate@v2
-      - name: Run Tests
+      - name: Run Tests with Coverage
         run: ./testcas.sh --with-coverage --category ${{ matrix.category }}
+        if: ${{ $matrix.os == "ubuntu-latest" }}
+      - name: Run Tests without Coverage
+        run: ./testcas.sh --category ${{ matrix.category }}
+        if: ${{ $matrix.os != "ubuntu-latest" }}
       - name: "Upload to Codecov"
         uses: "codecov/codecov-action@v1"
         with:
           file: ./build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml
           flags: ${{ matrix.category }}
           name: ${{ matrix.category }}
+        if: ${{ $matrix.os == "ubuntu-latest" }}
       - name: "Upload coverage file"
         uses: "actions/upload-artifact@v2"
         with:
           name: "cas-tests-${{ matrix.category }}.coverage"
           path: "./build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
+        if: ${{ $matrix.os == "ubuntu-latest" }}
 ##########################################################################
   upload_coverage:
     runs-on: ubuntu-latest

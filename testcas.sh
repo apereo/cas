@@ -16,6 +16,15 @@ cosmosdb,config,sms,util,services,web,audits,password-ops,webflow-mfa-actions"
     echo -e "\nPlease see the test script for details.\n"
 }
 
+hasDocker() {
+  type docker &> /dev/null
+  if [[ $? -ne 0 ]] ; then
+    echo Docker not available, skipping $0
+    return 1
+  fi
+  return 0
+}
+
 task="cleanTest "
 parallel="--parallel "
 dryRun=""
@@ -208,88 +217,88 @@ while (( "$#" )); do
                 task+="testSimple "
                 ;;
             mssql)
-                ./ci/tests/mssqlserver/run-mssql-server.sh
+                hasDocker && ./ci/tests/mssqlserver/run-mssql-server.sh
                 task+="testMsSqlServer "
                 ;;
             influx|influxdb)
-                ./ci/tests/influxdb/run-influxdb-server.sh
+                hasDocker && ./ci/tests/influxdb/run-influxdb-server.sh
                 task+="testInfluxDb "
                 ;;
             memcached|memcache|kryo)
-                ./ci/tests/memcached/run-memcached-server.sh
+                hasDocker && ./ci/tests/memcached/run-memcached-server.sh
                 task+="testMemcached "
                 ;;
             ehcache)
-                ./ci/tests/ehcache/run-terracotta-server.sh
+                hasDocker && ./ci/tests/ehcache/run-terracotta-server.sh
                 task+="testEhcache "
                 ;;
             ldap|ad|activedirectory)
-                ./ci/tests/ldap/run-ldap-server.sh
-                ./ci/tests/ldap/run-ad-server.sh true
+                hasDocker && ./ci/tests/ldap/run-ldap-server.sh
+                hasDocker && ./ci/tests/ldap/run-ad-server.sh true
                 task+="testLdap "
                 ;;
             couchbase)
-                ./ci/tests/couchbase/run-couchbase-server.sh
+                hasDocker && ./ci/tests/couchbase/run-couchbase-server.sh
                 task+="testCouchbase "
                 ;;
             mongo|mongodb)
-                ./ci/tests/mongodb/run-mongodb-server.sh
+                hasDocker && ./ci/tests/mongodb/run-mongodb-server.sh
                 task+="testMongoDb "
                 ;;
             couchdb)
-                ./ci/tests/couchdb/run-couchdb-server.sh
+                hasDocker && ./ci/tests/couchdb/run-couchdb-server.sh
                 task+="testCouchDb "
                 ;;
             mysql)
-                ./ci/tests/mysql/run-mysql-server.sh
+                hasDocker && ./ci/tests/mysql/run-mysql-server.sh
                 task+="testMySQL "
                 ;;
             maria|mariadb)
-                ./ci/tests/mariadb/run-mariadb-server.sh
+                hasDocker && ./ci/tests/mariadb/run-mariadb-server.sh
                 task+="testMariaDb "
                 ;;
             postgres|pg|postgresql)
-                ./ci/tests/postgres/run-postgres-server.sh
+                hasDocker && ./ci/tests/postgres/run-postgres-server.sh
                 task+="testPostgres "
                 ;;
             cassandra)
-                ./ci/tests/cassandra/run-cassandra-server.sh
+                hasDocker && ./ci/tests/cassandra/run-cassandra-server.sh
                 task+="testCassandra "
                 ;;
             kafka)
-                ./ci/tests/kafka/run-kafka-server.sh
+                hasDocker && ./ci/tests/kafka/run-kafka-server.sh
                 task+="testKafka "
                 ;;
             aws|amz)
-                ./ci/tests/aws/run-aws-server.sh
+                hasDocker && ./ci/tests/aws/run-aws-server.sh
                 task+="testAmazonWebServices "
                 ;;
             radius)
-                ./ci/tests/radius/run-radius-server.sh
+                hasDocker && ./ci/tests/radius/run-radius-server.sh
                 task+="testRadius "
                 ;;
             mail|email)
-                ./ci/tests/mail/run-mail-server.sh
+                hasDocker && ./ci/tests/mail/run-mail-server.sh
                 task+="testMail "
                 ;;
             zoo|zookeeper)
-                ./ci/tests/zookeeper/run-zookeeper-server.sh
+                hasDocker && ./ci/tests/zookeeper/run-zookeeper-server.sh
                 task+="testZooKeeper "
                 ;;
             dynamodb|dynamo)
-                ./ci/tests/dynamodb/run-dynamodb-server.sh
+                hasDocker && ./ci/tests/dynamodb/run-dynamodb-server.sh
                 task+="testDynamoDb "
                 ;;
             oracle)
-                ./ci/tests/oracle/run-oracle-server.sh
+                hasDocker && ./ci/tests/oracle/run-oracle-server.sh
                 task+="testOracle "
                 ;;
             redis)
-                ./ci/tests/redis/run-redis-server.sh
+                hasDocker && ./ci/tests/redis/run-redis-server.sh
                 task+="testRedis "
                 ;;
             activemq|amq|jms)
-                ./ci/tests/activemq/run-activemq-server.sh
+                hasDocker && ./ci/tests/activemq/run-activemq-server.sh
                 task+="testJMS "
                 ;;
             esac
