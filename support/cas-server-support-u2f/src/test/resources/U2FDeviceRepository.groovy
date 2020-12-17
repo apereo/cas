@@ -8,7 +8,7 @@ def read(Object[] args) {
     def logger = args[0]
     def mapper = new ObjectMapper().findAndRegisterModules()
             .enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY)
-    def file = new File("/tmp/groovy-u2f.json")
+    def file = new File(System.getProperty("java.io.tmpdir"), "groovy-u2f.json")
     if (!file.exists()) {
         return Map.of()
     }
