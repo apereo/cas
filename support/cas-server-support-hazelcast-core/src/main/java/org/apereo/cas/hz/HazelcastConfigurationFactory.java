@@ -175,7 +175,8 @@ public class HazelcastConfigurationFactory {
         config.addWanReplicationConfig(wanReplicationConfig);
     }
 
-    private static JoinConfig createDiscoveryJoinConfig(final Config config, final HazelcastClusterProperties cluster, final NetworkConfig networkConfig) {
+    private static JoinConfig createDiscoveryJoinConfig(final Config config, final HazelcastClusterProperties cluster,
+                                                        final NetworkConfig networkConfig) {
         val joinConfig = new JoinConfig();
 
         LOGGER.trace("Disabling multicast and TCP/IP configuration for discovery");
