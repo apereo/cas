@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.security.KeyStore;
 
@@ -33,13 +34,13 @@ import java.security.KeyStore;
         "cas.ticket.registry.ignite.tickets-cache.cache-mode=REPLICATED",
         "cas.ticket.registry.ignite.ignite-address[0]=localhost:47500",
         
-        "cas.ticket.registry.ignite.key-store-file-path=/tmp/ignite-keystore.jks",
+        "cas.ticket.registry.ignite.key-store-file-path=${java.io.tmpdir}/ignite-keystore.jks",
         "cas.ticket.registry.ignite.key-store-type=pkcs12",
         "cas.ticket.registry.ignite.key-store-password=changeit",
         "cas.ticket.registry.ignite.key-algorithm=SunX509",
         "cas.ticket.registry.ignite.protocol=TLS",
 
-        "cas.ticket.registry.ignite.trust-store-file-path=/tmp/ignite-keystore.jks",
+        "cas.ticket.registry.ignite.trust-store-file-path=${java.io.tmpdir}/ignite-keystore.jks",
         "cas.ticket.registry.ignite.trust-store-password=changeit",
         "cas.ticket.registry.ignite.trust-store-type=pkcs12"
     })
@@ -54,7 +55,7 @@ public class IgniteTicketRegistryTests extends BaseTicketRegistryTests {
         val ks = KeyStore.getInstance("pkcs12");
         val password = "changeit".toCharArray();
         ks.load(null, password);
-        try (val fos = new FileOutputStream("/tmp/ignite-keystore.jks")) {
+        try (val fos = new FileOutputStream(new File(System.getProperty("java.io.tmpdir"), "ignite-keystore.jks"))) {
             ks.store(fos, password);
         }
     }
