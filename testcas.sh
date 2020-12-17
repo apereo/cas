@@ -2,25 +2,27 @@
 
 clear
 
-printHelp() {
-    echo -e "\nUsage: ./testcas.sh --category [category1,category2,...] [--help] [--test TestClass] [--ignore-failures] [--no-wrapper] [--no-retry] [--debug] [--no-parallel] [--dry-run] [--info] [--with-coverage] [--no-build-cache] \n"
-    echo -e "Fetching test categories from the build...\n"
-    ./gradlew -q testCategories
-    echo -e "\nPlease see the test script for details.\n"
-}
-
 hasDocker() {
   type docker &> /dev/null
   if [[ $? -ne 0 ]] ; then
-    echo "Docker not available"
+    echo "Docker is not available."
     return 1
   fi
   dockerserver=$(docker version --format '{{json .Server.Os}}')
+  echo "Docker server is ${dockerserver}."
   if [[ $dockerserver =~ "linux" ]]; then
     return 0
   fi
-  echo "Docker server is not linux"
+  echo "Docker server is not linux."
   return 1
+}
+
+printHelp() {
+    hasDocker
+    echo -e "\nUsage: ./testcas.sh --category [category1,category2,...] [--help] [--test TestClass] [--ignore-failures] [--no-wrapper] [--no-retry] [--debug] [--no-parallel] [--dry-run] [--info] [--with-coverage] [--no-build-cache] \n"
+    echo -e "Fetching test categories from the build...\n"
+     ./gradlew -q testCategories
+    echo -e "\nPlease see the test script for details."
 }
 
 task="cleanTest "
