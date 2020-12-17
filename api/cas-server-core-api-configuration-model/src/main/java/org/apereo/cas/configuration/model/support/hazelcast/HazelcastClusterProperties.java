@@ -139,7 +139,8 @@ public class HazelcastClusterProperties implements Serializable {
     /**
      * Sets the well known members.
      * If members is empty, calling this method will have the same effect as calling clear().
-     * A member can be a comma separated string, e..g '10.11.12.1,10.11.12.2' which indicates multiple members are going to be added.
+     * A member can be a comma separated string, e..g '10.11.12.1,10.11.12.2' which
+     * indicates multiple members are going to be added.
      */
     @RequiredProperty
     private List<String> members = Stream.of("localhost").collect(Collectors.toList());
@@ -213,9 +214,11 @@ public class HazelcastClusterProperties implements Serializable {
 
     /**
      * Multicast trusted interfaces for discovery.
-     * With the multicast auto-discovery mechanism, Hazelcast allows cluster members to find each other using multicast communication.
+     * With the multicast auto-discovery mechanism, Hazelcast allows cluster
+     * members to find each other using multicast communication.
      * The cluster members do not need to know the concrete addresses of the other members,
-     * as they just multicast to all the other members for listening. Whether multicast is possible or allowed depends on your environment.
+     * as they just multicast to all the other members for listening. Whether
+     * multicast is possible or allowed depends on your environment.
      */
     private String multicastTrustedInterfaces;
 

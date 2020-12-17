@@ -22,7 +22,8 @@ import java.util.HashMap;
 public class HazelcastAwsDiscoveryStrategy implements HazelcastDiscoveryStrategy {
 
     @Override
-    public DiscoveryStrategyConfig get(final HazelcastClusterProperties cluster, final JoinConfig joinConfig, final Config configuration, final NetworkConfig networkConfig) {
+    public DiscoveryStrategyConfig get(final HazelcastClusterProperties cluster, final JoinConfig joinConfig,
+                                       final Config configuration, final NetworkConfig networkConfig) {
         val aws = cluster.getDiscovery().getAws();
         val properties = new HashMap<String, Comparable>();
         if (StringUtils.hasText(aws.getAccessKey())) {
