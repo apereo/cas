@@ -253,7 +253,7 @@ subprojects {
             }
         }
         maven {
-            url "https://repository.apache.org/content/groups/snapshots/"
+            url "https://repository.apache.org/content/groups/snapshots"
             mavenContent { snapshotsOnly() }
             content {
                 includeGroup "commons-io"
