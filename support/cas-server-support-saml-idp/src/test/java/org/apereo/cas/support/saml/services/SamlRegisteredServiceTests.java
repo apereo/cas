@@ -57,9 +57,12 @@ public class SamlRegisteredServiceTests {
     @BeforeAll
     public static void prepTests() throws Exception {
         val jsonFolder = new File(FileUtils.getTempDirectory(), JSON_SERVICE_REGISTRY_FOLDER);
-        jsonFolder.mkdir();
-        PathUtils.cleanDirectory(jsonFolder.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
-        Arrays.stream(FileUtils.getTempDirectory().listFiles()).forEach(File::delete);
+        if (jsonFolder.isDirectory()) {
+            PathUtils.cleanDirectory(jsonFolder.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
+        }
+        if (!jsonFolder.mkdir()) {
+            throw new IOException("Unable to make json folder: " + jsonFolder.getName());
+        }
         FileUtils.cleanDirectory(RESOURCE.getFile());
     }
 
