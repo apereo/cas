@@ -809,6 +809,8 @@ jobs:
           - authn-throttle
           - qrauthn-login
           - gauth-register
+          - gauth-login
+          - adaptive-login-blocked
           - duo-websdk-login
           - duo-universal-login
           - mfa-provider-selection
@@ -829,6 +831,7 @@ jobs:
           - authy-mfa-login
           - logout-confirm
           - gua-login
+          - surrogate-login-selection
           - simple-mfa-login
           - interrupt-login
           - oidc-authzcode-login
@@ -844,6 +847,10 @@ jobs:
           - forgot-username
           - forgot-password
           - attribute-consent
+          - u2f-register
+          - u2f-login
+          - webauthn-register
+          - webauthn-login
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK

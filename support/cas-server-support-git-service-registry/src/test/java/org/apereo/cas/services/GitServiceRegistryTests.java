@@ -68,7 +68,7 @@ public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Autowired
-    @Qualifier("gitRepositoryInstance")
+    @Qualifier("gitServiceRegistryRepositoryInstance")
     private GitRepository gitRepositoryInstance;
 
     @Autowired

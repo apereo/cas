@@ -86,7 +86,8 @@ This overlay is supplied the test scenario configuration that explain the requir
 inside an embedded Apache Tomcat container. Once running, the Puppeteer script is executed by Node for the given test scenario to verify
 specific functionality such as successful logins, generation of tickets, etc.
 
-All functional and browser tests are executed by the [continuous integration system](Test-Process.html#continuous-integration). If you are adding a new batch of tests, make sure the scenario (i.e. test) name is included in the CI configuration.
+All functional and browser tests are executed by the [continuous integration system](Test-Process.html#continuous-integration). If you 
+are adding a new batch of tests, make sure the scenario (i.e. test) name is included in the CI configuration.
 
 To help simplify the testing process, you may use the following bash function in your `.profile`:
 
@@ -102,6 +103,8 @@ function pupcas() {
 ```bash
 pupcas <scenario-name>
 ```
+ 
+To successfully run tests, you need to make [jq](https://stedolan.github.io/jq/) is installed.
 
 ## Continuous Integration
 

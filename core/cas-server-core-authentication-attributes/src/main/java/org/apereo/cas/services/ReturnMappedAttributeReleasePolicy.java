@@ -86,7 +86,8 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
             val file = matcherFile.group();
             fetchAttributeValueFromExternalGroovyScript(attributeName, resolvedAttributes, attributesToRelease, file);
         } else {
-            mapSimpleSingleAttributeDefinition(attributeName, mappedAttributeName, attributeValue, attributesToRelease);
+            mapSimpleSingleAttributeDefinition(attributeName, mappedAttributeName,
+                attributeValue, attributesToRelease, resolvedAttributes);
         }
     }
 
@@ -153,12 +154,17 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
     private static void mapSimpleSingleAttributeDefinition(final String attributeName,
                                                            final String mappedAttributeName,
                                                            final Object attributeValue,
-                                                           final Map<String, List<Object>> attributesToRelease) {
+                                                           final Map<String, List<Object>> attributesToRelease,
+                                                           final Map<String, List<Object>> resolvedAttributes) {
         if (attributeValue != null) {
             LOGGER.debug("Found attribute [{}] in the list of allowed attributes, mapped to the name [{}]",
                 attributeName, mappedAttributeName);
             val values = CollectionUtils.toCollection(attributeValue, ArrayList.class);
             attributesToRelease.put(mappedAttributeName, values);
+        } else if (resolvedAttributes.containsKey(mappedAttributeName)) {
+            val mappedValue = resolvedAttributes.get(mappedAttributeName);
+            LOGGER.debug("Reusing existing already-remapped attribute [{}] with value [{}]", mappedAttributeName, mappedValue);
+            attributesToRelease.put(mappedAttributeName, mappedValue);
         } else {
             LOGGER.warn("Could not find value for mapped attribute [{}] that is based off of [{}] in the allowed attributes list. "
                     + "Ensure the original attribute [{}] is retrieved and contains at least a single value. Attribute [{}] "
@@ -207,7 +213,8 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
             val attributeValue = resolvedAttributes.get(attributeName);
             mappedAttributes.forEach(mapped -> {
                 val mappedAttributeName = mapped.toString();
-                LOGGER.debug("Mapping attribute [{}] to [{}] with value [{}]", attributeName, mappedAttributeName, attributeValue);
+                LOGGER.debug("Mapping attribute [{}] to [{}] with value [{}]",
+                    attributeName, mappedAttributeName, attributeValue);
                 mapSingleAttributeDefinition(attributeName, mappedAttributeName,
                     attributeValue, resolvedAttributes, attributesToRelease);
             });

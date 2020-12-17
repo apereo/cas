@@ -1,0 +1,9 @@
+{
+  "dependencies": "core",
+  "properties": [
+    "--cas.events.track-geolocation=true",
+    "--cas.authn.adaptive.reject-ip-addresses=.*",
+    "--cas.authn.adaptive.reject-browsers=.*",
+    "--cas.service-registry.init-from-json=true"
+  ]
+}
