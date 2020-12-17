@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
     GoogleFirebaseCloudMessagingConfiguration.class,
     CasCoreUtilConfiguration.class
 }, properties = {
-    "cas.google-firebase-messaging.service-account-key.location=file:${java.io.tmpdir:/tmp}/account-key.json",
+    "cas.google-firebase-messaging.service-account-key.location=file:${java.io.tmpdir}/account-key.json",
     "cas.google-firebase-messaging.database-url=https://cassso-2531381995058.firebaseio.com",
     "cas.google-firebase-messaging.registration-token-attribute-name=registrationToken"
 })
