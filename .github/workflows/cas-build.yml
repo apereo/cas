@@ -601,7 +601,7 @@ jobs:
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - name: Initialize Windows
-        run: service stop MongoDB
+        run: sc stop MongoDB
         if: matrix.os == 'windows-latest'
       - uses: actions/cache@v2
         with:
