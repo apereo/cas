@@ -1,6 +1,5 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apache.commons.io.FileUtils;
 import org.apereo.cas.config.IgniteTicketRegistryConfiguration;
 import org.apereo.cas.config.IgniteTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -8,6 +7,7 @@ import org.apereo.cas.ticket.TicketCatalog;
 
 import lombok.Getter;
 import lombok.val;
+import org.apache.commons.io.FileUtils;
 import org.apache.ignite.configuration.IgniteConfiguration;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.RepeatedTest;
