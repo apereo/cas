@@ -9,6 +9,7 @@ import org.apereo.cas.support.oauth.authenticator.OAuth20UsernamePasswordAuthent
 import org.apereo.cas.support.oauth.profile.CasServerApiBasedTicketValidatorTests;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20ProfileScopeToAttributesFilterTests;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfileDataCreatorTests;
+import org.apereo.cas.support.oauth.profile.OAuth20ClientIdAwareProfileManagerTests;
 import org.apereo.cas.support.oauth.services.OAuth20AuthenticationServiceSelectionStrategyTests;
 import org.apereo.cas.support.oauth.services.OAuth20RegisteredServiceCipherExecutorTests;
 import org.apereo.cas.support.oauth.services.OAuth20ServicesManagerRegisteredServiceLocatorTests;
@@ -128,6 +129,7 @@ import org.junit.runner.RunWith;
     UnapprovedOAuth20DeviceUserCodeExceptionTests.class,
     InvalidOAuth20DeviceTokenExceptionTests.class,
     DefaultOAuth20UserProfileDataCreatorTests.class,
+    OAuth20ClientIdAwareProfileManagerTests.class,
     CasServerApiBasedTicketValidatorTests.class,
     DefaultOAuth20ProfileScopeToAttributesFilterTests.class,
     OAuth20AuthenticationServiceSelectionStrategyTests.class,
