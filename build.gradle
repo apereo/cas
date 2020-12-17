@@ -253,13 +253,6 @@ subprojects {
             }
         }
         maven {
-            url "https://repository.apache.org/content/groups/snapshots"
-            mavenContent { snapshotsOnly() }
-            content {
-                includeGroup "commons-io"
-            }
-        }
-        maven {
             url "https://oss.sonatype.org/content/repositories/snapshots"
             mavenContent { snapshotsOnly() }
         }

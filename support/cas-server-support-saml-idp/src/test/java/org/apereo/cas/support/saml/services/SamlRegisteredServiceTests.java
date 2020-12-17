@@ -88,7 +88,7 @@ public class SamlRegisteredServiceTests {
         chain.setPolicies(Arrays.asList(policy, new DenyAllAttributeReleasePolicy()));
         service.setAttributeReleasePolicy(chain);
         
-        val dao = new JsonServiceRegistry(new FileSystemResource(FileUtils.getTempDirectory()), WatcherService.noOp(),
+        val dao = new JsonServiceRegistry(new FileSystemResource(FileUtils.getTempDirectoryPath() + File.separator + "json-service-registry"), WatcherService.noOp(),
             appCtx, new NoOpRegisteredServiceReplicationStrategy(),
             new DefaultRegisteredServiceResourceNamingStrategy(),
             new ArrayList<>());

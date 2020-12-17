@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apache.commons.io.FileUtils;
 import org.apereo.cas.config.IgniteTicketRegistryConfiguration;
 import org.apereo.cas.config.IgniteTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -68,7 +69,7 @@ public class IgniteTicketRegistryTests extends BaseTicketRegistryTests {
         val ks = KeyStore.getInstance("pkcs12");
         val password = "changeit".toCharArray();
         ks.load(null, password);
-        try (val fos = new FileOutputStream(new File(System.getProperty("java.io.tmpdir"), "ignite-keystore.jks"))) {
+        try (val fos = new FileOutputStream(new File(FileUtils.getTempDirectory(), "ignite-keystore.jks"))) {
             ks.store(fos, password);
         }
     }

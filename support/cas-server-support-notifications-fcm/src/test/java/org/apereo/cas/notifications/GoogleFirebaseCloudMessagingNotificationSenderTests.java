@@ -8,6 +8,7 @@ import org.apereo.cas.notifications.push.NotificationSender;
 
 import com.google.common.io.Files;
 import lombok.val;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -58,7 +59,7 @@ public class GoogleFirebaseCloudMessagingNotificationSenderTests {
     public static void beforeAll() throws Exception {
         val key = IOUtils.toString(new ClassPathResource("account-key.json").getInputStream(), StandardCharsets.UTF_8);
         try (val writer = Files.newWriter(
-                new File(System.getProperty("java.io.tmpdir"), "account-key.json"), StandardCharsets.UTF_8)) {
+                new File(FileUtils.getTempDirectory(), "account-key.json"), StandardCharsets.UTF_8)) {
             IOUtils.write(key, writer);
             writer.flush();
         }
