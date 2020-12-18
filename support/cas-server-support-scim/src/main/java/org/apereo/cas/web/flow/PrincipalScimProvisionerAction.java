@@ -25,8 +25,8 @@ public class PrincipalScimProvisionerAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        val c = WebUtils.getCredential(requestContext);
-        if (c == null) {
+        val credential = WebUtils.getCredential(requestContext);
+        if (credential == null) {
             LOGGER.warn("No credential found in the request context to provision");
             return success();
         }
@@ -35,10 +35,11 @@ public class PrincipalScimProvisionerAction extends AbstractAction {
             LOGGER.warn("No authentication found in the request context to provision");
             return success();
         }
-        val p = authentication.getPrincipal();
-        LOGGER.debug("Starting to provision principal [{}]", p);
-        val res = this.scimProvisioner.create(authentication, p, c);
-        val msg = String.format("Provisioning of principal %s is%s done successfully", p,
+        val principal = authentication.getPrincipal();
+        val registeredService = WebUtils.getRegisteredService(requestContext);
+        LOGGER.debug("Starting to provision principal [{}] with registered service [{}]", principal, registeredService);
+        val res = scimProvisioner.create(authentication, credential, registeredService);
+        val msg = String.format("Provisioning of principal %s is%s done successfully", principal,
             BooleanUtils.toString(res, StringUtils.EMPTY, " not"));
         LOGGER.debug(msg);
         return success();
