@@ -25,6 +25,6 @@ public class JsonResourceWebAuthnCredentialRepositoryTests extends BaseWebAuthnC
 
     @AfterAll
     public static void cleanUp() {
-        FileUtils.deleteQuietly(new File(FileUtils.getTempDirectory(),"webauthn-devices.json"));
+        FileUtils.deleteQuietly(new File(FileUtils.getTempDirectory(), "webauthn-devices.json"));
     }
 }
