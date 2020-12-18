@@ -1,7 +1,6 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
 import org.apereo.cas.support.saml.BaseRedisSamlMetadataTests;
-import org.apereo.cas.support.saml.metadata.resolver.RedisSamlRegisteredServiceMetadataResolver;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
@@ -17,7 +16,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link RedisSamlIdPMetadataGeneratorTests}.

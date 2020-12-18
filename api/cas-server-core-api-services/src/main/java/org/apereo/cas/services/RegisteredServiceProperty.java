@@ -184,7 +184,6 @@ public interface RegisteredServiceProperty extends Serializable {
          * Whether CAS should inject xss protection headers into the response when this service is in process.
          */
         HTTP_HEADER_ENABLE_XSS_PROTECTION("httpHeaderEnableXSSProtection", "true"),
-
         /**
          * Whether CAS should allow credentials in CORS requests.
          */
@@ -208,7 +207,23 @@ public interface RegisteredServiceProperty extends Serializable {
         /**
          * Define exposed headers in the response for CORS requests.
          */
-        CORS_EXPOSED_HEADERS("corsExposedHeaders", StringUtils.EMPTY);
+        CORS_EXPOSED_HEADERS("corsExposedHeaders", StringUtils.EMPTY),
+        /**
+         * Define SCIM oauth token.
+         */
+        SCIM_OAUTH_TOKEN("scimOAuthToken", StringUtils.EMPTY),
+        /**
+         * Define SCIM username.
+         */
+        SCIM_USERNAME("scimUsername", StringUtils.EMPTY),
+        /**
+         * Define SCIM password.
+         */
+        SCIM_PASSWORD("scimPassword", StringUtils.EMPTY),
+        /**
+         * Define SCIM target.
+         */
+        SCIM_TARGET("scimTarget", StringUtils.EMPTY);
 
         private final String propertyName;
 
