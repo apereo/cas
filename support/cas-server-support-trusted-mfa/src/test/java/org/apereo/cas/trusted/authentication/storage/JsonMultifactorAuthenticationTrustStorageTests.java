@@ -5,7 +5,6 @@ import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.val;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -25,7 +24,6 @@ import java.io.File;
 @TestPropertySource(properties = "cas.authn.mfa.trusted.json.location=file:${java.io.tmpdir}/trusted-device.json")
 @Tag("FileSystem")
 @Getter
-@Slf4j
 public class JsonMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorAuthenticationTrustStorageTests {
 
     @BeforeAll
