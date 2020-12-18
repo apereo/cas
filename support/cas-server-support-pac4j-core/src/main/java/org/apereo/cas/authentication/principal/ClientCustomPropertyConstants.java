@@ -10,15 +10,15 @@ public interface ClientCustomPropertyConstants {
     /**
      * Property to indicate the principal attribute used for profile creation.
      */
-    String CLIENT_CUSTOM_PROPERTY_PRINCIPAL_ATTRIBUTE_ID = "principalAttributeId";
+    String CLIENT_CUSTOM_PROPERTY_PRINCIPAL_ATTRIBUTE_ID = "principal-attribute-id";
 
     /**
      * Property to indicate whether auto-redirect should execute for this client.
      */
-    String CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT = "autoRedirect";
+    String CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT = "auto-redirect";
 
     /**
      * CSS class assigned to this client to be used in the UI.
      */
-    String CLIENT_CUSTOM_PROPERTY_CSS_CLASS = "cssClass";
+    String CLIENT_CUSTOM_PROPERTY_CSS_CLASS = "css-class";
 }
