@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.scim.ScimProperties;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.util.LoggingUtils;
 
 import com.unboundid.scim2.client.ScimService;
@@ -95,13 +96,32 @@ public class ScimV2PrincipalProvisioner implements PrincipalProvisioner {
         val config = new ClientConfig();
         val client = ClientBuilder.newClient(config);
 
-        if (StringUtils.isNotBlank(scimProperties.getOauthToken())) {
-            client.register(OAuth2ClientSupport.feature(scimProperties.getOauthToken()));
+        var token = scimProperties.getOauthToken();
+        if (RegisteredServiceProperties.SCIM_OAUTH_TOKEN.isAssignedTo(registeredService)) {
+            token = RegisteredServiceProperties.SCIM_OAUTH_TOKEN.getPropertyValue(registeredService).getValue();
         }
-        if (StringUtils.isNotBlank(scimProperties.getUsername()) && StringUtils.isNotBlank(scimProperties.getPassword())) {
-            client.register(HttpAuthenticationFeature.basic(scimProperties.getUsername(), scimProperties.getPassword()));
+        if (StringUtils.isNotBlank(token)) {
+            client.register(OAuth2ClientSupport.feature(token));
         }
-        val webTarget = client.target(scimProperties.getTarget());
+
+        var username = scimProperties.getUsername();
+        if (RegisteredServiceProperties.SCIM_USERNAME.isAssignedTo(registeredService)) {
+            username = RegisteredServiceProperties.SCIM_USERNAME.getPropertyValue(registeredService).getValue();
+        }
+        var password = scimProperties.getPassword();
+        if (RegisteredServiceProperties.SCIM_PASSWORD.isAssignedTo(registeredService)) {
+            password = RegisteredServiceProperties.SCIM_PASSWORD.getPropertyValue(registeredService).getValue();
+        }
+        if (StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password)) {
+            client.register(HttpAuthenticationFeature.basic(username, password));
+        }
+
+        var target = scimProperties.getTarget();
+        if (RegisteredServiceProperties.SCIM_TARGET.isAssignedTo(registeredService)) {
+            target = RegisteredServiceProperties.SCIM_TARGET.getPropertyValue(registeredService).getValue();
+        }
+        val webTarget = client.target(target);
+
         return new ScimService(webTarget);
     }
 }

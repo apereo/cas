@@ -47,8 +47,8 @@ A sample JSON file follows:
 Cross-origin resource sharing (CORS) policies can also be defined per application in form of service properties. The
 following properties are supported:
 
-| Header                    | Description
-|-----------------------|-----------------------------------------------------------------------
+| Name                      | Description
+|---------------------------|-----------------------------------------------------------------------
 | `corsAllowCredentials`    | Whether user credentials are supported. 
 | `corsMaxAge`              | Configure how long, as a duration, the response from a pre-flight request can be cached by clients. 
 | `corsAllowedOrigins`      | Set the origins to allow. The special value `*` allows all domains.
