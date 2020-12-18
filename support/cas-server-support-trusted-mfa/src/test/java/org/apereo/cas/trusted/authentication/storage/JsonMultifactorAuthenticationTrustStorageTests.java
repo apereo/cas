@@ -5,6 +5,7 @@ import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.val;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -13,8 +14,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 
 import java.io.File;
-import java.io.IOException;
-
 
 /**
  * This is {@link JsonMultifactorAuthenticationTrustStorageTests}.
@@ -26,6 +25,7 @@ import java.io.IOException;
 @TestPropertySource(properties = "cas.authn.mfa.trusted.json.location=file:${java.io.tmpdir}/trusted-device.json")
 @Tag("FileSystem")
 @Getter
+@Slf4j
 public class JsonMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorAuthenticationTrustStorageTests {
 
     @BeforeAll
@@ -40,10 +40,13 @@ public class JsonMultifactorAuthenticationTrustStorageTests extends AbstractMult
         deleteJsonFile();
     }
 
-    private static void deleteJsonFile() throws IOException {
+    /**
+     * Cleanup json file before and after test, quietly because of errors on Windows.
+     */
+    private static void deleteJsonFile() {
         val file = new File(FileUtils.getTempDirectory(), "trusted-device.json");
         if (file.exists()) {
-            FileUtils.forceDelete(file);
+            FileUtils.deleteQuietly(file);
         }
     }
 }

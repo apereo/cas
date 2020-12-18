@@ -41,7 +41,6 @@ import static org.mockito.Mockito.*;
 
 /**
  * This is {@link GitServiceRegistryTests}.
- * When running on Windows, needs -Dtmpdir=c:/tmp - java.io.tmpdir doesn't work b/c slashes need to be forward.
  * @author Misagh Moayyed
  * @since 6.1.0
  */
