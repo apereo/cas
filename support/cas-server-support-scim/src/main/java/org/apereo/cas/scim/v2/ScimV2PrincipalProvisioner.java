@@ -4,10 +4,13 @@ import org.apereo.cas.api.PrincipalProvisioner;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.configuration.model.support.scim.ScimProperties;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.LoggingUtils;
 
 import com.unboundid.scim2.client.ScimService;
 import com.unboundid.scim2.common.types.UserResource;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -25,37 +28,24 @@ import javax.ws.rs.client.ClientBuilder;
  * @since 5.1.0
  */
 @Slf4j
+@RequiredArgsConstructor
 public class ScimV2PrincipalProvisioner implements PrincipalProvisioner {
 
-    private final ScimService scimService;
+    private final ScimProperties scimProperties;
+
     private final ScimV2PrincipalAttributeMapper mapper;
 
-    public ScimV2PrincipalProvisioner(final String target, final String oauthToken,
-                                      final String username, final String password,
-                                      final ScimV2PrincipalAttributeMapper mapper) {
-        val config = new ClientConfig();
-        val client = ClientBuilder.newClient(config);
-
-        if (StringUtils.isNotBlank(oauthToken)) {
-            client.register(OAuth2ClientSupport.feature(oauthToken));
-        }
-        if (StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password)) {
-            client.register(HttpAuthenticationFeature.basic(username, password));
-        }
-
-        val webTarget = client.target(target);
-        this.scimService = new ScimService(webTarget);
-        this.mapper = mapper;
-    }
-
     @Override
-    public boolean create(final Authentication auth, final Principal p, final Credential credential) {
+    public boolean create(final Authentication auth, final Credential credential,
+                          final RegisteredService registeredService) {
         try {
-            val currentUser = scimService.retrieve("Users", p.getId(), UserResource.class);
+            val principal = auth.getPrincipal();
+            val currentUser = getScimService(registeredService)
+                .retrieve("Users", principal.getId(), UserResource.class);
             if (currentUser != null) {
-                return updateUserResource(currentUser, p, credential);
+                return updateUserResource(currentUser, principal, credential, registeredService);
             }
-            return createUserResource(p, credential);
+            return createUserResource(principal, credential, registeredService);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
@@ -65,29 +55,53 @@ public class ScimV2PrincipalProvisioner implements PrincipalProvisioner {
     /**
      * Update user resource boolean.
      *
-     * @param user       the user
-     * @param p          the p
-     * @param credential the credential
-     * @return true/false
+     * @param user              the user
+     * @param principal         the principal
+     * @param credential        the credential
+     * @param registeredService the registered service
+     * @return true /false
      */
     @SneakyThrows
-    protected boolean updateUserResource(final UserResource user, final Principal p,
-                                         final Credential credential) {
-        this.mapper.map(user, p, credential);
-        return scimService.replace(user) != null;
+    protected boolean updateUserResource(final UserResource user, final Principal principal,
+                                         final Credential credential,
+                                         final RegisteredService registeredService) {
+        this.mapper.map(user, principal, credential);
+        return getScimService(registeredService).replace(user) != null;
     }
 
     /**
      * Create user resource boolean.
      *
-     * @param p          the p
-     * @param credential the credential
-     * @return true/false
+     * @param principal         the principal
+     * @param credential        the credential
+     * @param registeredService the registered service
+     * @return true /false
      */
     @SneakyThrows
-    protected boolean createUserResource(final Principal p, final Credential credential) {
+    protected boolean createUserResource(final Principal principal, final Credential credential,
+                                         final RegisteredService registeredService) {
         val user = new UserResource();
-        this.mapper.map(user, p, credential);
-        return scimService.create("Users", user) != null;
+        this.mapper.map(user, principal, credential);
+        return getScimService(registeredService).create("Users", user) != null;
+    }
+
+    /**
+     * Gets scim service.
+     *
+     * @param registeredService the registered service
+     * @return the scim service
+     */
+    protected ScimService getScimService(final RegisteredService registeredService) {
+        val config = new ClientConfig();
+        val client = ClientBuilder.newClient(config);
+
+        if (StringUtils.isNotBlank(scimProperties.getOauthToken())) {
+            client.register(OAuth2ClientSupport.feature(scimProperties.getOauthToken()));
+        }
+        if (StringUtils.isNotBlank(scimProperties.getUsername()) && StringUtils.isNotBlank(scimProperties.getPassword())) {
+            client.register(HttpAuthenticationFeature.basic(scimProperties.getUsername(), scimProperties.getPassword()));
+        }
+        val webTarget = client.target(scimProperties.getTarget());
+        return new ScimService(webTarget);
     }
 }

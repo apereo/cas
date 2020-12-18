@@ -34,6 +34,8 @@ public class RegisteredServiceCorsConfigurationSource implements CorsConfigurati
         val config = new CorsConfiguration();
 
         val service = argumentExtractor.extractService(request);
+        LOGGER.trace("Extracted service [{}] from the request", service);
+
         val registeredService = servicesManager.findServiceBy(service);
 
         config.setAllowCredentials(cors.isAllowCredentials());
@@ -78,6 +80,7 @@ public class RegisteredServiceCorsConfigurationSource implements CorsConfigurati
                 }
             }
         }
+
         return config;
     }
 }
