@@ -263,6 +263,21 @@ public class HazelcastClusterProperties implements Serializable {
     private String publicAddress;
 
     /**
+     * You can specify which network interfaces that Hazelcast should use.
+     * Servers mostly have more than one network interface, so you may want to
+     * list the valid IPs. Range characters ('*' and '-') can be used for simplicity.
+     * For instance, 10.3.10.* refers to IPs between 10.3.10.0 and 10.3.10.255.
+     * Interface 10.3.10.4-18 refers to IPs between 10.3.10.4 and
+     * 10.3.10.18 (4 and 18 included). If network interface configuration
+     * is enabled (it is disabled by default) and if Hazelcast cannot find
+     * an matching interface, then it will print a message on
+     * the console and will not start on that node.
+     *
+     * Interfaces can be separated by a comma.
+     */
+    private String networkInterfaces;
+
+    /**
      * Describe discovery strategies for Hazelcast.
      */
     @NestedConfigurationProperty

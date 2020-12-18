@@ -95,6 +95,12 @@ public class HazelcastConfigurationFactory {
             .setPort(cluster.getPort())
             .setPortAutoIncrement(cluster.isPortAutoIncrement());
 
+        if (StringUtils.hasText(cluster.getNetworkInterfaces())) {
+            networkConfig.getInterfaces().setEnabled(true);
+            StringUtils.commaDelimitedListToSet(cluster.getNetworkInterfaces())
+                .forEach(faceIp -> networkConfig.getInterfaces().addInterface(faceIp));
+        }
+        
         if (StringUtils.hasText(cluster.getLocalAddress())) {
             config.setProperty(BaseHazelcastProperties.HAZELCAST_LOCAL_ADDRESS_PROP, cluster.getLocalAddress());
         }
