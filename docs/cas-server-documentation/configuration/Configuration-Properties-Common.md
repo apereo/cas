@@ -561,6 +561,7 @@ More advanced Hazelcast configuration settings are listed below, given the compo
 
 # ${configurationKey}.cluster.local-address=
 # ${configurationKey}.cluster.public-address=
+# ${configurationKey}.cluster.network-interfaces=1,2,3,4
 
 # ${configurationKey}.cluster.outbound-ports[0]=45000
 ```
