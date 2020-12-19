@@ -92,6 +92,7 @@ jobs:
           java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+        shell: bash
       - uses: actions/cache@v2
         with:
           path: ~/.gradle/caches
@@ -600,6 +601,7 @@ jobs:
           java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+        shell: bash
       - name: Initialize Windows
         run: sc stop MongoDB
         if: matrix.os == 'windows-latest'
