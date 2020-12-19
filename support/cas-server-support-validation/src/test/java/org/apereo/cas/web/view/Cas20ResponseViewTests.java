@@ -91,7 +91,7 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
 
     @Test
     public void verifyValidationFailsInvalidTicket() throws Exception {
-        val service = CoreAuthenticationTestUtils.getService(UUID.randomUUID().toString());
+        val service = CoreAuthenticationTestUtils.getWebApplicationService(UUID.randomUUID().toString());
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService(service.getId());
         getServicesManager().save(registeredService);
         when(registeredService.getProxyPolicy()).thenReturn(new RefuseRegisteredServiceProxyPolicy());
@@ -107,7 +107,7 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
 
     @Test
     public void verifyValidationTicketAuthzFails() throws Exception {
-        val service = CoreAuthenticationTestUtils.getService("not-authorized");
+        val service = CoreAuthenticationTestUtils.getWebApplicationService("not-authorized");
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId());
         registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy());
         getServicesManager().save(registeredService);
@@ -127,7 +127,7 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
 
     @Test
     public void verifyValidationFailsBadProxy() throws Exception {
-        val service = CoreAuthenticationTestUtils.getService(UUID.randomUUID().toString());
+        val service = CoreAuthenticationTestUtils.getWebApplicationService(UUID.randomUUID().toString());
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId());
         registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy());
         registeredService.setMatchingStrategy(new PartialRegexRegisteredServiceMatchingStrategy());
@@ -149,7 +149,7 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
 
     @Test
     public void verifyValidationFailsBadAccess() throws Exception {
-        val service = CoreAuthenticationTestUtils.getService(UUID.randomUUID().toString());
+        val service = CoreAuthenticationTestUtils.getWebApplicationService(UUID.randomUUID().toString());
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId());
         registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(true, true));
         registeredService.setMatchingStrategy(new PartialRegexRegisteredServiceMatchingStrategy());

@@ -110,7 +110,7 @@ public class FunctionUtilsTests {
     @Test
     public void verifyDoAndHandle2() {
         var supplier = FunctionUtils.doAndHandle(
-            new Supplier<Object>() {
+            new Supplier<>() {
                 @Override
                 public Object get() {
                     throw new IllegalArgumentException();
@@ -120,7 +120,7 @@ public class FunctionUtilsTests {
             });
         assertThrows(IllegalArgumentException.class, supplier::get);
         supplier = FunctionUtils.doAndHandle(
-            new Supplier<Object>() {
+            new Supplier<>() {
                 @Override
                 public Object get() {
                     throw new IllegalArgumentException();

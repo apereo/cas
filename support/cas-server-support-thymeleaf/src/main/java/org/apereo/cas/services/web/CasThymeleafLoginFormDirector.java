@@ -26,7 +26,8 @@ public class CasThymeleafLoginFormDirector {
      */
     public boolean isLoginFormViewable(final WebEngineContext vars) {
         val context = RequestContextHolder.getRequestContext();
-        return context != null && WebUtils.getDelegatedAuthenticationProviderPrimary(context) == null
+        return context != null
+            && WebUtils.getDelegatedAuthenticationProviderPrimary(context) == null
             && WebUtils.isCasLoginFormViewable(context);
     }
 

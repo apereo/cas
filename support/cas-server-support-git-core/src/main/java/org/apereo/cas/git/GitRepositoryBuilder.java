@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.support.git.services.BaseGitProperties
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.jcraft.jsch.JSch;
@@ -26,7 +27,6 @@ import org.eclipse.jgit.util.FS;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StringUtils;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -63,6 +63,8 @@ public class GitRepositoryBuilder {
 
     private final boolean strictHostKeyChecking;
 
+    private final boolean clearExistingIdentities;
+
     private static String getBranchPath(final String branchName) {
         return "refs/heads/" + branchName;
     }
@@ -85,6 +87,7 @@ public class GitRepositoryBuilder {
             .sshSessionPassword(props.getSshSessionPassword())
             .timeoutInSeconds(Beans.newDuration(props.getTimeout()).toSeconds())
             .signCommits(props.isSignCommits())
+            .clearExistingIdentities(props.isClearExistingIdentities())
             .strictHostKeyChecking(props.isStrictHostKeyChecking());
         if (StringUtils.hasText(props.getUsername())) {
             val providers = CollectionUtils.wrapList(
@@ -93,10 +96,9 @@ public class GitRepositoryBuilder {
             builder.credentialsProviders(providers);
         }
         if (props.getPrivateKey().getLocation() != null) {
-            try {
-                builder.privateKeyPath(props.getPrivateKey().getLocation().getFile().getCanonicalPath());
-            } catch (final IOException e) {
-                LOGGER.warn("Error reading private key for git repository: {}", e.getMessage());
+            val resource = ResourceUtils.prepareClasspathResourceIfNeeded(props.getPrivateKey().getLocation());
+            if (resource != null && resource.exists()) {
+                builder.privateKeyPath(resource.getFile().getCanonicalPath());
             }
         }
         return builder.build();
@@ -122,6 +124,10 @@ public class GitRepositoryBuilder {
             @Override
             protected JSch createDefaultJSch(final FS fs) throws JSchException {
                 val defaultJSch = super.createDefaultJSch(fs);
+                if (clearExistingIdentities) {
+                    defaultJSch.removeAllIdentity();
+                }
+
                 if (StringUtils.hasText(privateKeyPath)) {
                     defaultJSch.addIdentity(privateKeyPath, privateKeyPassphrase);
                 }

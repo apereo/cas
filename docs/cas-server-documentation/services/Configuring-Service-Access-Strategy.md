@@ -380,7 +380,7 @@ You will also need to ensure `grouper.client.properties` is available on the cla
 with the following configured properties:
 
 ```properties
-grouperClient.webService.url = http://192.168.99.100:32768/grouper-ws/servicesRest
+grouperClient.webService.url = http://grouper.example.com/grouper-ws/servicesRest
 grouperClient.webService.login = banderson
 grouperClient.webService.password = password
 ```
@@ -401,6 +401,26 @@ Grouper access strategy based on group's display extension:
     "requiredAttributes" : {
       "@class" : "java.util.HashMap",
       "grouperAttributes" : [ "java.util.HashSet", [ "faculty" ] ]
+    },
+    "groupField" : "DISPLAY_EXTENSION"
+  }
+}
+```
+      
+While the `grouper.client.properties` is a hard requirement and must be presented, configuration properties can always be assigned to the strategy
+to override the defaults: 
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "^https://.+",
+  "name" : "test",
+  "id" : 62,
+  "accessStrategy" : {
+    "@class" : "org.apereo.cas.grouper.services.GrouperRegisteredServiceAccessStrategy",
+    "configProperties" : {
+      "@class" : "java.util.HashMap",
+      "grouperClient.webService.url" : "http://grouper.example.com/grouper-ws/servicesRest"
     },
     "groupField" : "DISPLAY_EXTENSION"
   }

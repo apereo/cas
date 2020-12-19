@@ -34,7 +34,8 @@ public class Cas30ResponseView extends Cas20ResponseView {
 
     @Override
     protected void prepareMergedOutputModel(final Map<String, Object> model, final HttpServletRequest request,
-                                            final HttpServletResponse response) throws Exception {
+                                            final HttpServletResponse response)
+        throws Exception {
         super.prepareMergedOutputModel(model, request, response);
         prepareCasResponseAttributesForViewModel(model);
     }

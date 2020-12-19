@@ -33,6 +33,6 @@ public class SamlResponseAuditPrincipalIdProvider extends DefaultAuditPrincipalI
 
     @Override
     public boolean supports(final Authentication authentication, final Object resultValue, final Exception exception) {
-        return resultValue != null && resultValue instanceof Response;
+        return resultValue instanceof Response;
     }
 }

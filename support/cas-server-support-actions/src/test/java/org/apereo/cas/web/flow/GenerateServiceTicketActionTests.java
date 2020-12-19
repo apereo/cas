@@ -42,7 +42,7 @@ public class GenerateServiceTicketActionTests extends AbstractWebflowActionsTest
     @BeforeEach
     public void onSetUp() {
         val authnResult = getAuthenticationSystemSupport()
-            .handleAndFinalizeSingleAuthenticationTransaction(CoreAuthenticationTestUtils.getService(),
+            .handleAndFinalizeSingleAuthenticationTransaction(CoreAuthenticationTestUtils.getWebApplicationService(),
                 CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
 
         this.ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(authnResult);

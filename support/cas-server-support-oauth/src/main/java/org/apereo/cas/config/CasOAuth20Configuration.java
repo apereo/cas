@@ -309,7 +309,7 @@ public class CasOAuth20Configuration {
         val clientList = new ArrayList<Client>();
 
         val beans = applicationContext.getBeansOfType(OAuthAuthenticationClientProvider.class, false, true);
-        val providers = new ArrayList<OAuthAuthenticationClientProvider>(beans.values());
+        val providers = new ArrayList<>(beans.values());
         AnnotationAwareOrderComparator.sort(providers);
 
         providers.forEach(p -> clientList.add(p.createClient()));

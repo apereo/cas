@@ -46,6 +46,10 @@ public class CasJavaClientProperties implements Serializable {
         /**
          * CAS30 ticket validator.
          */
-        CAS30
+        CAS30,
+        /**
+         * JSON ticket validator.
+         */
+        JSON
     }
 }

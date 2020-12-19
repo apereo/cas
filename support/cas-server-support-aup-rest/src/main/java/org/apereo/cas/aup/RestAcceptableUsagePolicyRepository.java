@@ -62,12 +62,9 @@ public class RestAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
                 new HashMap<>(0));
             val statusCode = response.getStatusLine().getStatusCode();
             return HttpStatus.valueOf(statusCode).is2xxSuccessful();
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }
-        return false;
     }
 
     @Override

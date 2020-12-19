@@ -35,6 +35,8 @@ import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -111,7 +113,7 @@ public class JsonResourcePasswordManagementServiceTests {
     public void verifyUserQuestionsCanBeFound() {
         val questions = passwordChangeService.getSecurityQuestions("casuser");
         assertEquals(2, questions.size());
-
+        assertTrue(passwordChangeService.getSecurityQuestions(UUID.randomUUID().toString()).isEmpty());
     }
 
     @Test
@@ -122,6 +124,24 @@ public class JsonResourcePasswordManagementServiceTests {
         bean.setPassword("newPassword");
         val res = passwordChangeService.change(c, bean);
         assertTrue(res);
+    }
+
+    @Test
+    public void verifyUserPasswordChangeFail() {
+        val c = new UsernamePasswordCredential("casuser", "password");
+        val bean = new PasswordChangeRequest();
+        bean.setConfirmedPassword("newPassword");
+        var res = passwordChangeService.change(c, bean);
+        assertFalse(res);
+        bean.setConfirmedPassword("newPassword");
+        bean.setPassword("unknown");
+        res = passwordChangeService.change(c, bean);
+        assertFalse(res);
+
+        bean.setPassword(bean.getConfirmedPassword());
+        c.setUsername(UUID.randomUUID().toString());
+        res = passwordChangeService.change(c, bean);
+        assertFalse(res);
     }
 
     @Test

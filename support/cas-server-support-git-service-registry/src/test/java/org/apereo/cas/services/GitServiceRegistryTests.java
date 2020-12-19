@@ -6,26 +6,36 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.GitServiceRegistryConfiguration;
 import org.apereo.cas.configuration.model.support.git.services.GitServiceRegistryProperties;
+import org.apereo.cas.git.GitRepository;
+import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
+import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.RandomUtils;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.errors.JGitInternalException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link GitServiceRegistryTests}.
@@ -55,6 +65,13 @@ public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
     private static String TMPDIR = "/tmp";
 
     @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
+    @Autowired
+    @Qualifier("gitServiceRegistryRepositoryInstance")
+    private GitRepository gitRepositoryInstance;
+
+    @Autowired
     @Qualifier("serviceRegistry")
     private ServiceRegistry newServiceRegistry;
 
@@ -80,6 +97,26 @@ public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
             LoggingUtils.error(LOGGER, e);
             fail(e.getMessage(), e);
         }
+    }
+
+    @Test
+    public void verifyPullFails() {
+        val gitRepository = mock(GitRepository.class);
+        when(gitRepository.getObjectsInRepository()).thenThrow(new JGitInternalException("error"));
+        when(gitRepository.getObjectsInRepository(any())).thenThrow(new JGitInternalException("error"));
+        when(gitRepository.getRepositoryDirectory()).thenReturn(gitRepositoryInstance.getRepositoryDirectory());
+        
+        val svc = buildRegisteredServiceInstance(RandomUtils.nextLong(), RegexRegisteredService.class);
+        svc.setId(RegisteredService.INITIAL_IDENTIFIER_VALUE);
+        newServiceRegistry.save(svc);
+        val size = newServiceRegistry.load().size();
+        
+        val registry = new GitServiceRegistry(applicationContext, gitRepository,
+            CollectionUtils.wrapList(
+                new RegisteredServiceJsonSerializer(),
+                new RegisteredServiceYamlSerializer()),
+            false, List.of(), List.of());
+        assertEquals(size, registry.load().size());
     }
 
     @AfterAll

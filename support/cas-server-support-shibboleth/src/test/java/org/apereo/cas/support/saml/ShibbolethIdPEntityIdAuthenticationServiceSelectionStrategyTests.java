@@ -32,6 +32,13 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.Ordered;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockServletContext;
+import org.springframework.webflow.context.ExternalContextHolder;
+import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.webflow.execution.RequestContextHolder;
+import org.springframework.webflow.test.MockRequestContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,6 +101,27 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategyTests {
             "https://cas.example.com/login?service=" + serviceUrl);
         val result = shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy.resolveServiceFrom(svc);
         assertEquals("https://service.example.com", result.getId());
+    }
+
+    @Test
+    public void verifyQueryStrings() {
+        val svc = RegisteredServiceTestUtils.getService("https://www.example.org?name=value");
+        val context = new MockRequestContext();
+
+        val request = new MockHttpServletRequest();
+        request.setQueryString("entityId=https://idp.example.org");
+
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        RequestContextHolder.setRequestContext(context);
+        ExternalContextHolder.setExternalContext(context.getExternalContext());
+
+        var result = shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy.resolveServiceFrom(svc);
+        assertEquals("https://idp.example.org", result.getId());
+
+        val svc2 = RegisteredServiceTestUtils.getService("_ _");
+        result = shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy.resolveServiceFrom(svc2);
+        assertEquals("_ _", result.getId());
     }
 
     @TestConfiguration

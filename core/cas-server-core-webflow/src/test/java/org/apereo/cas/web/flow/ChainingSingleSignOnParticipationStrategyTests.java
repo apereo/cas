@@ -10,6 +10,8 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.test.MockRequestContext;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -31,6 +33,17 @@ public class ChainingSingleSignOnParticipationStrategyTests {
         chain.addStrategy(SingleSignOnParticipationStrategy.alwaysParticipating());
         chain.addStrategy(SingleSignOnParticipationStrategy.neverParticipating());
         assertFalse(chain.isParticipating(context));
+    }
+
+    @Test
+    public void verifyEmptyChain() {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        val chain = new ChainingSingleSignOnParticipationStrategy();
+        chain.addStrategy(List.of());
+        assertTrue(chain.isParticipating(context));
     }
 
     @Test

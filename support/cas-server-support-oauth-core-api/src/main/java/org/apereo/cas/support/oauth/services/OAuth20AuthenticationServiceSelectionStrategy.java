@@ -12,6 +12,7 @@ import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.LoggingUtils;
 
 import lombok.Getter;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
@@ -73,8 +74,9 @@ public class OAuth20AuthenticationServiceSelectionStrategy extends BaseAuthentic
     public boolean supports(final Service service) {
         val svc = getServicesManager().findServiceBy(service);
         val res = svc != null && service.getId().startsWith(this.callbackUrl);
-        LOGGER.trace("Authentication request is{} identified as an OAuth request",
+        val msg = String.format("Authentication request is%s identified as an OAuth request",
             BooleanUtils.toString(res, StringUtils.EMPTY, " not"));
+        LOGGER.trace(msg);
         return res;
     }
 
@@ -91,29 +93,21 @@ public class OAuth20AuthenticationServiceSelectionStrategy extends BaseAuthentic
         return Optional.empty();
     }
 
+    @SneakyThrows
     private static Optional<NameValuePair> resolveRedirectUri(final Service service) {
-        try {
-            val builder = new URIBuilder(service.getId());
-            return builder.getQueryParams()
-                .stream()
-                .filter(p -> p.getName().equals(OAuth20Constants.REDIRECT_URI))
-                .findFirst();
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return Optional.empty();
+        val builder = new URIBuilder(service.getId());
+        return builder.getQueryParams()
+            .stream()
+            .filter(p -> p.getName().equals(OAuth20Constants.REDIRECT_URI))
+            .findFirst();
     }
 
+    @SneakyThrows
     private static Optional<NameValuePair> resolveGrantType(final Service service) {
-        try {
-            val builder = new URIBuilder(service.getId());
-            return builder.getQueryParams()
-                .stream()
-                .filter(p -> p.getName().equals(OAuth20Constants.GRANT_TYPE))
-                .findFirst();
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return Optional.empty();
+        val builder = new URIBuilder(service.getId());
+        return builder.getQueryParams()
+            .stream()
+            .filter(p -> p.getName().equals(OAuth20Constants.GRANT_TYPE))
+            .findFirst();
     }
 }

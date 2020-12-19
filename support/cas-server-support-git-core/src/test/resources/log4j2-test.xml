@@ -8,7 +8,8 @@
     <Loggers>
         <Logger name="org.apereo" level="warn" />
         <Logger name="org.apereo.cas.git" level="warn" />
-        <Logger name="org.eclipse.jgit" level="warn" />
+        <Logger name="org.eclipse.jgit" level="debug" />
+        <Logger name="com.jcraft.jsch" level="trace" />
         <Root level="off">
             <AppenderRef ref="console"/>
         </Root>

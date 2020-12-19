@@ -99,9 +99,10 @@ public class PasswordEncoderUtils {
                 return new Pbkdf2PasswordEncoder(properties.getSecret(), properties.getStrength(), HASH_WIDTH);
             case GLIBC_CRYPT:
                 val hasSecret = StringUtils.isNotBlank(properties.getSecret());
-                LOGGER.debug("Creating glibc CRYPT encoder with encoding alg [{}], strength [{}] and {}secret",
+                val msg = String.format("Creating glibc CRYPT encoder with encoding alg [%s], strength [%s] and %ssecret",
                     properties.getEncodingAlgorithm(), properties.getStrength(),
                     BooleanUtils.toString(hasSecret, StringUtils.EMPTY, "without "));
+                LOGGER.debug(msg);
                 return new GlibcCryptPasswordEncoder(properties.getEncodingAlgorithm(), properties.getStrength(), properties.getSecret());
             case NONE:
             default:

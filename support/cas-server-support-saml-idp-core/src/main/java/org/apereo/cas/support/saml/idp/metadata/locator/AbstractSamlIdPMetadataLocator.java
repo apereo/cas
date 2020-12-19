@@ -57,7 +57,7 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
         }
         val samlRegisteredService = registeredService.get();
         val key = CACHE_KEY_METADATA + '_' + samlRegisteredService.getId() + '_' + samlRegisteredService.getName();
-        LOGGER.trace("Using {} as cache key for metadata for service definition", key);
+        LOGGER.trace("Using [{}] as cache key for metadata for service definition", key);
         return key;
     }
 

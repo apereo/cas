@@ -1,6 +1,7 @@
 package org.apereo.cas.tomcat;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheSslHostConfigProperties;
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatClusteringProperties;
 import org.apereo.cas.util.function.FunctionUtils;
 
@@ -8,6 +9,7 @@ import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.AprLifecycleListener;
 import org.apache.catalina.ha.session.BackupManager;
 import org.apache.catalina.ha.session.ClusterManagerBase;
@@ -30,6 +32,8 @@ import org.apache.catalina.tribes.transport.nio.NioReceiver;
 import org.apache.catalina.tribes.transport.nio.PooledParallelSender;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.coyote.http11.Http11AprProtocol;
+import org.apache.tomcat.util.net.SSLHostConfig;
+import org.apache.tomcat.util.net.SSLHostConfigCertificate;
 import org.jooq.lambda.Unchecked;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
@@ -70,7 +74,8 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
     private void configureConnectorForApr() {
         val apr = casProperties.getServer().getTomcat().getApr();
         if (apr.isEnabled()) {
-            LOGGER.trace("Attempting to initialize APR protocol via [{}] for port [{}]", Http11AprProtocol.class.getName(), getPort());
+            LOGGER.trace("Attempting to initialize APR protocol via [{}] for port [{}]",
+                Http11AprProtocol.class.getName(), getPort());
             val arpLifecycle = new AprLifecycleListener();
             setProtocol(Http11AprProtocol.class.getName());
             addContextLifecycleListeners(arpLifecycle);
@@ -79,6 +84,10 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
                     LOGGER.debug("Enabling APR on connector port [{}]", c.getPort());
                     c.setSecure(true);
                     c.setScheme("https");
+
+                    if (apr.getSslHostConfig().isEnabled()) {
+                        configureConnectorForSslHostConfig(c, apr.getSslHostConfig());
+                    }
 
                     val handler = (Http11AprProtocol) c.getProtocolHandler();
                     handler.setSSLEnabled(true);
@@ -105,7 +114,7 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
 
                     FunctionUtils.doIfNotNull(apr.getSslCertificateFile(),
                         Unchecked.consumer(f -> handler.setSSLCertificateFile(apr.getSslCertificateFile().getCanonicalPath())));
-                    
+
                     FunctionUtils.doIfNotNull(apr.getSslCertificateKeyFile(),
                         Unchecked.consumer(f -> handler.setSSLCertificateKeyFile(apr.getSslCertificateKeyFile().getCanonicalPath())));
 
@@ -216,6 +225,31 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
         val backupManager = new BackupManager();
         backupManager.setNotifyListenersOnReplication(true);
         return backupManager;
+    }
+
+    private static void configureConnectorForSslHostConfig(final Connector c,
+        final CasEmbeddedApacheSslHostConfigProperties properties) {
+
+        val hostConfig = new SSLHostConfig();
+        hostConfig.setCertificateVerification(properties.getCertificateVerification());
+        hostConfig.setCertificateVerificationDepth(properties.getCertificateVerificationDepth());
+        hostConfig.setHostName(properties.getHostName());
+        hostConfig.setProtocols(properties.getProtocols());
+        hostConfig.setSslProtocol(properties.getSslProtocol());
+        hostConfig.setCaCertificateFile(properties.getCaCertificateFile());
+        hostConfig.setInsecureRenegotiation(properties.isInsecureRenegotiation());
+        hostConfig.setRevocationEnabled(properties.isRevocationEnabled());
+
+        properties.getCertificates().forEach(cert -> {
+            val certificate = new SSLHostConfigCertificate(hostConfig,
+                SSLHostConfigCertificate.Type.valueOf(cert.getType().trim().toUpperCase()));
+            certificate.setCertificateChainFile(cert.getCertificateChainFile());
+            certificate.setCertificateFile(cert.getCertificateFile());
+            certificate.setCertificateKeyFile(cert.getCertificateKeyFile());
+            certificate.setCertificateKeyPassword(cert.getCertificateKeyPassword());
+            hostConfig.addCertificate(certificate);
+        });
+        c.addSslHostConfig(hostConfig);
     }
 
     @Getter

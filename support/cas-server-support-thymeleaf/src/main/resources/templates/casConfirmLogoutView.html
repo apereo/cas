@@ -11,7 +11,7 @@
 
 <body>
 <main role="main" class="container mt-3 mb-3">
-    <div layout:fragment="content" class="mdc-card p-4 m-auto w-lg-66">
+    <div id="content" layout:fragment="content" class="mdc-card p-4 m-auto w-lg-66">
         <h2 th:utext="#{screen.logout.confirm.header}">Do you want to log out completely?</h2>
         <p th:remove="tag" th:utext="#{screen.logout.confirm.text}">An application may have redirected you to the Central
             Authentication Service \
@@ -24,7 +24,7 @@
             <input type="hidden" name="LogoutRequestConfirmed" value="true" />
             <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
             <input type="hidden" name="_eventId" value="success" />
-            <button class="mdc-button mdc-button--raised" name="success" accesskey="l">
+            <button id="logoutButton" class="mdc-button mdc-button--raised" name="success" accesskey="l">
                 <span class="mdc-button__label" th:text="#{screen.welcome.button.logout}">Logout</span>
             </button>
         </form>

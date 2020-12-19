@@ -25,7 +25,7 @@ public class JwtTokenTicketBuilderWithoutCryptoTests extends BaseJwtTokenTicketB
 
     @Test
     public void verifyJwtForServiceTicketEncoding() throws Exception {
-        val jwt = tokenTicketBuilder.build("ST-123456", CoreAuthenticationTestUtils.getService());
+        val jwt = tokenTicketBuilder.build("ST-123456", CoreAuthenticationTestUtils.getWebApplicationService());
         assertNotNull(jwt);
         val claims = JWTParser.parse(jwt).getJWTClaimsSet();
         assertEquals("casuser", claims.getSubject());
