@@ -1,3 +1,5 @@
+import java.time.Duration
+
 enum TestCategories {
     Kafka,
     Logout,
@@ -596,6 +598,7 @@ if (hasTestsOfCategory(project, TestCategories.Mail.name())) {
 if (hasTestsOfCategory(project, TestCategories.RestfulApi.name())) {
     task testRestfulApi(type: Test) {
         enabled = shouldTest(project, TestCategories.RestfulApi.name())
+        timeout = Duration.ofMinutes(30)
         //finalizedBy jacocoTestReport
         useJUnitPlatform {
             includeTags TestCategories.RestfulApi.name()
