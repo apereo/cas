@@ -76,11 +76,13 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
             .orElse(StringUtils.EMPTY);
         val registeredService = getRegisteredServiceByClientId(clientId);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(clientId, registeredService);
-        
-        val mv = getOAuthConfigurationContext().getConsentApprovalViewResolver().resolve(context, registeredService);
-        if (!mv.isEmpty() && mv.hasView()) {
-            LOGGER.debug("Redirecting to consent-approval view with model [{}]", mv.getModel());
-            return mv;
+
+        if (isRequestAuthenticated(manager)) {
+            val mv = getOAuthConfigurationContext().getConsentApprovalViewResolver().resolve(context, registeredService);
+            if (!mv.isEmpty() && mv.hasView()) {
+                LOGGER.debug("Redirecting to consent-approval view with model [{}]", mv.getModel());
+                return mv;
+            }
         }
 
         return redirectToCallbackRedirectUrl(manager, registeredService, context, clientId);
@@ -132,7 +134,6 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
     protected OAuthRegisteredService getRegisteredServiceByClientId(final String clientId) {
         return OAuth20Utils.getRegisteredOAuthServiceByClientId(getOAuthConfigurationContext().getServicesManager(), clientId);
     }
-
 
     /**
      * Is the request authenticated?
