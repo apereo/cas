@@ -14,6 +14,7 @@ import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -56,7 +57,7 @@ public class PrincipalAttributeRepositoryFetcher {
                     || StringUtils.equalsAnyIgnoreCase(IPersonAttributeDao.WILDCARD, repoIdsArray));
         }
 
-        val query = new HashMap<String, Object>();
+        val query = new LinkedHashMap<String, Object>();
         query.put("username", principalId);
 
         if (currentPrincipal != null) {
