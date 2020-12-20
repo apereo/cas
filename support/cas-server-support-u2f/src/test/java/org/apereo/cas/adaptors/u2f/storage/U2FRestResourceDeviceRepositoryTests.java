@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
     U2FConfiguration.class,
     AopAutoConfiguration.class,
     RefreshAutoConfiguration.class
-}, properties = "cas.authn.mfa.u2f.rest.url=http://localhost:9196")
+}, properties = "cas.authn.mfa.u2f.rest.url=http://localhost:9190")
 @Getter
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class U2FRestResourceDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
@@ -57,7 +57,7 @@ public class U2FRestResourceDeviceRepositoryTests extends AbstractU2FDeviceRepos
 
     @BeforeAll
     public static void beforeClass() {
-        WEB_SERVER = new MockWebServer(9196);
+        WEB_SERVER = new MockWebServer(9190);
         WEB_SERVER.start();
     }
 
