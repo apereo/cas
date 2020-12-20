@@ -33,8 +33,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("Ldap")
-@Import(CasAcceptableUsagePolicyLdapConfiguration.class)
 @EnabledIfPortOpen(port = 10389)
+@Import(CasAcceptableUsagePolicyLdapConfiguration.class)
 @TestPropertySource(properties = {
     "cas.acceptable-usage-policy.ldap[0].ldap-url=ldap://localhost:10389",
     "cas.acceptable-usage-policy.ldap[0].base-dn=ou=people,dc=example,dc=org",
