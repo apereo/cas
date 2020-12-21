@@ -21,8 +21,6 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Abstract implementation of the handler that has all of the logic.  Encapsulates the logic in case we get it wrong!
- *
  * @author Fotis Memis
  * @since 6.3.0
  */
