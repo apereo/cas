@@ -57,9 +57,8 @@ public class PrincipalAttributeRepositoryFetcher {
                     || StringUtils.equalsAnyIgnoreCase(IPersonAttributeDao.WILDCARD, repoIdsArray));
         }
 
-        val query = new LinkedHashMap<String, Object>();
+        val query = new HashMap<String, Object>();
         query.put("username", principalId);
-
         if (currentPrincipal != null) {
             query.put("principal", currentPrincipal.getId());
             query.putAll(currentPrincipal.getAttributes());
