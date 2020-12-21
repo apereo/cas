@@ -27,7 +27,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @TestPropertySource(properties = {
     "cas.authn.saml-idp.metadata.redis.host=localhost",
-    "cas.authn.saml-idp.metadata.redis.port=6379"
+    "cas.authn.saml-idp.metadata.redis.port=6379",
+    "cas.authn.saml-idp.metadata.location=file:/tmp"
 })
 @Tag("Redis")
 @EnabledIfPortOpen(port = 6379)

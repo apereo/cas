@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
 }, properties = {
     "cas.authn.attribute-repository.ldap[0].base-dn=ou=people,dc=example,dc=org",
     "cas.authn.attribute-repository.ldap[0].ldap-url=ldap://localhost:11389",
-    "cas.authn.attribute-repository.ldap[0].search-filter=cn={user}",
+    "cas.authn.attribute-repository.ldap[0].search-filter=cn={username}",
     "cas.authn.attribute-repository.ldap[0].trust-manager=ANY",
     "cas.authn.attribute-repository.ldap[0].attributes.homePostalAddress=homePostalAddress;",
     "cas.authn.attribute-repository.ldap[0].attributes.cn=cn",
