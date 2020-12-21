@@ -24,10 +24,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Ldap")
 public class PrincipalAttributeRepositoryFetcherLdapTests {
 
-    @TestPropertySource(
-        properties = "cas.authn.attribute-repository.ldap[0].search-filter=(|(cn={username})(name={username}))")
+    @TestPropertySource(properties = "cas.authn.attribute-repository.ldap[0].search-filter=(|(cn={username})(name={username}))")
     @Nested
     @EnabledIfPortOpen(port = 10389)
+    @SuppressWarnings("ClassCanBeStatic")
     public class MultipleFiltersTests extends BasePrincipalAttributeRepositoryFetcherLdapTests {
         @Test
         public void verifyOperation() {
@@ -42,8 +42,8 @@ public class PrincipalAttributeRepositoryFetcherLdapTests {
         }
     }
 
-    @TestPropertySource(
-        properties = "cas.authn.attribute-repository.ldap[0].search-filter=(|(cn={cn})(title={title}))")
+    @SuppressWarnings("ClassCanBeStatic")
+    @TestPropertySource(properties = "cas.authn.attribute-repository.ldap[0].search-filter=(|(cn={cn})(title={title}))")
     @Nested
     @EnabledIfPortOpen(port = 10389)
     public class MultipleFiltersByParameterNameTests extends BasePrincipalAttributeRepositoryFetcherLdapTests {
@@ -61,8 +61,8 @@ public class PrincipalAttributeRepositoryFetcherLdapTests {
         }
     }
 
-    @TestPropertySource(
-        properties = "cas.authn.attribute-repository.ldap[0].search-filter=(|(cn={cn})(title={customParameter}))")
+    @SuppressWarnings("ClassCanBeStatic")
+    @TestPropertySource(properties = "cas.authn.attribute-repository.ldap[0].search-filter=(|(cn={cn})(title={customParameter}))")
     @Nested
     @EnabledIfPortOpen(port = 10389)
     public class MultipleFiltersByExtraQueryAttributesTests extends BasePrincipalAttributeRepositoryFetcherLdapTests {

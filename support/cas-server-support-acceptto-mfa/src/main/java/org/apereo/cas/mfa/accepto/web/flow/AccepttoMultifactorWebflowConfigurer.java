@@ -60,6 +60,10 @@ public class AccepttoMultifactorWebflowConfigurer extends AbstractCasMultifactor
             createTransitionForState(initLoginFormState, CasWebflowConstants.TRANSITION_ID_SUCCESS, "fetchUserAccountStatus");
             setStartState(flow, initLoginFormState);
 
+            createEndState(flow, CasWebflowConstants.STATE_ID_SUCCESS);
+            createEndState(flow, CasWebflowConstants.STATE_ID_UNAVAILABLE);
+            createEndState(flow, CasWebflowConstants.STATE_ID_DENY);
+
             val fetchAccountState = createActionState(flow, "fetchUserAccountStatus",
                 createEvaluateAction("mfaAccepttoMultifactorDetermineUserAccountStatusAction"));
             createTransitionForState(fetchAccountState, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE, CasWebflowConstants.STATE_ID_MFA_FAILURE);
