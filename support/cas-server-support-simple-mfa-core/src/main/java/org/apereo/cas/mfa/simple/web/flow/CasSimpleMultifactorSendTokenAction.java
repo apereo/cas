@@ -23,11 +23,6 @@ import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.TimeUnit;
-
 /**
  * This is {@link CasSimpleMultifactorSendTokenAction}.
  *
@@ -49,42 +44,35 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractAction {
 
     private final CasSimpleMultifactorTokenCommunicationStrategy tokenCommunicationStrategy;
 
-    private final ConcurrentMap<String, ZonedDateTime> principalIdMap;
-
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         val authentication = WebUtils.getInProgressAuthentication();
         val principal = authentication.getPrincipal();
         val service = WebUtils.getService(requestContext);
         val token = ticketFactory.create(service,
-                CollectionUtils.wrap(CasSimpleMultifactorAuthenticationConstants.PROPERTY_PRINCIPAL, principal));
+            CollectionUtils.wrap(CasSimpleMultifactorAuthenticationConstants.PROPERTY_PRINCIPAL, principal));
         LOGGER.debug("Created multifactor authentication token [{}] for service [{}]", token, service);
-
-        if (throttleSmsOrEmail(principal, principalIdMap, properties)) {
-            return error();
-        }
 
         val strategy = tokenCommunicationStrategy.determineStrategy(token);
 
         val smsSent = strategy.contains(CasSimpleMultifactorTokenCommunicationStrategy.TokenSharingStrategyOptions.SMS)
-                && isSmsSent(communicationsManager, properties, principal, token);
+            && isSmsSent(communicationsManager, properties, principal, token);
 
         val emailSent = strategy.contains(CasSimpleMultifactorTokenCommunicationStrategy.TokenSharingStrategyOptions.EMAIL)
-                && isMailSent(communicationsManager, properties, principal, token);
+            && isMailSent(communicationsManager, properties, principal, token);
 
         val notificationSent = strategy.contains(CasSimpleMultifactorTokenCommunicationStrategy.TokenSharingStrategyOptions.NOTIFICATION)
-                && isNotificationSent(communicationsManager, principal, token);
+            && isNotificationSent(communicationsManager, principal, token);
 
         if (smsSent || emailSent || notificationSent) {
-            principalIdMap.put(principal.getId(), ZonedDateTime.now(ZoneOffset.UTC));
             ticketRegistry.addTicket(token);
             LOGGER.debug("Successfully submitted token via strategy option [{}] to [{}]", strategy, principal.getId());
 
             val resolver = new MessageBuilder()
-                    .info()
-                    .code(MESSAGE_MFA_TOKEN_SENT)
-                    .defaultText(MESSAGE_MFA_TOKEN_SENT)
-                    .build();
+                .info()
+                .code(MESSAGE_MFA_TOKEN_SENT)
+                .defaultText(MESSAGE_MFA_TOKEN_SENT)
+                .build();
             requestContext.getMessageContext().addMessage(resolver);
 
             val attributes = new LocalAttributeMap<Object>("token", token.getId());
@@ -94,46 +82,35 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractAction {
         return error();
     }
 
-
-    private static boolean throttleSmsOrEmail(final Principal principal, final ConcurrentMap<String, ZonedDateTime> principalIdMap, final CasSimpleMultifactorProperties properties) {
-        return principalIdMap.containsKey(principal.getId()) && !resendAllowed(principalIdMap.get(principal.getId()), properties);
-    }
-
-    private static boolean resendAllowed(final ZonedDateTime time, final CasSimpleMultifactorProperties properties) {
-        return ZonedDateTime.now(ZoneOffset.UTC).toInstant().toEpochMilli() > time.toInstant().toEpochMilli()
-                + TimeUnit.SECONDS.toMillis(properties.getResendTimeInSeconds());
-
-    }
-
     private static boolean isSmsSent(final CommunicationsManager communicationsManager,
-                                     final CasSimpleMultifactorProperties properties,
-                                     final Principal principal,
-                                     final Ticket token) {
+        final CasSimpleMultifactorProperties properties,
+        final Principal principal,
+        final Ticket token) {
         if (communicationsManager.isSmsSenderDefined()) {
             val smsProperties = properties.getSms();
             val smsText = StringUtils.isNotBlank(smsProperties.getText())
-                    ? smsProperties.getFormattedText(token.getId())
-                    : token.getId();
+                ? smsProperties.getFormattedText(token.getId())
+                : token.getId();
             return communicationsManager.sms(principal, smsProperties.getAttributeName(), smsText, smsProperties.getFrom());
         }
         return false;
     }
 
     private static boolean isMailSent(final CommunicationsManager communicationsManager,
-                                      final CasSimpleMultifactorProperties properties,
-                                      final Principal principal,
-                                      final Ticket token) {
+        final CasSimpleMultifactorProperties properties,
+        final Principal principal,
+        final Ticket token) {
         if (communicationsManager.isMailSenderDefined()) {
             val mailProperties = properties.getMail();
             return communicationsManager.email(principal, mailProperties.getAttributeName(),
-                    mailProperties, mailProperties.getFormattedBody(token.getId()));
+                mailProperties, mailProperties.getFormattedBody(token.getId()));
         }
         return false;
     }
 
     private static boolean isNotificationSent(final CommunicationsManager communicationsManager,
-                                              final Principal principal,
-                                              final Ticket token) {
+        final Principal principal,
+        final Ticket token) {
         if (communicationsManager.isNotificationSenderDefined()) {
             return communicationsManager.notify(principal, "Apereo CAS Token", String.format("Token: %s", token.getId()));
         }

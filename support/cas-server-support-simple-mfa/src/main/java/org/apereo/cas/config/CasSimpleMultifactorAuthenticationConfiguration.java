@@ -9,7 +9,6 @@ import org.apereo.cas.mfa.simple.ticket.DefaultCasSimpleMultifactorAuthenticatio
 import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorSendTokenAction;
 import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorTrustedDeviceWebflowConfigurer;
 import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorWebflowConfigurer;
-import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorResendTokensScheduler;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.TicketFactoryExecutionPlanConfigurer;
@@ -41,9 +40,6 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
 import java.util.Objects;
-import java.time.ZonedDateTime;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * This is {@link CasSimpleMultifactorAuthenticationConfiguration}.
@@ -77,12 +73,6 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
 
     @Autowired
     private ObjectProvider<FlowBuilderServices> flowBuilderServices;
-
-    @Autowired
-    @Qualifier("throttlerResendTokenMap")
-    private ConcurrentMap<String, ZonedDateTime> principalIdMap;
-
-
 
     @Bean
     public FlowDefinitionRegistry mfaSimpleAuthenticatorFlowRegistry() {
@@ -121,7 +111,7 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
         return new CasSimpleMultifactorSendTokenAction(ticketRegistry.getObject(),
             communicationsManager.getObject(),
             casSimpleMultifactorAuthenticationTicketFactory(), simple,
-            mfaSimpleMultifactorTokenCommunicationStrategy(), principalIdMap);
+            mfaSimpleMultifactorTokenCommunicationStrategy());
     }
 
     @ConditionalOnMissingBean(name = "mfaSimpleMultifactorTokenCommunicationStrategy")
@@ -129,21 +119,6 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
     public CasSimpleMultifactorTokenCommunicationStrategy mfaSimpleMultifactorTokenCommunicationStrategy() {
         return CasSimpleMultifactorTokenCommunicationStrategy.all();
     }
-
-    @RefreshScope
-    @ConditionalOnMissingBean(name = "throttlerResendTokenMap")
-    @Bean
-    public ConcurrentMap throttlerResendTokenMap() {
-        return new ConcurrentHashMap<String, ZonedDateTime>();
-    }
-
-    @ConditionalOnMissingBean(name = "throttleResendTokensScheduler")
-    @Bean
-    @RefreshScope
-    public CasSimpleMultifactorResendTokensScheduler throttleResendTokensScheduler() {
-        return new CasSimpleMultifactorResendTokensScheduler(principalIdMap, casProperties.getAuthn().getMfa().getSimple());
-    }
-
 
     @ConditionalOnMissingBean(name = "casSimpleMultifactorAuthenticationTicketExpirationPolicy")
     @Bean
