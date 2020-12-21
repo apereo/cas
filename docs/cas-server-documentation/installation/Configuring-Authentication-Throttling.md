@@ -40,7 +40,6 @@ A failure rate of more than 1 per 3 seconds is indicative of an automated authen
 reasonable basis for throttling policy. Regardless of policy care should be taken to weigh security against access;
 overly restrictive policies may prevent legitimate authentication attempts.
 
-
 Enable the following module in your configuration overlay:
 
 ```xml
@@ -50,6 +49,14 @@ Enable the following module in your configuration overlay:
     <version>${cas.version}</version>
 </dependency>
 ```
+
+### Administrative Endpoints
+
+The following endpoints are provided by CAS:
+ 
+| Endpoint                     | Description
+|------------------------------|---------------------------------------------
+| `throttles`                  | `GET` request to fetch throttled records.
 
 ### IP Address
 
@@ -93,7 +100,9 @@ Enable the following module in your configuration overlay:
 
 ### Redis
 
-Queries a Redis data source used by the CAS audit facility to prevent successive failed login attempts for a particular username from the same IP address. This component requires and depends on the [CAS auditing functionality](Audits.html) via Redis.
+Queries a Redis data source used by the CAS audit facility to prevent successive failed login attempts 
+for a particular username from the same IP address. This component requires and 
+depends on the [CAS auditing functionality](Audits.html) via Redis.
 
 Enable the following module in your configuration overlay:
 
@@ -122,14 +131,16 @@ Enable the following module in your configuration overlay:
 
 ### CouchDb
 
-Queries a CouchDb data source used by the CAS audit facility to prevent successive failed login attempts for a particular username from the same IP address. This component requires and depends on the [CAS auditing functionality](Audits.html) via CouchDb.
+Queries a CouchDb data source used by the CAS audit facility to prevent successive failed login attempts 
+for a particular username from the same IP address. This component requires and 
+depends on the [CAS auditing functionality](Audits.html) via CouchDb.
 
 Enable the following module in your configuration overlay:
 
 ```xml
 <dependency>
     <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-throttle-mongo</artifactId>
+    <artifactId>cas-server-support-throttle-couchdb</artifactId>
     <version>${cas.version}</version>
 </dependency>
 ```
@@ -140,7 +151,7 @@ For additional instructions on how to configure auditing, please [review the fol
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#authentication-throttling).
 
-## High Availability Considerations for Throttling
+## High Availability
 
 All of the throttling components are suitable for a CAS deployment that satisfies the
 [recommended HA architecture](../high_availability/High-Availability-Guide.html). In particular deployments with multiple CAS

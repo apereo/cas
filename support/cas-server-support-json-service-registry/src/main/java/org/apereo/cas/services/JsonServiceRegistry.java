@@ -49,4 +49,6 @@ public class JsonServiceRegistry extends AbstractResourceBasedServiceRegistry {
     protected String[] getExtensions() {
         return new String[]{FILE_EXTENSION};
     }
+
+    
 }

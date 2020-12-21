@@ -60,7 +60,7 @@ public class JasyptDecryptPropertyCommand {
         cipher.setProviderName(provider);
         cipher.setKeyObtentionIterations(iterations);
         val decrypted = cipher.decryptValue(value);
-        LOGGER.info("==== Decrypted Value ====\n{}", decrypted);
+        LOGGER.info("==== Decrypted Value ====\n[{}]", decrypted);
 
     }
 }

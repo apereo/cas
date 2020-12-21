@@ -112,7 +112,7 @@ class PredicateExample implements Predicate<Credential> {
 ## Password Encoding
 
 Certain aspects of CAS such as authentication handling support configuration of
-password encoding. Most options are based on Spring Security's [support for password encoding](http://docs.spring.io/spring-security/site/docs/current/apidocs/org/springframework/security/crypto/password/PasswordEncoder.html).
+password encoding. Most options are based on Spring Security's [support for password encoding](https://docs.spring.io/spring-security/site/docs/current/reference/html5/).
 
 The following options related to password encoding support in CAS apply equally to a number of CAS components (authentication handlers, etc) given the component's *configuration key*:
 
@@ -224,7 +224,7 @@ The following common properties configure cookie generator support in CAS.
 
 ```properties
 # ${configurationKey}.path=
-# ${configurationKey}.maxAge=-1
+# ${configurationKey}.max-age=-1
 # ${configurationKey}.domain=
 # ${configurationKey}.name=
 # ${configurationKey}.secure=true
@@ -482,12 +482,14 @@ The following options related to Git integration support in CAS when it attempts
 # ${configurationKey}.git.sign-commits=false
 # ${configurationKey}.git.username=
 # ${configurationKey}.git.password=
-# ${configurationKey}.git.clone-directory=file:/tmp/cas-service-registry
+# ${configurationKey}.git.clone-directory.location=file:/tmp/cas-service-registry
 # ${configurationKey}.git.push-changes=false
 # ${configurationKey}.git.private-key-passphrase=
-# ${configurationKey}.git.private-key-path=
+# ${configurationKey}.git.private-key.location=file:/tmp/privkey.pem
 # ${configurationKey}.git.ssh-session-password=
 # ${configurationKey}.git.timeout=PT10S
+# ${configurationKey}.git.strict-host-key-checking=true
+# ${configurationKey}.git.clear-existing-identities=false
 ```
 
 ## InfluxDb Configuration
@@ -536,6 +538,7 @@ The following options related to Hazelcast support in CAS apply equally to a num
 
 # ${configurationKey}.license-key=
 # ${configurationKey}.enable-compression=false
+# ${configurationKey}.enable-management-center-scripting=true
 ```
 
 More advanced Hazelcast configuration settings are listed below, given the component's *configuration key*:
@@ -1196,7 +1199,6 @@ to an external OpenID Connect provider such as Azure AD, given the provider's *c
 # ${configurationKey}.connect-timeout=PT5S
 # ${configurationKey}.expire-session-with-token=false
 # ${configurationKey}.token-expiration-advance=0
-
 ```
 
 ## LDAP Connection Settings

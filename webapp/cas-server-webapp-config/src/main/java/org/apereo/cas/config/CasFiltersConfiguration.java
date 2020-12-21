@@ -95,7 +95,7 @@ public class CasFiltersConfiguration {
         config.setMaxAge(cors.getMaxAge());
         config.setExposedHeaders(cors.getExposedHeaders());
         source.registerCorsConfiguration("/**", config);
-        val bean = new FilterRegistrationBean<CorsFilter>(new CorsFilter(source));
+        val bean = new FilterRegistrationBean<>(new CorsFilter(source));
         bean.setName("casCorsFilter");
         bean.setAsyncSupported(true);
         bean.setOrder(0);

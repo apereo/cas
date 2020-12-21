@@ -341,10 +341,7 @@ public class X509AuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "x509AuthenticationEventExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer x509AuthenticationEventExecutionPlanConfigurer() {
-        return plan -> {
-            val resolver = getPrincipalResolver();
-            plan.registerAuthenticationHandlerWithPrincipalResolver(x509CredentialsAuthenticationHandler(), resolver);
-        };
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(x509CredentialsAuthenticationHandler(), getPrincipalResolver());
     }
 
     private PrincipalResolver getPrincipalResolver() {

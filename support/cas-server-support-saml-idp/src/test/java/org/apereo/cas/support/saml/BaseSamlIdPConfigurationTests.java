@@ -91,6 +91,7 @@ import org.springframework.context.annotation.Lazy;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import static org.mockito.Mockito.*;
 
@@ -272,7 +273,13 @@ public abstract class BaseSamlIdPConfigurationTests {
     }
 
     protected static Assertion getAssertion() {
+        return getAssertion(Map.of());
+    }
+
+    protected static Assertion getAssertion(final Map<String, Object> attrs) {
         val attributes = new LinkedHashMap<String, Object>(CoreAuthenticationTestUtils.getAttributes());
+        attributes.putAll(attrs);
+
         val permissions = new ArrayList<>();
         permissions.add(new PermissionSamlAttributeValue("admin", "cas-admins", "super-cas"));
         permissions.add(new PermissionSamlAttributeValue("designer", "cas-designers", "cas-ux"));

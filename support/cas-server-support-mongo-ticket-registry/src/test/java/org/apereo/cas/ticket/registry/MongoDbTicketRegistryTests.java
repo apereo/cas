@@ -23,18 +23,29 @@ import org.apereo.cas.config.MongoDbTicketRegistryConfiguration;
 import org.apereo.cas.config.MongoDbTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.ticket.DefaultTicketDefinition;
+import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketCatalog;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.Getter;
+import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.annotation.DirtiesContext;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link MongoDbTicketRegistryTests}.
@@ -48,8 +59,8 @@ import org.springframework.test.annotation.DirtiesContext;
     CasCoreUtilConfiguration.class,
     AopAutoConfiguration.class,
     MongoDbTicketRegistryTicketCatalogConfiguration.class,
-    CasCoreTicketIdGeneratorsConfiguration.class,
     MongoDbTicketRegistryConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
@@ -88,8 +99,39 @@ public class MongoDbTicketRegistryTests extends BaseTicketRegistryTests {
     @Qualifier("ticketRegistry")
     private TicketRegistry newTicketRegistry;
 
+    @Autowired
+    @Qualifier("mongoDbTicketRegistryTemplate")
+    private MongoTemplate mongoDbTicketRegistryTemplate;
+
     @BeforeEach
     public void before() {
         newTicketRegistry.deleteAll();
+    }
+
+    @RepeatedTest(1)
+    public void verifyBadTicketInCatalog() {
+        val ticket = new MockTicketGrantingTicket("casuser");
+        val catalog = mock(TicketCatalog.class);
+        val defn = new DefaultTicketDefinition(ticket.getClass(), ticket.getPrefix(), 0);
+        
+        when(catalog.find(any(Ticket.class))).thenReturn(null);
+        val mgr = mock(TicketSerializationManager.class);
+        when(mgr.serializeTicket(any())).thenReturn("{}");
+        val registry = new MongoDbTicketRegistry(catalog, mongoDbTicketRegistryTemplate, mgr);
+        registry.addTicket(ticket);
+        assertNull(registry.updateTicket(ticket));
+
+        when(catalog.find(any(Ticket.class))).thenReturn(defn);
+        defn.getProperties().setStorageName(null);
+        registry.addTicket(ticket);
+        assertNull(registry.updateTicket(ticket));
+
+        when(catalog.find(any(Ticket.class))).thenThrow(new RuntimeException());
+        defn.getProperties().setStorageName(null);
+        registry.addTicket(ticket);
+        assertNull(registry.updateTicket(ticket));
+
+        when(catalog.find(anyString())).thenThrow(new RuntimeException());
+        assertNull(registry.getTicket(ticket.getId()));
     }
 }

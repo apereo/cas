@@ -38,7 +38,7 @@ import static org.mockito.Mockito.*;
  * @author Jerome Leleu
  * @since 4.0.0
  */
-@Tag("Authentication")
+@Tag("Logout")
 public class DefaultLogoutManagerTests {
     private static final String ID = "id";
 
@@ -105,10 +105,12 @@ public class DefaultLogoutManagerTests {
         this.logoutManager = new DefaultLogoutManager(false, plan);
         this.registeredService = getRegisteredService(URL);
         when(servicesManager.findServiceBy(this.simpleWebApplicationServiceImpl)).thenReturn(this.registeredService);
+        assertTrue(plan.getLogoutRedirectionStrategies().isEmpty());
     }
 
     @Test
     public void verifyServiceLogoutUrlIsUsed() {
+
         this.registeredService.setLogoutUrl("https://www.apereo.org");
         val logoutRequests = this.logoutManager.performLogout(
             SingleLogoutExecutionRequest

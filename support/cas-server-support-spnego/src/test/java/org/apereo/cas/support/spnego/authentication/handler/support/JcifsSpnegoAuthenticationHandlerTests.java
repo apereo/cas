@@ -37,6 +37,7 @@ public class JcifsSpnegoAuthenticationHandlerTests {
         assertNotNull(authenticationHandler.authenticate(credentials));
         assertEquals("test", credentials.getPrincipal().getId());
         assertNotNull(credentials.getNextToken());
+        assertTrue(authenticationHandler.supports(credentials.getClass()));
     }
 
     @Test

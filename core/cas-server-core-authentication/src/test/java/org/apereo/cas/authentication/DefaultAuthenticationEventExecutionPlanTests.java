@@ -9,9 +9,11 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link DefaultAuthenticationEventExecutionPlanTests}.
@@ -34,6 +36,31 @@ public class DefaultAuthenticationEventExecutionPlanTests {
         assertFalse(plan.getAuthenticationPolicies(
             DefaultAuthenticationTransaction.of(
                 CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword())).isEmpty());
+    }
+
+    @Test
+    public void verifyMismatchedCount() {
+        val plan = new DefaultAuthenticationEventExecutionPlan();
+        plan.registerAuthenticationHandlerWithPrincipalResolvers(List.of(new SimpleTestUsernamePasswordAuthenticationHandler()), List.of());
+        assertTrue(plan.getAuthenticationHandlers().isEmpty());
+    }
+
+
+    @Test
+    public void verifyNoHandlerResolves() {
+        val transaction = new DefaultAuthenticationTransaction(CoreAuthenticationTestUtils.getService(),
+            List.of(mock(Credential.class)));
+        val plan = new DefaultAuthenticationEventExecutionPlan();
+        assertThrows(AuthenticationException.class, () -> plan.getAuthenticationHandlers(transaction));
+    }
+
+
+    @Test
+    public void verifyDefaults() {
+        val input = mock(AuthenticationEventExecutionPlan.class);
+        when(input.getAuthenticationHandlers()).thenReturn(Set.of());
+        when(input.getAuthenticationHandlersBy(any())).thenCallRealMethod();
+        assertNotNull(input.getAuthenticationHandlersBy(authenticationHandler -> false));
     }
 
 }

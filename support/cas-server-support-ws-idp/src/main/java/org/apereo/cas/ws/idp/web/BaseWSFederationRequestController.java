@@ -197,6 +197,6 @@ public abstract class BaseWSFederationRequestController {
      */
     @ExceptionHandler(Exception.class)
     public ModelAndView handleUnauthorizedServiceException(final HttpServletRequest req, final Exception ex) {
-        return WebUtils.produceUnauthorizedErrorView();
+        return WebUtils.produceUnauthorizedErrorView(ex);
     }
 }

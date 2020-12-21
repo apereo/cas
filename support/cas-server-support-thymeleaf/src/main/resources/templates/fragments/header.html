@@ -12,51 +12,29 @@
 
 <body>
 <div th:fragment="header">
+
     <header id="app-bar" class="mdc-top-app-bar mdc-top-app-bar--fixed mdc-elevation--z4">
         <nav class="mdc-top-app-bar__row">
             <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
-                <button class="mdc-icon-button mdc-top-app-bar__navigation-icon">
+                <button
+                        th:if="${'true' == #strings.defaultString(#themes.code('cas.drawer-menu.enabled'), 'true')}"
+                        class="mdc-icon-button mdc-top-app-bar__navigation-icon">
                     <span class="mdi mdi-menu"></span>
                     <span class="sr-only">menu</span>
                 </button>
             </section>
-            <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-center">
+            <section class="mdc-top-app-bar__section">
                     <span class="cas-brand mx-auto">
-                        <span class="sr-only">CAS</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 336.82 167.83" class="cas-logo">
-                            <defs>
-                                <style>
-                                    .cls-1 {
-                                        fill: #024d71;
-                                    }
-
-                                    .cls-2 {
-                                        fill: #74c163;
-                                    }
-                                </style>
-                            </defs>
-                            <title>cas_logo</title>
-                            <g id="Layer_2" data-name="Layer 2">
-                                <path class="cls-1"
-                                      d="M217.72,469.85c-17.68,1.31-38.31,1-54.18-7.87-12.59-7-23.71-18.52-28.72-32.14a82,82,0,0,1-4.49-27.49c0-36.26,16.11-64.23,40.29-80.34,16.59-11.38,36-16.83,58.54-16.83,17.3,0,30.34,4,35.08,6.64l-9.48,27.73c-4.5-2.38-15.17-5.22-28.92-5.22s-26.78,4.27-36.5,12.33c-13.27,11.13-22,29.39-22,51.66,0,25.6,14.46,42.67,42.43,42.67a161.48,161.48,0,0,0,22.38-1.19Z"
-                                      transform="translate(-130.33 -305.18)"></path>
-                                <path class="cls-1"
-                                      d="M322.77,398.75l-2.72-30.4c-.71-8.76-1.42-21.56-2.14-31.28h-.71c-4,9.72-8.53,22-12.8,31.28l-13.69,30.08-13.53,33.43-17.33,38.41h-36.5l78-159.75h43.85l18.49,159.75H327.87l-3.05-38.12Z"
-                                      transform="translate(-130.33 -305.18)"></path>
-                                <path class="cls-1"
-                                      d="M364.31,438.85c12.27,3.81,21.29,5.19,36.22,5.19,13,0,20.87-6.71,20.87-19,0-9.24-6.87-14.93-21.57-22.75-16.82-9-32.94-21.8-32.94-42.42,0-32.24,28-51.91,62.81-51.91,19.19,0,30.57,4.27,37.44,7.82l-10.66,28.44a62.94,62.94,0,0,0-29.63-6.87c-15.88,0-24.17,7.82-24.17,16.59,0,9.48,9.72,15.17,23.23,22.75,19.43,10.19,31.52,23.23,31.52,42.43,0,35.55-29.44,55.72-64.71,53.8a231.52,231.52,0,0,1-24.78-2.61Z"
-                                      transform="translate(-130.33 -305.18)"></path>
-                            </g>
-                            <g id="swoosh">
-                                <path class="cls-2"
-                                      d="M257.45,432.24a41.64,41.64,0,0,1,13.11-.32,39.17,39.17,0,0,1,16.89,6.2l0,0c10.55-15,29.11-25,50.24-25,19.75,0,37.34,8.85,48.16,22.28l1-.77c-12.85-17.31-37.44-29-65.67-29-26.92,0-50.54,10.65-63.81,26.65Z"
-                                      transform="translate(-130.33 -305.18)"></path>
-                            </g>
-                        </svg>
+                        <span class="sr-only"
+                              th:text="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS')}">CAS</span>
+                        <img class="cas-logo"
+                             th:title="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS')}"
+                             th:src="@{${#strings.defaultString(#themes.code('cas.logo.file'), '/images/cas-logo.png')}}" />
                     </span>
             </section>
             <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end">
                 <button id="cas-notifications-menu"
+                        th:if="${'true' == #strings.defaultString(#themes.code('cas.notifications-menu.enabled'), 'true')}"
                         class="mdc-icon-button mdc-top-app-bar__action-item cas-notification-toggle"
                         aria-label="Bookmark this page">
                     <span class="mdi mdi-bell-alert"></span>
@@ -67,10 +45,14 @@
         </nav>
 
     </header>
-    <aside id="app-drawer" class="mdc-drawer mdc-drawer--dismissible mdc-drawer--modal">
+    <aside id="app-drawer"
+           th:if="${'true' == #strings.defaultString(#themes.code('cas.drawer-menu.enabled'), 'true')}"
+           class="mdc-drawer mdc-drawer--dismissible mdc-drawer--modal">
         <div class="mdc-drawer__header">
-            <h3 class="mdc-drawer__title">CAS</h3>
-            <h6 class="mdc-drawer__subtitle">Central Authentication Service</h6>
+            <h3 class="mdc-drawer__title" th:text="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS')}">CAS</h3>
+            <h6 class="mdc-drawer__subtitle"
+                th:text="${#strings.defaultString(#themes.code('cas.theme.description'), 'Central Authentication Service')}">
+                Central Authentication Service</h6>
         </div>
         <div class="mdc-drawer__content">
             <nav class="mdc-list">
@@ -112,8 +94,13 @@
     </aside>
 
     <script>var countMessages = 0;</script>
-    <div class="mdc-dialog cas-notification-dialog" id="cas-notification-dialog" role="alertdialog"
-         aria-modal="true" aria-labelledby="notif-dialog-title" aria-describedby="notif-dialog-content">
+    <div
+            th:if="${'true' == #strings.defaultString(#themes.code('cas.notifications-menu.enabled'), 'true')}"
+            class="mdc-dialog cas-notification-dialog"
+            id="cas-notification-dialog" role="alertdialog"
+            aria-modal="true" aria-labelledby="notif-dialog-title"
+            aria-describedby="notif-dialog-content">
+        
         <div class="mdc-dialog__container">
             <div class="mdc-dialog__surface">
                 <h1 class="mdc-dialog__title mt-lg-2" id="notif-dialog-title">
@@ -150,6 +137,7 @@
         </div>
         <div class="mdc-dialog__scrim"></div>
     </div>
+
     <script type="text/javascript">
 
         (function (material) {
@@ -160,27 +148,34 @@
                 },
                 attachDrawer: function () {
                     var elm = document.getElementById('app-drawer');
-                    var drawer = material.drawer.MDCDrawer.attachTo(elm);
-                    var closeDrawer = function (evt) {
-                        drawer.open = false;
-                    };
-                    drawer.foundation.handleScrimClick = closeDrawer;
-                    document.onkeydown = function (evt) {
-                        evt = evt || window.event;
-                        if (evt.keyCode == 27) {
-                            closeDrawer();
-                        }
-                    };
-
-                    header.drawer = drawer;
-
-                    return drawer;
+                    if (elm != null) {
+                        var drawer = material.drawer.MDCDrawer.attachTo(elm);
+                        var closeDrawer = function (evt) {
+                            drawer.open = false;
+                        };
+                        drawer.foundation.handleScrimClick = closeDrawer;
+                        document.onkeydown = function (evt) {
+                            evt = evt || window.event;
+                            if (evt.keyCode == 27) {
+                                closeDrawer();
+                            }
+                        };
+                        header.drawer = drawer;
+                        return drawer;
+                    }
+                    return undefined;
                 },
                 attachTopbar: function (drawer) {
+
                     var drawer = header.attachDrawer();
                     var dialog = header.attachNotificationDialog();
-                    header.attachDrawerToggle(drawer);
-                    header.attachNotificationToggle(dialog);
+
+                    if (drawer != undefined) {
+                        header.attachDrawerToggle(drawer);
+                    }
+                    if (dialog != undefined) {
+                        header.attachNotificationToggle(dialog);
+                    }
                 },
                 checkCaps: function (ev) {
                     var s = String.fromCharCode(ev.which);
@@ -191,30 +186,35 @@
                     }
                 },
                 attachDrawerToggle: function (drawer) {
-                    var topAppBar = material.topAppBar.MDCTopAppBar.attachTo(document.getElementById('app-bar'));
-                    topAppBar.setScrollTarget(document.getElementById('main-content'));
-                    topAppBar.listen('MDCTopAppBar:nav', function () {
-                        drawer.open = !drawer.open;
-                    });
-                    return topAppBar;
+                    let appBar = document.getElementById('app-bar');
+                    if (appBar != null) {
+                        var topAppBar = material.topAppBar.MDCTopAppBar.attachTo(appBar);
+                        topAppBar.setScrollTarget(document.getElementById('main-content'));
+                        topAppBar.listen('MDCTopAppBar:nav', function () {
+                            drawer.open = !drawer.open;
+                        });
+                        return topAppBar;
+                    }
+                    return undefined;
                 },
                 attachNotificationDialog: function () {
                     var element = document.getElementById('cas-notification-dialog');
-                    var dialog = material.dialog.MDCDialog.attachTo(element);
-                    return dialog;
+                    if (element != null) {
+                        return material.dialog.MDCDialog.attachTo(element);
+                    }
+                    return undefined;
                 },
                 attachNotificationToggle: function (dialog) {
                     var btn = document.getElementById('cas-notifications-menu');
-                    btn.addEventListener('click', function () {
-                        dialog.open();
-                    });
+                    if (btn != null) {
+                        btn.addEventListener('click', function () {
+                            dialog.open();
+                        });
+                    }
                 }
             }
-
-
             document.addEventListener('DOMContentLoaded', function () {
                 header.init();
-
                 if (countMessages == 0) {
                     window.jQuery('#notifications-count').remove();
                 } else {

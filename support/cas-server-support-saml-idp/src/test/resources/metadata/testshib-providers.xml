@@ -461,5 +461,59 @@
     </EntityDescriptor>
 
 
+
+
+
+
+    <EntityDescriptor entityID="https://noenc.example.org"
+                      xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
+                      xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+                      xmlns:mdattr="urn:oasis:names:tc:SAML:metadata:attribute"
+                      xmlns:mdrpi="urn:oasis:names:tc:SAML:metadata:rpi"
+                      xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui"
+                      xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+                      xmlns:xrd="http://docs.oasis-open.org/ns/xri/xrd-1.0">
+
+
+
+        <!-- An SP supporting SAML 1 and 2 contains this element with protocol support as shown. -->
+        <SPSSODescriptor
+                protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol urn:oasis:names:tc:SAML:1.1:protocol http://schemas.xmlsoap.org/ws/2003/07/secext">
+            
+            <!-- This tells IdPs that Single Logout is supported and where/how to request it. -->
+            <SingleLogoutService Location="https://httpbin.org/post"
+                                 Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"/>
+            <SingleLogoutService Location="https://httpbin.org/get"
+                                 Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"/>
+
+            <NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</NameIDFormat>
+
+
+            <AssertionConsumerService index="1"
+                                      Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                                      Location="https://httpbin.org/post"/>
+            <AssertionConsumerService index="2"
+                                      Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign"
+                                      Location="https://httpbin.org/post"/>
+            <AssertionConsumerService index="3"
+                                      Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact"
+                                      Location="https://httpbin.org/post"/>
+            <AssertionConsumerService index="4"
+                                      Binding="urn:oasis:names:tc:SAML:2.0:bindings:PAOS"
+                                      Location="https://httpbin.org/post"/>
+        </SPSSODescriptor>
+
+
+    </EntityDescriptor>
+
+
+
+
+
+
+
+
+
+
 </EntitiesDescriptor>
 

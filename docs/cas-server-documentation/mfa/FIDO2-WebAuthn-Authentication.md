@@ -35,6 +35,17 @@ repositories {
 }
 ```
 
+## Primary Authentication
+
+It is possible to allow WebAuthN to act as a standalone authentication strategy for primary authentication. Using this approach,
+user accounts and FIDO2-enabled devices that have already registered with CAS are given the option to login using their FIDO2-enabled
+device by only providing the username linked to their registration record for a passwordless authentication experience.
+
+Device registration can occur out of band using available CAS APIs, or by allowing users to pass through the registration flow
+as part of the typical multifactor authentication. See below for details on device registration. 
+
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#fido2-webauthn).
+
 ## Registration
 
 Device registration flows are baked into CAS automatically. A background *cleaner* process is also automatically scheduled to scan the 
@@ -55,7 +66,8 @@ The following endpoints are provided by CAS:
 |-----------------------------------------------|----------------------------------------------------------------------------
 | `webAuthnDevices/{username}`                  | `GET` request to fetch device registration records for the user.
 | `webAuthnDevices/{username}`                  | `DELETE` request to delete all device registration records for the user.
-| `webAuthnDevices/{username}/{credential}`    | `DELETE` request to delete a device registration record for the user.
+| `webAuthnDevices/{username}/{credential}`     | `DELETE` request to delete a device registration record for the user.
+| `webAuthnDevices/{username}` | `POST` request to add a device registration record for the user with request body parameter `record`.
 
 ### Default
 
@@ -83,6 +95,23 @@ Device registrations may be kept inside a MongoDb instance by including the foll
 ```
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#fido2-webauthn-mongodb).
+
+### LDAP
+
+Device registrations may be kept inside LDAP directories by including the following module in the WAR overlay:
+
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-support-webauthn-ldap</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```
+
+Device registration records are kept inside a designated configurable multi-valued attribute as JSON blobs. The attribute values are parsed
+to load, save, update or delete accounts. The content of each attribute value can be signed/encrypted if necessary. 
+
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#fido2-webauthn-ldap).
 
 ### JPA
 

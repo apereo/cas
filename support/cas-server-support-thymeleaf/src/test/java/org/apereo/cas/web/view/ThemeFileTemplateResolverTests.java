@@ -64,10 +64,16 @@ public class ThemeFileTemplateResolverTests {
         verifyThemeFile();
     }
 
+    @Test
+    public void verifyOperationByDefaultValue() throws Exception {
+        casProperties.getTheme().setDefaultThemeName("test");
+        verifyThemeFile();
+    }
+
     private void verifyThemeFile() throws IOException {
         val themeDir = new File(FileUtils.getTempDirectory(), "test");
         if (!themeDir.exists() && !themeDir.mkdir()) {
-            fail("Unable to create directory " + themeDir);
+            fail(() -> "Unable to create directory " + themeDir);
         }
         val path = new File(themeDir, "casLoginView.html");
         FileUtils.write(path, "<html><html>", StandardCharsets.UTF_8);

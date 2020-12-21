@@ -56,7 +56,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
         "cas.monitor.endpoints.jdbc.query=SELECT * FROM USERS",
         "cas.monitor.endpoints.jdbc.role-prefix=USER_",
 
-        "cas.monitor.endpoints.default-endpoint-properties.requiredIpAddresses=127.+",
+        "cas.monitor.endpoints.default-endpoint-properties.required-ip-addresses=127.+",
         "cas.monitor.endpoints.default-endpoint-properties.access=IP_ADDRESS",
 
         "cas.monitor.endpoints.endpoint.health.access=IP_ADDRESS",

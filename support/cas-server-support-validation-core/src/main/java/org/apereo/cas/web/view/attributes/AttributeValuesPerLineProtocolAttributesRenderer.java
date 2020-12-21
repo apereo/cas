@@ -21,8 +21,12 @@ public class AttributeValuesPerLineProtocolAttributesRenderer implements CasProt
     public Collection<String> render(final Map<String, Object> attributes) {
         val formattedAttributes = new ArrayList<String>(attributes.size());
         attributes.forEach((key, value) -> {
-            val attributeValues = CollectionUtils.toCollection(value).stream().map(Object::toString).collect(Collectors.joining(","));
-            formattedAttributes.add(key.concat("=").concat(attributeValues));
+            val attributeValues = CollectionUtils.toCollection(value)
+                .stream()
+                .map(Object::toString)
+                .collect(Collectors.joining(","));
+            val name = CasProtocolAttributesRenderer.sanitizeAttributeName(key);
+            formattedAttributes.add(name.concat("=").concat(attributeValues));
         });
         return formattedAttributes;
     }

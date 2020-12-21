@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.cookie;
 
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -19,6 +20,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("CookieProperties")
 public class CookieProperties implements Serializable {
 
     private static final long serialVersionUID = 6804770601645126835L;
@@ -57,12 +59,14 @@ public class CookieProperties implements Serializable {
     private String comment = "CAS Cookie";
 
     /**
-     * True if sending this cookie should be restricted to a secure protocol, or false if the it can be sent using any protocol.
+     * True if sending this cookie should be restricted to a secure protocol, or
+     * false if the it can be sent using any protocol.
      */
     private boolean secure = true;
 
     /**
-     * true if this cookie contains the HttpOnly attribute. This means that the cookie should not be accessible to scripting engines, like javascript.
+     * true if this cookie contains the HttpOnly attribute. This means that the cookie should
+     * not be accessible to scripting engines, like javascript.
      */
     private boolean httpOnly = true;
 

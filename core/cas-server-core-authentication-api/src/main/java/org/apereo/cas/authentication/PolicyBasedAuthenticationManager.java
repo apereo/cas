@@ -11,6 +11,7 @@ import org.apereo.cas.support.events.authentication.CasAuthenticationTransaction
 import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionStartedEvent;
 import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionSuccessfulEvent;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,6 @@ import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import java.lang.reflect.UndeclaredThrowableException;
 import java.security.GeneralSecurityException;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -276,12 +276,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
 
         val handlerSet = this.authenticationEventExecutionPlan.getAuthenticationHandlers(transaction);
         LOGGER.debug("Candidate resolved authentication handlers for this transaction are [{}]", handlerSet);
-
-        if (handlerSet.isEmpty()) {
-            LOGGER.error("Resolved authentication handlers for this transaction are empty");
-            throw new AuthenticationException(builder.getFailures(), builder.getSuccesses());
-        }
-
+        
         try {
             val it = credentials.iterator();
             AuthenticationCredentialsThreadLocalBinder.clearInProgressAuthentication();
@@ -381,7 +376,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
                 }
             } catch (final GeneralSecurityException e) {
                 LOGGER.debug(e.getMessage(), e);
-                failures.add(e.getCause());
+                FunctionUtils.doIfNotNull(e.getCause(), o -> failures.add(e.getCause()));
             } catch (final Exception e) {
                 LOGGER.debug(e.getMessage(), e);
                 failures.add(e);
@@ -400,9 +395,6 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
      */
     protected void handleAuthenticationException(final Throwable ex, final String name, final AuthenticationBuilder builder) {
         var e = ex;
-        if (ex instanceof UndeclaredThrowableException) {
-            e = ((UndeclaredThrowableException) ex).getUndeclaredThrowable();
-        }
         LOGGER.trace(e.getMessage(), e);
         val msg = new StringBuilder(StringUtils.defaultString(e.getMessage()));
         if (e.getCause() != null) {

@@ -153,7 +153,6 @@ Allow the CAS Spring Cloud configuration server to load settings from [HashiCorp
 
 # spring.cloud.consul.config.watch.delay=1000
 # spring.cloud.consul.config.watch.enabled=false
-
 ```
 
 ### Vault
@@ -392,22 +391,36 @@ server.port=8443
 server.ssl.key-store=file:/etc/cas/thekeystore
 server.ssl.key-store-password=changeit
 server.ssl.key-password=changeit
+
+# server.ssl.enabled=true
 # server.ssl.ciphers=
-# server.ssl.client-auth=
-# server.ssl.enabled=
 # server.ssl.key-alias=
 # server.ssl.key-store-provider=
 # server.ssl.key-store-type=
 # server.ssl.protocol=
-# server.ssl.trust-store=
-# server.ssl.trust-store-password=
-# server.ssl.trust-store-provider=
-# server.ssl.trust-store-type=
 
 # server.max-http-header-size=2097152
 # server.use-forward-headers=true
 # server.connection-timeout=20000
 ```
+
+### X.509 Client Authentication
+
+```properties
+# server.ssl.trust-store=
+# server.ssl.trust-store-password=
+# server.ssl.trust-store-provider=
+# server.ssl.trust-store-type=
+# server.ssl.client-auth=NEED|NONE|WANT
+```
+
+The following values are supported for client authentication type:
+
+| Type                 | Description
+|----------------------|-------------------------------------------------------
+| `NEED`               | Client authentication is needed and mandatory. 
+| `NONE`               | Client authentication is not wanted.
+| `WANT`               | Client authentication is wanted but not mandatory.
 
 ### Embedded Jetty Container
 
@@ -571,7 +584,8 @@ Enable basic authentication for the embedded Apache Tomcat.
 
 #### Apache Portable Runtime (APR)
 
-Tomcat can use the [Apache Portable Runtime](https://tomcat.apache.org/tomcat-9.0-doc/apr.html) to provide superior scalability, performance, and better integration with native server technologies.
+Tomcat can use the [Apache Portable Runtime](https://tomcat.apache.org/tomcat-9.0-doc/apr.html) to provide superior 
+scalability, performance, and better integration with native server technologies.
 
 ```properties
 # cas.server.tomcat.apr.enabled=false
@@ -594,6 +608,25 @@ Enabling APR requires the following JVM system property that indicates the locat
 ```bash
 -Djava.library.path=/path/to/tomcat-native/lib
 ```
+   
+The APR connector can be assigned an SSLHostConfig element as such:
+
+```properties
+# cas.server.tomcat.apr.ssl-host-config.enabled=false
+# cas.server.tomcat.apr.ssl-host-config.revocation-enabled=false
+# cas.server.tomcat.apr.ssl-host-config.ca-certificate-file=false
+# cas.server.tomcat.apr.ssl-host-config.host-name=
+# cas.server.tomcat.apr.ssl-host-config.ssl-protocol=
+# cas.server.tomcat.apr.ssl-host-config.protocols=all
+# cas.server.tomcat.apr.ssl-host-config.insecure-renegotiation=false
+# cas.server.tomcat.apr.ssl-host-config.certificate-verification-depth=10
+
+# cas.server.tomcat.apr.ssl-host-config.certificates[0].certificate-file=
+# cas.server.tomcat.apr.ssl-host-config.certificates[0].certificate-key-file=
+# cas.server.tomcat.apr.ssl-host-config.certificates[0].certificate-key-password=
+# cas.server.tomcat.apr.ssl-host-config.certificates[0].certificate-chain-file=
+# cas.server.tomcat.apr.ssl-host-config.certificates[0].type=UNDEFINED
+```
 
 #### Connector IO
 
@@ -615,11 +648,11 @@ Enable in-memory session replication to replicate web application session deltas
 | `DEFAULT`            | Discovers cluster members via multicast discovery and optionally via staticly defined cluster members using the `clusterMembers`. [SimpleTcpCluster with McastService](http://tomcat.apache.org/tomcat-9.0-doc/cluster-howto.html) 
 | `CLOUD`              | For use in Kubernetes where members are discovered via accessing the Kubernetes API or doing a DNS lookup of the members of a Kubernetes service. [Documentation](https://cwiki.apache.org/confluence/display/TOMCAT/ClusteringCloud) is currently light, see code for details.
 
-| `CLOUD` Membership Providers   | Description
+| Membership Providers   | Description
 |----------------------|-------------------------------------------------------
 | `kubernetes`         | Uses [Kubernetes API](https://github.com/apache/tomcat/blob/master/java/org/apache/catalina/tribes/membership/cloud/KubernetesMembershipProvider.java) to find other pods in a deployment. API is discovered and accessed via information in environment variables set in the container. The KUBERNETES_NAMESPACE environment variable is used to query the pods in the namespace and it will treat other pods in that namespace as potential cluster members but they can be filtered using the KUBERNETES_LABELS environment variable which are used as a [label selector](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#api).
 | `dns`                | Uses [DNS lookups](https://github.com/apache/tomcat/blob/master/java/org/apache/catalina/tribes/membership/cloud/DNSMembershipProvider.java) to find addresses of the cluster members behind a DNS name specified by DNS_MEMBERSHIP_SERVICE_NAME environment variable. Works in Kubernetes but doesn't rely on Kubernetes.
-| [MembershipProvider impl classname](https://github.com/apache/tomcat/blob/master/java/org/apache/catalina/tribes/MembershipProvider.java) | Use a membership provider implementation of your choice.
+| `MembershipProvider` class | Use a [membership provider implementation](https://github.com/apache/tomcat/blob/master/java/org/apache/catalina/tribes/MembershipProvider.java) of your choice.
 
 Most settings apply to the `DEFAULT` clustering type, which requires members to be defined via `clusterMembers` if multicast discovery doesn't work. The `cloudMembershipProvider` setting applies to the `CLOUD` type.
 
@@ -852,11 +885,15 @@ The following access levels are allowed for each individual endpoint:
 To learn more about this topic, [please review this guide](../monitoring/Configuring-Monitoring-Administration.html).
 
 ```properties
-# spring.boot.admin.url=https://bootadmin.example.org:8444
-# spring.boot.admin.client.management-url=${cas.server.prefix}/status
-# spring.boot.admin.client.name=Apereo CAS
-# spring.boot.admin.client.metadata.user.name=
-# spring.boot.admin.client.metadata.user.password=
+# spring.boot.admin.client.url=https://bootadmin.example.org:8444
+# spring.boot.admin.client.instance.service-base-url=${cas.server.prefix}
+# spring.boot.admin.client.instance.name=Apereo CAS
+# In case Spring Boot Admin endpoints are protected via basic authn :
+# spring.boot.admin.client.username=
+# spring.boot.admin.client.password=
+# In case CAS endpoints are protected via basic authn :
+# spring.boot.admin.client.instance.metadata.user.name=
+# spring.boot.admin.client.instance.metadata.user.password=
 ```
 
 ### JavaMelody
@@ -1032,7 +1069,8 @@ if explicit attribute mappings are defined, then *only mapped attributes* are re
 
 ### Multimapped Attribute
 
-Attributes may be allowed to be virtually renamed and remapped. The following definition, for instance, attempts to grab the attribute `uid` from the attribute source and rename it to `userId`:
+Attributes may be allowed to be virtually renamed and remapped. The following definition, for instance, attempts to 
+grab the attribute `uid` from the attribute source and rename it to `userId`:
 
 ```properties
 # cas.authn.attribute-repository.[type-placeholder].attributes.uid=userId
@@ -1074,7 +1112,9 @@ Static attributes that need to be mapped to a hardcoded value belong here.
 
 ### LDAP
 
-If you wish to directly and separately retrieve attributes from an LDAP source, LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.authn.attribute-repository.ldap[0]`.
+If you wish to directly and separately retrieve attributes from an LDAP source, LDAP settings for this 
+feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the 
+configuration key `cas.authn.attribute-repository.ldap[0]`.
 
 ```properties
 # cas.authn.attribute-repository.ldap[0].id=
@@ -1086,6 +1126,12 @@ If you wish to directly and separately retrieve attributes from an LDAP source, 
 # cas.authn.attribute-repository.ldap[0].attributes.affiliation=groupMembership
 ```
 
+To fetch and resolve attributes that carry tags/options, consider tagging the mapped attribute as such:
+
+```properties
+# cas.authn.attribute-repository.ldap[0].attributes.affiliation=affiliation;
+```
+                                  
 ### Groovy
 
 If you wish to directly and separately retrieve attributes from a Groovy script,
@@ -1143,7 +1189,9 @@ The format of the file may be:
 
 ### REST
 
-Retrieve attributes from a REST endpoint. RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.authn.attribute-repository.rest[0]`.
+Retrieve attributes from a REST endpoint. RESTful settings for this feature 
+are available [here](Configuration-Properties-Common.html#restful-integrations) under 
+the configuration key `cas.authn.attribute-repository.rest[0]`.
 
 ```properties
 # cas.authn.attribute-repository.rest[0].order=0
@@ -1223,7 +1271,9 @@ function run(uid, logger) {
 
 ### JDBC
 
-Retrieve attributes from a JDBC source. Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.attribute-repository.jdbc[0]`.
+Retrieve attributes from a JDBC source. Database settings for this feature 
+are available [here](Configuration-Properties-Common.html#database-settings) under 
+the configuration key `cas.authn.attribute-repository.jdbc[0]`.
 
 ```properties
 # cas.authn.attribute-repository.jdbc[0].attributes.uid=uid
@@ -1250,7 +1300,7 @@ Retrieve attributes from a JDBC source. Database settings for this feature are a
 
 ### Grouper
 
-This option reads all the groups from [a Grouper instance](http://www.internet2.edu/grouper/software.html) for the given CAS principal and adopts them
+This option reads all the groups from [a Grouper instance](https://incommon.org/software/grouper/) for the given CAS principal and adopts them
 as CAS attributes under a `grouperGroups` multi-valued attribute.
 To learn more about this topic, [please review this guide](../integration/Attribute-Resolution.html).
 
@@ -1271,7 +1321,8 @@ with the following configured properties:
 
 ### Couchbase
 
-This option will fetch attributes from a Couchbase database for a given CAS principal. To learn more about this topic, [please review this guide](../installation/Couchbase-Authentication.html). 
+This option will fetch attributes from a Couchbase database for a given CAS principal. To 
+learn more about this topic, [please review this guide](../installation/Couchbase-Authentication.html). 
 Database settings for this feature are available [here](Configuration-Properties-Common.html#couchbase-integration-settings) under the configuration key `cas.authn.attribute-repository.couchbase`.
 
 ```properties
@@ -1638,7 +1689,7 @@ under the configuration key `cas.authn.adaptive.ip-intel.rest`.
 #### Groovy Adaptive Authentication
 
 ```properties
-# cas.authn.adaptive.ipIntel.groovy.location=file:/etc/cas/config/GroovyIPAddressIntelligenceService.groovy
+# cas.authn.adaptive.ip-intel.groovy.location=file:/etc/cas/config/GroovyIPAddressIntelligenceService.groovy
 ```
 
 #### BlackDot Adaptive Authentication
@@ -1716,9 +1767,29 @@ Email notifications settings for this feature are available [here](Configuration
 under the configuration key `cas.authn.surrogate`. SMS notifications settings for this feature are 
 available [here](Configuration-Properties-Common.html#sms-notifications) under the configuration key `cas.authn.surrogate`.
 
+## QR Authentication
+
+Attempt to login via a mobile device via a QR code. To learn more about this 
+topic, [please review this guide](../installation/QRCode-Authentication.html).
+
+```properties   
+# Configure allowed Origin header values for browser clients.
+# cas.authn.qr.allowed-origins=*
+```
+
+### JSON Device Repository
+
+Attempt to login via a mobile device via a QR code. To learn more about this 
+topic, [please review this guide](../installation/QRCode-Authentication.html).
+
+```properties
+# cas.authn.qr.json.location=file:/etc/cas/config/qrdevices.json
+```
+
 ## Risk-based Authentication
 
-Evaluate suspicious authentication requests and take action. To learn more about this topic, [please review this guide](../installation/Configuring-RiskBased-Authentication.html).
+Evaluate suspicious authentication requests and take action. To learn 
+more about this topic, [please review this guide](../installation/Configuring-RiskBased-Authentication.html).
 
 ```properties
 # cas.authn.adaptive.risk.threshold=0.6
@@ -1752,16 +1823,37 @@ To learn more about this topic, [please review this guide](../installation/Passw
 ```properties   
 # cas.authn.passwordless.multifactor-authentication-activated=false
 # cas.authn.passwordless.delegated-authentication-activated=false
+```
 
+#### Simple Account Store
+
+```properties
 # cas.authn.passwordless.accounts.simple.casuser=cas@example.org
+```
+
+#### Groovy Account Store
+
+```properties
 # cas.authn.passwordless.accounts.groovy.location=file:/etc/cas/config/pwdless.groovy
 ```
+
+#### JSON Account Store
+
+```properties
+# cas.authn.passwordless.accounts.json.location=file:/etc/cas/config/pwdless-accounts.json
+```
+
+#### RESTful Account Store
 
 RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) 
 under the configuration key `cas.authn.passwordless.accounts.rest`.
 
+#### LDAP Account Store
+
 LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) 
 under the configuration key `cas.authn.passwordless.accounts.ldap`.
+
+#### MongoDb Account Store
 
 MongoDb settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) 
 under the configuration key `cas.authn.passwordless.accounts.mongo`.
@@ -1776,7 +1868,7 @@ RESTful settings for this feature are available [here](Configuration-Properties-
 under the configuration key `cas.authn.passwordless.tokens.rest`. The signing key and the encryption 
 key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. 
 Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under 
-the configuration key `cas.authn.passwordless.tokens.rest`.
+the configuration key `cas.authn.passwordless.tokens`.
 
 Email notifications settings for this feature are available [here](Configuration-Properties-Common.html#email-notifications) 
 under the configuration key `cas.authn.passwordless.tokens`. SMS notifications settings for this feature are 
@@ -2159,7 +2251,6 @@ To learn more about this topic, [please review this guide](../installation/LDAP-
 LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.authn.ldap[0]`.
 
 ```properties
-#
 # Define attributes to be retrieved from LDAP as part of the same authentication transaction
 # The left-hand size notes the source while the right-hand size indicate an optional renaming/remapping
 # of the attribute definition. The same attribute name is allowed to be mapped multiple times to
@@ -2172,6 +2263,12 @@ LDAP settings for this feature are available [here](Configuration-Properties-Com
 # cas.authn.ldap[0].allow-multiple-principal-attribute-values=true
 # cas.authn.ldap[0].allow-missing-principal-attribute-value=true
 # cas.authn.ldap[0].credential-criteria=
+```
+
+To fetch and resolve attributes that carry tags/options, consider tagging the mapped attribute as such:
+
+```properties
+# cas.authn.ldap[0].principal-attribute-list=homePostalAddress:homePostalAddress;
 ```
 
 ### LDAP Password Policy
@@ -2262,7 +2359,6 @@ Webflow auto-configuration settings for this feature are available [here](Config
 # cas.authn.spnego.properties[0].timeout=300000
 # cas.authn.spnego.properties[0].jcifs-service-principal=HTTP/cas.example.com@EXAMPLE.COM
 # cas.authn.spnego.properties[0].jcifs-netbios-wins=
-
 ```
 
 ### SPNEGO Client Selection Strategy
@@ -2337,7 +2433,8 @@ LDAP settings for this feature are available [here](Configuration-Properties-Com
 ### Static Resource Repository
 
 ```properties
-# cas.authn.gua.resource.location=file:/path/to/image.jpg
+# cas.authn.gua.simple.[username1]=file:/path/to/image.jpg
+# cas.authn.gua.simple.[username2]=file:/path/to/image.jpg
 ```
 
 ## JWT/Token Authentication
@@ -2511,6 +2608,11 @@ To learn more about this topic, [please review this guide](../installation/X509-
 
 Webflow auto-configuration settings for this feature are available [here](Configuration-Properties-Common.html#webflow-auto-configuration) under 
 the configuration key `cas.authn.x509.webflow`.
+
+```properties
+# cas.authn.x509.webflow.port=8446
+# cas.authn.x509.webflow.client-auth=want
+```
 
 ### Principal Resolution
 
@@ -2988,6 +3090,16 @@ Additionally, tokens can be managed via REST using the following settings:
 # cas.authn.mfa.gauth.mongo.token-collection=MongoDbGoogleAuthenticatorTokenRepository
 ```
 
+#### Google Authenticator LDAP
+
+LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.authn.mfa.gauth.ldap`. 
+
+The following settings are additionally available for this feature:
+
+```properties
+# cas.authn.mfa.gauth.ldap.account-attribute-name=gauthRecord
+```
+
 #### Google Authenticator Redis
 
  Configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration) 
@@ -3096,16 +3208,26 @@ To learn more about this topic, [please review this guide](../mfa/DuoSecurity-Au
 # cas.authn.mfa.duo[0].order=
 ```
 
-The `duo-application-key` is a string, at least 40 characters long, that you generate and keep secret from Duo.
-You can generate a random string in Python with:
+Multifactor authentication bypass settings for this provider are 
+available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under 
+the configuration key `cas.authn.mfa.duo[0]`.
+
+
+#### Web SDK
+
+The `duo-application-key` is a required string, at least 40 characters long, that you 
+generate and keep secret from Duo. You can generate a random string in Python with:
 
 ```python
 import os, hashlib
 print hashlib.sha1(os.urandom(32)).hexdigest()
 ```
 
-Multifactor authentication bypass settings for this provider are 
-available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.duo[0]`.
+#### Universal Prompt
+
+Universal Prompt no longer requires you to generate and use a application key value. Instead, it requires a *client id* and *client secret*,
+which are known and taught CAS using the integration key and secret key configuration settings. You will need get your integration key, 
+secret key, and API hostname from Duo Security when you register CAS as a protected application. 
 
 ### FIDO2 WebAuthn
 
@@ -3118,6 +3240,7 @@ To learn more about this topic, [please review this guide](../mfa/FIDO2-WebAuthn
 # cas.authn.mfa.web-authn.relying-party-id=
 
 # cas.authn.mfa.web-authn.display-name-attribute=displayName
+# cas.authn.mfa.web-authn.allow-primary-authentication=false
 
 # cas.authn.mfa.web-authn.allow-unrequested-extensions=false
 # cas.authn.mfa.web-authn.allow-untrusted-attestation=false
@@ -3153,6 +3276,15 @@ available [here](Configuration-Properties-Common.html#job-scheduling) under the 
 
 Common configuration settings for this feature are 
 available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.web-authn`.
+
+### FIDO2 WebAuthn LDAP
+
+Common configuration settings for this feature are 
+available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.authn.mfa.web-authn.ldap`.
+
+```properties
+# cas.authn.mfa.web-authn.ldap.account-attribute-name=casWebAuthnRecord
+```
 
 ### FIDO2 WebAuthn JPA
 
@@ -3277,7 +3409,8 @@ To learn more about this topic, [please review this guide](../mfa/AuthyAuthentic
 # cas.authn.mfa.authy.order=
 ```
 
-Multifactor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.authy`.
+Multifactor authentication bypass settings for this provider are 
+available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.authy`.
 
 
 ### Acceptto
@@ -3365,7 +3498,6 @@ A given attribute that is to be encoded in the final SAML response may contain a
 # cas.authn.saml-idp.metadata.basic-authn-username=
 # cas.authn.saml-idp.metadata.basic-authn-password=
 # cas.authn.saml-idp.metadata.supported-content-types=
-
 ```
 
 #### SAML Metadata JPA
@@ -3394,7 +3526,12 @@ settings for this feature are available [here](Configuration-Properties-Common.h
 
 #### SAML Metadata Git
 
-Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#git-configuration) under the configuration key `cas.authn.saml-idp.metadata`.
+```properties
+# cas.authn.saml-idp.metadata.git.idp-metadata-enabled=true
+```
+
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#git-configuration) 
+under the configuration key `cas.authn.saml-idp.metadata`.
  
 The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. Signing & 
 encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the 
@@ -3790,13 +3927,27 @@ The following settings specifically apply to this provider:
 
 #### KeyCloak
 
-Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-openid-connect-settings) 
+Common settings for this identity provider are 
+available [here](Configuration-Properties-Common.html#delegated-authentication-openid-connect-settings) 
 under the configuration key `cas.authn.pac4j.oidc[0].keycloak`.
 
 ```properties
 # cas.authn.pac4j.oidc[0].keycloak.realm=
 # cas.authn.pac4j.oidc[0].keycloak.base-uri=
 ```                                     
+
+#### Apple Signin
+
+Common settings for this identity provider are 
+available [here](Configuration-Properties-Common.html#delegated-authentication-openid-connect-settings) 
+under the configuration key `cas.authn.pac4j.oidc[0].apple`.
+
+```properties
+# cas.authn.pac4j.oidc[0].apple.private-key=
+# cas.authn.pac4j.oidc[0].apple.private-key-id=
+# cas.authn.pac4j.oidc[0].apple.team-id=
+# cas.authn.pac4j.oidc[0].apple.timeout=PT30S
+```  
 
 #### Generic
 
@@ -3988,7 +4139,6 @@ To learn more about this topic, [please review this guide](../installation/OAuth
 # cas.authn.oauth.device-user-code.user-code-length=8
 ```
 
-
 ### OAuth2 JWT Access Tokens
 
 ```properties
@@ -4027,9 +4177,12 @@ To learn more about this topic, [please review this guide](../ux/User-Interface-
 # cas.locale.default-value=en
 ```
 
-If the user changes the language, a special cookie is created by CAS to contain the selected language. Cookie settings for this feature are available [here](Configuration-Properties-Common.html#cookie-properties) under the configuration key `cas.locale.cookie`.
+If the user changes the language, a special cookie is created by CAS to contain the selected language. Cookie 
+settings for this feature are available [here](Configuration-Properties-Common.html#cookie-properties) under the configuration key `cas.locale.cookie`.
 
 ## Global SSO Behavior
+
+To learn more about this topic, [please review this guide](../installation/Configuring-SSO.html).
 
 ```properties
 # cas.sso.allow-missing-service-parameter=true
@@ -4458,6 +4611,7 @@ a local truststore is provided by CAS to improve portability of configuration ac
 
 # cas.http-client.truststore.psw=changeit
 # cas.http-client.truststore.file=classpath:/truststore.jks
+# cas.http-client.truststore.type=
 ```
 
 ### Hostname Verification
@@ -5485,7 +5639,7 @@ To learn more about this topic, [please review this guide](../installation/Servi
 # spring.cloud.consul.host=localhost
 
 # spring.cloud.consul.discovery.health-check-path=<health-endpoint-url>
-# spring.cloud.consul.discovery.health-check-path=15s
+# spring.cloud.consul.discovery.health-check-interval=15s
 # spring.cloud.consul.discovery.instance-id=${spring.application.name}:${random.value}
 
 # spring.cloud.consul.discovery.heartbeat.enabled=true
@@ -5585,7 +5739,7 @@ Configure settings relevant to the Java CAS client configured to handle inbound 
 
 ```properties
 # cas.client.prefix=https://sso.example.org/cas
-# cas.client.validator-type=CAS10|CAS20|CAS30
+# cas.client.validator-type=CAS10|CAS20|CAS30|JSON
 ```
 
 ## Password Synchronization

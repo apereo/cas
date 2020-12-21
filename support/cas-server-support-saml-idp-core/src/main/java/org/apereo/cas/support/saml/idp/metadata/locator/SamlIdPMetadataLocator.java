@@ -74,4 +74,15 @@ public interface SamlIdPMetadataLocator {
      * @return the saml id p metadata document
      */
     SamlIdPMetadataDocument fetch(Optional<SamlRegisteredService> registeredService);
+
+    /**
+     * Should generate metadata for service?
+     *
+     * @param registeredService the registered service
+     * @return the boolean
+     */
+    default boolean shouldGenerateMetadataFor(final Optional<SamlRegisteredService> registeredService) {
+        return registeredService.isEmpty();
+    }
+
 }

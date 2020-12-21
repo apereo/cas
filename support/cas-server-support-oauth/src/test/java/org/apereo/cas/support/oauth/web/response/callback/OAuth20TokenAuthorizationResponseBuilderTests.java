@@ -73,6 +73,7 @@ public class OAuth20TokenAuthorizationResponseBuilderTests extends AbstractOAuth
             CLIENT_ID,
             holder);
         assertTrue(modelAndView.getView() instanceof RedirectView, "Expected RedirectView");
+        assertTrue(modelAndView.getModel().isEmpty());
 
         val redirectUrl = ((RedirectView) modelAndView.getView()).getUrl();
         val params = splitQuery(new URIBuilder(redirectUrl).getFragment());
@@ -82,17 +83,17 @@ public class OAuth20TokenAuthorizationResponseBuilderTests extends AbstractOAuth
     }
 
     private static void verifyParam(final Map<String, List<String>> params, final String paramName, final String expectedParamValue) {
-        assertTrue(params.containsKey(paramName), "Expected " + paramName + "  param in redirect URL");
+        assertTrue(params.containsKey(paramName), () -> "Expected " + paramName + "  param in redirect URL");
         assertEquals(1,
             params
                 .get(paramName)
                 .size(),
-            "Expected one value for " + paramName + " param");
+            () -> "Expected one value for " + paramName + " param");
         assertEquals(expectedParamValue,
             params
                 .get(paramName)
                 .get(0),
-            "Expected unchanged " + paramName + "  param");
+            () -> "Expected unchanged " + paramName + "  param");
     }
 
     private static Map<String, List<String>> splitQuery(final String fragment) {

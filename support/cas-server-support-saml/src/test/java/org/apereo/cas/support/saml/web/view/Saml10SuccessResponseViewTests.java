@@ -109,7 +109,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
 
         val primary = CoreAuthenticationTestUtils.getAuthentication(principal, authAttributes);
         val assertion = new DefaultAssertionBuilder(primary).with(List.of(primary)).with(
-            CoreAuthenticationTestUtils.getService()).with(true).build();
+            CoreAuthenticationTestUtils.getWebApplicationService()).with(true).build();
         model.put("assertion", assertion);
 
         val servletResponse = new MockHttpServletResponse();
@@ -147,7 +147,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         val primary = CoreAuthenticationTestUtils.getAuthentication(principal, authAttributes);
         val assertion = new DefaultAssertionBuilder(primary)
             .with(List.of(primary))
-            .with(CoreAuthenticationTestUtils.getService())
+            .with(CoreAuthenticationTestUtils.getWebApplicationService())
             .with(true)
             .build();
 
@@ -180,7 +180,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
 
         val assertion = new DefaultAssertionBuilder(primary)
             .with(List.of(primary))
-            .with(CoreAuthenticationTestUtils.getService())
+            .with(CoreAuthenticationTestUtils.getWebApplicationService())
             .with(true)
             .build();
         model.put("assertion", assertion);

@@ -39,11 +39,17 @@ public class InMemoryPasswordHistoryServiceTests {
 
     @Test
     public void verifyValidity() {
+        passwordHistoryService.removeAll();
+        assertTrue(passwordHistoryService.fetchAll().isEmpty());
+
         val request = new PasswordChangeRequest("casuser", "password", "password");
         assertFalse(passwordHistoryService.exists(request));
         assertTrue(passwordHistoryService.store(request));
         assertTrue(passwordHistoryService.exists(request));
         assertFalse(passwordHistoryService.fetchAll().isEmpty());
         assertFalse(passwordHistoryService.fetch("casuser").isEmpty());
+
+        passwordHistoryService.remove("casuser");
+        assertTrue(passwordHistoryService.fetch("casuser").isEmpty());
     }
 }

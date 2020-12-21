@@ -2,14 +2,17 @@ package org.apereo.cas.webauthn.web;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.webauthn.WebAuthnUtils;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.web.flow.BaseWebAuthnWebflowTests;
 
+import com.yubico.data.CredentialRegistration;
 import com.yubico.webauthn.RegisteredCredential;
 import com.yubico.webauthn.data.ByteArray;
-import com.yubico.webauthn.data.CredentialRegistration;
-import com.yubico.webauthn.data.exception.Base64UrlException;
+import com.yubico.webauthn.data.UserIdentity;
+import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -17,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.Clock;
+import java.time.Instant;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -55,21 +60,40 @@ public class WebAuthnRegisteredDevicesEndpointTests {
 
         webAuthnRegisteredDevicesEndpoint.delete(id1, id1);
         assertTrue(webAuthnRegisteredDevicesEndpoint.fetch(id1).isEmpty());
-        
+
         webAuthnRegisteredDevicesEndpoint.delete(id2);
         assertTrue(webAuthnRegisteredDevicesEndpoint.fetch(id1).isEmpty());
         assertTrue(webAuthnRegisteredDevicesEndpoint.fetch(id2).isEmpty());
+
+        val id3 = UUID.randomUUID().toString();
+        val record = getCredentialRegistration(RegisteredServiceTestUtils.getAuthentication(id3));
+        assertTrue(webAuthnRegisteredDevicesEndpoint.write(id3,
+            EncodingUtils.encodeBase64(WebAuthnUtils.getObjectMapper().writeValueAsString(record))));
     }
 
-    private void register(final Authentication authn) throws Base64UrlException {
-        webAuthnCredentialRepository.addRegistrationByUsername(authn.getPrincipal().getId(),
-            CredentialRegistration.builder()
-                .credential(RegisteredCredential.builder()
-                    .credentialId(ByteArray.fromBase64Url(authn.getPrincipal().getId()))
-                    .userHandle(ByteArray.fromBase64Url(RandomUtils.randomAlphabetic(8)))
-                    .publicKeyCose(ByteArray.fromBase64Url(RandomUtils.randomAlphabetic(8)))
-                    .build())
-                .build());
+    private CredentialRegistration register(final Authentication authn) throws Exception {
+        val registration = getCredentialRegistration(authn);
+        val json = WebAuthnUtils.getObjectMapper().writeValueAsString(registration);
+        assertNotNull(json);
+        webAuthnCredentialRepository.addRegistrationByUsername(authn.getPrincipal().getId(), registration);
+        return registration;
+    }
+
+    @SneakyThrows
+    private static CredentialRegistration getCredentialRegistration(final Authentication authn) {
+        return CredentialRegistration.builder()
+            .userIdentity(UserIdentity.builder()
+                .name(authn.getPrincipal().getId())
+                .displayName("CAS")
+                .id(ByteArray.fromBase64Url(authn.getPrincipal().getId()))
+                .build())
+            .registrationTime(Instant.now(Clock.systemUTC()))
+            .credential(RegisteredCredential.builder()
+                .credentialId(ByteArray.fromBase64Url(authn.getPrincipal().getId()))
+                .userHandle(ByteArray.fromBase64Url(RandomUtils.randomAlphabetic(8)))
+                .publicKeyCose(ByteArray.fromBase64Url(RandomUtils.randomAlphabetic(8)))
+                .build())
+            .build();
     }
 
 

@@ -26,11 +26,13 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("RestfulApi")
 public class ReturnRestfulAttributeReleasePolicyTests {
-    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "verifySerializeAReturnAllowedAttributeReleasePolicyToJson.json");
+    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(),
+        "verifySerializeAReturnAllowedAttributeReleasePolicyToJson.json");
+
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     @Test
-    public void verifySerializeAttributeReleasePolicyToJson() throws IOException {
+    public void verifyJson() throws IOException {
         val policyWritten = new ReturnRestfulAttributeReleasePolicy("http://endpoint.example.org");
         MAPPER.writeValue(JSON_FILE, policyWritten);
         val policyRead = MAPPER.readValue(JSON_FILE, ReturnRestfulAttributeReleasePolicy.class);
@@ -49,6 +51,21 @@ public class ReturnRestfulAttributeReleasePolicyTests {
                 CoreAuthenticationTestUtils.getService(),
                 CoreAuthenticationTestUtils.getRegisteredService());
             assertFalse(attributes.isEmpty());
+        }
+    }
+
+    @Test
+    public void verifyBadPolicy() {
+        try (val webServer = new MockWebServer(9298,
+            new ByteArrayResource("---".getBytes(StandardCharsets.UTF_8), "REST Output"),
+            MediaType.APPLICATION_JSON_VALUE)) {
+            webServer.start();
+
+            val policyWritten = new ReturnRestfulAttributeReleasePolicy("http://localhost:9298");
+            val attributes = policyWritten.getAttributes(CoreAuthenticationTestUtils.getPrincipal(),
+                CoreAuthenticationTestUtils.getService(),
+                CoreAuthenticationTestUtils.getRegisteredService());
+            assertTrue(attributes.isEmpty());
         }
     }
 }

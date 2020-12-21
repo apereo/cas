@@ -57,5 +57,6 @@ public class ThreadLocalAuditPrincipalResolverTests {
 
     private void assertResolvedPrincipal(final String principalId) {
         assertEquals(principalId, theResolver.resolveFrom(null, (Object) null));
+        assertEquals(PrincipalResolver.UNKNOWN_USER, theResolver.resolve());
     }
 }

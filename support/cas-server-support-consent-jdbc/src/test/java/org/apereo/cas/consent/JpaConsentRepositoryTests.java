@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
     BaseConsentRepositoryTests.SharedTestConfiguration.class
 }, properties = {
     "cas.jdbc.show-sql=true",
-    "cas.authn.mfa.yubikey.jpa.ddl-auto=create-drop"
+    "cas.consent.jpa.ddl-auto=create-drop"
 })
 @Getter
 @Tag("JDBC")

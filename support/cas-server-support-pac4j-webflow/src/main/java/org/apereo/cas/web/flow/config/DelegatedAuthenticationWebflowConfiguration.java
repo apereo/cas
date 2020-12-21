@@ -25,6 +25,7 @@ import org.apereo.cas.web.flow.DelegatedClientAuthenticationAction;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
 import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationFunction;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
+import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.saml2.Saml2ClientMetadataController;
@@ -49,6 +50,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -211,7 +213,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
     }
 
     @Bean
-    public Saml2ClientMetadataController saml2ClientMetadataController() {
+    public Saml2ClientMetadataController delegatedSaml2ClientMetadataController() {
         return new Saml2ClientMetadataController(builtClients.getObject(), configBean.getObject());
     }
 
@@ -220,7 +222,8 @@ public class DelegatedAuthenticationWebflowConfiguration {
     public DefaultDelegatedAuthenticationNavigationController delegatedClientNavigationController() {
         return new DefaultDelegatedAuthenticationNavigationController(builtClients.getObject(),
             delegatedClientWebflowManager(),
-            delegatedClientDistributedSessionStore.getObject());
+            delegatedClientDistributedSessionStore.getObject(),
+            casProperties);
     }
 
     @Bean
@@ -229,6 +232,11 @@ public class DelegatedAuthenticationWebflowConfiguration {
         return plan -> plan.registerWebflowConfigurer(delegatedAuthenticationWebflowConfigurer());
     }
 
+    @Bean
+    @ConditionalOnMissingBean(name = "delegatedAuthenticationCasMultifactorWebflowCustomizer")
+    public CasMultifactorWebflowCustomizer delegatedAuthenticationCasMultifactorWebflowCustomizer() {
+        return () -> List.of(CasWebflowConstants.STATE_ID_DELEGATED_AUTHENTICATION);
+    }
 
     @Bean
     @RefreshScope

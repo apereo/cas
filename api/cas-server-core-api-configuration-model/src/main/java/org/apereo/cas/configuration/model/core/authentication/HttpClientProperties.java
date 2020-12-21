@@ -8,6 +8,7 @@ import lombok.experimental.Accessors;
 import org.springframework.core.io.Resource;
 
 import java.io.Serializable;
+import java.security.KeyStore;
 
 /**
  * Configuration properties class for http.client.truststore.
@@ -97,5 +98,10 @@ public class HttpClientProperties implements Serializable {
          * The truststore password.
          */
         private String psw = "changeit";
+
+        /**
+         * Truststore type used to create a SSL context for http client.
+         */
+        private String type = KeyStore.getDefaultType();
     }
 }

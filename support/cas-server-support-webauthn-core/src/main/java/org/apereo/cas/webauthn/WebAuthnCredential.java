@@ -2,10 +2,12 @@ package org.apereo.cas.webauthn;
 
 import org.apereo.cas.authentication.credential.OneTimeTokenCredential;
 
+import com.yubico.webauthn.data.ByteArray;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import lombok.ToString;
 
 /**
@@ -24,5 +26,10 @@ public class WebAuthnCredential extends OneTimeTokenCredential {
 
     public WebAuthnCredential(final String token) {
         super(token);
+    }
+
+    @SneakyThrows
+    public static ByteArray from(final WebAuthnCredential webAuthnCredential) {
+        return ByteArray.fromBase64Url(webAuthnCredential.getToken());
     }
 }

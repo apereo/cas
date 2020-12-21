@@ -4,8 +4,8 @@ import org.apereo.cas.configuration.model.support.git.services.BaseGitProperties
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-
 
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
@@ -24,9 +24,9 @@ import org.eclipse.jgit.transport.OpenSshConfig;
 import org.eclipse.jgit.transport.SshTransport;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.eclipse.jgit.util.FS;
+import org.springframework.core.io.Resource;
 import org.springframework.util.StringUtils;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,7 +45,7 @@ public class GitRepositoryBuilder {
 
     private final String repositoryUri;
 
-    private final File repositoryDirectory;
+    private final Resource repositoryDirectory;
 
     private final String branchesToClone;
 
@@ -60,6 +60,10 @@ public class GitRepositoryBuilder {
     private final long timeoutInSeconds;
 
     private final boolean signCommits;
+
+    private final boolean strictHostKeyChecking;
+
+    private final boolean clearExistingIdentities;
 
     private static String getBranchPath(final String branchName) {
         return "refs/heads/" + branchName;
@@ -78,19 +82,24 @@ public class GitRepositoryBuilder {
             .repositoryUri(resolver.resolve(props.getRepositoryUrl()))
             .activeBranch(resolver.resolve(props.getActiveBranch()))
             .branchesToClone(props.getBranchesToClone())
-            .repositoryDirectory(props.getCloneDirectory())
+            .repositoryDirectory(props.getCloneDirectory().getLocation())
             .privateKeyPassphrase(props.getPrivateKeyPassphrase())
             .sshSessionPassword(props.getSshSessionPassword())
             .timeoutInSeconds(Beans.newDuration(props.getTimeout()).toSeconds())
-            .signCommits(props.isSignCommits());
+            .signCommits(props.isSignCommits())
+            .clearExistingIdentities(props.isClearExistingIdentities())
+            .strictHostKeyChecking(props.isStrictHostKeyChecking());
         if (StringUtils.hasText(props.getUsername())) {
             val providers = CollectionUtils.wrapList(
                 new UsernamePasswordCredentialsProvider(props.getUsername(), props.getPassword()),
                 new NetRCCredentialsProvider());
             builder.credentialsProviders(providers);
         }
-        if (props.getPrivateKeyPath() != null) {
-            builder.privateKeyPath(props.getPrivateKeyPath().getCanonicalPath());
+        if (props.getPrivateKey().getLocation() != null) {
+            val resource = ResourceUtils.prepareClasspathResourceIfNeeded(props.getPrivateKey().getLocation());
+            if (resource != null && resource.exists()) {
+                builder.privateKeyPath(resource.getFile().getCanonicalPath());
+            }
         }
         return builder.build();
     }
@@ -107,11 +116,18 @@ public class GitRepositoryBuilder {
                 if (StringUtils.hasText(sshSessionPassword)) {
                     session.setPassword(sshSessionPassword);
                 }
+                if (!strictHostKeyChecking) {
+                    session.setConfig("StrictHostKeyChecking", "no");
+                }
             }
 
             @Override
             protected JSch createDefaultJSch(final FS fs) throws JSchException {
                 val defaultJSch = super.createDefaultJSch(fs);
+                if (clearExistingIdentities) {
+                    defaultJSch.removeAllIdentity();
+                }
+
                 if (StringUtils.hasText(privateKeyPath)) {
                     defaultJSch.addIdentity(privateKeyPath, privateKeyPassphrase);
                 }
@@ -152,7 +168,7 @@ public class GitRepositoryBuilder {
         val cloneCommand = Git.cloneRepository()
             .setProgressMonitor(new LoggingGitProgressMonitor())
             .setURI(this.repositoryUri)
-            .setDirectory(this.repositoryDirectory)
+            .setDirectory(this.repositoryDirectory.getFile())
             .setBranch(this.activeBranch)
             .setTimeout((int) this.timeoutInSeconds)
             .setTransportConfigCallback(transportCallback)
@@ -173,7 +189,7 @@ public class GitRepositoryBuilder {
 
 
     private GitRepository getExistingGitRepository(final TransportConfigCallback transportCallback) throws Exception {
-        val git = Git.open(this.repositoryDirectory);
+        val git = Git.open(this.repositoryDirectory.getFile());
         LOGGER.debug("Checking out the branch [{}] at [{}]", this.activeBranch, this.repositoryDirectory);
         git.checkout()
             .setName(this.activeBranch)

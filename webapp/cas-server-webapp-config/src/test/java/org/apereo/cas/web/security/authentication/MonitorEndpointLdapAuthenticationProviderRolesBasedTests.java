@@ -7,7 +7,6 @@ import org.apereo.cas.util.junit.EnabledIfPortOpen;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -47,12 +46,7 @@ public class MonitorEndpointLdapAuthenticationProviderRolesBasedTests extends Ba
         assertTrue(provider.supports(UsernamePasswordAuthenticationToken.class));
         val token = provider.authenticate(new UsernamePasswordAuthenticationToken("authzcas", "123456"));
         assertNotNull(token);
-        assertAll(new Executable() {
-            @Override
-            public void execute() {
-                provider.destroy();
-            }
-        });
+        assertAll(provider::destroy);
     }
 
     @Test
@@ -64,12 +58,7 @@ public class MonitorEndpointLdapAuthenticationProviderRolesBasedTests extends Ba
         val authenticator = LdapUtils.newLdaptiveAuthenticator(ldap);
         val provider = new MonitorEndpointLdapAuthenticationProvider(ldap, securityProperties, connectionFactory, authenticator);
         assertThrows(BadCredentialsException.class, () -> provider.authenticate(new UsernamePasswordAuthenticationToken("authzcas", "123456")));
-        assertAll(new Executable() {
-            @Override
-            public void execute() {
-                provider.destroy();
-            }
-        });
+        assertAll(provider::destroy);
     }
 
     @Test
@@ -80,14 +69,9 @@ public class MonitorEndpointLdapAuthenticationProviderRolesBasedTests extends Ba
         val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
         val authenticator = LdapUtils.newLdaptiveAuthenticator(ldap);
         val provider = new MonitorEndpointLdapAuthenticationProvider(ldap, securityProperties, connectionFactory, authenticator);
-        assertThrows(
-            InsufficientAuthenticationException.class, () -> provider.authenticate(new UsernamePasswordAuthenticationToken("UNKNOWN_USER", "123456")));
-        assertAll(new Executable() {
-            @Override
-            public void execute() {
-                provider.destroy();
-            }
-        });
+        assertThrows(InsufficientAuthenticationException.class,
+            () -> provider.authenticate(new UsernamePasswordAuthenticationToken("UNKNOWN_USER", "123456")));
+        assertAll(provider::destroy);
     }
 
     @Test
@@ -98,13 +82,9 @@ public class MonitorEndpointLdapAuthenticationProviderRolesBasedTests extends Ba
         val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
         val authenticator = LdapUtils.newLdaptiveAuthenticator(ldap);
         val provider = new MonitorEndpointLdapAuthenticationProvider(ldap, securityProperties, connectionFactory, authenticator);
-        assertThrows(BadCredentialsException.class, () -> provider.authenticate(new UsernamePasswordAuthenticationToken("authzcas", "BAD_PASSWORD")));
-        assertAll(new Executable() {
-            @Override
-            public void execute() {
-                provider.destroy();
-            }
-        });
+        assertThrows(BadCredentialsException.class,
+            () -> provider.authenticate(new UsernamePasswordAuthenticationToken("authzcas", "BAD_PASSWORD")));
+        assertAll(provider::destroy);
     }
 
 }

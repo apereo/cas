@@ -131,7 +131,7 @@ public class GoogleAuthenticatorOneTimeTokenCredentialValidatorTests {
 
     @Test
     public void verifyMultipleAccountsWithNoId() {
-        for (int i = 0; i < 2; i++) {
+        for (var i = 0; i < 2; i++) {
             val acct = GoogleAuthenticatorAccount.builder()
                 .username("casuser")
                 .name(String.format("account-%s", i))

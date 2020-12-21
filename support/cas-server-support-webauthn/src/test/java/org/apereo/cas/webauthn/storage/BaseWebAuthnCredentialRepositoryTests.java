@@ -4,10 +4,10 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.webauthn.web.flow.BaseWebAuthnWebflowTests;
 
+import com.yubico.data.CredentialRegistration;
 import com.yubico.webauthn.AssertionResult;
 import com.yubico.webauthn.RegisteredCredential;
 import com.yubico.webauthn.data.ByteArray;
-import com.yubico.webauthn.data.CredentialRegistration;
 import com.yubico.webauthn.data.UserIdentity;
 import lombok.SneakyThrows;
 import lombok.val;
@@ -47,7 +47,7 @@ public abstract class BaseWebAuthnCredentialRepositoryTests {
 
     @Test
     public void verifyOperation() throws Exception {
-        val id = UUID.randomUUID().toString();
+        val id = getUsername();
         val registration = getCredentialRegistration(id);
 
         assertTrue(webAuthnCredentialRepository.addRegistrationByUsername(id, registration));
@@ -78,6 +78,10 @@ public abstract class BaseWebAuthnCredentialRepositoryTests {
                 webAuthnCredentialRepository.clean();
             }
         });
+    }
+
+    protected String getUsername() {
+        return UUID.randomUUID().toString();
     }
 
     @SneakyThrows

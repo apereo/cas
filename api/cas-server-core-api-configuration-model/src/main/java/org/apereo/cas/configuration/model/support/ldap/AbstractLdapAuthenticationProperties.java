@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.ldap;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -17,9 +18,11 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("AbstractLdapAuthenticationProperties")
 public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapSearchProperties {
 
     private static final long serialVersionUID = 3849857270054289852L;
+
     /**
      * The authentication type.
      * <ul>
@@ -36,6 +39,7 @@ public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapS
      */
     @RequiredProperty
     private AuthenticationTypes type = AuthenticationTypes.AUTHENTICATED;
+
     /**
      * If principalAttributePassword is empty then a user simple bind is done to validate credentials
      * otherwise the given attribute is compared with the given principalAttributePassword
@@ -48,16 +52,19 @@ public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapS
      * </p>
      */
     private String principalAttributePassword;
+
     /**
      * Specify the dn format accepted by the AD authenticator, etc.
      * Example format might be {@code uid=%s,ou=people,dc=example,dc=org}.
      */
     private String dnFormat;
+
     /**
      * Whether specific search entry resolvers need to be set
      * on the authenticator, or the default should be used.
      */
     private boolean enhanceWithEntryResolver = true;
+
     /**
      * Define how aliases are de-referenced.
      * Accepted values are:

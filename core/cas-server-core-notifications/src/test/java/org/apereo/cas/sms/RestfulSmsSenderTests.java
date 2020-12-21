@@ -54,8 +54,8 @@ public class RestfulSmsSenderTests {
         request.setLocalAddr("185.88.151.11");
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
 
-        this.webServer = new MockWebServer(8132, new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8),
-            "REST Output"),
+        webServer = new MockWebServer(8132,
+            new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_JSON_VALUE);
         this.webServer.start();
     }

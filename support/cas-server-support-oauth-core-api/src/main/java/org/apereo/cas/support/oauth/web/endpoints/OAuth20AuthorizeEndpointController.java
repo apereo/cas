@@ -72,13 +72,8 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
             .map(String::valueOf)
             .orElse(StringUtils.EMPTY);
         val registeredService = getRegisteredServiceByClientId(clientId);
-        try {
-            RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(clientId, registeredService);
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-            return OAuth20Utils.produceUnauthorizedErrorView();
-        }
-
+        RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(clientId, registeredService);
+        
         val mv = getOAuthConfigurationContext().getConsentApprovalViewResolver().resolve(context, registeredService);
         if (!mv.isEmpty() && mv.hasView()) {
             LOGGER.debug("Redirecting to consent-approval view with model [{}]", mv.getModel());
@@ -167,12 +162,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
                                                          final OAuthRegisteredService registeredService,
                                                          final JEEContext context,
                                                          final String clientId) {
-        val profileResult = manager.get(true);
-        if (profileResult.isEmpty()) {
-            LOGGER.error("Unexpected null profile from profile manager. Request is not fully authenticated.");
-            return OAuth20Utils.produceUnauthorizedErrorView();
-        }
-        val profile = profileResult.get();
+        val profile = manager.get(true).orElseThrow();
         val service = getOAuthConfigurationContext().getAuthenticationBuilder()
             .buildService(registeredService, context, false);
         LOGGER.trace("Created service [{}] based on registered service [{}]", service, registeredService);
@@ -239,7 +229,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
                 .orElse(null);
         }
         if (ticketGrantingTicket == null) {
-            val message = String.format("Unable to determine ticket-granting-ticket for client id [%s] and service [%s]", clientId, registeredService.getName());
+            val message = String.format("Missing ticket-granting-ticket for client id [%s] and service [%s]", clientId, registeredService.getName());
             LOGGER.error(message);
             return OAuth20Utils.produceErrorView(new PreventedException(message));
         }

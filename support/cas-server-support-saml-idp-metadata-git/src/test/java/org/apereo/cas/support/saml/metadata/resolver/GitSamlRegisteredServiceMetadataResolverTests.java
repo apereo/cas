@@ -32,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = {
     "cas.authn.saml-idp.metadata.git.sign-commits=false",
     "cas.authn.saml-idp.metadata.git.push-changes=true",
+    "cas.authn.saml-idp.metadata.git.idp-metadata-enabled=true",
     "cas.authn.saml-idp.metadata.git.repository-url=file:/tmp/cas-metadata-data.git"
 })
 @Slf4j
@@ -84,5 +85,7 @@ public class GitSamlRegisteredServiceMetadataResolverTests extends BaseGitSamlMe
         assertFalse(resolver.supports(null));
         val resolvers = resolver.resolve(service);
         assertFalse(resolvers.isEmpty());
+        service.setMetadataLocation("https://example.com/endswith.git");
+        assertTrue(resolver.supports(service));
     }
 }

@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SAML")
 public class Saml2ClientMetadataControllerTests {
     @Autowired
-    @Qualifier("saml2ClientMetadataController")
+    @Qualifier("delegatedSaml2ClientMetadataController")
     private Saml2ClientMetadataController saml2ClientMetadataController;
 
     @Autowired

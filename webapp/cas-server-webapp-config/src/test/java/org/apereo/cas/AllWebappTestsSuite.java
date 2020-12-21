@@ -1,6 +1,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.config.WiringConfigurationTests;
+import org.apereo.cas.web.security.CasWebSecurityConfigurerAdapterDenyTests;
 import org.apereo.cas.web.security.CasWebSecurityConfigurerAdapterTests;
 import org.apereo.cas.web.security.CasWebSecurityExpressionHandlerTests;
 import org.apereo.cas.web.security.CasWebSecurityExpressionRootTests;
@@ -23,6 +24,7 @@ import org.junit.runner.RunWith;
 @SelectClasses({
     MonitorEndpointLdapAuthenticationProviderDefaultRolesTests.class,
     WiringConfigurationTests.class,
+    CasWebSecurityConfigurerAdapterDenyTests.class,
     CasWebSecurityExpressionRootTests.class,
     CasWebSecurityExpressionHandlerTests.class,
     CasWebflowServerSessionContextConfigurationTests.class,

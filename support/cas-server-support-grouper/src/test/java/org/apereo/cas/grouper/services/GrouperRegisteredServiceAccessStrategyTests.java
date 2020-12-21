@@ -4,6 +4,7 @@ import org.apereo.cas.services.JsonServiceRegistry;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.io.WatcherService;
 
 import edu.internet2.middleware.grouperClient.ws.beans.WsGetGroupsResult;
@@ -54,6 +55,7 @@ public class GrouperRegisteredServiceAccessStrategyTests {
 
         val service = RegisteredServiceTestUtils.getRegisteredService("test");
         val grouper = new GrouperRegisteredServiceAccessStrategy();
+        grouper.setConfigProperties(CollectionUtils.wrap("hello", "world"));
         grouper.setRequiredAttributes(attributes);
         service.setAccessStrategy(grouper);
 
@@ -75,7 +77,7 @@ public class GrouperRegisteredServiceAccessStrategyTests {
             private static final long serialVersionUID = 8533229193475808261L;
 
             @Override
-            protected Collection<WsGetGroupsResult> getWsGetGroupsResults(final String principal) {
+            protected Collection<WsGetGroupsResult> fetchWsGetGroupsResults(final String principal) {
                 val group = new WsGroup();
                 group.setExtension("GroupExtension");
                 group.setDescription("Group Desc");
@@ -98,10 +100,20 @@ public class GrouperRegisteredServiceAccessStrategyTests {
         val strategy = new GrouperRegisteredServiceAccessStrategy() {
             private static final long serialVersionUID = 8533229193475808261L;
             @Override
-            protected Collection<WsGetGroupsResult> getWsGetGroupsResults(final String principal) {
+            protected Collection<WsGetGroupsResult> fetchWsGetGroupsResults(final String principal) {
                 return List.of();
             }
         };
+        val attrs = (Map) RegisteredServiceTestUtils.getTestAttributes("banderson");
+        assertFalse(strategy.doPrincipalAttributesAllowServiceAccess("banderson", attrs));
+    }
+
+    @Test
+    public void checkFailsConfig() {
+        val strategy = new GrouperRegisteredServiceAccessStrategy();
+        strategy.getConfigProperties().put("grouperClient.webService.url", "http://localhost:8012");
+        strategy.getConfigProperties().put("grouperClient.webService.login", "unknown");
+        strategy.getConfigProperties().put("grouperClient.webService.password", "unknown");
         val attrs = (Map) RegisteredServiceTestUtils.getTestAttributes("banderson");
         assertFalse(strategy.doPrincipalAttributesAllowServiceAccess("banderson", attrs));
     }

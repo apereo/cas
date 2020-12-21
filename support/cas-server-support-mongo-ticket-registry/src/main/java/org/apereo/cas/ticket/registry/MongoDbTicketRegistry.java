@@ -52,33 +52,6 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     private final TicketSerializationManager ticketSerializationManager;
 
     @Override
-    public Ticket updateTicket(final Ticket ticket) {
-        LOGGER.debug("Updating ticket [{}]", ticket);
-        try {
-            val holder = buildTicketAsDocument(ticket);
-            val metadata = this.ticketCatalog.find(ticket);
-            if (metadata == null) {
-                LOGGER.error("Could not locate ticket definition in the catalog for ticket [{}]", ticket.getId());
-                return null;
-            }
-            LOGGER.debug("Located ticket definition [{}] in the ticket catalog", metadata);
-            val collectionName = getTicketCollectionInstanceByMetadata(metadata);
-            if (StringUtils.isBlank(collectionName)) {
-                LOGGER.error("Could not locate collection linked to ticket definition for ticket [{}]", ticket.getId());
-                return null;
-            }
-            val query = new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).is(holder.getTicketId()));
-            val update = Update.update(TicketHolder.FIELD_NAME_JSON, holder.getJson());
-            this.mongoTemplate.upsert(query, update, collectionName);
-            LOGGER.debug("Updated ticket [{}]", ticket);
-        } catch (final Exception e) {
-            LOGGER.error("Failed updating [{}]", ticket);
-            LoggingUtils.error(LOGGER, e);
-        }
-        return ticket;
-    }
-
-    @Override
     public void addTicket(final Ticket ticket) {
         try {
             LOGGER.debug("Adding ticket [{}]", ticket.getId());
@@ -90,10 +63,6 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             }
             LOGGER.trace("Located ticket definition [{}] in the ticket catalog", metadata);
             val collectionName = getTicketCollectionInstanceByMetadata(metadata);
-            if (StringUtils.isBlank(collectionName)) {
-                LOGGER.error("Could not locate collection linked to ticket definition for ticket [{}]", ticket.getId());
-                return;
-            }
             LOGGER.trace("Found collection [{}] linked to ticket [{}]", collectionName, metadata);
             this.mongoTemplate.insert(holder, collectionName);
             LOGGER.debug("Added ticket [{}]", ticket.getId());
@@ -137,34 +106,6 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public Collection<? extends Ticket> getTickets() {
-        return this.ticketCatalog.findAll().stream()
-            .map(this::getTicketCollectionInstanceByMetadata)
-            .map(map -> mongoTemplate.findAll(TicketHolder.class, map))
-            .flatMap(List::stream)
-            .map(ticket -> decodeTicket(deserializeTicketFromMongoDocument(ticket)))
-            .collect(Collectors.toSet());
-    }
-
-    @Override
-    public boolean deleteSingleTicket(final String ticketIdToDelete) {
-        val ticketId = encodeTicketId(ticketIdToDelete);
-        LOGGER.debug("Deleting ticket [{}]", ticketId);
-        try {
-            val metadata = this.ticketCatalog.find(ticketIdToDelete);
-            val collectionName = getTicketCollectionInstanceByMetadata(metadata);
-            val query = new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).is(ticketId));
-            val res = this.mongoTemplate.remove(query, collectionName);
-            LOGGER.debug("Deleted ticket [{}] with result [{}]", ticketIdToDelete, res);
-            return true;
-        } catch (final Exception e) {
-            LOGGER.error("Failed deleting [{}]", ticketId);
-            LoggingUtils.error(LOGGER, e);
-        }
-        return false;
-    }
-
-    @Override
     public long deleteAll() {
         val query = new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).exists(true));
         return this.ticketCatalog.findAll().stream()
@@ -179,17 +120,46 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
+    public Collection<? extends Ticket> getTickets() {
+        return this.ticketCatalog.findAll().stream()
+            .map(this::getTicketCollectionInstanceByMetadata)
+            .map(map -> mongoTemplate.findAll(TicketHolder.class, map))
+            .flatMap(List::stream)
+            .map(ticket -> decodeTicket(deserializeTicketFromMongoDocument(ticket)))
+            .collect(Collectors.toSet());
+    }
+
+    @Override
+    public Ticket updateTicket(final Ticket ticket) {
+        LOGGER.debug("Updating ticket [{}]", ticket);
+        try {
+            val holder = buildTicketAsDocument(ticket);
+            val metadata = this.ticketCatalog.find(ticket);
+            if (metadata == null) {
+                LOGGER.error("Could not locate ticket definition in the catalog for ticket [{}]", ticket.getId());
+                return null;
+            }
+            LOGGER.debug("Located ticket definition [{}] in the ticket catalog", metadata);
+            val collectionName = getTicketCollectionInstanceByMetadata(metadata);
+            val query = new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).is(holder.getTicketId()));
+            val update = Update.update(TicketHolder.FIELD_NAME_JSON, holder.getJson());
+            this.mongoTemplate.upsert(query, update, collectionName);
+            LOGGER.debug("Updated ticket [{}]", ticket);
+            return ticket;
+        } catch (final Exception e) {
+            LOGGER.error("Failed updating [{}]", ticket);
+            LoggingUtils.error(LOGGER, e);
+        }
+        return null;
+    }
+
+    @Override
     public Stream<Ticket> getTicketsStream() {
         return ticketCatalog.findAll().stream()
             .map(this::getTicketCollectionInstanceByMetadata)
             .map(map -> mongoTemplate.stream(new Query(), TicketHolder.class, map))
             .flatMap(StreamUtils::createStreamFromIterator)
             .map(ticket -> decodeTicket(deserializeTicketFromMongoDocument(ticket)));
-    }
-
-    @Override
-    public long serviceTicketCount() {
-        return countTicketsByTicketType(ServiceTicket.class);
     }
 
     @Override
@@ -214,6 +184,23 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
                 return mongoTemplate.count(query, map);
             })
             .sum();
+    }
+
+    @Override
+    public long serviceTicketCount() {
+        return countTicketsByTicketType(ServiceTicket.class);
+    }
+
+    @Override
+    public boolean deleteSingleTicket(final String ticketIdToDelete) {
+        val ticketId = encodeTicketId(ticketIdToDelete);
+        LOGGER.debug("Deleting ticket [{}]", ticketId);
+        val metadata = this.ticketCatalog.find(ticketIdToDelete);
+        val collectionName = getTicketCollectionInstanceByMetadata(metadata);
+        val query = new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).is(ticketId));
+        val res = this.mongoTemplate.remove(query, collectionName);
+        LOGGER.debug("Deleted ticket [{}] with result [{}]", ticketIdToDelete, res);
+        return true;
     }
 
     private long countTicketsByTicketType(final Class<? extends Ticket> ticketType) {
@@ -256,6 +243,14 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         return null;
     }
 
+    private String serializeTicketForMongoDocument(final Ticket ticket) {
+        return ticketSerializationManager.serializeTicket(ticket);
+    }
+
+    private Ticket deserializeTicketFromMongoDocument(final TicketHolder holder) {
+        return ticketSerializationManager.deserializeTicket(holder.getJson(), holder.getType());
+    }
+
     /**
      * Calculate the time at which the ticket is eligible for automated deletion by MongoDb.
      * Makes the assumption that the CAS server date and the Mongo server date are in sync.
@@ -271,19 +266,6 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         }
         val exp = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(ttl);
         return DateTimeUtils.dateOf(Instant.ofEpochMilli(exp));
-    }
-
-    private String serializeTicketForMongoDocument(final Ticket ticket) {
-        try {
-            return ticketSerializationManager.serializeTicket(ticket);
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return null;
-    }
-
-    private Ticket deserializeTicketFromMongoDocument(final TicketHolder holder) {
-        return ticketSerializationManager.deserializeTicket(holder.getJson(), holder.getType());
     }
 }
 

@@ -19,6 +19,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Action that should execute prior to rendering the generic-success login view.
@@ -37,20 +38,6 @@ public class GenericSuccessViewAction extends AbstractAction {
 
     private final String redirectUrl;
 
-    @Override
-    protected Event doExecute(final RequestContext requestContext) {
-        if (StringUtils.isNotBlank(this.redirectUrl)) {
-            val service = this.serviceFactory.createService(this.redirectUrl);
-            val registeredService = this.servicesManager.findServiceBy(service);
-            RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
-            requestContext.getExternalContext().requestExternalRedirect(service.getId());
-        } else {
-            val tgt = WebUtils.getTicketGrantingTicketId(requestContext);
-            getAuthentication(tgt).ifPresent(authn -> WebUtils.putAuthentication(authn, requestContext));
-        }
-        return success();
-    }
-
     /**
      * Gets authentication principal.
      *
@@ -60,13 +47,42 @@ public class GenericSuccessViewAction extends AbstractAction {
      */
     public Optional<Authentication> getAuthentication(final String ticketGrantingTicketId) {
         try {
-            val ticketGrantingTicket = this.centralAuthenticationService.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
+            val ticketGrantingTicket = centralAuthenticationService.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
             return Optional.of(ticketGrantingTicket.getAuthentication());
         } catch (final InvalidTicketException e) {
-            LOGGER.warn("Ticket-granting ticket [{}] cannot be found in the ticket registry.", e.getMessage());
             LOGGER.debug(e.getMessage(), e);
         }
         LOGGER.warn("In the absence of valid ticket-granting ticket, the authentication cannot be determined");
         return Optional.empty();
+    }
+
+    @Override
+    protected Event doExecute(final RequestContext requestContext) {
+        if (StringUtils.isNotBlank(this.redirectUrl)) {
+            val service = this.serviceFactory.createService(this.redirectUrl);
+            val registeredService = this.servicesManager.findServiceBy(service);
+            RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
+            requestContext.getExternalContext().requestExternalRedirect(service.getId());
+        } else {
+            val tgt = WebUtils.getTicketGrantingTicketId(requestContext);
+            getAuthentication(tgt).ifPresent(authn -> {
+                WebUtils.putAuthentication(authn, requestContext);
+
+                val service = WebUtils.getService(requestContext);
+                val authorizedServices = servicesManager.getAllServices()
+                    .stream()
+                    .filter(registeredService -> {
+                        try {
+                            return RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service, registeredService, authn);
+                        } catch (final Exception e) {
+                            LOGGER.error(e.getMessage(), e);
+                            return false;
+                        }
+                    })
+                    .collect(Collectors.toList());
+                requestContext.getFlowScope().put("authorizedServices", authorizedServices);
+            });
+        }
+        return success();
     }
 }

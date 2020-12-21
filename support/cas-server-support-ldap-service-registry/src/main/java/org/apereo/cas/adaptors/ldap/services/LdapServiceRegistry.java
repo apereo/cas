@@ -7,14 +7,13 @@ import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
-import org.apereo.cas.util.LoggingUtils;
 
+import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.ldaptive.ConnectionFactory;
-import org.ldaptive.LdapException;
 import org.ldaptive.SearchResponse;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -43,11 +42,11 @@ public class LdapServiceRegistry extends AbstractServiceRegistry implements Disp
     private final LdapServiceRegistryProperties ldapProperties;
 
     public LdapServiceRegistry(final ConnectionFactory connectionFactory,
-                               final String baseDn,
-                               final LdapRegisteredServiceMapper ldapServiceMapper,
-                               final LdapServiceRegistryProperties ldapProperties,
-                               final ConfigurableApplicationContext applicationContext,
-                               final Collection<ServiceRegistryListener> serviceRegistryListeners) {
+        final String baseDn,
+        final LdapRegisteredServiceMapper ldapServiceMapper,
+        final LdapServiceRegistryProperties ldapProperties,
+        final ConfigurableApplicationContext applicationContext,
+        final Collection<ServiceRegistryListener> serviceRegistryListeners) {
         super(applicationContext, serviceRegistryListeners);
         this.connectionFactory = connectionFactory;
         this.baseDn = baseDn;
@@ -58,25 +57,83 @@ public class LdapServiceRegistry extends AbstractServiceRegistry implements Disp
 
     @Override
     public RegisteredService save(final RegisteredService rs) {
-        try {
-            invokeServiceRegistryListenerPreSave(rs);
-            if (rs.getId() != RegisteredService.INITIAL_IDENTIFIER_VALUE) {
-                return update(rs);
-            }
-            insert(rs);
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
+        invokeServiceRegistryListenerPreSave(rs);
+        if (rs.getId() != RegisteredService.INITIAL_IDENTIFIER_VALUE) {
+            return update(rs);
         }
+        insert(rs);
         return rs;
     }
 
-    private RegisteredService insert(final RegisteredService rs) {
-        try {
-            val entry = this.ldapServiceMapper.mapFromRegisteredService(this.baseDn, rs);
-            LdapUtils.executeAddOperation(this.connectionFactory, entry);
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
+    @Override
+    public boolean delete(final RegisteredService registeredService) {
+        val response = searchForServiceById(registeredService.getId());
+        if (LdapUtils.containsResultEntry(response)) {
+            val entry = response.getEntry();
+            return LdapUtils.executeDeleteOperation(this.connectionFactory, entry);
         }
+        return false;
+    }
+
+    @Override
+    public Collection<RegisteredService> load() {
+        val list = new ArrayList<RegisteredService>();
+        val response = getSearchResultResponse();
+        if (LdapUtils.containsResultEntry(response)) {
+            response.getEntries()
+                .stream()
+                .map(this.ldapServiceMapper::mapToRegisteredService)
+                .filter(Objects::nonNull)
+                .map(this::invokeServiceRegistryListenerPostLoad)
+                .filter(Objects::nonNull)
+                .forEach(s -> {
+                    publishEvent(new CasRegisteredServiceLoadedEvent(this, s));
+                    list.add(s);
+                });
+        }
+        return list;
+    }
+
+    @Override
+    public RegisteredService findServiceById(final long id) {
+        val response = searchForServiceById(id);
+        if (LdapUtils.containsResultEntry(response)) {
+            return this.ldapServiceMapper.mapToRegisteredService(response.getEntry());
+        }
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     * This may be an expensive operation.
+     * In order to count the number of available definitions in LDAP,
+     * this call will attempt to execute a search query to load services
+     * and the results will be counted. Do NOT attempt to call this
+     * operation in a loop.
+     *
+     * @return number of entries in the service registry
+     */
+    @Override
+    public long size() {
+        val response = getSearchResultResponse();
+        if (LdapUtils.containsResultEntry(response)) {
+            return response.getEntries()
+                .stream()
+                .map(this.ldapServiceMapper::mapToRegisteredService)
+                .filter(Objects::nonNull)
+                .count();
+        }
+        return 0;
+    }
+
+    @Override
+    public void destroy() {
+        connectionFactory.close();
+    }
+
+    private RegisteredService insert(final RegisteredService rs) {
+        val entry = this.ldapServiceMapper.mapFromRegisteredService(this.baseDn, rs);
+        LdapUtils.executeAddOperation(this.connectionFactory, entry);
         return rs;
     }
 
@@ -100,98 +157,10 @@ public class LdapServiceRegistry extends AbstractServiceRegistry implements Disp
         return rs;
     }
 
-    private String getCurrentDnForRegisteredService(final RegisteredService rs) {
-        try {
-            val response = searchForServiceById(rs.getId());
-            if (LdapUtils.containsResultEntry(response)) {
-                return response.getEntry().getDn();
-            }
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return null;
-    }
-
-    @Override
-    public boolean delete(final RegisteredService registeredService) {
-        try {
-            val response = searchForServiceById(registeredService.getId());
-            if (LdapUtils.containsResultEntry(response)) {
-                val entry = response.getEntry();
-                return LdapUtils.executeDeleteOperation(this.connectionFactory, entry);
-            }
-        } catch (final LdapException e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     * This may be an expensive operation.
-     * In order to count the number of available definitions in LDAP,
-     * this call will attempt to execute a search query to load services
-     * and the results will be counted. Do NOT attempt to call this
-     * operation in a loop.
-     *
-     * @return number of entries in the service registry
-     */
-    @Override
-    public long size() {
-        try {
-            val response = getSearchResultResponse();
-            if (LdapUtils.containsResultEntry(response)) {
-                return response.getEntries()
-                    .stream()
-                    .map(this.ldapServiceMapper::mapToRegisteredService)
-                    .filter(Objects::nonNull)
-                    .count();
-            }
-        } catch (final LdapException e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return 0;
-    }
-
-    @Override
-    public Collection<RegisteredService> load() {
-        val list = new ArrayList<RegisteredService>();
-        try {
-            val response = getSearchResultResponse();
-            if (LdapUtils.containsResultEntry(response)) {
-                response.getEntries()
-                    .stream()
-                    .map(this.ldapServiceMapper::mapToRegisteredService)
-                    .filter(Objects::nonNull)
-                    .map(this::invokeServiceRegistryListenerPostLoad)
-                    .filter(Objects::nonNull)
-                    .forEach(s -> {
-                        publishEvent(new CasRegisteredServiceLoadedEvent(this, s));
-                        list.add(s);
-                    });
-            }
-        } catch (final LdapException e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return list;
-    }
-
-    private SearchResponse getSearchResultResponse() throws LdapException {
+    @SneakyThrows
+    private SearchResponse getSearchResultResponse() {
         val filter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getLoadFilter());
         return LdapUtils.executeSearchOperation(this.connectionFactory, this.baseDn, filter, ldapProperties.getPageSize());
-    }
-
-    @Override
-    public RegisteredService findServiceById(final long id) {
-        try {
-            val response = searchForServiceById(id);
-            if (LdapUtils.containsResultEntry(response)) {
-                return this.ldapServiceMapper.mapToRegisteredService(response.getEntry());
-            }
-        } catch (final LdapException e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return null;
     }
 
     /**
@@ -199,16 +168,20 @@ public class LdapServiceRegistry extends AbstractServiceRegistry implements Disp
      *
      * @param id the id
      * @return the response
-     * @throws LdapException the ldap exception
      */
-    private SearchResponse searchForServiceById(final Long id) throws LdapException {
+    @SneakyThrows
+    private SearchResponse searchForServiceById(final Long id) {
         val filter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getSearchFilter(),
             LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, CollectionUtils.wrap(id.toString()));
-        return LdapUtils.executeSearchOperation(this.connectionFactory, this.baseDn, filter, ldapProperties.getPageSize());
+        return LdapUtils.executeSearchOperation(this.connectionFactory, this.baseDn,
+            filter, ldapProperties.getPageSize());
     }
 
-    @Override
-    public void destroy() {
-        connectionFactory.close();
+    private String getCurrentDnForRegisteredService(final RegisteredService rs) {
+        val response = searchForServiceById(rs.getId());
+        if (LdapUtils.containsResultEntry(response)) {
+            return response.getEntry().getDn();
+        }
+        return null;
     }
 }

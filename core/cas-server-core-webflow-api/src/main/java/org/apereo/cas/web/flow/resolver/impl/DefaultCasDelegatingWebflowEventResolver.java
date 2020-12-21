@@ -64,7 +64,7 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
             LOGGER.trace("Attempting to resolve candidate authentication events for service [{}]", service);
             val resolvedEvents = resolveCandidateAuthenticationEvents(context, service, registeredService);
             if (!resolvedEvents.isEmpty()) {
-                LOGGER.trace("The set of authentication events resolved for [{}] are [{}]. Beginning to select the final event...", service, resolvedEvents);
+                LOGGER.trace("Authentication events resolved for [{}] are [{}]. Selecting final event...", service, resolvedEvents);
                 WebUtils.putResolvedEventsAsAttribute(context, resolvedEvents);
                 val finalResolvedEvent = this.selectiveResolver.resolveSingle(context);
                 LOGGER.debug("The final authentication event resolved for [{}] is [{}]", service, finalResolvedEvent);
@@ -84,7 +84,7 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
         } catch (final Exception e) {
             var event = returnAuthenticationExceptionEventIfNeeded(e);
             if (event == null) {
-                LOGGER.warn("{}: {}", e.getClass(), e.getMessage());
+                LOGGER.warn(e.getMessage());
                 LOGGER.debug(e.getMessage(), e);
                 event = newEvent(CasWebflowConstants.TRANSITION_ID_ERROR, e);
             }
@@ -140,14 +140,14 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
 
     private Event returnAuthenticationExceptionEventIfNeeded(final Exception e) {
         if (e instanceof AuthenticationException || e instanceof AbstractTicketException) {
-            LOGGER.warn("{}: {}", e.getClass(), e.getMessage());
+            LOGGER.warn(e.getMessage());
             LOGGER.debug(e.getMessage(), e);
             return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, e);
         }
 
         if (e.getCause() instanceof AuthenticationException || e.getCause() instanceof AbstractTicketException) {
             val ex = e.getCause();
-            LOGGER.warn("{}: {}", ex.getClass(), ex.getMessage());
+            LOGGER.warn(ex.getMessage());
             LOGGER.debug(ex.getMessage(), ex);
             return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, ex);
         }

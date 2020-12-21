@@ -4,9 +4,13 @@ import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.config.CasOAuthUmaComponentSerializationConfiguration;
 import org.apereo.cas.config.CasOAuthUmaConfiguration;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.uma.claim.UmaResourceSetClaimPermissionExaminer;
+import org.apereo.cas.uma.discovery.UmaServerDiscoverySettings;
 import org.apereo.cas.uma.ticket.resource.ResourceSetPolicy;
 import org.apereo.cas.uma.ticket.resource.ResourceSetPolicyPermission;
 import org.apereo.cas.uma.web.controllers.authz.UmaAuthorizationRequestEndpointController;
+import org.apereo.cas.uma.web.controllers.claims.UmaRequestingPartyClaimsCollectionEndpointController;
+import org.apereo.cas.uma.web.controllers.discovery.UmaWellKnownEndpointController;
 import org.apereo.cas.uma.web.controllers.permission.UmaPermissionRegistrationEndpointController;
 import org.apereo.cas.uma.web.controllers.permission.UmaPermissionRegistrationRequest;
 import org.apereo.cas.uma.web.controllers.policy.UmaCreatePolicyForResourceSetEndpointController;
@@ -18,6 +22,7 @@ import org.apereo.cas.uma.web.controllers.resource.UmaDeleteResourceSetRegistrat
 import org.apereo.cas.uma.web.controllers.resource.UmaFindResourceSetRegistrationEndpointController;
 import org.apereo.cas.uma.web.controllers.resource.UmaResourceRegistrationRequest;
 import org.apereo.cas.uma.web.controllers.resource.UmaUpdateResourceSetRegistrationEndpointController;
+import org.apereo.cas.uma.web.controllers.rpt.UmaRequestingPartyTokenJwksEndpointController;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +47,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -52,12 +58,25 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Import({CasOAuthUmaConfiguration.class, CasOAuthUmaComponentSerializationConfiguration.class})
-@TestPropertySource(properties = "cas.authn.uma.requestingPartyToken.jwksFile=classpath:uma-keystore.jwks")
+@TestPropertySource(properties = "cas.authn.uma.requesting-party-token.jwks-file=classpath:uma-keystore.jwks")
 @Slf4j
 public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Tests {
+
+    @Autowired
+    @Qualifier("umaWellKnownEndpointController")
+    protected UmaWellKnownEndpointController umaWellKnownEndpointController;
+
     @Autowired
     @Qualifier("umaPermissionRegistrationEndpointController")
     protected UmaPermissionRegistrationEndpointController umaPermissionRegistrationEndpointController;
+
+    @Autowired
+    @Qualifier("umaRequestingPartyTokenJwksEndpointController")
+    protected UmaRequestingPartyTokenJwksEndpointController umaRequestingPartyTokenJwksEndpointController;
+
+    @Autowired
+    @Qualifier("umaRequestingPartyClaimsCollectionEndpointController")
+    protected UmaRequestingPartyClaimsCollectionEndpointController umaRequestingPartyClaimsCollectionEndpointController;
 
     @Autowired
     @Qualifier("umaCreateResourceSetRegistrationEndpointController")
@@ -104,29 +123,23 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
     protected SecurityInterceptor umaRequestingPartyTokenSecurityInterceptor;
 
     @Autowired
+    @Qualifier("umaServerDiscoverySettingsFactory")
+    protected UmaServerDiscoverySettings discoverySettings;
+
+    @Autowired
     @Qualifier("umaAuthorizationApiTokenSecurityInterceptor")
     protected SecurityInterceptor umaAuthorizationApiTokenSecurityInterceptor;
 
-    protected Triple<HttpServletRequest, HttpServletResponse, String> authenticateUmaRequestWithProtectionScope() throws Exception {
+    @Autowired
+    @Qualifier("umaResourceSetClaimPermissionExaminer")
+    protected UmaResourceSetClaimPermissionExaminer umaResourceSetClaimPermissionExaminer;
+
+    protected Triple<HttpServletRequest, HttpServletResponse, String> authenticateUmaRequestWithProtectionScope() {
         return authenticateUmaRequestWithScope(OAuth20Constants.UMA_PROTECTION_SCOPE, umaRequestingPartyTokenSecurityInterceptor);
     }
 
-    protected Triple<HttpServletRequest, HttpServletResponse, String> authenticateUmaRequestWithAuthorizationScope() throws Exception {
+    protected Triple<HttpServletRequest, HttpServletResponse, String> authenticateUmaRequestWithAuthorizationScope() {
         return authenticateUmaRequestWithScope(OAuth20Constants.UMA_AUTHORIZATION_SCOPE, umaAuthorizationApiTokenSecurityInterceptor);
-    }
-
-    private Triple<HttpServletRequest, HttpServletResponse, String> authenticateUmaRequestWithScope(
-        final String scope, final SecurityInterceptor interceptor) {
-        val service = addRegisteredService();
-        val pair = assertClientOK(service, false, scope);
-        assertNotNull(pair.getKey());
-        val accessToken = pair.getKey();
-
-        val mockRequest = new MockHttpServletRequest(HttpMethod.POST.name(), CONTEXT + OAuth20Constants.UMA_REGISTRATION_URL);
-        mockRequest.addHeader(HttpHeaders.AUTHORIZATION, String.format("%s %s", OAuth20Constants.TOKEN_TYPE_BEARER, accessToken));
-        val mockResponse = new MockHttpServletResponse();
-        interceptor.preHandle(mockRequest, mockResponse, null);
-        return Triple.of(mockRequest, mockResponse, accessToken);
     }
 
     protected static UmaResourceRegistrationRequest createUmaResourceRegistrationRequest() {
@@ -134,6 +147,10 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
     }
 
     protected static UmaResourceRegistrationRequest createUmaResourceRegistrationRequest(final long id) {
+        return createUmaResourceRegistrationRequest(id, CollectionUtils.wrapList("read", "write"));
+    }
+
+    protected static UmaResourceRegistrationRequest createUmaResourceRegistrationRequest(final long id, final List<String> scopes) {
         val resRequest = new UmaResourceRegistrationRequest();
         resRequest.setUri("http://rs.example.com/alice/myresource");
         resRequest.setName("my-resource");
@@ -141,7 +158,7 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
         if (id >= 0) {
             resRequest.setId(id);
         }
-        resRequest.setScopes(CollectionUtils.wrapList("read", "write"));
+        resRequest.setScopes(scopes);
         return resRequest;
     }
 
@@ -183,5 +200,19 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
             return null;
         }
         return userProfileResult.get();
+    }
+
+    private Triple<HttpServletRequest, HttpServletResponse, String> authenticateUmaRequestWithScope(
+        final String scope, final SecurityInterceptor interceptor) {
+        val service = addRegisteredService();
+        val pair = assertClientOK(service, false, scope);
+        assertNotNull(pair.getKey());
+        val accessToken = pair.getKey();
+
+        val mockRequest = new MockHttpServletRequest(HttpMethod.POST.name(), CONTEXT + OAuth20Constants.UMA_REGISTRATION_URL);
+        mockRequest.addHeader(HttpHeaders.AUTHORIZATION, String.format("%s %s", OAuth20Constants.TOKEN_TYPE_BEARER, accessToken));
+        val mockResponse = new MockHttpServletResponse();
+        interceptor.preHandle(mockRequest, mockResponse, null);
+        return Triple.of(mockRequest, mockResponse, accessToken);
     }
 }

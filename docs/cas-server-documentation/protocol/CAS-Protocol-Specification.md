@@ -52,7 +52,7 @@ application.
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
-interpreted as described in RFC 2119[1](<#1>).
+interpreted as described in RFC 2119[[1](<#1>)].
 
 -   "Client" refers to the end user and/or the web browser.
 
@@ -76,7 +76,7 @@ interpreted as described in RFC 2119[1](<#1>).
 
 **1.2 Reference Implementation**
 --------------------------------
-The Apereo CAS Server [8](<#8>) is the official reference implementation of the
+The Apereo CAS Server [[8](<#8>)] is the official reference implementation of the
 CAS Protocol Specification.
 
 Apereo CAS Server 4.x and above supports the CAS Protocol 3.0 Specification.
@@ -86,7 +86,7 @@ Apereo CAS Server 4.x and above supports the CAS Protocol 3.0 Specification.
 **2. CAS URIs**
 ===============
 
-CAS is an HTTP[2](<#2>),[3](<#3>)-based protocol that requires each of its
+CAS is an HTTP[[2](<#2>)],[[3](<#3>)]-based protocol that requires each of its
 components to be accessible through specific URIs. This section will discuss
 each of the URIs:
 
@@ -490,8 +490,7 @@ case sensitive and MUST all be handled by `/validate`.
 
 On ticket validation success:
 
-yes&lt;LF&gt;
-username&lt;LF&gt;
+yes&lt;LF&gt;username&lt;LF&gt;
 
 On ticket validation failure:
 
@@ -572,7 +571,7 @@ are case sensitive and MUST all be handled by `/serviceValidate`.
 ### **2.5.2. response**
 
 `/serviceValidate` will return an XML-formatted CAS serviceResponse as described
-in the XML schema in Appendix A. Below are example responses:
+in the XML schema in [Appendix A](<#head_appdx_a>). Below are example responses:
 
 **On ticket validation success:**
 
@@ -715,8 +714,8 @@ The proxy callback mechanism works as follows:
 ### **2.5.5. attributes [CAS 3.0]**
 
 [CAS 3.0] The response document MAY include an optional <cas:attributes>
-element for additional authentication and/or user attributes. See [Appendix
-A](<#head_appdx_a>) for details.
+element for additional authentication and/or user attributes. See
+[Appendix A](<#head_appdx_a>) for details.
 
 <a name="head2.5.6"/>
 
@@ -802,7 +801,7 @@ Section [2.5.1](<#head2.5.1>).
 ### **2.6.2. response**
 
 `/proxyValidate` will return an XML-formatted CAS serviceResponse as described in
-the XML schema in Appendix A. Below are example responses:
+the XML schema in [Appendix A](<#head_appdx_a>). Below are example responses:
 
 Response on ticket validation success:
 
@@ -909,7 +908,7 @@ case-sensitive.
 ### **2.7.2. response**
 
 `/proxy` will return an XML-formatted CAS serviceResponse document as described in the XML
-schema in [Appendix A](#head_appdx_a). Below are example responses:
+schema in [Appendix A](<#head_appdx_a>). Below are example responses:
 
 Response on request success:
 
@@ -1363,7 +1362,7 @@ The Long-Term Ticket Granting Ticket lifetime MAY not exceed 3 months.
 -------------------------------
 
 `/samlValidate` checks the validity of a Service Ticket by a SAML 1.1 request
-document provided by a HTTP POST. A SAML (Secure Access Markup Language)[7](#7) 1.1
+document provided by a HTTP POST. A SAML (Secure Access Markup Language)[[7](#7)] 1.1
 response document MUST be returned. This allows the release of additional
 information (attributes) of the authenticated NetID. The Security Assertion
 Markup Language (SAML) describes a document and protocol framework by which
@@ -1708,7 +1707,7 @@ cache-related headers:
 
 -   Cache-Control: no-store
 
--   Expires: [RFC 1123[6] date equal to or before now]
+-   Expires: [RFC 1123[[6](<#6>)] date equal to or before now]
 
 The introduction of the login ticket removed the possibility of CAS accepting
 credentials that were cached and replayed by a browser. However, early versions
@@ -1798,6 +1797,8 @@ CONDITIONS OF ANY KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations under the License.
 
 
+<a name="head_appdx_f"/>
+
 **Appendix F: YALE License**
 ===========================
 
@@ -1831,9 +1832,9 @@ met:
 
 
 
-<a name="head_appdx_f"/>
+<a name="head_appdx_g"/>
 
-**Appendix F: Changes to this Document**
+**Appendix G: Changes to this Document**
 ========================================
 
 May 4, 2005: v1.0 - initial release for CAS 1.0 and CAS 2.0, Copyright © 2005, Yale University

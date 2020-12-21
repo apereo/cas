@@ -5,7 +5,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.webauthn.storage.BaseWebAuthnCredentialRepository;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.yubico.webauthn.data.CredentialRegistration;
+import com.yubico.data.CredentialRegistration;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
@@ -65,7 +65,7 @@ public class RedisWebAuthnCredentialRepository extends BaseWebAuthnCredentialRep
         if (records.isEmpty()) {
             redisTemplate.delete(redisKey);
         } else {
-            val jsonRecords = getCipherExecutor().encode(getObjectMapper().writeValueAsString(records));
+            val jsonRecords = getCipherExecutor().encode(WebAuthnUtils.getObjectMapper().writeValueAsString(records));
             val entry = RedisWebAuthnCredentialRegistration.builder()
                 .records(jsonRecords)
                 .username(username)
@@ -80,7 +80,7 @@ public class RedisWebAuthnCredentialRepository extends BaseWebAuthnCredentialRep
             .map(redisKey -> this.redisTemplate.boundValueOps(redisKey).get())
             .filter(Objects::nonNull)
             .map(record -> getCipherExecutor().decode(record.getRecords()))
-            .map(Unchecked.function(record -> getObjectMapper().readValue(record, new TypeReference<Set<CredentialRegistration>>() {
+            .map(Unchecked.function(record -> WebAuthnUtils.getObjectMapper().readValue(record, new TypeReference<Set<CredentialRegistration>>() {
             })))
             .flatMap(Collection::stream);
     }

@@ -50,7 +50,7 @@ public class MongoDbCacheStatistics implements CacheStatistics {
     @Override
     public String toString(final StringBuilder builder) {
         try {
-            val json = JsonValue.readJSON(this.statistics.toString());
+            val json = JsonValue.readJSON(statistics.toJson());
             val writer = new StringWriter();
             json.writeTo(writer, Stringify.FORMATTED);
             builder.append(writer.toString());

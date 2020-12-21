@@ -1,9 +1,11 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.mfa.MultifactorAuthenticationTestUtils;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.mfa.trigger.AuthenticationAttributeMultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.mfa.trigger.PrincipalAttributeMultifactorAuthenticationTrigger;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.ticket.UnsatisfiedAuthenticationContextTicketValidationException;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
@@ -47,6 +49,11 @@ public class DefaultMultifactorAuthenticationProviderResolverTests {
         val resolver = new DefaultMultifactorAuthenticationProviderResolver();
         val trigger = new PrincipalAttributeMultifactorAuthenticationTrigger(casProperties, resolver, applicationContext);
         assertProviderResolutionFromManyProviders(trigger, applicationContext, true);
+
+        assertThrows(UnsatisfiedAuthenticationContextTicketValidationException.class, () -> {
+            throw new UnsatisfiedAuthenticationContextTicketValidationException(
+                MultifactorAuthenticationTestUtils.getService("id"));
+        });
     }
 
     @Test
@@ -163,8 +170,8 @@ public class DefaultMultifactorAuthenticationProviderResolverTests {
     }
 
     private static void assertProviderResolutionFromManyProviders(final MultifactorAuthenticationTrigger trigger,
-                                                                  final ConfigurableApplicationContext applicationContext,
-                                                                  final boolean assertPresence) {
+        final ConfigurableApplicationContext applicationContext,
+        final boolean assertPresence) {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -192,8 +199,8 @@ public class DefaultMultifactorAuthenticationProviderResolverTests {
     }
 
     private static TestMultifactorAuthenticationProvider registerProviderInApplicationContext(final ConfigurableApplicationContext applicationContext,
-                                                                                              final MockRequestContext context,
-                                                                                              final TestMultifactorAuthenticationProvider candidateProvider) {
+        final MockRequestContext context,
+        final TestMultifactorAuthenticationProvider candidateProvider) {
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext, candidateProvider);
         val targetResolver = new DefaultTargetStateResolver(provider.getId());
         val transition = new Transition(new DefaultTransitionCriteria(new LiteralExpression(provider.getId())), targetResolver);

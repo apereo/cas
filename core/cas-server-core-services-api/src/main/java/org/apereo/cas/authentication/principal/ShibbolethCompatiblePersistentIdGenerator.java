@@ -10,6 +10,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -17,7 +18,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
 
@@ -56,19 +56,15 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
 
     @Override
     public String generate(final String principal, final String service) {
-        try {
-            if (StringUtils.isBlank(salt)) {
-                this.salt = new DefaultRandomStringGenerator(CONST_DEFAULT_SALT_COUNT).getNewString();
-            }
-            LOGGER.debug("Using principal [{}] to generate anonymous identifier for service [{}]", principal, service);
-
-            val md = prepareMessageDigest(principal, service);
-            val result = digestAndEncodeWithSalt(md);
-            LOGGER.debug("Generated persistent id for [{}] is [{}]", service, result);
-            return result;
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
+        if (StringUtils.isBlank(salt)) {
+            this.salt = new DefaultRandomStringGenerator(CONST_DEFAULT_SALT_COUNT).getNewString();
         }
+        LOGGER.debug("Using principal [{}] to generate anonymous identifier for service [{}]", principal, service);
+
+        val md = prepareMessageDigest(principal, service);
+        val result = digestAndEncodeWithSalt(md);
+        LOGGER.debug("Generated persistent id for [{}] is [{}]", service, result);
+        return result;
     }
 
     @Override
@@ -98,8 +94,7 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
             () -> {
                 LOGGER.debug("Using principal id [{}] to generate persistent identifier", defaultId);
                 return defaultId;
-            }
-            ).get();
+            }).get();
     }
 
     @Override
@@ -128,9 +123,9 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
      * @param principal the principal
      * @param service   the service
      * @return the message digest
-     * @throws NoSuchAlgorithmException the no such algorithm exception
      */
-    protected static MessageDigest prepareMessageDigest(final String principal, final String service) throws NoSuchAlgorithmException {
+    @SneakyThrows
+    protected static MessageDigest prepareMessageDigest(final String principal, final String service) {
         val md = MessageDigest.getInstance("SHA");
         if (StringUtils.isNotBlank(service)) {
             md.update(service.getBytes(StandardCharsets.UTF_8));

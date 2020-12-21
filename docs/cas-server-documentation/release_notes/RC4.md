@@ -64,13 +64,33 @@ this will not be a blocker for the final release.
 ### Wildcarded Service Definitions
 
 Following up on previous release notes, wildcarded service definitions should now be correctly located via CAS service management facilities
-by improving lookup operations to be protocol-aware. For example, in a scenario where two service definitions for OAuth and CAS service providers might have a very permissive `.*` for the service URL pattern, CAS should be able
+by improving lookup operations to be protocol-aware. For example, in a scenario where two service definitions for OAuth 
+and CAS service providers might have a very permissive `.*` for the service URL pattern, CAS should be able
 to correctly locate the right definition depending on whether an authentication request is submitted by an 
 OAUth relying party or a CAS-enabled client application.
+
+### UI Themes Bundles
+
+Minor improvements to handling of [UI themes](../ux/User-Interface-Customization-Themes.html) when 
+it comes to defining a custom theme on a per application basis.
+A theme bundle is now also available that will incrementally act as a drawer and a toolbox for a number of common
+user interface designs and themes, and may also serve as a reference example on how to define or modify a CAS theme.
 
 ### WebAuthN FIDO2 DynamoDb
 
 [WebAuthn FIDO2](../mfa/FIDO2-WebAuthn-Authentication.html) multifactor authentication is able manage and maintain registration records in DynamoDb.
+
+### Kryo v5
+
+The [Kryo library](https://github.com/EsotericSoftware/kryo) used by 
+the [Memcached ticket registry](../ticketing/Memcached-Ticket-Registry.html) and family is now upgraded to version `5.0.0`. 
+This is a major upgrade and a number of internal components that affect Kryo pooling operations are also revised and upgraded.
+However, the upgrade should remain invisible for the most part.
+
+### Google Authenticator w/ LDAP/AD
+
+[Google Authenticator](../mfa/GoogleAuthenticator-Authentication.html) registration records may be kept inside 
+LDAP/AD systems. Account registration records are kept inside a designated configurable multi-valued attribute as JSON blobs.
 
 ### Integration Tests Upgrades
 
@@ -82,6 +102,13 @@ latest versions of each system. These include the following systems:
 - MongoDb
 - Redis
 - Apache Cassandra
+
+Furthermore, the test infrastructure is updated to also support OpenLDAP in addition to 389-ds and Samba (AD).
+
+### Optional (Mixed) X.509 Authentication
+
+[X.509 authentication](../installation/X509-Authentication.html), when running an embedded Apache Tomcat, is enhanced to provide for mixed-mode authentication.
+In this mode, the user is given an additional option to login via X.509 without being prompted for a certificate preemptively.
 
 ## Other Stuff
 
@@ -102,9 +129,11 @@ latest versions of each system. These include the following systems:
 - Guava
 - Nimbus Jose
 - Twillio
+- Kryo
 - Couchbase Driver
 - Lombok
 - Person Directory
+- WebAuthN FIDO2
 - Maxmind
 - Amazon SDK
 - Eureka Client

@@ -1,8 +1,10 @@
 package org.apereo.cas.configuration.model.support.passwordless;
 
 import org.apereo.cas.configuration.model.SpringResourceProperties;
+import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.passwordless.account.PasswordlessAuthenticationGroovyAccountsProperties;
+import org.apereo.cas.configuration.model.support.passwordless.account.PasswordlessAuthenticationJsonAccountsProperties;
 import org.apereo.cas.configuration.model.support.passwordless.account.PasswordlessAuthenticationLdapAccountsProperties;
 import org.apereo.cas.configuration.model.support.passwordless.account.PasswordlessAuthenticationMongoDbAccountsProperties;
 import org.apereo.cas.configuration.model.support.passwordless.account.PasswordlessAuthenticationRestAccountsProperties;
@@ -10,6 +12,7 @@ import org.apereo.cas.configuration.model.support.passwordless.token.Passwordles
 import org.apereo.cas.configuration.model.support.passwordless.token.PasswordlessAuthenticationRestTokensProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -104,6 +107,12 @@ public class PasswordlessAuthenticationProperties implements Serializable {
         private PasswordlessAuthenticationGroovyAccountsProperties groovy = new PasswordlessAuthenticationGroovyAccountsProperties();
 
         /**
+         * Passwordless authentication settings via JSON resource.
+         */
+        @NestedConfigurationProperty
+        private PasswordlessAuthenticationJsonAccountsProperties json = new PasswordlessAuthenticationJsonAccountsProperties();
+
+        /**
          * Passwordless authentication settings via MongoDb.
          */
         @NestedConfigurationProperty
@@ -131,6 +140,12 @@ public class PasswordlessAuthenticationProperties implements Serializable {
         private int expireInSeconds = 180;
 
         /**
+         * Crypto settings on how to reset the password.
+         */
+        @NestedConfigurationProperty
+        private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
+
+        /**
          * Passwordless authentication settings via REST.
          */
         @NestedConfigurationProperty
@@ -153,6 +168,11 @@ public class PasswordlessAuthenticationProperties implements Serializable {
          */
         @NestedConfigurationProperty
         private SmsProperties sms = new SmsProperties();
+
+        public Tokens() {
+            crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
+            crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
+        }
     }
 
 

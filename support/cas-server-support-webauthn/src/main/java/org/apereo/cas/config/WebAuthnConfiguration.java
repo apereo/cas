@@ -15,19 +15,21 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.webauthn.WebAuthnAuthenticationHandler;
 import org.apereo.cas.webauthn.WebAuthnCredential;
 import org.apereo.cas.webauthn.WebAuthnCredentialRegistrationCipherExecutor;
 import org.apereo.cas.webauthn.WebAuthnMultifactorAuthenticationProvider;
+import org.apereo.cas.webauthn.WebAuthnUtils;
 import org.apereo.cas.webauthn.storage.JsonResourceWebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.web.WebAuthnController;
 import org.apereo.cas.webauthn.web.WebAuthnRegisteredDevicesEndpoint;
-import org.apereo.cas.webauthn.web.flow.WebAuthnAuthenticationHandler;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.yubico.internal.util.JacksonCodecs;
+import com.yubico.core.DefaultSessionManager;
+import com.yubico.core.SessionManager;
+import com.yubico.core.WebAuthnServer;
 import com.yubico.webauthn.RelyingParty;
 import com.yubico.webauthn.attestation.AttestationResolver;
 import com.yubico.webauthn.attestation.MetadataObject;
@@ -38,9 +40,6 @@ import com.yubico.webauthn.attestation.resolver.CompositeAttestationResolver;
 import com.yubico.webauthn.attestation.resolver.CompositeTrustResolver;
 import com.yubico.webauthn.attestation.resolver.SimpleAttestationResolver;
 import com.yubico.webauthn.attestation.resolver.SimpleTrustResolverWithEquality;
-import com.yubico.webauthn.core.DefaultSessionManager;
-import com.yubico.webauthn.core.SessionManager;
-import com.yubico.webauthn.core.WebAuthnServer;
 import com.yubico.webauthn.data.AttestationConveyancePreference;
 import com.yubico.webauthn.data.RelyingPartyIdentity;
 import com.yubico.webauthn.extension.appid.AppId;
@@ -77,8 +76,6 @@ import java.util.LinkedHashSet;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class WebAuthnConfiguration {
     private static final int CACHE_MAX_SIZE = 10_000;
-
-    private static final ObjectMapper MAPPER = JacksonCodecs.json().findAndRegisterModules();
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -152,7 +149,7 @@ public class WebAuthnConfiguration {
 
         val resource = casProperties.getAuthn().getMfa().getWebAuthn().getTrustedDeviceMetadata().getLocation();
         if (resource != null) {
-            val metadata = MAPPER.readValue(resource.getInputStream(), MetadataObject.class);
+            val metadata = WebAuthnUtils.getObjectMapper().readValue(resource.getInputStream(), MetadataObject.class);
             attestationResolvers.add(new SimpleAttestationResolver(CollectionUtils.wrapList(metadata), trustResolver));
         }
         attestationResolvers.addAll(foundAttestations.values());

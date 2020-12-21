@@ -3,6 +3,7 @@ package org.apereo.cas;
 import org.apereo.cas.util.DigestUtilsTests;
 import org.apereo.cas.util.HttpRequestUtilsTests;
 import org.apereo.cas.util.HttpUtilsTests;
+import org.apereo.cas.util.InetAddressUtilsTests;
 import org.apereo.cas.util.LoggingUtilsTests;
 import org.apereo.cas.util.cache.DistributedCacheManagerTests;
 import org.apereo.cas.util.cache.DistributedCacheObjectTests;
@@ -11,6 +12,7 @@ import org.apereo.cas.util.crypto.GlibcCryptPasswordEncoderTests;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBeanTests;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBeanTests;
 import org.apereo.cas.util.function.FunctionUtilsTests;
+import org.apereo.cas.util.http.SimpleHttpClientFactoryBeanTests;
 import org.apereo.cas.util.io.FileWatcherServiceTests;
 import org.apereo.cas.util.io.PathWatcherServiceTests;
 import org.apereo.cas.util.io.TemporaryFileSystemResourceTests;
@@ -18,6 +20,7 @@ import org.apereo.cas.util.scripting.GroovyScriptResourceCacheManagerTests;
 import org.apereo.cas.util.scripting.GroovyShellScriptTests;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResourceTests;
 import org.apereo.cas.util.serialization.SerializationUtilsTests;
+import org.apereo.cas.util.spring.ConvertersTests;
 import org.apereo.cas.util.spring.SpringAwareMessageMessageInterpolatorTests;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolverTests;
 import org.apereo.cas.util.spring.boot.DefaultCasBannerTests;
@@ -51,8 +54,11 @@ import org.junit.runner.RunWith;
     SerializationUtilsTests.class,
     SpringAwareMessageMessageInterpolatorTests.class,
     HttpUtilsTests.class,
+    ConvertersTests.class,
+    SimpleHttpClientFactoryBeanTests.class,
     GroovyScriptResourceCacheManagerTests.class,
     LoggingUtilsTests.class,
+    InetAddressUtilsTests.class,
     CompositeX509TrustManagerTests.class,
     CompositeX509KeyManagerTests.class,
     HttpRequestUtilsTests.class,

@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
+import org.apereo.cas.authentication.DefaultSecurityTokenServiceTokenFetcher;
 import org.apereo.cas.authentication.SecurityTokenServiceClientBuilder;
 import org.apereo.cas.authentication.SecurityTokenServiceTokenFetcher;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -222,7 +223,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @RefreshScope
     @Bean
     public List transportTokenValidators() {
-        val list = new ArrayList<Object>(4);
+        val list = new ArrayList<>(4);
         list.add(transportSamlTokenValidator());
         list.add(transportJwtTokenValidator());
         list.add(transportSecureContextTokenValidator());
@@ -234,7 +235,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @RefreshScope
     @Bean
     public List transportTokenProviders() {
-        val list = new ArrayList<Object>(3);
+        val list = new ArrayList<>(3);
         list.add(transportSamlTokenProvider());
         list.add(transportJwtTokenProvider());
         list.add(transportSecureContextTokenProvider());
@@ -405,7 +406,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @Bean
     @RefreshScope
     public SecurityTokenServiceTokenFetcher securityTokenServiceTokenFetcher() {
-        return new SecurityTokenServiceTokenFetcher(servicesManager.getObject(),
+        return new DefaultSecurityTokenServiceTokenFetcher(servicesManager.getObject(),
             wsFederationAuthenticationServiceSelectionStrategy.getObject(),
             securityTokenServiceCredentialCipherExecutor(),
             securityTokenServiceClientBuilder());

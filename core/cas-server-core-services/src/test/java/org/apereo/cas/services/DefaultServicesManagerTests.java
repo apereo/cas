@@ -16,6 +16,32 @@ public class DefaultServicesManagerTests extends AbstractServicesManagerTests<De
     private static final String TEST = "test";
 
     @Test
+    public void verifyFindByName() {
+        val service = new RegexRegisteredService();
+        service.setId(6100);
+        service.setName(TEST);
+        service.setServiceId(TEST);
+
+        assertNull(servicesManager.findServiceByName(null));
+
+        serviceRegistry.save(service);
+        assertNotNull(servicesManager.findServiceByName(service.getName()));
+        assertNotEquals(servicesManager.getAllServicesStream().count(), 0);
+    }
+
+    @Test
+    public void verifyFindByNameAndType() {
+        val service = new RegexRegisteredService();
+        service.setId(6200);
+        service.setName(TEST);
+        service.setServiceId(TEST);
+
+        serviceRegistry.save(service);
+        assertNotNull(servicesManager.findServiceByName(service.getName(), RegexRegisteredService.class));
+        assertNotEquals(servicesManager.getAllServicesStream().count(), 0);
+    }
+
+    @Test
     public void verifySaveAndRemoveFromCache() throws InterruptedException {
         val service = new RegexRegisteredService();
         service.setId(4000);

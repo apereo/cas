@@ -5,26 +5,11 @@ defaultTasks "clean", "build"
 
 buildscript {
     repositories {
+        mavenCentral()
         jcenter()
+        gradlePluginPortal()
         maven {
             url "https://maven.eveoh.nl/content/repositories/releases"
-            mavenContent { releasesOnly() }
-        }
-        maven {
-            url "https://plugins.gradle.org/m2/"
-            mavenContent { releasesOnly() }
-        }
-        maven {
-            url "https://repo.spring.io/plugins-release"
-            mavenContent { releasesOnly() }
-        }
-        maven {
-            url "https://repo.spring.io/libs-milestone"
-            mavenContent { releasesOnly() }
-        }
-        maven {
-            url "https://repo.spring.io/snapshot"
-            mavenContent { snapshotsOnly() }
         }
     }
 
@@ -36,7 +21,7 @@ buildscript {
         classpath "gradle.plugin.com.gorylenko.gradle-git-properties:gradle-git-properties:$gradleGitVersion"
         classpath "io.franzbecker:gradle-lombok:$gradleLombokVersion"
         classpath "com.github.ben-manes:gradle-versions-plugin:$gradleDependencyVersionsVersion"
-        classpath "io.spring.gradle:propdeps-plugin:$gradlePropDepsVersion"
+
         classpath "net.ltgt.gradle:gradle-errorprone-javacplugin-plugin:$gradleErrorProneVersion"
         classpath "org.owasp:dependency-check-gradle:$gradleDependencyCheckVersion"
         classpath "gradle.plugin.com.github.spotbugs.snom:spotbugs-gradle-plugin:$gradleSpotbugsVersion"
@@ -69,7 +54,6 @@ ext {
         '**/**NtlmAuthenticationHandler**',
         '**/**CosmosDbServiceRegistry**',
         '**/**NimbusOAuthJacksonModule**',
-        '**/**DelegatedClientJacksonModuleTests**',
         '**/**Application**',
         '**/**Application$**',
         '**/**Exception$**',
@@ -88,6 +72,8 @@ nexusStaging {
     password = "${sonatypePassword}"
     packageGroup = "org.apereo"
     stagingProfileId = "11d1ddbbdeae9d"
+    numberOfRetries = 20
+    delayBetweenRetriesInMillis = 10000
 }
 
 apply from: rootProject.file("gradle/dependencies.gradle")
@@ -97,6 +83,7 @@ if (!Boolean.getBoolean("skipSonarqube")) {
     apply plugin: "org.sonarqube"
 
     sonarqube {
+        def exclusions = rootProject.excludedFilesFromTestCoverage.join(",")
         def token = providers.systemProperty("SONARCLOUD_TOKEN").forUseAtConfigurationTime().getOrElse(System.getenv("SONARCLOUD_TOKEN"))
         properties {
             property "sonar.host.url", "https://sonarcloud.io"
@@ -105,8 +92,8 @@ if (!Boolean.getBoolean("skipSonarqube")) {
             property "sonar.java.source", project.targetCompatibility
             property "sonar.organization", "apereo"
             property "sonar.login", token
+            property "sonar.coverage.exclusions", exclusions
             property "sonar.java.coveragePlugin", "jacoco"
-            property "sonar.coverage.jacoco.xmlReportPaths", "${rootProject.buildDir}/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
         }
     }
 }
@@ -201,10 +188,6 @@ allprojects {
         mavenCentral()
         jcenter()
         maven {
-            url "https://repo.spring.io/libs-milestone"
-            mavenContent { releasesOnly() }
-        }
-        maven {
             url "$sonatypeReleasesRepositoryUrl"
             mavenContent { releasesOnly() }
         }
@@ -245,22 +228,12 @@ subprojects {
     if (!rootProject.skipErrorProneCompiler) {
         apply plugin: "net.ltgt.errorprone-javacplugin"
     }
-
-    apply plugin: "propdeps"
-    apply plugin: "propdeps-maven"
-    apply plugin: "propdeps-idea"
-    apply plugin: "propdeps-eclipse"
-
     apply from: rootProject.file("gradle/tests.gradle")
 
     ext.libraries = rootProject.ext.libraries
 
     repositories {
-        mavenLocal {
-            content {
-                includeGroup "org.apereo.service.persondir"
-            }
-        }
+        mavenLocal()
         mavenCentral()
         maven {
             url "https://build.shibboleth.net/nexus/content/repositories/releases"
@@ -271,10 +244,13 @@ subprojects {
         }
         maven {
             url "https://dl.bintray.com/apereocas/webauthn-cas/"
-            content {
-                includeGroupByRegex ".*java-webauthn-server.*"
-            }
             mavenContent { releasesOnly() }
+        }
+        maven {
+            url "https://dl.bintray.com/apereocas/jradius/"
+            content {
+                includeGroupByRegex "net\\.jradius.*"
+            }
         }
         maven {
             url "https://oss.sonatype.org/content/repositories/snapshots"
@@ -285,23 +261,10 @@ subprojects {
             mavenContent { releasesOnly() }
         }
         maven {
-            url "https://repo.spring.io/plugins-release/"
-            mavenContent { releasesOnly() }
-        }
-        maven {
-            url "https://repo.spring.io/milestone/"
-            mavenContent { releasesOnly() }
-        }
-        maven {
-            url "https://repo.spring.io/snapshot/"
-            mavenContent { snapshotsOnly() }
-        }
-        maven {
-            url "https://repo.spring.io/libs-milestone"
-            mavenContent { releasesOnly() }
-        }
-        maven {
             url "https://splunk.jfrog.io/splunk/ext-releases-local"
+            content {
+                includeGroupByRegex ".*splunk.*"
+            }
             mavenContent { releasesOnly() }
         }
         maven {
@@ -324,6 +287,7 @@ subprojects {
 
     configurations {
         tests
+        provided
     }
 
     jacocoTestReport {
@@ -451,6 +415,9 @@ subprojects {
 
     sourceSets {
         main {
+            compileClasspath += configurations.provided
+            runtimeClasspath += configurations.provided
+            
             java {
                 srcDirs = ["${projectDir}/src/main/java"]
             }
@@ -461,7 +428,6 @@ subprojects {
         test {
             java {
                 srcDirs = ["${projectDir}/src/test/java"]
-
             }
             resources {
                 srcDirs = ["${projectDir}/src/test/resources"]
@@ -503,7 +469,9 @@ subprojects {
         apply plugin: "io.franzbecker.gradle-lombok"
         lombok {
             version = "$lombokVersion"
+            sha256 = ""
         }
+        installLombok.enabled=false
     }
 
     jar {

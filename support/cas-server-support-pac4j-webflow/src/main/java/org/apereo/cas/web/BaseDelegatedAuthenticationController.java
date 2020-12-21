@@ -1,5 +1,6 @@
 package org.apereo.cas.web;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.web.view.DynamicHtmlView;
 
@@ -9,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.client.IndirectClient;
@@ -48,6 +48,8 @@ public abstract class BaseDelegatedAuthenticationController {
 
     private final SessionStore<JEEContext> sessionStore;
 
+    private final CasConfigurationProperties casProperties;
+
     /**
      * Build redirect view back to flow view.
      *
@@ -57,18 +59,14 @@ public abstract class BaseDelegatedAuthenticationController {
      */
     @SneakyThrows
     protected View buildRedirectViewBackToFlow(final String clientName, final HttpServletRequest request) {
-
-        val urlBuilder = new URIBuilder(String.valueOf(request.getRequestURL()));
+        val urlBuilder = new URIBuilder(casProperties.getServer().getLoginUrl());
         request.getParameterMap().forEach((k, v) -> {
             val value = request.getParameter(k);
             urlBuilder.addParameter(k, value);
         });
-
-        urlBuilder.setPath(urlBuilder.getPath().replace('/' + clientName, StringUtils.EMPTY));
         urlBuilder.addParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, clientName);
-
         val url = urlBuilder.toString();
-        LOGGER.debug("Received a response for client [{}], redirecting the login flow [{}]", clientName, url);
+        LOGGER.debug("Received response from client [{}]; Redirecting to [{}]", clientName, url);
         return new RedirectView(url);
     }
 

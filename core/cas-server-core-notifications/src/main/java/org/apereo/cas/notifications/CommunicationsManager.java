@@ -66,9 +66,9 @@ public class CommunicationsManager {
      * @return true /false
      */
     public boolean email(final Principal principal,
-                         final String attribute,
-                         final EmailProperties emailProperties,
-                         final String body) {
+        final String attribute,
+        final EmailProperties emailProperties,
+        final String body) {
         if (StringUtils.isNotBlank(attribute) && principal.getAttributes().containsKey(attribute) && isMailSenderDefined()) {
             val to = getFirstAttributeByName(principal, attribute);
             if (to.isPresent()) {
@@ -89,12 +89,13 @@ public class CommunicationsManager {
      */
     public boolean email(final EmailProperties emailProperties, final String to, final String body) {
         try {
+            LOGGER.trace("Attempting to send email [{}] to [{}]", body, to);
+            
             if (!isMailSenderDefined() || emailProperties.isUndefined() || StringUtils.isBlank(to)) {
-                LOGGER.warn("Could not send email to [{}] because either no from/to/subject/text is defined or email settings are not configured.", to);
-                return false;
+                throw new IllegalAccessException("Could not send email; from/to/subject/text or email settings are undefined.");
             }
 
-            val message = this.mailSender.createMimeMessage();
+            val message = mailSender.createMimeMessage();
             val helper = new MimeMessageHelper(message);
             helper.setTo(to);
             helper.setText(body, emailProperties.isHtml());
@@ -131,8 +132,8 @@ public class CommunicationsManager {
      * @return true/false
      */
     public boolean sms(final Principal principal,
-                       final String attribute,
-                       final String text, final String from) {
+        final String attribute,
+        final String text, final String from) {
         if (StringUtils.isNotBlank(attribute) && principal.getAttributes().containsKey(attribute) && isSmsSenderDefined()) {
             val to = getFirstAttributeByName(principal, attribute);
             if (to.isPresent()) {

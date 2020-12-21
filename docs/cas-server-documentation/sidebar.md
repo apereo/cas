@@ -15,6 +15,7 @@ layout: null
 * [Installation](#casinstallation)
     *   [Requirements](/$version/planning/Installation-Requirements.html)
     *   [WAR Overlays](/$version/installation/WAR-Overlay-Installation.html)
+        *   [Initializr](/$version/installation/WAR-Overlay-Initializr.html)
     *   [Command-line Shell](/$version/installation/Configuring-Commandline-Shell.html) 
     *   [Docker Deployment](/$version/installation/Docker-Installation.html)
     *   [Servlet Containers](/$version/installation/Configuring-Servlet-Container.html)
@@ -60,6 +61,7 @@ layout: null
         *   [Couchbase](/$version/installation/Couchbase-Authentication.html)
         *   [Basic](/$version/installation/Basic-Authentication.html)
         *   [Groovy](/$version/installation/Groovy-Authentication.html)
+        *   [QR Code](/$version/installation/QRCode-Authentication.html)
         *   [Digest](/$version/installation/Digest-Authentication.html)
         *   [MongoDb](/$version/installation/MongoDb-Authentication.html)
         *   [Redis](/$version/installation/Redis-Authentication.html)
@@ -146,7 +148,7 @@ layout: null
         *   [MongoDb](/$version/ticketing/MongoDb-Ticket-Registry.html)
         *   [DynamoDb](/$version/ticketing/DynamoDb-Ticket-Registry.html)
 
-* [Services](#service_management)
+* [Services & Applications](#service_management)
     *   [Overview](/$version/services/Service-Management.html)
     *   [Management Web Application](/$version/services/Installing-ServicesMgmt-Webapp.html)
     *   [Access Strategy](/$version/services/Configuring-Service-Access-Strategy.html)
@@ -265,6 +267,7 @@ layout: null
     *   [Code Conventions](/cas/developer/Code-Conventions.html)
     *   [Release Process](/$version/developer/Release-Process.html)
     *   [Build Process](/$version/developer/Build-Process.html)
+    *   [Test Process](/$version/developer/Test-Process.html)
 
 * [Project](#projectpolicy)
     *   [PMC](/cas/developer/Project-Commitee.html)

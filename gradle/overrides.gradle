@@ -7,105 +7,109 @@ configurations.all {
 
         cacheDynamicVersionsFor 5, 'days'
         cacheChangingModulesFor 5, 'days'
-        eachDependency { DependencyResolveDetails details ->
-            def requested = details.requested
-            if (requested.group == "gnu-getopt")  {
-                details.useTarget group: "gnu.getopt", name: "java-getopt", version: details.requested.version
-            }
-            if (requested.group == "com.h2database")  {
-                details.useVersion("${h2Version}")
-            }
-            if (requested.group == "org.hibernate")  {
-                details.useVersion("${hibernateVersion}")
-            }
-            if (requested.group == "org.postgresql")  {
-                details.useVersion("${postgresqlVersion}")
-            }
-            if (requested.group == "com.hazelcast" && requested.name == "hazelcast")  {
-                details.useVersion("${hazelcastVersion}")
-            }
-            if (requested.group == "org.infinispan")  {
-                details.useVersion("${infinispanVersion}")
-            }
-            if (requested.group == "org.springframework")  {
-                details.useVersion("${springVersion}")
-            }
-            if (requested.group == "org.springframework.session")  {
-                if (requested.name == "spring-session-data-mongodb") {
-                    details.useVersion("${springSessionMongoVersion}")
-                } else {
-                    details.useVersion("${springSessionVersion}")
+
+        def dependencyUpdates = gradle.startParameter.taskNames.any {task -> task.equalsIgnoreCase('dependencyUpdates') }
+        if (!dependencyUpdates) {
+            eachDependency { DependencyResolveDetails details ->
+                def requested = details.requested
+                if (requested.group == "gnu-getopt")  {
+                    details.useTarget group: "gnu.getopt", name: "java-getopt", version: details.requested.version
                 }
-            }
-            if (requested.group == "org.apache.tomcat")  {
-                details.useVersion("${tomcatVersion}")
-            }
-            if (requested.group == "org.hsqldb")  {
-                details.useVersion("${hsqlVersion}")
-            }
-            if (requested.group == "org.mariadb.jdbc")  {
-                details.useVersion("${mariaDbVersion}")
-            }
-            if (requested.group == "com.microsoft.sqlserver")  {
-                details.useVersion("${mssqlServerVersion}")
-            }
-            if (requested.group == "com.oracle.ojdbc:ojdbc10")  {
-                details.useVersion("${oracleJdbcVersion}")
-            }
-            if (requested.group == "org.mongodb")  {
-                details.useVersion("${mongoDriverVersion}")
-            }
-            if (requested.group == "mysql")  {
-                details.useVersion("${mysqlVersion}")
-            }
-            if (requested.group == "net.sourceforge.jtds")  {
-                details.useVersion("${jtdsVersion}")
-            }
-            if (requested.group == "com.couchbase.client" && details.requested.name == "java-client")  {
-                details.useVersion("${couchbaseVersion}")
-            }
-            if (requested.group == "com.github.ben-manes.caffeine")  {
-                details.useVersion("${caffeinVersion}")
-            }
-            if (requested.group == "org.apache.logging.log4j")  {
-                details.useVersion("${log4jVersion}")
-            }
-            if (requested.group == "org.codehaus.groovy")  {
-                details.useVersion("${groovyVersion}")
-            }
-            if (requested.group == "com.zaxxer")  {
-                details.useVersion("${hikariVersion}")
-            }
-            if (requested.group == "org.thymeleaf")  {
-                details.useVersion("${thymeleafVersion}")
-            }
-            if (requested.group == "nz.net.ultraq.thymeleaf" && requested.name == "thymeleaf-layout-dialect")  {
-                details.useVersion("${thymeleafDialectVersion}")
-            }
-            if (requested.group == "commons-beanutils" && requested.name == "commons-beanutils")  {
-                details.useVersion("${commonsBeansVersion}")
-            }
-            if (requested.group == "ch.qos.logback")  {
-                details.useVersion("${logbackVersion}")
-            }
-            if (requested.group == "org.apache.httpcomponents")  {
-                if (details.requested.name == "httpcore") {
-                    details.useVersion("${httpCoreVersion}")
-                } else {
-                    details.useVersion("${httpclientVersion}")
+                if (requested.group == "com.h2database")  {
+                    details.useVersion("${h2Version}")
                 }
-            }
-            if (requested.group.startsWith("com.fasterxml.jackson"))  {
-                details.useVersion("${jacksonVersion}")
-            }
-            if (requested.group == "io.micrometer")  {
-                details.useVersion("${micrometerVersion}")
-            }
-            if (requested.group == "com.timgroup")  {
-                details.useVersion("${statsdVersion}")
-            }
-            if (requested.group == "com.signalfx.public")  {
-                details.useVersion("${signalFxVersion}")
+                if (requested.group == "org.hibernate")  {
+                    details.useVersion("${hibernateVersion}")
+                }
+                if (requested.group == "org.postgresql")  {
+                    details.useVersion("${postgresqlVersion}")
+                }
+                if (requested.group == "com.hazelcast" && requested.name == "hazelcast")  {
+                    details.useVersion("${hazelcastVersion}")
+                }
+                if (requested.group == "org.infinispan")  {
+                    details.useVersion("${infinispanVersion}")
+                }
+                if (requested.group == "org.springframework")  {
+                    details.useVersion("${springVersion}")
+                }
+                if (requested.group == "org.springframework.session")  {
+                    if (requested.name == "spring-session-data-mongodb") {
+                        details.useVersion("${springSessionMongoVersion}")
+                    } else {
+                        details.useVersion("${springSessionVersion}")
+                    }
+                }
+                if (requested.group == "org.apache.tomcat")  {
+                    details.useVersion("${tomcatVersion}")
+                }
+                if (requested.group == "org.hsqldb")  {
+                    details.useVersion("${hsqlVersion}")
+                }
+                if (requested.group == "org.mariadb.jdbc")  {
+                    details.useVersion("${mariaDbVersion}")
+                }
+                if (requested.group == "com.microsoft.sqlserver")  {
+                    details.useVersion("${mssqlServerVersion}")
+                }
+                if (requested.group == "com.oracle.ojdbc:ojdbc10")  {
+                    details.useVersion("${oracleJdbcVersion}")
+                }
+                if (requested.group == "org.mongodb")  {
+                    details.useVersion("${mongoDriverVersion}")
+                }
+                if (requested.group == "mysql")  {
+                    details.useVersion("${mysqlVersion}")
+                }
+                if (requested.group == "net.sourceforge.jtds")  {
+                    details.useVersion("${jtdsVersion}")
+                }
+                if (requested.group == "com.couchbase.client" && details.requested.name == "java-client")  {
+                    details.useVersion("${couchbaseVersion}")
+                }
+                if (requested.group == "com.github.ben-manes.caffeine")  {
+                    details.useVersion("${caffeinVersion}")
+                }
+                if (requested.group == "org.apache.logging.log4j")  {
+                    details.useVersion("${log4jVersion}")
+                }
+                if (requested.group == "org.codehaus.groovy")  {
+                    details.useVersion("${groovyVersion}")
+                }
+                if (requested.group == "com.zaxxer")  {
+                    details.useVersion("${hikariVersion}")
+                }
+                if (requested.group == "org.thymeleaf")  {
+                    details.useVersion("${thymeleafVersion}")
+                }
+                if (requested.group == "nz.net.ultraq.thymeleaf" && requested.name == "thymeleaf-layout-dialect")  {
+                    details.useVersion("${thymeleafDialectVersion}")
+                }
+                if (requested.group == "commons-beanutils" && requested.name == "commons-beanutils")  {
+                    details.useVersion("${commonsBeansVersion}")
+                }
+                if (requested.group == "ch.qos.logback")  {
+                    details.useVersion("${logbackVersion}")
+                }
+                if (requested.group == "org.apache.httpcomponents")  {
+                    if (details.requested.name == "httpcore") {
+                        details.useVersion("${httpCoreVersion}")
+                    } else {
+                        details.useVersion("${httpclientVersion}")
+                    }
+                }
+                if (requested.group.startsWith("com.fasterxml.jackson"))  {
+                    details.useVersion("${jacksonVersion}")
+                }
+                if (requested.group == "io.micrometer")  {
+                    details.useVersion("${micrometerVersion}")
+                }
+                if (requested.group == "com.timgroup")  {
+                    details.useVersion("${statsdVersion}")
+                }
+                if (requested.group == "com.signalfx.public")  {
+                    details.useVersion("${signalFxVersion}")
+                }
             }
         }
     }

@@ -15,8 +15,14 @@
                     field.foundation.adapter.registerInputInteractionHandler('keypress', cas.checkCaps);
                 }
             }
-
-            //MDCTextFieldIconAdapter
+            let selector = document.querySelector('.mdc-select.authn-source');
+            if (selector != null) {
+                const select = new material.select.MDCSelect(selector);
+                select.listen('MDCSelect:change', () => {
+                    $('#source').val(select.value);
+                });
+                $('#source').val(select.value);
+            }
         },
         checkCaps: function (ev) {
             var s = String.fromCharCode(ev.which);
@@ -55,6 +61,12 @@ function randomWord() {
     let n1 = things[Math.floor(Math.random() * things.length)];
     let n2 = names[Math.floor(Math.random() * names.length)];
     return n1 + "_" + n2
+}
+
+function copyClipboard(element) {
+    element.select();
+    element.setSelectionRange(0, 99999);
+    document.execCommand("copy");
 }
 
 function requestGeoPosition() {

@@ -9,6 +9,7 @@ import org.apereo.cas.webauthn.web.flow.WebAuthnAuthenticationWebflowEventResolv
 import org.apereo.cas.webauthn.web.flow.WebAuthnMultifactorWebflowConfigurerTests;
 import org.apereo.cas.webauthn.web.flow.WebAuthnStartAuthenticationActionTests;
 import org.apereo.cas.webauthn.web.flow.WebAuthnStartRegistrationActionTests;
+import org.apereo.cas.webauthn.web.flow.WebAuthnValidateSessionCredentialTokenActionTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -25,6 +26,7 @@ import org.junit.runner.RunWith;
     WebAuthnAccountCheckRegistrationActionTests.class,
     WebAuthnAccountSaveRegistrationActionTests.class,
     WebAuthnStartAuthenticationActionTests.class,
+    WebAuthnValidateSessionCredentialTokenActionTests.class,
     JsonResourceWebAuthnCredentialRepositoryTests.class,
     WebAuthnRegisteredDevicesEndpointTests.class,
     WebAuthnAuthenticationWebflowEventResolverTests.class,

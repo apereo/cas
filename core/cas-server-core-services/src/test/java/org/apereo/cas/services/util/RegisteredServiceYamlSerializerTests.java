@@ -26,6 +26,8 @@ public class RegisteredServiceYamlSerializerTests {
     public void verifyPrinter() {
         val zer = new RegisteredServiceYamlSerializer();
         assertFalse(zer.supports(new File("bad-file")));
+        assertFalse(zer.getContentTypes().isEmpty());
+        assertNotNull(zer.getJsonFactory());
     }
 
     @Test

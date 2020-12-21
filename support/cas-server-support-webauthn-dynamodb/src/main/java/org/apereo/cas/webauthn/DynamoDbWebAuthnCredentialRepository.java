@@ -5,7 +5,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.webauthn.storage.BaseWebAuthnCredentialRepository;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.yubico.webauthn.data.CredentialRegistration;
+import com.yubico.data.CredentialRegistration;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -39,7 +39,7 @@ public class DynamoDbWebAuthnCredentialRepository extends BaseWebAuthnCredential
             .map(DynamoDbWebAuthnCredentialRegistration::getRecords)
             .flatMap(List::stream)
             .map(record -> getCipherExecutor().decode(record))
-            .map(Unchecked.function(record -> getObjectMapper().readValue(record, new TypeReference<CredentialRegistration>() {
+            .map(Unchecked.function(record -> WebAuthnUtils.getObjectMapper().readValue(record, new TypeReference<CredentialRegistration>() {
             })))
             .collect(Collectors.toList());
     }
@@ -50,7 +50,7 @@ public class DynamoDbWebAuthnCredentialRepository extends BaseWebAuthnCredential
             .map(DynamoDbWebAuthnCredentialRegistration::getRecords)
             .flatMap(List::stream)
             .map(record -> getCipherExecutor().decode(record))
-            .map(Unchecked.function(record -> getObjectMapper().readValue(record, new TypeReference<>() {
+            .map(Unchecked.function(record -> WebAuthnUtils.getObjectMapper().readValue(record, new TypeReference<>() {
             })));
     }
 
@@ -62,7 +62,7 @@ public class DynamoDbWebAuthnCredentialRepository extends BaseWebAuthnCredential
             facilitator.remove(username);
         } else {
             val jsonRecords = records.stream()
-                .map(Unchecked.function(record -> getCipherExecutor().encode(getObjectMapper().writeValueAsString(record))))
+                .map(Unchecked.function(record -> getCipherExecutor().encode(WebAuthnUtils.getObjectMapper().writeValueAsString(record))))
                 .collect(Collectors.toList());
             val entry = DynamoDbWebAuthnCredentialRegistration.builder()
                 .records(jsonRecords)

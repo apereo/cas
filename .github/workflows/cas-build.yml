@@ -12,10 +12,13 @@ env:
   RENOVATE_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
   GRADLE_BUILDCACHE_USER: ${{ secrets.GRADLE_BUILDCACHE_USER }}
   GRADLE_BUILDCACHE_PSW: ${{ secrets.GRADLE_BUILDCACHE_PSW }}
+  CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
+  SONARCLOUD_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   PYTHON_VERSION: 3.8.2
-  JDK_CURRENT: 11.0.8
+  JDK_CURRENT: 11.0.9
   JDK_LATEST: 15
-
+  
 ##########################################################################
 
 on:
@@ -73,6 +76,7 @@ jobs:
 
   build:
     needs: [cache]
+    if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') }}
     strategy:
       fail-fast: false
       matrix:
@@ -106,6 +110,7 @@ jobs:
 
   build-latest-jdk:
     runs-on: ubuntu-latest
+    if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') }}
     needs: [cache]
     steps:
       - uses: actions/checkout@v2
@@ -123,11 +128,12 @@ jobs:
             ${{ runner.os }}-gradle-
       - name: Build with Gradle
         run: ./gradlew --build-cache --configure-on-demand --no-daemon build -x test -x javadoc -x check --parallel
-        
+
 ##########################################################################
 
   validate-docs:
     runs-on: ubuntu-latest
+    if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' && !contains(github.event.head_commit.message, 'trigger dependency update') }}
     needs: [cache]
     steps:
       - uses: actions/checkout@v2
@@ -140,15 +146,45 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Validate Documentation
-        if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' }}
         run: ./ci/validate-documentation.sh
 
 ##########################################################################
-  
+  codeql-analysis:
+    runs-on: ubuntu-latest
+    needs: [build]
+    continue-on-error: true
+    if: ${{ !contains(github.head_ref, 'renovate') }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+      - uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v1
+        with:
+          languages: java
+          queries: security-and-quality
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v1
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v1
   static-analysis:
     runs-on: ubuntu-latest
     needs: [build]
     continue-on-error: true
+    if: ${{ !contains(github.head_ref, 'renovate') }}
     strategy:
       matrix:
         category:
@@ -177,13 +213,13 @@ jobs:
         with:
           name: binary-artifacts
       - name: Run Analysis
-        if: ${{ !contains(github.head_ref, 'renovate') }}
         run: ./gradlew --build-cache --configure-on-demand --parallel --no-daemon ${{ matrix.category }} -x test -x javadoc -DskipNestedConfigMetadataGen=true -DshowStandardStreams=true
         
 ##########################################################################
 
   validate-codebase:
     runs-on: ubuntu-latest
+    if: ${{ !contains(github.head_ref, 'renovate') && !contains(github.event.head_commit.message, 'trigger dependency update') }}
     needs: [cache]
     strategy:
       fail-fast: false
@@ -214,7 +250,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Validate Codebase
-        if: ${{ !contains(github.head_ref, 'renovate') }}
         run: java ./ci/checks/${{ matrix.check }}.java .
         
 ##########################################################################
@@ -222,6 +257,7 @@ jobs:
   validate-javadocs:
     runs-on: ubuntu-latest
     needs: [build]
+    if: ${{ !contains(github.head_ref, 'renovate') }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -240,7 +276,6 @@ jobs:
         with:
           name: binary-artifacts
       - name: Validate Javadocs
-        if: ${{ !contains(github.head_ref, 'renovate') }}
         run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel javadoc -x test -x check -DskipNestedConfigMetadataGen=true --parallel
 
 ##########################################################################
@@ -248,6 +283,7 @@ jobs:
   validate-commandline-shell:
     runs-on: ubuntu-latest
     needs: [build]
+    if: ${{ !contains(github.head_ref, 'renovate') }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -266,7 +302,6 @@ jobs:
         with:
           name: binary-artifacts
       - name: Validate CAS Command-line Shell
-        if: ${{ !contains(github.head_ref, 'renovate') }}
         run: |
           casVersion=$(./gradlew casVersion --no-daemon -q)
           java -jar support/cas-server-support-shell/build/libs/cas-server-support-shell-${casVersion}.jar @ci/tests/shell/cas-shell-script.sh
@@ -276,6 +311,7 @@ jobs:
   validate-webapp-embedded:
     runs-on: ubuntu-latest
     needs: [build]
+    if: ${{ !contains(github.head_ref, 'renovate') }}
     strategy:
       fail-fast: false
       matrix:
@@ -301,7 +337,6 @@ jobs:
         with:
           name: binary-artifacts
       - name: Validate Web Application Server
-        if: ${{ !contains(github.head_ref, 'renovate') }}
         run: ./ci/tests/webapp/validate-embedded-webapp.sh ${{ matrix.category }}
 
 ##########################################################################
@@ -309,6 +344,7 @@ jobs:
   validate-webapp-external-tomcat:
     runs-on: ubuntu-latest
     needs: [build]
+    if: ${{ !contains(github.head_ref, 'renovate') }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -327,7 +363,6 @@ jobs:
         with:
           name: binary-artifacts
       - name: Validate Web Application Server via External Apache Tomcat
-        if: ${{ !contains(github.head_ref, 'renovate') }}
         run: ./ci/tests/webapp/validate-external-webapp.sh tomcat
 
 ##########################################################################
@@ -335,6 +370,7 @@ jobs:
   validate-spring-cloud-config-server:
     runs-on: ubuntu-latest
     needs: [build]
+    if: ${{ !contains(github.head_ref, 'renovate') }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -353,7 +389,6 @@ jobs:
         with:
           name: binary-artifacts
       - name: Validate Spring Cloud Configuration Server
-        if: ${{ !contains(github.head_ref, 'renovate') }}
         run: ./ci/tests/webapp/validate-configserver-webapp.sh
 
 ##########################################################################
@@ -361,6 +396,7 @@ jobs:
   validate-eureka-discovery-server:
     runs-on: ubuntu-latest
     needs: [build]
+    if: ${{ !contains(github.head_ref, 'renovate') }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -379,7 +415,6 @@ jobs:
         with:
           name: binary-artifacts
       - name: Validate Eureka Discovery Server
-        if: ${{ !contains(github.head_ref, 'renovate') }}
         run: ./ci/tests/webapp/validate-eurekaserver-webapp.sh
 
 ##########################################################################
@@ -387,6 +422,7 @@ jobs:
   validate-spring-boot-admin-server:
     runs-on: ubuntu-latest
     needs: [build]
+    if: ${{ !contains(github.head_ref, 'renovate') }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -405,7 +441,6 @@ jobs:
         with:
           name: binary-artifacts
       - name: Validate Spring Boot Admin Server
-        if: ${{ !contains(github.head_ref, 'renovate') }}
         run: ./ci/tests/webapp/validate-bootadmin-webapp.sh
 
 
@@ -414,6 +449,7 @@ jobs:
   publish-snapshots:
     runs-on: ubuntu-latest
     needs: [build]
+    if: ${{ github.event_name == 'push' }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -432,7 +468,7 @@ jobs:
         with:
           name: binary-artifacts
       - name: Publish SNAPSHOTs
-        if: ${{ github.event_name == 'push' && env.SONATYPE_USER != null && env.SONATYPE_PWD != null }}
+        if: ${{ env.SONATYPE_USER != null && env.SONATYPE_PWD != null }}
         run: ./gradlew -DpublishSnapshots=true --build-cache --configure-on-demand --no-daemon --parallel -Dorg.gradle.internal.http.socketTimeout=180000 -Dorg.gradle.internal.http.connectionTimeout=180000 build publish -x test -x javadoc -x check -DsonatypeUsername="${SONATYPE_USER}" -DsonatypePassword="${SONATYPE_PWD}"
 
   ##########################################################################
@@ -441,23 +477,30 @@ jobs:
     runs-on: ubuntu-latest
     needs: [publish-snapshots]
     steps:
-      - uses: actions/checkout@v2
-        with:
-          repository: 'apereo/cas-overlay-template'
-          ref: 'master'
-      - name: Initialize
-        run: chmod -R 777 ./*.sh
+      - name: Prepare
+        run: |
+          mkdir work
+          cd work
+          curl https://casinit.herokuapp.com/starter.tgz | tar -xzvf -
+          chmod -R 777 ./*.sh
+          ls
       - name: Build Docker Image
-        run: ./docker-build.sh latest
+        run: |
+          cd work
+          ./docker-build.sh latest
       - name: Publish Docker Image
         if: ${{ github.event_name == 'push' && env.DOCKER_USER != null && env.DOCKER_PWD != null }}
-        run: ./docker-push.sh "${DOCKER_USER}" "${DOCKER_PWD}" latest
+        run: |
+          cd work
+          ls
+          ./docker-push.sh "${DOCKER_USER}" "${DOCKER_PWD}" latest
 
 ##########################################################################
 
   publish-docs:
     runs-on: ubuntu-latest
     needs: [validate-docs]
+    if: ${{ github.event_name == 'push' }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -473,13 +516,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Publish Documentation
-        if: ${{ github.event_name == 'push' && env.GH_PAGES_TOKEN != null }}
+        if: ${{ env.GH_PAGES_TOKEN != null  }}
         run: ./ci/push-docs-ghpages.sh
 
 ##########################################################################
 
   tests:
     runs-on: ubuntu-latest
+    if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') }}
     needs: [cache]
     continue-on-error: false
     strategy:
@@ -568,13 +612,58 @@ jobs:
 #        uses: mxschmitt/action-tmate@v2
       - name: Run Tests
         run: ./testcas.sh --with-coverage --category ${{ matrix.category }}
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1.0.13
+      - name: "Upload to Codecov"
+        uses: "codecov/codecov-action@v1"
         with:
+          file: ./build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml
           flags: ${{ matrix.category }}
-          fail_ci_if_error: true
+          name: ${{ matrix.category }}
+      - name: "Upload coverage file"
+        uses: "actions/upload-artifact@v2"
+        with:
+          name: "cas-tests-${{ matrix.category }}.coverage"
+          path: "./build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
 ##########################################################################
-
+  upload_coverage:
+    runs-on: ubuntu-latest
+    needs: [tests]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
+      - name: "Download coverage files"
+        uses: "actions/download-artifact@v2"
+        with:
+          path: "reports"
+      - name: "Collect Files for SonarCloud"
+        run: |
+          find $PWD -type f -name 'jacocoRootReport.xml'
+          export files=''
+          for file in $(find $PWD -type f -name 'jacocoRootReport.xml'); do export files="$file,${files}"; done
+          export files="${files%?}"
+          echo $files
+          echo "SONAR_COVERAGE_REPORTS=${files}" >> $GITHUB_ENV
+      - name: Upload Coverage to SonarCloud
+        if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' && env.SONARCLOUD_TOKEN != null }}
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel sonarqube -x javadoc -Dsonar.login="${SONARCLOUD_TOKEN}" -DskipNestedConfigMetadataGen=true -DshowStandardStreams=true -Dsonar.coverage.jacoco.xmlReportPaths="${SONAR_COVERAGE_REPORTS}"
+      - name: "Collect Files for Codacy"
+        run: |
+          find $PWD -type f -name 'jacocoRootReport.xml'
+          export files=''
+          for file in $(find . -type f -name 'jacocoRootReport.xml'); do export files="$file,${files}"; done
+          export files="${files%?}"
+          echo $files
+          echo "CODACY_COVERAGE_REPORTS=${files}" >> $GITHUB_ENV
+      - name: Upload Coverage to Codacy
+        if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' && env.CODACY_PROJECT_TOKEN != null }}
+        uses: codacy/codacy-coverage-reporter-action@master
+        with:
+          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          coverage-reports: ${{ env.CODACY_COVERAGE_REPORTS }}
+  ##########################################################################
+  
   tests-performance-locust:
     runs-on: ubuntu-latest
     needs: [build]
@@ -646,7 +735,8 @@ jobs:
 
   report-dependency-updates:
     runs-on: ubuntu-latest
-    needs: [build]
+    needs: [cache]
+    if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' && contains(github.event.head_commit.message, 'dependency') }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -662,14 +752,15 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Report Dependency Updates
-        if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' && contains(github.event.head_commit.message, 'dependency') }}
-        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel -x test -x javadoc dependencyUpdates -Drevision=release -DskipNestedConfigMetadataGen=true -DgradleReleaseChannel=current
+        run: |
+          ./gradlew --build-cache --configure-on-demand --no-daemon --parallel -x test -x javadoc dependencyUpdates -Drevision=release -DskipNestedConfigMetadataGen=true -DgradleReleaseChannel=current
 
 ##########################################################################
 
 #  renovate-dependency-updates:
 #    runs-on: ubuntu-latest
 #    needs: [cache]
+#    if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' && env.RENOVATE_TOKEN != null }}
 #    steps:
 #      - uses: actions/checkout@v2
 #      - name: Set up JDK
@@ -684,17 +775,74 @@ jobs:
 #          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
 #          restore-keys: |
 #            ${{ runner.os }}-gradle-
-#      - uses: renovatebot/github-action@v1.0.0
-#        if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' && env.RENOVATE_TOKEN != null }}
+#      - uses: renovatebot/github-action@v23.79.0
 #        with:
-#          token: ${{ secrets.RENOVATE_TOKEN }}
 #          configurationFile: .github/renovate.js
+#          token: ${{ secrets.RENOVATE_TOKEN }}
 
 ##########################################################################
 
-  validate-quality:
+  puppeteer-tests:
     runs-on: ubuntu-latest
-    needs: [build]
+    needs: [cache]
+    if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') }}
+    strategy:
+      fail-fast: false
+      matrix:
+        scenario:
+          - login-success
+          - block-missing-service
+          - default-service
+          - requiredattrs-service
+          - invalid-pswd-reset
+          - locale-param
+          - generate-service-ticket
+          - webauthn-primary-authn
+          - authn-throttle
+          - qrauthn-login
+          - gauth-register
+          - gauth-login
+          - adaptive-login-blocked
+          - duo-websdk-login
+          - duo-universal-login
+          - mfa-provider-selection
+          - x509-optional-login
+          - actuator-form-login
+          - unauthz-service
+          - account-locked-login
+          - account-disabled-login
+          - account-expired-login
+          - account-change-pswd
+          - account-invalidloc-login
+          - account-invalidtime-login
+          - ticket-validation-casv1
+          - ticket-validation-casv2
+          - ticket-validation-casv3
+          - ticket-validation-casv3-json
+          - aup-login
+          - authy-mfa-login
+          - logout-confirm
+          - gua-login
+          - surrogate-login-selection
+          - simple-mfa-login
+          - interrupt-login
+          - oidc-authzcode-login
+          - pac4j-delegated-login
+          - renew-existing-sso
+          - passwordless-requirepswd-login
+          - passwordless-delegated-login
+          - passwordless-mfa-login
+          - passwordless-login
+          - mfa-provider-unavailable
+          - source-selection-login
+          - custom-fields-login
+          - forgot-username
+          - forgot-password
+          - attribute-consent
+          - u2f-register
+          - u2f-login
+          - webauthn-register
+          - webauthn-login
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -702,18 +850,8 @@ jobs:
         with:
           java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v2
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - name: Validate Code Quality via SonarCloud
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONARCLOUD_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
-        if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' && env.SONARCLOUD_TOKEN != null }}
-        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel sonarqube -x javadoc -Dsonar.organization=apereo -Dsonar.host.url=https://sonarcloud.io -Dsonar.login="${SONARCLOUD_TOKEN}" -DskipNestedConfigMetadataGen=true --parallel -DshowStandardStreams=true
-
+        run: chmod -R 777 ./ci/*.sh
+      - name: Run Tests
+        run: ./ci/tests/puppeteer/run.sh $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
 ##########################################################################
+

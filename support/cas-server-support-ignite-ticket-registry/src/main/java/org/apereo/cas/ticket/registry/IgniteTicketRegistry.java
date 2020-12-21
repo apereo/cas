@@ -87,10 +87,6 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
         val ticket = getTicket(ticketId);
         if (ticket != null) {
             val metadata = this.ticketCatalog.find(ticket);
-            if (metadata == null) {
-                LOGGER.warn("Ticket [{}] is not registered in the catalog and is unrecognized", ticketId);
-                return false;
-            }
             val cache = getIgniteCacheFromMetadata(metadata);
             return cache.remove(encodeTicketId(ticket.getId()));
         }
@@ -118,11 +114,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
             return null;
         }
         val result = decodeTicket(ticket);
-        if (predicate.test(result)) {
-            return result;
-        }
-        LOGGER.debug("Unable to decode ticket [{}]", ticket);
-        return null;
+        return predicate.test(result) ? result : null;
     }
 
     @Override
@@ -178,13 +170,9 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
     }
 
     @ToString
+    @RequiredArgsConstructor
     private static class IgniteInternalTicketExpiryPolicy implements ExpiryPolicy {
-
         private final ExpirationPolicy expirationPolicy;
-
-        IgniteInternalTicketExpiryPolicy(final ExpirationPolicy ticket) {
-            this.expirationPolicy = ticket;
-        }
 
         @Override
         public Duration getExpiryForCreation() {

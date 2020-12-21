@@ -18,8 +18,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
 
@@ -78,7 +80,7 @@ public class JwtBuilder {
      * @return the jwt
      */
     public static String buildPlain(final JWTClaimsSet claimsSet,
-                                    final Optional<RegisteredService> registeredService) {
+        final Optional<RegisteredService> registeredService) {
         val header = new PlainHeader.Builder().type(JOSEObjectType.JWT);
         registeredService.ifPresent(svc ->
             header.customParam(RegisteredServiceCipherExecutor.CUSTOM_HEADER_REGISTERED_SERVICE_ID, svc.getId()));
@@ -126,7 +128,7 @@ public class JwtBuilder {
         val serviceAudience = payload.getServiceAudience();
         val claims = new JWTClaimsSet.Builder()
             .audience(serviceAudience)
-            .issuer(issuer)
+            .issuer(StringUtils.defaultString(payload.getIssuer(), this.issuer))
             .jwtID(payload.getJwtId())
             .issueTime(payload.getIssueDate())
             .subject(payload.getSubject());
@@ -182,6 +184,7 @@ public class JwtBuilder {
      */
     @Builder
     @Getter
+    @ToString
     public static class JwtRequest {
         private final String jwtId;
 
@@ -192,6 +195,8 @@ public class JwtBuilder {
         private final String subject;
 
         private final Date validUntilDate;
+
+        private final String issuer;
 
         @Builder.Default
         private final Map<String, List<Object>> attributes = new LinkedHashMap<>(MAP_SIZE);

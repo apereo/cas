@@ -44,8 +44,8 @@ public class HttpBasedServiceCredentialTests {
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService(CoreAuthenticationTestUtils.CONST_TEST_URL);
         val c = new HttpBasedServiceCredential(new URL(CoreAuthenticationTestUtils.CONST_GOOD_URL), registeredService);
         val c2 = new HttpBasedServiceCredential(new URL("http://www.msn.com"), registeredService);
-        assertFalse(c.equals(c2));
-        assertFalse(c.equals(new Object()));
+        assertNotEquals(c2, c);
+        assertNotEquals(new Object(), c);
     }
 
     @Test
@@ -55,8 +55,8 @@ public class HttpBasedServiceCredentialTests {
         val c = new HttpBasedServiceCredential(callbackUrl, registeredService);
         val c2 = new HttpBasedServiceCredential(callbackUrl, registeredService);
 
-        assertTrue(c.equals(c2));
-        assertTrue(c2.equals(c));
+        assertEquals(c2, c);
+        assertEquals(c, c2);
     }
 
     @Test
