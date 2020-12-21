@@ -78,8 +78,9 @@ public class CustomAuthenticatorSubsystemConfiguration {
     @Bean
     public FlowDefinitionRegistry customFlowRegistry() {
         var builder = new FlowDefinitionRegistryBuilder(applicationContext, flowBuilderServices);
-        builder.setBasePath("classpath*:/webflow");
-        builder.addFlowLocationPattern("/mfa-custom/*-webflow.xml");
+        builder.addFlowBuilder(new FlowModelFlowBuilder(
+            new DefaultFlowModelHolder(new DynamicFlowModelBuilder())),
+            "mfa-custom");
         return builder.build();
     }
 

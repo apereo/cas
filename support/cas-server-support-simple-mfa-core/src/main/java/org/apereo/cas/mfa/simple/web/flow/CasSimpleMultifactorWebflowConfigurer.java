@@ -50,7 +50,8 @@ public class CasSimpleMultifactorWebflowConfigurer extends AbstractCasMultifacto
                 createEvaluateAction(CasWebflowConstants.ACTION_ID_INIT_LOGIN_ACTION));
             createTransitionForState(initLoginFormState, CasWebflowConstants.TRANSITION_ID_SUCCESS, "sendSimpleToken");
             setStartState(flow, initLoginFormState);
-
+            createEndState(flow, CasWebflowConstants.STATE_ID_SUCCESS);
+            createEndState(flow, CasWebflowConstants.STATE_ID_UNAVAILABLE);
 
             val sendSimpleToken = createActionState(flow, "sendSimpleToken",
                 createEvaluateAction("mfaSimpleMultifactorSendTokenAction"));

@@ -18,7 +18,6 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
@@ -41,6 +40,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import org.springframework.webflow.engine.builder.FlowBuilder;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
@@ -116,11 +116,15 @@ public class SwivelConfiguration {
     @Qualifier("ticketRegistry")
     private ObjectProvider<TicketRegistry> ticketRegistry;
 
+    @Autowired
+    @Qualifier("flowBuilder")
+    private ObjectProvider<FlowBuilder> flowBuilder;
+
     @Bean
+    @ConditionalOnMissingBean(name = "swivelAuthenticatorFlowRegistry")
     public FlowDefinitionRegistry swivelAuthenticatorFlowRegistry() {
         val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, flowBuilderServices.getObject());
-        builder.setBasePath(CasWebflowConstants.BASE_CLASSPATH_WEBFLOW);
-        builder.addFlowLocationPattern("/mfa-swivel/*-webflow.xml");
+        builder.addFlowBuilder(flowBuilder.getObject(), SwivelMultifactorWebflowConfigurer.MFA_SWIVEL_EVENT_ID);
         return builder.build();
     }
 

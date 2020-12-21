@@ -328,11 +328,10 @@ public interface CasWebflowConfigurer extends Ordered {
     /**
      * Build flow.
      *
-     * @param location the location
      * @param id       the id
      * @return the flow
      */
-    Flow buildFlow(String location, String id);
+    Flow buildFlow(String id);
 
     /**
      * Gets name.

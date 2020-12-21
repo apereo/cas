@@ -34,7 +34,6 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
@@ -63,6 +62,7 @@ import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import org.springframework.webflow.engine.builder.FlowBuilder;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
@@ -153,11 +153,15 @@ public class AccepttoMultifactorAuthenticationConfiguration {
     @Qualifier("casAccepttoMultifactorAuthenticationProvider")
     private ObjectProvider<MultifactorAuthenticationProvider> casAccepttoMultifactorAuthenticationProvider;
 
+    @Autowired
+    @Qualifier("flowBuilder")
+    private ObjectProvider<FlowBuilder> flowBuilder;
+
     @Bean
+    @ConditionalOnMissingBean(name = "mfaAccepttoAuthenticatorFlowRegistry")
     public FlowDefinitionRegistry mfaAccepttoAuthenticatorFlowRegistry() {
         val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, flowBuilderServices.getObject());
-        builder.setBasePath(CasWebflowConstants.BASE_CLASSPATH_WEBFLOW);
-        builder.addFlowLocationPattern("/mfa-acceptto/*-webflow.xml");
+        builder.addFlowBuilder(flowBuilder.getObject(), AccepttoMultifactorWebflowConfigurer.MFA_ACCEPTTO_EVENT_ID);
         return builder.build();
     }
 

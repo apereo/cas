@@ -23,7 +23,6 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
@@ -48,6 +47,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import org.springframework.webflow.engine.builder.FlowBuilder;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
@@ -90,7 +90,7 @@ public class U2FWebflowConfiguration {
     @Autowired
     @Qualifier("singleSignOnParticipationStrategy")
     private ObjectProvider<SingleSignOnParticipationStrategy> webflowSingleSignOnParticipationStrategy;
-    
+
     @Autowired
     @Qualifier("authenticationEventExecutionPlan")
     private ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
@@ -106,7 +106,7 @@ public class U2FWebflowConfiguration {
     @Autowired
     @Qualifier("authenticationContextValidator")
     private ObjectProvider<MultifactorAuthenticationContextValidator> authenticationContextValidator;
-    
+
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
     private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
@@ -131,12 +131,15 @@ public class U2FWebflowConfiguration {
     @Qualifier("u2fService")
     private ObjectProvider<U2F> u2fService;
 
+    @Autowired
+    @Qualifier("flowBuilder")
+    private ObjectProvider<FlowBuilder> flowBuilder;
+
     @Bean
     @ConditionalOnMissingBean(name = "u2fFlowRegistry")
     public FlowDefinitionRegistry u2fFlowRegistry() {
-        val builder = new FlowDefinitionRegistryBuilder(applicationContext, flowBuilderServices.getObject());
-        builder.setBasePath(CasWebflowConstants.BASE_CLASSPATH_WEBFLOW);
-        builder.addFlowLocationPattern("/mfa-u2f/*-webflow.xml");
+        val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, flowBuilderServices.getObject());
+        builder.addFlowBuilder(flowBuilder.getObject(), U2FMultifactorWebflowConfigurer.MFA_U2F_EVENT_ID);
         return builder.build();
     }
 
