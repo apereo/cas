@@ -43,6 +43,11 @@ public class CasSimpleMultifactorProperties extends BaseMultifactorProviderPrope
      * Indicates whether this provider should support trusted devices.
      */
     private boolean trustedDeviceEnabled;
+
+    /**
+     * Time in seconds during which resend button will be deactivated. Default time is the same as token duration
+     */
+    private long resendTimeInSeconds = timeToKillInSeconds;
     
     /**
      * Email settings for notifications.

@@ -2,4 +2,5 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.co
   org.apereo.cas.config.CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration,\
   org.apereo.cas.config.CasSimpleMultifactorAuthenticationComponentSerializationConfiguration,\
   org.apereo.cas.config.CasSimpleMultifactorAuthenticationMultifactorProviderBypassConfiguration,\
-  org.apereo.cas.config.CasSimpleMultifactorAuthenticationTicketCatalogConfiguration
+  org.apereo.cas.config.CasSimpleMultifactorAuthenticationTicketCatalogConfiguration,\
+  org.apereo.cas.config.CasSimpleMultifactorAuthenticationThrottlingConfiguration
