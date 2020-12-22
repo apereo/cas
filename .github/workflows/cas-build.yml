@@ -616,7 +616,7 @@ jobs:
 #          name: binary-artifacts
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v2
-        if: matrix.os == 'ubuntu-latest' && matrix.category == 'rest'
+        if: matrix.os == 'windows-latest' && matrix.category == 'rest'
       - name: Run Tests with Coverage
         run: ./testcas.sh --with-coverage --category ${{ matrix.category }}
         if: matrix.os == 'ubuntu-latest'
