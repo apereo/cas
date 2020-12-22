@@ -88,11 +88,11 @@ public class X509AuthenticationWebflowConfiguration {
             return new X509CertificateCredentialsRequestHeaderAction(initialAuthenticationAttemptWebflowEventResolver.getObject(),
                 serviceTicketRequestWebflowEventResolver.getObject(),
                 adaptiveAuthenticationPolicy.getObject(),
-                x509CertificateExtractor.getObject());
+                x509CertificateExtractor.getObject(), casProperties);
         }
         return new X509CertificateCredentialsNonInteractiveAction(initialAuthenticationAttemptWebflowEventResolver.getObject(),
             serviceTicketRequestWebflowEventResolver.getObject(),
-            adaptiveAuthenticationPolicy.getObject());
+            adaptiveAuthenticationPolicy.getObject(), casProperties);
     }
 
     @Bean

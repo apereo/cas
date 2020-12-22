@@ -2690,6 +2690,8 @@ To fetch CRLs, the following options are available:
 # cas.authn.x509.cache-eternal=false
 # cas.authn.x509.cache-time-to-live-seconds=7200
 
+# cas.authn.x509.mixed-mode=true
+
 # cas.authn.x509.check-key-usage=false
 # cas.authn.x509.revocation-policy-threshold=172800
 

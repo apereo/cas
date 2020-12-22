@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.actions.AbstractNonInteractiveCredentialsAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -30,10 +31,17 @@ public class X509CertificateCredentialsNonInteractiveAction extends AbstractNonI
      */
     public static final String REQUEST_ATTRIBUTE_X509_CERTIFICATE = "javax.servlet.request.X509Certificate";
 
-    public X509CertificateCredentialsNonInteractiveAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
+    /**
+     * CAS configuration settings.
+     */
+    protected final CasConfigurationProperties casProperties;
+
+    public X509CertificateCredentialsNonInteractiveAction(final CasDelegatingWebflowEventResolver webflowEventResolver,
                                                           final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
-                                                          final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy) {
-        super(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy);
+                                                          final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
+                                                          final CasConfigurationProperties casProperties) {
+        super(webflowEventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy);
+        this.casProperties = casProperties;
     }
 
     @Override
@@ -47,5 +55,11 @@ public class X509CertificateCredentialsNonInteractiveAction extends AbstractNonI
         }
         LOGGER.debug("[{}] Certificate(s) found in request: [{}]", certificates.length, Arrays.toString(certificates));
         return new X509CertificateCredential(certificates);
+    }
+
+    @Override
+    protected void onError(final RequestContext requestContext) {
+        super.onError(requestContext);
+        WebUtils.putCasLoginFormViewable(requestContext, casProperties.getAuthn().getX509().isMixedMode());
     }
 }

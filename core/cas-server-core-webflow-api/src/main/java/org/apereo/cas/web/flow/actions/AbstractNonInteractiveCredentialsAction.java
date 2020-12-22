@@ -25,8 +25,8 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAu
     private static final String AUTHN_FAILURE_MESSAGE_CODE = "authenticationFailure.FailedLoginException";
 
     protected AbstractNonInteractiveCredentialsAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
-                                                   final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
-                                                   final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy) {
+                                                      final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
+                                                      final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy) {
         super(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy);
     }
 
