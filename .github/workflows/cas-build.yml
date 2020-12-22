@@ -529,8 +529,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+#        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [windows-latest]
         category:
+          - rest
           - simple
           - groovy
           - filesystem
@@ -542,7 +544,6 @@ jobs:
           - attributes
           - services
           - expiration-policy
-          - rest
           - password-ops
           - mfa
           - web
@@ -616,7 +617,7 @@ jobs:
 #          name: binary-artifacts
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v2
-        if: matrix.os == 'windows-latest' && matrix.category == 'rest'
+        if: ${{ matrix.os == 'windows-latest' && matrix.category == 'rest' }}
       - name: Run Tests with Coverage
         run: ./testcas.sh --with-coverage --category ${{ matrix.category }}
         if: matrix.os == 'ubuntu-latest'
