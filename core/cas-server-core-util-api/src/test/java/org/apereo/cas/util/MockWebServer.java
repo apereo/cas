@@ -182,9 +182,9 @@ public class MockWebServer implements AutoCloseable {
                         writeResponse(socket);
                     }
                     socket.shutdownOutput();
-                    Thread.sleep(100);
+                    Thread.sleep(200);
                 } catch (final SocketException e) {
-                    LOGGER.debug("Stopping on socket close.");
+                    LOGGER.debug("Stopping on socket close: [{}]", e.getMessage(), e);
                     this.running = false;
                 } catch (final Exception e) {
                     LoggingUtils.error(LOGGER, e);

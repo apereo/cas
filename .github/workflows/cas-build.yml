@@ -529,8 +529,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-#        os: [ubuntu-latest, windows-latest, macos-latest]
-        os: [windows-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
         category:
           - rest
           - simple
@@ -615,9 +614,9 @@ jobs:
 #      - uses: actions/download-artifact@v2
 #        with:
 #          name: binary-artifacts
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-        if: ${{ matrix.os == 'windows-latest' && matrix.category == 'rest' }}
+#      - name: Setup tmate session
+#        uses: mxschmitt/action-tmate@v3
+#        if: ${{ matrix.os == 'windows-latest' && matrix.category == 'rest' }}
       - name: Run Tests with Coverage
         run: ./testcas.sh --with-coverage --category ${{ matrix.category }}
         if: matrix.os == 'ubuntu-latest'
