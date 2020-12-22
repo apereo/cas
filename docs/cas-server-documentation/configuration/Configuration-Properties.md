@@ -3311,6 +3311,11 @@ under the configuration key `cas.authn.mfa.web-authn`.
 AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings) 
 under the configuration key `cas.authn.mfa.web-authn.dynamo-db`.
 
+### FIDO WebAuthn REST
+
+RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) under 
+the configuration key `cas.authn.mfa.web-authn.rest`.
+
 ### FIDO U2F
 
 To learn more about this topic, [please review this guide](../mfa/FIDO-U2F-Authentication.html).

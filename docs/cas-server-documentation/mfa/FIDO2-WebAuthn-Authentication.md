@@ -154,3 +154,25 @@ Device registrations may be kept inside a DynamoDb instance by including the fol
 ```
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#fido2-webauthn-dynamodb).
+
+### REST
+
+Device registrations may be managed using an external REST API by including the following module in the WAR overlay:
+
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-support-webauthn-rest</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```
+
+The following parameters are passed:
+
+| Operation        | Parameters      | Description      | Result
+|------------------|-----------------|------------------|-----------------------------------------------------
+| `GET`            | N/A             | Retrieve all records.     | `200` status code; Collection of JSON records in the body.
+| `GET`            | `username`      | Retrieve all records for user.  | `200` status code Collection of JSON records in the body.
+| `POST`           | Collection of records as JSON body | Store/Update registered devices. | `200`.
+
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#fido2-webauthn-rest).

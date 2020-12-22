@@ -170,15 +170,17 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 ### REST
 
-Device registrations may be managed via REST APIs. Endpoints must be designed to accept/process `application/json`. The syntax for he collection of devices passed back and forth is designed in JSON and is identical to the JSON structure defined above.
+Device registrations may be managed via REST APIs. Endpoints must be designed to 
+accept/process `application/json`. The syntax for he collection of devices passed back and 
+forth is designed in JSON and is identical to the JSON structure defined above.
 
 The following parameters are passed:
 
 | Operation        | Parameters      | Description      | Result
-|------------------|-----------------|-----------------------------------------------------------------------
-| `GET`            | N/A             | Retrieve all registered devices.     | `200` status code Collection of registered devices as JSON in the body of the response.
-| `POST`           | Collection of registered devices as JSON | Store registered devices. | `200`.
-| `DELETE`         | N/A | Delete all device records | `200`.
-| `DELETE`         | `/${id}`  as a path variable | Delete all device records matching that identifier. | `200`.
+|------------------|-----------------|------------------|----------------------------------------------------
+| `GET` | N/A    | Retrieve all registered devices.     | `200` status code; Collection of registered devices as JSON in response body.
+| `POST` | Collection of registered devices as JSON | Store registered devices. | `200`.
+| `DELETE` | N/A | Delete all device records | `200`.
+| `DELETE` | `/${id}`  as a path variable | Delete all device records matching that identifier. | `200`.
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#fido-u2f-rest).

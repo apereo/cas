@@ -174,6 +174,12 @@ public class WebAuthnMultifactorProperties extends BaseMultifactorProviderProper
     private WebAuthnJpaMultifactorProperties jpa = new WebAuthnJpaMultifactorProperties();
 
     /**
+     * Store device registration records via external REST APIs.
+     */
+    @NestedConfigurationProperty
+    private WebAuthnRestfulMultifactorProperties rest = new WebAuthnRestfulMultifactorProperties();
+
+    /**
      * Clean up expired records via a background cleaner process.
      */
     @NestedConfigurationProperty
