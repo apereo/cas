@@ -143,6 +143,14 @@ public class X509Properties implements Serializable {
     private boolean cacheEternal;
 
     /**
+     * Determine whether X509 authentication should allow
+     * other forms of authentication such as username/password.
+     * If this setting is turned off, typically the ability to view
+     * the login form as the primary form of authentication is turned off.
+     */
+    private boolean mixedMode = true;
+    
+    /**
      * When CRLs are cached, indicate the time-to-live of cache items.
      */
     private long cacheTimeToLiveSeconds = TimeUnit.HOURS.toSeconds(4);
