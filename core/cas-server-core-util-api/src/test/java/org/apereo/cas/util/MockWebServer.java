@@ -206,7 +206,7 @@ public class MockWebServer implements AutoCloseable {
 
         private void writeResponse(final Socket socket) throws IOException {
             if (resource != null) {
-                LOGGER.debug("Socket response for resource [{}]", resource.getFilename());
+                LOGGER.debug("Socket response for resource [{}]", resource.getDescription());
                 val out = socket.getOutputStream();
 
                 val statusLine = String.format("HTTP/1.1 %s %s%s", status.value(), status.getReasonPhrase(), SEPARATOR);
@@ -216,13 +216,20 @@ public class MockWebServer implements AutoCloseable {
                 out.write(SEPARATOR.getBytes(StandardCharsets.UTF_8));
 
                 val buffer = new byte[BUFFER_SIZE];
-                try (val in = this.resource.getInputStream()) {
-                    var count = 0;
-                    while ((count = in.read(buffer)) > -1) {
-                        out.write(buffer, 0, count);
+                try {
+                    try (val in = this.resource.getInputStream()) {
+                        var count = 0;
+                        while ((count = in.read(buffer)) > -1) {
+                            out.write(buffer, 0, count);
+                        }
                     }
+                } catch (final SocketException e) {
+                    LOGGER.debug("Error while writing response, current response buffer [{}], response length [{}]",
+                            buffer, this.resource.contentLength());
+                    throw e;
                 }
-                LOGGER.debug("Wrote response for resource [{}] for [{}]", resource.getFilename(), resource.contentLength());
+                out.flush();
+                LOGGER.debug("Wrote response for resource [{}] for [{}]", resource.getDescription(), resource.contentLength());
             }
         }
     }
