@@ -85,7 +85,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 #      - name: Setup tmate session
-#        uses: mxschmitt/action-tmate@v2
+#        uses: mxschmitt/action-tmate@v3
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
@@ -197,7 +197,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 #      - name: Setup tmate session
-#        uses: mxschmitt/action-tmate@v2
+#        uses: mxschmitt/action-tmate@v3
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
@@ -616,7 +616,7 @@ jobs:
 #        with:
 #          name: binary-artifacts
       - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v2
+        uses: mxschmitt/action-tmate@v3
         if: ${{ matrix.os == 'windows-latest' && matrix.category == 'rest' }}
       - name: Run Tests with Coverage
         run: ./testcas.sh --with-coverage --category ${{ matrix.category }}
