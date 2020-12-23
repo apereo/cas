@@ -23,33 +23,47 @@ Set -Dlog4j2.contextSelector=org.apache.logging.log4j.core.selector.BasicContext
     <Loggers>
         <Logger name="org.apereo.cas" level="info" includeLocation="true">
             <AppenderRef ref="casFile"/>
+            <AppenderRef ref="casConsole"/>
         </Logger>
         <Logger name="org.apache" level="info">
             <AppenderRef ref="casFile"/>
+            <AppenderRef ref="casConsole"/>
         </Logger>
         <Logger name="org.springframework.cloud.server" level="debug">
             <AppenderRef ref="casFile"/>
+            <AppenderRef ref="casConsole"/>
+        </Logger>
+        <Logger name="org.springframework.cloud.config" level="debug">
+            <AppenderRef ref="casFile"/>
+            <AppenderRef ref="casConsole"/>
         </Logger>
         <Logger name="org.springframework.cloud.bus" level="info">
             <AppenderRef ref="casFile"/>
+            <AppenderRef ref="casConsole"/>
         </Logger>
         <Logger name="org.springframework.cloud.vault" level="warn">
             <AppenderRef ref="casFile"/>
+            <AppenderRef ref="casConsole"/>
         </Logger>
         <Logger name="org.springframework.security" level="debug">
             <AppenderRef ref="casFile"/>
+            <AppenderRef ref="casConsole"/>
         </Logger>
         <Logger name="org.springframework.boot" level="info">
             <AppenderRef ref="casFile"/>
+            <AppenderRef ref="casConsole"/>
         </Logger>
         <Logger name="org.springframework.boot.autoconfigure.security" level="debug">
             <AppenderRef ref="casFile"/>
+            <AppenderRef ref="casConsole"/>
         </Logger>
         <Logger name="org.springframework.amqp" level="off">
             <AppenderRef ref="casFile"/>
+            <AppenderRef ref="casConsole"/>
         </Logger>
         <Logger name="org.springframework.web" level="warn">
             <AppenderRef ref="casFile"/>
+            <AppenderRef ref="casConsole"/>
         </Logger>
         <Root level="error">
             <AppenderRef ref="casConsole"/>

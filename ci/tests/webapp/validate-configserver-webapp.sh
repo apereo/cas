@@ -13,7 +13,8 @@ keytool -genkey -noprompt -alias cas -keyalg RSA -keypass changeit -storepass ch
 
 echo "Launching CAS config server web application..."
 java -jar webapp/cas-server-webapp-config-server/build/libs/casconfigserver.war \
-  --spring.security.user.password=Mellon --server.ssl.key-store="${keystore}" &
+  --spring.security.user.password=Mellon --server.ssl.key-store="${keystore}" \
+  --encrypt.key-store.location=file:${keystore} &
 pid=$!
 echo "Launched CAS config server with pid ${pid}. Waiting for CAS config server to come online..."
 sleep 30
