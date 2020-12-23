@@ -370,6 +370,8 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: binary-artifacts
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v2
       - name: Validate Spring Cloud Configuration Server
         run: ./ci/tests/webapp/validate-configserver-webapp.sh
 
