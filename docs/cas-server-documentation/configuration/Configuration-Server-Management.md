@@ -4,6 +4,8 @@ title: CAS - Configuration Server
 category: Configuration
 ---
 
+{% include variables.html %}
+
 # Configuration Server
 
 As your CAS deployment moves through the deployment pipeline from dev to test and into production

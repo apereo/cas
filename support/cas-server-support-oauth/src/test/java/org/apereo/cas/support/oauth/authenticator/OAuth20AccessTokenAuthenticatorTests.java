@@ -28,6 +28,12 @@ public class OAuth20AccessTokenAuthenticatorTests extends BaseOAuth20Authenticat
         authenticator = new OAuth20AccessTokenAuthenticator(ticketRegistry, accessTokenJwtBuilder);
     }
 
+    @BeforeEach
+    public void initialize() {
+        super.initialize();
+        ticketRegistry.deleteAll();
+    }
+
     @Test
     public void verifyAuthenticationWithJwtAccessToken() {
         val accessToken = getAccessToken();

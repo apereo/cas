@@ -51,6 +51,7 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
  */
 @SpringBootTest(classes = BaseWebflowConfigurerTests.SharedTestConfiguration.class)
 @TestPropertySource(properties = {
+    "spring.main.allow-bean-definition-overriding=true",
     "cas.webflow.crypto.encryption.key=qLhvLuaobvfzMmbo9U_bYA",
     "cas.webflow.crypto.signing.key=oZeAR5pEXsolruu4OQYsQKxf-FCvFzSsKlsVaKmfIl6pNzoPm6zPW94NRS1af7vT-0bb3DpPBeksvBXjloEsiA"
 })

@@ -4,6 +4,8 @@ title: CAS - Configuration Management
 category: Configuration
 ---
 
+{% include variables.html %}
+
 # Configuration Management
 
 The core foundations of CAS that deal with configuration management, settings and replication of changes

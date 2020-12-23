@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
     SamlServiceFactoryConfiguration.class,
     SamlConfiguration.class,
     AbstractOpenSamlTests.SharedTestConfiguration.class
-})
+}, properties = "spring.main.allow-bean-definition-overriding=true")
 @Tag("SAML")
 public class SamlServiceFactoryTests extends AbstractOpenSamlTests {
 

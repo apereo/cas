@@ -4,6 +4,8 @@ title: CAS - Configuration Discovery
 category: Configuration
 ---
 
+{% include variables.html %}
+
 # Configuration Discovery
 
 Certain aspects of the CAS server deployment may be advertised via a discovery endpoint to indicate to client applications and consumers the set of features and capabilities that are turned on. The [discovery profile endpoint](../monitoring/Monitoring-Statistics.html) is enabled by including the following module in the overlay:

@@ -4,6 +4,8 @@ title: CAS - Spring Expressions
 category: Installation
 ---
 
+{% include variables.html %}
+
 # Spring Expression Language
 
 A number of components in CAS are able to take advantage of 

@@ -499,7 +499,7 @@ jobs:
 
   publish-docs:
     runs-on: ubuntu-latest
-    needs: [validate-docs]
+#    needs: [validate-docs]
     if: ${{ github.event_name == 'push' }}
     steps:
       - uses: actions/checkout@v2
