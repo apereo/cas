@@ -2947,7 +2947,7 @@ ext.libraries = [
                     exclude(group: "com.fasterxml", module: "classmate")
 
                 },
-                dependencies.create("org.springframework.cloud:spring-cloud-starter-zipkin:$springCloudSleuthVersion") {
+                dependencies.create("org.springframework.cloud:spring-cloud-sleuth-zipkin:$springCloudSleuthVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                     exclude(group: "org.springframework.cloud", module: "spring-cloud-context")

@@ -36,6 +36,7 @@ import java.util.Map;
  */
 @SpringBootTest(classes = AbstractWsFederationTests.SharedTestConfiguration.class,
     properties = {
+        "spring.main.allow-bean-definition-overriding=true",
         "cas.authn.wsfed[0].identity-provider-url=https://adfs.example.com/adfs/ls/",
         "cas.authn.wsfed[0].identity-provider-identifier=http://(iam-dev-windows.unicon.net|adfs.example.com)/adfs/services/trust",
         "cas.authn.wsfed[0].relying-party-identifier=urn:federation:cas",
