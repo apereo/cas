@@ -21,7 +21,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 /**
- * This is {@link BaseMonitorEndpointLdapAuthenticationProviderTests}.
+ * This is {@link BaseEndpointLdapAuthenticationProviderTests}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
@@ -35,7 +35,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
         "cas.monitor.endpoints.ldap.bind-credential=password"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public abstract class BaseMonitorEndpointLdapAuthenticationProviderTests {
+public abstract class BaseEndpointLdapAuthenticationProviderTests {
     private static final int LDAP_PORT = 10389;
 
     @Autowired
