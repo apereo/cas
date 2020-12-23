@@ -8,7 +8,6 @@ import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilterChain;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.UrlResource;
@@ -27,7 +26,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("SAML")
-@SpringBootTest(classes = AbstractOpenSamlTests.SharedTestConfiguration.class)
 public class DynamicMetadataResolverAdapterTests extends AbstractOpenSamlTests {
     @Test
     public void verifyOperation() throws Exception {
