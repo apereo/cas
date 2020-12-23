@@ -39,9 +39,11 @@ import static org.junit.jupiter.api.Assertions.*;
     SamlMetadataUIConfiguration.class,
     SamlMetadataUIWebflowConfiguration.class,
     AbstractOpenSamlTests.SharedTestConfiguration.class
+}, properties = {
+    "spring.main.allow-bean-definition-overriding=true",
+    "cas.saml-metadata-ui.resources=classpath:sample-metadata.xml::classpath:inc-md-pub.pem"
 })
 @Tag("SAML")
-@TestPropertySource(properties = "cas.saml-metadata-ui.resources=classpath:sample-metadata.xml::classpath:inc-md-pub.pem")
 public class SamlMetadataUIParserActionTests extends AbstractOpenSamlTests {
     @Autowired
     @Qualifier("samlMetadataUIParserAction")
