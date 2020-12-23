@@ -517,7 +517,7 @@ jobs:
             ${{ runner.os }}-gradle-
       - name: Publish Documentation
         if: ${{ env.GH_PAGES_TOKEN != null  }}
-        run: ./ci/push-docs-ghpages.sh
+        run: ./ci/push-docs-ghpages.sh development
 
 ##########################################################################
 

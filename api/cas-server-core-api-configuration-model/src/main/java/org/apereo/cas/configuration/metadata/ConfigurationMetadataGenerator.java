@@ -7,7 +7,6 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
@@ -59,6 +58,9 @@ import java.util.stream.Collectors;
 public class ConfigurationMetadataGenerator {
     private static final ObjectMapper MAPPER = new ObjectMapper()
         .setDefaultPrettyPrinter(new MinimalPrettyPrinter())
+        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+        .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+        .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
         .findAndRegisterModules();
 
     private static final Pattern PATTERN_GENERICS = Pattern.compile(".+\\<(.+)\\>");
@@ -78,12 +80,10 @@ public class ConfigurationMetadataGenerator {
      * @throws Exception the exception
      */
     public static void main(final String[] args) throws Exception {
-        if (args.length != 2) {
-            throw new RuntimeException("Invalid build configuration. Incorrect command-line arguments specified");
-        }
         val buildDir = args[0];
         val projectDir = args[1];
-        new ConfigurationMetadataGenerator(buildDir, projectDir).execute();
+        val generator = new ConfigurationMetadataGenerator(buildDir, projectDir);
+        generator.adjustConfigurationMetadata();
     }
 
     /**
@@ -91,19 +91,14 @@ public class ConfigurationMetadataGenerator {
      *
      * @throws Exception the exception
      */
-    public void execute() throws Exception {
+    private void adjustConfigurationMetadata() throws Exception {
         val jsonFile = new File(buildDir, "classes/java/main/META-INF/spring-configuration-metadata.json");
         if (!jsonFile.exists()) {
             throw new RuntimeException("Could not locate file " + jsonFile.getCanonicalPath());
         }
-        val mapper = new ObjectMapper().findAndRegisterModules()
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            .setSerializationInclusion(JsonInclude.Include.NON_NULL)
-            .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS);
-
         final TypeReference<Map<String, Set<ConfigurationMetadataProperty>>> values = new TypeReference<>() {
         };
-        final Map<String, Set> jsonMap = (Map) mapper.readValue(jsonFile, values);
+        final Map<String, Set> jsonMap = (Map) MAPPER.readValue(jsonFile, values);
         final Set<ConfigurationMetadataProperty> properties = jsonMap.get("properties");
         final Set<ConfigurationMetadataProperty> groups = jsonMap.get("groups");
 
@@ -133,10 +128,11 @@ public class ConfigurationMetadataGenerator {
         jsonMap.put("properties", properties);
         jsonMap.put("groups", groups);
         jsonMap.put("hints", hints);
-        mapper.writer(new DefaultPrettyPrinter()).writeValue(jsonFile, jsonMap);
+        MAPPER.writeValue(jsonFile, jsonMap);
     }
 
-    private void processNestedEnumProperties(final Set<ConfigurationMetadataProperty> properties, final Set<ConfigurationMetadataProperty> groups) {
+    private void processNestedEnumProperties(final Set<ConfigurationMetadataProperty> properties,
+                                             final Set<ConfigurationMetadataProperty> groups) {
         val propertiesToProcess = properties.stream()
             .filter(e -> {
                 val matcher = NESTED_CLASS_PATTERN.matcher(e.getType());

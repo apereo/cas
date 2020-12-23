@@ -20,6 +20,7 @@ import org.springframework.boot.configurationmetadata.ConfigurationMetadataPrope
 import org.springframework.boot.configurationmetadata.ValueHint;
 import org.springframework.util.ReflectionUtils;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.TreeSet;
@@ -163,7 +164,9 @@ public class CasConfigurationMetadataCatalog {
     @SuperBuilder
     @Getter
     @EqualsAndHashCode(of = "name")
-    public static class CasReferenceProperty implements Comparable<CasReferenceProperty> {
+    public static class CasReferenceProperty implements Serializable, Comparable<CasReferenceProperty> {
+        private static final long serialVersionUID = 6084780445748297104L;
+        
         private final boolean required;
 
         private final String module;
