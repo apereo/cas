@@ -4,6 +4,8 @@ title: CAS Configuration Metadata Repository
 category: Configuration
 ---
 
+{% include variables.html %}
+
 # Configuration Metadata
 
 CAS ships with meta-data files that provide details of all supported configuration properties and settings. The repository of all configuration metadata

@@ -63,8 +63,10 @@ public class DefaultLogoutWebflowConfigurer extends AbstractCasWebflowConfigurer
      * @return the action state
      */
     protected ActionState createTerminateSessionActionState(final Flow flow) {
-        val actionState = createActionState(flow, CasWebflowConstants.STATE_ID_TERMINATE_SESSION, CasWebflowConstants.ACTION_ID_TERMINATE_SESSION);
-        createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_WARN, CasWebflowConstants.STATE_ID_CONFIRM_LOGOUT_VIEW);
+        val actionState = createActionState(flow, CasWebflowConstants.STATE_ID_TERMINATE_SESSION,
+            CasWebflowConstants.ACTION_ID_TERMINATE_SESSION);
+        createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_WARN,
+            CasWebflowConstants.STATE_ID_CONFIRM_LOGOUT_VIEW);
         createStateDefaultTransition(actionState, CasWebflowConstants.STATE_ID_DO_LOGOUT);
         return actionState;
     }

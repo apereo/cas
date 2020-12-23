@@ -4,6 +4,8 @@ title: CAS - Securing Configuration Properties
 category: Configuration
 ---
 
+{% include variables.html %}
+
 # Configuration Security
 
 This document describes how to retrieve and secure CAS configuration and properties.

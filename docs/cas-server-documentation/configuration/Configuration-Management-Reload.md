@@ -4,6 +4,8 @@ title: CAS - Configuration Management - Reloading Changes
 category: Configuration
 ---
 
+{% include variables.html %}
+
 # Reloading Changes
 
 The CAS spring cloud configuration server is able to consume properties and settings
