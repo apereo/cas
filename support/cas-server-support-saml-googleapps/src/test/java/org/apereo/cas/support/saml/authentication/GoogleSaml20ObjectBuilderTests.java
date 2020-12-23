@@ -25,11 +25,15 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("SAML")
 @TestPropertySource(properties = {
+    "spring.main.allow-bean-definition-overriding=true",
+
     "cas.server.name=http://localhost:8080",
     "cas.server.prefix=${server.name}/cas",
+
     "cas.saml-core.issuer=localhost",
     "cas.saml-core.skew-allowance=200",
     "cas.saml-core.ticketid-saml2=false",
+    
     "cas.google-apps.key-algorithm=DSA",
     "cas.google-apps.public-key-location=classpath:DSAPublicKey01.key",
     "cas.google-apps.private-key-location=classpath:DSAPrivateKey01.key"

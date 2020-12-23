@@ -26,7 +26,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@SpringBootTest(classes = BaseOAuth20WebflowTests.SharedTestConfiguration.class)
+@SpringBootTest(classes = BaseOAuth20WebflowTests.SharedTestConfiguration.class,
+    properties = "spring.main.allow-bean-definition-overriding=true")
 @Tag("OAuth")
 public class OAuth20RegisteredServiceUIActionTests {
     @Autowired
