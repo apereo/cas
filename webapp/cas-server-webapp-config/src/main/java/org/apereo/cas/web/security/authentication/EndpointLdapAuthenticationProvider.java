@@ -39,14 +39,14 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * This is {@link MonitorEndpointLdapAuthenticationProvider}.
+ * This is {@link EndpointLdapAuthenticationProvider}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
 @Slf4j
 @RequiredArgsConstructor
-public class MonitorEndpointLdapAuthenticationProvider implements AuthenticationProvider {
+public class EndpointLdapAuthenticationProvider implements AuthenticationProvider {
     private final MonitorProperties.Endpoints.LdapSecurity ldapProperties;
     private final SecurityProperties securityProperties;
     private final ConnectionFactory connectionFactory;
@@ -77,7 +77,7 @@ public class MonitorEndpointLdapAuthenticationProvider implements Authentication
 
                 val roles = securityProperties.getUser().getRoles();
                 if (roles.isEmpty()) {
-                    LOGGER.info("No user security roles are defined for CAS to enable authorization. User [{}] is considered authorized", username);
+                    LOGGER.info("No user security roles are defined to enable authorization. User [{}] is considered authorized", username);
                     return generateAuthenticationToken(authentication, new ArrayList<>(0));
                 }
 

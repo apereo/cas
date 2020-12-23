@@ -19,7 +19,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link MonitorEndpointLdapAuthenticationProviderRolesBasedTests}.
+ * This is {@link EndpointLdapAuthenticationProviderRolesBasedTests}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfPortOpen(port = 10389)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Ldap")
-public class MonitorEndpointLdapAuthenticationProviderRolesBasedTests extends BaseMonitorEndpointLdapAuthenticationProviderTests {
+public class EndpointLdapAuthenticationProviderRolesBasedTests extends BaseEndpointLdapAuthenticationProviderTests {
 
     @Test
     public void verifyAuthorizedByRole() {
@@ -42,7 +42,7 @@ public class MonitorEndpointLdapAuthenticationProviderRolesBasedTests extends Ba
         val ldap = casProperties.getMonitor().getEndpoints().getLdap();
         val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
         val authenticator = LdapUtils.newLdaptiveAuthenticator(ldap);
-        val provider = new MonitorEndpointLdapAuthenticationProvider(ldap, securityProperties, connectionFactory, authenticator);
+        val provider = new EndpointLdapAuthenticationProvider(ldap, securityProperties, connectionFactory, authenticator);
         assertTrue(provider.supports(UsernamePasswordAuthenticationToken.class));
         val token = provider.authenticate(new UsernamePasswordAuthenticationToken("authzcas", "123456"));
         assertNotNull(token);
@@ -56,7 +56,7 @@ public class MonitorEndpointLdapAuthenticationProviderRolesBasedTests extends Ba
         val ldap = casProperties.getMonitor().getEndpoints().getLdap();
         val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
         val authenticator = LdapUtils.newLdaptiveAuthenticator(ldap);
-        val provider = new MonitorEndpointLdapAuthenticationProvider(ldap, securityProperties, connectionFactory, authenticator);
+        val provider = new EndpointLdapAuthenticationProvider(ldap, securityProperties, connectionFactory, authenticator);
         assertThrows(BadCredentialsException.class, () -> provider.authenticate(new UsernamePasswordAuthenticationToken("authzcas", "123456")));
         assertAll(provider::destroy);
     }
@@ -68,7 +68,7 @@ public class MonitorEndpointLdapAuthenticationProviderRolesBasedTests extends Ba
         val ldap = casProperties.getMonitor().getEndpoints().getLdap();
         val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
         val authenticator = LdapUtils.newLdaptiveAuthenticator(ldap);
-        val provider = new MonitorEndpointLdapAuthenticationProvider(ldap, securityProperties, connectionFactory, authenticator);
+        val provider = new EndpointLdapAuthenticationProvider(ldap, securityProperties, connectionFactory, authenticator);
         assertThrows(InsufficientAuthenticationException.class,
             () -> provider.authenticate(new UsernamePasswordAuthenticationToken("UNKNOWN_USER", "123456")));
         assertAll(provider::destroy);
@@ -81,7 +81,7 @@ public class MonitorEndpointLdapAuthenticationProviderRolesBasedTests extends Ba
         val ldap = casProperties.getMonitor().getEndpoints().getLdap();
         val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
         val authenticator = LdapUtils.newLdaptiveAuthenticator(ldap);
-        val provider = new MonitorEndpointLdapAuthenticationProvider(ldap, securityProperties, connectionFactory, authenticator);
+        val provider = new EndpointLdapAuthenticationProvider(ldap, securityProperties, connectionFactory, authenticator);
         assertThrows(BadCredentialsException.class,
             () -> provider.authenticate(new UsernamePasswordAuthenticationToken("authzcas", "BAD_PASSWORD")));
         assertAll(provider::destroy);

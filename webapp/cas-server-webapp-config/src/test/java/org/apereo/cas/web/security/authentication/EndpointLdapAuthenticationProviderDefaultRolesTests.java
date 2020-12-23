@@ -17,7 +17,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link MonitorEndpointLdapAuthenticationProviderDefaultRolesTests}.
+ * This is {@link EndpointLdapAuthenticationProviderDefaultRolesTests}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfPortOpen(port = 10389)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Ldap")
-public class MonitorEndpointLdapAuthenticationProviderDefaultRolesTests extends BaseMonitorEndpointLdapAuthenticationProviderTests {
+public class EndpointLdapAuthenticationProviderDefaultRolesTests extends BaseEndpointLdapAuthenticationProviderTests {
 
     @Test
     public void verifyAuthorizedByRole() {
@@ -34,7 +34,7 @@ public class MonitorEndpointLdapAuthenticationProviderDefaultRolesTests extends 
         val ldap = casProperties.getMonitor().getEndpoints().getLdap();
         val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
         val authenticator = LdapUtils.newLdaptiveAuthenticator(ldap);
-        val provider = new MonitorEndpointLdapAuthenticationProvider(ldap, securityProperties, connectionFactory, authenticator);
+        val provider = new EndpointLdapAuthenticationProvider(ldap, securityProperties, connectionFactory, authenticator);
         assertThrows(InsufficientAuthenticationException.class,
             () -> provider.authenticate(new UsernamePasswordAuthenticationToken("authzcas", null)));
         val token = provider.authenticate(new UsernamePasswordAuthenticationToken("authzcas", "123456"));
@@ -48,7 +48,7 @@ public class MonitorEndpointLdapAuthenticationProviderDefaultRolesTests extends 
         val ldap = casProperties.getMonitor().getEndpoints().getLdap();
         val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
         val authenticator = LdapUtils.newLdaptiveAuthenticator(ldap);
-        val provider = new MonitorEndpointLdapAuthenticationProvider(ldap, securityProperties, connectionFactory, authenticator);
+        val provider = new EndpointLdapAuthenticationProvider(ldap, securityProperties, connectionFactory, authenticator);
         val token = provider.authenticate(new UsernamePasswordAuthenticationToken("authzcas", "123456"));
         assertNotNull(token);
         assertTrue(token.getAuthorities().isEmpty());

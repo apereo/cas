@@ -18,7 +18,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link MonitorEndpointLdapAuthenticationProviderGroupsBasedTests}.
+ * This is {@link EndpointLdapAuthenticationProviderGroupsBasedTests}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @Tag("Ldap")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class MonitorEndpointLdapAuthenticationProviderGroupsBasedTests extends BaseMonitorEndpointLdapAuthenticationProviderTests {
+public class EndpointLdapAuthenticationProviderGroupsBasedTests extends BaseEndpointLdapAuthenticationProviderTests {
 
     @Test
     public void verifyAuthorizedByGroup() {
@@ -49,7 +49,7 @@ public class MonitorEndpointLdapAuthenticationProviderGroupsBasedTests extends B
         val ldap = casProperties.getMonitor().getEndpoints().getLdap();
         val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
         val authenticator = LdapUtils.newLdaptiveAuthenticator(ldap);
-        val provider = new MonitorEndpointLdapAuthenticationProvider(ldap, securityProperties, connectionFactory, authenticator);
+        val provider = new EndpointLdapAuthenticationProvider(ldap, securityProperties, connectionFactory, authenticator);
         assertNotNull(provider.authenticate(new UsernamePasswordAuthenticationToken("authzcas", "123456")));
         assertAll(provider::destroy);
     }
