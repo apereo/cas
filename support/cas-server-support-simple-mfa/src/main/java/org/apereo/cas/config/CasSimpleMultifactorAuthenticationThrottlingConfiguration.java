@@ -17,7 +17,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.time.ZonedDateTime;
 import java.util.concurrent.ConcurrentHashMap;
@@ -33,7 +32,7 @@ import java.util.concurrent.ConcurrentMap;
 @Configuration("CasSimpleMultifactorAuthenticationThrottlingConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnClass(name = "org.apereo.cas.config.CasThrottlingConfiguration")
-public class CasSimpleMultifactorAuthenticationThrottlingConfiguration implements WebMvcConfigurer {
+public class CasSimpleMultifactorAuthenticationThrottlingConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
