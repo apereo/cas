@@ -4,6 +4,8 @@ title: CAS Properties
 category: Configuration
 ---
 
+{% include variables.html %}
+
 # CAS Properties
 
 Various properties can be specified in CAS [either inside configuration files or as command
@@ -2814,45 +2816,7 @@ To learn more about this topic, [please review this guide](../installation/Trust
 ## WS-Fed Delegated Authentication
 
 To learn more about this topic, [please review this guide](../integration/ADFS-Integration.html).
-
-### Attribute Types
-
-In order to construct the final authenticated principal, CAS may be configured to use the following
-strategies when collecting principal attributes:
-
-| Type                 | Description
-|----------------------|------------------------------------------------------------------------------------------------
-| `CAS`                | Use attributes provided by CAS' own attribute resolution mechanics and repository.
-| `WSFED`              | Use attributes provided by the delegated WS-Fed instance.
-| `BOTH`               | Combine both the above options, where CAS attribute repositories take precedence over WS-Fed.
-
-```properties
-# cas.authn.wsfed[0].identity-provider-url=https://adfs.example.org/adfs/ls/
-# cas.authn.wsfed[0].identity-provider-identifier=https://adfs.example.org/adfs/services/trust
-# cas.authn.wsfed[0].relying-party-identifier=urn:cas:localhost
-# cas.authn.wsfed[0].signing-certificate-resources=classpath:adfs-signing.crt
-# cas.authn.wsfed[0].identity-attribute=upn
-
-# cas.authn.wsfed[0].attributes-type=WSFED
-# cas.authn.wsfed[0].tolerance=10000
-# cas.authn.wsfed[0].attribute-resolver-enabled=true
-# cas.authn.wsfed[0].auto-redirect=true
-# cas.authn.wsfed[0].name=
-# cas.authn.wsfed[0].attribute-mutator-script.location=file:/etc/cas/config/wsfed-attr.groovy
-
-# cas.authn.wsfed[0].principal.principal-attribute=
-# cas.authn.wsfed[0].principal.return-null=false
-
-# Private/Public keypair used to decrypt assertions, if any.
-# cas.authn.wsfed[0].encryption-private-key=classpath:private.key
-# cas.authn.wsfed[0].encryption-certificate=classpath:certificate.crt
-# cas.authn.wsfed[0].encryption-private-key-password=NONE
-```
-
-### Signing & Encryption
-
-The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
-The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under `cas.authn.wsfed[0].cookie`.
+{% include {{ version }}/wsfed-delegated-authentication.md configKey="cas.authn.wsfed[0]" %}
 
 ## Multifactor Authentication
 
