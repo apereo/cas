@@ -1,14 +1,14 @@
 #!/bin/bash
 
-
-branchVersion="development"
+branchVersion="$1"
 
 echo -e "Copying project documentation over to $HOME/docs-latest...\n"
 cp -R docs/cas-server-documentation $HOME/docs-latest
+mv $HOME/docs-latest/_includes $HOME/_includes
 
 cd $HOME
-git config --global user.email "travis@travis-ci.org"
-git config --global user.name "travis-ci"
+git config --global user.email "cas@apereo.org"
+git config --global user.name "CAS"
 git config --global pack.threads "8"
 
 echo -e "Cloning the repository to push documentation...\n"
@@ -26,10 +26,12 @@ echo -e "Removing previous documentation from $branchVersion...\n"
 git rm -rf ./"$branchVersion" > /dev/null
 
 echo -e "Creating $branchVersion directory...\n"
-test -d "./$branchVersion" || mkdir -m777 -v "./$branchVersion"
+mkdir -p "./$branchVersion"
+mkdir -p "./_includes/$branchVersion"
 
 echo -e "Copying new docs from $HOME/docs-latest over to $branchVersion...\n"
 cp -Rf $HOME/docs-latest/* "./$branchVersion"
+cp -Rf $HOME/_includes/* "./_includes/$branchVersion"
 echo -e "Copied project documentation...\n"
 
 echo -e "Adding changes to the git index...\n"
