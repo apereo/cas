@@ -143,7 +143,8 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@SpringBootTest(classes = AbstractOAuth20Tests.SharedTestConfiguration.class)
+@SpringBootTest(classes = AbstractOAuth20Tests.SharedTestConfiguration.class,
+    properties = "spring.main.allow-bean-definition-overriding=true")
 @DirtiesContext
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
