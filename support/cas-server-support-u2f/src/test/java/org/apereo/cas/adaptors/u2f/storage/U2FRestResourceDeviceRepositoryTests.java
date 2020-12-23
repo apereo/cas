@@ -94,7 +94,7 @@ public class U2FRestResourceDeviceRepositoryTests extends AbstractU2FDeviceRepos
 
         @RestController("deviceRepositoryController")
         @RequestMapping("/")
-        public class DeviceRespositoryController {
+        public static class DeviceRespositoryController {
 
             @DeleteMapping
             public void removeAll() {
