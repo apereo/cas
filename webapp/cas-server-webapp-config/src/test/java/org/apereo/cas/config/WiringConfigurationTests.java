@@ -89,6 +89,7 @@ import static org.junit.jupiter.api.Assertions.*;
     MailSenderAutoConfiguration.class,
     RefreshAutoConfiguration.class
 }, properties = {
+    "spring.main.allow-bean-definition-overriding=true",
     "cas.authn.accept.users=casuser::Mellon",
     "cas.http-web-request.cors.enabled=true",
     "cas.http-web-request.pattern-to-block=.*",
