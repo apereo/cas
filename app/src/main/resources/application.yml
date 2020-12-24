@@ -14,8 +14,7 @@ logging:
   level:
     org:
       apereo:
-        cas:
-          overlay: debug
+        cas: debug
 
 spring:
   main:
@@ -31,7 +30,7 @@ initializr:
   artifact-id:
     value: cas
   version:
-    value: 0.0.1
+    value: 0.0.2
   package-name:
     value: org.apereo
   javaVersions:
@@ -63,7 +62,7 @@ initializr:
       default: false
       action: /starter.tgz
   boot-versions:
-    - id: 2.3.7.RELEASE
+    - id: 2.4.1
       default: true
   env:
     force-ssl: true
@@ -71,7 +70,7 @@ initializr:
       cas-bom:
         groupId: org.apereo.cas
         artifactId: cas-server-support-bom
-        version: 6.3.0-SNAPSHOT
+        version: 6.4.0-SNAPSHOT
   dependencies:
     - name: api
       content:
@@ -445,6 +444,15 @@ initializr:
           bom: cas-bom
           aliases:
             - acceptto
+        - name: cas-server-support-acme
+          id: acme
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-acme
+          description: Apereo CAS ACME Support
+          bom: cas-bom
+          aliases:
+            - acme4j
+            - letsencrypt
         - name: cas-server-support-actions
           id: support-actions
           groupId: org.apereo.cas
@@ -1479,6 +1487,8 @@ initializr:
           artifactId: cas-server-support-oauth-uma
           description: Apereo CAS OAuth UMA Server Core Support
           bom: cas-bom
+          aliases:
+            - uma
         - name: cas-server-support-oauth-uma-core
           id: support-oauth-uma-core
           groupId: org.apereo.cas
@@ -1507,6 +1517,7 @@ initializr:
           bom: cas-bom
           aliases:
             - oidc
+            - openidconnect
         - name: cas-server-support-oidc-core
           id: support-oidc-core
           groupId: org.apereo.cas
@@ -1880,6 +1891,12 @@ initializr:
           groupId: org.apereo.cas
           artifactId: cas-server-support-saml-idp-metadata-mongo
           description: Apereo CAS SAML Identity Provider Metadata Resolution Via MongoDb
+          bom: cas-bom
+        - name: cas-server-support-saml-idp-metadata-redis
+          id: support-saml-idp-metadata-redis
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-saml-idp-metadata-redis
+          description: Apereo CAS SAML Identity Provider Metadata Resolution Via Redis
           bom: cas-bom
         - name: cas-server-support-saml-idp-metadata-rest
           id: support-saml-idp-metadata-rest
@@ -2307,6 +2324,12 @@ initializr:
           artifactId: cas-server-support-trusted-mfa-mongo
           description: Apereo CAS Trusted MFA Browser/Device Mongo Support
           bom: cas-bom
+        - name: cas-server-support-trusted-mfa-redis
+          id: support-trusted-mfa-redis
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-trusted-mfa-redis
+          description: Apereo CAS Trusted MFA Browser/Device Redis Support
+          bom: cas-bom
         - name: cas-server-support-trusted-mfa-rest
           id: support-trusted-mfa-rest
           groupId: org.apereo.cas
@@ -2404,24 +2427,40 @@ initializr:
           artifactId: cas-server-support-webauthn-jpa
           description: Apereo CAS WebAuthN JPA Support
           bom: cas-bom
+          aliases:
+            - webauthn-jpa
         - name: cas-server-support-webauthn-mongo
           id: support-webauthn-mongo
           groupId: org.apereo.cas
           artifactId: cas-server-support-webauthn-mongo
           description: Apereo CAS WebAuthN MongoDb Support
           bom: cas-bom
+          aliases:
+            - webauthn-mongo
         - name: cas-server-support-webauthn-redis
           id: support-webauthn-redis
           groupId: org.apereo.cas
           artifactId: cas-server-support-webauthn-redis
           description: Apereo CAS WebAuthN Redis Support
           bom: cas-bom
+          aliases:
+            - webauthn-redis
         - name: cas-server-support-webauthn-dynamodb
           id: support-webauthn-dynamodb
           groupId: org.apereo.cas
           artifactId: cas-server-support-webauthn-dynamodb
           description: Apereo CAS WebAuthN DynamoDb Support
           bom: cas-bom
+          aliases:
+            - webauthn-dynamodb
+        - name: cas-server-support-webauthn-rest
+          id: support-webauthn-rest
+          groupId: org.apereo.cas
+          description: Apereo CAS WebAuthN REST Support
+          artifactId: cas-server-support-webauthn-rest
+          bom: cas-bom
+          aliases:
+            - webauthn-rest
         - name: cas-server-support-websockets
           id: support-websockets
           groupId: org.apereo.cas
@@ -2526,30 +2565,40 @@ initializr:
           artifactId: cas-server-support-yubikey-dynamodb
           description: Apereo CAS U2F YubiKey DynamoDb Support
           bom: cas-bom
+          aliases:
+            - yubikey-dynamodb
         - name: cas-server-support-yubikey-jpa
           id: support-yubikey-jpa
           groupId: org.apereo.cas
           artifactId: cas-server-support-yubikey-jpa
           description: Apereo CAS YubiKey Jpa Support
           bom: cas-bom
+          aliases:
+            - yubikey-jpa
         - name: cas-server-support-yubikey-mongo
           id: support-yubikey-mongo
           groupId: org.apereo.cas
           artifactId: cas-server-support-yubikey-mongo
           description: Apereo CAS YubiKey MongoDb Support
           bom: cas-bom
+          aliases:
+            - yubikey-mongo
         - name: cas-server-support-yubikey-redis
           id: support-yubikey-redis
           groupId: org.apereo.cas
           artifactId: cas-server-support-yubikey-redis
           description: Apereo CAS YubiKey Redis Support
           bom: cas-bom
+          aliases:
+            - yubikey-redis
         - name: cas-server-support-qr-authentication
           id: support-qr-authentication
           groupId: org.apereo.cas
           artifactId: cas-server-support-qr-authentication
           description: Apereo CAS QR Authentication Support
           bom: cas-bom
+          aliases:
+            - qr
     - name: webapp
       content:
         - name: cas-server-webapp

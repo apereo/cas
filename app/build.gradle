@@ -23,7 +23,7 @@ dependencyManagement {
 
 springBoot {
     buildInfo()
-    mainClassName = "org.apereo.cas.CasOverlayInitializrApplication"
+    mainClass = "org.apereo.cas.CasInitializrApplication"
 }
 
 dependencies {
@@ -66,12 +66,12 @@ bootRun {
 
 task copyWrapper(type: Copy) {
     from "../gradle/wrapper"
-    into "src/main/resources/overlay/gradle/wrapper"
+    into "src/main/resources/common/gradle/wrapper"
 }
 
 task copyWrapperExecutables(type: Copy) {
     from "../gradlew", "../gradlew.bat"
-    into "src/main/resources/overlay/gradle/exec"
+    into "src/main/resources/common/gradle/exec"
 }
 
 rootProject.tasks["wrapper"].finalizedBy([copyWrapper, copyWrapperExecutables]) 

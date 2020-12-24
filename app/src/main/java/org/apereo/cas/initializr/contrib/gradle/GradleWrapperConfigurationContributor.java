@@ -1,14 +1,14 @@
-package org.apereo.cas.overlay.contrib.gradle.wrapper;
+package org.apereo.cas.initializr.contrib.gradle;
 
 import io.spring.initializr.generator.project.contributor.MultipleResourcesProjectContributor;
 
 import java.io.IOException;
 import java.nio.file.Path;
 
-public class CasOverlayGradleWrapperConfigurationContributor extends MultipleResourcesProjectContributor {
+public class GradleWrapperConfigurationContributor extends MultipleResourcesProjectContributor {
 
-    public CasOverlayGradleWrapperConfigurationContributor() {
-        super("classpath:overlay/gradle/wrapper",
+    public GradleWrapperConfigurationContributor() {
+        super("classpath:common/gradle/wrapper",
             filename -> filename.equals("gradlew") || filename.equals("gradlew.bat"));
     }
 

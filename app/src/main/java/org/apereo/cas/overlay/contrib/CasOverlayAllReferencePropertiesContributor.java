@@ -2,7 +2,7 @@ package org.apereo.cas.overlay.contrib;
 
 import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
 import org.apereo.cas.metadata.ConfigurationMetadataCatalogQuery;
-import org.apereo.cas.overlay.contrib.util.TemplatedProjectContributor;
+import org.apereo.cas.initializr.contrib.TemplatedProjectContributor;
 import io.spring.initializr.generator.project.ProjectDescription;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;

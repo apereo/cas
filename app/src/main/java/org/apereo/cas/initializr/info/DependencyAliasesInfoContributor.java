@@ -1,4 +1,4 @@
-package org.apereo.cas.overlay.info;
+package org.apereo.cas.initializr.info;
 
 import io.spring.initializr.metadata.InitializrMetadataProvider;
 import lombok.RequiredArgsConstructor;

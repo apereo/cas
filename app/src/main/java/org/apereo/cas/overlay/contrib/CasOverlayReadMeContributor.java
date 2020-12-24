@@ -1,6 +1,6 @@
 package org.apereo.cas.overlay.contrib;
 
-import org.apereo.cas.overlay.contrib.util.TemplatedProjectContributor;
+import org.apereo.cas.initializr.contrib.TemplatedProjectContributor;
 import io.spring.initializr.generator.project.ProjectDescription;
 import io.spring.initializr.metadata.InitializrMetadataProvider;
 import lombok.val;

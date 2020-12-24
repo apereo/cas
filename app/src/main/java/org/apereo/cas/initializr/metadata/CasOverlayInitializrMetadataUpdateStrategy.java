@@ -1,4 +1,4 @@
-package org.apereo.cas.overlay.metadata;
+package org.apereo.cas.initializr.metadata;
 
 import io.spring.initializr.metadata.InitializrMetadata;
 import io.spring.initializr.web.support.InitializrMetadataUpdateStrategy;

@@ -1,4 +1,4 @@
-package org.apereo.cas.overlay.contrib;
+package org.apereo.cas.initializr.contrib;
 
 
 import io.spring.initializr.generator.project.contributor.ProjectContributor;

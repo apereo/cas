@@ -1,4 +1,4 @@
-package org.apereo.cas.overlay.contrib.util;
+package org.apereo.cas.initializr.contrib;
 
 import com.github.mustachejava.DefaultMustacheFactory;
 import io.spring.initializr.generator.project.ProjectDescription;

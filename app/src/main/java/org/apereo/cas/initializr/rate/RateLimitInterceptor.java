@@ -1,4 +1,4 @@
-package org.apereo.cas.overlay.rate;
+package org.apereo.cas.initializr.rate;
 
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
