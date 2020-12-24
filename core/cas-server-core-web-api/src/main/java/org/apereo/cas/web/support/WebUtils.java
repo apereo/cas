@@ -215,6 +215,26 @@ public class WebUtils {
     }
 
     /**
+     * Put ticket granting ticket.
+     *
+     * @param context the context
+     * @param ticket  the ticket value
+     */
+    public static void putTicketGrantingTicket(final RequestContext context, final TicketGrantingTicket ticket) {
+        context.getFlowScope().put("ticketGrantingTicket", ticket);
+    }
+
+    /**
+     * Get ticket granting ticket.
+     *
+     * @param context the context
+     * @return the ticket granting ticket
+     */
+    public static TicketGrantingTicket getTicketGrantingTicket(final RequestContext context) {
+        return context.getFlowScope().get("ticketGrantingTicket", TicketGrantingTicket.class);
+    }
+
+    /**
      * Put ticket granting ticket in request and flow scopes.
      *
      * @param context the context

@@ -108,7 +108,8 @@ public class TerminateSessionAction extends AbstractAction {
     }
 
     /**
-     * Terminates the CAS SSO session by destroying the TGT (if any) and removing cookies related to the SSO session.
+     * Terminates the CAS SSO session by destroying the TGT (if any)
+     * and removing cookies related to the SSO session.
      *
      * @param context Request context.
      * @return "success"
