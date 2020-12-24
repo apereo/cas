@@ -4,11 +4,17 @@ set -e
 
 echo "Running casinit"
 java -jar app/build/libs/app.jar &
+pid=$!
 sleep 30
+if [[ -d tmp ]] ; then
+  rm -rf tmp
+fi
 mkdir tmp
 cd tmp
 # create project dir from initializer with support boot admin, metrics, and git service registry
 curl http://localhost:8080/starter.tgz -d dependencies=core,bootadmin,metrics,gitsvc | tar -xzvf -
+echo Killing initializer pid $pid
+kill -9 $pid &> /dev/null
 
 echo "Building War and Jib Docker Image"
 chmod -R 777 ./*.sh
@@ -32,6 +38,9 @@ echo "Creating tls secret for ingress to use"
 echo "Creating truststore with server/ingress certs and put in configmap"
 ./create-truststore.sh
 
+# Set KUBECONFIG for helm
+export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+
 # Lint chart
 echo Lint check on cas-server helm chart
 helm lint cas-server
@@ -39,8 +48,8 @@ helm lint cas-server
 # k3s comes with Traefik so we could try using that instead at some point
 echo "Installing ingress controller and waiting for it to start"
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-kubectl create namespace ingress-nginx
-helm install --namespace ingress-nginx ingress-nginx ingress-nginx/ingress-nginx
+kubectl create namespace ingress-nginx || true
+helm upgrade --install --namespace ingress-nginx ingress-nginx ingress-nginx/ingress-nginx
 kubectl wait --namespace ingress-nginx \
   --for=condition=ready pod \
   --selector=app.kubernetes.io/component=controller \
