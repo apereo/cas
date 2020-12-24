@@ -142,6 +142,10 @@ allprojects {
     apply plugin: "java-library"
     apply plugin: "jacoco"
 
+    if (gradle.startParameter.taskNames.any {task -> task.equalsIgnoreCase("install") }) {
+        apply plugin: "maven"
+    }
+    
     if (!Boolean.getBoolean("skipTestRetry")) {
         apply plugin: "org.gradle.test-retry"
     }
