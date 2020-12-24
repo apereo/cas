@@ -56,11 +56,12 @@ public class CasThemesConfiguration {
         return () -> map;
     }
 
-    @ConditionalOnMissingBean(name = "themeResolver")
+    @ConditionalOnMissingBean(name = "casThemeResolver")
     @Bean
     @Autowired
     public ThemeResolver themeResolver(
-        @Qualifier("serviceThemeResolverSupportedBrowsers") final Supplier<Map<String, String>> serviceThemeResolverSupportedBrowsers) {
+        @Qualifier("serviceThemeResolverSupportedBrowsers")
+        final Supplier<Map<String, String>> serviceThemeResolverSupportedBrowsers) {
         val defaultThemeName = casProperties.getTheme().getDefaultThemeName();
 
         val fixedResolver = new FixedThemeResolver();

@@ -36,6 +36,7 @@ import org.apereo.cas.web.flow.login.ServiceWarningAction;
 import org.apereo.cas.web.flow.login.SetServiceUnauthorizedRedirectUrlAction;
 import org.apereo.cas.web.flow.login.TicketGrantingTicketCheckAction;
 import org.apereo.cas.web.flow.login.VerifyRequiredServiceAction;
+import org.apereo.cas.web.flow.logout.ConfirmLogoutAction;
 import org.apereo.cas.web.flow.logout.FrontChannelLogoutAction;
 import org.apereo.cas.web.flow.logout.LogoutAction;
 import org.apereo.cas.web.flow.logout.LogoutViewSetupAction;
@@ -335,6 +336,14 @@ public class CasSupportActionsConfiguration {
             casProperties.getLogout(),
             logoutManager.getObject(),
             applicationContext);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "confirmLogoutAction")
+    @RefreshScope
+    public Action confirmLogoutAction() {
+        return new ConfirmLogoutAction(centralAuthenticationService.getObject(),
+            ticketGrantingTicketCookieGenerator.getObject());
     }
 
     @Bean
