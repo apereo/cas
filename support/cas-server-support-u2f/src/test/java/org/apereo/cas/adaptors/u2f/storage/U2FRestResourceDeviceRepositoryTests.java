@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.Synchronized;
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -55,11 +57,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableAutoConfiguration
 public class U2FRestResourceDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper()
-            .enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY)
-            .findAndRegisterModules();
-
-    private static ArrayList<U2FDeviceRegistration> DEVICES = new ArrayList<>();
+    private static List<U2FDeviceRegistration> DEVICES = new ArrayList<>();
 
     @Autowired
     @Qualifier("u2fDeviceRepository")
@@ -92,6 +90,13 @@ public class U2FRestResourceDeviceRepositoryTests extends AbstractU2FDeviceRepos
     @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
     public static class RestfulServiceRegistryTestConfiguration {
 
+        @Autowired
+        public void configureJackson(final ObjectMapper objectMapper) {
+            objectMapper.findAndRegisterModules().
+                    activateDefaultTyping(BasicPolymorphicTypeValidator.builder().build(),
+                            ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
+        }
+
         @RestController("deviceRepositoryController")
         @RequestMapping("/")
         public static class DeviceRespositoryController {
@@ -113,10 +118,10 @@ public class U2FRestResourceDeviceRepositoryTests extends AbstractU2FDeviceRepos
 
             @SneakyThrows
             @GetMapping
-            public String readDevicesFromResource() {
-                val results = new HashMap<String, ArrayList<U2FDeviceRegistration>>();
+            public Map<String, List<U2FDeviceRegistration>> readDevicesFromResource() {
+                val results = new HashMap<String, List<U2FDeviceRegistration>>();
                 results.put(BaseResourceU2FDeviceRepository.MAP_KEY_DEVICES, DEVICES);
-                return MAPPER.writeValueAsString(results);
+                return results;
             }
         }
     }
