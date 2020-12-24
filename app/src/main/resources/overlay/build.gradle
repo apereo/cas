@@ -77,8 +77,8 @@ java {
 }
 
 dependencies {
-    implementation "org.apereo.cas:cas-server-core-api-configuration-model:${project.ext.casServerVersion}"
-    implementation "org.apereo.cas:cas-server-webapp-init:${project.ext.casServerVersion}"
+    implementation "org.apereo.cas:cas-server-core-api-configuration-model"
+    implementation "org.apereo.cas:cas-server-webapp-init"
 
     if (project.hasProperty("casModules")) {
         def dependencies = project.getProperty("casModules").split(",")
