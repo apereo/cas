@@ -103,14 +103,6 @@ dependencies {
     {{/dependencies}}
 }
 
-tasks.findByName("jibDockerBuild")
-    .dependsOn(copyWebAppIntoJib, copyConfigIntoJib)
-    .finalizedBy(deleteWebAppFromJib)
-
-tasks.findByName("jib")
-    .dependsOn(copyWebAppIntoJib, copyConfigIntoJib)
-    .finalizedBy(deleteWebAppFromJib)
-
 configurations.all {
     resolutionStrategy {
         cacheChangingModulesFor 0, "seconds"

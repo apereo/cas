@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "cas-server.bootadminname" . }}-test"
+  labels:
+    {{- include "cas-server.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test-success
+spec:
+  containers:
+    - name: wget
+      image: alpine
+      command: ['wget']
+      args: [ '--no-check-certificate', 'https://{{ include "cas-server.bootadminname" . }}:{{ .Values.bootadmin.service.port }}{{ .Values.bootAdminContainer.defaultStatusUrl }}' ]
+  restartPolicy: Never
+

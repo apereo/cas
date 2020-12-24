@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "cas-server.bootadminname" . }}
+  labels:
+    {{- include "cas-server.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.bootadmin.service.type }}
+  ports:
+    - port: {{ .Values.bootadmin.service.port }}
+      targetPort: https
+      protocol: TCP
+      name: https
+  selector:
+    {{- include "cas-bootadmin.selectorLabels" . | nindent 4 }}

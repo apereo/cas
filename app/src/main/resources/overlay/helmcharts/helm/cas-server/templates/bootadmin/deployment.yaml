@@ -1,0 +1,171 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "cas-server.bootadminname" . }}
+  labels: {{- include "cas-server.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "cas-bootadmin.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{ if .Values.bootAdminContainer.alwaysRoll }}
+        rollme: {{ randAlphaNum 5 | quote }}
+        {{- else }}
+        rollme: "rolldisabled"
+      {{- end }}
+      labels:
+        {{- include "cas-bootadmin.selectorLabels" . | nindent 8 }}
+        {{- include "cas-bootadmin.labels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "cas-server.serviceAccountName" . }}
+      securityContext:
+      {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      volumes:
+        {{- range $.Values.bootAdminContainer.casConfigMounts }}
+          {{- $configMount := printf "%s-%s" "bootadmin-config" . | replace "." "-" }}
+          - name: {{ $configMount | quote }}
+            configMap:
+              name: {{ include "cas-server.bootadminname" $ }}-config
+              defaultMode: 0444
+          {{- end }}
+          - name: scripts
+            configMap:
+              name: {{ include "cas-server.fullname" . }}-scripts
+              defaultMode: 0555
+          {{- if .Values.bootAdminContainer.serverKeystoreExistingSecret }}
+          - name: cas-server-keystore
+            secret:
+              secretName: {{ .Values.bootAdminContainer.serverKeystoreExistingSecret }}
+              defaultMode: 0444
+              items:
+                - key: {{ .Values.bootAdminContainer.serverKeystoreSubPath }}
+                  path: {{ .Values.bootAdminContainer.serverKeystoreSubPath }}
+          {{- end }}
+          {{- if .Values.bootAdminContainer.extraVolumes }}
+          {{- include "cas-server.tplvalues.render" ( dict "value" .Values.bootAdminContainer.extraVolumes "context" $ ) | nindent 10 }}
+          {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+          {{- toYaml .Values.securityContext | nindent 12 }}
+          image: {{ include "cas-server.bootadminImageName" . }}
+          imagePullPolicy: {{ .Values.bootadminimage.pullPolicy }}
+          env:
+            {{- if .Values.bootAdminContainer.warPath }}
+            - name: CAS_BOOTADMIN_WAR
+              value: {{ .Values.bootAdminContainer.warPath | quote }}
+            {{- end }}
+            {{- if .Values.bootAdminContainer.profiles }}
+            - name: SPRING_PROFILES
+              value: {{ .Values.bootAdminContainer.profiles | quote }}
+            {{- end }}
+            {{- if .Values.bootAdminContainer.jvm.maxHeapOpt }}
+            - name: MAX_HEAP_OPT
+              value: {{ .Values.bootAdminContainer.jvm.maxHeapOpt | quote }}
+            {{- end }}
+            {{- if .Values.bootAdminContainer.jvm.minHeapOpt }}
+            - name: MIN_HEAP_OPT
+              value: {{ .Values.bootAdminContainer.jvm.minHeapOpt | quote }}
+            {{- end }}
+            {{- if .Values.bootAdminContainer.jvm.extraOpts }}
+            - name: JVM_EXTRA_OPTS
+              value: {{ .Values.bootAdminContainer.jvm.extraOpts | quote }}
+            {{- end }}
+            - name: JAVA_ENABLE_DEBUG
+              value: {{ .Values.bootAdminContainer.jvm.debugEnabled | quote }}
+            - name: JAVA_DEBUG_SUSPEND
+              value: {{ .Values.bootAdminContainer.jvm.debugSuspend | quote }}
+            {{- if .Values.bootAdminContainer.extraEnvVars }}
+            {{- include "cas-server.tplvalues.render" (dict "value" .Values.bootAdminContainer.extraEnvVars "context" $) | nindent 12 }}
+            {{- end }}
+          envFrom:
+            {{- if .Values.bootAdminContainer.extraEnvVarsConfigMap }}
+            - configMapRef:
+                name: {{ .Values.bootAdminContainer.extraEnvVarsConfigMap }}
+            {{- end }}
+            {{- if .Values.bootAdminContainer.extraEnvVarsSecret }}
+            - secretRef:
+                name: {{ .Values.bootAdminContainer.extraEnvVarsSecret }}
+          {{- end }}
+          {{- if .Values.bootAdminContainer.command }}
+          command: {{- include "cas-server.tplvalues.render" (dict "value" .Values.bootAdminContainer.command "context" $) | nindent 12 }}
+          {{- else }}
+          command:
+            - '/entrypoint.sh'
+          {{- end }}
+          {{- if .Values.bootAdminContainer.args }}
+          args: {{- include "cas-server.tplvalues.render" (dict "value" .Values.bootAdminContainer.args "context" $) | nindent 12 }}
+          {{- end }}
+          ports:
+            - name: https
+              containerPort: {{ .Values.bootadmin.listenPortHttps }}
+              protocol: TCP
+            - name: jvm-debug
+              containerPort: {{ .Values.bootadmin.listenPortJvmDebug }}
+              protocol: TCP
+          volumeMounts:
+            {{- range $.Values.bootAdminContainer.casConfigMounts }}
+            {{- $configMount := printf "%s-%s" "bootadmin-config" . | replace "." "-" }}
+            {{- $configMountPath := printf "%s/%s" "/etc/cas/config" . }}
+            - name: {{ $configMount | quote }}
+              mountPath: {{ $configMountPath }}
+              subPath: {{ . | quote }}
+            {{- end }}
+            - name: scripts
+              mountPath: /entrypoint.sh
+              subPath: bootadmin-entrypoint.sh
+            {{- if .Values.bootAdminContainer.serverKeystoreExistingSecret }}
+            - name: cas-server-keystore
+              mountPath: {{ .Values.bootAdminContainer.serverKeystoreMountPath }}
+              subPath: {{ .Values.bootAdminContainer.serverKeystoreSubPath }}
+            {{- end }}
+            {{- if .Values.bootAdminContainer.extraVolumeMounts }}
+            {{- include "cas-server.tplvalues.render" ( dict "value" .Values.bootAdminContainer.extraVolumeMounts "context" $ ) | nindent 12 }}
+          {{- end }}
+          startupProbe:
+            httpGet:
+              path: {{ .Values.bootAdminContainer.defaultStatusUrl }}
+              port: https
+              scheme: HTTPS
+            failureThreshold: {{ .Values.bootAdminContainer.startupFailureThreshold }}
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.bootAdminContainer.defaultStatusUrl }}
+              port: https
+              scheme: HTTPS
+            initialDelaySeconds: {{ .Values.bootAdminContainer.readinessInitialDelaySeconds }}
+            periodSeconds: 5
+            failureThreshold: {{ .Values.bootAdminContainer.readinessFailureThreshold }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.bootAdminContainer.defaultStatusUrl }}
+              port: https
+              scheme: HTTPS
+            initialDelaySeconds: {{ .Values.bootAdminContainer.livenessInitialDelaySeconds }}
+            periodSeconds: 15
+            failureThreshold: {{ .Values.bootAdminContainer.livenessFailureThreshold }}
+          resources:
+      {{- toYaml .Values.bootadmin.resources | nindent 12 }}
+      {{- with .Values.bootadmin.nodeSelector }}
+      nodeSelector:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.bootadmin.affinity }}
+      affinity:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.bootadmin.tolerations }}
+      tolerations:
+      {{- toYaml . | nindent 8 }}
+  {{- end }}

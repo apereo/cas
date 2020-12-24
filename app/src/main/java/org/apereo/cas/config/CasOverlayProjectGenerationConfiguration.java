@@ -24,6 +24,7 @@ import org.apereo.cas.overlay.contrib.gradle.CasOverlayGradleSpringBootContribut
 import org.apereo.cas.overlay.contrib.gradle.CasOverlayGradleTasksContributor;
 import org.apereo.cas.overlay.contrib.gradle.wrapper.CasOverlayGradleWrapperConfigurationContributor;
 import org.apereo.cas.overlay.contrib.gradle.wrapper.CasOverlayGradleWrapperExecutablesContributor;
+import org.apereo.cas.overlay.contrib.helm.CasOverlayHelmContributor;
 import org.apereo.cas.overlay.contrib.util.ChainingMultipleResourcesProjectContributor;
 import org.apereo.cas.overlay.contrib.util.ChainingSingleResourceProjectContributor;
 import org.apereo.cas.overlay.customize.DefaultDependenciesBuildCustomizer;
@@ -69,6 +70,11 @@ public class CasOverlayProjectGenerationConfiguration {
     @Bean
     public CasOverlayDockerContributor casOverlayDockerContributor() {
         return new CasOverlayDockerContributor();
+    }
+
+    @Bean
+    public CasOverlayHelmContributor casOverlayHelmContributor() {
+        return new CasOverlayHelmContributor();
     }
 
     @Bean

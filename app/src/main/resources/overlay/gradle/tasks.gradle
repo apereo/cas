@@ -194,9 +194,15 @@ task casVersion(group: "CAS", description: "Display the current CAS version") {
 
 task createKeystore(group: "CAS", description: "Create CAS keystore") {
     doFirst {
-        mkdir "/etc/cas"
+        def certDir = project.getProperty("certDir")
+        def serverKeyStore = project.getProperty("serverKeystore")
+        def exportedServerCert = project.getProperty("exportedServerCert")
+        def storeType = project.getProperty("storeType")
+        def keystorePath = "$certDir/$serverKeyStore"
+        def serverCert = "$certDir/$exportedServerCert"
 
-        def keystorePath = "/etc/cas/thekeystore"
+
+        mkdir certDir
 
         def dn = "CN=cas.example.org,OU=Example,OU=Org,C=US"
         if (project.hasProperty("certificateDn")) {
@@ -214,16 +220,17 @@ task createKeystore(group: "CAS", description: "Create CAS keystore") {
                     "-keyalg", "RSA",
                     "-keypass", "changeit", "-storepass", "changeit",
                     "-keystore", keystorePath,
-                    "-dname", dn, "-ext", "SAN=${subjectAltName}"
+                    "-dname", dn, "-ext", "SAN=${subjectAltName}",
+                    "-storetype", storeType
         }
         logger.info "Exporting cert from keystore..."
         exec {
             workingDir "."
             commandLine "keytool", "-exportcert", "-alias", "cas",
                     "-storepass", "changeit", "-keystore", keystorePath,
-                    "-file", "/etc/cas/cas.cer"
+                    "-file", serverCert
         }
-        logger.info "Import /etc/cas/cas.cer into your Java truststore (JAVA_HOME/lib/security/cacerts)"
+        logger.info "Import $serverCert into your Java truststore (JAVA_HOME/lib/security/cacerts)"
     }
 }
 

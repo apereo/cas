@@ -1,0 +1,53 @@
+{{- if .Values.cas.ingress.enabled -}}
+{{- $fullName := include "cas-server.fullname" . -}}
+{{- $svcPort := .Values.cas.service.port -}}
+{{- $kubeVersion := .Capabilities.KubeVersion.Version -}}
+{{- if semverCompare ">=1.19.0" $kubeVersion }}
+apiVersion: networking.k8s.io/v1
+{{- else -}}
+apiVersion: networking.k8s.io/v1beta1
+{{- end }}
+kind: Ingress
+metadata:
+  name: {{ $fullName }}
+  labels:
+    {{- include "cas-server.labels" . | nindent 4 }}
+  {{- with .Values.cas.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if .Values.cas.ingress.tls }}
+  tls:
+    {{- range .Values.cas.ingress.tls }}
+    - hosts:
+        {{- range .hosts }}
+        - {{ . | quote }}
+        {{- end }}
+      secretName: {{ .secretName }}
+    {{- end }}
+  {{- end }}
+  rules:
+    {{- range .Values.cas.ingress.hosts }}
+    - host: {{ .host | quote }}
+      http:
+        paths:
+          {{- range .paths }}
+          - path: {{ . }}
+            {{- if semverCompare ">=1.18.0" $kubeVersion }}
+            pathType: Prefix
+            {{- end }}
+            {{- if semverCompare ">=1.19.0" $kubeVersion }}
+            backend:
+              service:
+                name: {{ $fullName }}
+                port:
+                  number: {{ $svcPort }}
+            {{- else }}
+            backend:
+              serviceName: {{ $fullName }}
+              servicePort: {{ $svcPort }}
+            {{- end }}
+          {{- end }}
+    {{- end }}
+  {{- end }}

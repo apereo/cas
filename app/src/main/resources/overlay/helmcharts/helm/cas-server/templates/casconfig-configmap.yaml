@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "cas-server.fullname" . }}-casconfig
+  labels: {{- include "cas-server.labels" . | nindent 4 }}
+data:
+  {{- include "cas-server.tplvalues.render" (dict "value" .Values.casServerContainer.casConfig "context" $) | nindent 2 }}

@@ -1401,6 +1401,8 @@ initializr:
           artifactId: cas-server-support-metrics
           description: Apereo CAS Metrics Support
           bom: cas-bom
+          aliases:
+            - metrics
         - name: cas-server-support-mongo
           id: support-mongo
           groupId: org.apereo.cas
