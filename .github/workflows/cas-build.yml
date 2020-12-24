@@ -824,6 +824,8 @@ jobs:
           - attribute-consent
           - u2f-register
           - u2f-login
+          - recaptcha-login-v2
+          - recaptcha-login-v3
           - webauthn-register
           - webauthn-login
     steps:

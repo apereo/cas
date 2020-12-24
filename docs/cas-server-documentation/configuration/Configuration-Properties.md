@@ -5203,7 +5203,7 @@ Display Google's reCAPTCHA widget on the CAS login page.
 To learn more about this topic, [please review this guide](../integration/Configuring-Google-Analytics.html).
 
 ```properties
-# cas.googleAnalytics.googleAnalyticsTrackingId=
+# cas.googleAnalytics.google-analytics-tracking-id=
 ```
 
 ### Google Analytics Cookie
