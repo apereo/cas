@@ -6,14 +6,28 @@ category: Planning
 
 # RC1 Release Notes
 
-We strongly recommend that you take advantage of the release candidates as they come out. Waiting for a `GA` release is only going to set 
-you up for unpleasant surprises. A `GA` is simply [a tag and nothing more](https://apereo.github.io/2017/03/08/the-myth-of-ga-rel/). Note that CAS 
-releases are *strictly* time-based releases; they are not scheduled or based on specific benchmarks, statistics or completion of features. To gain 
-confidence in a particular release, it is strongly recommended that you start early by experimenting with release candidates and/or follow-up snapshots.
+We strongly recommend that you take advantage of the release candidates as they come out. Waiting 
+for a `GA` release is only going to set you up for unpleasant surprises. A `GA` 
+is simply [a tag and nothing more](https://apereo.github.io/2017/03/08/the-myth-of-ga-rel/). Note that CAS 
+releases are *strictly* time-based releases; they are not scheduled or based on 
+specific benchmarks, statistics or completion of features. To gain confidence in 
+a particular release, it is strongly recommended that you start early by 
+experimenting with release candidates and/or follow-up snapshots.
 
 ## Apereo Membership
 
-If you benefit from Apereo CAS as free and open-source software, we invite you to [join the Apereo Foundation](https://www.apereo.org/content/apereo-membership) and financially support the project at a capacity that best suits your deployment. Note that all development activity is performed *almost exclusively* on a voluntary basis with no expectations, commitments or strings attached. Having the financial means to better sustain engineering activities will allow the developer community to allocate *dedicated and committed* time for long-term support, maintenance and release planning, especially when it comes to addressing critical and security issues in a timely manner. Funding will ensure support for the software you rely on and you gain an advantage and say in the way Apereo, and the CAS project at that, runs and operates. If you consider your CAS deployment to be a critical part of the identity and access management ecosystem, this is a viable option to consider.
+If you benefit from Apereo CAS as free and open-source software, we 
+invite you to [join the Apereo Foundation](https://www.apereo.org/content/apereo-membership) 
+and financially support the project at a capacity that best suits your 
+deployment. Note that all development activity is performed 
+*almost exclusively* on a voluntary basis with no expectations, commitments or strings 
+attached. Having the financial means to better sustain engineering activities will allow 
+the developer community to allocate *dedicated and committed* time for long-term 
+support, maintenance and release planning, especially when it comes to addressing 
+critical and security issues in a timely manner. Funding will ensure support for 
+the software you rely on and you gain an advantage and say in the way Apereo, and 
+the CAS project at that, runs and operates. If you consider your CAS deployment to 
+be a critical part of the identity and access management ecosystem, this is a viable option to consider.
 
 ## Get Involved
 
@@ -35,15 +49,78 @@ cas.version=6.4.0-RC1
 ```
 
 <div class="alert alert-info">
-  <strong>System Requirements</strong><br/>There are no changes to the minimum system/platform requirements for this release.
+<strong>System Requirements</strong><br/>There are no changes to the 
+minimum system/platform requirements for this release.
 </div>
 
 ## New & Noteworthy
 
 The following items are new improvements and enhancements presented in this release.
+               
+### Spring Boot 2.4
+                  
+CAS is now based on the Spring Boot `2.4.x` series which by extension also requires CAS to upgrade
+its dependency on related projects such as Spring and Spring Cloud. While this is a 
+significant framework upgrade, the change should remain largely invisible to CAS users and adopters.
+
+### Puppeteer Tests
+
+Th collection of end-to-end browser tests continue to grow to add additional scenarios
+and use cases, such as recaptcha, logout, and more.
+  
+### Logout Confirmations
+
+Upon logout confirmations, the CAS user interface and confirmation screens are 
+now able to list all applications linked to the existing SSO session.
+
+### XML-less Spring Webflow
+
+The construction of various Spring Webflow flows and subflows has now removed the requirement
+for an XML foundation, allowing the construction of all flows to be dynamic.
+
+### WebAuthN REST Device Management
+
+[WebAuthN/FIDO2 Device registrations](../mfa/FIDO2-WebAuthn-Authentication.html) 
+may be managed using an external REST API.
+ 
+### SCIM Provisioning
+
+Integration with [SCIM Provisioning](../integration/SCIM-Integration.html) is slightly
+improved to allow SCIM targets and settings per registered application.
+
+### WebAuthN REDIS Device Management
+
+[WebAuthN/FIDO2 Device registrations](../mfa/FIDO2-WebAuthn-Authentication.html)
+may be managed using a Redis database.
+
+### CORS Per Service
+
+[CORS configuration](../services/Configuring-Service-Http-Security-Headers.html) and 
+relevant headers, etc can now be defined on a per-application basis.
+
+### SAML2 Metadata via Redis
+
+Metadata artifacts that belong to CAS as a SAML2 identity provider, as well as metadata
+for service providers can now be [managed via Redis](../installation/Configuring-SAML2-DynamicMetadata.html).
+
+### ACME & Let's Encrypt
+
+CAS can now enable support for the [(ACME) protocol](../integration/ACME-Integration.html) 
+using a certificate authority (CA) such as Let's Encrypt.
+
+### Multifactor Trusted Devices via Redis 
+
+[Trusted devices](../mfa/Multifactor-TrustedDevice-Authentication.html) and user 
+decisions for multifactor authentication may also be kept inside a Redis instance.
 
 ## Other Stuff
+     
+- The configuration of [Hazelcast clusters](../ticketing/Hazelcast-Ticket-Registry.html) can allow for specification of network interfaces.
+- Delegated authentication configuration can allow for a pre-defined callback/redirect URI.
 
  
 ## Library Upgrades
 
+- Spring Framework
+- Spring Boot
+- Spring Cloud

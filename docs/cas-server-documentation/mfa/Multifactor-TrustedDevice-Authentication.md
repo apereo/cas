@@ -87,8 +87,8 @@ trusted device workflow for MFA can be bypassed on a per application basis:
     "bypassTrustedDeviceEnabled" : true
   }
 }
-
 ```
+
 ## Storage
 
 User decisions must be remembered and processed later on subsequent requests.  A background *cleaner* process is also automatically scheduled to 
