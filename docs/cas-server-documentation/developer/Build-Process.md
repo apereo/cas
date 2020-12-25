@@ -70,7 +70,7 @@ The following commandline boolean flags are supported by the build and can be pa
 | `ignoreJavadocFailures`           | Ignore javadoc failures and let the build resume.
 | `ignoreFindbugsFailures`          | Ignore Findbugs failures and let the build resume.
 | `ignoreTestFailures`              | Ignore test failures and let the build resume.
-| `casModules`                      | Comma separated list of modules without the `cas-server-` prefix.
+| `casModules`                      | Comma separated list of modules without the `cas-server-[support|core]` prefix.
 
 - You can use `-x <task>` to entirely skip/ignore a phase in the build. (i.e. `-x test`, `-x check`).
 - If you have no need to let Gradle resolve/update dependencies and new module versions for you, you can take advantage of the `--offline` flag when you build which tends to make the build go a lot faster.
