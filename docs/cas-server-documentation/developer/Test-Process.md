@@ -25,16 +25,16 @@ comma separated list of modules without the `cas-server-` prefix:
 For example:
 
 ```properties
-casModules=core-monitor,\
-    support-ldap,\
-    support-x509,\
-    support-bootadmin-client
+casModules=monitor,\
+    ldap,\
+    x509,\
+    bootadmin-client
 ```
 
 Or set the property on the command-line:
 
 ```bash
-bc -PcasModules=support-ldap,support-x509
+bc -PcasModules=ldap,x509
 ```
 
 ...where `bc` is an [alias for building CAS](Build-Process.html#sample-build-aliases).

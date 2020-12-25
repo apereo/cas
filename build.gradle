@@ -145,7 +145,7 @@ allprojects {
     if (gradle.startParameter.taskNames.any {task -> task.equalsIgnoreCase("install") }) {
         apply plugin: "maven"
     }
-
+    
     if (!Boolean.getBoolean("skipTestRetry")) {
         apply plugin: "org.gradle.test-retry"
     }
