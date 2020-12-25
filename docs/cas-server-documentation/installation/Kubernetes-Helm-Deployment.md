@@ -38,9 +38,11 @@ Currently, the chart is using SSL between ingress controller and the CAS and Boo
 This may be overkill and involves all the pain that comes with SSL (e.g. trust & hostname verification).
 This chart uses `StatefulSet` for CAS rather than a `Deployment` but this may change in the future or
 become configurable. 
+
 The Boot Admin CAS server discovery method should probably change to "cloud" discovery eventually.
 
 ## Installing CAS on local Kubernetes Installation
+
 The following sections provide an overview of the steps for installing Helm and Kubernetes and
 getting the CAS Helm chart installed and running locally.
 
@@ -48,10 +50,12 @@ getting the CAS Helm chart installed and running locally.
 
 Helm v3 and Kubectl are just single binary programs. Kubectl may come with the kubernetes
 installation, but both should be downloaded and put them in the PATH.
+
 - Install [Helm](https://helm.sh/docs/intro/install/)
 - Install [Kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 
 ### Install Kubernetes
+
 There are multiple options for running a Kubernetes cluster on Mac, Windows or Linux, but
 they all require Linux as a VM or as the host OS. The CAS Helm Chart is installed and tested
 on a K3S Kubernetes installation as part of the continuous integration scripts of the CAS Initializr 
@@ -85,8 +89,8 @@ a Linux virtual machine (e.g. running Ubuntu);
   ``` 
 
 Other options 
-- [Docker Desktop](https://www.docker.com/products/docker-desktop)
 
+- [Docker Desktop](https://www.docker.com/products/docker-desktop)
   - Install Docker Desktop
   - Enable Kubernetes in Settings
   - [Helm and Kubectl](#install-helm-and-kubectl) should be installed and added to path of bash terminal 
@@ -98,6 +102,7 @@ Other options
   - Install CAS Helm chart
 
 - [Minikube](https://minikube.sigs.k8s.io/docs/start/)
+
 ```shell script
   # coming soon
 ```
@@ -110,6 +115,7 @@ The CAS Helm chart is only tested with Kubernetes ingress-nginx, feel free to ad
 [Kubernetes Nginx Ingress Installation Guide](https://kubernetes.github.io/ingress-nginx/deploy/)
 
 To install the ingress controller using Helm and the ingress-nginx Helm chart:
+
 ```shell script
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 kubectl create namespace ingress-nginx
@@ -129,6 +135,7 @@ specified on the command line to override the default values as appropriate.
 The following examples use the `default` namespace but `--namespace cas` can be added to any 
 of the following `helm` commands to put CAS in its own kubernetes namespace (The namespace would 
 need to be created first, e.g. `kubectl create namespace cas`)
+
 ```
 # delete cas-server helm chart install
 helm delete cas-server
@@ -148,7 +155,7 @@ helm template cas-server --values values-local.yaml ./cas-server --debug
 
 Don't forget to add -n or --namespace if using non-default namespace.
 
-```
+```bash
 # Look at the pods to see the status
 kubectl get pods 
 # Describe the CAS pod to see why it isn't starting
@@ -164,7 +171,8 @@ kubectl delete pod cas-server-0
 ### Browse to CAS
 
 Make sure host file entries exist for whatever host is listed in values file for this entry:
-```
+
+```yaml
 ingress:
   hosts:
     - host: cas.example.org
@@ -176,7 +184,7 @@ ingress:
         - cas.example.org
 ```
 
-```
+```bash
 # host entry
 127.0.0.1 cas.example.org 
 ```
