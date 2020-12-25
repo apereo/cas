@@ -257,6 +257,7 @@ layout: null
     *   [Google reCAPTCHA](/$version/integration/Configuring-Google-reCAPTCHA.html)
     *   [Google Analytics](/$version/integration/Configuring-Google-Analytics.html)
     *   [SCIM Provisioning](/$version/integration/SCIM-Integration.html)
+    *   [ACME](/$version/integration/ACME-Integration.html)
     *   [CAS Clients](/$version/integration/CAS-Clients.html)
     *   [Swagger API](/$version/integration/Swagger-Integration.html)
     *   [JMX](/$version/integration/JMX-Integration.html)

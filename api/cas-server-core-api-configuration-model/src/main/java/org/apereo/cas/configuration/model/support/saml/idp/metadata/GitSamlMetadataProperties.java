@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.model.support.git.services.BaseGitProperties
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -24,6 +25,7 @@ import java.io.File;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("GitSamlMetadataProperties")
 public class GitSamlMetadataProperties extends BaseGitProperties {
     private static final long serialVersionUID = 4194689836396653458L;
 

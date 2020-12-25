@@ -41,7 +41,7 @@ public class OAuth20ClientIdAwareProfileManager<U extends CommonProfile> extends
         val clientId = getClientIdFromRequest();
         val results = profiles
             .stream()
-            .filter(it -> it.getValue().getAuthenticationAttribute(SESSION_CLIENT_ID).equals(clientId))
+            .filter(it -> StringUtils.equals((String) it.getValue().getAuthenticationAttribute(SESSION_CLIENT_ID), clientId))
             .collect(Collectors.toMap(
                 Map.Entry::getKey,
                 Map.Entry::getValue,

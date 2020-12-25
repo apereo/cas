@@ -22,238 +22,248 @@
         <div class="form-wrapper">
             <form method="post" id="fm1" th:object="${credential}" action="login">
 
-                <div th:if="${existingSingleSignOnSessionAvailable}">
-                    <i class="mdi mdi-alert-decagram"></i>&nbsp;
-                    <span id="existingSsoMsg" class="mdc-button__label"
-                          th:utext="#{screen.welcome.forcedsso(${existingSingleSignOnSessionPrincipal.id},${registeredService.name})}"/>
-                </div>
-                <h3 th:unless="${existingSingleSignOnSessionAvailable}" class="text-center">
-                    <i class="mdi mdi-security"></i>
-                    <span th:utext="#{screen.welcome.instructions}">Enter your Username and Password:</span>
-                </h3>
-
-                <div id="loginErrorsPanel" class="banner banner-danger banner-dismissible" th:if="${#fields.hasErrors('*')}">
-                    <p th:each="err : ${#fields.errors('*')}" th:utext="${err + ' '}">Example error</p>
-                    <!--<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>-->
-                </div>
-                
-                <section class="cas-field my-3" id="usernameSection">
-                    <div class="d-flex">
-
-                        <label for="username" class="mdc-text-field mdc-text-field--outlined">
-                            <input class="mdc-text-field__input"
-                                   id="username"
-                                   size="25"
-                                   type="text"
-                                   th:readonly="!${@casThymeleafLoginFormDirector.isLoginFormUsernameInputVisible(#vars)}"
-                                   th:field="*{username}"
-                                   th:accesskey="#{screen.welcome.label.netid.accesskey}"
-                                   autocomplete="off"/>
-
-                            <span class="mdc-notched-outline">
-                                <span class="mdc-notched-outline__leading"></span>
-                                <span class="mdc-notched-outline__notch">
-                                  <span class="mdc-floating-label" th:utext="#{screen.welcome.label.netid}">Username</span>
-                                </span>
-                                <span class="mdc-notched-outline__trailing"></span>
-                              </span>
-                        </label>
-
-                        <script type="text/javascript" th:inline="javascript">
-                            /*<![CDATA[*/
-                            var username = /*[[${@casThymeleafLoginFormDirector.getLoginFormUsername(#vars)}]]*/;
-                            var disabled = /*[[${@casThymeleafLoginFormDirector.isLoginFormUsernameInputDisabled(#vars)}]]*/;
-
-                            if (username != null && username !== '') {
-                                $('#username').val(username);
-                                if (disabled) {
-                                    $('#usernameSection').hide();
-                                }
-                            }
-                            /*]]>*/
-                        </script>
+                <span id="login-form-controls" th:unless="${@casThymeleafLoginFormDirector.isLoginFormViewable(#vars)}">
+                    <div id="loginErrorsPanel" class="banner banner-danger banner-dismissible" th:if="${#fields.hasErrors('*')}">
+                        <p th:each="err : ${#fields.errors('*')}" th:utext="${err + ' '}">Example error</p>
+                        <!--<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>-->
                     </div>
-                </section>
+                </span>
 
-                <section class="cas-field my-3 mdc-input-group">
-                    <div class="mdc-input-group-field mdc-input-group-field-append">
-                        <div class="d-flex caps-check">
+                <span id="login-form-controls" th:if="${@casThymeleafLoginFormDirector.isLoginFormViewable(#vars)}">
+                    <div th:if="${existingSingleSignOnSessionAvailable}">
+                        <i class="mdi mdi-alert-decagram"></i>&nbsp;
+                        <span id="existingSsoMsg" class="mdc-button__label"
+                              th:utext="#{screen.welcome.forcedsso(${existingSingleSignOnSessionPrincipal.id},${registeredService.name})}"/>
+                    </div>
+                    <h3 th:unless="${existingSingleSignOnSessionAvailable}" class="text-center">
+                        <i class="mdi mdi-security"></i>
+                        <span th:utext="#{screen.welcome.instructions}">Enter your Username and Password:</span>
+                    </h3>
 
-                            <label for="password"
-                                   class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">
+                    <div id="loginErrorsPanel" class="banner banner-danger banner-dismissible" th:if="${#fields.hasErrors('*')}">
+                        <p th:each="err : ${#fields.errors('*')}" th:utext="${err + ' '}">Example error</p>
+                            <!--<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>-->
+                    </div>
 
-                                <input class="mdc-text-field__input pwd"
-                                       type="password" id="password" size="25"
-                                       th:accesskey="#{screen.welcome.label.password.accesskey}"
-                                       th:field="*{password}" autocomplete="off"/>
+                    <section class="cas-field my-3" id="usernameSection">
+                        <div class="d-flex">
+
+                            <label for="username" class="mdc-text-field mdc-text-field--outlined">
+                                <input class="mdc-text-field__input"
+                                       id="username"
+                                       size="25"
+                                       type="text"
+                                       th:readonly="!${@casThymeleafLoginFormDirector.isLoginFormUsernameInputVisible(#vars)}"
+                                       th:field="*{username}"
+                                       th:accesskey="#{screen.welcome.label.netid.accesskey}"
+                                       autocomplete="off"/>
 
                                 <span class="mdc-notched-outline">
-                                        <span class="mdc-notched-outline__leading"></span>
-                                        <span class="mdc-notched-outline__notch">
-                                          <span class="mdc-floating-label" th:utext="#{screen.welcome.label.password}">Username</span>
+                                    <span class="mdc-notched-outline__leading"></span>
+                                    <span class="mdc-notched-outline__notch">
+                                      <span class="mdc-floating-label" th:utext="#{screen.welcome.label.netid}">Username</span>
+                                    </span>
+                                    <span class="mdc-notched-outline__trailing"></span>
+                                  </span>
+                            </label>
+
+                            <script type="text/javascript" th:inline="javascript">
+                                /*<![CDATA[*/
+                                var username = /*[[${@casThymeleafLoginFormDirector.getLoginFormUsername(#vars)}]]*/;
+                                var disabled = /*[[${@casThymeleafLoginFormDirector.isLoginFormUsernameInputDisabled(#vars)}]]*/;
+
+                                if (username != null && username !== '') {
+                                    $('#username').val(username);
+                                    if (disabled) {
+                                        $('#usernameSection').hide();
+                                    }
+                                }
+                                /*]]>*/
+                            </script>
+                        </div>
+                    </section>
+
+                    <section class="cas-field my-3 mdc-input-group" id="passwordSection">
+                        <div class="mdc-input-group-field mdc-input-group-field-append">
+                            <div class="d-flex caps-check">
+
+                                <label for="password"
+                                       class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">
+
+                                    <input class="mdc-text-field__input pwd"
+                                           type="password" id="password" size="25"
+                                           th:accesskey="#{screen.welcome.label.password.accesskey}"
+                                           th:field="*{password}" autocomplete="off"/>
+
+                                    <span class="mdc-notched-outline">
+                                            <span class="mdc-notched-outline__leading"></span>
+                                            <span class="mdc-notched-outline__notch">
+                                              <span class="mdc-floating-label" th:utext="#{screen.welcome.label.password}">Username</span>
+                                            </span>
+                                            <span class="mdc-notched-outline__trailing"></span>
                                         </span>
-                                        <span class="mdc-notched-outline__trailing"></span>
+
+                                </label>
+                            </div>
+
+                            <div class="mdc-text-field-helper-line caps-warn">
+                                <p
+                                        class="mdc-text-field-helper-text mdc-text-field-helper-text--persistent mdc-text-field-helper-text--validation-msg text-danger">
+                                    <span th:utext="#{screen.capslock.on}"/>
+                                </p>
+                            </div>
+                        </div>
+                        <button class="reveal-password mdc-button mdc-button--raised mdc-input-group-append mdc-icon-button" type="button">
+                            <i class="mdi mdi-eye reveal-password-icon"></i>
+                            <span class="sr-only">Toggle Password</span>
+                        </button>
+                    </section>
+
+                    <section id="authnSourceSection" class="cas-field my-2=3" th:if="${availableAuthenticationHandlerNames != null}">
+                        <div class="d-flex">
+                            <div th:if="${availableAuthenticationHandlerNames.size() > 1}"
+                                 class="mdc-select mdc-select--outlined mdc-select--required mdc-menu-surface--fullwidth authn-source">
+                                <div class="mdc-select__anchor"
+                                     role="button"
+                                     aria-required="true"
+                                     aria-haspopup="listbox"
+                                     aria-expanded="false">
+                                    <span class="mdc-line__ripple"></span>
+                                    <span class="mdc-notched-outline">
+                                      <span class="mdc-notched-outline__leading"></span>
+                                      <span class="mdc-notched-outline__notch">
+                                        <span id="outlined-select-label" class="mdc-floating-label"
+                                              th:utext="#{screen.welcome.label.source}">Source</span>
+                                      </span>
+                                      <span class="mdc-notched-outline__trailing"></span>
                                     </span>
 
+                                    <span class="mdc-select__selected-text-container">
+                                      <span class="mdc-select__selected-text" />
+                                    </span>
+
+                                    <span class="mdc-select__dropdown-icon">
+                                      <svg class="mdc-select__dropdown-icon-graphic" viewBox="7 10 10 5" focusable="false">
+                                        <polygon
+                                                class="mdc-select__dropdown-icon-inactive"
+                                                stroke="none"
+                                                fill-rule="evenodd"
+                                                points="7 10 12 15 17 10">
+                                        </polygon>
+                                        <polygon
+                                                class="mdc-select__dropdown-icon-active"
+                                                stroke="none"
+                                                fill-rule="evenodd"
+                                                points="7 15 12 10 17 15">
+                                        </polygon>
+                                      </svg>
+                                    </span>
+                                    <span class="mdc-line-ripple"></span>
+                                </div>
+
+                                <div class="mdc-select__menu mdc-menu mdc-menu-surface mdc-menu-surface--fullwidth">
+                                    <ul class="mdc-list" role="listbox">
+                                        <li th:each="handler,iter : ${availableAuthenticationHandlerNames}"
+                                            class="mdc-list-item "
+                                            th:id="${handler + '-authnSource'}"
+                                            th:classappend="${iter.index == 0 ? 'mdc-list-item--selected' : ''}"
+                                            th:data-value="${handler}" role="option">
+                                            <span class="mdc-list-item__ripple"></span>
+                                            <span class="mdc-list-item__text" th:utext="${handler}">Option</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <input type="hidden"
+                                       id="source"
+                                       th:field="*{source}"
+                                       name="source" />
+                            </div>
+
+                            <span th:if="${availableAuthenticationHandlerNames.size() == 1}">
+                               <input type="hidden"
+                                      id="source"
+                                      name="source"
+                                      th:value="${availableAuthenticationHandlerNames.get(0)}"/>
+                           </span>
+                        </div>
+                    </section>
+
+                    <section class="cas-field my-3">
+                        <div th:each="entry: ${customLoginFormFields}">
+                            <label class="mdc-text-field mdc-text-field--outlined">
+                                <input class="mdc-text-field__input"
+                                       th:id="${entry.key + '-customField'}"
+                                       th:name="${entry.key + '-customField'}"
+                                       size="25"
+                                       type="text"
+                                       th:field="*{customFields[__${entry.key}__]}"
+                                       autocomplete="off"/>
+
+                                <span class="mdc-notched-outline">
+                                    <span class="mdc-notched-outline__leading"></span>
+                                    <span class="mdc-notched-outline__notch">
+                                      <span class="mdc-floating-label" th:text="#{${entry.value.messageBundleKey}}">Label</span>
+                                    </span>
+                                    <span class="mdc-notched-outline__trailing"></span>
+                                  </span>
                             </label>
                         </div>
+                    </section>
 
-                        <div class="mdc-text-field-helper-line caps-warn">
-                            <p
-                                    class="mdc-text-field-helper-text mdc-text-field-helper-text--persistent mdc-text-field-helper-text--validation-msg text-danger">
-                                <span th:utext="#{screen.capslock.on}"/>
-                            </p>
-                        </div>
-                    </div>
-                    <button class="reveal-password mdc-button mdc-button--raised mdc-input-group-append mdc-icon-button" type="button">
-                        <i class="mdi mdi-eye reveal-password-icon"></i>
-                        <span class="sr-only">Toggle Password</span>
-                    </button>
-                </section>
+                    <section class="cas-field"
+                             th:if="${passwordManagementEnabled != null && passwordManagementEnabled && param.doChangePassword != null}">
+                        <p>
+                            <input type="checkbox" name="doChangePassword" id="doChangePassword"
+                                   value="true" th:checked="${param.doChangePassword != null}"/>
+                            <label for="doChangePassword" th:text="#{screen.button.changePassword}">Change Password</label>
+                        </p>
+                    </section>
 
-                <section id="authnSourceSection" class="cas-field my-2=3" th:if="${availableAuthenticationHandlerNames != null}">
-                    <div class="d-flex">
-                        <div th:if="${availableAuthenticationHandlerNames.size() > 1}"
-                             class="mdc-select mdc-select--outlined mdc-select--required mdc-menu-surface--fullwidth authn-source">
-                            <div class="mdc-select__anchor"
-                                 role="button"
-                                 aria-required="true"
-                                 aria-haspopup="listbox"
-                                 aria-expanded="false">
-                                <span class="mdc-line__ripple"></span>
-                                <span class="mdc-notched-outline">
-                                  <span class="mdc-notched-outline__leading"></span>
-                                  <span class="mdc-notched-outline__notch">
-                                    <span id="outlined-select-label" class="mdc-floating-label"
-                                          th:utext="#{screen.welcome.label.source}">Source</span>
-                                  </span>
-                                  <span class="mdc-notched-outline__trailing"></span>
+                    <section class="cas-field" th:if="${rememberMeAuthenticationEnabled}">
+                        <p>
+                            <input type="checkbox" name="rememberMe" id="rememberMe" value="true"/>
+                            <label for="rememberMe" th:text="#{screen.rememberme.checkbox.title}">Remember Me</label>
+                        </p>
+                    </section>
+
+                    <section class="cas-field">
+
+                        <div th:replace="fragments/recaptcha :: recaptchaToken"/>
+
+                        <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                        <input type="hidden" name="_eventId" value="submit"/>
+                        <input type="hidden" name="geolocation"/>
+
+                        <p th:if="${#request.getMethod().equalsIgnoreCase('POST')}">
+                                <span th:each="entry : ${httpRequestInitialPostParameters}" th:remove="tag">
+                                    <span th:each="entryValue : ${entry.value}" th:remove="tag">
+                                        <input type="hidden" th:name="${entry.key}" th:value="${entryValue}"/>
+                                    </span>
                                 </span>
+                        </p>
+                    </section>
 
-                                <span class="mdc-select__selected-text-container">
-                                  <span class="mdc-select__selected-text" />
-                                </span>
-
-                                <span class="mdc-select__dropdown-icon">
-                                  <svg class="mdc-select__dropdown-icon-graphic" viewBox="7 10 10 5" focusable="false">
-                                    <polygon
-                                            class="mdc-select__dropdown-icon-inactive"
-                                            stroke="none"
-                                            fill-rule="evenodd"
-                                            points="7 10 12 15 17 10">
-                                    </polygon>
-                                    <polygon
-                                            class="mdc-select__dropdown-icon-active"
-                                            stroke="none"
-                                            fill-rule="evenodd"
-                                            points="7 15 12 10 17 15">
-                                    </polygon>
-                                  </svg>
-                                </span>
-                                <span class="mdc-line-ripple"></span>
-                            </div>
-
-                            <div class="mdc-select__menu mdc-menu mdc-menu-surface mdc-menu-surface--fullwidth">
-                                <ul class="mdc-list" role="listbox">
-                                    <li th:each="handler,iter : ${availableAuthenticationHandlerNames}"
-                                        class="mdc-list-item "
-                                        th:id="${handler + '-authnSource'}"
-                                        th:classappend="${iter.index == 0 ? 'mdc-list-item--selected' : ''}"
-                                        th:data-value="${handler}" role="option">
-                                        <span class="mdc-list-item__ripple"></span>
-                                        <span class="mdc-list-item__text" th:utext="${handler}">Option</span>
-                                    </li>
-                                </ul>
-                            </div>
-                            <input type="hidden"
-                                   id="source"
-                                   th:field="*{source}"
-                                   name="source" />
-                        </div>
-
-                        <span th:if="${availableAuthenticationHandlerNames.size() == 1}">
-                           <input type="hidden"
-                                  id="source"
-                                  name="source"
-                                  th:value="${availableAuthenticationHandlerNames.get(0)}"/>
-                       </span>
-                    </div>
-                </section>
-                
-                <section class="cas-field my-3">
-                    <div th:each="entry: ${customLoginFormFields}">
-                        <label class="mdc-text-field mdc-text-field--outlined">
-                            <input class="mdc-text-field__input"
-                                   th:id="${entry.key + '-customField'}"
-                                   th:name="${entry.key + '-customField'}"
-                                   size="25"
-                                   type="text"
-                                   th:field="*{customFields[__${entry.key}__]}"
-                                   autocomplete="off"/>
-
-                            <span class="mdc-notched-outline">
-                                <span class="mdc-notched-outline__leading"></span>
-                                <span class="mdc-notched-outline__notch">
-                                  <span class="mdc-floating-label" th:text="#{${entry.value.messageBundleKey}}">Label</span>
-                                </span>
-                                <span class="mdc-notched-outline__trailing"></span>
-                              </span>
-                        </label>
-                    </div>
-                </section>
-
-                <section class="cas-field"
-                         th:if="${passwordManagementEnabled != null && passwordManagementEnabled && param.doChangePassword != null}">
-                    <p>
-                        <input type="checkbox" name="doChangePassword" id="doChangePassword"
-                               value="true" th:checked="${param.doChangePassword != null}"/>
-                        <label for="doChangePassword" th:text="#{screen.button.changePassword}">Change Password</label>
-                    </p>
-                </section>
-
-                <section class="cas-field" th:if="${rememberMeAuthenticationEnabled}">
-                    <p>
-                        <input type="checkbox" name="rememberMe" id="rememberMe" value="true"/>
-                        <label for="rememberMe" th:text="#{screen.rememberme.checkbox.title}">Remember Me</label>
-                    </p>
-                </section>
-
-                <section class="cas-field">
-
-                    <div th:replace="fragments/recaptcha :: recaptchaToken"/>
-
-                    <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
-                    <input type="hidden" name="_eventId" value="submit"/>
-                    <input type="hidden" name="geolocation"/>
-
-                    <p th:if="${#request.getMethod().equalsIgnoreCase('POST')}">
-                            <span th:each="entry : ${httpRequestInitialPostParameters}" th:remove="tag">
-                                <span th:each="entryValue : ${entry.value}" th:remove="tag">
-                                    <input type="hidden" th:name="${entry.key}" th:value="${entryValue}"/>
-                                </span>
-                            </span>
-                    </p>
-                </section>
-
-                <div th:replace="fragments/submitbutton :: submitButton (messageKey='screen.welcome.button.login')"/>
-
+                    <div th:replace="fragments/submitbutton :: submitButton (messageKey='screen.welcome.button.login')"/>
+                </span>
             </form>
 
             <div id="x509Login" th:if="${x509ClientAuthLoginEndpointUrl}">
-                <hr class="my-4"/>
-                <script th:inline="javascript">
-                    /*<![CDATA[*/
-                    function x509login() {
-                        var url =  /*[[${x509ClientAuthLoginEndpointUrl}]]*/;
-                        url += window.location.search;
-                        window.location.assign(url)
-                    }
+                <span th:if="${@casThymeleafLoginFormDirector.isLoginFormViewable(#vars)}">
+                    <hr class="my-4"/>
+                    <script th:inline="javascript">
+                        /*<![CDATA[*/
+                        function x509login() {
+                            var url =  /*[[${x509ClientAuthLoginEndpointUrl}]]*/;
+                            url += window.location.search;
+                            window.location.assign(url)
+                        }
 
-                    /*]]>*/
-                </script>
-                <a class="mdc-button mdc-button--raised"
-                   onclick="javascript:x509login();"
-                   th:text="#{screen.welcome.button.loginx509}">X509 Login</a>
+                        /*]]>*/
+                    </script>
+                    <a class="mdc-button mdc-button--raised"
+                       onclick="javascript:x509login();"
+                       th:text="#{screen.welcome.button.loginx509}">X509 Login</a>
+                </span>
             </div>
 
             <hr class="my-4"/>
@@ -274,7 +284,9 @@
                     <hr class="my-4"/>
                 </span>
 
-            <div th:replace="fragments/pmlinks :: pmlinks"/>
+            <span th:if="${@casThymeleafLoginFormDirector.isLoginFormViewable(#vars)}">
+                <div th:replace="fragments/pmlinks :: pmlinks"/>
+            </span>
 
             <script type="text/javascript" th:inline="javascript">
                 /*<![CDATA[*/

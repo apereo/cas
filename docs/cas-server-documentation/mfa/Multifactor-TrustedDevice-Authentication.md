@@ -87,8 +87,8 @@ trusted device workflow for MFA can be bypassed on a per application basis:
     "bypassTrustedDeviceEnabled" : true
   }
 }
-
 ```
+
 ## Storage
 
 User decisions must be remembered and processed later on subsequent requests.  A background *cleaner* process is also automatically scheduled to 
@@ -173,6 +173,22 @@ Support is provided via the following module:
 ```
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#dynamodb-storage).
+
+### Redis
+
+User decisions may also be kept inside a Redis instance.
+
+Support is provided via the following module:
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-trusted-mfa-redis</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#redis-storage).
 
 ### REST
 

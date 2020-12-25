@@ -4,6 +4,8 @@ title: CAS Properties
 category: Configuration
 ---
 
+{% include variables.html %}
+
 # CAS Properties
 
 Various properties can be specified in CAS [either inside configuration files or as command
@@ -2616,6 +2618,8 @@ the configuration key `cas.authn.x509.webflow`.
 
 ### Principal Resolution
 
+Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.x509`.
+
 X.509 principal resolution can act on the following principal types:
 
 | Type                    | Description
@@ -2687,6 +2691,8 @@ To fetch CRLs, the following options are available:
 # cas.authn.x509.cache-disk-size=100MB
 # cas.authn.x509.cache-eternal=false
 # cas.authn.x509.cache-time-to-live-seconds=7200
+
+# cas.authn.x509.mixed-mode=true
 
 # cas.authn.x509.check-key-usage=false
 # cas.authn.x509.revocation-policy-threshold=172800
@@ -2810,45 +2816,7 @@ To learn more about this topic, [please review this guide](../installation/Trust
 ## WS-Fed Delegated Authentication
 
 To learn more about this topic, [please review this guide](../integration/ADFS-Integration.html).
-
-### Attribute Types
-
-In order to construct the final authenticated principal, CAS may be configured to use the following
-strategies when collecting principal attributes:
-
-| Type                 | Description
-|----------------------|------------------------------------------------------------------------------------------------
-| `CAS`                | Use attributes provided by CAS' own attribute resolution mechanics and repository.
-| `WSFED`              | Use attributes provided by the delegated WS-Fed instance.
-| `BOTH`               | Combine both the above options, where CAS attribute repositories take precedence over WS-Fed.
-
-```properties
-# cas.authn.wsfed[0].identity-provider-url=https://adfs.example.org/adfs/ls/
-# cas.authn.wsfed[0].identity-provider-identifier=https://adfs.example.org/adfs/services/trust
-# cas.authn.wsfed[0].relying-party-identifier=urn:cas:localhost
-# cas.authn.wsfed[0].signing-certificate-resources=classpath:adfs-signing.crt
-# cas.authn.wsfed[0].identity-attribute=upn
-
-# cas.authn.wsfed[0].attributes-type=WSFED
-# cas.authn.wsfed[0].tolerance=10000
-# cas.authn.wsfed[0].attribute-resolver-enabled=true
-# cas.authn.wsfed[0].auto-redirect=true
-# cas.authn.wsfed[0].name=
-# cas.authn.wsfed[0].attribute-mutator-script.location=file:/etc/cas/config/wsfed-attr.groovy
-
-# cas.authn.wsfed[0].principal.principal-attribute=
-# cas.authn.wsfed[0].principal.return-null=false
-
-# Private/Public keypair used to decrypt assertions, if any.
-# cas.authn.wsfed[0].encryption-private-key=classpath:private.key
-# cas.authn.wsfed[0].encryption-certificate=classpath:certificate.crt
-# cas.authn.wsfed[0].encryption-private-key-password=NONE
-```
-
-### Signing & Encryption
-
-The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
-The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under `cas.authn.wsfed[0].cookie`.
+{% include {{ version }}/wsfed-delegated-authentication.md configKey="cas.authn.wsfed[0]" %}
 
 ## Multifactor Authentication
 
@@ -2969,7 +2937,12 @@ Configuration settings for this feature are available [here](Configuration-Prope
 #### MongoDb Storage
 
 Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.trusted`.
- 
+
+#### Redis Storage
+
+Configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration) 
+under the configuration key `cas.authn.mfa.trusted`.
+
 #### DynamoDb Storage
  
 Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#dynamodb-configuration)
@@ -3304,6 +3277,11 @@ under the configuration key `cas.authn.mfa.web-authn`.
 AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings) 
 under the configuration key `cas.authn.mfa.web-authn.dynamo-db`.
 
+### FIDO2 WebAuthn REST
+
+RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) under 
+the configuration key `cas.authn.mfa.web-authn.rest`.
+
 ### FIDO U2F
 
 To learn more about this topic, [please review this guide](../mfa/FIDO-U2F-Authentication.html).
@@ -3548,7 +3526,20 @@ Common configuration settings for this feature are available [here](Configuratio
 The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. Signing & 
 encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the 
 configuration key `cas.authn.saml-idp.metadata.mongo`.
- 
+
+#### SAML Metadata Redis
+
+RESTful settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration)
+under the configuration key `cas.authn.saml-idp.metadata`.
+
+```properties
+# cas.authn.saml-idp.metadata.redis.idp-metadata-enabled=true
+```
+
+The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. Signing &
+encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the
+configuration key `cas.authn.saml-idp.metadata.redis`.
+
 #### SAML Metadata REST
  
 RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) 
@@ -5212,7 +5203,7 @@ Display Google's reCAPTCHA widget on the CAS login page.
 To learn more about this topic, [please review this guide](../integration/Configuring-Google-Analytics.html).
 
 ```properties
-# cas.googleAnalytics.googleAnalyticsTrackingId=
+# cas.googleAnalytics.google-analytics-tracking-id=
 ```
 
 ### Google Analytics Cookie
@@ -5237,7 +5228,6 @@ To learn more about this topic, [please review this guide](../webflow/Webflow-Cu
 # cas.webflow.refresh=true
 # cas.webflow.redirect-same-state=false
 # cas.webflow.autoconfigure=true
-# cas.webflow.base-path=
 ```
 
 ### Spring Webflow Login Decorations
@@ -5787,7 +5777,7 @@ available [here](Configuration-Properties-Common.html#sms-notifications) under t
 The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
 The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.pm.reset`.
 
-### Webflow configuration
+### Webflow Configuration
 
 Webflow auto-configuration settings for this feature are available [here](Configuration-Properties-Common.html#webflow-auto-configuration) under 
 the configuration key `cas.authn.pm.webflow`.
@@ -5855,4 +5845,21 @@ feature are available [here](Configuration-Properties-Common.html#password-encod
 # cas.authn.pm.rest.endpoint-url-change=
 # cas.authn.pm.rest.endpoint-username=
 # cas.authn.pm.rest.endpoint-password=
+```
+
+## ACME Integration
+
+To learn more about this topic, [please review this guide](../integration/ACME-Integration.html).
+    
+```properties
+# cas.acme.domains[0]=example.org
+# cas.acme.terms-of-use-accepted=true
+
+# cas.acme.key-size=2048
+
+# cas.acme.server-url=acme://letsencrypt.org/staging
+# cas.acme.user-key.location=file:/etc/cas/config/acme/user.key
+# cas.acme.domain-key.location=file:/etc/cas/config/acme/domain.key
+# cas.acme.domain-csr.location=file:/etc/cas/config/acme/domain.csr
+# cas.acme.domain-chain.location=file:/etc/cas/config/acme/domain-chain.crt
 ```

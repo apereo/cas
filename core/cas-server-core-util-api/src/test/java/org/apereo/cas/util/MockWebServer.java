@@ -3,6 +3,7 @@ package org.apereo.cas.util;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
@@ -43,6 +44,10 @@ public class MockWebServer implements AutoCloseable {
         }
     }
 
+    public MockWebServer(final int port, final HttpStatus status) {
+        this(port, new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "REST Output"), status);
+    }
+    
     public MockWebServer(final int port, final Resource resource, final HttpStatus status) {
         try {
             this.worker = new Worker(new ServerSocket(port), resource, status);

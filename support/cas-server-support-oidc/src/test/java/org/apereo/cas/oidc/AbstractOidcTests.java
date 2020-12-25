@@ -116,6 +116,7 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = AbstractOidcTests.SharedTestConfiguration.class,
     properties = {
+        "spring.main.allow-bean-definition-overriding=true",
         "cas.authn.oidc.issuer=https://sso.example.org/cas/oidc",
         "cas.authn.oidc.jwks.jwks-file=classpath:keystore.jwks"
     })

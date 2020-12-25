@@ -37,10 +37,10 @@ public class HazelcastConfigurationFactoryTests {
         val hz = new BaseHazelcastProperties();
         hz.getCluster().setLocalAddress("127.0.0.1");
         hz.getCluster().setPublicAddress("127.0.0.1");
+        hz.getCluster().setNetworkInterfaces("127.0.0.1,*");
         val result = HazelcastConfigurationFactory.build(hz);
         assertNotNull(result);
     }
-
 
     @Test
     public void verifyDefaultJoinConfig() {

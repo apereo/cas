@@ -46,7 +46,8 @@ public class SwivelMultifactorWebflowConfigurer extends AbstractCasMultifactorWe
             createFlowVariable(flow, CasWebflowConstants.VAR_ID_CREDENTIAL, SwivelTokenCredential.class);
 
             flow.getStartActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_INITIAL_FLOW_SETUP));
-
+            createEndState(flow, CasWebflowConstants.STATE_ID_SUCCESS);
+            
             val initLoginFormState = createActionState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM,
                 createEvaluateAction(CasWebflowConstants.ACTION_ID_INIT_LOGIN_ACTION));
             createTransitionForState(initLoginFormState, CasWebflowConstants.TRANSITION_ID_SUCCESS,

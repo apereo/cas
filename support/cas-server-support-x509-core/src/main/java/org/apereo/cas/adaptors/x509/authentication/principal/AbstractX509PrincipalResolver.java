@@ -2,19 +2,16 @@ package org.apereo.cas.adaptors.x509.authentication.principal;
 
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
+import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.services.persondir.IPersonAttributeDao;
 
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
@@ -23,7 +20,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 
 /**
@@ -33,7 +29,6 @@ import java.util.Set;
  * @since 3.0.0
  */
 @ToString(callSuper = true)
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Slf4j
 @Setter
 public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrincipalResolver {
@@ -42,30 +37,14 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
 
     private String alternatePrincipalAttribute;
 
-    protected AbstractX509PrincipalResolver(final IPersonAttributeDao attributeRepository,
-                                            final PrincipalFactory principalFactory,
-                                            final boolean returnNullIfNoAttributes,
-                                            final String principalAttributeName,
-                                            final String alternatePrincipalAttribute,
-                                            final boolean useCurrentPrincipalId,
-                                            final boolean resolveAttributes,
-                                            final Set<String> activeAttributeRepositoryIdentifiers) {
-        super(attributeRepository, principalFactory, returnNullIfNoAttributes,
-            principalAttributeName, useCurrentPrincipalId, resolveAttributes,
-            activeAttributeRepositoryIdentifiers);
+    protected AbstractX509PrincipalResolver(final PrincipalResolutionContext context,
+                                            final String alternatePrincipalAttribute) {
+        super(context);
         this.alternatePrincipalAttribute = alternatePrincipalAttribute;
     }
 
-    protected AbstractX509PrincipalResolver(final IPersonAttributeDao attributeRepository,
-                                            final PrincipalFactory principalFactory,
-                                            final boolean returnNullIfNoAttributes,
-                                            final String principalAttributeName,
-                                            final boolean useCurrentPrincipalId,
-                                            final boolean resolveAttributes,
-                                            final Set<String> activeAttributeRepositoryIdentifiers) {
-        super(attributeRepository, principalFactory, returnNullIfNoAttributes,
-            principalAttributeName, useCurrentPrincipalId, resolveAttributes,
-            activeAttributeRepositoryIdentifiers);
+    protected AbstractX509PrincipalResolver(final PrincipalResolutionContext context) {
+        this(context, null);
     }
 
     @Override
@@ -106,7 +85,7 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
      * @return principal using alternate attribute or null if none configured
      */
     protected String getAlternatePrincipal(final X509Certificate certificate) {
-        if (alternatePrincipalAttribute == null) {
+        if (StringUtils.isBlank(alternatePrincipalAttribute)) {
             return null;
         }
         val attributes = extractPersonAttributes(certificate);

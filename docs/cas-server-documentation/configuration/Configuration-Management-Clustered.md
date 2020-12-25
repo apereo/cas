@@ -4,6 +4,8 @@ title: CAS - Configuration Management Clustered Deployment
 category: Configuration
 ---
 
+{% include variables.html %}
+
 # Clustered Deployments
 
 CAS uses the [Spring Cloud Bus](http://cloud.spring.io/spring-cloud-static/spring-cloud.html)
