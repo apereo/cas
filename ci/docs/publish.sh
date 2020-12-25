@@ -34,10 +34,6 @@ echo -e "Copying project documentation over to $PWD/docs-latest...\n"
 cp -R docs/cas-server-documentation/ $PWD/docs-latest
 mv $PWD/docs-latest/_includes $PWD/docs-includes
 
-#git config --global user.email "cas@apereo.org"
-#git config --global user.name "CAS"
-#git config --global pack.threads "8"
-
 echo -e "Cloning the repository to push documentation...\n"
 [[ -d $PWD/gh-pages ]] && rm -Rf $PWD/gh-pages
 
@@ -68,6 +64,9 @@ fi
 
 cd $PWD/gh-pages
 
+git config user.email "cas@apereo.org"
+git config user.name "CAS"
+
 echo -e "Configuring tracking branches for repository...\n"
 git branch -u origin/gh-pages
 
@@ -78,13 +77,13 @@ echo -e "Committing changes...\n"
 git commit -m "Published docs [gh-pages]. " > /dev/null
 
 echo -e "Pushing upstream to origin/gh-pages...\n"
-#git push -fq origin --all
-#retVal=$?
-#rm -Rf $PWD/gh-pages
-#if [[ ${retVal} -eq 0 ]]; then
-#    echo -e "Successfully published documentation.\n"
-#    exit 0
-#else
-#    echo -e "Failed to publish documentation.\n"
-#    exit ${retVal}
-#fi
+git push -fq origin --all
+retVal=$?
+rm -Rf $PWD/gh-pages
+if [[ ${retVal} -eq 0 ]]; then
+    echo -e "Successfully published documentation.\n"
+    exit 0
+else
+    echo -e "Failed to publish documentation.\n"
+    exit ${retVal}
+fi
