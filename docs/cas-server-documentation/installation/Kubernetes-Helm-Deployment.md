@@ -88,7 +88,7 @@ a Linux virtual machine (e.g. running Ubuntu);
   helm upgrade --install cas-server ./cas-server
   ``` 
 
-Other options 
+### Other Options 
 
 - [Docker Desktop](https://www.docker.com/products/docker-desktop)
   - Install Docker Desktop
@@ -103,12 +103,8 @@ Other options
 
 - [Minikube](https://minikube.sigs.k8s.io/docs/start/)
 
-```shell script
-  # coming soon
-```
 
-
-### Install ingress controller
+### Install Ingress Controller
 
 The CAS Helm chart is only tested with Kubernetes ingress-nginx, feel free to add support for other ingress controllers.
 
@@ -126,7 +122,7 @@ kubectl wait --namespace ingress-nginx \
   --timeout=120s
 ```
 
-### Install CAS Server Helm chart
+### Install CAS Server Helm Chart
 
 Helm charts consist of templates which are combined with values from one or more values files
 (and command line set arguments) to produce kubernetes yaml. The chart folder (containing the `templates` directory)
@@ -136,7 +132,7 @@ The following examples use the `default` namespace but `--namespace cas` can be 
 of the following `helm` commands to put CAS in its own kubernetes namespace (The namespace would 
 need to be created first, e.g. `kubectl create namespace cas`)
 
-```
+```bash
 # delete cas-server helm chart install
 helm delete cas-server
 # install cas-server chart 
@@ -153,7 +149,7 @@ helm template cas-server --values values-local.yaml ./cas-server --debug
 
 ### Useful `kubectl` Commands
 
-Don't forget to add -n or --namespace if using non-default namespace.
+Don't forget to add `-n` or `--namespace` if using non-default namespace.
 
 ```bash
 # Look at the pods to see the status
