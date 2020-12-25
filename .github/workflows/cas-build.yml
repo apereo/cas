@@ -23,9 +23,9 @@ env:
 
 on:
   push:
-    branches: [ master ]
+    branches: [ 6.3.x ]
   pull_request:
-    branches: [ master ]
+    branches: [ 6.3.x ]
 
 ##########################################################################
 
@@ -473,27 +473,27 @@ jobs:
 
   ##########################################################################
 
-  publish-docker-image:
-    runs-on: ubuntu-latest
-    needs: [publish-snapshots]
-    steps:
-      - name: Prepare
-        run: |
-          mkdir work
-          cd work
-          curl https://casinit.herokuapp.com/starter.tgz | tar -xzvf -
-          chmod -R 777 ./*.sh
-          ls
-      - name: Build Docker Image
-        run: |
-          cd work
-          ./docker-build.sh latest
-      - name: Publish Docker Image
-        if: ${{ github.event_name == 'push' && env.DOCKER_USER != null && env.DOCKER_PWD != null }}
-        run: |
-          cd work
-          ls
-          ./docker-push.sh "${DOCKER_USER}" "${DOCKER_PWD}" latest
+  # publish-docker-image:
+  #   runs-on: ubuntu-latest
+  #   needs: [publish-snapshots]
+  #   steps:
+  #     - name: Prepare
+  #       run: |
+  #         mkdir work
+  #         cd work
+  #         curl https://casinit.herokuapp.com/starter.tgz | tar -xzvf -
+  #         chmod -R 777 ./*.sh
+  #         ls
+  #     - name: Build Docker Image
+  #       run: |
+  #         cd work
+  #         ./docker-build.sh latest
+  #     - name: Publish Docker Image
+  #       if: ${{ github.event_name == 'push' && env.DOCKER_USER != null && env.DOCKER_PWD != null }}
+  #       run: |
+  #         cd work
+  #         ls
+  #         ./docker-push.sh "${DOCKER_USER}" "${DOCKER_PWD}" latest
 
 ##########################################################################
 
@@ -733,27 +733,27 @@ jobs:
 
 ##########################################################################
 
-  report-dependency-updates:
-    runs-on: ubuntu-latest
-    needs: [cache]
-    if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' && contains(github.event.head_commit.message, 'dependency') }}
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v2
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - name: Report Dependency Updates
-        run: |
-          ./gradlew --build-cache --configure-on-demand --no-daemon --parallel -x test -x javadoc dependencyUpdates -Drevision=release -DskipNestedConfigMetadataGen=true -DgradleReleaseChannel=current
+  # report-dependency-updates:
+  #   runs-on: ubuntu-latest
+  #   needs: [cache]
+  #   if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' && contains(github.event.head_commit.message, 'dependency') }}
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: Set up JDK
+  #       uses: actions/setup-java@v1
+  #       with:
+  #         java-version: ${{ env.JDK_CURRENT }}
+  #     - name: Initialize
+  #       run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+  #     - uses: actions/cache@v2
+  #       with:
+  #         path: ~/.gradle/caches
+  #         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-gradle-
+  #     - name: Report Dependency Updates
+  #       run: |
+  #         ./gradlew --build-cache --configure-on-demand --no-daemon --parallel -x test -x javadoc dependencyUpdates -Drevision=release -DskipNestedConfigMetadataGen=true -DgradleReleaseChannel=current
 
 ##########################################################################
 

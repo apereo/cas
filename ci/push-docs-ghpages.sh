@@ -1,14 +1,14 @@
 #!/bin/bash
 
 
-branchVersion="development"
+branchVersion="6.3.x"
 
 echo -e "Copying project documentation over to $HOME/docs-latest...\n"
 cp -R docs/cas-server-documentation $HOME/docs-latest
 
 cd $HOME
-git config --global user.email "travis@travis-ci.org"
-git config --global user.name "travis-ci"
+git config --global user.email "cas@apereo.org"
+git config --global user.name "CAS"
 git config --global pack.threads "8"
 
 echo -e "Cloning the repository to push documentation...\n"
