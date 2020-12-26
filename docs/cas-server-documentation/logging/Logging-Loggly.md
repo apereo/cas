@@ -4,6 +4,8 @@ title: CAS - Loggly Logging Configuration
 category: Logs & Audits
 ---
 
+{% include variables.html %}
+
 # Loggly Configuration
 
 [Loggly](https://www.loggly.com) is a cloud-based log management service that makes it easy to access and analyze the mission-critical information within your logs.

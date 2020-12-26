@@ -4,6 +4,8 @@ title: CAS - SysLog Logging Configuration
 category: Logs & Audits
 ---
 
+{% include variables.html %}
+
 # SysLog Logging
 
 CAS logging framework does have the ability to route messages to an external

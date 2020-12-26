@@ -4,6 +4,8 @@ title: CAS - Splunk Logging Configuration
 category: Logs & Audits
 ---
 
+{% include variables.html %}
+
 # Splunk Logging
 
 Log data can be automatically routed to [Splunk](https://splunk.com/). Support is enabled by including the following module in the overlay:

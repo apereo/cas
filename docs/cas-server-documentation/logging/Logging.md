@@ -4,6 +4,8 @@ title: CAS - Logging Configuration
 category: Logs & Audits
 ---
 
+{% include variables.html %}
+
 # Logging
 
 CAS provides a logging facility that logs important informational events like authentication success and

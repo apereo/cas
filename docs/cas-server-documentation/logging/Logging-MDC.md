@@ -4,7 +4,9 @@ title: CAS - MDC Logging Configuration
 category: Logs & Audits
 ---
 
-#  Mapped Diagnostic Context
+{% include variables.html %}
+
+# Mapped Diagnostic Context
 
 To uniquely stamp each request, CAS puts contextual
 information into the `MDC`, the abbreviation of Mapped Diagnostic Context. This effectively

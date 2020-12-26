@@ -4,6 +4,8 @@ title: CAS - Logback Configuration
 category: Logs & Audits
 ---
 
+{% include variables.html %}
+
 # Logback Logging
 
 CAS does also support [Logback](https://logback.qos.ch/) as an alternative logging engine. At a high level, 

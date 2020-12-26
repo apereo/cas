@@ -4,6 +4,8 @@ title: CAS - Papertrail Logging Configuration
 category: Logs & Audits
 ---
 
+{% include variables.html %}
+
 # Papertrail Logging
 
 [Papertrail](https://papertrailapp.com) is a cloud-based log management service that provides aggregated logging tools, 

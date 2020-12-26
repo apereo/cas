@@ -4,6 +4,8 @@ title: CAS - Logstash Logging Configuration
 category: Logs & Audits
 ---
 
+{% include variables.html %}
+
 # Logstash Logging
 
 CAS logging framework has the ability route log messages to a TCP/UDP endpoint.

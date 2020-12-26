@@ -4,6 +4,8 @@ title: CAS - Cloudwatch Logging Configuration
 category: Logs & Audits
 ---
 
+{% include variables.html %}
+
 # Cloudwatch Logging
 
 Log data can be automatically routed to [AWS CloudWatch](https://aws.amazon.com/cloudwatch/). Support is enabled by including the following module in the overlay:
