@@ -3,6 +3,8 @@ layout: default
 title: CAS - Permissive Authentication
 category: Authentication
 ---
+{% include variables.html %}
+
 
 # Permissive Authentication
 

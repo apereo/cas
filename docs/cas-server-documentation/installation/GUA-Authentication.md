@@ -3,6 +3,8 @@ layout: default
 title: CAS - GUA Authentication
 category: Authentication
 ---
+{% include variables.html %}
+
 
 # Graphical User Authentication
 

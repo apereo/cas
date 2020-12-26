@@ -3,6 +3,8 @@ layout: default
 title: CAS - Long Term Authentication
 category: SSO & SLO
 ---
+{% include variables.html %}
+
 
 # Long Term Authentication
 

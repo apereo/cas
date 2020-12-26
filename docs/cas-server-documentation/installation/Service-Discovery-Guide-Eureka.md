@@ -3,6 +3,8 @@ layout: default
 title: CAS - Eureka Service Discovery
 category: High Availability
 ---
+{% include variables.html %}
+
 
 # Eureka Server Discovery Service
 

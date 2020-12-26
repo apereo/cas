@@ -3,6 +3,8 @@ layout: default
 title: CAS - Microsoft Azure Active Directory Authentication
 category: Authentication
 ---
+{% include variables.html %}
+
 
 # Microsoft Azure Active Directory Authentication
 

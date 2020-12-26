@@ -3,6 +3,8 @@ layout: default
 title: CAS - SPNEGO Authentication
 category: Authentication
 ---
+{% include variables.html %}
+
 
 # SPNEGO Authentication
 
@@ -149,7 +151,7 @@ Default principal: HTTP/cas.example.com@REALM
 
 Valid starting       Expires              Service principal
 12/08/2016 10:52:00  12/08/2016 20:52:00  krbtgt/REALM@REALM
-	renew until 12/08/2016 20:52:00
+    renew until 12/08/2016 20:52:00
 ```
 
 ### Browser Configuration

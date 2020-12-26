@@ -3,6 +3,8 @@ layout: default
 title: CAS - Configuring Principal Resolution
 category: Configuration
 ---
+{% include variables.html %}
+
 
 # Overview
 Principal resolution converts information in the authentication credential into a security principal

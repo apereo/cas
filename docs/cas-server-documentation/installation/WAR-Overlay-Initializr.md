@@ -3,6 +3,8 @@ layout: default
 title: CAS - WAR Overlay Initializr
 category: Installation
 ---
+{% include variables.html %}
+
 
 # WAR Overlay Initializr
 

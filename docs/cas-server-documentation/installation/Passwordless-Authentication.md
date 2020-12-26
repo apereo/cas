@@ -3,6 +3,8 @@ layout: default
 title: CAS - Passwordless Authentication
 category: Authentication
 ---
+{% include variables.html %}
+
 
 # Passwordless Authentication
 

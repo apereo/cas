@@ -3,6 +3,8 @@ layout: default
 title: CAS - Trusted Authentication
 category: Authentication
 ---
+{% include variables.html %}
+
 
 # Trusted Authentication
 

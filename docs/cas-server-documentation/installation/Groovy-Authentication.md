@@ -3,6 +3,8 @@ layout: default
 title: CAS - Groovy Authentication
 category: Authentication
 ---
+{% include variables.html %}
+
 
 # Groovy Authentication
 

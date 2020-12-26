@@ -3,6 +3,8 @@ layout: default
 title: CAS - Deny Authentication
 category: Authentication
 ---
+{% include variables.html %}
+
 
 # Deny Authentication
 

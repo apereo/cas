@@ -3,6 +3,8 @@ layout: default
 title: CAS - Couchbase Authentication
 category: Authentication
 ---
+{% include variables.html %}
+
 
 # Couchbase Authentication
 

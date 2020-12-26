@@ -3,6 +3,8 @@ layout: default
 title: CAS - MongoDb Authentication
 category: Authentication
 ---
+{% include variables.html %}
+
 
 # MongoDb Authentication
 

@@ -3,6 +3,8 @@ layout: default
 title: CAS - GeoTracking Authentication Requests
 category: Authentication
 ---
+{% include variables.html %}
+
 
 # GeoTracking Authentication Requests
 

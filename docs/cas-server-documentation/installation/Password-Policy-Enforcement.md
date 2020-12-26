@@ -3,6 +3,8 @@ layout: default
 title: CAS - Password Policy Enforcement
 category: Authentication
 ---
+{% include variables.html %}
+
 
 # Password Policy Enforcement
 

@@ -4,6 +4,8 @@ title: CAS - Configuring SSO Sessions
 category: SSO & SLO
 ---
 
+
+
 # SSO Sessions
 
 A ticket-granting cookie is an HTTP cookie set by CAS upon the establishment of a single sign-on session. This cookie maintains login

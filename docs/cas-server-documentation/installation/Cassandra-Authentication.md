@@ -3,6 +3,8 @@ layout: default
 title: CAS - Apache Cassandra Authentication
 category: Authentication
 ---
+{% include variables.html %}
+
 
 # Apache Cassandra Authentication
 

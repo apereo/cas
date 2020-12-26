@@ -3,6 +3,8 @@ layout: default
 title: CAS - LDAP Authentication
 category: Authentication
 ---
+{% include variables.html %}
+
 
 # LDAP Authentication
 

@@ -3,6 +3,8 @@ layout: default
 title: CAS - Configuring Authentication Components
 category: Authentication
 ---
+{% include variables.html %}
+
 
 # Configuration
 

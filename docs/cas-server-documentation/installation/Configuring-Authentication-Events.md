@@ -3,6 +3,8 @@ layout: default
 title: CAS - Configuring Authentication Events
 category: Authentication
 ---
+{% include variables.html %}
+
 
 # Authentication Events
 

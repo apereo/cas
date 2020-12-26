@@ -3,6 +3,8 @@ layout: default
 title: CAS - Digest Authentication
 category: Authentication
 ---
+{% include variables.html %}
+
 
 # Digest Authentication
 

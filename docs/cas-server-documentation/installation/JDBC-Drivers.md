@@ -3,6 +3,8 @@ layout: default
 title: CAS - JDBC Drivers
 category: Configuration
 ---
+{% include variables.html %}
+
 
 # JDBC Drivers
 

@@ -3,6 +3,8 @@ layout: default
 title: CAS - Overlay Installation
 category: Installation
 ---
+{% include variables.html %}
+
 
 # Servlet Container Configuration
 

@@ -3,6 +3,8 @@ layout: default
 title: CAS - Proxy Authentication
 category: Authentication
 ---
+{% include variables.html %}
+
 
 # Proxy Authentication
 

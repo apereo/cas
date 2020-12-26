@@ -3,6 +3,8 @@ layout: default
 title: CAS - Okta Authentication
 category: Authentication
 ---
+{% include variables.html %}
+
 
 # Okta Authentication
 

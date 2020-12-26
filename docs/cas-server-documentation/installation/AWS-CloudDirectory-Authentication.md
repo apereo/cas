@@ -3,6 +3,8 @@ layout: default
 title: CAS - Amazon Cloud Directory Authentication
 category: Authentication
 ---
+{% include variables.html %}
+
 
 # Amazon Cloud Directory Authentication
 

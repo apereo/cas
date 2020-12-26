@@ -3,6 +3,8 @@ layout: default
 title: CAS - SAML2 Attribute Release
 category: Attributes
 ---
+{% include variables.html %}
+
 
 # SAML2 Attribute Release
 

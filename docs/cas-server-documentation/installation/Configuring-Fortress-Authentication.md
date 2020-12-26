@@ -3,6 +3,8 @@ layout: default
 title: CAS - Apache Fortress Authentication
 category: Authentication
 ---
+{% include variables.html %}
+
 
 # Apache Fortress Authentication
 

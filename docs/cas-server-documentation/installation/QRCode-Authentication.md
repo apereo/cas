@@ -3,6 +3,8 @@ layout: default
 title: CAS - QR Code Authentication
 category: Authentication
 ---
+{% include variables.html %}
+
 
 # QR Code Authentication
 

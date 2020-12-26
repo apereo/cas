@@ -3,6 +3,8 @@ layout: default
 title: CAS - Consul Service Discovery
 category: High Availability
 ---
+{% include variables.html %}
+
 
 # Consul Server Discovery Service
 

@@ -3,6 +3,8 @@ layout: default
 title: CAS - Password Synchronization
 category: Authentication
 ---
+{% include variables.html %}
+
 
 # Password Synchronization
 

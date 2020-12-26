@@ -3,6 +3,8 @@ layout: default
 title: CAS - Remote Address Authentication
 category: Authentication
 ---
+{% include variables.html %}
+
 
 # Remote Address Authentication
 
