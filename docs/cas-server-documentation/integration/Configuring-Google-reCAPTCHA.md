@@ -4,6 +4,8 @@ title: CAS - Google reCAPTCHA
 category: Integration
 ---
 
+{% include variables.html %}
+
 # Google reCAPTCHA
 
 reCAPTCHA is a [Google service](https://developers.google.com/recaptcha) that protects your CAS deployment from spam and abuse.

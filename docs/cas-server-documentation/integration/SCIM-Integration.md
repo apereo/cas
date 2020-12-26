@@ -4,6 +4,8 @@ title: CAS - SCIM Provisioning Integration
 category: Integration
 ---
 
+{% include variables.html %}
+
 # Overview
 
 The [SCIM standard](http://www.simplecloud.info/) is created to simplify user management and provisioning in the cloud by

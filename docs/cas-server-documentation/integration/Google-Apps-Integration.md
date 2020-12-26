@@ -4,6 +4,8 @@ title: CAS - Google Apps Integration
 category: Integration
 ---
 
+{% include variables.html %}
+
 # Overview
 
 Google Apps for Education (or any of the Google Apps) utilizes SAML 2.0 to provide an

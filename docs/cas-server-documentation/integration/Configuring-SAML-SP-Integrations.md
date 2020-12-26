@@ -4,6 +4,8 @@ title: CAS - SAML SP Integrations
 category: Integration
 ---
 
+{% include variables.html %}
+
 # SAML SP Integrations
 
 CAS provides built-in integration support for a number of SAML2 service providers. Configuring these service providers

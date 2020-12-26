@@ -4,6 +4,8 @@ title: CAS - Delegate Authentication
 category: Authentication
 ---
 
+{% include variables.html %}
+
 # Delegated Authentication
 
 CAS can act as a client (i.e. service provider or proxy) using 

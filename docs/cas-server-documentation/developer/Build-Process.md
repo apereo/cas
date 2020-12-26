@@ -4,6 +4,8 @@ title: CAS - Build Process
 category: Developer
 ---
 
+{% include variables.html %}
+
 # CAS Build Process
 
 This page documents the steps that a CAS developer/contributor should take for building a CAS server locally.
@@ -308,7 +310,6 @@ alias bci='clear; cas; \
     -DskipNestedConfigMetadataGen=true \
     -DskipBootifulArtifact=true'
 ```
-
 
 # CAS Initializr Build Process
 

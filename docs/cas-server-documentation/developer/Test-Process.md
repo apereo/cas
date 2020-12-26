@@ -4,6 +4,8 @@ title: CAS - Test Process
 category: Developer
 ---
 
+{% include variables.html %}
+
 # Test Process
 
 This page documents the steps that a CAS developer/contributor should take for testing a CAS server deployment during development. For additional

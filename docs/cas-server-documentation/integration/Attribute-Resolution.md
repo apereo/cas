@@ -4,6 +4,8 @@ title: CAS - Attribute Resolution
 category: Attributes
 ---
 
+{% include variables.html %}
+
 # Attribute Resolution
 
 Attribute resolution strategies are controlled by

@@ -4,6 +4,8 @@ title: CAS - Google Analytics
 category: Integration
 ---
 
+{% include variables.html %}
+
 # Google Analytics
 
 Google Analytics can be used to deliver useful statistics. create custom dimensions and metrics to gain

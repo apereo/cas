@@ -2816,6 +2816,7 @@ To learn more about this topic, [please review this guide](../installation/Trust
 ## WS-Fed Delegated Authentication
 
 To learn more about this topic, [please review this guide](../integration/ADFS-Integration.html).
+
 {% include {{ version }}/wsfed-delegated-authentication.md configKey="cas.authn.wsfed[0]" %}
 
 ## Multifactor Authentication
@@ -2915,10 +2916,7 @@ The following strategies can be used to generate keys for trusted device records
 | `DEFAULT`            | Uses a combination of the username, device name and device fingerprint to generate the device key.
 | `LEGACY`             | Deprecated. Uses a combination of the username, record date and device fingerprint to generate the device key.
 
-#### Signing & Encryption
-
-The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
-The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.mfa.trusted`.
+{% include {{ version }}/signing-encryption.md configKey="cas.authn.mfa.trusted" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
 
 #### JSON Storage
 
@@ -2979,8 +2977,7 @@ under the configuration key `cas.authn.mfa.trusted.dynamo-db`.
 The device fingerprint cookie component can be configured with the common cookie properties found [here](Configuration-Properties-Common.html#cookie-properties) under the configuration key `cas.authn.mfa.trusted.device-fingerprint.cookie`.
 The default cookie name is set to `MFATRUSTED` and the default maxAge is set to `2592000`.
 
-The device fingerprint cookie component supports signing & encryption. The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
-The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.mfa.trusted.device-fingerprint.cookie`.
+{% include {{ version }}/signing-encryption.md configKey="cas.authn.mfa.trusted.device-fingerprint.cookie" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
 
 #### Cleaner
 
@@ -3029,11 +3026,8 @@ To learn more about this topic, [please review this guide](../mfa/GoogleAuthenti
 Multifactor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass)
 under the configuration key `cas.authn.mfa.gauth`. Scheduler settings for this feature are available [here](Configuration-Properties-Common.html#job-scheduling) under the configuration key `cas.authn.mfa.gauth.cleaner`.
 
-#### Signing & Encryption
 
-The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
-The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.  Signing & encryption settings for this feature are
-available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.mfa.gauth`.
+{% include {{ version }}/signing-encryption.md configKey="cas.authn.mfa.gauth" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
 
 #### Google Authenticator CouchDb
 
@@ -4077,9 +4071,8 @@ To learn more about this topic, [please review this guide](../protocol/WS-Federa
 # cas.authn.wsfed-idp.sts.realm.issuer=CAS
 ```
 
-### Signing & Encryption
+{% include {{ version }}/signing-encryption.md configKey="cas.authn.wsfed-idp.sts" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
 
-The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.  These come into play in order to secure authentication requests between the IdP and STS. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.wsfed-idp.sts`.
 
 ## OAuth2
 
@@ -4202,11 +4195,7 @@ Cookie settings for this feature are available [here](Configuration-Properties-C
 # cas.tgc.auto-configure-cookie-path=true
 ```
 
-### Signing & Encryption
-
-The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
-The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.
-Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.tgc`.
+{% include {{ version }}/signing-encryption.md configKey="cas.tgc" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
 
 ## Logout
 
@@ -4242,7 +4231,7 @@ the last resort in getting an integration to work...maybe not even then.</p></di
 # cas.clearpass.cache-credential=false
 ```
 
-The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.clearpass`.
+{% include {{ version }}/signing-encryption.md configKey="cas.clearpass" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
 
 ## Message Bundles
 
@@ -5077,11 +5066,7 @@ available [here](Configuration-Properties-Common.html#signing--encryption) under
 
 ## Protocol Ticket Security
 
-Controls whether tickets issued by the CAS server should be secured via signing and encryption
-when shared with client applications on outgoing calls. The signing and encryption 
-keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
-The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encryption settings for this 
-feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket`.
+{% include {{ version }}/signing-encryption.md configKey="cas.ticket" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
 
 ## Service Tickets Behavior
 
@@ -5774,13 +5759,11 @@ Common email notifications settings for this feature are available [here](Config
 under the configuration key `cas.authn.pm.reset`. SMS notifications settings for this feature are 
 available [here](Configuration-Properties-Common.html#sms-notifications) under the configuration key `cas.authn.pm.reset`.
 
-The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
-The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.pm.reset`.
+{% include {{ version }}/signing-encryption.md configKey="cas.authn.pm.reset" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
 
 ### Webflow Configuration
 
-Webflow auto-configuration settings for this feature are available [here](Configuration-Properties-Common.html#webflow-auto-configuration) under 
-the configuration key `cas.authn.pm.webflow`.
+Webflow auto-configuration settings for this feature are available [here](Configuration-Properties-Common.html#webflow-auto-configuration) under the configuration key `cas.authn.pm.webflow`.
 
 ### Password History
 
@@ -5850,16 +5833,5 @@ feature are available [here](Configuration-Properties-Common.html#password-encod
 ## ACME Integration
 
 To learn more about this topic, [please review this guide](../integration/ACME-Integration.html).
-    
-```properties
-# cas.acme.domains[0]=example.org
-# cas.acme.terms-of-use-accepted=true
 
-# cas.acme.key-size=2048
-
-# cas.acme.server-url=acme://letsencrypt.org/staging
-# cas.acme.user-key.location=file:/etc/cas/config/acme/user.key
-# cas.acme.domain-key.location=file:/etc/cas/config/acme/domain.key
-# cas.acme.domain-csr.location=file:/etc/cas/config/acme/domain.csr
-# cas.acme.domain-chain.location=file:/etc/cas/config/acme/domain-chain.crt
-```
+{% include {{ version }}/acme-integration.md %}

@@ -4,6 +4,8 @@ title: CAS - ACME Integration
 category: Integration
 ---
 
+{% include variables.html %}
+
 # Overview
 
 Enable support for the *Automatic Certificate Management Environment* (ACME) protocol 
@@ -46,5 +48,5 @@ path to respond to verification challenges.
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#acme-integration).
+{% include {{ version }}/acme-integration.md %}
 

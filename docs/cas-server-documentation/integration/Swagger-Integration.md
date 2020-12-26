@@ -4,6 +4,8 @@ title: CAS - Swagger API Integration
 category: Integration
 ---
 
+{% include variables.html %}
+
 # Overview
 
 CAS takes advantages of [Swagger](https://swagger.io/) to produce API documentation automatically. 
