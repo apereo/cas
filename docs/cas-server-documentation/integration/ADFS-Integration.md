@@ -16,13 +16,7 @@ available as attributes to CAS Server, and by extension CAS Clients.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-wsfederation-webflow</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-wsfederation-webflow" %}
 
 You may also need to declare the following repository in your
 CAS Overlay to be able to resolve dependencies:

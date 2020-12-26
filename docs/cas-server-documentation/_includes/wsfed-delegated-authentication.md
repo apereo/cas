@@ -32,7 +32,5 @@ strategies when collecting principal attributes:
 # {{ include.configKey }}.encryption-private-key-password=NONE
 ```
 
-### Signing & Encryption
-
 {% include {{ version }}/signing-encryption.md configKey="cas.authn.wsfed[0].cookie" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
 
