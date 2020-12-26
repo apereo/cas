@@ -4,6 +4,8 @@ title: CAS - DynamoDb Ticket Registry
 category: Ticketing
 ---
 
+{% include variables.html %}
+
 # DynamoDb Ticket Registry
 
 DynamoDb ticket registry integration is enabled by including the following dependency in the WAR overlay:

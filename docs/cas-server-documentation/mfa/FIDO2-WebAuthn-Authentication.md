@@ -4,6 +4,8 @@ title: CAS - FIDO2 WebAuthn Multifactor Authentication
 category: Multifactor Authentication
 ---
 
+{% include variables.html %}
+
 # FIDO2 WebAuthn Multifactor Authentication
 
 [WebAuthn](https://webauthn.io/) is an API that makes it very easy for a relying party, such as a web service, to integrate strong 

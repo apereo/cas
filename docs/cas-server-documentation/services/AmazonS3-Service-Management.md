@@ -4,6 +4,8 @@ title: CAS - Amazon S3 Service Registry
 category: Services
 ---
 
+{% include variables.html %}
+
 # Amazon S3 Service Registry
 
 Stores registered service data in a [Amazon S3](https://aws.amazon.com/s3/) buckets. Each service definition is managed inside its own separate bucket

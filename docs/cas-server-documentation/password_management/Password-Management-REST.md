@@ -4,6 +4,8 @@ title: CAS - Password Management
 category: Password Management
 ---
 
+{% include variables.html %}
+
 # Password Management - REST
 
 Tasks such as locating users' email and security questions as well as management

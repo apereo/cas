@@ -4,6 +4,8 @@ title: CAS - Multifactor Authentication
 category: Multifactor Authentication
 ---
 
+{% include variables.html %}
+
 # Multifactor Authentication (MFA)
 
 CAS provides support for a variety of multifactor authentication providers and options, while allowing one to design their own. The secondary authentication factor always kicks in *after* the primary step and existing authentication sessions will be asked to step-up to the needed multifactor authentication factor, should the request or trigger require it. The satisfied authentication context is communicated back to the application as well to denote a successful multifactor authentication event.

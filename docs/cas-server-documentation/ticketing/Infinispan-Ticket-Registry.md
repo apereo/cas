@@ -4,6 +4,8 @@ title: CAS - Infinispan Ticket Registry
 category: Ticketing
 ---
 
+{% include variables.html %}
+
 # Infinispan Ticket Registry
 
 Infinispan integration is enabled by including the following dependency in the WAR overlay:

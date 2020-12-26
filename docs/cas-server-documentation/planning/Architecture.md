@@ -4,6 +4,8 @@ title: CAS - Architecture
 category: Planning
 ---
 
+{% include variables.html %}
+
 # Architecture
 
 ![CAS Architecture Diagram](../images/cas_architecture.png "CAS Architecture Diagram")

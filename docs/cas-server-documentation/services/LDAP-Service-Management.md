@@ -4,6 +4,8 @@ title: CAS - LDAP Service Registry
 category: Services
 ---
 
+{% include variables.html %}
+
 # LDAP Service Registry
 
 Service registry implementation which stores the services in a LDAP Directory and attempts to *map* service records to LDAP entries in order to configure 

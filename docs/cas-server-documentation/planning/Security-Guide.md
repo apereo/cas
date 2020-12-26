@@ -4,6 +4,8 @@ title: CAS - Security Guide
 category: Planning
 ---
 
+{% include variables.html %}
+
 # Security Guide
 
 CAS is security software that provides secure Web-based single sign-on to Web-based applications. Single sign-on

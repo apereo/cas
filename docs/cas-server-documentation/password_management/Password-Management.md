@@ -4,6 +4,8 @@ title: CAS - Password Management
 category: Password Management
 ---
 
+{% include variables.html %}
+
 # Password Management
 
 If authentication fails due to a rejected password policy, CAS is able to intercept

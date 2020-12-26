@@ -4,6 +4,8 @@ title: CAS - CAS SAML Protocol
 category: Protocols
 ---
 
+{% include variables.html %}
+
 # SAML Protocol
 
 CAS has support for versions 1.1 and 2 of the SAML protocol to a specific extent.

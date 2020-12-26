@@ -4,6 +4,8 @@ title: CAS - RESTful Service Registry
 category: Services
 ---
 
+{% include variables.html %}
+
 # RESTful Service Registry
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-rest-service-registry" %}

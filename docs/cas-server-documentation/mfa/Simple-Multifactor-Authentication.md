@@ -4,6 +4,8 @@ title: CAS - Simple Multifactor Authentication
 category: Multifactor Authentication
 ---
 
+{% include variables.html %}
+
 # Simple Multifactor Authentication
 
 Allow CAS to act as a multifactor authentication provider on its own, issuing tokens and sending them to end-users via pre-defined communication

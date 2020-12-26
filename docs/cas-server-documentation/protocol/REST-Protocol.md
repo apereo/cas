@@ -4,6 +4,8 @@ title: CAS - CAS REST Protocol
 category: Protocols
 ---
 
+{% include variables.html %}
+
 # REST Protocol
 
 The REST protocol allows one to model applications as users, programmatically acquiring

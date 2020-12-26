@@ -4,8 +4,10 @@ title: CAS - JPA Ticket Registry
 category: Ticketing
 ---
 
+{% include variables.html %}
 
 # JPA Ticket Registry
+
 The JPA Ticket Registry allows CAS to store client authenticated state
 data (tickets) in a database back-end such as MySQL.
 

@@ -4,6 +4,8 @@ title: CAS - Default Ticket Registry
 category: Ticketing
 ---
 
+{% include variables.html %}
+
 # Default Ticket Registry
 
 The default registry uses a memory-backed internal concurrent map for ticket storage and retrieval, though there is also the option to use an implementation that is backed by a caching engine to gain slightly better performance when it comes to evicting expired tickets.

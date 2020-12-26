@@ -4,6 +4,8 @@ title: CAS - JSON Service Registry
 category: Services
 ---
 
+{% include variables.html %}
+
 # JSON Service Registry
 
 This registry reads services definitions from JSON configuration files at the application context initialization time.

@@ -4,6 +4,8 @@ title: CAS - OAuth Protocol
 category: Protocols
 ---
 
+{% include variables.html %}
+
 # OAuth Protocol
 
 You can configure the CAS server with:

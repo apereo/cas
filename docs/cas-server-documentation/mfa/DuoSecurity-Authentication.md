@@ -4,6 +4,8 @@ title: CAS - Duo Security Authentication
 category: Multifactor Authentication
 ---
 
+{% include variables.html %}
+
 # Duo Security Authentication
 
 [Duo Security](https://www.duo.com) is a two-step verification service the provides 

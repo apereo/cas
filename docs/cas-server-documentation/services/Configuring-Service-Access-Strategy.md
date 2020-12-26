@@ -4,6 +4,8 @@ title: CAS - Configuring Service Access Strategy
 category: Services
 ---
 
+{% include variables.html %}
+
 # Configure Service Access Strategy
 
 The access strategy of a registered service provides fine-grained control over the service authorization rules.

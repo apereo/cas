@@ -4,6 +4,8 @@ title: CAS - Password Management
 category: Password Management
 ---
 
+{% include variables.html %}
+
 # Password Management - JSON
 
 Accounts and password may be stored inside a static modest JSON resource, whose location is taught to CAS via settings.

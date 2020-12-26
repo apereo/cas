@@ -4,6 +4,8 @@ title: CAS - RADIUS Authentication
 category: Multifactor Authentication
 ---
 
+{% include variables.html %}
+
 # RADIUS Authentication
 
 RADIUS support is enabled by only including the following dependency in the overlay:

@@ -4,6 +4,8 @@ title: CAS - Service Management
 category: Services
 ---
 
+{% include variables.html %}
+
 # Service Management
 
 The CAS service management facility allows CAS server administrators to declare and configure which services

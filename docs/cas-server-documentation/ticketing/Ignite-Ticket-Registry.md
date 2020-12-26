@@ -4,7 +4,10 @@ title: CAS - Ignite Ticket Registry
 category: Ticketing
 ---
 
+{% include variables.html %}
+
 # Ignite Ticket Registry
+
 Ignite integration is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-ignite-ticket-registry" %}

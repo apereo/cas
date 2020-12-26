@@ -4,6 +4,8 @@ title: CAS - Upgrade Guide
 category: Planning
 ---
 
+{% include variables.html %}
+
 # Upgrade Guide
 
 In general, it is recommended that adopters try to keep their CAS deployment in alignment with the latest CAS version available.

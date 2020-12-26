@@ -4,6 +4,8 @@ title: CAS - Configuring Service Replication
 category: Services
 ---
 
+{% include variables.html %}
+
 # Configure Service Replication
 
 In the event that CAS service definitions are not managed globally via a [centralized store](Service-Management.html), 

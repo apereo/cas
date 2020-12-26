@@ -4,6 +4,8 @@ title: CAS - Monitoring
 category: Monitoring & Statistics
 ---
 
+{% include variables.html %}
+
 # CAS Monitoring
 
 CAS monitors may be defined to report back the health status of the ticket registry and other underlying connections to systems that are in use by CAS. Spring Boot offers a number of monitors known as `HealthIndicator`s that are activated given the presence of specific settings (i.e. `spring.mail.*`). CAS itself providers a number of other monitors based on the same component that are listed below, whose action may require a combination of a particular dependency module and its relevant settings.

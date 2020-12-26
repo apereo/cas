@@ -4,6 +4,8 @@ title: CAS - Authentication Interrupt
 category: Webflow Management
 ---
 
+{% include variables.html %}
+
 # Authentication Interrupt
 
 CAS has the ability to pause and interrupt the authentication flow to reach out to external services and resources, querying for status and settings that 

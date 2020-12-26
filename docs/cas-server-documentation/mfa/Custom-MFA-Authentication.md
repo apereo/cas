@@ -4,6 +4,8 @@ title: CAS - Custom Multifactor Authentication
 category: Multifactor Authentication
 ---
 
+{% include variables.html %}
+
 # Custom Multifactor Authentication
 
 To create your own custom multifactor authentication provider, you will need to design components that primarily register a customized authentication flow into the CAS webflow engine under a unique identifier. Later on, you will also need to consider strategies by which your custom multifactor authentication provider [can be triggered](Configuring-Multifactor-Authentication-Triggers.html).

@@ -4,6 +4,8 @@ title: CAS - Redis Service Registry
 category: Services
 ---
 
+{% include variables.html %}
+
 # Redis Service Registry
 
 This service registry stores tickets in one or more [Redis](http://redis.io/) instances. The

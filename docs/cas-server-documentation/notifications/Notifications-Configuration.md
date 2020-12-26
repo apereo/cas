@@ -4,6 +4,8 @@ title: CAS - Notifications
 category: Notifications
 ---
 
+{% include variables.html %}
+
 # Notifications
 
 CAS presents the ability to notify users and accounts on select actions via platform-specific notifications. Example actions include 

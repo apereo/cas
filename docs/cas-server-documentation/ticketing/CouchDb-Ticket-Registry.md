@@ -4,6 +4,8 @@ title: CAS - CouchDB Ticket Registry
 category: Ticketing
 ---
 
+{% include variables.html %}
+
 # CouchDB Ticket Registry
 
 CouchDB integration is enabled by including the following dependency in the WAR overlay:

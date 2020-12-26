@@ -4,6 +4,8 @@ title: CAS - Configuring Service HTTP Security Headers
 category: Services
 ---
 
+{% include variables.html %}
+
 # Service HTTP Security Headers
 
 CAS has ability to control, on a per-service basis, whether certain security-related HTTP headers should be injected into the response. While headers are typically enabled and defined globally as part of the [CAS Security Filter](../planning/Security-Guide.html#cas-security-filter), the strategy described here allows one to disable/enable the injection of these headers for certain applications and service requests and override the global defaults.

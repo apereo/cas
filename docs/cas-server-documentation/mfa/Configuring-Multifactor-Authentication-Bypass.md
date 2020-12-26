@@ -4,6 +4,8 @@ title: CAS - Multifactor Authentication Bypass
 category: Multifactor Authentication
 ---
 
+{% include variables.html %}
+
 # Multifactor Authentication Bypass
 
 Each [multifactor provider](Configuring-Multifactor-Authentication.html) is equipped with options to allow for bypass. Once the provider

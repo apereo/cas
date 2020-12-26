@@ -4,6 +4,8 @@ title: Views - User Interface Customization - CAS
 category: User Interface
 ---
 
+{% include variables.html %}
+
 # Views
 
 The views are found inside the CAS web application in the `WEB-INF\lib\cas-server-support-thymeleaf-<cas.version>.jar` in the 

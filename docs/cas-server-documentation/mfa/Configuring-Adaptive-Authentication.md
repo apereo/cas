@@ -4,6 +4,8 @@ title: CAS - Adaptive Authentication
 category: Multifactor Authentication
 ---
 
+{% include variables.html %}
+
 # Adaptive Authentication
 
 Adaptive authentication in CAS allows you to accept or reject authentication requests based on certain characteristics

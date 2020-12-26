@@ -4,6 +4,8 @@ title: CAS - Sending Email
 category: Notifications
 ---
 
+{% include variables.html %}
+
 # Sending Email
 
 CAS presents the ability to notify users on select actions via email messages. Example actions include notification 

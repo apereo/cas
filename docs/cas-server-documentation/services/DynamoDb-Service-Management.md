@@ -4,6 +4,8 @@ title: CAS - DynamoDb Service Registry
 category: Services
 ---
 
+{% include variables.html %}
+
 # DynamoDb Service Registry
 
 Stores registered service data in a [DynamoDb](https://aws.amazon.com/dynamodb/) instance.

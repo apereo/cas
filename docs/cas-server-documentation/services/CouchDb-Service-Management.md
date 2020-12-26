@@ -4,7 +4,10 @@ title: CAS - CouchDB Service Registry
 category: Services
 ---
 
+{% include variables.html %}
+
 # CouchDB Service Registry
+
 CouchDB integration is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-couchdb-service-registry" %}

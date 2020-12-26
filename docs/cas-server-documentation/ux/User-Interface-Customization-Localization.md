@@ -4,7 +4,10 @@ title: Localization - User Interface Customization - CAS
 category: User Interface
 ---
 
+{% include variables.html %}
+
 # Localization
+
 The CAS Web application includes a number of localized message files:
 
 - English (US)

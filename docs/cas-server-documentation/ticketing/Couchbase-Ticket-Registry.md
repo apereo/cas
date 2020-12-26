@@ -4,6 +4,8 @@ title: CAS - Couchbase Ticket Registry
 category: Ticketing
 ---
 
+{% include variables.html %}
+
 # Couchbase Ticket Registry
 
 Couchbase integration is enabled by including the following dependency in the WAR overlay:

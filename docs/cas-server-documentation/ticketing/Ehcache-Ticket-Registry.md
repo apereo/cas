@@ -4,6 +4,8 @@ title: CAS - Ehcache Ticket Registry
 category: Ticketing
 ---
 
+{% include variables.html %}
+
 # Ehcache v3 Ticket Registry
 
 Ehcache 3.x integration is enabled by including the following dependency in the WAR overlay:

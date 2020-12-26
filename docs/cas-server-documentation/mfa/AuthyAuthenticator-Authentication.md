@@ -4,6 +4,8 @@ title: CAS - Authy Authentication
 category: Multifactor Authentication
 ---
 
+{% include variables.html %}
+
 # Authy Authentication
 
 CAS provides support for Authy's [TOTP API](http://docs.authy.com/totp.html). This is done
