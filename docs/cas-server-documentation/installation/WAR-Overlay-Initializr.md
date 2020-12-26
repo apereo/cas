@@ -63,6 +63,7 @@ The [CAS Initializr][initializr] can be invoked using curl to generate a CAS ove
 the CAS Initializr, the following strategies can be used.
 
 ### Heroku
+
 The CAS projects provides a running an instance of the CAS Initializr on [Heroku][initializr]. To get 
 started with this instance, a simple way might be to include the following function in your bash profile:
      
@@ -135,23 +136,12 @@ Or using HTTPie:
 http https://casinit.herokuapp.com Accept:application/json
 ```
 
+### Dependency Management
+
+CAS Initializr is set to use the [CAS BOM](BOM-Dependency-Management.html) for dependency management.
+
+## Contributions
+
+Please see [this guide](/cas/developer/Contributor-Guidelines.html) for more details.
+
 [initializr]: https://casinit.herokuapp.com/
-
-
-## Contributing to the CAS Initializr
-
-The code for the CAS Initializr is found in the https://github.com/apereo/cas repository on the `heroku-casinit` branch.
-Clone CAS and checkout the `heroku-casinit` branch if you want to customize it or improve it. 
-```
-git clone --single-branch --branch heroku-casinit https://github.com/apereo/cas.git casinit
-cd casinit
-gradlew bootRun
-```
-Then in another terminal, test using the local initializr:
-```
-mkdir cas-server
-cd cas-server
-curl -k http://localhost:8080/starter.tgz -d dependencies="ldap,aup,x509" | tar -xzvf 
-gradlew build
-```
-Make any desired changes to the CAS Initializr project and submit the changes as a PR if they are generally useful.
