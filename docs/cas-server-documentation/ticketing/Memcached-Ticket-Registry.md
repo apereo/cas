@@ -8,13 +8,7 @@ category: Ticketing
 
 Memcached integration is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-memcached-ticket-registry</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-memcached-ticket-registry" %}
 
 This registry stores tickets in one or more [memcached](http://memcached.org/) instances. 
 Memcached stores data in exactly one node among many in a distributed cache, thus avoiding the requirement to replicate
@@ -37,13 +31,7 @@ single-threaded memcached client that should be the default choice for the major
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-memcached-spy</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-memcached-spy" %}
 
 ## AWS ElastiCache
 
@@ -65,13 +53,7 @@ This metadata is updated whenever nodes are added or removed from the cluster.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-memcached-aws-elasticache</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-memcached-aws-elasticache" %}
 
 ## Configuration Considerations
 

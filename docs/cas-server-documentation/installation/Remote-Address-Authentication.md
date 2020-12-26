@@ -30,12 +30,6 @@ be deployed within an internal network this is generally not a problem.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-generic-remote-webflow</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-generic-remote-webflow" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#remote-address-authentication).

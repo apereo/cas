@@ -8,13 +8,7 @@ category: Ticketing
 
 Infinispan integration is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-infinispan-ticket-registry</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-infinispan-ticket-registry" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#infinispan-ticket-registry).
 

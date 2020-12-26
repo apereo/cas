@@ -36,13 +36,7 @@ verify their identities without passwords and login using FIDO2-enabled devices.
 
 Support is enabled by including the following module in the overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-passwordless-webflow</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-passwordless-webflow" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#passwordless-authentication).
 
@@ -64,13 +58,7 @@ properties, please [review this guide](../configuration/Configuration-Properties
 
 Support is enabled by including the following module in the overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-passwordless-mongo</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-passwordless-mongo" %}
 
 ### LDAP
 
@@ -80,13 +68,7 @@ properties, please [review this guide](../configuration/Configuration-Properties
 
 Support is enabled by including the following module in the overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-passwordless-ldap</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-passwordless-ldap" %}
 
 ### JSON
 
@@ -187,13 +169,8 @@ This strategy allows one to store tokens and manage their expiration policy usin
 
 Support is enabled by including the following module in the overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-passwordless-jpa</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```     
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-passwordless-jpa" %}
+    
 
 To see the relevant list of CAS 
 properties, please [review this guide](../configuration/Configuration-Properties.html#passwordless-authentication).

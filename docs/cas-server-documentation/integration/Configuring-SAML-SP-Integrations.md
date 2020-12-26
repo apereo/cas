@@ -19,13 +19,7 @@ to ensure all such [attributes are properly resolved](Attribute-Resolution.html)
 
 Support is enabled by including the following module in the Overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-saml-sp-integrations</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-saml-sp-integrations" %}
 
 The following SAML SP integrations, as samples, are provided by CAS:
 

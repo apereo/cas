@@ -11,13 +11,7 @@ JSON files are expected to be found inside a configured directory location and t
 
 Support is enabled by adding the following module into the overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-json-service-registry</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-json-service-registry" %}
 
 A sample JSON file follows:
 

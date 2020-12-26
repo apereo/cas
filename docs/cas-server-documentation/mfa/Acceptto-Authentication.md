@@ -13,13 +13,7 @@ Start by visiting the [Acceptto documentation](https://www.acceptto.com/acceptto
 
 Support is enabled by including the following module in the overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-acceptto-mfa</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-acceptto-mfa" %}
 
 The integration adds support for both multifactor authentication and QR passwordless authentication.
 

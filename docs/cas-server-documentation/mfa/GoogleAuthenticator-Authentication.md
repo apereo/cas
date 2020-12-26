@@ -14,13 +14,7 @@ Note that the functionality presented here should also be compatible with the li
 
 Support is enabled by including the following module in the overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-gauth</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-gauth" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#google-authenticator).
 
@@ -53,13 +47,7 @@ are found. The ability to handle multiple device registration records can be con
 
 Registration records and tokens may be kept inside a database instance via the following module:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-gauth-jpa</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-gauth-jpa" %}
 
 To learn how to configure database drivers, [please see this guide](../installation/JDBC-Drivers.html).
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#google-authenticator-jpa).
@@ -68,13 +56,7 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 Registration records and tokens may be kept inside a CouchDb instance, via the following module:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-gauth-couchdb</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-gauth-couchdb" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#google-authenticator-couchdb).
 
@@ -82,13 +64,7 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 Registration records and tokens may be kept inside a MongoDb instance, via the following module:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-gauth-mongo</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-gauth-mongo" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#google-authenticator-mongodb).
 
@@ -96,13 +72,7 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 Registration records and tokens may be kept inside a Redis instance via the following module:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-gauth-redis</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-gauth-redis" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#google-authenticator-redis).
 
@@ -110,13 +80,7 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 Registration records may be kept inside LDAP/AD systems via the following module:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-gauth-ldap</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-gauth-ldap" %}
 
 Account registration records are kept inside a designated configurable multi-valued attribute as JSON blobs. The attribute values are parsed
 to load, save, update or delete accounts. The content of each attribute value can be signed/encrypted if necessary. 

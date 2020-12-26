@@ -93,13 +93,8 @@ and samples, and attempt to automate much of the configuration.
 
 Support is enabled by including the following module in the WAR overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-theme-collections</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```       
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-theme-collections" %}
+      
 
 The following themes are provided by this module and can be assigned to service definitions:
 

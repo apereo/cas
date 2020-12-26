@@ -11,13 +11,7 @@ settings for retrieval, search and persistence of service definitions. By defaul
 
 Support is enabled by adding the following module into the overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-ldap-service-registry</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-ldap-service-registry" %}
 
 ## Configuration
 

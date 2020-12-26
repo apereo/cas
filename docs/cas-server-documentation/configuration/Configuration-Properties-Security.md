@@ -88,13 +88,7 @@ To learn more about Vault and its installation process, please visit the project
 
 Once vault is accessible and configured inside CAS, support is provided via the following dependency:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-configuration-cloud-vault</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-configuration-cloud-vault" %}
 
 To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html#vault).
 

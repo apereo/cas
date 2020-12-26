@@ -353,13 +353,8 @@ takes advantage of scripting functionality built into the Java platform via addi
 natively supported by CAS, the following module is required in the overlay to include support for additional languages
 such as Python, etc.
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-script-engines</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```  
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-script-engines" %}
+ 
 
 The service definition then may be designed as:
 

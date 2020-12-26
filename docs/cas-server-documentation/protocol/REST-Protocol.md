@@ -20,13 +20,7 @@ by exposing a way to REST-fully obtain a Ticket Granting Ticket and then use tha
 
 Support is enabled by including the following to the overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-rest</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-rest" %}
 
 ## Request a Ticket Granting Ticket
 
@@ -53,13 +47,7 @@ If incorrect credentials are sent, CAS will respond with a `401 Unauthorized`. A
 
 Ticket-granting tickets created by the REST protocol may be issued as JWTs instead. Support is enabled by including the following in your overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-rest-tokens</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-rest-tokens" %}
 
 To request a ticket-granting ticket as JWT next, ensure the `POST` request matches the following:
 
@@ -118,13 +106,7 @@ Service tickets created by the REST protocol may be issued as JWTs instead. See 
 
 Support is enabled by including the following in your overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-rest-tokens</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-rest-tokens" %}
 
 Note that JWTs created are typically signed and encrypted by default with pre-generated keys. To control settings or to see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#jwt-tickets).
 
@@ -175,13 +157,7 @@ GET /cas/v1/tickets/TGT-fdsjfsdfjkalfewrihfdhfaie HTTP/1.0
 
 Support is enabled by including the following in your overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-rest-services</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-rest-services" %}
 
 Invoke CAS to register applications into its own service registry. The REST call must be authenticated using basic authentication where credentials are authenticated and accepted by the existing CAS authentication strategy, and furthermore the authenticated principal must be authorized with a pre-configured role/attribute name and value that is designated in the CAS configuration via the CAS properties. The body of the request must be the service definition that shall be registered in JSON format and of course, CAS must be configured to accept the particular service type defined in the body. The accepted media type for this request is `application/json`.
 
@@ -229,13 +205,7 @@ during TLS handshake, and have CAS server retrieve the certificate from the cont
 
 Support is enabled by including the following in your overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-rest-x509</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-rest-x509" %}
 
 ### Request a Ticket Granting Ticket (Proxy TLS Client Authentication using a body parameter)
 

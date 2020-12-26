@@ -13,13 +13,7 @@ Consent attribute records stored in the configured repository are signed and enc
 
 Support is enabled by including the following module in the Overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-consent-webflow</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-consent-webflow" %}
 
 ## Administrative Endpoints
 
@@ -244,13 +238,7 @@ def Boolean deleteAll(final Object... args) {
 
 Support is enabled by including the following module in the Overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-consent-jdbc</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-consent-jdbc" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#jpa-attribute-consent).
 
@@ -258,13 +246,7 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 Support is enabled by including the following module in the Overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-consent-mongo</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-consent-mongo" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#mongodb-attribute-consent).
 
@@ -272,13 +254,7 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 Support is enabled by including the following module in the Overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-consent-redis</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-consent-redis" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#redis-attribute-consent).
 
@@ -286,13 +262,7 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 Support is enabled by including the following module in the Overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-consent-couchdb</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-consent-couchdb" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#couchdb-attribute-consent).
 
@@ -301,13 +271,7 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 Support is enabled by including the following module in the Overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-consent-rest</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-consent-rest" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#rest-attribute-consent).
 
@@ -331,13 +295,7 @@ Consent decisions can be stored on LDAP user objects. The decisions are serializ
 
 Support is enabled by including the following module in the Overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-consent-ldap</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-consent-ldap" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#ldap-attribute-consent).
 

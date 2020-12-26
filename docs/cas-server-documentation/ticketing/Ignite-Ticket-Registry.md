@@ -7,13 +7,7 @@ category: Ticketing
 # Ignite Ticket Registry
 Ignite integration is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-ignite-ticket-registry</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-ignite-ticket-registry" %}
 
 This registry stores tickets in an [Ignite](http://ignite.apache.org/) instance.
 

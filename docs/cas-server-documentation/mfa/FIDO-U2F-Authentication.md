@@ -15,13 +15,7 @@ Opera seem to exist, you should always verify that U2F support is available for 
 
 Support is enabled by including the following module in the WAR overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-u2f</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-u2f" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#fido-u2f).
 
@@ -102,13 +96,7 @@ def remove(Object[] args) {
 
 Device registrations may be kept inside a relational database by including the following module in the WAR overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-u2f-jpa</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-u2f-jpa" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#fido-u2f-jpa).
 
@@ -116,13 +104,7 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 Device registrations may be kept inside a MongoDb instance by including the following module in the WAR overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-u2f-mongo</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-u2f-mongo" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#fido-u2f-mongodb).
 
@@ -130,13 +112,7 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 Device registrations may be kept inside a DynamoDb instance by including the following module in the WAR overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-u2f-dynamodb</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-u2f-dynamodb" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#fido-u2f-dynamodb).
 
@@ -144,13 +120,7 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 Device registrations may be kept inside a Redis instance by including the following module in the WAR overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-u2f-redis</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-u2f-redis" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#fido-u2f-redis).
 
@@ -158,13 +128,7 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 Device registrations may be kept inside a CouchDb instance by including the following module in the WAR overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-u2f-couchdb</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-u2f-couchdb" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#fido-u2f-couchdb).
 

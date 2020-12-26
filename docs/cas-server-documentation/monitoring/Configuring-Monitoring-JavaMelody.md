@@ -10,13 +10,7 @@ Use [JavaMelody](https://github.com/javamelody/javamelody) is to monitor CAS in 
 
 Support is added by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-javamelody</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-javamelody" %}
 
 JavaMelody monitoring is by default exposed at `${context-path}/monitoring` where `${context-path}` is typically set to `/cas`.
 

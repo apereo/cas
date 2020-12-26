@@ -8,13 +8,7 @@ category: Ticketing
 
 Couchbase integration is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-couchbase-ticket-registry</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-couchbase-ticket-registry" %}
 
 
 [Couchbase](http://www.couchbase.com) is a highly available, open source NoSQL database server based on

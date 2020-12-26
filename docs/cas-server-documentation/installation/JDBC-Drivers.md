@@ -9,13 +9,7 @@ category: Configuration
 While in most cases this is unnecessary and handled by CAS automatically,
 you may need to also include the following module to account for various database drivers:
 
-```xml
-<dependency>
-   <groupId>org.apereo.cas</groupId>
-   <artifactId>cas-server-support-jdbc-drivers</artifactId>
-   <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-jdbc-drivers" %}
 
 ## Database Support
 

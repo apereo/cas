@@ -8,13 +8,7 @@ category: Authentication
 
 Database authentication is enabled by including the following dependencies in the WAR overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-jdbc</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-jdbc" %}
 
 To learn how to configure database drivers, [please see this guide](JDBC-Drivers.html).
 

@@ -69,13 +69,7 @@ SERVER IP ADDRESS: 192.168.200.22
 
 If you intend to use a database for auditing functionality, enable the following module in your configuration:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-audit-jdbc</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-audit-jdbc" %}
 
 To learn how to configure database drivers, please [review this guide](JDBC-Drivers.html).
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#database-audits).
@@ -84,13 +78,7 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 If you intend to use a MongoDb database for auditing functionality, enable the following module in your configuration:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-audit-mongo</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-audit-mongo" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#mongodb-audits).
 
@@ -98,13 +86,7 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 If you intend to use a Redis database for auditing functionality, enable the following module in your configuration:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-audit-redis</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-audit-redis" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#redis-audits).
 
@@ -112,13 +94,7 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 If you intend to use a CouchDb database for auditing functionality, enable the following module in your configuration:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-audit-couchdb</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-audit-couchdb" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#couchdb-audits).
 
@@ -126,13 +102,7 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 If you intend to use a Couchbase database for auditing functionality, enable the following module in your configuration:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-audit-couchbase</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-audit-couchbase" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#couchbase-audits).
 
@@ -140,13 +110,7 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 If you intend to use a DynamoDb database for auditing functionality, enable the following module in your configuration:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-audit-dynamodb</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-audit-dynamodb" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#dynamodb-audits).
 
@@ -154,13 +118,7 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 Audit events may also be `POST`ed to an endpoint of your choosing. To activate this feature, enable the following module in your configuration:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-audit-rest</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-audit-rest" %}
 
 The body of the HTTP request is a JSON representation of the audit record. 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#rest-audits).

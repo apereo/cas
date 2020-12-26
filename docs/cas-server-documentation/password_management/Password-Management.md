@@ -20,13 +20,7 @@ a successful change. This behavior can be altered via CAS settings.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-pm-webflow</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-pm-webflow" %}
 
 <div class="alert alert-info"><strong>YAGNI</strong><p>You do not need to explicitly include this module
 in your configuration and overlays. This is just to teach you that it exists.</p></div>

@@ -16,13 +16,7 @@ CAS supports Swivel Secure's TURing-image based authentication. TURing uses the 
 
 Support is enabled by including the following module in the overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-swivel</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-swivel" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#swivel-secure).
 

@@ -8,13 +8,7 @@ category: Ticketing
 
 MongoDb ticket registry integration is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-mongo-ticket-registry</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-mongo-ticket-registry" %}
 
 This registry stores tickets in one or more [MongoDb](https://www.mongodb.com/) instances.
 Tickets are auto-converted and wrapped into document objects as JSON. Special indices are

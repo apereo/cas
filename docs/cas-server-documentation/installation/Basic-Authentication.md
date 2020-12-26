@@ -10,13 +10,7 @@ Verify and authenticate credentials using Basic Authentication.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-basic</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-basic" %}
 
 To access a CAS-protected application using a command-line client such as `curl`, the following command may be used:
 

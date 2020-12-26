@@ -54,13 +54,7 @@ The `token` parameter may also be passed as a request header.
 
 JWT authentication support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-token-webflow</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-token-webflow" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#jwttoken-authentication).
 

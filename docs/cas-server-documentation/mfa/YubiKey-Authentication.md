@@ -13,13 +13,7 @@ To configure YubiKey accounts and obtain API keys, [refer to the documentation](
 
 [YubiKey](https://www.yubico.com/products/yubikey-hardware) authentication components are enabled by including the following dependencies in the WAR overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-yubikey</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-yubikey" %}
 
 ## Administrative Endpoints
 
@@ -72,13 +66,7 @@ with the public id of the YubiKey device. See [review this guide](../configurati
 
 Support is enabled by including the following dependencies in the WAR overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-yubikey-jpa</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-yubikey-jpa" %}
 
 The expected database schema that is automatically created and configured by CAS contains a single table as `YubiKeyAccount` with the following fields:
 
@@ -92,13 +80,7 @@ The expected database schema that is automatically created and configured by CAS
 
 Support is enabled by including the following dependencies in the WAR overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-yubikey-couchdb</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-yubikey-couchdb" %}
 
 The registration records are kept inside a single CouchDb database of your choosing that will be auto-created by CAS.
 The structure of this database's documents is as follows:
@@ -113,13 +95,7 @@ The structure of this database's documents is as follows:
 
 Support is enabled by including the following dependencies in the WAR overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-yubikey-redis</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-yubikey-redis" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#yubikey).
 
@@ -127,13 +103,7 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 Support is enabled by including the following dependencies in the WAR overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-yubikey-dynamodb</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-yubikey-dynamodb" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#yubikey).
 
@@ -141,13 +111,7 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 Support is enabled by including the following dependencies in the WAR overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-yubikey-mongo</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-yubikey-mongo" %}
 
 The registration records are kept inside a single MongoDb collection of your choosing that will be auto-created by CAS.
 The structure of this collection is as follows:

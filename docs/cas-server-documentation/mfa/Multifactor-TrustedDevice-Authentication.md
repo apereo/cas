@@ -29,13 +29,7 @@ This can be optionally disabled and applied only to a selected set of providers.
 
 Support is provided via the following module:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-trusted-mfa</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-trusted-mfa" %}
 
 ## Administrative Endpoints
 
@@ -115,13 +109,7 @@ User decisions may also be kept inside a regular RDBMS of your own choosing.
 
 Support is provided via the following module:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-trusted-mfa-jdbc</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-trusted-mfa-jdbc" %}
 
 To learn how to configure database drivers, [please see this guide](../installation/JDBC-Drivers.html).
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#jdbc-storage).
@@ -132,13 +120,7 @@ User decisions may also be kept inside a CouchDb instance.
 
 Support is provided via the following module:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-trusted-mfa-couchdb</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-trusted-mfa-couchdb" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#couchdb-storage).
 
@@ -148,13 +130,7 @@ User decisions may also be kept inside a MongoDb instance.
 
 Support is provided via the following module:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-trusted-mfa-mongo</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-trusted-mfa-mongo" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#mongodb-storage).
 
@@ -164,13 +140,7 @@ User decisions may also be kept inside a DynamoDb instance.
 
 Support is provided via the following module:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-trusted-mfa-dynamodb</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-trusted-mfa-dynamodb" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#dynamodb-storage).
 
@@ -180,13 +150,7 @@ User decisions may also be kept inside a Redis instance.
 
 Support is provided via the following module:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-trusted-mfa-redis</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-trusted-mfa-redis" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#redis-storage).
 
@@ -197,13 +161,7 @@ which CAS shall contact to verify user decisions and remember those for later.
 
 Support is provided via the following module:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-trusted-mfa-rest</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-trusted-mfa-rest" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#rest-storage).
 

@@ -70,13 +70,7 @@ Other platforms such as Windows may require custom configuration.
 
 Note that by default, the embedded container attempts to enable the HTTP2 protocol.
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-webapp-tomcat</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-webapp-tomcat" %}
 
 #### IPv4 Configuration
 
@@ -122,23 +116,11 @@ java -jar /path/to/cas.war -Djava.util.logging.config.file=/path/to/logging.prop
 
 ### Jetty
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-webapp-jetty</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-webapp-jetty" %}
 
 ### Undertow
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-webapp-undertow</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-webapp-undertow" %}
 
 ## External
 
@@ -146,13 +128,7 @@ A CAS deployment may be deployed to any number of external servlet containers. T
 the servlet specification `v4.0.0` at a minimum. In these scenarios, the following vanilla CAS web application
 may be used, in the [WAR Overlay](WAR-Overlay-Installation.html) :
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-webapp</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-webapp" %}
 
 While there is no official project support, the following containers should be compatible with a CAS deployment:
 
@@ -185,13 +161,7 @@ Note for JBoss, Wildfly and EAP, you may need to add a `jboss-deloyment-structur
 
 Support for external containers is enabled by including the following module in the overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-webapp</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-webapp" %}
 
 ### Async Support
 

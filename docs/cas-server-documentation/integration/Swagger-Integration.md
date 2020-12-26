@@ -12,13 +12,7 @@ application context and are present in the overlay.
 
 Support is enabled by including the following dependency in the overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-swagger</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-swagger" %}
 
 ## Endpoints
 

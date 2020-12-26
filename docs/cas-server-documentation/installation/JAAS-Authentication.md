@@ -186,13 +186,7 @@ Ldaptive provides several [login modules for authentication and authorization](h
 
 In order to take advantage of the login modules provided by Ldaptive, the following dependency must be present and added to the overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-ldap-core</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-ldap-core" %}
 
 ### Keystore
 

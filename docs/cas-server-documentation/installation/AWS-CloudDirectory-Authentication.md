@@ -14,13 +14,7 @@ To learn more, please [see this guide](http://docs.aws.amazon.com/directoryservi
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-cloud-directory-authentication</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-cloud-directory-authentication" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#amazon-cloud-directory-authentication).
 

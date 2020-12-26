@@ -12,13 +12,7 @@ category: Logs & Audits
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-sentry</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-sentry" %}
 
 The [Logging](../logging/Logging.html) configuration file must be adjusted to match the following:
 

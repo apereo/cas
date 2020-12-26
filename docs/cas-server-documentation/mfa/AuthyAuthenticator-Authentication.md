@@ -13,13 +13,7 @@ Start by visiting the [Authy documentation](https://www.authy.com/developers/).
 
 Support is enabled by including the following module in the overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-authy</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-authy" %}
 
 ## Configuration
 

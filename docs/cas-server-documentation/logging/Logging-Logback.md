@@ -16,13 +16,7 @@ Refer to the [Logback documentation](https://logback.qos.ch/documentation.html) 
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-logback</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-logback" %}
 
 You must also make sure the following modules and dependencies are excluded from the WAR overlay:
 

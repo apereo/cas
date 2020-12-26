@@ -99,13 +99,7 @@ SAML2 identity provider metadata can be managed in dynamics ways as well. To lea
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-saml-idp</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-saml-idp" %}
 
 You may also need to declare the following repository in
 your CAS overlay to be able to resolve dependencies:

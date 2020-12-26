@@ -14,13 +14,7 @@ The default monitors report back brief memory and ticket stats.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-core-monitor</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-core-monitor" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#monitoring)
 and [this guide](../configuration/Configuration-Properties.html#memory).
@@ -29,13 +23,7 @@ and [this guide](../configuration/Configuration-Properties.html#memory).
 
 ## Memcached
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-memcached-monitor</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-memcached-monitor" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#memcached-monitors).
 
@@ -47,13 +35,7 @@ Enable support via the [spymemcached library](https://code.google.com/p/spymemca
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-memcached-spy</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-memcached-spy" %}
 
 ### AWS ElastiCache
 
@@ -63,25 +45,13 @@ and to initiate and maintain connections to all of these nodes.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-memcached-aws-elasticache</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-memcached-aws-elasticache" %}
 
 ## Ehcache
 
 Monitor the status and state of a cache backed by Ehcache.
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-ehcache-monitor</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-ehcache-monitor" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#cache-monitors).
 
@@ -89,13 +59,7 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 Monitor the status and availability of a MongoDb database.
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-mongo-monitor</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-mongo-monitor" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#mongodb-monitors).
 
@@ -103,13 +67,7 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 Monitor the status and state of a cache backed by Hazelcast.
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-hazelcast-monitor</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-hazelcast-monitor" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#cache-monitors).
 
@@ -117,13 +75,7 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 Monitor the status and availability of a relational SQL database.
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-jdbc-monitor</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-jdbc-monitor" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#database-monitoring).
 
@@ -131,12 +83,6 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 Monitor the status and availability of an LDAP server.
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-ldap-monitor</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-ldap-monitor" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#ldap-server-monitoring).

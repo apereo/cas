@@ -6,13 +6,7 @@ category: Services
 
 # RESTful Service Registry
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-rest-service-registry</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-rest-service-registry" %}
 
 ## Configuration
 

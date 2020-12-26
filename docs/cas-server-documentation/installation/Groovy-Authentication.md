@@ -11,13 +11,7 @@ handling password policy and all other related matters are the sole responsibili
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-generic</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-generic" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#groovy-authentication).
 

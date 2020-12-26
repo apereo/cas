@@ -33,13 +33,7 @@ A SAML 1.1 ticket validation response is obtained by validating a ticket via POS
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-saml</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-saml" %}
 
 ### Administrative Endpoints
 
