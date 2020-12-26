@@ -1765,8 +1765,9 @@ under the configuration key `cas.authn.surrogate.rest`.
 
 ### Notifications
 
-Email notifications settings for this feature are available [here](Configuration-Properties-Common.html#email-notifications) 
-under the configuration key `cas.authn.surrogate`. SMS notifications settings for this feature are 
+{% include {{ version }}/email-notifications.md configKey="cas.authn.surrogate" %}
+
+SMS notifications settings for this feature are 
 available [here](Configuration-Properties-Common.html#sms-notifications) under the configuration key `cas.authn.surrogate`.
 
 ## QR Authentication
@@ -1812,8 +1813,9 @@ more about this topic, [please review this guide](../installation/Configuring-Ri
 # cas.authn.adaptive.risk.response.risky-authentication-attribute=triggeredRiskBasedAuthentication
 ```
 
-Email notifications settings for this feature are available [here](Configuration-Properties-Common.html#email-notifications) 
-under the configuration key `cas.authn.adaptive.risk.response`. SMS notifications settings for this feature are 
+{% include {{ version }}/email-notifications.md configKey="cas.authn.adaptive.risk.response" %}
+
+SMS notifications settings for this feature are 
 available [here](Configuration-Properties-Common.html#sms-notifications) under the configuration key `cas.authn.adaptive.risk.response`.
 
 ## Passwordless Authentication
@@ -1872,16 +1874,14 @@ key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of
 Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under 
 the configuration key `cas.authn.passwordless.tokens`.
 
-Email notifications settings for this feature are available [here](Configuration-Properties-Common.html#email-notifications) 
-under the configuration key `cas.authn.passwordless.tokens`. SMS notifications settings for this feature are 
+{% include {{ version }}/email-notifications.md configKey="cas.authn.passwordless.tokens" %}
+
+SMS notifications settings for this feature are 
 available [here](Configuration-Properties-Common.html#sms-notifications) under the configuration key `cas.authn.passwordless.tokens`.
 
 Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under 
 the configuration key `cas.authn.passwordless.tokens.jpa`. Scheduler settings for this feature are available [here](Configuration-Properties-Common.html#job-scheduling) under the configuration key `cas.authn.passwordless.tokens.jpa.cleaner`.
 
-## Email Submissions
-
-Email notifications settings are available [here](Configuration-Properties-Common.html#email-notifications).
 
 ## SMS Messaging
 
@@ -2997,8 +2997,9 @@ To learn more about this topic, [please review this guide](../mfa/Simple-Multifa
 # cas.authn.mfa.simple.token-length=6
 ```
 
-Email notifications settings for this feature are available [here](Configuration-Properties-Common.html#email-notifications) 
-under the configuration key `cas.authn.mfa.simple`. SMS notifications settings for this feature are 
+{% include {{ version }}/email-notifications.md configKey="cas.authn.mfa.simple" %}
+
+SMS notifications settings for this feature are 
 available [here](Configuration-Properties-Common.html#sms-notifications) under the configuration key `cas.authn.mfa.simple`.
 
 Multifactor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass)
@@ -4624,8 +4625,9 @@ Scheduler settings for this feature are available [here](Configuration-Propertie
 
 ### Service Registry Notifications
 
-Email notifications settings for this feature are available [here](Configuration-Properties-Common.html#email-notifications) 
-under the configuration key `cas.service-registry`. SMS notifications settings for this feature are 
+{% include {{ version }}/email-notifications.md configKey="cas.service-registry" %}
+
+SMS notifications settings for this feature are 
 available [here](Configuration-Properties-Common.html#sms-notifications) under the configuration key `cas.service-registry`.
 
 ### JSON Service Registry
@@ -5755,8 +5757,9 @@ To learn more about this topic, [please review this guide](../installation/Passw
 # cas.authn.pm.auto-login=false
 ```
 
-Common email notifications settings for this feature are available [here](Configuration-Properties-Common.html#email-notifications) 
-under the configuration key `cas.authn.pm.reset`. SMS notifications settings for this feature are 
+{% include {{ version }}/email-notifications.md configKey="cas.authn.pm.reset" %}
+
+SMS notifications settings for this feature are 
 available [here](Configuration-Properties-Common.html#sms-notifications) under the configuration key `cas.authn.pm.reset`.
 
 {% include {{ version }}/signing-encryption.md configKey="cas.authn.pm.reset" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
