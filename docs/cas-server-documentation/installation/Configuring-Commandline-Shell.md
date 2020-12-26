@@ -3,6 +3,8 @@ layout: default
 title: CAS - Configuring Commandline Shell
 category: Installation
 ---
+{% include variables.html %}
+
 
 # CAS Command-line Shell
 

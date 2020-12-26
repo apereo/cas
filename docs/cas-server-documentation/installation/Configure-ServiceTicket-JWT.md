@@ -3,6 +3,8 @@ layout: default
 title: CAS - JWT Service Tickets
 category: Ticketing
 ---
+{% include variables.html %}
+
 
 # JWT Service Tickets
 

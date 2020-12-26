@@ -3,6 +3,8 @@ layout: default
 title: CAS - Troubleshooting Guide
 category: Installation
 ---
+{% include variables.html %}
+
 
 # Troubleshooting Guide
 

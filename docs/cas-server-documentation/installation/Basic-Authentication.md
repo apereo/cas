@@ -3,6 +3,8 @@ layout: default
 title: CAS - Basic Authentication
 category: Authentication
 ---
+{% include variables.html %}
+
 
 # Basic Authentication
 

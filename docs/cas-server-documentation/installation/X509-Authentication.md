@@ -3,6 +3,8 @@ layout: default
 title: CAS - X.509 Authentication
 category: Authentication
 ---
+{% include variables.html %}
+
 
 # X.509 Authentication
 

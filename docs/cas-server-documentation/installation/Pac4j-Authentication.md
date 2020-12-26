@@ -3,6 +3,8 @@ layout: default
 title: CAS - pac4j Authentication
 category: Authentication
 ---
+{% include variables.html %}
+
 
 <p align="center">
   <img src="https://pac4j.github.io/pac4j/img/logo-cas.png" width="300" />

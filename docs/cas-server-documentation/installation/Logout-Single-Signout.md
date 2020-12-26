@@ -3,6 +3,8 @@ layout: default
 title: CAS - Logout & Single Logout
 category: SSO & SLO
 ---
+{% include variables.html %}
+
 
 # Logout and Single Logout (SLO)
 

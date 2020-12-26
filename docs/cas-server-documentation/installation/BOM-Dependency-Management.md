@@ -3,6 +3,8 @@ layout: default
 title: CAS - Bill of Materials
 category: Authentication
 ---
+{% include variables.html %}
+
 
 # CAS Bill of Materials  (BOM)
 

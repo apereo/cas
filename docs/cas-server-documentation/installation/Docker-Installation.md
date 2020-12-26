@@ -3,6 +3,8 @@ layout: default
 title: CAS - Docker Installation
 category: Installation
 ---
+{% include variables.html %}
+
 
 # Docker Installation
 

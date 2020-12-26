@@ -3,6 +3,8 @@ layout: default
 title: CAS - Configuring Authentication Throttling
 category: Authentication
 ---
+{% include variables.html %}
+
 
 # Throttling Authentication Attempts
 

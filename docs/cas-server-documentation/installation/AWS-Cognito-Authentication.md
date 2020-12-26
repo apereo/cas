@@ -3,6 +3,8 @@ layout: default
 title: CAS - Amazon Cognito Authentication
 category: Authentication
 ---
+{% include variables.html %}
+
 
 # Amazon Cognito Authentication
 

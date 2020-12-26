@@ -3,6 +3,8 @@ layout: default
 title: CAS - Kubernetes Helm Deployment
 category: Installation
 ---
+{% include variables.html %}
+
 
 # Kubernetes Helm Installation
 

@@ -3,6 +3,8 @@ layout: default
 title: CAS - SAML2 Authentication
 category: Protocols
 ---
+{% include variables.html %}
+
 
 # SAML2 Authentication
 

@@ -3,6 +3,8 @@ layout: default
 title: CAS - JWT Authentication
 category: Authentication
 ---
+{% include variables.html %}
+
 
 # JWT Authentication
 

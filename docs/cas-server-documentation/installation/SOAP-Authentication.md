@@ -3,6 +3,8 @@ layout: default
 title: CAS - SOAP Authentication
 category: Authentication
 ---
+{% include variables.html %}
+
 
 # SOAP Authentication
 

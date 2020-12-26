@@ -3,6 +3,8 @@ layout: default
 title: CAS - JAAS Authentication
 category: Authentication
 ---
+{% include variables.html %}
+
 
 # JAAS Authentication
 

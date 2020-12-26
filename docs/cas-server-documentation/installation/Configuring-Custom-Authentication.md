@@ -3,6 +3,8 @@ layout: default
 title: CAS - Design Authentication Strategies
 category: Authentication
 ---
+{% include variables.html %}
+
 
 # Custom Authentication Strategies
 

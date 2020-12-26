@@ -1,7 +1,10 @@
 ---
 layout: default
 title: CAS - SAML2 Metadata Management
+category: Protocols
 ---
+
+{% include variables.html %}
 
 # SAML2 Metadata Management
 

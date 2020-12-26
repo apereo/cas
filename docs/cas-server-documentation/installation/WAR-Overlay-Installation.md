@@ -3,6 +3,8 @@ layout: default
 title: CAS - Overlay Installation
 category: Installation
 ---
+{% include variables.html %}
+
 
 # WAR Overlay Installation
 

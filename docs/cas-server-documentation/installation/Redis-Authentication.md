@@ -1,7 +1,10 @@
 ---
 layout: default
 title: CAS - Redis Authentication
+category: Authentication
 ---
+
+{% include variables.html %}
 
 # Redis Authentication
 

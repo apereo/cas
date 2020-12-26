@@ -3,6 +3,8 @@ layout: default
 title: CAS - Shiro Authentication
 category: Authentication
 ---
+{% include variables.html %}
+
 
 
 # Shiro Authentication

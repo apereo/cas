@@ -1,7 +1,10 @@
 ---
 layout: default
 title: CAS - CouchDb Authentication
+category: Authentication
 ---
+
+{% include variables.html %}
 
 # CouchDb Authentication
 

@@ -3,6 +3,8 @@ layout: default
 title: CAS - OAuth Authentication
 category: Authentication
 ---
+{% include variables.html %}
+
 
 # OAuth/OpenID Authentication
 
