@@ -8,13 +8,7 @@ category: Authentication
 
 LDAP integration is enabled by including the following dependency in the overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-ldap</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-ldap" %}
 
 ## Configuration
 

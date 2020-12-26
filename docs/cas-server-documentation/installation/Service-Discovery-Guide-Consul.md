@@ -51,13 +51,7 @@ Each individual CAS server is given the ability to auto-register itself with the
 
 Support is added by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-consul-client</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-consul-client" %}
 
 To see the relevant list of CAS properties,
 please [review this guide](../configuration/Configuration-Properties.html#consul-service-discovery).

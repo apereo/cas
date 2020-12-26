@@ -12,13 +12,7 @@ pushed to the defined remotes.
 
 Support is enabled by adding the following module into the overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-git-service-registry</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-git-service-registry" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#git-service-registry).
 

@@ -14,13 +14,7 @@ In practice, CAS prompts the user for only their username and responds with a pa
 
 Support is enabled by including the following module in the overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-gua</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-gua" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#gua-authentication).
 

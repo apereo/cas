@@ -21,10 +21,4 @@ To see the relevant list of CAS properties, please [review this guide](../config
 Synchronize account passwords with one or more LDAP servers. Support is enabled by including the 
 following dependencies in the WAR overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-ldap</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-ldap" %}

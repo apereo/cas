@@ -55,13 +55,7 @@ the Advanced Message Queuing Protocol (AMQP).
 
 Support is enabled by including the following dependency in the final overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-configuration-cloud-amqp</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-configuration-cloud-amqp" %}
 
 To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html#rabbitmq).
 
@@ -74,12 +68,6 @@ making it highly valuable for enterprise infrastructures to process streaming da
 
 Support is enabled by including the following dependency in the final overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-configuration-cloud-kafka</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-configuration-cloud-kafka" %}
 
 To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html#kafka).

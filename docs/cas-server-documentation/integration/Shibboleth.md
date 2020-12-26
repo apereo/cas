@@ -29,13 +29,7 @@ and [v3](https://github.com/Unicon/shib-cas-authn3) and [v4](https://github.com/
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-shibboleth</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-shibboleth" %}
 
 ### Relying Party EntityId
 
@@ -61,13 +55,7 @@ that is provided by the metadata associated with the relying party.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-saml-mdui</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-saml-mdui" %}
 
 ### Relying Party Metadata
 

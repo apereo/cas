@@ -14,13 +14,7 @@ designed to be consumed by the developer and subsequent CAS modules, while audit
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-core-events</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-core-events" %}
 
 ## Recorded Data
 
@@ -61,13 +55,7 @@ The following storage backends are available for consumption of events.
 
 Stores authentication events into a MongoDb NoSQL database.
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-events-mongo</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-events-mongo" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#mongodb-events).
 
@@ -75,13 +63,7 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 Stores authentication events into a DynamoDb database.
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-events-dynamodb</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-events-dynamodb" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#dynamodb-events).
 
@@ -89,13 +71,7 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 Stores authentication events inside a CouchDb instance.
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-events-couchdb</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-events-couchdb" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#couchdb-events).
 
@@ -103,13 +79,7 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 Stores authentication events into a RDBMS.
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-events-jpa</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-events-jpa" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#database-events).
 
@@ -117,13 +87,7 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 Stores authentication events inside an InfluxDb instance.
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-events-influxdb</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-events-influxdb" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#influxdb-events).
 
@@ -131,10 +95,4 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 Stores authentication events into memory for a very limited time period.
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-events-memory</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-events-memory" %}

@@ -13,13 +13,7 @@ gracefully continue in case settings are not defined.
 
 Default support for email notifications is automatically enabled/included by the relevant modules using the following module:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-core-notifications</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-core-notifications" %}
 
 You need not explicitly include this module in WAR Overlay configurations, except when there is a need to access components and APIs at compile-time. 
 

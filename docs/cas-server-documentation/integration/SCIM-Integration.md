@@ -24,13 +24,7 @@ via SCIM to a provisioning/identity/entity engine which would then dynamically s
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-scim</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-scim" %}
 
 To see the relevant list of CAS properties, 
 please [review this guide](../configuration/Configuration-Properties.html#provisioning).

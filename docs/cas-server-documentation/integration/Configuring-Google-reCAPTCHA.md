@@ -11,13 +11,7 @@ It uses advanced risk analysis techniques to tell humans and bots apart. CAS sup
 
 Support is enabled by including the following module in the Overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-captcha</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-captcha" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#google-recaptcha-integration).
 

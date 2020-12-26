@@ -14,13 +14,7 @@ a scenario to allow CAS 120 authentication requests per minute with a refill rat
 
 Enable the following module in your configuration overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-throttle-bucket4j</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-throttle-bucket4j" %}
 
 ## Failure Throttling
 
@@ -42,13 +36,7 @@ overly restrictive policies may prevent legitimate authentication attempts.
 
 Enable the following module in your configuration overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-throttle</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-throttle" %}
 
 ### Administrative Endpoints
 
@@ -74,13 +62,7 @@ This component requires and depends on the [CAS auditing functionality](Audits.h
 
 Enable the following module in your configuration overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-throttle-jdbc</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-throttle-jdbc" %}
 
 For additional instructions on how to configure auditing, please [review the following guide](Audits.html).
 
@@ -90,13 +72,7 @@ Queries a MongoDb data source used by the CAS audit facility to prevent successi
 
 Enable the following module in your configuration overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-throttle-mongo</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-throttle-mongo" %}
 
 ### Redis
 
@@ -106,13 +82,7 @@ depends on the [CAS auditing functionality](Audits.html) via Redis.
 
 Enable the following module in your configuration overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-throttle-redis</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-throttle-redis" %}
 
 ### Hazelcast
 
@@ -121,13 +91,7 @@ This component requires and depends on the [CAS auditing functionality](Audits.h
 
 Enable the following module in your configuration overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-throttle-hazelcast</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-throttle-hazelcast" %}
 
 ### CouchDb
 
@@ -137,13 +101,7 @@ depends on the [CAS auditing functionality](Audits.html) via CouchDb.
 
 Enable the following module in your configuration overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-throttle-couchdb</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-throttle-couchdb" %}
 
 For additional instructions on how to configure auditing, please [review the following guide](Audits.html).
 

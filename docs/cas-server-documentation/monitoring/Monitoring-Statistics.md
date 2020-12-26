@@ -50,13 +50,8 @@ as a legacy endpoint. If you wish to obtain health status of each monitor in det
 
 The default set of CAS actuator endpoints can be turned in by including the following dependency in the WAR overlay:
                                                            
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-reports</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```                                       
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-reports" %}
+                                      
 
 Note that certain CAS features present actuator endpoints of their own, and such endpoints only become active
 once the feature is turned on and made available to CAS at runtime. For more information, refer to the specific
@@ -122,13 +117,7 @@ levels:
 
 Support for distributed tracing of requests is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-sleuth</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-sleuth" %}
 
 ![image](https://cloud.githubusercontent.com/assets/1205228/24955152/8798ad9c-1f97-11e7-8b9d-fccc3c306c42.png)
 

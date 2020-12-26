@@ -9,13 +9,7 @@ category: Authentication
 Verify and authenticate credentials against a [MongoDb](https://www.mongodb.org/) instance.
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-mongo</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-mongo" %}
 
 To see the relevant list of CAS properties,
 please [review this guide](../configuration/Configuration-Properties.html#mongodb-authentication).

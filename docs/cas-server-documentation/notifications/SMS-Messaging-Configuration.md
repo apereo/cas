@@ -12,13 +12,7 @@ providers.
 
 Default support for SMS notifications is automatically enabled/included by the relevant modules using the following module:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-core-notifications</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-core-notifications" %}
 
 You need not explicitly include this module in WAR Overlay configurations, except when there is a need to access components and APIs at compile-time. 
 See below on how to customize or override the default behavior with specific providers.
@@ -73,13 +67,7 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 To learn more, [visit this site](https://www.twilio.com/).
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-sms-twilio</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-sms-twilio" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#twilio).
 
@@ -87,13 +75,7 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 To learn more, [visit this site](https://www.textmagic.com/).
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-sms-textmagic</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-sms-textmagic" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#textmagic).
 
@@ -101,13 +83,7 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 To learn more, [visit this site](http://www.clickatell.com/).
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-sms-clickatell</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-sms-clickatell" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#clickatell).
 
@@ -115,13 +91,7 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 To learn more, [visit this site](https://docs.aws.amazon.com/sns).
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-sms-aws-sns</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-sms-aws-sns" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#amazon-sns).
 
@@ -129,12 +99,6 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 To learn more, [visit this site](https://dashboard.nexmo.com/).
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-sms-nexmo</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-sms-nexmo" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#nexmo).

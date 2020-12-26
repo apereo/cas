@@ -18,13 +18,7 @@ for authentication attempts, allowing the end user to *scan and proceed*.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-qrlogin</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-qrlogin" %}
 
 
 ## Administrative Endpoints

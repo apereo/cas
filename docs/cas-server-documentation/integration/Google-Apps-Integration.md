@@ -20,13 +20,7 @@ the SAML2 identity provider functionality in CAS to handle this integration as y
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-saml-googleapps</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-saml-googleapps" %}
 
 ## Generate Public/Private Keys
 

@@ -8,13 +8,7 @@ category: Multifactor Authentication
 
 RADIUS support is enabled by only including the following dependency in the overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-radius</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-radius" %}
 
 ## Configuration
 
@@ -36,13 +30,7 @@ repositories {
 
 RSA RADIUS OTP support for MFA is enabled by only including the following dependency in the overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-radius-mfa</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-radius-mfa" %}
 
 ## Configuration
 

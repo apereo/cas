@@ -42,13 +42,7 @@ Similar to the Dynamic Metadata Query Protocol (MDQ), SAML service provider meta
 
 Support is enabled by including the following module in the overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-saml-idp-metadata-rest</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-saml-idp-metadata-rest" %}
 
 Use the below snippet as an example to fetch metadata from REST endpoints:
 
@@ -120,13 +114,7 @@ Metadata documents may also be stored in and fetched from Git repositories. This
 
 Support is enabled by including the following module in the overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-saml-idp-metadata-git</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-saml-idp-metadata-git" %}
 
 SAML service definitions must then be designed as follows to allow CAS to fetch metadata documents from Git repositories:
 
@@ -176,13 +164,7 @@ Metadata documents may also be stored in and fetched from a MongoDb instance.  T
 
 Support is enabled by including the following module in the overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-saml-idp-metadata-mongo</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-saml-idp-metadata-mongo" %}
 
 SAML service definitions must then be designed as follows to allow CAS to fetch metadata documents from MongoDb instances:
 
@@ -235,13 +217,7 @@ deal with more than a few bilateral SAML integrations.
 
 Support is enabled by including the following module in the overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-saml-idp-metadata-redis</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-saml-idp-metadata-redis" %}
 
 SAML service definitions must then be designed as follows to allow CAS to fetch metadata documents from MongoDb instances:
 
@@ -289,13 +265,7 @@ Metadata documents may also be stored in and fetched from a relational database 
 
 Support is enabled by including the following module in the overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-saml-idp-metadata-jpa</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-saml-idp-metadata-jpa" %}
 
 SAML service definitions must then be designed as follows to allow CAS to fetch metadata documents from database instances:
 
@@ -352,13 +322,7 @@ Metadata documents may also be stored in and fetched from a NoSQL database. This
 
 Support is enabled by including the following module in the overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-saml-idp-metadata-couchdb</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-saml-idp-metadata-couchdb" %}
 
 SAML service definitions must then be designed as follows to allow CAS to fetch metadata documents from CouchDb instances:
 
@@ -462,13 +426,7 @@ single pre-defined bucket that is taught to CAS via settings.
 
 Support is enabled by including the following module in the overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-saml-idp-metadata-aws-s3</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-saml-idp-metadata-aws-s3" %}
 
 SAML service definitions must then be designed as follows to allow CAS to fetch metadata documents from MongoDb instances:
 

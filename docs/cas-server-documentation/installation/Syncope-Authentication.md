@@ -13,13 +13,7 @@ CAS support handling the authentication event via [Apache Syncope](http://syncop
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-syncope-authentication</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-syncope-authentication" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#syncope-authentication).
 

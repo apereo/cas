@@ -8,13 +8,7 @@ category: Logs & Audits
 
 Log data can be automatically routed to [AWS CloudWatch](https://aws.amazon.com/cloudwatch/). Support is enabled by including the following module in the overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-logging-config-cloudwatch</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-logging-config-cloudwatch" %}
 
 With the above module, you may then declare a specific appender to communicate with AWS CloudWatch:
 

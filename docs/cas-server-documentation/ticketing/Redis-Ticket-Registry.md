@@ -8,13 +8,7 @@ category: Ticketing
 
 Redis integration is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-redis-ticket-registry</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-redis-ticket-registry" %}
 
 This registry stores tickets in one or more [Redis](http://redis.io/) instances. The
 [spring data redis](http://projects.spring.io/spring-data-redis/) library used by this component presents Redis as a

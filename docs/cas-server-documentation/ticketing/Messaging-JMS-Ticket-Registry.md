@@ -13,13 +13,7 @@ top of [Spring Boot](https://docs.spring.io/spring-boot/docs/current/reference/h
 
 Support is enabled by including the following dependency in the overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-jms-ticket-registry</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-jms-ticket-registry" %}
 
 This registry is very much an extension of the [default ticket registry](Default-Ticket-Registry.html). 
 The difference is that ticket operations applied to the registry are broadcasted using a messaging queue 
@@ -57,13 +51,7 @@ When the latter is configured, CAS configures the registry connecting to a broke
 
 Support is enabled by including the following dependency in the overlay:
 
-```xml
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-artemis</artifactId>
-    <version>${springboot.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="spring-boot-starter-artemis" %}
 
 Artemis configuration is controlled by external configuration properties in [CAS settings](../configuration/Configuration-Properties.html#jms-ticket-registry).
 

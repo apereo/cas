@@ -23,13 +23,7 @@ JVM metrics, report utilization of:
 
 Support is enabled by including the following module in the Overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-metrics</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-metrics" %}
 
 Auto-configuration enables the instrumentation of all available DataSource objects 
 with a metric named `jdbc`. Data source instrumentation results in gauges representing the 

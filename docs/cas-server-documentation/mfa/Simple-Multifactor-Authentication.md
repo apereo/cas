@@ -14,13 +14,7 @@ and are assigned a configurable expiration policy controlled via CAS settings.
 
 Support is enabled by including the following module in the overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-simple-mfa</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-simple-mfa" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#simple-multifactor-authentication).
 

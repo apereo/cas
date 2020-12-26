@@ -13,13 +13,7 @@ of verification and certificate issuance.
 
 Support is enabled by including the following dependency in the overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-acme</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-acme" %}
 
 The activation of this module is performed on startup when the CAS server is ready serve http requests. 
 When this module is finished successfully, the domain key pair composed of the key and 

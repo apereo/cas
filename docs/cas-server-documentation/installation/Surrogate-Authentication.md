@@ -20,13 +20,7 @@ Example use cases for impersonation include:
 
 Surrogate authentication is enabled by including the following dependencies in the WAR overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-surrogate-webflow</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-surrogate-webflow" %}
 
 ## Account Storage
 
@@ -53,13 +47,7 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 LDAP support for surrogate authentication is enabled by including the following dependencies in the WAR overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-surrogate-authentication-ldap</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-surrogate-authentication-ldap" %}
 
 Surrogate accounts may also be retrieved from an LDAP instance. Such accounts are expected to be found in a configured attribute defined for the primary user in LDAP whose value(s) may be examined against a regular expression pattern of your own choosing to further narrow down the list of authorized surrogate accounts. To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#surrogate-authentication).
 
@@ -67,13 +55,7 @@ Surrogate accounts may also be retrieved from an LDAP instance. Such accounts ar
 
 CouchDb support for surrogate authentication is enabled by including the following dependencies in the WAR overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-surrogate-authentication-couchdb</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-surrogate-authentication-couchdb" %}
 
 Surrogate accounts may also be retrieved from an CouchDb instance. By default, this takes the form of surrogate/principal key/value pairs. Users authorized as surrogates may be listed multiple times to authorize them to access multiple accounts. Additionally, the CouchDb surrogate support may be configured to use a profile attribute containing a list of principals the user may surrogate for with the `profileBased` property. To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#surrogate-authentication).
 
@@ -81,13 +63,7 @@ Surrogate accounts may also be retrieved from an CouchDb instance. By default, t
 
 JDBC support for surrogate authentication is enabled by including the following dependencies in the WAR overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-surrogate-authentication-jdbc</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-surrogate-authentication-jdbc" %}
 
 Aside from the usual database settings, this mode requires the specification of two SQL queries; one that determines eligibility and one that is able to retrieve
 the list of accounts that can be impersonated for a given admin user. To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#jdbc-surrogate-accounts).
@@ -96,13 +72,7 @@ the list of accounts that can be impersonated for a given admin user. To see the
 
 REST support for surrogate authentication is enabled by including the following dependencies in the WAR overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-surrogate-authentication-rest</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-surrogate-authentication-rest" %}
 
 | Method       | Description                                                   | Parameter(s)             | Response
 |--------------|---------------------------------------------------------------|--------------------------|-----------

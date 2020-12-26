@@ -21,13 +21,7 @@ Note that:
 
 You will need to have compile-time access to the following modules in the Overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-core-webflow</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-core-webflow" %}
 
 These are modules that ship with CAS by default and thou shall mark them with a `compile` or `provided` scope in your build configuration.
 

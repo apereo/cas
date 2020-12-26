@@ -8,13 +8,7 @@ category: Ticketing
 
 Cassandra integration is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-cassandra-ticket-registry</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-cassandra-ticket-registry" %}
 
 This registry stores tickets in [Apache Cassandra](http://cassandra.apache.org/) instances. Tickets are expected to be found/stored in a `castickets` table
 with a default write consistency of `LOCAL_QUORUM` and read consistency of `ONE`.

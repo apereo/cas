@@ -22,13 +22,7 @@ Each individual CAS server is given the ability to auto-register itself with the
 
 Support is added by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-bootadmin-client</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-bootadmin-client" %}
 
 Note that CAS server's actuator endpoints are by default secured. In order to allow secure communication between the CAS server and the Spring Boot Admin server, [please see guide][bootadmindocs].
 

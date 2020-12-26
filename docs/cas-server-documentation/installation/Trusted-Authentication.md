@@ -12,13 +12,7 @@ components that perform authentication in front of CAS.
 
 Trusted authentication handler support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-trusted-webflow</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-trusted-webflow" %}
 
 Trusted authentication is able to extract the remote authenticated user via the following ways:
 

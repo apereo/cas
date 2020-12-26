@@ -8,13 +8,7 @@ category: Ticketing
 
 DynamoDb ticket registry integration is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-dynamodb-ticket-registry</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-dynamodb-ticket-registry" %}
 
 This registry stores tickets in [DynamoDb](https://aws.amazon.com/dynamodb/) instances. Each ticket type is linked to a distinct table.
 

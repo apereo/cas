@@ -9,13 +9,7 @@ category: Services
 This registry uses a [MongoDb](https://www.mongodb.org/) instance to load and persist service definitions.
 Support is enabled by adding the following module into the overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-mongo-service-registry</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-mongo-service-registry" %}
 
 ## Configuration
 

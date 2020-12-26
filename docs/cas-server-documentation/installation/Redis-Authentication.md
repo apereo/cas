@@ -9,13 +9,7 @@ Verify and authenticate credentials using [Redis](https://redis.io/).
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-redis-authentication</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-redis-authentication" %}
 
 User accounts are mapped to a `username` field as the key. The user account record would contain the following fields:
 

@@ -50,13 +50,7 @@ CAS nodes in the cluster to pick up the changes and keep definitions in sync.
 
 Support is enabled by including the following dependency in the overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-service-registry-stream-hazelcast</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-service-registry-stream-hazelcast" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#service-registry-replication-hazelcast).
 
@@ -70,13 +64,7 @@ CAS nodes in the cluster to pick up the changes and keep definitions in sync.
 
 Support is enabled by including the following dependency in the overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-service-registry-stream-kafka</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-service-registry-stream-kafka" %}
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#service-registry-replication-kafka).
 

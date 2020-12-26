@@ -15,13 +15,7 @@ To learn more about UMA, please [read the specification](https://docs.kantaraini
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-oauth-uma</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-oauth-uma" %}
 
 To see the relevant list of CAS properties for this feature, please [review this guide](../configuration/Configuration-Properties.html#oauth2-uma).
 
@@ -34,13 +28,7 @@ of choice to track and manage such definitions. The repository choice is activat
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-oauth-uma-jpa</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-oauth-uma-jpa" %}
 
 ## Endpoints
 

@@ -8,13 +8,7 @@ category: Ticketing
 
 CouchDB integration is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-couchdb-ticket-registry</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-couchdb-ticket-registry" %}
 
 
 [CouchDB](http://couchdb.apache.org) is a highly available, open source NoSQL database server based on

@@ -16,13 +16,7 @@ the complexity is likely not worth the trouble.</p></div>
 
 Support is enabled by adding the following module into the overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-jpa-ticket-registry</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-jpa-ticket-registry" %}
 
 ## Configuration
 

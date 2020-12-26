@@ -42,13 +42,7 @@ This is the most traditional yet most powerful method of dynamically altering th
 
 At a minimum, your overlay will need to include the following modules:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-core-webflow</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-core-webflow" %}
 
 #### Design
 
