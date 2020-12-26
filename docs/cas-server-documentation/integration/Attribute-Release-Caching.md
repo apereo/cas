@@ -3,6 +3,9 @@ layout: default
 title: CAS - Attribute Release Caching
 category: Attributes
 ---
+
+{% include variables.html %}
+
 # Attribute Release Caching
 
 By default, [resolved attributes](Attribute-Resolution.html) are cached to the

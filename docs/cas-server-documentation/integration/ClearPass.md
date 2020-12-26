@@ -4,6 +4,8 @@ title: CAS - ClearPass
 category: Authentication
 ---
 
+{% include variables.html %}
+
 # ClearPass: Credential Caching and Replay
 
 To enable single sign-on into some legacy applications it may be necessary to provide them with the actual password.

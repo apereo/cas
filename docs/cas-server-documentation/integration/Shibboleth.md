@@ -4,6 +4,8 @@ title: CAS - Shibboleth Integration
 category: Integration
 ---
 
+{% include variables.html %}
+
 # Overview
 
 CAS can be integrated with the [Shibboleth federated SSO platform](http://shibboleth.net/) by a couple

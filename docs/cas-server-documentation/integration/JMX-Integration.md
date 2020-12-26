@@ -4,6 +4,8 @@ title: CAS - JMX Integration
 category: Integration
 ---
 
+{% include variables.html %}
+
 # JMX Integration
 
 The JMX support in CAS provides you with the features to easily and transparently integrate your CAS deployment into a JMX infrastructure. These features are 

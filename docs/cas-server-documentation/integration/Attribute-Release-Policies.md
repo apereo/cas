@@ -4,6 +4,8 @@ title: CAS - Attribute Release Policies
 category: Attributes
 ---
 
+{% include variables.html %}
+
 # Attribute Release Policies
 
 The attribute release policy decides how attributes are selected and provided to a given application in the final CAS response. Additionally, each policy has the ability to apply an optional filter to weed out their attributes based on their values.

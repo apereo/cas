@@ -4,6 +4,8 @@ title: CAS - Delegate Authentication w/ SAML2 Identity Providers
 category: Authentication
 ---
 
+{% include variables.html %}
+
 # Delegated Authentication w/ SAML2
 
 In the event that CAS is configured to delegate authentication to an external identity provider, the service provider (CAS) 

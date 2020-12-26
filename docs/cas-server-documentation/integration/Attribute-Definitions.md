@@ -4,6 +4,8 @@ title: CAS - Attribute Definitions
 category: Attributes
 ---
 
+{% include variables.html %}
+
 # Attribute Definitions
 
 The definition of an attribute in CAS, when fetched and resolved from an authentication or attribute repository source, tends to be defined

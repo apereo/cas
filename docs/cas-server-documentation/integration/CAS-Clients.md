@@ -4,6 +4,8 @@ title: CAS - CAS Clients
 category: Integration
 ---
 
+{% include variables.html %}
+
 # Overview
 
 A CAS client is also a software package that can be integrated with various software platforms and applications in order to 

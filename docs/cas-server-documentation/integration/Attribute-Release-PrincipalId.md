@@ -4,6 +4,8 @@ title: CAS - Releasing Principal Id
 category: Attributes
 ---
 
+{% include variables.html %}
+
 # Principal-Id Attribute
 
 Registered CAS applications are given the ability to allow for configuration of a

@@ -4,6 +4,8 @@ title: CAS - Attribute Release Consent
 category: Attributes
 ---
 
+{% include variables.html %}
+
 # Attribute Consent
 
 CAS provides the ability to enforce user-informed consent upon attribute release. Practically, this means that prior to accessing the target application, the
