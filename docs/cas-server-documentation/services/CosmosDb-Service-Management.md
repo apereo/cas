@@ -4,6 +4,8 @@ title: CAS - CosmosDb Service Registry
 category: Services
 ---
 
+{% include variables.html %}
+
 # CosmosDb Service Registry
 
 Stores registered service data in an [Azure CosmosDb](https://docs.microsoft.com/en-us/azure/cosmos-db/introduction) instance.

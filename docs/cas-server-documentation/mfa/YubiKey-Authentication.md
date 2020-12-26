@@ -4,6 +4,8 @@ title: CAS - YubiKey Authentication
 category: Multifactor Authentication
 ---
 
+{% include variables.html %}
+
 # YubiKey Authentication
 
 Yubico is a cloud-based service that enables strong, easy-to-use and affordable two-factor authentication with one-time passwords through their flagship product, YubiKey. Once Yubico `clientId` and `secretKey` are obtained, then the 

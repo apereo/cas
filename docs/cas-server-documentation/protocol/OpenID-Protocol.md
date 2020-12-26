@@ -4,6 +4,8 @@ title: CAS - OpenID Protocol
 category: Protocols
 ---
 
+{% include variables.html %}
+
 # OpenID Protocol
 
 OpenID is an open, decentralized, free framework for user-centric digital identity. Users represent

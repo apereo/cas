@@ -4,6 +4,8 @@ title: CAS - Git Service Registry
 category: Services
 ---
 
+{% include variables.html %}
+
 # Git Service Registry
 
 This registry reads services definitions from remote or local git repositories. Service definition files are expected to be

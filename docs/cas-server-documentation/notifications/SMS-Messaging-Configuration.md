@@ -4,6 +4,8 @@ title: CAS - SMS Messaging
 category: Notifications
 ---
 
+{% include variables.html %}
+
 # SMS Messaging
 
 CAS presents the ability to notify users on select actions via SMS messaging. Example actions include notification of risky authentication attempts

@@ -4,6 +4,8 @@ title: CAS - Cassandra Ticket Registry
 category: Ticketing
 ---
 
+{% include variables.html %}
+
 # Cassandra Ticket Registry
 
 Cassandra integration is enabled by including the following dependency in the WAR overlay:

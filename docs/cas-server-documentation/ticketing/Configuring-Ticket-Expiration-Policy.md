@@ -4,6 +4,8 @@ title: CAS - Configuring Ticket Expiration Policy Components
 category: Ticketing
 ---
 
+{% include variables.html %}
+
 # Ticket Expiration Policies
 
 CAS supports a pluggable and extensible policy framework to control the expiration policy of ticket-granting

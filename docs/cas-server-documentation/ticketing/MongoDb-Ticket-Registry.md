@@ -4,6 +4,8 @@ title: CAS - MongoDb Ticket Registry
 category: Ticketing
 ---
 
+{% include variables.html %}
+
 # MongoDb Ticket Registry
 
 MongoDb ticket registry integration is enabled by including the following dependency in the WAR overlay:

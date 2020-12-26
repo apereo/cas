@@ -4,6 +4,8 @@ title: CAS - U2F - FIDO Universal 2nd Factor Authentication
 category: Multifactor Authentication
 ---
 
+{% include variables.html %}
+
 # U2F - FIDO Universal Authentication
 
 U2F is an open authentication standard that enables internet users to securely access any number of online services, with one single device, instantly 

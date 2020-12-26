@@ -4,6 +4,8 @@ title: CAS - Webflow Decorations
 category: Webflow Management
 ---
 
+{% include variables.html %}
+
 # Webflow Decorations
 
 There are times where you may need to modify the CAS login webflow to include additional data, typically fetched from outside resources and endpoints that may also be considered sensitive and may require credentials for access. Examples include displaying announcements on the CAS login screen or other types of dynamic data. You can certainly [extend the webflow](Webflow-Customization-Extensions.html) to include additional states and actions into the login flow to call upon endpoints and data sources to fetch data. An easier option would be to let CAS decorate the login webflow automatically by reaching out to your REST endpoints, etc, taking care of the internal webflow configuration. Such decorators specifically get called upon as CAS begins to render the login view while reserving the right to decorate additional parts of the webflow in the future.

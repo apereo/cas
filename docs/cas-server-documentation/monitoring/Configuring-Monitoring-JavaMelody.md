@@ -4,6 +4,8 @@ title: CAS - JavaMelody Monitoring
 category: Monitoring & Statistics
 ---
 
+{% include variables.html %}
+
 # JavaMelody Monitoring
 
 Use [JavaMelody](https://github.com/javamelody/javamelody) is to monitor CAS in QA and production environments.

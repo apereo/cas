@@ -4,6 +4,8 @@ title: CAS - Password Management
 category: Password Management
 ---
 
+{% include variables.html %}
+
 # Password Management - Custom
 
 You may also inject your own implementation for password management into CAS that would itself handle account updates and retrievals.

@@ -4,6 +4,8 @@ title: CSS & JavaScript - User Interface Customization - CAS
 category: User Interface
 ---
 
+{% include variables.html %}
+
 # CSS
 
 The default styles are all contained in one single file located in `src/main/resources/static/css/cas.css`. This location is set in `cas-theme-default.properties`. CAS by default uses [Material.io](https://material.io/) library and design specification as a base for its user experience.

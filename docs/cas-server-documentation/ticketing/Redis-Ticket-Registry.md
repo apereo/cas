@@ -4,6 +4,8 @@ title: CAS - Redis Ticket Registry
 category: Ticketing
 ---
 
+{% include variables.html %}
+
 # Redis Ticket Registry
 
 Redis integration is enabled by including the following dependency in the WAR overlay:

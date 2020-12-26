@@ -4,6 +4,8 @@ title: CAS - Memcached Ticket Registry
 category: Ticketing
 ---
 
+{% include variables.html %}
+
 # Memcached Ticket Registry
 
 Memcached integration is enabled by including the following dependency in the WAR overlay:

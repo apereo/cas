@@ -4,6 +4,8 @@ title: Dynamic Themes - User Interface Customization - CAS
 category: User Interface
 ---
 
+{% include variables.html %}
+
 # Dynamic Themes
 
 With the introduction of [Service Management application](../services/Service-Management.html), deployers are now able to switch the themes based on 

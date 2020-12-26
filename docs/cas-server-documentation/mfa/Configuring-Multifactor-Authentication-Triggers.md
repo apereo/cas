@@ -4,6 +4,8 @@ title: CAS - Multifactor Authentication Triggers
 category: Multifactor Authentication
 ---
 
+{% include variables.html %}
+
 # Multifactor Authentication Triggers
 
 The following triggers can be used to activate and instruct CAS to navigate to a multifactor authentication flow.

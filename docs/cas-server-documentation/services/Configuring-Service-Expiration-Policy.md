@@ -4,6 +4,8 @@ title: CAS - Configuring Service Expiration Policy
 category: Services
 ---
 
+{% include variables.html %}
+
 # Configure Service Expiration Policy
 
 An application registered with CAS may be assigned an optional expiration policy that controls the lifetime of the registration. Once the service is deemed expired, it will automatically be disabled or removed from the CAS registry 

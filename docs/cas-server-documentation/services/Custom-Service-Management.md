@@ -4,6 +4,8 @@ title: CAS - Custom Service Registry
 category: Services
 ---
 
+{% include variables.html %}
+
 # Custom Service Registry
 
 If you wish to design your own implementation of a service registry, you will need to inject your implementation into CAS as such:

@@ -4,7 +4,10 @@ title: CAS - Couchbase Service Registry
 category: Services
 ---
 
+{% include variables.html %}
+
 # Couchbase Service Registry
+
 Couchbase integration is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-couchbase-service-registry" %}

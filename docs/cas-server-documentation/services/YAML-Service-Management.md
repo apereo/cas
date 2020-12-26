@@ -4,6 +4,8 @@ title: CAS - YAML Service Registry
 category: Services
 ---
 
+{% include variables.html %}
+
 # YAML Service Registry
 
 This registry reads services definitions from YAML configuration files at the application context initialization time.

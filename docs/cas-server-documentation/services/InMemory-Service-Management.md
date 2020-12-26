@@ -4,6 +4,8 @@ title: CAS - InMemory Service Registry
 category: Services
 ---
 
+{% include variables.html %}
+
 # InMemory Service Registry
 
 This is an in-memory services management tool seeded from registration beans wired via Spring beans.

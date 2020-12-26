@@ -4,6 +4,8 @@ title: CAS - Acceptto Authentication
 category: Multifactor Authentication
 ---
 
+{% include variables.html %}
+
 # Acceptto Authentication
 
 Secure your workforce identity with [Acceptto](https://www.acceptto.com) 

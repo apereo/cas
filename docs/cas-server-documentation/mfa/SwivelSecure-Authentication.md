@@ -4,6 +4,8 @@ title: CAS - Swivel Secure Authentication
 category: Multifactor Authentication
 ---
 
+{% include variables.html %}
+
 # Swivel Secure Authentication
 
 Swivel Secure offers a wide range of authentication factors, allowing the use of 2FA and image based authentication. To learn more, please refer to [the official website](https://swivelsecure.com/).

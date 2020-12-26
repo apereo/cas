@@ -4,6 +4,8 @@ title: CAS - Metrics
 category: Monitoring & Statistics
 ---
 
+{% include variables.html %}
+
 # CAS Metrics
 
 CAS via Spring Boot registers the following core metrics when applicable:

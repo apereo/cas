@@ -4,6 +4,8 @@ title: CAS - OAuth User-Managed Access Protocol
 category: Protocols
 ---
 
+{% include variables.html %}
+
 # User-Managed Access Protocol
 
 User-Managed Access (UMA) is a lightweight access control protocol that defines a centralized workflow to allow an entity (user or corporation) 

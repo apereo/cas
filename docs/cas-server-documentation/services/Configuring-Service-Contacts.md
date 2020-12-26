@@ -4,6 +4,8 @@ title: CAS - Configuring Service Contacts
 category: Services
 ---
 
+{% include variables.html %}
+
 # Configure Service Contacts
 
 CAS has ability to assign contact information to a service definition. These are individual and/or entities that can be classified as owners of the application that may be notified in case changes are applied to the service definition.

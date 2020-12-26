@@ -4,6 +4,8 @@ title: CAS - OIDC Protocol
 category: Protocols
 ---
 
+{% include variables.html %}
+
 # OpenID Connect Protocol
 
 You can configure the CAS server with:

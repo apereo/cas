@@ -4,6 +4,8 @@ title: CAS - Web Flow Extensions
 category: Webflow Management
 ---
 
+{% include variables.html %}
+
 # Extending CAS Webflow
 
 The objective of this guide is to better describe how CAS utilizes Spring Webflow to accommodate various authentication flows. Please remember that this is **NOT** to teach one how Spring Webflow itself works internally. If you want to learn more about Spring Webflow and understand the internals of actions, states, decisions and scopes please [see this guide](http://projects.spring.io/spring-webflow/).

@@ -4,6 +4,8 @@ title: CAS - Password Management
 category: Password Management
 ---
 
+{% include variables.html %}
+
 # Password Management - Groovy
 
 Accounts and password may be determined and handled using a customized Groovy script. The outline of the script may match the following:

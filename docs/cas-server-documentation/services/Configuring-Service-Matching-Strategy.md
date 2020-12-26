@@ -4,6 +4,8 @@ title: CAS - Configuring Service Matching Strategy
 category: Services
 ---
 
+{% include variables.html %}
+
 # Configuring Service Matching Strategy
 
 Authentication requests that carry a client application identifier are compared against the service identifier

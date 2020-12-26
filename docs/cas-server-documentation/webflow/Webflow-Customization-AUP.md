@@ -4,6 +4,8 @@ title: CAS - Web Flow Acceptable Usage Policy
 category: Webflow Management
 ---
 
+{% include variables.html %}
+
 # Acceptable Usage Policy
 
 Also known as *Terms of Use* or *EULA*, CAS presents the ability to allow the user to accept the usage policy before moving on to the application.

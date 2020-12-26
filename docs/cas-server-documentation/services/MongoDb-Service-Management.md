@@ -4,6 +4,8 @@ title: CAS - Mongo Service Registry
 category: Services
 ---
 
+{% include variables.html %}
+
 # Mongo Service Registry
 
 This registry uses a [MongoDb](https://www.mongodb.org/) instance to load and persist service definitions.

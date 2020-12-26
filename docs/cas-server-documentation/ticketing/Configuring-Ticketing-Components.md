@@ -4,6 +4,8 @@ title: CAS - Configuring Ticketing Components
 category: Ticketing
 ---
 
+{% include variables.html %}
+
 # Ticketing
 
 There are two core configurable ticketing components:

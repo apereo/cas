@@ -4,6 +4,8 @@ title: CAS - Hazelcast Ticket Registry
 category: Ticketing
 ---
 
+{% include variables.html %}
+
 # Hazelcast Ticket Registry
 
 Hazelcast Ticket Registry is a distributed ticket registry implementation

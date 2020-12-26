@@ -4,6 +4,8 @@ title: CAS - Service Authentication Policy
 category: Services
 ---
 
+{% include variables.html %}
+
 # Service Authentication Policy
 
 Each registered application in the registry may be assigned an authentication policy that indicates how CAS

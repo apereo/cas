@@ -4,6 +4,8 @@ title: CAS - Messaging (JMS) Ticket Registry
 category: Ticketing
 ---
 
+{% include variables.html %}
+
 # JMS Ticket Registry
 
 CAS can be enabled with a variety of messaging systems in order to distribute and share ticket data: 

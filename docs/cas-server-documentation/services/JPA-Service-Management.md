@@ -4,7 +4,10 @@ title: CAS - JPA Service Registry
 category: Services
 ---
 
+{% include variables.html %}
+
 # JPA Service Registry
+
 Stores registered service data in a database.
 
 Support is enabled by adding the following module into the overlay:

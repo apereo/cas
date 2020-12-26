@@ -4,6 +4,8 @@ title: CAS - Webflow Customization
 category: Webflow Management
 ---
 
+{% include variables.html %}
+
 # Webflow Customization
 
 CAS uses [Spring Webflow](http://projects.spring.io/spring-webflow) to do *script* processing of login and logout protocols.

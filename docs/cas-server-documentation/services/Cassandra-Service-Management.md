@@ -4,6 +4,8 @@ title: CAS - Cassandra Service Registry
 category: Services
 ---
 
+{% include variables.html %}
+
 # Cassandra Service Registry
 
 Stores registered service data in [Apache Cassandra](http://cassandra.apache.org/) instances. Services 

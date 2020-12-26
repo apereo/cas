@@ -4,6 +4,8 @@ title: CAS - Service Registry Initialization
 category: Services
 ---
 
+{% include variables.html %}
+
 # Service Registry Initialization
 
 Upon startup and configuration permitting, the registry is able to auto initialize itself from default JSON service definitions available to CAS. Populating the registry with a set of default services serves as *a starting point* and an example at that where one is able to immediately start integrating applications. For production purposes, it is recommended that you pick a more relevant [option for storage](Service-Management.html) and disable this behavior.

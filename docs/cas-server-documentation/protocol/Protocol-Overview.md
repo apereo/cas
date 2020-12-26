@@ -4,6 +4,8 @@ title: CAS - Protocol Overview
 category: Protocols
 ---
 
+{% include variables.html %}
+
 # Protocols Overview
 
 The following protocols are supported and provided by CAS:

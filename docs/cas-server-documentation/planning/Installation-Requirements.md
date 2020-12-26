@@ -4,6 +4,8 @@ title: CAS - Installation Requirements
 category: Installation
 ---
 
+{% include variables.html %}
+
 # Installation Requirements
 
 Depending on choice of configuration components, there may be additional requirements such as LDAP directory,

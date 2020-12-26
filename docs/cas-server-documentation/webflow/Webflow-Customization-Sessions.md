@@ -4,6 +4,8 @@ title: CAS - Web Flow Customization
 category: Webflow Management
 ---
 
+{% include variables.html %}
+
 # Webflow Session
 
 CAS uses [Spring Webflow](https://github.com/spring-projects/spring-webflow) to manage the

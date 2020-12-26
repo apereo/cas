@@ -4,6 +4,8 @@ title: CAS - Configuring Service Proxy Policy
 category: Services
 ---
 
+{% include variables.html %}
+
 # Configure Proxy Authentication Policy
 
 Each registered application in the registry may be assigned a proxy policy to determine whether the service is allowed for proxy authentication. This means that a PGT will not be issued to a service unless the proxy policy is configured to allow it. Additionally, the policy could also define which endpoint urls are in fact allowed to receive the PGT.
