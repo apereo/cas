@@ -4,6 +4,8 @@ title: CAS - Sentry Monitoring Integration
 category: Logs & Audits
 ---
 
+{% include variables.html %}
+
 # Overview
 
 [Sentry](https://sentry.io) allows you to track logs and error in real time. It provides insight into production deployments and information to reproduce and fix crashes.
