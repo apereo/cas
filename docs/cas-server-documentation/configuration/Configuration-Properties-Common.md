@@ -1028,35 +1028,6 @@ The parameters passed are as follows:
 | `configuration`       | The LDAP password policy configuration carrying the account state handler defined.
 | `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
 
-## Email Notifications
-
-To learn more about this topic, [please review this guide](../notifications/Sending-Email-Configuration.html).
-
-The following options are shared and apply when CAS is configured to send email notifications, given the provider's *configuration key*:
-
-```properties
-# ${configurationKey}.mail.from=
-# ${configurationKey}.mail.text=
-# ${configurationKey}.mail.subject=
-# ${configurationKey}.mail.cc=
-# ${configurationKey}.mail.bcc=
-# ${configurationKey}.mail.reply-to=
-# ${configurationKey}.mail.validate-addresses=false
-# ${configurationKey}.mail.html=false
-
-# ${configurationKey}.mail.attribute-name=mail
-```
-
-The following settings may also need to be defined to describe the mail server settings:
-
-```properties
-# spring.mail.host=
-# spring.mail.port=
-# spring.mail.username=
-# spring.mail.password=
-# spring.mail.properties.mail.smtp.auth=true
-# spring.mail.properties.mail.smtp.starttls.enable=true
-```
 
 ## SMS Notifications
  
