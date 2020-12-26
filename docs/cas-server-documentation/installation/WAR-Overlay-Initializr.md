@@ -142,6 +142,6 @@ CAS Initializr is set to use the [CAS BOM](BOM-Dependency-Management.html) for d
 
 ## Contributions
 
-Please see [this guide](/cas/developer/Contributor-Guidelines.html) for more details.
+Please see [this guide](../developer/Build-Process.html) for more details.
 
 [initializr]: https://casinit.herokuapp.com/
