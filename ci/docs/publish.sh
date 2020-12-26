@@ -32,6 +32,7 @@ function validateProjectDocumentation {
 
 echo -e "Copying project documentation over to $PWD/docs-latest...\n"
 cp -R docs/cas-server-documentation/ $PWD/docs-latest
+rm -Rf $PWD/docs-latest/build
 mv $PWD/docs-latest/_includes $PWD/docs-includes
 
 echo -e "Cloning the repository to push documentation...\n"
