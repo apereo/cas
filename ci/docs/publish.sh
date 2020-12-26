@@ -51,6 +51,8 @@ mkdir -p "$PWD/gh-pages/_includes/$branchVersion"
 echo -e "Copying new docs to $branchVersion...\n"
 cp -Rf $PWD/docs-latest/* "$PWD/gh-pages/$branchVersion"
 cp -Rf $PWD/docs-includes/* "$PWD/gh-pages/_includes/$branchVersion"
+
+rm -Rf "$PWD/gh-pages/$branchVersion/build"
 echo -e "Copied project documentation...\n"
 
 rm -Rf $PWD/docs-latest
