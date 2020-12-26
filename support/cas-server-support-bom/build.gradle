@@ -1,4 +1,9 @@
 description = "Apereo CAS ‌‌Bill of Material"
+
+def getProjectNamePattern() {
+    return "^cas-server-(core-api|core|support|webapp).*"
+}
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
@@ -27,7 +32,7 @@ publishing {
                 def allLibraries = []
 
                 rootProject.subprojects
-                        .findAll { p -> p != project && p.name.startsWith("cas-") }
+                        .findAll { p -> p != project && p.name.matches(getProjectNamePattern()) }
                         .each { p ->
                             createDependency(dependencies, groupId, p.name,
                                     p.version, dependencyVersions, allLibraries)
@@ -106,7 +111,7 @@ def createDependency(dependencies, group, name, version, dependencyVersions, all
         dependency.appendNode("groupId", group)
         dependency.appendNode("artifactId", name)
 
-        if (name.startsWith("cas-server")) {
+        if (name.matches(getProjectNamePattern())) {
             dependency.appendNode("version", "\${cas.version}")
             dependencyVersions.put("cas.version", version)
         } else {
