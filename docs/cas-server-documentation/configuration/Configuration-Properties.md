@@ -758,8 +758,7 @@ JAAS authentication for endpoint security may be configured via the following se
 
 ### LDAP Authentication Security
 
-Shared LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) 
-under the configuration key `cas.monitor.endpoints.ldap`.
+{% include {{ version }}/ldap-configuration.md configKey="cas.monitor.endpoints.ldap" %}
 
 LDAP authentication for endpoint security may be additionally configured via the following settings:
 
@@ -1111,9 +1110,7 @@ Static attributes that need to be mapped to a hardcoded value belong here.
 
 ### LDAP
 
-If you wish to directly and separately retrieve attributes from an LDAP source, LDAP settings for this 
-feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the 
-configuration key `cas.authn.attribute-repository.ldap[0]`.
+{% include {{ version }}/ldap-configuration.md configKey="cas.authn.attribute-repository.ldap[0]" %}
 
 ```properties
 # cas.authn.attribute-repository.ldap[0].id=
@@ -1651,8 +1648,11 @@ same IP address.
 ### CouchDb
 
 Queries the data source used by the CAS audit facility to prevent successive failed login attempts for a particular username from the
-same IP address. CouchDb settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key
-`cas.authn.throttle`. When using this feature the audit facility should be in synchronous mode.
+same IP address. 
+
+{% include {{ version }}/couchdb-integration.md configKey="cas.authn.throttle" %}
+
+When using this feature the audit facility should be in synchronous mode.
 
 ## Adaptive Authentication
 
@@ -1727,7 +1727,7 @@ under the configuration key `cas.authn.surrogate.principal`.
 
 ### LDAP Surrogate Accounts
 
-LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.authn.surrogate.ldap`.
+{% include {{ version }}/ldap-configuration.md configKey="cas.authn.surrogate.ldap" %}
 
 ```properties
 # cas.authn.surrogate.ldap.surrogate-search-filter=(&(principal={user})(memberOf=cn=edu:example:cas:something:{user},dc=example,dc=edu))
@@ -1737,7 +1737,10 @@ LDAP settings for this feature are available [here](Configuration-Properties-Com
 
 ### CouchDb Surrogate Accounts
 
-Settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.authn.surrogate`. Surrogates may be stored either as part of the principals profile or as a series of principal/surrogate pair. The default is a key/value pair.
+{% include {{ version }}/couchdb-integration.md configKey="cas.authn.surrogate" %}. 
+
+Surrogates may be stored either as part of the principals profile or as a 
+series of principal/surrogate pair. The default is a key/value pair.
 
 ```properties
 # cas.authn.surrogate.ldap.surrogate-search-filter=(&(principal={user})(memberOf=cn=edu:example:cas:something:{user},dc=example,dc=edu))
@@ -1847,8 +1850,7 @@ To learn more about this topic, [please review this guide](../installation/Passw
 
 #### LDAP Account Store
 
-LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) 
-under the configuration key `cas.authn.passwordless.accounts.ldap`.
+{% include {{ version }}/ldap-configuration.md configKey="cas.authn.passwordless.accounts.ldap" %}
 
 #### MongoDb Account Store
 
@@ -2189,7 +2191,7 @@ To learn more about this topic, [please review this guide](../installation/Couch
 {% include {{ version }}/password-encoding.md configKey="cas.authn.couch-db" %}
 
 
-Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.authn`.
+{% include {{ version }}/couchdb-integration.md configKey="cas.authn" %}
 
 ```properties
 # cas.authn.couch-db.attributes=
@@ -2246,7 +2248,8 @@ retrieved from [other attribute repository sources](#authentication-attributes),
 Attributes retrieved directly as part of LDAP authentication trump all other attributes.
 
 To learn more about this topic, [please review this guide](../installation/LDAP-Authentication.html). 
-LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.authn.ldap[0]`.
+
+{% include {{ version }}/ldap-configuration.md configKey="cas.authn.ldap[0]" %}
 
 ```properties
 # Define attributes to be retrieved from LDAP as part of the same authentication transaction
@@ -2378,7 +2381,7 @@ Webflow auto-configuration settings for this feature are available [here](Config
 
 ### SPNEGO LDAP Integration
 
-LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.authn.spnego.ldap`.
+{% include {{ version }}/ldap-configuration.md configKey="cas.authn.spnego.ldap" %}
 
 ```properties
 # cas.authn.spnego.spnego-attribute-name=distinguishedName
@@ -2427,7 +2430,7 @@ To learn more about this topic, [please review this guide](../installation/GUA-A
 
 ### LDAP Repository
 
-LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.authn.gua.ldap`.
+{% include {{ version }}/ldap-configuration.md configKey="cas.authn.gua.ldap" %}
 
 ```properties
 # cas.authn.gua.ldap.image-attribute=userImageIdentifier
@@ -2780,9 +2783,10 @@ Principal resolution and Person Directory settings for this feature are availabl
 
 ### X509 LDAP Integration
 
-LDAP settings for the X509 feature (used if fetching CRLs from LDAP) are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.authn.x509.ldap`.
+{% include {{ version }}/ldap-configuration.md configKey="cas.authn.x509.ldap" %}
 
-See LDAP attribute repositories [here](Configuration-Properties.html#ldap) to fetch additional LDAP attributes using the principal extracted from the X509 certificate. 
+See LDAP attribute repositories [here](Configuration-Properties.html#ldap) to fetch additional 
+LDAP attributes using the principal extracted from the X509 certificate. 
 
 ## Syncope Authentication
 
@@ -2940,7 +2944,7 @@ The following strategies can be used to generate keys for trusted device records
 
 #### CouchDb Storage
 
-Configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.authn.mfa.trusted`.
+{% include {{ version }}/couchdb-integration.md configKey="cas.authn.mfa.trusted" %}
 
 #### MongoDb Storage
 
@@ -3041,7 +3045,7 @@ under the configuration key `cas.authn.mfa.gauth`.
 
 #### Google Authenticator CouchDb
 
-Configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.authn.mfa.gauth`.  
+{% include {{ version }}/couchdb-integration.md configKey="cas.authn.mfa.gauth" %}
 
 #### Google Authenticator JSON
 
@@ -3071,7 +3075,7 @@ The following settings are additionally available for this feature:
 
 #### Google Authenticator LDAP
 
-LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.authn.mfa.gauth.ldap`. 
+{% include {{ version }}/ldap-configuration.md configKey="cas.authn.mfa.gauth.ldap" %}
 
 The following settings are additionally available for this feature:
 
@@ -3138,7 +3142,7 @@ available [here](Configuration-Properties-Common.html#multifactor-authentication
 
 ### YubiKey CouchDb Device Store
 
-Configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.authn.mfa.yubikey`.
+{% include {{ version }}/couchdb-integration.md configKey="cas.authn.mfa.yubikey" %}
 
 ### YubiKey MongoDb Device Store
 
@@ -3252,8 +3256,7 @@ available [here](Configuration-Properties-Common.html#multifactor-authentication
 
 ### FIDO2 WebAuthn LDAP
 
-Common configuration settings for this feature are 
-available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.authn.mfa.web-authn.ldap`.
+{% include {{ version }}/ldap-configuration.md configKey="cas.authn.mfa.web-authn.ldap" %}
 
 ```properties
 # cas.authn.mfa.web-authn.ldap.account-attribute-name=casWebAuthnRecord
@@ -3311,8 +3314,7 @@ available [here](Configuration-Properties-Common.html#multifactor-authentication
 
 ### FIDO U2F CouchDb
 
-Common configuration settings for this feature are 
-available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.authn.mfa.u2f`.
+{% include {{ version }}/couchdb-integration.md configKey="cas.authn.mfa.u2f" %}
 
 ### FIDO U2F MongoDb
 
@@ -3476,8 +3478,7 @@ A given attribute that is to be encoded in the final SAML response may contain a
  
 #### SAML Metadata CouchDb
 
-Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) 
-under the configuration key `cas.authn.saml-idp.metadata`.
+{% include {{ version }}/couchdb-integration.md configKey="cas.authn.saml-idp.metadata" %}
  
 ```properties
 # cas.authn.saml-idp.metadata.couch-db.idp-metadata-enabled=true
@@ -4221,8 +4222,7 @@ Store audit logs inside a Redis database.
 
 Store audit logs inside a CouchDb database.
 
-Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration)
-under the configuration key `cas.audit`.
+{% include {{ version }}/couchdb-integration.md configKey="cas.audit" %}
 
 ### Couchbase Audits
 
@@ -4347,8 +4347,9 @@ for authentication or attribute retrieval.
 ### LDAP Server Monitoring
 
 Decide how CAS should monitor the LDAP server it uses for authentication, etc.  
-LDAP settings for this feature are 
-available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.monitor.ldap[0]`.
+
+{% include {{ version }}/ldap-configuration.md configKey="cas.monitor.ldap[0]" %}
+
 The default for the pool size is zero to prevent failed ldap pool initialization to impact server startup.
 
 The following properties are specific to the ldap monitor and configure the thread pool 
@@ -4400,8 +4401,9 @@ configuration settings for this feature are available [here](Configuration-Prope
 
 ### CouchDb Events
 
-Decide how CAS should store authentication events inside a CouchDb instance. Common
-configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.events.couch-db`.
+Decide how CAS should store authentication events inside a CouchDb instance. 
+
+{% include {{ version }}/couchdb-integration.md configKey="cas.events.couch-db" %}
 
 ### Database Events
 
@@ -4571,7 +4573,9 @@ To learn more about this topic, [please review this guide](../services/REST-Serv
 
 ### CouchDb Service Registry
 
-To learn more about this topic, [please review this guide](../services/CouchDb-Service-Management.html). Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.service-registry`.
+To learn more about this topic, [please review this guide](../services/CouchDb-Service-Management.html). 
+
+{% include {{ version }}/couchdb-integration.md configKey="cas.service-registry" %}
 
 ### Redis Service Registry
 
@@ -4625,7 +4629,9 @@ Store CAS service definitions inside a MongoDb instance. To learn more about thi
 ### LDAP Service Registry
 
 Control how CAS services should be found inside an LDAP instance.
-To learn more about this topic, [please review this guide](../services/LDAP-Service-Management.html).  LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.service-registry.ldap`.
+To learn more about this topic, [please review this guide](../services/LDAP-Service-Management.html).  
+
+{% include {{ version }}/ldap-configuration.md configKey="cas.service-registry.ldap" %}
 
 ```properties
 # cas.service-registry.ldap.service-definition-attribute=description
@@ -4729,7 +4735,9 @@ Signing & encryption settings for this registry are available [here](Configurati
 
 ### CouchDb Ticket Registry
 
-To learn more about this topic, [please review this guide](../ticketing/CouchDb-Ticket-Registry.html). Database settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.ticket.registry.couch-db`.
+To learn more about this topic, [please review this guide](../ticketing/CouchDb-Ticket-Registry.html). 
+
+{% include {{ version }}/couchdb-integration.md configKey="cas.ticket.registry.couch-db" %}
 
 ### Couchbase Ticket Registry
 
@@ -5288,8 +5296,7 @@ If AUP is controlled via JDBC, decide how choices should be remembered back insi
 
 #### CouchDb
 
-Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under 
-the configuration key `cas.acceptable-usage-policy`. This feature uses the `asynchronous` setting.
+{% include {{ version }}/couchdb-integration.md configKey="cas.acceptable-usage-policy" %}
 
 #### Couchbase
 
@@ -5305,7 +5312,9 @@ the configuration key `cas.acceptable-usage-policy`. This feature uses the `asyn
 
 #### LDAP
 
-If AUP is controlled via LDAP, decide how choices should be remembered back inside the LDAP instance. LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.acceptable-usage-policy.ldap[0]`.
+If AUP is controlled via LDAP, decide how choices should be remembered back inside the LDAP instance. 
+
+{% include {{ version }}/ldap-configuration.md configKey="cas.acceptable-usage-policy.ldap[0]" %}
 
 #### Disable Acceptable Usage Policy
 
@@ -5577,7 +5586,7 @@ the configuration key `cas.consent.webflow`.
 
 ### LDAP Attribute Consent
 
-LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.consent.ldap`.
+{% include {{ version }}/ldap-configuration.md configKey="cas.consent.ldap" %}
 
 ```properties
 # cas.consent.ldap.consent-attribute-name=casConsentDecision
@@ -5591,10 +5600,9 @@ LDAP settings for this feature are available [here](Configuration-Properties-Com
 
 {% include {{ version }}/redis-configuration.md configKey="cas.consent" %}
 
-
 ### CouchDb Attribute Consent
 
-Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.consent`.
+{% include {{ version }}/couchdb-integration.md configKey="cas.consent" %}
 
 ### REST Attribute Consent
 
@@ -5626,8 +5634,7 @@ topic, [please review this guide](../installation/Password-Synchronization.html)
 
 ### LDAP Password Sync
 
-Common LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under 
-the configuration key `cas.authn.passwordSync.ldap[0]`.
+{% include {{ version }}/ldap-configuration.md configKey="cas.authn.password-sync.ldap[0]" %}
 
 ```properties
 # cas.authn.password-sync.enabled=true
@@ -5691,8 +5698,7 @@ To learn more about this topic, [please review this guide](../installation/Passw
 
 ### LDAP Password Management
 
-Common LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) 
-under the configuration key `cas.authn.pm.ldap[0]`.
+{% include {{ version }}/ldap-configuration.md configKey="cas.authn.pm.ldap[0]" %}
 
 ```properties
 # cas.authn.pm.ldap[0].type=AD|GENERIC|EDirectory|FreeIPA
