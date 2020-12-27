@@ -288,8 +288,7 @@ under the configuration key `cas.spring.cloud.aws.s3`.
 
 ### DynamoDb
 
-Common AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings)
-under the configuration key `cas.spring.cloud.dynamo-db`. 
+{% include {{ version }}/dynamodb-configuration.md configKey="cas.spring.cloud.dynamo-db" %}
 
 ### JDBC
 
@@ -1339,8 +1338,7 @@ This option will fetch attributes from a Redis database for a given CAS principa
 
 To learn more about this topic, [please review this guide](../installation/Redis-Authentication.html).
 
-Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration) 
-under the configuration key `cas.authn.attribute-repository.redis`.
+{% include {{ version }}/redis-configuration.md configKey="cas.authn.attribute-repository" %}
 
 ```properties
 # cas.authn.attribute-repository.redis.order=0
@@ -1626,11 +1624,13 @@ Handle capacity planning and system overload protection using rate-limiting and 
 
 ### MongoDb
 
-Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.audit`. This feature uses the same data source used by the CAS MongoDb audit facility. 
+{% include {{ version }}/mongodb-configuration.md configKey="cas.audit" %}
 
 ### Redis
 
-Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration) under the configuration key `cas.audit`. This feature uses the same data source used by the CAS Redis audit facility.
+{% include {{ version }}/redis-configuration.md configKey="cas.audit" %}
+
+This feature uses the same data source used by the CAS Redis audit facility.
 
 ### Hazelcast
 
@@ -1858,8 +1858,7 @@ under the configuration key `cas.authn.passwordless.accounts.ldap`.
 
 #### MongoDb Account Store
 
-MongoDb settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) 
-under the configuration key `cas.authn.passwordless.accounts.mongo`.
+{% include {{ version }}/mongodb-configuration.md configKey="cas.authn.passwordless.accounts" %}
 
 ### Token Management
 
@@ -2218,8 +2217,7 @@ To learn more about this topic, [please review this guide](../installation/Redis
 
 {% include {{ version }}/password-encoding.md configKey="cas.authn.redis" %}
 
-Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration) 
-under the configuration key `cas.authn`.
+{% include {{ version }}/redis-configuration.md configKey="cas.authn" %}
 
 ```properties
 # cas.authn.redis.name=
@@ -2234,7 +2232,7 @@ To learn more about this topic, [please review this guide](../installation/Mongo
 
 {% include {{ version }}/password-encoding.md configKey="cas.authn.mongo" %}
 
-Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn`.
+{% include {{ version }}/mongodb-configuration.md configKey="cas.authn" %}
 
 ```properties
 # cas.authn.mongo.attributes=
@@ -2957,20 +2955,15 @@ Configuration settings for this feature are available [here](Configuration-Prope
 
 #### MongoDb Storage
 
-Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.trusted`.
+{% include {{ version }}/mongodb-configuration.md configKey="cas.authn.mfa.trusted" %}
 
 #### Redis Storage
 
-Configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration) 
-under the configuration key `cas.authn.mfa.trusted`.
+{% include {{ version }}/redis-configuration.md configKey="cas.authn.mfa.trusted" %}
 
 #### DynamoDb Storage
  
-Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#dynamodb-configuration)
-under the configuration key `cas.authn.mfa.trusted`.
-
-AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings) 
-under the configuration key `cas.authn.mfa.trusted.dynamo-db`.
+{% include {{ version }}/dynamodb-configuration.md configKey="cas.authn.mfa.trusted" %}
 
 ```properties
 # cas.authn.mfa.trusted.dynamo-db.tableName=DynamoDbCasMfaTrustRecords
@@ -3074,7 +3067,9 @@ Additionally, tokens can be managed via REST using the following settings:
 
 #### Google Authenticator MongoDb
 
- Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.gauth`.  The following settings are additionally available for this feature:
+{% include {{ version }}/mongodb-configuration.md configKey="cas.authn.mfa.gauth" %}
+ 
+The following settings are additionally available for this feature:
 
 ```properties
 # cas.authn.mfa.gauth.mongo.token-collection=MongoDbGoogleAuthenticatorTokenRepository
@@ -3092,8 +3087,7 @@ The following settings are additionally available for this feature:
 
 #### Google Authenticator Redis
 
- Configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration) 
- under the configuration key `cas.authn.mfa.gauth`.  
+{% include {{ version }}/redis-configuration.md configKey="cas.authn.mfa.gauth" %}
  
  
 #### Google Authenticator JPA
@@ -3154,16 +3148,15 @@ Configuration settings for this feature are available [here](Configuration-Prope
 
 ### YubiKey MongoDb Device Store
 
-Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.yubikey`.
+{% include {{ version }}/mongodb-configuration.md configKey="cas.authn.mfa.yubikey" %}
 
 ### YubiKey DynamoDb Device Store
 
-Configuration settings for this feature are available [here](Configuration-Properties-Common.html#dynamodb-configuration) under the configuration key `cas.authn.mfa.yubikey`.
+{% include {{ version }}/dynamodb-configuration.md configKey="cas.authn.mfa.yubikey" %}
 
 ### YubiKey Redis Device Store
 
-Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration)
-under the configuration key `cas.authn.mfa.yubikey`.
+{% include {{ version }}/redis-configuration.md configKey="cas.authn.mfa.yubikey" %}
  
 ### Radius OTP
 
@@ -3262,8 +3255,7 @@ available [here](Configuration-Properties-Common.html#job-scheduling) under the 
 
 ### FIDO2 WebAuthn MongoDb
 
-Common configuration settings for this feature are 
-available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.web-authn`.
+{% include {{ version }}/mongodb-configuration.md configKey="cas.authn.mfa.web-authn" %}
 
 ### FIDO2 WebAuthn LDAP
 
@@ -3281,16 +3273,11 @@ under the configuration key `cas.authn.mfa.web-authn.jpa`.
 
 ### FIDO2 WebAuthn Redis
 
-Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration)
-under the configuration key `cas.authn.mfa.web-authn`.
+{% include {{ version }}/redis-configuration.md configKey="cas.authn.mfa.web-authn" %}
 
 ### FIDO2 WebAuthn DynamoDb
 
-Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#dynamodb-configuration)
-under the configuration key `cas.authn.mfa.web-authn`.
-
-AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings) 
-under the configuration key `cas.authn.mfa.web-authn.dynamo-db`.
+{% include {{ version }}/dynamodb-configuration.md configKey="cas.authn.mfa.web-authn" %}
 
 ### FIDO2 WebAuthn REST
 
@@ -3339,21 +3326,15 @@ available [here](Configuration-Properties-Common.html#couchdb-configuration) und
 
 ### FIDO U2F MongoDb
 
-Common configuration settings for this feature are 
-available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.u2f`.
+{% include {{ version }}/mongodb-configuration.md configKey="cas.authn.mfa.u2f" %}
 
 ### FIDO U2F DynamoDb
 
-Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#dynamodb-configuration)
-under the configuration key `cas.authn.mfa.u2f`.
-
-AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings) 
-under the configuration key `cas.authn.mfa.u2f.dynamo-db`.
+{% include {{ version }}/dynamodb-configuration.md configKey="cas.authn.mfa.u2f" %}
 
 ### FIDO U2F Redis
 
-Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration)
-under the configuration key `cas.authn.mfa.u2f`.
+{% include {{ version }}/redis-configuration.md configKey="cas.authn.mfa.u2f" %}
 
 ### FIDO U2F JPA
 
@@ -3529,7 +3510,7 @@ under the configuration key `cas.authn.saml-idp.metadata`.
 
 #### SAML Metadata MongoDb
 
-Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.saml-idp.metadata`.
+{% include {{ version }}/mongodb-configuration.md configKey="cas.authn.saml-idp.metadata" %}
  
 ```properties
 # cas.authn.saml-idp.metadata.mongo.idp-metadata-collection=saml-idp-metadata
@@ -3539,8 +3520,8 @@ Common configuration settings for this feature are available [here](Configuratio
 
 #### SAML Metadata Redis
 
-RESTful settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration)
-under the configuration key `cas.authn.saml-idp.metadata`.
+{% include {{ version }}/redis-configuration.md configKey="cas.authn.saml-idp.metadata" %}
+
 
 ```properties
 # cas.authn.saml-idp.metadata.redis.idp-metadata-enabled=true
@@ -4089,8 +4070,7 @@ To learn more about this topic, [please review this guide](../protocol/WS-Federa
 
 Allows CAS to act as an OAuth2 provider. Here you can control how long various tokens issued by CAS should last, etc.
 
-Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) 
-under the configuration key `cas.authn.oauth`.
+{% include {{ version }}/signing-encryption.md configKey="cas.authn.oauth" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
 
 To learn more about this topic, [please review this guide](../installation/OAuth-OpenId-Authentication.html).
 
@@ -4304,8 +4284,7 @@ and any number of log appenders that might push data to a variety of systems.</p
 
 Store audit logs inside a MongoDb database.
 
-Common configuration settings for this feature are available 
-[here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.audit`.
+{% include {{ version }}/mongodb-configuration.md configKey="cas.audit" %}
 
 ```properties
 # cas.audit.mongo.asynchronous=true
@@ -4315,8 +4294,8 @@ Common configuration settings for this feature are available
 
 Store audit logs inside a Redis database.
 
-Common configuration settings for this feature are available 
-[here](Configuration-Properties-Common.html#redis-configuration) under the configuration key `cas.audit`.
+{% include {{ version }}/redis-configuration.md configKey="cas.audit" %}
+
 
 ```properties
 # cas.audit.redis.asynchronous=true
@@ -4344,11 +4323,7 @@ under the configuration key `cas.audit.couchbase`.
 
 Store audit logs inside a DynamoDb database.
 
-Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#dynamodb-configuration)
-under the configuration key `cas.audit`.
-
-AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings) 
-under the configuration key `cas.audit.dynamo-db`.
+{% include {{ version }}/dynamodb-configuration.md configKey="cas.audit" %}
 
 ```properties
 # cas.audit.dynamo-db.asynchronous=true
@@ -4436,9 +4411,9 @@ under the configuration key `cas.monitor.memcached`.
 
 ### MongoDb Monitors
 
-Decide how CAS should monitor the internal state of a MongoDb instance.  
-Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) 
-under the configuration key `cas.monitor`.
+Decide how CAS should monitor the internal state of a MongoDb instance. 
+
+{% include {{ version }}/mongodb-configuration.md configKey="cas.monitor" %}
 
 ### Database Monitoring
 
@@ -4517,18 +4492,15 @@ settings for this feature are available [here](Configuration-Properties-Common.h
 
 ### MongoDb Events
 
-Decide how CAS should store authentication events inside a MongoDb instance. Common 
-configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.events`.
+Decide how CAS should store authentication events inside a MongoDb instance. 
+
+{% include {{ version }}/mongodb-configuration.md configKey="cas.events" %}
 
 ### DynamoDb Events
 
 Decide how CAS should store authentication events inside a DynamoDb instance.
 
-Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#dynamodb-configuration)
-under the configuration key `cas.events`.
-
-AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings) 
-under the configuration key `cas.evnts.dynamo-db`.
+{% include {{ version }}/dynamodb-configuration.md configKey="cas.events" %}
 
 ```properties
 # cas.events.dynamo-db.table-name=DynamoDbCasEvents
@@ -4690,7 +4662,9 @@ To learn more about this topic, [please review this guide](../services/CouchDb-S
 
 ### Redis Service Registry
 
-To learn more about this topic, [please review this guide](../services/Redis-Service-Management.html). Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration) under the configuration key `cas.service-registry`.
+To learn more about this topic, [please review this guide](../services/Redis-Service-Management.html). 
+
+{% include {{ version }}/redis-configuration.md configKey="cas.service-registry" %}
 
 ### CosmosDb Service Registry
 
@@ -4716,10 +4690,8 @@ under the configuration key `cas.service-registry.amazon-s3`.
 ### DynamoDb Service Registry
 
 To learn more about this topic, [please review this guide](../services/DynamoDb-Service-Management.html).
-Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#dynamodb-configuration)
-under the configuration key `cas.service-registry`.
-AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings) 
-under the configuration key `cas.service-registry.dynamo-db`.
+
+{% include {{ version }}/dynamodb-configuration.md configKey="cas.service-registry" %}
 
 ```properties
 # cas.service-registry.dynamo-db.table-name=DynamoDbCasServices
@@ -4734,7 +4706,8 @@ Common Cassandra settings for this feature are available [here](Configuration-Pr
 ### MongoDb Service Registry
 
 Store CAS service definitions inside a MongoDb instance. To learn more about this topic, [please review this guide](../services/MongoDb-Service-Management.html).
- Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.service-registry`.
+
+{% include {{ version }}/mongodb-configuration.md configKey="cas.service-registry" %}
 
 ### LDAP Service Registry
 
@@ -5044,14 +5017,12 @@ Signing & encryption settings for this registry are available [here](Configurati
 
 To learn more about this topic, [please review this guide](../ticketing/DynamoDb-Ticket-Registry.html). 
 
-Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#dynamodb-configuration) 
-under the configuration key `cas.ticket.registry`. 
+{% include {{ version }}/dynamodb-configuration.md configKey="cas.ticket.registry" %}
 
 Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) 
 under the configuration key `cas.ticket.registry.dynamo-db`.
 
-AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings) 
-under the configuration key `cas.ticket.registry.dynamo-db`.
+
 
 ```properties
 # cas.ticket.registry.dynamo-db.service-tickets-table-name=serviceTicketsTable
@@ -5065,14 +5036,17 @@ under the configuration key `cas.ticket.registry.dynamo-db`.
 
 To learn more about this topic, [please review this guide](../ticketing/MongoDb-Ticket-Registry.html). 
 Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) 
-under the configuration key `cas.ticket.registry.mongo`.  Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.ticket.registry`.
+under the configuration key `cas.ticket.registry.mongo`.  
+
+{% include {{ version }}/mongodb-configuration.md configKey="cas.ticket.registry" %}
 
 ### Redis Ticket Registry
 
 To learn more about this topic, [please review this guide](../ticketing/Redis-Ticket-Registry.html). 
-Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration) 
-under the configuration key `cas.ticket.registry`. Signing & encryption settings for this registry are 
-available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.redis`.
+
+{% include {{ version }}/redis-configuration.md configKey="cas.ticket.registry" %}
+
+{% include {{ version }}/signing-encryption.md configKey="cas.ticket.registry.redis" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
 
 ## Protocol Ticket Security
 
@@ -5405,12 +5379,12 @@ configuration key `cas.acceptable-usage-policy.couchbase`.
 
 #### MongoDb
 
-Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under 
-the configuration key `cas.acceptable-usage-policy`.
+{% include {{ version }}/mongodb-configuration.md configKey="cas.acceptable-usage-policy" %}
 
 #### Redis
 
-Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration) under the configuration key `cas.acceptable-usage-policy`.
+{% include {{ version }}/redis-configuration.md configKey="cas.acceptable-usage-policy" %}
+
 
 #### LDAP
 
@@ -5694,11 +5668,12 @@ LDAP settings for this feature are available [here](Configuration-Properties-Com
 
 ### MongoDb Attribute Consent
 
-Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.consent`.
- 
+{% include {{ version }}/mongodb-configuration.md configKey="cas.consent" %}
+   
 ### Redis Attribute Consent
- 
-Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration) under the configuration key `cas.consent`.
+
+{% include {{ version }}/redis-configuration.md configKey="cas.consent" %}
+
 
 ### CouchDb Attribute Consent
 
