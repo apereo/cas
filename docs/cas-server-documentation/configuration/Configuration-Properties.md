@@ -37,12 +37,7 @@ is both true for properties that are owned by CAS as well as those that might be
 an external library or framework such as Spring Boot, etc.
 
 > When possible, properties should be stored in lower-case kebab format, such as cas.property-name=value.
-
-## General
-
-A number of CAS configuration options equally apply to a number of modules and features. To understand and 
-take note of those options, please [review this guide](Configuration-Properties-Common.html).
-
+> 
 ## Validation
 
 Configuration properties are automatically validated on CAS startup to report issues with configuration binding,
@@ -266,25 +261,21 @@ Allow the CAS Spring Cloud configuration server to load settings from an Apache 
 
 ### Amazon Secrets Manager
 
-Common AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings)
-under the configuration key `cas.spring.cloud.aws.secrets-manager`.
+{% include {{ version }}/aws-integration.md configKey="cas.spring.cloud.aws.secrets-manager" %}
+
 
 ### Amazon Parameter Store
 
-Common AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings)
-under the configuration key `cas.spring.cloud.aws.ssm`.
+{% include {{ version }}/aws-integration.md configKey="cas.spring.cloud.aws.ssm" %}
+
 
 ### Amazon S3
 
-The following settings may be passed using strategies outlined [here](Configuration-Management.html#overview) in order for CAS to establish a connection,
-using the configuration key `cas.spring.cloud.aws.s3`.
+{% include {{ version }}/aws-integration.md configKey="cas.spring.cloud.aws.s3" %}
 
 ```properties
 # ${configuration-key}.bucket-name=cas-properties
 ```
-
-Common AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings)
-under the configuration key `cas.spring.cloud.aws.s3`.
 
 ### DynamoDb
 
@@ -1400,9 +1391,9 @@ basis. To learn more about this topic, [please review this guide](../integration
 
 ## Principal Resolution
 
-In the event that a separate resolver is put into place, control how the final principal should be constructed by default. Principal resolution 
-and Person Directory settings for this feature are 
-available [here](Configuration-Properties-Common.html#person-directory-principal-resolution) under the configuration key `cas.person-directory`.
+In the event that a separate resolver is put into place, control how the final principal should be constructed by default.
+
+{% include {{ version }}/persondirectory-configuration.md configKey="cas.person-directory" %}
 
 ## Attribute Definitions
 
@@ -1708,9 +1699,7 @@ To learn more about this topic, [please review this guide](../installation/Surro
 # cas.authn.surrogate.tgt.time-to-kill-in-seconds=30
 ```
 
-Principal resolution and Person Directory settings for this feature 
-are available [here](Configuration-Properties-Common.html#person-directory-principal-resolution) 
-under the configuration key `cas.authn.surrogate.principal`.
+{% include {{ version }}/persondirectory-configuration.md configKey="cas.authn.surrogate.principal" %}
 
 ### Static Surrogate Accounts
 
@@ -1946,8 +1935,8 @@ Send text messaging using Amazon SNS.
 # cas.sms-provider.sns.sms-type=Transactional
 ```
 
-AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings) 
-under the configuration key `cas.sms-provider.sns`.
+{% include {{ version }}/aws-integration.md configKey="cas.sms-provider.sns" %}
+
 
 ## Google Cloud Firebase Messaging
 
@@ -2000,7 +1989,7 @@ To learn more about this topic, [please review this guide](../installation/Cassa
 # cas.authn.cassandra.order=
 ```
 
-Common Cassandra settings for this feature are available [here](Configuration-Properties-Common.html#cassandra-configuration) under the configuration key `cas.authn.cassandra`.
+{% include {{ version }}/cassandra-configuration.md configKey="cas.authn.cassandra" %}
 
 {% include {{ version }}/principal-transformation.md configKey="cas.authn.cassandra" %}
 
@@ -2310,8 +2299,7 @@ To learn more about this topic, [please review this guide](../integration/Google
 
 Allow CAS to become an OpenID authentication provider. To learn more about this topic, [please review this guide](../protocol/OpenID-Protocol.html).
 
-Principal resolution and Person Directory settings for this feature 
-are available [here](Configuration-Properties-Common.html#person-directory-principal-resolution) under the configuration key `cas.authn.openid.principal`.
+{% include {{ version }}/persondirectory-configuration.md configKey="cas.authn.openid.principal" %}
 
 ```properties
 # cas.authn.openid.enforce-rp-id=false
@@ -2323,7 +2311,7 @@ are available [here](Configuration-Properties-Common.html#person-directory-princ
 
 To learn more about this topic, [please review this guide](../installation/SPNEGO-Authentication.html).
 
-Principal resolution and Person Directory settings for this feature are available [here](Configuration-Properties-Common.html#person-directory-principal-resolution) under the configuration key `cas.authn.spnego.principal`.
+{% include {{ version }}/persondirectory-configuration.md configKey="cas.authn.spnego.principal" %}
 
 ```properties
 # cas.authn.spnego.mixed-mode-authentication=false
@@ -2335,9 +2323,7 @@ Principal resolution and Person Directory settings for this feature are availabl
 # cas.authn.spnego.ntlm=false
 ```
 
-### Webflow configuration
-
-Webflow auto-configuration settings for this feature are available [here](Configuration-Properties-Common.html#webflow-auto-configuration) under the configuration key `cas.authn.spnego.webflow`.
+{% include {{ version }}/webflow-configuration.md configKey="cas.authn.spnego.webflow" %}
 
 ### System Settings
 
@@ -2417,9 +2403,7 @@ To learn more about this topic, [please review this guide](../installation/JAAS-
 # cas.authn.jaas[0].login-configuration-file=/path/to/jaas.con
 ```
 
-Principal resolution and Person Directory settings for this feature 
-are available [here](Configuration-Properties-Common.html#person-directory-principal-resolution) 
-under the configuration key `cas.authn.jaas[0].principal`.
+{% include {{ version }}/persondirectory-configuration.md configKey="cas.authn.jaas[0].principal" %}
 
 {% include {{ version }}/password-policy.md configKey="cas.authn.jaas[0].password-policy" %}
 
@@ -2455,8 +2439,7 @@ To learn more about this topic, [please review this guide](../installation/JWT-A
 
 ### Webflow configuration
 
-Webflow auto-configuration settings for this feature are available [here](Configuration-Properties-Common.html#webflow-auto-configuration) under 
-the configuration key `cas.authn.token.webflow`.
+{% include {{ version }}/webflow-configuration.md configKey="cas.authn.token.webflow" %}
 
 ### JWT Tickets
 
@@ -2496,8 +2479,8 @@ To learn more about this topic, [please review this guide](../installation/AWS-C
 
 {% include {{ version }}/password-encoding.md configKey="cas.authn.cloud-directory" %}
 
-AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings) 
-under the configuration key `cas.authn.cloud-directory`.
+{% include {{ version }}/aws-integration.md configKey="cas.authn.cloud-directory" %}
+
 
 ```properties
 # cas.authn.cloud-directory.directory-arn=
@@ -2520,7 +2503,7 @@ To learn more about this topic, [please review this guide](../installation/AWS-C
 
 {% include {{ version }}/password-encoding.md configKey="cas.authn.cognito" %}
 
-AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings) under the configuration key `cas.authn.cognito`.
+{% include {{ version }}/aws-integration.md configKey="cas.authn.cognito" %}
 
 ```properties
 # cas.authn.cognito.name=
@@ -2621,8 +2604,7 @@ To learn more about this topic, [please review this guide](../installation/X509-
 
 ### Webflow configuration
 
-Webflow auto-configuration settings for this feature are available [here](Configuration-Properties-Common.html#webflow-auto-configuration) under 
-the configuration key `cas.authn.x509.webflow`.
+{% include {{ version }}/webflow-configuration.md configKey="cas.authn.x509.webflow" %}
 
 ```properties
 # cas.authn.x509.webflow.port=8446
@@ -2779,7 +2761,7 @@ Apache HTTPD, Nginx, Haproxy, BigIP F5, etc.
 # cas.authn.x509.principal-type=SERIAL_NO|SERIAL_NO_DN|SUBJECT|SUBJECT_ALT_NAME|SUBJECT_DN
 ```
 
-Principal resolution and Person Directory settings for this feature are available [here](Configuration-Properties-Common.html#person-directory-principal-resolution) under the configuration key `cas.authn.x509.principal`.
+{% include {{ version }}/persondirectory-configuration.md configKey="cas.authn.x509.principal" %}
 
 ### X509 LDAP Integration
 
@@ -2819,7 +2801,9 @@ To learn more about this topic, [please review this guide](../installation/Shiro
 
 ## Trusted Authentication
 
-To learn more about this topic, [please review this guide](../installation/Trusted-Authentication.html). Principal resolution and Person Directory settings for this feature are available [here](Configuration-Properties-Common.html#person-directory-principal-resolution) under the configuration key `cas.authn.trusted`.
+To learn more about this topic, [please review this guide](../installation/Trusted-Authentication.html). 
+
+{% include {{ version }}/persondirectory-configuration.md configKey="cas.authn.trusted" %}
 
 ```properties
 # cas.authn.trusted.name=
@@ -3037,7 +3021,6 @@ To learn more about this topic, [please review this guide](../mfa/GoogleAuthenti
 {% include {{ version }}/mfa-bypass-configuration.md configKey="cas.authn.mfa.gauth" %}
 
 {% include {{ version }}/job-scheduling.md configKey="cas.authn.mfa.gauth.cleaner" %}
-
 
 {% include {{ version }}/signing-encryption.md configKey="cas.authn.mfa.gauth" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
 
@@ -3519,9 +3502,9 @@ A given attribute that is to be encoded in the final SAML response may contain a
 {% include {{ version }}/signing-encryption.md configKey="cas.authn.saml-idp.metadata.rest" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
 
 #### SAML Metadata Amazon S3
- 
-Common AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings)
-under the configuration key `cas.authn.saml-idp.metadata.amazon-s3`.
+
+{% include {{ version }}/aws-integration.md configKey="cas.authn.saml-idp.metadata.amazon-s3" %}
+
 
 {% include {{ version }}/signing-encryption.md configKey="cas.authn.saml-idp.metadata.amazon-s3" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
  
@@ -3584,78 +3567,71 @@ under the configuration key `cas.authn.saml-idp.metadata.amazon-s3`.
 Allow CAS to register and enable a number of built-in SAML service provider integrations.
 To learn more about this topic, [please review this guide](../integration/Configuring-SAML-SP-Integrations.html).
 
-<div class="alert alert-warning"><strong>Remember</strong><p>SAML2 service provider integrations listed here simply attempt to automate CAS configuration based on known and documented integration guidelines and recipes provided by the service provider owned by the vendor. These recipes can change and break CAS over time.</p></div>
+<div class="alert alert-warning"><strong>Remember</strong><p>SAML2 service provider integrations listed 
+here simply attempt to automate CAS configuration based on known and documented integration 
+guidelines and recipes provided by the service provider owned by the vendor. These 
+recipes can change and break CAS over time.</p></div>
 
-Configuration settings for all SAML2 service providers are [available here](Configuration-Properties-Common.html#saml2-service-provider-integrations).
-
-| Service Provider      | Configuration Key     | Attributes
-|-----------------------|-----------------------|----------------------------------
-| Gitlab                | `cas.saml-sp.gitlab`   | `last_name`,`first_name`,`name`
-| Hipchat               | `cas.saml-sp.hipchat`  | `last_name`,`first_name`,`title`
-| Dropbox               | `cas.saml-sp.dropbox`  | `mail`
-| OpenAthens            | `cas.saml-sp.openAthens`   | `email`, `eduPersonPrincipalName`
-| Egnyte                | `cas.saml-sp.egnyte`       | N/A
-| EverBridge            | `cas.saml-sp.ever-bridge`   | N/A
-| Simplicity            | `cas.saml-sp.simplicity`   | N/A
-| App Dynamics          | `cas.saml-sp.app-dynamics`  | `User.OpenIDName`, `User.email`, `User.fullName`, `AccessControl`, `Groups-Membership`
-| Yuja                  | `cas.saml-sp.yuja`         | N/A
-| Simplicity            | `cas.saml-sp.simplicity`   | N/A
-| New Relic             | `cas.saml-sp.new-relic`     | N/A
-| Sunshine State Education & Research Computing Alliance | `cas.saml-sp.sserca` | N/A
-| CherWell              | `cas.saml-sp.cherWell`         | N/A
-| FAMIS                 | `cas.saml-sp.famis`            | N/A
-| Bynder                | `cas.saml-sp.bynder`           | N/A
-| Web Advisor           | `cas.saml-sp.webAdvisor`       | `uid`
-| Adobe Creative Cloud  | `cas.saml-sp.adobe-cloud`       | `firstName`, `lastName`, `email`
-| Securing The Human    | `cas.saml-sp.sans-sth`          | `firstName`, `lastName`, `scopedUserId`, `department`, `reference`, `email`
-| Easy IEP              | `cas.saml-sp.easy-iep`          | `employeeId`
-| Infinite Campus       | `cas.saml-sp.infinite-campus`   | `employeeId`
-| Slack                 | `cas.saml-sp.slack`        | `User.Email`, `User.Username`, `first_name`, `last_name`, `employeeId`
-| Zendesk               | `cas.saml-sp.zendesk`      | `organization`, `tags`, `phone`, `role`, `email`
-| Gartner               | `cas.saml-sp.gartner`      | `urn:oid:2.5.4.42`, `urn:oid:2.5.4.4`, `urn:oid:0.9.2342.19200300.100.1.3`
-| Arc GIS               | `cas.saml-sp.arcGIS`       | `arcNameId`, `mail`, `givenName`
-| Benefit Focus         | `cas.saml-sp.benefit-focus` | `benefitFocusUniqueId`
-| Office365             | `cas.saml-sp.office365`    | `IDPEmail`, `ImmutableID`
-| SAManage              | `cas.saml-sp.sa-manage`     | `mail`
-| Salesforce            | `cas.saml-sp.salesforce`   | `eduPersonPrincipalName`
-| Workday               | `cas.saml-sp.workday`      | N/A
-| Academic Works            | `cas.saml-sp.academic-works`    | `displayName`
-| ZOOM                      | `cas.saml-sp.zoom`             | `mail`, `sn`, `givenName`
-| Evernote                  | `cas.saml-sp.evernote`         | `email`
-| Tableau                   | `cas.saml-sp.tableau`          | `username`
-| Asana                     | `cas.saml-sp.asana`            | `email`
-| Box                       | `cas.saml-sp.box`              | `email`, `firstName`, `lastName`
-| Service Now               | `cas.saml-sp.service-now`   | `eduPersonPrincipalName`
-| Net Partner               | `cas.saml-sp.net-partner`   | `studentId`
-| Webex                     | `cas.saml-sp.webex`        | `firstName`, `lastName`
-| InCommon                  | `cas.saml-sp.in-common`     | `eduPersonPrincipalName`
-| Amazon                    | `cas.saml-sp.amazon`       | `awsRoles`, `awsRoleSessionName`
-| Concur Solutions          | `cas.saml-sp.concur-solutions`  | `email`
-| PollEverywhere            | `cas.saml-sp.poll-everywhere`   | `email`
-| DocuSign                  | `cas.saml-sp.docuSign`   | `email`, `givenName`, `surname`, `employeeNumber`
-| SafariOnline              | `cas.saml-sp.safari-online`   | `email`, `givenName`, `surname`, `employeeNumber`,`eduPersonAffiliation`
-| BlackBaud                 | `cas.saml-sp.black-baud`    | `email`, `eduPersonPrincipalName`
-| GiveCampus                | `cas.saml-sp.give-campus`   | `email`, `givenName`, `surname`, `displayName`
-| WarpWire                  | `cas.saml-sp.warp-wire`     | `email`, `givenName`, `eduPersonPrincipalName`, `surname`, `eduPersonScopedAffiliation`, `employeeNumber`
-| RocketChat                | `cas.saml-sp.rocket-chat`   | `email`, `cn`, `username`
-| ArmsSoftware              | `cas.saml-sp.arms-software` | `email`, `uid`, `eduPersonPrincipalName`
-| TopHat                    | `cas.saml-sp.top-hat` | `email`, `eduPersonPrincipalName`
-| Academic HealthPlans      | `cas.saml-sp.academic-health-plans` | `email`, `givenName`, `surname`, `studentId`
-| Confluence                | `cas.saml-sp.confluence` | `email`, `givenName`, `surname`, `uid`, `displayName`
-| JIRA                      | `cas.saml-sp.jira` | `email`, `givenName`, `surname`, `uid`, `displayName`
-| CrashPlan                 | `cas.saml-sp.crash-plan` | `email`, `givenName`, `surname`
-| Emma                      | `cas.saml-sp.emma` | `email`, `givenName`, `surname`
-| Qualtrics                 | `cas.saml-sp.qualtrics` | `email`, `givenName`, `surname`, `employeeNumber`, `eduPersonPrincipalName`
-| NeoGov                    | `cas.saml-sp.neoGov` | `email`, `ImmutableID`
-| Zimbra                    | `cas.saml-sp.zimbra` | `email`
-| PagerDuty                 | `cas.saml-sp.pager-duty` | `email`
-| CraniumCafe               | `cas.saml-sp.cranium-cafe` | `email`, `eduPersonPrincipalName`, `displayName`, `eduPersonScopedAffiliation`, `studentId`
-| CCC Central               | `cas.saml-sp.cccco` | `email`, `eduPersonPrincipalName`, `displayName`, `eduPersonScopedAffiliation`, `uid`, `givenName`, `commonName`, `surname`, `eduPersonPrimaryffiliation`
-                                
-**Note**: For InCommon and other metadata aggregates, multiple entity ids can be specified to 
-filter [the InCommon metadata](https://spaces.internet2.edu/display/InCFederation/Metadata+Aggregates). EntityIds 
-can be regular expression patterns and are mapped to 
-CAS' `serviceId` field in the registry. The signature location MUST BE the public key used to sign the metadata.
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.gitlab" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.hipchat" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.dropbox" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.openAthens" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.egnyte" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.ever-bridge" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.simplicity" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.app-dynamics" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.yuja" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.simplicity" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.new-relic" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.sserca" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.cherWell" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.famis" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.bynder" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.web-advisor" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.adobe-cloud" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.sans-sth" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.easy-iep" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.infinite-campus" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.slack" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.zendesk" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.gartner" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.arc-g-i-s" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.office365" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.sa-manage" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.salesforce" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.workday" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.academic-works" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.zoom" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.evernote" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.tableau" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.asana" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.box" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.service-now" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.net-partner" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.webex" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.in-common" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.amazon" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.concur-solutions" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.poll-everywhere" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.docuSign" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.safari-online" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.black-baud" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.give-campus" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.warp-wire" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.rocket-chat" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.arms-software" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.top-hat" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.academic-health-plans" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.confluence" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.jira" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.crash-plan" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.emma" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.qualtrics" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.neoGov" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.zimbra" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.pager-duty" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.cranium-cafe" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.cccco" %}                        
 
 ## OpenID Connect
 
@@ -3774,9 +3750,6 @@ Identity providers for delegated authentication can be provided to CAS using an 
 
 ### Default Configuration
 
-The following external identity providers share [common blocks of settings](Configuration-Properties-Common.html#delegated-authentication-settings) 
-under the listed configuration keys listed below:
-    
 {% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.twitter" %}
 {% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.paypal" %}
 {% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.wordpress" %}
@@ -4386,8 +4359,9 @@ cas.events.enabled=true
 
 ### InfluxDb Events
 
-Decide how CAS should store authentication events inside an InfluxDb instance. Common 
-configuration settings for this feature are available [here](Configuration-Properties-Common.html#influxdb-configuration) under the configuration key `cas.events.influx-db`.
+Decide how CAS should store authentication events inside an InfluxDb instance. 
+
+{% include {{ version }}/influxdb-configuration.md configKey="cas.events.influx-db" %}
 
 ### CouchDb Events
 
@@ -4591,8 +4565,8 @@ To learn more about this topic, [please review this guide](../services/CosmosDb-
 
 To learn more about this topic, [please review this guide](../services/AmazonS3-Service-Management.html).
 
-AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings) 
-under the configuration key `cas.service-registry.amazon-s3`.
+{% include {{ version }}/aws-integration.md configKey="cas.service-registry.amazon-s3" %}
+
 
 ### DynamoDb Service Registry
 
@@ -4608,7 +4582,7 @@ To learn more about this topic, [please review this guide](../services/DynamoDb-
 
 To learn more about this topic, [please review this guide](../services/Cassandra-Service-Management.html).
 
-Common Cassandra settings for this feature are available [here](Configuration-Properties-Common.html#cassandra-configuration) under the configuration key `cas.service-registry.cassandra`.
+{% include {{ version }}/cassandra-configuration.md configKey="cas.service-registry.cassandra" %}
 
 ### MongoDb Service Registry
 
@@ -4690,10 +4664,9 @@ To learn more about this topic, [please review this guide](../services/Configuri
 Control how CAS services definition files should be replicated across a CAS cluster backed by Apache Kafka.
 To learn more about this topic, [please review this guide](../services/Configuring-Service-Replication.html).
 
-Kafka common settings for this feature are available [here](Configuration-Properties-Common.html#apache-kafka-configuration) under 
-the configuration key `cas.service-registry.stream.kafka`. Kafka topic settings for this feature are 
-available [here](Configuration-Properties-Common.html#apache-kafka-configuration)
-under the configuration key `cas.service-registry.stream.kafka.topic`.
+{% include {{ version }}/kafka-configuration.md configKey="cas.service-registry.stream.kafka" %}
+
+{% include {{ version }}/kafka-topic-configuration.md configKey="cas.service-registry.stream.kafka.topic" %}
 
 ## Ticket Registry
 
@@ -4753,7 +4726,7 @@ Signing & encryption settings for this registry are available [here](Configurati
 
 To learn more about this topic, [please review this guide](../ticketing/Cassandra-Ticket-Registry.html).
 
-Common Cassandra settings for this feature are available [here](Configuration-Properties-Common.html#cassandra-configuration) under the configuration key `cas.ticket.registry.cassandra`.
+{% include {{ version }}/cassandra-configuration.md configKey="cas.ticket.registry.cassandra" %}
 
 Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.cassandra`.
 
@@ -4939,8 +4912,6 @@ To learn more about this topic, [please review this guide](../ticketing/DynamoDb
 Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) 
 under the configuration key `cas.ticket.registry.dynamo-db`.
 
-
-
 ```properties
 # cas.ticket.registry.dynamo-db.service-tickets-table-name=serviceTicketsTable
 # cas.ticket.registry.dynamo-db.proxy-tickets-table-name=proxyTicketsTable
@@ -4992,7 +4963,6 @@ Controls the expiration policy of service tickets, as well as other properties a
 # cas.ticket.pt.time-to-kill-in-seconds=10
 # cas.ticket.pt.number-of-uses=1
 ```
-
 
 ## Transient Session Tickets Behavior
 
@@ -5553,10 +5523,7 @@ To learn more about this topic, [please review this guide](../integration/Attrib
 
 {% include {{ version }}/signing-encryption.md configKey="cas.consent" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
 
-### Webflow configuration
-
-Webflow auto-configuration settings for this feature are available [here](Configuration-Properties-Common.html#webflow-auto-configuration) under 
-the configuration key `cas.consent.webflow`.
+{% include {{ version }}/webflow-configuration.md configKey="cas.consent.webflow" %}
 
 ### JSON Attribute Consent
 
@@ -5660,9 +5627,7 @@ To learn more about this topic, [please review this guide](../installation/Passw
 
 {% include {{ version }}/signing-encryption.md configKey="cas.authn.pm.reset" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
 
-### Webflow Configuration
-
-Webflow auto-configuration settings for this feature are available [here](Configuration-Properties-Common.html#webflow-auto-configuration) under the configuration key `cas.authn.pm.webflow`.
+{% include {{ version }}/webflow-configuration.md configKey="cas.authn.pm.webflow" %}
 
 ### Password History
 

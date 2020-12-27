@@ -19,3 +19,10 @@ The following bypass options apply equally to multifactor authentication provide
 
 # {{ include.configKey }}.bypass.groovy.location=file:/etc/cas/config/mfa-bypass.groovy
 ```
+
+If multifactor authentication bypass is determined via REST, then the following
+settings can be used to configure the REST integration:
+
+{% include {{ version }}/rest-integration.md configKey="{{ include.configKey }}.bypass.rest"  %}
+
+{% include {{ version }}/mfa-configuration.md configKey="{{ include.configKey }}" %}
