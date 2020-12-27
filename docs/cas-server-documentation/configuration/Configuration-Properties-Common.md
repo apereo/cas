@@ -568,51 +568,6 @@ The following options related to CouchDb support in CAS apply equally to a numbe
 # ${configurationKey}.couch-db.asynchronous=true
 ```
 
-## MongoDb Configuration
-
-The following options related to MongoDb support in CAS apply equally to a number of CAS components (ticket registries, etc) given the component's *configuration key*:
-
-```properties
-# ${configurationKey}.mongo.host=localhost
-# ${configurationKey}.mongo.client-uri=localhost
-# ${configurationKey}.mongo.port=27017
-# ${configurationKey}.mongo.drop-collection=false
-# ${configurationKey}.mongo.socket-keep-alive=false
-# ${configurationKey}.mongo.password=
-
-# ${configurationKey}.mongo.collection=cas-service-registry
-
-# ${configurationKey}.mongo.database-name=cas-mongo-database
-# ${configurationKey}.mongo.timeout=5000
-# ${configurationKey}.mongo.user-id=
-# ${configurationKey}.mongo.write-concern=NORMAL
-# ${configurationKey}.mongo.read-concern=AVAILABLE
-# ${configurationKey}.mongo.read-preference=PRIMARY
-# ${configurationKey}.mongo.authentication-database-name=
-# ${configurationKey}.mongo.replica-set=
-# ${configurationKey}.mongo.ssl-enabled=false
-# ${configurationKey}.mongo.retry-writes=false
-
-# ${configurationKey}.mongo.pool.life-time=60000
-# ${configurationKey}.mongo.pool.idle-time=30000
-# ${configurationKey}.mongo.pool.max-wait-time=60000
-# ${configurationKey}.mongo.pool.max-size=10
-# ${configurationKey}.mongo.pool.min-size=1
-# ${configurationKey}.mongo.pool.per-host=10
-```
-
-## DynamoDb Configuration
-
-The following options related to DynamoDb support in CAS apply equally to a number of CAS components (ticket registries, etc) given the component's *configuration key*:
-
-```properties
-# ${configurationKey}.dynamo-db.drop-tables-on-startup=false
-# ${configurationKey}.dynamo-db.prevent-table-creation-on-startup=false
-# ${configurationKey}.dynamo-db.local-instance=false
-```
-    
-AWS settings for this feature are available [here](#amazon-integration-settings).
-
 ## RESTful Integrations
 
 The following options related to features in CAS that provide REST support to fetch and update data. These settings apply equally, given the component's *configuration key*:
@@ -626,66 +581,11 @@ The following options related to features in CAS that provide REST support to fe
 # ${configurationKey}.url=https://rest.somewhere.org/attributes
 ```
 
-## Redis Configuration
-
-The following options related to Redis support in CAS apply equally to a number of CAS components (ticket registries, etc) given the component's *configuration key*:
-
-```properties
-# ${configurationKey}.redis.host=localhost
-# ${configurationKey}.redis.database=0
-# ${configurationKey}.redis.port=6380
-# ${configurationKey}.redis.password=
-# ${configurationKey}.redis.timeout=2000
-# ${configurationKey}.redis.use-ssl=false
-# ${configurationKey}.redis.read-from=MASTER
-```
-
-### Redis Pool Configuration
-
-```properties
-# ${configurationKey}.redis.pool.enabled=false
-# ${configurationKey}.redis.pool.max-active=20
-# ${configurationKey}.redis.pool.max-idle=8
-# ${configurationKey}.redis.pool.min-idle=0
-# ${configurationKey}.redis.pool.max-active=8
-# ${configurationKey}.redis.pool.max-wait=-1
-# ${configurationKey}.redis.pool.num-tests-per-eviction-run=0
-# ${configurationKey}.redis.pool.soft-min-evictable-idle-time-millis=0
-# ${configurationKey}.redis.pool.min-evictable-idle-time-millis=0
-# ${configurationKey}.redis.pool.lifo=true
-# ${configurationKey}.redis.pool.fairness=false
-# ${configurationKey}.redis.pool.test-on-create=false
-# ${configurationKey}.redis.pool.test-on-borrow=false
-# ${configurationKey}.redis.pool.test-on-return=false
-# ${configurationKey}.redis.pool.test-while-idle=false
-```
-
-### Redis Sentinel Configuration
-
-```properties
-# ${configurationKey}.redis.sentinel.master=mymaster
-# ${configurationKey}.redis.sentinel.node[0]=localhost:26377
-# ${configurationKey}.redis.sentinel.node[1]=localhost:26378
-# ${configurationKey}.redis.sentinel.node[2]=localhost:26379
-```
-
-### Redis Cluster Configuration
-
-```properties
-# ${configurationKey}.redis.cluster.password=
-# ${configurationKey}.redis.cluster.max-redirects=0
-# ${configurationKey}.redis.cluster.nodes[0].host=
-# ${configurationKey}.redis.cluster.nodes[0].port=
-# ${configurationKey}.redis.cluster.nodes[0].replica-of=
-# ${configurationKey}.redis.cluster.nodes[0].id=
-# ${configurationKey}.redis.cluster.nodes[0].name=
-# ${configurationKey}.redis.cluster.nodes[0].type=MASTER|SLAVE
-```
 
 ## DDL Configuration
 
-Note that the default value for Hibernate's DDL setting is `create-drop` which may not be appropriate for use in production. Setting the value to
-`validate` may be more desirable, but any of the following options can be used:
+Note that the default value for Hibernate's DDL setting is `create-drop` which may not be appropriate 
+for use in production. Setting the value to `validate` may be more desirable, but any of the following options can be used:
 
 | Type                 | Description
 |----------------------|----------------------------------------------------------
@@ -801,33 +701,6 @@ The following options are shared and apply when CAS is configured to integrate w
 # ${configurationKey}.scan-consistency=NOT_BOUNDED|REQUEST_PLUS
 ```
 
-## Amazon Integration Settings
-
-The following options are shared and apply when CAS is configured to integrate with various 
-Amazon Web Service features, given the provider's *configuration key*:
-
-```properties
-# ${configurationKey}.credential-access-key=
-# ${configurationKey}.credential-secret-key=
-
-# ${configurationKey}.endpoint=http://localhost:8000
-# ${configurationKey}.region=US_WEST_2|US_EAST_2|EU_WEST_2|<REGION-NAME>
-# ${configurationKey}.local-address=
-# ${configurationKey}.retry-mode=STANDARD|LEGACY
-
-# ${configurationKey}.proxy-host=
-# ${configurationKey}.proxy-password=
-# ${configurationKey}.proxy-username=
-
-# ${configurationKey}.read-capacity=10
-# ${configurationKey}.write-capacity=10
-# ${configurationKey}.connection-timeout=5000
-# ${configurationKey}.socket-timeout=5000
-# ${configurationKey}.use-reaper=false
-
-# ${configurationKey}.client-execution-timeout=10000
-# ${configurationKey}.max-connections=10
-```
 
 ## Memcached Integration Settings
 
