@@ -4672,10 +4672,6 @@ To learn more about this topic, [please review this guide](../services/Configuri
 
 To learn more about this topic, [please review this guide](../ticketing/Configuring-Ticketing-Components.html).
 
-### Signing & Encryption
-
-The encryption key must be randomly-generated string of size `16`. The signing key [is a JWK](Configuration-Properties-Common.html#signing--encryption) of size `512`.
-
 ### Cleaner
 
 A cleaner process is scheduled to run in the background to clean up expired and stale tickets.
@@ -4694,7 +4690,7 @@ To learn more about this topic, [please review this guide](../ticketing/JPA-Tick
 # cas.ticket.registry.jpa.jpa-locking-timeout=3600
 ```
 
-Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.jpa`.
+{% include {{ version }}/signing-encryption.md configKey="cas.ticket.registry.jpa" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
 
 ### CouchDb Ticket Registry
 
@@ -4708,7 +4704,7 @@ To learn more about this topic, [please review this guide](../ticketing/Couchbas
 
 {% include {{ version }}/couchbase-configuration.md configKey="cas.ticket.registry.couchbase" %}
 
-Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.couchbase`.
+{% include {{ version }}/signing-encryption.md configKey="cas.ticket.registry.couchbase" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
 
 ### Hazelcast Ticket Registry
 
@@ -4720,7 +4716,7 @@ To learn more about this topic, [please review this guide](../ticketing/Hazelcas
 # cas.ticket.registry.hazelcast.page-size=500
 ```
 
-Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.hazelcast`.
+{% include {{ version }}/signing-encryption.md configKey="cas.ticket.registry.hazelcast" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
 
 ### Cassandra Ticket Registry
 
@@ -4728,7 +4724,7 @@ To learn more about this topic, [please review this guide](../ticketing/Cassandr
 
 {% include {{ version }}/cassandra-configuration.md configKey="cas.ticket.registry.cassandra" %}
 
-Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.cassandra`.
+{% include {{ version }}/signing-encryption.md configKey="cas.ticket.registry.cassandra" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
 
 ```properties
 # cas.ticket.registry.cassandra.drop-tables-on-startup=false
@@ -4743,7 +4739,7 @@ To learn more about this topic, [please review this guide](../ticketing/Infinisp
 # cas.ticket.registry.infinispan.config-location=/infinispan.xml
 ```
 
-Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.infinispan`.
+{% include {{ version }}/signing-encryption.md configKey="cas.ticket.registry.infinispan" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
 
 ### InMemory Ticket Registry
 
@@ -4759,14 +4755,13 @@ are kept inside the runtime environment memory.
 # cas.ticket.registry.in-memory.initial-capacity=1000
 ```
 
-Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.in-memory`.
+{% include {{ version }}/signing-encryption.md configKey="cas.ticket.registry.in-memory" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
 
 ### JMS Ticket Registry
 
 To learn more about this topic, [please review this guide](../ticketing/Messaging-JMS-Ticket-Registry.html).
 
-Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption)
-under the configuration key `cas.ticket.registry.jms`.
+{% include {{ version }}/signing-encryption.md configKey="cas.ticket.registry.jms" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
 
 ```properties
 # cas.ticket.registry.jms.id=
@@ -4835,7 +4830,7 @@ To learn more about this topic, [please review this guide](../ticketing/Ehcache-
 # cas.ticket.registry.ehcache.systemprops.key2=value2
 ```
 
-Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.ehcache`.
+{% include {{ version }}/signing-encryption.md configKey="cas.ticket.registry.ehcache" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
 
 ### Ehcache 3 Ticket Registry
 
@@ -4861,8 +4856,7 @@ To learn more about this topic, [please review this guide](../ticketing/Ehcache-
 
 There is no default value for the Terracota Cluster URI but the format is `terracotta://host1.company.org:9410,host2.company.org:9410/cas-application`
 
-Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.ehcache3`.
-
+{% include {{ version }}/signing-encryption.md configKey="cas.ticket.registry.ehcache3" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
 ### Ignite Ticket Registry
 
 To learn more about this topic, [please review this guide](../ticketing/Ignite-Ticket-Registry.html).
@@ -4893,7 +4887,7 @@ To learn more about this topic, [please review this guide](../ticketing/Ignite-T
 # cas.ticket.registry.ignite.tickets-cache.cache-mode=REPLICATED
 ```
 
-Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.ignite`.
+{% include {{ version }}/signing-encryption.md configKey="cas.ticket.registry.ignite" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
 
 ### Memcached Ticket Registry
 
@@ -4901,7 +4895,8 @@ To learn more about this topic, [please review this guide](../ticketing/Memcache
 
 {% include {{ version }}/memcached-integration.md configKey="cas.ticket.registry.memcached" %}
 
-Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.memcached`.
+{% include {{ version }}/signing-encryption.md configKey="cas.ticket.registry.memcached" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
+
 
 ### DynamoDb Ticket Registry
 
@@ -4909,8 +4904,7 @@ To learn more about this topic, [please review this guide](../ticketing/DynamoDb
 
 {% include {{ version }}/dynamodb-configuration.md configKey="cas.ticket.registry" %}
 
-Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) 
-under the configuration key `cas.ticket.registry.dynamo-db`.
+{% include {{ version }}/signing-encryption.md configKey="cas.ticket.registry.dynamo-db" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
 
 ```properties
 # cas.ticket.registry.dynamo-db.service-tickets-table-name=serviceTicketsTable
@@ -4922,9 +4916,9 @@ under the configuration key `cas.ticket.registry.dynamo-db`.
 
 ### MongoDb Ticket Registry
 
-To learn more about this topic, [please review this guide](../ticketing/MongoDb-Ticket-Registry.html). 
-Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) 
-under the configuration key `cas.ticket.registry.mongo`.  
+To learn more about this topic, [please review this guide](../ticketing/MongoDb-Ticket-Registry.html).
+
+{% include {{ version }}/signing-encryption.md configKey="cas.ticket.registry.mongo" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
 
 {% include {{ version }}/mongodb-configuration.md configKey="cas.ticket.registry" %}
 
@@ -5126,13 +5120,9 @@ To learn more about this topic, [see this guide](../webflow/Webflow-Customizatio
 # cas.webflow.session.storage=false
 ```
 
-The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
-
 #### Spring Webflow Client-Side Session
 
-The encryption key must be randomly-generated string of size `16`. The signing key [is a JWK](Configuration-Properties-Common.html#signing--encryption) of size `512`.
-
-Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.webflow`.
+{% include {{ version }}/signing-encryption.md configKey="cas.webflow" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
 
 #### Spring Webflow Hazelcast Server-Side Session
 
