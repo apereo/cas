@@ -1605,7 +1605,7 @@ To learn more about this topic, [please review this guide](../installation/Confi
 # cas.authn.throttle.failure.range-seconds=60
 ```
 
-Scheduler settings for this feature are available [here](Configuration-Properties-Common.html#job-scheduling) under the configuration key `cas.authn.throttle`.
+{% include {{ version }}/job-scheduling.md configKey="cas.authn.throttle" %}
 
 ### Bucket4j
 
@@ -1868,7 +1868,9 @@ under the configuration key `cas.authn.passwordless.accounts.ldap`.
 {% include {{ version }}/sms-notifications.md configKey="cas.authn.passwordless.tokens" %}
 
 Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under 
-the configuration key `cas.authn.passwordless.tokens.jpa`. Scheduler settings for this feature are available [here](Configuration-Properties-Common.html#job-scheduling) under the configuration key `cas.authn.passwordless.tokens.jpa.cleaner`.
+the configuration key `cas.authn.passwordless.tokens.jpa`. 
+
+{% include {{ version }}/job-scheduling.md configKey="cas.authn.passwordless.tokens.jpa.cleaner" %}
 
 ## SMS Messaging
 
@@ -2988,8 +2990,9 @@ The default cookie name is set to `MFATRUSTED` and the default maxAge is set to 
 #### Cleaner
 
 A cleaner process is scheduled to run in the background to clean up expired and stale tickets.
-This section controls how that process should behave. Scheduler settings for this feature 
-are available [here](Configuration-Properties-Common.html#job-scheduling) under the configuration key `cas.authn.mfa.trusted.cleaner`.
+This section controls how that process should behave. 
+
+{% include {{ version }}/job-scheduling.md configKey="cas.authn.mfa.trusted.cleaner" %}
 
 
 ### Simple Multifactor Authentication
@@ -3030,7 +3033,9 @@ To learn more about this topic, [please review this guide](../mfa/GoogleAuthenti
 ```
 
 Multifactor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass)
-under the configuration key `cas.authn.mfa.gauth`. Scheduler settings for this feature are available [here](Configuration-Properties-Common.html#job-scheduling) under the configuration key `cas.authn.mfa.gauth.cleaner`.
+under the configuration key `cas.authn.mfa.gauth`. 
+
+{% include {{ version }}/job-scheduling.md configKey="cas.authn.mfa.gauth.cleaner" %}
 
 
 {% include {{ version }}/signing-encryption.md configKey="cas.authn.mfa.gauth" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
@@ -3234,8 +3239,7 @@ available [here](Configuration-Properties-Common.html#multifactor-authentication
 
 ### FIDO2 WebAuthn Cleaner
 
-Scheduler settings for this feature are 
-available [here](Configuration-Properties-Common.html#job-scheduling) under the configuration key `cas.authn.mfa.web-authn.cleaner`.
+{% include {{ version }}/job-scheduling.md configKey="cas.authn.mfa.web-authn.cleaner" %}
 
 ### FIDO2 WebAuthn JSON
 
@@ -3305,8 +3309,7 @@ available [here](Configuration-Properties-Common.html#multifactor-authentication
 
 ### FIDO U2F Cleaner
 
-Scheduler settings for this feature are 
-available [here](Configuration-Properties-Common.html#job-scheduling) under the configuration key `cas.authn.mfa.u2f.cleaner`.
+{% include {{ version }}/job-scheduling.md configKey="cas.authn.mfa.u2f.cleaner`" %}
 
 ### FIDO U2F CouchDb
 
@@ -4327,7 +4330,7 @@ under the configuration key `cas.audit.jdbc`.
 # cas.audit.jdbc.date-formatter-pattern=
 ```
 
-Scheduler settings for this feature are available [here](Configuration-Properties-Common.html#job-scheduling) under the configuration key `cas.audit.jdbc`.
+{% include {{ version }}/job-scheduling.md configKey="cas.audit.jdbc" %}
 
 ### REST Audits
 
@@ -4587,8 +4590,7 @@ See [this guide](../services/Service-Management.html) to learn more.
 # cas.service-registry.cache-capacity=1000
 ```
 
-Scheduler settings for this feature are available [here](Configuration-Properties-Common.html#job-scheduling) under
- the configuration key `cas.service-registry`.
+{% include {{ version }}/job-scheduling.md configKey="cas.service-registry" %}
 
 ### Service Registry Notifications
 
@@ -4780,8 +4782,9 @@ The encryption key must be randomly-generated string of size `16`. The signing k
 ### Cleaner
 
 A cleaner process is scheduled to run in the background to clean up expired and stale tickets.
-This section controls how that process should behave. Scheduler settings for this feature are 
-available [here](Configuration-Properties-Common.html#job-scheduling) under the configuration key `cas.ticket.registry.cleaner`.
+This section controls how that process should behave. 
+
+{% include {{ version }}/job-scheduling.md configKey="cas.ticket.registry.cleaner" %}
 
 ### JPA Ticket Registry
 
@@ -5552,7 +5555,7 @@ To learn more about this topic, [please review this guide](../integration/Shibbo
 # cas.saml-metadata-ui.parameter=entityId
 ```         
 
-Scheduler settings for this feature are available [here](Configuration-Properties-Common.html#job-scheduling) under the configuration key `cas.saml-metadata-ui`.
+{% include {{ version }}/job-scheduling.md configKey="cas.saml-metadata-ui" %}
 
 ## Eureka Service Discovery
 
