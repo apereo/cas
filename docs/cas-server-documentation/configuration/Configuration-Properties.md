@@ -989,8 +989,7 @@ To learn more about this topic, [please review this guide](../ux/User-Interface-
 
 ### Restful Views
 
-Control the resolution of CAS views via REST. RESTful settings for this feature are 
-available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.view.rest`.
+{% include {{ version }}/rest-integration.md configKey="cas.view.rest" %}
 
 ## Logging
 
@@ -1190,9 +1189,7 @@ The format of the file may be:
 
 ### REST
 
-Retrieve attributes from a REST endpoint. RESTful settings for this feature 
-are available [here](Configuration-Properties-Common.html#restful-integrations) under 
-the configuration key `cas.authn.attribute-repository.rest[0]`.
+{% include {{ version }}/rest-integration.md configKey="cas.authn.attribute-repository.rest[0]" %}
 
 ```properties
 # cas.authn.attribute-repository.rest[0].order=0
@@ -1580,8 +1577,7 @@ Contact a REST endpoint via `POST` to detect authentication policy.
 The message body contains the CAS authenticated principal that can be used
 to examine account status and policy.
 
-RESTful settings for this feature are 
-available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.authn.policy.rest[0]`.
+{% include {{ version }}/rest-integration.md configKey="cas.authn.policy.rest[0]" %}
 
 Response codes from the REST endpoint are translated as such:
 
@@ -1685,8 +1681,7 @@ Examine the client IP address via the following strategies.
 
 #### REST Adaptive Authentication
 
-RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) 
-under the configuration key `cas.authn.adaptive.ip-intel.rest`.
+{% include {{ version }}/rest-integration.md configKey="cas.authn.adaptive.ip-intel.rest" %}
 
 #### Groovy Adaptive Authentication
 
@@ -1760,8 +1755,7 @@ Settings for this feature are available [here](Configuration-Properties-Common.h
 
 ### REST Surrogate Accounts
 
-RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) 
-under the configuration key `cas.authn.surrogate.rest`.
+{% include {{ version }}/rest-integration.md configKey="cas.authn.surrogate.rest" %}
 
 ### Notifications
 
@@ -1848,8 +1842,7 @@ To learn more about this topic, [please review this guide](../installation/Passw
 
 #### RESTful Account Store
 
-RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) 
-under the configuration key `cas.authn.passwordless.accounts.rest`.
+{% include {{ version }}/rest-integration.md configKey="cas.authn.passwordless.accounts.rest" %}
 
 #### LDAP Account Store
 
@@ -1866,8 +1859,7 @@ under the configuration key `cas.authn.passwordless.accounts.ldap`.
 # cas.authn.passwordless.accounts.expire-in-seconds=180
 ```
 
-RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) 
-under the configuration key `cas.authn.passwordless.tokens.rest`. 
+{% include {{ version }}/rest-integration.md configKey="cas.authn.passwordless.tokens.rest" %}
 
 {% include {{ version }}/signing-encryption.md configKey="cas.authn.passwordless.tokens" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
 
@@ -1892,8 +1884,7 @@ Send text messages using a Groovy script.
 
 ### REST
 
-Send text messages using a RESTful API. RESTful settings for this feature are 
-available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.sms-provider.rest`.
+{% include {{ version }}/rest-integration.md configKey="cas.sms-provider.rest" %}
 
 ### Twilio
 
@@ -2070,7 +2061,7 @@ To learn more about this topic, [please review this guide](../installation/Permi
 
 {% include {{ version }}/password-encoding.md configKey="cas.authn.json" %}
 
-Password policy settings for this feature are available [here](Configuration-Properties-Common.html#password-policy-settings) under the configuration key `cas.authn.json.passwordPolicy`.
+{% include {{ version }}/password-policy.md configKey="cas.authn.json.password-policy" %}
 
 ```properties
 # cas.authn.json.location=file:///path/to/users/file.json
@@ -2281,7 +2272,7 @@ To fetch and resolve attributes that carry tags/options, consider tagging the ma
 
 ### LDAP Password Policy
 
-LDAP password policy settings for this feature are available [here](Configuration-Properties-Common.html#password-policy-settings) under the configuration key `cas.authn.ldap[0].password-policy`.
+{% include {{ version }}/password-policy.md configKey="cas.authn.ldap[0].password-policy" %}
 
 ### LDAP Password Encoding & Principal Transformation
 
@@ -2428,8 +2419,7 @@ Principal resolution and Person Directory settings for this feature
 are available [here](Configuration-Properties-Common.html#person-directory-principal-resolution) 
 under the configuration key `cas.authn.jaas[0].principal`.
 
-Password policy settings for this feature are available [here](Configuration-Properties-Common.html#password-policy-settings) 
-under the configuration key `cas.authn.jaas[0].password-policy`.
+{% include {{ version }}/password-policy.md configKey="cas.authn.jaas[0].password-policy" %}
 
 
 ## GUA Authentication
@@ -2612,7 +2602,7 @@ prior to production rollouts.</p></div>
 
 {% include {{ version }}/principal-transformation.md configKey="cas.authn.accept" %}
 
-Password policy settings for this feature are available [here](Configuration-Properties-Common.html#password-policy-settings) under the configuration key `cas.authn.accept.password-policy`.
+{% include {{ version }}/password-policy.md configKey="cas.authn.accept.password-policy" %}
 
 {% include {{ version }}/password-encoding.md configKey="cas.authn.accept" %}
 
@@ -2886,7 +2876,7 @@ To learn more about this topic, [please review this guide](../mfa/Configuring-Mu
 
 ### Multifactor Authentication: REST API Trigger
 
-RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.authn.mfa.rest`.
+{% include {{ version }}/rest-integration.md configKey="cas.authn.mfa.rest" %}
 
 ### Multifactor Authentication: Groovy Trigger
 
@@ -3057,7 +3047,7 @@ Configuration settings for this feature are available [here](Configuration-Prope
 
 #### Google Authenticator Rest
 
-RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.authn.mfa.gauth.rest`.
+{% include {{ version }}/rest-integration.md configKey="cas.authn.mfa.gauth.rest" %}
 
 Additionally, tokens can be managed via REST using the following settings:
 
@@ -3115,7 +3105,7 @@ available [here](Configuration-Properties-Common.html#multifactor-authentication
 
 #### YubiKey REST Device Store
 
-RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.authn.mfa.yubikey.rest`.
+{% include {{ version }}/rest-integration.md configKey="cas.authn.mfa.yubikey.rest" %}
 
 #### YubiKey JSON Device Store
 
@@ -3281,8 +3271,7 @@ under the configuration key `cas.authn.mfa.web-authn.jpa`.
 
 ### FIDO2 WebAuthn REST
 
-RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) under 
-the configuration key `cas.authn.mfa.web-authn.rest`.
+{% include {{ version }}/rest-integration.md configKey="cas.authn.mfa.web-authn.rest" %}
 
 ### FIDO U2F
 
@@ -3342,7 +3331,7 @@ Database settings for this feature are available [here](Configuration-Properties
 
 ### FIDO U2F REST
 
-RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.authn.mfa.u2f.rest`.
+{% include {{ version }}/rest-integration.md configKey="cas.authn.mfa.u2f.rest" %}
 
 ### FIDO U2F Groovy
 
@@ -3531,8 +3520,7 @@ under the configuration key `cas.authn.saml-idp.metadata`.
 
 #### SAML Metadata REST
  
-RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) 
-under the configuration key `cas.authn.saml-idp.metadata.rest`.
+{% include {{ version }}/rest-integration.md configKey="cas.authn.saml-idp.metadata.rest" %}
 
 ```properties
 # cas.authn.saml-idp.metadata.rest.idp-metadata-enabled=true
@@ -3735,8 +3723,7 @@ Manage the JSON web keyset for OpenID Connect as a static file resource.
 Reach out to an external REST API to ask for the JSON web keyset. The expected response code is `200`
 where the response body should contain the contents of the JSON web keyset.
 
-RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) 
-under the configuration key `cas.authn.oidc.jwks.rest`.
+{% include {{ version }}/rest-integration.md configKey="cas.authn.oidc.jwks.rest" %}
 
 ### OpenID Connect Scopes & Claims
 
@@ -3764,8 +3751,7 @@ might be discovered via an "acct:" URI, for example, which is a URI that looks l
 
 #### WebFinger UserInfo via REST
 
-RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) 
-under the configuration key `cas.authn.oidc.webfinger.user-info.rest`.
+{% include {{ version }}/rest-integration.md configKey="cas.authn.oidc.webfinger.user-info.rest" %}
 
 ### OpenID Connect Logout
 
@@ -3794,8 +3780,7 @@ To learn more about this topic, [please review this guide](../integration/Delega
 
 Identity providers for delegated authentication can be provided to CAS using an external REST endpoint. 
 
-RESTful settings for this feature are 
-available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.authn.pac4j.rest`.
+{% include {{ version }}/rest-integration.md configKey="cas.authn.pac4j.rest" %}
 
 ### Default Configuration
 
@@ -3830,7 +3815,7 @@ Provision and create established user profiles to identity stores.
 
 #### REST
 
-RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.authn.pac4j.provisioning.rest`.
+{% include {{ version }}/rest-integration.md configKey="cas.authn.pac4j.provisioning.rest" %}
 
 ### GitHub
 
@@ -4346,8 +4331,9 @@ Scheduler settings for this feature are available [here](Configuration-Propertie
 
 ### REST Audits
 
-Store audit logs inside a database. RESTful settings for this feature are 
-available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.audit.rest`.
+Store audit logs inside a database. 
+
+{% include {{ version }}/rest-integration.md configKey="cas.audit.rest" %}
 
 ```properties
 # cas.audit.rest.asynchronous=true
@@ -4650,11 +4636,7 @@ To learn more about this topic, [please review this guide](../services/Git-Servi
 
 To learn more about this topic, [please review this guide](../services/REST-Service-Management.html).
 
-```properties
-# cas.service-registry.rest.url=https://example.api.org
-# cas.service-registry.rest.basic-auth-username=
-# cas.service-registry.rest.basic-auth-password=
-```
+{% include {{ version }}/rest-integration.md configKey="cas.service-registry" %}
 
 ### CouchDb Service Registry
 
@@ -5209,7 +5191,7 @@ To learn more about this topic, [please review this guide](../webflow/Webflow-Cu
 
 #### REST
 
-RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.webflow.login-decorator.rest`.
+{% include {{ version }}/rest-integration.md configKey="cas.webflow.login-decorator.rest" %}
 
 ### Spring Webflow Auto Configuration
 
@@ -5319,8 +5301,7 @@ Interrupt the authentication flow to reach out to external services. To learn mo
 
 #### Authentication Interrupt REST
 
-RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.interrupt.rest`.
-
+{% include {{ version }}/rest-integration.md configKey="cas.interrupt.rest" %}
 
 ### Acceptable Usage Policy
 
@@ -5353,7 +5334,7 @@ The following scopes are supported:
 
 #### REST
 
-RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.acceptable-usage-policy.rest`.
+{% include {{ version }}/rest-integration.md configKey="cas.acceptable-usage-policy.rest" %}
 
 #### JDBC
 
