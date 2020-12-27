@@ -12,10 +12,6 @@ This document describes a number of suggestions and configuration
 options that apply to and are common amongst a selection of CAS modules and features. 
 To see the full list of CAS properties, please [review this guide](Configuration-Properties.html).
 
-## What is `${configurationKey}`?
-
-Many CAS *sub* settings are common and applicable to a number of modules and features. For example, in dealing with database authentication there are a number of database-related modules who own an individual setting to define the database driver. These settings would typically be defined as `cas.authn.feature1.database-driver=xyz` and `cas.authn.feature2.database-driver=abc`. Rather than duplicating the shared and common `database-driver` setting, this page attempts to collect only what might be common CAS settings across features and modules while referring to the specific feature under the path `${configurationKey}`. Therefore, the documentation for either `feature1` or `feature2` might allow one to find common database-related settings (such as the `database-driver`) under `${configurationKey}.database-driver` where `${configurationKey}` would either be `cas.authn.feature1` or `cas.authn.feature2` depending on feature at hand. The notes and documentation for each feature that wants to inherit from a common block of settings should always advertise the appropriate value for `${configurationKey}`.
-
 ## Naming Convention
 
 - Settings and properties that are controlled by the CAS platform directly always begin with the prefix `cas`. All other settings are controlled 
@@ -568,19 +564,6 @@ The following options related to CouchDb support in CAS apply equally to a numbe
 # ${configurationKey}.couch-db.asynchronous=true
 ```
 
-## RESTful Integrations
-
-The following options related to features in CAS that provide REST support to fetch and update data. These settings apply equally, given the component's *configuration key*:
-
-```properties
-# ${configurationKey}.method=GET|POST
-# ${configurationKey}.order=0
-# ${configurationKey}.case-insensitive=false
-# ${configurationKey}.basic-auth-username=uid
-# ${configurationKey}.basic-auth-password=password
-# ${configurationKey}.url=https://rest.somewhere.org/attributes
-```
-
 
 ## DDL Configuration
 
@@ -728,70 +711,6 @@ The following  options are shared and apply when CAS is configured to integrate 
 # ${configurationKey}.memcached.kryo-objects-by-reference=false
 # ${configurationKey}.memcached.kryo-registration-required=false
 ```
-
-## Password Policy Settings
-
-The following  options are shared and apply when CAS is configured to integrate with account sources and authentication strategies that support password policy enforcement and detection, given the provider's *configuration key*. Note that certain setting may only be applicable if the underlying account source is LDAP and are only taken into account if the authentication strategy configured in CAS is able to honor and recognize them: 
-
-```properties
-# ${configurationKey}.type=GENERIC|AD|FreeIPA|EDirectory
-
-# ${configurationKey}.enabled=true
-# ${configurationKey}.policy-attributes.account-locked=javax.security.auth.login.AccountLockedException
-# ${configurationKey}.login-failures=5
-# ${configurationKey}.warning-attribute-value=
-# ${configurationKey}.warning-attribute-name=
-# ${configurationKey}.display-warning-on-match=true
-# ${configurationKey}.warn-all=true
-# ${configurationKey}.warning-days=30
-# ${configurationKey}.account-state-handling-enabled=true
-
-# An implementation of `org.ldaptive.auth.AuthenticationResponseHandler`
-# ${configurationKey}.custom-policy-class=com.example.MyAuthenticationResponseHandler
-
-# ${configurationKey}.strategy=DEFAULT|GROOVY|REJECT_RESULT_CODE
-# ${configurationKey}.groovy.location=file:/etc/cas/config/password-policy.groovy
-```
-
-#### Password Policy Strategies
-
-Password policy strategy types are outlined below. The strategy evaluates the authentication response received from LDAP, etc and is allowed to review it upfront in order to further examine whether account state, messages and warnings is eligible for further investigation.
-
-| Option        | Description
-|---------------|-----------------------------------------------------------------------------
-| `DEFAULT`     | Accepts the authentication response as is, and processes account state, if any.
-| `GROOVY`      | Examine the authentication response as part of a Groovy script dynamically. The responsibility of handling account state changes and warnings is entirely delegated to the script.
-| `REJECT_RESULT_CODE`  | An extension of the `DEFAULT` where account state is processed only if the result code of the authentication response is not denied in the configuration. By default `INVALID_CREDENTIALS(49)` prevents CAS from handling account states.
-
-If the password policy strategy is to be handed off to a Groovy script, the outline of the script may be as follows:
-
-```groovy
-import java.util.*
-import org.ldaptive.auth.*
-import org.apereo.cas.*
-import org.apereo.cas.authentication.*
-import org.apereo.cas.authentication.support.*
-
-def List<MessageDescriptor> run(final Object... args) {
-    def response = args[0]
-    def configuration = args[1];
-    def logger = args[2]
-    def applicationContext = args[3]
-
-    logger.info("Handling password policy [{}] via ${configuration.getAccountStateHandler()}", response)
-
-    def accountStateHandler = configuration.getAccountStateHandler()
-    return accountStateHandler.handle(response, configuration)
-}
-```
-
-The parameters passed are as follows:
-
-| Parameter             | Description
-|-----------------------|-----------------------------------------------------------------------------------
-| `response`            | The LDAP authentication response of type `org.ldaptive.auth.AuthenticationResponse`
-| `configuration`       | The LDAP password policy configuration carrying the account state handler defined.
-| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
 
 ## Webflow Auto Configuration
 
