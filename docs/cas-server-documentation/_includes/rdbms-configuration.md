@@ -50,6 +50,28 @@ connections and queries.
 # cas.jdbc.physical-table-names.{table-name}={new-table-name}
 ```
 
+### DDL Configuration
+
+Note that the default value for Hibernate's DDL setting is `create-drop` which may not be appropriate
+for use in production. Setting the value to `validate` may be more desirable, but any of the following options can be used:
+
+| Type                 | Description
+|----------------------|----------------------------------------------------------
+| `validate`           | Validate the schema, but make no changes to the database.
+| `update`             | Update the schema.
+| `create`             | Create the schema, destroying previous data.
+| `create-drop`        | Drop the schema at the end of the session.
+| `none`               | Do nothing.
+
+Note that during a version migration where any schema has changed `create-drop` will result
+in the loss of all data as soon as CAS is started. For transient data like tickets this is probably
+not an issue, but in cases like the audit table important data could be lost. Using `update`, while safe
+for data, is confirmed to result in invalid database state. `validate` or `none` settings
+are likely the only safe options for production use.
+
+For more information on configuration of transaction levels and propagation behaviors,
+please review [this guide](http://docs.spring.io/spring-framework/docs/current/javadoc-api/).
+
 ### Container-based JDBC Connections
 
 If you are planning to use a container-managed JDBC connection with CAS (i.e. JPA Ticket/Service Registry, etc)

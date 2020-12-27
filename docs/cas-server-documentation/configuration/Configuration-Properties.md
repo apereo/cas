@@ -1320,7 +1320,8 @@ with the following configured properties:
 
 This option will fetch attributes from a Couchbase database for a given CAS principal. To 
 learn more about this topic, [please review this guide](../installation/Couchbase-Authentication.html). 
-Database settings for this feature are available [here](Configuration-Properties-Common.html#couchbase-integration-settings) under the configuration key `cas.authn.attribute-repository.couchbase`.
+
+{% include {{ version }}/couchbase-configuration.md configKey="cas.authn.attribute-repository.couchbase" %}
 
 ```properties
 # cas.authn.attribute-repository.couchbase.usernameAttribute=username
@@ -1629,7 +1630,9 @@ This feature uses the same data source used by the CAS Redis audit facility.
 
 ### Hazelcast
 
-Use a distributed Hazelcast map to record throttled authentication attempts. Hazelcast settings for this feature are available [here](Configuration-Properties-Common.html#hazelcast-configuration) under the configuration key `cas.authn.throttle.hazelcast`.
+Use a distributed Hazelcast map to record throttled authentication attempts. 
+
+{% include {{ version }}/hazelcast-configuration.md configKey="cas.authn.throttle.hazelcast" %}
 
 ### Database
 
@@ -2472,7 +2475,7 @@ To learn more about this topic, [please review this guide](../installation/Couch
 
 {% include {{ version }}/password-encoding.md configKey="cas.authn.couchbase" %}
 
-Database settings for this feature are available [here](Configuration-Properties-Common.html#couchbase-integration-settings) under the configuration key `cas.authn.couchbase`.
+{% include {{ version }}/couchbase-configuration.md configKey="cas.authn.couchbase" %}
 
 ```properties
 # cas.authn.couchbase.username-attribute=username
@@ -3782,22 +3785,18 @@ Identity providers for delegated authentication can be provided to CAS using an 
 
 The following external identity providers share [common blocks of settings](Configuration-Properties-Common.html#delegated-authentication-settings) 
 under the listed configuration keys listed below:
+    
+{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.twitter" %}
+{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.paypal" %}
+{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.wordpress" %}
+{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.yahoo" %}
+{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.orcid" %}
+{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.dropbox" %}
+{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.foursquare" %}
+{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.windows-live" %}
+{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.google" %}
+{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.hi-org-server" %}
 
-| Identity Provider         | Configuration Key
-|---------------------------|----------------------------------------------------------
-| Twitter                   | `cas.authn.pac4j.twitter`
-| Paypal                    | `cas.authn.pac4j.paypal`
-| Wordpress                 | `cas.authn.pac4j.wordpress`
-| Yahoo                     | `cas.authn.pac4j.yahoo`
-| Orcid                     | `cas.authn.pac4j.orcid`
-| Dropbox                   | `cas.authn.pac4j.dropbox`
-| GitHub                    | `cas.authn.pac4j.github`
-| Foursquare                | `cas.authn.pac4j.foursquare`
-| WindowsLive               | `cas.authn.pac4j.windows-live`
-| Google                    | `cas.authn.pac4j.google`
-| HiOrg-Server              | `cas.authn.pac4j.hi-org-server`
-
-See below for other identity providers such as CAS, SAML2 and more.
 
 ### Provisioning
 
@@ -3815,8 +3814,7 @@ Provision and create established user profiles to identity stores.
 
 ### GitHub
 
-In addition to the [common block of settings](Configuration-Properties-Common.html#delegated-authentication-settings), the following 
-properties are additionally supported, when delegating authentication to GitHub:
+The following properties are additionally supported, when delegating authentication to GitHub:
 
 ```properties
 # cas.authn.pac4j.github.scope=user|read:user|user:email|...
@@ -3828,7 +3826,7 @@ For a full list of possible scopes, please [see this link](https://developer.git
 
 ### Google
 
-In addition to the [common block of settings](Configuration-Properties-Common.html#delegated-authentication-settings) , the following properties are additionally supported, when delegating authentication to Google:
+The following properties are additionally supported, when delegating authentication to Google:
 
 ```properties
 # cas.authn.pac4j.google.scope=EMAIL|PROFILE|EMAIL_AND_PROFILE
@@ -3845,37 +3843,27 @@ Delegate authentication to an external CAS server.
 
 ### OAuth20
 
-Delegate authentication to an generic OAuth2 server. Common settings for this 
-identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) under the configuration key `cas.authn.pac4j.oauth2[0]`.
+Delegate authentication to an generic OAuth2 server. 
 
-```properties
-# cas.authn.pac4j.oauth2[0].auth-url=
-# cas.authn.pac4j.oauth2[0].token-url=
-# cas.authn.pac4j.oauth2[0].profile-url=
-# cas.authn.pac4j.oauth2[0].profile-path=
-# cas.authn.pac4j.oauth2[0].scope=
-# cas.authn.pac4j.oauth2[0].profile-verb=GET|POST
-# cas.authn.pac4j.oauth2[0].response-type=code
-# cas.authn.pac4j.oauth2[0].profile-attrs.attr1=path-to-attr-in-profile
-# cas.authn.pac4j.oauth2[0].custom-params.param1=value1
-```
+{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.oauth2[0]" %}
+{% include {{ version }}/oauth-delegated-authentication.md configKey="cas.authn.pac4j.oauth2[0]" %}
 
 ### OpenID Connect
 
 Delegate authentication to an external OpenID Connect server.
 
-Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) 
-under the configuration key `cas.authn.pac4j.oidc[0]`.
+{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.oidc[0]" %}
+{% include {{ version }}/oidc-delegated-authentication.md configKey="cas.authn.pac4j.oidc[0]" %}
 
 #### Google
 
-Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-openid-connect-settings) 
-under the configuration key `cas.authn.pac4j.oidc[0].google`.
+{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.oidc[0].google" %}
+{% include {{ version }}/oidc-delegated-authentication.md configKey="cas.authn.pac4j.oidc[0].google" %}
 
 #### Azure AD
 
-Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-openid-connect-settings) 
-under the configuration key `cas.authn.pac4j.oidc[0].azure`.
+{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.oidc[0].azure" %}
+{% include {{ version }}/oidc-delegated-authentication.md configKey="cas.authn.pac4j.oidc[0].azure" %}
 
 The following settings specifically apply to this provider:
 
@@ -3885,9 +3873,8 @@ The following settings specifically apply to this provider:
 
 #### KeyCloak
 
-Common settings for this identity provider are 
-available [here](Configuration-Properties-Common.html#delegated-authentication-openid-connect-settings) 
-under the configuration key `cas.authn.pac4j.oidc[0].keycloak`.
+{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.oidc[0].keycloak" %}
+{% include {{ version }}/oidc-delegated-authentication.md configKey="cas.authn.pac4j.oidc[0].keycloak" %}
 
 ```properties
 # cas.authn.pac4j.oidc[0].keycloak.realm=
@@ -3896,9 +3883,8 @@ under the configuration key `cas.authn.pac4j.oidc[0].keycloak`.
 
 #### Apple Signin
 
-Common settings for this identity provider are 
-available [here](Configuration-Properties-Common.html#delegated-authentication-openid-connect-settings) 
-under the configuration key `cas.authn.pac4j.oidc[0].apple`.
+{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.oidc[0].apple" %}
+{% include {{ version }}/oidc-delegated-authentication.md configKey="cas.authn.pac4j.oidc[0].apple" %}
 
 ```properties
 # cas.authn.pac4j.oidc[0].apple.private-key=
@@ -3909,68 +3895,15 @@ under the configuration key `cas.authn.pac4j.oidc[0].apple`.
 
 #### Generic
 
-Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-openid-connect-settings) 
-under the configuration key `cas.authn.pac4j.oidc[0].generic`.
+{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.oidc[0].generic" %}
+{% include {{ version }}/oidc-delegated-authentication.md configKey="cas.authn.pac4j.oidc[0].generic" %}
 
 ### SAML2
 
 Delegate authentication to an external SAML2 IdP.
 
-```properties
-# cas.authn.pac4j.saml[0].keystore-password=
-# cas.authn.pac4j.saml[0].private-key-password=
-# cas.authn.pac4j.saml[0].keystore-path=
-# cas.authn.pac4j.saml[0].keystore-alias=
-
-# cas.authn.pac4j.saml[0].service-provider-entity-id=
-# cas.authn.pac4j.saml[0].service-provider-metadata-path=
-
-# cas.authn.pac4j.saml[0].certificate-name-to-append=
-
-# cas.authn.pac4j.saml[0].maximum-authentication-lifetime=3600
-# cas.authn.pac4j.saml[0].maximum-authentication-lifetime=300
-# cas.authn.pac4j.saml[0].destination-binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect
-
-# cas.authn.pac4j.saml[0].identity-provider-metadata-path=
-
-# cas.authn.pac4j.saml[0].authn-context-class-ref[0]=
-# cas.authn.pac4j.saml[0].authn-context-comparison-type=
-# cas.authn.pac4j.saml[0].name-id-policy-format=
-# cas.authn.pac4j.saml[0].force-auth=false
-# cas.authn.pac4j.saml[0].passive=false
-
-# cas.authn.pac4j.saml[0].wants-assertions-signed=
-# cas.authn.pac4j.saml[0].wants-responses-signed=
-# cas.authn.pac4j.saml[0].all-signature-validation-disabled=false
-# cas.authn.pac4j.saml[0].sign-service-provider-metadata=false
-# cas.authn.pac4j.saml[0].principal-id-attribute=eduPersonPrincipalName
-# cas.authn.pac4j.saml[0].use-name-qualifier=true
-# cas.authn.pac4j.saml[0].attribute-consuming-service-index=
-# cas.authn.pac4j.saml[0].assertion-consumer-service-index=-1
-# cas.authn.pac4j.saml[0].provider-name=
-# cas.authn.pac4j.saml[0].name-id-policy-allow-create=TRUE|FALSE|UNDEFINED
-
-
-# cas.authn.pac4j.saml[0].sign-authn-request=false
-# cas.authn.pac4j.saml[0].sign-service-provider-logout-request=false
-# cas.authn.pac4j.saml[0].black-listed-signature-signing-algorithms[0]=
-# cas.authn.pac4j.saml[0].signature-algorithms[0]=
-# cas.authn.pac4j.saml[0].signature-reference-digest-methods[0]=
-# cas.authn.pac4j.saml[0].signature-canonicalization-algorithm=
-
-# cas.authn.pac4j.saml[0].requested-attributes[0].name=
-# cas.authn.pac4j.saml[0].requested-attributes[0].friendly-name=
-# cas.authn.pac4j.saml[0].requested-attributes[0].name-format=urn:oasis:names:tc:SAML:2.0:attrname-format:uri
-# cas.authn.pac4j.saml[0].requested-attributes[0].required=false
-
-# cas.authn.pac4j.saml[0].mapped-attributes[0].name=urn:oid:2.5.4.42
-# cas.authn.pac4j.saml[0].mapped-attributes[0].mapped-as=displayName
-
-# cas.authn.pac4j.saml[0].message-store-factory=org.pac4j.saml.store.EmptyStoreFactory
-```
-
-Examine the generated metadata after accessing the CAS login screen to ensure all 
-ports and endpoints are correctly adjusted. Finally, share the CAS SP metadata with the delegated IdP and register CAS as an authorized relying party.
+{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.saml[0]" %}
+{% include {{ version }}/saml2-delegated-authentication.md configKey="cas.authn.pac4j.saml[0]" %}
 
 #### SAML2 Identity Provider Discovery
 
@@ -3980,7 +3913,7 @@ cas.authn.pac4j.saml-discovery.resource[0].location=file:/etc/cas/config/json-fe
 
 ### Facebook
 
-Delegate authentication to Facebook. Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) under the configuration key `cas.authn.pac4j.facebook`.
+{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.facebook" %}
 
 ```properties
 # cas.authn.pac4j.facebook.fields=
@@ -3989,7 +3922,7 @@ Delegate authentication to Facebook. Common settings for this identity provider 
 
 ### HiOrg Server
 
-Delegate authentication to HiOrg Server. Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) under the configuration key `cas.authn.pac4j.hi-org-server`.
+{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.hi-org-server" %}
 
 ```properties
 # cas.authn.pac4j.hi-org-server.scope=eigenedaten
@@ -3997,14 +3930,15 @@ Delegate authentication to HiOrg Server. Common settings for this identity provi
 
 ### LinkedIn
 
-Delegate authentication to LinkedIn. Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) under the configuration key `cas.authn.pac4j.linkedin`.
+{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.linkedin" %}
 
 ```properties
 # cas.authn.pac4j.linked-in.scope=
 ```
 
 ### Twitter
-Delegate authentication to Twitter.  Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) under the configuration key `cas.authn.pac4j.twitter`.
+
+{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.twitter" %}
 
 ```properties
 # cas.authn.pac4j.twitter.include-email=false
@@ -4294,8 +4228,7 @@ under the configuration key `cas.audit`.
 
 Store audit logs inside a Couchbase database.
 
-Database settings for this feature are available [here](Configuration-Properties-Common.html#couchbase-integration-settings) 
-under the configuration key `cas.audit.couchbase`.
+{% include {{ version }}/couchbase-configuration.md configKey="cas.audit.couchbase" %}
 
 ```properties
 # cas.audit.couchbase.asynchronous=true
@@ -4390,8 +4323,8 @@ Decide how CAS should monitor the internal state of various cache storage servic
 ### Memcached Monitors
 
 Decide how CAS should monitor the internal state of a memcached connection pool. 
-Integration settings for this registry are available [here](Configuration-Properties-Common.html#memcached-integration-settings) 
-under the configuration key `cas.monitor.memcached`.
+
+{% include {{ version }}/memcached-integration.md configKey="cas.monitor.memcached" %}
 
 ### MongoDb Monitors
 
@@ -4706,8 +4639,8 @@ To learn more about this topic, [please review this guide](../services/LDAP-Serv
 
 Control how CAS services should be found inside a Couchbase instance.
 To learn more about this topic, [please review this guide](../services/Couchbase-Service-Management.html). 
-Database settings for this feature are available [here](Configuration-Properties-Common.html#couchbase-integration-settings) 
-under the configuration key `cas.service-registry.couchbase`.
+
+{% include {{ version }}/couchbase-configuration.md configKey="cas.service-registry.couchbase" %}
 
 ### Database Service Registry
 
@@ -4750,8 +4683,7 @@ Replication modes may be configured per the following options:
 Control how CAS services definition files should be replicated across a CAS cluster backed by a distributed Hazelcast cache.
 To learn more about this topic, [please review this guide](../services/Configuring-Service-Replication.html).
 
-Hazelcast settings for this feature are available [here](Configuration-Properties-Common.html#hazelcast-configuration) under 
-the configuration key `cas.service-registry.stream.hazelcast.config`.
+{% include {{ version }}/hazelcast-configuration.md configKey="cas.service-registry.stream.hazelcast.config" %}
 
 ```properties
 # cas.service-registry.stream.hazelcast.duration=PT1M
@@ -4801,7 +4733,9 @@ To learn more about this topic, [please review this guide](../ticketing/CouchDb-
 
 ### Couchbase Ticket Registry
 
-To learn more about this topic, [please review this guide](../ticketing/Couchbase-Ticket-Registry.html). Database settings for this feature are available [here](Configuration-Properties-Common.html#couchbase-integration-settings) under the configuration key `cas.ticket.registry.couchbase`.
+To learn more about this topic, [please review this guide](../ticketing/Couchbase-Ticket-Registry.html). 
+
+{% include {{ version }}/couchbase-configuration.md configKey="cas.ticket.registry.couchbase" %}
 
 Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.couchbase`.
 
@@ -4809,7 +4743,7 @@ Signing & encryption settings for this registry are available [here](Configurati
 
 To learn more about this topic, [please review this guide](../ticketing/Hazelcast-Ticket-Registry.html).
 
-Common Hazelcast settings for this feature are available [here](Configuration-Properties-Common.html#hazelcast-configuration) under the configuration key `cas.ticket.registry.hazelcast`.
+{% include {{ version }}/hazelcast-configuration.md configKey="cas.ticket.registry.hazelcast" %}
 
 ```properties
 # cas.ticket.registry.hazelcast.page-size=500
@@ -4992,7 +4926,9 @@ Signing & encryption settings for this registry are available [here](Configurati
 
 ### Memcached Ticket Registry
 
-To learn more about this topic, [please review this guide](../ticketing/Memcached-Ticket-Registry.html).Integration settings for this registry are available [here](Configuration-Properties-Common.html#memcached-integration-settings) under the configuration key `cas.ticket.registry.memcached`.
+To learn more about this topic, [please review this guide](../ticketing/Memcached-Ticket-Registry.html). 
+
+{% include {{ version }}/memcached-integration.md configKey="cas.ticket.registry.memcached" %}
 
 Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.memcached`.
 
@@ -5357,8 +5293,7 @@ the configuration key `cas.acceptable-usage-policy`. This feature uses the `asyn
 
 #### Couchbase
 
-Database settings for this feature are available [here](Configuration-Properties-Common.html#couchbase-integration-settings) under the 
-configuration key `cas.acceptable-usage-policy.couchbase`.
+{% include {{ version }}/couchbase-configuration.md configKey="cas.acceptable-usage-policy.couchbase" %}
 
 #### MongoDb
 
@@ -5367,7 +5302,6 @@ configuration key `cas.acceptable-usage-policy.couchbase`.
 #### Redis
 
 {% include {{ version }}/redis-configuration.md configKey="cas.acceptable-usage-policy" %}
-
 
 #### LDAP
 
