@@ -49,14 +49,6 @@ should support the duration syntax for full clarity on unit of measure:
 The native numeric syntax is still supported though you will have to refer to the docs
 in each case to learn the exact unit of measure.
 
-## Authentication Throttling
-
-Certain functionality in CAS, such as [OAuth](../installation/OAuth-OpenId-Authentication.html) 
-or [REST API](../protocol/REST-Protocol.html), allow you to throttle requests to specific endpoints in addition to the more 
-generic authentication throttling functionality applied during the login flow and authentication attempts.
-
-To fully deliver this functionality, it is expected that [authentication throttling](../installation/Configuring-Authentication-Throttling.html) is turned on.
-
 ## Authentication Credential Selection
 
 A number of authentication handlers are allowed to determine whether they can operate on the provided credential
@@ -157,37 +149,6 @@ The following options related to Kafka support in CAS apply equally to a number 
 # ${configurationKey}.config.key=value
 ```
 
-## RADIUS Configuration
-
-The following options related to RADIUS support in CAS apply equally to a number of CAS components (authentication, etc) 
-given the component's *configuration key*.
-
-`server` parameters defines identification values of authenticated service (CAS server), primarily `server.protocol`
- for communication to RADIUS server identified by `client`.
-
-`client` parameters defines values for connecting RADIUS server. 
-Parameter `client.inetAddress` has possibility to contain more addresses separated by comma to define failover servers 
-when `failoverOnException` is set.   
-
-```properties
-# ${configurationKey}.server.nas-port-id=-1
-# ${configurationKey}.server.nas-real-port=-1
-# ${configurationKey}.server.protocol=EAP_MSCHAPv2
-# ${configurationKey}.server.retries=3
-# ${configurationKey}.server.nas-port-type=-1
-# ${configurationKey}.server.nas-port=-1
-# ${configurationKey}.server.nas-ip-address=
-# ${configurationKey}.server.nas-ipv6-address=
-# ${configurationKey}.server.nas-identifier=-1
-# ${configurationKey}.client.authentication-port=1812
-# ${configurationKey}.client.shared-secret=N0Sh@ar3d$ecReT
-# ${configurationKey}.client.socket-timeout=0
-# ${configurationKey}.client.inet-address=localhost
-# ${configurationKey}.client.accounting-port=1813
-# ${configurationKey}.failover-on-exception=false
-# ${configurationKey}.failover-on-authentication-failure=false
-```
-
 ## SAML2 Service Provider Integrations
 
 The settings defined for each service provider simply attempt to automate the creation of 
@@ -238,27 +199,6 @@ All configurable multifactor authentication providers have these base properties
 # ${configurationKey}.failure-mode=UNDEFINED
 ```
 
-## Multifactor Authentication Bypass
-
-The following bypass options apply equally to multifactor authentication providers given the provider's *configuration key*:
-
-```properties
-# ${configurationKey}.bypass.principal-attribute-name=bypass|skip
-# ${configurationKey}.bypass.principal-attribute-value=true|enabled.+
-
-# ${configurationKey}.bypass.authentication-attribute-name=bypass|skip
-# ${configurationKey}.bypass.authentication-attribute-value=allowed.+|enabled.+
-
-# ${configurationKey}.bypass.authentication-handler-name=AcceptUsers.+
-# ${configurationKey}.bypass.authentication-method-name=LdapAuthentication.+
-
-# ${configurationKey}.bypass.credential-class-type=UsernamePassword.+
-
-# ${configurationKey}.bypass.http-request-remote-address=127.+|example.*
-# ${configurationKey}.bypass.http-request-headers=header-X-.+|header-Y-.+
-
-# ${configurationKey}.bypass.groovy.location=file:/etc/cas/config/mfa-bypass.groovy
-```
 
 If multifactor authentication bypass is determined via REST, 
 RESTful settings are available [here](#restful-integrations) under the configuration key `${configurationKey}.bypass.rest`.
