@@ -99,20 +99,6 @@ class PredicateExample implements Predicate<Credential> {
 }
 ```
 
-## Cookie Properties
-
-The following common properties configure cookie generator support in CAS.
-
-```properties
-# ${configurationKey}.path=
-# ${configurationKey}.max-age=-1
-# ${configurationKey}.domain=
-# ${configurationKey}.name=
-# ${configurationKey}.secure=true
-# ${configurationKey}.http-only=true
-# ${configurationKey}.same-site-policy=none|lax|strict
-# ${configurationKey}.comment=CAS Cookie
-```
 
 ## Cassandra Configuration
 
@@ -126,138 +112,6 @@ when CAS attempts to establish connections, run queries, etc.
 # ${configurationKey}.consistency-level=ANY|ONE|TWO|THREE|QUORUM|LOCAL_QUORUM|ALL|EACH_QUORUM|LOCAL_SERIAL|SERIAL|LOCAL_ONE
 # ${configurationKey}.serial-consistency-level=ANY|ONE|TWO|THREE|QUORUM|LOCAL_QUORUM|ALL|EACH_QUORUM|LOCAL_SERIAL|SERIAL|LOCAL_ONE
 # ${configurationKey}.timeout=PT5S
-```
-
-## Hibernate & JDBC
-
-Control global properties that are relevant to Hibernate,
-when CAS attempts to employ and utilize database resources,
-connections and queries.
-
-```properties
-# cas.jdbc.show-sql=true
-# cas.jdbc.gen-ddl=true
-# cas.jdbc.case-insensitive=false
-# cas.jdbc.physical-table-names.{table-name}={new-table-name}
-```
-
-### Database Settings
-
-The following options related to JPA/JDBC support in CAS apply equally to a number of CAS components (ticket registries, etc) given the component's *configuration key*:
-
-```properties
-# ${configurationKey}.user=sa
-# ${configurationKey}.password=
-# ${configurationKey}.driver-class=org.hsqldb.jdbcDriver
-# ${configurationKey}.url=jdbc:hsqldb:mem:cas-hsql-database
-# ${configurationKey}.dialect=org.hibernate.dialect.HSQLDialect
-
-# ${configurationKey}.fail-fast-timeout=1
-# ${configurationKey}.isolation-level-name=ISOLATION_READ_COMMITTED 
-# ${configurationKey}.health-query=
-# ${configurationKey}.isolate-internal-queries=false
-# ${configurationKey}.leak-threshold=10
-# ${configurationKey}.propagation-behaviorName=PROPAGATION_REQUIRED
-# ${configurationKey}.batchSize=1
-# ${configurationKey}.default-catalog=
-# ${configurationKey}.default-schema=
-# ${configurationKey}.ddl-auto=create-drop
-# ${configurationKey}.physical-naming-strategy-class-name=org.apereo.cas.hibernate.CasHibernatePhysicalNamingStrategy
-
-# ${configurationKey}.autocommit=false
-# ${configurationKey}.idle-timeout=5000
-
-# ${configurationKey}.data-source-name=
-# ${configurationKey}.data-source-roxy=false
-
-# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
-# ${configurationKey}.properties.property-name=propertyValue
-
-# ${configurationKey}.pool.suspension=false
-# ${configurationKey}.pool.mi-size=6
-# ${configurationKey}.pool.max-size=18
-# ${configurationKey}.pool.max-wait=2000
-# ${configurationKey}.pool.timeout-millis=1000
-```
-
-### Container-based JDBC Connections
-
-If you are planning to use a container-managed JDBC connection with CAS (i.e. JPA Ticket/Service Registry, etc)
-then you can set the `data-source-name` property on any of the configuration items that require a database
-connection. When using a container configured data source, many of the pool related parameters will not be used.
-If `data-source-name` is specified but the JNDI lookup fails, a data source will be created with the configured 
-(or default) CAS pool parameters.
-
-If you experience classloading errors while trying to use a container datasource, you can try 
-setting the `data-source-proxy` setting to true which will wrap the container datasource in
-a way that may resolve the error.
-
-The `data-source-name` property can be either a JNDI name for the datasource or a resource name prefixed with 
-`java:/comp/env/`. If it is a resource name then you need an entry in a `web.xml` that you can add to your
-CAS overlay. It should contain an entry like this:
-
-```xml
-<resource-ref>
-    <res-ref-name>jdbc/casDataSource</res-ref-name>
-    <res-type>javax.sql.DataSource</res-type>
-    <res-auth>Container</res-auth>
-</resource-ref>
-```
-
-In Apache Tomcat a container datasource can be defined like this in the `context.xml`:
-
-```xml
-<Resource name="jdbc/casDataSource"
-    auth="Container"
-    type="javax.sql.DataSource"
-    driverClassName="org.postgresql.Driver"
-    url="jdbc:postgresql://casdb.example.com:5432/xyz_db"
-    username="cas"
-    password="xyz"
-    testWhileIdle="true"
-    testOnBorrow="true"
-    testOnReturn="false"
-    validationQuery="select 1"
-    validationInterval="30000"
-    timeBetweenEvictionRunsMillis="30000"
-    factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
-    minIdle="0"
-    maxIdle="5"
-    initialSize="0"
-    maxActive="20"
-    maxWait="10000" />
-```
-
-In Jetty, a pool can be put in JNDI with a `jetty.xml` or `jetty-env.xml` file like this:
-
-```xml
-<?xml version="1.0"?>
-<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure_9_3.dtd">
-
-<Configure class="org.eclipse.jetty.webapp.WebAppContext">
-<New id="datasource.cas" class="org.eclipse.jetty.plus.jndi.Resource">
-    <Arg></Arg> <!-- empty scope arg is JVM scope -->
-    <Arg>jdbc/casDataSource</Arg> <!-- name that matches resource in web.xml-->
-    <Arg>
-        <New class="org.apache.commons.dbcp.BasicDataSource">
-            <Set name="driverClassName">oracle.jdbc.OracleDriver</Set>
-            <Set name="url">jdbc:oracle:thin:@//casdb.example.com:1521/ntrs"</Set>
-            <Set name="username">cas</Set>
-            <Set name="password">xyz</Set>
-            <Set name="validationQuery">select dummy from dual</Set>
-            <Set name="testOnBorrow">true</Set>
-            <Set name="testOnReturn">false</Set>
-            <Set name="testWhileIdle">false</Set>
-            <Set name="defaultAutoCommit">false</Set>
-            <Set name="initialSize">0</Set>
-            <Set name="maxActive">15</Set>
-            <Set name="minIdle">0</Set>
-            <Set name="maxIdle">5</Set>
-            <Set name="maxWait">2000</Set>
-        </New>
-    </Arg>
-</New>
-</Configure>
 ```
 
 
@@ -274,26 +128,6 @@ The following options related to Person Directory support in CAS when it attempt
 # ${configurationKey}.active-attribute-repository-ids=StubRepository,etc
 ```
 
-## Git Configuration
-
-The following options related to Git integration support in CAS when it attempts to connect and pull/push changes, given the component's *configuration key*:
-
-```properties
-# ${configurationKey}.git.repository-url=https://github.com/repository
-# ${configurationKey}.git.branches-to-clone=master
-# ${configurationKey}.git.active-branch=master
-# ${configurationKey}.git.sign-commits=false
-# ${configurationKey}.git.username=
-# ${configurationKey}.git.password=
-# ${configurationKey}.git.clone-directory.location=file:/tmp/cas-service-registry
-# ${configurationKey}.git.push-changes=false
-# ${configurationKey}.git.private-key-passphrase=
-# ${configurationKey}.git.private-key.location=file:/tmp/privkey.pem
-# ${configurationKey}.git.ssh-session-password=
-# ${configurationKey}.git.timeout=PT10S
-# ${configurationKey}.git.strict-host-key-checking=true
-# ${configurationKey}.git.clear-existing-identities=false
-```
 
 ## InfluxDb Configuration
 
