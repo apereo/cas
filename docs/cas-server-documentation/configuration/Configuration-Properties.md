@@ -2028,7 +2028,7 @@ To learn more about this topic, [please review this guide](../mfa/RADIUS-Authent
 
 {% include {{ version }}/password-encoding.md configKey="cas.authn.radius" %}
 
-Radius settings for this feature are available [here](Configuration-Properties-Common.html#radius-configuration) under the configuration key `cas.authn.radius`.
+{% include {{ version }}/radius-configuration.md configKey="cas.authn.radius" %}
 
 ```properties
 # cas.authn.radius.name=
@@ -3013,8 +3013,7 @@ To learn more about this topic, [please review this guide](../mfa/Simple-Multifa
 
 {% include {{ version }}/sms-notifications.md configKey="cas.authn.mfa.simple" %}
 
-Multifactor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass)
-under the configuration key `cas.authn.mfa.simple`.
+{% include {{ version }}/mfa-bypass-configuration.md configKey="cas.authn.mfa.simple" %}
 
 ### Google Authenticator
 
@@ -3035,8 +3034,7 @@ To learn more about this topic, [please review this guide](../mfa/GoogleAuthenti
 # cas.authn.mfa.gauth.order=
 ```
 
-Multifactor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass)
-under the configuration key `cas.authn.mfa.gauth`. 
+{% include {{ version }}/mfa-bypass-configuration.md configKey="cas.authn.mfa.gauth" %}
 
 {% include {{ version }}/job-scheduling.md configKey="cas.authn.mfa.gauth.cleaner" %}
 
@@ -3108,8 +3106,7 @@ To learn more about this topic, [please review this guide](../mfa/YubiKey-Authen
 # cas.authn.mfa.yubikey.order=
 ```
 
-Multifactor authentication bypass settings for this provider are 
-available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.yubikey`.
+{% include {{ version }}/mfa-bypass-configuration.md configKey="cas.authn.mfa.yubikey" %}
 
 #### YubiKey REST Device Store
 
@@ -3168,9 +3165,9 @@ To learn more about this topic, [please review this guide](../mfa/RADIUS-Authent
 # cas.authn.mfa.radius.order=
 ```
 
-Radius  settings for this feature are available [here](Configuration-Properties-Common.html#radius-configuration) under the configuration key `cas.authn.mfa.radius`.
+{% include {{ version }}/radius-configuration.md configKey="cas.authn.mfa.radius" %}
 
-Multifactor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.radius`.
+{% include {{ version }}/mfa-bypass-configuration.md configKey="cas.authn.mfa.radius" %}
 
 ### DuoSecurity
 
@@ -3189,9 +3186,7 @@ To learn more about this topic, [please review this guide](../mfa/DuoSecurity-Au
 # cas.authn.mfa.duo[0].order=
 ```
 
-Multifactor authentication bypass settings for this provider are 
-available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under 
-the configuration key `cas.authn.mfa.duo[0]`.
+{% include {{ version }}/mfa-bypass-configuration.md configKey="cas.authn.mfa.duo[0]" %}
 
 
 #### Web SDK
@@ -3235,10 +3230,9 @@ To learn more about this topic, [please review this guide](../mfa/FIDO2-WebAuthn
 # cas.authn.mfa.web-authn.expire-devices-time-unit=DAYS
 ```   
 
-Multifactor authentication bypass settings for this provider are
-available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.web-authn`.
+{% include {{ version }}/mfa-bypass-configuration.md configKey="cas.authn.mfa.web-authn" %}
 
-{% include {{ version }}/signing-encryption.md configKey="cas.authn.mfa.web-authn" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}                                                   
+{% include {{ version }}/signing-encryption.md configKey="cas.authn.mfa.web-authn" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
 
 ### FIDO2 WebAuthn Cleaner
 
@@ -3296,8 +3290,7 @@ To learn more about this topic, [please review this guide](../mfa/FIDO-U2F-Authe
 # cas.authn.mfa.u2f.expire-devices-time-unit=DAYS
 ```
 
-Multifactor authentication bypass settings for this provider are
-available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.u2f`.
+{% include {{ version }}/mfa-bypass-configuration.md configKey="cas.authn.mfa.u2f" %}
 
 {% include {{ version }}/signing-encryption.md configKey="cas.authn.mfa.u2f" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
 
@@ -3356,8 +3349,7 @@ To learn more about this topic, [please review this guide](../mfa/SwivelSecure-A
 # cas.authn.mfa.swivel.order=
 ```
 
-Multifactor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.swivel`.
-
+{% include {{ version }}/mfa-bypass-configuration.md configKey="cas.authn.mfa.swivel" %}
 
 ### Authy
 
@@ -3375,9 +3367,7 @@ To learn more about this topic, [please review this guide](../mfa/AuthyAuthentic
 # cas.authn.mfa.authy.order=
 ```
 
-Multifactor authentication bypass settings for this provider are 
-available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.authy`.
-
+{% include {{ version }}/mfa-bypass-configuration.md configKey="cas.authn.mfa.authy" %}
 
 ### Acceptto
 
@@ -3404,7 +3394,7 @@ To learn more about this topic, [please review this guide](../mfa/Acceptto-Authe
 # cas.authn.mfa.acceptto.rank=0
 ```
 
-Multifactor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.acceptto`.
+{% include {{ version }}/mfa-bypass-configuration.md configKey="cas.authn.mfa.acceptto" %}
 
 ## SAML Core
 
