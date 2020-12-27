@@ -292,8 +292,9 @@ under the configuration key `cas.spring.cloud.aws.s3`.
 
 ### JDBC
 
-Allow the CAS Spring Cloud configuration server to load settings from a RDBMS instance. Database settings for this feature 
-are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.spring.cloud.jdbc`.
+Allow the CAS Spring Cloud configuration server to load settings from a RDBMS instance. 
+
+{% include {{ version }}/rdbms-configuration.md configKey="cas.spring.cloud.jdbc" %}
 
 ```properties
 # cas.spring.cloud.jdbc.sql=SELECT id, name, value FROM CAS_SETTINGS_TABLE
@@ -701,8 +702,7 @@ If none is specified, one is automatically detected and used by CAS.
 Control aspects of session replication for certain CAS features, such as OAuth or OpenID Connect,
 allowing session and authentication profile data to be kept with the client as a cookie.
 
-Common cookie properties found [here](Configuration-Properties-Common.html#cookie-properties) under 
-the configuration key `cas.session-replication.cookie`.
+{% include {{ version }}/cookie-configuration.md configKey="cas.session-replication.cookie" %}
 
 ```properties
 # cas.session-replication.auto-configure-cookie-path=true
@@ -777,8 +777,7 @@ LDAP authentication for endpoint security may be additionally configured via the
 
 ### JDBC Authentication Security
 
-Shared database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings)
-under the configuration key `cas.monitor.endpoints.jdbc`.
+{% include {{ version }}/rdbms-configuration.md configKey="cas.monitor.endpoints.jdbc" %}
 
 JDBC authentication for endpoint security may be additionally configured via the following settings:
 
@@ -1269,9 +1268,9 @@ function run(uid, logger) {
 
 ### JDBC
 
-Retrieve attributes from a JDBC source. Database settings for this feature 
-are available [here](Configuration-Properties-Common.html#database-settings) under 
-the configuration key `cas.authn.attribute-repository.jdbc[0]`.
+Retrieve attributes from a JDBC source. 
+
+{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.attribute-repository.jdbc[0]" %}
 
 ```properties
 # cas.authn.attribute-repository.jdbc[0].attributes.uid=uid
@@ -1637,8 +1636,7 @@ Use a distributed Hazelcast map to record throttled authentication attempts. Haz
 Queries the data source used by the CAS audit facility to prevent successive failed login attempts for a particular username from the
 same IP address. 
 
-Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) 
-under the configuration key `cas.authn.throttle.jdbc`.
+{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.throttle.jdbc" %}
 
 ```properties
 # cas.authn.throttle.jdbc.audit-query=SELECT AUD_DATE FROM COM_AUDIT_TRAIL \
@@ -1746,7 +1744,7 @@ Settings for this feature are available [here](Configuration-Properties-Common.h
 
 ### JDBC Surrogate Accounts
 
- Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.surrogate.jdbc`.
+{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.surrogate.jdbc" %}
 
 ```properties
 # cas.authn.surrogate.jdbc.surrogate-search-query=SELECT COUNT(*) FROM surrogate WHERE username=?
@@ -1867,8 +1865,7 @@ under the configuration key `cas.authn.passwordless.accounts.ldap`.
 
 {% include {{ version }}/sms-notifications.md configKey="cas.authn.passwordless.tokens" %}
 
-Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under 
-the configuration key `cas.authn.passwordless.tokens.jpa`. 
+{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.passwordless.tokens.jpa" %}
 
 {% include {{ version }}/job-scheduling.md configKey="cas.authn.passwordless.tokens.jpa.cleaner" %}
 
@@ -2092,14 +2089,11 @@ To learn more about this topic, [please review this guide](../installation/Datab
 Authenticates a user by comparing the user password (which can be encoded with a password encoder)
 against the password on record determined by a configurable database query.
 
-Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.jdbc.query[0]`.
+{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.jdbc.query[0]" %}
 
 {% include {{ version }}/principal-transformation.md configKey="cas.authn.jdbc.query[0]" %}
 
-
 {% include {{ version }}/password-encoding.md configKey="cas.authn.jdbc.query[0]" %}
-
-
 
 ```properties
 # cas.authn.jdbc.query[0].credential-criteria=
@@ -2117,7 +2111,7 @@ Database settings for this feature are available [here](Configuration-Properties
 
 Searches for a user record by querying against a username and password; the user is authenticated if at least one result is found.
 
-Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.jdbc.search[0]`.
+{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.jdbc.search[0]" %}
 
 {% include {{ version }}/principal-transformation.md configKey="cas.authn.jdbc.search[0]" %}
 
@@ -2137,7 +2131,7 @@ Database settings for this feature are available [here](Configuration-Properties
 
 Authenticates a user by attempting to create a database connection using the username and (hashed) password.
 
-Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.jdbc.bind[0]`.
+{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.jdbc.bind[0]" %}
 
 {% include {{ version }}/principal-transformation.md configKey="cas.authn.jdbc.bind[0]" %}
 
@@ -2160,7 +2154,7 @@ This password encoding method combines the private Salt and the public salt whic
 If multiple iterations are used, the bytecode hash of the first iteration is rehashed without the salt values. The final hash
 is converted to hex before comparing it to the database value.
 
-Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.jdbc.encode[0]`.
+{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.jdbc.encode[0]" %}
 
 {% include {{ version }}/principal-transformation.md configKey="cas.authn.jdbc.encode[0]" %}
 
@@ -2939,7 +2933,7 @@ The following strategies can be used to generate keys for trusted device records
 
 #### JDBC Storage
 
-Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.mfa.trusted.jpa`.
+{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.mfa.trusted.jpa" %}
 
 #### CouchDb Storage
 
@@ -2982,7 +2976,9 @@ Configuration settings for this feature are available [here](Configuration-Prope
 # cas.authn.mfa.trusted.device-fingerprint.geolocation.order=4
 ```
 
-The device fingerprint cookie component can be configured with the common cookie properties found [here](Configuration-Properties-Common.html#cookie-properties) under the configuration key `cas.authn.mfa.trusted.device-fingerprint.cookie`.
+{% include {{ version }}/cookie-configuration.md configKey="cas.authn.mfa.trusted.device-fingerprint.cookie" %}
+
+
 The default cookie name is set to `MFATRUSTED` and the default maxAge is set to `2592000`.
 
 {% include {{ version }}/signing-encryption.md configKey="cas.authn.mfa.trusted.device-fingerprint.cookie" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
@@ -3087,7 +3083,7 @@ The following settings are additionally available for this feature:
  
 #### Google Authenticator JPA
 
-Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.mfa.gauth.jpa`.
+{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.mfa.gauth.jpa" %}
 
 ### YubiKey
 
@@ -3135,7 +3131,7 @@ available [here](Configuration-Properties-Common.html#multifactor-authentication
 
 ### YubiKey JPA Device Store
 
-Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.mfa.yubikey.jpa`.
+{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.mfa.yubikey.jpa" %}
 
 ### YubiKey CouchDb Device Store
 
@@ -3262,8 +3258,7 @@ available [here](Configuration-Properties-Common.html#ldap-connection-settings) 
 
 ### FIDO2 WebAuthn JPA
 
-Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) 
-under the configuration key `cas.authn.mfa.web-authn.jpa`.
+{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.mfa.web-authn.jpa" %}
 
 ### FIDO2 WebAuthn Redis
 
@@ -3330,7 +3325,7 @@ available [here](Configuration-Properties-Common.html#couchdb-configuration) und
 
 ### FIDO U2F JPA
 
-Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.mfa.u2f.jpa`.
+{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.mfa.u2f.jpa" %}
 
 ### FIDO U2F REST
 
@@ -3468,8 +3463,7 @@ A given attribute that is to be encoded in the final SAML response may contain a
 
 #### SAML Metadata JPA
 
-Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) 
-under the configuration key `cas.authn.saml-idp.metadata.jpa`.
+{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.saml-idp.metadata.jpa" %}
 
 ```properties
 # cas.authn.saml-idp.metadata.jpa.idp-metadata-enabled=true
@@ -3494,8 +3488,7 @@ under the configuration key `cas.authn.saml-idp.metadata`.
 # cas.authn.saml-idp.metadata.git.idp-metadata-enabled=true
 ```
 
-Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#git-configuration) 
-under the configuration key `cas.authn.saml-idp.metadata`.
+{% include {{ version }}/git-configuration.md configKey="cas.authn.saml-idp.metadata" %}
 
 {% include {{ version }}/signing-encryption.md configKey="cas.authn.saml-idp.metadata.git" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
 
@@ -4128,7 +4121,7 @@ To learn more about this topic, [please review this guide](../installation/OAuth
 
 #### OAuth2 UMA JPA
 
-Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.uma.resource-set.jpa`.
+{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.uma.resource-set.jpa" %}
 
 ## Localization
 
@@ -4139,8 +4132,7 @@ To learn more about this topic, [please review this guide](../ux/User-Interface-
 # cas.locale.default-value=en
 ```
 
-If the user changes the language, a special cookie is created by CAS to contain the selected language. Cookie 
-settings for this feature are available [here](Configuration-Properties-Common.html#cookie-properties) under the configuration key `cas.locale.cookie`.
+{% include {{ version }}/cookie-configuration.md configKey="cas.locale.cookie" %}
 
 ## Global SSO Behavior
 
@@ -4157,7 +4149,9 @@ To learn more about this topic, [please review this guide](../installation/Confi
 
 ## Warning Cookie
 
-Created by CAS if and when users are to be warned when accessing CAS protected services. Cookie settings for this feature are available [here](Configuration-Properties-Common.html#cookie-properties) under the configuration key `cas.warning-cookie`.
+Created by CAS if and when users are to be warned when accessing CAS protected services. 
+
+{% include {{ version }}/cookie-configuration.md configKey="cas.warning-cookie" %}
 
 ```properties
 # cas.warningCookie.auto-configure-cookie-path=true
@@ -4165,7 +4159,7 @@ Created by CAS if and when users are to be warned when accessing CAS protected s
 
 ## Ticket Granting Cookie
 
-Cookie settings for this feature are available [here](Configuration-Properties-Common.html#cookie-properties) under the configuration key `cas.tgc`.
+{% include {{ version }}/cookie-configuration.md configKey="cas.tgc" %}
 
 ```properties
 # cas.tgc.pin-to-session=true
@@ -4319,8 +4313,9 @@ Store audit logs inside a DynamoDb database.
 
 ### Database Audits
 
-Store audit logs inside a database. Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings)
-under the configuration key `cas.audit.jdbc`.
+Store audit logs inside a database. 
+
+{% include {{ version }}/rdbms-configuration.md configKey="cas.audit.jdbc" %}
 
 ```properties
 # cas.audit.jdbc.asynchronous=true
@@ -4407,8 +4402,9 @@ Decide how CAS should monitor the internal state of a MongoDb instance.
 ### Database Monitoring
 
 Decide how CAS should monitor the internal state of JDBC connections used
-for authentication or attribute retrieval. Database settings for this feature are 
-available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.monitor.jdbc`.
+for authentication or attribute retrieval. 
+
+{% include {{ version }}/rdbms-configuration.md configKey="cas.monitor.jdbc" %}
 
 ```properties
 # cas.monitor.jdbc.validation-query=SELECT 1
@@ -4476,8 +4472,9 @@ configuration settings for this feature are available [here](Configuration-Prope
 
 ### Database Events
 
-Decide how CAS should store authentication events inside a database instance. Database 
-settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.events.jpa`.
+Decide how CAS should store authentication events inside a database instance. 
+
+{% include {{ version }}/rdbms-configuration.md configKey="cas.events.jpa" %}
 
 ### MongoDb Events
 
@@ -4624,8 +4621,7 @@ To learn more about this topic, [please review this guide](../services/YAML-Serv
 
 Works with git repository to fetch and manage service registry definitions.
 
-Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#git-configuration) 
-under the configuration key `cas.service-registry`.
+{% include {{ version }}/git-configuration.md configKey="cas.service-registry`" %}
 
 ```properties
 # cas.service-registry.git.group-by-type=true
@@ -4717,8 +4713,8 @@ under the configuration key `cas.service-registry.couchbase`.
 
 Control how CAS services should be found inside a database instance.
 To learn more about this topic, [please review this guide](../services/JPA-Service-Management.html). 
-Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) 
-under the configuration key `cas.service-registry.jpa`.
+
+{% include {{ version }}/rdbms-configuration.md configKey="cas.service-registry.jpa" %}
 
 ### Cache Service Registry
 
@@ -4788,7 +4784,9 @@ This section controls how that process should behave.
 
 ### JPA Ticket Registry
 
-To learn more about this topic, [please review this guide](../ticketing/JPA-Ticket-Registry.html). Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.ticket.registry.jpa`.
+To learn more about this topic, [please review this guide](../ticketing/JPA-Ticket-Registry.html). 
+
+{% include {{ version }}/rdbms-configuration.md configKey="cas.ticket.registry.jpa" %}
 
 ```properties
 # cas.ticket.registry.jpa.ticket-lock-type=NONE
@@ -5162,8 +5160,7 @@ To learn more about this topic, [please review this guide](../integration/Config
 
 ### Google Analytics Cookie
 
-The common cookie settings applicable to this feature are [available here](Configuration-Properties-Common.html#cookie-properties) 
-under the configuration key `cas.google-analytics.cookie`.
+{% include {{ version }}/cookie-configuration.md configKey="cas.google-analytics.cookie" %}
 
 ```properties
 cas.google-analytics.cookie.attribute-name=
@@ -5341,7 +5338,9 @@ The following scopes are supported:
 
 #### JDBC
 
-If AUP is controlled via JDBC, decide how choices should be remembered back inside the database instance. Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.acceptable-usage-policy.jdbc`.
+If AUP is controlled via JDBC, decide how choices should be remembered back inside the database instance. 
+
+{% include {{ version }}/rdbms-configuration.md configKey="cas.acceptable-usage-policy.jdbc" %}
 
 ```properties
 # cas.acceptable-usage-policy.jdbc.table-name=usage_policies_table
@@ -5640,7 +5639,7 @@ the configuration key `cas.consent.webflow`.
 
 ### JPA Attribute Consent
 
-Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.consent.jpa`.
+{% include {{ version }}/rdbms-configuration.md configKey="cas.consent.jpa" %}
 
 ### LDAP Attribute Consent
 
@@ -5773,12 +5772,9 @@ under the configuration key `cas.authn.pm.ldap[0]`.
 
 ### JDBC Password Management
 
-Common Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) 
-under the configuration key `cas.authn.pm.jdbc`. 
-
+{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.pm.jdbc" %}
 
 {% include {{ version }}/password-encoding.md configKey="cas.authn.pm.jdbc" %}
-
 
 ```properties
 # The two fields indicated below are expected to be returned
