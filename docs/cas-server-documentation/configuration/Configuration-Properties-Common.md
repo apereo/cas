@@ -112,39 +112,6 @@ class PredicateExample implements Predicate<Credential> {
 }
 ```
 
-
-## Authentication Principal Transformation
-
-Authentication handlers that generally deal with username-password credentials
-can be configured to transform the user id prior to executing the authentication sequence.
-The following options may be used:
-
-| Type                    | Description
-|-------------------------|----------------------------------------------------------
-| `NONE`                  | Do not apply any transformations.
-| `UPPERCASE`             | Convert the username to uppercase.
-| `LOWERCASE`             | Convert the username to lowercase.
-
-Authentication handlers as part of principal transformation may also be provided a path to a Groovy script to transform the provided username. The outline of the script may take on the following form:
-
-```groovy
-def String run(final Object... args) {
-    def providedUsername = args[0]
-    def logger = args[1]
-    return providedUsername.concat("SomethingElse")
-}
-```
-
-The following options related to principal transformation support in CAS apply equally to a number of CAS components (authentication handlers, etc) given the component's *configuration key*:
-
-```properties
-# ${configurationKey}.principal-transformation.pattern=(.+)@example.org
-# ${configurationKey}.principal-transformation.groovy.location=file:///etc/cas/config/principal.groovy
-# ${configurationKey}.principal-transformation.suffix=
-# ${configurationKey}.principal-transformation.case-conversion=NONE|UPPERCASE|LOWERCASE
-# ${configurationKey}.principal-transformation.prefix=
-```
-
 ## Cookie Properties
 
 The following common properties configure cookie generator support in CAS.
