@@ -36,7 +36,8 @@ The index `[0]` is meant to be incremented by the adopter to allow for distinct 
 If you are unsure about the meaning of a given CAS setting, do **NOT** turn it on without hesitation.
 Review the codebase or better yet, [ask questions](/cas/Mailing-Lists.html) to clarify the intended behavior.
 
-<div class="alert alert-info"><strong>Keep It Simple</strong><p>If you do not know or cannot tell what a setting does, you do not need it.</p></div>
+<div class="alert alert-info"><strong>Keep It Simple</strong><p>
+If you do not know or cannot tell what a setting does, you do not need it.</p></div>
 
 ## Time Unit of Measure
 
@@ -54,16 +55,6 @@ should support the duration syntax for full clarity on unit of measure:
 The native numeric syntax is still supported though you will have to refer to the docs
 in each case to learn the exact unit of measure.
 
-## Job Scheduling
-
-A number of CAS components are given the ability to schedule background jobs to clean tokens, remove records, etc.
-The behavior of the scheduler can be controlled using the following settings:
-
-```properties
-# ${configurationKey}.schedule.start-delay=PT10S
-# ${configurationKey}.schedule.repeat-interval=PT60S
-# ${configurationKey}.schedule.enabled=true
-```
 
 ## Authentication Throttling
 
