@@ -74,19 +74,20 @@ echo -e "Configuring tracking branches for repository...\n"
 git branch -u origin/gh-pages
 
 echo -e "Adding changes to the git index...\n"
-git add -f . > /dev/null
+rm -Rf "$branchVersion/build"
+git add -f .
 
 echo -e "Committing changes...\n"
-git commit -m "Published docs [gh-pages]. " > /dev/null
+git commit -m "Published docs [gh-pages]. "
 
 echo -e "Pushing upstream to origin/gh-pages...\n"
-git push -fq origin --all
-retVal=$?
-rm -Rf $PWD/gh-pages
-if [[ ${retVal} -eq 0 ]]; then
-    echo -e "Successfully published documentation.\n"
-    exit 0
-else
-    echo -e "Failed to publish documentation.\n"
-    exit ${retVal}
-fi
+#git push -fq origin --all
+#retVal=$?
+#rm -Rf $PWD/gh-pages
+#if [[ ${retVal} -eq 0 ]]; then
+#    echo -e "Successfully published documentation.\n"
+#    exit 0
+#else
+#    echo -e "Failed to publish documentation.\n"
+#    exit ${retVal}
+#fi
