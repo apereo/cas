@@ -1651,18 +1651,6 @@ Decide how CAS should monitor the internal state of JVM memory available at runt
 ```
 
 
-## REST API
-
-To learn more about this topic, [please review this guide](../protocol/REST-Protocol.html).
-
-```properties
-# cas.rest.attribute-name=
-# cas.rest.attribute-value=
-# cas.rest.header-auth=
-# cas.rest.body-auth=
-# cas.rest.tls-client-auth=
-```
-
 ## CAS Client
 
 Configure settings relevant to the Java CAS client configured to handle inbound ticket validation operations, etc.
