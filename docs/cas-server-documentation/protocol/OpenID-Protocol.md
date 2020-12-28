@@ -35,7 +35,9 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-openid-webflow" %}
 
-To see the relevant list of CAS properties for this feature, please [review this guide](../configuration/Configuration-Properties.html#openid-authentication).
+{% include {{ version }}/persondirectory-configuration.md configKey="cas.authn.openid.principal" %}
+
+{% include {{ version }}/openid-configuration.md %}
 
 ## Register Clients
 

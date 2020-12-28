@@ -65,7 +65,7 @@ The collection of handlers can be narrowed down using a selection criteria that 
 for the handler based on the current authentication transaction, provided credentials, service definition policy
 and many other controls. 
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#authentication-engine).
+{% include {{ version }}/authentication-engine-configuration.md %}
 
 #### Per Registered Service
 

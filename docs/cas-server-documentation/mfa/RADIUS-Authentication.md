@@ -42,7 +42,7 @@ RSA RADIUS OTP support for MFA is enabled by only including the following depend
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#radius-otp).
+{% include {{ version }}/radius-otp-authentication-configuration.md %}
 
 ## Repository
 

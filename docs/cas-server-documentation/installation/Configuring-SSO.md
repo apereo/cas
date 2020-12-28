@@ -38,7 +38,7 @@ The following endpoints are provided by CAS:
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#ticket-granting-cookie).
+{% include {{ version }}/tgc-configuration.md %}
 
 The cookie has the following properties:
 
@@ -126,8 +126,7 @@ In the event that no `service` is submitted to CAS, you may specify a default
 service url to which CAS will redirect. Note that this default service, much like
 all other services, MUST be authorized and registered with CAS.
 
-To see the relevant list of CAS properties, 
-please [review this guide](../configuration/Configuration-Properties.html#views).
+{% include {{ version }}/views-configuration.md %}
 
 ## Required Service
 

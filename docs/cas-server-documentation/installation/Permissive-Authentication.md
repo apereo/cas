@@ -17,7 +17,11 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-generic" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#file-authentication).
+{% include {{ version }}/principal-transformation.md configKey="cas.authn.file" %}
+
+{% include {{ version }}/password-encoding.md configKey="cas.authn.file" %}
+
+{% include {{ version }}/file-authentication-configuration.md %}
 
 ## Example Password File
 

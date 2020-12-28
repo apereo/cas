@@ -106,74 +106,6 @@ as it's treated by the underlying servlet container engine.
 # server.servlet.session.tracking-modes=COOKIE
 ```
 
-## Views
-
-Control how CAS should treat views and other UI elements.
-
-To learn more about this topic, [please review this guide](../ux/User-Interface-Customization-Views.html).
-
-```properties
-# spring.thymeleaf.encoding=UTF-8
-
-# Controls  whether views should be cached by CAS.
-# When turned on, ad-hoc chances to views are not automatically
-# picked up by CAS until a restart. Small incremental performance
-# improvements are to be expected.
-# spring.thymeleaf.cache=true
-
-# Instruct CAS to locate views at the below location.
-# This location can be externalized to a directory outside
-# the cas web application.
-# spring.thymeleaf.prefix=classpath:/templates/
-
-# Defines a default URL to which CAS may redirect if there is no service provided in the authentication request.
-# cas.view.default-redirect-url=https://www.github.com
-
-# CAS views may be located at the following paths outside
-# the web application context, in addition to prefix specified
-# above which is handled via Thymeleaf.
-# cas.view.template-prefixes[0]=file:///etc/cas/templates
-```
-
-## Custom Login Fields
-
-```properties
-# cas.view.custom-login-form-fields.[field-name].message-bundle-key=
-# cas.view.custom-login-form-fields.[field-name].required=true
-# cas.view.custom-login-form-fields.[field-name].converter=
-```
-
-### CAS v1
-
-```properties
-# cas.view.cas1.attribute-renderer-type=DEFAULT|VALUES_PER_LINE
-```
-
-### CAS v2
-
-```properties
-# cas.view.cas2.v3-forward-compatible=false
-# cas.view.cas2.success=protocol/2.0/casServiceValidationSuccess
-# cas.view.cas2.failure=protocol/2.0/casServiceValidationFailure
-# cas.view.cas2.proxy.success=protocol/2.0/casProxySuccessView
-# cas.view.cas2.proxy.failure=protocol/2.0/casProxyFailureView
-```
-
-### CAS v3
-
-```properties
-# cas.view.cas3.success=protocol/3.0/casServiceValidationSuccess
-# cas.view.cas3.failure=protocol/3.0/casServiceValidationFailure
-# cas.view.cas3.attribute-renderer-type=DEFAULT|INLINE
-```
-
-### Restful Views
-
-{% include {{ version }}/rest-integration.md configKey="cas.view.rest" %}
-
-
-
-
 
 ## Authentication Attributes
 
@@ -559,29 +491,6 @@ basis. To learn more about this topic, [please review this guide](../integration
 # cas.authn.authentication-attribute-release.enabled=true
 ```
 
-
-
-## Attribute Definitions
-
-An attribute definition store allows one to describe metadata about necessary attributes 
-with special decorations to be considered during attribute resolution and release.
-
-```properties
-# cas.person-directory.attribute-definition-store.json.location=file:/etc/cas/config/attribute-defns.json
-```
- 
-## Authentication Engine
-
-Control inner-workings of the CAS authentication engine, before and after the execution.
-
-```properties
-cas.authn.core.groovy-authentication-resolution.location=file:/etc/cas/config/GroovyAuthentication.groovy
-cas.authn.core.groovy-authentication-resolution.order=0
-
-cas.authn.core.service-authentication-resolution.order=0
-```
-    
-
 ### IP Address Intelligence
 
 Examine the client IP address via the following strategies.
@@ -661,123 +570,6 @@ series of principal/surrogate pair. The default is a key/value pair.
 # cas.authn.surrogate.jdbc.surrogate-account-query=SELECT surrogate_user AS surrogateAccount FROM surrogate WHERE username=?
 ```
 
-### REST Surrogate Accounts
-
-{% include {{ version }}/rest-integration.md configKey="cas.authn.surrogate.rest" %}
-
-
-
-## QR Authentication
-
-Attempt to login via a mobile device via a QR code. To learn more about this 
-topic, [please review this guide](../installation/QRCode-Authentication.html).
-
-```properties   
-# Configure allowed Origin header values for browser clients.
-# cas.authn.qr.allowed-origins=*
-```
-
-### JSON Device Repository
-
-Attempt to login via a mobile device via a QR code. To learn more about this 
-topic, [please review this guide](../installation/QRCode-Authentication.html).
-
-```properties
-# cas.authn.qr.json.location=file:/etc/cas/config/qrdevices.json
-```
-
-
-## Google Cloud Firebase Messaging
-
-To learn more about this topic, [please review this guide](../notifications/Notifications-Configuration.html).
-
-```properties
-# cas.google-firebase-messaging.service-account-key.location=/path/to/account-key.json",
-# cas.google-firebase-messaging.database-url=https://cassso-123456.firebaseio.com",
-# cas.google-firebase-messaging.registration-token-attribute-name=registrationToken
-# cas.google-firebase-messaging.scopes=https://www.googleapis.com/auth/firebase.messaging
-```
-
-## GeoTracking
-
-To learn more about this topic, [please review this guide](../installation/GeoTracking-Authentication-Requests.html).
-
-### GoogleMaps GeoTracking
-
-Used to geo-profile authentication events.
-
-```properties
-# cas.google-maps.api-key=
-# cas.google-maps.client-id=
-# cas.google-maps.client-secret=
-# cas.google-maps.connect-timeout=3000
-# cas.google-maps.google-apps-engine=false
-```
-
-### Maxmind GeoTracking
-
-Used to geo-profile authentication events.
-
-```properties
-# cas.maxmind.city-database=file:/etc/cas/maxmind/GeoLite2-City.mmdb
-# cas.maxmind.country-database=file:/etc/cas/maxmind/GeoLite2-Country.mmdb
-```
-
-
-
-## Digest Authentication
-
-To learn more about this topic, [please review this guide](../installation/Digest-Authentication.html).
-
-```properties
-# cas.authn.digest.users.casuser=3530292c24102bac7ced2022e5f1036a
-# cas.authn.digest.users.anotheruser=7530292c24102bac7ced2022e5f1036b
-# cas.authn.digest.realm=CAS
-# cas.authn.digest.name=
-# cas.authn.digest.order=
-# cas.authn.digest.authentication-method=auth
-```
-
-
-## File Authentication
-
-To learn more about this topic, [please review this guide](../installation/Permissive-Authentication.html).
-
-{% include {{ version }}/principal-transformation.md configKey="cas.authn.file" %}
-
-{% include {{ version }}/password-encoding.md configKey="cas.authn.file" %}
-
-```properties
-# cas.authn.file.separator=::
-# cas.authn.file.filename=file:///path/to/users/file
-# cas.authn.file.name=
-```
-
-## Groovy Authentication
-
-To learn more about this topic, [please review this guide](../installation/Groovy-Authentication.html).
-
-```properties
-# cas.authn.groovy.order=0
-# cas.authn.groovy.name=
-```
-
-
-## Reject Users Authentication
-
-To learn more about this topic, [please review this guide](../installation/Reject-Authentication.html).
-
-{% include {{ version }}/principal-transformation.md configKey="cas.authn.reject" %}
-
-{% include {{ version }}/password-encoding.md configKey="cas.authn.reject" %}
-
-```properties
-# cas.authn.reject.users=user1,user2
-# cas.authn.reject.name=
-```
-
-
-
 ### LDAP Password Policy
 
 {% include {{ version }}/password-policy.md configKey="cas.authn.ldap[0].password-policy" %}
@@ -788,41 +580,6 @@ To learn more about this topic, [please review this guide](../installation/Rejec
 
 {% include {{ version }}/password-encoding.md configKey="cas.authn.ldap[0]" %}
 
-## REST Authentication
-
-This allows the CAS server to reach to a remote REST endpoint via a `POST`.
-To learn more about this topic, [please review this guide](../installation/Rest-Authentication.html). 
-
-{% include {{ version }}/password-encoding.md configKey="cas.authn.rest" %}
-
-```properties
-# cas.authn.rest.uri=https://...
-# cas.authn.rest.name=
-# cas.authn.rest.charset=US-ASCII
-```
-
-## Google Apps Authentication
-
-Authenticate via CAS into Google Apps services and applications.
-To learn more about this topic, [please review this guide](../integration/Google-Apps-Integration.html).
-
-```properties
-# cas.google-apps.public-key-location=file:/etc/cas/public.key
-# cas.google-apps.key-algorithm=RSA
-# cas.google-apps.private-key-location=file:/etc/cas/private.key
-```
-
-## OpenID Authentication
-
-Allow CAS to become an OpenID authentication provider. To learn more about this topic, [please review this guide](../protocol/OpenID-Protocol.html).
-
-{% include {{ version }}/persondirectory-configuration.md configKey="cas.authn.openid.principal" %}
-
-```properties
-# cas.authn.openid.enforce-rp-id=false
-# cas.authn.openid.name=
-# cas.authn.openid.order=
-```
 
 ## SPNEGO Authentication
 
@@ -901,26 +658,9 @@ To learn more about this topic, [please review this guide](../installation/SPNEG
 # cas.authn.ntlm.enabled=false
 ```
 
-
-
 ## GUA Authentication
 
 To learn more about this topic, [please review this guide](../installation/GUA-Authentication.html).
-
-### LDAP Repository
-
-{% include {{ version }}/ldap-configuration.md configKey="cas.authn.gua.ldap" %}
-
-```properties
-# cas.authn.gua.ldap.image-attribute=userImageIdentifier
-```
-
-### Static Resource Repository
-
-```properties
-# cas.authn.gua.simple.[username1]=file:/path/to/image.jpg
-# cas.authn.gua.simple.[username2]=file:/path/to/image.jpg
-```
 
 ## JWT/Token Authentication
 
@@ -1248,21 +988,6 @@ The following strategies can be used to generate keys for trusted device records
 # cas.authn.mfa.trusted.json.location=file:/etc/cas/config/trusted-dev.json
 ```
 
-#### JDBC Storage
-
-{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.mfa.trusted.jpa" %}
-
-#### CouchDb Storage
-
-{% include {{ version }}/couchdb-integration.md configKey="cas.authn.mfa.trusted" %}
-
-#### MongoDb Storage
-
-{% include {{ version }}/mongodb-configuration.md configKey="cas.authn.mfa.trusted" %}
-
-#### Redis Storage
-
-{% include {{ version }}/redis-configuration.md configKey="cas.authn.mfa.trusted" %}
 
 #### DynamoDb Storage
  
@@ -1342,15 +1067,6 @@ The following settings are additionally available for this feature:
 # cas.authn.mfa.gauth.ldap.account-attribute-name=gauthRecord
 ```
 
-#### Google Authenticator Redis
-
-
- 
- 
-#### Google Authenticator JPA
-
-
-
 ### YubiKey
 
 To learn more about this topic, [please review this guide](../mfa/YubiKey-Authentication.html).
@@ -1369,10 +1085,6 @@ To learn more about this topic, [please review this guide](../mfa/YubiKey-Authen
 
 {% include {{ version }}/mfa-bypass-configuration.md configKey="cas.authn.mfa.yubikey" %}
 
-#### YubiKey REST Device Store
-
-{% include {{ version }}/rest-integration.md configKey="cas.authn.mfa.yubikey.rest" %}
-
 #### YubiKey JSON Device Store
 
 ```properties
@@ -1385,58 +1097,12 @@ To learn more about this topic, [please review this guide](../mfa/YubiKey-Authen
 # cas.authn.mfa.yubikey.allowed-devices.uid1=yubikeyPublicId1
 # cas.authn.mfa.yubikey.allowed-devices.uid2=yubikeyPublicId2
 ```
- 
-### Radius OTP
 
-To learn more about this topic, [please review this guide](../mfa/RADIUS-Authentication.html).
-
-```properties
-# cas.authn.mfa.radius.rank=0
-# cas.authn.mfa.radius.trusted-device-enabled=false
-# cas.authn.mfa.radius.allowed-authentication-attempts=-1
-# cas.authn.mfa.radius.name=
-# cas.authn.mfa.radius.order=
-```
 
 {% include {{ version }}/radius-configuration.md configKey="cas.authn.mfa.radius" %}
 
 {% include {{ version }}/mfa-bypass-configuration.md configKey="cas.authn.mfa.radius" %}
 
-### DuoSecurity
-
-To learn more about this topic, [please review this guide](../mfa/DuoSecurity-Authentication.html).
-
-```properties
-# cas.authn.mfa.duo[0].duo-secret-key=
-# cas.authn.mfa.duo[0].rank=0
-# cas.authn.mfa.duo[0].duo-application-key=
-# cas.authn.mfa.duo[0].duo-integration-key=
-# cas.authn.mfa.duo[0].duo-api-host=
-# cas.authn.mfa.duo[0].trusted-device-enabled=false
-# cas.authn.mfa.duo[0].id=mfa-duo
-# cas.authn.mfa.duo[0].registration-url=https://registration.example.org/duo-enrollment
-# cas.authn.mfa.duo[0].name=
-# cas.authn.mfa.duo[0].order=
-```
-
-{% include {{ version }}/mfa-bypass-configuration.md configKey="cas.authn.mfa.duo[0]" %}
-
-
-#### Web SDK
-
-The `duo-application-key` is a required string, at least 40 characters long, that you 
-generate and keep secret from Duo. You can generate a random string in Python with:
-
-```python
-import os, hashlib
-print hashlib.sha1(os.urandom(32)).hexdigest()
-```
-
-#### Universal Prompt
-
-Universal Prompt no longer requires you to generate and use a application key value. Instead, it requires a *client id* and *client secret*,
-which are known and taught CAS using the integration key and secret key configuration settings. You will need get your integration key, 
-secret key, and API hostname from Duo Security when you register CAS as a protected application. 
 
 ### FIDO2 WebAuthn
 
@@ -1477,9 +1143,7 @@ To learn more about this topic, [please review this guide](../mfa/FIDO2-WebAuthn
 # cas.authn.mfa.web-authn.json.location=file:///etc/cas/config/devices.json
 ```
 
-### FIDO2 WebAuthn MongoDb
 
-{% include {{ version }}/mongodb-configuration.md configKey="cas.authn.mfa.web-authn" %}
 
 ### FIDO2 WebAuthn LDAP
 
@@ -1489,35 +1153,6 @@ To learn more about this topic, [please review this guide](../mfa/FIDO2-WebAuthn
 # cas.authn.mfa.web-authn.ldap.account-attribute-name=casWebAuthnRecord
 ```
 
-### FIDO2 WebAuthn JPA
-
-{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.mfa.web-authn.jpa" %}
-
-### FIDO2 WebAuthn Redis
-
-{% include {{ version }}/redis-configuration.md configKey="cas.authn.mfa.web-authn" %}
-
-### FIDO2 WebAuthn DynamoDb
-
-{% include {{ version }}/dynamodb-configuration.md configKey="cas.authn.mfa.web-authn" %}
-
-### FIDO2 WebAuthn REST
-
-{% include {{ version }}/rest-integration.md configKey="cas.authn.mfa.web-authn.rest" %}
-
-
-## SAML Core
-
-Control core SAML functionality within CAS.
-
-```properties
-# cas.saml-core.ticketid-saml2=false
-# cas.saml-core.skew-allowance=5
-# cas.saml-core.issue-length=30
-# cas.saml-core.attribute-namespace=http://www.ja-sig.org/products/cas/
-# cas.saml-core.issuer=localhost
-# cas.saml-core.security-manager=org.apache.xerces.util.SecurityManager
-```
 
 ## SAML IdP
 
@@ -1688,7 +1323,6 @@ A given attribute that is to be encoded in the final SAML response may contain a
 # cas.authn.saml-idp.profile.sso.url-decode-redirect-request=false
 # cas.authn.saml-idp.profile.sso-post-simple-sign.url-decode-redirect-request=false
 ```
-
 
 ### OpenID Connect WebFinger
 
@@ -1917,7 +1551,6 @@ To learn more about this topic, [please review this guide](../installation/OAuth
 {% include {{ version }}/rdbms-configuration.md configKey="cas.authn.uma.resource-set.jpa" %}
 
 
-
 ## Warning Cookie
 
 Created by CAS if and when users are to be warned when accessing CAS protected services. 
@@ -1927,56 +1560,6 @@ Created by CAS if and when users are to be warned when accessing CAS protected s
 ```properties
 # cas.warning-cookie.auto-configure-cookie-path=true
 ```
-
-## Ticket Granting Cookie
-
-{% include {{ version }}/cookie-configuration.md configKey="cas.tgc" %}
-
-```properties
-# cas.tgc.pin-to-session=true
-# cas.tgc.remember-me-max-age=P14D
-# cas.tgc.auto-configure-cookie-path=true
-```
-
-{% include {{ version }}/signing-encryption.md configKey="cas.tgc" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
-
-## Logout
-
-Control various settings related to CAS logout functionality. 
-
-```properties
-# cas.logout.follow-service-redirects=false
-# cas.logout.redirect-parameter=service
-# cas.logout.redirect-url=https://www.github.com
-# cas.logout.confirm-logout=false
-# cas.logout.remove-descendant-tickets=false
-```
-
-## Single Logout
-
-To learn more about this topic, [please review this guide](../installation/Logout-Single-Signout.html).
-
-```properties
-# cas.slo.disabled=false
-# cas.slo.asynchronous=true
-```
-
-## Clearpass
-
-Capture and cache user credentials and optionally release them to trusted applications.
-To learn more about this topic, [please review this guide](../integration/ClearPass.html).
-
-<div class="alert alert-warning"><strong>Usage Warning!</strong><p>ClearPass is turned off by default.
-Think <strong>VERY CAREFULLY</strong> before turning on this feature, as it <strong>MUST</strong> be
-the last resort in getting an integration to work...maybe not even then.</p></div>
-
-```properties
-# cas.clearpass.cache-credential=false
-```
-
-{% include {{ version }}/signing-encryption.md configKey="cas.clearpass" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
-
-
 
 ## Sleuth Distributed Tracing
 
@@ -2077,261 +1660,6 @@ To learn more about this topic, [please review this guide](../ux/User-Interface-
 ```
 
 
-
-
-
-## Service Tickets Behavior
-
-Controls the expiration policy of service tickets, as well as other properties applicable to STs.
-
-```properties
-# cas.ticket.st.max-length=20
-
-# cas.ticket.st.number-of-uses=1
-# cas.ticket.st.time-to-kill-in-seconds=10
-```
-
-## Proxy Granting Tickets Behavior
-
-```properties
-# cas.ticket.pgt.max-length=50
-```
-
-## Proxy Tickets Behavior
-
-```properties
-# cas.ticket.pt.time-to-kill-in-seconds=10
-# cas.ticket.pt.number-of-uses=1
-```
-
-## Transient Session Tickets Behavior
-
-```properties
-# cas.ticket.tst.time-to-kill-in-seconds=300
-```
-
-## Ticket Granting Tickets Behavior
-
-```properties
-# cas.ticket.tgt.only-track-most-recent-session=true
-# cas.ticket.tgt.max-length=50
-```
-
-## TGT Expiration Policy
-
-Ticket expiration policies are activated in the following conditions:
-
-- If the timeout values for the default policy are all set to zero or less, CAS shall ensure tickets are *never* considered expired.
-- Disabling a policy requires that all its timeout settings be set to a value equal or less than zero.
-- If not ticket expiration policy is determined, CAS shall ensure the ticket are *always* considered expired.
-
-<div class="alert alert-info"><strong>Keep What You Need!</strong><p>You are encouraged to only keep and maintain 
-properties and settings needed for a particular policy. It is <strong>UNNECESSARY</strong> to grab a copy of all 
-fields or keeping a copy as a reference while leaving them commented out. This strategy would ultimately lead to 
-poor upgrades increasing chances of breaking changes and a messy deployment at that.</p></div>
-
-Ticket expiration policies are activated in the following order:
-
-1. Tickets are never expired, if and when settings for the default policy are configured accordingly.
-2. Timeout
-3. Default
-4. Throttled Timeout
-5. Hard Timeout
-6. Tickets always expire immediately.
-
-### Default
-
-Provides a hard-time out as well as a sliding window.
-
-```properties
-# Set to a negative value to never expire tickets
-# cas.ticket.tgt.max-time-to-live-in-seconds=28800
-# cas.ticket.tgt.time-to-kill-in-seconds=7200
-```
-
-### Remember Me
-
-```properties
-# cas.ticket.tgt.remember-me.enabled=true
-# cas.ticket.tgt.remember-me.time-to-kill-in-seconds=28800
-```
-
-### Timeout
-
-The expiration policy applied to TGTs provides for most-recently-used expiration 
-policy, similar to a Web server session timeout.
-
-```properties
-# cas.ticket.tgt.timeout.max-time-to-live-in-seconds=28800
-```
-
-### Throttled Timeout
-
-The throttled timeout policy extends the Timeout policy with the concept of throttling where a ticket may be used at most every N seconds.
-
-```properties
-# cas.ticket.tgt.throttledTimeout.timeToKillInSeconds=28800
-# cas.ticket.tgt.throttledTimeout.timeInBetweenUsesInSeconds=5
-```
-
-### Hard Timeout
-
-The hard timeout policy provides for finite ticket lifetime as measured from the time of creation.
-
-```properties
-# cas.ticket.tgt.hard-timeout.time-to-kill-in-seconds=28800
-```
-
-
-## Google Analytics
-
-To learn more about this topic, [please review this guide](../integration/Configuring-Google-Analytics.html).
-
-```properties
-# cas.googleAnalytics.google-analytics-tracking-id=
-```
-
-### Google Analytics Cookie
-
-{% include {{ version }}/cookie-configuration.md configKey="cas.google-analytics.cookie" %}
-
-```properties
-cas.google-analytics.cookie.attribute-name=
-cas.google-analytics.cookie.attribute-value-pattern=.+
-```
-
-## Spring Webflow
-
-Control how Spring Webflow's conversational session state should be managed by CAS,
-and all other webflow related settings.
-
-To learn more about this topic, [please review this guide](../webflow/Webflow-Customization.html).
-
-```properties
-# cas.webflow.always-pause-redirect=false
-# cas.webflow.refresh=true
-# cas.webflow.redirect-same-state=false
-# cas.webflow.autoconfigure=true
-```
-
-### Spring Webflow Login Decorations
-
-#### Groovy
-
-```properties
-# cas.webflow.login-decorator.groovy.location=file:/etc/cas/config/LoginDecorator.groovy
-```
-
-#### REST
-
-{% include {{ version }}/rest-integration.md configKey="cas.webflow.login-decorator.rest" %}
-
-### Spring Webflow Auto Configuration
-
-Options that control how the Spring Webflow context is dynamically altered and configured by CAS. To learn more about this topic, [please review this guide](../webflow/Webflow-Customization-Extensions.html).
-
-```properties
-# cas.webflow.autoconfigure=true
-```
-
-#### Spring Webflow Groovy Auto Configuration
-
-Control the Spring Webflow context via a custom Groovy script.
-
-```properties
-# cas.webflow.groovy.location=file:/etc/cas/config/custom-webflow.groovy
-```
-
-### Spring Webflow Session Management
-
-To learn more about this topic, [see this guide](../webflow/Webflow-Customization-Sessions.html).
-
-```properties
-# cas.webflow.session.lock-timeout=30
-# cas.webflow.session.compress=false
-# cas.webflow.session.max-conversations=5
-
-# Enable server-side session management
-# cas.webflow.session.storage=false
-```
-
-#### Spring Webflow Client-Side Session
-
-{% include {{ version }}/signing-encryption.md configKey="cas.webflow" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
-
-#### Spring Webflow Hazelcast Server-Side Session
-
-```properties
-# cas.webflow.session.hz-location=classpath:/hazelcast.xml
-```
-
-#### Spring Webflow MongoDb Server-Side Session
-
-```properties
-# spring.data.mongodb.host=mongo-srv
-# spring.data.mongodb.port=27018
-# spring.data.mongodb.database=prod
-```
-
-#### Spring Webflow Redis Server-Side Session
-
-```properties
-# spring.session.store-type=redis
-# spring.redis.host=localhost
-# spring.redis.password=secret
-# spring.redis.port=6379
-```
-
-#### Spring Webflow JDBC Server-Side Session
-
-```properties
-# spring.session.store-type=jdbc
-# spring.session.jdbc.initialize-schema=embedded
-# spring.session.jdbc.schema=classpath:org/springframework/session/jdbc/schema-@@platform@@.sql
-# spring.session.jdbc.table-name=SPRING_SESSION
-
-# spring.datasource.url=jdbc:hsqldb:mem:cas-sessions
-# spring.datasource.username=sa
-# spring.datasource.password=
-```
-
-### Authentication Exceptions
-
-Map custom authentication exceptions in the CAS webflow and link them to custom messages defined in message bundles.
-
-To learn more about this topic, [please review this guide](../webflow/Webflow-Customization-Exceptions.html).
-
-```properties
-# cas.authn.errors.exceptions=value1,value2,...
-```
-
-### Authentication Interrupt
-
-Interrupt the authentication flow to reach out to external services. To learn more about this topic, [please review this guide](../webflow/Webflow-Customization-Interrupt.html).
-
-#### Authentication Interrupt JSON
-
-```properties
-# cas.interrupt.json.location=file:/etc/cas/config/interrupt.json
-```
-
-#### Authentication Interrupt Regex Attributes
-
-```properties
-# cas.interrupt.attribute-name=attribute-name-pattern
-# cas.interrupt.attribute-value=attribute-value-pattern
-```
-
-#### Authentication Interrupt Groovy
-
-```properties
-# cas.interrupt.groovy.location=file:/etc/cas/config/interrupt.groovy
-```
-
-#### Authentication Interrupt REST
-
-{% include {{ version }}/rest-integration.md configKey="cas.interrupt.rest" %}
-
 ## REST API
 
 To learn more about this topic, [please review this guide](../protocol/REST-Protocol.html).
@@ -2342,48 +1670,6 @@ To learn more about this topic, [please review this guide](../protocol/REST-Prot
 # cas.rest.header-auth=
 # cas.rest.body-auth=
 # cas.rest.tls-client-auth=
-```
-
-
-## SAML Metadata UI
-
-Control how SAML MDUI elements should be displayed on the main CAS login page
-in the event that CAS is handling authentication for an external SAML2 IdP.
-
-To learn more about this topic, [please review this guide](../integration/Shibboleth.html).
-
-```properties
-# cas.saml-metadata-ui.require-valid-metadata=true
-# cas.saml-metadata-ui.resources=classpath:/sp-metadata::classpath:/pub.key,http://md.incommon.org/InCommon/InCommon-metadata.xml::classpath:/inc-md-pub.key
-# cas.saml-metadata-ui.max-validity=0
-# cas.saml-metadata-ui.require-signed-root=false
-# cas.saml-metadata-ui.parameter=entityId
-```         
-
-{% include {{ version }}/job-scheduling.md configKey="cas.saml-metadata-ui" %}
-
-
-## Provisioning
-
-### SCIM
-
-Provision the authenticated CAS principal via SCIM.
-To learn more about this topic, [please review this guide](../integration/SCIM-Integration.html).
-
-```properties
-# cas.scim.version=2
-# cas.scim.target=
-# cas.scim.oauthToken=
-# cas.scim.username=
-# cas.scim.password=
-```
-
-## Apache Fortress Authentication
-
-To learn more about this topic, [please review this guide](../installation/Configuring-Fortress-Authentication.html).
-
-```properties
-# cas.authn.fortress.rbaccontext=HOME
 ```
 
 ## CAS Client

@@ -114,7 +114,8 @@ Support is provided via the following module:
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-trusted-mfa-jdbc" %}
 
 To learn how to configure database drivers, [please see this guide](../installation/JDBC-Drivers.html).
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#jdbc-storage).
+
+{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.mfa.trusted.jpa" %}
 
 ### CouchDb
 
@@ -124,7 +125,7 @@ Support is provided via the following module:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-trusted-mfa-couchdb" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#couchdb-storage).
+{% include {{ version }}/couchdb-integration.md configKey="cas.authn.mfa.trusted" %}
 
 ### MongoDb
 
@@ -134,7 +135,7 @@ Support is provided via the following module:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-trusted-mfa-mongo" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#mongodb-storage).
+{% include {{ version }}/mongodb-configuration.md configKey="cas.authn.mfa.trusted" %}
 
 ### DynamoDb
 
@@ -154,7 +155,7 @@ Support is provided via the following module:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-trusted-mfa-redis" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#redis-storage).
+{% include {{ version }}/redis-configuration.md configKey="cas.authn.mfa.trusted" %}
 
 ### REST
 

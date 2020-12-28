@@ -38,9 +38,9 @@ and the module automatically takes care of all required changes. While this is t
 you may want to manually handle all such changes. For doing so, you will need to disable the CAS auto-configuration
 of the webflow.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#spring-webflow).
+{% include {{ version }}/spring-webflow-configuration.md %}
 
-<div class="alert alert-warning"><strong>Achtung, liebe Leser!</strong><p>Only attempt to 
+<div class="alert alert-warning"><strong>Note</strong><p>Only attempt to 
 modify the Spring webflow configuration files by hand when/if absolutely necessary and the
 change is rather minimal or decorative. Extensive modifications of the webflow, if not done carefully
 may severely complicate your deployment and future upgrades. If reasonable, consider contributing or

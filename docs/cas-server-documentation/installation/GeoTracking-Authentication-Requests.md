@@ -21,7 +21,7 @@ authentication requests into a geo-location.
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-geolocation-googlemaps" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#googlemaps-geotracking).
+{% include {{ version }}/googlemaps-configuration.md %}
 
 ## Maxmind
 
@@ -30,4 +30,4 @@ authentication requests into a geo-location.
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-geolocation-maxmind" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#maxmind-geotracking).
+{% include {{ version }}/maxmind-configuration.md %}
