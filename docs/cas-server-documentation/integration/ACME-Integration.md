@@ -48,5 +48,5 @@ path to respond to verification challenges.
 
 ## Configuration
 
-{% include {{ version }}/acme-integration.md %}
+{% include {{ version }}/acme-configuration.md %}
 

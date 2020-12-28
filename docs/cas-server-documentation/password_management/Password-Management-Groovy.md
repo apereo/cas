@@ -43,4 +43,4 @@ def getSecurityQuestions(Object[] args) {
 }
 ```
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#groovy-password-management).
+{% include {{ version }}/groovy-pswd-mgmt-configuration.md %}

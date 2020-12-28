@@ -114,7 +114,7 @@ of the entire attribute consent policy will be used to determine attribute conse
 The default consent activation strategy can be replaced with an external Groovy script to determine whether the request 
 qualifies for consent. Path to the script is defined via CAS configuration properties.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#attribute-consent). 
+{% include {{ version }}/groovy-consent-activation-configuration.md %}
 
 The script itself may be designed as such:
 
@@ -194,7 +194,7 @@ Valid values for `options` include:
 | `ATTRIBUTE_VALUE`         | Same as above, except that attributes values are also accounted for and trigger consent, if changed.
 | `ALWAYS`                  | Always ask for consent, regardless of change or context.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#json-attribute-consent).
+{% include {{ version }}/json-consent-configuration.md %}
 
 ### Groovy
 
@@ -235,6 +235,7 @@ def Boolean deleteAll(final Object... args) {
 }
 ```
 
+{% include {{ version }}/groovy-consent-configuration.md %}
 
 ### JDBC
 
@@ -242,7 +243,7 @@ Support is enabled by including the following module in the Overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-consent-jdbc" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#jpa-attribute-consent).
+{% include {{ version }}/rdbms-configuration.md configKey="cas.consent.jpa" %}
 
 ### MongoDb
 
@@ -250,7 +251,7 @@ Support is enabled by including the following module in the Overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-consent-mongo" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#mongodb-attribute-consent).
+{% include {{ version }}/mongodb-configuration.md configKey="cas.consent" %}
 
 ### Redis
 
@@ -258,7 +259,7 @@ Support is enabled by including the following module in the Overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-consent-redis" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#redis-attribute-consent).
+{% include {{ version }}/redis-configuration.md configKey="cas.consent" %}
 
 ### CouchDb
 
@@ -266,7 +267,7 @@ Support is enabled by including the following module in the Overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-consent-couchdb" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#couchdb-attribute-consent).
+{% include {{ version }}/couchdb-integration.md configKey="cas.consent" %}
 
 
 ### REST
@@ -275,7 +276,7 @@ Support is enabled by including the following module in the Overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-consent-rest" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#rest-attribute-consent).
+{% include {{ version }}/rest-consent-configuration.md %}
 
 Endpoints must be designed to accept/process `application/json`.
 
@@ -293,18 +294,21 @@ The consent decision object in transit will and must match the JSON structure ab
 
 ### LDAP
 
-Consent decisions can be stored on LDAP user objects. The decisions are serialized into JSON and stored one-by-one in a multi-valued string attribute.
+Consent decisions can be stored on LDAP user objects. The decisions 
+are serialized into JSON and stored one-by-one in a multi-valued string attribute.
 
 Support is enabled by including the following module in the Overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-consent-ldap" %}
-
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#ldap-attribute-consent).
+{% include {{ version }}/ldap-configuration.md configKey="cas.consent.ldap" %}
+{% include {{ version }}/ldap-consent-configuration.md %}
 
 
 ### Custom
 
-You may also inject your own implementation for attribute consent management into CAS that would itself handle storing consent decisions, etc. In order to do this, you will need to design a configuration class that roughly matches the following: 
+You may also inject your own implementation for attribute consent management 
+into CAS that would itself handle storing consent decisions, etc. In order 
+to do this, you will need to design a configuration class that roughly matches the following: 
 
 ```java
 package org.apereo.cas.consent;
@@ -320,4 +324,5 @@ public class MyConfiguration {
 }
 ```
 
-[See this guide](../configuration/Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.
+[See this guide](../configuration/Configuration-Management-Extensions.html) to 
+learn more about how to register configurations into the CAS runtime.
