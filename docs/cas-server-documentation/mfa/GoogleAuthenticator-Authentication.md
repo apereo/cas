@@ -79,7 +79,7 @@ Registration records and tokens may be kept inside a MongoDb instance, via the f
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-gauth-mongo" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#google-authenticator-mongodb).
+{% include {{ version }}/mongodb-gauth-configuration.md %}
 
 ### Redis
 
@@ -98,7 +98,7 @@ Registration records may be kept inside LDAP/AD systems via the following module
 Account registration records are kept inside a designated configurable multi-valued attribute as JSON blobs. The attribute values are parsed
 to load, save, update or delete accounts. The content of each attribute value can be signed/encrypted if necessary. 
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#google-authenticator-ldap).
+{% include {{ version }}/ldap-gauth-configuration.md %}
 
 ### REST
 
@@ -139,7 +139,7 @@ The following endpoints need also be available:
 | `GET`     | `count`    | N/A             | `200`. Numeric count | Count all records
 | `GET`     | `count`    | `username`             | `200`. Numeric count | Count all records for the user
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#google-authenticator-rest).
+{% include {{ version }}/rest-gauth-configuration.md %}
 
 ### JSON
 
@@ -148,7 +148,7 @@ The behavior is only activated when a path to a JSON data store file is provided
 and otherwise CAS may fallback to keeping records in memory. This feature is mostly
 useful during development and for demo purposes.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#google-authenticator-json).
+{% include {{ version }}/json-gauth-configuration.md %}
 
 ## REST Protocol Credential Extraction 
 

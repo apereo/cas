@@ -491,28 +491,6 @@ basis. To learn more about this topic, [please review this guide](../integration
 # cas.authn.authentication-attribute-release.enabled=true
 ```
 
-### IP Address Intelligence
-
-Examine the client IP address via the following strategies.
-
-#### REST Adaptive Authentication
-
-{% include {{ version }}/rest-integration.md configKey="cas.authn.adaptive.ip-intel.rest" %}
-
-#### Groovy Adaptive Authentication
-
-```properties
-# cas.authn.adaptive.ip-intel.groovy.location=file:/etc/cas/config/GroovyIPAddressIntelligenceService.groovy
-```
-
-#### BlackDot Adaptive Authentication
-
-```properties
-# cas.authn.adaptive.ip-intel.black-dot.url=http://check.getipintel.net/check.php?ip=%s
-# cas.authn.adaptive.ip-intel.black-dot.email-address=
-# cas.authn.adaptive.ip-intel.black-dot.mode=DYNA_LIST
-```
-
 ## Surrogate Authentication
 
 Authenticate on behalf of another user.
@@ -569,17 +547,6 @@ series of principal/surrogate pair. The default is a key/value pair.
 # cas.authn.surrogate.jdbc.surrogate-search-query=SELECT COUNT(*) FROM surrogate WHERE username=?
 # cas.authn.surrogate.jdbc.surrogate-account-query=SELECT surrogate_user AS surrogateAccount FROM surrogate WHERE username=?
 ```
-
-### LDAP Password Policy
-
-{% include {{ version }}/password-policy.md configKey="cas.authn.ldap[0].password-policy" %}
-
-### LDAP Password Encoding & Principal Transformation
-
-{% include {{ version }}/principal-transformation.md configKey="cas.authn.ldap[0]" %}
-
-{% include {{ version }}/password-encoding.md configKey="cas.authn.ldap[0]" %}
-
 
 ## SPNEGO Authentication
 
@@ -689,15 +656,6 @@ or [this guide](../protocol/REST-Protocol.html) for more info.
 {% include {{ version }}/signing-encryption.md configKey="cas.authn.token" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
 
 
-## Remote Address Authentication
-
-To learn more about this topic, [please review this guide](../installation/Remote-Address-Authentication.html).
-
-```properties
-# cas.authn.remote-address.ip-address-range=
-# cas.authn.remote-address.name=
-# cas.authn.remote-address.order=
-```
 
 ## X509 Authentication
 
@@ -871,17 +829,6 @@ Apache HTTPD, Nginx, Haproxy, BigIP F5, etc.
 See LDAP attribute repositories [here](Configuration-Properties.html#ldap) to fetch additional 
 LDAP attributes using the principal extracted from the X509 certificate. 
 
-## Trusted Authentication
-
-To learn more about this topic, [please review this guide](../installation/Trusted-Authentication.html). 
-
-{% include {{ version }}/persondirectory-configuration.md configKey="cas.authn.trusted" %}
-
-```properties
-# cas.authn.trusted.name=
-# cas.authn.trusted.order=
-# cas.authn.trusted.remote-principal-header=
-```
 
 ## Multifactor Authentication
 
@@ -1030,43 +977,6 @@ A cleaner process is scheduled to run in the background to clean up expired and 
 This section controls how that process should behave. 
 
 {% include {{ version }}/job-scheduling.md configKey="cas.authn.mfa.trusted.cleaner" %}
-
-#### Google Authenticator JSON
-
-```properties
-# cas.authn.mfa.gauth.json.location=file:/somewhere.json
-```
-
-#### Google Authenticator Rest
-
-{% include {{ version }}/rest-integration.md configKey="cas.authn.mfa.gauth.rest" %}
-
-Additionally, tokens can be managed via REST using the following settings:
-
-```properties
-# cas.authn.mfa.gauth.rest.token-url=https://somewhere.gauth.com
-```
-
-#### Google Authenticator MongoDb
-
-{% include {{ version }}/mongodb-configuration.md configKey="cas.authn.mfa.gauth" %}
- 
-The following settings are additionally available for this feature:
-
-```properties
-# cas.authn.mfa.gauth.mongo.token-collection=MongoDbGoogleAuthenticatorTokenRepository
-```
-
-#### Google Authenticator LDAP
-
-{% include {{ version }}/ldap-configuration.md configKey="cas.authn.mfa.gauth.ldap" %}
-
-The following settings are additionally available for this feature:
-
-```properties
-# cas.authn.mfa.gauth.ldap.account-attribute-name=gauthRecord
-```
-
 
 ## SAML IdP
 
