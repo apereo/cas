@@ -15,8 +15,9 @@ Support is enabled by including the following module in the Overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-captcha" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#google-recaptcha-integration).
+{% include {{ version }}/recaptcha-configuration.md %}
 
 ## Internet Explorer
 
-Remember to disable Internet Explorer's "Compatibility View" mode. reCAPTCHA may not render correctly when that mode is turned on.
+Remember to disable Internet Explorer's "Compatibility View" mode. reCAPTCHA
+may not render correctly when that mode is turned on.

@@ -205,12 +205,85 @@ The following SAML SP integrations, as samples, are provided by CAS:
 
 </div>
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#saml-sps).
-
-<div class="alert alert-info"><strong>Configure Once, Run Everywhere</strong><p>If you have developed a recipe for integrating
+<div class="alert alert-info"><strong>Configure Once, Run Everywhere</strong>
+<p>If you have developed a recipe for integrating
 with a SAML service provider, consider contributing that recipe to the project so its configuration
-can be automated once and for all to use. Let the change become a feature of the project, rather than something you alone have to maintain.</p></div>
+can be automated once and for all to use. Let the change become a feature of the project, 
+rather than something you alone have to maintain.</p></div>
+
+## Configuration
+
+## SAML SPs
+
+Allow CAS to register and enable a number of built-in SAML service provider integrations.
+
+<div class="alert alert-warning"><strong>Remember</strong><p>SAML2 service provider integrations listed 
+here simply attempt to automate CAS configuration based on known and documented integration 
+guidelines and recipes provided by the service provider owned by the vendor. These 
+recipes can change and break CAS over time.</p></div>
+
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.gitlab" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.hipchat" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.dropbox" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.openAthens" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.egnyte" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.ever-bridge" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.simplicity" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.app-dynamics" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.yuja" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.simplicity" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.new-relic" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.sserca" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.cherWell" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.famis" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.bynder" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.web-advisor" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.adobe-cloud" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.sans-sth" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.easy-iep" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.infinite-campus" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.slack" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.zendesk" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.gartner" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.arc-g-i-s" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.office365" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.sa-manage" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.salesforce" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.workday" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.academic-works" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.zoom" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.evernote" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.tableau" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.asana" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.box" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.service-now" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.net-partner" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.webex" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.in-common" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.amazon" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.concur-solutions" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.poll-everywhere" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.docuSign" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.safari-online" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.black-baud" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.give-campus" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.warp-wire" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.rocket-chat" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.arms-software" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.top-hat" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.academic-health-plans" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.confluence" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.jira" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.crash-plan" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.emma" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.qualtrics" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.neoGov" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.zimbra" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.pager-duty" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.cranium-cafe" %}
+{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.cccco" %}
 
 ## Google Apps
 
-The Google Apps SAML integration is also provided by CAS natively [based on this guide](Google-Apps-Integration.html).
+The Google Apps SAML integration is also provided by 
+CAS natively [based on this guide](Google-Apps-Integration.html).

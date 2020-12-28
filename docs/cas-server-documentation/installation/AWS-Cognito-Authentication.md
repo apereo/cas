@@ -16,7 +16,13 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#amazon-cognito-authentication).
+{% include {{ version }}/principal-transformation.md configKey="cas.authn.cognito" %}
+
+{% include {{ version }}/password-encoding.md configKey="cas.authn.cognito" %}
+
+{% include {{ version }}/aws-integration.md configKey="cas.authn.cognito" %}
+
+{% include {{ version }}/aws-cognito-authentication-configuration.md %}
 
 When you create the *app client* entry in the Amazon Cognito management console, make sure the app is able to support the `ADMIN_NO_SRP_AUTH` authentication flow and it is *NOT* assigned a secret key.
 

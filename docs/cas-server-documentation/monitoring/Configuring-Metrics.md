@@ -102,4 +102,4 @@ CAS metrics may be routed to varying types of databases for storage and analytic
 - CloudWatch
 - ...
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#metrics).
+{% include {{ version }}/metrics-configuration.md %}

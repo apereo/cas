@@ -69,7 +69,7 @@ Enable the following module in your configuration overlay:
 
 {% include {{ version }}/rdbms-configuration.md configKey="cas.authn.throttle.jdbc" %}
 
-{% include {{ version }}/audit-jdbc-configuration.md configKey="cas.authn.throttle.jdbc" %}
+{% include {{ version }}/jdbc-audit-configuration.md configKey="cas.authn.throttle.jdbc" %}
 
 For additional instructions on how to configure auditing, please [review the following guide](Audits.html).
 

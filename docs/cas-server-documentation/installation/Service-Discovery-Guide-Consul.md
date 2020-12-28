@@ -55,8 +55,7 @@ Support is added by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-consul-client" %}
 
-To see the relevant list of CAS properties,
-please [review this guide](../configuration/Configuration-Properties.html#consul-service-discovery).
+{% include {{ version }}/consul-service-discovery-configuration.md %}
 
 ### Troubleshooting
 

@@ -25,4 +25,4 @@ The integration is able to handle the integration with DBFP and will set a cooki
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#acceptto).
+{% include {{ version }}/acceptto-configuration.md %}

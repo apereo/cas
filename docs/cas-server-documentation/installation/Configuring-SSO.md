@@ -71,12 +71,7 @@ subsequent attempt to authenticate to a SSO-participating application.
 The cookie generation strategy can also be customized on a per-application basis. For additional details, 
 please [review this guide](../services/Configuring-Service-SSO-Policy.html).
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#global-sso-behavior).
-
-## Disable SSO Globally
-
-Participation in single sign-on sessions can be disabled globally via CAS properties. To see the relevant list of CAS 
-properties, please [review this guide](../configuration/Configuration-Properties.html#global-sso-behavior).
+{% include {{ version }}/global-sso-configuration.md %}
 
 ## Disable Service SSO Access
 
@@ -159,5 +154,3 @@ Such validation checks can be turned off and skipped on a per-application basis:
   }
 }
 ```
-
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#global-sso-behavior).

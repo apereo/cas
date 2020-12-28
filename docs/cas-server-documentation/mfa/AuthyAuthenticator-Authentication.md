@@ -19,7 +19,7 @@ Support is enabled by including the following module in the overlay:
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#authy).
+{% include {{ version }}/authy-configuration.md %}
 
 ## Registration
 

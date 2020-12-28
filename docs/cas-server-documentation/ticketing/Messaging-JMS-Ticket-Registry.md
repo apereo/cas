@@ -26,21 +26,25 @@ identifier in order to avoid endless looping behavior and recursive needless inb
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#jms-ticket-registry).
+{% include {{ version }}/signing-encryption.md configKey="cas.ticket.registry.jms" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
+
+{% include {{ version }}/jms-ticket-registry-configuration.md %}
 
 ## ActiveMQ
 
 CAS can configure the ticket registry when it detects that ActiveMQ 
 is available on the classpath. If the broker is present, an embedded broker is started and 
 configured automatically, as long as no broker URL is specified through configuration. 
-By default, ActiveMQ creates a destination if it does not exist yet, so destinations are resolved against their provided names.
+By default, ActiveMQ creates a destination if it does not exist yet, so 
+destinations are resolved against their provided names.
 
-ActiveMQ configuration is controlled by external configuration properties in [CAS settings](../configuration/Configuration-Properties.html#jms-ticket-registry).
+{% include {{ version }}/activemq-jms-ticket-registry-configuration.md %}
 
 The default setting for ActiveMQ is that all persistent messages outside of a transaction 
 are sent to a broker are synchronous. This means that the send method is blocked until the 
 message is received by the broker, its then written to disk - then a response is returned 
-to the client and the `send()` unblocks with success or throws an error if the send could not complete (e.g. due to a security exception).
+to the client and the `send()` unblocks with success or throws an error if 
+the send could not complete (e.g. due to a security exception).
 
 ## Artemis
 
@@ -55,7 +59,7 @@ Support is enabled by including the following dependency in the overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="spring-boot-starter-artemis" %}
 
-Artemis configuration is controlled by external configuration properties in [CAS settings](../configuration/Configuration-Properties.html#jms-ticket-registry).
+{% include {{ version }}/artemis-jms-ticket-registry-configuration.md %}
 
 ## JNDI
 
@@ -64,6 +68,7 @@ CAS will attempt to locate a JMS connection using JNDI. By default, the location
 `java:/JmsXA` and `java:/XAConnectionFactory` will be checked. Of course, alternative locations may be 
 specified using [CAS settings](../configuration/Configuration-Properties.html#jms-ticket-registry).
 
+{% include {{ version }}/jndi-jms-ticket-registry-configuration.md %}
 
 ## Troubleshooting
 
