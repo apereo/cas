@@ -16,7 +16,9 @@ and the event is not considered a catastrophic failure.
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#password-synchronization).
+Allow the user to synchronize account password to a variety of destinations in-place.
+
+{% include {{ version }}/ldap-configuration.md configKey="cas.authn.password-sync.ldap[0]" %}
 
 ## LDAP
 
@@ -24,3 +26,5 @@ Synchronize account passwords with one or more LDAP servers. Support is enabled 
 following dependencies in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-ldap" %}
+
+{% include {{ version }}/ldap-pswd-sync-configuration.md %}

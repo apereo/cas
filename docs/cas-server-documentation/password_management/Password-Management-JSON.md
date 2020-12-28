@@ -27,4 +27,4 @@ The outline of the JSON file may match the following:
 }
 ```
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#json-password-management).
+{% include {{ version }}/json-pswd-mgmt-configuration.md %}

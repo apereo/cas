@@ -15,7 +15,7 @@ REST support is enabled by including the following dependencies in the WAR overl
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-pm-rest" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#rest-password-management).
+{% include {{ version }}/rest-pswd-mgmt-configuration.md %}
 
 | Endpoint                  | Method    | Headers             | Expected Response
 |---------------------------|-----------|------------------------------------------------------------------------
