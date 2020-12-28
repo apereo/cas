@@ -50,8 +50,7 @@ from the CAS server to the application must be done using HTTPS:
 - when the generated service ticket is sent back to the application on the "service" url
 - when a proxy callback url is called.
 
-To see the relevant list of CAS properties and tune this behavior, please [review this guide](../configuration/Configuration-Properties.html#http-client).
-
+{% include {{ version }}/httpclient-configuration.md %}
 
 ### Connections to Dependent Systems
 
@@ -256,7 +255,8 @@ applications are accessed via XHR/Ajax requests.
 As part of the CAS Security Filter, the CAS project automatically provides the necessary configuration to
 insert HTTP Security headers into the web response to prevent against HSTS, XSS, X-FRAME and other attacks.
 These settings are presently on by default.
-To see the relevant list of CAS properties and tune this behavior, please [review this guide](../configuration/Configuration-Properties.html#http-web-requests).
+
+{% include {{ version }}/http-webrequests-configuration.md %}
 
 To review and learn more about these options, please visit [this guide][cas-sec-filter].
 
