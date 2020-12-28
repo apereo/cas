@@ -73,7 +73,7 @@ views and theme-based views may both be externalized out of the web application 
 directory named after the theme. For instance, if the external path for CAS views is `/etc/cas/templates`, view template files for 
 theme `sample` may be located `/etc/cas/templates/sample/`.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#views).
+{% include {{ version }}/views-configuration.md %}
 
 ### Configuration
 

@@ -105,7 +105,8 @@ An optional step, the `casLogoutView.html` can be modified to place a link to AD
 ```
 
 Alternatively, you may simply instruct CAS to redirect to the above endpoint after logout operations have executed.
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#logout).
+
+{% include {{ version }}/logout-configuration.md %}
 
 ## Per-Service Relying Party Id
 

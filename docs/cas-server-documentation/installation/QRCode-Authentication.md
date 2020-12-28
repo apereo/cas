@@ -35,8 +35,7 @@ The following endpoints are provided by CAS:
 
 ## Configuration
 
-To see the relevant list of CAS 
-properties, please [review this guide](../configuration/Configuration-Properties.html#qr-authentication).
+{% include {{ version }}/qr-authentication-configuration.md %}
 
 ## Web Socket Communication
 
@@ -118,8 +117,9 @@ implementations can be supplied using one of the strategies outlined below.
 
 ### JSON
 
-Authorized devices can be managed and tracked inside a single JSON resource, whose path is taught to CAS via settings. To see the 
-relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#qr-authentication).
+Authorized devices can be managed and tracked inside a single JSON resource, whose path is taught to CAS via settings. 
+
+{% include {{ version }}/json-qr-authentication-configuration.md %}
 
 ### Custom
 

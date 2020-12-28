@@ -58,4 +58,7 @@ the user will be able to directly change the password.
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#rest-authentication).
+{% include {{ version }}/password-encoding.md configKey="cas.authn.rest" %}
+
+{% include {{ version }}/rest-authentication-configuration.md %}
+

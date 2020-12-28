@@ -15,15 +15,37 @@ tickets (`TGT`), proxy-granting tickets (`PGT`), service tickets (`ST`) and prox
 
 ## Ticket-Granting Ticket Policies
 
-TGT expiration policy governs the time span during which an authenticated user may grant STs with a valid (non-expired) TGT without
-having to re-authenticate. An attempt to grant an ST with an expired TGT would require the user to re-authenticate
-to obtain a new (valid) TGT.
+`TGT` expiration policy governs the time span during which an authenticated user may grant STs with a valid (non-expired) `TGT` without
+having to re-authenticate. An attempt to grant an ST with an expired `TGT` would require the user to re-authenticate
+to obtain a new (valid) `TGT`.
 
 ### Default
 
 This is the default option, which provides a hard-time out as well as a sliding window.
+   
+{% include {{ version }}/tgt-configuration.md %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#tgt-expiration-policy).
+Ticket expiration policies are activated in the following conditions:
+
+- If the timeout values for the default policy are all set to zero or less, CAS shall ensure tickets are *never* considered expired.
+- Disabling a policy requires that all its timeout settings be set to a value equal or less than zero.
+- If not ticket expiration policy is determined, CAS shall ensure the ticket are *always* considered expired.
+
+<div class="alert alert-info"><strong>Keep What You Need!</strong><p>You are encouraged to only keep and maintain 
+properties and settings needed for a particular policy. It is <strong>UNNECESSARY</strong> to grab a copy of all 
+fields or keeping a copy as a reference while leaving them commented out. This strategy would ultimately lead to 
+poor upgrades increasing chances of breaking changes and a messy deployment at that.</p></div>
+
+Ticket expiration policies are activated in the following order:
+
+1. Tickets are never expired, if and when settings for the default policy are configured accordingly.
+2. Timeout
+3. Default
+4. Throttled Timeout
+5. Hard Timeout
+6. Tickets always expire immediately.
+      
+{% include {{ version }}/default-tgt-expiration-policy-configuration.md %}
 
 ### Per Service
 
@@ -46,10 +68,10 @@ whose ticket granting ticket expiration policy is to deviate from the default co
 ### Timeout
 
 The expiration policy applied to TGTs provides for most-recently-used expiration policy, similar to a Web server session timeout.
-For example, a 2-hour time span with this policy in effect would require a TGT to be used every 2 hours or less, otherwise
+For example, a 2-hour time span with this policy in effect would require a `TGT` to be used every 2 hours or less, otherwise
 it would be marked as expired.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#tgt-expiration-policy).
+{% include {{ version }}/timeout-tgt-expiration-policy-configuration.md %}
 
 ### Hard Timeout
 
@@ -57,7 +79,7 @@ The hard timeout policy provides for finite ticket lifetime as measured from the
 for this policy means that a ticket created at 1PM may be used up until 5PM; subsequent attempts to use it will mark it expired
 and the user will be forced to re-authenticate.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#tgt-expiration-policy).
+{% include {{ version }}/hard-timeout-tgt-expiration-policy-configuration.md %}
 
 ### Throttled
 
@@ -65,7 +87,7 @@ The throttled timeout policy extends the TimeoutExpirationPolicy with the concep
 most every N seconds. This policy was designed to thwart denial of service conditions where a rogue or misconfigured client
 attempts to consume CAS server resources by requesting high volumes of service tickets in a short time.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#tgt-expiration-policy).
+{% include {{ version }}/throttled-timeout-tgt-expiration-policy-configuration.md %}
 
 ### Never
 
@@ -86,7 +108,7 @@ ST expiration policy governs the time span during which an authenticated user ma
 This is the default policy applied to service tickets where a ticket is expired after a fixed number of uses or after a maximum
 period of inactivity elapses.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#service-tickets-behavior).
+{% include {{ version }}/st-configuration.md %}
 
 ### Per Service
 
@@ -109,14 +131,14 @@ whose service ticket expiration policy is to deviate from the default configurat
 
 ## Proxy Ticket Policies
 
-PT expiration policy governs the time span during which an authenticated user may attempt to validate an PT.
+`PT` expiration policy governs the time span during which an authenticated user may attempt to validate an `PT`.
 
 ### Default
 
 This is the default policy applied to proxy tickets where a ticket is expired after a fixed number of uses or after a maximum
 period of inactivity elapses. 
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#proxy-tickets-behavior).
+{% include {{ version }}/pt-configuration.md %}
 
 ### Per Service
 
@@ -139,11 +161,12 @@ whose proxy ticket expiration policy is to deviate from the default configuratio
 
 ## Proxy-Granting Ticket Policies
 
-PGT expiration policy governs the time span during which CAS may grant PTs with a valid (non-expired) PGT.
+`PGT` expiration policy governs the time span during which CAS may grant PTs with a valid (non-expired) `PGT`.
 
 ### Default
 
-By default, the expiration policy assigned to proxy-granting tickets is controlled by the same policy assigned to ticket-granting tickets.
+By default, the expiration policy assigned to proxy-granting 
+tickets is controlled by the same policy assigned to ticket-granting tickets.
 
 ### Per Service
 
@@ -163,4 +186,10 @@ whose proxy granting ticket expiration policy is to deviate from the default con
 }
 ```
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#proxy-granting-tickets-behavior).
+{% include {{ version }}/pgt-configuration.md %}
+
+## Transient Session Ticket Policies
+
+TST expiration policy governs the time span during which CAS can track a specific activity tied to a session.
+
+{% include {{ version }}/tst-configuration.md %}

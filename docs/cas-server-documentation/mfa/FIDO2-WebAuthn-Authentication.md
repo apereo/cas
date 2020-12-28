@@ -84,7 +84,7 @@ Device registrations may be kept inside a MongoDb instance by including the foll
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-webauthn-mongo" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#fido2-webauthn-mongodb).
+{% include {{ version }}/mongodb-configuration.md configKey="cas.authn.mfa.web-authn" %}
 
 ### LDAP
 
@@ -103,7 +103,7 @@ Device registrations may be kept inside a relational database instance by includ
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-webauthn-jpa" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#fido2-webauthn-jpa).
+{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.mfa.web-authn.jpa" %}
 
 ### Redis
 
@@ -111,7 +111,7 @@ Device registrations may be kept inside a Redis database instance by including t
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-webauthn-redis" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#fido2-webauthn-redis).
+{% include {{ version }}/redis-configuration.md configKey="cas.authn.mfa.web-authn" %}
 
 ### DynamoDb
 
@@ -119,7 +119,7 @@ Device registrations may be kept inside a DynamoDb instance by including the fol
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-webauthn-dynamodb" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#fido2-webauthn-dynamodb).
+{% include {{ version }}/dynamodb-configuration.md configKey="cas.authn.mfa.web-authn" %}
 
 ### REST
 
@@ -135,4 +135,4 @@ The following parameters are passed:
 | `GET`            | `username`      | Retrieve all records for user.  | `200` status code Collection of JSON records in the body.
 | `POST`           | Collection of records as JSON body | Store/Update registered devices. | `200`.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#fido2-webauthn-rest).
+{% include {{ version }}/rest-integration.md configKey="cas.authn.mfa.web-authn.rest" %}

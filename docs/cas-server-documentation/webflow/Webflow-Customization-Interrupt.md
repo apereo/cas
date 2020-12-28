@@ -8,8 +8,14 @@ category: Webflow Management
 
 # Authentication Interrupt
 
-CAS has the ability to pause and interrupt the authentication flow to reach out to external services and resources, querying for status and settings that 
-would then dictate how CAS should manage and control the SSO session. Interrupt services are able to present notification messages to the user, provide options for redirects to external services, etc. A common use case deals with presenting a *bulletin board* during the authentication flow to present messages and announcements to select users and then optionally require the audience to complete a certain task before CAS is able to honor the authentication request and establish a session.
+CAS has the ability to pause and interrupt the authentication flow to reach 
+out to external services and resources, querying for status and settings that 
+would then dictate how CAS should manage and control the SSO session. Interrupt 
+services are able to present notification messages to the user, provide options 
+for redirects to external services, etc. A common use case deals with 
+presenting a *bulletin board* during the authentication flow to present 
+messages and announcements to select users and then optionally require the 
+audience to complete a certain task before CAS is able to honor the authentication request and establish a session.
 
 <div class="alert alert-info"><strong>Interrupt Sequence</strong><p>
 Note that the interrupt operations typically execute after the primary authentication event, meaning an authenticated user has been identified by CAS and by extension is made available to the interrupt.
@@ -22,8 +28,6 @@ In the interrupt flow, CAS is not at the moment reaching back to an external res
 Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-interrupt-webflow" %}
-
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#authentication-interrupt).
 
 ## Interrupt Payload
 
@@ -48,8 +52,11 @@ Interrupt queries can be executed via the following ways:
 
 ### JSON
 
-This strategy reaches out to a static JSON resource that contains a map of usernames linked to various interrupt policies.
-This option is most useful during development, testing and demos.
+{% include {{ version }}/json-interrupt-configuration.md %}
+
+This strategy reaches out to a static JSON resource that contains a map of 
+usernames linked to various interrupt policies. This option is most 
+useful during development, testing and demos.
 
 ```json
 {
@@ -72,19 +79,20 @@ This option is most useful during development, testing and demos.
 }
 ```
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#authentication-interrupt-json).
-
 ### Regex Attribute
 
-This strategy allows one to define regular expression patterns in CAS settings that would be matched against attributes names and values.
-If a successful match is produced while CAS examines the collection of both authentication and principal attributes, the authentication flow
-would be interrupted.
+This strategy allows one to define regular expression patterns in CAS settings that would be 
+matched against attributes names and values. If a successful match is produced while CAS 
+examines the collection of both authentication and principal attributes, the 
+authentication flow would be interrupted.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#authentication-interrupt-regex-attributes).
+{% include {{ version }}/regex-interrupt-configuration.md %}
 
 ### Groovy
 
-This strategy reaches out to a Groovy resource whose job is to dynamically calculate whether the authentication flow should be interrupted given the provided username and certain number of other parameters.
+This strategy reaches out to a Groovy resource whose job is to dynamically 
+calculate whether the authentication flow should be interrupted given the 
+provided username and certain number of other parameters.
 
 The script may be defined as:
 
@@ -107,7 +115,7 @@ def run(final Object... args) {
 }
 ```
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#authentication-interrupt-groovy).
+{% include {{ version }}/groovy-interrupt-configuration.md %}
 
 The following parameters are passed to the script:
 
@@ -132,11 +140,12 @@ This strategy reaches out to a REST endpoint resource whose job is to dynamicall
 
 On a successful operation with a status code of `200`, the response body is expected to contain the JSON payload whose syntax and structure is identical to what is described above.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#authentication-interrupt-rest).
+{% include {{ version }}/rest-integration.md configKey="cas.interrupt.rest" %}
 
 ### Custom
 
-If you wish to design your own interrupt strategy to make inquiries, you can design your component to make determinations:
+If you wish to design your own interrupt strategy to make 
+inquiries, you can design your component to make determinations:
 
 ```java
 package org.apereo.cas.support.interrupt;
@@ -158,7 +167,8 @@ public class MyInterruptConfiguration {
 }
 ```
 
-[See this guide](../configuration/Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.
+[See this guide](../configuration/Configuration-Management-Extensions.html) to learn 
+more about how to register configurations into the CAS runtime.
 
 ## Skipping Interrupts
 

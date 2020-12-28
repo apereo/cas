@@ -118,10 +118,9 @@ Content-Type: text/xml
 </SOAP-ENV:Envelope>
 ```
 
-
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#saml-core).
+{% include {{ version }}/samlcore-configuration.md %}
 
 You may also need to declare the following repository in
 your CAS Overlay to be able to resolve dependencies:

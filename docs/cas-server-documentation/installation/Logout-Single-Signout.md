@@ -37,7 +37,7 @@ Upon logout, it may also be desirable to redirect back to a service. This is con
 link via the `service` parameter. The specified `service` must be registered in the service registry of CAS and enabled and
 CAS must be allowed to follow service redirects.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#logout).
+{% include {{ version }}/logout-configuration.md %}
 
 ## Single Logout (SLO)
 
@@ -57,7 +57,7 @@ contacted, and this may disrupt user experience negatively if those applications
 As an example, if user has logged into a portal application and an email application, logging out of one through SLO will
 also destroy the user session in the other which could mean data loss if the application is not carefully managing its session and user activity.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#single-logout).
+{% include {{ version }}/slo-configuration.md %}
 
 ### Back Channel
 
@@ -99,10 +99,6 @@ delivered or the redirection is sent to the URL presented in the _service_ param
 The session identifier is the CAS service ticket ID that was provided to the service when it originally authenticated
 to CAS. The session identifier is used to correlate a CAS session with an application session; for example, the SLO
 session identifier maps to a servlet session that can subsequently be destroyed to terminate the application session.
-
-### Turning Off Single Logout
-
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#single-logout).
 
 ### Redirecting Logout to Service
 
@@ -152,7 +148,7 @@ To configure a service specific endpoint, try the following example:
 ### Asynchronous SLO Messages
 
 By default, backchannel logout messages are sent to endpoint in an asynchronous fashion.
-This behavior can be modified via CAS settings. To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#logout).
+This behavior can be modified via CAS settings. 
 
 ## SSO Session vs. Application Session
 

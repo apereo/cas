@@ -17,4 +17,8 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-generic" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#reject-users-authentication).
+{% include {{ version }}/principal-transformation.md configKey="cas.authn.reject" %}
+
+{% include {{ version }}/password-encoding.md configKey="cas.authn.reject" %}
+
+{% include {{ version }}/rejectusers-authentication-configuration.md %}
