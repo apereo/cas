@@ -48,4 +48,6 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-webflow-mfa", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-reports", configuration: "tests")
+
+    testImplementation libraries.springboottomcat
 }

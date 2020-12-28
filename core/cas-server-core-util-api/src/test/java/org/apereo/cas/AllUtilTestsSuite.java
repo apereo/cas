@@ -5,6 +5,7 @@ import org.apereo.cas.util.HttpRequestUtilsTests;
 import org.apereo.cas.util.HttpUtilsTests;
 import org.apereo.cas.util.InetAddressUtilsTests;
 import org.apereo.cas.util.LoggingUtilsTests;
+import org.apereo.cas.util.SocketUtilsTests;
 import org.apereo.cas.util.cache.DistributedCacheManagerTests;
 import org.apereo.cas.util.cache.DistributedCacheObjectTests;
 import org.apereo.cas.util.crypto.CertUtilsTests;
@@ -58,6 +59,7 @@ import org.junit.runner.RunWith;
     SimpleHttpClientFactoryBeanTests.class,
     GroovyScriptResourceCacheManagerTests.class,
     LoggingUtilsTests.class,
+    SocketUtilsTests.class,
     InetAddressUtilsTests.class,
     CompositeX509TrustManagerTests.class,
     CompositeX509KeyManagerTests.class,

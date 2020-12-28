@@ -36,8 +36,8 @@ DOMAIN=example.org
 ORG=cas
 SUBJECT="/C=US/ST=VA/O=Apereo/CN=$DOMAIN"
 
-docker stop samba
-docker rm samba
+docker stop samba || true
+docker rm samba || true
 if [[ "${RESET}" == "true" ]] ; then
     docker volume rm samba_data
     docker volume rm samba_conf

@@ -22,10 +22,10 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 }, properties = {
     "cas.acme.domains=cas.example.org",
     "cas.acme.server-url=acme://letsencrypt.org/staging",
-    "cas.acme.user-key.location=file:/tmp/user.key",
-    "cas.acme.domain-key.location=file:/tmp/domain.key",
-    "cas.acme.domain-csr.location=file:/tmp/domain.csr",
-    "cas.acme.domain-chain.location=file:/tmp/domain-chain.crt"
+    "cas.acme.user-key.location=file:${java.io.tmpdir}/user.key",
+    "cas.acme.domain-key.location=file:${java.io.tmpdir}/domain.key",
+    "cas.acme.domain-csr.location=file:${java.io.tmpdir}/domain.csr",
+    "cas.acme.domain-chain.location=file:${java.io.tmpdir}/domain-chain.crt"
 })
 public abstract class BaseAcmeTests {
 

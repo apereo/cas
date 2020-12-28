@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
 public class OidcDefaultJsonWebKeystoreCacheLoaderTests extends AbstractOidcTests {
     @BeforeAll
     public static void setup() {
-        val file = new File(System.getProperty("java.io.tmpdir"), "keystore.jwks");
+        val file = new File(FileUtils.getTempDirectory(), "keystore.jwks");
         file.delete();
     }
 

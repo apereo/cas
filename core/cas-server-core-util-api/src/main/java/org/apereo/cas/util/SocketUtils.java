@@ -15,6 +15,8 @@ import java.net.ServerSocket;
  */
 @UtilityClass
 public class SocketUtils {
+    private static final String OS = System.getProperty("os.name").toLowerCase();
+    
     /**
      * Is tcp port available.
      *
@@ -23,7 +25,7 @@ public class SocketUtils {
      */
     public static boolean isTcpPortAvailable(final int port) {
         try (val serverSocket = new ServerSocket()) {
-            serverSocket.setReuseAddress(false);
+            serverSocket.setReuseAddress(OS.contains("mac"));
             serverSocket.bind(new InetSocketAddress(InetAddress.getByName("localhost"), port), 1);
             return true;
         } catch (final Exception ex) {

@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.handler.support.jaas.JaasAuthenticationHand
 
 import lombok.SneakyThrows;
 import lombok.val;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +36,7 @@ public class JaasAuthenticationHandlerSystemConfigurationTests {
     @SneakyThrows
     public void initialize() {
         val resource = new ClassPathResource("jaas-system.conf");
-        val fileName = new File(System.getProperty("java.io.tmpdir"), "jaas-system.conf");
+        val fileName = new File(FileUtils.getTempDirectoryPath(), "jaas-system.conf");
         try (val writer = Files.newBufferedWriter(fileName.toPath(), StandardCharsets.UTF_8)) {
             IOUtils.copy(resource.getInputStream(), writer, Charset.defaultCharset());
             writer.flush();

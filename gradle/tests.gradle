@@ -1,613 +1,95 @@
-if (hasTestsOfCategory(project, "Kafka")) {
-    task testKafka(type: Test) {
-        enabled = shouldTest(project, "Kafka")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "Kafka"
+import java.time.Duration
+
+enum TestCategories {
+    Kafka,
+    Logout,
+    CAS,
+    ExpirationPolicy,
+    Metrics,
+    Tickets,
+    PasswordOps,
+    Attributes,
+    Audits,
+    Web,
+    Infinispan,
+    Spnego,
+    WebApp,
+    Authentication,
+    ActuatorEndpoint,
+    RegisteredService,
+    Utility,
+    WSFederation,
+    SMS,
+    CasConfiguration,
+    Hazelcast,
+    JMX,
+    Simple,
+    MFA,
+    X509,
+    SHELL,
+    Cassandra,
+    Webflow,
+    WebflowConfig,
+    WebflowEvents,
+    WebflowActions,
+    WebflowMfaActions,
+    CosmosDb,
+    ZooKeeper,
+    JMS,
+    AmazonWebServices,
+    Radius,
+    Couchbase,
+    CouchDb,
+    MySQL,
+    Postgres,
+    MsSqlServer,
+    MariaDb,
+    DynamoDb,
+    Ehcache,
+    FileSystem,
+    Ignite,
+    InfluxDb,
+    Oracle,
+    Ldap,
+    Groovy,
+    Mail,
+    RestfulApi,
+    Memcached,
+    MongoDb,
+    Redis,
+    OAuth,
+    UMA,
+    OIDC,
+    SAML,
+    JDBC
+}
+
+if (rootProject.tasks.findByName("testCategories") == null) {
+    rootProject.tasks.create(name: "testCategories", description: "Display all available test categories") {
+        doLast {
+            println("Found ${TestCategories.values().length} test categories:")
+            println(TestCategories.values().toSorted({ o1, o2 ->
+                o1.name().compareTo(o2.name())
+            }))
         }
     }
 }
 
-if (hasTestsOfCategory(project, "Logout")) {
-    task testLogout(type: Test) {
-        enabled = shouldTest(project, "Logout")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "Logout"
+TestCategories.values().each({ category ->
+    if (hasTestsOfCategory(project, category.name())) {
+        def taskName = "test${category.name()}"
+        if (tasks.findByName(taskName) == null) {
+            // println "Creating task ${taskName} for ${project.name}"
+            tasks.create(name: taskName, type: Test, description: "Testing category ${category.name()}") {
+                enabled = shouldTest(project, category.name())
+                //finalizedBy jacocoTestReport
+                useJUnitPlatform {
+                    includeTags category.name()
+                }
+            }
         }
     }
-}
-
-if (hasTestsOfCategory(project, "CAS")) {
-    task testCAS(type: Test) {
-        enabled = shouldTest(project, "CAS")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "CAS"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "ExpirationPolicy")) {
-    task testExpirationPolicy(type: Test) {
-        enabled = shouldTest(project, "ExpirationPolicy")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "ExpirationPolicy"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "Metrics")) {
-    task testMetrics(type: Test) {
-        enabled = shouldTest(project, "Metrics")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "Metrics"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "Tickets")) {
-    task testTickets(type: Test) {
-        enabled = shouldTest(project, "Tickets")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "Tickets"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "PasswordOps")) {
-    task testPasswordOps(type: Test) {
-        enabled = shouldTest(project, "PasswordOps")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "PasswordOps"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "Attributes")) {
-    task testAttributes(type: Test) {
-        enabled = shouldTest(project, "Attributes")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "Attributes"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "Audits")) {
-    task testAudits(type: Test) {
-        enabled = shouldTest(project, "Audits")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "Audits"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "Web")) {
-    task testWeb(type: Test) {
-        enabled = shouldTest(project, "Web")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "Web"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "Infinispan")) {
-    task testInfinispan(type: Test) {
-        enabled = shouldTest(project, "Infinispan")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "Infinispan"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "Spnego")) {
-    task testSpnego(type: Test) {
-        enabled = shouldTest(project, "Spnego")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "Spnego"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "WebApp")) {
-    task testWebApp(type: Test) {
-        enabled = shouldTest(project, "WebApp")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "WebApp"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "Authentication")) {
-    task testAuthentication(type: Test) {
-        enabled = shouldTest(project, "Authentication")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "Authentication"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "ActuatorEndpoint")) {
-    task testActuatorEndpoint(type: Test) {
-        enabled = shouldTest(project, "ActuatorEndpoint")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "ActuatorEndpoint"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "RegisteredService")) {
-    task testRegisteredService(type: Test) {
-        enabled = shouldTest(project, "RegisteredService")
-//        finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "RegisteredService"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "Utility")) {
-    task testUtility(type: Test) {
-        enabled = shouldTest(project, "Utility")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "Utility"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "WSFederation")) {
-    task testWSFederation(type: Test) {
-        enabled = shouldTest(project, "WSFederation")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "WSFederation"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "SMS")) {
-    task testSMS(type: Test) {
-        enabled = shouldTest(project, "SMS")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "SMS"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "CasConfiguration")) {
-    task testCasConfiguration(type: Test) {
-        enabled = shouldTest(project, "CasConfiguration")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "CasConfiguration"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "Hazelcast")) {
-    task testHazelcast(type: Test) {
-        enabled = shouldTest(project, "Hazelcast")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "Hazelcast"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "JMX")) {
-    task testJMX(type: Test) {
-        enabled = shouldTest(project, "JMX")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "JMX"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "Simple")) {
-    task testSimple(type: Test) {
-        enabled = shouldTest(project, "Simple")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "Simple"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "MFA")) {
-    task testMFA(type: Test) {
-        enabled = shouldTest(project, "MFA")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "MFA"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "X509")) {
-    task testX509(type: Test) {
-        enabled = shouldTest(project, "X509")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "X509"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "SHELL")) {
-    task testSHELL(type: Test) {
-        enabled = shouldTest(project, "SHELL")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "SHELL"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "Cassandra")) {
-    task testCassandra(type: Test) {
-        enabled = shouldTest(project, "Cassandra")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "Cassandra"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "Webflow")) {
-    task testWebflow(type: Test) {
-        enabled = shouldTest(project, "Webflow")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "Webflow"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "WebflowConfig")) {
-    task testWebflowConfig(type: Test) {
-        enabled = shouldTest(project, "WebflowConfig")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "WebflowConfig"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "WebflowEvents")) {
-    task testWebflowEvents(type: Test) {
-        enabled = shouldTest(project, "WebflowEvents")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "WebflowEvents"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "WebflowActions")) {
-    task testWebflowActions(type: Test) {
-        enabled = shouldTest(project, "WebflowActions")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "WebflowActions"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "WebflowMfaActions")) {
-    task testWebflowMfaActions(type: Test) {
-        enabled = shouldTest(project, "WebflowMfaActions")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "WebflowMfaActions"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "CosmosDb")) {
-    task testCosmosDb(type: Test) {
-        enabled = shouldTest(project, "CosmosDb")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "CosmosDb"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "ZooKeeper")) {
-    task testZooKeeper(type: Test) {
-        enabled = shouldTest(project, "ZooKeeper")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "ZooKeeper"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "JMS")) {
-    task testJMS(type: Test) {
-        enabled = shouldTest(project, "JMS")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "JMS"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "AmazonWebServices")) {
-    task testAmazonWebServices(type: Test) {
-        enabled = shouldTest(project, "AmazonWebServices")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "AmazonWebServices"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "Radius")) {
-    task testRadius(type: Test) {
-        enabled = shouldTest(project, "Radius")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "Radius"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "Couchbase")) {
-    task testCouchbase(type: Test) {
-        enabled = shouldTest(project, "Couchbase")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "Couchbase"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "CouchDb")) {
-    task testCouchDb(type: Test) {
-        enabled = shouldTest(project, "CouchDb")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "CouchDb"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "MySQL")) {
-    task testMySQL(type: Test) {
-        enabled = shouldTest(project, "MySQL")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "MySQL"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "Postgres")) {
-    task testPostgres(type: Test) {
-        enabled = shouldTest(project, "Postgres")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "Postgres"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "MsSqlServer")) {
-    task testMsSqlServer(type: Test) {
-        enabled = shouldTest(project, "MsSqlServer")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "MsSqlServer"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "MariaDb")) {
-    task testMariaDb(type: Test) {
-        enabled = shouldTest(project, "MariaDb")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "MariaDb"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "DynamoDb")) {
-    task testDynamoDb(type: Test) {
-        enabled = shouldTest(project, "DynamoDb")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "DynamoDb"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "Ehcache")) {
-    task testEhcache(type: Test) {
-        enabled = shouldTest(project, "Ehcache")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "Ehcache"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "FileSystem")) {
-    task testFileSystem(type: Test) {
-        enabled = shouldTest(project, "FileSystem")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "FileSystem"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "Ignite")) {
-    task testIgnite(type: Test) {
-        enabled = shouldTest(project, "Ignite")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "Ignite"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "InfluxDb")) {
-    task testInfluxDb(type: Test) {
-        enabled = shouldTest(project, "InfluxDb")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "InfluxDb"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "Oracle")) {
-    task testOracle(type: Test) {
-        enabled = shouldTest(project, "Oracle")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "Oracle"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "Ldap")) {
-    task testLdap(type: Test) {
-        enabled = shouldTest(project, "Ldap")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "Ldap"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "Groovy")) {
-    task testGroovy(type: Test) {
-        enabled = shouldTest(project, "Groovy")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "Groovy"
-        }
-    }
-}
-
-
-if (hasTestsOfCategory(project, "Mail")) {
-    task testMail(type: Test) {
-        enabled = shouldTest(project, "Mail")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "Mail"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "RestfulApi")) {
-    task testRestfulApi(type: Test) {
-        enabled = shouldTest(project, "RestfulApi")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "RestfulApi"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "Memcached")) {
-    task testMemcached(type: Test) {
-        enabled = shouldTest(project, "Memcached")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "Memcached"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "MongoDb")) {
-    task testMongoDb(type: Test) {
-        enabled = shouldTest(project, "MongoDb")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "MongoDb"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "Redis")) {
-    task testRedis(type: Test) {
-        enabled = shouldTest(project, "Redis")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "Redis"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "OAuth")) {
-    task testOAuth(type: Test) {
-        enabled = shouldTest(project, "OAuth")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "OAuth"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "UMA")) {
-    task testUMA(type: Test) {
-        enabled = shouldTest(project, "UMA")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "UMA"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "OIDC")) {
-    task testOIDC(type: Test) {
-        enabled = shouldTest(project, "OIDC")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "OIDC"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "SAML")) {
-    task testSAML(type: Test) {
-        enabled = shouldTest(project, "SAML")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "SAML"
-        }
-    }
-}
-
-if (hasTestsOfCategory(project, "JDBC")) {
-    task testJDBC(type: Test) {
-        enabled = shouldTest(project, "JDBC")
-        //finalizedBy jacocoTestReport
-        useJUnitPlatform {
-            includeTags "JDBC"
-        }
-    }
-}
+})
 
 test {
     enabled = false

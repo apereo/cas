@@ -18,8 +18,15 @@ echo -e "User: ${USER}"
 echo -e "User HOME directory: ${HOME}"
 echo -e "************************************"
 
+echo -e "Checking for sudo, not available on Windows bash"
+SUDO=
+type sudo &> /dev/null
+if [ $? -eq 0 ]; then
+  SUDO=sudo
+fi
+
 echo -e "Setting build environment...\n"
-sudo mkdir -p /etc/cas/config /etc/cas/saml /etc/cas/services
+$SUDO mkdir -p /etc/cas/config /etc/cas/saml /etc/cas/services /tmp /temp
 
 echo -e "Configuring Gradle wrapper...\n"
 mkdir -p ~/.gradle && echo "org.gradle.daemon=false" >> ~/.gradle/gradle.properties

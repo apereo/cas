@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
     U2FConfiguration.class,
     AopAutoConfiguration.class,
     RefreshAutoConfiguration.class
-}, properties = "cas.authn.mfa.u2f.json.location=file:/tmp/u2f.json")
+}, properties = "cas.authn.mfa.u2f.json.location=file:${java.io.tmpdir}/u2f.json")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("FileSystem")
 @Getter
@@ -41,7 +41,7 @@ public class U2FJsonResourceDeviceRepositoryTests extends AbstractU2FDeviceRepos
 
     @BeforeAll
     public static void cleanUp() {
-        FileUtils.deleteQuietly(new File("/tmp/u2f.json"));
+        FileUtils.deleteQuietly(new File(FileUtils.getTempDirectory(), "u2f.json"));
     }
 
     @Test

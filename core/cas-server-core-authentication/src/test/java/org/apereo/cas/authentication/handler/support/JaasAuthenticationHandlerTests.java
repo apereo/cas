@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -32,7 +33,7 @@ public class JaasAuthenticationHandlerTests {
     @BeforeEach
     public void initialize() throws Exception {
         val resource = new ClassPathResource("jaas.conf");
-        this.fileName = new File(System.getProperty("java.io.tmpdir"), "jaas-custom.conf");
+        this.fileName = new File(FileUtils.getTempDirectory(), "jaas-custom.conf");
         try (val writer = Files.newBufferedWriter(fileName.toPath(), StandardCharsets.UTF_8)) {
             IOUtils.copy(resource.getInputStream(), writer, Charset.defaultCharset());
             writer.flush();

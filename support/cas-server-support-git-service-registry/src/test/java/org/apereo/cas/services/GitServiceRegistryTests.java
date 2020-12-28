@@ -17,6 +17,8 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.file.PathUtils;
+import org.apache.commons.io.file.StandardDeleteOption;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.JGitInternalException;
 import org.junit.jupiter.api.AfterAll;
@@ -39,7 +41,6 @@ import static org.mockito.Mockito.*;
 
 /**
  * This is {@link GitServiceRegistryTests}.
- * When running on Windows, needs -Dtmpdir=c:/tmp - java.io.tmpdir doesn't work b/c slashes need to be forward.
  * @author Misagh Moayyed
  * @since 6.1.0
  */
@@ -55,14 +56,12 @@ import static org.mockito.Mockito.*;
     properties = {
         "cas.service-registry.git.sign-commits=false",
         "cas.service-registry.git.root-directory=svc-cfg",
-        "cas.service-registry.git.repository-url=file://${tmpdir:/tmp}/cas-sample-data"
+        "cas.service-registry.git.repository-url=file://${java.io.tmpdir}/cas-sample-data"
     })
 @Slf4j
 @Tag("FileSystem")
 @Getter
 public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
-
-    private static String TMPDIR = "/tmp";
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
@@ -78,13 +77,15 @@ public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
     @BeforeAll
     public static void setup() {
         try {
-            val gitRepoSampleDir = new File(TMPDIR +"/cas-sample-data");
+            val gitRepoSampleDir = new File(FileUtils.getTempDirectory(), "cas-sample-data");
             if (gitRepoSampleDir.exists()) {
-                FileUtils.deleteDirectory(gitRepoSampleDir);
+                PathUtils.delete(gitRepoSampleDir.toPath(),
+                        StandardDeleteOption.OVERRIDE_READ_ONLY);
             }
             val gitDir = new File(FileUtils.getTempDirectory(), GitServiceRegistryProperties.DEFAULT_CAS_SERVICE_REGISTRY_NAME);
             if (gitDir.exists()) {
-                FileUtils.deleteDirectory(gitDir);
+                PathUtils.delete(gitDir.toPath(),
+                        StandardDeleteOption.OVERRIDE_READ_ONLY);
             }
             val gitSampleRepo = Git.init().setDirectory(gitRepoSampleDir).setBare(false).call();
             FileUtils.write(new File(gitRepoSampleDir, "readme.txt"), "text", StandardCharsets.UTF_8);
@@ -121,10 +122,11 @@ public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @AfterAll
     public static void cleanUp() throws Exception {
-        FileUtils.deleteDirectory(new File(TMPDIR +"/cas-sample-data"));
+        PathUtils.delete(new File(FileUtils.getTempDirectory() + "cas-sample-data").toPath(),
+                StandardDeleteOption.OVERRIDE_READ_ONLY);
         val gitDir = new File(FileUtils.getTempDirectory(), GitServiceRegistryProperties.DEFAULT_CAS_SERVICE_REGISTRY_NAME);
         if (gitDir.exists()) {
-            FileUtils.deleteDirectory(gitDir);
+            PathUtils.delete(gitDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
         }
     }
 }

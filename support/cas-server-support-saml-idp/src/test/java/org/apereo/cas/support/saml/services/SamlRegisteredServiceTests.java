@@ -15,6 +15,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.file.PathUtils;
+import org.apache.commons.io.file.StandardDeleteOption;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -50,9 +52,17 @@ public class SamlRegisteredServiceTests {
 
     private static final String METADATA_LOCATION = "classpath:/metadata/idp-metadata.xml";
 
+    private static final String JSON_SERVICE_REGISTRY_FOLDER = "json-service-registry";
+
     @BeforeAll
     public static void prepTests() throws Exception {
-        Arrays.stream(FileUtils.getTempDirectory().listFiles()).forEach(File::delete);
+        val jsonFolder = new File(FileUtils.getTempDirectory(), JSON_SERVICE_REGISTRY_FOLDER);
+        if (jsonFolder.isDirectory()) {
+            PathUtils.cleanDirectory(jsonFolder.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
+        }
+        if (!jsonFolder.mkdir()) {
+            throw new IOException("Unable to make json folder: " + jsonFolder.getName());
+        }
         FileUtils.cleanDirectory(RESOURCE.getFile());
     }
 
@@ -88,7 +98,7 @@ public class SamlRegisteredServiceTests {
         chain.setPolicies(Arrays.asList(policy, new DenyAllAttributeReleasePolicy()));
         service.setAttributeReleasePolicy(chain);
         
-        val dao = new JsonServiceRegistry(new FileSystemResource(FileUtils.getTempDirectory()), WatcherService.noOp(),
+        val dao = new JsonServiceRegistry(new FileSystemResource(FileUtils.getTempDirectoryPath() + File.separator + "json-service-registry"), WatcherService.noOp(),
             appCtx, new NoOpRegisteredServiceReplicationStrategy(),
             new DefaultRegisteredServiceResourceNamingStrategy(),
             new ArrayList<>());

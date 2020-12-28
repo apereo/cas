@@ -85,13 +85,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 #      - name: Setup tmate session
-#        uses: mxschmitt/action-tmate@v2
+#        uses: mxschmitt/action-tmate@v3
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
           java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+        shell: bash
       - uses: actions/cache@v2
         with:
           path: ~/.gradle/caches
@@ -178,7 +179,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 #      - name: Setup tmate session
-#        uses: mxschmitt/action-tmate@v2
+#        uses: mxschmitt/action-tmate@v3
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
@@ -505,14 +506,15 @@ jobs:
 ##########################################################################
 
   tests:
-    runs-on: ubuntu-latest
     if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') }}
     needs: [cache]
     continue-on-error: false
     strategy:
       fail-fast: false
       matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
         category:
+          - rest
           - simple
           - groovy
           - filesystem
@@ -524,7 +526,6 @@ jobs:
           - attributes
           - services
           - expiration-policy
-          - rest
           - password-ops
           - mfa
           - web
@@ -574,6 +575,7 @@ jobs:
           - zookeeper
           - jms
           - cosmosdb
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -582,6 +584,10 @@ jobs:
           java-version: ${{ env.JDK_CURRENT }}
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+        shell: bash
+      - name: Initialize Windows
+        run: sc stop MongoDB
+        if: matrix.os == 'windows-latest'
       - uses: actions/cache@v2
         with:
           path: ~/.gradle/caches
@@ -592,20 +598,28 @@ jobs:
 #        with:
 #          name: binary-artifacts
 #      - name: Setup tmate session
-#        uses: mxschmitt/action-tmate@v2
-      - name: Run Tests
+#        uses: mxschmitt/action-tmate@v3
+#        if: ${{ matrix.os == 'windows-latest' && matrix.category == 'rest' }}
+      - name: Run Tests with Coverage
         run: ./testcas.sh --with-coverage --category ${{ matrix.category }}
+        if: matrix.os == 'ubuntu-latest'
+      - name: Run Tests without Coverage
+        run: ./testcas.sh --category ${{ matrix.category }}
+        shell: bash
+        if: matrix.os != 'ubuntu-latest'
       - name: "Upload to Codecov"
         uses: "codecov/codecov-action@v1"
         with:
           file: ./build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml
           flags: ${{ matrix.category }}
           name: ${{ matrix.category }}
+        if: matrix.os == 'ubuntu-latest'
       - name: "Upload coverage file"
         uses: "actions/upload-artifact@v2"
         with:
           name: "cas-tests-${{ matrix.category }}.coverage"
           path: "./build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
+        if: matrix.os == 'ubuntu-latest'
 ##########################################################################
   upload_coverage:
     runs-on: ubuntu-latest

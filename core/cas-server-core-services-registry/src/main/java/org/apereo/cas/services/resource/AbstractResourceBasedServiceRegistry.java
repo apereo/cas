@@ -387,9 +387,8 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
     protected File getRegisteredServiceFileName(final RegisteredService service) {
         val fileName = resourceNamingStrategy.build(service, getExtensions()[0]);
         val svcFile = new File(this.serviceRegistryDirectory.toFile(), fileName);
-        LOGGER.debug("Using [{}] as the service definition file", svcFile.getCanonicalPath());
+        LOGGER.debug("Using [{}] as the service definition file", svcFile.getAbsolutePath());
         return svcFile;
-
     }
 
     /**

@@ -15,16 +15,16 @@ import java.io.File;
  * @since 6.3.0
  */
 @Tag("FileSystem")
-@TestPropertySource(properties = "cas.authn.mfa.web-authn.json.location=file:/tmp/webauthn-devices.json")
+@TestPropertySource(properties = "cas.authn.mfa.web-authn.json.location=file:${java.io.tmpdir}/webauthn-devices.json")
 public class JsonResourceWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRepositoryTests {
 
     @BeforeAll
     public static void bootstrap() {
-        FileUtils.deleteQuietly(new File("/tmp/webauthn-devices.json"));
+        FileUtils.deleteQuietly(new File(FileUtils.getTempDirectory(), "webauthn-devices.json"));
     }
 
     @AfterAll
     public static void cleanUp() {
-        FileUtils.deleteQuietly(new File("/tmp/webauthn-devices.json"));
+        FileUtils.deleteQuietly(new File(FileUtils.getTempDirectory(), "webauthn-devices.json"));
     }
 }
