@@ -548,114 +548,10 @@ series of principal/surrogate pair. The default is a key/value pair.
 # cas.authn.surrogate.jdbc.surrogate-account-query=SELECT surrogate_user AS surrogateAccount FROM surrogate WHERE username=?
 ```
 
-## SPNEGO Authentication
-
-To learn more about this topic, [please review this guide](../installation/SPNEGO-Authentication.html).
-
-{% include {{ version }}/persondirectory-configuration.md configKey="cas.authn.spnego.principal" %}
-
-```properties
-# cas.authn.spnego.mixed-mode-authentication=false
-# cas.authn.spnego.supported-browsers=MSIE,Trident,Firefox,AppleWebKit
-# cas.authn.spnego.send401-on-authentication-failure=true
-# cas.authn.spnego.ntlm-allowed=true
-# cas.authn.spnego.principal-with-domain-name=false
-# cas.authn.spnego.name=
-# cas.authn.spnego.ntlm=false
-```
-
-{% include {{ version }}/webflow-configuration.md configKey="cas.authn.spnego.webflow" %}
-
-### System Settings
-
-```properties
-# cas.authn.spnego.system.kerberos-conf=
-# cas.authn.spnego.system.login-conf=
-# cas.authn.spnego.system.kerberos-realm=EXAMPLE.COM
-# cas.authn.spnego.system.kerberos-debug=true
-# cas.authn.spnego.system.use-subject-creds-only=false
-# cas.authn.spnego.system.kerberos-kdc=172.10.1.10
-```
-
-### Spnego Authentication Settings
-
-```properties
-# cas.authn.spnego.properties[0].cache-policy=600
-# cas.authn.spnego.properties[0].jcifs-domain-controller=
-# cas.authn.spnego.properties[0].jcifs-domain=
-# cas.authn.spnego.properties[0].jcifs-password=
-# cas.authn.spnego.properties[0].jcifs-username=
-# cas.authn.spnego.properties[0].jcifs-service-password=
-# cas.authn.spnego.properties[0].timeout=300000
-# cas.authn.spnego.properties[0].jcifs-service-principal=HTTP/cas.example.com@EXAMPLE.COM
-# cas.authn.spnego.properties[0].jcifs-netbios-wins=
-```
-
-### SPNEGO Client Selection Strategy
-
-```properties
-# cas.authn.spnego.host-name-client-action-strategy=hostnameSpnegoClientAction
-```
-
-### SPNEGO Client Selection Hostname
-
-```properties
-# cas.authn.spnego.alternative-remote-host-attribute=alternateRemoteHeader
-# cas.authn.spnego.ips-to-check-pattern=127.+
-# cas.authn.spnego.dns-timeout=2000
-# cas.authn.spnego.host-name-pattern-string=.+
-```
-
-### SPNEGO LDAP Integration
-
-{% include {{ version }}/ldap-configuration.md configKey="cas.authn.spnego.ldap" %}
-
-```properties
-# cas.authn.spnego.spnego-attribute-name=distinguishedName
-```
-
-### NTLM Authentication
-
-```properties
-# cas.authn.ntlm.include-pattern=
-# cas.authn.ntlm.load-balance=true
-# cas.authn.ntlm.domain-controller=
-# cas.authn.ntlm.name=
-# cas.authn.ntlm.order=
-# cas.authn.ntlm.enabled=false
-```
-
-## GUA Authentication
-
-To learn more about this topic, [please review this guide](../installation/GUA-Authentication.html).
-
-## JWT/Token Authentication
-
-To learn more about this topic, [please review this guide](../installation/JWT-Authentication.html). 
-
-{% include {{ version }}/principal-transformation.md configKey="cas.authn.token" %}
-
-```properties
-# cas.authn.token.name=
-```
 
 ### Webflow configuration
 
 {% include {{ version }}/webflow-configuration.md configKey="cas.authn.token.webflow" %}
-
-### JWT Tickets
-
-Allow CAS tickets through various protocol channels to be created as JWTs. See [this guide](../installation/Configure-ServiceTicket-JWT.html) 
-or [this guide](../protocol/REST-Protocol.html) for more info.
-
-```properties
-# cas.authn.token.crypto.encryption-enabled=true
-# cas.authn.token.crypto.signing-enabled=true
-```
-
-{% include {{ version }}/signing-encryption.md configKey="cas.authn.token" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
-
-
 
 ## X509 Authentication
 
@@ -1164,10 +1060,7 @@ might be discovered via an "acct:" URI, for example, which is a URI that looks l
 
 {% include {{ version }}/rest-integration.md configKey="cas.authn.oidc.webfinger.user-info.rest" %}
 
-
-
 ## Pac4j Delegated AuthN
-
 
 ### GitHub
 

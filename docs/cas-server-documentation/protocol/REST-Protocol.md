@@ -61,7 +61,9 @@ POST /cas/v1/tickets HTTP/1.0
 username=battags&password=password&token=true&additionalParam1=paramvalue
 ```
 
-The `token` parameter may either be passed as a request parameter or a request header. The body of the response will include the ticket-granting ticket as a JWT. Note that JWTs created are typically signed and encrypted by default with pre-generated keys. To control settings or to see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#jwt-tickets).
+The `token` parameter may either be passed as a request parameter or a request header. The body of the response will include the ticket-granting ticket as a JWT. Note that JWTs created are typically signed and encrypted by default with pre-generated keys. 
+
+{% include {{ version }}/jwt-tickets-configuration.md %}
 
 ## Authenticate Credentials
 
@@ -112,7 +114,7 @@ Support is enabled by including the following in your overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-rest-tokens" %}
 
-Note that JWTs created are typically signed and encrypted by default with pre-generated keys. To control settings or to see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#jwt-tickets).
+{% include {{ version }}/jwt-tickets-configuration.md %}
 
 ## Validate Service Ticket
 

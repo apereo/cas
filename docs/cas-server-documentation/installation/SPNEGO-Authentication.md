@@ -5,7 +5,6 @@ category: Authentication
 ---
 {% include variables.html %}
 
-
 # SPNEGO Authentication
 
 [SPNEGO](http://en.wikipedia.org/wiki/SPNEGO) is an authentication technology that is primarily used to provide
@@ -29,9 +28,16 @@ ticket expires.
 * Supported browser.
 * CAS is running MIT kerberos against the AD domain controller.
 
-<div class="alert alert-info"><strong>JCE Requirement</strong><p>It's safe to make sure you have the proper JCE bundle installed in your Java environment that is used by CAS, specially if you need to consume encrypted payloads issued by ADFS. Be sure to pick the right version of the JCE for your Java version. Java versions can be detected via the <code>java -version</code> command.</p></div>
+<div class="alert alert-info"><strong>JCE Requirement</strong><p>It's safe to make 
+sure you have the proper JCE bundle installed in your Java environment that is used 
+by CAS, specially if you need to consume encrypted payloads issued by ADFS. Be sure 
+to pick the right version of the JCE for your Java version. Java versions can be 
+detected via the <code>java -version</code> command.</p></div>
 
-<div class="alert alert-info"><strong>Large Kerberos Tickets</strong><p>If organization users have large kerberos tickets, likely cause by being a member of a large number of groups, the Tomcat connector will need to have the <code>maxHttpHeaderSize</code> value increased from the default amount to allow the ticket to be passed to the CAS Server application.</p></div>
+<div class="alert alert-info"><strong>Large Kerberos Tickets</strong><p>If organization 
+users have large kerberos tickets, likely cause by being a member of a large number 
+of groups, the Tomcat connector will need to have the <code>maxHttpHeaderSize</code> 
+value increased from the default amount to allow the ticket to be passed to the CAS Server application.</p></div>
  
 
 ## Components
@@ -165,18 +171,18 @@ URL, e.g. `https://cas.example.com`.
 
 Make sure you have at least specified the JCIFS Service Principal in the CAS configuration.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#spnego-authentication).
-To see the relevant list of CAS properties that deal with NTLM authentication,
-please [review this guide](../configuration/Configuration-Properties.html#ntlm-authentication).
+{% include {{ version }}/spnego-configuration.md %}
 
 You may provide a JAAS `login.conf` file:
 
 ```bash
 jcifs.spnego.initiate {
-   com.sun.security.auth.module.Krb5LoginModule required storeKey=true useKeyTab=true keyTab="/home/cas/kerberos/myspnaccount.keytab";
+   com.sun.security.auth.module.Krb5LoginModule \
+    required storeKey=true useKeyTab=true keyTab="/home/cas/kerberos/myspnaccount.keytab";
 };
 jcifs.spnego.accept {
-   com.sun.security.auth.module.Krb5LoginModule required storeKey=true useKeyTab=true keyTab="/home/cas/kerberos/myspnaccount.keytab";
+   com.sun.security.auth.module.Krb5LoginModule \
+    required storeKey=true useKeyTab=true keyTab="/home/cas/kerberos/myspnaccount.keytab";
 };
 ```
 
@@ -188,22 +194,22 @@ current authentication/browser request. The state that is available to the webfl
 is `evaluateClientRequest` which will attempt to start SPNEGO authentication
 or resume normally, depending on the client action strategy chosen below.
 
+{% include {{ version }}/client-selection-spnego-configuration.md %}
+
 ### By Remote IP
 
 Checks to see if the request's remote ip address matches a predefine pattern.
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#spnego-authentication).
 
 ### By Hostname
 
 Checks to see if the request's remote hostname matches a predefine pattern.
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#spnego-authentication).
 
 ### By LDAP Attribute
 
 Checks an LDAP instance for the remote hostname, to locate a pre-defined attribute whose mere existence
 would allow the webflow to resume to SPNEGO.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#spnego-authentication).
+{% include {{ version }}/ldap-spnego-configuration.md %}
 
 ## Logging
 
