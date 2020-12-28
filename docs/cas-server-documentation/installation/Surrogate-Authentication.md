@@ -8,7 +8,8 @@ category: Authentication
 
 # Surrogate Authentication
 
-Surrogate authentication (impersonation), sometimes known as *sudo for the web*, is the ability to authenticate on behalf of another user. 
+Surrogate authentication (impersonation), sometimes known as *sudo for the web*, 
+is the ability to authenticate on behalf of another user. 
 
 The two actors in this case are:
 
@@ -244,7 +245,14 @@ SERVER IP ADDRESS: 127.0.0.1
 =============================================================
 ```
 
-Additionally, failure and success events may also communicated via SMS and/or email messages to relevant parties. To learn more about available options, please [see this guide](../notifications/SMS-Messaging-Configuration.html) or [this guide](../notifications/Sending-Email-Configuration.html).
+Additionally, failure and success events may also communicated via SMS and/or email messages to relevant parties. 
+
+{% include {{ version }}/email-notifications.md configKey="cas.authn.surrogate" %}
+
+{% include {{ version }}/sms-notifications.md configKey="cas.authn.surrogate" %}
+
+To learn more about available options, please [see this guide](../notifications/SMS-Messaging-Configuration.html) 
+or [this guide](../notifications/Sending-Email-Configuration.html).
 
 ## REST Protocol
 
