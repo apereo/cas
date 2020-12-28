@@ -248,7 +248,7 @@ One application of CORS is when a resource makes a cross-origin HTTP request whe
 different domain than the one which the first resource itself serves. This should help more with CAS-enabled
 applications are accessed via XHR/Ajax requests.
 
-To see the relevant list of CAS properties and tune this behavior, please [review this guide](../configuration/Configuration-Properties.html#http-web-requests).
+{% include {{ version }}/http-webrequests-configuration.md %}
 
 #### Security Response Headers
 

@@ -22,9 +22,16 @@ Support is enabled by adding the following module into the overlay:
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#jpa-ticket-registry).
+{% include {{ version }}/rdbms-configuration.md configKey="cas.ticket.registry.jpa" %}
 
-A background *cleaner* process is also automatically scheduled to scan the chosen database periodically and remove expired records based on configured threshold parameters.
+{% include {{ version }}/jpa-ticket-registry-configuration.md %}
+
+{% include {{ version }}/signing-encryption.md configKey="cas.ticket.registry.jpa" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
+
+A background *cleaner* process is also automatically scheduled to scan the chosen 
+database periodically and remove expired records based on configured threshold parameters.
+
+{% include {{ version }}/job-scheduling.md configKey="cas.ticket.registry.cleaner" %}
 
 <div class="alert alert-warning"><strong>Cleaner Usage</strong><p>In a clustered CAS deployment, it is best to keep the cleaner running on one designated CAS node only and turn it off on all others via CAS settings. Keeping the cleaner running on all nodes may likely lead to severe performance and locking issues.</p></div>
 
@@ -39,4 +46,3 @@ This reduces performance of the JPA Ticket Registry and may not be desirable or 
 the database in use, its configured transaction isolation level, and expected concurrency of a single
 TGT.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#jpa-ticket-registry).

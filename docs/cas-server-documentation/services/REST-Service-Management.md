@@ -12,7 +12,7 @@ category: Services
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#restful-service-registry).
+{% include {{ version }}/rest-integration.md configKey="cas.service-registry" %}
 
 | Operation         | Method          | Body                       | Response
 |-------------------|-----------------|----------------------------------------------------------------------

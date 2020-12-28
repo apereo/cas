@@ -11,7 +11,8 @@ category: Webflow Management
 CAS uses [Spring Webflow](http://projects.spring.io/spring-webflow) to do *script* processing of login and logout protocols.
 Spring Web Flow builds on Spring MVC and allows implementing the "flows" of a web application. A flow encapsulates a sequence
 of steps that guide a user through the execution of some business task. It spans multiple HTTP requests, has state, deals with
- transactional data, is reusable, and may be dynamic and long-running in nature. Each flow may contain among many other settings the following major elements:
+ transactional data, is reusable, and may be dynamic and long-running in nature. Each 
+flow may contain among many other settings the following major elements:
 
 - Actions: components that describe an executable task and return back a result
 - Transitions: Routing the flow from one state to another; Transitions may be global to the entire flow.
@@ -19,7 +20,11 @@ of steps that guide a user through the execution of some business task. It spans
 - Decisions: Components that conditionally route to other areas of flow and can make logical decisions
 
 Spring Web Flow presents CAS with a pluggable architecture where custom actions, views and decisions may be injected into the
-flow to account for additional use cases and processes. Note that <strong>to customize the webflow, one must possess a reasonable level of understanding of the webflow's internals and injection policies</strong>. The intention of this document is NOT to describe Spring Web Flow, but merely to demonstrate how the framework is used by CAS to carry out various aspects of the protocol and business logic execution.
+flow to account for additional use cases and processes. Note that <strong>to customize the 
+webflow, one must possess a reasonable level of understanding of the webflow's internals 
+and injection policies</strong>. The intention of this document is NOT to describe 
+Spring Web Flow, but merely to demonstrate how the framework is used by CAS to 
+carry out various aspects of the protocol and business logic execution.
 
 ## Webflow Session
 

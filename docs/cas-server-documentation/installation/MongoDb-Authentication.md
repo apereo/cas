@@ -13,16 +13,21 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-mongo" %}
 
-To see the relevant list of CAS properties,
-please [review this guide](../configuration/Configuration-Properties.html#mongodb-authentication).
+{% include {{ version }}/principal-transformation.md configKey="cas.authn.mongo" %}
+
+{% include {{ version }}/password-encoding.md configKey="cas.authn.mongo" %}
+
+{% include {{ version }}/mongodb-configuration.md configKey="cas.authn" %}
+
+{% include {{ version }}/mongodb-authentication-configuration.md %}
 
 Accounts are expected to be found as such in collections:
 
 ```json
 {
-	"username": "casuser",
-	"password": "34598dfkjdjk3487jfdkh874395",
-	"first_name": "john",
-	"last_name": "smith"
+    "username": "casuser",
+    "password": "34598dfkjdjk3487jfdkh874395",
+    "first_name": "john",
+    "last_name": "smith"
 }
 ```

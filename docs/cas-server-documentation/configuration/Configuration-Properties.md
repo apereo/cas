@@ -1245,57 +1245,7 @@ is converted to hex before comparing it to the database value.
 # cas.authn.jdbc.encode[0].order=0
 ```
 
-## CouchDb Authentication
 
-To learn more about this topic, [please review this guide](../installation/CouchDb-Authentication.html).
-
-{% include {{ version }}/principal-transformation.md configKey="cas.authn.couch-db" %}
-
-{% include {{ version }}/password-encoding.md configKey="cas.authn.couch-db" %}
-
-
-{% include {{ version }}/couchdb-integration.md configKey="cas.authn" %}
-
-```properties
-# cas.authn.couch-db.attributes=
-# cas.authn.couch-db.username-attribute=username
-# cas.authn.couch-db.password-attribute=password
-# cas.authn.couch-db.name=
-# cas.authn.couch-db.order=
-```
-
-## Redis Authentication
-
-To learn more about this topic, [please review this guide](../installation/Redis-Authentication.html).
-
-{% include {{ version }}/principal-transformation.md configKey="cas.authn.redis" %}
-
-{% include {{ version }}/password-encoding.md configKey="cas.authn.redis" %}
-
-{% include {{ version }}/redis-configuration.md configKey="cas.authn" %}
-
-```properties
-# cas.authn.redis.name=
-# cas.authn.redis.order=
-```
-
-## MongoDb Authentication
-
-To learn more about this topic, [please review this guide](../installation/MongoDb-Authentication.html). 
-
-{% include {{ version }}/principal-transformation.md configKey="cas.authn.mongo" %}
-
-{% include {{ version }}/password-encoding.md configKey="cas.authn.mongo" %}
-
-{% include {{ version }}/mongodb-configuration.md configKey="cas.authn" %}
-
-```properties
-# cas.authn.mongo.attributes=
-# cas.authn.mongo.username-attribute=username
-# cas.authn.mongo.password-attribute=password
-# cas.authn.mongo.principal-id-attribute=
-# cas.authn.mongo.name=
-```
 
 ## LDAP Authentication
 
@@ -1458,28 +1408,6 @@ To learn more about this topic, [please review this guide](../installation/SPNEG
 # cas.authn.ntlm.enabled=false
 ```
 
-## JAAS Authentication
-
-To learn more about this topic, [please review this guide](../installation/JAAS-Authentication.html). 
-
-{% include {{ version }}/principal-transformation.md configKey="cas.authn.jaas[0]" %}
-
-{% include {{ version }}/password-encoding.md configKey="cas.authn.jaas[0]" %}
-
-```properties
-# cas.authn.jaas[0].realm=CAS
-# cas.authn.jaas[0].kerberos-kdc-system-property=
-# cas.authn.jaas[0].kerberos-realm-system-property
-# cas.authn.jaas[0].name=
-# cas.authn.jaas[0].order=
-# cas.authn.jaas[0].credential-criteria=
-# cas.authn.jaas[0].login-config-type=JavaLoginConfig
-# cas.authn.jaas[0].login-configuration-file=/path/to/jaas.con
-```
-
-{% include {{ version }}/persondirectory-configuration.md configKey="cas.authn.jaas[0].principal" %}
-
-{% include {{ version }}/password-policy.md configKey="cas.authn.jaas[0].password-policy" %}
 
 
 ## GUA Authentication
@@ -2043,7 +1971,6 @@ The following strategies can be used to generate keys for trusted device records
 
 {% include {{ version }}/cookie-configuration.md configKey="cas.authn.mfa.trusted.device-fingerprint.cookie" %}
 
-
 The default cookie name is set to `MFATRUSTED` and the default maxAge is set to `2592000`.
 
 {% include {{ version }}/signing-encryption.md configKey="cas.authn.mfa.trusted.device-fingerprint.cookie" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
@@ -2054,53 +1981,6 @@ A cleaner process is scheduled to run in the background to clean up expired and 
 This section controls how that process should behave. 
 
 {% include {{ version }}/job-scheduling.md configKey="cas.authn.mfa.trusted.cleaner" %}
-
-
-### Simple Multifactor Authentication
-
-To learn more about this topic, [please review this guide](../mfa/Simple-Multifactor-Authentication.html).
-
-```properties
-# cas.authn.mfa.simple.name=
-# cas.authn.mfa.simple.order=
-# cas.authn.mfa.simple.time-to-kill-in-seconds=30
-# cas.authn.mfa.simple.token-length=6
-```
-
-{% include {{ version }}/email-notifications.md configKey="cas.authn.mfa.simple" %}
-
-{% include {{ version }}/sms-notifications.md configKey="cas.authn.mfa.simple" %}
-
-{% include {{ version }}/mfa-bypass-configuration.md configKey="cas.authn.mfa.simple" %}
-
-### Google Authenticator
-
-To learn more about this topic, [please review this guide](../mfa/GoogleAuthenticator-Authentication.html).
-
-```properties
-# cas.authn.mfa.gauth.issuer=
-# cas.authn.mfa.gauth.label=
-
-# cas.authn.mfa.gauth.window-size=3
-# cas.authn.mfa.gauth.code-digits=6
-# cas.authn.mfa.gauth.time-step-size=30
-# cas.authn.mfa.gauth.rank=0
-# cas.authn.mfa.gauth.trusted-device-enabled=false
-# cas.authn.mfa.gauth.multiple-device-registration-enabled=false
-
-# cas.authn.mfa.gauth.name=
-# cas.authn.mfa.gauth.order=
-```
-
-{% include {{ version }}/mfa-bypass-configuration.md configKey="cas.authn.mfa.gauth" %}
-
-{% include {{ version }}/job-scheduling.md configKey="cas.authn.mfa.gauth.cleaner" %}
-
-{% include {{ version }}/signing-encryption.md configKey="cas.authn.mfa.gauth" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
-
-#### Google Authenticator CouchDb
-
-{% include {{ version }}/couchdb-integration.md configKey="cas.authn.mfa.gauth" %}
 
 #### Google Authenticator JSON
 
@@ -2140,12 +2020,12 @@ The following settings are additionally available for this feature:
 
 #### Google Authenticator Redis
 
-{% include {{ version }}/redis-configuration.md configKey="cas.authn.mfa.gauth" %}
+
  
  
 #### Google Authenticator JPA
 
-{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.mfa.gauth.jpa" %}
+
 
 ### YubiKey
 
@@ -2181,34 +2061,6 @@ To learn more about this topic, [please review this guide](../mfa/YubiKey-Authen
 # cas.authn.mfa.yubikey.allowed-devices.uid1=yubikeyPublicId1
 # cas.authn.mfa.yubikey.allowed-devices.uid2=yubikeyPublicId2
 ```
-
-#### YubiKey Registration Records Encryption and Signing
-
-```properties
-# cas.authn.mfa.yubikey.crypto.enabled=true
-```
-
-{% include {{ version }}/signing-encryption.md configKey="cas.authn.mfa.yubikey" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
-
-### YubiKey JPA Device Store
-
-{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.mfa.yubikey.jpa" %}
-
-### YubiKey CouchDb Device Store
-
-{% include {{ version }}/couchdb-integration.md configKey="cas.authn.mfa.yubikey" %}
-
-### YubiKey MongoDb Device Store
-
-{% include {{ version }}/mongodb-configuration.md configKey="cas.authn.mfa.yubikey" %}
-
-### YubiKey DynamoDb Device Store
-
-{% include {{ version }}/dynamodb-configuration.md configKey="cas.authn.mfa.yubikey" %}
-
-### YubiKey Redis Device Store
-
-{% include {{ version }}/redis-configuration.md configKey="cas.authn.mfa.yubikey" %}
  
 ### Radius OTP
 
@@ -3357,18 +3209,6 @@ Decide how CAS should monitor the internal state of various cache storage servic
 # cas.monitor.warn.eviction-threshold=0
 ```
 
-### Memcached Monitors
-
-Decide how CAS should monitor the internal state of a memcached connection pool. 
-
-{% include {{ version }}/memcached-integration.md configKey="cas.monitor.memcached" %}
-
-### MongoDb Monitors
-
-Decide how CAS should monitor the internal state of a MongoDb instance. 
-
-{% include {{ version }}/mongodb-configuration.md configKey="cas.monitor" %}
-
 ### Database Monitoring
 
 Decide how CAS should monitor the internal state of JDBC connections used
@@ -3416,97 +3256,6 @@ To learn more about this topic, [please review this guide](../ux/User-Interface-
 # cas.theme.default-theme-name=cas-theme-default
 ```
 
-## Events
-
-Decide how CAS should track authentication events.
-To learn more about this topic, [please review this guide](../installation/Configuring-Authentication-Events.html).
-
-```properties
-cas.events.enabled=true
-
-# Whether geolocation tracking should be turned on and requested from the browser.
-# cas.events.track-geolocation=false
-
-# Control whether CAS should monitor configuration files and auto-refresh context.
-# cas.events.track-configuration-modifications=true
-```
-
-### InfluxDb Events
-
-Decide how CAS should store authentication events inside an InfluxDb instance. 
-
-{% include {{ version }}/influxdb-configuration.md configKey="cas.events.influx-db" %}
-
-### CouchDb Events
-
-Decide how CAS should store authentication events inside a CouchDb instance. 
-
-{% include {{ version }}/couchdb-integration.md configKey="cas.events.couch-db" %}
-
-### Database Events
-
-Decide how CAS should store authentication events inside a database instance. 
-
-{% include {{ version }}/rdbms-configuration.md configKey="cas.events.jpa" %}
-
-### MongoDb Events
-
-Decide how CAS should store authentication events inside a MongoDb instance. 
-
-{% include {{ version }}/mongodb-configuration.md configKey="cas.events" %}
-
-### DynamoDb Events
-
-Decide how CAS should store authentication events inside a DynamoDb instance.
-
-{% include {{ version }}/dynamodb-configuration.md configKey="cas.events" %}
-
-```properties
-# cas.events.dynamo-db.table-name=DynamoDbCasEvents
-```
-
-## Http Web Requests
-
-Control how CAS should respond and validate incoming HTTP requests.
-
-```properties
-# cas.http-web-request.header.enabled=true
-
-# cas.http-web-request.header.xframe=true
-# cas.http-web-request.header.xframe-options=DENY
-
-# cas.http-web-request.header.xss=true
-# cas.http-web-request.header.xss-options=1; mode=block
-
-# cas.http-web-request.header.hsts=true
-# cas.http-web-request.header.xcontent=true
-# cas.http-web-request.header.cache=true
-# cas.http-web-request.header.content-security-policy=
-
-# cas.http-web-request.cors.enabled=false
-# cas.http-web-request.cors.allow-credentials=false
-# cas.http-web-request.cors.allow-origins[0]=
-# cas.http-web-request.cors.allow-methods[0]=*
-# cas.http-web-request.cors.allow-headers[0]=*
-# cas.http-web-request.cors.max-age=3600
-# cas.http-web-request.cors.exposed-headers[0]=
-
-# cas.http-web-request.web.force-encoding=true
-# cas.http-web-request.web.encoding=UTF-8
-
-# cas.http-web-request.allow-multi-value-parameters=false
-# cas.http-web-request.only-post-params=username,password
-# cas.http-web-request.params-to-check=ticket,service,renew,gateway,warn,method,target,SAMLart,pgtUrl,pgt,pgtId,pgtIou,targetService,entityId,token
-# cas.http-web-request.pattern-to-block=
-# cas.http-web-request.characters-to-forbid=none
-
-# cas.http-web-request.custom-headers.header-name1=headerValue1
-# cas.http-web-request.custom-headers.header-name2=headerValue2
-
-# server.servlet.encoding.charset=UTF-8
-# server.servlet.encoding.enabled=true
-# server.servlet.encoding.force=true
-```
 
 ## Http Client
 
@@ -3544,82 +3293,7 @@ The default options are available for hostname verification:
 | `NONE`                  | Ignore hostname verification.
 | `DEFAULT`               | Enforce hostname verification.
 
-## Service Registry
 
-See [this guide](../services/Service-Management.html) to learn more.
-
-```properties
-# cas.service-registry.watcher-enabled=true
-
-# Auto-initialize the registry from default JSON service definitions
-# cas.service-registry.init-from-json=false
-
-# cas.service-registry.management-type=DEFAULT|DOMAIN
-# cas.service-registry.cache=PT5M
-# cas.service-registry.cache-size=1000
-# cas.service-registry.cache-capacity=1000
-```
-
-{% include {{ version }}/job-scheduling.md configKey="cas.service-registry" %}
-
-### Service Registry Notifications
-
-{% include {{ version }}/email-notifications.md configKey="cas.service-registry" %}
-
-{% include {{ version }}/sms-notifications.md configKey="cas.service-registry" %}
-
-### JSON Service Registry
-
-If the underlying service registry is using local system resources
-to locate JSON service definitions, decide how those resources should be found.
-
-```properties
-# cas.service-registry.json.location=classpath:/services
-```
-
-To learn more about this topic, [please review this guide](../services/JSON-Service-Management.html).
-
-### YAML Service Registry
-
-If the underlying service registry is using local system resources
-to locate YAML service definitions, decide how those resources should be found.
-
-```properties
-# cas.service-registry.yaml.location=classpath:/services
-```
-
-To learn more about this topic, [please review this guide](../services/YAML-Service-Management.html).
-
-### Git Service Registry
-
-Works with git repository to fetch and manage service registry definitions.
-
-{% include {{ version }}/git-configuration.md configKey="cas.service-registry`" %}
-
-```properties
-# cas.service-registry.git.group-by-type=true
-# cas.service-registry.git.root-directory=
-```
-
-To learn more about this topic, [please review this guide](../services/Git-Service-Management.html).
-
-### RESTful Service Registry
-
-To learn more about this topic, [please review this guide](../services/REST-Service-Management.html).
-
-{% include {{ version }}/rest-integration.md configKey="cas.service-registry" %}
-
-### CouchDb Service Registry
-
-To learn more about this topic, [please review this guide](../services/CouchDb-Service-Management.html). 
-
-{% include {{ version }}/couchdb-integration.md configKey="cas.service-registry" %}
-
-### Redis Service Registry
-
-To learn more about this topic, [please review this guide](../services/Redis-Service-Management.html). 
-
-{% include {{ version }}/redis-configuration.md configKey="cas.service-registry" %}
 
 ### CosmosDb Service Registry
 
@@ -3635,201 +3309,8 @@ To learn more about this topic, [please review this guide](../services/CosmosDb-
 # cas.service-registry.cosmos-db.consistency-level=Session
 ```
 
-### Amazon S3 Service Registry
 
-To learn more about this topic, [please review this guide](../services/AmazonS3-Service-Management.html).
 
-{% include {{ version }}/aws-integration.md configKey="cas.service-registry.amazon-s3" %}
-
-
-### DynamoDb Service Registry
-
-To learn more about this topic, [please review this guide](../services/DynamoDb-Service-Management.html).
-
-{% include {{ version }}/dynamodb-configuration.md configKey="cas.service-registry" %}
-
-```properties
-# cas.service-registry.dynamo-db.table-name=DynamoDbCasServices
-```
-
-### Cassandra Service Registry
-
-To learn more about this topic, [please review this guide](../services/Cassandra-Service-Management.html).
-
-{% include {{ version }}/cassandra-configuration.md configKey="cas.service-registry.cassandra" %}
-
-### MongoDb Service Registry
-
-Store CAS service definitions inside a MongoDb instance. To learn more about this topic, [please review this guide](../services/MongoDb-Service-Management.html).
-
-{% include {{ version }}/mongodb-configuration.md configKey="cas.service-registry" %}
-
-### LDAP Service Registry
-
-Control how CAS services should be found inside an LDAP instance.
-To learn more about this topic, [please review this guide](../services/LDAP-Service-Management.html).  
-
-{% include {{ version }}/ldap-configuration.md configKey="cas.service-registry.ldap" %}
-
-```properties
-# cas.service-registry.ldap.service-definition-attribute=description
-# cas.service-registry.ldap.id-attribute=uid
-# cas.service-registry.ldap.object-class=casRegisteredService
-# cas.service-registry.ldap.search-filter=(%s={0})
-# cas.service-registry.ldap.load-filter=(objectClass=%s)
-```
-
-### Couchbase Service Registry
-
-Control how CAS services should be found inside a Couchbase instance.
-To learn more about this topic, [please review this guide](../services/Couchbase-Service-Management.html). 
-
-{% include {{ version }}/couchbase-configuration.md configKey="cas.service-registry.couchbase" %}
-
-### Database Service Registry
-
-Control how CAS services should be found inside a database instance.
-To learn more about this topic, [please review this guide](../services/JPA-Service-Management.html). 
-
-{% include {{ version }}/rdbms-configuration.md configKey="cas.service-registry.jpa" %}
-
-### Cache Service Registry
-
-Services cache duration specifies the fixed duration for an entry to be automatically removed from the cache after its creation or update.
-
-### Cache Size Service Registry
-
-Services cache size specifies the maximum number of entries the cache may contain.
-
-### Cach Capacity Service Registry
-
-Services cache capacity sets the minimum total size for the internal data structures.
-
-## Service Registry Replication
-
-Control how CAS services definition files should be replicated across a CAS cluster.
-To learn more about this topic, [please review this guide](../services/Configuring-Service-Replication.html)
-
-Replication modes may be configured per the following options:
-
-| Type                    | Description
-|-------------------------|--------------------------------------------------------------
-| `ACTIVE_ACTIVE`       | All CAS nodes sync copies of definitions and keep them locally.
-| `ACTIVE_PASSIVE`    | Default. One master node keeps definitions and streams changes to other passive nodes.
-
-```properties
-# cas.service-registry.stream.enabled=true
-# cas.service-registry.stream.replication-mode=ACTIVE_ACTIVE|ACTIVE_PASSIVE
-```
-
-## Service Registry Replication Hazelcast
-
-Control how CAS services definition files should be replicated across a CAS cluster backed by a distributed Hazelcast cache.
-To learn more about this topic, [please review this guide](../services/Configuring-Service-Replication.html).
-
-{% include {{ version }}/hazelcast-configuration.md configKey="cas.service-registry.stream.hazelcast.config" %}
-
-```properties
-# cas.service-registry.stream.hazelcast.duration=PT1M
-```
-
-## Service Registry Replication Kafka
-
-Control how CAS services definition files should be replicated across a CAS cluster backed by Apache Kafka.
-To learn more about this topic, [please review this guide](../services/Configuring-Service-Replication.html).
-
-{% include {{ version }}/kafka-configuration.md configKey="cas.service-registry.stream.kafka" %}
-
-{% include {{ version }}/kafka-topic-configuration.md configKey="cas.service-registry.stream.kafka.topic" %}
-
-## Ticket Registry
-
-To learn more about this topic, [please review this guide](../ticketing/Configuring-Ticketing-Components.html).
-
-### Cleaner
-
-A cleaner process is scheduled to run in the background to clean up expired and stale tickets.
-This section controls how that process should behave. 
-
-{% include {{ version }}/job-scheduling.md configKey="cas.ticket.registry.cleaner" %}
-
-### JPA Ticket Registry
-
-To learn more about this topic, [please review this guide](../ticketing/JPA-Ticket-Registry.html). 
-
-{% include {{ version }}/rdbms-configuration.md configKey="cas.ticket.registry.jpa" %}
-
-```properties
-# cas.ticket.registry.jpa.ticket-lock-type=NONE
-# cas.ticket.registry.jpa.jpa-locking-timeout=3600
-```
-
-{% include {{ version }}/signing-encryption.md configKey="cas.ticket.registry.jpa" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
-
-### CouchDb Ticket Registry
-
-To learn more about this topic, [please review this guide](../ticketing/CouchDb-Ticket-Registry.html). 
-
-{% include {{ version }}/couchdb-integration.md configKey="cas.ticket.registry.couch-db" %}
-
-### Couchbase Ticket Registry
-
-To learn more about this topic, [please review this guide](../ticketing/Couchbase-Ticket-Registry.html). 
-
-{% include {{ version }}/couchbase-configuration.md configKey="cas.ticket.registry.couchbase" %}
-
-{% include {{ version }}/signing-encryption.md configKey="cas.ticket.registry.couchbase" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
-
-### Hazelcast Ticket Registry
-
-To learn more about this topic, [please review this guide](../ticketing/Hazelcast-Ticket-Registry.html).
-
-{% include {{ version }}/hazelcast-configuration.md configKey="cas.ticket.registry.hazelcast" %}
-
-```properties
-# cas.ticket.registry.hazelcast.page-size=500
-```
-
-{% include {{ version }}/signing-encryption.md configKey="cas.ticket.registry.hazelcast" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
-
-### Cassandra Ticket Registry
-
-To learn more about this topic, [please review this guide](../ticketing/Cassandra-Ticket-Registry.html).
-
-{% include {{ version }}/cassandra-configuration.md configKey="cas.ticket.registry.cassandra" %}
-
-{% include {{ version }}/signing-encryption.md configKey="cas.ticket.registry.cassandra" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
-
-```properties
-# cas.ticket.registry.cassandra.drop-tables-on-startup=false
-```
-
-### Infinispan Ticket Registry
-
-To learn more about this topic, [please review this guide](../ticketing/Infinispan-Ticket-Registry.html).
-
-```properties
-# cas.ticket.registry.infinispan.cache-name=
-# cas.ticket.registry.infinispan.config-location=/infinispan.xml
-```
-
-{% include {{ version }}/signing-encryption.md configKey="cas.ticket.registry.infinispan" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
-
-### InMemory Ticket Registry
-
-This is typically the default ticket registry instance where tickets
-are kept inside the runtime environment memory.
-
-```properties
-# Enable the backing map to be cacheable
-# cas.ticket.registry.in-memory.cache=true
-
-# cas.ticket.registry.in-memory.load-factor=1
-# cas.ticket.registry.in-memory.concurrency=20
-# cas.ticket.registry.in-memory.initial-capacity=1000
-```
-
-{% include {{ version }}/signing-encryption.md configKey="cas.ticket.registry.in-memory" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
 
 ### JMS Ticket Registry
 
@@ -3869,140 +3350,6 @@ To learn more about this topic, [please review this guide](../ticketing/Messagin
 # spring.jms.jndi-name=java:/MyConnectionFactory
 ```
 
-### Ehcache Ticket Registry
-
-Theses properties are for the module that uses version 2.x of the Ehcache library. 
-To learn more about this topic, [please review this guide](../ticketing/Ehcache-Ticket-Registry.html).
-
-```properties
-# cas.ticket.registry.ehcache.replicate-updates-via-copy=true
-# cas.ticket.registry.ehcache.cache-manager-name=ticketRegistryCacheManager
-# cas.ticket.registry.ehcache.replicate-puts=true
-# cas.ticket.registry.ehcache.replicate-updates=true
-# cas.ticket.registry.ehcache.memory-store-eviction-policy=LRU
-# cas.ticket.registry.ehcache.config-location=classpath:/ehcache-replicated.xml
-# cas.ticket.registry.ehcache.maximum-batch-size=100
-# cas.ticket.registry.ehcache.shared=false
-# cas.ticket.registry.ehcache.replication-interval=10000
-# cas.ticket.registry.ehcache.cache-time-to-live=2147483647
-# cas.ticket.registry.ehcache.disk-expiry-thread-interval-seconds=0
-# cas.ticket.registry.ehcache.replicate-removals=true
-# cas.ticket.registry.ehcache.max-chunk-size=5000000
-# cas.ticket.registry.ehcache.max-elements-on-disk=0
-# cas.ticket.registry.ehcache.max-elements-in-cache=0
-# cas.ticket.registry.ehcache.max-elements-in-memory=10000
-# cas.ticket.registry.ehcache.eternal=false
-# cas.ticket.registry.ehcache.loader-async=true
-# cas.ticket.registry.ehcache.replicate-puts-via-copy=true
-# cas.ticket.registry.ehcache.cache-time-to-idle=0
-# cas.ticket.registry.ehcache.persistence=LOCALTEMPSWAP|NONE|LOCALRESTARTABLE|DISTRIBUTED
-# cas.ticket.registry.ehcache.synchronous-writes=
-
-# The systemprops allows a map of properties to be set as system properties before configLocation config is processed.
-# These properties may be referenced in the ehcache XML config via ${key}
-# cas.ticket.registry.ehcache.systemprops.key1=value1
-# cas.ticket.registry.ehcache.systemprops.key2=value2
-```
-
-{% include {{ version }}/signing-encryption.md configKey="cas.ticket.registry.ehcache" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
-
-### Ehcache 3 Ticket Registry
-
-To learn more about this topic, [please review this guide](../ticketing/Ehcache-Ticket-Registry.html).
-
-```properties
-# cas.ticket.registry.ehcache3.enabled=true
-# cas.ticket.registry.ehcache3.max-elements-in-memory=10000
-# cas.ticket.registry.ehcache3.per-cache-size-on-disk=20MB
-# cas.ticket.registry.ehcache3.eternal=false
-# cas.ticket.registry.ehcache3.enable-statistics=true
-# cas.ticket.registry.ehcache3.enable-management=true
-# cas.ticket.registry.ehcache3.terracotta-cluster-uri=
-# cas.ticket.registry.ehcache3.default-server-resource=main
-# cas.ticket.registry.ehcache3.resource-pool-name=cas-ticket-pool
-# cas.ticket.registry.ehcache3.resource-pool-size=15MB
-# cas.ticket.registry.ehcache3.root-directory=/tmp/cas/ehcache3
-# cas.ticket.registry.ehcache3.persist-on-disk=true
-# cas.ticket.registry.ehcache3.cluster-connection-timeout=150
-# cas.ticket.registry.ehcache3.cluster-read-write-timeout=5
-# cas.ticket.registry.ehcache3.clustered-cache-consistency=STRONG
-```                                              
-
-There is no default value for the Terracota Cluster URI but the format is `terracotta://host1.company.org:9410,host2.company.org:9410/cas-application`
-
-{% include {{ version }}/signing-encryption.md configKey="cas.ticket.registry.ehcache3" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
-### Ignite Ticket Registry
-
-To learn more about this topic, [please review this guide](../ticketing/Ignite-Ticket-Registry.html).
-
-```properties
-# cas.ticket.registry.ignite.key-algorithm=
-# cas.ticket.registry.ignite.protocol=
-# cas.ticket.registry.ignite.trust-store-password=
-# cas.ticket.registry.ignite.key-store-type=
-# cas.ticket.registry.ignite.key-store-file-path=
-# cas.ticket.registry.ignite.key-store-password=
-# cas.ticket.registry.ignite.trust-store-type=
-# cas.ticket.registry.ignite.ignite-address[0]=localhost:47500
-# cas.ticket.registry.ignite.ignite-address[1]=
-# cas.ticket.registry.ignite.trust-store-file-path=
-# cas.ticket.registry.ignite.ack-timeout=2000
-# cas.ticket.registry.ignite.join-timeout=1000
-# cas.ticket.registry.ignite.local-address=
-# cas.ticket.registry.ignite.local-port=-1
-# cas.ticket.registry.ignite.network-timeout=5000
-# cas.ticket.registry.ignite.socket-timeout=5000
-# cas.ticket.registry.ignite.thread-priority=10
-# cas.ticket.registry.ignite.force-server-mode=false
-# cas.ticket.registry.ignite.client-mode=false
-
-# cas.ticket.registry.ignite.tickets-cache.write-synchronization-mode=FULL_SYNC
-# cas.ticket.registry.ignite.tickets-cache.atomicity-mode=TRANSACTIONAL
-# cas.ticket.registry.ignite.tickets-cache.cache-mode=REPLICATED
-```
-
-{% include {{ version }}/signing-encryption.md configKey="cas.ticket.registry.ignite" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
-
-### Memcached Ticket Registry
-
-To learn more about this topic, [please review this guide](../ticketing/Memcached-Ticket-Registry.html). 
-
-{% include {{ version }}/memcached-integration.md configKey="cas.ticket.registry.memcached" %}
-
-{% include {{ version }}/signing-encryption.md configKey="cas.ticket.registry.memcached" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
-
-
-### DynamoDb Ticket Registry
-
-To learn more about this topic, [please review this guide](../ticketing/DynamoDb-Ticket-Registry.html). 
-
-{% include {{ version }}/dynamodb-configuration.md configKey="cas.ticket.registry" %}
-
-{% include {{ version }}/signing-encryption.md configKey="cas.ticket.registry.dynamo-db" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
-
-```properties
-# cas.ticket.registry.dynamo-db.service-tickets-table-name=serviceTicketsTable
-# cas.ticket.registry.dynamo-db.proxy-tickets-table-name=proxyTicketsTable
-# cas.ticket.registry.dynamo-db.ticket-granting-tickets-table-name=ticketGrantingTicketsTable
-# cas.ticket.registry.dynamo-db.proxy-granting-tickets-table-name=proxyGrantingTicketsTable
-# cas.ticket.registry.dynamo-db.transient-session-tickets-table-name=transientSessionTicketsTable
-```
-
-### MongoDb Ticket Registry
-
-To learn more about this topic, [please review this guide](../ticketing/MongoDb-Ticket-Registry.html).
-
-{% include {{ version }}/signing-encryption.md configKey="cas.ticket.registry.mongo" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
-
-{% include {{ version }}/mongodb-configuration.md configKey="cas.ticket.registry" %}
-
-### Redis Ticket Registry
-
-To learn more about this topic, [please review this guide](../ticketing/Redis-Ticket-Registry.html). 
-
-{% include {{ version }}/redis-configuration.md configKey="cas.ticket.registry" %}
-
-{% include {{ version }}/signing-encryption.md configKey="cas.ticket.registry.redis" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
 
 ## Protocol Ticket Security
 
@@ -4086,7 +3433,8 @@ Provides a hard-time out as well as a sliding window.
 
 ### Timeout
 
-The expiration policy applied to TGTs provides for most-recently-used expiration policy, similar to a Web server session timeout.
+The expiration policy applied to TGTs provides for most-recently-used expiration 
+policy, similar to a Web server session timeout.
 
 ```properties
 # cas.ticket.tgt.timeout.max-time-to-live-in-seconds=28800
@@ -4270,83 +3618,6 @@ Interrupt the authentication flow to reach out to external services. To learn mo
 #### Authentication Interrupt REST
 
 {% include {{ version }}/rest-integration.md configKey="cas.interrupt.rest" %}
-
-### Acceptable Usage Policy
-
-Decide how CAS should attempt to determine whether AUP is accepted.
-To learn more about this topic, [please review this guide](../webflow/Webflow-Customization-AUP.html).
-
-```properties
-# cas.acceptable-usage-policy.aup-attribute-name=aupAccepted
-# cas.acceptable-usage-policy.aup-policy-terms-attribute-name=membership
-```
-
-#### Default
-
-```properties
-# cas.acceptable-usage-policy.in-memory.scope=GLOBAL|AUTHENTICATION
-```                                                    
-
-The following scopes are supported:
-
-| Scope                | Description
-|----------------------|----------------------------------
-| `GLOBAL`             | Store decisions in the global in-memory map (for life of server).
-| `AUTHENTICATION`     | Store decisions such that user is prompted when they authenticate via credentials.
-
-#### Groovy
-
-```properties
-# cas.acceptable-usage-policy.groovy.location=file:/etc/cas/config/aup.groovy
-```
-
-#### REST
-
-{% include {{ version }}/rest-integration.md configKey="cas.acceptable-usage-policy.rest" %}
-
-#### JDBC
-
-If AUP is controlled via JDBC, decide how choices should be remembered back inside the database instance. 
-
-{% include {{ version }}/rdbms-configuration.md configKey="cas.acceptable-usage-policy.jdbc" %}
-
-```properties
-# cas.acceptable-usage-policy.jdbc.table-name=usage_policies_table
-# cas.acceptable-usage-policy.jdbc.aup-column=
-# cas.acceptable-usage-policy.jdbc.principal-id-column=username
-# cas.acceptable-usage-policy.jdbc.principal-id-attribute=
-# cas.acceptable-usage-policy.jdbc.sql-update=UPDATE %s SET %s=true WHERE %s=?
-```
-
-#### CouchDb
-
-{% include {{ version }}/couchdb-integration.md configKey="cas.acceptable-usage-policy" %}
-
-#### Couchbase
-
-{% include {{ version }}/couchbase-configuration.md configKey="cas.acceptable-usage-policy.couchbase" %}
-
-#### MongoDb
-
-{% include {{ version }}/mongodb-configuration.md configKey="cas.acceptable-usage-policy" %}
-
-#### Redis
-
-{% include {{ version }}/redis-configuration.md configKey="cas.acceptable-usage-policy" %}
-
-#### LDAP
-
-If AUP is controlled via LDAP, decide how choices should be remembered back inside the LDAP instance. 
-
-{% include {{ version }}/ldap-configuration.md configKey="cas.acceptable-usage-policy.ldap[0]" %}
-
-#### Disable Acceptable Usage Policy
-
-Allow acceptable usage policy webflow to be disabled - requires restart.
-
-```properties
-cas.acceptable-usage-policy.enabled=true
-```
 
 ## REST API
 
@@ -4570,7 +3841,6 @@ To learn more about this topic, [please review this guide](../integration/SCIM-I
 # cas.scim.username=
 # cas.scim.password=
 ```
-
 
 ## Apache Fortress Authentication
 

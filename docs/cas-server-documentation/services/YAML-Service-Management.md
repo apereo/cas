@@ -16,7 +16,7 @@ Support is enabled by adding the following module into the overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-yaml-service-registry" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#yaml-service-registry).
+{% include {{ version }}/yaml-service-registry-configuration.md %}
 
 
 A sample YAML file follows:

@@ -15,7 +15,8 @@ Support is enabled by adding the following module into the overlay:
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-jpa-service-registry" %}
 
 To learn how to configure database drivers, [please see this guide](../installation/JDBC-Drivers.html).
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#database-service-registry).
+
+{% include {{ version }}/rdbms-configuration.md configKey="cas.service-registry.jpa" %}
 
 ## Auto Initialization
 

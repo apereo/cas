@@ -8,8 +8,10 @@ category: Services
 
 # LDAP Service Registry
 
-Service registry implementation which stores the services in a LDAP Directory and attempts to *map* service records to LDAP entries in order to configure 
-settings for retrieval, search and persistence of service definitions. By default, entries are assigned the `objectclass` that is `casRegisteredService` attribute and are looked up by the `uid` attribute.
+Service registry implementation which stores the services in a LDAP Directory 
+and attempts to *map* service records to LDAP entries in order to configure 
+settings for retrieval, search and persistence of service definitions. By default, 
+entries are assigned the `objectclass` that is `casRegisteredService` attribute and are looked up by the `uid` attribute.
 
 Support is enabled by adding the following module into the overlay:
 
@@ -29,7 +31,8 @@ Service definitions are by default stored inside the `serviceDefinitionAttribute
 JSON objects. The format and syntax of the JSON is identical to that of
 [JSON Service Registry](JSON-Service-Management.html). That's all, as far as the schema goes.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#ldap-service-registry).
+{% include {{ version }}/ldap-configuration.md configKey="cas.service-registry.ldap" %}
+{% include {{ version }}/ldap-service-registry-configuration.md %}
 
 ## Auto Initialization
 

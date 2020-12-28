@@ -8,8 +8,9 @@ category: Services
 
 # Amazon S3 Service Registry
 
-Stores registered service data in a [Amazon S3](https://aws.amazon.com/s3/) buckets. Each service definition is managed inside its own separate bucket
-and the body of the service definition is managed as a JSON blob, similar to that of [JSON service registry](JSON-Service-Management.html).
+Stores registered service data in a [Amazon S3](https://aws.amazon.com/s3/) buckets. Each service 
+definition is managed inside its own separate bucket and the body of the service definition is managed 
+as a JSON blob, similar to that of [JSON service registry](JSON-Service-Management.html).
 
 Support is enabled by adding the following module into the overlay:
 
@@ -17,7 +18,7 @@ Support is enabled by adding the following module into the overlay:
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#amazon-s3-service-registry).
+{% include {{ version }}/aws-integration.md configKey="cas.service-registry.amazon-s3" %}
 
 ## Troubleshooting
 
