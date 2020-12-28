@@ -12,7 +12,8 @@ The CAS authentication process is primarily controlled by an authentication mana
 
 ## Authentication Manager
 
-CAS ships with a single yet flexible authentication manager which performs authentication according to the following contract.
+CAS ships with a single yet flexible authentication manager which 
+performs authentication according to the following contract.
 
 For any given credential the manager does the following:
 
@@ -33,7 +34,8 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 ## Authentication Handlers
 
-There are a variety of authentication handlers and methods supported by CAS. Use the menu to navigate around the site and choose.
+There are a variety of authentication handlers and methods supported 
+by CAS. Use the menu to navigate around the site and choose.
 
 <div class="alert alert-warning"><strong>Default Credentials</strong><p>To test the default authentication scheme in CAS,
 use <strong>casuser</strong> and <strong>Mellon</strong> as the username and password respectively. These are automatically
@@ -138,7 +140,7 @@ Typical use cases of authentication policies may include:
 2. Ensure a specific class of failure is not evident in the authentication chain's execution log.
 3. Ensure that all authentication schemes in the chain are executed successfully, for the entire authentication event to be considered successful.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#authentication-policy).
+{% include {{ version }}/authentication-policy-configuration.md %}
 
 ### Administrative Endpoints
 
@@ -150,7 +152,9 @@ The following endpoints are provided by CAS:
 
 ## Principal Resolution
 
-Please [see this guide](Configuring-Principal-Resolution.html) more full details on principal resolution.
+In the event that a separate resolver is put into place, control how the final principal should be constructed by default.
+
+{% include {{ version }}/persondirectory-configuration.md configKey="cas.person-directory" %}
 
 ### Principal Transformation
 
