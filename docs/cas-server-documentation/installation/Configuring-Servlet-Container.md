@@ -5,7 +5,6 @@ category: Installation
 ---
 {% include variables.html %}
 
-
 # Servlet Container Configuration
 
 A number of container options are available to deploy CAS. The [WAR Overlay](WAR-Overlay-Installation.html) guide
@@ -23,11 +22,14 @@ There are is a wide range of servlet containers and servers on the menu. The sel
 
 ## Production Quality
 
-All servlet containers presented here, embedded or otherwise, aim to be production ready. This means that CAS ships with useful defaults out of the box that 
+All servlet containers presented here, embedded or otherwise, aim to be production ready. This means 
+that CAS ships with useful defaults out of the box that 
 may be overridden, if necessary and by default, CAS configures everything for you from development to production 
-in today’s platforms. In terms of their production quality, there is almost no difference between using an embedded container vs. an external one.
+in today’s platforms. In terms of their production quality, there is almost no 
+difference between using an embedded container vs. an external one.
 
-Unless there are specific, technical and reasonable objections, choosing an embedded servlet container is almost always the better choice.
+Unless there are specific, technical and reasonable objections, choosing an 
+embedded servlet container is almost always the better choice.
 
 ## Embedded
 
@@ -39,8 +41,13 @@ You **DO NOT** need to, but can if you want to, configure and deploy to an exter
 <div class="alert alert-info"><strong>Do Less</strong><p>Remember that most if not all aspects of the embedded 
 container can be controlled via the CAS properties. See <a href="../configuration/Configuration-Properties.html#embedded-apache-tomcat-container">this guide</a> for more info.</p></div>
 
-To see the relevant list of CAS properties, 
-please [review this guide](../configuration/Configuration-Properties.html#embedded-container).
+### Embedded Container Configuration
+
+{% include embedded-container.md %}
+
+### X.509 Client Authentication
+
+{% include embedded-container-x509.md %}
 
 ### Execution
 
@@ -57,7 +64,8 @@ Additionally, it is also possible to run CAS as a fully executable web applicati
 /path/to/cas.war
 ```
 
-This is achieved via the build process of the deployment overlay where a launch script is *inserted* at the beginning of the web application artifact. If you
+This is achieved via the build process of the deployment overlay where a 
+launch script is *inserted* at the beginning of the web application artifact. If you
  wish to see and examine the script, simply run the following commands:
  
  ```bash
@@ -65,7 +73,8 @@ This is achieved via the build process of the deployment overlay where a launch 
  head -n X /path/to.cas.war
  ```
  
-Note that running CAS as a standalone and fully executable web application is supported on most Linux and OS X distributions. 
+Note that running CAS as a standalone and fully executable web application 
+is supported on most Linux and OS X distributions. 
 Other platforms such as Windows may require custom configuration.
 
 ### Apache Tomcat
@@ -82,12 +91,13 @@ In order to force Apache Tomcat to use IPv4, configure the following as a system
 -Djava.net.preferIPv4Stack=true 
 ```
 
-The same sort of configuration needs to be applied to your `$CATALINA_OPTS` environment variable in case of an external container.
+The same sort of configuration needs to be applied to your `$CATALINA_OPTS` 
+environment variable in case of an external container.
 
 #### Faster Startup
 
-[This guide](https://cwiki.apache.org/confluence/display/TOMCAT/HowTo+FasterStartUp) provides several recommendations on how to make 
-web applications and Apache Tomcat as a whole to start up faster.
+[This guide](https://cwiki.apache.org/confluence/display/TOMCAT/HowTo+FasterStartUp) provides 
+several recommendations on how to make web applications and Apache Tomcat as a whole to start up faster.
 
 #### Logging
 
@@ -116,13 +126,63 @@ For instance:
 java -jar /path/to/cas.war -Djava.util.logging.config.file=/path/to/logging.properties
 ```
 
+### Embedded Apache Tomcat Container
+
+{% include {{ version }}/embedded-container-tomcat.md %}
+
+#### HTTP Proxying
+
+{% include {{ version }}/embedded-container-tomcat-httpproxy.md %}
+
+#### HTTP
+
+{% include {{ version }}/embedded-container-tomcat-http.md %}
+
+#### AJP
+
+{% include {{ version }}/embedded-container-tomcat-ajp.md %}
+
+#### SSL Valve
+
+{% include {{ version }}/embedded-container-tomcat-sslvalve.md %}
+
+#### Extended Access Log Valve
+
+{% include {{ version }}/embedded-container-tomcat-extended-accesslog.md %}
+
+#### Rewrite Valve
+
+{% include {{ version }}/embedded-container-tomcat-rewritevalve.md %}
+
+#### Basic Authentication
+
+{% include {{ version }}/embedded-container-tomcat-basicauth.md %}
+
+#### Apache Portable Runtime (APR)
+
+{% include {{ version }}/embedded-container-tomcat-apr.md %}
+
+#### Connector IO
+
+{% include {{ version }}/embedded-container-tomcat-connectorio.md %}
+
+#### Session Clustering & Replication
+
+{% include {{ version }}/embedded-container-tomcat-session-clustering.md %}
+
 ### Jetty
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-webapp-jetty" %}
 
+### Embedded Jetty Container
+
+{% include {{ version }}/embedded-container-jetty.md %}
+
 ### Undertow
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-webapp-undertow" %}
+
+{% include {{ version }}/embedded-container-undertow.md %}
 
 ## External
 

@@ -5,18 +5,17 @@ category: Authentication
 ---
 {% include variables.html %}
 
-
 # Throttling Authentication Attempts
 
 ## Capacity Throttling
 
-CAS is able to support request rate-limiting based on the token-bucket algorithm. This means that authentication requests that reach a certain configurable 
-capacity within a time window may either be blocked or _throttled_ to slow down. This is done to protect the system from overloading, allowing you to introduce
-a scenario to allow CAS 120 authentication requests per minute with a refill rate of 10 requests per second that would continually increase in the capacity bucket.
+CAS is able to support request rate-limiting based on the token-bucket algorithm. This means that authentication requests that reach a certain configurable capacity within a time window may either be blocked or _throttled_ to slow down. This is done to protect the system from overloading, allowing you to introduce a scenario to allow CAS 120 authentication requests per minute with a refill rate of 10 requests per second that would continually increase in the capacity bucket.
 
 Enable the following module in your configuration overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-throttle-bucket4j" %}
+
+{% include bucket4j-configuration.md %}
 
 ## Failure Throttling
 
@@ -59,22 +58,33 @@ a particular username from the same IP address.
 
 ### JDBC
 
-Queries a database data source used by the CAS audit facility to prevent successive failed login attempts for a particular username from the same IP address. 
-This component requires and depends on the [CAS auditing functionality](Audits.html) via databases.
+Queries a database data source used by the CAS audit facility to 
+prevent successive failed login attempts for a particular username 
+from the same IP address. This component requires and 
+depends on the [CAS auditing functionality](Audits.html) via databases.
 
 Enable the following module in your configuration overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-throttle-jdbc" %}
 
+{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.throttle.jdbc" %}
+
+{% include {{ version }}/audit-jdbc-configuration.md configKey="cas.authn.throttle.jdbc" %}
+
 For additional instructions on how to configure auditing, please [review the following guide](Audits.html).
 
 ### MongoDb
 
-Queries a MongoDb data source used by the CAS audit facility to prevent successive failed login attempts for a particular username from the same IP address. This component requires and depends on the [CAS auditing functionality](Audits.html) via MongoDb.
+Queries a MongoDb data source used by the CAS audit facility to 
+prevent successive failed login attempts for a particular username 
+from the same IP address. This component requires and depends on 
+the [CAS auditing functionality](Audits.html) via MongoDb.
 
 Enable the following module in your configuration overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-throttle-mongo" %}
+
+{% include {{ version }}/mongodb-configuration.md configKey="cas.audit" %}
 
 ### Redis
 
@@ -86,6 +96,8 @@ Enable the following module in your configuration overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-throttle-redis" %}
 
+{% include {{ version }}/redis-configuration.md configKey="cas.audit" %}
+
 ### Hazelcast
 
 This feature uses a distributed Hazelcast map to record throttled authentication attempts. 
@@ -94,6 +106,8 @@ This component requires and depends on the [CAS auditing functionality](Audits.h
 Enable the following module in your configuration overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-throttle-hazelcast" %}
+
+{% include {{ version }}/hazelcast-configuration.md configKey="cas.authn.throttle.hazelcast" %}
 
 ### CouchDb
 
@@ -105,17 +119,22 @@ Enable the following module in your configuration overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-throttle-couchdb" %}
 
-For additional instructions on how to configure auditing, please [review the following guide](Audits.html).
+
+{% include {{ version }}/couchdb-integration.md configKey="cas.authn.throttle" %}
+
+When using this feature the audit facility should be in synchronous mode. For additional instructions 
+on how to configure auditing, please [review the following guide](Audits.html).
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#authentication-throttling).
+{% include {{ version }}/authentication-throttling.md configKey="cas.authn.throttle" %}
+
+{% include {{ version }}/job-scheduling.md configKey="cas.authn.throttle" %}
 
 ## High Availability
 
 All of the throttling components are suitable for a CAS deployment that satisfies the
-[recommended HA architecture](../high_availability/High-Availability-Guide.html). In particular deployments with multiple CAS
-nodes behind a load balancer configured with session affinity can use either in-memory or _inspektr_ components. It is
+[recommended HA architecture](../high_availability/High-Availability-Guide.html). In particular deployments with multiple CAS nodes behind a load balancer configured with session affinity can use either in-memory or _inspektr_ components. It is
 instructive to discuss the rationale. Since load balancer session affinity is determined by source IP address, which
 is the same criterion by which throttle policy is applied, an attacker from a fixed location should be bound to the
 same CAS server node for successive authentication attempts. A distributed attack, on the other hand, where successive

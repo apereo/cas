@@ -24,24 +24,29 @@ For debugging and diagnostic purposes you may want to set these levels to `DEBUG
 turn up <code>DEBUG</code> or <code>INFO</code> if you need to research a particular issue.</p></div>
 
 ## CAS Custom Log4j2 plugins
+
 The log4j2.xml file use by CAS includes custom Log4j2 plugins:
-- CasAppender: The CasAppender wraps another regular appender and removes sensitive values from the log entries
+
+- `CasAppender`: The CasAppender wraps another regular appender and removes sensitive values from the log entries
 such as Ticket Granting Tickets or Proxy Granting Tickets.
-- ExceptionOnlyFilter: In order to allow CAS to freely log unexpected errors at WARN and ERROR without obscuring everything
-with stacktraces, exceptions in the logs are disabled by default but there are log4j2.xml properties that can turn 
-them back on. By default, all exceptions are written to a dedicated stacktrace rolling log file 
+  
+- `ExceptionOnlyFilter`: In order to allow CAS to freely log unexpected errors at WARN and ERROR without obscuring everything with stacktraces, exceptions in the logs are disabled by default but there are log4j2.xml properties that can turn them back on. By default, all exceptions are written to a dedicated stacktrace rolling log file 
 and this is done using a custom ExceptionOnlyFilter nested in the CasAppender. 
 
 ## Log4j2 Properties
+
 The log4j2.xml file includes properties for various settings and those can be set in the properties section
 of the log4j2.xml file, in a property file called `log4j2.component.properties` on the classpath, or as system 
 properties. If setting properties in a `log4j2.component.properties`, be sure to include:
-```
+
+```properties
 Log4jContextSelector=org.apache.logging.log4j.core.async.AsyncLoggerContextSelector
 ```
+
 in order to keep using asynchronous logging which CAS sets by default. 
 To turn off asynchronous logging, include the following in `log4j2.component.properites` or as a system property:
-```
+
+```properties
 Log4jContextSelector=org.apache.logging.log4j.core.selector.BasicContextSelector
 ```
 
@@ -51,12 +56,12 @@ It is often helpful to externalize the `log4j2.xml` file to a system path to pre
 The location of `log4j2.xml` file by default is on the runtime classpath and can be controlled
 via the CAS properties. 
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#logging).
+{% include logging-configuration.md %}
 
 ### Log Levels
 
 While log levels can directly be massaged via the native `log4j2.xml` syntax, they may also be modified
-using the usual CAS properties. To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#logging).
+using the usual CAS properties. 
 
 ### Refresh Interval
 
@@ -188,4 +193,3 @@ SERVER IP ADDRESS: ...
 
 Certain number of characters are left at the trailing end of the ticket id to assist with troubleshooting and diagnostics.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#logging).
