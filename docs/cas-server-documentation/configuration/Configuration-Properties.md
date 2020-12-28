@@ -1650,15 +1650,6 @@ Decide how CAS should monitor the internal state of JVM memory available at runt
 # cas.monitor.free-mem-threshold=10
 ```
 
-## Themes
-
-To learn more about this topic, [please review this guide](../ux/User-Interface-Customization-Themes.html).
-
-```properties
-# cas.theme.param-name=theme
-# cas.theme.default-theme-name=cas-theme-default
-```
-
 
 ## REST API
 
