@@ -108,9 +108,21 @@ Client applications may dynamically be registered with CAS for authentication. B
 in a `PROTECTED` mode where the registration endpoint requires user authentication. This behavior may be relaxed via 
 CAS settings to allow CAS to operate in an `OPEN` mode.
 
-## Settings
+## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#openid-connect).
+{% include {{ version }}/oidc-configuration.md %}
+   
+### JWKS
+
+{% include {{ version }}/jwks-oidc-configuration.md %}
+
+### Scopes & Claims
+
+{% include {{ version }}/claims-oidc-configuration.md %}
+
+### Logout
+
+{% include {{ version }}/logout-oidc-configuration.md %}
 
 ## Server Configuration
 
@@ -164,8 +176,6 @@ allow the value of the attribute `sys_given_name` to be mapped and assigned to t
 without having an impact on the attribute resolution configuration and all other CAS-enabled applications. 
 
 If mapping is not defined, by default CAS attributes are expected to match claim names.
-
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#openid-connect).
 
 ### User-Defined Scopes
 

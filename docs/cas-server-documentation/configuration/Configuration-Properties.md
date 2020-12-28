@@ -1956,76 +1956,6 @@ A given attribute that is to be encoded in the final SAML response may contain a
 ```
 
 
-## OpenID Connect
-
-Allow CAS to become an OpenID Connect provider (OP). To learn more about this topic, [please review this guide](../installation/OIDC-Authentication.html).
-
-```properties
-# cas.authn.oidc.issuer=http://localhost:8080/cas/oidc
-# cas.authn.oidc.skew=5
-
-# cas.authn.oidc.dynamic-client-registration-mode=OPEN|PROTECTED
-
-# cas.authn.oidc.subject-types=public,pairwise
-# cas.authn.oidc.scopes=openid,profile,email,address,phone,offline_access
-# cas.authn.oidc.claims=sub,name,preferred_username,family_name, \
-#    given_name,middle_name,given_name,profile, \
-#    picture,nickname,website,zoneinfo,locale,updated_at,birthdate, \
-#    email,email_verified,phone_number,phone_number_verified,address
-
-# cas.authn.oidc.response-types-supported=code,token,id_token token
-# cas.authn.oidc.introspection-supported-authentication-methods=client_secret_basic
-# cas.authn.oidc.claim-types-supported=normal
-# cas.authn.oidc.grant-types-supported=authorization_code,password,client_credentials,refresh_token
-# cas.authn.oidc.token-endpoint-auth-methods-supported=client_secret_basic,client_secret_post,private_key_jwt,client_secret_jwt
-# cas.authn.oidc.code-challenge-methods-supported=plain,S256
-
-# cas.authn.oidc.id-token-signing-alg-values-supported=none,RS256,RS384,RS512,PS256,PS384,PS512,ES256,ES384,ES512,HS256,HS384,HS512
-# cas.authn.oidc.id-token-encryption-alg-values-supported=RSA1_5,RSA-OAEP,RSA-OAEP-256,A128KW,A192KW,A256KW,\
-    A128GCMKW,A192GCMKW,A256GCMKW,ECDH-ES,ECDH-ES+A128KW,ECDH-ES+A192KW,ECDH-ES+A256KW
-# cas.authn.oidc.id-token-encryption-encoding-values-supported=A128CBC-HS256,A192CBC-HS384,A256CBC-HS512,A128GCM,A192GCM,A256GCM
-
-# cas.authn.oidc.user-info-signing-alg-values-supported=none,RS256,RS384,RS512,PS256,PS384,PS512,ES256,ES384,ES512,HS256,HS384,HS512
-# cas.authn.oidc.user-info-encryption-alg-values-supported=RSA1_5,RSA-OAEP,RSA-OAEP-256,A128KW,A192KW,A256KW,\
-    A128GCMKW,A192GCMKW,A256GCMKW,ECDH-ES,ECDH-ES+A128KW,ECDH-ES+A192KW,ECDH-ES+A256KW
-# cas.authn.oidc.user-info-encryption-encoding-values-supported=A128CBC-HS256,A192CBC-HS384,A256CBC-HS512,A128GCM,A192GCM,A256GCM
-```
-  
-### OpenID Connect JWKS
-
-```properties
-# cas.authn.oidc.jwks.jwks-cache-in-minutes=60
-# cas.authn.oidc.jwks.jwks-key-size=2048
-# cas.authn.oidc.jwks.jwks-type=RSA|EC
-```                         
-
-#### File-based JWKS
-
-Manage the JSON web keyset for OpenID Connect as a static file resource.
-
-```properties 
-# cas.authn.oidc.jwks.jwks-file=file:/etc/cas/config/keystore.jwks
-```                                                               
-
-#### REST-based JWKS
-
-Reach out to an external REST API to ask for the JSON web keyset. The expected response code is `200`
-where the response body should contain the contents of the JSON web keyset.
-
-{% include {{ version }}/rest-integration.md configKey="cas.authn.oidc.jwks.rest" %}
-
-### OpenID Connect Scopes & Claims
-
-```properties
-# Define custom scopes and claims
-# cas.authn.oidc.user-defined-scopes.scope1=cn,givenName,photos,customAttribute
-# cas.authn.oidc.user-defined-scopes.scope2=cn,givenName,photos,customAttribute2
-
-# Map fixed claims to CAS attributes
-# cas.authn.oidc.claims-map.given_name=custom-given-name
-# cas.authn.oidc.claims-map.preferred_username=global-user-attribute
-```
-
 ### OpenID Connect WebFinger
 
 WebFinger is a protocol specified by the Internet Engineering Task Force IETF that allows for 
@@ -2042,62 +1972,10 @@ might be discovered via an "acct:" URI, for example, which is a URI that looks l
 
 {% include {{ version }}/rest-integration.md configKey="cas.authn.oidc.webfinger.user-info.rest" %}
 
-### OpenID Connect Logout
 
-The supported logout channels can be defined via the following properties:
-
-```properties
-# cas.authn.oidc.logout.backchannel-logout-supported=true
-# cas.authn.oidc.logout.frontchannel-logout-supported=true
-```
 
 ## Pac4j Delegated AuthN
 
-Act as a proxy, and delegate authentication to external identity providers.
-To learn more about this topic, [please review this guide](../integration/Delegate-Authentication.html).
-
-```properties
-# cas.authn.pac4j.typed-id-used=false
-# cas.authn.pac4j.principal-attribute-id=
-# cas.authn.pac4j.name=
-# cas.authn.pac4j.order=
-# cas.authn.pac4j.lazy-init=true
-# cas.authn.pac4j.replicate-sessions=true
-```
-
-### REST-based Configuration
-
-Identity providers for delegated authentication can be provided to CAS using an external REST endpoint. 
-
-{% include {{ version }}/rest-integration.md configKey="cas.authn.pac4j.rest" %}
-
-### Default Configuration
-
-{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.twitter" %}
-{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.paypal" %}
-{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.wordpress" %}
-{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.yahoo" %}
-{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.orcid" %}
-{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.dropbox" %}
-{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.foursquare" %}
-{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.windows-live" %}
-{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.google" %}
-{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.hi-org-server" %}
-
-
-### Provisioning
-
-Provision and create established user profiles to identity stores.
-
-#### Groovy
-
-```properties
-# cas.authn.pac4j.provisioning.groovy.location=file:/etc/cas/config/Provisioner.groovy
-```
-
-#### REST
-
-{% include {{ version }}/rest-integration.md configKey="cas.authn.pac4j.provisioning.rest" %}
 
 ### GitHub
 
@@ -2187,10 +2065,7 @@ The following settings specifically apply to this provider:
 
 ### SAML2
 
-Delegate authentication to an external SAML2 IdP.
 
-{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.saml[0]" %}
-{% include {{ version }}/saml2-delegated-authentication.md configKey="cas.authn.pac4j.saml[0]" %}
 
 #### SAML2 Identity Provider Discovery
 
@@ -2230,11 +2105,6 @@ cas.authn.pac4j.saml-discovery.resource[0].location=file:/etc/cas/config/json-fe
 ```properties
 # cas.authn.pac4j.twitter.include-email=false
 ```
-
-## WS Federation
-
-{% include {{ version }}/wsfed-configuration.md %}
-
 
 ## OAuth2
 
@@ -2321,7 +2191,7 @@ Created by CAS if and when users are to be warned when accessing CAS protected s
 {% include {{ version }}/cookie-configuration.md configKey="cas.warning-cookie" %}
 
 ```properties
-# cas.warningCookie.auto-configure-cookie-path=true
+# cas.warning-cookie.auto-configure-cookie-path=true
 ```
 
 ## Ticket Granting Cookie
@@ -2338,7 +2208,7 @@ Created by CAS if and when users are to be warned when accessing CAS protected s
 
 ## Logout
 
-Control various settings related to CAS logout functionality. To learn more about this topic, [please review this guide](../installation/Logout-Single-Signout.html).
+Control various settings related to CAS logout functionality. 
 
 ```properties
 # cas.logout.follow-service-redirects=false
@@ -2472,42 +2342,6 @@ To learn more about this topic, [please review this guide](../ux/User-Interface-
 # cas.theme.default-theme-name=cas-theme-default
 ```
 
-
-## Http Client
-
-Control how CAS should attempt to contact resources on the web
-via its own Http Client. This is most commonly used when responding
-to ticket validation events and/or single logout.
-
-In the event that local certificates are to be imported into the CAS running environment,
-a local truststore is provided by CAS to improve portability of configuration across environments.
-
-```properties
-# cas.http-client.connection-timeout=5000
-# cas.http-client.async-timeout=5000
-# cas.http-client.read-timeout=5000 
-
-# cas.http-client.proxy-host=
-# cas.http-client.proxy-port=0 
-
-# cas.http-client.host-name-verifier=NONE|DEFAULT
-# cas.http-client.allow-local-logout-urls=false
-# cas.http-client.authority-validation-reg-ex=
-# cas.http-client.authority-validation-reg-ex-case-sensitive=true
-
-# cas.http-client.truststore.psw=changeit
-# cas.http-client.truststore.file=classpath:/truststore.jks
-# cas.http-client.truststore.type=
-```
-
-### Hostname Verification
-
-The default options are available for hostname verification:
-
-| Type                    | Description
-|-------------------------|--------------------------------------
-| `NONE`                  | Ignore hostname verification.
-| `DEFAULT`               | Enforce hostname verification.
 
 
 

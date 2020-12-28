@@ -1,4 +1,4 @@
-### Delegated Authentication Configuration
+### {{ include.configKey | camelcase }} Configuration
 
 The following options are shared and apply when CAS is configured to delegate authentication
 to an external provider such as Twitter, GitHub, etc:
