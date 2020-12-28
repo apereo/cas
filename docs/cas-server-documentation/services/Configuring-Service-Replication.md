@@ -54,7 +54,7 @@ Support is enabled by including the following dependency in the overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-service-registry-stream-hazelcast" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#service-registry-replication-hazelcast).
+{% include {{ version }}/hazelcast-service-registry-replication-configuration.md %}
 
 ## Apache Kafka
 
@@ -68,12 +68,32 @@ Support is enabled by including the following dependency in the overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-service-registry-stream-kafka" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#service-registry-replication-kafka).
+{% include {{ version }}/kafka-service-registry-replication-configuration.md %}
 
 ## Replication Modes
 
-When CAS is configured to replicate service definitions in an active-active mode, you will need to make sure the service registry scheduler is carefully tuned in order to avoid surprises and overwrites. Likewise, the same sort of check needs to be done and verified for ad-hoc dynamic changes to the CAS service registry directory, if CAS is set to monitor for changes. Delays in replication and schedule may force one node to overwrite changes to the other. 
+When CAS is configured to replicate service definitions in an 
+active-active mode, you will need to make sure the service registry 
+scheduler is carefully tuned in order to avoid surprises and overwrites. Likewise, the same 
+sort of check needs to be done and verified for ad-hoc dynamic changes to the CAS service 
+registry directory, if CAS is set to monitor for changes. Delays in replication and 
+schedule may force one node to overwrite changes to the other. 
 
-For instance, consider the following scenario: there are two nodes in a CAS cluster where CAS1 is set to monitor changes from `/etc/cas/services` on node N1 and CAS2 is monitoring `/etc/cas/services` directory on node N2. Both N1 and N2 on startup attempt to bootstrap each other's copies of service definitions to make sure all is synchronized correctly. 
+{% include {{ version }}/service-registry-replication-configuration.md %}
 
-Now let's consider that a file is `/etc/cas/services/App-100.json` is deleted from N2. In the time that it takes from N2 to broadcast the change to N1, it is likely that service registry scheduler for N2 also wakes up and attempts to restore the state of the world by synchronizing its copies of its service definition files from the distributed cache, which means that N2 will grab a copy of the deleted service from N1 and will restore the deleted file back. This situation typically manifests itself when the service registry scheduler is set to very aggressive timeouts and can mostly be avoided by relaxing the reload operation to run on a long scheduler such as every 2 hours. Alternatively, you may decide to run an active-passive setup to only have one master node produce and broadcast changes and other slave/passive nodes simply and only consume changes when needed.
+For instance, consider the following scenario: there are two nodes in a CAS cluster 
+where CAS1 is set to monitor changes from `/etc/cas/services` on node N1 and CAS2 is 
+monitoring `/etc/cas/services` directory on node N2. Both N1 and N2 on startup attempt 
+to bootstrap each other's copies of service definitions to make sure all is synchronized correctly. 
+
+Now let's consider that a file is `/etc/cas/services/App-100.json` is deleted from 
+N2. In the time that it takes from N2 to broadcast the change to N1, it is likely that 
+service registry scheduler for N2 also wakes up and attempts to restore the state of 
+the world by synchronizing its copies of its service definition files from the 
+distributed cache, which means that N2 will grab a copy of the deleted service 
+from N1 and will restore the deleted file back. This situation typically manifests 
+itself when the service registry scheduler is set to very aggressive timeouts and 
+can mostly be avoided by relaxing the reload operation to run on a long scheduler 
+such as every 2 hours. Alternatively, you may decide to run an active-passive setup 
+to only have one master node produce and broadcast changes and other slave/passive 
+nodes simply and only consume changes when needed.

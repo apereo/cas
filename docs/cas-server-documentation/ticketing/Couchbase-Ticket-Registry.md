@@ -12,16 +12,15 @@ Couchbase integration is enabled by including the following dependency in the WA
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-couchbase-ticket-registry" %}
 
-
 [Couchbase](http://www.couchbase.com) is a highly available, open source NoSQL database server based on
 [Erlang/OTP](http://www.erlang.org) and its mnesia database. The intention of this
 registry is to leverage the capability of Couchbase server to provide high availability to CAS.
 
-<div class="alert alert-info"><strong>Compatibility</strong><p>Couchbase support in CAS at the moment is limited to Couchbase v4.</p></div>
-
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#couchbase-ticket-registry).
+{% include {{ version }}/couchbase-configuration.md configKey="cas.ticket.registry.couchbase" %}
+
+{% include {{ version }}/signing-encryption.md configKey="cas.ticket.registry.couchbase" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
 
 The Couchbase integration currently assumes that the ticket registries are stored
 in their own buckets. You may optionally set passwords for the buckets and optionally configure

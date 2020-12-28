@@ -12,13 +12,19 @@ DynamoDb ticket registry integration is enabled by including the following depen
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-dynamodb-ticket-registry" %}
 
-This registry stores tickets in [DynamoDb](https://aws.amazon.com/dynamodb/) instances. Each ticket type is linked to a distinct table.
+This registry stores tickets in [DynamoDb](https://aws.amazon.com/dynamodb/) instances. 
+Each ticket type is linked to a distinct table.
 
 ## Configuration
 
 You will need to provide CAS with your [AWS credentials](https://aws.amazon.com/console/). Also, to gain a better understanding
 of DynamoDb's core components and concepts, please [start with this guide](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Introduction.html) first.
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#dynamodb-ticket-registry).
+
+{% include {{ version }}/dynamodb-configuration.md configKey="cas.ticket.registry" %}
+
+{% include {{ version }}/signing-encryption.md configKey="cas.ticket.registry.dynamo-db" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
+
+{% include {{ version }}/dynamodb-ticket-registry-configuration.md %}
 
 ## Troubleshooting
 

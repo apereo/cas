@@ -9,7 +9,8 @@ category: Services
 # Cassandra Service Registry
 
 Stores registered service data in [Apache Cassandra](http://cassandra.apache.org/) instances. Services 
-are expected to be found/stored in a `casservices` table with a default write consistency of `LOCAL_QUORUM` and read consistency of `ONE`.
+are expected to be found/stored in a `casservices` table with a default write 
+consistency of `LOCAL_QUORUM` and read consistency of `ONE`.
 
 Support is enabled by adding the following module into the overlay:
 
@@ -17,7 +18,7 @@ Support is enabled by adding the following module into the overlay:
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#cassandra-service-registry).
+{% include {{ version }}/cassandra-configuration.md configKey="cas.service-registry.cassandra" %}
 
 ## Troubleshooting
 

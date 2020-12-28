@@ -18,7 +18,10 @@ created to let MongoDb handle the expiration of each document and cleanup tasks.
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#mongodb-ticket-registry).
+{% include {{ version }}/signing-encryption.md configKey="cas.ticket.registry.mongo" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
+
+{% include {{ version }}/mongodb-configuration.md configKey="cas.ticket.registry" %}
+
 
 ## Troubleshooting
 

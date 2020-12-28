@@ -8,7 +8,8 @@ category: Webflow Management
 
 # Acceptable Usage Policy
 
-Also known as *Terms of Use* or *EULA*, CAS presents the ability to allow the user to accept the usage policy before moving on to the application.
+Also known as *Terms of Use* or *EULA*, CAS presents the ability to allow the 
+user to accept the usage policy before moving on to the application.
 Production-level deployments of this feature would require modifications to the flow such that the retrieval
 and/or acceptance of the policy would be handled via an external storage mechanism such as LDAP or JDBC.
 
@@ -18,9 +19,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-aup-webflow" %}
 
-Customize the policy by modifying the `src/main/resources/templates/casAcceptableUsagePolicyView.html`. See [this guide](../ux/User-Interface-Customization.html)
-to learn more about user interface customizations. Note that the view here should have full access to the resolved principal and attributes,
-if you wish to dynamically alter the page to present different text, etc.
+Customize the policy by modifying the `src/main/resources/templates/casAcceptableUsagePolicyView.html`. See [this guide](../ux/User-Interface-Customization.html) to learn more about user interface customizations. Note that the view here should have full access to the resolved principal and attributes, if you wish to dynamically alter the page to present different text, etc.
 
 <div class="alert alert-info"><strong>Webflow Sequence</strong><p>Remember that acceptable usage policy executes
 after a successful authentication event where CAS has already established the authentication principal, since the 
@@ -28,7 +27,7 @@ policy record is strongly tied to the identified user record. Implementing this 
 would require rather heavy modifications to the CAS webflow as well as alternative means of storing and remembering decisions
 such as cookies or browser storage, etc.</p></div>
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#acceptable-usage-policy).
+{% include {{ version }}/aup-configuration.md %}
 
 ## Per Service 
 
@@ -74,15 +73,19 @@ By default the task of remembering the user's choice is kept in memory by defaul
 container restarts and/or in clustered deployments. This option is only useful during development, testing
 and demos and is not at all suitable for production.
 
+{% include {{ version }}/default-aup-configuration.md %}
+
 The scope of the default storage mechanism can be adjusted from the default of GLOBAL (described above) to
 AUTHENTICATION which will result in the user having to agree to the policy during each authentication event.
 The user will not have to agree to the policy when CAS grants access based on an existing ticket granting
-ticket cookie. 
+ticket cookie.
 
 ### Groovy
 
 Alternatively, CAS can be configured to use a Groovy script to verify status 
 of policies and store results. The script should match the following:
+
+{% include {{ version }}/groovy-aup-configuration.md %}
 
 ```groovy
 import org.apereo.cas.authentication.principal.*
@@ -148,44 +151,46 @@ The parameters passed are as follows:
 
 ### LDAP
 
-Alternatively, CAS can be configured to use LDAP as the storage mechanism. Upon accepting the policy, the result will be stored back into LDAP and
-remembered via the same attribute. Support is enabled by including the following dependency in the WAR overlay:
+Alternatively, CAS can be configured to use LDAP as the storage mechanism. Upon 
+accepting the policy, the result will be stored back into LDAP and remembered 
+via the same attribute. Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-aup-ldap" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#ldap-1).
+{% include {{ version }}/ldap-configuration.md configKey="cas.acceptable-usage-policy.ldap[0]" %}
 
 ### MongoDb
 
-CAS can be configured to use a MongoDb instance as the storage mechanism. Upon accepting the policy, the adopter is expected to provide a collection name where the 
-decision is kept and the document is assumed to contain a `username` column as well as one that matches the AUP attribute name defined.
+CAS can be configured to use a MongoDb instance as the storage mechanism. Upon accepting the policy, the adopter is expected to provide a collection name where the decision is kept and the document is assumed to contain a `username` column as well as one that matches the AUP attribute name defined.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-aup-mongo" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#acceptable-usage-policy).
+{% include {{ version }}/mongodb-configuration.md configKey="cas.acceptable-usage-policy" %}
 
 ### Redis
 
-CAS can be configured to use a Redis instance as the storage mechanism. Decisions are mapped to a combination of CAS username and the designated AUP attribute name.
+CAS can be configured to use a Redis instance as the storage mechanism. Decisions 
+are mapped to a combination of CAS username and the designated AUP attribute name.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-aup-redis" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#acceptable-usage-policy).
+{% include {{ version }}/redis-configuration.md configKey="cas.acceptable-usage-policy" %}
 
 ### CouchDb
 
-CAS can be configured to use a CouchDb instance as the storage mechanism. Upon accepting the policy, the adopter is expected to provide a collection name where the
-decision is kept and the document is assumed to contain a `username` column as well as one that matches the AUP attribute name defined.
+CAS can be configured to use a CouchDb instance as the storage mechanism. Upon accepting the 
+policy, the adopter is expected to provide a collection name where the decision is kept and 
+the document is assumed to contain a `username` column as well as one that matches the AUP attribute name defined.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-aup-couchdb" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#acceptable-usage-policy).
+{% include {{ version }}/couchdb-integration.md configKey="cas.acceptable-usage-policy" %}
 
 ### Couchbase
 
@@ -196,18 +201,21 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-aup-couchbase" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#acceptable-usage-policy).
+{% include {{ version }}/couchbase-configuration.md configKey="cas.acceptable-usage-policy.couchbase" %}
 
 ### JDBC
 
-CAS can be configured to use a database as the storage mechanism. Upon accepting the policy, the adopter is expected to provide a table name where the 
-decision is kept and the table is assumed to contain a `username` column as well as one that matches the AUP attribute name defined.
+CAS can be configured to use a database as the storage mechanism. Upon accepting the 
+policy, the adopter is expected to provide a table name where the  decision 
+is kept and the table is assumed to contain a `username` column as well as 
+one that matches the AUP attribute name defined.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-aup-jdbc" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#acceptable-usage-policy).
+{% include {{ version }}/rdbms-configuration.md configKey="cas.acceptable-usage-policy.jdbc" %}
+{% include {{ version }}/jdbc-aup-configuration.md %}
 
 ### REST
 
@@ -229,9 +237,7 @@ output body is expected to be an instance of `AcceptableUsagePolicyTerms` as suc
 Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-aup-rest" %}
-
-
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#acceptable-usage-policy).
+{% include {{ version }}/rest-integration.md configKey="cas.acceptable-usage-policy.rest" %}
 
 ### Custom
 
@@ -271,5 +277,3 @@ The defined attribute must of course be available for the resolved authenticated
 
 For example, if the policy terms attribute is defined as `status` with the value of `developer`, the expected language
 code to carry the policy text would be `screen.aup.policyterms.developer=<p>Policy for developers</p>`.
-
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#acceptable-usage-policy).

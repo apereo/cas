@@ -17,7 +17,11 @@ Support is enabled by adding the following module into the overlay:
 ## Configuration
 
 You will need to provide CAS with your [AWS credentials](https://aws.amazon.com/console/). Also, to gain a better understanding
-of DynamoDb's core components and concepts, please [start with this guide](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Introduction.html) first. To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#dynamodb-service-registry).
+of DynamoDb's core components and concepts, please [start with this guide](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Introduction.html) first. 
+
+{% include {{ version }}/dynamodb-configuration.md configKey="cas.service-registry" %}
+
+{% include {{ version }}/dynamodb-service-registry-configuration.md %}
 
 ## Troubleshooting
 

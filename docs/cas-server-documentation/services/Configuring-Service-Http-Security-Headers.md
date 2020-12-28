@@ -24,7 +24,7 @@ Supported HTTP headers in form of service properties are:
 | `httpHeaderEnableXSSProtection`      | Insert `X-XSS-Protection` headers into the response for this service.
 | `httpHeaderXFrameOptions`      | Override the `X-Frame-Options` header of the response for this service.
 
-The headers values are picked up from CAS properties. See [this guide](../configuration/Configuration-Properties.html#http-web-requests) for relevant settings.
+{% include {{ version }}/http-webrequests-configuration.md %}
 
 A sample JSON file follows:
 

@@ -103,7 +103,10 @@ compact data, which benefits both storage requirements and throughput.
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#memcached-ticket-registry).
+{% include {{ version }}/memcached-integration.md configKey="cas.ticket.registry.memcached" %}
+
+{% include {{ version }}/signing-encryption.md configKey="cas.ticket.registry.memcached" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
+
 
 ## High Availability Considerations
 

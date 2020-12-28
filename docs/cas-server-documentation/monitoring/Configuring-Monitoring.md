@@ -8,7 +8,12 @@ category: Monitoring & Statistics
 
 # CAS Monitoring
 
-CAS monitors may be defined to report back the health status of the ticket registry and other underlying connections to systems that are in use by CAS. Spring Boot offers a number of monitors known as `HealthIndicator`s that are activated given the presence of specific settings (i.e. `spring.mail.*`). CAS itself providers a number of other monitors based on the same component that are listed below, whose action may require a combination of a particular dependency module and its relevant settings.
+CAS monitors may be defined to report back the health status of the ticket registry 
+and other underlying connections to systems that are in use by CAS. Spring Boot 
+offers a number of monitors known as `HealthIndicator`s that are activated given 
+the presence of specific settings (i.e. `spring.mail.*`). CAS itself providers a 
+number of other monitors based on the same component that are listed below, whose 
+action may require a combination of a particular dependency module and its relevant settings.
 
 ## Default
 
@@ -27,7 +32,7 @@ and [this guide](../configuration/Configuration-Properties.html#memory).
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-memcached-monitor" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#memcached-monitors).
+{% include {{ version }}/memcached-integration.md configKey="cas.monitor.memcached" %}
 
 The actual memcached implementation may be supported via one of the following options, expected to be defined in the overlay.
 
@@ -63,7 +68,7 @@ Monitor the status and availability of a MongoDb database.
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-mongo-monitor" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#mongodb-monitors).
+{% include {{ version }}/mongodb-configuration.md configKey="cas.monitor" %}
 
 ## Hazelcast
 
