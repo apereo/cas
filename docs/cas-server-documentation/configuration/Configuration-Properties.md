@@ -1067,92 +1067,6 @@ The following settings are additionally available for this feature:
 # cas.authn.mfa.gauth.ldap.account-attribute-name=gauthRecord
 ```
 
-### YubiKey
-
-To learn more about this topic, [please review this guide](../mfa/YubiKey-Authentication.html).
-
-```properties
-# cas.authn.mfa.yubikey.client-id=
-# cas.authn.mfa.yubikey.secret-key=
-# cas.authn.mfa.yubikey.rank=0
-# cas.authn.mfa.yubikey.api-urls=
-# cas.authn.mfa.yubikey.trusted-device-enabled=false
-# cas.authn.mfa.yubikey.multiple-device-registration-enabled=false
-
-# cas.authn.mfa.yubikey.name=
-# cas.authn.mfa.yubikey.order=
-```
-
-{% include {{ version }}/mfa-bypass-configuration.md configKey="cas.authn.mfa.yubikey" %}
-
-#### YubiKey JSON Device Store
-
-```properties
-# cas.authn.mfa.yubikey.json-file=file:/etc/cas/deviceRegistrations.json
-```
-
-#### YubiKey Allowed Device Store
-
-```properties
-# cas.authn.mfa.yubikey.allowed-devices.uid1=yubikeyPublicId1
-# cas.authn.mfa.yubikey.allowed-devices.uid2=yubikeyPublicId2
-```
-
-
-{% include {{ version }}/radius-configuration.md configKey="cas.authn.mfa.radius" %}
-
-{% include {{ version }}/mfa-bypass-configuration.md configKey="cas.authn.mfa.radius" %}
-
-
-### FIDO2 WebAuthn
-
-To learn more about this topic, [please review this guide](../mfa/FIDO2-WebAuthn-Authentication.html).
-
-```properties
-# cas.authn.mfa.web-authn.allowed-origins=
-# cas.authn.mfa.web-authn.application-id=
-# cas.authn.mfa.web-authn.relying-party-name=CAS WebAuthn 
-# cas.authn.mfa.web-authn.relying-party-id=
-
-# cas.authn.mfa.web-authn.display-name-attribute=displayName
-# cas.authn.mfa.web-authn.allow-primary-authentication=false
-
-# cas.authn.mfa.web-authn.allow-unrequested-extensions=false
-# cas.authn.mfa.web-authn.allow-untrusted-attestation=false
-# cas.authn.mfa.web-authn.validate-signature-counter=true
-# cas.authn.mfa.web-authn.attestation-conveyance-preference=DIRECT|INDIRECT|NONE
-# cas.authn.mfa.web-authn.trusted-device-metadata.location=
-
-# cas.authn.mfa.web-authn.trusted-device-enabled=false
-
-# cas.authn.mfa.web-authn.expire-devices=30
-# cas.authn.mfa.web-authn.expire-devices-time-unit=DAYS
-```   
-
-{% include {{ version }}/mfa-bypass-configuration.md configKey="cas.authn.mfa.web-authn" %}
-
-{% include {{ version }}/signing-encryption.md configKey="cas.authn.mfa.web-authn" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
-
-### FIDO2 WebAuthn Cleaner
-
-{% include {{ version }}/job-scheduling.md configKey="cas.authn.mfa.web-authn.cleaner" %}
-
-### FIDO2 WebAuthn JSON
-
-```properties
-# cas.authn.mfa.web-authn.json.location=file:///etc/cas/config/devices.json
-```
-
-
-
-### FIDO2 WebAuthn LDAP
-
-{% include {{ version }}/ldap-configuration.md configKey="cas.authn.mfa.web-authn.ldap" %}
-
-```properties
-# cas.authn.mfa.web-authn.ldap.account-attribute-name=casWebAuthnRecord
-```
-
 
 ## SAML IdP
 
@@ -1533,24 +1447,6 @@ To learn more about this topic, [please review this guide](../installation/OAuth
 {% include {{ version }}/signing-encryption.md configKey="cas.authn.oauth.access-token" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
 
 
-### OAuth2 UMA
-
-To learn more about this topic, [please review this guide](../installation/OAuth-OpenId-Authentication.html).
-
-```properties
-# cas.authn.uma.issuer=http://localhost:8080/cas
-
-# cas.authn.uma.requesting-party-token.max-time-to-live-in-seconds=PT3M
-# cas.authn.uma.requesting-party-token.jwks-file=file:/etc/cas/config/uma-keystore.jwks
-
-# cas.authn.uma.permission-ticket.max-time-to-live-in-seconds=PT3M
-```
-
-#### OAuth2 UMA JPA
-
-{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.uma.resource-set.jpa" %}
-
-
 ## Warning Cookie
 
 Created by CAS if and when users are to be warned when accessing CAS protected services. 
@@ -1559,18 +1455,6 @@ Created by CAS if and when users are to be warned when accessing CAS protected s
 
 ```properties
 # cas.warning-cookie.auto-configure-cookie-path=true
-```
-
-## Sleuth Distributed Tracing
-
-To learn more about this topic, [please review this guide](../monitoring/Monitoring-Statistics.html#distributed-tracing).
-
-```properties
-# spring.sleuth.sampler.percentage = 0.5
-# spring.sleuth.enabled=true
-
-# spring.zipkin.enabled=true
-# spring.zipkin.base-url=http://localhost:9411/
 ```
 
 ## Monitoring
@@ -1649,7 +1533,6 @@ Decide how CAS should monitor the internal state of JVM memory available at runt
 ```properties
 # cas.monitor.free-mem-threshold=10
 ```
-
 
 ## CAS Client
 

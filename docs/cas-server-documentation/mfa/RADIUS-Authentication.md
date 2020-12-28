@@ -40,6 +40,10 @@ RSA RADIUS OTP support for MFA is enabled by only including the following depend
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-radius-mfa" %}
 
+{% include {{ version }}/radius-configuration.md configKey="cas.authn.mfa.radius" %}
+
+{% include {{ version }}/mfa-bypass-configuration.md configKey="cas.authn.mfa.radius" %}
+
 ## Configuration
 
 {% include {{ version }}/radius-otp-authentication-configuration.md %}

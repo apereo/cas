@@ -178,7 +178,7 @@ interactions with external systems should be instrumented automatically.
 Trace data is captured automatically and passed along to [Zipkin](https://github.com/openzipkin/zipkin), which helps 
 gather timing data needed to troubleshoot latency problems.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#sleuth-distributed-tracing).
+{% include {{ version }}/sleuth-configuration.md %}
 
 ### Troubleshooting
 
