@@ -7,18 +7,18 @@ services:
     ports:
       - 6379:6379
 
-  slave_1:
+  replica_1:
     image: redis:6.0.8-alpine
-    container_name: redis_server_slave_1
+    container_name: redis_server_replica_1
     command: redis-server --slaveof master 6379
     ports:
       - 6380:6379
     depends_on:
       - master
 
-  slave_2:
+  replica_2:
     image: redis:6.0.8-alpine
-    container_name: redis_server_slave_2
+    container_name: redis_server_replica_2
     command: redis-server --slaveof master 6379
     ports:
       - 6381:6379
