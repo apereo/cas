@@ -42,7 +42,13 @@ use <strong>casuser</strong> and <strong>Mellon</strong> as the username and pas
 configured via the static authentication handler, and <strong>MUST</strong> be removed from the configuration
 prior to production rollouts.</p></div>
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#accept-users-authentication).
+{% include {{ version }}/acceptusers-authentication-configuration.md %}
+
+{% include {{ version }}/principal-transformation.md configKey="cas.authn.accept" %}
+
+{% include {{ version }}/password-policy.md configKey="cas.authn.accept.password-policy" %}
+
+{% include {{ version }}/password-encoding.md configKey="cas.authn.accept" %}
 
 ### Administrative Endpoints
 

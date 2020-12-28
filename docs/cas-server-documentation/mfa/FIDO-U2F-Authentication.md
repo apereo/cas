@@ -8,9 +8,12 @@ category: Multifactor Authentication
 
 # U2F - FIDO Universal Authentication
 
-U2F is an open authentication standard that enables internet users to securely access any number of online services, with one single device, instantly 
-and with no drivers, or client software needed. The CAS U2F implementation is built on top of [Yubico](https://www.yubico.com/about/background/fido/) and 
-the technical specifications are hosted by the open-authentication industry consortium known as the [FIDO Alliance](https://fidoalliance.org/).
+U2F is an open authentication standard that enables internet users to securely 
+access any number of online services, with one single device, instantly 
+and with no drivers, or client software needed. The CAS U2F implementation 
+is built on top of [Yubico](https://www.yubico.com/about/background/fido/) and 
+the technical specifications are hosted by the open-authentication 
+industry consortium known as the [FIDO Alliance](https://fidoalliance.org/).
 
 Note that not all browsers today support U2F. While support in recent versions of Chrome and 
 Opera seem to exist, you should always verify that U2F support is available for your target browser.
@@ -19,17 +22,25 @@ Support is enabled by including the following module in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-u2f" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#fido-u2f).
+{% include {{ version }}/u2f-configuration.md %}
 
 ## Registration
 
-U2F device registration flows are baked into CAS automatically. A background *cleaner* process is also automatically scheduled to scan the 
-repository periodically and remove expired device registration records based on configured parameters. In the default setting U2F devices
-expire after a fixed period since a user registered the U2F token (independent of the last time the token was used); if you deploy U2F
-MFA for a setup where tokens are centrally distributed and revoked, you may want to [extend the interval](../configuration/Configuration-Properties.html#fido-u2f).
+U2F device registration flows are baked into CAS automatically. A 
+background *cleaner* process is also automatically scheduled to scan the 
+repository periodically and remove expired device registration records 
+based on configured parameters. In the default setting U2F devices
+expire after a fixed period since a user registered the U2F token 
+(independent of the last time the token was used); if you deploy U2F
+MFA for a setup where tokens are centrally distributed and revoked, 
+you may want to extend the interval.
 
-<div class="alert alert-warning"><strong>Cleaner Usage</strong><p>In a clustered CAS deployment, it is best to keep the cleaner running on one designated 
-CAS node only and turn it off on all others via CAS settings. Keeping the cleaner running on all nodes may likely lead to severe performance and locking issues.</p></div>
+{% include {{ version }}/job-scheduling.md configKey="cas.authn.mfa.u2f.cleaner`" %}
+
+<div class="alert alert-warning"><strong>Cleaner Usage</strong><p>In a 
+clustered CAS deployment, it is best to keep the cleaner running on one designated 
+CAS node only and turn it off on all others via CAS settings. Keeping the 
+cleaner running on all nodes may likely lead to severe performance and locking issues.</p></div>
 
 ### Administrative Endpoints
 
@@ -46,7 +57,12 @@ This option should only be used for demo and testing purposes.
 
 ### JSON
 
-A device repository implementation that collects user device registrations and saves them into a JSON file whose path is taught to CAS via settings. This is a very modest option and should mostly be used for demo and testing purposes. Needless to say, this JSON resource acts as a database that must be available to all CAS server nodes in the cluster.
+A device repository implementation that collects user device registrations and 
+saves them into a JSON file whose path is taught to CAS via settings. This is 
+a very modest option and should mostly be used for demo and testing purposes. 
+Needless to say, this JSON resource acts as a database that must be available to all CAS server nodes in the cluster.
+
+{% include {{ version }}/json-j2f-configuration.md %}
 
 Devices stored into the JSON file take on the following format:
 
@@ -66,6 +82,8 @@ Devices stored into the JSON file take on the following format:
 ### Groovy
 
 Device registrations may be managed via an external Groovy script. The script may be designed as follows:
+
+{% include {{ version }}/groovy-u2f-configuration.md %}
 
 ```groovy
 import java.util.*
@@ -100,7 +118,7 @@ Device registrations may be kept inside a relational database by including the f
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-u2f-jpa" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#fido-u2f-jpa).
+{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.mfa.u2f.jpa" %}
 
 ### MongoDb
 
@@ -108,7 +126,7 @@ Device registrations may be kept inside a MongoDb instance by including the foll
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-u2f-mongo" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#fido-u2f-mongodb).
+{% include {{ version }}/mongodb-configuration.md configKey="cas.authn.mfa.u2f" %}
 
 ### DynamoDb
 
@@ -116,7 +134,7 @@ Device registrations may be kept inside a DynamoDb instance by including the fol
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-u2f-dynamodb" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#fido-u2f-dynamodb).
+{% include {{ version }}/dynamodb-configuration.md configKey="cas.authn.mfa.u2f" %}
 
 ### Redis
 
@@ -124,7 +142,7 @@ Device registrations may be kept inside a Redis instance by including the follow
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-u2f-redis" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#fido-u2f-redis).
+{% include {{ version }}/redis-configuration.md configKey="cas.authn.mfa.u2f" %}
 
 ### CouchDb
 
@@ -132,7 +150,7 @@ Device registrations may be kept inside a CouchDb instance by including the foll
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-u2f-couchdb" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#fido-u2f-couchdb).
+{% include {{ version }}/couchdb-integration.md configKey="cas.authn.mfa.u2f" %}
 
 ### REST
 
@@ -149,4 +167,4 @@ The following parameters are passed:
 | `DELETE` | N/A | Delete all device records | `200`.
 | `DELETE` | `/${id}`  as a path variable | Delete all device records matching that identifier. | `200`.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#fido-u2f-rest).
+{% include {{ version }}/rest-integration.md configKey="cas.authn.mfa.u2f.rest" %}

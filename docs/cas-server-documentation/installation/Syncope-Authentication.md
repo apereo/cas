@@ -8,8 +8,10 @@ category: Authentication
 
 # Apache Syncope Authentication
 
-CAS support handling the authentication event via [Apache Syncope](http://syncope.apache.org/). This is done by using the `rest/users/self` REST API that is exposed by a running Syncope instance. As part of a successful authentication attempt, the properties of the provided user object are transformed into CAS attributes that can then be released to applications, etc.
-
+CAS support handling the authentication event via [Apache Syncope](http://syncope.apache.org/). This 
+is done by using the `rest/users/self` REST API that is exposed by a running Syncope instance. 
+As part of a successful authentication attempt, the properties of the provided user object 
+are transformed into CAS attributes that can then be released to applications, etc.
 
 ## Components
 
@@ -17,7 +19,11 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-syncope-authentication" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#syncope-authentication).
+{% include {{ version }}/principal-transformation.md configKey="cas.authn.syncope" %}
+
+{% include {{ version }}/password-encoding.md configKey="cas.authn.syncope" %}
+
+{% include {{ version }}/syncope-authentication-configuration.md %}
 
 ## Attributes
 

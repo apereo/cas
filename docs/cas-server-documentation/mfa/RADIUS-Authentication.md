@@ -14,7 +14,13 @@ RADIUS support is enabled by only including the following dependency in the over
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#radius-authentication).
+{% include {{ version }}/principal-transformation.md configKey="cas.authn.radius" %}
+
+{% include {{ version }}/password-encoding.md configKey="cas.authn.radius" %}
+
+{% include {{ version }}/radius-configuration.md configKey="cas.authn.radius" %}
+
+{% include {{ version }}/radius-authentication-configuration.md %}
 
 You may also need to declare the following repository in
 your CAS overlay to be able to resolve dependencies:

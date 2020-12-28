@@ -16,7 +16,7 @@ Support is enabled by adding the following module into the overlay:
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#cosmosdb-service-registry).
+{% include {{ version }}/cosmosdb-service-registry-configuration.md %}
 
 ## Troubleshooting
 

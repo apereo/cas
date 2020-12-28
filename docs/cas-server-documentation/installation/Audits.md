@@ -13,9 +13,13 @@ and statistics. The Inspektr project allows for non-intrusive auditing and loggi
 coarse-grained execution paths e.g. Spring-managed beans method executions by using annotations
 and Spring-managed `@Aspect`-style aspects.
 
-CAS server auto-configures all the relevant Inspektr components.   All the available configuration options that are injected to Inspektr classes are available to deployers via relevant CAS properties. Note that the audit record management functionality of CAS supports handling multiple audit record destinations at the same time. In other words, you may choose to route audit records to both a database and a REST endpoint as well as any number of logger-based destinations all at the same time.
+CAS server auto-configures all the relevant Inspektr components. All the available configuration
+options that are injected to Inspektr classes are available to deployers via relevant CAS properties. 
+Note that the audit record management functionality of CAS supports handling multiple audit 
+record destinations at the same time. In other words, you may choose to route audit records 
+to both a database and a REST endpoint as well as any number of logger-based destinations all at the same time.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#audits).
+{% include {{ version }}/audit-configuration.md %}
 
 ## Administrative Endpoints
 
@@ -25,8 +29,10 @@ The following endpoints are provided by CAS:
 |--------------------------|------------------------------------------------
 | `auditLog`               | Provides a JSON representation of all the audit log.
 
-You can specify an interval of log entries to return by adding a Duration Syntax to the navigated path. This interval will be subtracted from the current 
-date and time when the query is executed. For instance `/actuator/auditLog/PT1H` will return only entries for the past hour.
+You can specify an interval of log entries to return by adding a `Duration` Syntax 
+to the navigated path. This interval will be subtracted from the current 
+date and time when the query is executed. For instance `/actuator/auditLog/PT1H` will 
+return only entries for the past hour.
 
 The actuator endpoint can also accept a JSON object through a POST method containing criteria to filter log entries by.
 
@@ -45,7 +51,8 @@ Each filter other than `interval` can accept a regular expression to match again
 ## File-based Audits
 
 File-based audit logs appear in a `cas_audit.log` file defined in the [Logging](../logging/Logging.html) configuration.
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#audits).
+
+{% include {{ version }}/slf4j-audit-configuration.md %}
 
 ### Sample Log Output
 
@@ -74,7 +81,12 @@ If you intend to use a database for auditing functionality, enable the following
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-audit-jdbc" %}
 
 To learn how to configure database drivers, please [review this guide](JDBC-Drivers.html).
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#database-audits).
+
+{% include {{ version }}/rdbms-configuration.md configKey="cas.audit.jdbc" %}
+
+{% include {{ version }}/jdbc-audit-configuration.md %}
+
+{% include {{ version }}/job-scheduling.md configKey="cas.audit.jdbc" %}
 
 ## MongoDb Audits
 
@@ -82,7 +94,9 @@ If you intend to use a MongoDb database for auditing functionality, enable the f
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-audit-mongo" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#mongodb-audits).
+{% include {{ version }}/mongodb-configuration.md configKey="cas.audit" %}
+
+{% include {{ version }}/mongodb-audit-configuration.md %}
 
 ## Redis Audits
 
@@ -90,7 +104,9 @@ If you intend to use a Redis database for auditing functionality, enable the fol
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-audit-redis" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#redis-audits).
+{% include {{ version }}/redis-configuration.md configKey="cas.audit" %}
+
+{% include {{ version }}/redis-audit-configuration.md %}
 
 ## CouchDb Audits
 
@@ -98,7 +114,7 @@ If you intend to use a CouchDb database for auditing functionality, enable the f
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-audit-couchdb" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#couchdb-audits).
+{% include {{ version }}/couchdb-integration.md configKey="cas.audit" %}
 
 ## Couchbase Audits
 
@@ -106,7 +122,9 @@ If you intend to use a Couchbase database for auditing functionality, enable the
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-audit-couchbase" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#couchbase-audits).
+{% include {{ version }}/couchbase-configuration.md configKey="cas.audit.couchbase" %}
+
+{% include {{ version }}/couchbase-audit-configuration.md %}
 
 ## DynamoDb Audits
 
@@ -114,16 +132,22 @@ If you intend to use a DynamoDb database for auditing functionality, enable the 
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-audit-dynamodb" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#dynamodb-audits).
+{% include {{ version }}/dynamodb-configuration.md configKey="cas.audit" %}
+
+{% include {{ version }}/dynamodb-audit-configuration.md %}
 
 ## REST Audits
 
-Audit events may also be `POST`ed to an endpoint of your choosing. To activate this feature, enable the following module in your configuration:
+Audit events may also be `POST`ed to an endpoint of your choosing. To activate 
+this feature, enable the following module in your configuration:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-audit-rest" %}
 
 The body of the HTTP request is a JSON representation of the audit record. 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#rest-audits).
+
+{% include {{ version }}/rest-integration.md configKey="cas.audit.rest" %}
+
+{% include {{ version }}/rest-audit-configuration.md %}
 
 ## Audit Events
 

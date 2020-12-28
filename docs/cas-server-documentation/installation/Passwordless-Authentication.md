@@ -5,7 +5,6 @@ category: Authentication
 ---
 {% include variables.html %}
 
-
 # Passwordless Authentication
 
 Passwordless Authentication is a form of authentication in CAS where passwords take the 
@@ -31,7 +30,8 @@ validate, expire or save operations in appropriate data stores.
 Passwordless authentication can also be activated using [QR Code Authentication](QRCode-Authentication.html),
 allowing end users to login by scanning a QR code using a mobile device.
 
-Passwordless authentication can also be achieved via [FIDO2 WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) which lets users 
+Passwordless authentication can also be 
+achieved via [FIDO2 WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) which lets users 
 verify their identities without passwords and login using FIDO2-enabled devices.
 
 ## Overview
@@ -40,27 +40,34 @@ Support is enabled by including the following module in the overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-passwordless-webflow" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#passwordless-authentication).
+{% include {{ version }}/passwordless-configuration.md %}
 
 ## Account Stores
 
-User records that qualify for passwordless authentication must be found by CAS using one of the following strategies. All strategies may be configured
+User records that qualify for passwordless authentication must 
+be found by CAS using one of the following strategies. All strategies may be configured
 using CAS settings and are activated depending on the presence of configuration values.
 
 ### Simple
 
-This strategy provides a static map of usernames that are linked to their method of contact, such as email or phone number. It is best used
-for testing and demo purposes. The key in the map is taken to be the username eligible for authentication while the value can either be an email
+This strategy provides a static map of usernames that are linked to their 
+method of contact, such as email or phone number. It is best used
+for testing and demo purposes. The key in the map is taken to be the username 
+eligible for authentication while the value can either be an email
 address or phone number that would be used to contact the user with issued tokens.
+
+{% include {{ version }}/passwordless-simple-accounts-configuration.md %}
 
 ### MongoDb
 
-This strategy allows one to locate a user record in MongoDb. The designated MongoDb collection is expectd to carry objects of type `PasswordlessUserAccount` in JSON format. To see the relevant list of CAS 
-properties, please [review this guide](../configuration/Configuration-Properties.html#passwordless-authentication).
+This strategy allows one to locate a user record in MongoDb. The designated MongoDb 
+collection is expected to carry objects of type `PasswordlessUserAccount` in JSON format. 
 
 Support is enabled by including the following module in the overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-passwordless-mongo" %}
+
+{% include {{ version }}/mongodb-configuration.md configKey="cas.authn.passwordless.accounts" %}
 
 ### LDAP
 
@@ -71,6 +78,8 @@ properties, please [review this guide](../configuration/Configuration-Properties
 Support is enabled by including the following module in the overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-passwordless-ldap" %}
+
+{% include {{ version }}/ldap-configuration.md configKey="cas.authn.passwordless.accounts.ldap" %}
 
 ### JSON
 
@@ -92,6 +101,8 @@ This strategy allows one to locate user records via a JSON resource, as such:
   }
 }
 ```
+
+{% include {{ version }}/passwordless-json-accounts-configuration.md %}
 
 ### Groovy
 
@@ -124,6 +135,8 @@ def run(Object[] args) {
 }
 ```
 
+{% include {{ version }}/passwordless-groovy-accounts-configuration.md %}
+
 ### REST
 
 This strategy allows one design REST endpoints in charge of locating passwordless user records. A successful execution of the endpoint  
@@ -143,6 +156,8 @@ would produce a response body similar to the following:
 }
 ```
 
+{% include {{ version }}/rest-integration.md configKey="cas.authn.passwordless.accounts.rest" %}
+
 ### Custom
 
 You may also define your own user account store using the following bean definition and by implementing `PasswordlessUserAccountStore`:
@@ -160,10 +175,16 @@ public PasswordlessUserAccountStore passwordlessUserAccountStore() {
 
 The following strategies define how issued tokens may be managed by CAS. 
 
+{% include {{ version }}/passwordless-token-mgmt-configuration.md %}
+
+{% include {{ version }}/signing-encryption.md configKey="cas.authn.passwordless.tokens" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
+
 ### Memory
 
-This is the default option where tokens are kept in memory using a cache with a configurable expiration period. Needless to say, this option 
-is not appropriate in clustered CAS deployments inside there is not a way to synchronize and replicate tokens across CAS nodes.
+This is the default option where tokens are kept in memory using a cache 
+with a configurable expiration period. Needless to say, this option 
+is not appropriate in clustered CAS deployments inside there is not a way 
+to synchronize and replicate tokens across CAS nodes.
 
 ### JPA
 
@@ -172,16 +193,18 @@ This strategy allows one to store tokens and manage their expiration policy usin
 Support is enabled by including the following module in the overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-passwordless-jpa" %}
-    
 
-To see the relevant list of CAS 
-properties, please [review this guide](../configuration/Configuration-Properties.html#passwordless-authentication).
+{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.passwordless.tokens.jpa" %}
+
+{% include {{ version }}/job-scheduling.md configKey="cas.authn.passwordless.tokens.jpa.cleaner" %}
 
 ### REST
 
 This strategy allows one design REST endpoints in charge of managing tokens and their expiration policy entirely. 
 CAS continues to generate tokens and the endpoint is only acting as a facade to the real token store, receiving tokens from CAS
 in an encrypted fashion. 
+
+{% include {{ version }}/rest-integration.md configKey="cas.authn.passwordless.tokens.rest" %}
 
 The following operations need to be supported by the endpoint:
 
@@ -207,15 +230,22 @@ public PasswordlessTokenRepository passwordlessTokenRepository() {
 
 ### Messaging & Notifications
 
+{% include {{ version }}/email-notifications.md configKey="cas.authn.passwordless.tokens" %}
+
+{% include {{ version }}/sms-notifications.md configKey="cas.authn.passwordless.tokens" %}
+
 Users may be notified of tokens via text messages, mail, etc.
 To learn more about available options, please [see this guide](../notifications/SMS-Messaging-Configuration.html)
 or [this guide](../notifications/Sending-Email-Configuration.html).
 
 ## Disabling Passwordless Authentication Flow
 
-Passwordless authentication can be disabled conditionally on a per-user basis. If the passwordless account retrieved from the account store
-carries a user whose `requestPassword` is set to `true`, the passwordless flow (i.e. as described above with token generation, etc) will
-be disabled and skipped in favor of the more usual CAS authentication flow, challenging the user for a password. Support for this behavior may depend
+Passwordless authentication can be disabled conditionally on a per-user basis. If 
+the passwordless account retrieved from the account store
+carries a user whose `requestPassword` is set to `true`, the passwordless flow
+(i.e. as described above with token generation, etc) will
+be disabled and skipped in favor of the more usual CAS authentication flow, 
+challenging the user for a password. Support for this behavior may depend
 on each individual account store implementation.
 
 ## Multifactor Authentication Integration
@@ -224,27 +254,34 @@ Passwordless authentication can be integrated
 with [CAS multifactor authentication providers](../mfa/Configuring-Multifactor-Authentication.html). In this scenario,
 once CAS configuration is enabled to support this behavior via settings 
 or the located passwordless user account is considered *eligible* for multifactor authentication,
-CAS will allow passwordless authentication to skip its own *intended normal* flow (i.e. as described above with token generation, etc) in favor of 
+CAS will allow passwordless authentication to skip its 
+own *intended normal* flow (i.e. as described above with token generation, etc) in favor of 
 multifactor authentication providers that may be available and defined in CAS.
 
-This means that if [multifactor authentication providers](../mfa/Configuring-Multifactor-Authentication.html) are defined and activated, and defined 
-[multifactor triggers](../mfa/Configuring-Multifactor-Authentication-Triggers.html) in CAS signal availability and eligibility of an multifactor flow for the given passwordless user, CAS will skip 
-its normal passwordless authentication flow in favor of the requested multifactor authentication provider and its flow. If no multifactor providers 
-are available, or if no triggers require the use of multifactor authentication for the verified passwordless user, passwordless 
+This means that if [multifactor authentication providers](../mfa/Configuring-Multifactor-Authentication.html) are 
+defined and activated, and defined 
+[multifactor triggers](../mfa/Configuring-Multifactor-Authentication-Triggers.html) in CAS 
+signal availability and eligibility of an multifactor flow for the given passwordless user, CAS will skip 
+its normal passwordless authentication flow in favor of the requested multifactor 
+authentication provider and its flow. If no multifactor providers 
+are available, or if no triggers require the use of multifactor authentication 
+for the verified passwordless user, passwordless 
 authentication flow will commence as usual.
-
-To see the relevant list of CAS 
-properties, please [review this guide](../configuration/Configuration-Properties.html#passwordless-authentication).
 
 ## Delegated Authentication Integration
 
-Passwordless authentication can be integrated with [CAS delegated authentication](../integration/Delegate-Authentication.html). In this scenario,
-once CAS configuration is enabled to support this behavior via settings or the located passwordless user account is considered *eligible* for delegated authentication,
-CAS will allow passwordless authentication to skip its own *intended normal* flow (i.e. as described above with token generation, etc) in favor of 
+Passwordless authentication can be integrated 
+with [CAS delegated authentication](../integration/Delegate-Authentication.html). In this scenario,
+once CAS configuration is enabled to support this behavior via settings or 
+the located passwordless user account is considered *eligible* for delegated authentication,
+CAS will allow passwordless authentication to skip its own *intended normal* 
+flow (i.e. as described above with token generation, etc) in favor of 
 delegated authentication that may be available and defined in CAS.
 
-This means that if [delegated authentication providers](../integration/Delegate-Authentication.html) are defined and activated, CAS will skip 
-its normal passwordless authentication flow in favor of the requested multifactor authentication provider and its flow. If no delegated identity providers 
+This means that if [delegated authentication providers](../integration/Delegate-Authentication.html) 
+are defined and activated, CAS will skip 
+its normal passwordless authentication flow in favor of the requested multifactor authentication 
+provider and its flow. If no delegated identity providers 
 are available, passwordless authentication flow will commence as usual.
 
 The selection of a delegated authentication identity provider for a passwordless user is handled 
@@ -259,7 +296,7 @@ def run(Object[] args) {
     
     logger.info("Testing username $passwordlessUser")
 
-    return clients[0]
+    clients[0]
 }
 ``` 
 
@@ -272,8 +309,7 @@ The parameters passed are as follows:
 | `httpServletRequest`  | The object representing the http request.
 | `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
 
-The outcome of the script can be `null` to skip delegated authentication for the user, or it could a selection from the available identity providers
+The outcome of the script can be `null` to skip delegated authentication for 
+the user, or it could a selection from the available identity providers
 passed into the script.
 
-To see the relevant list of CAS 
-properties, please [review this guide](../configuration/Configuration-Properties.html#passwordless-authentication).

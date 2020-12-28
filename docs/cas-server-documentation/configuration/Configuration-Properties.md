@@ -953,65 +953,6 @@ more about this topic, [please review this guide](../installation/Configuring-Ri
 {% include {{ version }}/sms-notifications.md configKey="cas.authn.adaptive.risk.response" %}
 
 
-## Passwordless Authentication
-
-To learn more about this topic, [please review this guide](../installation/Passwordless-Authentication.html).
-
-### Account Stores
-
-```properties   
-# cas.authn.passwordless.multifactor-authentication-activated=false
-# cas.authn.passwordless.delegated-authentication-activated=false
-```
-
-#### Simple Account Store
-
-```properties
-# cas.authn.passwordless.accounts.simple.casuser=cas@example.org
-```
-
-#### Groovy Account Store
-
-```properties
-# cas.authn.passwordless.accounts.groovy.location=file:/etc/cas/config/pwdless.groovy
-```
-
-#### JSON Account Store
-
-```properties
-# cas.authn.passwordless.accounts.json.location=file:/etc/cas/config/pwdless-accounts.json
-```
-
-#### RESTful Account Store
-
-{% include {{ version }}/rest-integration.md configKey="cas.authn.passwordless.accounts.rest" %}
-
-#### LDAP Account Store
-
-{% include {{ version }}/ldap-configuration.md configKey="cas.authn.passwordless.accounts.ldap" %}
-
-#### MongoDb Account Store
-
-{% include {{ version }}/mongodb-configuration.md configKey="cas.authn.passwordless.accounts" %}
-
-### Token Management
-
-```properties
-# cas.authn.passwordless.accounts.expire-in-seconds=180
-```
-
-{% include {{ version }}/rest-integration.md configKey="cas.authn.passwordless.tokens.rest" %}
-
-{% include {{ version }}/signing-encryption.md configKey="cas.authn.passwordless.tokens" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
-
-{% include {{ version }}/email-notifications.md configKey="cas.authn.passwordless.tokens" %}
-
-{% include {{ version }}/sms-notifications.md configKey="cas.authn.passwordless.tokens" %}
-
-{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.passwordless.tokens.jpa" %}
-
-{% include {{ version }}/job-scheduling.md configKey="cas.authn.passwordless.tokens.jpa.cleaner" %}
-
 ## Google Cloud Firebase Messaging
 
 To learn more about this topic, [please review this guide](../notifications/Notifications-Configuration.html).
@@ -1048,26 +989,6 @@ Used to geo-profile authentication events.
 # cas.maxmind.country-database=file:/etc/cas/maxmind/GeoLite2-Country.mmdb
 ```
 
-## Cassandra Authentication
-
-To learn more about this topic, [please review this guide](../installation/Cassandra-Authentication.html).
-
-```properties
-# cas.authn.cassandra.username-attribute=
-# cas.authn.cassandra.password-attribute=
-# cas.authn.cassandra.table-name=
-# cas.authn.cassandra.username=
-# cas.authn.cassandra.password=
-# cas.authn.cassandra.query=SELECT * FROM %s WHERE %s = ? ALLOW FILTERING
-# cas.authn.cassandra.name=
-# cas.authn.cassandra.order=
-```
-
-{% include {{ version }}/cassandra-configuration.md configKey="cas.authn.cassandra" %}
-
-{% include {{ version }}/principal-transformation.md configKey="cas.authn.cassandra" %}
-
-{% include {{ version }}/password-encoding.md configKey="cas.authn.cassandra" %}
 
 
 ## Digest Authentication
@@ -1083,19 +1004,6 @@ To learn more about this topic, [please review this guide](../installation/Diges
 # cas.authn.digest.authentication-method=auth
 ```
 
-## Radius Authentication
-
-To learn more about this topic, [please review this guide](../mfa/RADIUS-Authentication.html).
-
-{% include {{ version }}/principal-transformation.md configKey="cas.authn.radius" %}
-
-{% include {{ version }}/password-encoding.md configKey="cas.authn.radius" %}
-
-{% include {{ version }}/radius-configuration.md configKey="cas.authn.radius" %}
-
-```properties
-# cas.authn.radius.name=
-```
 
 ## File Authentication
 
@@ -1120,20 +1028,6 @@ To learn more about this topic, [please review this guide](../installation/Groov
 # cas.authn.groovy.name=
 ```
 
-## JSON Authentication
-
-To learn more about this topic, [please review this guide](../installation/Permissive-Authentication.html).
-
-{% include {{ version }}/principal-transformation.md configKey="cas.authn.json" %}
-
-{% include {{ version }}/password-encoding.md configKey="cas.authn.json" %}
-
-{% include {{ version }}/password-policy.md configKey="cas.authn.json.password-policy" %}
-
-```properties
-# cas.authn.json.location=file:///path/to/users/file.json
-# cas.authn.json.name=
-```
 
 ## Reject Users Authentication
 
@@ -1148,142 +1042,7 @@ To learn more about this topic, [please review this guide](../installation/Rejec
 # cas.authn.reject.name=
 ```
 
-## Database Authentication
 
-To learn more about this topic, [please review this guide](../installation/Database-Authentication.html).
-
-### Query Database Authentication
-
-Authenticates a user by comparing the user password (which can be encoded with a password encoder)
-against the password on record determined by a configurable database query.
-
-{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.jdbc.query[0]" %}
-
-{% include {{ version }}/principal-transformation.md configKey="cas.authn.jdbc.query[0]" %}
-
-{% include {{ version }}/password-encoding.md configKey="cas.authn.jdbc.query[0]" %}
-
-```properties
-# cas.authn.jdbc.query[0].credential-criteria=
-# cas.authn.jdbc.query[0].name=
-# cas.authn.jdbc.query[0].order=0
-
-# cas.authn.jdbc.query[0].sql=SELECT * FROM table WHERE name=?
-# cas.authn.jdbc.query[0].field-password=password
-# cas.authn.jdbc.query[0].field-expired=
-# cas.authn.jdbc.query[0].field-disabled=
-# cas.authn.jdbc.query[0].principal-attribute-list=sn,cn:commonName,givenName
-```
-
-### Search Database Authentication
-
-Searches for a user record by querying against a username and password; the user is authenticated if at least one result is found.
-
-{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.jdbc.search[0]" %}
-
-{% include {{ version }}/principal-transformation.md configKey="cas.authn.jdbc.search[0]" %}
-
-{% include {{ version }}/password-encoding.md configKey="cas.authn.jdbc.search[0]" %}
-
-
-```properties
-# cas.authn.jdbc.search[0].field-user=
-# cas.authn.jdbc.search[0].table-users=
-# cas.authn.jdbc.search[0].field-password=
-# cas.authn.jdbc.search[0].credential-criteria=
-# cas.authn.jdbc.search[0].name=
-# cas.authn.jdbc.search[0].order=0
-```
-
-### Bind Database Authentication
-
-Authenticates a user by attempting to create a database connection using the username and (hashed) password.
-
-{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.jdbc.bind[0]" %}
-
-{% include {{ version }}/principal-transformation.md configKey="cas.authn.jdbc.bind[0]" %}
-
-{% include {{ version }}/password-encoding.md configKey="cas.authn.jdbc.bind[0]" %}
-
-
-```properties
-# cas.authn.jdbc.bind[0].credential-criteria=
-# cas.authn.jdbc.bind[0].name=
-# cas.authn.jdbc.bind[0].order=0
-```
-
-### Encode Database Authentication
-
-A JDBC querying handler that will pull back the password and the private salt value for a user and validate the encoded
-password using the public salt value. Assumes everything is inside the same database table. Supports settings for
-number of iterations as well as private salt.
-
-This password encoding method combines the private Salt and the public salt which it prepends to the password before hashing.
-If multiple iterations are used, the bytecode hash of the first iteration is rehashed without the salt values. The final hash
-is converted to hex before comparing it to the database value.
-
-{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.jdbc.encode[0]" %}
-
-{% include {{ version }}/principal-transformation.md configKey="cas.authn.jdbc.encode[0]" %}
-
-{% include {{ version }}/password-encoding.md configKey="cas.authn.jdbc.encode[0]" %}
-
-
-```properties
-# cas.authn.jdbc.encode[0].number-of-iterations=0
-# cas.authn.jdbc.encode[0].number-of-iterations-field-name=numIterations
-# cas.authn.jdbc.encode[0].salt-field-name=salt
-# cas.authn.jdbc.encode[0].static-salt=
-# cas.authn.jdbc.encode[0].sql=
-# cas.authn.jdbc.encode[0].algorithm-name=
-# cas.authn.jdbc.encode[0].password-field-name=password
-# cas.authn.jdbc.encode[0].expired-field-name=
-# cas.authn.jdbc.encode[0].disabled-field-name=
-
-# cas.authn.jdbc.encode[0].credential-criteria=
-# cas.authn.jdbc.encode[0].name=
-# cas.authn.jdbc.encode[0].order=0
-```
-
-
-
-## LDAP Authentication
-
-CAS authenticates a username/password against an LDAP directory such as Active Directory or OpenLDAP.
-There are numerous directory architectures and we provide configuration for four common cases.
-
-Note that CAS will automatically create the appropriate components internally
-based on the settings specified below. If you wish to authenticate against more than one LDAP
-server, increment the index and specify the settings for the next LDAP server.
-
-**Note:** Attributes retrieved as part of LDAP authentication are merged with all attributes
-retrieved from [other attribute repository sources](#authentication-attributes), if any.
-Attributes retrieved directly as part of LDAP authentication trump all other attributes.
-
-To learn more about this topic, [please review this guide](../installation/LDAP-Authentication.html). 
-
-{% include {{ version }}/ldap-configuration.md configKey="cas.authn.ldap[0]" %}
-
-```properties
-# Define attributes to be retrieved from LDAP as part of the same authentication transaction
-# The left-hand size notes the source while the right-hand size indicate an optional renaming/remapping
-# of the attribute definition. The same attribute name is allowed to be mapped multiple times to
-# different attribute names.
-
-# cas.authn.ldap[0].principal-attribute-list=sn,cn:commonName,givenName,eduPersonTargettedId:SOME_IDENTIFIER
-
-# cas.authn.ldap[0].collect-dn-attribute=false
-# cas.authn.ldap[0].principal-dn-attribute-name=principalLdapDn
-# cas.authn.ldap[0].allow-multiple-principal-attribute-values=true
-# cas.authn.ldap[0].allow-missing-principal-attribute-value=true
-# cas.authn.ldap[0].credential-criteria=
-```
-
-To fetch and resolve attributes that carry tags/options, consider tagging the mapped attribute as such:
-
-```properties
-# cas.authn.ldap[0].principal-attribute-list=homePostalAddress:homePostalAddress;
-```
 
 ### LDAP Password Policy
 
@@ -1455,119 +1214,6 @@ or [this guide](../protocol/REST-Protocol.html) for more info.
 
 {% include {{ version }}/signing-encryption.md configKey="cas.authn.token" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
 
-## Couchbase Authentication
-
-To learn more about this topic, [please review this guide](../installation/Couchbase-Authentication.html).
-
-{% include {{ version }}/principal-transformation.md configKey="cas.authn.couchbase" %}
-
-{% include {{ version }}/password-encoding.md configKey="cas.authn.couchbase" %}
-
-{% include {{ version }}/couchbase-configuration.md configKey="cas.authn.couchbase" %}
-
-```properties
-# cas.authn.couchbase.username-attribute=username
-# cas.authn.couchbase.password-attribute=psw
-
-# cas.authn.couchbase.name=
-# cas.authn.couchbase.order=
-```
-
-## Amazon Cloud Directory Authentication
-
-To learn more about this topic, [please review this guide](../installation/AWS-CloudDirectory-Authentication.html).
-
-{% include {{ version }}/principal-transformation.md configKey="cas.authn.cloud-directory" %}
-
-{% include {{ version }}/password-encoding.md configKey="cas.authn.cloud-directory" %}
-
-{% include {{ version }}/aws-integration.md configKey="cas.authn.cloud-directory" %}
-
-
-```properties
-# cas.authn.cloud-directory.directory-arn=
-# cas.authn.cloud-directory.schema-arn=
-# cas.authn.cloud-directory.facet-name=
-
-# cas.authn.cloud-directory.username-attribute-name=
-# cas.authn.cloud-directory.password-attribute-name=
-# cas.authn.cloud-directory.username-index-path=
-
-# cas.authn.cloud-directory.name=
-# cas.authn.cloud-directory.order=
-```
-
-## Amazon Cognito Authentication
-
-To learn more about this topic, [please review this guide](../installation/AWS-Cognito-Authentication.html).
-
-{% include {{ version }}/principal-transformation.md configKey="cas.authn.cognito" %}
-
-{% include {{ version }}/password-encoding.md configKey="cas.authn.cognito" %}
-
-{% include {{ version }}/aws-integration.md configKey="cas.authn.cognito" %}
-
-```properties
-# cas.authn.cognito.name=
-# cas.authn.cognito.order=
-
-# cas.authn.cognito.client-id=
-# cas.authn.cognito.user-pool-id=
-```
-
-## Okta Authentication
-
-To learn more about this topic, [please review this guide](../installation/Okta-Authentication.html).
-
-{% include {{ version }}/principal-transformation.md configKey="cas.authn.okta" %}
-
-{% include {{ version }}/password-encoding.md configKey="cas.authn.okta" %}
-
-```properties
-# cas.authn.okta.name=
-# cas.authn.okta.order=  
-# cas.authn.okta.credential-criteria=
-
-# cas.authn.okta.organization-url=     
-
-# cas.authn.okta.connection-timeout=5000
-# cas.authn.okta.proxy-username=
-# cas.authn.okta.proxy-password=
-# cas.authn.okta.proxy-host=
-# cas.authn.okta.proxy-port=
-```
-
-## Microsoft Azure Active Directory Authentication
-
-To learn more about this topic, [please review this guide](../installation/Azure-ActiveDirectory-Authentication.html).
-
-{% include {{ version }}/principal-transformation.md configKey="cas.authn.azure-active-directory" %}
-
-{% include {{ version }}/password-encoding.md configKey="cas.authn.azure-active-directory" %}
-
-```properties
-# cas.authn.azure-active-directory.name=
-# cas.authn.azure-active-directory.order=
-# cas.authn.azure-active-directory.credential-criteria=
-
-# cas.authn.azure-active-directory.client-id=
-# cas.authn.azure-active-directory.login-url=https://login.microsoftonline.com/common/
-# cas.authn.azure-active-directory.resource=https://graph.microsoft.com/
-```
-
-## SOAP Authentication
-
-To learn more about this topic, [please review this guide](../installation/SOAP-Authentication.html).
-
-{% include {{ version }}/principal-transformation.md configKey="cas.authn.soap" %}
-
-{% include {{ version }}/password-encoding.md configKey="cas.authn.soap" %}
-
-```properties
-# cas.authn.soap.name=
-# cas.authn.soap.order=
-# cas.authn.soap.url=
-```
 
 ## Remote Address Authentication
 
@@ -1577,27 +1223,6 @@ To learn more about this topic, [please review this guide](../installation/Remot
 # cas.authn.remote-address.ip-address-range=
 # cas.authn.remote-address.name=
 # cas.authn.remote-address.order=
-```
-
-
-## Accept Users Authentication
-
-<div class="alert alert-warning"><strong>Default Credentials</strong><p>To test the default authentication scheme in CAS,
-use <strong>casuser</strong> and <strong>Mellon</strong> as the username and password respectively. These are automatically
-configured via the static authentication handler, and <strong>MUST</strong> be removed from the configuration
-prior to production rollouts.</p></div>
-
-{% include {{ version }}/principal-transformation.md configKey="cas.authn.accept" %}
-
-{% include {{ version }}/password-policy.md configKey="cas.authn.accept.password-policy" %}
-
-{% include {{ version }}/password-encoding.md configKey="cas.authn.accept" %}
-
-```properties
-# cas.authn.accept.users=
-# cas.authn.accept.name=
-# cas.authn.accept.enabled=true
-# cas.authn.accept.credential-criteria=
 ```
 
 ## X509 Authentication
@@ -1772,35 +1397,6 @@ Apache HTTPD, Nginx, Haproxy, BigIP F5, etc.
 See LDAP attribute repositories [here](Configuration-Properties.html#ldap) to fetch additional 
 LDAP attributes using the principal extracted from the X509 certificate. 
 
-## Syncope Authentication
-
-To learn more about this topic, [please review this guide](../installation/Syncope-Authentication.html).
-
-{% include {{ version }}/principal-transformation.md configKey="cas.authn.syncope" %}
-
-{% include {{ version }}/password-encoding.md configKey="cas.authn.syncope" %}
-
-```properties
-# cas.authn.syncope.domain=Master
-# cas.authn.syncope.url=https://idm.instance.org/syncope
-# cas.authn.syncope.name=
-```
-
-## Shiro Authentication
-
-To learn more about this topic, [please review this guide](../installation/Shiro-Authentication.html).
-
-{% include {{ version }}/principal-transformation.md configKey="cas.authn.shiro" %}
-
-{% include {{ version }}/password-encoding.md configKey="cas.authn.shiro" %}
-
-```properties
-# cas.authn.shiro.required-permissions=value1,value2,...
-# cas.authn.shiro.required-roles=value1,value2,...
-# cas.authn.shiro.location=classpath:shiro.ini
-# cas.authn.shiro.name=
-```
-
 ## Trusted Authentication
 
 To learn more about this topic, [please review this guide](../installation/Trusted-Authentication.html). 
@@ -1812,12 +1408,6 @@ To learn more about this topic, [please review this guide](../installation/Trust
 # cas.authn.trusted.order=
 # cas.authn.trusted.remote-principal-header=
 ```
-
-## WS-Fed Delegated Authentication
-
-To learn more about this topic, [please review this guide](../integration/ADFS-Integration.html).
-
-{% include {{ version }}/wsfed-delegated-authentication.md configKey="cas.authn.wsfed[0]" %}
 
 ## Multifactor Authentication
 
@@ -2181,129 +1771,6 @@ To learn more about this topic, [please review this guide](../mfa/FIDO2-WebAuthn
 
 {% include {{ version }}/rest-integration.md configKey="cas.authn.mfa.web-authn.rest" %}
 
-### FIDO U2F
-
-To learn more about this topic, [please review this guide](../mfa/FIDO-U2F-Authentication.html).
-
-```properties
-# cas.authn.mfa.u2f.rank=0
-# cas.authn.mfa.u2f.name=
-# cas.authn.mfa.u2f.order=
-
-# Expiry of U2F device registration requests:
-# cas.authn.mfa.u2f.expire-registrations=30
-# cas.authn.mfa.u2f.expire-registrations-time-unit=SECONDS
-
-# Expiry of U2F devices since registration, independent of last time used:
-# cas.authn.mfa.u2f.expire-devices=30
-# cas.authn.mfa.u2f.expire-devices-time-unit=DAYS
-```
-
-{% include {{ version }}/mfa-bypass-configuration.md configKey="cas.authn.mfa.u2f" %}
-
-{% include {{ version }}/signing-encryption.md configKey="cas.authn.mfa.u2f" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
-
-
-### FIDO U2F JSON
-
-```properties
-# cas.authn.mfa.u2f.json.location=file:///etc/cas/config/u2fdevices.json
-```
-
-### FIDO U2F Cleaner
-
-{% include {{ version }}/job-scheduling.md configKey="cas.authn.mfa.u2f.cleaner`" %}
-
-### FIDO U2F CouchDb
-
-{% include {{ version }}/couchdb-integration.md configKey="cas.authn.mfa.u2f" %}
-
-### FIDO U2F MongoDb
-
-{% include {{ version }}/mongodb-configuration.md configKey="cas.authn.mfa.u2f" %}
-
-### FIDO U2F DynamoDb
-
-{% include {{ version }}/dynamodb-configuration.md configKey="cas.authn.mfa.u2f" %}
-
-### FIDO U2F Redis
-
-{% include {{ version }}/redis-configuration.md configKey="cas.authn.mfa.u2f" %}
-
-### FIDO U2F JPA
-
-{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.mfa.u2f.jpa" %}
-
-### FIDO U2F REST
-
-{% include {{ version }}/rest-integration.md configKey="cas.authn.mfa.u2f.rest" %}
-
-### FIDO U2F Groovy
-
-```properties
-# cas.authn.mfa.u2f.groovy.location=file:/etc/cas/config/fido.groovy
-```
-
-### Swivel Secure
-
-To learn more about this topic, [please review this guide](../mfa/SwivelSecure-Authentication.html).
-
-```properties
-# cas.authn.mfa.swivel.swivel-turing-image-url=https://turing.example.edu/TURingImage
-# cas.authn.mfa.swivel.swivel-url=https://swivel.example.org/pinsafe
-# cas.authn.mfa.swivel.shared-secret=Th3Sh@r3d$ecret
-# cas.authn.mfa.swivel.ignore-ssl-errors=false
-# cas.authn.mfa.swivel.rank=0
-# cas.authn.mfa.swivel.name=
-# cas.authn.mfa.swivel.order=
-```
-
-{% include {{ version }}/mfa-bypass-configuration.md configKey="cas.authn.mfa.swivel" %}
-
-### Authy
-
-To learn more about this topic, [please review this guide](../mfa/AuthyAuthenticator-Authentication.html).
-
-```properties
-# cas.authn.mfa.authy.api-key=
-# cas.authn.mfa.authy.api-url=
-# cas.authn.mfa.authy.phone-attribute=phone
-# cas.authn.mfa.authy.mail-attribute=mail
-# cas.authn.mfa.authy.country-code=1
-# cas.authn.mfa.authy.force-verification=true
-# cas.authn.mfa.authy.trusted-device-enabled=false
-# cas.authn.mfa.authy.name=
-# cas.authn.mfa.authy.order=
-```
-
-{% include {{ version }}/mfa-bypass-configuration.md configKey="cas.authn.mfa.authy" %}
-
-### Acceptto
-
-To learn more about this topic, [please review this guide](../mfa/Acceptto-Authentication.html).
-
-```properties
-# cas.authn.mfa.acceptto.application-id=
-# cas.authn.mfa.acceptto.secret=
-# cas.authn.mfa.acceptto.organization-id=
-# cas.authn.mfa.acceptto.organization-secret=
-
-# cas.authn.mfa.acceptto.authn-selection-url=https://mfa.acceptto.com/mfa/index
-# cas.authn.mfa.acceptto.api-url=https://mfa.acceptto.com/api/v9/
-# cas.authn.mfa.acceptto.message=Do you want to login via CAS?
-# cas.authn.mfa.acceptto.timeout=120
-# cas.authn.mfa.acceptto.email-attribute=mail    
-# cas.authn.mfa.acceptto.group-attribute=    
-
-# cas.authn.mfa.acceptto.registration-api-url=https://mfa.acceptto.com/api/integration/v1/mfa/authenticate
-# cas.authn.mfa.acceptto.registration-api-public-key=file:/path/to/publickey.pem
-
-# cas.authn.mfa.acceptto.name=
-# cas.authn.mfa.acceptto.order=
-# cas.authn.mfa.acceptto.rank=0
-```
-
-{% include {{ version }}/mfa-bypass-configuration.md configKey="cas.authn.mfa.acceptto" %}
 
 ## SAML Core
 
@@ -2488,76 +1955,6 @@ A given attribute that is to be encoded in the final SAML response may contain a
 # cas.authn.saml-idp.profile.sso-post-simple-sign.url-decode-redirect-request=false
 ```
 
-## SAML SPs
-
-Allow CAS to register and enable a number of built-in SAML service provider integrations.
-To learn more about this topic, [please review this guide](../integration/Configuring-SAML-SP-Integrations.html).
-
-<div class="alert alert-warning"><strong>Remember</strong><p>SAML2 service provider integrations listed 
-here simply attempt to automate CAS configuration based on known and documented integration 
-guidelines and recipes provided by the service provider owned by the vendor. These 
-recipes can change and break CAS over time.</p></div>
-
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.gitlab" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.hipchat" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.dropbox" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.openAthens" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.egnyte" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.ever-bridge" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.simplicity" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.app-dynamics" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.yuja" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.simplicity" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.new-relic" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.sserca" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.cherWell" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.famis" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.bynder" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.web-advisor" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.adobe-cloud" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.sans-sth" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.easy-iep" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.infinite-campus" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.slack" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.zendesk" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.gartner" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.arc-g-i-s" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.office365" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.sa-manage" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.salesforce" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.workday" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.academic-works" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.zoom" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.evernote" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.tableau" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.asana" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.box" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.service-now" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.net-partner" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.webex" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.in-common" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.amazon" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.concur-solutions" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.poll-everywhere" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.docuSign" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.safari-online" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.black-baud" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.give-campus" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.warp-wire" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.rocket-chat" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.arms-software" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.top-hat" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.academic-health-plans" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.confluence" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.jira" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.crash-plan" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.emma" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.qualtrics" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.neoGov" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.zimbra" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.pager-duty" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.cranium-cafe" %}
-{% include {{ version }}/saml2-sp-integration.md configKey="cas.saml-sp.cccco" %}                        
 
 ## OpenID Connect
 
@@ -2836,39 +2233,7 @@ cas.authn.pac4j.saml-discovery.resource[0].location=file:/etc/cas/config/json-fe
 
 ## WS Federation
 
-Allow CAS to act as an identity provider and security token service
-to support the WS-Federation protocol.
-
-To learn more about this topic, [please review this guide](../protocol/WS-Federation-Protocol.html)
-
-```properties
-# cas.authn.wsfed-idp.idp.realm=urn:org:apereo:cas:ws:idp:realm-CAS
-# cas.authn.wsfed-idp.idp.realm-name=CAS
-
-# cas.authn.wsfed-idp.sts.signing-keystore-file=/etc/cas/config/ststrust.jks
-# cas.authn.wsfed-idp.sts.signing-keystore-password=storepass
-# cas.authn.wsfed-idp.sts.encryption-keystore-file=/etc/cas/config/stsencrypt.jks
-# cas.authn.wsfed-idp.sts.encryption-keystore-password=storepass
-
-# cas.authn.wsfed-idp.sts.subject-name-id-format=unspecified
-# cas.authn.wsfed-idp.sts.subject-name-qualifier=http://cxf.apache.org/sts
-# cas.authn.wsfed-idp.sts.encrypt-tokens=true
-# cas.authn.wsfed-idp.sts.sign-tokens=true
-
-# cas.authn.wsfed-idp.sts.conditions-accept-client-lifetime=true
-# cas.authn.wsfed-idp.sts.conditions-fail-lifetime-exceedance=false
-# cas.authn.wsfed-idp.sts.conditions-future-time-to-live=PT60S
-# cas.authn.wsfed-idp.sts.conditions-lifetime=PT30M
-# cas.authn.wsfed-idp.sts.conditions-max-lifetime=PT12H
-
-# cas.authn.wsfed-idp.sts.realm.keystore-file=/etc/cas/config/stscasrealm.jks
-# cas.authn.wsfed-idp.sts.realm.keystore-password=storepass
-# cas.authn.wsfed-idp.sts.realm.keystore-alias=realmcas
-# cas.authn.wsfed-idp.sts.realm.key-password=cas
-# cas.authn.wsfed-idp.sts.realm.issuer=CAS
-```
-
-{% include {{ version }}/signing-encryption.md configKey="cas.authn.wsfed-idp.sts" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
+{% include {{ version }}/wsfed-configuration.md %}
 
 
 ## OAuth2
@@ -2947,29 +2312,7 @@ To learn more about this topic, [please review this guide](../installation/OAuth
 
 {% include {{ version }}/rdbms-configuration.md configKey="cas.authn.uma.resource-set.jpa" %}
 
-## Localization
 
-To learn more about this topic, [please review this guide](../ux/User-Interface-Customization-Localization.html).
-
-```properties
-# cas.locale.param-name=locale
-# cas.locale.default-value=en
-```
-
-{% include {{ version }}/cookie-configuration.md configKey="cas.locale.cookie" %}
-
-## Global SSO Behavior
-
-To learn more about this topic, [please review this guide](../installation/Configuring-SSO.html).
-
-```properties
-# cas.sso.allow-missing-service-parameter=true
-# cas.sso.create-sso-cookie-on-renew-authn=true
-# cas.sso.proxy-authn-enabled=true
-# cas.sso.renew-authn-enabled=true
-# cas.sso.sso-enabled=true
-# cas.sso.required-service-pattern=
-```
 
 ## Warning Cookie
 
@@ -3029,135 +2372,7 @@ the last resort in getting an integration to work...maybe not even then.</p></di
 
 {% include {{ version }}/signing-encryption.md configKey="cas.clearpass" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
 
-## Message Bundles
 
-To learn more about this topic, [please review this guide](../ux/User-Interface-Customization-Localization.html).
-The baseNames are message bundle base names representing files that either end in .properties or _xx.properties where xx is a country locale code. The commonNames are not actually message bundles but they are properties files that are merged together and contain keys that are only used if they are not found in the message bundles. Keys from the later files in the list will be preferred over keys from the earlier files.
-
-```properties
-# cas.message-bundle.encoding=UTF-8
-# cas.message-bundle.fallback-system-locale=false
-# cas.message-bundle.cache-seconds=180
-# cas.message-bundle.use-code-message=true
-# cas.message-bundle.base-names=classpath:custom_messages,classpath:messages
-# cas.message-bundle.common-names=classpath:/common_messages.properties,file:/etc/cas/config/common_messages.properties
-```
-
-## Audits
-
-Control how audit messages are formatted.
-To learn more about this topic, [please review this guide](../installation/Audits.html).
-
-```properties 
-# cas.audit.enabled=true
-# cas.audit.ignore-audit-failures=false
-# cas.audit.app-code=CAS
-# cas.audit.number-of-days-in-history=30
-# cas.audit.include-validation-assertion=false
-# cas.audit.alternate-server-addr-header-name=
-# cas.audit.alternate-client-addr-header-name=X-Forwarded-For
-# cas.audit.use-server-host-address=false  
-
-# cas.audit.supported-actions=*
-# cas.audit.excluded-actions=
-```
-
-### Slf4j Audits
-
-Route audit logs to the Slf4j logging system which might in turn store audit logs in a file or any other
-destination that the logging system supports.
-
-The logger name is fixed at `org.apereo.inspektr.audit.support`.
-
-```xml
-<Logger name="org.apereo.inspektr.audit.support" level="info">
-    <!-- Route the audit data to any number of appenders supported by the logging framework. -->
-</Logger>
-```
-
-<div class="alert alert-info"><strong></strong><p>Audit records routed to the Slf4j log are not
-able to read the audit data back given the abstraction layer between CAS, the logging system
-and any number of log appenders that might push data to a variety of systems.</p></div>
-
-```properties
-# cas.audit.slf4j.audit-format=DEFAULT|JSON
-# cas.audit.slf4j.singleline-separator=|
-# cas.audit.slf4j.use-single-line=false
-# cas.audit.slf4j.enabled=true
-```
-
-### MongoDb Audits
-
-Store audit logs inside a MongoDb database.
-
-{% include {{ version }}/mongodb-configuration.md configKey="cas.audit" %}
-
-```properties
-# cas.audit.mongo.asynchronous=true
-```
-
-### Redis Audits
-
-Store audit logs inside a Redis database.
-
-{% include {{ version }}/redis-configuration.md configKey="cas.audit" %}
-
-
-```properties
-# cas.audit.redis.asynchronous=true
-```
-
-### CouchDb Audits
-
-Store audit logs inside a CouchDb database.
-
-{% include {{ version }}/couchdb-integration.md configKey="cas.audit" %}
-
-### Couchbase Audits
-
-Store audit logs inside a Couchbase database.
-
-{% include {{ version }}/couchbase-configuration.md configKey="cas.audit.couchbase" %}
-
-```properties
-# cas.audit.couchbase.asynchronous=true
-```
-
-### DynamoDb Audits
-
-Store audit logs inside a DynamoDb database.
-
-{% include {{ version }}/dynamodb-configuration.md configKey="cas.audit" %}
-
-```properties
-# cas.audit.dynamo-db.asynchronous=true
-```
-
-### Database Audits
-
-Store audit logs inside a database. 
-
-{% include {{ version }}/rdbms-configuration.md configKey="cas.audit.jdbc" %}
-
-```properties
-# cas.audit.jdbc.asynchronous=true
-# cas.audit.jdbc.max-age-days=180
-# cas.audit.jdbc.column-length=100
-# cas.audit.jdbc.select-sql-query-template=
-# cas.audit.jdbc.date-formatter-pattern=
-```
-
-{% include {{ version }}/job-scheduling.md configKey="cas.audit.jdbc" %}
-
-### REST Audits
-
-Store audit logs inside a database. 
-
-{% include {{ version }}/rest-integration.md configKey="cas.audit.rest" %}
-
-```properties
-# cas.audit.rest.asynchronous=true
-```
 
 ## Sleuth Distributed Tracing
 
@@ -3192,6 +2407,7 @@ Decide how CAS should monitor the generation of STs.
 # cas.monitor.st.warn.threshold=10
 # cas.monitor.st.warn.evictionThreshold=0
 ```
+
 ### Load 
 
 Decide how CAS should monitor system load of a CAS Server.  
@@ -3295,65 +2511,6 @@ The default options are available for hostname verification:
 
 
 
-### CosmosDb Service Registry
-
-To learn more about this topic, [please review this guide](../services/CosmosDb-Service-Management.html).
-
-```properties
-# cas.service-registry.cosmos-db.uri=
-# cas.service-registry.cosmos-db.key=
-# cas.service-registry.cosmos-db.database=
-# cas.service-registry.cosmos-db.collection=
-# cas.service-registry.cosmos-db.throughput=10000
-# cas.service-registry.cosmos-db.drop-collection=true
-# cas.service-registry.cosmos-db.consistency-level=Session
-```
-
-
-
-
-### JMS Ticket Registry
-
-To learn more about this topic, [please review this guide](../ticketing/Messaging-JMS-Ticket-Registry.html).
-
-{% include {{ version }}/signing-encryption.md configKey="cas.ticket.registry.jms" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
-
-```properties
-# cas.ticket.registry.jms.id=
-```
-
-#### JMS Ticket Registry ActiveMQ
-
-```properties
-# spring.activemq.broker-url=tcp://192.168.1.210:9876
-# spring.activemq.user=admin
-# spring.activemq.password=secret
-# spring.activemq.pool.enabled=true
-# spring.activemq.pool.max-connections=50
-# spring.activemq.packages.trust-all=false
-# spring.activemq.packages.trusted=org.apereo.cas
-```
-
-#### JMS Ticket Registry Artemis
-
-```properties
-# spring.artemis.mode=native
-# spring.artemis.host=192.168.1.210
-# spring.artemis.port=9876
-# spring.artemis.user=admin
-# spring.artemis.password=secret
-```
-
-#### JMS Ticket Registry JNDI
-
-```properties
-# spring.jms.jndi-name=java:/MyConnectionFactory
-```
-
-
-## Protocol Ticket Security
-
-{% include {{ version }}/signing-encryption.md configKey="cas.ticket" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
 
 ## Service Tickets Behavior
 
@@ -3457,18 +2614,6 @@ The hard timeout policy provides for finite ticket lifetime as measured from the
 # cas.ticket.tgt.hard-timeout.time-to-kill-in-seconds=28800
 ```
 
-## Google reCAPTCHA Integration
-
-Display Google's reCAPTCHA widget on the CAS login page.
-
-```properties
-# cas.google-recaptcha.enabled=true
-# cas.google-recaptcha.verify-url=https://www.google.com/recaptcha/api/siteverify
-# cas.google-recaptcha.site-key=
-# cas.google-recaptcha.secret=
-# cas.google-recaptcha.invisible=
-# cas.google-recaptcha.position=bottomright
-```
 
 ## Google Analytics
 
@@ -3631,151 +2776,6 @@ To learn more about this topic, [please review this guide](../protocol/REST-Prot
 # cas.rest.tls-client-auth=
 ```
 
-## Metrics
-
-To learn more about this topic, [please review this guide](../monitoring/Monitoring-Statistics.html).
-
-### Atlas
-
-By default, metrics are exported to Atlas running on your local machine. The location of the Atlas server to use can be provided using:
-
-```properties
-# management.metrics.export.atlas.uri=http://atlas.example.com:7101/api/v1/publish
-```
-
-### Datadog
-
-Datadog registry pushes metrics to `datadoghq` periodically. To export metrics to Datadog, your API key must be provided:
-
-```properties
-# management.metrics.export.datadog.api-key=YOUR_KEY
-```
-
-You can also change the interval at which metrics are sent to Datadog:
-
-```properties
-# management.metrics.export.datadog.step=30s
-```
-
-### Ganglia
-
-By default, metrics are exported to Ganglia running on your local machine. The Ganglia server host and port to use can be provided using:
-
-```properties
-# management.metrics.export.ganglia.host=ganglia.example.com
-# management.metrics.export.ganglia.port=9649
-```
-
-### Graphite
-
-By default, metrics are exported to Graphite running on your local machine. The Graphite server host and port to use can be provided using:
-
-```properties
-# management.metrics.export.graphite.host=graphite.example.com
-# management.metrics.export.graphite.port=9004
-```
-
-### InfluxDb
-
-By default, metrics are exported to Influx running on your local machine. The location of the Influx server to use can be provided using:
-
-```properties
-# management.metrics.export.influx.uri=http://influx.example.com:8086
-```
-### JMX
-
-Micrometer provides a hierarchical mapping to JMX, primarily as a cheap and portable way to view metrics locally.
-
-### New Relic
-
-New Relic registry pushes metrics to New Relic periodically. To export metrics to New Relic, your API key and account id must be provided:
-
-```properties
-# management.metrics.export.newrelic.api-key=YOUR_KEY
-# management.metrics.export.newrelic.account-id=YOUR_ACCOUNT_ID
-```
- 
-You can also change the interval at which metrics are sent to New Relic:
-
-```properties
-# management.metrics.export.newrelic.step=30s
-```
-
-### Prometheus
-
-Prometheus expects to scrape or poll individual app instances for metrics. Spring Boot provides an actuator endpoint 
-available at `/actuator/prometheus` to present a Prometheus scrape with the appropriate format.
-
-Here is an example `scrape_config` to add to `prometheus.yml`:
-
-```yaml
-scrape_configs:
-  - job_name: 'spring'
-    metrics_path: '/actuator/prometheus'
-    static_configs:
-      - targets: ['HOST:PORT']
-``` 
-
-### SignalFx
-
-SignalFx registry pushes metrics to SignalFx periodically. To export metrics to SignalFx, your access token must be provided:
-
-```properties
-# management.metrics.export.signalfx.access-token=YOUR_ACCESS_TOKEN
-```
-
-You can also change the interval at which metrics are sent to SignalFx:
-
-```properties
-# management.metrics.export.signalfx.step=30s
-```
-
-Micrometer ships with a simple, in-memory backend that is automatically used as a fallback if no other registry is configured. 
-This allows you to see what metrics are collected in the metrics endpoint.
-
-The in-memory backend disables itself as soon as you’re using any of the other available backend. You can also disable it explicitly:
-
-```properties
-# management.metrics.export.simple.enabled=false
-```
-
-### StatsD
-
-The StatsD registry pushes metrics over UDP to a StatsD agent eagerly. By default, 
-metrics are exported to a StatsD agent running on your local machine. The StatsD agent host and port to use can be provided using:
-
-```properties
-# management.metrics.export.statsd.host=statsd.example.com
-# management.metrics.export.statsd.port=9125
-```
-
-You can also change the StatsD line protocol to use (default to Datadog):
-
-```properties
-# management.metrics.export.statsd.flavor=etsy
-```
-
-### Wavefront
-
-Wavefront registry pushes metrics to Wavefront periodically. If you are exporting metrics to 
-Wavefront directly, your API token must be provided:
-
-```properties
-# management.metrics.export.wavefront.api-token=YOUR_API_TOKEN
-```
-
-Alternatively, you may use a Wavefront sidecar or an internal proxy set up in your environment that 
-forwards metrics data to the Wavefront API host:
-
-```properties
-# management.metrics.export.uri=proxy://localhost:2878
-```
-
-You can also change the interval at which metrics are sent to Wavefront:
-
-```properties
-# management.metrics.export.wavefront.step=30s
-```
 
 ## SAML Metadata UI
 
@@ -3794,38 +2794,6 @@ To learn more about this topic, [please review this guide](../integration/Shibbo
 
 {% include {{ version }}/job-scheduling.md configKey="cas.saml-metadata-ui" %}
 
-## Eureka Service Discovery
-
-To learn more about this topic, [please review this guide](../installation/Service-Discovery-Guide-Eureka.html).
-
-```properties
-# eureka.client.service-url.default-zone=${EUREKA_SERVER_HOST:http://localhost:8761}/eureka/
-# eureka.client.enabled=true
-# eureka.instance.status-page-url=${cas.server.prefix}/actuator/info
-# eureka.instance.health-check-url=${cas.server.prefix}/actuator/health
-# eureka.instance.home-page-url=${cas.server.prefix}/
-# eureka.client.healthcheck.enabled=true
-
-# spring.cloud.config.discovery.enabled=false
-```
-
-## Consul Service Discovery
-
-To learn more about this topic, [please review this guide](../installation/Service-Discovery-Guide-Consul.html).
-
-```properties
-# spring.cloud.consul.port=8500
-# spring.cloud.consul.enabled=true
-# spring.cloud.consul.host=localhost
-
-# spring.cloud.consul.discovery.health-check-path=<health-endpoint-url>
-# spring.cloud.consul.discovery.health-check-interval=15s
-# spring.cloud.consul.discovery.instance-id=${spring.application.name}:${random.value}
-
-# spring.cloud.consul.discovery.heartbeat.enabled=true
-# spring.cloud.consul.discovery.heartbeat.ttl-value=60
-# spring.cloud.consul.discovery.heartbeat.ttl-unit=s
-```
 
 ## Provisioning
 

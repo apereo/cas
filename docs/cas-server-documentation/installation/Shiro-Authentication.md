@@ -5,11 +5,9 @@ category: Authentication
 ---
 {% include variables.html %}
 
-
-
 # Shiro Authentication
-CAS support handling the authentication event via [Apache Shiro](http://shiro.apache.org/).
 
+CAS support handling the authentication event via [Apache Shiro](http://shiro.apache.org/).
 
 ## Components
 
@@ -25,7 +23,11 @@ of the authentication, so that in their absence, the authentication may fail.
 While by default these settings are optional, you may configure roles and/or permissions
 for the given authentication handler to check their presence and report back.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#shiro-authentication).
+{% include {{ version }}/principal-transformation.md configKey="cas.authn.shiro" %}
+
+{% include {{ version }}/password-encoding.md configKey="cas.authn.shiro" %}
+
+{% include {{ version }}/shiro-authentication-configuration.md %}
 
 Sample `shiro.ini` that needs be placed on the classpath based on the example above:
 

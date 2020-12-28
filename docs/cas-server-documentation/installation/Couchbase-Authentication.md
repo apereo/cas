@@ -14,7 +14,13 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-couchbase-authentication" %}
 
-The authentication strategy is able to fetch user attributes as part of the authentication event. To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#couchbase-authentication).
+{% include {{ version }}/principal-transformation.md configKey="cas.authn.couchbase" %}
+
+{% include {{ version }}/password-encoding.md configKey="cas.authn.couchbase" %}
+
+{% include {{ version }}/couchbase-configuration.md configKey="cas.authn.couchbase" %}
+
+{% include {{ version }}/couchbase-authentication-configuration.md %}
 
 ## Couchbase Principal Attributes
 

@@ -49,5 +49,12 @@ specify additional account details mostly useful for development and basic testi
 }
 ```
 
-The accepted statuses are `OK`, `LOCKED`, `DISABLED`, `EXPIRED` and `MUST_CHANGE_PASSWORD`. To see the 
-relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#json-authentication).
+The accepted statuses are `OK`, `LOCKED`, `DISABLED`, `EXPIRED` and `MUST_CHANGE_PASSWORD`. 
+
+{% include {{ version }}/principal-transformation.md configKey="cas.authn.json" %}
+
+{% include {{ version }}/password-encoding.md configKey="cas.authn.json" %}
+
+{% include {{ version }}/password-policy.md configKey="cas.authn.json.password-policy" %}
+
+{% include {{ version }}/json-authentication-configuration.md %}

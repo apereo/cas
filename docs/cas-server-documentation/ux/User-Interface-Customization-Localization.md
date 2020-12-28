@@ -41,11 +41,20 @@ For an accurate and complete list of localized messages, always refer to the Eng
 
 ## Configuration
 
-All message bundles are marked under `messages_xx.properties` files at `src/main/resources`. The default language bundle is for the
-English language and is thus called `messages.properties`. If there are any custom messages that need to be presented into views,
+All message bundles are marked under `messages_xx.properties` files at `src/main/resources`.
+The default language bundle is for the
+English language and is thus called `messages.properties`. If there are any custom 
+messages that need to be presented into views,
 they may also be formatted under `custom_messages.properties` files.
 
 In the event that the code is not found in the activated resource bundle, the code itself will be used verbatim.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#localization)
-and [this guide](../configuration/Configuration-Properties.html#message-bundles).
+### Localization
+
+{% include {{ version }}/localization-configuration.md %}
+
+{% include {{ version }}/cookie-configuration.md configKey="cas.locale.cookie" %}
+
+### Message Bundles
+
+{% include {{ version }}/messagebundles-configuration.md %}
