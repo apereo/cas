@@ -8,8 +8,11 @@ category: Multifactor Authentication
 
 # YubiKey Authentication
 
-Yubico is a cloud-based service that enables strong, easy-to-use and affordable two-factor authentication with one-time passwords through their flagship product, YubiKey. Once Yubico `clientId` and `secretKey` are obtained, then the 
-configuration options available to use YubiKey devices as a primary authentication source that CAS server could use to authenticate users.
+Yubico is a cloud-based service that enables strong, easy-to-use and affordable 
+two-factor authentication with one-time passwords through their 
+flagship product, YubiKey. Once Yubico `client-id` and `secret-key` 
+are obtained, then the configuration options available to use YubiKey devices as a primary authentication 
+source that CAS server could use to authenticate users.
 
 To configure YubiKey accounts and obtain API keys, [refer to the documentation](https://upgrade.yubico.com/getapikey/).
 
@@ -26,6 +29,8 @@ The following endpoints are provided by CAS:
 | `yubikeyAccountRepository`    | Manage and control [Google Authenticator account records](YubiKey-Authentication.html). A `GET` operation produces a list of all account records. A `DELETE` operation will delete all account records. A `GET` operation produces with a parameter selector of `/{username}` will list the record assigned to the user. A `DELETE` operation produces with a parameter selector of `/{username}` will remove the record assigned to the user.
 
 ## Configuration
+
+{% include {{ version }}/yubikey-configuration.md %}
 
 {% include {{ version }}/signing-encryption.md configKey="cas.authn.mfa.yubikey" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
 
@@ -49,6 +54,8 @@ The JSON structure is a map of user id to yubikey public id representing any par
 }
 ```
 
+{% include {{ version }}/json-yubikey-configuration.md %}
+
 ### REST
 
 {% include {{ version }}/rest-integration.md configKey="cas.authn.mfa.yubikey.rest" %}
@@ -69,6 +76,8 @@ The following endpoints are expected to be available and implemented by the REST
 Registration records may be specified statically via CAS settings in form of a map that links registered usernames 
 with the public id of the YubiKey device. 
 
+{% include {{ version }}/allowed-yubikey-configuration.md %}
+
 ### JPA
 
 Support is enabled by including the following dependencies in the WAR overlay:
@@ -77,7 +86,8 @@ Support is enabled by including the following dependencies in the WAR overlay:
 
 {% include {{ version }}/rdbms-configuration.md configKey="cas.authn.mfa.yubikey.jpa" %}
 
-The expected database schema that is automatically created and configured by CAS contains a single table as `YubiKeyAccount` with the following fields:
+The expected database schema that is automatically created and configured 
+by CAS contains a single table as `YubiKeyAccount` with the following fields:
 
 | Field              | Description
 |--------------------------------------------------------------------------------------
@@ -135,7 +145,6 @@ The structure of this collection is as follows:
 | `publicId`         | The public identifier/key of the device used for authentication.
 | `username`         | The username whose device is registered.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#yubikey).
 
 ### Custom
 
@@ -177,8 +186,12 @@ public class MyYubiKeyConfiguration {
 }
 ```
 
-[See this guide](../configuration/Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.
+[See this guide](../configuration/Configuration-Management-Extensions.html) to learn more 
+about how to register configurations into the CAS runtime.
 
 ## REST Protocol Credential Extraction 
 
-In the event that the [CAS REST Protocol](../protocol/REST-Protocol.html) is turned on, a special credential extractor is injected into the REST authentication engine in order to recognize YubiKey credentials and authenticate them as part of the REST request. The expected parameter name in the request body is `yubikeyotp`.
+In the event that the [CAS REST Protocol](../protocol/REST-Protocol.html) is turned on, 
+a special credential extractor is injected into the REST authentication engine in 
+order to recognize YubiKey credentials and authenticate them as part of the REST 
+request. The expected parameter name in the request body is `yubikeyotp`.
