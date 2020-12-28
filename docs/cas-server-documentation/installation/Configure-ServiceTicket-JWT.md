@@ -60,7 +60,7 @@ JWT support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-token-tickets" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#jwt-tickets).
+{% include {{ version }}/jwt-tickets-configuration.md %}
 
 ### Register Clients
 
