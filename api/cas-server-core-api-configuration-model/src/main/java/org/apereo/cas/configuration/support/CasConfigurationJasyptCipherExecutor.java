@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
+import org.jasypt.iv.RandomIvGenerator;
 import org.springframework.core.env.Environment;
 
 import java.security.Security;
@@ -26,23 +27,12 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
     public static final String ENCRYPTED_VALUE_PREFIX = "{cas-cipher}";
 
     /**
-     * These algorithms don't work with Jasypt 1.9.2.
+     * These algorithms don't work with Jasypt 1.9.3 (empty for now).
      */
-    private static final String[] ALGORITHM_BLACKLIST = new String[]{
-        "PBEWITHHMACSHA1ANDAES_128",
-        "PBEWITHHMACSHA1ANDAES_256",
-        "PBEWITHHMACSHA224ANDAES_128",
-        "PBEWITHHMACSHA224ANDAES_256",
-        "PBEWITHHMACSHA256ANDAES_128",
-        "PBEWITHHMACSHA256ANDAES_256",
-        "PBEWITHHMACSHA384ANDAES_128",
-        "PBEWITHHMACSHA384ANDAES_256",
-        "PBEWITHHMACSHA512ANDAES_128",
-        "PBEWITHHMACSHA512ANDAES_256"
-    };
+    private static final String[] ALGORITHM_BLACKLIST = new String[]{ };
 
     /**
-     * List version of blocked algorithms (due to Jasypt 1.9.2 bug).
+     * List version of blocked algorithms.
      */
     public static final Set<String> ALGORITHM_BLACKLIST_SET = Set.of(ALGORITHM_BLACKLIST);
 
@@ -68,6 +58,8 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
         setProviderName(pName);
         val iter = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.ITERATIONS);
         setKeyObtentionIterations(iter);
+        val iv = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.IV);
+        setInitializationVector(Boolean.parseBoolean(iv));
     }
 
     /**
@@ -106,6 +98,17 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
         if (StringUtils.isNotBlank(alg)) {
             LOGGER.debug("Configured Jasypt algorithm [{}]", alg);
             jasyptInstance.setAlgorithm(alg);
+        }
+    }
+
+    /**
+     * Since Jasypt v1.9.3 PBEWithDigestAndAES algorithms (from the JCE Provider of JAVA 8) are supported.
+     * They require an initialization vector (IV) parameter
+     * http://www.jasypt.org/faq.html#i-receive-null-when-encrypting-decrypting
+     */
+    public void setInitializationVector(boolean useIV) {
+        if (useIV) {
+            jasyptInstance.setIvGenerator(new RandomIvGenerator());
         }
     }
 
@@ -255,7 +258,11 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
         /**
          * Jasypt password to use.
          */
-        PASSWORD("cas.standalone.configurationSecurity.psw", null);
+        PASSWORD("cas.standalone.configurationSecurity.psw", null),
+        /**
+         * Use (or not) Jasypt Initialization Vector (IV).
+         */
+        IV("cas.standalone.configurationSecurity.iv", "false");
 
         /**
          * The Name.
