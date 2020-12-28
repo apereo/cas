@@ -8,15 +8,25 @@ category: User Interface
 
 # Dynamic Themes
 
-With the introduction of [Service Management application](../services/Service-Management.html), deployers are now able to switch the themes based on 
-different services. For example, you may want to have different login screens (different styles) for staff applications and student applications, or you want to show two 
+With the introduction of [Service Management application](../services/Service-Management.html), deployers 
+are now able to switch the themes based on 
+different services. For example, you may want to have different login screens (different styles) 
+for staff applications and student applications, or you want to show two 
 layouts for day time and night time. This document could help you go through the basic settings to achieve this.
 
 ## Static Themes
 
-CAS is configured to decorate views based on the `theme` property of a given registered service in the Service Registry. The theme that is activated via this method will still preserve the default views for CAS but will apply decorations such as CSS and Javascript to the views. The physical structure of views cannot be modified via this method.
+CAS is configured to decorate views based on the `theme` property of a given 
+registered service in the Service Registry. The theme that is activated via 
+this method will still preserve the default views for CAS but will apply 
+decorations such as CSS and Javascript to the views. The physical structure 
+of views cannot be modified via this method.
+             
+
 
 ### Configuration
+
+{% include {{ version }}/themes-configuration.md %}
 
 - Add a `[theme_name].properties` placed to the root of `src/main/resources` folder. 
 Contents of this file should match the following:
