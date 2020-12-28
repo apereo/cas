@@ -6,7 +6,6 @@ category: Configuration
 
 {% include variables.html %}
 
-
 ## Custom Settings
 
 The following settings could be used to extend CAS with arbitrary configuration keys and values:
@@ -94,167 +93,6 @@ CAS may also be conditionally configured to report, as part of the
 banner, whether a newer CAS release is available for an upgrade.
 This check is off by default and may be enabled with a system property of `-DCAS_UPDATE_CHECK_ENABLED=true`.
 
-## Actuator Management Endpoints
-
-The following properties describe access controls and settings for the `/actuator`
-endpoint of CAS which provides administrative functionality and oversight into the CAS software.
-
-To learn more about this topic, [please review this guide](../monitoring/Monitoring-Statistics.html).
-
-```properties
-# management.endpoints.enabled-by-default=true
-# management.endpoints.web.base-path=/actuator
-
-# management.endpoints.web.exposure.include=info,health,status,configurationMetadata
-# management.endpoints.web.exposure.exclude=
-
-# management.endpoints.jmx.exposure.exclude=*
-# management.endpoints.jmx.exposure.include=
-```
-
-### Basic Authentication Security
-
-Credentials for basic authentication may be defined via the following settings:
-
-```properties
-# spring.security.user.name=casuser
-# spring.security.user.password=
-# spring.security.user.roles=
-```
-
-### JAAS Authentication Security
-
-JAAS authentication for endpoint security may be configured via the following settings:
-
-```properties
-# cas.monitor.endpoints.jaas.refresh-configuration-on-startup=true
-# cas.monitor.endpoints.jaas.login-config=file:/etc/cas/config/jaas.conf
-# cas.monitor.endpoints.jaas.login-context-name=CAS
-```
-
-### LDAP Authentication Security
-
-{% include {{ version }}/ldap-configuration.md configKey="cas.monitor.endpoints.ldap" %}
-
-LDAP authentication for endpoint security may be additionally configured via the following settings:
-
-```properties
-# cas.monitor.endpoints.ldap.ldap-authz.role-attribute=uugid
-# cas.monitor.endpoints.ldap.ldap-authz.role-prefix=ROLE_
-# cas.monitor.endpoints.ldap.ldap-authz.allow-multiple-results=false
-# cas.monitor.endpoints.ldap.ldap-authz.group-attribute=
-# cas.monitor.endpoints.ldap.ldap-authz.group-prefix=
-# cas.monitor.endpoints.ldap.ldap-authz.group-filter=
-# cas.monitor.endpoints.ldap.ldap-authz.group-base-dn=
-# cas.monitor.endpoints.ldap.ldap-authz.base-dn=
-# cas.monitor.endpoints.ldap.ldap-authz.search-filter=
-```
-
-### JDBC Authentication Security
-
-{% include {{ version }}/rdbms-configuration.md configKey="cas.monitor.endpoints.jdbc" %}
-
-JDBC authentication for endpoint security may be additionally configured via the following settings:
-
-```properties
-# cas.monitor.endpoints.jdbc.role-prefix=
-# cas.monitor.endpoints.jdbc.query=
-```
-
-{% include {{ version }}/password-encoding.md configKey="cas.monitor.endpoints.jdbc" %}
-
-
-### Enabling Endpoints
-
-To determine whether an endpoint is available, the calculation order for all endpoints is as follows:
-
-1. The `enabled` setting of the individual endpoint (i.e. `info`) is consulted in CAS settings, as demonstrated below:
-
-```properties
-# management.endpoint.<endpoint-name>.enabled=true
-```        
-
-2. If undefined, the global endpoint security is consulted from CAS settings.
-3. If undefined, the default built-in setting for the endpoint in CAS is consulted, which is typically `false` by default.
-
-A number of available endpoint ids [should be listed here](../monitoring/Monitoring-Statistics.html).
-
-Endpoints may also be mapped to custom arbitrary endpoints. For example, to remap the `health` endpoint to `healthcheck`, 
-specify the following settings:
-
-```properties
-# management.endpoints.web.path-mapping.health=healthcheck
-```
-
-### Health Endpoint
-
-The `health` endpoint may also be configured to show details using `management.endpoint.health.show-details` via the following conditions:
-
-| URL                  | Description
-|----------------------|-------------------------------------------------------
-| `never`              | Never display details of health monitors.
-| `always`             | Always display details of health monitors.
-| `when-authorized`   | Details are only shown to authorized users. Authorized roles can be configured using `management.endpoint.health.roles`.
-
-```properties
-# management.endpoint.health.show-details=never
-```
-
-The results and details of the `health` endpoints are produced by a number of health indicator components that may monitor different systems, such as LDAP connection
-pools, database connections, etc. Such health indicators are turned off by default and may individually be controlled and turned on via the following settings:
-
-```properties
-# management.health.<name>.enabled=true
-# management.health.defaults.enabled=false 
-```
-
-The following health indicator names are available, given the presence of the appropriate CAS feature:
-
-| Health Indicator          | Description
-|----------------------|------------------------------------------------------------------------------------------
-| `memoryHealthIndicator`   | Reports back on the health status of CAS JVM memory usage, etc.
-| `systemHealthIndicator`   | Reports back on the health of the system of the CAS server.(Load, Uptime, Heap, CPU etc.)
-| `sessionHealthIndicator`   | Reports back on the health status of CAS tickets and SSO session usage.
-| `duoSecurityHealthIndicator`   | Reports back on the health status of Duo Security APIs.
-| `ehcacheHealthIndicator`   | Reports back on the health status of Ehcache caches.
-| `hazelcastHealthIndicator`   | Reports back on the health status of Hazelcast caches.
-| `dataSourceHealthIndicator`   | Reports back on the health status of JDBC connections.
-| `pooledLdapConnectionFactoryHealthIndicator`   | Reports back on the health status of LDAP connection pools.
-| `memcachedHealthIndicator`   | Reports back on the health status of Memcached connections.
-| `mongoHealthIndicator`   | Reports back on the health status of MongoDb connections.
-| `samlRegisteredServiceMetadataHealthIndicator`   | Reports back on the health status of SAML2 service provider metadata sources.
-
-### Endpoint Security
-
-Global endpoint security configuration activated by CAS may be controlled under the configuration key `cas.monitor.endpoints.endpoint.<endpoint-name>`.
-There is a special endpoint named `defaults`  which serves as a shortcut that controls the security of all endpoints, if left undefined in CAS settings. Accessing an endpoint
-over the web can be allowed via a special login form whose access and presence can be controlled via:
-
-```properties
-# cas.monitor.endpoints.form-login-enabled=false
-``` 
-
-Note that any individual endpoint must be first enabled before any security can be applied. The security of all endpoints is controlled using the following settings:
-
-```properties
-# ${configuration-key}.required-roles[0]=
-# ${configuration-key}.required-authorities[0]=
-# ${configuration-key}.required-ip-addresses[0]=
-# ${configuration-key}.access[0]=PERMIT|ANONYMOUS|DENY|AUTHENTICATED|ROLE|AUTHORITY|IP_ADDRESS
-```
-
-The following access levels are allowed for each individual endpoint:
-
-| Type                    | Description
-|-------------------------|----------------------------------------------------------------------------------------------------
-| `PERMIT`                | Allow open access to the endpoint.
-| `ANONYMOUS`             | Allow anonymous access to the endpoint. 
-| `DENY`                  | Default. Block access to the endpoint.
-| `AUTHENTICATED`         | Require authenticated access to the endpoint.
-| `ROLE`                  | Require authenticated access to the endpoint along with a role requirement.
-| `AUTHORITY`             | Require authenticated access to the endpoint along with an authority requirement.
-| `IP_ADDRESS`            | Require authenticated access to the endpoint using a collection of IP addresses.
-    
 
 
 ## Web Application Session
@@ -741,80 +579,8 @@ cas.authn.core.groovy-authentication-resolution.location=file:/etc/cas/config/Gr
 cas.authn.core.groovy-authentication-resolution.order=0
 
 cas.authn.core.service-authentication-resolution.order=0
-```           
-
-### Authentication Pre-Processing
-
-#### Groovy
-
-```properties
-# cas.authn.core.engine.groovy-pre-processor.location=file:/etc/cas/config/GroovyPreProcessor.groovy
 ```
-
-The script itself may be designed as:
-
-```groovy
-def run(Object[] args) {
-    def transaction = args[0]
-    def logger = args[1]
-    true
-}
-
-def supports(Object[] args) {
-    def credential = args[0]
-    def logger = args[1]
-    true
-}
-```
-
-### Authentication Post-Processing
-
-#### Groovy
-
-```properties
-# cas.authn.core.engine.groovy-post-processor.location=file:/etc/cas/config/GroovyPostProcessor.groovy
-```
-
-The script itself may be designed as:
-
-```groovy
-def run(Object[] args) {
-    def builder = args[0]
-    def transaction = args[1]
-    def logger = args[2]
-    true
-}
-
-def supports(Object[] args) {
-    def credential = args[0]
-    def logger = args[1]
-    true
-}
-```
-
-
-
-## Adaptive Authentication
-
-Control how CAS authentication should adapt itself to incoming client requests.
-To learn more about this topic, [please review this guide](../mfa/Configuring-Adaptive-Authentication.html).
-
-```properties
-# cas.authn.adaptive.reject-countries=United.+
-# cas.authn.adaptive.reject-browsers=Gecko.+
-# cas.authn.adaptive.reject-ip-addresses=127.+
-
-# cas.authn.adaptive.require-multifactor.mfa-duo=127.+|United.+|Gecko.+
-```
-
-Adaptive authentication can also react to specific times in order to trigger multifactor authentication.
-
-```properties
-# cas.authn.adaptive.require-timed-multifactor[0].provider-id=mfa-duo
-# cas.authn.adaptive.require-timed-multifactor[0].on-or-after-hour=20
-# cas.authn.adaptive.require-timed-multifactor[0].on-or-before-hour=7
-# cas.authn.adaptive.require-timed-multifactor[0].on-days=Saturday,Sunday
-```
+    
 
 ### IP Address Intelligence
 
@@ -899,11 +665,7 @@ series of principal/surrogate pair. The default is a key/value pair.
 
 {% include {{ version }}/rest-integration.md configKey="cas.authn.surrogate.rest" %}
 
-### Notifications
 
-{% include {{ version }}/email-notifications.md configKey="cas.authn.surrogate" %}
-
-{% include {{ version }}/sms-notifications.md configKey="cas.authn.surrogate" %}
 
 ## QR Authentication
 
@@ -923,34 +685,6 @@ topic, [please review this guide](../installation/QRCode-Authentication.html).
 ```properties
 # cas.authn.qr.json.location=file:/etc/cas/config/qrdevices.json
 ```
-
-## Risk-based Authentication
-
-Evaluate suspicious authentication requests and take action. To learn 
-more about this topic, [please review this guide](../installation/Configuring-RiskBased-Authentication.html).
-
-```properties
-# cas.authn.adaptive.risk.threshold=0.6
-# cas.authn.adaptive.risk.days-in-recent-history=30
-
-# cas.authn.adaptive.risk.ip.enabled=false
-
-# cas.authn.adaptive.risk.agent.enabled=false
-
-# cas.authn.adaptive.risk.geo-location.enabled=false
-
-# cas.authn.adaptive.risk.date-time.enabled=false
-# cas.authn.adaptive.risk.date-time.window-in-hours=2
-
-# cas.authn.adaptive.risk.response.block-attempt=false
-
-# cas.authn.adaptive.risk.response.mfa-provider=
-# cas.authn.adaptive.risk.response.risky-authentication-attribute=triggeredRiskBasedAuthentication
-```
-
-{% include {{ version }}/email-notifications.md configKey="cas.authn.adaptive.risk.response" %}
-
-{% include {{ version }}/sms-notifications.md configKey="cas.authn.adaptive.risk.response" %}
 
 
 ## Google Cloud Firebase Messaging

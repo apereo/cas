@@ -120,6 +120,18 @@ authentication requirements. The collection of authentication handlers tries to 
 The idea is that adopters can assign an `order` value to an authentication handler thereby explicitly positioning it in the 
 collection and controlling its execution sequence.
 
+### Authentication Pre/Post Processing
+            
+Tap into the CAS authentication engine to invoke pre/post processors.
+
+#### Authentication Pre-Processing
+
+{% include {{ version }}/groovy-preprocessing-authentication-configuration.md %}
+                                   
+#### Authentication Post-Processing
+
+{% include {{ version }}/groovy-postprocessing-authentication-configuration.md %}
+
 ### Naming Strategy
 
 Each authentication handler in CAS can be named via CAS settings and if left undefined, the short name of 

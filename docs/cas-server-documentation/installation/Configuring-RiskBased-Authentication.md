@@ -8,11 +8,16 @@ category: Authentication
 
 # Risk-based Authentication
 
-Risk-based authentication allows CAS to detect suspicious and seemingly-fraudulent authentication requests based on past user behavior
-and collected authentication events, statistics, etc. Once and *after* primary authentication where the principal is identified,
-the authentication transaction is analyzed via a number of configurable criteria and fences to determine how *risky* the attempt may be.
-The result of the evaluation step is a cumulative risk score that is then weighed against a risk threshold set by the CAS operator.
-In the event that the authentication attempt is considered risky well beyond the risk threshold, CAS may be allowed to take action and
+Risk-based authentication allows CAS to detect suspicious and 
+seemingly-fraudulent authentication requests based on past user behavior
+and collected authentication events, statistics, etc. Once and *after* 
+primary authentication where the principal is identified,
+the authentication transaction is analyzed via a number of configurable 
+criteria and fences to determine how *risky* the attempt may be.
+The result of the evaluation step is a cumulative risk score that is then 
+weighed against a risk threshold set by the CAS operator.
+In the event that the authentication attempt is considered risky well 
+beyond the risk threshold, CAS may be allowed to take action and
 mitigate that risk.
 
 Simply put, the story told is:
@@ -90,11 +95,14 @@ Support is enabled by including the following dependency in the overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-electrofence" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#risk-based-authentication).
+{% include {{ version }}/riskbased-adaptive-authentication-configuration.md %}
 
 ### Messaging & Notifications
 
-Users may be notified of risky authentication attempts via text messages and/or email.
+{% include {{ version }}/email-notifications.md configKey="cas.authn.adaptive.risk.response" %}
+
+{% include {{ version }}/sms-notifications.md configKey="cas.authn.adaptive.risk.response" %}
+
 To learn more about available options, please [see this guide](../notifications/SMS-Messaging-Configuration.html)
 or [this guide](../notifications/Sending-Email-Configuration.html).
 
