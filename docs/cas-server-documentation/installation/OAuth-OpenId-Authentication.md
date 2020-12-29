@@ -187,6 +187,8 @@ Client secrets for OAuth relying parties may be defined as encrypted values pref
 
 Client secrets may be encrypted using CAS-provided cipher operations either manually or via the [CAS Command-line shell](Configuring-Commandline-Shell.html).
 
+Client secrets may also be defined as hash values prefixed with `{id}` supported by [Spring Security's password storage formats](https://docs.spring.io/spring-security/site/docs/current/reference/html5/#authentication-password-storage-dpe-format)
+
 {% include {{ version }}/oauth2-configuration.md %}
 
 ### Attribute Release

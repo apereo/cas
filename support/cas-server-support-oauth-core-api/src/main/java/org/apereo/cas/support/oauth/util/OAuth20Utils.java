@@ -29,6 +29,10 @@ import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
@@ -61,6 +65,14 @@ public class OAuth20Utils {
     private static final ObjectMapper MAPPER = new ObjectMapper()
         .findAndRegisterModules()
         .configure(SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, true);
+
+    private static final PasswordEncoder PASS_ENCODER;
+    
+    static {
+        PASS_ENCODER = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        ((DelegatingPasswordEncoder) PASS_ENCODER)
+                .setDefaultPasswordEncoderForMatches(NoOpPasswordEncoder.getInstance());
+    }
 
     /**
      * Write to the output this error.
@@ -417,11 +429,16 @@ public class OAuth20Utils {
             return true;
         }
         definedSecret = cipherExecutor.decode(definedSecret, new Object[] {registeredService});
-        if (!StringUtils.equals(definedSecret, clientSecret)) {
-            LOGGER.error("Wrong client secret for service: [{}]", registeredService.getServiceId());
-            return false;
+        if (StringUtils.equals(definedSecret, clientSecret)) {
+            return true;
         }
-        return true;
+
+        if (PASS_ENCODER.matches(clientSecret, definedSecret)) {
+            return true;
+        }
+
+        LOGGER.error("Wrong client secret for service: [{}]", registeredService.getServiceId());
+        return false;
     }
 
     /**

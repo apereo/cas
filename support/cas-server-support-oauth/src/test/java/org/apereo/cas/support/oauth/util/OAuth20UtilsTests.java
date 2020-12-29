@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.JEEContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 
 import java.util.HashSet;
 import java.util.List;
@@ -122,6 +123,18 @@ public class OAuth20UtilsTests {
         val registeredService = new OAuthRegisteredService();
         registeredService.setClientId("clientid");
         registeredService.setClientSecret(secret);
+        val result = OAuth20Utils.checkClientSecret(registeredService, secret, cipher);
+        assertTrue(result);
+    }
+
+    @Test
+    public void verifyClientSecretCheckWithOneWayHash() {
+        val cipher = new OAuth20RegisteredServiceCipherExecutor();
+        val secret = RandomUtils.randomAlphanumeric(12);
+        val encodedSecret = PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(secret);
+        val registeredService = new OAuthRegisteredService();
+        registeredService.setClientId("clientid");
+        registeredService.setClientSecret(encodedSecret);
         val result = OAuth20Utils.checkClientSecret(registeredService, secret, cipher);
         assertTrue(result);
     }
