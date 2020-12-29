@@ -62,7 +62,7 @@ saves them into a JSON file whose path is taught to CAS via settings. This is
 a very modest option and should mostly be used for demo and testing purposes. 
 Needless to say, this JSON resource acts as a database that must be available to all CAS server nodes in the cluster.
 
-{% include {{ version }}/json-j2f-configuration.md %}
+{% include {{ version }}/json-u2f-configuration.md %}
 
 Devices stored into the JSON file take on the following format:
 

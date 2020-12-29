@@ -56,7 +56,7 @@ It is often helpful to externalize the `log4j2.xml` file to a system path to pre
 The location of `log4j2.xml` file by default is on the runtime classpath and can be controlled
 via the CAS properties. 
 
-{% include logging-configuration.md %}
+{% include {{ version }}/logging-configuration.md %}
 
 ### Log Levels
 

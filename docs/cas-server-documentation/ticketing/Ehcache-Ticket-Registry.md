@@ -40,7 +40,7 @@ Running a Terracotta cluster on Kubernetes can be done easily using the Terracot
 
 #### Configuration
 
-{% include {{ version }}/ehcache-ticket-registry-configuration.md %}
+{% include {{ version }}/ehcache3-ticket-registry-configuration.md %}
 
 {% include {{ version }}/signing-encryption-configuration.md configKey="cas.ticket.registry.ehcache3" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
 

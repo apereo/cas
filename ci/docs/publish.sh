@@ -59,18 +59,20 @@ rm -Rf $PWD/docs-includes
 validateProjectDocumentation
 retVal=$?
 if [[ ${retVal} -eq 1 ]]; then
-    echo -e "Failed to validate documentation.\n"
-    exit ${retVal}
+   echo -e "Failed to validate documentation.\n"
+   exit ${retVal}
 fi
 
 echo -e "Build documentation site...\n"
 cd $PWD/gh-pages
 chmod +x ./build.sh
 gem install bundle
-bundle exec jekyll build
+bundle exec jekyll build --incremental
+rm -Rf $PWD/gh-pages/_site
 
 git config user.email "cas@apereo.org"
 git config user.name "CAS"
+git config core.fileMode false
 
 echo -e "Configuring tracking branches for repository...\n"
 git branch -u origin/gh-pages
@@ -86,9 +88,9 @@ git push -fq origin --all
 retVal=$?
 rm -Rf $PWD/gh-pages
 if [[ ${retVal} -eq 0 ]]; then
-    echo -e "Successfully published documentation to $branchVersion.\n"
-    exit 0
+   echo -e "Successfully published documentation to $branchVersion.\n"
+   exit 0
 else
-    echo -e "Failed to publish documentation.\n"
-    exit ${retVal}
+   echo -e "Failed to publish documentation.\n"
+   exit ${retVal}
 fi
