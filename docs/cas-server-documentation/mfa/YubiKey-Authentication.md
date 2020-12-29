@@ -43,7 +43,7 @@ in order to allow for a successful authentication event.
 
 ### JSON
 
-Registration records may be tracked inside a JSON file, provided the file path is specified in CAS settings. See [review this guide](../configuration/Configuration-Properties.html#yubikey) for more info.
+Registration records may be tracked inside a JSON file, provided the file path is specified in CAS settings. 
 
 The JSON structure is a map of user id to yubikey public id representing any particular device:
 

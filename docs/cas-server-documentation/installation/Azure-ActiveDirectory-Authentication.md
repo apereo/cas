@@ -25,4 +25,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 ## Principal Attributes
 
-The above dependency may also be used, in the event that principal attributes need to be fetched from Azure Active Directory without necessarily authenticating credentials . To see the relevant list of CAS properties, please [review this guide](..configuration/Configuration-Properties.html#microsoft-azure-active-directory.
+The above dependency may also be used, in the event that principal attributes 
+need to be fetched from Azure Active Directory without necessarily authenticating credentials . 
+
+{% include {{ version }}/azuread-attribute-resolution-configuration.md %}
