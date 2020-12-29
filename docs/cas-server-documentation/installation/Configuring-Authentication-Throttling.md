@@ -127,7 +127,7 @@ on how to configure auditing, please [review the following guide](Audits.html).
 
 ## Configuration
 
-{% include {{ version }}/authentication-throttling.md configKey="cas.authn.throttle" %}
+{% include {{ version }}/authentication-throttling-configuration.md configKey="cas.authn.throttle" %}
 
 {% include {{ version }}/job-scheduling-configuration.md configKey="cas.authn.throttle" %}
 

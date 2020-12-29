@@ -231,7 +231,7 @@ public PasswordlessTokenRepository passwordlessTokenRepository() {
 
 {% include {{ version }}/email-notifications-configuration.md configKey="cas.authn.passwordless.tokens" %}
 
-{% include {{ version }}/sms-notifications.md configKey="cas.authn.passwordless.tokens" %}
+{% include {{ version }}/sms-notifications-configuration.md configKey="cas.authn.passwordless.tokens" %}
 
 Users may be notified of tokens via text messages, mail, etc.
 To learn more about available options, please [see this guide](../notifications/SMS-Messaging-Configuration.html)

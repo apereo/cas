@@ -13,7 +13,7 @@ and [relevant contacts](Configuring-Service-Contacts.html) defined and assigned 
 
 {% include {{ version }}/email-notifications-configuration.md configKey="cas.service-registry" %}
 
-{% include {{ version }}/sms-notifications.md configKey="cas.service-registry" %}
+{% include {{ version }}/sms-notifications-configuration.md configKey="cas.service-registry" %}
 
 A sample JSON file follows:
 

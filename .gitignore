@@ -10,6 +10,7 @@ bin/
 *.ignore
 *.ipr
 *.war
+**/gh-pages/
 *.iml
 *.iws
 **/ignite/work/marshaller/

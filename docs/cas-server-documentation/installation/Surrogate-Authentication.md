@@ -268,7 +268,7 @@ Additionally, failure and success events may also communicated via SMS and/or em
 
 {% include {{ version }}/email-notifications-configuration.md configKey="cas.authn.surrogate" %}
 
-{% include {{ version }}/sms-notifications.md configKey="cas.authn.surrogate" %}
+{% include {{ version }}/sms-notifications-configuration.md configKey="cas.authn.surrogate" %}
 
 To learn more about available options, please [see this guide](../notifications/SMS-Messaging-Configuration.html) 
 or [this guide](../notifications/Sending-Email-Configuration.html).
