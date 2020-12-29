@@ -63,20 +63,23 @@ CAS is now based on the Spring Boot `2.4.x` series which by extension also requi
 its dependency on related projects such as Spring and Spring Cloud. While this is a 
 significant framework upgrade, the change should remain largely invisible to CAS users and adopters.
 
-### Puppeteer Tests
+### Tests
 
-Th collection of end-to-end browser tests continue to grow to add additional scenarios
-and use cases, such as recaptcha, logout, and more.
+Th collection of [end-to-end browser tests](../developer/Test-Process.html) based on Puppeteer 
+continue to grow to add additional scenarios and use cases, such as recaptcha, logout, and more.
+Furthermore, the CAS codebase is now running its entire tests suite against Ubuntu, Windows and MacOS
+platforms.
   
 ### Logout Confirmations
 
-Upon logout confirmations, the CAS user interface and confirmation screens are 
+Upon [logout confirmations](../installation/Logout-Single-Signout.html), the 
+CAS user interface and confirmation screens are 
 now able to list all applications linked to the existing SSO session.
 
 ### XML-less Spring Webflow
 
-The construction of various Spring Webflow flows and subflows has now removed the requirement
-for an XML foundation, allowing the construction of all flows to be dynamic.
+The construction of various [Spring Webflow flows](../webflow/Webflow-Customization.html) and (multifactor authentication) subflows 
+has now removed the requirement for an XML foundation, allowing the construction of all flows to be dynamic.
 
 ### WebAuthN REST Device Management
 
@@ -110,14 +113,13 @@ using a certificate authority (CA) such as Let's Encrypt.
 
 ### Multifactor Trusted Devices via Redis 
 
-[Trusted devices](../mfa/Multifactor-TrustedDevice-Authentication.html) and user 
+[Multifactor Trusted Devices](../mfa/Multifactor-TrustedDevice-Authentication.html) and user 
 decisions for multifactor authentication may also be kept inside a Redis instance.
 
 ## Other Stuff
      
 - The configuration of [Hazelcast clusters](../ticketing/Hazelcast-Ticket-Registry.html) can allow for specification of network interfaces.
 - Delegated authentication configuration can allow for a pre-defined callback/redirect URI.
-
  
 ## Library Upgrades
 
