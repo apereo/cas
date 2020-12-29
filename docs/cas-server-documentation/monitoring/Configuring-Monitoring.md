@@ -23,10 +23,17 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-core-monitor" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#monitoring)
-and [this guide](../configuration/Configuration-Properties.html#memory).
+{% include {{ version }}/tgt-monitoring-configuration.md %}
+{% include {{ version }}/st-monitoring-configuration.md %}
+{% include {{ version }}/load-monitoring-configuration.md %}
+{% include {{ version }}/memory-monitoring-configuration.md %}
 
-<div class="alert alert-warning"><strong>YMMV</strong><p>In order to accurately and reliably report on ticket statistics, you are at the mercy of the underlying ticket registry to support the behavior in a performant manner which means that the infrastructure and network capabilities and latencies must be considered and carefully tuned. This might have become specially relevant in clustered deployments as depending on the ticket registry of choice, CAS may need to <i>interrogate</i> the entire cluster by running distributed queries to calculate ticket usage.</p></div>
+<div class="alert alert-warning"><strong>YMMV</strong><p>In order to accurately and reliably 
+report on ticket statistics, you are at the mercy of the underlying ticket registry to support 
+the behavior in a performant manner which means that the infrastructure and network capabilities 
+and latencies must be considered and carefully tuned. This might have become specially relevant 
+in clustered deployments as depending on the ticket registry of choice, CAS may need 
+to <i>interrogate</i> the entire cluster by running distributed queries to calculate ticket usage.</p></div>
 
 ## Memcached
 
@@ -36,7 +43,7 @@ and [this guide](../configuration/Configuration-Properties.html#memory).
 
 The actual memcached implementation may be supported via one of the following options, expected to be defined in the overlay.
 
-###  Spymemcached
+### Spymemcached
 
 Enable support via the [spymemcached library](https://code.google.com/p/spymemcached/). 
 
@@ -60,7 +67,7 @@ Monitor the status and state of a cache backed by Ehcache.
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-ehcache-monitor" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#cache-monitors).
+{% include {{ version }}/cache-monitoring-configuration.md %}
 
 ## MongoDb
 
@@ -76,7 +83,7 @@ Monitor the status and state of a cache backed by Hazelcast.
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-hazelcast-monitor" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#cache-monitors).
+{% include {{ version }}/cache-monitoring-configuration.md %}
 
 ## JDBC
 
@@ -84,7 +91,7 @@ Monitor the status and availability of a relational SQL database.
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-jdbc-monitor" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#database-monitoring).
+{% include {{ version }}/jdbc-monitoring-configuration.md %}
 
 ## LDAP
 
@@ -92,4 +99,4 @@ Monitor the status and availability of an LDAP server.
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-ldap-monitor" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#ldap-server-monitoring).
+{% include {{ version }}/ldap-monitoring-configuration.md %}
