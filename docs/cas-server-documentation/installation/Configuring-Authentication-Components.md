@@ -8,7 +8,8 @@ category: Authentication
 
 # Configuration
 
-The CAS authentication process is primarily controlled by an authentication manager, which orchestrates a collection of authentication handlers.
+The CAS authentication process is primarily controlled by an 
+authentication manager, which orchestrates a collection of authentication handlers.
 
 ## Authentication Manager
 
@@ -29,8 +30,6 @@ For any given credential the manager does the following:
 5. After all credentials have been attempted check security policy again and throw `AuthenticationException` if not satisfied.
 
 There is an implicit security policy that requires at least one handler to successfully authenticate a credential.
-
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#authentication-policy).
 
 ## Authentication Handlers
 
@@ -60,55 +59,7 @@ The following endpoints are provided by CAS:
 
 ### Resolution Strategy
 
-Authentication handlers are typically defined globally and then executed and tried by the authentication engine. 
-The collection of handlers can be narrowed down using a selection criteria that defines an eligibility criteria
-for the handler based on the current authentication transaction, provided credentials, service definition policy
-and many other controls. 
-
-{% include {{ version }}/authentication-engine-configuration.md %}
-
-#### Per Registered Service
-
-Each registered application in the registry may be assigned a set of identifiers/names for the required authentication 
-handlers available and configured in CAS. These names can be used to enforce a service definition to only use the 
-authentication strategy carrying that name when an authentication request is submitted to CAS.
-
-Please [review this guide](../services/Configuring-Service-AuthN-Policy.html) to learn more.
-
-#### Groovy Script
-
-The global collection of authentication handlers can also pass through a Groovy script as a filter
-to narrow down the list of candidates for the current transaction. The outline of the script may be designed as:
-
-```groovy
-def run(Object[] args) {
-    def handlers = args[0]
-    def transaction = args[1]
-    def servicesManager = args[2]
-    def logger = args[3]
-
-    return handlers
-}
-
-def supports(Object[] args) {
-    def handlers = args[0]
-    def transaction = args[1]
-    def servicesManager = args[2]
-    def logger = args[3]
-    true
-}
-```
-
-The following parameters are passed to the script:
-
-| Parameter        | Description
-|------------------|--------------------------------------------------------------------------------------------
-| `handlers`       | Collection of available and candidate `AuthenticationHandler`s.
-| `transaction`    | The authentication transaction currently in progress.
-| `servicesManager`  | The `ServicesManager` object responsible for locating service definitions attached to this transaction.
-| `logger`           | The object responsible for issuing log messages such as `logger.info(...)`.
-
-The outcome of the script should be the collection of selected handlers with the type `Set<AuthenticationHandler>`.
+Please see [this guide](Configuring-Authentication-Resolution.html) for more info.      
 
 ### Authentication Sequence
 
@@ -142,31 +93,7 @@ Authentication failures are typically collected in CAS by the name of each authe
 
 ## Authentication Policy
 
-CAS presents a number of strategies for handling authentication security policies. Policies in general control the following:
-
-1. Should the authentication chain be stopped after a certain kind of authentication failure?
-2. Given multiple authentication handlers in a chain, what constitutes a successful authentication event?
-
-Policies are typically activated after:
-
-1. An authentication failure has occurred.
-2. The authentication chain has finished execution.
-
-Typical use cases of authentication policies may include:
-
-1. Enforce a specific authentication's successful execution, for the entire authentication event to be considered successful.
-2. Ensure a specific class of failure is not evident in the authentication chain's execution log.
-3. Ensure that all authentication schemes in the chain are executed successfully, for the entire authentication event to be considered successful.
-
-{% include {{ version }}/authentication-policy-configuration.md %}
-
-### Administrative Endpoints
-
-The following endpoints are provided by CAS:
- 
-| Endpoint                  | Description
-|---------------------------|------------------------------------------------
-| `authenticationPolicies`  | A `GET` request presents the collection of registered authentication policies. An individual authentication policy can be queried via `GET` by its name using a selector path (i.e. `authenticationPolicies/{name}`).
+Please see [authentication security policies](Configuring-Authentication-Policy.html) for more details.
 
 ## Principal Resolution
 
