@@ -22,9 +22,9 @@ User accounts are mapped to a `username` field as the key. The user account reco
 | `status`             | One of `OK`, `LOCKED`, `DISABLED`, `EXPIRED`, `MUST_CHANGE_PASSWORD`.
 | `attributes`         | User attributes modeled as `Map<String, List<Object>>`.
 
-{% include {{ version }}/principal-transformation.md configKey="cas.authn.redis" %}
+{% include {{ version }}/principal-transformation-configuration.md configKey="cas.authn.redis" %}
 
-{% include {{ version }}/password-encoding.md configKey="cas.authn.redis" %}
+{% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.redis" %}
 
 {% include {{ version }}/redis-configuration.md configKey="cas.authn" %}
 

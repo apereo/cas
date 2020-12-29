@@ -132,7 +132,7 @@ container that ships with CAS and can be potentially simplify the configuration 
 quite a bit, depending on use case and behavior. The configuration of certificate and trust stores 
 as well as behavior and enforcement of client authentication can also be managed directly by CAS.
 
-{% include {{ version }}/embedded-container.md %}
+{% include {{ version }}/embedded-container-configuration.md %}
 
 #### Optional (Mixed) Authentication
 

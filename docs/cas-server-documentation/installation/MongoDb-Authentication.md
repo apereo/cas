@@ -13,9 +13,9 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-mongo" %}
 
-{% include {{ version }}/principal-transformation.md configKey="cas.authn.mongo" %}
+{% include {{ version }}/principal-transformation-configuration.md configKey="cas.authn.mongo" %}
 
-{% include {{ version }}/password-encoding.md configKey="cas.authn.mongo" %}
+{% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.mongo" %}
 
 {% include {{ version }}/mongodb-configuration.md configKey="cas.authn" %}
 

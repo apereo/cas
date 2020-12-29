@@ -150,7 +150,7 @@ Device registrations may be kept inside a CouchDb instance by including the foll
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-u2f-couchdb" %}
 
-{% include {{ version }}/couchdb-integration.md configKey="cas.authn.mfa.u2f" %}
+{% include {{ version }}/couchdb-configuration.md configKey="cas.authn.mfa.u2f" %}
 
 ### REST
 
@@ -167,4 +167,4 @@ The following parameters are passed:
 | `DELETE` | N/A | Delete all device records | `200`.
 | `DELETE` | `/${id}`  as a path variable | Delete all device records matching that identifier. | `200`.
 
-{% include {{ version }}/rest-integration.md configKey="cas.authn.mfa.u2f.rest" %}
+{% include {{ version }}/rest-configuration.md configKey="cas.authn.mfa.u2f.rest" %}

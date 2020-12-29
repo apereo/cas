@@ -1,4 +1,4 @@
-{% include {{ version }}/couchdb-integration.md configKey="cas.authn.surrogate" %}.
+{% include {{ version }}/couchdb-configuration.md configKey="cas.authn.surrogate" %}.
 
 Surrogates may be stored either as part of the principals profile or as a
 series of principal/surrogate pair. The default is a key/value pair.

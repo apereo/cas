@@ -190,7 +190,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-aup-couchdb" %}
 
-{% include {{ version }}/couchdb-integration.md configKey="cas.acceptable-usage-policy" %}
+{% include {{ version }}/couchdb-configuration.md configKey="cas.acceptable-usage-policy" %}
 
 ### Couchbase
 
@@ -237,7 +237,7 @@ output body is expected to be an instance of `AcceptableUsagePolicyTerms` as suc
 Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-aup-rest" %}
-{% include {{ version }}/rest-integration.md configKey="cas.acceptable-usage-policy.rest" %}
+{% include {{ version }}/rest-configuration.md configKey="cas.acceptable-usage-policy.rest" %}
 
 ### Custom
 

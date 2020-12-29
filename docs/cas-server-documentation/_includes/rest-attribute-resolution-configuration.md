@@ -1,4 +1,4 @@
-{% include {{ version }}/rest-integration.md configKey="cas.authn.attribute-repository.rest[0]" %}
+{% include {{ version }}/rest-configuration.md configKey="cas.authn.attribute-repository.rest[0]" %}
 
 ```properties
 # cas.authn.attribute-repository.rest[0].order=0

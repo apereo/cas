@@ -132,7 +132,7 @@ may be entered into a web-based login form.
 
 {% include {{ version }}/jdbc-authentication-actuator-endpoints-configuration.md %}
 
-{% include {{ version }}/password-encoding.md configKey="cas.monitor.endpoints.jdbc" %}
+{% include {{ version }}/password-encoding-configuration.md configKey="cas.monitor.endpoints.jdbc" %}
 
 ### Enabling Endpoints
 

@@ -18,7 +18,7 @@ server to provide high availability to CAS across multiple data centers.
 
 ## Configuration
 
-{% include {{ version }}/couchdb-integration.md configKey="cas.service-registry" %}
+{% include {{ version }}/couchdb-configuration.md configKey="cas.service-registry" %}
 
 The only truly mandatory setting is the URL. However, CouchDB should not be used in admin party mode in production, so username and password are needed as well.
 
