@@ -39,11 +39,12 @@ Support is added by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-eureka-client" %}
 
-{% include {{ version }}/consul-service-discovery-configuration.md %}
+{% include {{ version }}/eureka-service-discovery-configuration.md %}
 
 ### Authentication
 
-Support for HTTP basic authentication will be automatically added if one of Eureka server URLs in the configuration has credentials embedded in it (curl style, like `http://user:password@localhost:8761/eureka`). 
+Support for HTTP basic authentication will be automatically added if one of Eureka server URLs 
+in the configuration has credentials embedded in it (curl style, like `http://user:password@localhost:8761/eureka`). 
 
 ### Troubleshooting
 

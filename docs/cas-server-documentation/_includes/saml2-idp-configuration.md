@@ -9,3 +9,5 @@
   
 # cas.authn.saml-idp.attribute-query-profile-enabled=true
 ```
+   
+{% include {{ version }}/casclient-configuration.md %}

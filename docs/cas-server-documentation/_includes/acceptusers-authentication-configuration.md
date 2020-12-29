@@ -10,3 +10,5 @@ prior to production rollouts.</p></div>
 # cas.authn.accept.enabled=true
 # cas.authn.accept.credential-criteria=
 ```
+
+{% include {{ version }}/authentication-credential-selection-configuration.md %}

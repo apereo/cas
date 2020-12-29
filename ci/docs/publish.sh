@@ -43,6 +43,7 @@ git clone --single-branch --depth 1 --branch gh-pages --quiet \
 
 echo -e "Removing previous documentation from $branchVersion...\n"
 rm -Rf $PWD/gh-pages/"$branchVersion" > /dev/null
+rm -Rf $PWD/gh-pages/_includes/"$branchVersion" > /dev/null
 
 echo -e "Creating $branchVersion directory...\n"
 mkdir -p "$PWD/gh-pages/$branchVersion"
@@ -51,7 +52,7 @@ mkdir -p "$PWD/gh-pages/_includes/$branchVersion"
 echo -e "Copying new docs to $branchVersion...\n"
 cp -Rf $PWD/docs-latest/* "$PWD/gh-pages/$branchVersion"
 cp -Rf $PWD/docs-includes/* "$PWD/gh-pages/_includes/$branchVersion"
-echo -e "Copied project documentation...\n"
+echo -e "Copied project documentation to $PWD/gh-pages/...\n"
 
 rm -Rf $PWD/docs-latest
 rm -Rf $PWD/docs-includes
@@ -63,11 +64,33 @@ if [[ ${retVal} -eq 1 ]]; then
    exit ${retVal}
 fi
 
+res=0
+files=$(ls $PWD/gh-pages/_includes/$branchVersion/*.md)
+for f in $files; do
+  fname=$(basename "$f")
+#  echo "Looking for $fname in $PWD/gh-pages/$branchVersion";
+  grep -r $fname "$PWD/gh-pages/$branchVersion" --include \*.md >/dev/null 2>&1
+  docsVal=$?
+  if [ docsVal == 1 ]; then
+      grep -r $fname "$PWD/gh-pages/_includes/$branchVersion" --include \*.md >/dev/null 2>&1
+      docsVal=$?
+  fi
+  if [ docsVal == 1 ]; then
+      echo "$fname fragment is unused."
+      res=1
+  fi
+done
+
+if [ $res == 1 ]; then
+  echo "Found unused include fragments."
+  exit 1
+fi
+
 echo -e "Build documentation site...\n"
 cd $PWD/gh-pages
 chmod +x ./build.sh
-gem install bundle
-bundle exec jekyll build --incremental
+sudo gem install bundle
+sudo bundle exec jekyll build --incremental
 rm -Rf $PWD/gh-pages/_site
 
 git config user.email "cas@apereo.org"

@@ -8,3 +8,5 @@
 # cas.authn.azure-active-directory.login-url=https://login.microsoftonline.com/common/
 # cas.authn.azure-active-directory.resource=https://graph.microsoft.com/
 ```
+
+{% include {{ version }}/authentication-credential-selection-configuration.md %}

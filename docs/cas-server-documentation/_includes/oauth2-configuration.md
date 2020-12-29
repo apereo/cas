@@ -5,3 +5,5 @@
 # cas.authn.oauth.grants.resource-owner.require-service-header=true
 # cas.authn.oauth.user-profile-view-type=NESTED|FLAT
 ```
+
+{% include {{ version }}/casclient-configuration.md %}

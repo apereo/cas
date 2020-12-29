@@ -26,6 +26,10 @@ If no alternative attribute is specified then the principal will be null and CAS
 # cas.authn.x509.alternate-principal-attribute=subjectDn|sigAlgOid|subjectX500Principal|x509Rfc822Email|x509subjectUPN
 ```
 
+### `SUBJECT_DN` Principal Resolution
+
+{% include {{ version }}/subject-dnformat-x509-configuration.md %}
+
 ### `CN_EDIPI` Principal Resolution
 
 {% include {{ version }}/edipi-principal-resolution-x509-authentication-configuration.md %}
@@ -33,7 +37,6 @@ If no alternative attribute is specified then the principal will be null and CAS
 ### `RFC822_EMAIL` Principal Resolution
 
 {% include {{ version }}/rfc822-principal-resolution-x509-authentication-configuration.md %}
-
 
 ### `SERIAL_NO` Principal Resolution
 

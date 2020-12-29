@@ -3,7 +3,7 @@ layout: default
 title: CAS - Configuration Discovery
 category: Configuration
 ---
-
+       
 {% include variables.html %}
 
 # Configuration Discovery

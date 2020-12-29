@@ -9,3 +9,4 @@ the user is authenticated if at least one result is found.
 # cas.authn.jdbc.search[0].name=
 # cas.authn.jdbc.search[0].order=0
 ```
+{% include {{ version }}/authentication-credential-selection-configuration.md %}
