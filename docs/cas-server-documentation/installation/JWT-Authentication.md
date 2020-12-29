@@ -60,6 +60,8 @@ JWT authentication support is enabled by including the following dependency in t
 
 {% include {{ version }}/jwt-authentication-configuration.md %}
 
+{% include {{ version }}/webflow-configuration.md configKey="cas.authn.token.webflow" %}
+
 Configure the appropriate service in your service registry to hold the secrets:
 
 ```json
