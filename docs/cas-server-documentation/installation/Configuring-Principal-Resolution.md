@@ -7,6 +7,7 @@ category: Configuration
 
 
 # Overview
+
 Principal resolution converts information in the authentication credential into a security principal
 that commonly contains additional
 metadata attributes (i.e. user details such as affiliations, group membership, email, display name).
@@ -31,9 +32,9 @@ be be combined with an LDAP-based principal resolver to accommodate this case.
 CAS uses the Person Directory library to provide a flexible principal resolution services against a number of data
 sources. The key to configuring `PersonDirectoryPrincipalResolver` is the definition of an `IPersonAttributeDao` object.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#principal-resolution).
+{% include {{ version }}/persondirectory-configuration.md configKey="cas.person-directory" %}
 
-## PrincipalResolver vs. AuthenticationHandler
+## `PrincipalResolver` vs. `AuthenticationHandler`
 
 The principal resolution machinery provided by `AuthenticationHandler` components should be used in preference to
 `PrincipalResolver` in any situation where the former provides adequate functionality.

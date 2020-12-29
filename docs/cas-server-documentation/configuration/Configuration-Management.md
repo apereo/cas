@@ -62,7 +62,8 @@ To learn more about how to extend and customize the CAS configuration, please [r
 
 ## Auto Configuration Strategy
 
-To see a complete list of CAS properties, please [review this guide](Configuration-Properties.html#configuration-storage).
+To see the relevant list of CAS properties for this
+feature, please [review this guide](Configuration-Storage.html).
 
 Note that CAS in most if not all cases will attempt to auto-configure the context based on the declaration
 and presence of feature-specific dedicated modules. This generally SHOULD relieve the deployer

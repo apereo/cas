@@ -4,13 +4,7 @@ from attribute sources unless noted otherwise by the specific authentication sch
 If multiple attribute repository sources are defined, they are added into a list
 and their results are cached and merged.
 
-```properties
-# cas.authn.attribute-repository.expiration-time=30
-# cas.authn.attribute-repository.expiration-time-unit=MINUTES
-# cas.authn.attribute-repository.maximum-cache-size=10000
-# cas.authn.attribute-repository.merger=REPLACE|ADD|MULTIVALUED|NONE
-# cas.authn.attribute-repository.aggregation=MERGE|CASCADE
-```
+{% include {{ version }}/caching-attribute-resolution-configuration.md %}
 
 <div class="alert alert-info"><strong>Remember This</strong><p>Note that in certain cases,
 CAS authentication is able to retrieve and resolve attributes from the authentication 

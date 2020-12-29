@@ -72,8 +72,7 @@ Support is enabled by including the following module in the overlay:
 ### LDAP
 
 This strategy allows one to locate a user record in an LDAP directory. The record is expected to carry the user's phone number
-or email address via configurable attributes. To see the relevant list of CAS 
-properties, please [review this guide](../configuration/Configuration-Properties.html#passwordless-authentication).
+or email address via configurable attributes.
 
 Support is enabled by including the following module in the overlay:
 

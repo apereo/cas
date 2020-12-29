@@ -88,9 +88,13 @@ See [this guide](Webflow-Customization-Exceptions.html) for more info.
 
 ## Custom Settings
 
-All webflow components and CAS views have access to the entire bundle of CAS settings defined from a variety of configuration sources. This allows one to extend and modify any CAS view or webflow component using the variable `casProperties` to gain access to a specific setting. Remember that this syntax only allowed access to settings that are *owned* by CAS, noted by its very own prefix.
+All webflow components and CAS views have access to the entire bundle of CAS settings 
+defined from a variety of configuration sources. This allows one to extend and modify 
+any CAS view or webflow component using the variable `casProperties` to gain access to 
+a specific setting. Remember that this syntax only allowed access to settings 
+that are *owned* by CAS, noted by its very own prefix.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#custom-settings).
+{% include {{ version }}/custom-settings-configuration.md %}
 
 ## Troubleshooting
 

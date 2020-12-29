@@ -38,9 +38,6 @@ as much as possible. These embedded containers are an integral part of the CAS s
 updated usually for every release and surely are meant to and can be used in production deployments. 
 You **DO NOT** need to, but can if you want to, configure and deploy to an externally configured container. 
 
-<div class="alert alert-info"><strong>Do Less</strong><p>Remember that most if not all aspects of the embedded 
-container can be controlled via the CAS properties. See <a href="../configuration/Configuration-Properties.html#embedded-apache-tomcat-container">this guide</a> for more info.</p></div>
-
 ### Embedded Container Configuration
 
 {% include {{ version }}/embedded-container.md %}

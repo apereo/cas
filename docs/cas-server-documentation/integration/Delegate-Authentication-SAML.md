@@ -68,9 +68,6 @@ directly be consumed as a JSON file with the following structure:
 }]
 ```
 
-To see the relevant list of CAS properties, 
-please [review this guide](../configuration/Configuration-Properties.html#saml2-identity-provider-discovery).
-
 The following endpoints are available:
 
 | Endpoint                         | Description
