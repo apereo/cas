@@ -101,7 +101,7 @@ Support is enabled by including the following dependency in the overlay:
 
 {% include {{ version }}/email-notifications-configuration.md configKey="cas.authn.adaptive.risk.response" %}
 
-{% include {{ version }}/sms-notifications.md configKey="cas.authn.adaptive.risk.response" %}
+{% include {{ version }}/sms-notifications-configuration.md configKey="cas.authn.adaptive.risk.response" %}
 
 To learn more about available options, please [see this guide](../notifications/SMS-Messaging-Configuration.html)
 or [this guide](../notifications/Sending-Email-Configuration.html).

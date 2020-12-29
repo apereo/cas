@@ -1,5 +1,5 @@
 #!/bin/bash
-
+clear
 branchVersion="$1"
 
 function validateProjectDocumentation {
@@ -57,13 +57,15 @@ echo -e "Copied project documentation to $PWD/gh-pages/...\n"
 rm -Rf $PWD/docs-latest
 rm -Rf $PWD/docs-includes
 
-validateProjectDocumentation
-retVal=$?
-if [[ ${retVal} -eq 1 ]]; then
-   echo -e "Failed to validate documentation.\n"
-   exit ${retVal}
+echo "Looking for badly named include fragments..."
+ls $PWD/gh-pages/_includes/$branchVersion/*.md | grep -v '\-configuration.md$'
+docsVal=$?
+if [ $docsVal == 0 ]; then
+  echo "Found include fragments whose name does not end in '-configuration.md'"
+  exit 1
 fi
 
+echo "Looking for unused include fragments..."
 res=0
 files=$(ls $PWD/gh-pages/_includes/$branchVersion/*.md)
 for f in $files; do
@@ -71,13 +73,13 @@ for f in $files; do
 #  echo "Looking for $fname in $PWD/gh-pages/$branchVersion";
   grep -r $fname "$PWD/gh-pages/$branchVersion" --include \*.md >/dev/null 2>&1
   docsVal=$?
-  if [ docsVal == 1 ]; then
-      grep -r $fname "$PWD/gh-pages/_includes/$branchVersion" --include \*.md >/dev/null 2>&1
-      docsVal=$?
+  if [ $docsVal == 1 ]; then
+    grep -r $fname "$PWD/gh-pages/_includes/$branchVersion" --include \*.md >/dev/null 2>&1
+    docsVal=$?
   fi
-  if [ docsVal == 1 ]; then
-      echo "$fname fragment is unused."
-      res=1
+  if [ $docsVal == 1 ]; then
+    echo "$fname fragment is unused."
+    res=1
   fi
 done
 
@@ -86,11 +88,19 @@ if [ $res == 1 ]; then
   exit 1
 fi
 
-echo -e "Build documentation site...\n"
+echo "Validating documentation links..."
+validateProjectDocumentation
+retVal=$?
+if [[ ${retVal} -eq 1 ]]; then
+   echo -e "Failed to validate documentation.\n"
+   exit ${retVal}
+fi
+
+echo -e "Building documentation site...\n"
 cd $PWD/gh-pages
 chmod +x ./build.sh
-sudo gem install bundle
-sudo bundle exec jekyll build --incremental
+#sudo gem install bundle
+bundle exec jekyll build --incremental
 rm -Rf $PWD/gh-pages/_site
 
 git config user.email "cas@apereo.org"
@@ -111,7 +121,7 @@ git push -fq origin --all
 retVal=$?
 rm -Rf $PWD/gh-pages
 if [[ ${retVal} -eq 0 ]]; then
-   echo -e "Successfully published documentation to $branchVersion.\n"
+   echo -e "Published documentation to $branchVersion.\n"
    exit 0
 else
    echo -e "Failed to publish documentation.\n"
