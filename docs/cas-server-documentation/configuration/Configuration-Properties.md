@@ -491,70 +491,9 @@ basis. To learn more about this topic, [please review this guide](../integration
 # cas.authn.authentication-attribute-release.enabled=true
 ```
 
-## Surrogate Authentication
-
-Authenticate on behalf of another user.
-To learn more about this topic, [please review this guide](../installation/Surrogate-Authentication.html).
-
-```properties
-# cas.authn.surrogate.separator=+
-# cas.authn.surrogate.tgt.time-to-kill-in-seconds=30
-```
-
-{% include {{ version }}/persondirectory-configuration.md configKey="cas.authn.surrogate.principal" %}
-
-### Static Surrogate Accounts
-
-```properties
-# cas.authn.surrogate.simple.surrogates.casuser=jsmith,jsmith2
-# cas.authn.surrogate.simple.surrogates.casuser2=jsmith4,jsmith2
-```
-
-### JSON Surrogate Accounts
-
-```properties
-# cas.authn.surrogate.json.location=file:/etc/cas/config/surrogates.json
-```
-
-### LDAP Surrogate Accounts
-
-{% include {{ version }}/ldap-configuration.md configKey="cas.authn.surrogate.ldap" %}
-
-```properties
-# cas.authn.surrogate.ldap.surrogate-search-filter=(&(principal={user})(memberOf=cn=edu:example:cas:something:{user},dc=example,dc=edu))
-# cas.authn.surrogate.ldap.member-attribute-name=memberOf
-# cas.authn.surrogate.ldap.member-attribute-value-regex=cn=edu:example:cas:something:([^,]+),.+
-```
-
-### CouchDb Surrogate Accounts
-
-{% include {{ version }}/couchdb-integration.md configKey="cas.authn.surrogate" %}. 
-
-Surrogates may be stored either as part of the principals profile or as a 
-series of principal/surrogate pair. The default is a key/value pair.
-
-```properties
-# cas.authn.surrogate.ldap.surrogate-search-filter=(&(principal={user})(memberOf=cn=edu:example:cas:something:{user},dc=example,dc=edu))
-# cas.authn.surrogate.ldap.member-attribute-name=memberOf
-# cas.authn.surrogate.ldap.member-attribute-value-regex=cn=edu:example:cas:something:([^,]+),.+
-```
-
-### JDBC Surrogate Accounts
-
-{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.surrogate.jdbc" %}
-
-```properties
-# cas.authn.surrogate.jdbc.surrogate-search-query=SELECT COUNT(*) FROM surrogate WHERE username=?
-# cas.authn.surrogate.jdbc.surrogate-account-query=SELECT surrogate_user AS surrogateAccount FROM surrogate WHERE username=?
-```
-
-
 ### Webflow configuration
 
 {% include {{ version }}/webflow-configuration.md configKey="cas.authn.token.webflow" %}
-
-
-
 
 ## Pac4j Delegated AuthN
 
