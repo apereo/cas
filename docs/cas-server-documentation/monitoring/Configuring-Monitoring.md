@@ -39,7 +39,7 @@ to <i>interrogate</i> the entire cluster by running distributed queries to calcu
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-memcached-monitor" %}
 
-{% include {{ version }}/memcached-integration.md configKey="cas.monitor.memcached" %}
+{% include {{ version }}/memcached-configuration.md configKey="cas.monitor.memcached" %}
 
 The actual memcached implementation may be supported via one of the following options, expected to be defined in the overlay.
 

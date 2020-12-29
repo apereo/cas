@@ -103,9 +103,9 @@ compact data, which benefits both storage requirements and throughput.
 
 ## Configuration
 
-{% include {{ version }}/memcached-integration.md configKey="cas.ticket.registry.memcached" %}
+{% include {{ version }}/memcached-configuration.md configKey="cas.ticket.registry.memcached" %}
 
-{% include {{ version }}/signing-encryption.md configKey="cas.ticket.registry.memcached" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
+{% include {{ version }}/signing-encryption-configuration.md configKey="cas.ticket.registry.memcached" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
 
 
 ## High Availability Considerations

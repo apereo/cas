@@ -176,7 +176,7 @@ The following strategies define how issued tokens may be managed by CAS.
 
 {% include {{ version }}/passwordless-token-mgmt-configuration.md %}
 
-{% include {{ version }}/signing-encryption.md configKey="cas.authn.passwordless.tokens" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
+{% include {{ version }}/signing-encryption-configuration.md configKey="cas.authn.passwordless.tokens" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
 
 ### Memory
 
@@ -195,7 +195,7 @@ Support is enabled by including the following module in the overlay:
 
 {% include {{ version }}/rdbms-configuration.md configKey="cas.authn.passwordless.tokens.jpa" %}
 
-{% include {{ version }}/job-scheduling.md configKey="cas.authn.passwordless.tokens.jpa.cleaner" %}
+{% include {{ version }}/job-scheduling-configuration.md configKey="cas.authn.passwordless.tokens.jpa.cleaner" %}
 
 ### REST
 
@@ -229,7 +229,7 @@ public PasswordlessTokenRepository passwordlessTokenRepository() {
 
 ### Messaging & Notifications
 
-{% include {{ version }}/email-notifications.md configKey="cas.authn.passwordless.tokens" %}
+{% include {{ version }}/email-notifications-configuration.md configKey="cas.authn.passwordless.tokens" %}
 
 {% include {{ version }}/sms-notifications.md configKey="cas.authn.passwordless.tokens" %}
 

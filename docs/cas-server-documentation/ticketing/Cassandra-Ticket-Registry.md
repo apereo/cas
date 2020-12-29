@@ -31,7 +31,7 @@ To enable additional logging, configure the log4j configuration file to add the 
 
 {% include {{ version }}/cassandra-configuration.md configKey="cas.ticket.registry.cassandra" %}
 
-{% include {{ version }}/signing-encryption.md configKey="cas.ticket.registry.cassandra" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
+{% include {{ version }}/signing-encryption-configuration.md configKey="cas.ticket.registry.cassandra" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
 
 {% include {{ version }}/cassandra-ticket-registry-configuration.md %}
 

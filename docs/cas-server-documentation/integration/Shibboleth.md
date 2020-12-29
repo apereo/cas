@@ -63,7 +63,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include {{ version }}/saml-metadataui-configuration.md %}
 
-{% include {{ version }}/job-scheduling.md configKey="cas.saml-metadata-ui" %}
+{% include {{ version }}/job-scheduling-configuration.md configKey="cas.saml-metadata-ui" %}
 
 
 ### Relying Party Metadata

@@ -21,7 +21,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-pac4j-webflow" %}
 
-{% include {{ version }}/global-delegated-authentication.md %}
+{% include {{ version }}/global-delegated-authentication-configuration.md %}
 
 <div class="alert alert-info"><strong>Note</strong><p>The client issuing the authentication request can be of any type (SAML, OAuth2, OpenID Connect, etc) and is allowed to submit the authentication request using any protocol that the CAS server supports and is configured to understand. This means that you may have an OAuth2 client using CAS in delegation mode to authenticate at an external SAML2 identity provider, another CAS server or Facebook and in the end of that flow receiving an OAuth2 user profile. The CAS server is able to act as a proxy, doing the protocol translation in the middle.</p></div>
 
@@ -41,89 +41,89 @@ Identity providers for delegated authentication can be registered with CAS using
 
 ### Facebook
 
-{% include {{ version }}/facebook-delegated-configuration.md %}
+{% include {{ version }}/facebook-delegated-authentication-configuration.md %}
 
 ### Twitter
 
-{% include {{ version }}/twitter-delegated-configuration.md %}
+{% include {{ version }}/twitter-delegated-authentication-configuration.md %}
 
 ### PayPal
 
-{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.paypal" %}
+{% include {{ version }}/delegated-authentication-configuration.md configKey="cas.authn.pac4j.paypal" %}
 
 ### Wordpress
 
-{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.wordpress" %}
+{% include {{ version }}/delegated-authentication-configuration.md configKey="cas.authn.pac4j.wordpress" %}
 
 ### Yahoo!
 
-{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.yahoo" %}
+{% include {{ version }}/delegated-authentication-configuration.md configKey="cas.authn.pac4j.yahoo" %}
 
 ### Orcid
 
-{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.orcid" %}
+{% include {{ version }}/delegated-authentication-configuration.md configKey="cas.authn.pac4j.orcid" %}
 
 ### DropBox
 
-{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.dropbox" %}
+{% include {{ version }}/delegated-authentication-configuration.md configKey="cas.authn.pac4j.dropbox" %}
 
 ### FourSquare
 
-{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.foursquare" %}
+{% include {{ version }}/delegated-authentication-configuration.md configKey="cas.authn.pac4j.foursquare" %}
 
 ### Windows Live
 
-{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.windows-live" %}
+{% include {{ version }}/delegated-authentication-configuration.md configKey="cas.authn.pac4j.windows-live" %}
 
 ### Google
 
-{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.google" %}
+{% include {{ version }}/delegated-authentication-configuration.md configKey="cas.authn.pac4j.google" %}
 
 ### HiOrg Server
 
-{% include {{ version }}/hiorg-delegated-configuration.md %}
+{% include {{ version }}/hiorg-delegated-authentication-configuration.md %}
 
 ### OAuth20
 
-{% include {{ version }}/oauth20-delegated-configuration.md %}
+{% include {{ version }}/oauth20-delegated-authentication-configuration.md %}
 
 ### CAS
 
-{% include {{ version }}/cas-delegated-configuration.md %}
+{% include {{ version }}/cas-delegated-authentication-configuration.md %}
 
 ### Google
 
-{% include {{ version }}/google-delegated-configuration.md %}
+{% include {{ version }}/google-delegated-authentication-configuration.md %}
 
 ### LinkedIn
 
-{% include {{ version }}/linkedin-delegated-configuration.md %}
+{% include {{ version }}/linkedin-delegated-authentication-configuration.md %}
 
 ### GitHub
 
-{% include {{ version }}/github-delegated-configuration.md %}
+{% include {{ version }}/github-delegated-authentication-configuration.md %}
 
 ### Google OpenID Connect
 
-{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.oidc[0].google" %}
-{% include {{ version }}/oidc-delegated-authentication.md configKey="cas.authn.pac4j.oidc[0].google" %}
+{% include {{ version }}/delegated-authentication-configuration.md configKey="cas.authn.pac4j.oidc[0].google" %}
+{% include {{ version }}/oidc-delegated-authentication-configuration.md configKey="cas.authn.pac4j.oidc[0].google" %}
 
 ### KeyCloak
 
-{% include {{ version }}/keycloak-delegated-configuration.md %}
+{% include {{ version }}/keycloak-delegated-authentication-configuration.md %}
 
 ### Azure AD
 
-{% include {{ version }}/azuread-delegated-configuration.md %}
+{% include {{ version }}/azuread-delegated-authentication-configuration.md %}
 
 ### Apple Signin
 
-{% include {{ version }}/applesignin-delegated-configuration.md %}
+{% include {{ version }}/applesignin-delegated-authentication-configuration.md %}
 
 ### OpenID Connect Generic
 
-{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.oidc[0].generic" %}
-{% include {{ version }}/oidc-delegated-authentication.md configKey="cas.authn.pac4j.oidc[0].generic" %}
+{% include {{ version }}/delegated-authentication-configuration.md configKey="cas.authn.pac4j.oidc[0].generic" %}
+{% include {{ version }}/oidc-delegated-authentication-configuration.md configKey="cas.authn.pac4j.oidc[0].generic" %}
 
 ### REST
 

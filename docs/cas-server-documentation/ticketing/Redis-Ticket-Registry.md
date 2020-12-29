@@ -23,7 +23,7 @@ The Redis ticket registry supports Redis Sentinel, which provides high availabil
 
 {% include {{ version }}/redis-configuration.md configKey="cas.ticket.registry" %}
 
-{% include {{ version }}/signing-encryption.md configKey="cas.ticket.registry.redis" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
+{% include {{ version }}/signing-encryption-configuration.md configKey="cas.ticket.registry.redis" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
 ### Eviction Policy
 
 Redis manages the internal eviction policy of cached objects via its time-alive settings.

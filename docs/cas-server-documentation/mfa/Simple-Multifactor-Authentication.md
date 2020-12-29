@@ -22,7 +22,7 @@ Support is enabled by including the following module in the overlay:
 
 {% include {{ version }}/simple-mfa-configuration.md %}
 
-{% include {{ version }}/email-notifications.md configKey="cas.authn.mfa.simple" %}
+{% include {{ version }}/email-notifications-configuration.md configKey="cas.authn.mfa.simple" %}
 
 {% include {{ version }}/sms-notifications.md configKey="cas.authn.mfa.simple" %}
 

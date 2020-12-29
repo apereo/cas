@@ -26,7 +26,7 @@ identifier in order to avoid endless looping behavior and recursive needless inb
 
 ## Configuration
 
-{% include {{ version }}/signing-encryption.md configKey="cas.ticket.registry.jms" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
+{% include {{ version }}/signing-encryption-configuration.md configKey="cas.ticket.registry.jms" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
 
 {% include {{ version }}/jms-ticket-registry-configuration.md %}
 

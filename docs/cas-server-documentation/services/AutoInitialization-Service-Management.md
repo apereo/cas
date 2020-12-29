@@ -32,4 +32,4 @@ over the registry and register services and applications which you have fully au
 
 {% include {{ version }}/service-registry-configuration.md %}
 
-{% include {{ version }}/job-scheduling.md configKey="cas.service-registry" %}
+{% include {{ version }}/job-scheduling-configuration.md configKey="cas.service-registry" %}

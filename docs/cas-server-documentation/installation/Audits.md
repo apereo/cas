@@ -86,7 +86,7 @@ To learn how to configure database drivers, please [review this guide](JDBC-Driv
 
 {% include {{ version }}/jdbc-audit-configuration.md %}
 
-{% include {{ version }}/job-scheduling.md configKey="cas.audit.jdbc" %}
+{% include {{ version }}/job-scheduling-configuration.md configKey="cas.audit.jdbc" %}
 
 ## MongoDb Audits
 
