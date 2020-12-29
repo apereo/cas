@@ -68,7 +68,6 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
             if (!mv.isEmpty() && mv.hasView()) {
                 return mv;
             }
-            return OAuth20Utils.produceUnauthorizedErrorView();
         }
 
         val clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID)
