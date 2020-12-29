@@ -108,8 +108,9 @@ acceptable client certificates.
 
 {% include {{ version }}/ldap-configuration.md configKey="cas.authn.x509.ldap" %}
 
-See LDAP attribute repositories [here](Configuration-Properties.html#ldap) to fetch additional
-LDAP attributes using the principal extracted from the X509 certificate.
+You may also fetch additional LDAP attributes using the principal extracted from the X509 certificate:
+
+{% include {{ version }}/ldap-attribute-resolution-configuration.md %}
 
 ## Web Server Configuration
 

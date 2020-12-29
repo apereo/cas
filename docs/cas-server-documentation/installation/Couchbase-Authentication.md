@@ -24,4 +24,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 ## Couchbase Principal Attributes
 
-The above dependency may also be used, in the event that principal attributes need to be fetched from a Couchbase database without necessarily authenticating credentials against Couchbase. To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#couchbase).
+The above dependency may also be used, in the event that principal attributes 
+need to be fetched from a Couchbase database without necessarily authenticating credentials against Couchbase. 
+
+{% include {{ version }}/couchbase-attribute-resolution-configuration.md %}
