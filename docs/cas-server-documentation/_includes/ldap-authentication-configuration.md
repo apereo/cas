@@ -31,3 +31,5 @@ To fetch and resolve attributes that carry tags/options, consider tagging the ma
 ```properties
 # cas.authn.ldap[0].principal-attribute-list=homePostalAddress:homePostalAddress;
 ```
+
+{% include {{ version }}/authentication-credential-selection-configuration.md %}

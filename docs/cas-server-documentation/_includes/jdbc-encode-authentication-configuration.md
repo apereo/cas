@@ -21,3 +21,5 @@ is converted to hex before comparing it to the database value.
 # cas.authn.jdbc.encode[0].name=
 # cas.authn.jdbc.encode[0].order=0
 ```
+
+{% include {{ version }}/authentication-credential-selection-configuration.md %}

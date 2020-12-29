@@ -23,6 +23,8 @@ The following bypass options apply equally to multifactor authentication provide
 If multifactor authentication bypass is determined via REST, then the following
 settings can be used to configure the REST integration:
 
-{% include {{ version }}/rest-configuration.md configKey="{{ include.configKey }}.bypass.rest"  %}
+{% capture configKey %}{{ include.configKey }}{% endcapture %}
 
-{% include {{ version }}/mfa-configuration.md configKey="{{ include.configKey }}" %}
+{% include {{ version }}/rest-configuration.md configKey=configKey  %}
+
+{% include {{ version }}/mfa-configuration.md configKey=configKey %}
