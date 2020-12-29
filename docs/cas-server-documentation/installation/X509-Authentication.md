@@ -90,7 +90,26 @@ by the Web server terminating the SSL connection. Since an SSL peer may be confi
 certificates, the CAS X.509 handler provides a number of properties that place additional restrictions on
 acceptable client certificates.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#x509-authentication).
+{% include {{ version }}/x509-authentication-configuration.md %}
+
+### X509 Certificate Extraction
+
+{% include {{ version }}/cert-extraction-x509-authentication-configuration.md %}
+
+### X509 Principal Resolution
+
+{% include {{ version }}/principal-resolution-x509-authentication-configuration.md %}
+
+### X509 CRL Fetching / Revocation
+
+{% include {{ version }}/crl-x509-authentication-configuration.md %}
+
+### X509 LDAP Integration
+
+{% include {{ version }}/ldap-configuration.md configKey="cas.authn.x509.ldap" %}
+
+See LDAP attribute repositories [here](Configuration-Properties.html#ldap) to fetch additional
+LDAP attributes using the principal extracted from the X509 certificate.
 
 ## Web Server Configuration
 
@@ -112,7 +131,7 @@ container that ships with CAS and can be potentially simplify the configuration 
 quite a bit, depending on use case and behavior. The configuration of certificate and trust stores 
 as well as behavior and enforcement of client authentication can also be managed directly by CAS.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#embedded-container).
+{% include {{ version }}/embedded-container.md %}
 
 #### Optional (Mixed) Authentication
 
@@ -125,8 +144,7 @@ This behavior is achieved by exposing a dedicated port for the embedded Apache T
 may forcefully require X.509 authentication for login and access. Doing so should automatically allow for an extra
 login option in the user interface to trigger the browser for X.509.
 
-To see the relevant list of CAS properties, 
-please [review this guide](../configuration/Configuration-Properties.html#x509-authentication).
+{% include {{ version }}/webflow-x509-authentication-configuration.md %}
 
 ### External Apache Tomcat
 

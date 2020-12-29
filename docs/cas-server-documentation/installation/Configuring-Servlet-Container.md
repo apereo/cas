@@ -43,11 +43,11 @@ container can be controlled via the CAS properties. See <a href="../configuratio
 
 ### Embedded Container Configuration
 
-{% include embedded-container.md %}
+{% include {{ version }}/embedded-container.md %}
 
 ### X.509 Client Authentication
 
-{% include embedded-container-x509.md %}
+{% include {{ version }}/embedded-container-x509.md %}
 
 ### Execution
 
