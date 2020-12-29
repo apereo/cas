@@ -64,6 +64,10 @@ if [[ ${retVal} -eq 1 ]]; then
 fi
 
 cd $PWD/gh-pages
+ls
+gem bundle install
+chmod +x ./build.sh
+./build.sh
 
 git config user.email "cas@apereo.org"
 git config user.name "CAS"
