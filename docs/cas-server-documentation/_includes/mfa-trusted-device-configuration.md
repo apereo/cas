@@ -11,4 +11,4 @@ The following strategies can be used to generate keys for trusted device records
 | `DEFAULT`            | Uses a combination of the username, device name and device fingerprint to generate the device key.
 | `LEGACY`             | Deprecated. Uses a combination of the username, record date and device fingerprint to generate the device key.
 
-{% include {{ version }}/signing-encryption.md configKey="cas.authn.mfa.trusted" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
+{% include {{ version }}/signing-encryption-configuration.md configKey="cas.authn.mfa.trusted" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}

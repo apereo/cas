@@ -42,7 +42,7 @@ Running a Terracotta cluster on Kubernetes can be done easily using the Terracot
 
 {% include {{ version }}/ehcache-ticket-registry-configuration.md %}
 
-{% include {{ version }}/signing-encryption.md configKey="cas.ticket.registry.ehcache3" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
+{% include {{ version }}/signing-encryption-configuration.md configKey="cas.ticket.registry.ehcache3" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
 
 ### Eviction Policy
 
@@ -82,7 +82,7 @@ replication with Ehcache, [see this resource](https://www.ehcache.org/documentat
 
 {% include {{ version }}/ehcache2-ticket-registry-configuration.md %}
 
-{% include {{ version }}/signing-encryption.md configKey="cas.ticket.registry.ehcache" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
+{% include {{ version }}/signing-encryption-configuration.md configKey="cas.ticket.registry.ehcache" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
 
 The Ehcache configuration for `ehcache-replicated.xml` mentioned in the config follows. 
 Note that `${ehcache.otherServer}` would be replaced by a system property: `-Dehcache.otherserver=cas2`.

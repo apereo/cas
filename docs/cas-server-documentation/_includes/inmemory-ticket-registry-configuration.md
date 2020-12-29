@@ -7,4 +7,4 @@
 # cas.ticket.registry.in-memory.initial-capacity=1000
 ```
 
-{% include {{ version }}/signing-encryption.md configKey="cas.ticket.registry.in-memory" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
+{% include {{ version }}/signing-encryption-configuration.md configKey="cas.ticket.registry.in-memory" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}

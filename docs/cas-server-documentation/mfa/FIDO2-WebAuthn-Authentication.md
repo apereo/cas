@@ -53,7 +53,7 @@ expire after a fixed period since a user registered their device. If you deploy 
 MFA for a setup where tokens are centrally distributed and revoked, 
 you may want to extend the internal.
 
-{% include {{ version }}/job-scheduling.md configKey="cas.authn.mfa.web-authn.cleaner" %}
+{% include {{ version }}/job-scheduling-configuration.md configKey="cas.authn.mfa.web-authn.cleaner" %}
 
 <div class="alert alert-warning"><strong>Cleaner Usage</strong><p>In a clustered CAS deployment, it is best to keep 
 the cleaner running on one designated CAS node only and turn it off on all others via CAS settings. Keeping the cleaner running 

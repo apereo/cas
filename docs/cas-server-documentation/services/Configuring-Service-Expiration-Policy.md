@@ -11,7 +11,7 @@ category: Services
 An application registered with CAS may be assigned an optional expiration policy that controls the lifetime of the registration. Once the service is deemed expired, it will automatically be disabled or removed from the CAS registry 
 and [relevant contacts](Configuring-Service-Contacts.html) defined and assigned to the service will be notified via email or text messages.
 
-{% include {{ version }}/email-notifications.md configKey="cas.service-registry" %}
+{% include {{ version }}/email-notifications-configuration.md configKey="cas.service-registry" %}
 
 {% include {{ version }}/sms-notifications.md configKey="cas.service-registry" %}
 

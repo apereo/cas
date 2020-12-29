@@ -8,4 +8,4 @@ The following options related to DynamoDb support in CAS apply equally to a numb
 # {{ include.configKey }}.dynamo-db.local-instance=false
 ```
 
-{% include {{ version }}/aws-integration.md configKey="{{ include.configKey }}.dynamo-db" %}
+{% include {{ version }}/aws-configuration.md configKey="{{ include.configKey }}.dynamo-db" %}

@@ -20,7 +20,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include {{ version }}/password-encoding.md configKey="cas.authn.cognito" %}
 
-{% include {{ version }}/aws-integration.md configKey="cas.authn.cognito" %}
+{% include {{ version }}/aws-configuration.md configKey="cas.authn.cognito" %}
 
 {% include {{ version }}/aws-cognito-authentication-configuration.md %}
 

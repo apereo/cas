@@ -94,7 +94,7 @@ scan the chosen repository/database/registry periodically and remove expired rec
 <div class="alert alert-warning"><strong>Cleaner Usage</strong><p>In a clustered CAS deployment, it is best to keep the cleaner running on one designated CAS 
 node only and turn it off on all others via CAS settings. Keeping the cleaner running on all nodes may likely lead to severe performance and locking issues.</p></div>
 
-{% include {{ version }}/job-scheduling.md configKey="cas.authn.mfa.trusted.cleaner" %}
+{% include {{ version }}/job-scheduling-configuration.md configKey="cas.authn.mfa.trusted.cleaner" %}
 
 ### Default
 

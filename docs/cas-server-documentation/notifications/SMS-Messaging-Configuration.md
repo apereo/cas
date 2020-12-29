@@ -100,7 +100,7 @@ To learn more, [visit this site](https://docs.aws.amazon.com/sns).
 
 {% include {{ version }}/aws-sns-configuration.md %}
 
-{% include {{ version }}/aws-integration.md configKey="cas.sms-provider.sns" %}
+{% include {{ version }}/aws-configuration.md configKey="cas.sms-provider.sns" %}
 
 ## Nexmo
 

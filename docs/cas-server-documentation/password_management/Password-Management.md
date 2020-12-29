@@ -33,11 +33,11 @@ To learn more about available notification options, please [see this guide](../n
 
 {% include {{ version }}/password-management-configuration.md %}
 
-{% include {{ version }}/email-notifications.md configKey="cas.authn.pm.reset" %}
+{% include {{ version }}/email-notifications-configuration.md configKey="cas.authn.pm.reset" %}
 
 {% include {{ version }}/sms-notifications.md configKey="cas.authn.pm.reset" %}
 
-{% include {{ version }}/signing-encryption.md configKey="cas.authn.pm.reset" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
+{% include {{ version }}/signing-encryption-configuration.md configKey="cas.authn.pm.reset" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
 
 {% include {{ version }}/webflow-configuration.md configKey="cas.authn.pm.webflow" %}
 

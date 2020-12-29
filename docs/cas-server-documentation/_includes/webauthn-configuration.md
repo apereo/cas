@@ -22,4 +22,4 @@
 
 {% include {{ version }}/mfa-bypass-configuration.md configKey="cas.authn.mfa.web-authn" %}
 
-{% include {{ version }}/signing-encryption.md configKey="cas.authn.mfa.web-authn" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
+{% include {{ version }}/signing-encryption-configuration.md configKey="cas.authn.mfa.web-authn" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}

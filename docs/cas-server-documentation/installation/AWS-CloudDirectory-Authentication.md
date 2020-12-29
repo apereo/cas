@@ -25,7 +25,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include {{ version }}/password-encoding.md configKey="cas.authn.cloud-directory" %}
 
-{% include {{ version }}/aws-integration.md configKey="cas.authn.cloud-directory" %}
+{% include {{ version }}/aws-configuration.md configKey="cas.authn.cloud-directory" %}
 
 {% include {{ version }}/aws-clouddirectory-authentication-configuration.md %}
 

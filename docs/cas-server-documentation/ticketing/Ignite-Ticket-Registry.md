@@ -29,7 +29,7 @@ Ignite supports replication over TLS for distributed caches composed of two or m
 ## Configuration
 
 {% include {{ version }}/ignite-ticket-registry-configuration.md %}
-{% include {{ version }}/signing-encryption.md configKey="cas.ticket.registry.ignite" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
+{% include {{ version }}/signing-encryption-configuration.md configKey="cas.ticket.registry.ignite" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
 
 ## Troubleshooting
 

@@ -99,7 +99,7 @@ Support is enabled by including the following dependency in the overlay:
 
 ### Messaging & Notifications
 
-{% include {{ version }}/email-notifications.md configKey="cas.authn.adaptive.risk.response" %}
+{% include {{ version }}/email-notifications-configuration.md configKey="cas.authn.adaptive.risk.response" %}
 
 {% include {{ version }}/sms-notifications.md configKey="cas.authn.adaptive.risk.response" %}
 

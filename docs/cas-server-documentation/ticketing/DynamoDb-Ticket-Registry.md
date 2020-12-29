@@ -22,7 +22,7 @@ of DynamoDb's core components and concepts, please [start with this guide](http:
 
 {% include {{ version }}/dynamodb-configuration.md configKey="cas.ticket.registry" %}
 
-{% include {{ version }}/signing-encryption.md configKey="cas.ticket.registry.dynamo-db" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
+{% include {{ version }}/signing-encryption-configuration.md configKey="cas.ticket.registry.dynamo-db" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
 
 {% include {{ version }}/dynamodb-ticket-registry-configuration.md %}
 

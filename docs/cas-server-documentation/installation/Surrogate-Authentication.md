@@ -266,7 +266,7 @@ SERVER IP ADDRESS: 127.0.0.1
 
 Additionally, failure and success events may also communicated via SMS and/or email messages to relevant parties. 
 
-{% include {{ version }}/email-notifications.md configKey="cas.authn.surrogate" %}
+{% include {{ version }}/email-notifications-configuration.md configKey="cas.authn.surrogate" %}
 
 {% include {{ version }}/sms-notifications.md configKey="cas.authn.surrogate" %}
 

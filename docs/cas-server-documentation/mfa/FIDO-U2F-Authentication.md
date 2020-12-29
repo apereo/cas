@@ -35,7 +35,7 @@ expire after a fixed period since a user registered the U2F token
 MFA for a setup where tokens are centrally distributed and revoked, 
 you may want to extend the interval.
 
-{% include {{ version }}/job-scheduling.md configKey="cas.authn.mfa.u2f.cleaner`" %}
+{% include {{ version }}/job-scheduling-configuration.md configKey="cas.authn.mfa.u2f.cleaner`" %}
 
 <div class="alert alert-warning"><strong>Cleaner Usage</strong><p>In a 
 clustered CAS deployment, it is best to keep the cleaner running on one designated 

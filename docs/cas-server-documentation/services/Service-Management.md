@@ -20,7 +20,7 @@ service registry that stores one or more registered services containing metadata
 
 {% include {{ version }}/service-registry-configuration.md %}
 
-{% include {{ version }}/job-scheduling.md configKey="cas.service-registry" %}
+{% include {{ version }}/job-scheduling-configuration.md configKey="cas.service-registry" %}
 
 ## Administrative Endpoints
 
