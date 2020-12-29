@@ -56,7 +56,12 @@ to an external SAML2 identity provider such as Azure AD or Amazon Cognito, etc:
 # {{ include.configKey }}.message-store-factory=org.pac4j.saml.store.EmptyStoreFactory
 ```
 
-
 Examine the generated metadata after accessing the CAS login screen to ensure all
 ports and endpoints are correctly adjusted. Finally, share the CAS SP metadata
 with the delegated identity provider and register CAS as an authorized relying party.
+
+#### SAML2 Identity Provider Discovery
+
+```properties
+cas.authn.pac4j.saml-discovery.resource[0].location=file:/etc/cas/config/json-feed.json
+```

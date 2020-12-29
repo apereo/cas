@@ -39,16 +39,91 @@ to be defined in the CAS configuration as well.
 
 Identity providers for delegated authentication can be registered with CAS using settings. 
 
-{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.twitter" %}
+### Facebook
+
+{% include {{ version }}/facebook-delegated-configuration.md %}
+
+### Twitter
+
+{% include {{ version }}/twitter-delegated-configuration.md %}
+
+### PayPal
+
 {% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.paypal" %}
+
+### Wordpress
+
 {% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.wordpress" %}
+
+### Yahoo!
+
 {% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.yahoo" %}
+
+### Orcid
+
 {% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.orcid" %}
+
+### DropBox
+
 {% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.dropbox" %}
+
+### FourSquare
+
 {% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.foursquare" %}
+
+### Windows Live
+
 {% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.windows-live" %}
+
+### Google
+
 {% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.google" %}
-{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.hi-org-server" %}
+
+### HiOrg Server
+
+{% include {{ version }}/hiorg-delegated-configuration.md %}
+
+### OAuth20
+
+{% include {{ version }}/oauth20-delegated-configuration.md %}
+
+### CAS
+
+{% include {{ version }}/cas-delegated-configuration.md %}
+
+### Google
+
+{% include {{ version }}/google-delegated-configuration.md %}
+
+### LinkedIn
+
+{% include {{ version }}/linkedin-delegated-configuration.md %}
+
+### GitHub
+
+{% include {{ version }}/github-delegated-configuration.md %}
+
+### Google OpenID Connect
+
+{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.oidc[0].google" %}
+{% include {{ version }}/oidc-delegated-authentication.md configKey="cas.authn.pac4j.oidc[0].google" %}
+
+### KeyCloak
+
+{% include {{ version }}/keycloak-delegated-configuration.md %}
+
+### Azure AD
+
+{% include {{ version }}/azuread-delegated-configuration.md %}
+
+### Apple Signin
+
+{% include {{ version }}/applesignin-delegated-configuration.md %}
+
+### OpenID Connect Generic
+
+{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.oidc[0].generic" %}
+{% include {{ version }}/oidc-delegated-authentication.md configKey="cas.authn.pac4j.oidc[0].generic" %}
 
 ### REST
 
