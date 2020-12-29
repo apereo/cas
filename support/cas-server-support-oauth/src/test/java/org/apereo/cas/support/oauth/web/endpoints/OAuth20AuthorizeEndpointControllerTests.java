@@ -4,6 +4,7 @@ import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
+import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthAccessTokenExpirationPolicy;
@@ -33,6 +34,7 @@ import org.springframework.web.servlet.view.RedirectView;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -61,8 +63,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         val mockResponse = new MockHttpServletResponse();
 
-        val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
-        assertEquals(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, modelAndView.getViewName());
+        assertThrows(UnauthorizedServiceException.class, () -> oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse));
     }
 
     @Test
@@ -71,8 +72,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         val mockResponse = new MockHttpServletResponse();
 
-        val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
-        assertEquals(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, modelAndView.getViewName());
+        assertThrows(NoSuchElementException.class, () -> oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse));
     }
 
     @Test
@@ -82,8 +82,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         val mockResponse = new MockHttpServletResponse();
 
-        val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
-        assertEquals(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, modelAndView.getViewName());
+        assertThrows(NoSuchElementException.class, () -> oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse));
     }
 
     @Test
@@ -113,8 +112,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         val mockResponse = new MockHttpServletResponse();
 
-        val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
-        assertEquals(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, modelAndView.getViewName());
+        assertThrows(UnauthorizedServiceException.class, () -> oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse));
     }
 
     @Test
@@ -127,8 +125,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
 
         this.servicesManager.save(getRegisteredService(OTHER_REDIRECT_URI, CLIENT_ID));
 
-        val modelAndView = oAuth20AuthorizeEndpointController.handleRequestPost(mockRequest, mockResponse);
-        assertEquals(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, modelAndView.getViewName());
+        assertThrows(NoSuchElementException.class, () -> oAuth20AuthorizeEndpointController.handleRequestPost(mockRequest, mockResponse));
     }
 
     @Test
@@ -151,8 +148,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val session = new MockHttpSession();
         mockRequest.setSession(session);
 
-        val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
-        assertEquals(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, modelAndView.getViewName());
+        assertThrows(NoSuchElementException.class, () -> oAuth20AuthorizeEndpointController.handleRequestPost(mockRequest, mockResponse));
     }
 
     @Test
