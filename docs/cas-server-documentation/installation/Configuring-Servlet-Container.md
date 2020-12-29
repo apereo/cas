@@ -40,11 +40,11 @@ You **DO NOT** need to, but can if you want to, configure and deploy to an exter
 
 ### Embedded Container Configuration
 
-{% include {{ version }}/embedded-container.md %}
+{% include {{ version }}/embedded-container-configuration.md %}
 
 ### X.509 Client Authentication
 
-{% include {{ version }}/embedded-container-x509.md %}
+{% include {{ version }}/embedded-container-x509-configuration.md %}
 
 ### Execution
 
@@ -125,47 +125,47 @@ java -jar /path/to/cas.war -Djava.util.logging.config.file=/path/to/logging.prop
 
 ### Embedded Apache Tomcat Container
 
-{% include {{ version }}/embedded-container-tomcat.md %}
+{% include {{ version }}/embedded-container-tomcat-configuration.md %}
 
 #### HTTP Proxying
 
-{% include {{ version }}/embedded-container-tomcat-httpproxy.md %}
+{% include {{ version }}/embedded-container-tomcat-httpproxy-configuration.md %}
 
 #### HTTP
 
-{% include {{ version }}/embedded-container-tomcat-http.md %}
+{% include {{ version }}/embedded-container-tomcat-http-configuration.md %}
 
 #### AJP
 
-{% include {{ version }}/embedded-container-tomcat-ajp.md %}
+{% include {{ version }}/embedded-container-tomcat-ajp-configuration.md %}
 
 #### SSL Valve
 
-{% include {{ version }}/embedded-container-tomcat-sslvalve.md %}
+{% include {{ version }}/embedded-container-tomcat-sslvalve-configuration.md %}
 
 #### Extended Access Log Valve
 
-{% include {{ version }}/embedded-container-tomcat-extended-accesslog.md %}
+{% include {{ version }}/embedded-container-tomcat-extended-accesslog-configuration.md %}
 
 #### Rewrite Valve
 
-{% include {{ version }}/embedded-container-tomcat-rewritevalve.md %}
+{% include {{ version }}/embedded-container-tomcat-rewritevalve-configuration.md %}
 
 #### Basic Authentication
 
-{% include {{ version }}/embedded-container-tomcat-basicauth.md %}
+{% include {{ version }}/embedded-container-tomcat-basicauth-configuration.md %}
 
 #### Apache Portable Runtime (APR)
 
-{% include {{ version }}/embedded-container-tomcat-apr.md %}
+{% include {{ version }}/embedded-container-tomcat-apr-configuration.md %}
 
 #### Connector IO
 
-{% include {{ version }}/embedded-container-tomcat-connectorio.md %}
+{% include {{ version }}/embedded-container-tomcat-connectorio-configuration.md %}
 
 #### Session Clustering & Replication
 
-{% include {{ version }}/embedded-container-tomcat-session-clustering.md %}
+{% include {{ version }}/embedded-container-tomcat-session-clustering-configuration.md %}
 
 ### Jetty
 
@@ -173,13 +173,13 @@ java -jar /path/to/cas.war -Djava.util.logging.config.file=/path/to/logging.prop
 
 ### Embedded Jetty Container
 
-{% include {{ version }}/embedded-container-jetty.md %}
+{% include {{ version }}/embedded-container-jetty-configuration.md %}
 
 ### Undertow
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-webapp-undertow" %}
 
-{% include {{ version }}/embedded-container-undertow.md %}
+{% include {{ version }}/embedded-container-undertow-configuration.md %}
 
 ## External
 

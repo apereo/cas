@@ -14,10 +14,10 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-couchdb-authentication" %}
 
-{% include {{ version }}/principal-transformation.md configKey="cas.authn.couch-db" %}
+{% include {{ version }}/principal-transformation-configuration.md configKey="cas.authn.couch-db" %}
 
-{% include {{ version }}/password-encoding.md configKey="cas.authn.couch-db" %}
+{% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.couch-db" %}
 
-{% include {{ version }}/couchdb-integration.md configKey="cas.authn" %}
+{% include {{ version }}/couchdb-configuration.md configKey="cas.authn" %}
 
 {% include {{ version }}/couchdb-authentication-configuration.md %}

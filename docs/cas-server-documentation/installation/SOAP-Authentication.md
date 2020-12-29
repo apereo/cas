@@ -52,9 +52,9 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 ## Configuration
 
-{% include {{ version }}/principal-transformation.md configKey="cas.authn.soap" %}
+{% include {{ version }}/principal-transformation-configuration.md configKey="cas.authn.soap" %}
 
-{% include {{ version }}/password-encoding.md configKey="cas.authn.soap" %}
+{% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.soap" %}
 
 {% include {{ version }}/soap-authentication-configuration.md %}
 

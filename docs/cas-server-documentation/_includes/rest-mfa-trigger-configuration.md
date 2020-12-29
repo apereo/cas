@@ -1,1 +1,1 @@
-{% include {{ version }}/rest-integration.md configKey="cas.authn.mfa.rest" %}
+{% include {{ version }}/rest-configuration.md configKey="cas.authn.mfa.rest" %}

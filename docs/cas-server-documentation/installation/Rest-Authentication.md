@@ -58,7 +58,7 @@ the user will be able to directly change the password.
 
 ## Configuration
 
-{% include {{ version }}/password-encoding.md configKey="cas.authn.rest" %}
+{% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.rest" %}
 
 {% include {{ version }}/rest-authentication-configuration.md %}
 

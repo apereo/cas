@@ -1,4 +1,4 @@
-{% include {{ version }}/couchdb-integration.md configKey="cas.authn.saml-idp.metadata" %}
+{% include {{ version }}/couchdb-configuration.md configKey="cas.authn.saml-idp.metadata" %}
 
 ```properties
 # cas.authn.saml-idp.metadata.couch-db.idp-metadata-enabled=true

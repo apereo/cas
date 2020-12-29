@@ -1,4 +1,4 @@
-{% include {{ version }}/rest-integration.md configKey="cas.authn.mfa.gauth.rest" %}
+{% include {{ version }}/rest-configuration.md configKey="cas.authn.mfa.gauth.rest" %}
 
 Additionally, tokens can be managed via REST using the following settings:
 

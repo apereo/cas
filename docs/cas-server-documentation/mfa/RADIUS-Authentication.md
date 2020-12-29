@@ -14,9 +14,9 @@ RADIUS support is enabled by only including the following dependency in the over
 
 ## Configuration
 
-{% include {{ version }}/principal-transformation.md configKey="cas.authn.radius" %}
+{% include {{ version }}/principal-transformation-configuration.md configKey="cas.authn.radius" %}
 
-{% include {{ version }}/password-encoding.md configKey="cas.authn.radius" %}
+{% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.radius" %}
 
 {% include {{ version }}/radius-configuration.md configKey="cas.authn.radius" %}
 

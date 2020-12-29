@@ -114,7 +114,7 @@ If you intend to use a CouchDb database for auditing functionality, enable the f
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-audit-couchdb" %}
 
-{% include {{ version }}/couchdb-integration.md configKey="cas.audit" %}
+{% include {{ version }}/couchdb-configuration.md configKey="cas.audit" %}
 
 ## Couchbase Audits
 
@@ -145,7 +145,7 @@ this feature, enable the following module in your configuration:
 
 The body of the HTTP request is a JSON representation of the audit record. 
 
-{% include {{ version }}/rest-integration.md configKey="cas.audit.rest" %}
+{% include {{ version }}/rest-configuration.md configKey="cas.audit.rest" %}
 
 {% include {{ version }}/rest-audit-configuration.md %}
 

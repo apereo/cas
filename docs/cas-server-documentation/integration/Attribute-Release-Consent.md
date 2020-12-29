@@ -267,7 +267,7 @@ Support is enabled by including the following module in the Overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-consent-couchdb" %}
 
-{% include {{ version }}/couchdb-integration.md configKey="cas.consent" %}
+{% include {{ version }}/couchdb-configuration.md configKey="cas.consent" %}
 
 
 ### REST

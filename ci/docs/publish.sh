@@ -60,14 +60,14 @@ validateProjectDocumentation
 retVal=$?
 if [[ ${retVal} -eq 1 ]]; then
     echo -e "Failed to validate documentation.\n"
-#    exit ${retVal}
+    exit ${retVal}
 fi
 
+echo -e "Build documentation site...\n"
 cd $PWD/gh-pages
-ls
-gem bundle install
 chmod +x ./build.sh
-./build.sh
+gem install bundle
+bundle exec jekyll build
 
 git config user.email "cas@apereo.org"
 git config user.name "CAS"

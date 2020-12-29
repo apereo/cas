@@ -1,4 +1,4 @@
-{% include {{ version }}/rest-integration.md configKey="cas.authn.saml-idp.metadata.rest" %}
+{% include {{ version }}/rest-configuration.md configKey="cas.authn.saml-idp.metadata.rest" %}
 
 ```properties
 # cas.authn.saml-idp.metadata.rest.idp-metadata-enabled=true

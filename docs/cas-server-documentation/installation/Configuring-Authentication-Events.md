@@ -84,7 +84,7 @@ Stores authentication events inside a CouchDb instance.
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-events-couchdb" %}
 
-{% include {{ version }}/couchdb-integration.md configKey="cas.events.couch-db" %}
+{% include {{ version }}/couchdb-configuration.md configKey="cas.events.couch-db" %}
 
 ### JPA
 

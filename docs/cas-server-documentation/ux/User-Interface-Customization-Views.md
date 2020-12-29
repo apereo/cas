@@ -33,7 +33,7 @@ the response. This URL endpoint will receive the available request headers as we
 
 Upon a successful `200` status result, the response body is expected to contain the view that will be rendered by CAS.
 
-{% include {{ version }}/rest-integration.md configKey="cas.view.rest" %}
+{% include {{ version }}/rest-configuration.md configKey="cas.view.rest" %}
 
 ## Thymeleaf
 

@@ -301,7 +301,7 @@ Allow the CAS Spring Cloud configuration server to load settings from a RDBMS in
 
 Allow the CAS Spring Cloud configuration server to load settings from a REST API.
 
-{% include {{ version }}/rest-integration.md configKey="cas.spring.cloud.rest" %}
+{% include {{ version }}/rest-configuration.md configKey="cas.spring.cloud.rest" %}
 
 ## Configuration Security
 

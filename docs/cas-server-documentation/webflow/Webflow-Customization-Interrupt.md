@@ -140,7 +140,7 @@ This strategy reaches out to a REST endpoint resource whose job is to dynamicall
 
 On a successful operation with a status code of `200`, the response body is expected to contain the JSON payload whose syntax and structure is identical to what is described above.
 
-{% include {{ version }}/rest-integration.md configKey="cas.interrupt.rest" %}
+{% include {{ version }}/rest-configuration.md configKey="cas.interrupt.rest" %}
 
 ### Custom
 

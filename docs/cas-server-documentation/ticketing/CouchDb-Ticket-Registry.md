@@ -19,7 +19,7 @@ registry is to leverage the multi-master, multi-datacenter capabilities of Couch
 
 ## Configuration
 
-{% include {{ version }}/couchdb-integration.md configKey="cas.ticket.registry.couch-db" %}
+{% include {{ version }}/couchdb-configuration.md configKey="cas.ticket.registry.couch-db" %}
 
 
 The only truly mandatory setting is the URL. However, CouchDB should not be used in admin party mode in production, so username and password are needed as well.

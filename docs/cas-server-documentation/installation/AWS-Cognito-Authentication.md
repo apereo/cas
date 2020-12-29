@@ -16,9 +16,9 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 ## Configuration
 
-{% include {{ version }}/principal-transformation.md configKey="cas.authn.cognito" %}
+{% include {{ version }}/principal-transformation-configuration.md configKey="cas.authn.cognito" %}
 
-{% include {{ version }}/password-encoding.md configKey="cas.authn.cognito" %}
+{% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.cognito" %}
 
 {% include {{ version }}/aws-configuration.md configKey="cas.authn.cognito" %}
 

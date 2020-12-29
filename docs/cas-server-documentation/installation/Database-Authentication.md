@@ -20,9 +20,9 @@ To learn how to configure database drivers, [please see this guide](JDBC-Drivers
 
 {% include {{ version }}/rdbms-configuration.md configKey="cas.authn.jdbc.query[0]" %}
 
-{% include {{ version }}/principal-transformation.md configKey="cas.authn.jdbc.query[0]" %}
+{% include {{ version }}/principal-transformation-configuration.md configKey="cas.authn.jdbc.query[0]" %}
 
-{% include {{ version }}/password-encoding.md configKey="cas.authn.jdbc.query[0]" %}
+{% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.jdbc.query[0]" %}
 
 {% include {{ version }}/jdbc-query-authentication-configuration.md %}
 
@@ -31,9 +31,9 @@ To learn how to configure database drivers, [please see this guide](JDBC-Drivers
 
 {% include {{ version }}/rdbms-configuration.md configKey="cas.authn.jdbc.search[0]" %}
 
-{% include {{ version }}/principal-transformation.md configKey="cas.authn.jdbc.search[0]" %}
+{% include {{ version }}/principal-transformation-configuration.md configKey="cas.authn.jdbc.search[0]" %}
 
-{% include {{ version }}/password-encoding.md configKey="cas.authn.jdbc.search[0]" %}
+{% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.jdbc.search[0]" %}
 
 {% include {{ version }}/jdbc-search-authentication-configuration.md %}
 
@@ -42,9 +42,9 @@ To learn how to configure database drivers, [please see this guide](JDBC-Drivers
 
 {% include {{ version }}/rdbms-configuration.md configKey="cas.authn.jdbc.bind[0]" %}
 
-{% include {{ version }}/principal-transformation.md configKey="cas.authn.jdbc.bind[0]" %}
+{% include {{ version }}/principal-transformation-configuration.md configKey="cas.authn.jdbc.bind[0]" %}
 
-{% include {{ version }}/password-encoding.md configKey="cas.authn.jdbc.bind[0]" %}
+{% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.jdbc.bind[0]" %}
 
 {% include {{ version }}/jdbc-bind-authentication-configuration.md %}
 
@@ -53,9 +53,9 @@ To learn how to configure database drivers, [please see this guide](JDBC-Drivers
 
 {% include {{ version }}/rdbms-configuration.md configKey="cas.authn.jdbc.encode[0]" %}
 
-{% include {{ version }}/principal-transformation.md configKey="cas.authn.jdbc.encode[0]" %}
+{% include {{ version }}/principal-transformation-configuration.md configKey="cas.authn.jdbc.encode[0]" %}
 
-{% include {{ version }}/password-encoding.md configKey="cas.authn.jdbc.encode[0]" %}
+{% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.jdbc.encode[0]" %}
 
 {% include {{ version }}/jdbc-encode-authentication-configuration.md %}
 

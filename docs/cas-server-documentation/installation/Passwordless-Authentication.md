@@ -155,7 +155,7 @@ would produce a response body similar to the following:
 }
 ```
 
-{% include {{ version }}/rest-integration.md configKey="cas.authn.passwordless.accounts.rest" %}
+{% include {{ version }}/rest-configuration.md configKey="cas.authn.passwordless.accounts.rest" %}
 
 ### Custom
 
@@ -203,7 +203,7 @@ This strategy allows one design REST endpoints in charge of managing tokens and 
 CAS continues to generate tokens and the endpoint is only acting as a facade to the real token store, receiving tokens from CAS
 in an encrypted fashion. 
 
-{% include {{ version }}/rest-integration.md configKey="cas.authn.passwordless.tokens.rest" %}
+{% include {{ version }}/rest-configuration.md configKey="cas.authn.passwordless.tokens.rest" %}
 
 The following operations need to be supported by the endpoint:
 

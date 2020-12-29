@@ -4,7 +4,7 @@
 
 {% include {{ version }}/persondirectory-configuration.md configKey="cas.authn.x509.principal" %}
 
-{% include {{ version }}/principal-transformation.md configKey="cas.authn.x509" %}
+{% include {{ version }}/principal-transformation-configuration.md configKey="cas.authn.x509" %}
 
 X.509 principal resolution can act on the following principal types:
 

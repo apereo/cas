@@ -18,7 +18,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include {{ version }}/cassandra-configuration.md configKey="cas.authn.cassandra" %}
 
-{% include {{ version }}/principal-transformation.md configKey="cas.authn.cassandra" %}
+{% include {{ version }}/principal-transformation-configuration.md configKey="cas.authn.cassandra" %}
 
-{% include {{ version }}/password-encoding.md configKey="cas.authn.cassandra" %}
+{% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.cassandra" %}
 

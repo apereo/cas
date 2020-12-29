@@ -66,7 +66,7 @@ Send text messages using a RESTful API. This is a `POST` with the following para
 
 The request body contains the actual message. A status code of `200` is expected from the endpoint.
 
-{% include {{ version }}/rest-integration.md configKey="cas.sms-provider.rest" %}
+{% include {{ version }}/rest-configuration.md configKey="cas.sms-provider.rest" %}
 
 ## Twilio
 
