@@ -26,3 +26,7 @@ The integration is able to handle the integration with DBFP and will set a cooki
 ## Configuration
 
 {% include {{ version }}/acceptto-configuration.md %}
+
+## Session Replication
+
+{% include {{ version }}/session-replication-configuration.md %}

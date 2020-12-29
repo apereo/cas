@@ -414,6 +414,10 @@ Remember that OAuth features of CAS require session affinity (and optionally ses
 as the authorization responses throughout the login flow are stored via server-backed session storage mechanisms. You will need to configure your deployment
 environment and load balancers accordingly.
 
+## Session Replication
+
+{% include {{ version }}/session-replication-configuration.md %}
+
 ## Sample Client Applications
 
 - [OAuth2 Sample Webapp](https://github.com/cas-projects/oauth2-sample-java-webapp)

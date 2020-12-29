@@ -282,6 +282,10 @@ Provisioning tasks can be carried out using an external REST endpoint expected t
 
 To learn more about delegating authentication to SAML2 identity providers, 
 please [review this guide](Delegate-Authentication-SAML.html).
+ 
+## Session Replication
+
+{% include {{ version }}/session-replication-configuration.md %}
 
 ## Troubleshooting
 
