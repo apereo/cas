@@ -14,8 +14,8 @@ CAS is able to support request rate-limiting based on the token-bucket algorithm
 Enable the following module in your configuration overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-throttle-bucket4j" %}
-
-{% include bucket4j-configuration.md %}
+        
+{% include {{ version }}/bucket4j-configuration.md %}
 
 ## Failure Throttling
 

@@ -72,7 +72,7 @@ You may also have the option to define attributes and their relevant name format
 via CAS properties. 
 
 {% include {{ version }}/saml2-idp-configuration.md %}
-{% include {{ version }}/saml2-idp-nameformat-configuration.md %}
+{% include {{ version }}/saml2-idp-attribute-nameformat-configuration.md %}
 
 ## Attribute Friendly Names
 

@@ -3,8 +3,7 @@ layout: default
 title: CAS - Configuring SSO Sessions
 category: SSO & SLO
 ---
-
-
+{% include variables.html %}
 
 # SSO Sessions
 
