@@ -100,7 +100,7 @@ Device registrations may be kept inside LDAP directories by including the follow
 Device registration records are kept inside a designated configurable multi-valued attribute as JSON blobs. The attribute values are parsed
 to load, save, update or delete accounts. The content of each attribute value can be signed/encrypted if necessary. 
 
-{% include {{ version }}/ldap-wbauthn-configuration.md %}
+{% include {{ version }}/ldap-webauthn-configuration.md %}
 
 ### JPA
 

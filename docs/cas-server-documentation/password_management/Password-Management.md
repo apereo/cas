@@ -31,7 +31,7 @@ in your configuration and overlays. This is just to teach you that it exists.</p
 
 To learn more about available notification options, please [see this guide](../notifications/SMS-Messaging-Configuration.html) or [this guide](../notifications/Sending-Email-Configuration.html). 
 
-{% include {{ version }}/password-management-configuration.md %}
+{% include {{ version }}/pswd-mgmt-configuration.md %}
 
 {% include {{ version }}/email-notifications-configuration.md configKey="cas.authn.pm.reset" %}
 

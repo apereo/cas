@@ -4,6 +4,8 @@ title: CAS - Monitoring & Statistics
 category: Monitoring & Statistics
 ---
 
+{% include variables.html %}
+
 # Monitoring / Statistics
 
 Actuator endpoints used to monitor and diagnose the internal configuration of the CAS server are typically
