@@ -25,13 +25,17 @@ Surrogate authentication is enabled by including the following dependencies in t
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-surrogate-webflow" %}
 
+{% include {{ version }}/surrogate-authentication-configuration.md %}
+
 ## Account Storage
 
 The following account stores may be configured and used to locate surrogates authorized for a particular user.
 
 ### Static
 
-Surrogate accounts may be defined statically in the CAS configuration. To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#surrogate-authentication).
+Surrogate accounts may be defined statically in the CAS configuration. 
+
+{% include {{ version }}/static-accounts-surrogate-authentication-configuration.md %}
 
 ### JSON
 
@@ -44,7 +48,7 @@ Similar to above, except that surrogate accounts may be defined in an external J
 }
 ```
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#surrogate-authentication).
+{% include {{ version }}/json-accounts-surrogate-authentication-configuration.md %}
 
 ### LDAP
 
@@ -52,7 +56,9 @@ LDAP support for surrogate authentication is enabled by including the following 
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-surrogate-authentication-ldap" %}
 
-Surrogate accounts may also be retrieved from an LDAP instance. Such accounts are expected to be found in a configured attribute defined for the primary user in LDAP whose value(s) may be examined against a regular expression pattern of your own choosing to further narrow down the list of authorized surrogate accounts. To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#surrogate-authentication).
+Surrogate accounts may also be retrieved from an LDAP instance. Such accounts are expected to be found in a configured attribute defined for the primary user in LDAP whose value(s) may be examined against a regular expression pattern of your own choosing to further narrow down the list of authorized surrogate accounts. 
+
+{% include {{ version }}/ldap-accounts-surrogate-authentication-configuration.md %}
 
 ### CouchDb
 
@@ -60,7 +66,9 @@ CouchDb support for surrogate authentication is enabled by including the followi
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-surrogate-authentication-couchdb" %}
 
-Surrogate accounts may also be retrieved from an CouchDb instance. By default, this takes the form of surrogate/principal key/value pairs. Users authorized as surrogates may be listed multiple times to authorize them to access multiple accounts. Additionally, the CouchDb surrogate support may be configured to use a profile attribute containing a list of principals the user may surrogate for with the `profileBased` property. To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#surrogate-authentication).
+Surrogate accounts may also be retrieved from an CouchDb instance. By default, this takes the form of surrogate/principal key/value pairs. Users authorized as surrogates may be listed multiple times to authorize them to access multiple accounts. Additionally, the CouchDb surrogate support may be configured to use a profile attribute containing a list of principals the user may surrogate for with the `profileBased` property. 
+
+{% include {{ version }}/couchdb-accounts-surrogate-authentication-configuration.md %}
 
 ### JDBC
 
@@ -68,8 +76,12 @@ JDBC support for surrogate authentication is enabled by including the following 
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-surrogate-authentication-jdbc" %}
 
-Aside from the usual database settings, this mode requires the specification of two SQL queries; one that determines eligibility and one that is able to retrieve
-the list of accounts that can be impersonated for a given admin user. To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#jdbc-surrogate-accounts).
+Aside from the usual database settings, this mode requires the specification of 
+two SQL queries; one that determines eligibility and one that is able to retrieve
+the list of accounts that can be impersonated for a given admin user. 
+
+{% include {{ version }}/jdbc-accounts-surrogate-authentication-configuration.md %}
+
 
 ### REST
 
@@ -142,7 +154,8 @@ assigned to non-surrogate sessions. In other words, if the usual expiration poli
 
 ## Surrogate Attributes
 
-Upon a successful surrogate authentication event, the following attributes are communicated back to the application in order to detect an impersonation session:
+Upon a successful surrogate authentication event, the following 
+attributes are communicated back to the application in order to detect an impersonation session:
 
 | Attribute             | Instructions
 |-----------------------|-------------------------------------------------------------------------------
@@ -152,13 +165,19 @@ Upon a successful surrogate authentication event, the following attributes are c
 
 ## Surrogate Access Strategy
 
-Each surrogate account storage is able to determine the list of impersonatees to enforce authorization rules. Additionally, you may on a per-service level define whether an application is authorized to leverage surrogate authentication. The surrogate access strategy is only activated if the establish authentication and SSO session is one of impersonation.
+Each surrogate account storage is able to determine the list of impersonatees to enforce 
+authorization rules. Additionally, you may on a per-service level define whether an 
+application is authorized to leverage surrogate authentication. The surrogate access 
+strategy is only activated if the establish authentication and SSO session is one of impersonation.
 
 See below for the available options.
 
 ### Attributes
 
-Decide whether the primary user is tagged with enough attributes and entitlements to allow impersonation to execute. In the below example, surrogate access to the application matching `testId` is allowed only if the authenticated primary user carries an attribute `givenName` which contains a value of `Administrator`.
+Decide whether the primary user is tagged with enough attributes and entitlements to 
+allow impersonation to execute. In the below example, surrogate access to the 
+application matching `testId` is allowed only if the authenticated primary user 
+carries an attribute `givenName` which contains a value of `Administrator`.
 
 A sample service definition follows:
 
@@ -183,8 +202,8 @@ A sample service definition follows:
 
 ### Groovy
 
-Decide whether the primary user is allowed to go through impersonation via an external Groovy script. A sample service file follows:
-
+Decide whether the primary user is allowed to go through impersonation via 
+an external Groovy script. A sample service file follows:
 
 ```json
 {
