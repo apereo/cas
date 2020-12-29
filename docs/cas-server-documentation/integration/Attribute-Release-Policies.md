@@ -61,8 +61,9 @@ or attributes that are specific to CAS which may describe the type of credential
 authentication handlers, date/time of the authentication, etc.
 
 Releasing authentication attributes to service providers and applications can be
-controlled to some extent. To learn more and see the relevant list of CAS properties,
-please [review this guide](../configuration/Configuration-Properties.html#authentication-attributes).
+controlled to some extent.
+
+{% include {{ version }}/protocol-attributes-configuration.md %}
 
 ## Principal Attributes
 
@@ -76,9 +77,13 @@ authentication protocol at hand. Remember to verify attribute release capabiliti
 
 ### Default
 
-CAS provides the ability to release a bundle of principal attributes to all services by default. This bundle is not defined on a per-service basis and is always combined with attributes produced by the specific release policy of the service, such that for instance, you can devise rules to always release `givenName` and `cn` to every application, and additionally allow other specific principal attributes for only some applications per their attribute release policy.
+CAS provides the ability to release a bundle of principal attributes to all services by default. This bundle 
+is not defined on a per-service basis and is always combined with attributes produced by the specific 
+release policy of the service, such that for instance, you can devise rules to always release `givenName` 
+and `cn` to every application, and additionally allow other specific principal attributes for 
+only some applications per their attribute release policy.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#default-bundle).
+{% include {{ version }}/defaultbundle-attributes-configuration.md %}
 
 ### Return All
 
