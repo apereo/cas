@@ -186,7 +186,7 @@ POST /cas/v1/services HTTP/1.0
 
 A successful response will produce a `200` status code in return.
 
-## X.509 Authentication
+## X509 Authentication
 
 The feature extends the CAS REST API communication model to non-interactive X.509 authentication
 where REST credentials may be retrieved from a certificate embedded in the request rather than
@@ -238,7 +238,10 @@ Location: http://www.whatever.com/cas/v1/tickets/{TGT id}
 
 ## Multiple Credentials
 
-The CAS REST API machinery has the ability to use multiple *credential extractors* that are tasked with analyzing the request body in order to fetch credentials and pass them along. While by default expected credentials that may be extracted are based on username/password, additional modules automatically lend themselves into this design and inject their opinionated credential extractor into the REST engine automatically so that the final collection of credentials may be used for issuing tickets, etc. This is, in a sense, how the [X.509 authentication](#x509-authentication) is integrated with the CAS REST Protocol. 
+The CAS REST API machinery has the ability to use multiple *credential extractors* that are tasked with analyzing the request body in order to fetch credentials and pass them along. While by default expected credentials that may be extracted are based on username/password, additional modules automatically lend themselves into this design and inject 
+their opinionated credential extractor into the REST engine automatically so that the final 
+collection of credentials may be used for issuing tickets, etc. This is, in a 
+sense, how the [X.509 authentication](#x509-authentication) is integrated with the CAS REST Protocol. 
 
 This indicates that you may pass along multiple credentials to the REST protocol in the request body and so long as CAS is configured to understand and extract those credentials and the authentication machinery is configured to also execute and validate those credentials. For instance, you may deliver a use case where two sets of credentials in form of username/password and OTP are provided to the REST protocol and CAS would then attempt to authenticate both credentials and produce a response on a successful validation, assuming that authentication strategies for username/password and OTP are properly configured in CAS.
 
@@ -249,56 +252,33 @@ receive tickets and validate them. The following Java REST client is available
 by [pac4j](https://github.com/pac4j/pac4j):
 
 ```java
-import org.pac4j.cas.profile.CasRestProfile;
-import org.pac4j.cas.client.rest.CasRestFormClient;
-import org.pac4j.cas.config.CasConfiguration;
-import org.pac4j.cas.credentials.authenticator.CasRestAuthenticator;
-import org.pac4j.cas.profile.CasProfile;
-import org.pac4j.core.context.JEEContext;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.core.credentials.TokenCredentials;
-import org.pac4j.core.credentials.UsernamePasswordCredentials;
-import org.pac4j.core.exception.HttpAction;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
+var casUrlPrefix = "http://localhost:8080/cas";
+var username = args[0];
+var password = args[1];
+var serviceUrl = args[2];
+var casConfiguration = new CasConfiguration(casUrlPrefix);
+var authenticator = new CasRestAuthenticator(casConfiguration);
+var client = new CasRestFormClient(casConfiguration,"username","password");
+var request = new MockHttpServletRequest();
+var response = new MockHttpServletResponse();
 
-import java.util.Map;
-import java.util.Set;
+var webContext = new JEEContext(request, response);
+casConfiguration.init(webContext);
 
-public class RestTestClient {
+var credentials = new UsernamePasswordCredentials(username,password,"testclient");
+var restAuthenticator = new CasRestAuthenticator(casConfiguration);
 
-    public static void main(String[] args ) throws HttpAction {
-        final String casUrlPrefix = "http://localhost:8080/cas";
-        String username = args[0];
-        String password = args[1];
-        String serviceUrl = args[2];
-        CasConfiguration casConfiguration = new CasConfiguration(casUrlPrefix);
-        final CasRestAuthenticator authenticator = new CasRestAuthenticator(casConfiguration);
-        final CasRestFormClient client = new CasRestFormClient(casConfiguration,"username","password");
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        final MockHttpServletResponse response = new MockHttpServletResponse();
+restAuthenticator.validate(credentials, webContext);
+var profile = (CasRestProfile) credentials.getUserProfile();
+var casCredentials = client.requestServiceTicket(serviceUrl, profile, webContext);
+var casProfile = client.validateServiceTicket(serviceUrl, casCredentials, webContext);
 
-        final WebContext webContext = new JEEContext(request, response);
-        casConfiguration.init(webContext);
-        UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username,password,"testclient");
-        CasRestAuthenticator restAuthenticator = new CasRestAuthenticator(casConfiguration);
-        // authenticate with credentials (validate credentials)
-        restAuthenticator.validate(credentials, webContext);
-        final CasRestProfile profile = (CasRestProfile) credentials.getUserProfile();
-        // get service ticket
-        final TokenCredentials casCredentials = client.requestServiceTicket(serviceUrl, profile, webContext);
-        // validate service ticket
-        final CasProfile casProfile = client.validateServiceTicket(serviceUrl, casCredentials, webContext);
-        Map<String,Object> attributes = casProfile.getAttributes();
-        Set<Map.Entry<String,Object>> mapEntries = attributes.entrySet();
-        for (Map.Entry entry : mapEntries) {
-            System.out.println(entry.getKey() + ":" + entry.getValue());
-        }
-        client.destroyTicketGrantingTicket(profile,webContext);
-    }
+var attributes = casProfile.getAttributes();
+var mapEntries = attributes.entrySet();
+for (var entry : mapEntries) {
+    System.out.println(entry.getKey() + ":" + entry.getValue());
 }
-
-
+client.destroyTicketGrantingTicket(profile, webContext);
 ```
 
 ## Throttling
@@ -308,8 +288,7 @@ please review [the available options](../installation/Configuring-Authentication
 By default, throttling REST requests is turned off. 
 To activate this functionality, you will need to choose an appropriate throttler and activate it by declaring the relevant module. 
 The same throttling mechanism that handles the usual CAS server endpoints for authentication
-and ticket validation, etc is then activated for the REST endpoints that are supported for throttling. 
-
+and ticket validation, etc is then activated for the REST endpoints that are supported for throttling.
 
 ## Swagger API
 

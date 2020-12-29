@@ -553,177 +553,8 @@ series of principal/surrogate pair. The default is a key/value pair.
 
 {% include {{ version }}/webflow-configuration.md configKey="cas.authn.token.webflow" %}
 
-## X509 Authentication
-
-To learn more about this topic, [please review this guide](../installation/X509-Authentication.html).
-
-### Webflow configuration
-
-{% include {{ version }}/webflow-configuration.md configKey="cas.authn.x509.webflow" %}
-
-```properties
-# cas.authn.x509.webflow.port=8446
-# cas.authn.x509.webflow.client-auth=want
-```
-
-### Principal Resolution
-
-{% include {{ version }}/principal-transformation.md configKey="cas.authn.x509" %}
-
-X.509 principal resolution can act on the following principal types:
-
-| Type                    | Description
-|-------------------------|----------------------------------------------------------------------
-| `SERIAL_NO`             | Resolve the principal by the serial number with a configurable <strong>radix</strong>, ranging from 2 to 36. If <code>radix</code> is <code>16</code>, then the serial number could be filled with leading zeros to even the number of digits.
-| `SERIAL_NO_DN`          | Resolve the principal by serial number and issuer dn.
-| `SUBJECT`               | Resolve the principal by extracting one or more attribute values from the certificate subject DN and combining them with intervening delimiters.
-| `SUBJECT_ALT_NAME`      | Resolve the principal by the subject alternative name extension. (type: otherName)
-| `SUBJECT_DN`            | The default type; Resolve the principal by the certificate's subject dn.
-| `CN_EDIPI`              | Resolve the principal by the Electronic Data Interchange Personal Identifier (EDIPI) from the Common Name.
-| `RFC822_EMAIL`          | Resolve the principal by the [RFC822 Name](https://tools.ietf.org/html/rfc5280#section-4.2.1.6) (aka E-mail address) type of subject alternative name field. 
-
-For the `CN_EDIPI`,`SUBJECT_ALT_NAME`, and `RFC822_EMAIL` principal resolvers, since not all certificates have those attributes, 
-you may specify the following property in order to have a different attribute from the certificate used as the principal.  
-If no alternative attribute is specified then the principal will be null and CAS will fail auth or use a different authenticator.
-
-```properties
-# cas.authn.x509.alternate-principal-attribute=subjectDn|sigAlgOid|subjectX500Principal|x509Rfc822Email|x509subjectUPN
-```
-
-### CRL Fetching / Revocation
-
-CAS provides a flexible policy engine for certificate revocation checking. This facility arose due to lack of configurability
-in the revocation machinery built into the JSSE.
-
-Available policies cover the following events:
-
-- CRL Expiration
-- CRL Unavailability
-
-In either event, the following options are available:
-
-| Type                    | Description
-|-------------------------|----------------------------------------------------------------------------------------------------
-| `ALLOW`                 | Allow authentication to proceed.
-| `DENY`                  | Deny authentication and block.
-| `THRESHOLD`             | Applicable to CRL expiration, throttle the request whereby expired data is permitted up to a threshold period of time but not afterward.
 
 
-Revocation certificate checking can be carried out in one of the following ways:
-
-| Type                    | Description
-|-------------------------|----------------------------------------------------------------------------------------------------
-| `NONE`                  | No revocation is performed.
-| `CRL`                   | The CRL URI(s) mentioned in the certificate `cRLDistributionPoints` extension field. Caches are available to prevent excessive IO against CRL endpoints; CRL data is fetched if does not exist in the cache or if it is expired.
-| `RESOURCE`              | A CRL hosted at a fixed location. The CRL is fetched at periodic intervals and cached.
-
-
-To fetch CRLs, the following options are available:
-
-| Type                    | Description
-|-------------------------|----------------------------------------------------------------------------------------------------
-| `RESOURCE`              | By default, all revocation checks use fixed resources to fetch the CRL resource from the specified location.
-| `LDAP`                  | A CRL resource may be fetched from a pre-configured attribute, in the event that the CRL resource location is an LDAP URI
-
-```properties
-# cas.authn.x509.crl-expired-policy=DENY|ALLOW|THRESHOLD
-# cas.authn.x509.crl-unavailable-policy=DENY|ALLOW|THRESHOLD
-# cas.authn.x509.crl-resource-expired-policy=DENY|ALLOW|THRESHOLD
-# cas.authn.x509.crl-resource-unavailable-policy=DENY|ALLOW|THRESHOLD
-
-# cas.authn.x509.revocation-checker=NONE|CRL|RESOURCE
-# cas.authn.x509.crl-fetcher=RESOURCE|LDAP
-
-# cas.authn.x509.crl-resources[0]=file:/...
-
-# cas.authn.x509.cache-max-elements-in-memory=1000
-# cas.authn.x509.cache-disk-overflow=false
-# cas.authn.x509.cache-disk-size=100MB
-# cas.authn.x509.cache-eternal=false
-# cas.authn.x509.cache-time-to-live-seconds=7200
-
-# cas.authn.x509.mixed-mode=true
-
-# cas.authn.x509.check-key-usage=false
-# cas.authn.x509.revocation-policy-threshold=172800
-
-# cas.authn.x509.reg-ex-subject-dn-pattern=.+
-# cas.authn.x509.reg-ex-trusted-issuer-dn-pattern=.+
-
-# cas.authn.x509.name=
-# cas.authn.x509.order=
-
-# cas.authn.x509.principal-descriptor=
-# cas.authn.x509.max-path-length=1
-# cas.authn.x509.throw-on-fetch-failure=false
-
-# cas.authn.x509.check-all=false
-# cas.authn.x509.require-key-usage=false
-# cas.authn.x509.refresh-interval-seconds=3600
-# cas.authn.x509.max-path-length-allow-unspecified=false
-
-# SUBJECT_DN
-# cas.authn.x509.subject-dn.format=[DEFAULT,RFC1779,RFC2253,CANONICAL]
-```  
-
-| Type          | Description
-|---------------|----------------------------------------------------------------------
-| `DEFAULT`     | Calls certificate.getSubjectDN() method for backwards compatibility but that method is ["denigrated"](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/security/cert/X509Certificate.html#getIssuerDN()). 
-| `RFC1779`     | Calls [X500Principal.getName("RFC1779")](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/javax/security/auth/x500/X500Principal.html#getName()) which emits a subject DN with the attribute keywords defined in RFC 1779 (CN, L, ST, O, OU, C, STREET). Any other attribute type is emitted as an OID.
-| `RFC2253`     | Calls [X500Principal.getName("RFC2253")](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/javax/security/auth/x500/X500Principal.html#getName()) which emits a subject DN with the attribute keywords defined in RFC 2253 (CN, L, ST, O, OU, C, STREET, DC, UID). Any other attribute type is emitted as an OID.
-| `CANONICAL`   | Calls X500Principal.getName("CANONICAL" which emits a subject DN that starts with RFC 2253 and applies additional canonicalizations described in the [javadoc](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/javax/security/auth/x500/X500Principal.html#getName()).
-
-```properties
-# SERIAL_NO_DN
-# cas.authn.x509.serial-no-dn.serial-number-prefix=SERIALNUMBER=
-# cas.authn.x509.serial-no-dn.value-delimiter=,
-
-# SERIAL_NO
-# cas.authn.x509.serial-no.principal-s-n-radix=10
-# cas.authn.x509.serial-no.principal-hex-s-n-zero-padding=false
-
-# SUBJECT_ALT_NAME
-# cas.authn.x509.subject-alt-name.alternate-principal-attribute=[sigAlgOid|subjectDn|subjectX500Principal|x509Rfc822Email]
-
-# CN_EDIPI 
-# cas.authn.x509.cn-edipi.alternate-principal-attribute=[sigAlgOid|subjectDn|subjectX500Principal|x509Rfc822Email|x509subjectUPN]
-
-# RFC822_EMAIL 
-# cas.authn.x509.rfc822-email.alternate-principal-attribute=[sigAlgOid|subjectDn|subjectX500Principal|x509subjectUPN]
-```
-
-### X509 Certificate Extraction
-
-These settings can be used to turn on and configure CAS to
-extract an X509 certificate from a base64 encoded certificate
-on a HTTP request header (placed there by a proxy in front of CAS).
-If this is set to true, it is important that the proxy cannot
-be bypassed by users and that the proxy ensures the header
-never originates from the browser.
-
-```properties
-# cas.authn.x509.extract-cert=false
-# cas.authn.x509.ssl-header-name=ssl_client_cert
-```
-
-The specific parsing logic for the certificate is compatible
-with the Tomcat SSLValve which can work with headers set by
-Apache HTTPD, Nginx, Haproxy, BigIP F5, etc.
-
-### X509 Principal Resolution
-
-```properties
-# cas.authn.x509.principal-type=SERIAL_NO|SERIAL_NO_DN|SUBJECT|SUBJECT_ALT_NAME|SUBJECT_DN
-```
-
-{% include {{ version }}/persondirectory-configuration.md configKey="cas.authn.x509.principal" %}
-
-### X509 LDAP Integration
-
-{% include {{ version }}/ldap-configuration.md configKey="cas.authn.x509.ldap" %}
-
-See LDAP attribute repositories [here](Configuration-Properties.html#ldap) to fetch additional 
-LDAP attributes using the principal extracted from the X509 certificate.
 
 ## Pac4j Delegated AuthN
 
@@ -812,10 +643,6 @@ The following settings specifically apply to this provider:
 
 {% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.oidc[0].generic" %}
 {% include {{ version }}/oidc-delegated-authentication.md configKey="cas.authn.pac4j.oidc[0].generic" %}
-
-### SAML2
-
-
 
 #### SAML2 Identity Provider Discovery
 
@@ -913,4 +740,3 @@ To learn more about this topic, [please review this guide](../installation/OAuth
 ```
 
 {% include {{ version }}/signing-encryption.md configKey="cas.authn.oauth.access-token" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
-

@@ -51,8 +51,6 @@ mkdir -p "$PWD/gh-pages/_includes/$branchVersion"
 echo -e "Copying new docs to $branchVersion...\n"
 cp -Rf $PWD/docs-latest/* "$PWD/gh-pages/$branchVersion"
 cp -Rf $PWD/docs-includes/* "$PWD/gh-pages/_includes/$branchVersion"
-
-rm -Rf "$PWD/gh-pages/$branchVersion/build"
 echo -e "Copied project documentation...\n"
 
 rm -Rf $PWD/docs-latest
@@ -74,17 +72,17 @@ echo -e "Configuring tracking branches for repository...\n"
 git branch -u origin/gh-pages
 
 echo -e "Adding changes to the git index...\n"
-git add -f .
+git add -f . > /dev/null
 
 echo -e "Committing changes...\n"
-git commit -m "Published docs [gh-pages]. "
+git commit -m "Published docs to [gh-pages] from $branchVersion. "
 
 echo -e "Pushing upstream to origin/gh-pages...\n"
 git push -fq origin --all
 retVal=$?
 rm -Rf $PWD/gh-pages
 if [[ ${retVal} -eq 0 ]]; then
-    echo -e "Successfully published documentation.\n"
+    echo -e "Successfully published documentation to $branchVersion.\n"
     exit 0
 else
     echo -e "Failed to publish documentation.\n"
