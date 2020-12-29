@@ -9,7 +9,6 @@ category: Multifactor Authentication
 # Multifactor Authentication Triggers
 
 The following triggers can be used to activate and instruct CAS to navigate to a multifactor authentication flow.
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#multifactor-authentication).
 
 The execution order of multifactor authentication triggers is outlined below:
 
@@ -37,7 +36,7 @@ The trigger machinery in general should be completely oblivious to multifactor a
 
 MFA can be triggered for all applications and users regardless of individual settings.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#multifactor-authentication).
+{% include {{ version }}/global-mfa-trigger-configuration.md %}
 
 ## Per Application
 
@@ -192,7 +191,8 @@ class GroovyMultifactorPolicy extends DefaultRegisteredServiceMultifactorPolicy 
 }
 ```
 
-The configuration of this component qualifies to use the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax. Refer to the CAS API documentation to learn more about operations and expected behaviors.
+The configuration of this component qualifies to use the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax. Refer to the CAS API 
+documentation to learn more about operations and expected behaviors.
 
 ## Global Principal Attribute
 
@@ -205,7 +205,9 @@ to know what provider to next activate.
 - Trigger MFA based on a principal attribute(s) whose value(s) **EXACTLY** matches an MFA provider.
 This option is more relevant if you have more than one provider configured or if you have the flexibility of assigning provider ids to attributes as values.
 
-Needless to say, the attributes need to have been resolved for the principal prior to this step. To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#multifactor-authentication).
+Needless to say, the attributes need to have been resolved for the principal prior to this step.
+
+{% include {{ version }}/principal-attribute-mfa-trigger-configuration.md %}
 
 ## Global Principal Attribute Predicate
 
@@ -251,9 +253,11 @@ The parameters passed are as follows:
 | `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
 
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#multifactor-authentication).
+{% include {{ version }}/principal-attribute-mfa-trigger-configuration.md %}
 
-As an example, the following predicate example will begin to test each multifactor authentication provider and if the given provider is `mfa-duo` it will accept it as a valid trigger so long as the provider can be reached.
+As an example, the following predicate example will begin to test each multifactor 
+authentication provider and if the given provider is `mfa-duo` it will accept it 
+as a valid trigger so long as the provider can be reached.
 
 ```groovy
 import org.apereo.cas.authentication.*
@@ -312,6 +316,8 @@ additional multifactor authentication events.
 
 An example of this scenario would be the "Access Challenge response" produced by RADIUS servers.
 
+{% include {{ version }}/authentication-attribute-mfa-trigger-configuration.md %}
+
 ## Adaptive
 
 MFA can be triggered based on the specific nature of a request that may be considered outlawed. For instance,
@@ -339,9 +345,12 @@ grouperClient.webService.login = banderson
 grouperClient.webService.password = password
 ```
 
+{% include {{ version }}/grouper-mfa-trigger-configuration.md %}
+
 ## Groovy
 
-MFA can be triggered based on the results of a groovy script of your own design. The outcome of the script should determine the MFA provider id that CAS should attempt to activate.
+MFA can be triggered based on the results of a groovy script of your own design. The 
+outcome of the script should determine the MFA provider id that CAS should attempt to activate.
 
 The outline of the groovy script is shown below as a sample:
 
@@ -373,7 +382,9 @@ The parameters passed are as follows:
 | `httpRequest`         | The object representing the `HttpServletRequest`.
 | `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
 
-As an example, the following script triggers multifactor authentication via Duo Security, if the requesting application is `https://www.example.com` and the authenticated principal contains a `mail` attribute whose values contain `email@example.org`.
+As an example, the following script triggers multifactor authentication 
+via [Duo Security](../mfa/DuoSecurity-Authentication.html), if the requesting application is `https://www.example.com` and 
+the authenticated principal contains a `mail` attribute whose values contain `email@example.org`.
 
 ```groovy
 import java.util.*
@@ -400,6 +411,8 @@ class MyExampleScript {
 }
 ```
 
+{% include {{ version }}/groovy-mfa-trigger-configuration.md %}
+
 ## REST
 
 MFA can be triggered based on the results of a remote REST endpoint of your design. If the endpoint is configured,
@@ -409,6 +422,8 @@ url in the body of the request.
 Endpoints must be designed to accept/process `application/json`. The body of the response in 
 the event of a successful `200` status code is expected to be the MFA provider id which CAS should activate.
 
+{% include {{ version }}/rest-mfa-trigger-configuration.md %}
+
 ## Opt-In Request Parameter/Header
 
 MFA can be triggered for a specific authentication request, provided
@@ -416,6 +431,8 @@ the initial request to the CAS `/login` endpoint contains a parameter/header
 that indicates the required MFA authentication flow. The parameter/header name
 is configurable, but its value must match the authentication provider id
 of an available MFA provider described above.
+
+{% include {{ version }}/httprequest-mfa-trigger-configuration.md %}
 
 An example request that triggers an authentication flow based on a request parameter would be:
 
@@ -471,4 +488,6 @@ https://.../cas/login?service=http://idp.example.org&entityId=the-entity-id-pass
 
 ## Custom
 
-While support for triggers may seem extensive, there is always that edge use case that would have you trigger MFA based on a special set of requirements. To learn how to design your own triggers, [please see this guide](Configuring-Multifactor-Authentication-CustomTriggers.html).
+While support for triggers may seem extensive, there is always that edge use case that would 
+have you trigger MFA based on a special set of requirements. To learn how to design 
+your own triggers, [please see this guide](Configuring-Multifactor-Authentication-CustomTriggers.html).
