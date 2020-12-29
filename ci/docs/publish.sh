@@ -80,13 +80,13 @@ echo -e "Committing changes...\n"
 git commit -m "Published docs [gh-pages]. "
 
 echo -e "Pushing upstream to origin/gh-pages...\n"
-#git push -fq origin --all
-#retVal=$?
-#rm -Rf $PWD/gh-pages
-#if [[ ${retVal} -eq 0 ]]; then
-#    echo -e "Successfully published documentation.\n"
-#    exit 0
-#else
-#    echo -e "Failed to publish documentation.\n"
-#    exit ${retVal}
-#fi
+git push -fq origin --all
+retVal=$?
+rm -Rf $PWD/gh-pages
+if [[ ${retVal} -eq 0 ]]; then
+    echo -e "Successfully published documentation.\n"
+    exit 0
+else
+    echo -e "Failed to publish documentation.\n"
+    exit ${retVal}
+fi
