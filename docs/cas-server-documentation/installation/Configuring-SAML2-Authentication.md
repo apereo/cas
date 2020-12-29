@@ -41,6 +41,8 @@ The following CAS endpoints handle the generation of SAML2 metadata:
 This endpoint will display the CAS IdP SAML2 metadata upon receiving a GET request. If metadata is already available and generated,
 it will be displayed. If metadata is absent, one will be generated automatically.
 CAS configuration below dictates where metadata files/keys will be generated and stored.
+  
+{% include {{ version }}/saml2-idp-metadata-configuration.md %}
 
 Note that the endpoint can accept a `service` parameter either by entity id or numeric identifier. This parameter
 is matched against the CAS service registry allowing the endpoint to calculate and combine any identity provider 
@@ -115,7 +117,7 @@ repositories {
 }
 ```
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#saml-idp).
+{% include {{ version }}/saml2-idp-configuration.md %}
 
 ### Administrative Endpoints
 
@@ -236,7 +238,8 @@ To learn more, please [review this guide](Configuring-SAML2-DynamicMetadata.html
 
 ### Security Configuration
 
-There are several levels of configuration that control the security configuration of objects that are signed, encrypted, etc. These configurations include things 
+There are several levels of configuration that control the security configuration 
+of objects that are signed, encrypted, etc. These configurations include things 
 like the keys to use, preferred/default algorithms, and algorithms to allow, enforce or reject. 
 
 The configurations are generally determined based on the following order:
@@ -248,7 +251,11 @@ The configurations are generally determined based on the following order:
 
 In almost all cases, you should leave the defaults in place.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#saml-algorithms--security).
+{% include {{ version }}/saml2-idp-algorithms-configuration.md %}
+{% include {{ version }}/saml2-idp-logout-configuration.md %}
+{% include {{ version }}/saml2-idp-profiles-configuration.md %}
+{% include {{ version }}/saml2-idp-response-configuration.md %}
+{% include {{ version }}/saml2-idp-tickets-configuration.md %}
 
 #### Encryption
 
@@ -460,7 +467,7 @@ will always use its own signing certificate for signing of the responses generat
 Also note that support for attribute queries need to be explicitly enabled and the behavior is off by default, given it imposes a burden on 
 CAS and the underlying ticket registry to keep track of attributes and responses as tickets and have them be later used and looked up.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#saml-idp).
+{% include {{ version }}/saml2-idp-configuration.md %}
 
 ## Service Provider Integrations
 

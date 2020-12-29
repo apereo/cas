@@ -69,7 +69,10 @@ Attribute name formats can be specified per relying party in the service registr
 ```
 
 You may also have the option to define attributes and their relevant name format globally
-via CAS properties. To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#saml-idp).
+via CAS properties. 
+
+{% include {{ version }}/saml2-idp-configuration.md %}
+{% include {{ version }}/saml2-idp-nameformat-configuration.md %}
 
 ## Attribute Friendly Names
 
