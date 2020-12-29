@@ -5,7 +5,7 @@ branchVersion="$1"
 function validateProjectDocumentation {
   HTML_PROOFER_IMAGE=hdeadman/html-proofer:latest
   DOCS_FOLDER=$PWD/gh-pages/"$branchVersion"
-  DOCS_OUTPUT=$PWD/gh-pages/"$branchVersion"/build/out
+  DOCS_OUTPUT=/tmp/build/out
   HTML_PROOFER_SCRIPT=$PWD/ci/docs/html-proofer-docs.rb
   
   echo "Running html-proof image: ${HTML_PROOFER_IMAGE} on ${DOCS_FOLDER} with output ${DOCS_OUTPUT} using ${HTML_PROOFER_SCRIPT}"
@@ -32,8 +32,6 @@ function validateProjectDocumentation {
 
 echo -e "Copying project documentation over to $PWD/docs-latest...\n"
 chmod -R 777 docs/cas-server-documentation
-rm -Rf docs/build docs/cas-server-documentation/build
-ls docs/cas-server-documentation
 cp -R docs/cas-server-documentation/ $PWD/docs-latest
 mv $PWD/docs-latest/_includes $PWD/docs-includes
 
@@ -76,7 +74,6 @@ echo -e "Configuring tracking branches for repository...\n"
 git branch -u origin/gh-pages
 
 echo -e "Adding changes to the git index...\n"
-rm -Rf "$branchVersion/build"
 git add -f .
 
 echo -e "Committing changes...\n"

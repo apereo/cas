@@ -76,7 +76,7 @@ a successful `200 - OK` response status, CAS expects the body of the HTTP respon
 }
 ```
 
-To see the relevant CAS properties, please [see this guide](../configuration/Configuration-Properties.html#saml-metadata-rest).
+{% include {{ version }}/rest-saml2-metadata-configuration.md %}
 
 ### Identity Provider Metadata
 
@@ -101,9 +101,6 @@ The API is expected to produce a successful `200 - OK` response status on all op
 |----------------------|----------------------------------------------------------------------------
 | `GET`                | The response is expected to produce a JSON document outlining keys and metadata as indicated above. An `appliesTo` parameter may be passed to indicate the document owner and applicability, where a value of `CAS` indicates the CAS server as the global owner of the metadata and keys.
 | `POST`               | Store the metadata and keys to finalize the metadata generation process. The request body contains the JSON document that outlines metadata and keys as indicated above.
-
-Note that the signing and encryption keys are expected to be encrypted and signed using CAS crypto keys. To see the relevant 
-CAS properties, please [see this guide](../configuration/Configuration-Properties.html#saml-metadata-rest).
 
 #### Per Service
 
@@ -140,13 +137,11 @@ The metadata location in the registration record above simply needs to be specif
 SAML metadata for registered service provider must be fetched from Git repositories defined in CAS configuration. 
 </p></div>
 
-To see the relevant CAS properties, please [see this guide](../configuration/Configuration-Properties.html#saml-metadata-git).
+{% include {{ version }}/git-saml2-metadata-configuration.md %}
 
 ### Identity Provider Metadata
 
 Metadata artifacts that belong to CAS as a SAML2 identity provider may also be managed and stored via Git. Artifacts such as the metadata, signing and encryption keys, etc are kept on the file-system in distinct directory locations inside the repository and data is pushed to or pulled from git repositories on demand.
-
-Note that the signing and encryption keys are expected to be encrypted and signed using CAS crypto keys. To see the relevant CAS properties, please [see this guide](../configuration/Configuration-Properties.html#saml-metadata-git).
 
 #### Per Service
 
@@ -187,7 +182,7 @@ The metadata location in the registration record above simply needs to be specif
 SAML metadata for registered service provider must be fetched from MongoDb data sources defined in CAS configuration. 
 </p></div>
 
-To see the relevant CAS properties, please [see this guide](../configuration/Configuration-Properties.html#saml-metadata-mongodb).
+{% include {{ version }}/mongodb-saml2-metadata-configuration.md %}
 
 ### Identity Provider Metadata
 
@@ -203,8 +198,6 @@ Metadata artifacts that belong to CAS as a SAML2 identity provider may also be m
     "appliesTo": "CAS"
 }
 ```
-
-Note that the signing and encryption keys are expected to be encrypted and signed using CAS crypto keys. To see the relevant CAS properties, please [see this guide](../configuration/Configuration-Properties.html#saml-metadata-mongodb).
 
 #### Per Service
 
@@ -240,14 +233,11 @@ The metadata location in the registration record above simply needs to be specif
 SAML metadata for registered service provider must be fetched from Redis data sources defined in CAS configuration. 
 </p></div>
 
-To see the relevant CAS properties, please [see this guide](../configuration/Configuration-Properties.html#saml-metadata-redis).
+{% include {{ version }}/redis-saml2-metadata-configuration.md %}
 
 ### Identity Provider Metadata
 
 Metadata artifacts that belong to CAS as a SAML2 identity provider may also be managed and stored via Redis.
-
-Note that the signing and encryption keys are expected to be encrypted and signed using CAS crypto keys. 
-To see the relevant CAS properties, please [see this guide](../configuration/Configuration-Properties.html#saml-metadata-redis).
 
 #### Per Service
 
@@ -287,7 +277,7 @@ SAML service definitions must then be designed as follows to allow CAS to fetch 
 The metadata location in the registration record above simply needs to be specified as <code>jdbc://</code> to signal to CAS that SAML metadata for registered service provider must be fetched from JDBC data sources defined in CAS configuration. 
 </p></div>
 
-To see the relevant CAS properties, please [see this guide](../configuration/Configuration-Properties.html#saml-metadata-jpa).
+{% include {{ version }}/jpa-saml2-metadata-configuration.md %}
 
 ### Identity Provider Metadata
 
@@ -304,7 +294,6 @@ inside a database table that would have the following structure:
 | `metadata`                | The SAML2 identity provider metadata.
 | `appliesTo`               | The owner of the SAML2 identity provider metadata (i.e. `CAS`).
 
-Note that the signing and encryption keys are expected to be encrypted and signed using CAS crypto keys. To see the relevant CAS properties, please [see this guide](../configuration/Configuration-Properties.html#saml-metadata-jpa).
 
 #### Per Service
 
@@ -344,7 +333,7 @@ SAML service definitions must then be designed as follows to allow CAS to fetch 
 The metadata location in the registration record above simply needs to be specified as <code>couchdb://</code> to signal to CAS that SAML metadata for registered service provider must be fetched from CouchDb as defined in CAS configuration.
 </p></div>
 
-Note that the signing and encryption keys are expected to be encrypted and signed using CAS crypto keys. To see the relevant CAS properties, please [see this guide](../configuration/Configuration-Properties.html#saml-metadata-couchdb).
+{% include {{ version }}/couchdb-saml2-metadata-configuration.md %}
 
 ### Identity Provider Metadata
 
@@ -360,8 +349,6 @@ inside a database with documents that would have the following structure:
 | `encryptionKey`           | The encryption key.
 | `metadata`                | The SAML2 identity provider metadata.
 | `appliesTo`               | The owner of the SAML2 identity provider metadata (i.e. `CAS`).
-
-Note that the signing and encryption keys are expected to be encrypted and signed using CAS crypto keys. To see the relevant CAS properties, please [see this guide](../configuration/Configuration-Properties.html#saml-metadata-couchdb).
 
 #### Per Service
 
@@ -455,7 +442,7 @@ The metadata location in the registration record above simply needs to be specif
 SAML metadata for registered service provider must be fetched from Amazon S3 defined in CAS configuration. 
 </p></div>
 
-To see the relevant CAS properties, please [see this guide](../configuration/Configuration-Properties.html#saml-metadata-amazon-s3).
+{% include {{ version }}/aws-s3-saml2-metadata-configuration.md %}
 
 ### Identity Provider Metadata
 
@@ -471,9 +458,7 @@ inside a bucket with metadata that would have the following structure:
 | `encryptionKey`           | The encryption key.
 | `appliesTo`               | The owner of this metadata document (i.e. `CAS`).
 
-The actual object's content/body is expected to contain the SAML2 identity provider metadata. Note that the signing and encryption keys are expected to be encrypted and signed using CAS crypto keys. 
-
-To see the relevant CAS properties, please [see this guide](../configuration/Configuration-Properties.html#saml-metadata-amazon-s3).
+The actual object's content/body is expected to contain the SAML2 identity provider metadata. Note that the signing and encryption keys are expected to be encrypted and signed using CAS crypto keys.
 
 #### Per Service
 

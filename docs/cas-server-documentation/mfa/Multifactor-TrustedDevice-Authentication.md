@@ -43,7 +43,7 @@ The following endpoints are provided by CAS:
 
 ## Settings
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#multifactor-trusted-devicebrowser).
+{% include {{ version }}/mfa-trusted-device-configuration.md %}
 
 ## Authentication Context
 
@@ -65,7 +65,7 @@ Device fingerprint can be calculated using the following ways:
 allowed to [ask and process geodata](../installation/Configuring-Authentication-Events.html) provided by the browser.
 - User-agent header
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#trusted-device-fingerprint).
+{% include {{ version }}/mfa-trusted-devicefingerprint-configuration.md %}
 
 ## Bypass
 
@@ -87,11 +87,14 @@ trusted device workflow for MFA can be bypassed on a per application basis:
 
 ## Storage
 
-User decisions must be remembered and processed later on subsequent requests.  A background *cleaner* process is also automatically scheduled to 
+User decisions must be remembered and processed later on subsequent 
+requests. A background *cleaner* process is also automatically scheduled to 
 scan the chosen repository/database/registry periodically and remove expired records based on configured threshold parameters.
 
 <div class="alert alert-warning"><strong>Cleaner Usage</strong><p>In a clustered CAS deployment, it is best to keep the cleaner running on one designated CAS 
 node only and turn it off on all others via CAS settings. Keeping the cleaner running on all nodes may likely lead to severe performance and locking issues.</p></div>
+
+{% include {{ version }}/job-scheduling.md configKey="cas.authn.mfa.trusted.cleaner" %}
 
 ### Default
 
@@ -103,7 +106,7 @@ This is most useful if you have a very small deployment with a small user base o
 Records may be kept inside a static json resource whose path is defined via CAS settings.
 This is also most useful if you have a very small deployment with a small user base or if you wish to demo the functionality.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#json-storage).
+{% include {{ version }}/json-mfa-trusted-device-configuration.md %}
 
 ### JDBC
 
@@ -145,7 +148,7 @@ Support is provided via the following module:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-trusted-mfa-dynamodb" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#dynamodb-storage).
+{% include {{ version }}/dynamodb-mfa-trusted-device-configuration.md %}
 
 ### Redis
 
@@ -166,7 +169,7 @@ Support is provided via the following module:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-trusted-mfa-rest" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#rest-storage).
+{% include {{ version }}/rest-mfa-trusted-device-configuration.md %}
 
 #### Retrieve Trusted Records
 
