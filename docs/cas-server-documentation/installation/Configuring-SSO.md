@@ -101,8 +101,7 @@ please [review this guide](../services/Configuring-Service-SSO-Policy.html).
 A warning cookie set by CAS upon the establishment of the SSO session at the request of the user on the CAS login page.
 The cookie is used later to warn and prompt the user before a service ticket is generated and access to the service application is granted.
 
-To see the relevant list of CAS properties, 
-please [review this guide](../configuration/Configuration-Properties.html#warning-cookie).
+{% include {{ version }}/warning-cookie-configuration.md %}
 
 ## Public Workstations
 
