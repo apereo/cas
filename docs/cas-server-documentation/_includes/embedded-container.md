@@ -18,3 +18,12 @@ server.ssl.key-password=changeit
 # server.use-forward-headers=true
 # server.connection-timeout=20000
 ```
+
+You may also control the CAS web application session behavior as it's treated 
+by the underlying servlet container engine.
+
+```properties
+# server.servlet.session.timeout=PT30S
+# server.servlet.session.cookie.http-only=true
+# server.servlet.session.tracking-modes=COOKIE
+```
