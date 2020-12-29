@@ -7,23 +7,23 @@ underlying account source is LDAP and are only taken into account if the
 authentication strategy configured in CAS is able to honor and recognize them:
 
 ```properties
-# ${configurationKey}.type=GENERIC|AD|FreeIPA|EDirectory
+# {{ include.configKey }}.type=GENERIC|AD|FreeIPA|EDirectory
 
-# ${configurationKey}.enabled=true
-# ${configurationKey}.policy-attributes.account-locked=javax.security.auth.login.AccountLockedException
-# ${configurationKey}.login-failures=5
-# ${configurationKey}.warning-attribute-value=
-# ${configurationKey}.warning-attribute-name=
-# ${configurationKey}.display-warning-on-match=true
-# ${configurationKey}.warn-all=true
-# ${configurationKey}.warning-days=30
-# ${configurationKey}.account-state-handling-enabled=true
+# {{ include.configKey }}.enabled=true
+# {{ include.configKey }}.policy-attributes.account-locked=javax.security.auth.login.AccountLockedException
+# {{ include.configKey }}.login-failures=5
+# {{ include.configKey }}.warning-attribute-value=
+# {{ include.configKey }}.warning-attribute-name=
+# {{ include.configKey }}.display-warning-on-match=true
+# {{ include.configKey }}.warn-all=true
+# {{ include.configKey }}.warning-days=30
+# {{ include.configKey }}.account-state-handling-enabled=true
 
 # An implementation of `org.ldaptive.auth.AuthenticationResponseHandler`
-# ${configurationKey}.custom-policy-class=com.example.MyAuthenticationResponseHandler
+# {{ include.configKey }}.custom-policy-class=com.example.MyAuthenticationResponseHandler
 
-# ${configurationKey}.strategy=DEFAULT|GROOVY|REJECT_RESULT_CODE
-# ${configurationKey}.groovy.location=file:/etc/cas/config/password-policy.groovy
+# {{ include.configKey }}.strategy=DEFAULT|GROOVY|REJECT_RESULT_CODE
+# {{ include.configKey }}.groovy.location=file:/etc/cas/config/password-policy.groovy
 ```
 
 ### Password Policy Strategies

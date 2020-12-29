@@ -38,12 +38,15 @@ Note that while authentication methods in CAS all are given a default name, most
 
 ## Authentication Policy Criteria
 
-Authentication policy criteria can also be assigned to each application definition, which should override the global policy defined for the deployment.
-Such policies should closely follow after those [that can be defined globally](../installation/Configuring-Authentication-Components.html#authentication-policy), are entirely optional and can be one of the following types:
+Authentication policy criteria can also be assigned to each application definition, which should 
+override the global policy defined for the deployment.
+Such policies should closely follow after those
+[that can be defined globally](../installation/Configuring-Authentication-Policy.html), are 
+entirely optional and can be one of the following types:
 
 ### Allowed
 
-Maps to the `Required` [authentication policy](../configuration/Configuration-Properties.html#required).
+Maps to the `Required` [authentication policy](../installation/Configuring-Authentication-Policy.html).
 
 ```json
 {
@@ -83,7 +86,7 @@ Enable the authentication policy criteria to exclude and disqualify indicated au
 
 ### Any
 
-Maps to the `Any` [authentication policy](../configuration/Configuration-Properties.html#authentication-policy).
+Maps to the `Any` [authentication policy](../installation/Configuring-Authentication-Policy.html).
 
 ```json
 {
@@ -103,7 +106,7 @@ Maps to the `Any` [authentication policy](../configuration/Configuration-Propert
 
 ### All
 
-Maps to the `All` [authentication policy](../configuration/Configuration-Properties.html#authentication-policy).
+Maps to the `All` [authentication policy](../installation/Configuring-Authentication-Policy.html).
 
 ```json
 {
@@ -122,7 +125,7 @@ Maps to the `All` [authentication policy](../configuration/Configuration-Propert
 
 ### Not Prevented
 
-Maps to the `Not Prevented` [authentication policy](../configuration/Configuration-Properties.html#authentication-policy).
+Maps to the `Not Prevented` [authentication policy](../installation/Configuring-Authentication-Policy.html).
 
 ```json
 {
@@ -141,7 +144,7 @@ Maps to the `Not Prevented` [authentication policy](../configuration/Configurati
 
 ### Groovy
 
-Maps to the `Groovy` [authentication policy](../configuration/Configuration-Properties.html#authentication-policy).
+Maps to the `Groovy` [authentication policy](../installation/Configuring-Authentication-Policy.html).
 
 ```json
 {
@@ -163,7 +166,7 @@ The `script` attribute can either be an inline Groovy script or a reference to a
 
 ### REST
 
- Maps to the `Rest` [authentication policy](../configuration/Configuration-Properties.html#authentication-policy).
+ Maps to the `Rest` [authentication policy](../installation/Configuring-Authentication-Policy.html).
  
 ```json
 {
