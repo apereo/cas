@@ -65,8 +65,7 @@ Support is enabled by including the following dependency in the overlay:
 
 If you are [running CAS in an application server](../installation/Configuring-Servlet-Container.html), 
 CAS will attempt to locate a JMS connection using JNDI. By default, the locations 
-`java:/JmsXA` and `java:/XAConnectionFactory` will be checked. Of course, alternative locations may be 
-specified using [CAS settings](../configuration/Configuration-Properties.html#jms-ticket-registry).
+`java:/JmsXA` and `java:/XAConnectionFactory` will be checked. 
 
 {% include {{ version }}/jndi-jms-ticket-registry-configuration.md %}
 

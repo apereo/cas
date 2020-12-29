@@ -248,7 +248,7 @@ Token type may be configured on a per-service basis:
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#ws-federation).
+{% include {{ version }}/wsfed-configuration.md %}
 
 You may also need to declare the following repository in
 your CAS Overlay to be able to resolve dependencies:

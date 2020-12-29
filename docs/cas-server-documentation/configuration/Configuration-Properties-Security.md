@@ -25,7 +25,7 @@ cas.something.sensitive={cas-cipher}FKSAJDFGYOS8F7GLHAKERGFHLSAJ
 
 You also need to instruct CAS to use the proper algorithm, decryption key and other relevant parameters
 when attempting to decrypt settings. To see the relevant list of CAS properties for this 
-feature, please [review this guide](Configuration-Properties.html#configuration-security).
+feature, please [review this guide](Configuration-Storage.html#configuration-security).
 
 
 ## Spring Cloud
@@ -38,7 +38,8 @@ The CAS configuration server exposes `/encrypt` and `/decrypt` endpoints to supp
 Both endpoints accept a `POST` payload; you can use `/encrypt` to secure and encrypt settings and place them inside your CAS configuration.
 CAS will auto-decrypt at the appropriate moment.
 
-To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html#configuration-security).
+To see the relevant list of CAS properties for this
+feature, please [review this guide](Configuration-Storage.html#configuration-security).
 
 <div class="alert alert-info"><strong>JCE Requirements</strong><p>To use the encryption and decryption
 features you need the full-strength "Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files"
@@ -90,7 +91,8 @@ Once vault is accessible and configured inside CAS, support is provided via the 
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-configuration-cloud-vault" %}
 
-To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html#vault).
+To see the relevant list of CAS properties for this
+feature, please [review this guide](Configuration-Storage.html#vault).
 
 With CAS, secrets are picked up at startup of the application server. CAS uses the data and settings
 from the application name (i.e. `cas`) and active profiles to determine contexts paths in

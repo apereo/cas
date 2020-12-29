@@ -15,12 +15,14 @@ to the service upon release time.
 
 Note: Remember that while the below policies are typically applied at release time on a per-service level, 
 CAS automatically does create attribute release caching policies at a more global with configurable timeouts
-and durations. See [the relevant settings](../configuration/Configuration-Properties.html#authentication-attributes) for more info.
+and durations. 
+
+{% include {{ version }}/caching-attribute-resolution-configuration.md %}
 
 The following settings are shared by all principal attribute repositories:
 
 | Name                                     | Value
-|------------------------------------------|--------------------------------------------------------------------------------------------------------
+|------------------------------------------|-----------------------------------------------------------------------
 | `mergingStrategy`  | Indicate the merging strategy when combining attributes from multiple sources. Accepted values are `MULTIVALUED`, `ADD`, `NONE`, `MULTIVALUED` 
 | `attributeRepositoryIds`  | A `Set` of attribute repository identifiers to consult for attribute resolution at release time.
 | `ignoreResolvedAttributes`  | Ignore the collection of attributes that may have been resolved during the principal resolution phase, typically via attribute repositories.
