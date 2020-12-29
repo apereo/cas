@@ -2,7 +2,7 @@ package org.apereo.cas.api;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.services.RegisteredService;
 
 /**
  * This is {@link PrincipalProvisioner}.
@@ -16,10 +16,10 @@ public interface PrincipalProvisioner {
     /**
      * Create principal.
      *
-     * @param authentication the authentication
-     * @param p              the principal
-     * @param credential     the credential
+     * @param authentication    the authentication
+     * @param credential        the credential
+     * @param registeredService the registered service
      * @return true /false
      */
-    boolean create(Authentication authentication, Principal p, Credential credential);
+    boolean create(Authentication authentication, Credential credential, RegisteredService registeredService);
 }

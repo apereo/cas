@@ -4,6 +4,8 @@ title: CAS - High Availability Guide
 category: High Availability
 ---
 
+{% include variables.html %}
+
 # High Availability Guide (HA/Clustering)
 
 A highly available CAS deployment is one that offers resilience in response to various failure modes such that CAS

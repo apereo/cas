@@ -17,6 +17,7 @@ import lombok.val;
 @Deprecated(since = "6.2.0")
 public class LegacyMultifactorAuthenticationTrustRecordKeyGenerator
     implements MultifactorAuthenticationTrustRecordKeyGenerator {
+
     @Override
     public String generate(final MultifactorAuthenticationTrustRecord record) {
         val result = record.getPrincipal()

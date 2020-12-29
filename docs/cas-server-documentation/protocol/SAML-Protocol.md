@@ -4,6 +4,8 @@ title: CAS - CAS SAML Protocol
 category: Protocols
 ---
 
+{% include variables.html %}
+
 # SAML Protocol
 
 CAS has support for versions 1.1 and 2 of the SAML protocol to a specific extent.
@@ -33,13 +35,7 @@ A SAML 1.1 ticket validation response is obtained by validating a ticket via POS
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-saml</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-saml" %}
 
 ### Administrative Endpoints
 
@@ -122,10 +118,9 @@ Content-Type: text/xml
 </SOAP-ENV:Envelope>
 ```
 
-
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#saml-core).
+{% include {{ version }}/samlcore-configuration.md %}
 
 You may also need to declare the following repository in
 your CAS Overlay to be able to resolve dependencies:

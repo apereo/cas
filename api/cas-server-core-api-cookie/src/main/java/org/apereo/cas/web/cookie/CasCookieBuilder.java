@@ -2,6 +2,7 @@ package org.apereo.cas.web.cookie;
 
 import org.apereo.cas.authentication.RememberMeCredential;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -20,9 +21,10 @@ public interface CasCookieBuilder {
      * @param response    the response
      * @param rememberMe  the remember me
      * @param cookieValue the cookie value
+     * @return the cookie
      */
-    void addCookie(HttpServletRequest request, HttpServletResponse response,
-                   boolean rememberMe, String cookieValue);
+    Cookie addCookie(HttpServletRequest request, HttpServletResponse response,
+                     boolean rememberMe, String cookieValue);
 
     /**
      * Add cookie.
@@ -30,8 +32,9 @@ public interface CasCookieBuilder {
      * @param request     the request
      * @param response    the response
      * @param cookieValue the cookie value
+     * @return the cookie
      */
-    void addCookie(HttpServletRequest request, HttpServletResponse response, String cookieValue);
+    Cookie addCookie(HttpServletRequest request, HttpServletResponse response, String cookieValue);
 
     /**
      * Add cookie.

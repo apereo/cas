@@ -3,6 +3,8 @@ layout: default
 title: CAS - Microsoft Azure Active Directory Authentication
 category: Authentication
 ---
+{% include variables.html %}
+
 
 # Microsoft Azure Active Directory Authentication
 
@@ -13,17 +15,17 @@ Azure Active Directory as the account store and optionally fetch user attributes
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-azuread-authentication</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-azuread-authentication" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#microsoft-azure-active-directory-authentication).
+{% include {{ version }}/principal-transformation-configuration.md configKey="cas.authn.azure-active-directory" %}
+
+{% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.azure-active-directory" %}
+
+{% include {{ version }}/azuread-authentication-configuration.md %}
 
 ## Principal Attributes
 
-The above dependency may also be used, in the event that principal attributes need to be fetched from Azure Active Directory without 
-necessarily authenticating credentials . To see the relevant list of CAS properties, please [review this guide](..configuration/Configuration-Properties.html#microsoft-azure-active-directory.
+The above dependency may also be used, in the event that principal attributes 
+need to be fetched from Azure Active Directory without necessarily authenticating credentials . 
+
+{% include {{ version }}/azuread-attribute-resolution-configuration.md %}

@@ -3,22 +3,28 @@ layout: default
 title: CAS - LDAP Authentication
 category: Authentication
 ---
+{% include variables.html %}
+
 
 # LDAP Authentication
 
 LDAP integration is enabled by including the following dependency in the overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-ldap</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-ldap" %}
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#ldap-authentication).
+{% include {{ version }}/ldap-authentication-configuration.md %}
+
+### LDAP Password Policy
+
+{% include {{ version }}/password-policy-configuration.md configKey="cas.authn.ldap[0].password-policy" %}
+
+### LDAP Password Encoding & Principal Transformation
+
+{% include {{ version }}/principal-transformation-configuration.md configKey="cas.authn.ldap[0]" %}
+
+{% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.ldap[0]" %}
 
 ## Password Policy Enforcement
 

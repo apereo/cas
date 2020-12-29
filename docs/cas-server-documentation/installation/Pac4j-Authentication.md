@@ -3,6 +3,8 @@ layout: default
 title: CAS - pac4j Authentication
 category: Authentication
 ---
+{% include variables.html %}
+
 
 <p align="center">
   <img src="https://pac4j.github.io/pac4j/img/logo-cas.png" width="300" />
@@ -20,13 +22,7 @@ in a CAS authentication handler and used for authentication.
 
 Support is added by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-pac4j-authentication</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-pac4j-authentication" %}
 
 ## Configuration
 

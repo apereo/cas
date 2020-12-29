@@ -4,6 +4,8 @@ title: CAS - Web Flow Extensions
 category: Webflow Management
 ---
 
+{% include variables.html %}
+
 # Extending CAS Webflow
 
 The objective of this guide is to better describe how CAS utilizes Spring Webflow to accommodate various authentication flows. Please remember that this is **NOT** to teach one how Spring Webflow itself works internally. If you want to learn more about Spring Webflow and understand the internals of actions, states, decisions and scopes please [see this guide](http://projects.spring.io/spring-webflow/).
@@ -42,13 +44,7 @@ This is the most traditional yet most powerful method of dynamically altering th
 
 At a minimum, your overlay will need to include the following modules:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-core-webflow</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-core-webflow" %}
 
 #### Design
 
@@ -119,9 +115,11 @@ See [this guide](https://docs.spring.io/spring-boot/docs/current/reference/html/
 
 ### Groovy
 
-You may configure CAS to alter and auto-configure the webflow via a Groovy script. This is the less elaborate option where you have modest access to CAS APIs that allow you alter the webflow. However, configuration and scaffolding of the overlay and required dependencies is easier as all is provided by CAS at runtime.
+You may configure CAS to alter and auto-configure the webflow via a Groovy script. 
+This is the less elaborate option where you have modest access to CAS APIs that allow you alter the webflow. However, 
+configuration and scaffolding of the overlay and required dependencies is easier as all is provided by CAS at runtime.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#spring-webflow-groovy-auto-configuration).
+{% include {{ version }}/spring-webflow-auto-configuration.md %}
 
 <div class="alert alert-warning"><strong>Stop Coding</strong><p>Remember that APIs provided here, specifically executed as part of the Groovy script are considered implementations internal to CAS mostly. They may be added or removed with little hesitation which means changes may break your deployment and upgrades at runtime. Remember that unlike Java classes, scripts are not statically compiled when you build CAS and you only may observe failures when you do in fact turn on the server and deploy. Thus, choose this option with good reason and make sure you have thought changes through before stepping into code.</p></div>
 

@@ -3,6 +3,8 @@ layout: default
 title: CAS - X.509 Authentication
 category: Authentication
 ---
+{% include variables.html %}
+
 
 # X.509 Authentication
 
@@ -81,20 +83,34 @@ individuals, instead of trusting the institutional root CA.
 
 X.509 support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-x509-webflow</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-x509-webflow" %}
 
 The X.509 handler technically performs additional checks _after_ the real SSL client authentication process performed
 by the Web server terminating the SSL connection. Since an SSL peer may be configured to accept a wide range of
 certificates, the CAS X.509 handler provides a number of properties that place additional restrictions on
 acceptable client certificates.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#x509-authentication).
+{% include {{ version }}/x509-authentication-configuration.md %}
+
+### X509 Certificate Extraction
+
+{% include {{ version }}/cert-extraction-x509-authentication-configuration.md %}
+
+### X509 Principal Resolution
+
+{% include {{ version }}/principal-resolution-x509-authentication-configuration.md %}
+
+### X509 CRL Fetching / Revocation
+
+{% include {{ version }}/crl-x509-authentication-configuration.md %}
+
+### X509 LDAP Integration
+
+{% include {{ version }}/ldap-configuration.md configKey="cas.authn.x509.ldap" %}
+
+You may also fetch additional LDAP attributes using the principal extracted from the X509 certificate:
+
+{% include {{ version }}/ldap-attribute-resolution-configuration.md %}
 
 ## Web Server Configuration
 
@@ -116,7 +132,7 @@ container that ships with CAS and can be potentially simplify the configuration 
 quite a bit, depending on use case and behavior. The configuration of certificate and trust stores 
 as well as behavior and enforcement of client authentication can also be managed directly by CAS.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#embedded-container).
+{% include {{ version }}/embedded-container-configuration.md %}
 
 #### Optional (Mixed) Authentication
 
@@ -129,8 +145,7 @@ This behavior is achieved by exposing a dedicated port for the embedded Apache T
 may forcefully require X.509 authentication for login and access. Doing so should automatically allow for an extra
 login option in the user interface to trigger the browser for X.509.
 
-To see the relevant list of CAS properties, 
-please [review this guide](../configuration/Configuration-Properties.html#x509-authentication).
+{% include {{ version }}/webflow-x509-authentication-configuration.md %}
 
 ### External Apache Tomcat
 

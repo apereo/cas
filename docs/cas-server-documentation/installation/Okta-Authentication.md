@@ -3,6 +3,8 @@ layout: default
 title: CAS - Okta Authentication
 category: Authentication
 ---
+{% include variables.html %}
+
 
 # Okta Authentication
 
@@ -13,12 +15,10 @@ is useful if you need to accept and validate credentials managed by Okta.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-okta-authentication</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-okta-authentication" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#okta-authentication).
+{% include {{ version }}/principal-transformation-configuration.md configKey="cas.authn.okta" %}
+
+{% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.okta" %}
+
+{% include {{ version }}/okta-authentication-configuration.md %}

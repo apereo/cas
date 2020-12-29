@@ -1,17 +1,14 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
-import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
 
-import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apereo.services.persondir.IPersonAttributeDao;
 
 import java.security.cert.X509Certificate;
-import java.util.Set;
 import java.util.StringTokenizer;
 
 /**
@@ -28,24 +25,15 @@ import java.util.StringTokenizer;
  */
 @Slf4j
 @ToString(callSuper = true)
-@NoArgsConstructor
 public class X509CommonNameEDIPIPrincipalResolver extends AbstractX509PrincipalResolver {
 
     private static final String COMMON_NAME_VAR = "CN";
 
     private static final int EDIPI_LENGTH = 10;
 
-    public X509CommonNameEDIPIPrincipalResolver(final IPersonAttributeDao attributeRepository,
-                                                final PrincipalFactory principalFactory,
-                                                final boolean returnNullIfNoAttributes,
-                                                final String principalAttributeName,
-                                                final String alternatePrincipalAttribute,
-                                                final boolean useCurrentPrincipalId,
-                                                final boolean resolveAttributes,
-                                                final Set<String> activeAttributeRepositoryIdentifiers) {
-        super(attributeRepository, principalFactory, returnNullIfNoAttributes,
-            principalAttributeName, alternatePrincipalAttribute, useCurrentPrincipalId,
-            resolveAttributes, activeAttributeRepositoryIdentifiers);
+    public X509CommonNameEDIPIPrincipalResolver(final PrincipalResolutionContext context,
+                                                final String alternatePrincipalAttribute) {
+        super(context, alternatePrincipalAttribute);
     }
 
     @Override

@@ -35,7 +35,6 @@ import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfigu
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.apereo.cas.web.flow.config.X509AuthenticationWebflowConfiguration;
 
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -106,5 +105,5 @@ public abstract class BaseCertificateCredentialActionTests {
 
     @Autowired
     @Qualifier("x509Check")
-    protected ObjectProvider<Action> action;
+    protected Action action;
 }

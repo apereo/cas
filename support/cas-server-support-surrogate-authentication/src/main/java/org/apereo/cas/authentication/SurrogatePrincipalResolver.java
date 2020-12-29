@@ -1,18 +1,16 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
+import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.core.Ordered;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 /**
  * This is {@link SurrogatePrincipalResolver}.
@@ -24,26 +22,9 @@ import java.util.Set;
 public class SurrogatePrincipalResolver extends PersonDirectoryPrincipalResolver {
     private final SurrogatePrincipalBuilder surrogatePrincipalBuilder;
 
-    public SurrogatePrincipalResolver(final IPersonAttributeDao attributeRepository,
+    public SurrogatePrincipalResolver(final PrincipalResolutionContext context,
                                       final SurrogatePrincipalBuilder surrogatePrincipalBuilder) {
-        super(attributeRepository);
-        this.surrogatePrincipalBuilder = surrogatePrincipalBuilder;
-    }
-
-    public SurrogatePrincipalResolver(final IPersonAttributeDao attributeRepository, final String principalAttributeName,
-                                      final SurrogatePrincipalBuilder surrogatePrincipalBuilder) {
-        super(attributeRepository, principalAttributeName);
-        this.surrogatePrincipalBuilder = surrogatePrincipalBuilder;
-    }
-
-    public SurrogatePrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory,
-                                      final boolean returnNullIfNoAttributes, final String principalAttributeName,
-                                      final boolean useCurrentPrincipalId, final boolean resolveAttributes,
-                                      final Set<String> activeAttributeRepositoryIdentifiers,
-                                      final SurrogatePrincipalBuilder surrogatePrincipalBuilder) {
-        super(attributeRepository, principalFactory, returnNullIfNoAttributes,
-            principalAttributeName, useCurrentPrincipalId, resolveAttributes,
-            activeAttributeRepositoryIdentifiers);
+        super(context);
         this.surrogatePrincipalBuilder = surrogatePrincipalBuilder;
     }
 

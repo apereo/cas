@@ -4,17 +4,13 @@ title: CAS - Memcached Ticket Registry
 category: Ticketing
 ---
 
+{% include variables.html %}
+
 # Memcached Ticket Registry
 
 Memcached integration is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-memcached-ticket-registry</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-memcached-ticket-registry" %}
 
 This registry stores tickets in one or more [memcached](http://memcached.org/) instances. 
 Memcached stores data in exactly one node among many in a distributed cache, thus avoiding the requirement to replicate
@@ -37,13 +33,7 @@ single-threaded memcached client that should be the default choice for the major
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-memcached-spy</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-memcached-spy" %}
 
 ## AWS ElastiCache
 
@@ -65,13 +55,7 @@ This metadata is updated whenever nodes are added or removed from the cluster.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-memcached-aws-elasticache</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-memcached-aws-elasticache" %}
 
 ## Configuration Considerations
 
@@ -119,7 +103,10 @@ compact data, which benefits both storage requirements and throughput.
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#memcached-ticket-registry).
+{% include {{ version }}/memcached-configuration.md configKey="cas.ticket.registry.memcached" %}
+
+{% include {{ version }}/signing-encryption-configuration.md configKey="cas.ticket.registry.memcached" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
+
 
 ## High Availability Considerations
 

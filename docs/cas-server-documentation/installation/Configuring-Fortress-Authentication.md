@@ -3,6 +3,7 @@ layout: default
 title: CAS - Apache Fortress Authentication
 category: Authentication
 ---
+{% include variables.html %}
 
 # Apache Fortress Authentication
 
@@ -23,21 +24,16 @@ To enable this feature, ensure Apache Fortress is [installed](http://directory.a
 
 Next include the following module in the WAR overlay:  
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-fortress</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```  
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-fortress" %}
+ 
+{% include {{ version }}/fortress-authentication-configuration.md %}
 
 At this time, Apache Fortress support is limited to Apache Tomcat as the web container. 
 Support for additional containers such as Jetty will be worked out in future releases.
 
 ## CAS Configuration
 
-- Configure `fortress.properties` file and put it under your `$TOMCAT_HOME/lib` or you can append your own classpath configuration. An example configuration
-file follows:
+- Configure `fortress.properties` file and put it under your `$TOMCAT_HOME/lib` or you can append your own classpath configuration. An example configuration file follows:
 
 ```properties
 http.user=fortress-super-user

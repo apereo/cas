@@ -3,24 +3,61 @@ layout: default
 title: CAS - Database Authentication
 category: Authentication
 ---
+{% include variables.html %}
+
 
 # Database Authentication
 
 Database authentication is enabled by including the following dependencies in the WAR overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-jdbc</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-jdbc" %}
 
 To learn how to configure database drivers, [please see this guide](JDBC-Drivers.html).
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#database-authentication).
+### Query Database Authentication
+
+{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.jdbc.query[0]" %}
+
+{% include {{ version }}/principal-transformation-configuration.md configKey="cas.authn.jdbc.query[0]" %}
+
+{% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.jdbc.query[0]" %}
+
+{% include {{ version }}/jdbc-query-authentication-configuration.md %}
+
+
+### Search Database Authentication
+
+{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.jdbc.search[0]" %}
+
+{% include {{ version }}/principal-transformation-configuration.md configKey="cas.authn.jdbc.search[0]" %}
+
+{% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.jdbc.search[0]" %}
+
+{% include {{ version }}/jdbc-search-authentication-configuration.md %}
+
+
+### Bind Database Authentication
+
+{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.jdbc.bind[0]" %}
+
+{% include {{ version }}/principal-transformation-configuration.md configKey="cas.authn.jdbc.bind[0]" %}
+
+{% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.jdbc.bind[0]" %}
+
+{% include {{ version }}/jdbc-bind-authentication-configuration.md %}
+
+
+### Encode Database Authentication
+
+{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.jdbc.encode[0]" %}
+
+{% include {{ version }}/principal-transformation-configuration.md configKey="cas.authn.jdbc.encode[0]" %}
+
+{% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.jdbc.encode[0]" %}
+
+{% include {{ version }}/jdbc-encode-authentication-configuration.md %}
 
 ## Password Policy Enforcement
 

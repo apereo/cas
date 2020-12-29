@@ -4,6 +4,8 @@ title: CAS - Acceptto Authentication
 category: Multifactor Authentication
 ---
 
+{% include variables.html %}
+
 # Acceptto Authentication
 
 Secure your workforce identity with [Acceptto](https://www.acceptto.com) 
@@ -13,13 +15,7 @@ Start by visiting the [Acceptto documentation](https://www.acceptto.com/acceptto
 
 Support is enabled by including the following module in the overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-acceptto-mfa</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-acceptto-mfa" %}
 
 The integration adds support for both multifactor authentication and QR passwordless authentication.
 
@@ -29,4 +25,8 @@ The integration is able to handle the integration with DBFP and will set a cooki
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#acceptto).
+{% include {{ version }}/acceptto-configuration.md %}
+
+## Session Replication
+
+{% include {{ version }}/session-replication-configuration.md %}

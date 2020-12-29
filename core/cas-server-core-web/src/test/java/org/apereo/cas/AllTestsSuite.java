@@ -1,6 +1,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.view.CasReloadableMessageBundleTests;
+import org.apereo.cas.web.RegisteredServiceCorsConfigurationSourceTests;
 import org.apereo.cas.web.RegisteredServiceResponseHeadersEnforcementFilterTests;
 import org.apereo.cas.web.SimpleUrlValidatorFactoryBeanTests;
 import org.apereo.cas.web.SimpleUrlValidatorTests;
@@ -24,6 +25,7 @@ import org.junit.runner.RunWith;
     SimpleUrlValidatorFactoryBeanTests.class,
     DynamicHtmlViewTests.class,
     WebUtilsTests.class,
+    RegisteredServiceCorsConfigurationSourceTests.class,
     SimpleUrlValidatorTests.class,
     WebjarValidationTests.class
 })

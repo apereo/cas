@@ -18,15 +18,16 @@
                 <i class="mdi mdi-shield-lock-outline"></i>
             </div>
             <form name="fm1" th:action="@{/adminlogin}" method="post">
-                <div th:if="${param.error}" class="alert alert-error">Invalid credentials.</div>
-            
+
                 <h3 th:utext="#{screen.welcome.instructions}">Enter your Username and Password</h3>
                 
+                <div th:if="${param.error}" class="banner banner-danger banner-dismissible">Invalid credentials.</div>
                 <section class="cas-field my-3">
                     <div class="d-flex">
                         <label for="username" class="mdc-text-field mdc-text-field--outlined">
                             <input class="mdc-text-field__input"
                                    id="username"
+                                   name="username"
                                    size="25"
                                    type="text"
                                    autocomplete="off" />
@@ -50,6 +51,7 @@
 
                                 <input class="mdc-text-field__input pwd"
                                        type="password" id="password" size="25"
+                                       name="password"
                                        th:accesskey="#{screen.welcome.label.password.accesskey}"
                                        autocomplete="off" />
 

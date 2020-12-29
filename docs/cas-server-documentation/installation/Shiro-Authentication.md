@@ -3,23 +3,17 @@ layout: default
 title: CAS - Shiro Authentication
 category: Authentication
 ---
-
+{% include variables.html %}
 
 # Shiro Authentication
-CAS support handling the authentication event via [Apache Shiro](http://shiro.apache.org/).
 
+CAS support handling the authentication event via [Apache Shiro](http://shiro.apache.org/).
 
 ## Components
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-shiro-authentication</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-shiro-authentication" %}
 
 ## Shiro Configuration
 
@@ -29,7 +23,11 @@ of the authentication, so that in their absence, the authentication may fail.
 While by default these settings are optional, you may configure roles and/or permissions
 for the given authentication handler to check their presence and report back.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#shiro-authentication).
+{% include {{ version }}/principal-transformation-configuration.md configKey="cas.authn.shiro" %}
+
+{% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.shiro" %}
+
+{% include {{ version }}/shiro-authentication-configuration.md %}
 
 Sample `shiro.ini` that needs be placed on the classpath based on the example above:
 

@@ -4,6 +4,8 @@ title: CAS - Configuration Extensions
 category: Configuration
 ---
 
+{% include variables.html %}
+
 # Extending CAS Configuration
 
 Being a [Spring Boot](https://github.com/spring-projects/spring-boot) application at its core, designing and extending CAS configuration components very much comes down to [the following guide](https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-developing-auto-configuration.html) some aspects of which are briefly highlighted in this document.
@@ -71,7 +73,11 @@ spring.autoconfigure.exclude=org.apereo.cas.custom.config.SomethingConfiguration
 
 ## CAS Properties
 
-The [collection of CAS-provided settings](Configuration-Properties.html) are all encapsulated inside a `CasConfigurationProperties` component. This is a parent class that brings all elements of the entire CAS platform together and binds values to the relevant fields inside in a very type-safe manner. The [configuration binding](Configuration-Server-Management.html) is typically done via `@EnableConfigurationProperties(CasConfigurationProperties.class)` on the actual configuration class. 
+The collection of CAS-provided settings are all encapsulated 
+inside a `CasConfigurationProperties` component. This is a parent class that brings all elements of the 
+entire CAS platform together and binds values to the relevant fields inside in a 
+very type-safe manner. The [configuration binding](Configuration-Server-Management.html) is 
+typically done via `@EnableConfigurationProperties(CasConfigurationProperties.class)` on the actual configuration class. 
 
 <div class="alert alert-info"><strong>Prefix Notation</strong><p>Note that all CAS-provided settings exclusively begin with the prefix <code>cas</code>. Other frameworks and packages upon which CAS depends may present their own configuration naming scheme. Note the difference.</p></div>
 

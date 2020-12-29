@@ -4,6 +4,8 @@ title: CAS - Delegate Authentication
 category: Authentication
 ---
 
+{% include variables.html %}
+
 # Delegated Authentication
 
 CAS can act as a client (i.e. service provider or proxy) using 
@@ -17,13 +19,9 @@ the [Pac4j library](https://github.com/pac4j/pac4j) and delegate the authenticat
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-pac4j-webflow</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-pac4j-webflow" %}
+
+{% include {{ version }}/global-delegated-authentication-configuration.md %}
 
 <div class="alert alert-info"><strong>Note</strong><p>The client issuing the authentication request can be of any type (SAML, OAuth2, OpenID Connect, etc) and is allowed to submit the authentication request using any protocol that the CAS server supports and is configured to understand. This means that you may have an OAuth2 client using CAS in delegation mode to authenticate at an external SAML2 identity provider, another CAS server or Facebook and in the end of that flow receiving an OAuth2 user profile. The CAS server is able to act as a proxy, doing the protocol translation in the middle.</p></div>
 
@@ -39,12 +37,102 @@ to be defined in the CAS configuration as well.
 
 ### Default
 
-Identity providers for delegated authentication can be registered with CAS using settings. To see the relevant list of 
-CAS properties, please [review this guide](../configuration/Configuration-Properties.html#pac4j-delegated-authn).
+Identity providers for delegated authentication can be registered with CAS using settings. 
+
+### Facebook
+
+{% include {{ version }}/facebook-delegated-authentication-configuration.md %}
+
+### Twitter
+
+{% include {{ version }}/twitter-delegated-authentication-configuration.md %}
+
+### PayPal
+
+{% include {{ version }}/delegated-authentication-configuration.md configKey="cas.authn.pac4j.paypal" %}
+
+### Wordpress
+
+{% include {{ version }}/delegated-authentication-configuration.md configKey="cas.authn.pac4j.wordpress" %}
+
+### Yahoo!
+
+{% include {{ version }}/delegated-authentication-configuration.md configKey="cas.authn.pac4j.yahoo" %}
+
+### Orcid
+
+{% include {{ version }}/delegated-authentication-configuration.md configKey="cas.authn.pac4j.orcid" %}
+
+### DropBox
+
+{% include {{ version }}/delegated-authentication-configuration.md configKey="cas.authn.pac4j.dropbox" %}
+
+### FourSquare
+
+{% include {{ version }}/delegated-authentication-configuration.md configKey="cas.authn.pac4j.foursquare" %}
+
+### Windows Live
+
+{% include {{ version }}/delegated-authentication-configuration.md configKey="cas.authn.pac4j.windows-live" %}
+
+### Google
+
+{% include {{ version }}/delegated-authentication-configuration.md configKey="cas.authn.pac4j.google" %}
+
+### HiOrg Server
+
+{% include {{ version }}/hiorg-delegated-authentication-configuration.md %}
+
+### OAuth20
+
+{% include {{ version }}/oauth20-delegated-authentication-configuration.md %}
+
+### CAS
+
+{% include {{ version }}/cas-delegated-authentication-configuration.md %}
+
+### Google
+
+{% include {{ version }}/google-delegated-authentication-configuration.md %}
+
+### LinkedIn
+
+{% include {{ version }}/linkedin-delegated-authentication-configuration.md %}
+
+### GitHub
+
+{% include {{ version }}/github-delegated-authentication-configuration.md %}
+
+### Google OpenID Connect
+
+{% include {{ version }}/delegated-authentication-configuration.md configKey="cas.authn.pac4j.oidc[0].google" %}
+{% include {{ version }}/oidc-delegated-authentication-configuration.md configKey="cas.authn.pac4j.oidc[0].google" %}
+
+### KeyCloak
+
+{% include {{ version }}/keycloak-delegated-authentication-configuration.md %}
+
+### Azure AD
+
+{% include {{ version }}/azuread-delegated-authentication-configuration.md %}
+
+### Apple Signin
+
+{% include {{ version }}/applesignin-delegated-authentication-configuration.md %}
+
+### OpenID Connect Generic
+
+{% include {{ version }}/delegated-authentication-configuration.md configKey="cas.authn.pac4j.oidc[0].generic" %}
+{% include {{ version }}/oidc-delegated-authentication-configuration.md configKey="cas.authn.pac4j.oidc[0].generic" %}
 
 ### REST
 
-Identity providers for delegated authentication can be provided to CAS using an external REST endpoint. This allows the CAS server to reach to 
+Identity providers for delegated authentication can be provided to CAS 
+using an external REST endpoint. 
+
+{% include {{ version }}/rest-configuration.md configKey="cas.authn.pac4j.rest" %}
+
+This allows the CAS server to reach to 
 a remote REST endpoint whose responsibility is to produce the following payload in the response body:
 
 ```json
@@ -60,10 +148,11 @@ a remote REST endpoint whose responsibility is to produce the following payload 
 }
 ```
 
-The syntax and collection of available `properties` in the above payload is controlled by [Pac4j]((https://pac4j.org/docs/index.html). 
+The syntax and collection of available `properties` in the above 
+payload is controlled by [Pac4j]((https://pac4j.org/docs/index.html). 
 The response that is returned must be accompanied by a 200 status code.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#pac4j-delegated-authn).
+{% include {{ version }}/rest-configuration.md configKey="cas.authn.pac4j.rest" %}
 
 ## User Interface
 
@@ -77,7 +166,6 @@ After a successful delegated authentication, a user is created inside the CAS se
 this one can be created only from the technical identifier received from the external identity provider (like `1234`)
 or as a "typed identifier" (like `FacebookProfile#1234`), which is the default.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#pac4j-delegated-authn).
 
 ## Returned Payload
 
@@ -147,11 +235,12 @@ Note that:
 By default, user profiles that are extracted from external identity providers and merged into a CAS
 authenticated principal are not stored or tracked anywhere. CAS does provide additional options to allow
 such profiles to be managed outside of CAS and/or provisioned into identity stores, allowing you optionally to link
-external/guest accounts with their equivalent found in the authentication source used by CAS, etc. 
+external/guest accounts with their equivalent found in the authentication source used by CAS, etc.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#pac4j-delegated-authn).
 
 ### Groovy Provisioner
+   
+{% include {{ version }}/groovy-provisioning-delegated-authentication-configuration.md %}
 
 Provisioning tasks can be carried out using an external Groovy script with the following structure:
 
@@ -176,6 +265,8 @@ It is not expected for the script to return a value. The following parameters ar
 
 ### REST Provisioner
 
+{% include {{ version }}/rest-configuration.md configKey="cas.authn.pac4j.provisioning.rest" %}
+
 Provisioning tasks can be carried out using an external REST endpoint expected to receive the following:
      
 | Header                  | Description
@@ -191,6 +282,10 @@ Provisioning tasks can be carried out using an external REST endpoint expected t
 
 To learn more about delegating authentication to SAML2 identity providers, 
 please [review this guide](Delegate-Authentication-SAML.html).
+ 
+## Session Replication
+
+{% include {{ version }}/session-replication-configuration.md %}
 
 ## Troubleshooting
 

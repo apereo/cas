@@ -4,6 +4,8 @@ title: CAS - Security Guide
 category: Planning
 ---
 
+{% include variables.html %}
+
 # Security Guide
 
 CAS is security software that provides secure Web-based single sign-on to Web-based applications. Single sign-on
@@ -48,8 +50,7 @@ from the CAS server to the application must be done using HTTPS:
 - when the generated service ticket is sent back to the application on the "service" url
 - when a proxy callback url is called.
 
-To see the relevant list of CAS properties and tune this behavior, please [review this guide](../configuration/Configuration-Properties.html#http-client).
-
+{% include {{ version }}/httpclient-configuration.md %}
 
 ### Connections to Dependent Systems
 
@@ -82,7 +83,7 @@ Forced authentication is suitable for services where higher security is desired 
 authentication is configured on a per-service basis, but the [service management](#service-management) facility
 provides some support for implementing forced authentication as a matter of centralized security policy.
 Forced authentication may be combined with 
-[multi-factor authentication](../configuration/Configuration-Properties.html#multifactor-authentication) features to
+[multi-factor authentication](../mfa/Configuring-Multifactor-Authentication.html) features to
 implement arbitrary service-specific access control policy.
 
 
@@ -171,7 +172,8 @@ Protocol tickets that are issued by CAS and shared with other applications such 
 
 <div class="alert alert-warning"><strong>Pay Attention</strong><p>Encrypting and signing a generated ticket will, depending on the encryption method and algorithm used, increase the generated ticket length. Not all CAS clients are equipped to handle lengthy ticket strings and may get upset with you. Evaluate existing integrations before turning this on and consider whether this feature is truly needed for your deployment.</p></div>
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#protocol-ticket-security).
+
+{% include {{ version }}/signing-encryption-configuration.md configKey="cas.ticket" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
 
 
 ### Ticket Registry Encryption
@@ -246,14 +248,15 @@ One application of CORS is when a resource makes a cross-origin HTTP request whe
 different domain than the one which the first resource itself serves. This should help more with CAS-enabled
 applications are accessed via XHR/Ajax requests.
 
-To see the relevant list of CAS properties and tune this behavior, please [review this guide](../configuration/Configuration-Properties.html#http-web-requests).
+{% include {{ version }}/http-webrequests-configuration.md %}
 
 #### Security Response Headers
 
 As part of the CAS Security Filter, the CAS project automatically provides the necessary configuration to
 insert HTTP Security headers into the web response to prevent against HSTS, XSS, X-FRAME and other attacks.
 These settings are presently on by default.
-To see the relevant list of CAS properties and tune this behavior, please [review this guide](../configuration/Configuration-Properties.html#http-web-requests).
+
+{% include {{ version }}/http-webrequests-configuration.md %}
 
 To review and learn more about these options, please visit [this guide][cas-sec-filter].
 

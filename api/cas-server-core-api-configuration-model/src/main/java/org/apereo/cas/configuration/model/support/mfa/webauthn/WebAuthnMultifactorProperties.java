@@ -3,7 +3,6 @@ package org.apereo.cas.configuration.model.support.mfa.webauthn;
 import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorProviderProperties;
-import org.apereo.cas.configuration.model.support.mfa.u2f.U2FJpaMultifactorProperties;
 import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -172,7 +171,13 @@ public class WebAuthnMultifactorProperties extends BaseMultifactorProviderProper
      * Store device registration records inside a JDBC resource.
      */
     @NestedConfigurationProperty
-    private U2FJpaMultifactorProperties jpa = new U2FJpaMultifactorProperties();
+    private WebAuthnJpaMultifactorProperties jpa = new WebAuthnJpaMultifactorProperties();
+
+    /**
+     * Store device registration records via external REST APIs.
+     */
+    @NestedConfigurationProperty
+    private WebAuthnRestfulMultifactorProperties rest = new WebAuthnRestfulMultifactorProperties();
 
     /**
      * Clean up expired records via a background cleaner process.

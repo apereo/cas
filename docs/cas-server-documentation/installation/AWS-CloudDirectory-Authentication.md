@@ -3,10 +3,15 @@ layout: default
 title: CAS - Amazon Cloud Directory Authentication
 category: Authentication
 ---
+{% include variables.html %}
+
 
 # Amazon Cloud Directory Authentication
 
-Amazon Cloud Directory is a highly available multi-tenant directory-based store in AWS. These directories scale automatically to hundreds of millions of objects as needed for applications. This lets operation's staff focus on developing and deploying applications that drive the business, not managing directory infrastructure.
+Amazon Cloud Directory is a highly available multi-tenant directory-based store 
+in AWS. These directories scale automatically to hundreds of millions of 
+objects as needed for applications. This lets operation's staff 
+focus on developing and deploying applications that drive the business, not managing directory infrastructure.
 
 To learn more, please [see this guide](http://docs.aws.amazon.com/directoryservice/latest/admin-guide/directory_amazon_cd.html).
 
@@ -14,17 +19,18 @@ To learn more, please [see this guide](http://docs.aws.amazon.com/directoryservi
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-cloud-directory-authentication</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-cloud-directory-authentication" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#amazon-cloud-directory-authentication).
+{% include {{ version }}/principal-transformation-configuration.md configKey="cas.authn.cloud-directory" %}
 
-AWS credentials are fetched from the following sources automatically, where relevant and made possible via CAS configuration:
+{% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.cloud-directory" %}
+
+{% include {{ version }}/aws-configuration.md configKey="cas.authn.cloud-directory" %}
+
+{% include {{ version }}/aws-clouddirectory-authentication-configuration.md %}
+
+AWS credentials are fetched from the following sources automatically, where relevant 
+and made possible via CAS configuration:
 
 1. EC2 instance metadata linked to the IAM role.
 2. External properties file that contains `accessKey` and `secretKey` as property keys.

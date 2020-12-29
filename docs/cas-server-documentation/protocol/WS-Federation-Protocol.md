@@ -4,8 +4,9 @@ title: CAS - CAS WS Federation Protocol
 category: Protocols
 ---
 
-# WS Federation Protocol
+{% include variables.html %}
 
+# WS Federation Protocol
 
 CAS can act as a standalone identity provider, presenting support for the [WS-Federation Passive Requestor Profile](http://docs.oasis-open.org/wsfed/federation/v1.2/os/ws-federation-1.2-spec-os.html#_Toc223175002). The core functionality
 is built on top of [Apache Fediz](http://cxf.apache.org/fediz.html) whose architecture is described [here](http://cxf.apache.org/fediz-architecture.html).
@@ -19,13 +20,7 @@ tokens its service providers require. Instead, it sends a request to the STS con
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-ws-sts</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-ws-sts" %}
 
 <div class="alert alert-info"><strong>YAGNI</strong><p>You do not need to explicitly include this component
 in your configuration and overlays. This is just to teach you that it exists. The security token service will be pulled 
@@ -58,13 +53,7 @@ STS to the sign-in response for the browser. Further the browser user must authe
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-ws-idp</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-ws-idp" %}
 
 ### Endpoints
 
@@ -259,7 +248,7 @@ Token type may be configured on a per-service basis:
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#ws-federation).
+{% include {{ version }}/wsfed-configuration.md %}
 
 You may also need to declare the following repository in
 your CAS Overlay to be able to resolve dependencies:

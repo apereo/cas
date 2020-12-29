@@ -3,24 +3,26 @@ layout: default
 title: CAS - Configuring Authentication Events
 category: Authentication
 ---
+{% include variables.html %}
 
 # Authentication Events
 
-CAS provides a facility for consuming and recording authentication events into persistent storage. This functionality is similar to the records
-kept by the [Audit log](Audits.html) except that the functionality and storage format is controlled via CAS itself rather than the audit engine.
-Additionally, while audit data may be used for reporting and monitoring, events stored into storage via this functionality may later be assessed
-in a historical fashion to assess authentication requests, evaluate risk associated with them and take further action upon them. Events are primarily
-designed to be consumed by the developer and subsequent CAS modules, while audit data is targeted at deployers for end-user functionality and reporting.
+CAS provides a facility for consuming and recording authentication events into 
+persistent storage. This functionality is similar to the records
+kept by the [Audit log](Audits.html) except that the functionality and storage 
+format is controlled via CAS itself rather than the audit engine.
+Additionally, while audit data may be used for reporting and monitoring, events 
+stored into storage via this functionality may later be assessed
+in a historical fashion to assess authentication requests, evaluate risk 
+associated with them and take further action upon them. Events are primarily
+designed to be consumed by the developer and subsequent CAS modules, while 
+audit data is targeted at deployers for end-user functionality and reporting.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-core-events</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-core-events" %}
+
+{% include {{ version }}/events-configuration.md %}
 
 ## Recorded Data
 
@@ -41,8 +43,9 @@ The following metadata is captured and recorded by the event machinery when enab
 
 ## GeoLocation
 
-CAS attempts to record the geolocation properties of the authentication requests, by allowing the browser to ask for user's consent.
-Should consent not be granted or geolocation not supported by the browser, CAS will ignore the geolocation data when it attempts to
+CAS attempts to record the geolocation properties of the authentication requests, by allowing 
+the browser to ask for user's consent.  Should consent not be granted or geolocation 
+not supported by the browser, CAS will ignore the geolocation data when it attempts to
 record the event. To learn more, please [review this guide](GeoTracking-Authentication-Requests.html).
 
 ## Administrative Endpoints
@@ -61,80 +64,46 @@ The following storage backends are available for consumption of events.
 
 Stores authentication events into a MongoDb NoSQL database.
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-events-mongo</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-events-mongo" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#mongodb-events).
+{% include {{ version }}/mongodb-configuration.md configKey="cas.events" %}
 
 ### DynamoDb
 
 Stores authentication events into a DynamoDb database.
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-events-dynamodb</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-events-dynamodb" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#dynamodb-events).
+{% include {{ version }}/dynamodb-configuration.md configKey="cas.events" %}
+
+{% include {{ version }}/dynamodb-events-configuration.md %}
 
 ### CouchDb
 
 Stores authentication events inside a CouchDb instance.
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-events-couchdb</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-events-couchdb" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#couchdb-events).
+{% include {{ version }}/couchdb-configuration.md configKey="cas.events.couch-db" %}
 
 ### JPA
 
 Stores authentication events into a RDBMS.
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-events-jpa</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-events-jpa" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#database-events).
+{% include {{ version }}/rdbms-configuration.md configKey="cas.events.jpa" %}
 
 ### InfluxDb
 
 Stores authentication events inside an InfluxDb instance.
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-events-influxdb</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-events-influxdb" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#influxdb-events).
+{% include {{ version }}/influxdb-configuration.md configKey="cas.events.influx-db" %}
 
 ### Memory
 
 Stores authentication events into memory for a very limited time period.
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-events-memory</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-events-memory" %}

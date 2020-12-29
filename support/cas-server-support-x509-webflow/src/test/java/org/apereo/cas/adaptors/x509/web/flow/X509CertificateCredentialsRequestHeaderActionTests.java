@@ -29,7 +29,9 @@ public class X509CertificateCredentialsRequestHeaderActionTests extends BaseCert
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addHeader("ssl_client_cert", VALID_CERTIFICATE.getContent());
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, action.getObject().execute(context).getId());
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(),
+            request, new MockHttpServletResponse()));
+        assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE,
+            action.execute(context).getId());
     }
 }

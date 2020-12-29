@@ -3,6 +3,7 @@ package org.apereo.cas.support.wsfederation.config.support.authentication;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationDelegatedCookieProperties;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationDelegationProperties;
@@ -63,6 +64,32 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    private static WsFederationAttributeMutator getAttributeMutatorForWsFederationConfig(final WsFederationDelegationProperties wsfed) {
+        val location = wsfed.getAttributeMutatorScript().getLocation();
+        if (location != null) {
+            return new GroovyWsFederationAttributeMutator(location);
+        }
+        return WsFederationAttributeMutator.noOp();
+    }
+
+    private static CasCookieBuilder getCookieGeneratorForWsFederationConfig(final WsFederationDelegationProperties wsfed) {
+        val cookie = wsfed.getCookie();
+        val cipher = getCipherExecutorForWsFederationConfig(cookie);
+        return new WsFederationCookieGenerator(new DefaultCasCookieValueManager(cipher, cookie), cookie);
+    }
+
+    private static CipherExecutor getCipherExecutorForWsFederationConfig(final WsFederationDelegatedCookieProperties cookie) {
+        val crypto = cookie.getCrypto();
+        if (crypto.isEnabled()) {
+            return CipherExecutorUtils.newStringCipherExecutor(crypto, WsFederationCookieCipherExecutor.class);
+        }
+        LOGGER.info("WsFederation delegated authentication cookie encryption/signing is turned off and "
+            + "MAY NOT be safe in a production environment. "
+            + "Consider using other choices to handle encryption, signing and verification of "
+            + "delegated authentication cookie.");
+        return CipherExecutor.noOp();
+    }
+
     private WsFederationConfiguration getWsFederationConfiguration(final WsFederationDelegationProperties wsfed) {
         val config = new WsFederationConfiguration();
         config.setAttributesType(WsFederationConfiguration.WsFedPrincipalResolutionAttributesType.valueOf(wsfed.getAttributesType()));
@@ -89,32 +116,6 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
 
         config.initialize();
         return config;
-    }
-
-    private static WsFederationAttributeMutator getAttributeMutatorForWsFederationConfig(final WsFederationDelegationProperties wsfed) {
-        val location = wsfed.getAttributeMutatorScript().getLocation();
-        if (location != null) {
-            return new GroovyWsFederationAttributeMutator(location);
-        }
-        return WsFederationAttributeMutator.noOp();
-    }
-
-    private static CasCookieBuilder getCookieGeneratorForWsFederationConfig(final WsFederationDelegationProperties wsfed) {
-        val cookie = wsfed.getCookie();
-        val cipher = getCipherExecutorForWsFederationConfig(cookie);
-        return new WsFederationCookieGenerator(new DefaultCasCookieValueManager(cipher, cookie), cookie);
-    }
-
-    private static CipherExecutor getCipherExecutorForWsFederationConfig(final WsFederationDelegatedCookieProperties cookie) {
-        val crypto = cookie.getCrypto();
-        if (crypto.isEnabled()) {
-            return CipherExecutorUtils.newStringCipherExecutor(crypto, WsFederationCookieCipherExecutor.class);
-        }
-        LOGGER.info("WsFederation delegated authentication cookie encryption/signing is turned off and "
-            + "MAY NOT be safe in a production environment. "
-            + "Consider using other choices to handle encryption, signing and verification of "
-            + "delegated authentication cookie.");
-        return CipherExecutor.noOp();
     }
 
     @ConditionalOnMissingBean(name = "wsFederationConfigurations")
@@ -161,15 +162,21 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
                     val principal = wsfed.getPrincipal();
                     val principalAttribute = StringUtils.defaultIfBlank(principal.getPrincipalAttribute(),
                         personDirectory.getPrincipalAttribute());
-                    val r = new WsFederationCredentialsToPrincipalResolver(attributeRepository.getObject(),
-                        wsfedPrincipalFactory(),
-                        principal.isReturnNull() || personDirectory.isReturnNull(),
-                        principalAttribute,
-                        cfg,
-                        personDirectory.isUseExistingPrincipalId() || principal.isUseExistingPrincipalId(),
-                        principal.isAttributeResolutionEnabled(),
-                        org.springframework.util.StringUtils.commaDelimitedListToSet(principal.getActiveAttributeRepositoryIds()));
-                    plan.registerAuthenticationHandlerWithPrincipalResolver(handler, r);
+
+                    val context = PrincipalResolutionContext.builder()
+                        .attributeRepository(attributeRepository.getObject())
+                        .principalFactory(wsfedPrincipalFactory())
+                        .returnNullIfNoAttributes(principal.isReturnNull() || personDirectory.isReturnNull())
+                        .principalNameTransformer(String::trim)
+                        .principalAttributeNames(principalAttribute)
+                        .useCurrentPrincipalId(principal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId())
+                        .resolveAttributes(principal.isAttributeResolutionEnabled())
+                        .activeAttributeRepositoryIdentifiers(org.springframework.util.StringUtils
+                            .commaDelimitedListToSet(principal.getActiveAttributeRepositoryIds()))
+                        .build();
+
+                    val resolver = new WsFederationCredentialsToPrincipalResolver(context, cfg);
+                    plan.registerAuthenticationHandlerWithPrincipalResolver(handler, resolver);
                 }
             });
     }

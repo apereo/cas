@@ -24,6 +24,11 @@ public class ScimProperties implements Serializable {
     private static final long serialVersionUID = 7943229230342691009L;
 
     /**
+     * Decide whether scim should be enabled.
+     */
+    private boolean enabled = true;
+
+    /**
      * Indicate what version of the scim protocol is and should be used.
      */
     private long version = 2;

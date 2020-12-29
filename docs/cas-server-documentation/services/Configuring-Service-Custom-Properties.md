@@ -4,6 +4,8 @@ title: CAS - Configuring Service Custom Properties
 category: Services
 ---
 
+{% include variables.html %}
+
 # Configure Service Custom Properties
 
 CAS has ability to add arbitrary attributes to a registered service.

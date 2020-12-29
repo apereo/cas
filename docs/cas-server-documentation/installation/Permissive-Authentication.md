@@ -3,6 +3,8 @@ layout: default
 title: CAS - Permissive Authentication
 category: Authentication
 ---
+{% include variables.html %}
+
 
 # Permissive Authentication
 
@@ -13,15 +15,13 @@ stored directly in the configuration and those that accept a set of credentials 
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-generic</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-generic" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#file-authentication).
+{% include {{ version }}/principal-transformation-configuration.md configKey="cas.authn.file" %}
+
+{% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.file" %}
+
+{% include {{ version }}/file-authentication-configuration.md %}
 
 ## Example Password File
 
@@ -53,5 +53,12 @@ specify additional account details mostly useful for development and basic testi
 }
 ```
 
-The accepted statuses are `OK`, `LOCKED`, `DISABLED`, `EXPIRED` and `MUST_CHANGE_PASSWORD`. To see the 
-relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#json-authentication).
+The accepted statuses are `OK`, `LOCKED`, `DISABLED`, `EXPIRED` and `MUST_CHANGE_PASSWORD`. 
+
+{% include {{ version }}/principal-transformation-configuration.md configKey="cas.authn.json" %}
+
+{% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.json" %}
+
+{% include {{ version }}/password-policy-configuration.md configKey="cas.authn.json.password-policy" %}
+
+{% include {{ version }}/json-authentication-configuration.md %}

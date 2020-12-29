@@ -3,6 +3,8 @@ layout: default
 title: CAS - SOAP Authentication
 category: Authentication
 ---
+{% include variables.html %}
+
 
 # SOAP Authentication
 
@@ -46,17 +48,15 @@ The current schema is as such:
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-soap-authentication</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-soap-authentication" %}
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#soap-authentication).
+{% include {{ version }}/principal-transformation-configuration.md configKey="cas.authn.soap" %}
+
+{% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.soap" %}
+
+{% include {{ version }}/soap-authentication-configuration.md %}
 
 The `status` returned in the SOAP response as interpreted as one of the following values:
 

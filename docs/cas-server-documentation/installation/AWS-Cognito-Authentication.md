@@ -3,6 +3,8 @@ layout: default
 title: CAS - Amazon Cognito Authentication
 category: Authentication
 ---
+{% include variables.html %}
+
 
 # Amazon Cognito Authentication
 
@@ -10,17 +12,17 @@ Verify and authenticate credentials using [Amazon Cognito](https://aws.amazon.co
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-aws-cognito-authentication</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-aws-cognito-authentication" %}
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#amazon-cognito-authentication).
+{% include {{ version }}/principal-transformation-configuration.md configKey="cas.authn.cognito" %}
+
+{% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.cognito" %}
+
+{% include {{ version }}/aws-configuration.md configKey="cas.authn.cognito" %}
+
+{% include {{ version }}/aws-cognito-authentication-configuration.md %}
 
 When you create the *app client* entry in the Amazon Cognito management console, make sure the app is able to support the `ADMIN_NO_SRP_AUTH` authentication flow and it is *NOT* assigned a secret key.
 

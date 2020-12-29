@@ -139,7 +139,8 @@ public class HazelcastClusterProperties implements Serializable {
     /**
      * Sets the well known members.
      * If members is empty, calling this method will have the same effect as calling clear().
-     * A member can be a comma separated string, e..g '10.11.12.1,10.11.12.2' which indicates multiple members are going to be added.
+     * A member can be a comma separated string, e..g '10.11.12.1,10.11.12.2' which
+     * indicates multiple members are going to be added.
      */
     @RequiredProperty
     private List<String> members = Stream.of("localhost").collect(Collectors.toList());
@@ -213,9 +214,11 @@ public class HazelcastClusterProperties implements Serializable {
 
     /**
      * Multicast trusted interfaces for discovery.
-     * With the multicast auto-discovery mechanism, Hazelcast allows cluster members to find each other using multicast communication.
+     * With the multicast auto-discovery mechanism, Hazelcast allows cluster
+     * members to find each other using multicast communication.
      * The cluster members do not need to know the concrete addresses of the other members,
-     * as they just multicast to all the other members for listening. Whether multicast is possible or allowed depends on your environment.
+     * as they just multicast to all the other members for listening. Whether
+     * multicast is possible or allowed depends on your environment.
      */
     private String multicastTrustedInterfaces;
 
@@ -258,6 +261,21 @@ public class HazelcastClusterProperties implements Serializable {
      * The default public address to be advertised to other cluster members and clients.
      */
     private String publicAddress;
+
+    /**
+     * You can specify which network interfaces that Hazelcast should use.
+     * Servers mostly have more than one network interface, so you may want to
+     * list the valid IPs. Range characters ('*' and '-') can be used for simplicity.
+     * For instance, 10.3.10.* refers to IPs between 10.3.10.0 and 10.3.10.255.
+     * Interface 10.3.10.4-18 refers to IPs between 10.3.10.4 and
+     * 10.3.10.18 (4 and 18 included). If network interface configuration
+     * is enabled (it is disabled by default) and if Hazelcast cannot find
+     * an matching interface, then it will print a message on
+     * the console and will not start on that node.
+     *
+     * Interfaces can be separated by a comma.
+     */
+    private String networkInterfaces;
 
     /**
      * Describe discovery strategies for Hazelcast.

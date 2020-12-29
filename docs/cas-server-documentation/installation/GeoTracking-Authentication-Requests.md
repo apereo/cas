@@ -3,6 +3,8 @@ layout: default
 title: CAS - GeoTracking Authentication Requests
 category: Authentication
 ---
+{% include variables.html %}
+
 
 # GeoTracking Authentication Requests
 
@@ -10,40 +12,22 @@ Authentication requests can be mapped and translated to physical locations.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-geolocation</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-geolocation" %}
 
 ## Google Maps
 
 Uses the [Google Maps Geocoding API](https://developers.google.com/maps/documentation/geocoding/start) to translate
 authentication requests into a geo-location.
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-geolocation-googlemaps</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-geolocation-googlemaps" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#googlemaps-geotracking).
+{% include {{ version }}/googlemaps-configuration.md %}
 
 ## Maxmind
 
 Uses [Maxmind](https://www.maxmind.com/en/home) to translate
 authentication requests into a geo-location.
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-geolocation-maxmind</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-geolocation-maxmind" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#maxmind-geotracking).
+{% include {{ version }}/maxmind-configuration.md %}

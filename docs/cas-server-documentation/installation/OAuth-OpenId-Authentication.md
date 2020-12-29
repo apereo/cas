@@ -3,6 +3,8 @@ layout: default
 title: CAS - OAuth Authentication
 category: Authentication
 ---
+{% include variables.html %}
+
 
 # OAuth/OpenID Authentication
 
@@ -24,15 +26,9 @@ The following endpoints are provided by CAS:
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-oauth-webflow</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-oauth-webflow" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#oauth2).
+{% include {{ version }}/oauth2-configuration.md %}
 
 ## Endpoints
 
@@ -190,7 +186,8 @@ Client secrets for OAuth relying parties may be defined as encrypted values pref
 ```
 
 Client secrets may be encrypted using CAS-provided cipher operations either manually or via the [CAS Command-line shell](Configuring-Commandline-Shell.html).
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#oauth2).
+
+{% include {{ version }}/oauth2-configuration.md %}
 
 ### Attribute Release
 
@@ -199,9 +196,33 @@ See [this guide](../integration/Attribute-Release-Policies.html) for more info.
 
 ## OAuth Token Expiration Policy
 
-The expiration policy for OAuth tokens is controlled by CAS settings and properties. Note that while access and refresh tokens may have their own lifetime and expiration policy, they are typically upper-bound to the length of the CAS single sign-on session.
+The expiration policy for OAuth tokens is controlled by CAS settings and properties. Note that
+while access and refresh tokens may have their own lifetime and expiration policy, they are 
+typically upper-bound to the length of the CAS single sign-on session.
+  
+### OAuth Codes
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#oauth2).
+{% include {{ version }}/codes-oauth2-configuration.md %}
+
+### OAuth Access Tokens
+
+{% include {{ version }}/accesstokens-oauth2-configuration.md %}
+
+### OAuthJWT Access Tokens
+
+{% include {{ version }}/jwt-accesstokens-oauth2-configuration.md %}
+
+### OAuth Device Tokens
+
+{% include {{ version }}/devicetokens-oauth2-configuration.md %}
+
+### OAuth Refresh Tokens
+
+{% include {{ version }}/refreshtokens-oauth2-configuration.md %}
+
+### OAuth Device User Codes
+
+{% include {{ version }}/deviceusercodes-oauth2-configuration.md %}
 
 ### Per Service
 
@@ -280,7 +301,8 @@ whose token expiration policy is to deviate from the default configuration must 
 
 ## JWT Access Tokens
 
-By default, OAuth access tokens are created as opaque identifiers. There is also the option to generate JWTs as access tokens on a per-service basis:
+By default, OAuth access tokens are created as opaque identifiers. There is 
+also the option to generate JWTs as access tokens on a per-service basis:
 
 ```json
 {
@@ -325,7 +347,6 @@ The following cipher strategy types are available:
 | `SIGN_AND_ENCRYPT`  | Sign values, and then encrypt.
 
 Signing and encryption keys may also be defined on a per-service basis, or globally via CAS settings.
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#oauth2).
 
 ## OAuth User Profile Structure
 
@@ -359,8 +380,6 @@ This option flattens principal attributes by one degree, putting them at the sam
 }
 ```
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#oauth2).
-
 ### Custom
 
 If you wish to create your own profile structure, you will need to design a component and register it with CAS to handle the rendering of the user profile:
@@ -388,13 +407,16 @@ Authentication throttling may be enabled for the `/oauth2.0/accessToken` provide
 throttling](Configuring-Authentication-Throttling.html) support. The throttling mechanism that handles the usual CAS server endpoints for authentication
 and ticket validation, etc is then activated for the OAuth endpoints that are supported for throttling.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#oauth2).
 
 ## Server Configuration
 
 Remember that OAuth features of CAS require session affinity (and optionally session replication),
 as the authorization responses throughout the login flow are stored via server-backed session storage mechanisms. You will need to configure your deployment
 environment and load balancers accordingly.
+
+## Session Replication
+
+{% include {{ version }}/session-replication-configuration.md %}
 
 ## Sample Client Applications
 

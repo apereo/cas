@@ -3,6 +3,7 @@ layout: default
 title: CAS - OS Service Deployment
 category: Installation
 ---
+{% include variables.html %}
 
 # OS Service Deployment
 

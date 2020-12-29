@@ -4,6 +4,8 @@ title: CAS - Attribute Resolution
 category: Attributes
 ---
 
+{% include variables.html %}
+
 # Attribute Resolution
 
 Attribute resolution strategies are controlled by
@@ -34,36 +36,91 @@ A framework for resolving persons and attributes from a variety of underlying so
 It consists of a collection of components that retrieve, cache, resolve, aggregate,
 merge person attributes from JDBC, LDAP and more.
 
-To see the relevant list of CAS properties that deal with resolving principals, please [review this guide](../configuration/Configuration-Properties.html#principal-resolution).
-
 Attribute sources are defined and configured to describe the global set of attributes to be fetched
 for each authenticated principal. That global set of attributes is then filtered by the
 service manager according to service-specific attribute release rules.
 
-Note that each attribute repository source can be assigned a unique identifier to be used for additional filtering. The attribute resolution engine
-provided by Person Directory can also be configured to only consult not all but a selection of attribute repository sources, *deferring* the task
-of attribute retrieval for later phases in the authentication process, such as [releasing attributes](Attribute-Release-Caching.html).
+Note that each attribute repository source can be assigned a unique 
+identifier to be used for additional filtering. The attribute resolution engine
+provided by Person Directory can also be configured to only consult not 
+all but a selection of attribute repository sources, *deferring* the task
+of attribute retrieval for later phases in the authentication process, 
+such as [releasing attributes](Attribute-Release-Caching.html).
 
 <div class="alert alert-info"><strong>Principal Resolution</strong><p>Note that in most if not all cases,
 CAS authentication is able to retrieve and resolve attributes from the authentication source, which would
-eliminate the need for configuring a separate resolver specially if both the authentication and the attribute source are the same.
-Using separate resolvers should only be required when sources are different, or when there is a need to tackle more advanced attribute
-resolution use cases such as cascading, merging, etc. <a href="../installation/Configuring-Principal-Resolution.html">See this guide</a> for more info.</p></div>
+eliminate the need for configuring a separate resolver specially if 
+both the authentication and the attribute source are the same.
+Using separate resolvers should only be required when sources are 
+different, or when there is a need to tackle more advanced attribute
+resolution use cases such as cascading, merging, etc. 
+<a href="../installation/Configuring-Principal-Resolution.html">See this guide</a> for more info.</p></div>
 
-The goal of the resolver is to construct a final identifiable authenticated principal for CAS which carries a number of attributes inside it.
-The behavior of the person-directory resolver is such that it attempts to locate the principal id, which in most cases is the same thing as the credential
-id provided during authentication or it could be noted by a custom attribute. Then the resolver starts to construct attributes from attribute repositories defined. If it realizes that a custom attribute is used to determine the principal id AND the same attribute is also set to be collected into the final set of attributes, it will then remove that attribute from the final collection.
+The goal of the resolver is to construct a final identifiable 
+authenticated principal for CAS which carries a number of attributes inside it.
+The behavior of the person-directory resolver is such that it attempts
+to locate the principal id, which in most cases is the same thing as the credential
+id provided during authentication or it could be noted by a custom 
+attribute. Then the resolver starts to construct attributes from attribute 
+repositories defined. If it realizes that a custom attribute is used to determine the principal id AND the same attribute 
+is also set to be collected into the final set of attributes, it 
+will then remove that attribute from the final collection.
 
 Note that by default, CAS auto-creates attribute repository sources that are appropriate for LDAP, JDBC, etc.
 If you need something more, you will need to resort to more elaborate measures of defining the bean configuration.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#authentication-attributes).
 More about the Person Directory and its configurable sources [can be found here](https://github.com/apereo/person-directory).
+
+### Overview
+
+{% include {{ version }}/attribute-resolution-configuration.md %}
+
+### Stub
+
+{% include {{ version }}/stub-attribute-resolution-configuration.md %}
+
+### LDAP
+
+{% include {{ version }}/ldap-attribute-resolution-configuration.md %}
+
+### Groovy
+
+{% include {{ version }}/groovy-attribute-resolution-configuration.md %}
+
+### JSON
+
+{% include {{ version }}/json-attribute-resolution-configuration.md %}
+
+### REST
+
+{% include {{ version }}/rest-attribute-resolution-configuration.md %}
+
+### Grouper
+
+{% include {{ version }}/grouper-attribute-resolution-configuration.md %}
+
+### Couchbase
+
+{% include {{ version }}/couchbase-attribute-resolution-configuration.md %}
+
+### Python/Javascript/Groovy
+
+{% include {{ version }}/scriptengine-attribute-resolution-configuration.md %}
+
+### Redis
+
+{% include {{ version }}/redis-attribute-resolution-configuration.md %}
+
+### Microsoft Azure Active Directory
+
+{% include {{ version }}/azuread-attribute-resolution-configuration.md %}
 
 ### JDBC
 
 CAS does allow for attributes to be retrieved from a variety of SQL databases.
 To learn how to configure database drivers, [please see this guide](../installation/JDBC-Drivers.html).
+           
+{% include {{ version }}/jdbc-attribute-resolution-configuration.md %}
 
 JDBC attribute sources can be defined based on the following mechanics:
 

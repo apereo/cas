@@ -3,6 +3,7 @@ layout: default
 title: CAS - Configuring SSO Sessions
 category: SSO & SLO
 ---
+{% include variables.html %}
 
 # SSO Sessions
 
@@ -36,7 +37,7 @@ The following endpoints are provided by CAS:
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#ticket-granting-cookie).
+{% include {{ version }}/tgc-configuration.md %}
 
 The cookie has the following properties:
 
@@ -69,12 +70,7 @@ subsequent attempt to authenticate to a SSO-participating application.
 The cookie generation strategy can also be customized on a per-application basis. For additional details, 
 please [review this guide](../services/Configuring-Service-SSO-Policy.html).
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#global-sso-behavior).
-
-## Disable SSO Globally
-
-Participation in single sign-on sessions can be disabled globally via CAS properties. To see the relevant list of CAS 
-properties, please [review this guide](../configuration/Configuration-Properties.html#global-sso-behavior).
+{% include {{ version }}/global-sso-configuration.md %}
 
 ## Disable Service SSO Access
 
@@ -104,8 +100,7 @@ please [review this guide](../services/Configuring-Service-SSO-Policy.html).
 A warning cookie set by CAS upon the establishment of the SSO session at the request of the user on the CAS login page.
 The cookie is used later to warn and prompt the user before a service ticket is generated and access to the service application is granted.
 
-To see the relevant list of CAS properties, 
-please [review this guide](../configuration/Configuration-Properties.html#warning-cookie).
+{% include {{ version }}/warning-cookie-configuration.md %}
 
 ## Public Workstations
 
@@ -129,8 +124,7 @@ In the event that no `service` is submitted to CAS, you may specify a default
 service url to which CAS will redirect. Note that this default service, much like
 all other services, MUST be authorized and registered with CAS.
 
-To see the relevant list of CAS properties, 
-please [review this guide](../configuration/Configuration-Properties.html#views).
+{% include {{ version }}/views-configuration.md %}
 
 ## Required Service
 
@@ -157,5 +151,3 @@ Such validation checks can be turned off and skipped on a per-application basis:
   }
 }
 ```
-
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#global-sso-behavior).

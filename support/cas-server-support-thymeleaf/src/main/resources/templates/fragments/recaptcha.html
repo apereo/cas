@@ -14,8 +14,10 @@
 <main role="main" class="container mt-3 mb-3">
     <div th:fragment="recaptchaToken">
         <span th:if="${recaptchaVersion=='v2'}" th:remove="tag">
-            <section class="form-group" th:if="${recaptchaSiteKey != null AND recaptchaInvisible != null AND !recaptchaInvisible}">
-                <div class="g-recaptcha" th:attr="data-sitekey=${recaptchaSiteKey}"/>
+            <section id="recaptchaV2Section"
+                     class="form-group"
+                     th:if="${recaptchaSiteKey != null AND recaptchaInvisible != null AND !recaptchaInvisible}">
+                <div id="g-recaptcha" class="g-recaptcha" th:attr="data-sitekey=${recaptchaSiteKey}"/>
 
                 <script type="text/javascript"
                         th:if="${recaptchaSiteKey != null AND recaptchaInvisible != null AND recaptchaInvisible}"
@@ -27,7 +29,7 @@
 
             </section>
         </span>
-        <span th:if="${recaptchaVersion=='v3'}" th:remove="tag">
+        <span th:if="${recaptchaVersion=='v3'}" id="recaptchaV3Section">
             <input type="hidden" id="g-recaptcha-token" name="g-recaptcha-token"/>
 
             <script type="text/javascript" th:if="${recaptchaSiteKey != null}" th:inline="javascript">

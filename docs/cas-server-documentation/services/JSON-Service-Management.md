@@ -4,6 +4,8 @@ title: CAS - JSON Service Registry
 category: Services
 ---
 
+{% include variables.html %}
+
 # JSON Service Registry
 
 This registry reads services definitions from JSON configuration files at the application context initialization time.
@@ -11,13 +13,7 @@ JSON files are expected to be found inside a configured directory location and t
 
 Support is enabled by adding the following module into the overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-json-service-registry</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-json-service-registry" %}
 
 A sample JSON file follows:
 
@@ -31,7 +27,7 @@ A sample JSON file follows:
 }
 ```
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#json-service-registry).
+{% include {{ version }}/json-service-registry-configuration.md %}
 
 <div class="alert alert-warning"><strong>Clustering Services</strong><p>
 You MUST consider that if your CAS server deployment is clustered, each CAS node in the cluster must have

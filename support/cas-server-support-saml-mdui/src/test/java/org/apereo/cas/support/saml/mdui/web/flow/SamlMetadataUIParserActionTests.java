@@ -20,7 +20,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
@@ -39,9 +38,11 @@ import static org.junit.jupiter.api.Assertions.*;
     SamlMetadataUIConfiguration.class,
     SamlMetadataUIWebflowConfiguration.class,
     AbstractOpenSamlTests.SharedTestConfiguration.class
+}, properties = {
+    "spring.main.allow-bean-definition-overriding=true",
+    "cas.saml-metadata-ui.resources=classpath:sample-metadata.xml::classpath:inc-md-pub.pem"
 })
 @Tag("SAML")
-@TestPropertySource(properties = "cas.saml-metadata-ui.resources=classpath:sample-metadata.xml::classpath:inc-md-pub.pem")
 public class SamlMetadataUIParserActionTests extends AbstractOpenSamlTests {
     @Autowired
     @Qualifier("samlMetadataUIParserAction")

@@ -4,6 +4,8 @@ title: CAS - Shibboleth Integration
 category: Integration
 ---
 
+{% include variables.html %}
+
 # Overview
 
 CAS can be integrated with the [Shibboleth federated SSO platform](http://shibboleth.net/) by a couple
@@ -29,13 +31,9 @@ and [v3](https://github.com/Unicon/shib-cas-authn3) and [v4](https://github.com/
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-shibboleth</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-shibboleth" %}
+           
+{% include {{ version }}/shibidp-configuration.md %}
 
 ### Relying Party EntityId
 
@@ -61,23 +59,25 @@ that is provided by the metadata associated with the relying party.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-saml-mdui</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-saml-mdui" %}
+
+{% include {{ version }}/saml-metadataui-configuration.md %}
+
+{% include {{ version }}/job-scheduling-configuration.md configKey="cas.saml-metadata-ui" %}
+
 
 ### Relying Party Metadata
 
-You may allow CAS to recognize SAML MDUI directly from metadata documents that are fed to CAS via settings. If the metadata for the relying party matches the requested `entityId` and contains MDUI elements, those will be passed onto the login page for decorations. If MDUI is not available in the metadata, the relevant elements from the matching service in the service registry will be used all the same.
-
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#saml-metadata-ui).
+You may allow CAS to recognize SAML MDUI directly from metadata documents that are fed 
+to CAS via settings. If the metadata for the relying party matches the 
+requested `entityId` and contains MDUI elements, those will be passed 
+onto the login page for decorations. If MDUI is not available in the metadata, the relevant 
+elements from the matching service in the service registry will be used all the same.
 
 ### Service Registry Metadata
 
-You may also register the relying party in the CAS service registry as a regular service application and simply specify a number of MDUI-like elements in the body of the registration record. An example follows:
+You may also register the relying party in the CAS service registry as a regular 
+service application and simply specify a number of MDUI-like elements in the body of the registration record. An example follows:
 
 ```json
 {

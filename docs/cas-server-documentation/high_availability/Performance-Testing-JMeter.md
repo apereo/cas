@@ -4,6 +4,8 @@ title: CAS - JMeter Performance Testing
 category: High Availability
 ---
 
+{% include variables.html %}
+
 # JMeter Performance Testing
 
 Apache JMeter is a great performance testing tool that is used heavily within the Java community.

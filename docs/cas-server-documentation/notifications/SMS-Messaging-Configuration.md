@@ -4,24 +4,23 @@ title: CAS - SMS Messaging
 category: Notifications
 ---
 
+{% include variables.html %}
+
 # SMS Messaging
 
-CAS presents the ability to notify users on select actions via SMS messaging. Example actions include notification of risky authentication attempts
-or password reset links/tokens. SMS providers supported by CAS are listed below. Note that an active/professional subscription may be required for certain
-providers.
+CAS presents the ability to notify users on select actions via SMS messaging. Example 
+actions include notification of risky authentication attempts or password reset 
+links/tokens. SMS providers supported by CAS are listed below. Note that 
+an active/professional subscription may be required for certain providers.
 
-Default support for SMS notifications is automatically enabled/included by the relevant modules using the following module:
+Default support for SMS notifications is automatically enabled/included by the 
+relevant modules using the following module:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-core-notifications</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-core-notifications" %}
 
-You need not explicitly include this module in WAR Overlay configurations, except when there is a need to access components and APIs at compile-time. 
-See below on how to customize or override the default behavior with specific providers.
+You need not explicitly include this module in WAR Overlay configurations, except 
+when there is a need to access components and APIs at compile-time. See 
+below on how to customize or override the default behavior with specific providers.
 
 ## Custom
 
@@ -52,11 +51,11 @@ def run(Object[] args) {
 }
 ```
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#groovy).
+{% include {{ version }}/groovy-sms-configuration.md %}
 
 ## REST
   
-  Send text messages using a RESTful API. This is a `POST` with the following parameters:
+Send text messages using a RESTful API. This is a `POST` with the following parameters:
             
 | Field               | Description
 |---------------------|---------------------------------------------------
@@ -67,74 +66,46 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 The request body contains the actual message. A status code of `200` is expected from the endpoint.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#rest-2).
+{% include {{ version }}/rest-configuration.md configKey="cas.sms-provider.rest" %}
 
 ## Twilio
 
 To learn more, [visit this site](https://www.twilio.com/).
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-sms-twilio</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-sms-twilio" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#twilio).
+{% include {{ version }}/twilio-configuration.md %}
 
 ## TextMagic
 
 To learn more, [visit this site](https://www.textmagic.com/).
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-sms-textmagic</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-sms-textmagic" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#textmagic).
+{% include {{ version }}/textmagic-configuration.md %}
 
 ## Clickatell
 
 To learn more, [visit this site](http://www.clickatell.com/).
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-sms-clickatell</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-sms-clickatell" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#clickatell).
+{% include {{ version }}/clickatell-configuration.md %}
 
 ## Amazon SNS
 
 To learn more, [visit this site](https://docs.aws.amazon.com/sns).
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-sms-aws-sns</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-sms-aws-sns" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#amazon-sns).
+{% include {{ version }}/aws-sns-configuration.md %}
+
+{% include {{ version }}/aws-configuration.md configKey="cas.sms-provider.sns" %}
 
 ## Nexmo
 
 To learn more, [visit this site](https://dashboard.nexmo.com/).
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-sms-nexmo</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-sms-nexmo" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#nexmo).
+{% include {{ version }}/nexmo-configuration.md %}

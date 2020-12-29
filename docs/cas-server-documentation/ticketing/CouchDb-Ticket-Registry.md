@@ -4,17 +4,13 @@ title: CAS - CouchDB Ticket Registry
 category: Ticketing
 ---
 
+{% include variables.html %}
+
 # CouchDB Ticket Registry
 
 CouchDB integration is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-couchdb-ticket-registry</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-couchdb-ticket-registry" %}
 
 
 [CouchDB](http://couchdb.apache.org) is a highly available, open source NoSQL database server based on
@@ -23,7 +19,7 @@ registry is to leverage the multi-master, multi-datacenter capabilities of Couch
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#couchdb-ticket-registry).
+{% include {{ version }}/couchdb-configuration.md configKey="cas.ticket.registry.couch-db" %}
 
 
 The only truly mandatory setting is the URL. However, CouchDB should not be used in admin party mode in production, so username and password are needed as well.

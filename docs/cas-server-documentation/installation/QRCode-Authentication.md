@@ -3,6 +3,8 @@ layout: default
 title: CAS - QR Code Authentication
 category: Authentication
 ---
+{% include variables.html %}
+
 
 # QR Code Authentication
 
@@ -18,13 +20,7 @@ for authentication attempts, allowing the end user to *scan and proceed*.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-qrlogin</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-qrlogin" %}
 
 
 ## Administrative Endpoints
@@ -39,8 +35,7 @@ The following endpoints are provided by CAS:
 
 ## Configuration
 
-To see the relevant list of CAS 
-properties, please [review this guide](../configuration/Configuration-Properties.html#qr-authentication).
+{% include {{ version }}/qr-authentication-configuration.md %}
 
 ## Web Socket Communication
 
@@ -122,8 +117,9 @@ implementations can be supplied using one of the strategies outlined below.
 
 ### JSON
 
-Authorized devices can be managed and tracked inside a single JSON resource, whose path is taught to CAS via settings. To see the 
-relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#qr-authentication).
+Authorized devices can be managed and tracked inside a single JSON resource, whose path is taught to CAS via settings. 
+
+{% include {{ version }}/json-qr-authentication-configuration.md %}
 
 ### Custom
 

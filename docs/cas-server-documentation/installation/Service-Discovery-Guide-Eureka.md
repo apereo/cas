@@ -3,6 +3,8 @@ layout: default
 title: CAS - Eureka Service Discovery
 category: High Availability
 ---
+{% include variables.html %}
+
 
 # Eureka Server Discovery Service
 
@@ -29,20 +31,15 @@ You always want to make sure the discovery server is run in high-availability mo
 
 ## CAS Discovery Service Clients
 
-Each individual CAS server is given the ability to auto-register itself with the discovery server, provided configuration is made available to instruct the CAS server how to locate and connect to the discover server service.
+Each individual CAS server is given the ability to auto-register itself 
+with the discovery server, provided configuration is made available to 
+instruct the CAS server how to locate and connect to the discover server service.
 
 Support is added by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-eureka-client</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-eureka-client" %}
 
-To see the relevant list of CAS properties,
-please [review this guide](../configuration/Configuration-Properties.html#eureka-service-discovery).
+{% include {{ version }}/consul-service-discovery-configuration.md %}
 
 ### Authentication
 

@@ -3,6 +3,8 @@ layout: default
 title: CAS - WAR Overlay Initializr
 category: Installation
 ---
+{% include variables.html %}
+
 
 # WAR Overlay Initializr
 
@@ -63,6 +65,7 @@ The [CAS Initializr][initializr] can be invoked using curl to generate a CAS ove
 the CAS Initializr, the following strategies can be used.
 
 ### Heroku
+
 The CAS projects provides a running an instance of the CAS Initializr on [Heroku][initializr]. To get 
 started with this instance, a simple way might be to include the following function in your bash profile:
      
@@ -134,5 +137,13 @@ Or using HTTPie:
 ```bash
 http https://casinit.herokuapp.com Accept:application/json
 ```
+
+### Dependency Management
+
+CAS Initializr is set to use the [CAS BOM](BOM-Dependency-Management.html) for dependency management.
+
+## Contributions
+
+Please see [this guide](../developer/Build-Process.html) for more details.
 
 [initializr]: https://casinit.herokuapp.com/

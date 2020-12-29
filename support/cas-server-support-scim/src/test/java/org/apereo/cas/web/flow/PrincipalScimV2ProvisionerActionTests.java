@@ -66,7 +66,8 @@ public class PrincipalScimV2ProvisionerActionTests extends BaseScimProvisionerAc
 
         val data = MAPPER.writeValueAsString(user);
         try (val webServer = new MockWebServer(8218,
-            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
+            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
+            MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, principalScimProvisionerAction.execute(context).getId());
         }

@@ -248,8 +248,8 @@ public class PasswordManagementWebflowConfiguration {
         @Autowired
         @ConditionalOnMissingBean(name = "passwordManagementCaptchaWebflowExecutionPlanConfigurer")
         public CasWebflowExecutionPlanConfigurer passwordManagementCaptchaWebflowExecutionPlanConfigurer(
-            @Qualifier("passwordManagementCaptchaWebflowConfigurer") final CasWebflowConfigurer passwordManagementCaptchaWebflowConfigurer) {
-            return plan -> plan.registerWebflowConfigurer(passwordManagementCaptchaWebflowConfigurer);
+            @Qualifier("passwordManagementCaptchaWebflowConfigurer") final CasWebflowConfigurer cfg) {
+            return plan -> plan.registerWebflowConfigurer(cfg);
         }
     }
 }
