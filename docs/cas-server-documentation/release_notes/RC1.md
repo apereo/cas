@@ -60,7 +60,7 @@ The following items are new improvements and enhancements presented in this rele
 ### Spring Boot 2.4
                   
 CAS is now based on the Spring Boot `2.4.x` series which by extension also requires CAS to upgrade
-its dependency on related projects such as Spring and Spring Cloud. While this is a 
+its dependency on related projects such as [Spring and Spring Cloud](../planning/Architecture.html). While this is a 
 significant framework upgrade, the change should remain largely invisible to CAS users and adopters.
 
 ### Testing Strategy
