@@ -485,6 +485,7 @@ jobs:
   publish-docs:
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'push' }}
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
