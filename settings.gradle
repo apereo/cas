@@ -80,6 +80,7 @@ include "core:cas-server-core-webflow-api"
 include "core:cas-server-core-webflow-mfa"
 include "core:cas-server-core-webflow-mfa-api"
 
+include "docs:cas-server-documentation-processor"
 include "docs:cas-server-documentation"
 
 include "support:cas-server-support-acceptto-mfa"
