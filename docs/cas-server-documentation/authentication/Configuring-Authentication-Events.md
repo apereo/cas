@@ -9,7 +9,7 @@ category: Authentication
 
 CAS provides a facility for consuming and recording authentication events into 
 persistent storage. This functionality is similar to the records
-kept by the [Audit log](Audits.html) except that the functionality and storage 
+kept by the [Audit log](../audits/Audits.html) except that the functionality and storage 
 format is controlled via CAS itself rather than the audit engine.
 Additionally, while audit data may be used for reporting and monitoring, events 
 stored into storage via this functionality may later be assessed

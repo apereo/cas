@@ -136,7 +136,7 @@ as well as behavior and enforcement of client authentication can also be managed
 
 #### Optional (Mixed) Authentication
 
-When using an [embedded Apache Tomcat container](Configuring-Servlet-Container.html), it may be 
+When using an [embedded Apache Tomcat container](../installation/Configuring-Servlet-Container.html), it may be 
 required to allow the user to select either X.509 authentication or the usual CAS login flow without first being prompted.
 In this scenario, the user is allowed the option to select a login flow via X.509 at which time the browser would present
 a dialog prompt asking for a certificate selection and then passing it onto CAS to proceed.
