@@ -234,6 +234,12 @@ layout: null
     *   [JavaMelody](/cas/{{ version }}/monitoring/Configuring-Monitoring-JavaMelody.html)
     *   [Metrics](/cas/{{ version }}/monitoring/Configuring-Metrics.html)
     *   [Monitors](/cas/{{ version }}/monitoring/Configuring-Monitoring.html)
+        *   [Memcached](/cas/{{ version }}/monitoring/Configuring-Monitoring-Memcached.html)
+        *   [Ehcache](/cas/{{ version }}/monitoring/Configuring-Monitoring-Ehcache.html)
+        *   [MongoDb](/cas/{{ version }}/monitoring/Configuring-Monitoring-MongoDb.html)
+        *   [Hazelcast](/cas/{{ version }}/monitoring/Configuring-Monitoring-Hazelcast.html)
+        *   [JDBC](/cas/{{ version }}/monitoring/Configuring-Monitoring-JDBC.html)
+        *   [LDAP](/cas/{{ version }}/monitoring/Configuring-Monitoring-LDAP.html)
         
 * [User Interface](#user_interface)
     *   [Overview](/cas/{{ version }}/ux/User-Interface-Customization.html)

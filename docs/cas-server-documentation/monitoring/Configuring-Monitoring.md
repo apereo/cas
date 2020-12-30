@@ -37,66 +37,25 @@ to <i>interrogate</i> the entire cluster by running distributed queries to calcu
 
 ## Memcached
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-memcached-monitor" %}
-
-{% include {{ version }}/memcached-configuration.md configKey="cas.monitor.memcached" %}
-
-The actual memcached implementation may be supported via one of the following options, expected to be defined in the overlay.
-
-### Spymemcached
-
-Enable support via the [spymemcached library](https://code.google.com/p/spymemcached/). 
-
-Support is enabled by including the following dependency in the WAR overlay:
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-memcached-spy" %}
-
-### AWS ElastiCache
-
-For clusters running the Memcached engine, ElastiCache supports Auto Discovery—the ability 
-for client programs to automatically identify all of the nodes in a cache cluster, 
-and to initiate and maintain connections to all of these nodes. 
-
-Support is enabled by including the following dependency in the WAR overlay:
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-memcached-aws-elasticache" %}
+Please [see this guide](Configuring-Monitoring-Memcached.html) for more info.
 
 ## Ehcache
 
-Monitor the status and state of a cache backed by Ehcache.
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-ehcache-monitor" %}
-
-{% include {{ version }}/cache-monitoring-configuration.md %}
+Please [see this guide](Configuring-Monitoring-Ehcache.html) for more info.
 
 ## MongoDb
 
-Monitor the status and availability of a MongoDb database.
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-mongo-monitor" %}
-
-{% include {{ version }}/mongodb-configuration.md configKey="cas.monitor" %}
+Please [see this guide](Configuring-Monitoring-MongoDb.html) for more info.
 
 ## Hazelcast
 
-Monitor the status and state of a cache backed by Hazelcast.
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-hazelcast-monitor" %}
-
-{% include {{ version }}/cache-monitoring-configuration.md %}
+Please [see this guide](Configuring-Monitoring-Hazelcast.html) for more info.
 
 ## JDBC
 
-Monitor the status and availability of a relational SQL database.
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-jdbc-monitor" %}
-
-{% include {{ version }}/jdbc-monitoring-configuration.md %}
+Please [see this guide](Configuring-Monitoring-JDBC.html) for more info.
 
 ## LDAP
 
-Monitor the status and availability of an LDAP server.
+Please [see this guide](Configuring-Monitoring-LDAP.html) for more info.
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-ldap-monitor" %}
-
-{% include {{ version }}/ldap-monitoring-configuration.md %}
