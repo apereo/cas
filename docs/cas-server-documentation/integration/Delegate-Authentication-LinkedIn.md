@@ -8,4 +8,6 @@ category: Authentication
 
 # LinkedIn
 
+For an overview of the delegated authentication flow, please [see this guide](Delegate-Authentication.html).
+
 {% include {{ version }}/linkedin-delegated-authentication-configuration.md %}

@@ -8,4 +8,6 @@ category: Authentication
 
 # Azure Active Directory
 
+For an overview of the delegated authentication flow, please [see this guide](Delegate-Authentication.html).
+
 {% include {{ version }}/azuread-delegated-authentication-configuration.md %}

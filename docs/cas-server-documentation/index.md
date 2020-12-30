@@ -3,6 +3,8 @@ layout: default
 title: CAS - Home
 ---
 
+{% include variables.html %}
+
 # CAS Enterprise Single Sign-On
 
 Welcome to the home of the Apereo Central Authentication Service project, more commonly referred to as CAS. CAS is an enterprise 
