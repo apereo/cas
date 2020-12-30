@@ -1,0 +1,22 @@
+description = "Apereo CAS Documentation Generator"
+project.ext["mainClassName"] = "org.apereo.cas.CasDocumentationApplication"
+project.ext["forceBootifulArtifact"] = true
+
+apply from: rootProject.file("gradle/springboot.gradle")
+
+javadoc {
+    enabled(false)
+}
+
+test {
+    enabled(false)
+}
+
+dependencies {
+    api project(":api:cas-server-core-api-configuration-model")
+
+    implementation project(":core:cas-server-core-configuration-metadata-repository")
+
+    implementation libraries.log4j
+    implementation libraries.springbootconfigmetadata
+}

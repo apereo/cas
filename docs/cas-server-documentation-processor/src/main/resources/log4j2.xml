@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Configuration shutdownHook="disable">
+    <Appenders>
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%highlight{%m%n}"/>
+        </Console>
+    </Appenders>
+    <Loggers>
+        <Logger name="org.apereo" level="info" />
+        <Root level="warn">
+            <AppenderRef ref="console"/>
+        </Root>
+    </Loggers>
+</Configuration>
