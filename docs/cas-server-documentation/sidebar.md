@@ -38,6 +38,9 @@ layout: null
 
 * [Authentication](#casauthentication)
     *   [Overview](/$version/installation/Configuring-Authentication-Components.html)
+    *   [Policy](/$version/installation/Configuring-Authentication-Policy.html)
+    *   [Resolution Strategy](/$version/installation/Configuring-Authentication-Resolution.html)
+    *   [Pre/Post Processing](/$version/installation/Configuring-Authentication-PrePostProcessing.html)
     *   [Methods](#authnmethods)
         *   [LDAP](/$version/installation/LDAP-Authentication.html)
             *   [Password Policy](/$version/installation/Password-Policy-Enforcement.html)

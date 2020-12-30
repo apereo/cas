@@ -72,16 +72,8 @@ The idea is that adopters can assign an `order` value to an authentication handl
 collection and controlling its execution sequence.
 
 ### Authentication Pre/Post Processing
-            
-Tap into the CAS authentication engine to invoke pre/post processors.
 
-#### Authentication Pre-Processing
-
-{% include {{ version }}/groovy-preprocessing-authentication-configuration.md %}
-                                   
-#### Authentication Post-Processing
-
-{% include {{ version }}/groovy-postprocessing-authentication-configuration.md %}
+Please see [this guide](Configuring-Authentication-PrePostProcessing.html) for more details.           
 
 ### Naming Strategy
 

@@ -1,7 +1,10 @@
 description = "Apereo CAS Core Configuration Metadata Repository"
 dependencies {
+    api project(":api:cas-server-core-api-configuration-model")
+    
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-web-api")
+
     implementation libraries.springbootconfigmetadata
 }

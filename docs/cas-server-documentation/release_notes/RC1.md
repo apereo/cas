@@ -63,7 +63,7 @@ CAS is now based on the Spring Boot `2.4.x` series which by extension also requi
 its dependency on related projects such as Spring and Spring Cloud. While this is a 
 significant framework upgrade, the change should remain largely invisible to CAS users and adopters.
 
-### Tests
+### Testing Strategy
 
 Th collection of [end-to-end browser tests](../developer/Test-Process.html) based on Puppeteer 
 continue to grow to add additional scenarios and use cases, such as recaptcha, logout, and more.
@@ -95,6 +95,12 @@ improved to allow SCIM targets and settings per registered application.
 
 [WebAuthN/FIDO2 Device registrations](../mfa/FIDO2-WebAuthn-Authentication.html)
 may be managed using a Redis database.
+
+### Grouper Access Strategy
+
+[Grouper Service Access Strategy](../services/Configuring-Service-Access-Strategy.md) can 
+now accept configuration properties 
+in the service definition to override the default Grouper settings.
 
 ### CORS Per Service
 
