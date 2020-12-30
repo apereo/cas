@@ -27,7 +27,8 @@ Control how CAS should respond and validate incoming HTTP requests.
 
 # cas.http-web-request.allow-multi-value-parameters=false
 # cas.http-web-request.only-post-params=username,password
-# cas.http-web-request.params-to-check=ticket,service,renew,gateway,warn,method,target,SAMLart,pgtUrl,pgt,pgtId,pgtIou,targetService,entityId,token
+# cas.http-web-request.params-to-check=ticket,service,renew,gateway,warn,method,\
+    target,SAMLart,pgtUrl,pgt,pgtId,pgtIou,targetService,entityId,token
 # cas.http-web-request.pattern-to-block=
 # cas.http-web-request.characters-to-forbid=none
 
