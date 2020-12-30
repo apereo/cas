@@ -12,7 +12,7 @@ Database authentication is enabled by including the following dependencies in th
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-jdbc" %}
 
-To learn how to configure database drivers, [please see this guide](JDBC-Drivers.html).
+To learn how to configure database drivers, [please see this guide](../installation/JDBC-Drivers.html).
 
 ## Configuration
 
@@ -62,4 +62,4 @@ To learn how to configure database drivers, [please see this guide](JDBC-Drivers
 ## Password Policy Enforcement
 
 A certain number of database authentication schemes have limited support for detecting locked/disabled/etc accounts
-via column names that are defined in the CAS settings. To learn how to enforce a password policy, please [review this guide](Password-Policy-Enforcement.html).
+via column names that are defined in the CAS settings. To learn how to enforce a password policy, please [review this guide](../installation/Password-Policy-Enforcement.html).

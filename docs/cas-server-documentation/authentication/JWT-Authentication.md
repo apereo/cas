@@ -16,7 +16,7 @@ on a form of credentials that are JWTs.
 
 CAS may also be allowed to fully create signed/encrypted JWTs and pass them back to the application in form of service tickets.
 In this case, JWTs are entirely self-contained and contain the authenticated principal as well as all authorized attributes
-in form of JWT claims. To learn more about this functionality, [please review this guide](Configure-ServiceTicket-JWT.html).
+in form of JWT claims. To learn more about this functionality, [please review this guide](../installation/Configure-ServiceTicket-JWT.html).
 
 ## Overview
 

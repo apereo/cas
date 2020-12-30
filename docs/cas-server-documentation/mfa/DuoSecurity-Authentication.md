@@ -94,7 +94,7 @@ translate into an out-of-band factor (push or phone) recommended by Duo as the b
 
 In order to successfully complete the authentication flow, CAS must also be configured with a method
 of primary authentication that is able to support non-web based environments 
-such as [Basic Authentication](../installation/Basic-Authentication.html).
+such as [Basic Authentication](../authentication/Basic-Authentication.html).
 
 Here is an example using `curl` that attempts to authenticate into a service by first exercising
 basic authentication while identifying the request content type as `application/cas`. It is assumed that the
