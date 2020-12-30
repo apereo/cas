@@ -76,42 +76,63 @@ More about the Person Directory and its configurable sources [can be found here]
 {% include {{ version }}/attribute-resolution-configuration.md %}
 
 ### Stub
+     
+The following configuration describes how to fetch and retrieve attributes from Stub attribute repositories.
 
 {% include {{ version }}/stub-attribute-resolution-configuration.md %}
 
 ### LDAP
 
+The following configuration describes how to fetch and retrieve attributes from LDAP attribute repositories.
+
 {% include {{ version }}/ldap-attribute-resolution-configuration.md %}
 
 ### Groovy
+
+The following configuration describes how to fetch and retrieve attributes from Groovy attribute repositories.
 
 {% include {{ version }}/groovy-attribute-resolution-configuration.md %}
 
 ### JSON
 
+The following configuration describes how to fetch and retrieve attributes from JSON attribute repositories.
+
 {% include {{ version }}/json-attribute-resolution-configuration.md %}
 
 ### REST
+
+The following configuration describes how to fetch and retrieve attributes from REST attribute repositories.
 
 {% include {{ version }}/rest-attribute-resolution-configuration.md %}
 
 ### Grouper
 
+The following configuration describes how to fetch and retrieve attributes from Grouper attribute repositories.
+
 {% include {{ version }}/grouper-attribute-resolution-configuration.md %}
 
 ### Couchbase
+
+The following configuration describes how to fetch and retrieve attributes from Couchbase attribute repositories.
 
 {% include {{ version }}/couchbase-attribute-resolution-configuration.md %}
 
 ### Python/Javascript/Groovy
 
+The following configuration describes how to fetch and retrieve attributes from Scripted attribute repositories.
+
 {% include {{ version }}/scriptengine-attribute-resolution-configuration.md %}
 
 ### Redis
 
+The following configuration describes how to fetch and retrieve attributes from Redis attribute repositories.
+
 {% include {{ version }}/redis-attribute-resolution-configuration.md %}
 
 ### Microsoft Azure Active Directory
+
+The following configuration describes how to fetch and retrieve 
+attributes from Microsoft Azure Active Directory attribute repositories.
 
 {% include {{ version }}/azuread-attribute-resolution-configuration.md %}
 
