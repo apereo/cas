@@ -16,6 +16,7 @@ import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
+import org.apereo.cas.support.oauth.web.response.callback.OAuth20InvalidAuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
@@ -92,6 +93,8 @@ public class OAuth20ConfigurationContext {
     private final OAuth20CasAuthenticationBuilder authenticationBuilder;
 
     private final Set<OAuth20AuthorizationResponseBuilder> oauthAuthorizationResponseBuilders;
+
+    private final OAuth20InvalidAuthorizationResponseBuilder oauthInvalidAuthorizationResponseBuilder;
 
     private final Set<OAuth20AuthorizationRequestValidator> oauthRequestValidators;
 
