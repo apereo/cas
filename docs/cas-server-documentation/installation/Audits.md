@@ -5,7 +5,6 @@ category: Logs & Audits
 ---
 {% include variables.html %}
 
-
 # Audits
 
 CAS uses the [Inspektr framework](https://github.com/apereo/inspektr) for auditing purposes
@@ -50,104 +49,35 @@ Each filter other than `interval` can accept a regular expression to match again
 
 ## File-based Audits
 
-File-based audit logs appear in a `cas_audit.log` file defined in the [Logging](../logging/Logging.html) configuration.
-
-{% include {{ version }}/slf4j-audit-configuration.md %}
-
-### Sample Log Output
-
-```bash
-WHO: org.apereo.cas.support.oauth.authentication.principal.OAuthCredentials@6cd7c975
-WHAT: supplied credentials: org.apereo.cas.support.oauth.authentication.principal.OAuthCredentials@6cd7c975
-ACTION: AUTHENTICATION_SUCCESS
-APPLICATION: CAS
-WHEN: Mon Aug 26 12:35:59 IST 2013
-CLIENT IP ADDRESS: 172.16.5.181
-SERVER IP ADDRESS: 192.168.200.22
-
-WHO: org.apereo.cas.support.oauth.authentication.principal.OAuthCredentials@6cd7c975
-WHAT: TGT-9-qj2jZKQUmu1gQvXNf7tXQOJPOtROvOuvYAxybhZiVrdZ6pCUwW-cas01.example.org
-ACTION: TICKET_GRANTING_TICKET_CREATED
-APPLICATION: CAS
-WHEN: Mon Aug 26 12:35:59 IST 2013
-CLIENT IP ADDRESS: 172.16.5.181
-SERVER IP ADDRESS: 192.168.200.22
-```
+Please [see this guide](Audits-File.html) for more info.
 
 ## Database Audits
 
-If you intend to use a database for auditing functionality, enable the following module in your configuration:
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-audit-jdbc" %}
-
-To learn how to configure database drivers, please [review this guide](JDBC-Drivers.html).
-
-{% include {{ version }}/rdbms-configuration.md configKey="cas.audit.jdbc" %}
-
-{% include {{ version }}/jdbc-audit-configuration.md %}
-
-{% include {{ version }}/job-scheduling-configuration.md configKey="cas.audit.jdbc" %}
+Please [see this guide](Audits-Database.html) for more info.
 
 ## MongoDb Audits
 
-If you intend to use a MongoDb database for auditing functionality, enable the following module in your configuration:
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-audit-mongo" %}
-
-{% include {{ version }}/mongodb-configuration.md configKey="cas.audit" %}
-
-{% include {{ version }}/mongodb-audit-configuration.md %}
+Please [see this guide](Audits-MongoDb.html) for more info.
 
 ## Redis Audits
 
-If you intend to use a Redis database for auditing functionality, enable the following module in your configuration:
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-audit-redis" %}
-
-{% include {{ version }}/redis-configuration.md configKey="cas.audit" %}
-
-{% include {{ version }}/redis-audit-configuration.md %}
+Please [see this guide](Audits-Redis.html) for more info.
 
 ## CouchDb Audits
 
-If you intend to use a CouchDb database for auditing functionality, enable the following module in your configuration:
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-audit-couchdb" %}
-
-{% include {{ version }}/couchdb-configuration.md configKey="cas.audit" %}
+Please [see this guide](Audits-CouchDb.html) for more info.
 
 ## Couchbase Audits
 
-If you intend to use a Couchbase database for auditing functionality, enable the following module in your configuration:
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-audit-couchbase" %}
-
-{% include {{ version }}/couchbase-configuration.md configKey="cas.audit.couchbase" %}
-
-{% include {{ version }}/couchbase-audit-configuration.md %}
+Please [see this guide](Audits-Couchbase.html) for more info.
 
 ## DynamoDb Audits
 
-If you intend to use a DynamoDb database for auditing functionality, enable the following module in your configuration:
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-audit-dynamodb" %}
-
-{% include {{ version }}/dynamodb-configuration.md configKey="cas.audit" %}
-
-{% include {{ version }}/dynamodb-audit-configuration.md %}
+Please [see this guide](Audits-DynamoDb.html) for more info.
 
 ## REST Audits
 
-Audit events may also be `POST`ed to an endpoint of your choosing. To activate 
-this feature, enable the following module in your configuration:
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-audit-rest" %}
-
-The body of the HTTP request is a JSON representation of the audit record. 
-
-{% include {{ version }}/rest-configuration.md configKey="cas.audit.rest" %}
-
-{% include {{ version }}/rest-audit-configuration.md %}
+Please [see this guide](Audits-REST.html) for more info.
 
 ## Audit Events
 

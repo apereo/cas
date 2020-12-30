@@ -58,6 +58,8 @@ The JSON structure is a map of user id to yubikey public id representing any par
 
 ### REST
 
+Registration records may be tracked using an external REST API.
+
 {% include {{ version }}/rest-configuration.md configKey="cas.authn.mfa.yubikey.rest" %}
 
 The following endpoints are expected to be available and implemented by the REST API:
