@@ -51,6 +51,7 @@ ext {
     ci = System.getenv("CI") || Boolean.getBoolean("CI")
 
     excludedFilesFromTestCoverage = [
+        '**/docs/**',
         '**/**ConfigurationMetadata**',
         '**/**NtlmAuthenticationHandler**',
         '**/**CosmosDbServiceRegistry**',

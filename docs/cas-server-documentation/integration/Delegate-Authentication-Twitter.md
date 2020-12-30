@@ -8,4 +8,6 @@ category: Authentication
 
 # Twitter
 
+For an overview of the delegated authentication flow, please [see this guide](Delegate-Authentication.html).
+
 {% include {{ version }}/twitter-delegated-authentication-configuration.md %}

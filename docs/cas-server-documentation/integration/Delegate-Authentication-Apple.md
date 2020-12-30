@@ -7,5 +7,7 @@ category: Authentication
 {% include variables.html %}
 
 # Apple Signin
+  
+For an overview of the delegated authentication flow, please [see this guide](Delegate-Authentication.html).
 
 {% include {{ version }}/applesignin-delegated-authentication-configuration.md %}

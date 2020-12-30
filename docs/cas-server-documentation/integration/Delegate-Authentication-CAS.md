@@ -8,4 +8,6 @@ category: Authentication
 
 # CAS
 
+For an overview of the delegated authentication flow, please [see this guide](Delegate-Authentication.html).
+
 {% include {{ version }}/cas-delegated-authentication-configuration.md %}

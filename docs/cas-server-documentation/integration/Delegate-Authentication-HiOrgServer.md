@@ -8,4 +8,6 @@ category: Authentication
 
 # HiOrg Server
 
+For an overview of the delegated authentication flow, please [see this guide](Delegate-Authentication.html).
+
 {% include {{ version }}/hiorg-delegated-authentication-configuration.md %}

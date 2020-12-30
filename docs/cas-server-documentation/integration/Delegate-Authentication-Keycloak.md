@@ -8,4 +8,6 @@ category: Authentication
 
 # Keycloak
 
+For an overview of the delegated authentication flow, please [see this guide](Delegate-Authentication.html).
+
 {% include {{ version }}/keycloak-delegated-authentication-configuration.md %}

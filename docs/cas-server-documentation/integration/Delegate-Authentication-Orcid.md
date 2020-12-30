@@ -8,4 +8,6 @@ category: Authentication
 
 # Orcid
 
+For an overview of the delegated authentication flow, please [see this guide](Delegate-Authentication.html).
+
 {% include {{ version }}/delegated-authentication-configuration.md configKey="cas.authn.pac4j.orcid" %}

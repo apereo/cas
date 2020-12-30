@@ -8,4 +8,6 @@ category: Authentication
 
 # Facebook
 
+For an overview of the delegated authentication flow, please [see this guide](Delegate-Authentication.html).
+
 {% include {{ version }}/facebook-delegated-authentication-configuration.md %}
