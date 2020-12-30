@@ -82,9 +82,7 @@ in an iFrame controlled and owned by CAS. Rather, the prompt is now hosted on Du
 response from Duo Security is passed to CAS as a browser redirect and CAS will begin to negotiate and exchange that response in favor of
 a JWT that contains the multifactor authentication user profile details.
 
-This option only required settings for integration key, secret key, and API hostname. 
-
-{% include {{ version }}/duosecurity-configuration.md %}
+This option only required settings for integration key, secret key, and API hostname.
  
 ## Non-Browser MFA
 

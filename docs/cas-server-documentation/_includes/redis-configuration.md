@@ -1,6 +1,7 @@
 ### Redis Configuration
 
-The following options related to Redis support in CAS apply equally to a number of CAS components (ticket registries, etc):
+The following options related to Redis support in CAS apply equally 
+o a number of CAS components (ticket registries, etc):
 
 ```properties
 # {{ include.configKey }}.redis.host=localhost
@@ -13,6 +14,8 @@ The following options related to Redis support in CAS apply equally to a number 
 ```
 
 ### Redis Pool Configuration
+
+Redis connection pooling configuration is described as follows:
 
 ```properties
 # {{ include.configKey }}.redis.pool.enabled=false
@@ -34,6 +37,8 @@ The following options related to Redis support in CAS apply equally to a number 
 
 ### Redis Sentinel Configuration
 
+Redis sentinel configuration is described as follows:
+
 ```properties
 # {{ include.configKey }}.redis.sentinel.master=mymaster
 # {{ include.configKey }}.redis.sentinel.node[0]=localhost:26377
@@ -42,6 +47,8 @@ The following options related to Redis support in CAS apply equally to a number 
 ```
 
 ### Redis Cluster Configuration
+      
+Redis cluster configuration is described as follows:
 
 ```properties
 # {{ include.configKey }}.redis.cluster.password=
