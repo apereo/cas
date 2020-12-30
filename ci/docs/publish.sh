@@ -61,47 +61,55 @@ echo "Looking for badly named include fragments..."
 ls $PWD/gh-pages/_includes/$branchVersion/*.md | grep -v '\-configuration.md$'
 docsVal=$?
 if [ $docsVal == 0 ]; then
-  echo "Found include fragments whose name does not end in '-configuration.md'"
-  exit 1
+ echo "Found include fragments whose name does not end in '-configuration.md'"
+ exit 1
 fi
 
 echo "Looking for unused include fragments..."
 res=0
 files=$(ls $PWD/gh-pages/_includes/$branchVersion/*.md)
 for f in $files; do
-  fname=$(basename "$f")
+ fname=$(basename "$f")
 #  echo "Looking for $fname in $PWD/gh-pages/$branchVersion";
-  grep -r $fname "$PWD/gh-pages/$branchVersion" --include \*.md >/dev/null 2>&1
-  docsVal=$?
-  if [ $docsVal == 1 ]; then
-    grep -r $fname "$PWD/gh-pages/_includes/$branchVersion" --include \*.md >/dev/null 2>&1
-    docsVal=$?
-  fi
-  if [ $docsVal == 1 ]; then
-    echo "$fname fragment is unused."
-    res=1
-  fi
+ grep -r $fname "$PWD/gh-pages/$branchVersion" --include \*.md >/dev/null 2>&1
+ docsVal=$?
+ if [ $docsVal == 1 ]; then
+   grep -r $fname "$PWD/gh-pages/_includes/$branchVersion" --include \*.md >/dev/null 2>&1
+   docsVal=$?
+ fi
+ if [ $docsVal == 1 ]; then
+   echo "$fname fragment is unused."
+   res=1
+ fi
 done
 
 if [ $res == 1 ]; then
-  echo "Found unused include fragments."
-  exit 1
+ echo "Found unused include fragments."
+ exit 1
 fi
 
 echo "Validating documentation links..."
 validateProjectDocumentation
 retVal=$?
 if [[ ${retVal} -eq 1 ]]; then
-   echo -e "Failed to validate documentation.\n"
-   exit ${retVal}
+  echo -e "Failed to validate documentation.\n"
+  exit ${retVal}
 fi
 
+pushd .
 echo -e "Building documentation site...\n"
 cd $PWD/gh-pages
 chmod +x ./build.sh
 #sudo gem install bundle
 bundle exec jekyll build --incremental
-rm -Rf $PWD/gh-pages/_site
+
+
+if [ -z "$GH_PAGES_TOKEN" ]; then
+  echo "No GitHub token is defined"
+  popd
+  rm -Rf $PWD/gh-pages
+  exit 1
+fi
 
 git config user.email "cas@apereo.org"
 git config user.name "CAS"
@@ -119,7 +127,10 @@ git commit -m "Published docs to [gh-pages] from $branchVersion. "
 echo -e "Pushing upstream to origin/gh-pages...\n"
 git push -fq origin --all
 retVal=$?
+
+popd
 rm -Rf $PWD/gh-pages
+
 if [[ ${retVal} -eq 0 ]]; then
    echo -e "Published documentation to $branchVersion.\n"
    exit 0
@@ -127,3 +138,4 @@ else
    echo -e "Failed to publish documentation.\n"
    exit ${retVal}
 fi
+

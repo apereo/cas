@@ -34,14 +34,22 @@ public class CasConfigurationMetadataRepositoryTests {
 
     @Test
     public void verifyQueryOperation() {
-        val repository = new CasConfigurationMetadataRepository();
-        var properties = repository.query(ConfigurationMetadataCatalogQuery.builder().build());
+        var properties = CasConfigurationMetadataRepository.query(ConfigurationMetadataCatalogQuery
+            .builder()
+            .build());
         assertFalse(properties.properties().isEmpty());
-        properties = repository.query(ConfigurationMetadataCatalogQuery.builder().casExclusive(true).build());
+
+        properties = CasConfigurationMetadataRepository.query(ConfigurationMetadataCatalogQuery
+            .builder()
+            .queryType(ConfigurationMetadataCatalogQuery.QueryTypes.CAS)
+            .build());
         assertTrue(properties.properties().isEmpty());
-        properties = repository.query(ConfigurationMetadataCatalogQuery.builder()
+
+        properties = CasConfigurationMetadataRepository.query(ConfigurationMetadataCatalogQuery
+            .builder()
             .modules(List.of("some-module-name"))
-            .casExclusive(true).build());
+            .queryType(ConfigurationMetadataCatalogQuery.QueryTypes.THIRD_PARTY)
+            .build());
         assertTrue(properties.properties().isEmpty());
     }
 

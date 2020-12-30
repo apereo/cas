@@ -98,7 +98,7 @@ may be managed using a Redis database.
 
 ### Grouper Access Strategy
 
-[Grouper Service Access Strategy](../services/Configuring-Service-Access-Strategy.md) can 
+[Grouper Service Access Strategy](../services/Configuring-Service-Access-Strategy.html) can 
 now accept configuration properties 
 in the service definition to override the default Grouper settings.
 

@@ -111,7 +111,7 @@ public class CasConfigurationMetadataRepository {
      * @param query the query
      * @return the cas configuration metadata catalog
      */
-    public CasConfigurationMetadataCatalog.CasPropertiesContainer query(final ConfigurationMetadataCatalogQuery query) {
+    public static CasConfigurationMetadataCatalog.CasPropertiesContainer query(final ConfigurationMetadataCatalogQuery query) {
         return CasConfigurationMetadataCatalog.catalog(query);
     }
 }
