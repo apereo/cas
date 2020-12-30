@@ -1,5 +1,3 @@
-### RESTful Configuration
-
 The following options related to features in CAS that provide REST support to fetch and update data:
 
 ```properties
