@@ -4,7 +4,10 @@ import org.apereo.cas.configuration.support.PropertyOwner;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +23,7 @@ import org.springframework.boot.configurationmetadata.ConfigurationMetadataPrope
 import org.springframework.boot.configurationmetadata.ValueHint;
 import org.springframework.util.ReflectionUtils;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Map;
@@ -165,6 +169,21 @@ public class CasConfigurationMetadataCatalog {
          */
         public TreeSet<CasReferenceProperty> properties() {
             return this.properties;
+        }
+
+        /**
+         * Export properties into a file as YAML.
+         *
+         * @param destination the destination
+         */
+        @SneakyThrows
+        public void export(final File destination) {
+            val mapper = new ObjectMapper(new YAMLFactory())
+                .setSerializationInclusion(JsonInclude.Include.NON_DEFAULT)
+                .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
+                .configure(SerializationFeature.WRITE_ENUMS_USING_TO_STRING, true)
+                .configure(SerializationFeature.INDENT_OUTPUT, true);
+            mapper.writeValue(destination, properties());
         }
     }
 

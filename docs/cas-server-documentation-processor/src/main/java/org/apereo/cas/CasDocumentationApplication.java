@@ -3,7 +3,8 @@ package org.apereo.cas;
 import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
 import org.apereo.cas.metadata.ConfigurationMetadataCatalogQuery;
 
-import lombok.extern.slf4j.Slf4j;
+import java.io.File;
+import java.util.List;
 
 /**
  * This is {@link CasDocumentationApplication}.
@@ -11,16 +12,15 @@ import lombok.extern.slf4j.Slf4j;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Slf4j
 public class CasDocumentationApplication {
-    public static void main(final String[] args) {
+    public static void main(final String[] args) throws Exception {
         var results = CasConfigurationMetadataRepository.query(
             ConfigurationMetadataCatalogQuery.builder()
+                .modules(List.of("cas-server-support-captcha"))
                 .queryType(ConfigurationMetadataCatalogQuery.QueryTypes.CAS)
                 .build());
+        var f = new File("/Users/Misagh/Workspace/GitWorkspace/cas-server/docs/cas-server-documentation-processor/src/main/java/org/apereo/cas/file.yml");
 
-        results.properties().forEach(p -> {
-            LOGGER.info("[{}]=[{}]", p.getName(), p.getOwner());
-        });
+        results.export(f);
     }
 }
