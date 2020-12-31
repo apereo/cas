@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.captcha;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -47,21 +48,25 @@ public class GoogleRecaptchaProperties implements Serializable {
     /**
      * Whether google reCAPTCHA should be enabled.
      */
+    @RequiredProperty
     private boolean enabled = true;
 
     /**
      * The google reCAPTCHA site key.
      */
+    @RequiredProperty
     private String siteKey;
 
     /**
      * The google reCAPTCHA endpoint for verification of tokens and input.
      */
+    @RequiredProperty
     private String verifyUrl = "https://www.google.com/recaptcha/api/siteverify";
 
     /**
      * The google reCAPTCHA site secret.
      */
+    @RequiredProperty
     private String secret;
 
     /**
@@ -88,5 +93,6 @@ public class GoogleRecaptchaProperties implements Serializable {
      * decide on thresholds by looking at your traffic in the admin console.
      * By default, you can use a threshold of 0.5.
      */
+    @RequiredProperty
     private double score = 0.5;
 }
