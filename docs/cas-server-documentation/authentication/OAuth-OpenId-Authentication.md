@@ -185,7 +185,7 @@ Client secrets for OAuth relying parties may be defined as encrypted values pref
 }
 ```
 
-Client secrets may be encrypted using CAS-provided cipher operations either manually or via the [CAS Command-line shell](Configuring-Commandline-Shell.html).
+Client secrets may be encrypted using CAS-provided cipher operations either manually or via the [CAS Command-line shell](../installation/Configuring-Commandline-Shell.html).
 
 {% include {{ version }}/oauth2-configuration.md %}
 

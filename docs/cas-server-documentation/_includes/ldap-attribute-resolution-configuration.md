@@ -1,5 +1,7 @@
 {% include {{ version }}/ldap-configuration.md configKey="cas.authn.attribute-repository.ldap[0]" %}
 
+To fetch and resolve attributes from LDAP, consider the following options:
+
 ```properties
 # cas.authn.attribute-repository.ldap[0].id=
 # cas.authn.attribute-repository.ldap[0].order=0

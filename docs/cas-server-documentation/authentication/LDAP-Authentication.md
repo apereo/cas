@@ -28,7 +28,7 @@ LDAP integration is enabled by including the following dependency in the overlay
 
 ## Password Policy Enforcement
 
-To learn how to enforce a password policy for LDAP, please [review this guide](Password-Policy-Enforcement.html).
+To learn how to enforce a password policy for LDAP, please [review this guide](../installation/Password-Policy-Enforcement.html).
 
 ## Troubleshooting
 

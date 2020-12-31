@@ -47,43 +47,79 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTe
 
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
+        val context = new JEEContext(request, response);
 
-        assertFalse(v.validate(new JEEContext(request, response)));
+        assertFalse(v.supports(context));
+        assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR).isPresent());
+        assertEquals(context.getRequestAttribute(OAuth20Constants.ERROR).get().toString(), OAuth20Constants.INVALID_REQUEST);
 
+        request.removeAttribute(OAuth20Constants.ERROR);
         request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
-        assertFalse(v.validate(new JEEContext(request, response)));
+        assertFalse(v.supports(context));
 
+        request.removeAttribute(OAuth20Constants.ERROR);
         request.setParameter(OAuth20Constants.CLIENT_ID, "client");
-        assertFalse(v.validate(new JEEContext(request, response)));
+        assertFalse(v.supports(context));
+        assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR).isPresent());
+        assertEquals(context.getRequestAttribute(OAuth20Constants.ERROR).get().toString(), OAuth20Constants.INVALID_REQUEST);
 
+        request.removeAttribute(OAuth20Constants.ERROR);
         request.setParameter(OAuth20Constants.REDIRECT_URI, service.getServiceId());
-        assertFalse(v.validate(new JEEContext(request, response)));
+        assertFalse(v.supports(context));
+        assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR).isPresent());
+        assertEquals(context.getRequestAttribute(OAuth20Constants.ERROR).get().toString(), OAuth20Constants.UNSUPPORTED_RESPONSE_TYPE);
 
+        request.removeAttribute(OAuth20Constants.ERROR);
         request.setParameter(OAuth20Constants.RESPONSE_TYPE, "unknown");
-        assertFalse(v.validate(new JEEContext(request, response)));
+        assertFalse(v.supports(context));
+        assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR).isPresent());
+        assertEquals(context.getRequestAttribute(OAuth20Constants.ERROR).get().toString(), OAuth20Constants.UNSUPPORTED_RESPONSE_TYPE);
 
+        request.removeAttribute(OAuth20Constants.ERROR);
         request.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.getType());
+        request.setParameter(OAuth20Constants.CODE_VERIFIER, "abcd");
         service.setSupportedResponseTypes(new LinkedHashSet<>());
-        assertTrue(v.validate(new JEEContext(request, response)));
+        assertTrue(v.supports(context));
+        assertTrue(v.validate(context));
 
+        request.removeAttribute(OAuth20Constants.ERROR);
         request.setParameter(OAuth20Constants.REQUEST, "authn-request");
-        assertFalse(v.validate(new JEEContext(request, response)));
+        assertTrue(v.supports(context));
+        assertFalse(v.validate(context));
+        assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR).isPresent());
+        assertEquals(context.getRequestAttribute(OAuth20Constants.ERROR).get().toString(), OAuth20Constants.REQUEST_NOT_SUPPORTED);
+
         request.removeParameter(OAuth20Constants.REQUEST);
+        request.removeAttribute(OAuth20Constants.ERROR);
+        assertTrue(v.supports(context));
+        assertTrue(v.validate(context));
+        assertFalse(context.getRequestAttribute(OAuth20Constants.ERROR).isPresent());
 
+        request.removeAttribute(OAuth20Constants.ERROR);
         service.setSupportedResponseTypes(CollectionUtils.wrapHashSet(OAuth20ResponseTypes.CODE.getType()));
-        assertTrue(v.validate(new JEEContext(request, response)));
+        assertTrue(v.supports(context));
+        assertTrue(v.validate(context));
+        assertFalse(context.getRequestAttribute(OAuth20Constants.ERROR).isPresent());
 
+        request.removeAttribute(OAuth20Constants.ERROR);
         service.setSupportedResponseTypes(CollectionUtils.wrapHashSet(OAuth20ResponseTypes.TOKEN.getType()));
-        assertFalse(v.validate(new JEEContext(request, response)));
+        assertTrue(v.supports(context));
+        assertFalse(v.validate(context));
+        assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR).isPresent());
 
-        assertTrue(v.supports(new JEEContext(request, response)));
-
+        request.removeAttribute(OAuth20Constants.ERROR);
         request.setParameter(OAuth20Constants.REDIRECT_URI, "unknown-uri");
-        assertFalse(v.validate(new JEEContext(request, response)));
+        assertFalse(v.supports(context));
+        assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR).isPresent());
+        assertEquals(context.getRequestAttribute(OAuth20Constants.ERROR).get().toString(), OAuth20Constants.INVALID_REQUEST);
+
+        request.removeAttribute(OAuth20Constants.ERROR);
         request.setParameter(OAuth20Constants.REDIRECT_URI, service.getServiceId());
 
         service.getAccessStrategy().setServiceAccessAllowed(false);
-        assertFalse(v.validate(new JEEContext(request, response)));
+        assertFalse(v.supports(context));
+        assertTrue(context.getRequestAttribute(OAuth20Constants.ERROR).isPresent());
+        assertEquals(context.getRequestAttribute(OAuth20Constants.ERROR).get().toString(), OAuth20Constants.INVALID_REQUEST);
 
         assertEquals(Ordered.LOWEST_PRECEDENCE, v.getOrder());
         assertNotNull(v.getRegisteredServiceAccessStrategyEnforcer());

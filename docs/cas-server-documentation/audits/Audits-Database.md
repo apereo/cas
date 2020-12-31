@@ -11,7 +11,7 @@ If you intend to use a database for auditing functionality, enable the following
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-audit-jdbc" %}
 
-To learn how to configure database drivers, please [review this guide](JDBC-Drivers.html).
+To learn how to configure database drivers, please [review this guide](../installation/JDBC-Drivers.html).
 
 {% include {{ version }}/rdbms-configuration.md configKey="cas.audit.jdbc" %}
 
