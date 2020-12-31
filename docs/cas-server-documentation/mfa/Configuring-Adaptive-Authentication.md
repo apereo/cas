@@ -23,7 +23,7 @@ to an mfa provider where successful matching of rules allows for the multifactor
 {% include {{ version }}/adaptive-authentication-configuration.md %}
 
 To enable adaptive authentication, you will need to allow CAS to geo-locate authentication requests.
-To learn more, please [see this guide](../installation/GeoTracking-Authentication-Requests.html)
+To learn more, please [see this guide](../authentication/GeoTracking-Authentication-Requests.html)
 
 ## IP Intelligence
 

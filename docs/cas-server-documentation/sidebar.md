@@ -39,7 +39,7 @@ layout: null
     *   [Clustered Deployments](/cas/{{ version }}/configuration/Configuration-Management-Clustered.html)
 
 * [Authentication](#casauthentication)
-    *   [Overview](/cas/{{ version }}/installation/Configuring-Authentication-Components.html)
+    *   [Overview](/cas/{{ version }}/authentication/Configuring-Authentication-Components.html)
     *   [Policy](/cas/{{ version }}/installation/Configuring-Authentication-Policy.html)
     *   [Resolution Strategy](/cas/{{ version }}/installation/Configuring-Authentication-Resolution.html)
     *   [Pre/Post Processing](/cas/{{ version }}/installation/Configuring-Authentication-PrePostProcessing.html)

@@ -224,7 +224,7 @@ and denial of service attacks. The feature is beneficial in environments where b
 equivalent features. In cases where this support is available in underlying systems, we encourage using it instead
 of CAS features; the justification is that enabling support in underlying systems provides the feature in all dependent
 systems including CAS. See the
-[login throttling configuration](../installation/Configuring-Authentication-Components.html#login-throttling)
+[login throttling configuration](../authentication/Configuring-Authentication-Components.html#login-throttling)
 section for further information.
 
 ### Credential Encryption
@@ -285,7 +285,7 @@ configured for forced authentication, authentication would be required for servi
 long-term session.
 
 Long term authentication support must be explicitly enabled through
-[configuration and UI customization](../installation/Configuring-Authentication-Components.html#long-term-authentication)
+[configuration and UI customization](../authentication/Configuring-Authentication-Components.html#long-term-authentication)
 during the installation process. Thus deployers choose to offer long-term authentication support, and when available
 users may elect to use it via selection on the CAS login form.
 

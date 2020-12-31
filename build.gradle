@@ -664,7 +664,7 @@ task verifyRequiredJavaVersion {
 }
 
 boolean projectShouldBePublished(Project project) {
-    return !["api", "core", "docs", "support", "webapp", "cas-server-documentation"].contains(project.name)
+    return !["api", "core", "docs", "support", "webapp"].contains(project.name) && !project.getPath().contains("cas-server-documentation")
 }
 
 
