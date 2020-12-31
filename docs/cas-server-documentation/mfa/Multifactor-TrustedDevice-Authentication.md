@@ -61,8 +61,8 @@ Device fingerprint can be calculated using the following ways:
 
 - Client IP address
 - Randomly generated cookie plus the client IP (default)
-- [GeoLocation address](../installation/GeoTracking-Authentication-Requests.html). You do need to ensure CAS is 
-allowed to [ask and process geodata](../installation/Configuring-Authentication-Events.html) provided by the browser.
+- [GeoLocation address](../authentication/GeoTracking-Authentication-Requests.html). You do need to ensure CAS is 
+allowed to [ask and process geodata](../authentication/Configuring-Authentication-Events.html) provided by the browser.
 - User-agent header
 
 {% include {{ version }}/mfa-trusted-devicefingerprint-configuration.md %}

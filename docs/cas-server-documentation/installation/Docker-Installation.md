@@ -32,4 +32,4 @@ is built out of an existing [CAS overlay](WAR-Overlay-Installation.html).
   
 ## Kubernetes & Helm
 
-To learn how to use a CAS Helm chart to deploy CAS on a Kubernetes cluster, please [see this](Kubernetes-Helm-Deployment). 
+To learn how to use a CAS Helm chart to deploy CAS on a Kubernetes cluster, please [see this](Kubernetes-Helm-Deployment.html). 

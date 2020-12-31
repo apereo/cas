@@ -41,12 +41,12 @@ Note that while authentication methods in CAS all are given a default name, most
 Authentication policy criteria can also be assigned to each application definition, which should 
 override the global policy defined for the deployment.
 Such policies should closely follow after those
-[that can be defined globally](../installation/Configuring-Authentication-Policy.html), are 
+[that can be defined globally](../authentication/Configuring-Authentication-Policy.html), are 
 entirely optional and can be one of the following types:
 
 ### Allowed
 
-Maps to the `Required` [authentication policy](../installation/Configuring-Authentication-Policy.html).
+Maps to the `Required` [authentication policy](../authentication/Configuring-Authentication-Policy.html).
 
 ```json
 {
@@ -86,7 +86,7 @@ Enable the authentication policy criteria to exclude and disqualify indicated au
 
 ### Any
 
-Maps to the `Any` [authentication policy](../installation/Configuring-Authentication-Policy.html).
+Maps to the `Any` [authentication policy](../authentication/Configuring-Authentication-Policy.html).
 
 ```json
 {
@@ -106,7 +106,7 @@ Maps to the `Any` [authentication policy](../installation/Configuring-Authentica
 
 ### All
 
-Maps to the `All` [authentication policy](../installation/Configuring-Authentication-Policy.html).
+Maps to the `All` [authentication policy](../authentication/Configuring-Authentication-Policy.html).
 
 ```json
 {
@@ -125,7 +125,7 @@ Maps to the `All` [authentication policy](../installation/Configuring-Authentica
 
 ### Not Prevented
 
-Maps to the `Not Prevented` [authentication policy](../installation/Configuring-Authentication-Policy.html).
+Maps to the `Not Prevented` [authentication policy](../authentication/Configuring-Authentication-Policy.html).
 
 ```json
 {
@@ -144,7 +144,7 @@ Maps to the `Not Prevented` [authentication policy](../installation/Configuring-
 
 ### Groovy
 
-Maps to the `Groovy` [authentication policy](../installation/Configuring-Authentication-Policy.html).
+Maps to the `Groovy` [authentication policy](../authentication/Configuring-Authentication-Policy.html).
 
 ```json
 {
@@ -166,7 +166,7 @@ The `script` attribute can either be an inline Groovy script or a reference to a
 
 ### REST
 
- Maps to the `Rest` [authentication policy](../installation/Configuring-Authentication-Policy.html).
+ Maps to the `Rest` [authentication policy](../authentication/Configuring-Authentication-Policy.html).
  
 ```json
 {

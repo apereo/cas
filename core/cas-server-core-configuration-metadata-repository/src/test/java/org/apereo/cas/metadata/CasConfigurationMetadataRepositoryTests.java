@@ -7,6 +7,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.util.List;
 import java.util.Set;
 
@@ -33,11 +34,15 @@ public class CasConfigurationMetadataRepositoryTests {
     }
 
     @Test
-    public void verifyQueryOperation() {
+    public void verifyQueryOperation() throws Exception {
         var properties = CasConfigurationMetadataRepository.query(ConfigurationMetadataCatalogQuery
             .builder()
             .build());
         assertFalse(properties.properties().isEmpty());
+
+        val file = File.createTempFile("config", ".yml");
+        properties.export(file);
+        assertTrue(file.exists());
 
         properties = CasConfigurationMetadataRepository.query(ConfigurationMetadataCatalogQuery
             .builder()
@@ -52,5 +57,4 @@ public class CasConfigurationMetadataRepositoryTests {
             .build());
         assertTrue(properties.properties().isEmpty());
     }
-
 }
