@@ -69,196 +69,43 @@ ask for policy acceptance. Upon accepting the policy, the result will be stored 
 
 ### Default
 
-By default the task of remembering the user's choice is kept in memory by default and will be lost upon
-container restarts and/or in clustered deployments. This option is only useful during development, testing
-and demos and is not at all suitable for production.
-
-{% include {{ version }}/default-aup-configuration.md %}
-
-The scope of the default storage mechanism can be adjusted from the default of GLOBAL (described above) to
-AUTHENTICATION which will result in the user having to agree to the policy during each authentication event.
-The user will not have to agree to the policy when CAS grants access based on an existing ticket granting
-ticket cookie.
+To learn more, please [see this guide](Webflow-Customization-AUP-Default.html).
 
 ### Groovy
 
-Alternatively, CAS can be configured to use a Groovy script to verify status 
-of policies and store results. The script should match the following:
-
-{% include {{ version }}/groovy-aup-configuration.md %}
-
-```groovy
-import org.apereo.cas.authentication.principal.*
-import org.apereo.cas.authentication.*
-import org.apereo.cas.util.*
-import org.apereo.cas.aup.*
-import org.springframework.webflow.execution.*
-
-def verify(Object[] args) {
-    def requestContext = args[0]
-    def credential = args[1]
-    def applicationContext = args[2]
-    def principal = args[3]
-    def logger = args[4]
-    ...
-    if (policyAccepted()) {
-        return AcceptableUsagePolicyStatus.accepted(principal)
-    }
-    return AcceptableUsagePolicyStatus.denied(principal)
-}
-
-def submit(Object[] args) {
-     def requestContext = args[0]
-     def credential = args[1]
-     def applicationContext = args[2]
-     def principal = args[3]
-     def logger = args[4]
-     ...
-     return true
-}
-     
-/*
-    A special callback function is implemented
-    as an override to return an `AcceptableUsagePolicyTerms` 
-    object back to CAS to be re-purposed
-    for acceptable usage policy flows.
-*/
-def fetch(Object[] args) {
-    def requestContext = args[0]
-    def credential = args[1]
-    def applicationContext = args[2]
-    def principal = args[3]
-    def logger = args[4]
-
-    ...    
-
-    return AcceptableUsagePolicyTerms.builder()
-            .defaultText("Hello, World")
-            .code(AcceptableUsagePolicyTerms.CODE)
-            .build();
-}
-```
-
-The parameters passed are as follows:
-
-| Parameter             | Description
-|-----------------------|-----------------------------------------------------------------------
-| `requestContext`      | The object representing the Spring Webflow `RequestContext`.
-| `credential`          | The object representing the authentication `Credential`.
-| `applicationContext`  | The object representing the Spring `ApplicationContext`.
-| `principal`           | The object representing the authenticated `Principal`.
-| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
+To learn more, please [see this guide](Webflow-Customization-AUP-Groovy.html).
 
 ### LDAP
 
-Alternatively, CAS can be configured to use LDAP as the storage mechanism. Upon 
-accepting the policy, the result will be stored back into LDAP and remembered 
-via the same attribute. Support is enabled by including the following dependency in the WAR overlay:
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-aup-ldap" %}
-
-{% include {{ version }}/ldap-configuration.md configKey="cas.acceptable-usage-policy.ldap[0]" %}
+To learn more, please [see this guide](Webflow-Customization-AUP-LDAP.html).
 
 ### MongoDb
 
-CAS can be configured to use a MongoDb instance as the storage mechanism. Upon accepting the policy, the adopter is expected to provide a collection name where the decision is kept and the document is assumed to contain a `username` column as well as one that matches the AUP attribute name defined.
-
-Support is enabled by including the following dependency in the WAR overlay:
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-aup-mongo" %}
-
-{% include {{ version }}/mongodb-configuration.md configKey="cas.acceptable-usage-policy" %}
+To learn more, please [see this guide](Webflow-Customization-AUP-MongoDb.html).
 
 ### Redis
 
-CAS can be configured to use a Redis instance as the storage mechanism. Decisions 
-are mapped to a combination of CAS username and the designated AUP attribute name.
-
-Support is enabled by including the following dependency in the WAR overlay:
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-aup-redis" %}
-
-{% include {{ version }}/redis-configuration.md configKey="cas.acceptable-usage-policy" %}
+To learn more, please [see this guide](Webflow-Customization-AUP-Redis.html).
 
 ### CouchDb
 
-CAS can be configured to use a CouchDb instance as the storage mechanism. Upon accepting the 
-policy, the adopter is expected to provide a collection name where the decision is kept and 
-the document is assumed to contain a `username` column as well as one that matches the AUP attribute name defined.
-
-Support is enabled by including the following dependency in the WAR overlay:
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-aup-couchdb" %}
-
-{% include {{ version }}/couchdb-configuration.md configKey="cas.acceptable-usage-policy" %}
+To learn more, please [see this guide](Webflow-Customization-AUP-CouchDb.html).
 
 ### Couchbase
 
-CAS can be configured to use a Couchbase instance as the storage mechanism. Upon accepting the policy, the
-decision is kept inside a document with a `username` column and the AUP attribute name with the result of the decision.
-
-Support is enabled by including the following dependency in the WAR overlay:
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-aup-couchbase" %}
-
-{% include {{ version }}/couchbase-configuration.md configKey="cas.acceptable-usage-policy.couchbase" %}
+To learn more, please [see this guide](Webflow-Customization-AUP-Couchbase.html).
 
 ### JDBC
 
-CAS can be configured to use a database as the storage mechanism. Upon accepting the 
-policy, the adopter is expected to provide a table name where the  decision 
-is kept and the table is assumed to contain a `username` column as well as 
-one that matches the AUP attribute name defined.
-
-Support is enabled by including the following dependency in the WAR overlay:
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-aup-jdbc" %}
-
-{% include {{ version }}/rdbms-configuration.md configKey="cas.acceptable-usage-policy.jdbc" %}
-{% include {{ version }}/jdbc-aup-configuration.md %}
+To learn more, please [see this guide](Webflow-Customization-AUP-JDBC.html).
 
 ### REST
 
-CAS can be configured to use a REST API as the storage mechanism. Upon accepting the policy, 
-the API is contacted passing along a `username` parameter who has accepted the policy. The expected response status code is `200`.
-
-Furthermore, the API endpoint at `${endpoint}/policy` will be invoked by CAS to fetch the appropriate policy terms.
-The API is contacted passing along `username` and `locale` parameters and the expected response status code is `200`. The response
-output body is expected to be an instance of `AcceptableUsagePolicyTerms` as such:
-
-```json
-{
-  "@class": "org.apereo.cas.aup.AcceptableUsagePolicyTerms",
-  "code": "screen.aup.policyterms.some.key",
-  "defaultText": "Default policy text"
-}
-```
-
-Support is enabled by including the following dependency in the WAR overlay:
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-aup-rest" %}
-{% include {{ version }}/rest-configuration.md configKey="cas.acceptable-usage-policy.rest" %}
+To learn more, please [see this guide](Webflow-Customization-AUP-REST.html).
 
 ### Custom
 
-If you wish to design your own storage mechanism, you may follow the below approach:
-
-```java
-package org.apereo.cas.custom;
-
-@Configuration("myUsagePolicyConfiguration")
-@EnableConfigurationProperties(CasConfigurationProperties.class)
-public class MyUsagePolicyConfiguration {
-
-    @Bean
-    public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository() {
-      ...
-    }
-
-}
-```
-
-[See this guide](../configuration/Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.
+To learn more, please [see this guide](Webflow-Customization-AUP-Custom.html).
 
 ## Policy Terms
 

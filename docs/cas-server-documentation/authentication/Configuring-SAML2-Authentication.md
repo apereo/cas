@@ -86,7 +86,8 @@ Here is a generated metadata file as an example:
 </EntityDescriptor>
 ```
 
-SAML2 identity provider metadata can be managed in dynamics ways as well. To learn more, please [review this guide](Configuring-SAML2-DynamicMetadata.html).
+SAML2 identity provider metadata can be managed in dynamics ways 
+as well. To learn more, please [review this guide](../installation/Configuring-SAML2-DynamicMetadata.html).
 
 ### Per Service
 
@@ -97,7 +98,7 @@ if global metadata artifacts are managed on disk at `/etc/cas/config/saml/metada
 whose name is configured as `SampleService` with an id of `1000` are expected to be found at `/etc/cas/config/saml/metadata/SampleService-1000`.
 
 SAML2 identity provider metadata can be managed in dynamics ways 
-as well. To learn more, please [review this guide](Configuring-SAML2-DynamicMetadata.html).
+as well. To learn more, please [review this guide](../installation/Configuring-SAML2-DynamicMetadata.html).
 
 ## Configuration
 
@@ -170,20 +171,20 @@ metadata resolution to override the default global value.
 
 In addition to the more traditional means of managing service provider metadata such as direct XML files or URLs, CAS 
 provides support for a number of other strategies to fetch metadata more dynamically with the likes of MDQ and more.
-To learn more, please [review this guide](Configuring-SAML2-DynamicMetadata.html).
+To learn more, please [review this guide](../installation/Configuring-SAML2-DynamicMetadata.html).
 
 ### Security Configuration
 
-Please [see this guide](Configuring-SAML2-Security.html) to learn more
+Please [see this guide](../installation/Configuring-SAML2-Security.html) to learn more
 about how to configure SAML2 security configuration.
 
 ### Attribute Release
 
-Attribute filtering and release policies are defined per SAML service. See [this guide](Configuring-SAML2-Attribute-Release.html) for more info.
+Attribute filtering and release policies are defined per SAML service. See [this guide](../installation/Configuring-SAML2-Attribute-Release.html) for more info.
 
 ### Name ID Selection
 
-Please [see this guide](Configuring-SAML2-NamID.html) to learn more
+Please [see this guide](../installation/Configuring-SAML2-NamID.html) to learn more
 about how to configure SAML2 security configuration.
   
 ## Unsolicited SSO

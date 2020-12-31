@@ -61,7 +61,7 @@ a particular username from the same IP address.
 Queries a database data source used by the CAS audit facility to 
 prevent successive failed login attempts for a particular username 
 from the same IP address. This component requires and 
-depends on the [CAS auditing functionality](Audits.html) via databases.
+depends on the [CAS auditing functionality](../audits/Audits.html) via databases.
 
 Enable the following module in your configuration overlay:
 
@@ -71,14 +71,14 @@ Enable the following module in your configuration overlay:
 
 {% include {{ version }}/jdbc-audit-configuration.md configKey="cas.authn.throttle.jdbc" %}
 
-For additional instructions on how to configure auditing, please [review the following guide](Audits.html).
+For additional instructions on how to configure auditing, please [review the following guide](../audits/Audits.html).
 
 ### MongoDb
 
 Queries a MongoDb data source used by the CAS audit facility to 
 prevent successive failed login attempts for a particular username 
 from the same IP address. This component requires and depends on 
-the [CAS auditing functionality](Audits.html) via MongoDb.
+the [CAS auditing functionality](../audits/Audits.html) via MongoDb.
 
 Enable the following module in your configuration overlay:
 
@@ -90,7 +90,7 @@ Enable the following module in your configuration overlay:
 
 Queries a Redis data source used by the CAS audit facility to prevent successive failed login attempts 
 for a particular username from the same IP address. This component requires and 
-depends on the [CAS auditing functionality](Audits.html) via Redis.
+depends on the [CAS auditing functionality](../audits/Audits.html) via Redis.
 
 Enable the following module in your configuration overlay:
 
@@ -101,7 +101,7 @@ Enable the following module in your configuration overlay:
 ### Hazelcast
 
 This feature uses a distributed Hazelcast map to record throttled authentication attempts. 
-This component requires and depends on the [CAS auditing functionality](Audits.html)
+This component requires and depends on the [CAS auditing functionality](../audits/Audits.html)
 
 Enable the following module in your configuration overlay:
 
@@ -113,7 +113,7 @@ Enable the following module in your configuration overlay:
 
 Queries a CouchDb data source used by the CAS audit facility to prevent successive failed login attempts 
 for a particular username from the same IP address. This component requires and 
-depends on the [CAS auditing functionality](Audits.html) via CouchDb.
+depends on the [CAS auditing functionality](../audits/Audits.html) via CouchDb.
 
 Enable the following module in your configuration overlay:
 
@@ -123,7 +123,7 @@ Enable the following module in your configuration overlay:
 {% include {{ version }}/couchdb-configuration.md configKey="cas.authn.throttle" %}
 
 When using this feature the audit facility should be in synchronous mode. For additional instructions 
-on how to configure auditing, please [review the following guide](Audits.html).
+on how to configure auditing, please [review the following guide](../audits/Audits.html).
 
 ## Configuration
 

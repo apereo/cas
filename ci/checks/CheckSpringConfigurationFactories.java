@@ -17,7 +17,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class CheckSpringConfigurationFactories {
     public static void main(final String[] args) throws Exception {
-        checkPattern(args[0]);
+        checkSpringFactoryConfigurations(args[0]);
+        checkMissingSpringFactoryConfigurations(args[0]);
     }
 
     private static void print(final String message, final Object... args) {
@@ -40,12 +41,11 @@ public class CheckSpringConfigurationFactories {
         if (springFactoriesFile.exists()) {
             return true;
         }
-        final var pass = new AtomicBoolean(true);
+        var pass = new AtomicBoolean(true);
         Files.walk(Paths.get(projectPath))
-            .filter(Files::isRegularFile)
+            .filter(f -> Files.isRegularFile(f) && f.toFile().getName().endsWith("Configuration.java"))
             .forEach(file -> {
-                if (file.toFile().getName().endsWith("Configuration.java")
-                    && readFile(file).contains("@Configuration")) {
+                if (readFile(file).contains("@Configuration")) {
                     print("Configuration class %s is missing from %s", file, springFactoriesFile);
                     pass.set(false);
                 }
@@ -72,8 +72,27 @@ public class CheckSpringConfigurationFactories {
         return true;
     }
 
-    protected static void checkPattern(final String arg) throws IOException {
-        final var count = new AtomicInteger(0);
+    protected static void checkMissingSpringFactoryConfigurations(final String arg) throws IOException {
+        Files.walk(Paths.get(arg))
+            .filter(f -> Files.isRegularFile(f) && f.toFile().getName().endsWith("Configuration.java"))
+            .forEach(file -> {
+                if (readFile(file).contains("@Configuration")) {
+                    var parent = file.getParent();
+                    while (parent != null && !parent.toFile().getName().equals("src")) {
+                        parent = parent.getParent();
+                    }
+                    var springFactoriesFile = new File(parent.toFile(), "main/resources/META-INF/spring.factories");
+                    if (!springFactoriesFile.exists()) {
+                        print("Configuration class %s is missing from %s",
+                            file.toFile().getAbsolutePath(), springFactoriesFile.getAbsolutePath());
+                        System.exit(1);
+                    }
+                }
+            });
+    }
+
+    protected static void checkSpringFactoryConfigurations(final String arg) throws IOException {
+        var count = new AtomicInteger(0);
 
         Files.walk(Paths.get(arg))
             .filter(file -> Files.isDirectory(file) && file.toFile().getAbsolutePath().endsWith("src/main/resources/META-INF"))
