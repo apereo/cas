@@ -33,12 +33,14 @@ public class OAuth20ServicesManagerRegisteredServiceLocatorTests extends Abstrac
     public void verifyOperation() {
         assertNotNull(oauthServicesManagerRegisteredServiceLocator);
         assertEquals(Ordered.HIGHEST_PRECEDENCE, oauthServicesManagerRegisteredServiceLocator.getOrder());
-        val service = getRegisteredService("clientid123456", UUID.randomUUID().toString());
+        val service = getRegisteredService(UUID.randomUUID().toString(), UUID.randomUUID().toString());
         service.setMatchingStrategy(new PartialRegexRegisteredServiceMatchingStrategy());
+        val service2 = getRegisteredService(UUID.randomUUID().toString(), UUID.randomUUID().toString());
+        service2.setMatchingStrategy(new PartialRegexRegisteredServiceMatchingStrategy());
         val svc = serviceFactory.createService(
-            String.format("https://oauth.example.org/whatever?%s=clientid", OAuth20Constants.CLIENT_ID));
-        val result = oauthServicesManagerRegisteredServiceLocator.locate(List.of(service),
-            svc, r -> r.matches("https://oauth.example.org"));
+                String.format("https://oauth.example.org/whatever?%s=%s", OAuth20Constants.CLIENT_ID, service.getClientId()));
+        val result = oauthServicesManagerRegisteredServiceLocator.locate(List.of(service, service2),
+                svc, r -> r.matches("https://oauth.example.org"));
         assertNotNull(result);
     }
 

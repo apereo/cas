@@ -44,9 +44,11 @@ public class OidcServicesManagerRegisteredServiceLocatorTests extends AbstractOi
         assertEquals(Ordered.HIGHEST_PRECEDENCE, oidcServicesManagerRegisteredServiceLocator.getOrder());
         val service = getOidcRegisteredService(UUID.randomUUID().toString());
         service.setMatchingStrategy(new PartialRegexRegisteredServiceMatchingStrategy());
+        val service2 = getOidcRegisteredService(UUID.randomUUID().toString());
+        service2.setMatchingStrategy(new PartialRegexRegisteredServiceMatchingStrategy());
         val svc = webApplicationServiceFactory.createService(
-            String.format("https://oauth.example.org/whatever?%s=clientid", OAuth20Constants.CLIENT_ID));
-        val result = oidcServicesManagerRegisteredServiceLocator.locate(List.of(service),
+            String.format("https://oauth.example.org/whatever?%s=%s", OAuth20Constants.CLIENT_ID, service.getClientId()));
+        val result = oidcServicesManagerRegisteredServiceLocator.locate(List.of(service, service2),
             svc, r -> r.matches("https://oauth.example.org/whatever"));
         assertNotNull(result);
     }
@@ -56,19 +58,22 @@ public class OidcServicesManagerRegisteredServiceLocatorTests extends AbstractOi
         val service1 = RegisteredServiceTestUtils.getRegisteredService(".+");
         service1.setEvaluationOrder(5);
 
-        val oidcClientId = UUID.randomUUID().toString();
-        val service2 = getOidcRegisteredService(oidcClientId, ".+", false, false);
+        val service2 = getOidcRegisteredService(UUID.randomUUID().toString(), ".+", false, false);
         service2.setEvaluationOrder(10);
 
-        val oauthClientId = UUID.randomUUID().toString();
-        val service3 = getOAuthRegisteredService(oauthClientId, ".+");
+        val service3 = getOAuthRegisteredService(UUID.randomUUID().toString(), ".+");
         service3.setEvaluationOrder(15);
 
         servicesManager.save(service1, service2, service3);
 
         var svc = webApplicationServiceFactory.createService(
-            String.format("https://app.example.org/whatever?%s=clientid", OAuth20Constants.CLIENT_ID));
+            String.format("https://app.example.org/whatever?%s=%s", OAuth20Constants.CLIENT_ID, service2.getClientId()));
         var result = servicesManager.findServiceBy(svc);
+        assertTrue(result instanceof OidcRegisteredService);
+
+        svc = webApplicationServiceFactory.createService(
+                String.format("https://app.example.org/whatever?%s=%s", OAuth20Constants.CLIENT_ID, service3.getClientId()));
+        result = servicesManager.findServiceBy(svc);
         assertTrue(result instanceof OidcRegisteredService);
 
         svc = webApplicationServiceFactory.createService("https://app.example.org/whatever?hello=world");
