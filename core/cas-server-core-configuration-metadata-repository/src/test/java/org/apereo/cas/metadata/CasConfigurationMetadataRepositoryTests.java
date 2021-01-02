@@ -35,22 +35,22 @@ public class CasConfigurationMetadataRepositoryTests {
 
     @Test
     public void verifyQueryOperation() throws Exception {
-        var properties = CasConfigurationMetadataRepository.query(ConfigurationMetadataCatalogQuery
+        var properties = CasConfigurationMetadataCatalog.query(ConfigurationMetadataCatalogQuery
             .builder()
             .build());
         assertFalse(properties.properties().isEmpty());
 
         val file = File.createTempFile("config", ".yml");
-        properties.export(file);
+        CasConfigurationMetadataCatalog.export(file, properties);
         assertTrue(file.exists());
 
-        properties = CasConfigurationMetadataRepository.query(ConfigurationMetadataCatalogQuery
+        properties = CasConfigurationMetadataCatalog.query(ConfigurationMetadataCatalogQuery
             .builder()
             .queryType(ConfigurationMetadataCatalogQuery.QueryTypes.CAS)
             .build());
         assertTrue(properties.properties().isEmpty());
 
-        properties = CasConfigurationMetadataRepository.query(ConfigurationMetadataCatalogQuery
+        properties = CasConfigurationMetadataCatalog.query(ConfigurationMetadataCatalogQuery
             .builder()
             .modules(List.of("some-module-name"))
             .queryType(ConfigurationMetadataCatalogQuery.QueryTypes.THIRD_PARTY)

@@ -8,11 +8,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import lombok.experimental.SuperBuilder;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -24,7 +21,6 @@ import org.springframework.boot.configurationmetadata.ValueHint;
 import org.springframework.util.ReflectionUtils;
 
 import java.io.File;
-import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.TreeSet;
@@ -43,15 +39,29 @@ public class CasConfigurationMetadataCatalog {
     private static final int DESCRIPTION_WRAP_LENGTH = 120;
 
     /**
+     * Export.
+     *
+     * @param destination the destination
+     * @param data        the data
+     */
+    @SneakyThrows
+    public static void export(final File destination, final Object data) {
+        val mapper = new ObjectMapper(new YAMLFactory())
+            .setSerializationInclusion(JsonInclude.Include.NON_DEFAULT)
+            .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
+            .configure(SerializationFeature.WRITE_ENUMS_USING_TO_STRING, true)
+            .configure(SerializationFeature.INDENT_OUTPUT, true);
+        mapper.writeValue(destination, data);
+    }
+    
+    /**
      * Catalog cas properties container.
      *
      * @param query the query
      * @return the cas properties container
      */
-    public static CasPropertiesContainer catalog(final ConfigurationMetadataCatalogQuery query) {
-
+    public static CasPropertiesContainer query(final ConfigurationMetadataCatalogQuery query) {
         val repo = new CasConfigurationMetadataRepository();
-
         val allProperties = repo.getRepository()
             .getAllProperties()
             .entrySet()
@@ -169,58 +179,6 @@ public class CasConfigurationMetadataCatalog {
          */
         public TreeSet<CasReferenceProperty> properties() {
             return this.properties;
-        }
-
-        /**
-         * Export properties into a file as YAML.
-         *
-         * @param destination the destination
-         */
-        @SneakyThrows
-        public void export(final File destination) {
-            val mapper = new ObjectMapper(new YAMLFactory())
-                .setSerializationInclusion(JsonInclude.Include.NON_DEFAULT)
-                .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
-                .configure(SerializationFeature.WRITE_ENUMS_USING_TO_STRING, true)
-                .configure(SerializationFeature.INDENT_OUTPUT, true);
-            mapper.writeValue(destination, properties());
-        }
-    }
-
-    /**
-     * The type Cas reference property.
-     */
-    @SuperBuilder
-    @Getter
-    @EqualsAndHashCode(of = "name")
-    public static class CasReferenceProperty implements Serializable, Comparable<CasReferenceProperty> {
-        private static final long serialVersionUID = 6084780445748297104L;
-
-        private final boolean required;
-
-        private final String module;
-
-        private final String owner;
-
-        private final String type;
-
-        private final String description;
-
-        private final String name;
-
-        private final Object defaultValue;
-
-        private final String deprecationLevel;
-
-        private final String deprecationReason;
-
-        private final String deprecationReplacement;
-
-        private final String sourceType;
-
-        @Override
-        public int compareTo(final CasReferenceProperty o) {
-            return this.name.compareTo(o.getName());
         }
     }
 }

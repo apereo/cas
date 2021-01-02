@@ -1,5 +1,5 @@
 description = "Apereo CAS Documentation Generator"
-project.ext["mainClassName"] = "org.apereo.cas.CasDocumentationApplication"
+project.ext["mainClassName"] = "org.apereo.cas.documentation.CasDocumentationApplication"
 project.ext["forceBootifulArtifact"] = true
 
 apply from: rootProject.file("gradle/springboot.gradle")
