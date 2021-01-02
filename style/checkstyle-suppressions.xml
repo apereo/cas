@@ -34,4 +34,5 @@
     <suppress checks="\w+" files="(\.(crt|crl|class|keystore))|rebel.xml"/>
     <suppress checks="." files="com[\\/]duosecurity[\\/]duoweb[\\/]"/>
     <suppress checks="." files="org[\\/]apereo[\\/]cas[\\/]authentication[\\/]soap[\\/]"/>
+    <suppress checks="." files="org[\\/]apereo[\\/]cas[\\/]documentation"/>
 </suppressions>
