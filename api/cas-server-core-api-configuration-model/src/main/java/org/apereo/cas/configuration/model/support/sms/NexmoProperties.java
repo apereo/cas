@@ -15,7 +15,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@RequiresModule(name = "cas-server-support-sms-clickatell")
+@RequiresModule(name = "cas-server-support-sms-nexmo")
 @Getter
 @Setter
 @Accessors(chain = true)

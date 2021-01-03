@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -23,6 +24,7 @@ import java.io.Serializable;
 @Getter
 @Accessors(chain = true)
 @Setter
+@JsonFilter("UmaProperties")
 public class UmaProperties implements Serializable {
     private static final long serialVersionUID = 865028615694269276L;
 

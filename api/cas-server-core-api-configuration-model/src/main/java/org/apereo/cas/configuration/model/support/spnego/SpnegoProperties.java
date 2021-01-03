@@ -3,7 +3,6 @@ package org.apereo.cas.configuration.model.support.spnego;
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.core.web.flow.WebflowAutoConfigurationProperties;
-import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -72,7 +71,8 @@ public class SpnegoProperties implements Serializable {
     /**
      * LDAP settings for spnego to validate clients, etc.
      */
-    private Ldap ldap = new Ldap();
+    @NestedConfigurationProperty
+    private SpnegoLdapProperties ldap = new SpnegoLdapProperties();
 
     /**
      * When validating clients, specifies the DNS timeout used to look up an address.
@@ -144,12 +144,4 @@ public class SpnegoProperties implements Serializable {
     @NestedConfigurationProperty
     private WebflowAutoConfigurationProperties webflow = new WebflowAutoConfigurationProperties(100);
 
-    @RequiresModule(name = "cas-server-support-spnego-webflow")
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class Ldap extends AbstractLdapSearchProperties {
-
-        private static final long serialVersionUID = -8835216200501334936L;
-    }
 }

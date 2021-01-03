@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.spnego;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -50,6 +51,7 @@ public class SpnegoAuthenticationProperties implements Serializable {
     /**
      * The Jcifs service principal.
      */
+    @RequiredProperty
     private String jcifsServicePrincipal = "HTTP/cas.example.com@EXAMPLE.COM";
 
     /**
