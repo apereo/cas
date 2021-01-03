@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -33,12 +34,14 @@ public class PasswordEncoderProperties implements Serializable {
      *
      * @see PasswordEncoderTypes
      */
+    @RequiredProperty
     private String type = "NONE";
 
     /**
      * The encoding algorithm to use such as 'MD5'.
      * Relevant when the type used is 'DEFAULT' or 'GLIBC_CRYPT'.
      */
+    @RequiredProperty
     private String encodingAlgorithm;
 
     /**

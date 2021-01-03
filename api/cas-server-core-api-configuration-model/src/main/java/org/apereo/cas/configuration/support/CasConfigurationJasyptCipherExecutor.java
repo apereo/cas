@@ -230,7 +230,7 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
      */
     private void initializeJasyptInstanceIfNecessary() {
         if (!this.jasyptInstance.isInitialized()) {
-            LOGGER.debug("Initializing Jasypt...");
+            LOGGER.trace("Initializing Jasypt...");
             this.jasyptInstance.initialize();
         }
     }
@@ -243,19 +243,19 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
         /**
          * Jasypt algorithm name to use.
          */
-        ALGORITHM("cas.standalone.configurationSecurity.alg", "PBEWithMD5AndTripleDES"),
+        ALGORITHM("cas.standalone.configuration-security.alg", "PBEWithMD5AndTripleDES"),
         /**
          * Jasypt provider name to use.
          */
-        PROVIDER("cas.standalone.configurationSecurity.provider", null),
+        PROVIDER("cas.standalone.configuration-security.provider", null),
         /**
          * Jasypt number of iterations to use.
          */
-        ITERATIONS("cas.standalone.configurationSecurity.iterations", null),
+        ITERATIONS("cas.standalone.configuration-security.iterations", null),
         /**
          * Jasypt password to use.
          */
-        PASSWORD("cas.standalone.configurationSecurity.psw", null);
+        PASSWORD("cas.standalone.configuration-security.psw", null);
 
         /**
          * The Name.
