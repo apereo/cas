@@ -119,6 +119,7 @@ public class YubiKeyMultifactorProperties extends BaseMultifactorProviderPropert
     /**
      * Crypto settings that sign/encrypt the yubikey registration records.
      */
+    @NestedConfigurationProperty
     private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
 
     public YubiKeyMultifactorProperties() {

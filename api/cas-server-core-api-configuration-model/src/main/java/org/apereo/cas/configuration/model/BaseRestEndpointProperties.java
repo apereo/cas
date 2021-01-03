@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -19,6 +20,7 @@ import java.io.Serializable;
 @Setter
 @RequiresModule(name = "cas-server-core-util", automated = true)
 @Accessors(chain = true)
+@JsonFilter("BaseRestEndpointProperties")
 public class BaseRestEndpointProperties implements Serializable {
     private static final long serialVersionUID = 2687020856160473089L;
 

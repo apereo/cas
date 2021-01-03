@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -22,6 +23,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-core-util", automated = true)
 @Accessors(chain = true)
 @ToString
+@JsonFilter("SpringResourceProperties")
 public class SpringResourceProperties implements Serializable {
     private static final long serialVersionUID = 4142130961445546358L;
     /**

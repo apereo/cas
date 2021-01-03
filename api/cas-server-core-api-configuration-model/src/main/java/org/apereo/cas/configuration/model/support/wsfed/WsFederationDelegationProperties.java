@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPri
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -22,6 +23,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("WsFederationDelegationProperties")
 public class WsFederationDelegationProperties implements Serializable {
 
     private static final long serialVersionUID = 5743971334977239938L;
@@ -129,7 +131,6 @@ public class WsFederationDelegationProperties implements Serializable {
     @Setter
     @Accessors(chain = true)
     public static class Groovy extends SpringResourceProperties {
-
         private static final long serialVersionUID = 8079027843747126083L;
     }
 }
