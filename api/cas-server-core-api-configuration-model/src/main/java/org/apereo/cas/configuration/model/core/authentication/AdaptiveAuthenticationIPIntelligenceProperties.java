@@ -1,13 +1,12 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
-import org.apereo.cas.configuration.model.RestEndpointProperties;
-import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 
@@ -28,33 +27,19 @@ public class AdaptiveAuthenticationIPIntelligenceProperties implements Serializa
     /**
      * Fetch IP diagnostic information via REST.
      */
-    private Rest rest = new Rest();
+    @NestedConfigurationProperty
+    private RestfulAdaptiveAuthenticationIPIntelligenceProperties rest = new RestfulAdaptiveAuthenticationIPIntelligenceProperties();
 
     /**
      * Fetch IP diagnostic information via Groovy.
      */
-    private Groovy groovy = new Groovy();
+    @NestedConfigurationProperty
+    private GroovyAdaptiveAuthenticationIPIntelligenceProperties groovy = new GroovyAdaptiveAuthenticationIPIntelligenceProperties();
 
     /**
      * Fetch IP diagnostic information via <a href="getipintel.net">IP Intel</a>.
      */
     private BlackDot blackDot = new BlackDot();
-
-    @RequiresModule(name = "cas-server-core-authentication", automated = true)
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class Groovy extends SpringResourceProperties {
-        private static final long serialVersionUID = 8079027843747126083L;
-    }
-
-    @RequiresModule(name = "cas-server-core-authentication", automated = true)
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class Rest extends RestEndpointProperties {
-        private static final long serialVersionUID = 3659099897056632608L;
-    }
 
     @RequiresModule(name = "cas-server-core-authentication", automated = true)
     @Getter
