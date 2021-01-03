@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
-import org.apereo.cas.configuration.model.RestEndpointProperties;
 import org.apereo.cas.configuration.model.support.mfa.gauth.GoogleAuthenticatorMultifactorProperties;
 import org.apereo.cas.configuration.model.support.mfa.trusteddevice.TrustedDevicesMultifactorProperties;
 import org.apereo.cas.configuration.model.support.mfa.u2f.U2FMultifactorProperties;
@@ -76,7 +75,8 @@ public class MultifactorAuthenticationProperties implements Serializable {
      * The body of the response in the event of a successful 200 status code is
      * expected to be the MFA provider id which CAS should activate.
      */
-    private Rest rest = new Rest();
+    @NestedConfigurationProperty
+    private RestfulMultifactorAuthenticationProperties rest = new RestfulMultifactorAuthenticationProperties();
 
     /**
      * MFA can be triggered based on the results of a groovy script of your own design.
@@ -162,7 +162,8 @@ public class MultifactorAuthenticationProperties implements Serializable {
     private String grouperGroupField;
 
     /**
-     * In the event that multiple multifactor authentication providers are determined for a multifactor authentication transaction,
+     * In the event that multiple multifactor authentication
+     * providers are determined for a multifactor authentication transaction,
      * by default CAS will attempt to sort the collection of providers based on their rank and
      * will pick one with the highest priority. This use case may arise if multiple triggers
      * are defined where each decides on a different multifactor authentication provider, or
@@ -246,11 +247,4 @@ public class MultifactorAuthenticationProperties implements Serializable {
     @NestedConfigurationProperty
     private AccepttoMultifactorProperties acceptto = new AccepttoMultifactorProperties();
 
-    @RequiresModule(name = "cas-server-core-authentication", automated = true)
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class Rest extends RestEndpointProperties {
-        private static final long serialVersionUID = 3659099897056632608L;
-    }
 }

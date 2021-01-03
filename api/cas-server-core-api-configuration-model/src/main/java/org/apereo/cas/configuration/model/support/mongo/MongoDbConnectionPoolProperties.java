@@ -22,13 +22,15 @@ public class MongoDbConnectionPoolProperties implements Serializable {
     private static final long serialVersionUID = 8312213511918496060L;
 
     /**
-     * The maximum time a pooled connection can live for.  A zero value indicates no limit to the life time.  A pooled connection that
+     * The maximum time a pooled connection can live for.  A zero value indicates no limit
+     * to the life time.  A pooled connection that
      * has exceeded its life time will be closed and replaced when necessary by a new connection.
      */
     private int lifeTime = 60_000;
 
     /**
-     * The maximum idle time of a pooled connection.  A zero value indicates no limit to the idle time.  A pooled connection that has
+     * The maximum idle time of a pooled connection.  A zero value indicates no limit
+     * to the idle time.  A pooled connection that has
      * exceeded its idle time will be closed and replaced when necessary by a new connection.
      */
     private int idleTime = 30_000;
@@ -42,7 +44,7 @@ public class MongoDbConnectionPoolProperties implements Serializable {
      * Maximum number of connections to keep around.
      */
     private int maxSize = 10;
-    
+
     /**
      * Minimum number of connections to keep around.
      */

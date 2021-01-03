@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 
 import java.util.Set;
@@ -78,12 +80,36 @@ public class ConfigurationMetadataPropertyCreator {
         }
         properties.add(prop);
 
-        val grp = new ConfigurationMetadataProperty();
+        val grp = new ComparableConfigurationMetadataProperty();
         grp.setId(indexedGroup);
         grp.setName(indexedGroup);
         grp.setType(parentClass);
         groups.add(grp);
 
         return prop;
+    }
+
+    private static class ComparableConfigurationMetadataProperty extends ConfigurationMetadataProperty {
+        private static final long serialVersionUID = -7924691650447203471L;
+
+        @Override
+        public int hashCode() {
+            return new HashCodeBuilder(17, 37).append(getId()).toHashCode();
+        }
+
+        @Override
+        public boolean equals(final Object obj) {
+            if (obj == null) {
+                return false;
+            }
+            if (obj == this) {
+                return true;
+            }
+            if (!(obj instanceof ConfigurationMetadataProperty)) {
+                return false;
+            }
+            var rhs = (ConfigurationMetadataProperty) obj;
+            return new EqualsBuilder().append(getId(), rhs.getId()).isEquals();
+        }
     }
 }
