@@ -25,6 +25,11 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class PrincipalAttributesRepositoryCache implements Closeable {
+    /**
+     * Default bean name.
+     */
+    public static final String DEFAULT_BEAN_NAME = "principalAttributesRepositoryCache";
+
     private static final int DEFAULT_MAXIMUM_CACHE_SIZE = 1000;
 
     private static final String DEFAULT_CACHE_EXPIRATION_UNIT = TimeUnit.HOURS.name();

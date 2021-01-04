@@ -119,7 +119,7 @@ public class CachingPrincipalAttributesRepository extends AbstractPrincipalAttri
     public static PrincipalAttributesRepositoryCache getCacheInstanceFromApplicationContext() {
         val ctx = ApplicationContextProvider.getApplicationContext();
         return Objects.requireNonNull(ctx)
-            .getBean("principalAttributesRepositoryCache", PrincipalAttributesRepositoryCache.class);
+            .getBean(PrincipalAttributesRepositoryCache.DEFAULT_BEAN_NAME, PrincipalAttributesRepositoryCache.class);
     }
 
 }

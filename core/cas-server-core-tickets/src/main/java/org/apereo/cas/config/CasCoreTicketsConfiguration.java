@@ -311,7 +311,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
         val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(mem.getCrypto(), "in-memory");
 
         if (mem.isCache()) {
-            val logoutManager = applicationContext.getBean("logoutManager", LogoutManager.class);
+            val logoutManager = applicationContext.getBean(LogoutManager.DEFAULT_BEAN_NAME, LogoutManager.class);
             return new CachingTicketRegistry(cipher, logoutManager);
         }
         val storageMap = new ConcurrentHashMap<String, Ticket>(mem.getInitialCapacity(), mem.getLoadFactor(), mem.getConcurrency());

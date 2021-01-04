@@ -201,7 +201,7 @@ public class SamlIdPMetadataConfiguration {
         return plan;
     }
 
-    @ConditionalOnMissingBean(name = "defaultSamlRegisteredServiceCachingMetadataResolver")
+    @ConditionalOnMissingBean(name = SamlRegisteredServiceCachingMetadataResolver.DEFAULT_BEAN_NAME)
     @Bean
     @RefreshScope
     public SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver() {

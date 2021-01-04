@@ -130,7 +130,7 @@ public class CasCoreAuthenticationSupportConfiguration {
         };
     }
 
-    @ConditionalOnMissingBean(name = "principalAttributesRepositoryCache")
+    @ConditionalOnMissingBean(name = PrincipalAttributesRepositoryCache.DEFAULT_BEAN_NAME)
     @Bean
     public PrincipalAttributesRepositoryCache principalAttributesRepositoryCache() {
         return new PrincipalAttributesRepositoryCache();

@@ -47,7 +47,7 @@ public class CasCoreTicketsSchedulingConfiguration {
     private ObjectProvider<LockingStrategy> lockingStrategy;
 
     @Autowired
-    @Qualifier("logoutManager")
+    @Qualifier(LogoutManager.DEFAULT_BEAN_NAME)
     private ObjectProvider<LogoutManager> logoutManager;
 
     @Autowired

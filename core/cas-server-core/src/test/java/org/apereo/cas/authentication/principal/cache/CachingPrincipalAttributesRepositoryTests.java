@@ -71,7 +71,7 @@ public class CachingPrincipalAttributesRepositoryTests extends AbstractCachingPr
     @Lazy(false)
     public static class CachingPrincipalAttributeRepositoryTestConfiguration {
         @Bean
-        @ConditionalOnMissingBean(name = "principalAttributesRepositoryCache")
+        @ConditionalOnMissingBean(name = PrincipalAttributesRepositoryCache.DEFAULT_BEAN_NAME)
         public PrincipalAttributesRepositoryCache principalAttributesRepositoryCache() {
             return new PrincipalAttributesRepositoryCache();
         }

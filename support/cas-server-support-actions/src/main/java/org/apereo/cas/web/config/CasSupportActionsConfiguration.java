@@ -74,7 +74,7 @@ public class CasSupportActionsConfiguration {
     private ConfigurableApplicationContext applicationContext;
 
     @Autowired
-    @Qualifier("logoutManager")
+    @Qualifier(LogoutManager.DEFAULT_BEAN_NAME)
     private ObjectProvider<LogoutManager> logoutManager;
     
     @Autowired
