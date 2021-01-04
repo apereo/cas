@@ -91,10 +91,17 @@ public abstract class AbstractServicesManager implements ServicesManager {
             return null;
         }
 
-        var foundService = configurationContext.getRegisteredServiceLocators()
+        val candidates = getCandidateServicesToMatch(service.getId());
+        val serviceLocators = configurationContext.getRegisteredServiceLocators();
+        var foundService = serviceLocators.isEmpty()
+            ? candidates
             .stream()
-            .map(locator -> locator.locate(getCandidateServicesToMatch(service.getId()), service,
-                entry -> entry.matches(service.getId())))
+            .filter(entry -> entry.matches(service.getId()))
+            .findFirst()
+            .orElse(null)
+            : serviceLocators
+            .stream()
+            .map(locator -> locator.locate(candidates, service, entry -> entry.matches(service.getId())))
             .filter(Objects::nonNull)
             .findFirst()
             .orElse(null);
@@ -102,7 +109,20 @@ public abstract class AbstractServicesManager implements ServicesManager {
         if (foundService == null) {
             val serviceRegistry = configurationContext.getServiceRegistry();
             LOGGER.trace("Service [{}] is not cached; Searching [{}]", service.getId(), serviceRegistry.getName());
-            foundService = serviceRegistry.findServiceBy(service.getId());
+            val servicesLoaded = serviceRegistry.load();
+            foundService = serviceLocators.isEmpty()
+                ? servicesLoaded
+                .stream()
+                .filter(entry -> entry.matches(service.getId()))
+                .findFirst()
+                .orElse(null)
+                : serviceLocators
+                .stream()
+                .map(locator -> locator.locate(servicesLoaded, service, entry -> entry.matches(service.getId())))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(null);
+
             if (foundService != null) {
                 configurationContext.getServicesCache().put(foundService.getId(), foundService);
                 LOGGER.trace("Service [{}] is found in [{}] and cached", service, serviceRegistry.getName());
@@ -158,7 +178,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
         service = configurationContext.getServicesCache().get(id, k -> configurationContext.getServiceRegistry().findServiceById(id, clazz));
         return (T) validateRegisteredService(service);
     }
-    
+
     @Override
     public RegisteredService findServiceByName(final String name) {
         if (StringUtils.isBlank(name)) {
