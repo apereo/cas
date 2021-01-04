@@ -61,7 +61,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
         ensureSessionReplicationIsAutoconfiguredIfNeedBe(request);
 
         val context = new JEEContext(request, response, getOAuthConfigurationContext().getSessionStore());
-        val manager = new ProfileManager<CommonProfile>(context, context.getSessionStore());
+        val manager = new ProfileManager<CommonProfile>(context);
 
         if (context.getRequestAttribute(OAuth20Constants.ERROR).isPresent()) {
             val mv = getOAuthConfigurationContext().getOauthInvalidAuthorizationResponseBuilder().build(context);

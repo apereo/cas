@@ -50,7 +50,7 @@ public abstract class BaseUmaEndpointController {
                                                     final HttpServletResponse response,
                                                     final String requiredPermission) {
         val context = new JEEContext(request, response, getUmaConfigurationContext().getSessionStore());
-        val manager = new ProfileManager<CommonProfile>(context, context.getSessionStore());
+        val manager = new ProfileManager<CommonProfile>(context);
         val profileResult = manager.get(true);
         if (profileResult.isEmpty()) {
             throw new AuthenticationException("Unable to locate authenticated profile");

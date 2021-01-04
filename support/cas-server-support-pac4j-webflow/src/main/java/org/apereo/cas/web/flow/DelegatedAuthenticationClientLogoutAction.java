@@ -47,7 +47,7 @@ public class DelegatedAuthenticationClientLogoutAction extends AbstractAction {
      * @return The common profile active.
      */
     private static CommonProfile findCurrentProfile(final JEEContext webContext) {
-        val pm = new ProfileManager<CommonProfile>(webContext, webContext.getSessionStore());
+        val pm = new ProfileManager<CommonProfile>(webContext);
         val profile = pm.get(true);
         return profile.orElse(null);
     }
@@ -65,14 +65,20 @@ public class DelegatedAuthenticationClientLogoutAction extends AbstractAction {
                 : clients.findClient(currentProfile.getClientName());
             if (clientResult.isPresent()) {
                 val client = clientResult.get();
-                LOGGER.debug("Located client [{}]", client);
-                val actionResult = client.getLogoutAction(context, currentProfile, null);
+                LOGGER.trace("Located client [{}]", client);
+
+                val service = WebUtils.getService(requestContext);
+                val targetUrl = service != null ? service.getId() : null;
+                LOGGER.debug("Logout target url based on service [{}] is [{}]", service, targetUrl);
+                
+                val actionResult = client.getLogoutAction(context, currentProfile, targetUrl);
                 if (actionResult.isPresent()) {
                     val action = (HttpAction) actionResult.get();
+                    LOGGER.debug("Adapting logout action [{}] for client [{}]", action, client);
                     new JEEHttpActionAdapter().adapt(action, context);
                 }
             } else {
-                LOGGER.debug("The current client cannot be found and no logout action will be executed.");
+                LOGGER.debug("The current client cannot be found; No logout action can execute");
             }
         } catch (final Exception e) {
             LoggingUtils.warn(LOGGER, e);

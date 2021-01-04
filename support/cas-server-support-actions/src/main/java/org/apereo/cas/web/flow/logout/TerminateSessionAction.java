@@ -162,7 +162,7 @@ public class TerminateSessionAction extends AbstractAction {
     protected static void destroyApplicationSession(final HttpServletRequest request, final HttpServletResponse response) {
         LOGGER.trace("Destroying application session");
         val context = new JEEContext(request, response, new JEESessionStore());
-        val manager = new ProfileManager<>(context, context.getSessionStore());
+        val manager = new ProfileManager<>(context);
         manager.logout();
 
         val session = request.getSession(false);

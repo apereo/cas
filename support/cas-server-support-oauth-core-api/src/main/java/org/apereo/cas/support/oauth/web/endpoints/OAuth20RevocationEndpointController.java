@@ -53,7 +53,7 @@ public class OAuth20RevocationEndpointController extends BaseOAuth20Controller {
             return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_REQUEST);
         }
 
-        val manager = new ProfileManager<CommonProfile>(context, context.getSessionStore());
+        val manager = new ProfileManager<CommonProfile>(context);
         val clientId = OAuth20Utils.getClientIdAndClientSecret(context).getLeft();
         val registeredService = getRegisteredServiceByClientId(clientId);
 

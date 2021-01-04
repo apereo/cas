@@ -196,7 +196,7 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
      */
     protected CommonProfile getCurrentProfile(final HttpServletRequest request, final HttpServletResponse response) {
         val ctx = new JEEContext(request, response, this.oauthDistributedSessionStore);
-        val manager = new ProfileManager<CommonProfile>(ctx, ctx.getSessionStore());
+        val manager = new ProfileManager<CommonProfile>(ctx);
         val userProfileResult = manager.get(true);
         if (userProfileResult.isEmpty()) {
             LOGGER.info("Unable to determine the user profile from the context");

@@ -31,7 +31,7 @@ public class OidcCallbackAuthorizeViewResolverTests extends AbstractOidcTests {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response, new JEESessionStore());
-        val manager = new ProfileManager<>(context, context.getSessionStore());
+        val manager = new ProfileManager<>(context);
 
         val profile = new CommonProfile();
         profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
@@ -49,7 +49,7 @@ public class OidcCallbackAuthorizeViewResolverTests extends AbstractOidcTests {
         val url = "https://cas.org/something?" + OidcConstants.PROMPT + "=none";
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response, new JEESessionStore());
-        val manager = new ProfileManager<>(context, context.getSessionStore());
+        val manager = new ProfileManager<>(context);
 
         val profile = new CommonProfile();
         profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
@@ -66,7 +66,7 @@ public class OidcCallbackAuthorizeViewResolverTests extends AbstractOidcTests {
         val url = "https://cas.org/something?" + OidcConstants.PROMPT + "=none";
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response, new JEESessionStore());
-        val manager = new ProfileManager<>(context, context.getSessionStore());
+        val manager = new ProfileManager<>(context);
         
         val mv = callbackAuthorizeViewResolver.resolve(context, manager, url);
         assertNotNull(mv);
@@ -79,7 +79,7 @@ public class OidcCallbackAuthorizeViewResolverTests extends AbstractOidcTests {
         val url = "https://cas.org/something?" + OidcConstants.PROMPT + "=none";
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response, new JEESessionStore());
-        val manager = new ProfileManager<>(context, context.getSessionStore());
+        val manager = new ProfileManager<>(context);
 
         val mv = callbackAuthorizeViewResolver.resolve(context, manager, url);
         assertNotNull(mv);
@@ -91,7 +91,7 @@ public class OidcCallbackAuthorizeViewResolverTests extends AbstractOidcTests {
         val url = "https://cas.org/something?" + OidcConstants.PROMPT + "=login";
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response, new JEESessionStore());
-        val manager = new ProfileManager<>(context, context.getSessionStore());
+        val manager = new ProfileManager<>(context);
 
         val mv = callbackAuthorizeViewResolver.resolve(context, manager, url);
         assertNotNull(mv);

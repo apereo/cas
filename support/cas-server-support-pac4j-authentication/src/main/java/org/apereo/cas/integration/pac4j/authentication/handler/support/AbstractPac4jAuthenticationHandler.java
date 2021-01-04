@@ -160,7 +160,7 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
      * @param profile    the profile
      */
     protected void storeUserProfile(final WebContext webContext, final CommonProfile profile) {
-        val manager = new ProfileManager<CommonProfile>(webContext, webContext.getSessionStore());
+        val manager = new ProfileManager<CommonProfile>(webContext);
         manager.save(true, profile, false);
     }
 }
