@@ -38,7 +38,8 @@ public class NotPreventedAuthenticationPolicy extends AtLeastOneCredentialValida
     }
 
     @Override
-    public boolean isSatisfiedBy(final Authentication authentication, final Set<AuthenticationHandler> authenticationHandlers,
+    public boolean isSatisfiedBy(final Authentication authentication,
+                                 final Set<AuthenticationHandler> authenticationHandlers,
                                  final ConfigurableApplicationContext applicationContext,
                                  final Optional<Serializable> assertion) throws Exception {
         val fail = authentication.getFailures().values()
