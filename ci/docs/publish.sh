@@ -44,15 +44,23 @@ git clone --single-branch --depth 1 --branch gh-pages --quiet \
 echo -e "Removing previous documentation from $branchVersion...\n"
 rm -Rf $PWD/gh-pages/"$branchVersion" > /dev/null
 rm -Rf $PWD/gh-pages/_includes/"$branchVersion" > /dev/null
+rm -Rf $PWD/gh-pages/_data/"$branchVersion" > /dev/null
 
 echo -e "Creating $branchVersion directory...\n"
 mkdir -p "$PWD/gh-pages/$branchVersion"
 mkdir -p "$PWD/gh-pages/_includes/$branchVersion"
+mkdir -p "$PWD/gh-pages/_data/$branchVersion"
 
 echo -e "Copying new docs to $branchVersion...\n"
 cp -Rf $PWD/docs-latest/* "$PWD/gh-pages/$branchVersion"
 cp -Rf $PWD/docs-includes/* "$PWD/gh-pages/_includes/$branchVersion"
 echo -e "Copied project documentation to $PWD/gh-pages/...\n"
+
+echo -e "Generating documentation site data...\n"
+chmod +x docs/cas-server-documentation-processor/build/libs/casdocsgen.jar
+rm -Rf $PWD/gh-pages/_data/"$branchVersion" > /dev/null
+docs/cas-server-documentation-processor/build/libs/casdocsgen.jar "$PWD/gh-pages/_data" "$branchVersion"
+echo -e "Generated documentation data at $PWD/gh-pages/_data/$branchVersion...\n"
 
 rm -Rf $PWD/docs-latest
 rm -Rf $PWD/docs-includes

@@ -42,6 +42,10 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishReleases && !rootP
     } else {
         bootJar {
             mainClassName = project.ext.mainClassName
+
+            if (project.ext.archiveFileName != null) {
+                archiveFileName = project.ext.archiveFileName
+            }
             from "${buildDir}/resources/main", { into "WEB-INF/classes" }
             launchScript()
         }
