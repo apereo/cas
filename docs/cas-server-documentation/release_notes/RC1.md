@@ -124,11 +124,20 @@ decisions for multifactor authentication may also be kept inside a Redis instanc
 
 ## Other Stuff
      
-- The configuration of [Hazelcast clusters](../ticketing/Hazelcast-Ticket-Registry.html) can allow for specification of network interfaces.
+- [Hazelcast cluster configuration](../ticketing/Hazelcast-Ticket-Registry.html) allows specification of network interfaces.
 - Delegated authentication configuration can allow for a pre-defined callback/redirect URI.
+- Configuration metadata is corrected in a number of cases to make sure `@NestedConfigurationProperty` is properly set on fields.
+- Publishing Maven metadata into the local maven repository is corrected to include all CAS-required repositories.
  
 ## Library Upgrades
 
 - Spring Framework
 - Spring Boot
 - Spring Cloud
+- Hibernate
+- Amazon SDK
+- Hazelcast
+- Joda Time
+- Thymeleaf Dialect
+- Apache Ignite
+- BouncyCastle
