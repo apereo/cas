@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.core.ticket.registry;
 
-import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.cassandra.ticketregistry.CassandraTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.couchbase.ticketregistry.CouchbaseTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.couchdb.ticketregistry.CouchDbTicketRegistryProperties;
@@ -121,8 +120,8 @@ public class TicketRegistryProperties implements Serializable {
     /**
      * Settings relevant for the default in-memory ticket registry.
      */
-    private InMemory inMemory = new InMemory();
-
+    @NestedConfigurationProperty
+    private InMemoryTicketRegistryProperties inMemory = new InMemoryTicketRegistryProperties();
 
     /**
      * CouchDb registry settings.
@@ -136,46 +135,4 @@ public class TicketRegistryProperties implements Serializable {
     @NestedConfigurationProperty
     private ScheduledJobProperties cleaner = new ScheduledJobProperties("PT10S", "PT1M");
 
-    @RequiresModule(name = "cas-server-core-tickets", automated = true)
-    @Getter
-    @Setter
-    public static class InMemory implements Serializable {
-
-        private static final long serialVersionUID = -2600525447128979994L;
-
-        /**
-         * Allow the ticket registry to cache ticket items for period of time
-         * and auto-evict and clean up, removing the need to running a ticket
-         * registry cleaner in the background.
-         */
-        private boolean cache;
-
-        /**
-         * The initial capacity of the underlying memory store.
-         * The implementation performs internal sizing to accommodate this many elements.
-         */
-        private int initialCapacity = 1000;
-
-        /**
-         * The load factor threshold, used to control resizing.
-         * Resizing may be performed when the average number of elements per bin exceeds this threshold.
-         */
-        private int loadFactor = 1;
-
-        /**
-         * The estimated number of concurrently updating threads.
-         * The implementation performs internal sizing to try to accommodate this many threads.
-         */
-        private int concurrency = 20;
-
-        /**
-         * Crypto settings for the registry.
-         */
-        @NestedConfigurationProperty
-        private EncryptionRandomizedSigningJwtCryptographyProperties crypto = new EncryptionRandomizedSigningJwtCryptographyProperties();
-
-        public InMemory() {
-            crypto.setEnabled(false);
-        }
-    }
 }

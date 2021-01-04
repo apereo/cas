@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.core.web.flow;
 
-import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -70,14 +69,6 @@ public class WebflowProperties implements Serializable {
      * Path to groovy resource that may auto-configure the webflow context
      * dynamically creating/removing states and actions.
      */
-    private Groovy groovy = new Groovy();
-
-    @RequiresModule(name = "cas-server-core-webflow", automated = true)
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class Groovy extends SpringResourceProperties {
-
-        private static final long serialVersionUID = 8079027843747126083L;
-    }
+    @NestedConfigurationProperty
+    private GroovyWebflowProperties groovy = new GroovyWebflowProperties();
 }
