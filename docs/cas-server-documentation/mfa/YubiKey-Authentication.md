@@ -4,22 +4,21 @@ title: CAS - YubiKey Authentication
 category: Multifactor Authentication
 ---
 
+{% include variables.html %}
+
 # YubiKey Authentication
 
-Yubico is a cloud-based service that enables strong, easy-to-use and affordable two-factor authentication with one-time passwords through their flagship product, YubiKey. Once Yubico `clientId` and `secretKey` are obtained, then the 
-configuration options available to use YubiKey devices as a primary authentication source that CAS server could use to authenticate users.
+Yubico is a cloud-based service that enables strong, easy-to-use and affordable 
+two-factor authentication with one-time passwords through their 
+flagship product, YubiKey. Once Yubico `client-id` and `secret-key` 
+are obtained, then the configuration options available to use YubiKey devices as a primary authentication 
+source that CAS server could use to authenticate users.
 
 To configure YubiKey accounts and obtain API keys, [refer to the documentation](https://upgrade.yubico.com/getapikey/).
 
 [YubiKey](https://www.yubico.com/products/yubikey-hardware) authentication components are enabled by including the following dependencies in the WAR overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-yubikey</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-yubikey" %}
 
 ## Administrative Endpoints
 
@@ -31,13 +30,20 @@ The following endpoints are provided by CAS:
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#yubikey).
+{% include {{ version }}/yubikey-configuration.md %}
 
-By default, all YubiKey accounts for users are allowed to authenticate. Devices that need to be authorized for authentication need to have followed an out-of-band registration process where the record for them is found in one of the following storage backends. Upon authentication, CAS will begin to search the configured registration database for matching record for the authenticated user and device in order to allow for a successful authentication event.
+{% include {{ version }}/signing-encryption-configuration.md configKey="cas.authn.mfa.yubikey" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
+
+By default, all YubiKey accounts for users are allowed to authenticate. Devices that 
+need to be authorized for authentication need to have followed an out-of-band 
+registration process where the record for them is found in one of the following 
+storage backends. Upon authentication, CAS will begin to search the configured 
+registration database for matching record for the authenticated user and device 
+in order to allow for a successful authentication event.
 
 ### JSON
 
-Registration records may be tracked inside a JSON file, provided the file path is specified in CAS settings. See [review this guide](../configuration/Configuration-Properties.html#yubikey) for more info.
+Registration records may be tracked inside a JSON file, provided the file path is specified in CAS settings. 
 
 The JSON structure is a map of user id to yubikey public id representing any particular device:
 
@@ -48,9 +54,13 @@ The JSON structure is a map of user id to yubikey public id representing any par
 }
 ```
 
+{% include {{ version }}/json-yubikey-configuration.md %}
+
 ### REST
 
-Registration records can be managed via an external REST API. See [review this guide](../configuration/Configuration-Properties.html#yubikey) for more info.
+Registration records may be tracked using an external REST API.
+
+{% include {{ version }}/rest-configuration.md configKey="cas.authn.mfa.yubikey.rest" %}
 
 The following endpoints are expected to be available and implemented by the REST API:
 
@@ -66,21 +76,20 @@ The following endpoints are expected to be available and implemented by the REST
 ### Permissive
 
 Registration records may be specified statically via CAS settings in form of a map that links registered usernames 
-with the public id of the YubiKey device. See [review this guide](../configuration/Configuration-Properties.html#yubikey) for more info.
+with the public id of the YubiKey device. 
+
+{% include {{ version }}/allowed-yubikey-configuration.md %}
 
 ### JPA
 
 Support is enabled by including the following dependencies in the WAR overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-yubikey-jpa</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-yubikey-jpa" %}
 
-The expected database schema that is automatically created and configured by CAS contains a single table as `YubiKeyAccount` with the following fields:
+{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.mfa.yubikey.jpa" %}
+
+The expected database schema that is automatically created and configured 
+by CAS contains a single table as `YubiKeyAccount` with the following fields:
 
 | Field              | Description
 |--------------------------------------------------------------------------------------
@@ -92,13 +101,9 @@ The expected database schema that is automatically created and configured by CAS
 
 Support is enabled by including the following dependencies in the WAR overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-yubikey-couchdb</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-yubikey-couchdb" %}
+
+{% include {{ version }}/couchdb-configuration.md configKey="cas.authn.mfa.yubikey" %}
 
 The registration records are kept inside a single CouchDb database of your choosing that will be auto-created by CAS.
 The structure of this database's documents is as follows:
@@ -113,41 +118,25 @@ The structure of this database's documents is as follows:
 
 Support is enabled by including the following dependencies in the WAR overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-yubikey-redis</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-yubikey-redis" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#yubikey).
+{% include {{ version }}/redis-configuration.md configKey="cas.authn.mfa.yubikey" %}
 
 ### DynamoDb
 
 Support is enabled by including the following dependencies in the WAR overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-yubikey-dynamodb</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-yubikey-dynamodb" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#yubikey).
+{% include {{ version }}/dynamodb-configuration.md configKey="cas.authn.mfa.yubikey" %}
 
 ### MongoDb
 
 Support is enabled by including the following dependencies in the WAR overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-yubikey-mongo</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-yubikey-mongo" %}
+
+{% include {{ version }}/mongodb-configuration.md configKey="cas.authn.mfa.yubikey" %}
 
 The registration records are kept inside a single MongoDb collection of your choosing that will be auto-created by CAS.
 The structure of this collection is as follows:
@@ -158,12 +147,13 @@ The structure of this collection is as follows:
 | `publicId`         | The public identifier/key of the device used for authentication.
 | `username`         | The username whose device is registered.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#yubikey).
 
 ### Custom
 
 If you wish to plug in a custom registry implementation that would determine
-which users are allowed to use their YubiKey accounts for authentication, you may plug in a custom implementation of the `YubiKeyAccountRegistry` that allows you to provide a mapping between usernames and YubiKey public keys.
+which users are allowed to use their YubiKey accounts for authentication, you 
+may plug in a custom implementation of the `YubiKeyAccountRegistry` that 
+allows you to provide a mapping between usernames and YubiKey public keys.
 
 
 ```java
@@ -198,8 +188,12 @@ public class MyYubiKeyConfiguration {
 }
 ```
 
-[See this guide](../configuration/Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.
+[See this guide](../configuration/Configuration-Management-Extensions.html) to learn more 
+about how to register configurations into the CAS runtime.
 
 ## REST Protocol Credential Extraction 
 
-In the event that the [CAS REST Protocol](../protocol/REST-Protocol.html) is turned on, a special credential extractor is injected into the REST authentication engine in order to recognize YubiKey credentials and authenticate them as part of the REST request. The expected parameter name in the request body is `yubikeyotp`.
+In the event that the [CAS REST Protocol](../protocol/REST-Protocol.html) is turned on, 
+a special credential extractor is injected into the REST authentication engine in 
+order to recognize YubiKey credentials and authenticate them as part of the REST 
+request. The expected parameter name in the request body is `yubikeyotp`.

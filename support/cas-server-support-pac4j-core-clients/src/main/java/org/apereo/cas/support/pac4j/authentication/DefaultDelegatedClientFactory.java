@@ -581,7 +581,9 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
         if (StringUtils.isNotBlank(props.getCssClass())) {
             customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_CSS_CLASS, props.getCssClass());
         }
-        client.setCallbackUrl(casProperties.getServer().getLoginUrl());
+        val callbackUrl = StringUtils.defaultString(props.getCallbackUrl(), casProperties.getServer().getLoginUrl());
+        client.setCallbackUrl(callbackUrl);
+
         switch (props.getCallbackUrlType()) {
             case PATH_PARAMETER:
                 client.setCallbackUrlResolver(new PathParameterCallbackUrlResolver());

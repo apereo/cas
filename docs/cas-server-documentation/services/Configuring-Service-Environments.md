@@ -4,6 +4,8 @@ title: CAS - Configuring Service Environments
 category: Services
 ---
 
+{% include variables.html %}
+
 # Configure Service Environments
 
 Each registered application in the registry may be assigned a set of environment names. The environment names act as a filter, allowing

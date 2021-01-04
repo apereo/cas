@@ -17,6 +17,7 @@ import org.apereo.cas.services.ServicesManager;
 
 import lombok.SneakyThrows;
 import lombok.val;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
@@ -86,7 +87,7 @@ public class JaasAuthenticationHandlersConfigurationTests {
     @SneakyThrows
     public void initialize() {
         val resource = new ClassPathResource("jaas-system.conf");
-        val fileName = new File(System.getProperty("java.io.tmpdir"), "jaas-authn.conf");
+        val fileName = new File(FileUtils.getTempDirectory(), "jaas-authn.conf");
         try (val writer = Files.newBufferedWriter(fileName.toPath(), StandardCharsets.UTF_8)) {
             IOUtils.copy(resource.getInputStream(), writer, Charset.defaultCharset());
             writer.flush();

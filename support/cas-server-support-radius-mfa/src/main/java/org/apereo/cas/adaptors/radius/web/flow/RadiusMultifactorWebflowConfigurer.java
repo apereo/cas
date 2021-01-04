@@ -46,7 +46,9 @@ public class RadiusMultifactorWebflowConfigurer extends AbstractCasMultifactorWe
             createFlowVariable(flow, CasWebflowConstants.VAR_ID_CREDENTIAL, RadiusTokenCredential.class);
 
             flow.getStartActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_INITIAL_FLOW_SETUP));
-
+            createEndState(flow, CasWebflowConstants.STATE_ID_SUCCESS);
+            createEndState(flow, CasWebflowConstants.STATE_ID_CANCEL);
+            
             val initLoginFormState = createActionState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM,
                 createEvaluateAction(CasWebflowConstants.ACTION_ID_INIT_LOGIN_ACTION));
             createTransitionForState(initLoginFormState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);

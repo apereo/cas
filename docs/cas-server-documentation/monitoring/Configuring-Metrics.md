@@ -4,6 +4,8 @@ title: CAS - Metrics
 category: Monitoring & Statistics
 ---
 
+{% include variables.html %}
+
 # CAS Metrics
 
 CAS via Spring Boot registers the following core metrics when applicable:
@@ -23,13 +25,7 @@ JVM metrics, report utilization of:
 
 Support is enabled by including the following module in the Overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-metrics</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-metrics" %}
 
 Auto-configuration enables the instrumentation of all available DataSource objects 
 with a metric named `jdbc`. Data source instrumentation results in gauges representing the 
@@ -106,4 +102,4 @@ CAS metrics may be routed to varying types of databases for storage and analytic
 - CloudWatch
 - ...
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#metrics).
+{% include {{ version }}/metrics-configuration.md %}

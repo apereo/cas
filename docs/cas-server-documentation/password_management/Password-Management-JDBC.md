@@ -4,21 +4,19 @@ title: CAS - Password Management
 category: Password Management
 ---
 
+{% include variables.html %}
+
 # Password Management - JDBC
 
 The account password and security questions may be stored inside a database.
 
 JDBC support is enabled by including the following dependencies in the WAR overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-pm-jdbc</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-pm-jdbc" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#jdbc-password-management).
+{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.pm.jdbc" %}
+{% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.pm.jdbc" %}
+{% include {{ version }}/jdbc-pswd-mgmt-configuration.md %}
 
 The expected database schema for the user accounts is:
 

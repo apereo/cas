@@ -3,6 +3,7 @@ layout: default
 title: CAS - Overlay Installation
 category: Installation
 ---
+{% include variables.html %}
 
 # Servlet Container Configuration
 
@@ -21,11 +22,14 @@ There are is a wide range of servlet containers and servers on the menu. The sel
 
 ## Production Quality
 
-All servlet containers presented here, embedded or otherwise, aim to be production ready. This means that CAS ships with useful defaults out of the box that 
+All servlet containers presented here, embedded or otherwise, aim to be production ready. This means 
+that CAS ships with useful defaults out of the box that 
 may be overridden, if necessary and by default, CAS configures everything for you from development to production 
-in today’s platforms. In terms of their production quality, there is almost no difference between using an embedded container vs. an external one.
+in today’s platforms. In terms of their production quality, there is almost no 
+difference between using an embedded container vs. an external one.
 
-Unless there are specific, technical and reasonable objections, choosing an embedded servlet container is almost always the better choice.
+Unless there are specific, technical and reasonable objections, choosing an 
+embedded servlet container is almost always the better choice.
 
 ## Embedded
 
@@ -34,11 +38,13 @@ as much as possible. These embedded containers are an integral part of the CAS s
 updated usually for every release and surely are meant to and can be used in production deployments. 
 You **DO NOT** need to, but can if you want to, configure and deploy to an externally configured container. 
 
-<div class="alert alert-info"><strong>Do Less</strong><p>Remember that most if not all aspects of the embedded 
-container can be controlled via the CAS properties. See <a href="../configuration/Configuration-Properties.html#embedded-apache-tomcat-container">this guide</a> for more info.</p></div>
+### Embedded Container Configuration
 
-To see the relevant list of CAS properties, 
-please [review this guide](../configuration/Configuration-Properties.html#embedded-container).
+{% include {{ version }}/embedded-container-configuration.md %}
+
+### X.509 Client Authentication
+
+{% include {{ version }}/embedded-container-x509-configuration.md %}
 
 ### Execution
 
@@ -55,7 +61,8 @@ Additionally, it is also possible to run CAS as a fully executable web applicati
 /path/to/cas.war
 ```
 
-This is achieved via the build process of the deployment overlay where a launch script is *inserted* at the beginning of the web application artifact. If you
+This is achieved via the build process of the deployment overlay where a 
+launch script is *inserted* at the beginning of the web application artifact. If you
  wish to see and examine the script, simply run the following commands:
  
  ```bash
@@ -63,20 +70,15 @@ This is achieved via the build process of the deployment overlay where a launch 
  head -n X /path/to.cas.war
  ```
  
-Note that running CAS as a standalone and fully executable web application is supported on most Linux and OS X distributions. 
+Note that running CAS as a standalone and fully executable web application 
+is supported on most Linux and OS X distributions. 
 Other platforms such as Windows may require custom configuration.
 
 ### Apache Tomcat
 
 Note that by default, the embedded container attempts to enable the HTTP2 protocol.
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-webapp-tomcat</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-webapp-tomcat" %}
 
 #### IPv4 Configuration
 
@@ -86,12 +88,13 @@ In order to force Apache Tomcat to use IPv4, configure the following as a system
 -Djava.net.preferIPv4Stack=true 
 ```
 
-The same sort of configuration needs to be applied to your `$CATALINA_OPTS` environment variable in case of an external container.
+The same sort of configuration needs to be applied to your `$CATALINA_OPTS` 
+environment variable in case of an external container.
 
 #### Faster Startup
 
-[This guide](https://cwiki.apache.org/confluence/display/TOMCAT/HowTo+FasterStartUp) provides several recommendations on how to make 
-web applications and Apache Tomcat as a whole to start up faster.
+[This guide](https://cwiki.apache.org/confluence/display/TOMCAT/HowTo+FasterStartUp) provides 
+several recommendations on how to make web applications and Apache Tomcat as a whole to start up faster.
 
 #### Logging
 
@@ -120,25 +123,63 @@ For instance:
 java -jar /path/to/cas.war -Djava.util.logging.config.file=/path/to/logging.properties
 ```
 
+### Embedded Apache Tomcat Container
+
+{% include {{ version }}/embedded-container-tomcat-configuration.md %}
+
+#### HTTP Proxying
+
+{% include {{ version }}/embedded-container-tomcat-httpproxy-configuration.md %}
+
+#### HTTP
+
+{% include {{ version }}/embedded-container-tomcat-http-configuration.md %}
+
+#### AJP
+
+{% include {{ version }}/embedded-container-tomcat-ajp-configuration.md %}
+
+#### SSL Valve
+
+{% include {{ version }}/embedded-container-tomcat-sslvalve-configuration.md %}
+
+#### Extended Access Log Valve
+
+{% include {{ version }}/embedded-container-tomcat-extended-accesslog-configuration.md %}
+
+#### Rewrite Valve
+
+{% include {{ version }}/embedded-container-tomcat-rewritevalve-configuration.md %}
+
+#### Basic Authentication
+
+{% include {{ version }}/embedded-container-tomcat-basicauth-configuration.md %}
+
+#### Apache Portable Runtime (APR)
+
+{% include {{ version }}/embedded-container-tomcat-apr-configuration.md %}
+
+#### Connector IO
+
+{% include {{ version }}/embedded-container-tomcat-connectorio-configuration.md %}
+
+#### Session Clustering & Replication
+
+{% include {{ version }}/embedded-container-tomcat-session-clustering-configuration.md %}
+
 ### Jetty
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-webapp-jetty</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-webapp-jetty" %}
+
+### Embedded Jetty Container
+
+{% include {{ version }}/embedded-container-jetty-configuration.md %}
 
 ### Undertow
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-webapp-undertow</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-webapp-undertow" %}
+
+{% include {{ version }}/embedded-container-undertow-configuration.md %}
 
 ## External
 
@@ -146,13 +187,7 @@ A CAS deployment may be deployed to any number of external servlet containers. T
 the servlet specification `v4.0.0` at a minimum. In these scenarios, the following vanilla CAS web application
 may be used, in the [WAR Overlay](WAR-Overlay-Installation.html) :
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-webapp</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-webapp" %}
 
 While there is no official project support, the following containers should be compatible with a CAS deployment:
 
@@ -185,13 +220,7 @@ Note for JBoss, Wildfly and EAP, you may need to add a `jboss-deloyment-structur
 
 Support for external containers is enabled by including the following module in the overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-webapp</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-webapp" %}
 
 ### Async Support
 

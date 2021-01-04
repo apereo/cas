@@ -3,6 +3,7 @@ package org.apereo.cas.web.report;
 import org.apereo.cas.logging.web.LoggingConfigurationEndpoint;
 
 import lombok.val;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -26,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @TestPropertySource(properties = {
     "management.endpoint.logging-config.enabled=true",
-    "logging.config=file:/tmp/log4j2.xml"
+    "logging.config=file:${java.io.tmpdir}/log4j2.xml"
 })
 @Tag("ActuatorEndpoint")
 public class LoggingConfigurationEndpointTests extends AbstractCasEndpointTests {
@@ -37,7 +38,7 @@ public class LoggingConfigurationEndpointTests extends AbstractCasEndpointTests 
     @BeforeAll
     public static void setup() throws Exception {
         val content = IOUtils.toString(new ClassPathResource("log4j2-test.xml").getInputStream(), StandardCharsets.UTF_8);
-        try (val writer = new FileWriter(new File("/tmp/log4j2.xml"), StandardCharsets.UTF_8)) {
+        try (val writer = new FileWriter(new File(FileUtils.getTempDirectory(), "log4j2.xml"), StandardCharsets.UTF_8)) {
             IOUtils.write(content, writer);
             writer.flush();
         }

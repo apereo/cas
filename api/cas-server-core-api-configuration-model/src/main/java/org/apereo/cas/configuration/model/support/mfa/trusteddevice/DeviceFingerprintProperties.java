@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.model.support.cookie.CookieProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -23,6 +24,7 @@ import java.time.Duration;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("DeviceFingerprintProperties")
 public class DeviceFingerprintProperties implements Serializable {
     private static final long serialVersionUID = 747021103142441353L;
 

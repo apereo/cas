@@ -58,7 +58,9 @@ dependencies {
         def dependencies = project.getProperty("casModules").split(",")
         dependencies.each {
             def projectsToAdd = rootProject.subprojects.findAll {project ->
-                project.name == "cas-server-core-${it}" || project.name == "cas-server-support-${it}"
+                def pattern = /cas-server-${it}|cas-server-core-${it}|cas-server-support-${it}/
+                logger.debug("Matching ${pattern} against CAS module ${project.name}")
+                project.name.matches(pattern)
             }
             projectsToAdd.each {
                 println "Adding CAS module ${it.path}"

@@ -4,19 +4,15 @@ title: CAS - RESTful Service Registry
 category: Services
 ---
 
+{% include variables.html %}
+
 # RESTful Service Registry
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-rest-service-registry</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-rest-service-registry" %}
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#restful-service-registry).
+{% include {{ version }}/rest-configuration.md configKey="cas.service-registry" %}
 
 | Operation         | Method          | Body                       | Response
 |-------------------|-----------------|----------------------------------------------------------------------

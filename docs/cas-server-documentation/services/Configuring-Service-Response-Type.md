@@ -4,6 +4,8 @@ title: CAS - Configuring Service Response Type
 category: Services
 ---
 
+{% include variables.html %}
+
 # Configuring Service Response Type
 
 By default, authentication requests are handled with a browser redirect (i.e. `302`) back to the calling application 

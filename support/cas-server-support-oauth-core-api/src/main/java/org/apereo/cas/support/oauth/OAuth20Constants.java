@@ -114,6 +114,26 @@ public interface OAuth20Constants {
     String ERROR = "error";
 
     /**
+     * The error description.
+     */
+    String ERROR_DESCRIPTION = "error_description";
+
+    /**
+     * The error with callback.
+     */
+    String ERROR_WITH_CALLBACK = "error_with_callback";
+
+    /**
+     * Request parameter is not supported.
+     */
+    String REQUEST_NOT_SUPPORTED = "request_not_supported";
+
+    /**
+     * Unsupported response_type error.
+     */
+    String UNSUPPORTED_RESPONSE_TYPE = "unsupported_response_type";
+
+    /**
      * The state.
      */
     String STATE = "state";

@@ -4,6 +4,8 @@ title: CAS - Release Process
 category: Developer
 ---
 
+{% include variables.html %}
+
 # CAS Release Process
 
 This page documents the steps that a release engineer should take for cutting a CAS server release. 

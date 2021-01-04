@@ -4,6 +4,8 @@ title: CAS - Protocol Overview
 category: Protocols
 ---
 
+{% include variables.html %}
+
 # Protocols Overview
 
 The following protocols are supported and provided by CAS:
@@ -14,7 +16,7 @@ The following protocols are supported and provided by CAS:
 *   [OpenID Connect](OIDC-Protocol.html)
 *   [WS Federation](WS-Federation-Protocol.html)
 *   [SAML1](SAML-Protocol.html)
-*   [SAML2](../installation/Configuring-SAML2-Authentication.html)
+*   [SAML2](../authentication/Configuring-SAML2-Authentication.html)
 *   [REST Protocol](REST-Protocol.html)
 
 ## Design

@@ -4,10 +4,11 @@ title: Overview - User Interface Customization - CAS
 category: User Interface
 ---
 
+{% include variables.html %}
+
 # Overview
 
-Branding the CAS User Interface (UI) involves editing the CSS stylesheet and also a small collection of relatively simple HTML include files, also known as views. Optionally, you may also wish to modify the text displayed and/or add additional Javascript effects
-on these views.
+Branding the CAS User Interface (UI) involves editing the CSS stylesheet and also a small collection of relatively simple HTML include files, also known as views. Optionally, you may also wish to modify the text displayed and/or add additional Javascript effects on these views.
 
 # Browser Support
 

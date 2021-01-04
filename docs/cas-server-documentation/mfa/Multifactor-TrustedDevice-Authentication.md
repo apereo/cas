@@ -4,6 +4,8 @@ title: CAS - Trusted Device Multifactor Authentication
 category: Multifactor Authentication
 ---
 
+{% include variables.html %}
+
 # Multifactor Authentication Trusted Device/Browser
 
 In addition to triggers that are provided by the [MFA functionality](Configuring-Multifactor-Authentication.html) of CAS, there may be
@@ -29,13 +31,7 @@ This can be optionally disabled and applied only to a selected set of providers.
 
 Support is provided via the following module:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-trusted-mfa</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-trusted-mfa" %}
 
 ## Administrative Endpoints
 
@@ -47,7 +43,7 @@ The following endpoints are provided by CAS:
 
 ## Settings
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#multifactor-trusted-devicebrowser).
+{% include {{ version }}/mfa-trusted-device-configuration.md %}
 
 ## Authentication Context
 
@@ -69,7 +65,7 @@ Device fingerprint can be calculated using the following ways:
 allowed to [ask and process geodata](../installation/Configuring-Authentication-Events.html) provided by the browser.
 - User-agent header
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#trusted-device-fingerprint).
+{% include {{ version }}/mfa-trusted-devicefingerprint-configuration.md %}
 
 ## Bypass
 
@@ -87,15 +83,18 @@ trusted device workflow for MFA can be bypassed on a per application basis:
     "bypassTrustedDeviceEnabled" : true
   }
 }
-
 ```
+
 ## Storage
 
-User decisions must be remembered and processed later on subsequent requests.  A background *cleaner* process is also automatically scheduled to 
+User decisions must be remembered and processed later on subsequent 
+requests. A background *cleaner* process is also automatically scheduled to 
 scan the chosen repository/database/registry periodically and remove expired records based on configured threshold parameters.
 
 <div class="alert alert-warning"><strong>Cleaner Usage</strong><p>In a clustered CAS deployment, it is best to keep the cleaner running on one designated CAS 
 node only and turn it off on all others via CAS settings. Keeping the cleaner running on all nodes may likely lead to severe performance and locking issues.</p></div>
+
+{% include {{ version }}/job-scheduling-configuration.md configKey="cas.authn.mfa.trusted.cleaner" %}
 
 ### Default
 
@@ -107,7 +106,7 @@ This is most useful if you have a very small deployment with a small user base o
 Records may be kept inside a static json resource whose path is defined via CAS settings.
 This is also most useful if you have a very small deployment with a small user base or if you wish to demo the functionality.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#json-storage).
+{% include {{ version }}/json-mfa-trusted-device-configuration.md %}
 
 ### JDBC
 
@@ -115,16 +114,11 @@ User decisions may also be kept inside a regular RDBMS of your own choosing.
 
 Support is provided via the following module:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-trusted-mfa-jdbc</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-trusted-mfa-jdbc" %}
 
 To learn how to configure database drivers, [please see this guide](../installation/JDBC-Drivers.html).
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#jdbc-storage).
+
+{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.mfa.trusted.jpa" %}
 
 ### CouchDb
 
@@ -132,15 +126,9 @@ User decisions may also be kept inside a CouchDb instance.
 
 Support is provided via the following module:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-trusted-mfa-couchdb</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-trusted-mfa-couchdb" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#couchdb-storage).
+{% include {{ version }}/couchdb-configuration.md configKey="cas.authn.mfa.trusted" %}
 
 ### MongoDb
 
@@ -148,15 +136,9 @@ User decisions may also be kept inside a MongoDb instance.
 
 Support is provided via the following module:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-trusted-mfa-mongo</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-trusted-mfa-mongo" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#mongodb-storage).
+{% include {{ version }}/mongodb-configuration.md configKey="cas.authn.mfa.trusted" %}
 
 ### DynamoDb
 
@@ -164,15 +146,19 @@ User decisions may also be kept inside a DynamoDb instance.
 
 Support is provided via the following module:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-trusted-mfa-dynamodb</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-trusted-mfa-dynamodb" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#dynamodb-storage).
+{% include {{ version }}/dynamodb-mfa-trusted-device-configuration.md %}
+
+### Redis
+
+User decisions may also be kept inside a Redis instance.
+
+Support is provided via the following module:
+
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-trusted-mfa-redis" %}
+
+{% include {{ version }}/redis-configuration.md configKey="cas.authn.mfa.trusted" %}
 
 ### REST
 
@@ -181,15 +167,9 @@ which CAS shall contact to verify user decisions and remember those for later.
 
 Support is provided via the following module:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-trusted-mfa-rest</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-trusted-mfa-rest" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#rest-storage).
+{% include {{ version }}/rest-mfa-trusted-device-configuration.md %}
 
 #### Retrieve Trusted Records
 

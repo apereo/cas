@@ -3,18 +3,14 @@ layout: default
 title: CAS - Configuration Discovery
 category: Configuration
 ---
+       
+{% include variables.html %}
 
 # Configuration Discovery
 
 Certain aspects of the CAS server deployment may be advertised via a discovery endpoint to indicate to client applications and consumers the set of features and capabilities that are turned on. The [discovery profile endpoint](../monitoring/Monitoring-Statistics.html) is enabled by including the following module in the overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-discovery-profile</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-discovery-profile" %}
 
 The metadata reported in the discovery profile generally includes two categories of items:
 

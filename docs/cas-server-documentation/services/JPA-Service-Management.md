@@ -4,21 +4,19 @@ title: CAS - JPA Service Registry
 category: Services
 ---
 
+{% include variables.html %}
+
 # JPA Service Registry
+
 Stores registered service data in a database.
 
 Support is enabled by adding the following module into the overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-jpa-service-registry</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-jpa-service-registry" %}
 
 To learn how to configure database drivers, [please see this guide](../installation/JDBC-Drivers.html).
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#database-service-registry).
+
+{% include {{ version }}/rdbms-configuration.md configKey="cas.service-registry.jpa" %}
 
 ## Auto Initialization
 
