@@ -119,7 +119,7 @@ public class CasCoreServicesConfiguration {
         return new WebApplicationServiceResponseBuilder(servicesManager());
     }
 
-    @ConditionalOnMissingBean(name = "registeredServiceCipherExecutor")
+    @ConditionalOnMissingBean(name = RegisteredServiceCipherExecutor.DEFAULT_BEAN_NAME)
     @Bean
     @RefreshScope
     public RegisteredServiceCipherExecutor registeredServiceCipherExecutor() {

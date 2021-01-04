@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.core.web;
 
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -22,6 +23,7 @@ import java.util.stream.Stream;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("MessageBundleProperties")
 public class MessageBundleProperties implements Serializable {
 
     /**

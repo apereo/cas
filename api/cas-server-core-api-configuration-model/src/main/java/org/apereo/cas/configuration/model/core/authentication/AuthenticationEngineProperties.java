@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
-import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -27,17 +26,11 @@ public class AuthenticationEngineProperties implements Serializable {
     /**
      * Groovy script to handle the authentication pre-processor.
      */
-    private Groovy groovyPreProcessor = new Groovy();
+    private GroovyAuthenticationEngineProcessorProperties groovyPreProcessor = new GroovyAuthenticationEngineProcessorProperties();
 
     /**
      * Groovy script to handle the authentication post-processor.
      */
-    private Groovy groovyPostProcessor = new Groovy();
+    private GroovyAuthenticationEngineProcessorProperties groovyPostProcessor = new GroovyAuthenticationEngineProcessorProperties();
 
-    @RequiresModule(name = "cas-server-core-authentication", automated = true)
-    @Getter
-    @Setter
-    public static class Groovy extends SpringResourceProperties {
-        private static final long serialVersionUID = 8079027843747126083L;
-    }
 }

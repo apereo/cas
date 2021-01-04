@@ -31,9 +31,9 @@ public class DefaultRegisteredServiceUsernameProviderTests {
         val applicationContext = new StaticApplicationContext();
         val beanFactory = applicationContext.getBeanFactory();
         val cipher = RegisteredServiceCipherExecutor.noOp();
-        beanFactory.initializeBean(cipher, "registeredServiceCipherExecutor");
+        beanFactory.initializeBean(cipher, RegisteredServiceCipherExecutor.DEFAULT_BEAN_NAME);
         beanFactory.autowireBean(cipher);
-        beanFactory.registerSingleton("registeredServiceCipherExecutor", cipher);
+        beanFactory.registerSingleton(RegisteredServiceCipherExecutor.DEFAULT_BEAN_NAME, cipher);
         applicationContext.refresh();
         ApplicationContextProvider.holdApplicationContext(applicationContext);
         

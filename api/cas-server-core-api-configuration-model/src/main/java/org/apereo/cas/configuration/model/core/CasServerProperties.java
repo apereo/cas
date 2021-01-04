@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomca
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,7 +25,8 @@ import java.net.URL;
 @RequiresModule(name = "cas-server-core", automated = true)
 @Getter
 @Setter
-@Accessors(chain = true)                                            
+@Accessors(chain = true) 
+@JsonFilter("CasServerProperties")
 public class CasServerProperties implements Serializable {
 
     private static final long serialVersionUID = 7876382696803430817L;

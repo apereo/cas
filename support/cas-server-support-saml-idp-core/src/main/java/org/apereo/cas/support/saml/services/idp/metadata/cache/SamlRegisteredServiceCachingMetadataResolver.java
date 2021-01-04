@@ -16,6 +16,11 @@ import org.opensaml.saml.metadata.resolver.MetadataResolver;
 public interface SamlRegisteredServiceCachingMetadataResolver {
 
     /**
+     * Bean name of the default implementation class.
+     */
+    String DEFAULT_BEAN_NAME = "defaultSamlRegisteredServiceCachingMetadataResolver";
+
+    /**
      * Resolve chaining metadata resolver.
      *
      * @param service     the service

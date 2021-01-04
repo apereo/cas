@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 
@@ -48,86 +49,29 @@ public class TicketGrantingTicketProperties implements Serializable {
     /**
      * Hard timeout for TGTs.
      */
-    private HardTimeout hardTimeout = new HardTimeout();
+    @NestedConfigurationProperty
+    private HardTimeoutTicketExpirationPolicyProperties hardTimeout =
+        new HardTimeoutTicketExpirationPolicyProperties();
 
     /**
      * Throttled timeout for TGTs.
      */
-    private ThrottledTimeout throttledTimeout = new ThrottledTimeout();
+    @NestedConfigurationProperty
+    private ThrottledTimeoutTicketExpirationPolicyProperties throttledTimeout =
+        new ThrottledTimeoutTicketExpirationPolicyProperties();
 
     /**
      * Timeout for TGTs.
      */
-    private Timeout timeout = new Timeout();
+    @NestedConfigurationProperty
+    private TimeoutTicketExpirationPolicyProperties timeout =
+        new TimeoutTicketExpirationPolicyProperties();
 
     /**
      * Remember me for TGTs.
      */
-    private RememberMe rememberMe = new RememberMe();
+    @NestedConfigurationProperty
+    private RememberMeAuthenticationProperties rememberMe =
+        new RememberMeAuthenticationProperties();
 
-    @Getter
-    @RequiresModule(name = "cas-server-core-tickets", automated = true)
-    @Setter
-    @Accessors(chain = true)
-    public static class HardTimeout implements Serializable {
-
-        private static final long serialVersionUID = 4160963910346416908L;
-
-        /**
-         * Timeout in seconds to kill the session and consider tickets expired.
-         */
-        private long timeToKillInSeconds;
-    }
-
-    @RequiresModule(name = "cas-server-core-tickets", automated = true)
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class Timeout implements Serializable {
-
-        private static final long serialVersionUID = 8635419913795245907L;
-
-        /**
-         * Maximum time in seconds. for TGTs to be live in CAS server.
-         */
-        private int maxTimeToLiveInSeconds;
-    }
-
-    @Getter
-    @Setter
-    @RequiresModule(name = "cas-server-core-tickets", automated = true)
-    @Accessors(chain = true)
-    public static class ThrottledTimeout implements Serializable {
-
-        private static final long serialVersionUID = -2370751379747804646L;
-
-        /**
-         * Timeout in seconds to kill the session and consider tickets expired.
-         */
-        private long timeToKillInSeconds;
-
-        /**
-         * Timeout in between each attempt.
-         */
-        private long timeInBetweenUsesInSeconds;
-    }
-
-    @Accessors(chain = true)
-    @RequiresModule(name = "cas-server-core-tickets", automated = true)
-    @Getter
-    @Setter
-    public static class RememberMe implements Serializable {
-
-        private static final long serialVersionUID = 1899959269597512610L;
-
-        /**
-         * Flag to indicate whether remember-me facility is enabled.
-         */
-        private boolean enabled;
-
-        /**
-         * Time in seconds after which remember-me enabled SSO session will be destroyed.
-         */
-        private long timeToKillInSeconds = 1_209_600;
-    }
 }

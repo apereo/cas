@@ -229,7 +229,8 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         val serviceUrl = constructServiceUrl(request, response, pair);
         LOGGER.debug("Created service url [{}]", DigestUtils.abbreviate(serviceUrl));
 
-        val initialUrl = CommonUtils.constructRedirectUrl(samlProfileHandlerConfigurationContext.getCasProperties().getServer().getLoginUrl(),
+        val properties = samlProfileHandlerConfigurationContext.getCasProperties();
+        val initialUrl = CommonUtils.constructRedirectUrl(properties.getServer().getLoginUrl(),
             CasProtocolConstants.PARAMETER_SERVICE, serviceUrl, authnRequest.isForceAuthn(),
             authnRequest.isPassive());
 

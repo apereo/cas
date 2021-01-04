@@ -68,7 +68,7 @@ public class SamlIdPWebflowConfiguration {
     private ObjectProvider<SessionStore<JEEContext>> samlIdPDistributedSessionStore;
 
     @Autowired
-    @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
+    @Qualifier(SamlRegisteredServiceCachingMetadataResolver.DEFAULT_BEAN_NAME)
     private ObjectProvider<SamlRegisteredServiceCachingMetadataResolver> defaultSamlRegisteredServiceCachingMetadataResolver;
 
     @Autowired

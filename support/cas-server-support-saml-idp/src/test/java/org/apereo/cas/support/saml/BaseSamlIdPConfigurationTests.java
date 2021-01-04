@@ -137,7 +137,7 @@ public abstract class BaseSamlIdPConfigurationTests {
     protected SamlIdPObjectEncrypter samlIdPObjectEncrypter;
 
     @Autowired
-    @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
+    @Qualifier(SamlRegisteredServiceCachingMetadataResolver.DEFAULT_BEAN_NAME)
     protected SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver;
 
     @Autowired
@@ -172,7 +172,7 @@ public abstract class BaseSamlIdPConfigurationTests {
     protected CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
+    @Qualifier(SamlRegisteredServiceCachingMetadataResolver.DEFAULT_BEAN_NAME)
     protected SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver;
 
     @Autowired

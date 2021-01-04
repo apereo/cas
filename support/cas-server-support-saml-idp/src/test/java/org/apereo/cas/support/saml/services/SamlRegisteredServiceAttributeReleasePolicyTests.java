@@ -87,7 +87,7 @@ public class SamlRegisteredServiceAttributeReleasePolicyTests {
         val beanFactory = mock(AutowireCapableBeanFactory.class);
         when(beanFactory.getBean(CasConfigurationProperties.class)).thenReturn(new CasConfigurationProperties());
         when(ctx.getAutowireCapableBeanFactory()).thenReturn(beanFactory);
-        when(ctx.getBean("defaultSamlRegisteredServiceCachingMetadataResolver",
+        when(ctx.getBean(SamlRegisteredServiceCachingMetadataResolver.DEFAULT_BEAN_NAME,
             SamlRegisteredServiceCachingMetadataResolver.class)).thenReturn(resolver);
 
         ApplicationContextProvider.holdApplicationContext(ctx);

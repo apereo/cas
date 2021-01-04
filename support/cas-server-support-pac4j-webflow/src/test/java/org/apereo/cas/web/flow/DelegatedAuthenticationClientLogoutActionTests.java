@@ -43,7 +43,7 @@ public class DelegatedAuthenticationClientLogoutActionTests {
     private Action delegatedAuthenticationClientLogoutAction;
 
     @Autowired
-    @Qualifier("logoutManager")
+    @Qualifier(LogoutManager.DEFAULT_BEAN_NAME)
     private LogoutManager logoutManager;
 
     @Test

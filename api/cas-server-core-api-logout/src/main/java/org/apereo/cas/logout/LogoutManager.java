@@ -14,6 +14,11 @@ import java.util.List;
 public interface LogoutManager {
 
     /**
+     * Default bean name.
+     */
+    String DEFAULT_BEAN_NAME = "logoutManager";
+
+    /**
      * Perform a back channel logout for a given ticket granting
      * ticket and returns all the logout requests.
      *

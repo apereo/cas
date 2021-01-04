@@ -57,7 +57,6 @@ public class PrincipalTransformationProperties implements Serializable {
     private CaseConversion caseConversion = CaseConversion.NONE;
 
     public enum CaseConversion {
-
         /**
          * No conversion.
          */
