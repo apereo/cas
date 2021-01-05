@@ -76,7 +76,7 @@ public abstract class AbstractOpenSamlTests {
     protected ConfigurableApplicationContext applicationContext;
 
     @Autowired
-    @Qualifier("shibboleth.OpenSAMLConfig")
+    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
     protected OpenSamlConfigBean configBean;
 
     @Autowired

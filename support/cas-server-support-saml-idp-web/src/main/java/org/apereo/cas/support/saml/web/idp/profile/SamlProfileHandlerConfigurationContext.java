@@ -23,7 +23,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
+import org.jasig.cas.client.validation.TicketValidator;
 import org.opensaml.saml.common.SAMLObject;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
@@ -62,13 +62,15 @@ public class SamlProfileHandlerConfigurationContext {
 
     private final Service callbackService;
 
+    private final CasCookieBuilder samlDistributedSessionCookieGenerator;
+
     private final SSOSamlHttpRequestExtractor samlHttpRequestExtractor;
 
     private final HttpServletRequestXMLMessageDecodersMap samlMessageDecoders;
 
     private final SamlProfileObjectBuilder<? extends SAMLObject> samlFaultResponseBuilder;
 
-    private final AbstractUrlBasedTicketValidator ticketValidator;
+    private final TicketValidator ticketValidator;
 
     private final TicketRegistry ticketRegistry;
 

@@ -96,9 +96,11 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
         val encodeResponse = (Boolean) map.getOrDefault(SamlProtocolConstants.PARAMETER_ENCODE_RESPONSE, Boolean.TRUE);
 
         if (encodeResponse) {
-            val context = new JEEContext(request, response);
-            val relayState = samlResponseBuilderConfigurationContext.getSessionStore()
-                .get(context, SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE).orElse(StringUtils.EMPTY).toString();
+            val sessionStore = samlResponseBuilderConfigurationContext.getSessionStore();
+            val context = new JEEContext(request, response, sessionStore);
+            val relayState = sessionStore.get(context, SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE)
+                .orElse(StringUtils.EMPTY)
+                .toString();
             LOGGER.trace("RelayState is [{}]", relayState);
             return encode(service, finalResponse, response, request, adaptor, relayState, binding, authnRequest, assertion);
         }

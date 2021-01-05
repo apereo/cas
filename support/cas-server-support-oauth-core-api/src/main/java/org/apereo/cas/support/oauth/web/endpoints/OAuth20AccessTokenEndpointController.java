@@ -168,7 +168,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
      */
     private boolean verifyAccessTokenRequest(final HttpServletRequest request, final HttpServletResponse response) {
         val validators = getOAuthConfigurationContext().getAccessTokenGrantRequestValidators();
-        val context = new JEEContext(request, response);
+        val context = new JEEContext(request, response, getOAuthConfigurationContext().getSessionStore());
         return validators.stream()
             .filter(ext -> ext.supports(context))
             .findFirst()

@@ -122,7 +122,7 @@ public class SamlIdPConfiguration {
     private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
-    @Qualifier("shibboleth.OpenSAMLConfig")
+    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
     private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
 
     @Autowired

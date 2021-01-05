@@ -23,7 +23,6 @@ import org.apereo.cas.support.oauth.authenticator.OAuth20ProofKeyCodeExchangeAut
 import org.apereo.cas.support.oauth.authenticator.OAuth20RefreshTokenAuthenticator;
 import org.apereo.cas.support.oauth.authenticator.OAuth20UsernamePasswordAuthenticator;
 import org.apereo.cas.support.oauth.authenticator.OAuthAuthenticationClientProvider;
-import org.apereo.cas.support.oauth.profile.CasServerApiBasedTicketValidator;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfileDataCreator;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
@@ -100,6 +99,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
+import org.apereo.cas.util.InternalTicketValidator;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -257,7 +257,7 @@ public class CasOAuth20Configuration {
         val server = casProperties.getServer();
 
         val cfg = new CasConfiguration(server.getLoginUrl());
-        val validator = new CasServerApiBasedTicketValidator(centralAuthenticationService.getObject(), webApplicationServiceFactory.getObject());
+        val validator = new InternalTicketValidator(centralAuthenticationService.getObject(), webApplicationServiceFactory.getObject());
         cfg.setDefaultTicketValidator(validator);
 
         val oauthCasClient = new CasClient(cfg);

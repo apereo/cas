@@ -28,7 +28,7 @@ import org.springframework.util.ReflectionUtils;
 public class CoreWsSecuritySecurityTokenServiceSamlConfiguration implements InitializingBean {
 
     @Autowired
-    @Qualifier("shibboleth.OpenSAMLConfig")
+    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
     private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
 
     @Override

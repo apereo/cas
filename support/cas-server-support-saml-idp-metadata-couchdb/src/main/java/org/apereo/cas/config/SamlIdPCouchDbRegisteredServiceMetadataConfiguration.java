@@ -32,7 +32,7 @@ public class SamlIdPCouchDbRegisteredServiceMetadataConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("shibboleth.OpenSAMLConfig")
+    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
     private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
 
     @Autowired

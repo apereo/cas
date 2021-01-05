@@ -87,7 +87,7 @@ public class SamlConfiguration {
     private ObjectProvider<ProxyHandler> proxy20Handler;
 
     @Autowired
-    @Qualifier("shibboleth.OpenSAMLConfig")
+    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
     private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
 
     @Autowired

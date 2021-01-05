@@ -24,6 +24,11 @@ import org.opensaml.xmlsec.config.DecryptionParserPool;
 @Getter
 public class OpenSamlConfigBean {
 
+    /**
+     * Default bean name.
+     */
+    public static final String DEFAULT_BEAN_NAME = "shibboleth.OpenSAMLConfig";
+    
     private final ParserPool parserPool;
 
     private final XMLObjectBuilderFactory builderFactory;

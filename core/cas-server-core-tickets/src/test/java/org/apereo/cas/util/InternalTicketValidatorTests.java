@@ -1,6 +1,5 @@
-package org.apereo.cas.support.oauth.profile;
+package org.apereo.cas.util;
 
-import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
@@ -15,13 +14,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * This is {@link CasServerApiBasedTicketValidatorTests}.
+ * This is {@link InternalTicketValidatorTests}.
  *
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("OAuth")
-public class CasServerApiBasedTicketValidatorTests extends AbstractOAuth20Tests {
+@Tag("Tickets")
+public class InternalTicketValidatorTests {
 
     @Test
     public void verifyOperation() {
@@ -29,7 +28,7 @@ public class CasServerApiBasedTicketValidatorTests extends AbstractOAuth20Tests 
         val assertion = mock(Assertion.class);
         when(assertion.getPrimaryAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication());
         when(cas.validateServiceTicket(anyString(), any(Service.class))).thenReturn(assertion);
-        val validator = new CasServerApiBasedTicketValidator(cas, new WebApplicationServiceFactory());
+        val validator = new InternalTicketValidator(cas, new WebApplicationServiceFactory());
         assertNotNull(validator.validate("ST-12345", RegisteredServiceTestUtils.CONST_TEST_URL2));
 
     }

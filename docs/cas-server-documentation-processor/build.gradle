@@ -13,6 +13,10 @@ test {
     enabled(false)
 }
 
+if (tasks.findByName("install") != null) {
+    tasks.getByName("install").enabled(false)
+}
+
 dependencies {
     api project(":api:cas-server-core-api-configuration-model")
 

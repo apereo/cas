@@ -60,7 +60,7 @@ public class CoreSamlConfiguration {
         return new VelocityEngine(properties);
     }
 
-    @Bean(name = "shibboleth.OpenSAMLConfig")
+    @Bean(name = OpenSamlConfigBean.DEFAULT_BEAN_NAME)
     public OpenSamlConfigBean openSamlConfigBean() {
         return new OpenSamlConfigBean(parserPool());
     }
@@ -93,19 +93,19 @@ public class CoreSamlConfiguration {
     }
     
     @Bean(name = "shibboleth.BuilderFactory")
-    @DependsOn("shibboleth.OpenSAMLConfig")
+    @DependsOn(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
     public XMLObjectBuilderFactory builderFactory() {
         return XMLObjectProviderRegistrySupport.getBuilderFactory();
     }
 
     @Bean(name = "shibboleth.MarshallerFactory")
-    @DependsOn("shibboleth.OpenSAMLConfig")
+    @DependsOn(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
     public MarshallerFactory marshallerFactory() {
         return XMLObjectProviderRegistrySupport.getMarshallerFactory();
     }
 
     @Bean(name = "shibboleth.UnmarshallerFactory")
-    @DependsOn("shibboleth.OpenSAMLConfig")
+    @DependsOn(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
     public UnmarshallerFactory unmarshallerFactory() {
         return XMLObjectProviderRegistrySupport.getUnmarshallerFactory();
     }

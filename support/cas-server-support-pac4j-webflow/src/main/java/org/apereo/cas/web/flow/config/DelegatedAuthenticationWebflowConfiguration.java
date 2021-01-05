@@ -100,7 +100,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
     private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
 
     @Autowired
-    @Qualifier("shibboleth.OpenSAMLConfig")
+    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
     private ObjectProvider<OpenSamlConfigBean> configBean;
 
     @Autowired
