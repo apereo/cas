@@ -32,7 +32,6 @@ import org.jasig.cas.client.authentication.DefaultAuthenticationRedirectStrategy
 import org.jasig.cas.client.util.CommonUtils;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.AssertionImpl;
-import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLException;
 import org.opensaml.saml.common.SignableSAMLObject;
@@ -48,7 +47,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -137,28 +135,6 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         return registeredService;
     }
 
-    /**
-     * Retrieve authn request authn request.
-     *
-     * @param request  the request
-     * @param response the response
-     * @return the authn request
-     * @throws Exception the exception
-     */
-    protected AuthnRequest retrieveSamlAuthenticationRequestFromHttpRequest(final HttpServletRequest request,
-                                                                            final HttpServletResponse response) throws Exception {
-        LOGGER.debug("Retrieving authentication request from scope");
-        val context = new JEEContext(request, response);
-        val requestValue = samlProfileHandlerConfigurationContext.getSessionStore()
-            .get(context, SamlProtocolConstants.PARAMETER_SAML_REQUEST).orElse(StringUtils.EMPTY).toString();
-        if (StringUtils.isBlank(requestValue)) {
-            throw new IllegalArgumentException("SAML request could not be determined from the authentication request");
-        }
-        val encodedRequest = EncodingUtils.decodeBase64(requestValue.getBytes(StandardCharsets.UTF_8));
-        return (AuthnRequest) XMLObjectSupport.unmarshallFromInputStream(
-            samlProfileHandlerConfigurationContext.getOpenSamlConfigBean().getParserPool(),
-            new ByteArrayInputStream(encodedRequest));
-    }
 
     /**
      * Build  cas assertion.
@@ -310,11 +286,10 @@ public abstract class AbstractSamlIdPProfileHandlerController {
                     SamlIdPUtils.getIssuerFromSamlObject(authnRequest)));
 
             val samlRequest = EncodingUtils.encodeBase64(writer.toString().getBytes(StandardCharsets.UTF_8));
-            val context = new JEEContext(request, response);
-            samlProfileHandlerConfigurationContext.getSessionStore()
-                .set(context, SamlProtocolConstants.PARAMETER_SAML_REQUEST, samlRequest);
-            samlProfileHandlerConfigurationContext.getSessionStore()
-                .set(context, SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, SAMLBindingSupport.getRelayState(messageContext));
+            val sessionStore = samlProfileHandlerConfigurationContext.getSessionStore();
+            val context = new JEEContext(request, response, sessionStore);
+            sessionStore.set(context, SamlProtocolConstants.PARAMETER_SAML_REQUEST, samlRequest);
+            sessionStore.set(context, SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, SAMLBindingSupport.getRelayState(messageContext));
             val url = builder.buildURL();
 
             LOGGER.trace("Built service callback url [{}]", url);
@@ -336,7 +311,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
     protected void initiateAuthenticationRequest(final Pair<? extends SignableSAMLObject, MessageContext> pair,
                                                  final HttpServletResponse response,
                                                  final HttpServletRequest request) throws Exception {
-
+        autoConfigureCookiePath(request);
         verifySamlAuthenticationRequest(pair, request);
         issueAuthenticationRequestRedirect(pair, request, response);
     }
@@ -488,6 +463,31 @@ public abstract class AbstractSamlIdPProfileHandlerController {
             LoggingUtils.error(LOGGER, e);
         }
         return null;
+    }
+
+    /**
+     * Auto configure cookie path.
+     *
+     * @param request the request
+     */
+    protected void autoConfigureCookiePath(final HttpServletRequest request) {
+        val casProperties = samlProfileHandlerConfigurationContext.getCasProperties();
+        if (casProperties.getAuthn().getSamlIdp().isReplicateSessions()
+            && casProperties.getSessionReplication().getCookie().isAutoConfigureCookiePath()) {
+
+            val contextPath = request.getContextPath();
+            val cookiePath = StringUtils.isNotBlank(contextPath) ? contextPath + '/' : "/";
+
+            val cookieBuilder = samlProfileHandlerConfigurationContext.getSamlDistributedSessionCookieGenerator();
+            val path = cookieBuilder.getCookiePath();
+            if (StringUtils.isBlank(path)) {
+                LOGGER.debug("Setting path for cookies for SAML2 distributed session cookie generator to: [{}]", cookiePath);
+                cookieBuilder.setCookiePath(cookiePath);
+            } else {
+                LOGGER.trace("SAML2 authentication cookie domain is [{}] with path [{}]",
+                    cookieBuilder.getCookieDomain(), path);
+            }
+        }
     }
 }
 
