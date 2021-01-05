@@ -67,14 +67,13 @@ public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasActuatorEndpoin
 
     private final AbstractSaml20ObjectBuilder saml20ObjectBuilder;
 
-
     public SSOSamlIdPPostProfileHandlerEndpoint(final CasConfigurationProperties casProperties,
                                                 final ServicesManager servicesManager,
                                                 final AuthenticationSystemSupport authenticationSystemSupport,
                                                 final ServiceFactory<WebApplicationService> serviceFactory,
                                                 final PrincipalFactory principalFactory,
                                                 final SamlProfileObjectBuilder<? extends SAMLObject> responseBuilder,
-                                                final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
+                                                final SamlRegisteredServiceCachingMetadataResolver cachingMetadataResolver,
                                                 final AbstractSaml20ObjectBuilder saml20ObjectBuilder) {
         super(casProperties);
         this.servicesManager = servicesManager;
@@ -82,7 +81,7 @@ public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasActuatorEndpoin
         this.serviceFactory = serviceFactory;
         this.principalFactory = principalFactory;
         this.responseBuilder = responseBuilder;
-        this.defaultSamlRegisteredServiceCachingMetadataResolver = defaultSamlRegisteredServiceCachingMetadataResolver;
+        this.defaultSamlRegisteredServiceCachingMetadataResolver = cachingMetadataResolver;
         this.saml20ObjectBuilder = saml20ObjectBuilder;
     }
 

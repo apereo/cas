@@ -289,9 +289,29 @@ This attribute release policy authorizes the release of defined attributes, prov
 
 The specification of `entityAttributeFormat` is optional.
 
-## Requested Attributes Filter
+## Metadata Requested Attributes Filter
 
 This attribute release policy authorizes the release of defined attributes, based on the accompanying metadata for the service provider having requested attributes as part of its `AttributeConsumingService` element.
+
+```json
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "entity-ids-allowed-via-regex",
+  "name": "SAML",
+  "id": 10,
+  "metadataLocation": "path/to/metadata.xml",
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.support.saml.services.MetadataRequestedAttributesAttributeReleasePolicy",
+    "useFriendlyName" : false
+  }
+}
+```
+
+The `useFriendlyName` allows the filter to compare the requested attribute's friendly name with the resolved attribute.
+
+## Authentication Request Requested Attributes Filter
+
+This attribute release policy authorizes the release of a subset of attributes requested as extensions of the SAML2 authentication request. The intersection of requested attributes and those allowed by the attribute release policy explicitly is evaluated for the final attribute release phase:
 
 ```json
 {

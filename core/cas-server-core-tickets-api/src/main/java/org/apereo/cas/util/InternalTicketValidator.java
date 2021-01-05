@@ -1,4 +1,4 @@
-package org.apereo.cas.support.oauth.profile;
+package org.apereo.cas.util;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -20,7 +20,7 @@ import java.util.Map;
  * @since 6.1.0
  */
 @RequiredArgsConstructor
-public class CasServerApiBasedTicketValidator implements TicketValidator {
+public class InternalTicketValidator implements TicketValidator {
     private final CentralAuthenticationService centralAuthenticationService;
 
     private final ServiceFactory<WebApplicationService> webApplicationServiceFactory;

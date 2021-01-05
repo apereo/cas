@@ -121,7 +121,7 @@ public abstract class BaseSamlIdPConfigurationTests {
     protected MetadataResolver casSamlIdPMetadataResolver;
 
     @Autowired
-    @Qualifier("shibboleth.OpenSAMLConfig")
+    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
     protected OpenSamlConfigBean openSamlConfigBean;
 
     @Autowired
