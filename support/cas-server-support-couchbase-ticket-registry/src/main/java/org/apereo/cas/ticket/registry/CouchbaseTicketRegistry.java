@@ -44,6 +44,21 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
 
     private final CouchbaseClientFactory couchbase;
 
+    /**
+     * Get the expiration policy value of the ticket in seconds.
+     *
+     * @param ticket the ticket
+     * @return the exp value
+     */
+    private static Duration getTimeToLive(final Ticket ticket) {
+        val ttl = ticket.getExpirationPolicy().getTimeToLive();
+        if (ttl >= Integer.MAX_VALUE) {
+            return Duration.ofSeconds(0);
+        }
+        val expTime = ttl.intValue();
+        return Duration.ofSeconds(expTime);
+    }
+
     @Override
     public void addTicket(final Ticket ticketToAdd) {
         LOGGER.debug("Adding ticket [{}]", ticketToAdd);
@@ -155,17 +170,6 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
         val query = getQueryForAllTickets();
         return couchbase.select(query,
             QueryOptions.queryOptions().serializer(JacksonJsonSerializer.create(MAPPER)), false);
-    }
-
-    /**
-     * Get the expiration policy value of the ticket in seconds.
-     *
-     * @param ticket the ticket
-     * @return the exp value
-     */
-    private static Duration getTimeToLive(final Ticket ticket) {
-        val expTime = ticket.getExpirationPolicy().getTimeToLive().intValue();
-        return Duration.ofSeconds(expTime);
     }
 }
 
