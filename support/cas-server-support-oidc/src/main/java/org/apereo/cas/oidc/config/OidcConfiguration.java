@@ -99,6 +99,7 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20Acc
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationCodeAuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ClientCredentialsResponseBuilder;
+import org.apereo.cas.support.oauth.web.response.callback.OAuth20InvalidAuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResourceOwnerCredentialsResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20TokenAuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
@@ -367,6 +368,10 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Autowired
     @Qualifier("oauthDistributedSessionCookieGenerator")
     private ObjectProvider<CasCookieBuilder> oauthDistributedSessionCookieGenerator;
+
+    @Autowired
+    @Qualifier("oauthInvalidAuthorizationBuilder")
+    private ObjectProvider<OAuth20InvalidAuthorizationResponseBuilder> oauthInvalidAuthorizationBuilder;
 
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
@@ -1006,6 +1011,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
             .consentApprovalViewResolver(consentApprovalViewResolver())
             .authenticationBuilder(authenticationBuilder.getObject())
             .oauthAuthorizationResponseBuilders(oidcAuthorizationResponseBuilders())
+            .oauthInvalidAuthorizationResponseBuilder(oauthInvalidAuthorizationBuilder.getObject())
             .oauthRequestValidators(oauthRequestValidators.getObject())
             .singleLogoutServiceLogoutUrlBuilder(singleLogoutServiceLogoutUrlBuilder.getObject())
             .idTokenSigningAndEncryptionService(oidcTokenSigningAndEncryptionService())

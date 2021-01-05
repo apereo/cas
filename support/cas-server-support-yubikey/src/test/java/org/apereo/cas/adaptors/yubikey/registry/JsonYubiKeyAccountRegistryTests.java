@@ -26,7 +26,7 @@ import org.springframework.boot.test.context.SpringBootTest;
     properties = {
         "cas.authn.mfa.yubikey.client-id=18423",
         "cas.authn.mfa.yubikey.secret-key=zAIqhjui12mK8x82oe9qzBEb0As=",
-        "cas.authn.mfa.yubikey.json-file=file:/tmp/yubikey.json"
+        "cas.authn.mfa.yubikey.json-file=file:${java.io.tmpdir}/yubikey.json"
     })
 public class JsonYubiKeyAccountRegistryTests extends AbstractYubiKeyAccountRegistryTests {
     @Autowired

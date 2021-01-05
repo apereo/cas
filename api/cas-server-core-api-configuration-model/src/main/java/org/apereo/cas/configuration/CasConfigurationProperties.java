@@ -23,6 +23,7 @@ import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
 import org.apereo.cas.configuration.model.core.web.flow.WebflowProperties;
 import org.apereo.cas.configuration.model.core.web.security.HttpRequestProperties;
 import org.apereo.cas.configuration.model.core.web.view.ViewProperties;
+import org.apereo.cas.configuration.model.support.acme.AcmeProperties;
 import org.apereo.cas.configuration.model.support.analytics.GoogleAnalyticsProperties;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
@@ -98,6 +99,12 @@ public class CasConfigurationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private ConsentProperties consent = new ConsentProperties();
+
+    /**
+     * ACME functionality.
+     */
+    @NestedConfigurationProperty
+    private AcmeProperties acme = new AcmeProperties();
 
     /**
      * SCIM functionality.

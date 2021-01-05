@@ -15,13 +15,12 @@
 
         <div class="d-flex justify-content-center flex-md-row flex-column mdc-card mdc-card-content w-lg-25">
             <section id="loginForm"
-                class="login-section login-form"
-                th:if="${@casThymeleafLoginFormDirector.isLoginFormViewable(#vars)}">
+                class="login-section login-form">
                 <div th:replace="fragments/loginform :: loginform">
                     <a href="fragments/loginform.html">Login Form goes here</a>
                 </div>
             </section>
-            <section id="providers" class="login-section login-providers"
+            <section id="loginProviders" class="login-section login-providers"
                      th:if="${delegatedAuthenticationProviderConfigurations} OR ${wsfedUrls}">
                 <div th:replace="fragments/loginProviders :: loginProviders">
                     <a href="fragments/loginProviders.html">loginProviders</a>

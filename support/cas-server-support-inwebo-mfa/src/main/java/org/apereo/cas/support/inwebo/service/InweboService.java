@@ -149,7 +149,7 @@ public class InweboService {
         if ("OK".equals(err)) {
             response.setResult(InweboResult.OK);
         } else {
-            LOGGER.debug("Inwebo call: {} returned error: {}", operation, err);
+            LOGGER.debug("Inwebo call: [{}] returned error: [{}]", operation, err);
             if ("NOK:NOPUSH".equals(err)) {
                 response.setResult(InweboResult.NOPUSH);
             } else if ("NOK:NOMA".equals(err)) {

@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.file.PathUtils;
+import org.apache.commons.io.file.StandardDeleteOption;
 import org.eclipse.jgit.api.Git;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -32,7 +34,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = {
     "cas.authn.saml-idp.metadata.git.sign-commits=false",
     "cas.authn.saml-idp.metadata.git.push-changes=true",
-    "cas.authn.saml-idp.metadata.git.repository-url=file:/tmp/cas-metadata-data.git"
+    "cas.authn.saml-idp.metadata.git.idp-metadata-enabled=true",
+    "cas.authn.saml-idp.metadata.git.repository-url=file:${java.io.tmpdir}/cas-metadata-data.git"
 })
 @Slf4j
 @Tag("FileSystem")
@@ -40,10 +43,10 @@ public class GitSamlRegisteredServiceMetadataResolverTests extends BaseGitSamlMe
     @BeforeAll
     public static void setup() {
         try {
-            FileUtils.deleteDirectory(new File("/tmp/cas-metadata-data"));
             val gitDir = new File(FileUtils.getTempDirectory(), "cas-saml-metadata");
             if (gitDir.exists()) {
-                FileUtils.deleteDirectory(gitDir);
+                PathUtils.deleteDirectory(gitDir.toPath(),
+                        StandardDeleteOption.OVERRIDE_READ_ONLY);
             }
             if (!gitDir.mkdir()) {
                 throw new IllegalArgumentException("Git repository directory location " + gitDir + " cannot be located/created");
@@ -59,10 +62,15 @@ public class GitSamlRegisteredServiceMetadataResolverTests extends BaseGitSamlMe
 
     @AfterAll
     public static void cleanUp() throws Exception {
-        FileUtils.deleteDirectory(new File("/tmp/cas-metadata-data"));
+        val gitRepoDir = new File(FileUtils.getTempDirectory(), "cas-metadata-data");
+        if (gitRepoDir.exists()) {
+            PathUtils.deleteDirectory(gitRepoDir.toPath(),
+                    StandardDeleteOption.OVERRIDE_READ_ONLY);
+        }
         val gitDir = new File(FileUtils.getTempDirectory(), "cas-saml-metadata");
         if (gitDir.exists()) {
-            FileUtils.deleteDirectory(gitDir);
+            PathUtils.deleteDirectory(gitDir.toPath(),
+                    StandardDeleteOption.OVERRIDE_READ_ONLY);
         }
     }
 
@@ -84,5 +92,7 @@ public class GitSamlRegisteredServiceMetadataResolverTests extends BaseGitSamlMe
         assertFalse(resolver.supports(null));
         val resolvers = resolver.resolve(service);
         assertFalse(resolvers.isEmpty());
+        service.setMetadataLocation("https://example.com/endswith.git");
+        assertTrue(resolver.supports(service));
     }
 }

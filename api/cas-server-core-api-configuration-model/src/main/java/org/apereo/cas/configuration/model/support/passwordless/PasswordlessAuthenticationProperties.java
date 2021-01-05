@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.passwordless.account.PasswordlessAuthenticationGroovyAccountsProperties;
+import org.apereo.cas.configuration.model.support.passwordless.account.PasswordlessAuthenticationJsonAccountsProperties;
 import org.apereo.cas.configuration.model.support.passwordless.account.PasswordlessAuthenticationLdapAccountsProperties;
 import org.apereo.cas.configuration.model.support.passwordless.account.PasswordlessAuthenticationMongoDbAccountsProperties;
 import org.apereo.cas.configuration.model.support.passwordless.account.PasswordlessAuthenticationRestAccountsProperties;
@@ -13,6 +14,7 @@ import org.apereo.cas.configuration.model.support.sms.SmsProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -32,6 +34,7 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("PasswordlessAuthenticationProperties")
 public class PasswordlessAuthenticationProperties implements Serializable {
     private static final long serialVersionUID = 8726382874579042117L;
 
@@ -104,6 +107,12 @@ public class PasswordlessAuthenticationProperties implements Serializable {
          */
         @NestedConfigurationProperty
         private PasswordlessAuthenticationGroovyAccountsProperties groovy = new PasswordlessAuthenticationGroovyAccountsProperties();
+
+        /**
+         * Passwordless authentication settings via JSON resource.
+         */
+        @NestedConfigurationProperty
+        private PasswordlessAuthenticationJsonAccountsProperties json = new PasswordlessAuthenticationJsonAccountsProperties();
 
         /**
          * Passwordless authentication settings via MongoDb.

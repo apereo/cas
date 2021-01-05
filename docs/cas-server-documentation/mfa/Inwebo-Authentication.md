@@ -4,6 +4,8 @@ title: CAS - Inwebo Authentication
 category: Multifactor Authentication
 ---
 
+{% include variables.html %}
+
 # Inwebo Authentication
 
 You can secure your CAS server with a second factor provided by [Inwebo](https://www.inwebo.com).
@@ -12,16 +14,10 @@ Apart from this CAS integration, notice that this identity provider can provide 
 
 Support is enabled by including the following module in the overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-inwebo-mfa</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-inwebo-mfa" %}
 
 The integration adds support for both push mobile/desktop and browser authentications.
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#inwebo).
+{% include {{ version }}/inwebo-configuration.md %}

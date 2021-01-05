@@ -4,6 +4,8 @@ title: CAS - Attribute Definitions
 category: Attributes
 ---
 
+{% include variables.html %}
+
 # Attribute Definitions
 
 The definition of an attribute in CAS, when fetched and resolved from an authentication or attribute repository source, tends to be defined
@@ -19,7 +21,7 @@ or defined inside a service definition, an attribute definition store allows one
 with special decorations to be considered during attribute resolution and release. The specification of the attribute definition store is entirely 
 optional and the store may not contain any attribute definitions.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#attribute-definitions).
+{% include {{ version }}/attribute-definitions-configuration.md %}
 
 ## JSON Attribute Definitions
 

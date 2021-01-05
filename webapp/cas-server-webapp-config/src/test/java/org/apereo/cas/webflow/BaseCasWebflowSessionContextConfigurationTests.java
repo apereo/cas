@@ -127,7 +127,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreNotificationsConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class
-}, properties = "cas.webflow.base-path=classpath:/webflow")
+})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public abstract class BaseCasWebflowSessionContextConfigurationTests {
@@ -139,26 +139,16 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
     @Test
     public void verifyFlowExecutorByClient() {
         val ctx = getMockRequestContext();
-        val map = new LocalAttributeMap<Object>();
+        val map = new LocalAttributeMap<>();
         getFlowExecutor().launchExecution("login", map, ctx.getExternalContext());
-    }
-
-    @Test
-    public void verifyCasPropertiesAreAvailableInView() {
-        val ctx = getMockRequestContext();
-        val map = new LocalAttributeMap<Object>();
-        getFlowExecutor().launchExecution("login", map, ctx.getExternalContext());
-        assertResponseWrittenEquals("classpath:expected/end.html", ctx);
     }
 
     @SneakyThrows(IOException.class)
     protected static void assertResponseWrittenEquals(final String response, final MockRequestContext context) {
         val nativeResponse = (MockHttpServletResponse) context.getExternalContext().getNativeResponse();
-
-        assertEquals(
-            IOUtils.toString(new InputStreamReader(ResourceUtils.getResourceFrom(response).getInputStream(), StandardCharsets.UTF_8)),
-            nativeResponse.getContentAsString()
-        );
+        try (val reader = new InputStreamReader(ResourceUtils.getResourceFrom(response).getInputStream(), StandardCharsets.UTF_8)) {
+            assertEquals(IOUtils.toString(reader), nativeResponse.getContentAsString());
+        }
     }
 
     private static MockRequestContext getMockRequestContext() {

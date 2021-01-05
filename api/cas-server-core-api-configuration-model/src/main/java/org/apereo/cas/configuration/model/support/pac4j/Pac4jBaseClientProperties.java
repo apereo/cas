@@ -65,6 +65,17 @@ public class Pac4jBaseClientProperties implements Serializable {
      * Default is {@link CallbackUrlTypes#QUERY_PARAMETER}.
      */
     private CallbackUrlTypes callbackUrlType = CallbackUrlTypes.QUERY_PARAMETER;
+
+    /**
+     * Callback URL to use to return the flow
+     * back to the CAS server one the identity
+     * provider is successfully done. This may be
+     * used at the discretion of the client and its type
+     * to build service parameters, redirect URIs, etc.
+     * If none is specified, the CAS server's login endpoint
+     * will be used as the basis of the final callback url.
+     */
+    private String callbackUrl;
     
     /**
      * The callback url types.

@@ -18,9 +18,12 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-
 public class RadiusAuthenticationWebflowEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
-    private static final String FLOW_SCOPE_ATTR_TOTAL_AUTHENTICATION_ATTEMPTS = "totalAuthenticationAttempts";
+    /**
+     * Flow scope variable to indicate count of authn attempts.
+     */
+    public static final String FLOW_SCOPE_ATTR_TOTAL_AUTHENTICATION_ATTEMPTS = "totalAuthenticationAttempts";
+
     private final long allowedAuthenticationAttempts;
 
     public RadiusAuthenticationWebflowEventResolver(

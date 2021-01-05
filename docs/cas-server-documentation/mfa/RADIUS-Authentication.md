@@ -4,21 +4,23 @@ title: CAS - RADIUS Authentication
 category: Multifactor Authentication
 ---
 
+{% include variables.html %}
+
 # RADIUS Authentication
 
 RADIUS support is enabled by only including the following dependency in the overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-radius</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-radius" %}
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#radius-authentication).
+{% include {{ version }}/principal-transformation-configuration.md configKey="cas.authn.radius" %}
+
+{% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.radius" %}
+
+{% include {{ version }}/radius-configuration.md configKey="cas.authn.radius" %}
+
+{% include {{ version }}/radius-authentication-configuration.md %}
 
 You may also need to declare the following repository in
 your CAS overlay to be able to resolve dependencies:
@@ -36,17 +38,15 @@ repositories {
 
 RSA RADIUS OTP support for MFA is enabled by only including the following dependency in the overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-radius-mfa</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-radius-mfa" %}
+
+{% include {{ version }}/radius-configuration.md configKey="cas.authn.mfa.radius" %}
+
+{% include {{ version }}/mfa-bypass-configuration.md configKey="cas.authn.mfa.radius" %}
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#radius-otp).
+{% include {{ version }}/radius-otp-authentication-configuration.md %}
 
 ## Repository
 

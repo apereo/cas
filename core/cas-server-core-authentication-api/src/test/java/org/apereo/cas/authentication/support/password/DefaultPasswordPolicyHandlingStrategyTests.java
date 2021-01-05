@@ -21,7 +21,7 @@ public class DefaultPasswordPolicyHandlingStrategyTests {
 
     @Test
     public void verifyOperation() throws Exception {
-        val s = new DefaultPasswordPolicyHandlingStrategy<Object>();
+        val s = new DefaultPasswordPolicyHandlingStrategy<>();
         assertTrue(s.handle(new Object(), null).isEmpty());
         val cfg = new PasswordPolicyContext(30);
         cfg.setAccountStateHandler((o, o2) -> List.of(new DefaultMessageDescriptor("bad.password")));

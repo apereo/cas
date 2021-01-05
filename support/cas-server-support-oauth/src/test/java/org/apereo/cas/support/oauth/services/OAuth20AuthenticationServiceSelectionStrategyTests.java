@@ -52,5 +52,4 @@ public class OAuth20AuthenticationServiceSelectionStrategyTests extends Abstract
         assertTrue(service.getAttributes().containsKey(OAuth20Constants.GRANT_TYPE));
         assertEquals(Ordered.HIGHEST_PRECEDENCE, strategy.getOrder());
     }
-
 }

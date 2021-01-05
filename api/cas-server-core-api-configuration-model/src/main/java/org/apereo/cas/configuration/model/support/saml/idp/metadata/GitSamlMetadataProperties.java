@@ -5,11 +5,13 @@ import org.apereo.cas.configuration.model.support.git.services.BaseGitProperties
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.apache.commons.io.FileUtils;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import org.springframework.core.io.FileSystemResource;
 
 import java.io.File;
 
@@ -23,9 +25,16 @@ import java.io.File;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("GitSamlMetadataProperties")
 public class GitSamlMetadataProperties extends BaseGitProperties {
     private static final long serialVersionUID = 4194689836396653458L;
 
+    /**
+     * Whether identity provider metadata artifacts
+     * are expected to be found in the database.
+     */
+    private boolean idpMetadataEnabled;
+    
     /**
      * Crypto settings that sign/encrypt the metadata records.
      */
@@ -33,7 +42,7 @@ public class GitSamlMetadataProperties extends BaseGitProperties {
     private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
 
     public GitSamlMetadataProperties() {
-        setCloneDirectory(new File(FileUtils.getTempDirectory(), "cas-saml-metadata"));
+        getCloneDirectory().setLocation(new FileSystemResource(new File(FileUtils.getTempDirectory(), "cas-saml-metadata")));
         crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
         crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
     }

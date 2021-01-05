@@ -4,6 +4,8 @@ title: CAS - Password Management
 category: Password Management
 ---
 
+{% include variables.html %}
+
 # Password Management
 
 If authentication fails due to a rejected password policy, CAS is able to intercept
@@ -20,35 +22,39 @@ a successful change. This behavior can be altered via CAS settings.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-pm-webflow</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-pm-webflow" %}
 
 <div class="alert alert-info"><strong>YAGNI</strong><p>You do not need to explicitly include this module
 in your configuration and overlays. This is just to teach you that it exists.</p></div>
 
 ## Configuration
 
-To learn more about available notification options, please [see this guide](../notifications/SMS-Messaging-Configuration.html) 
-or [this guide](../notifications/Sending-Email-Configuration.html). 
+To learn more about available notification options, please [see this guide](../notifications/SMS-Messaging-Configuration.html) or [this guide](../notifications/Sending-Email-Configuration.html). 
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#password-management).
+{% include {{ version }}/pswd-mgmt-configuration.md %}
+
+{% include {{ version }}/email-notifications-configuration.md configKey="cas.authn.pm.reset" %}
+
+{% include {{ version }}/sms-notifications-configuration.md configKey="cas.authn.pm.reset" %}
+
+{% include {{ version }}/signing-encryption-configuration.md configKey="cas.authn.pm.reset" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
+
+{% include {{ version }}/webflow-configuration.md configKey="cas.authn.pm.webflow" %}
 
 ## reCAPTCHA Integration
 
-Password reset attempts can be protected and integrated with [Google reCAPTCHA](https://developers.google.com/recaptcha). This requires the presence of reCAPTCHA settings for the basic integration and instructing the password management flow to turn on and verify requests via reCAPTCHA. To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#google-recaptcha-integration) and [this guide](../configuration/Configuration-Properties.html#password-management).
+Password reset attempts can be protected and integrated with [Google reCAPTCHA](https://developers.google.com/recaptcha). This requires the presence of reCAPTCHA settings for the basic integration and instructing the password management flow to turn on and verify requests via reCAPTCHA. 
 
 ## Password History
 
-CAS allows for strategies to track and storage recycled password. Recycled passwords are kept in storage for the user account and
-are examined upon password updates for validity. 
+CAS allows for strategies to track and storage recycled password. Recycled 
+passwords are kept in storage for the user account and are examined upon password updates for validity. 
 
-Once password history functionality is enabled, passwords can be tracked in history via a Groovy or an in-memory backend. Specific 
-storage options may also provide their own support for password history.
+{% include {{ version }}/pswd-history-configuration.md %}
+
+Once password history functionality is enabled, passwords can be tracked 
+in history via a Groovy or an in-memory backend. Specific storage 
+options may also provide their own support for password history.
 
 ### Groovy
 
@@ -89,6 +95,8 @@ def removeAll(Object[] args) {
 ```
 
 The `request` parameter encapsulates a `PasswordChangeRequest` object, carrying `username` and `password` fields.
+
+{% include {{ version }}/pswd-history-groovy-configuration.md %}
 
 ## JSON Storage
 

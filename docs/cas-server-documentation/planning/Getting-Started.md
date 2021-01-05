@@ -4,6 +4,8 @@ title: CAS - Getting Started Guide
 category: Planning
 ---
 
+{% include variables.html %}
+
 # Getting Started
 
 This document provides a high-level guide on how to get started with a CAS server deployment. 

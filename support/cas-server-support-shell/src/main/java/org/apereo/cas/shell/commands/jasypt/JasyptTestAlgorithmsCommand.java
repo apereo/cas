@@ -68,7 +68,7 @@ public class JasyptTestAlgorithmsCommand {
                     if (e.getCause() instanceof NoSuchAlgorithmException) {
                         LOGGER.warn("Provider: [{}] does not support Algorithm: [{}]", provider, algorithm);
                     } else {
-                        LOGGER.warn("Error encrypting using provider: [{}] and algorithm: [{}], Message: {}", provider, algorithm, e.getMessage());
+                        LOGGER.warn("Error encrypting using provider: [{}] and algorithm: [{}], Message: [{}]", provider, algorithm, e.getMessage());
                     }
                 }
             }

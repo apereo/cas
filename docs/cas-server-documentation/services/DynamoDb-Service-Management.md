@@ -4,24 +4,24 @@ title: CAS - DynamoDb Service Registry
 category: Services
 ---
 
+{% include variables.html %}
+
 # DynamoDb Service Registry
 
 Stores registered service data in a [DynamoDb](https://aws.amazon.com/dynamodb/) instance.
 
 Support is enabled by adding the following module into the overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-dynamodb-service-registry</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-dynamodb-service-registry" %}
 
 ## Configuration
 
 You will need to provide CAS with your [AWS credentials](https://aws.amazon.com/console/). Also, to gain a better understanding
-of DynamoDb's core components and concepts, please [start with this guide](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Introduction.html) first. To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#dynamodb-service-registry).
+of DynamoDb's core components and concepts, please [start with this guide](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Introduction.html) first. 
+
+{% include {{ version }}/dynamodb-configuration.md configKey="cas.service-registry" %}
+
+{% include {{ version }}/dynamodb-service-registry-configuration.md %}
 
 ## Troubleshooting
 

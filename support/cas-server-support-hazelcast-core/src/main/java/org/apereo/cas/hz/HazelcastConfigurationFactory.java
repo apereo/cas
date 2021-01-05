@@ -95,6 +95,12 @@ public class HazelcastConfigurationFactory {
             .setPort(cluster.getPort())
             .setPortAutoIncrement(cluster.isPortAutoIncrement());
 
+        if (StringUtils.hasText(cluster.getNetworkInterfaces())) {
+            networkConfig.getInterfaces().setEnabled(true);
+            StringUtils.commaDelimitedListToSet(cluster.getNetworkInterfaces())
+                .forEach(faceIp -> networkConfig.getInterfaces().addInterface(faceIp));
+        }
+        
         if (StringUtils.hasText(cluster.getLocalAddress())) {
             config.setProperty(BaseHazelcastProperties.HAZELCAST_LOCAL_ADDRESS_PROP, cluster.getLocalAddress());
         }
@@ -123,7 +129,7 @@ public class HazelcastConfigurationFactory {
         LOGGER.trace("Created Hazelcast network configuration [{}]", networkConfig);
         config.setNetworkConfig(networkConfig);
 
-        LOGGER.trace("Enables compression: {}", hz.isEnableCompression());
+        LOGGER.trace("Enables compression: [{}]", hz.isEnableCompression());
         config.getSerializationConfig().setEnableCompression(hz.isEnableCompression());
 
         val instanceName = StringUtils.hasText(cluster.getInstanceName())
@@ -175,7 +181,8 @@ public class HazelcastConfigurationFactory {
         config.addWanReplicationConfig(wanReplicationConfig);
     }
 
-    private static JoinConfig createDiscoveryJoinConfig(final Config config, final HazelcastClusterProperties cluster, final NetworkConfig networkConfig) {
+    private static JoinConfig createDiscoveryJoinConfig(final Config config, final HazelcastClusterProperties cluster,
+                                                        final NetworkConfig networkConfig) {
         val joinConfig = new JoinConfig();
 
         LOGGER.trace("Disabling multicast and TCP/IP configuration for discovery");

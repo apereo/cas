@@ -4,23 +4,21 @@ title: CAS - Cassandra Service Registry
 category: Services
 ---
 
+{% include variables.html %}
+
 # Cassandra Service Registry
 
-Stores registered service data in [Apache Cassandra](http://cassandra.apache.org/) instances. Services are expected to be found/stored in a `casservices` table with a default write consistency of `LOCAL_QUORUM` and read consistency of `ONE`.
+Stores registered service data in [Apache Cassandra](http://cassandra.apache.org/) instances. Services 
+are expected to be found/stored in a `casservices` table with a default write 
+consistency of `LOCAL_QUORUM` and read consistency of `ONE`.
 
 Support is enabled by adding the following module into the overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-cassandra-service-registry</artifactId>
-     <version>${cas.version}</version>
-</dependency>                                                            
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-cassandra-service-registry" %}
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#cassandra-service-registry).
+{% include {{ version }}/cassandra-configuration.md configKey="cas.service-registry.cassandra" %}
 
 ## Troubleshooting
 

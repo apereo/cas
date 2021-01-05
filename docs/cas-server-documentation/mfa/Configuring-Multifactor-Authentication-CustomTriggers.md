@@ -4,6 +4,8 @@ title: CAS - Configuring Multifactor Authentication Custom Triggers
 category: Multifactor Authentication
 ---
 
+{% include variables.html %}
+
 # Multifactor Authentication Custom Triggers
 
 To create your own custom multifactor authentication trigger, you will need to design a component that is able to resolve events in the CAS authentication chain. The trigger's (i.e. event resolver's) job is to examine a set of conditions and requirements and provide an event id to CAS that would indicate the next step in the authentication flow.
@@ -21,13 +23,7 @@ Note that:
 
 You will need to have compile-time access to the following modules in the Overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-core-webflow</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-core-webflow" %}
 
 These are modules that ship with CAS by default and thou shall mark them with a `compile` or `provided` scope in your build configuration.
 

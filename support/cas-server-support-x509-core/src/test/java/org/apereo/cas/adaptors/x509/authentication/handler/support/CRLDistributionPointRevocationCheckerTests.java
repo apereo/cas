@@ -9,6 +9,7 @@ import org.apereo.cas.util.MockWebServer;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.ehcache.UserManagedCache;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
@@ -59,7 +60,7 @@ public class CRLDistributionPointRevocationCheckerTests extends BaseCRLRevocatio
         final String crlFile,
         final GeneralSecurityException expected) throws IOException, InterruptedException {
 
-        val file = new File(System.getProperty("java.io.tmpdir"), "ca.crl");
+        val file = new File(FileUtils.getTempDirectory(), "ca.crl");
         val out = new FileOutputStream(file);
         IOUtils.copy(new ClassPathResource(crlFile).getInputStream(), out);
 

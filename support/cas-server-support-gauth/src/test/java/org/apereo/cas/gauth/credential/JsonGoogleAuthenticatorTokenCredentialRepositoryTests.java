@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
  * @since 5.2.0
  */
 @SpringBootTest(classes = BaseGoogleAuthenticatorTests.SharedTestConfiguration.class,
-    properties = "cas.authn.mfa.gauth.json.location=file:/tmp/repository.json")
+    properties = "cas.authn.mfa.gauth.json.location=file:${java.io.tmpdir}/repository.json")
 @Getter
 @Tag("MFA")
 public class JsonGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTokenCredentialRepositoryTests {

@@ -39,6 +39,13 @@ public class DynamicFlowModelBuilder implements FlowModelBuilder {
     public void init() throws FlowModelBuilderException {
         if (this.flowModel == null) {
             this.flowModel = new FlowModel();
+            this.flowModel.setStates(new LinkedList<>());
+            this.flowModel.setVars(new LinkedList<>());
+            this.flowModel.setAttributes(new LinkedList<>());
+            this.flowModel.setExceptionHandlers(new LinkedList<>());
+            this.flowModel.setGlobalTransitions(new LinkedList<>());
+            this.flowModel.setOnEndActions(new LinkedList<>());
+            this.flowModel.setOnStartActions(new LinkedList<>());
         }
     }
 

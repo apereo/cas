@@ -2,6 +2,7 @@ package org.apereo.cas.webauthn.storage;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.webauthn.web.flow.BaseWebAuthnWebflowTests;
 
 import com.yubico.data.CredentialRegistration;
@@ -45,6 +46,10 @@ public abstract class BaseWebAuthnCredentialRepositoryTests {
     @Qualifier("webAuthnCredentialRepository")
     protected WebAuthnCredentialRepository webAuthnCredentialRepository;
 
+    @Autowired
+    @Qualifier("webAuthnCredentialRegistrationCipherExecutor")
+    protected CipherExecutor<String, String> cipherExecutor;
+    
     @Test
     public void verifyOperation() throws Exception {
         val id = getUsername();
@@ -85,7 +90,7 @@ public abstract class BaseWebAuthnCredentialRepositoryTests {
     }
 
     @SneakyThrows
-    protected static CredentialRegistration getCredentialRegistration(final String username) {
+    public static CredentialRegistration getCredentialRegistration(final String username) {
         return CredentialRegistration.builder()
             .registrationTime(Instant.now(Clock.systemUTC()))
             .credential(RegisteredCredential.builder()
@@ -100,6 +105,4 @@ public abstract class BaseWebAuthnCredentialRepositoryTests {
                 .build())
             .build();
     }
-
-
 }

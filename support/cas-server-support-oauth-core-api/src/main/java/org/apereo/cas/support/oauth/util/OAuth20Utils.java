@@ -131,7 +131,7 @@ public class OAuth20Utils {
             .filter(a -> StringUtils.isNotBlank(context.getParameter(a)))
             .map(m -> {
                 val values = context.getParameterValues(m);
-                val valuesSet = new LinkedHashSet<Object>(values.length);
+                val valuesSet = new LinkedHashSet<>(values.length);
                 if (values != null && values.length > 0) {
                     Arrays.stream(values).forEach(v -> valuesSet.addAll(Arrays.stream(v.split(" ")).collect(Collectors.toSet())));
                 }
@@ -212,7 +212,8 @@ public class OAuth20Utils {
      * @return true/false
      */
     public static boolean isResponseModeTypeFormPost(final OAuthRegisteredService registeredService, final OAuth20ResponseModeTypes responseType) {
-        return responseType == OAuth20ResponseModeTypes.FORM_POST || StringUtils.equalsIgnoreCase("post", registeredService.getResponseType());
+        return responseType == OAuth20ResponseModeTypes.FORM_POST
+            || (registeredService != null && StringUtils.equalsIgnoreCase("post", registeredService.getResponseType()));
     }
 
     /**

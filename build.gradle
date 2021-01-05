@@ -11,9 +11,6 @@ buildscript {
         maven {
             url "https://maven.eveoh.nl/content/repositories/releases"
         }
-        maven {
-            url "https://repo.spring.io/plugins-release"
-        }
     }
 
     dependencies {
@@ -24,13 +21,14 @@ buildscript {
         classpath "gradle.plugin.com.gorylenko.gradle-git-properties:gradle-git-properties:$gradleGitVersion"
         classpath "io.franzbecker:gradle-lombok:$gradleLombokVersion"
         classpath "com.github.ben-manes:gradle-versions-plugin:$gradleDependencyVersionsVersion"
-        classpath "io.spring.gradle:propdeps-plugin:$gradlePropDepsVersion"
+
         classpath "net.ltgt.gradle:gradle-errorprone-javacplugin-plugin:$gradleErrorProneVersion"
         classpath "org.owasp:dependency-check-gradle:$gradleDependencyCheckVersion"
         classpath "gradle.plugin.com.github.spotbugs.snom:spotbugs-gradle-plugin:$gradleSpotbugsVersion"
         classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:$gradleSonarqubeVersion"
         classpath "com.github.jengelman.gradle.plugins:shadow:$gradleShadowVersion"
         classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:$gradleNexusStagingVersion"
+        classpath "de.marcphilipp.gradle:nexus-publish-plugin:$gradleNexusPublishingVersion"
     }
 }
 
@@ -53,6 +51,7 @@ ext {
     ci = System.getenv("CI") || Boolean.getBoolean("CI")
 
     excludedFilesFromTestCoverage = [
+        '**/docs/**',
         '**/**ConfigurationMetadata**',
         '**/**NtlmAuthenticationHandler**',
         '**/**CosmosDbServiceRegistry**',
@@ -75,8 +74,8 @@ nexusStaging {
     password = "${sonatypePassword}"
     packageGroup = "org.apereo"
     stagingProfileId = "11d1ddbbdeae9d"
-    numberOfRetries = 50
-    delayBetweenRetriesInMillis = 5000
+    numberOfRetries = 30
+    delayBetweenRetriesInMillis = 60000
 }
 
 apply from: rootProject.file("gradle/dependencies.gradle")
@@ -145,6 +144,10 @@ allprojects {
     apply plugin: "java-library"
     apply plugin: "jacoco"
 
+    if (gradle.startParameter.taskNames.any {task -> task.equalsIgnoreCase("install") }) {
+        apply plugin: "maven"
+    }
+    
     if (!Boolean.getBoolean("skipTestRetry")) {
         apply plugin: "org.gradle.test-retry"
     }
@@ -231,12 +234,6 @@ subprojects {
     if (!rootProject.skipErrorProneCompiler) {
         apply plugin: "net.ltgt.errorprone-javacplugin"
     }
-
-    apply plugin: "propdeps"
-    apply plugin: "propdeps-maven"
-    apply plugin: "propdeps-idea"
-    apply plugin: "propdeps-eclipse"
-
     apply from: rootProject.file("gradle/tests.gradle")
 
     ext.libraries = rootProject.ext.libraries
@@ -296,6 +293,7 @@ subprojects {
 
     configurations {
         tests
+        provided
     }
 
     jacocoTestReport {
@@ -423,6 +421,9 @@ subprojects {
 
     sourceSets {
         main {
+            compileClasspath += configurations.provided
+            runtimeClasspath += configurations.provided
+            
             java {
                 srcDirs = ["${projectDir}/src/main/java"]
             }
@@ -433,7 +434,6 @@ subprojects {
         test {
             java {
                 srcDirs = ["${projectDir}/src/test/java"]
-
             }
             resources {
                 srcDirs = ["${projectDir}/src/test/resources"]
@@ -477,6 +477,7 @@ subprojects {
             version = "$lombokVersion"
             sha256 = ""
         }
+        installLombok.enabled = false
     }
 
     jar {

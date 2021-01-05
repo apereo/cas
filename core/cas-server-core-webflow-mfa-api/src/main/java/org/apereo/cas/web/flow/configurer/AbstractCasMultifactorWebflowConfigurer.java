@@ -235,7 +235,9 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
                 transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS, targetSuccessId));
                 transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS, targetWarningsId));
                 transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_DENY, targetDenied));
+                transitionSet.add(createTransition(CasWebflowConstants.STATE_ID_MFA_DENIED, targetDenied));
                 transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_UNAVAILABLE, targetUnavailable));
+                transitionSet.add(createTransition(CasWebflowConstants.STATE_ID_MFA_UNAVAILABLE, targetUnavailable));
                 transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_CANCEL, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM));
 
                 LOGGER.trace("Creating transition [{}] for state [{}]", subflowId, actionState.getId());
@@ -247,7 +249,7 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
     private void registerMultifactorProviderFailureAction(final Flow flow, final Flow mfaFlow) {
         if (flow != null) {
             val failureAction = createActionState(mfaFlow, CasWebflowConstants.STATE_ID_MFA_FAILURE, MFA_CHECK_FAILURE_BEAN_ID);
-            createTransitionForState(failureAction, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
+            createTransitionForState(failureAction, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE, CasWebflowConstants.STATE_ID_MFA_UNAVAILABLE);
             createTransitionForState(failureAction, CasWebflowConstants.TRANSITION_ID_BYPASS, CasWebflowConstants.TRANSITION_ID_SUCCESS);
 
             LOGGER.trace("Adding end state [{}] with transition to [{}] to flow [{}] for MFA",

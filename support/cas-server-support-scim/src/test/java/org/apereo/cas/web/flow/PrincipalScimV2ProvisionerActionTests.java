@@ -32,7 +32,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@TestPropertySource(properties ="cas.scim.target=http://localhost:8218")
+@TestPropertySource(properties = {
+    "cas.scim.target=http://localhost:8218",
+    "cas.scim.version=2",
+    "cas.scim.username=casuser",
+    "cas.scim.password=Mellon",
+    "cas.scim.oauth-token=mfh834bsd202usn10snf"
+})
 @Tag("WebflowActions")
 public class PrincipalScimV2ProvisionerActionTests extends BaseScimProvisionerActionTests {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
@@ -60,7 +66,8 @@ public class PrincipalScimV2ProvisionerActionTests extends BaseScimProvisionerAc
 
         val data = MAPPER.writeValueAsString(user);
         try (val webServer = new MockWebServer(8218,
-            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
+            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
+            MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, principalScimProvisionerAction.execute(context).getId());
         }

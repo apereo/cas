@@ -121,7 +121,7 @@ public class OidcDefaultJsonWebKeystoreCacheLoader implements CacheLoader<String
             LOGGER.warn("Unable to locate public key from [{}]", keySet);
             return Optional.empty();
         }
-        LOGGER.warn("Found public JSON web key as [{}]", key);
+        LOGGER.debug("Found public JSON web key as [{}]", key);
         return Optional.of(key);
     }
 }

@@ -13,10 +13,10 @@ const assert = require('assert');
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
 
-    var gauth = await page.$('#mfa-gauth');
+    let gauth = await page.$('#mfa-gauth');
     assert(await gauth.boundingBox() != null);
 
-    var yb = await page.$('#mfa-yubikey');
+    let yb = await page.$('#mfa-yubikey');
     assert(await yb.boundingBox() != null);
 
     await browser.close();

@@ -57,7 +57,7 @@ public class DefaultCasSslContext {
         val keyManagers = new KeyManager[]{
             new CompositeX509KeyManager(CollectionUtils.wrapList(jvmKeyManager, customKeyManager))
         };
-        val allManagers = new ArrayList<X509TrustManager>(customTrustManager);
+        val allManagers = new ArrayList<>(customTrustManager);
         allManagers.addAll(jvmTrustManagers);
         trustManagers = new TrustManager[]{new CompositeX509TrustManager(allManagers)};
 

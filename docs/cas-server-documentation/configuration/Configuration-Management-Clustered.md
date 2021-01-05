@@ -4,6 +4,8 @@ title: CAS - Configuration Management Clustered Deployment
 category: Configuration
 ---
 
+{% include variables.html %}
+
 # Clustered Deployments
 
 CAS uses the [Spring Cloud Bus](http://cloud.spring.io/spring-cloud-static/spring-cloud.html)
@@ -22,7 +24,7 @@ of CAS settings in a shared (git) repository (or better yet, inside a private Gi
 where you make a change in one place and it's broadcasted to all nodes. This model removes the need for
 synchronizing changes across disks and CAS nodes.  
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#configuration-storage).
+{% include {{ version }}/springcloud-configbus-configuration.md %}
 
 The following endpoints are secured and exposed by the Spring Cloud Config Bus:
 
@@ -53,15 +55,9 @@ the Advanced Message Queuing Protocol (AMQP).
 
 Support is enabled by including the following dependency in the final overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-configuration-cloud-amqp</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-configuration-cloud-amqp" %}
 
-To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html#rabbitmq).
+{% include {{ version }}/rabbitmq-springcloud-configbus-configuration.md %}
 
 ## Kafka
 
@@ -72,12 +68,6 @@ making it highly valuable for enterprise infrastructures to process streaming da
 
 Support is enabled by including the following dependency in the final overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-configuration-cloud-kafka</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-configuration-cloud-kafka" %}
 
-To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html#kafka).
+{% include {{ version }}/kafka-springcloud-configbus-configuration.md %}

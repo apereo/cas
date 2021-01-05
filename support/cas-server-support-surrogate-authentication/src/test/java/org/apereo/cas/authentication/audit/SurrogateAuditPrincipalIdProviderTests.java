@@ -31,10 +31,16 @@ public class SurrogateAuditPrincipalIdProviderTests {
             CoreAuthenticationTestUtils.getPrincipal(),
             CollectionUtils.wrap(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED, List.of("true"),
                 SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_PRINCIPAL, List.of("principal"),
-                SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_USER, List.of("surrogateUser"))
-        );
+                SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_USER, List.of("surrogateUser")));
         assertTrue(p.supports(auth, new Object(), new SurrogateAuthenticationException("error")));
         assertNotNull(p.getPrincipalIdFrom(auth, new Object(), new SurrogateAuthenticationException("error")));
+    }
 
+    @Test
+    public void verifyNoSurrogateAction() {
+        val p = new SurrogateAuditPrincipalIdProvider();
+        assertTrue(p.getOrder() > 0);
+        val auth = CoreAuthenticationTestUtils.getAuthentication(CoreAuthenticationTestUtils.getPrincipal());
+        assertEquals("test", p.getPrincipalIdFrom(auth, new Object(), new SurrogateAuthenticationException("error")));
     }
 }

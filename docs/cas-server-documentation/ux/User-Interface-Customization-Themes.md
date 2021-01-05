@@ -4,17 +4,29 @@ title: Dynamic Themes - User Interface Customization - CAS
 category: User Interface
 ---
 
+{% include variables.html %}
+
 # Dynamic Themes
 
-With the introduction of [Service Management application](../services/Service-Management.html), deployers are now able to switch the themes based on 
-different services. For example, you may want to have different login screens (different styles) for staff applications and student applications, or you want to show two 
+With the introduction of [Service Management application](../services/Service-Management.html), deployers 
+are now able to switch the themes based on 
+different services. For example, you may want to have different login screens (different styles) 
+for staff applications and student applications, or you want to show two 
 layouts for day time and night time. This document could help you go through the basic settings to achieve this.
 
 ## Static Themes
 
-CAS is configured to decorate views based on the `theme` property of a given registered service in the Service Registry. The theme that is activated via this method will still preserve the default views for CAS but will apply decorations such as CSS and Javascript to the views. The physical structure of views cannot be modified via this method.
+CAS is configured to decorate views based on the `theme` property of a given 
+registered service in the Service Registry. The theme that is activated via 
+this method will still preserve the default views for CAS but will apply 
+decorations such as CSS and Javascript to the views. The physical structure 
+of views cannot be modified via this method.
+             
+
 
 ### Configuration
+
+{% include {{ version }}/themes-configuration.md %}
 
 - Add a `[theme_name].properties` placed to the root of `src/main/resources` folder. 
 Contents of this file should match the following:
@@ -71,7 +83,7 @@ views and theme-based views may both be externalized out of the web application 
 directory named after the theme. For instance, if the external path for CAS views is `/etc/cas/templates`, view template files for 
 theme `sample` may be located `/etc/cas/templates/sample/`.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#views).
+{% include {{ version }}/views-configuration.md %}
 
 ### Configuration
 
@@ -93,13 +105,8 @@ and samples, and attempt to automate much of the configuration.
 
 Support is enabled by including the following module in the WAR overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-theme-collections</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```       
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-theme-collections" %}
+      
 
 The following themes are provided by this module and can be assigned to service definitions:
 

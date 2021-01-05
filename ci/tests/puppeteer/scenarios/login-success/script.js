@@ -14,7 +14,7 @@ const assert = require('assert');
     await page.waitForNavigation();
 
     const tgc = (await page.cookies()).filter(value => value.name === "TGC")
-    assert(tgc != null);
+    assert(tgc.length !== 0);
     
     const title = await page.title();
     console.log(title)

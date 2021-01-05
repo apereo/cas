@@ -4,6 +4,8 @@ title: CAS - Test Process
 category: Developer
 ---
 
+{% include variables.html %}
+
 # Test Process
 
 This page documents the steps that a CAS developer/contributor should take for testing a CAS server deployment during development. For additional
@@ -25,16 +27,16 @@ comma separated list of modules without the `cas-server-` prefix:
 For example:
 
 ```properties
-casModules=core-monitor,\
-    support-ldap,\
-    support-x509,\
-    support-bootadmin-client
+casModules=monitor,\
+    ldap,\
+    x509,\
+    bootadmin-client
 ```
 
 Or set the property on the command-line:
 
 ```bash
-bc -PcasModules=support-ldap,support-x509
+bc -PcasModules=ldap,x509
 ```
 
 ...where `bc` is an [alias for building CAS](Build-Process.html#sample-build-aliases).
@@ -86,7 +88,25 @@ This overlay is supplied the test scenario configuration that explain the requir
 inside an embedded Apache Tomcat container. Once running, the Puppeteer script is executed by Node for the given test scenario to verify
 specific functionality such as successful logins, generation of tickets, etc.
 
-All functional tests are executed by the [continuous integration system](Test-Process.html#continuous-integration).
+All functional and browser tests are executed by the [continuous integration system](Test-Process.html#continuous-integration). If you 
+are adding a new batch of tests, make sure the scenario (i.e. test) name is included in the CI configuration.
+
+To help simplify the testing process, you may use the following bash function in your `.profile`:
+
+```bash
+function pupcas() {
+  scenario=$1
+  /path/to/cas/ci/tests/puppeteer/run.sh /path/to/cas/ci/tests/puppeteer/scenarios/"${scenario}"
+}
+```
+
+...which can later be invoked as:
+
+```bash
+pupcas <scenario-name>
+```
+ 
+To successfully run tests, you need to make [jq](https://stedolan.github.io/jq/) is installed.
 
 ## Continuous Integration
 

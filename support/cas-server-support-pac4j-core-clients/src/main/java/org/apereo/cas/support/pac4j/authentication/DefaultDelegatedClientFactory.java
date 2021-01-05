@@ -61,6 +61,7 @@ import java.security.interfaces.ECPrivateKey;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -73,6 +74,8 @@ import java.util.stream.Collectors;
 @Slf4j
 @Getter
 public class DefaultDelegatedClientFactory implements DelegatedClientFactory<IndirectClient> {
+    private static final Pattern PATTERN_LOGIN_URL = Pattern.compile("/login$");
+
     private final CasConfigurationProperties casProperties;
 
     private final Collection<DelegatedClientFactoryCustomizer> customizers;
@@ -369,7 +372,7 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
             .filter(cas -> cas.isEnabled() && StringUtils.isNotBlank(cas.getLoginUrl()))
             .forEach(cas -> {
                 val cfg = new CasConfiguration(cas.getLoginUrl(), CasProtocol.valueOf(cas.getProtocol()));
-                val prefix = cas.getLoginUrl().replaceFirst("/login$", "/");
+                val prefix = PATTERN_LOGIN_URL.matcher(cas.getLoginUrl()).replaceFirst("/");
                 cfg.setPrefixUrl(StringUtils.appendIfMissing(prefix, "/"));
                 val client = new CasClient(cfg);
 
@@ -578,7 +581,9 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
         if (StringUtils.isNotBlank(props.getCssClass())) {
             customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_CSS_CLASS, props.getCssClass());
         }
-        client.setCallbackUrl(casProperties.getServer().getLoginUrl());
+        val callbackUrl = StringUtils.defaultString(props.getCallbackUrl(), casProperties.getServer().getLoginUrl());
+        client.setCallbackUrl(callbackUrl);
+
         switch (props.getCallbackUrlType()) {
             case PATH_PARAMETER:
                 client.setCallbackUrlResolver(new PathParameterCallbackUrlResolver());

@@ -52,7 +52,9 @@ import org.springframework.webflow.engine.TransitionableState;
 import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.WildcardTransitionCriteria;
 import org.springframework.webflow.engine.builder.BinderConfiguration;
+import org.springframework.webflow.engine.builder.model.FlowModelFlowBuilder;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
+import org.springframework.webflow.engine.model.builder.DefaultFlowModelHolder;
 import org.springframework.webflow.engine.support.ActionExecutingViewFactory;
 import org.springframework.webflow.engine.support.ActionTransitionCriteria;
 import org.springframework.webflow.engine.support.BeanFactoryVariableValueFactory;
@@ -382,10 +384,11 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     }
 
     @Override
-    public Flow buildFlow(final String location, final String id) {
+    public Flow buildFlow(final String id) {
         val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
         builder.setParent(this.mainFlowDefinitionRegistry);
-        builder.addFlowLocation(location, id);
+        builder.addFlowBuilder(new FlowModelFlowBuilder(
+                new DefaultFlowModelHolder(new DynamicFlowModelBuilder())), id);
         val registry = builder.build();
         return (Flow) registry.getFlowDefinition(id);
     }

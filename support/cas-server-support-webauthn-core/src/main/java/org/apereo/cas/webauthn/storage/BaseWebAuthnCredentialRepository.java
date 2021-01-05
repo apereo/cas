@@ -37,7 +37,6 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseWebAuthnCredentialRepository implements WebAuthnCredentialRepository {
 
-
     private final CasConfigurationProperties properties;
 
     private final CipherExecutor<String, String> cipherExecutor;

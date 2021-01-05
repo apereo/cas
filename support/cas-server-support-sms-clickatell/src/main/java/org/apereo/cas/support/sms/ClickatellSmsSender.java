@@ -55,7 +55,7 @@ public class ClickatellSmsSender implements SmsSender {
             val stringify = new StringWriter();
             MAPPER.writeValue(stringify, map);
 
-            val request = new HttpEntity<String>(stringify.toString(), headers);
+            val request = new HttpEntity<>(stringify.toString(), headers);
             val response = restTemplate.postForEntity(new URI(this.serverUrl), request, Map.class);
             if (response.hasBody()) {
                 val body = response.getBody();

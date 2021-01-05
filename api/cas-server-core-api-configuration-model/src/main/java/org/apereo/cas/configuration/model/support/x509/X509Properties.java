@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.x509;
 
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
+import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
@@ -141,6 +142,14 @@ public class X509Properties implements Serializable {
      */
     private boolean cacheEternal;
 
+    /**
+     * Determine whether X509 authentication should allow
+     * other forms of authentication such as username/password.
+     * If this setting is turned off, typically the ability to view
+     * the login form as the primary form of authentication is turned off.
+     */
+    private boolean mixedMode = true;
+    
     /**
      * When CRLs are cached, indicate the time-to-live of cache items.
      */
@@ -309,6 +318,12 @@ public class X509Properties implements Serializable {
      */
     @NestedConfigurationProperty
     private X509WebflowAutoConfigurationProperties webflow = new X509WebflowAutoConfigurationProperties(100);
+
+    /**
+     * Principal transformation properties.
+     */
+    @NestedConfigurationProperty
+    private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
 
     /**
      * The  Principal types.

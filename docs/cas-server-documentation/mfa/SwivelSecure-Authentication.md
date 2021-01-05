@@ -4,6 +4,8 @@ title: CAS - Swivel Secure Authentication
 category: Multifactor Authentication
 ---
 
+{% include variables.html %}
+
 # Swivel Secure Authentication
 
 Swivel Secure offers a wide range of authentication factors, allowing the use of 2FA and image based authentication. To learn more, please refer to [the official website](https://swivelsecure.com/).
@@ -16,15 +18,9 @@ CAS supports Swivel Secure's TURing-image based authentication. TURing uses the 
 
 Support is enabled by including the following module in the overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-swivel</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-swivel" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#swivel-secure).
+{% include {{ version }}/swivel-configuration.md %}
 
 ## Logging
 

@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginLocationException;
+import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.services.ServicesManager;
@@ -109,6 +110,15 @@ public class JsonResourceAuthenticationHandlerTests {
             CollectionUtils.wrapList("CAS")));
         accounts.put("badlocation", acct);
 
+        acct = new CasUserAccount();
+        acct.setPassword("Mellon");
+        acct.setAvailability("2020-10-20~2020-11-20");
+        acct.setStatus(CasUserAccount.AccountStatus.OK);
+        acct.setAttributes(CollectionUtils.wrap("firstName",
+            CollectionUtils.wrapList("Apereo"), "lastName",
+            CollectionUtils.wrapList("CAS")));
+        accounts.put("badtime", acct);
+
         val resource = new FileSystemResource(File.createTempFile("account", ".json"));
 
         val mapper = Jackson2ObjectMapperBuilder.json()
@@ -203,4 +213,11 @@ public class JsonResourceAuthenticationHandlerTests {
         assertThrows(InvalidLoginLocationException.class,
             () -> handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("badlocation", "Mellon")));
     }
+
+    @Test
+    public void verifyInvalidTime() {
+        assertThrows(InvalidLoginTimeException.class,
+            () -> handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("badtime", "Mellon")));
+    }
+
 }

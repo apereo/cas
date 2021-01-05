@@ -4,15 +4,22 @@ import org.apereo.cas.adaptors.x509.authentication.CasX509Certificate;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
+import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
+import org.apereo.services.persondir.IPersonAttributeDao;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.security.cert.X509Certificate;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Scott Battaglia
@@ -23,8 +30,21 @@ import static org.junit.jupiter.api.Assertions.*;
 public class X509SerialNumberAndIssuerDNPrincipalResolverTests {
     private static final CasX509Certificate VALID_CERTIFICATE = new CasX509Certificate(true);
 
-    private final X509SerialNumberAndIssuerDNPrincipalResolver resolver =
-        new X509SerialNumberAndIssuerDNPrincipalResolver(null, null);
+    private X509SerialNumberAndIssuerDNPrincipalResolver resolver;
+
+    @BeforeEach
+    public void setup() {
+        val context = PrincipalResolutionContext.builder()
+            .attributeRepository(CoreAuthenticationTestUtils.getAttributeRepository())
+            .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())
+            .returnNullIfNoAttributes(false)
+            .principalNameTransformer(formUserId -> formUserId)
+            .useCurrentPrincipalId(false)
+            .resolveAttributes(true)
+            .activeAttributeRepositoryIdentifiers(CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD))
+            .build();
+        resolver = new X509SerialNumberAndIssuerDNPrincipalResolver(context, null, null);
+    }
 
     @Test
     public void verifyResolvePrincipalInternal() {

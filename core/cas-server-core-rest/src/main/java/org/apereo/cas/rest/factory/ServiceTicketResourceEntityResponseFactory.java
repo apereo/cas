@@ -1,7 +1,7 @@
 package org.apereo.cas.rest.factory;
 
 import org.apereo.cas.authentication.AuthenticationResult;
-import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 
 import org.springframework.core.Ordered;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +23,7 @@ public interface ServiceTicketResourceEntityResponseFactory extends Ordered {
      * @return the response entity
      */
     ResponseEntity<String> build(String ticketGrantingTicket,
-                                 Service service,
+                                 WebApplicationService service,
                                  AuthenticationResult authenticationResult);
 
     /**
@@ -33,5 +33,5 @@ public interface ServiceTicketResourceEntityResponseFactory extends Ordered {
      * @param authenticationResult the authentication result
      * @return true/false
      */
-    boolean supports(Service service, AuthenticationResult authenticationResult);
+    boolean supports(WebApplicationService service, AuthenticationResult authenticationResult);
 }

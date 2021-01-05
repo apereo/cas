@@ -38,11 +38,11 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
         if (flow != null) {
             createClientActionActionState(flow);
             createStopWebflowViewState(flow);
-            createSaml2ClientLogoutAction();
+            createDelegatedClientLogoutAction();
         }
     }
 
-    protected void createSaml2ClientLogoutAction() {
+    protected void createDelegatedClientLogoutAction() {
         val logoutFlow = getLogoutFlow();
         val state = getState(logoutFlow, CasWebflowConstants.STATE_ID_TERMINATE_SESSION);
         state.getEntryActionList().add(createEvaluateAction("delegatedAuthenticationClientLogoutAction"));

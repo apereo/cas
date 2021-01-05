@@ -4,7 +4,9 @@ title: CAS - Build Process
 category: Developer
 ---
 
-# Build Process
+{% include variables.html %}
+
+# CAS Build Process
 
 This page documents the steps that a CAS developer/contributor should take for building a CAS server locally.
 
@@ -70,7 +72,7 @@ The following commandline boolean flags are supported by the build and can be pa
 | `ignoreJavadocFailures`           | Ignore javadoc failures and let the build resume.
 | `ignoreFindbugsFailures`          | Ignore Findbugs failures and let the build resume.
 | `ignoreTestFailures`              | Ignore test failures and let the build resume.
-| `casModules`                      | Comma separated list of modules without the `cas-server-` prefix.
+| `casModules`                      | Comma separated list of modules without the `cas-server-[support|core]` prefix.
 
 - You can use `-x <task>` to entirely skip/ignore a phase in the build. (i.e. `-x test`, `-x check`).
 - If you have no need to let Gradle resolve/update dependencies and new module versions for you, you can take advantage of the `--offline` flag when you build which tends to make the build go a lot faster.
@@ -308,3 +310,25 @@ alias bci='clear; cas; \
     -DskipNestedConfigMetadataGen=true \
     -DskipBootifulArtifact=true'
 ```
+
+# CAS Initializr Build Process
+
+The code for the CAS Initializr is found in the CAS repository on the `heroku-casinit` branch.
+Clone CAS and checkout the `heroku-casinit` branch if you want to customize it or improve it.
+
+```bash
+git clone --single-branch --branch heroku-casinit https://github.com/apereo/cas.git casinit
+cd casinit
+gradlew bootRun
+```
+
+Then in another terminal, test the local running instance using:
+
+```bash
+mkdir cas-server
+cd cas-server
+curl -k http://localhost:8080/starter.tgz -d dependencies="ldap,aup,x509" | tar -xzvf 
+gradlew build
+```
+
+Make any desired changes to the CAS Initializr project and submit the changes as a PR if they are generally useful.

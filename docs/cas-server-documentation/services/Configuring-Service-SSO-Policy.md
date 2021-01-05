@@ -4,6 +4,8 @@ title: CAS - Configuring Service SSO Policy
 category: Services
 ---
 
+{% include variables.html %}
+
 # Configuring Service SSO Policy
 
 Single Sign-on participation policies designed on a per-service basis should override the global SSO behavior. Such policies generally are applicable

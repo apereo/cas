@@ -4,6 +4,8 @@ title: CAS - Git Service Registry
 category: Services
 ---
 
+{% include variables.html %}
+
 # Git Service Registry
 
 This registry reads services definitions from remote or local git repositories. Service definition files are expected to be
@@ -12,15 +14,11 @@ pushed to the defined remotes.
 
 Support is enabled by adding the following module into the overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-git-service-registry</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-git-service-registry" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#git-service-registry).
+{% include {{ version }}/git-configuration.md configKey="cas.service-registry`" %}
+
+{% include {{ version }}/git-service-registry-configuration.md %}
 
 <div class="alert alert-warning"><strong>No Interference!</strong><p>
 Be careful to not manually modify the state of the git repository directory that is cloned on the local server. By doing so, you risk 

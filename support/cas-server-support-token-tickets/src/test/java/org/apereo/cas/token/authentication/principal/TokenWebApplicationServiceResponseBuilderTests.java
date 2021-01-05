@@ -95,7 +95,7 @@ import static org.junit.jupiter.api.Assertions.*;
 }, properties = {
     "cas.server.name=http://localhost:8281",
     "cas.server.prefix=${cas.server.name}/cas",
-    "cas.client.validatorType=CAS10"
+    "cas.client.validator-type=CAS10"
 })
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableScheduling

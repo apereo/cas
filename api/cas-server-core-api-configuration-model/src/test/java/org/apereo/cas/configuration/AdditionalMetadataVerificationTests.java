@@ -52,7 +52,7 @@ public class AdditionalMetadataVerificationTests {
             try {
                 ConfigurationPropertyName.of(prop.getName());
             } catch (final InvalidConfigurationPropertyNameException e) {
-                fail(e.getMessage());
+                fail(e::getMessage);
             }
             val deprecation = prop.getDeprecation();
             if (deprecation != null && StringUtils.isNotBlank(deprecation.getReplacement())) {
