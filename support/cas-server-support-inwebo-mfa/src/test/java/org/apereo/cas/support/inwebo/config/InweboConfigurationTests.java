@@ -3,6 +3,7 @@ package org.apereo.cas.support.inwebo.config;
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.support.inwebo.service.InweboService;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -28,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.inwebo.bypass.groovy.location=classpath:GroovyBypass.groovy",
         "cas.authn.mfa.inwebo.bypass.rest.url=http://localhost:8080/bypass"
     })
+@Tag("MFA")
 public class InweboConfigurationTests {
      @Autowired
      @Qualifier("inweboService")
