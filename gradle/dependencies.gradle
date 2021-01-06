@@ -3438,13 +3438,13 @@ ext.libraries = [
                     exclude(group: "log4j", module: "log4j")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "slf4j-log4j12")
-
                 },
                 dependencies.create("org.springframework.ws:spring-ws-support:$springWsVersion") {
-
+                    exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-context")
                 },
                 dependencies.create("com.sun.xml.messaging.saaj:saaj-impl:$saajImplVersion") {
-
                 },
         ],
         wss4j                   : [

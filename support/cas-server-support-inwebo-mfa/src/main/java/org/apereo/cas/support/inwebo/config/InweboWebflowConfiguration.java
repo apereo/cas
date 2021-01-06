@@ -20,7 +20,6 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.actions.StaticEventExecutionAction;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -43,6 +42,7 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import org.springframework.webflow.engine.builder.FlowBuilder;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
@@ -111,11 +111,14 @@ public class InweboWebflowConfiguration {
     @Qualifier("inweboService")
     private ObjectProvider<InweboService> inweboService;
 
+    @Autowired
+    @Qualifier("flowBuilder")
+    private ObjectProvider<FlowBuilder> flowBuilder;
+
     @Bean
     public FlowDefinitionRegistry inweboFlowRegistry() {
         val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices.getObject());
-        builder.setBasePath(CasWebflowConstants.BASE_CLASSPATH_WEBFLOW);
-        builder.addFlowLocationPattern("/mfa-inwebo/*-webflow.xml");
+        builder.addFlowBuilder(flowBuilder.getObject(), InweboMultifactorWebflowConfigurer.MFA_INWEBO_EVENT_ID);
         return builder.build();
     }
 
@@ -125,11 +128,11 @@ public class InweboWebflowConfiguration {
     @RefreshScope
     public CasWebflowConfigurer inweboMultifactorWebflowConfigurer() {
         val cfg = new InweboMultifactorWebflowConfigurer(flowBuilderServices.getObject(),
-                loginFlowDefinitionRegistry.getObject(),
-                inweboFlowRegistry(),
-                applicationContext,
-                casProperties,
-                MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
+            loginFlowDefinitionRegistry.getObject(),
+            inweboFlowRegistry(),
+            applicationContext,
+            casProperties,
+            MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
         cfg.setOrder(WEBFLOW_CONFIGURER_ORDER);
         return cfg;
     }
@@ -145,18 +148,18 @@ public class InweboWebflowConfiguration {
     @RefreshScope
     public CasWebflowEventResolver inweboMultifactorAuthenticationWebflowEventResolver() {
         val context = CasWebflowEventResolutionConfigurationContext.builder()
-                .authenticationSystemSupport(authenticationSystemSupport.getObject())
-                .centralAuthenticationService(centralAuthenticationService.getObject())
-                .servicesManager(servicesManager.getObject())
-                .ticketRegistrySupport(ticketRegistrySupport.getObject())
-                .warnCookieGenerator(warnCookieGenerator.getObject())
-                .authenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies.getObject())
-                .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getObject())
-                .casProperties(casProperties)
-                .ticketRegistry(ticketRegistry.getObject())
-                .applicationContext(applicationContext)
-                .authenticationEventExecutionPlan(authenticationEventExecutionPlan.getObject())
-                .build();
+            .authenticationSystemSupport(authenticationSystemSupport.getObject())
+            .centralAuthenticationService(centralAuthenticationService.getObject())
+            .servicesManager(servicesManager.getObject())
+            .ticketRegistrySupport(ticketRegistrySupport.getObject())
+            .warnCookieGenerator(warnCookieGenerator.getObject())
+            .authenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies.getObject())
+            .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getObject())
+            .casProperties(casProperties)
+            .ticketRegistry(ticketRegistry.getObject())
+            .applicationContext(applicationContext)
+            .authenticationEventExecutionPlan(authenticationEventExecutionPlan.getObject())
+            .build();
 
         return new InweboMultifactorAuthenticationWebflowEventResolver(context);
     }
@@ -177,6 +180,7 @@ public class InweboWebflowConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "inweboMustEnrollAction")
+    @RefreshScope
     public Action inweboMustEnrollAction() {
         return new InweboMustEnrollAction();
     }
@@ -190,6 +194,7 @@ public class InweboWebflowConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "inweboSuccessAction")
+    @RefreshScope
     public Action inweboSuccessAction() {
         return StaticEventExecutionAction.SUCCESS;
     }
@@ -208,11 +213,11 @@ public class InweboWebflowConfiguration {
         @RefreshScope
         public CasWebflowConfigurer inweboMultifactorTrustWebflowConfigurer() {
             val cfg = new InweboMultifactorTrustWebflowConfigurer(flowBuilderServices.getObject(),
-                    loginFlowDefinitionRegistry.getObject(),
-                    inweboFlowRegistry(),
-                    applicationContext,
-                    casProperties,
-                    MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
+                loginFlowDefinitionRegistry.getObject(),
+                inweboFlowRegistry(),
+                applicationContext,
+                casProperties,
+                MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
             cfg.setOrder(WEBFLOW_CONFIGURER_ORDER + 1);
             return cfg;
         }

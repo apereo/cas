@@ -52,6 +52,7 @@ ext {
 
     excludedFilesFromTestCoverage = [
         '**/docs/**',
+        '**/soap/generated/**',
         '**/**ConfigurationMetadata**',
         '**/**NtlmAuthenticationHandler**',
         '**/**CosmosDbServiceRegistry**',

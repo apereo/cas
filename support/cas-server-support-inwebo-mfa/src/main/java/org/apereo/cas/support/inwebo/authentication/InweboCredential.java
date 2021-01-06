@@ -21,6 +21,8 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 public class InweboCredential extends BasicIdentifiableCredential {
 
+    private static final long serialVersionUID = 7458888463097030052L;
+
     private String otp;
 
     private String deviceName;

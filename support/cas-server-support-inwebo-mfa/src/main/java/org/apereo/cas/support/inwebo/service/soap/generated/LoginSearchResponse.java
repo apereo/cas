@@ -1,5 +1,5 @@
 // CHECKSTYLE:OFF
-package org.apereo.cas.support.inwebo.service.soap;
+package org.apereo.cas.support.inwebo.service.soap.generated;
 
 import javax.xml.bind.annotation.*;
 

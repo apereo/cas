@@ -1,6 +1,6 @@
 package org.apereo.cas.support.inwebo.config;
 
-import org.apereo.cas.authentication.DefaultCasSslContext;
+import org.apereo.cas.authentication.DefaultCasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.inwebo.service.InweboConsoleAdmin;
 import org.apereo.cas.support.inwebo.service.InweboService;
@@ -38,42 +38,42 @@ public class InweboServiceConfiguration {
 
     @Autowired
     @Qualifier("casSslContext")
-    private ObjectProvider<DefaultCasSslContext> casSslContext;
+    private ObjectProvider<DefaultCasSSLContext> casSslContext;
 
     @Bean
     @ConditionalOnMissingBean(name = "inweboConsoleAdmin")
     @RefreshScope
-    public InweboConsoleAdmin inweboConsoleAdmin() {
-        val marshaller = new Jaxb2Marshaller();
-        marshaller.setContextPath(this.getClass().getPackageName().replaceAll("config", "service.soap"));
+    public InweboConsoleAdmin inweboConsoleAdmin() throws Exception {
+        val inwebo = casProperties.getAuthn().getMfa().getInwebo();
 
-        val client = new InweboConsoleAdmin();
-        client.setDefaultUri("https://api.myinwebo.com/v2/services/ConsoleAdmin");
+        val marshaller = new Jaxb2Marshaller();
+        val marshallerContext = getClass().getPackageName().replaceAll("config", "service.soap.generated");
+        marshaller.setContextPath(marshallerContext);
+
+        val client = new InweboConsoleAdmin(casProperties);
+        client.setDefaultUri(inwebo.getConsoleAdminUrl());
         client.setMarshaller(marshaller);
         client.setUnmarshaller(marshaller);
 
-        try {
-            val messageSender = new HttpsUrlConnectionMessageSender();
-            messageSender.setKeyManagers(SSLUtils.buildKeystore(casProperties.getAuthn().getMfa().getInwebo().getClientCertificate()).getKeyManagers());
-            if (casSslContext.getIfAvailable() != null) {
-                messageSender.setTrustManagers(casSslContext.getIfAvailable().getTrustManagers());
-            } else {
-                val tmFactory = TrustManagerFactory.getInstance("PKIX");
-                tmFactory.init((KeyStore) null);
-                messageSender.setTrustManagers(tmFactory.getTrustManagers());
-            }
-            client.setMessageSender(messageSender);
-        } catch (final Exception e) {
-            throw new RuntimeException("Cannot initialize ConsoleAdmin", e);
+        val messageSender = new HttpsUrlConnectionMessageSender();
+        messageSender.setKeyManagers(SSLUtils.buildKeystore(inwebo.getClientCertificate()).getKeyManagers());
+        if (casSslContext.getIfAvailable() != null) {
+            messageSender.setTrustManagers(casSslContext.getObject().getTrustManagers());
+        } else {
+            val tmFactory = TrustManagerFactory.getInstance("PKIX");
+            tmFactory.init((KeyStore) null);
+            messageSender.setTrustManagers(tmFactory.getTrustManagers());
         }
-
+        client.setMessageSender(messageSender);
         return client;
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "inweboService")
     @RefreshScope
-    public InweboService inweboService() {
-        return new InweboService(casProperties, inweboConsoleAdmin());
+    public InweboService inweboService() throws Exception {
+        val inwebo = casProperties.getAuthn().getMfa().getInwebo();
+        val sslContext = SSLUtils.buildSSLContext(inwebo.getClientCertificate());
+        return new InweboService(casProperties, inweboConsoleAdmin(), sslContext);
     }
 }
