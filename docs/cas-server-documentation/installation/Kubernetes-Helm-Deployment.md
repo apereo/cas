@@ -5,7 +5,6 @@ category: Installation
 ---
 {% include variables.html %}
 
-
 # Kubernetes Helm Installation
 
 The [CAS WAR Overlay Initializr](WAR-Overlay-Initializr.html) includes a CAS Helm chart that can 
