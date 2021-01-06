@@ -817,6 +817,9 @@ jobs:
           - ticket-validation-casv2
           - ticket-validation-casv3
           - ticket-validation-casv3-json
+          - ticket-validation-saml1
+          - mfa-inwebo-browser
+          - mfa-inwebo-push
           - aup-login
           - authy-mfa-login
           - logout-confirm
