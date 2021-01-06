@@ -187,6 +187,7 @@ layout: null
             *   [REST](/cas/{{ version }}/mfa/FIDO-U2F-Authentication-Rest.html)
         *   [FIDO2 WebAuthn](/cas/{{ version }}/mfa/FIDO2-WebAuthn-Authentication.html)
         *   [Swivel Secure](/cas/{{ version }}/mfa/SwivelSecure-Authentication.html)
+        *   [Inwebo](/cas/{{ version }}/mfa/Inwebo-Authentication.html)
         *   [Custom](/cas/{{ version }}/mfa/Custom-MFA-Authentication.html)
     *   [Triggers](/cas/{{ version }}/mfa/Configuring-Multifactor-Authentication-Triggers.html)
     *   [Bypass](/cas/{{ version }}/mfa/Configuring-Multifactor-Authentication-Bypass.html)
