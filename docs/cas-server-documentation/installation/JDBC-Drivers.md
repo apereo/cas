@@ -5,7 +5,6 @@ category: Configuration
 ---
 {% include variables.html %}
 
-
 # JDBC Drivers
 
 While in most cases this is unnecessary and handled by CAS automatically,

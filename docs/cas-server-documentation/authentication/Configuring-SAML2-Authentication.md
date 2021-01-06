@@ -184,7 +184,7 @@ Attribute filtering and release policies are defined per SAML service. See [this
 
 ### Name ID Selection
 
-Please [see this guide](../installation/Configuring-SAML2-NamID.html) to learn more
+Please [see this guide](../installation/Configuring-SAML2-NameID.html) to learn more
 about how to configure SAML2 security configuration.
   
 ## Unsolicited SSO

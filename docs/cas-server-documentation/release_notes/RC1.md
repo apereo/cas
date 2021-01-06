@@ -88,14 +88,14 @@ may be managed using an external REST API.
 
 ### Inwebo MFA Integration
 
-Support [inWebo](../mfa/Inwebo-Authentication.html) as a multifactor authentication provider is now available.
+Support for [inWebo](../mfa/Inwebo-Authentication.html) as a multifactor authentication provider is now available.
  
 ### SCIM Provisioning
 
 Integration with [SCIM Provisioning](../integration/SCIM-Integration.html) is slightly
 improved to allow SCIM targets and settings per registered application.
 
-### WebAuthN REDIS Device Management
+### WebAuthN Redis Device Management
 
 [WebAuthN/FIDO2 Device registrations](../mfa/FIDO2-WebAuthn-Authentication.html)
 may be managed using a Redis database.
