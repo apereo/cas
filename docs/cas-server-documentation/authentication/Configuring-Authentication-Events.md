@@ -62,48 +62,24 @@ The following storage backends are available for consumption of events.
 
 ### MongoDb
 
-Stores authentication events into a MongoDb NoSQL database.
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-events-mongo" %}
-
-{% include {{ version }}/mongodb-configuration.md configKey="cas.events" %}
+Please [see this guide](Configuring-Authentication-Events-MongoDb.html) for more info.
 
 ### DynamoDb
 
-Stores authentication events into a DynamoDb database.
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-events-dynamodb" %}
-
-{% include {{ version }}/dynamodb-configuration.md configKey="cas.events" %}
-
-{% include {{ version }}/dynamodb-events-configuration.md %}
+Please [see this guide](Configuring-Authentication-Events-DynamoDb.html) for more info.
 
 ### CouchDb
 
-Stores authentication events inside a CouchDb instance.
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-events-couchdb" %}
-
-{% include {{ version }}/couchdb-configuration.md configKey="cas.events.couch-db" %}
+Please [see this guide](Configuring-Authentication-Events-CouchDb.html) for more info.
 
 ### JPA
 
-Stores authentication events into a RDBMS.
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-events-jpa" %}
-
-{% include {{ version }}/rdbms-configuration.md configKey="cas.events.jpa" %}
+Please [see this guide](Configuring-Authentication-Events-JPA.html) for more info.
 
 ### InfluxDb
 
-Stores authentication events inside an InfluxDb instance.
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-events-influxdb" %}
-
-{% include {{ version }}/influxdb-configuration.md configKey="cas.events.influx-db" %}
+Please [see this guide](Configuring-Authentication-Events-InfluxDb.html) for more info.
 
 ### Memory
 
-Stores authentication events into memory for a very limited time period.
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-events-memory" %}
+Please [see this guide](Configuring-Authentication-Events-Memory.html) for more info.
