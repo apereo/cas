@@ -10,7 +10,8 @@ category: Multifactor Authentication
 
 You can secure your CAS server with a second factor provided by [Inwebo](https://www.inwebo.com).
 
-Apart from this CAS integration, notice that this identity provider can provide more general authentication solutions.
+Apart from this CAS integration, notice that this identity 
+provider can provide more general authentication solutions.
 
 Support is enabled by including the following module in the overlay:
 

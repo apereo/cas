@@ -1,6 +1,6 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.authentication.DefaultCasSslContext;
+import org.apereo.cas.authentication.DefaultCasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.http.HttpClient;
@@ -49,10 +49,10 @@ public class CasCoreHttpConfiguration {
 
     @ConditionalOnMissingBean(name = "casSslContext")
     @Bean
-    public DefaultCasSslContext casSslContext() {
+    public DefaultCasSSLContext casSslContext() {
         val client = casProperties.getHttpClient().getTruststore();
         if (client.getFile() != null && client.getFile().exists() && StringUtils.isNotBlank(client.getPsw())) {
-            return new DefaultCasSslContext(client.getFile(), client.getPsw(), client.getType());
+            return new DefaultCasSSLContext(client.getFile(), client.getPsw(), client.getType());
         }
         return null;
     }

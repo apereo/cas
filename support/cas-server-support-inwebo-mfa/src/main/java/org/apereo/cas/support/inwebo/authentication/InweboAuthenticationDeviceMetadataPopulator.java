@@ -19,10 +19,15 @@ import lombok.val;
 @RequiredArgsConstructor
 public class InweboAuthenticationDeviceMetadataPopulator extends BaseAuthenticationMetaDataPopulator {
 
+    /**
+     * Authentication attribute to capture device name.
+     */
+    public static final String ATTRIBUTE_NAME_INWEBO_AUTHENTICATION_DEVICE = "inweboAuthenticationDevice";
+
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {
         val inweboCredential = (InweboCredential) transaction.getCredentials().iterator().next();
-        builder.addAttribute("inweboAuthenticationDevice", inweboCredential.getDeviceName());
+        builder.addAttribute(ATTRIBUTE_NAME_INWEBO_AUTHENTICATION_DEVICE, inweboCredential.getDeviceName());
     }
 
     @Override

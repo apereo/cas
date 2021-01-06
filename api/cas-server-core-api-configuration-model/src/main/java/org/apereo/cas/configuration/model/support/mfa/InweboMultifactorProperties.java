@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.core.util.ClientCertificateProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -18,6 +19,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("InweboMultifactorProperties")
 public class InweboMultifactorProperties extends BaseMultifactorProviderProperties {
 
     /**
@@ -28,7 +30,19 @@ public class InweboMultifactorProperties extends BaseMultifactorProviderProperti
     private static final long serialVersionUID = -942637204816051814L;
 
     /**
-     * The Inwebo serviceId.
+     * The service API url.
+     */
+    @RequiredProperty
+    private String serviceApiUrl = "https://api.myinwebo.com/FS?";
+
+    /**
+     * Console admin API url.
+     */
+    @RequiredProperty
+    private String consoleAdminUrl = "https://api.myinwebo.com/v2/services/ConsoleAdmin";
+
+    /**
+     * The Inwebo service id.
      */
     @RequiredProperty
     private Long serviceId;
@@ -37,7 +51,7 @@ public class InweboMultifactorProperties extends BaseMultifactorProviderProperti
      * The client certificate.
      */
     @RequiredProperty
-    private ClientCertificateProperties clientCertificate;
+    private ClientCertificateProperties clientCertificate = new ClientCertificateProperties();
 
     /**
      * The alias of the secured site.

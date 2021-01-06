@@ -24,13 +24,13 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 /**
- * This is {@link DefaultCasSslContext}.
+ * This is {@link DefaultCasSSLContext}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
 @Getter
-public class DefaultCasSslContext {
+public class DefaultCasSSLContext {
     private static final String ALG_NAME_PKIX = "PKIX";
 
     private final SSLContext sslContext;
@@ -38,7 +38,7 @@ public class DefaultCasSslContext {
     private final TrustManager[] trustManagers;
 
     @SneakyThrows
-    public DefaultCasSslContext(final Resource trustStoreFile, final String trustStorePassword, final String trustStoreType) {
+    public DefaultCasSSLContext(final Resource trustStoreFile, final String trustStorePassword, final String trustStoreType) {
         val casTrustStore = KeyStore.getInstance(trustStoreType);
         val trustStorePasswordCharArray = trustStorePassword.toCharArray();
 
@@ -59,11 +59,9 @@ public class DefaultCasSslContext {
         };
         val allManagers = new ArrayList<>(customTrustManager);
         allManagers.addAll(jvmTrustManagers);
-        trustManagers = new TrustManager[]{new CompositeX509TrustManager(allManagers)};
-
+        this.trustManagers = new TrustManager[]{new CompositeX509TrustManager(allManagers)};
         this.sslContext = SSLContexts.custom().setProtocol("SSL").build();
         this.sslContext.init(keyManagers, trustManagers, null);
-
     }
 
     @SneakyThrows

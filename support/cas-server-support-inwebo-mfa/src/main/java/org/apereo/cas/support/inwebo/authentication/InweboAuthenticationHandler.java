@@ -41,7 +41,7 @@ public class InweboAuthenticationHandler extends AbstractPreAndPostProcessingAut
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
         val inweboCredential = (InweboCredential) credential;
         val login = inweboCredential.getLogin();
-        LOGGER.debug("Login: [{}]", login);
+        LOGGER.trace("Inwebo credential login is [{}]", login);
 
         val otp = inweboCredential.getOtp();
         var authenticated = inweboCredential.isAlreadyAuthenticated();
