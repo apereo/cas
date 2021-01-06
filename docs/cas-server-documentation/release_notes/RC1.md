@@ -85,6 +85,10 @@ has now removed the requirement for an XML foundation, allowing the construction
 
 [WebAuthN/FIDO2 Device registrations](../mfa/FIDO2-WebAuthn-Authentication.html) 
 may be managed using an external REST API.
+
+### Inwebo MFA Integration
+
+Support [inWebo](../mfa/Inwebo-Authentication.html) as a multifactor authentication provider is now available.
  
 ### SCIM Provisioning
 

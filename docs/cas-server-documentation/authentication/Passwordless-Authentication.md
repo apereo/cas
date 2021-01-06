@@ -50,125 +50,31 @@ using CAS settings and are activated depending on the presence of configuration 
 
 ### Simple
 
-This strategy provides a static map of usernames that are linked to their 
-method of contact, such as email or phone number. It is best used
-for testing and demo purposes. The key in the map is taken to be the username 
-eligible for authentication while the value can either be an email
-address or phone number that would be used to contact the user with issued tokens.
-
-{% include {{ version }}/passwordless-simple-accounts-configuration.md %}
+Please [see this guide](Passwordless-Authentication-Storage-Simple.html).
 
 ### MongoDb
 
-This strategy allows one to locate a user record in MongoDb. The designated MongoDb 
-collection is expected to carry objects of type `PasswordlessUserAccount` in JSON format. 
-
-Support is enabled by including the following module in the overlay:
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-passwordless-mongo" %}
-
-{% include {{ version }}/mongodb-configuration.md configKey="cas.authn.passwordless.accounts" %}
+Please [see this guide](Passwordless-Authentication-Storage-MongoDb.html).
 
 ### LDAP
 
-This strategy allows one to locate a user record in an LDAP directory. The record is expected to carry the user's phone number
-or email address via configurable attributes.
-
-Support is enabled by including the following module in the overlay:
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-passwordless-ldap" %}
-
-{% include {{ version }}/ldap-configuration.md configKey="cas.authn.passwordless.accounts.ldap" %}
+Please [see this guide](Passwordless-Authentication-Storage-LDAP.html).
 
 ### JSON
 
-This strategy allows one to locate user records via a JSON resource, as such:
-
-```json 
-{
-  "@class" : "java.util.LinkedHashMap",
-  "casuser" : {
-    "@class": "org.apereo.cas.api.PasswordlessUserAccount",
-    "username": "casuser",
-    "attributes": {
-        "@class": "java.util.LinkedHashMap",
-        "name": [ "java.util.ArrayList", ["value"] ]
-    },
-    "multifactorAuthenticationEligible": "TRUE",
-    "delegatedAuthenticationEligible": "TRUE",
-    "requestPassword": false
-  }
-}
-```
-
-{% include {{ version }}/passwordless-json-accounts-configuration.md %}
+Please [see this guide](Passwordless-Authentication-Storage-JSON.html).
 
 ### Groovy
 
-This strategy allows one to locate user records via a Groovy script. The body of the script may be defined as such:
-
-```groovy
-import org.apereo.cas.api.*
-
-def run(Object[] args) {
-    def username = args[0]
-    def logger = args[1]
-    
-    logger.info("Locating user record for user $username")
-    
-    /*
-     ...
-     Locate the record for the given username, and return the result back to CAS.
-     ...
-    */
-    
-    def account = new PasswordlessUserAccount()
-    account.setUsername(username)
-    account.setEmail("username@example.org")
-    account.setName("TestUser")
-    account.setPhone("123-456-7890") 
-    account.setAttributes(Map.of("...", List.of("...", "...")) 
-    account.setMultifactorAuthenticationEligible(TriStateBoolean.FALSE)  
-    account.setRequestPassword(false)
-    return account
-}
-```
-
-{% include {{ version }}/passwordless-groovy-accounts-configuration.md %}
+Please [see this guide](Passwordless-Authentication-Storage-Groovy.html).
 
 ### REST
 
-This strategy allows one design REST endpoints in charge of locating passwordless user records. A successful execution of the endpoint  
-would produce a response body similar to the following:
-
-```json
-{
-  "@class" : "org.apereo.cas.api.PasswordlessUserAccount",
-  "username" : "casuser",
-  "email" : "cas@example.org",
-  "phone" : "123-456-7890",
-  "name" : "CASUser",        
-  "multifactorAuthenticationEligible": "FALSE",  
-  "delegatedAuthenticationEligible": "FALSE",  
-  "requestPassword": false,
-  "attributes":{ "lastName" : ["...", "..."] }
-}
-```
-
-{% include {{ version }}/rest-configuration.md configKey="cas.authn.passwordless.accounts.rest" %}
+Please [see this guide](Passwordless-Authentication-Storage-Rest.html).
 
 ### Custom
 
-You may also define your own user account store using the following bean definition and by implementing `PasswordlessUserAccountStore`:
-
-```java 
-@Bean
-public PasswordlessUserAccountStore passwordlessUserAccountStore() {
-    ...
-}
-```
-
-[See this guide](../configuration/Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.
+Please [see this guide](Passwordless-Authentication-Storage-Custom.html).
 
 ## Token Management
 
@@ -187,45 +93,17 @@ to synchronize and replicate tokens across CAS nodes.
 
 ### JPA
 
-This strategy allows one to store tokens and manage their expiration policy using a relational database.
-
-Support is enabled by including the following module in the overlay:
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-passwordless-jpa" %}
-
-{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.passwordless.tokens.jpa" %}
-
-{% include {{ version }}/job-scheduling-configuration.md configKey="cas.authn.passwordless.tokens.jpa.cleaner" %}
+Please [see this guide](Passwordless-Authentication-Tokens-JPA.html).
 
 ### REST
 
-This strategy allows one design REST endpoints in charge of managing tokens and their expiration policy entirely. 
-CAS continues to generate tokens and the endpoint is only acting as a facade to the real token store, receiving tokens from CAS
-in an encrypted fashion. 
+Please [see this guide](Passwordless-Authentication-Tokens-Rest.html).
 
-{% include {{ version }}/rest-configuration.md configKey="cas.authn.passwordless.tokens.rest" %}
-
-The following operations need to be supported by the endpoint:
-
-| HTTP Method | Description                               | Parameter(s)          | Response
-|-------------|-------------------------------------------|-----------------------|--------------------------------
-| `GET`       | Locate tokens for the user.               | `username`            | Token in the response body.
-| `DELETE`    | Delete all tokens for the user.           | `username`            | N/A
-| `DELETE`    | Delete a single token for the user.       | `username`, `token`   | N/A
-| `POST`      | Save a token for the user.                | `username`, `token`   | N/A
 
 ### Custom
 
-You may also define your own token management store using the following bean definition and by implementing `PasswordlessTokenRepository`:
+Please [see this guide](Passwordless-Authentication-Tokens-Custom.html).
 
-```java 
-@Bean
-public PasswordlessTokenRepository passwordlessTokenRepository() {
-    ...
-}
-```
-
-[See this guide](../configuration/Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.
 
 ### Messaging & Notifications
 
