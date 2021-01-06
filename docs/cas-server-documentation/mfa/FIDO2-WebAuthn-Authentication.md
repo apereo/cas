@@ -72,72 +72,34 @@ The following endpoints are provided by CAS:
 
 ### Default
 
-By default, a repository implementation is included that collects user device registrations and saves them into memory.
+By default, a repository implementation is included that collects 
+user device registrations and saves them into memory.
 This option should only be used for demo and testing purposes.
 
 ### JSON
 
-A device repository implementation that collects user device registrations and saves them into a JSON file whose 
-path is taught to CAS via settings. This is a very modest option and should mostly be used for demo and testing 
-purposes. Needless to say, this JSON resource acts as a database that must be available to all CAS server nodes in the cluster.
-
-{% include {{ version }}/json-webauthn-configuration.md %}
+Please [see this guide](FIDO2-WebAuthn-Authentication-Registration-JSON.html) for more info.
 
 ### MongoDb
 
-Device registrations may be kept inside a MongoDb instance by including the following module in the WAR overlay:
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-webauthn-mongo" %}
-
-{% include {{ version }}/mongodb-configuration.md configKey="cas.authn.mfa.web-authn" %}
+Please [see this guide](FIDO2-WebAuthn-Authentication-Registration-MongoDb.html) for more info.
 
 ### LDAP
 
-Device registrations may be kept inside LDAP directories by including the following module in the WAR overlay:
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-webauthn-ldap" %}
-
-Device registration records are kept inside a designated configurable multi-valued attribute as JSON blobs. The attribute values are parsed
-to load, save, update or delete accounts. The content of each attribute value can be signed/encrypted if necessary. 
-
-{% include {{ version }}/ldap-webauthn-configuration.md %}
+Please [see this guide](FIDO2-WebAuthn-Authentication-Registration-LDAP.html) for more info.
 
 ### JPA
 
-Device registrations may be kept inside a relational database instance by including the following module in the WAR overlay:
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-webauthn-jpa" %}
-
-{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.mfa.web-authn.jpa" %}
+Please [see this guide](FIDO2-WebAuthn-Authentication-Registration-JPA.html) for more info.
 
 ### Redis
 
-Device registrations may be kept inside a Redis database instance by including the following module in the WAR overlay:
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-webauthn-redis" %}
-
-{% include {{ version }}/redis-configuration.md configKey="cas.authn.mfa.web-authn" %}
+Please [see this guide](FIDO2-WebAuthn-Authentication-Registration-Redis.html) for more info.
 
 ### DynamoDb
 
-Device registrations may be kept inside a DynamoDb instance by including the following module in the WAR overlay:
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-webauthn-dynamodb" %}
-
-{% include {{ version }}/dynamodb-configuration.md configKey="cas.authn.mfa.web-authn" %}
+Please [see this guide](FIDO2-WebAuthn-Authentication-Registration-DynamoDb.html) for more info.
 
 ### REST
 
-Device registrations may be managed using an external REST API by including the following module in the WAR overlay:
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-webauthn-rest" %}
-
-The following parameters are passed:
-
-| Operation        | Parameters      | Description      | Result
-|------------------|-----------------|------------------|-----------------------------------------------------
-| `GET`            | N/A             | Retrieve all records.     | `200` status code; Collection of JSON records in the body.
-| `GET`            | `username`      | Retrieve all records for user.  | `200` status code Collection of JSON records in the body.
-| `POST`           | Collection of records as JSON body | Store/Update registered devices. | `200`.
-
-{% include {{ version }}/rest-configuration.md configKey="cas.authn.mfa.web-authn.rest" %}
+Please [see this guide](FIDO2-WebAuthn-Authentication-Registration-Rest.html) for more info.

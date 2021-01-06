@@ -38,84 +38,30 @@ Surrogate accounts may be defined statically in the CAS configuration.
 {% include {{ version }}/static-accounts-surrogate-authentication-configuration.md %}
 
 ### JSON
-
-Similar to above, except that surrogate accounts may be defined in an external JSON file whose path is specified via the CAS configuration. The syntax of the JSON file should match the following snippet:
-
-```json
-{
-    "casuser": ["jsmith", "banderson"],
-    "adminuser": ["jsmith", "tomhanks"]
-}
-```
-
-{% include {{ version }}/json-accounts-surrogate-authentication-configuration.md %}
+   
+Please [see this guide](Surrogate-Authentication-Storage-JSON.html).
 
 ### LDAP
 
-LDAP support for surrogate authentication is enabled by including the following dependencies in the WAR overlay:
+Please [see this guide](Surrogate-Authentication-Storage-LDAP.html).
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-surrogate-authentication-ldap" %}
-
-Surrogate accounts may also be retrieved from an LDAP instance. Such accounts are expected to be found in a configured attribute defined for the primary user in LDAP whose value(s) may be examined against a regular expression pattern of your own choosing to further narrow down the list of authorized surrogate accounts. 
-
-{% include {{ version }}/ldap-accounts-surrogate-authentication-configuration.md %}
 
 ### CouchDb
 
-CouchDb support for surrogate authentication is enabled by including the following dependencies in the WAR overlay:
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-surrogate-authentication-couchdb" %}
-
-Surrogate accounts may also be retrieved from an CouchDb instance. By default, this takes the form of surrogate/principal key/value pairs. Users authorized as surrogates may be listed multiple times to authorize them to access multiple accounts. Additionally, the CouchDb surrogate support may be configured to use a profile attribute containing a list of principals the user may surrogate for with the `profileBased` property. 
-
-{% include {{ version }}/couchdb-accounts-surrogate-authentication-configuration.md %}
+Please [see this guide](Surrogate-Authentication-Storage-CouchDb.html).
 
 ### JDBC
 
-JDBC support for surrogate authentication is enabled by including the following dependencies in the WAR overlay:
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-surrogate-authentication-jdbc" %}
-
-Aside from the usual database settings, this mode requires the specification of 
-two SQL queries; one that determines eligibility and one that is able to retrieve
-the list of accounts that can be impersonated for a given admin user. 
-
-{% include {{ version }}/jdbc-accounts-surrogate-authentication-configuration.md %}
+Please [see this guide](Surrogate-Authentication-Storage-JDBC.html).
 
 
 ### REST
 
-REST support for surrogate authentication is enabled by including the following dependencies in the WAR overlay:
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-surrogate-authentication-rest" %}
-
-| Method       | Description                                                   | Parameter(s)             | Response
-|--------------|---------------------------------------------------------------|--------------------------|-----------
-| `GET`        | Whether principal can authenticate as a surrogate account.    | `surrogate`, `principal` | `202`
-| `GET`        | List of accounts principal is eligible to impersonate.        | `principal` | JSON list of usernames.
-
-{% include {{ version }}/rest-configuration.md configKey="cas.authn.surrogate.rest" %}
+Please [see this guide](Surrogate-Authentication-Storage-REST.html).
 
 ### Custom
 
-If you wish to design your own account store, you may follow the below approach:
-
-```java
-package org.apereo.cas.custom;
-
-@Configuration("mySurrogateConfiguration")
-@EnableConfigurationProperties(CasConfigurationProperties.class)
-public class MySurrogateConfiguration {
-
-    @Bean
-    public SurrogateAuthenticationService surrogateAuthenticationService() {
-      ...
-    }
-
-}
-```
-
-[See this guide](../configuration/Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.
+Please [see this guide](Surrogate-Authentication-Storage-Custom.html).
 
 ## Account Selection
 
@@ -123,14 +69,18 @@ The surrogate user selection can happen via the following ways.
 
 ### Preselected
 
-This is the case where the surrogate user identity is known beforehand and is provided to CAS upon login using a special syntax.
+This is the case where the surrogate user identity is known 
+beforehand and is provided to CAS upon login using a special syntax.
 When entering credentials, the following syntax should be used:
 
 ```bash
 [surrogate-userid][separator][primary-userid]
 ```
 
-For example, if you are `casuser` and you need to switch to `jsmith` as the surrogate user, the credential id provided to CAS would be `jsmith+casuser` where the separator is `+` and can be altered via the CAS configuration. You will need to provide your own password of course.
+For example, if you are `casuser` and you need to switch to `jsmith` as the 
+surrogate user, the credential id provided to CAS would be `jsmith+casuser` where 
+the separator is `+` and can be altered via the CAS configuration. You will 
+need to provide your own password of course.
 
 ### GUI
 
