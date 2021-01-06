@@ -38,6 +38,7 @@ The following multifactor providers are supported by CAS.
 | FIDO2 WebAuthN        | `mfa-webauthn`  | [See this guide](FIDO2-WebAuthn-Authentication.html).
 | CAS Simple            | `mfa-simple`    | [See this guide](Simple-Multifactor-Authentication.html).
 | Swivel Secure         | `mfa-swivel`    | [See this guide](SwivelSecure-Authentication.html).
+| Inwebo                | `mfa-inwebo`    | [See this guide](Inwebo-Authentication.html).
 | Custom                | Custom          | [See this guide](../mfa/Custom-MFA-Authentication.html).
 
 ## Triggers
