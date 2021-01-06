@@ -52,119 +52,38 @@ The following endpoints are provided by CAS:
 
 ### Default
 
-By default, a repository implementation is included that collects user device registrations and saves them into memory.
+By default, a repository implementation is included that collects 
+user device registrations and saves them into memory.
 This option should only be used for demo and testing purposes.
 
 ### JSON
-
-A device repository implementation that collects user device registrations and 
-saves them into a JSON file whose path is taught to CAS via settings. This is 
-a very modest option and should mostly be used for demo and testing purposes. 
-Needless to say, this JSON resource acts as a database that must be available to all CAS server nodes in the cluster.
-
-{% include {{ version }}/json-u2f-configuration.md %}
-
-Devices stored into the JSON file take on the following format:
-
-```json
-{
-  "@class" : "java.util.HashMap",
-  "devices" : [ "java.util.ArrayList", [ {
-    "@class" : "org.apereo.cas.adaptors.u2f.storage.U2FDeviceRegistration",
-    "id" : 1508515100762,
-    "username" : "casuser",
-    "record" : "{\"keyHandle\":\"keyhandle11\",\"publicKey\":\"publickey1\",\"counter\":1,\"compromised\":false}",
-    "createdDate" : "2016-10-15"
-  } ] ]
-}
-```
+      
+Please [see this guide](FIDO-U2F-Authentication-JSON.html) for more info.
 
 ### Groovy
 
-Device registrations may be managed via an external Groovy script. The script may be designed as follows:
-
-{% include {{ version }}/groovy-u2f-configuration.md %}
-
-```groovy
-import java.util.*
-import org.apereo.cas.adaptors.u2f.storage.*
-
-Map<String, List<U2FDeviceRegistration>> read(final Object... args) {
-    def logger = args[0]
-    ...
-    null
-}
-
-Boolean write(final Object... args) {
-    List<U2FDeviceRegistration> list = args[0]
-    def logger = args[1]
-    ...
-    true
-}
-
-void removeAll(final Object... args) {
-    def logger = args[0]
-}          
-
-def remove(Object[] args) {
-    def device = args[0]
-    def logger = args[1]
-}
-```
+Please [see this guide](FIDO-U2F-Authentication-Groovy.html) for more info.
 
 ### JPA
 
-Device registrations may be kept inside a relational database by including the following module in the WAR overlay:
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-u2f-jpa" %}
-
-{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.mfa.u2f.jpa" %}
+Please [see this guide](FIDO-U2F-Authentication-JPA.html) for more info.
 
 ### MongoDb
 
-Device registrations may be kept inside a MongoDb instance by including the following module in the WAR overlay:
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-u2f-mongo" %}
-
-{% include {{ version }}/mongodb-configuration.md configKey="cas.authn.mfa.u2f" %}
+Please [see this guide](FIDO-U2F-Authentication-MongoDb.html) for more info.
 
 ### DynamoDb
 
-Device registrations may be kept inside a DynamoDb instance by including the following module in the WAR overlay:
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-u2f-dynamodb" %}
-
-{% include {{ version }}/dynamodb-configuration.md configKey="cas.authn.mfa.u2f" %}
+Please [see this guide](FIDO-U2F-Authentication-DynamoDb.html) for more info.
 
 ### Redis
 
-Device registrations may be kept inside a Redis instance by including the following module in the WAR overlay:
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-u2f-redis" %}
-
-{% include {{ version }}/redis-configuration.md configKey="cas.authn.mfa.u2f" %}
+Please [see this guide](FIDO-U2F-Authentication-Redis.html) for more info.
 
 ### CouchDb
 
-Device registrations may be kept inside a CouchDb instance by including the following module in the WAR overlay:
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-u2f-couchdb" %}
-
-{% include {{ version }}/couchdb-configuration.md configKey="cas.authn.mfa.u2f" %}
+Please [see this guide](FIDO-U2F-Authentication-CouchDb.html) for more info.
 
 ### REST
 
-Device registrations may be managed via REST APIs. Endpoints must be designed to 
-accept/process `application/json`. The syntax for he collection of devices passed back and 
-forth is designed in JSON and is identical to the JSON structure defined above.
-
-The following parameters are passed:
-
-| Operation        | Parameters      | Description      | Result
-|------------------|-----------------|------------------|----------------------------------------------------
-| `GET` | N/A    | Retrieve all registered devices.     | `200` status code; Collection of registered devices as JSON in response body.
-| `POST` | Collection of registered devices as JSON | Store registered devices. | `200`.
-| `DELETE` | N/A | Delete all device records | `200`.
-| `DELETE` | `/${id}`  as a path variable | Delete all device records matching that identifier. | `200`.
-
-{% include {{ version }}/rest-configuration.md configKey="cas.authn.mfa.u2f.rest" %}
+Please [see this guide](FIDO-U2F-Authentication-Rest.html) for more info.

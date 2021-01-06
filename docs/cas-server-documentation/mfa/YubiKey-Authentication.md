@@ -11,12 +11,14 @@ category: Multifactor Authentication
 Yubico is a cloud-based service that enables strong, easy-to-use and affordable 
 two-factor authentication with one-time passwords through their 
 flagship product, YubiKey. Once Yubico `client-id` and `secret-key` 
-are obtained, then the configuration options available to use YubiKey devices as a primary authentication 
+are obtained, then the configuration options available to 
+use YubiKey devices as a primary authentication 
 source that CAS server could use to authenticate users.
 
 To configure YubiKey accounts and obtain API keys, [refer to the documentation](https://upgrade.yubico.com/getapikey/).
 
-[YubiKey](https://www.yubico.com/products/yubikey-hardware) authentication components are enabled by including the following dependencies in the WAR overlay:
+[YubiKey](https://www.yubico.com/products/yubikey-hardware) authentication 
+components are enabled by including the following dependencies in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-yubikey" %}
 
@@ -43,136 +45,50 @@ in order to allow for a successful authentication event.
 
 ### JSON
 
-Registration records may be tracked inside a JSON file, provided the file path is specified in CAS settings. 
+Please [see this guide](YubiKey-Authentication-Registration-JSON.html) for more info.
 
-The JSON structure is a map of user id to yubikey public id representing any particular device:
-
-```json
-{
-  "uid1": ["yubikeyPublicId1"],
-  "uid2": ["yubikeyPublicId2"]
-}
-```
-
-{% include {{ version }}/json-yubikey-configuration.md %}
 
 ### REST
 
-Registration records may be tracked using an external REST API.
-
-{% include {{ version }}/rest-configuration.md configKey="cas.authn.mfa.yubikey.rest" %}
-
-The following endpoints are expected to be available and implemented by the REST API:
-
-| METHOD              | Endpoint        | Description
-|--------------------------------------------------------------------------------------
-| `GET`              | `/`              | Get all registered records.
-| `GET`              | `/{user}`        | Get all registered records for the user.
-| `DELETE`           | `/`              | Delete all registered records.
-| `DELETE`           | `/{user}`        | Delete all registered records for the user.
-| `DELETE`           | `/{user}/{id}`   | Delete the registered device by its id from the the registration record for the user.
-| `POST`             | `/`              | Store registration records passed as the request body.
+Please [see this guide](YubiKey-Authentication-Registration-Rest.html) for more info.
 
 ### Permissive
 
-Registration records may be specified statically via CAS settings in form of a map that links registered usernames 
-with the public id of the YubiKey device. 
-
-{% include {{ version }}/allowed-yubikey-configuration.md %}
+Please [see this guide](YubiKey-Authentication-Registration-Permissive.html) for more info.
 
 ### JPA
 
-Support is enabled by including the following dependencies in the WAR overlay:
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-yubikey-jpa" %}
-
-{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.mfa.yubikey.jpa" %}
-
-The expected database schema that is automatically created and configured 
-by CAS contains a single table as `YubiKeyAccount` with the following fields:
-
-| Field              | Description
-|--------------------------------------------------------------------------------------
-| `id`               | Unique record identifier, acting as the primary key.
-| `publicId`         | The public identifier/key of the device used for authentication.
-| `username`         | The username whose device is registered.
+Please [see this guide](YubiKey-Authentication-Registration-JPA.html) for more info.
 
 ### CouchDb
 
-Support is enabled by including the following dependencies in the WAR overlay:
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-yubikey-couchdb" %}
-
-{% include {{ version }}/couchdb-configuration.md configKey="cas.authn.mfa.yubikey" %}
-
-The registration records are kept inside a single CouchDb database of your choosing that will be auto-created by CAS.
-The structure of this database's documents is as follows:
-
-| Field              | Description
-|--------------------------------------------------------------------------------------
-| `id`               | Unique record identifier, acting as the primary key.
-| `publicId`         | The public identifier/key of the device used for authentication.
-| `username`         | The username whose device is registered.
+Please [see this guide](YubiKey-Authentication-Registration-CouchDb.html) for more info.
 
 ### Redis
 
-Support is enabled by including the following dependencies in the WAR overlay:
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-yubikey-redis" %}
-
-{% include {{ version }}/redis-configuration.md configKey="cas.authn.mfa.yubikey" %}
+Please [see this guide](YubiKey-Authentication-Registration-Redis.html) for more info.
 
 ### DynamoDb
 
-Support is enabled by including the following dependencies in the WAR overlay:
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-yubikey-dynamodb" %}
-
-{% include {{ version }}/dynamodb-configuration.md configKey="cas.authn.mfa.yubikey" %}
+Please [see this guide](YubiKey-Authentication-Registration-DynamoDb.html) for more info.
 
 ### MongoDb
 
-Support is enabled by including the following dependencies in the WAR overlay:
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-yubikey-mongo" %}
-
-{% include {{ version }}/mongodb-configuration.md configKey="cas.authn.mfa.yubikey" %}
-
-The registration records are kept inside a single MongoDb collection of your choosing that will be auto-created by CAS.
-The structure of this collection is as follows:
-
-| Field              | Description
-|--------------------------------------------------------------------------------------
-| `id`               | Unique record identifier, acting as the primary key.
-| `publicId`         | The public identifier/key of the device used for authentication.
-| `username`         | The username whose device is registered.
+Please [see this guide](YubiKey-Authentication-Registration-MongoDb.html) for more info.
 
 
 ### Custom
 
-If you wish to plug in a custom registry implementation that would determine
-which users are allowed to use their YubiKey accounts for authentication, you 
-may plug in a custom implementation of the `YubiKeyAccountRegistry` that 
-allows you to provide a mapping between usernames and YubiKey public keys.
+Please [see this guide](YubiKey-Authentication-Registration-Custom.html) for more info.
 
+## Device/Account Validation
 
-```java
-package org.apereo.cas.support.yubikey;
-
-@Configuration("myYubiKeyConfiguration")
-@EnableConfigurationProperties(CasConfigurationProperties.class)
-public class MyYubiKeyConfiguration {
-
-  @Bean
-  public YubiKeyAccountRegistry yubiKeyAccountRegistry() {
-      ...
-  }
-}
-```
-
-## Device Registrations
-
-In the event that a new YubiKey should be registered, it may be desirable to execute additional validation processes before the account is registered with the underlying store. By default, the device registration step only verifies the device token. If you wish to extend this behavior, you can design your own validator that cross-checks the account against alternative sources and databases for validity and authorization:
+In the event that a new YubiKey should be registered, it may be desirable to 
+execute additional validation processes before the account is registered with 
+the underlying store. By default, the device registration step only verifies 
+the device token. If you wish to extend this behavior, you can design your 
+own validator that cross-checks the account against alternative 
+sources and databases for validity and authorization:
 
 ```java
 package org.apereo.cas.support.yubikey;
