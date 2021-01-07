@@ -28,7 +28,7 @@ CAS during the SSO session. While this is a best-effort process, in many cases i
 user experience by creating symmetry between login and logout.
 
 <div class="alert alert-info"><strong>SSO Sessions</strong><p>It is possible to review the current collection of active SSO sessions,
-and determine if CAS itself maintains an active SSO session via the <a href="../monitoring/Monitoring-Statistics.html">CAS administration panels.</a></p></div>
+and determine if CAS itself maintains an active SSO session. See <a href="../monitoring/Monitoring-Statistics.html">this page</a>.</p></div>
 
 ## CAS Logout
 
