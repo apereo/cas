@@ -404,12 +404,14 @@ layout: null
 
 * [High Availability](#highavailability)
     *   [Overview](/cas/{{ version }}/high_availability/High-Availability-Guide.html)
-    *   [Performance Testing](/cas/{{ version }}/high_availability/High-Availability-Performance-Testing.html)
+    *   [Performance Testing](#perftesting)
+        *   [Overview](/cas/{{ version }}/high_availability/High-Availability-Performance-Testing.html)
         *   [Locust](/cas/{{ version }}/high_availability/Performance-Testing-Locust.html)
         *   [JMeter](/cas/{{ version }}/high_availability/Performance-Testing-JMeter.html)
-    *   [Service Discovery](/cas/{{ version }}/installation/Service-Discovery-Guide.html)
-        *  [Eureka Service Discovery](/cas/{{ version }}/installation/Service-Discovery-Guide-Eureka.html)
-        *  [Consul Service Discovery](/cas/{{ version }}/installation/Service-Discovery-Guide-Consul.html)
+    *   [Service Discovery](#servicediscovery)
+        *   [Overview](/cas/{{ version }}/installation/Service-Discovery-Guide.html)
+        *   [Eureka Service Discovery](/cas/{{ version }}/installation/Service-Discovery-Guide-Eureka.html)
+        *   [Consul Service Discovery](/cas/{{ version }}/installation/Service-Discovery-Guide-Consul.html)
     
 * [Protocols](#protocols)
     *   [Overview](/cas/{{ version }}/protocol/Protocol-Overview.html)
