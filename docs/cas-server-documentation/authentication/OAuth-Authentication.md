@@ -6,9 +6,9 @@ category: Authentication
 {% include variables.html %}
 
 
-# OAuth/OpenID Authentication
+# OAuth Authentication
 
-Allow CAS to act as an OAuth/OpenID authentication provider. Please [review the specification](https://oauth.net/2/) to learn more.
+Allow CAS to act as an OAuth authentication provider. Please [review the specification](https://oauth.net/2/) to learn more.
 
 <div class="alert alert-info"><strong>CAS as OAuth Server</strong><p>This page specifically describes how to enable
 OAuth/OpenID server support for CAS. If you would like to have CAS act as an OAuth/OpenID client communicating with
@@ -127,177 +127,20 @@ when this previous access token is expired.
 
 ## Grant Type Selection
 
-A grant is a method of acquiring an access token. Deciding which grants to implement depends on the type of client the end user will be using, and the experience you want for your users.
+A grant is a method of acquiring an access token. Deciding which grants to implement 
+depends on the type of client the end user will be using, and the experience you want for your users.
 
 ![](https://alexbilbie.com/images/oauth-grants.svg)
 
 To learn more about profiles and grant types, please [review this guide](https://alexbilbie.com/guide-to-oauth-2-grants/).
 
-## Register Clients
+## Client Registration
 
-Every OAuth client must be defined as a CAS service (notice the new *clientId* and *clientSecret* properties, specific to OAuth):
-
-```json
-{
-  "@class" : "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
-  "clientId": "clientid",
-  "clientSecret": "clientSecret",
-  "serviceId" : "^(https|imaps)://<redirect-uri>.*",
-  "name" : "OAuthService",
-  "id" : 100,
-  "supportedGrantTypes": [ "java.util.HashSet", [ "...", "..." ] ],
-  "supportedResponseTypes": [ "java.util.HashSet", [ "...", "..." ] ]
-}
-```
-
-The following fields are supported:
-
-| Field                             | Description
-|-----------------------------------|---------------------------------------------------------------------------------
-| `clientId`                        | The client identifier for the application/service.
-| `clientSecret`                    | The client secret for the application/service.
-| `supportedGrantTypes`             | Collection of supported grant types for this service.
-| `supportedResponseTypes`          | Collection of supported response types for this service.
-| `bypassApprovalPrompt`            | Whether approval prompt/consent screen should be bypassed. Default is `false`.
-| `generateRefreshToken`            | Whether a refresh token should be generated along with the access token. Default is `false`.
-| `renewRefreshToken`               | Whether the existing refresh token should be expired and a new one generated (and sent along) whenever a new access token is requested (with `grant_type` = `refresh_token`). Only possible if `generateRefreshToken` is set to `true`. Default is `false`.
-| `jwtAccessToken`                  | Whether access tokens should be created as JWTs. Default is `false`.
-| `serviceId`                       | The pattern that authorizes the redirect URI(s), or same as `clientId` in case `redirect_uri` is not required by the grant type (i.e `client_credentials`, etc).
-
-<div class="alert alert-info"><strong>Keep What You Need!</strong><p>You are encouraged to only keep and maintain properties and settings needed for a particular integration. It is <strong>UNNECESSARY</strong> to grab a copy of all service fields and try to configure them yet again based on their default. While you may wish to keep a copy as a reference, this strategy would ultimately lead to poor upgrades increasing chances of breaking changes and a messy deployment at that.</p></div>
-
-Service definitions are typically managed by the [service management](../services/Service-Management.html) facility.
-
-<div class="alert alert-warning"><strong>Usage Warning!</strong><p>CAS today does not strictly enforce the collection of authorized supported response/grant types for backward compatibility reasons. This means that if left undefined, all grant and response types may be allowed by the service definition and related policies. Do please note that this behavior is <strong>subject to change</strong> in future releases and thus, it is strongly recommended that all authorized grant/response types for each profile be declared in the service definition immediately to avoid surprises in the future.</p></div>
-
-### Encryptable Client Secrets
-
-Client secrets for OAuth relying parties may be defined as encrypted values prefixed with `{cas-cipher}`:
-
-```json
-{
-  "@class": "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
-  "clientId": "clientid",
-  "clientSecret": "{cas-cipher}eyJhbGciOiJIUzUxMiIs...",
-  "serviceId" : "^(https|imaps)://<redirect-uri>.*",
-  "name": "Sample",
-  "id": 100
-}
-```
-
-Client secrets may be encrypted using CAS-provided cipher operations either manually or via the [CAS Command-line shell](../installation/Configuring-Commandline-Shell.html).
-
-{% include {{ version }}/oauth2-configuration.md %}
-
-### Attribute Release
-
-Attribute/claim filtering and release policies are defined per OAuth service.
-See [this guide](../integration/Attribute-Release-Policies.html) for more info.
+Please [see this guide](OAuth-Authentication-Clients.html).
 
 ## OAuth Token Expiration Policy
 
-The expiration policy for OAuth tokens is controlled by CAS settings and properties. Note that
-while access and refresh tokens may have their own lifetime and expiration policy, they are 
-typically upper-bound to the length of the CAS single sign-on session.
-  
-### OAuth Codes
-
-{% include {{ version }}/codes-oauth2-configuration.md %}
-
-### OAuth Access Tokens
-
-{% include {{ version }}/accesstokens-oauth2-configuration.md %}
-
-### OAuthJWT Access Tokens
-
-{% include {{ version }}/jwt-accesstokens-oauth2-configuration.md %}
-
-### OAuth Device Tokens
-
-{% include {{ version }}/devicetokens-oauth2-configuration.md %}
-
-### OAuth Refresh Tokens
-
-{% include {{ version }}/refreshtokens-oauth2-configuration.md %}
-
-### OAuth Device User Codes
-
-{% include {{ version }}/deviceusercodes-oauth2-configuration.md %}
-
-### Per Service
-
-The expiration policy of certain OAuth tokens can be conditionally decided on a per-application basis. The candidate service
-whose token expiration policy is to deviate from the default configuration must be designed as the following snippets demonstrate.
-
-#### OAuth Code
-
-```json
-{
-  "@class" : "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
-  "clientId": "clientid",
-  "clientSecret": "clientSecret",
-  "serviceId" : "^(https|imaps)://<redirect-uri>.*",
-  "name" : "OAuthService",
-  "id" : 100,
-  "codeExpirationPolicy": {
-    "@class": "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthCodeExpirationPolicy",
-    "numberOfUses": 1,
-    "timeToLive": "10"
-  }
-}
-```
-
-#### OAuth Access Token
-
-```json
-{
-  "@class" : "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
-  "clientId": "clientid",
-  "clientSecret": "clientSecret",
-  "serviceId" : "^(https|imaps)://<redirect-uri>.*",
-  "name" : "OAuthService",
-  "id" : 100,
-  "accessTokenExpirationPolicy": {
-    "@class": "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthAccessTokenExpirationPolicy",
-    "maxTimeToLive": "1000",
-    "timeToLive": "100"
-  }
-}
-```
-
-#### OAuth Device Token
-
-```json
-{
-  "@class" : "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
-  "clientId": "clientid",
-  "clientSecret": "clientSecret",
-  "serviceId" : "^(https|imaps)://<redirect-uri>.*",
-  "name" : "OAuthService",
-  "id" : 100,
-  "accessTokenExpirationPolicy": {
-    "@class": "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthDeviceTokenExpirationPolicy",
-    "timeToLive": "100"
-  }
-}
-```
-
-#### OAuth Refresh Token
-
-```json
-{
-  "@class" : "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
-  "clientId": "clientid",
-  "clientSecret": "clientSecret",
-  "serviceId" : "^(https|imaps)://<redirect-uri>.*",
-  "name" : "OAuthService",
-  "id" : 100,
-  "accessTokenExpirationPolicy": {
-    "@class": "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthRefreshTokenExpirationPolicy",
-    "timeToLive": "100"
-  }
-}
-```
+Please [see this guide](OAuth-Authentication-TokenExpirationPolicy.html).
 
 ## JWT Access Tokens
 
@@ -350,68 +193,22 @@ Signing and encryption keys may also be defined on a per-service basis, or globa
 
 ## OAuth User Profile Structure
 
-The requested user profile may be rendered and consumed by the application using the following options.
-
-### Nested
-
-By default, the requested user profile is rendered using a `NESTED` format where the authenticated principal and attributes are placed inside `id` and `attributes` tags respectively in the final structure.
-
-```json
-{
-  "id": "casuser",
-  "attributes": {
-    "email": "casuser@example.org",
-    "name": "CAS"
-  },
-  "something": "else"
-}
-```
-
-### Flat
-
-This option flattens principal attributes by one degree, putting them at the same level as `id`. Other nested elements in the final payload are left untouched.
-
-```json
-{
-  "id": "casuser",
-  "email": "casuser@example.org",
-  "name": "CAS",
-  "something": "else"
-}
-```
-
-### Custom
-
-If you wish to create your own profile structure, you will need to design a component and register it with CAS to handle the rendering of the user profile:
-
-```java
-package org.apereo.cas.support.oauth;
-
-@Configuration("MyOAuthConfiguration")
-@EnableConfigurationProperties(CasConfigurationProperties.class)
-public class MyOAuthConfiguration {
-
-    @Bean
-    @RefreshScope
-    public OAuth20UserProfileViewRenderer oauthUserProfileViewRenderer() {
-        ...
-    }
-}
-```
-
-[See this guide](../configuration/Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.
+Please [see this guide](OAuth-Authentication-UserProfiles.html).
 
 ## Throttling
 
-Authentication throttling may be enabled for the `/oauth2.0/accessToken` provided support is included in the overlay to [turn on authentication
-throttling](Configuring-Authentication-Throttling.html) support. The throttling mechanism that handles the usual CAS server endpoints for authentication
-and ticket validation, etc is then activated for the OAuth endpoints that are supported for throttling.
-
+Authentication throttling may be enabled for the `/oauth2.0/accessToken` provided support 
+is included in the overlay to [turn on authentication
+throttling](Configuring-Authentication-Throttling.html) support. The throttling 
+mechanism that handles the usual CAS server endpoints for authentication
+and ticket validation, etc is then activated for the OAuth 
+endpoints that are supported for throttling.
 
 ## Server Configuration
 
 Remember that OAuth features of CAS require session affinity (and optionally session replication),
-as the authorization responses throughout the login flow are stored via server-backed session storage mechanisms. You will need to configure your deployment
+as the authorization responses throughout the login flow are stored via 
+server-backed session storage mechanisms. You will need to configure your deployment
 environment and load balancers accordingly.
 
 ## Session Replication
@@ -421,7 +218,3 @@ environment and load balancers accordingly.
 ## Sample Client Applications
 
 - [OAuth2 Sample Webapp](https://github.com/cas-projects/oauth2-sample-java-webapp)
-
-# OpenID Authentication
-
-To configure CAS to act as an OpenID provider, please [see this page](../protocol/OpenID-Protocol.html).
