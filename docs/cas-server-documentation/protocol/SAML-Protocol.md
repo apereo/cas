@@ -1,30 +1,12 @@
 ---
 layout: default
-title: CAS - CAS SAML Protocol
+title: CAS - CAS SAML v1.1 Protocol
 category: Protocols
 ---
 
 {% include variables.html %}
 
-# SAML Protocol
-
-CAS has support for versions 1.1 and 2 of the SAML protocol to a specific extent.
-This document deals with CAS-specific concerns.
-
-## SAML2
-
-CAS provides support for [SAML2 Authentication](../authentication/Configuring-SAML2-Authentication.html), allowing CAS to act
-as a SAML2 identity provider.
-
-## Google Apps
-
-<div class="alert alert-warning"><strong>Usage</strong>
-<p><strong>This feature is deprecated and is scheduled to be removed in the future.</strong></p>
-</div>
-
-CAS provides support for [Google Apps Integration](../integration/Google-Apps-Integration.html).
-
-## SAML 1.1
+# SAML v1.1 Protocol
 
 CAS supports the [standardized SAML 1.1 protocol](http://en.wikipedia.org/wiki/SAML_1.1) primarily to:
 
@@ -37,7 +19,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-saml" %}
 
-### Administrative Endpoints
+## Administrative Endpoints
 
 The following endpoints are provided by CAS:
  
@@ -45,7 +27,7 @@ The following endpoints are provided by CAS:
 |-------------------|---------------------------------------------------------------------------------------------------
 | `samlValidate`    | Obtain a SAML 1.1 validation payload by supplying a `username`, `password` and `service` as parameters.
 
-### Sample Request
+## Sample Request
 
 ```xml
 POST /cas/samlValidate?ticket=
@@ -67,7 +49,7 @@ Content-Type: text/xml
 </SOAP-ENV:Envelope>
 ```
 
-### Sample Response
+## Sample Response
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
