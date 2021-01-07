@@ -23,8 +23,9 @@ the result for each respected key. The deployer MUST attempt to copy the generat
 settings in their CAS properties file, specially when running a multi-node CAS deployment. Failure to do so will prevent CAS
 to appropriate decrypt and encrypt the cookie value and will prevent successful single sign-on.
 
-<div class="alert alert-info"><strong>SSO Sessions</strong><p>It is possible to review the current collection of active SSO sessions,
-and determine if CAS itself maintains an active SSO session via the <a href="../monitoring/Monitoring-Statistics.html">CAS administration panels.</a></p></div>
+<div class="alert alert-info"><strong>SSO Sessions</strong><p>It is possible to review the 
+current collection of active SSO sessions,
+and determine if CAS itself maintains an active SSO session. See <a href="../monitoring/Monitoring-Statistics.html">this page</a>.</p></div>
 
 ## Administrative Endpoints
 
@@ -56,6 +57,12 @@ WARN [...] - <Generated signing key XYZ of size ... . The generated key MUST be 
 
 You should then grab each generated key for encryption and signing, and put them inside your CAS properties for each setting.
 If you wish you manually generate keys, you may [use the following tool](https://github.com/mitreid-connect/json-web-key-generator).
+ 
+## Authentication Protocol vs. SSO
+
+Remember that the creation of an SSO session is entirely separate and has nothing to do with the authentication protocol used to establish
+said session. Regardless of the type exchange between the client application and the CAS server, an SSO session will be created, used,
+maintained and shared between all application types that are integrated with CAS, regardless of their type or requested protocol.
 
 ## Cookie Generation for Renewed Authentications
 
