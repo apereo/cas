@@ -333,7 +333,7 @@ subprojects {
      * evaluate sub-projects to apply plugins, etc.
      */
     afterEvaluate { project ->
-        if ((rootProject.publishReleases || rootProject.publishSnapshots) && projectShouldBePublished(project)) {
+        if (projectShouldBePublished(project)) {
             //logger.info "Project ${project.name} should be published"
             apply from: rootProject.file("gradle/maven.gradle")
 
