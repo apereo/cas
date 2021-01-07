@@ -48,7 +48,7 @@ layout: null
 
 * [Authentication](#casauthentication)
     *   [Overview](/cas/{{ version }}/authentication/Configuring-Authentication-Components.html)
-    *   [Policy](/cas/{{ version }}/authentication/Configuring-Authentication-Policy.html)
+    *   [Authentication Policy](/cas/{{ version }}/authentication/Configuring-Authentication-Policy.html)
     *   [Resolution Strategy](/cas/{{ version }}/authentication/Configuring-Authentication-Resolution.html)
     *   [Pre/Post Processing](/cas/{{ version }}/authentication/Configuring-Authentication-PrePostProcessing.html)
     *   [Methods](#authnmethods)
@@ -247,7 +247,18 @@ layout: null
         *   [Custom](/cas/{{ version }}/mfa/Configuring-Multifactor-Authentication-Triggers-Custom.html)
       
     *   [Bypass](/cas/{{ version }}/mfa/Configuring-Multifactor-Authentication-Bypass.html)
-    *   [Trusted Devices](/cas/{{ version }}/mfa/Multifactor-TrustedDevice-Authentication.html)
+    *   [Trusted Devices](#mfatrusteddevices)
+        *   [Overview](/cas/{{ version }}/mfa/Multifactor-TrustedDevice-Authentication.html)
+        *   [Bypass](/cas/{{ version }}/mfa/Multifactor-TrustedDevice-Authentication-Bypass.html)
+        *   [Device Fingerprint](/cas/{{ version }}/mfa/Multifactor-TrustedDevice-Authentication-DeviceFingerprint.html)
+        *   [Storage](#mfatrusteddevicesstorage)
+            *   [CouchDb](/cas/{{ version }}/mfa/Multifactor-TrustedDevice-Authentication-Storage-CouchDb.html)
+            *   [DynamoDb](/cas/{{ version }}/mfa/Multifactor-TrustedDevice-Authentication-Storage-DynamoDb.html)
+            *   [JDBC](/cas/{{ version }}/mfa/Multifactor-TrustedDevice-Authentication-Storage-JDBC.html)
+            *   [JSON](/cas/{{ version }}/mfa/Multifactor-TrustedDevice-Authentication-Storage-JSON.html)
+            *   [MongoDb](/cas/{{ version }}/mfa/Multifactor-TrustedDevice-Authentication-Storage-MongoDb.html)
+            *   [Redis](/cas/{{ version }}/mfa/Multifactor-TrustedDevice-Authentication-Storage-Redis.html)
+            *   [REST](/cas/{{ version }}/mfa/Multifactor-TrustedDevice-Authentication-Storage-REST.html)
     *   [Adaptive](/cas/{{ version }}/mfa/Configuring-Adaptive-Authentication.html)
     
 *   [SSO & SLO](#ssoandslo) 
