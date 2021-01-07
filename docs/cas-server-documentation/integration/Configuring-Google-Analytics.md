@@ -11,7 +11,7 @@ category: Integration
 Google Analytics can be used to deliver useful statistics. create custom dimensions and metrics to gain
 insight into CAS and user traffic.
 
-Support is enabled by including the following module in the Overlay:
+Support is enabled by including the following module in the WAR Overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-google-analytics" %}
 
