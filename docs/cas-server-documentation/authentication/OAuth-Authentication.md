@@ -20,7 +20,7 @@ The following endpoints are provided by CAS:
 
 | Endpoint                 | Description
 |--------------------------|------------------------------------------------
-| `oauthTokens`            | Manage and control [OAuth2 access tokens](OAuth-OpenId-Authentication.html). A `GET` operation produces a list of all access/refresh tokens. A `DELETE` operation will delete the provided access/refresh token provided in form of a parameter selector. (i.e. `/{token}`). A `GET` operation produces with a parameter selector of `/{token}` will list the details of the fetched access/refresh token.
+| `oauthTokens`            | Manage and control [OAuth2 access tokens](OAuth-Authentication.html). A `GET` operation produces a list of all access/refresh tokens. A `DELETE` operation will delete the provided access/refresh token provided in form of a parameter selector. (i.e. `/{token}`). A `GET` operation produces with a parameter selector of `/{token}` will list the details of the fetched access/refresh token.
 
 ## Configuration
 

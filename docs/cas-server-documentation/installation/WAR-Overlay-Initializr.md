@@ -84,7 +84,7 @@ getcas duo,oidc
 
 …which generates a CAS overlay project prepared with multifactor authentication 
 by [Duo Security](../mfa/DuoSecurity-Authentication.html) and 
-support for [OpenID Connect](../authentication/OAuth-OpenId-Authentication.html).
+support for [OpenID Connect](../authentication/OAuth-Authentication.html).
 
 <div class="alert alert-info"><strong>Note</strong>
 <p>To help keep the deployment costs down, the Heroku instance has turned on support for 
