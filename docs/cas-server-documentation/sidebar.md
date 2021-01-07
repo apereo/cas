@@ -268,6 +268,7 @@ layout: null
 
 *   [Password Management](#pswmgmt)
     *   [Overview](/cas/{{ version }}/password_management/Password-Management.html)
+    *   [Password History](/cas/{{ version }}/password_management/Password-Management-History.html)
     *   [Account Management](#pwmOptions)
         *   [JSON](/cas/{{ version }}/password_management/Password-Management-JSON.html)
         *   [LDAP](/cas/{{ version }}/password_management/Password-Management-LDAP.html)
