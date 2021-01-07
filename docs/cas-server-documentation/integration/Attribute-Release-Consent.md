@@ -13,7 +13,7 @@ CAS provides the ability to enforce user-informed consent upon attribute release
 
 Consent attribute records stored in the configured repository are signed and encrypted.
 
-Support is enabled by including the following module in the Overlay:
+Support is enabled by including the following module in the WAR Overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-consent-webflow" %}
 
@@ -239,7 +239,7 @@ def Boolean deleteAll(final Object... args) {
 
 ### JDBC
 
-Support is enabled by including the following module in the Overlay:
+Support is enabled by including the following module in the WAR Overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-consent-jdbc" %}
 
@@ -247,7 +247,7 @@ Support is enabled by including the following module in the Overlay:
 
 ### MongoDb
 
-Support is enabled by including the following module in the Overlay:
+Support is enabled by including the following module in the WAR Overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-consent-mongo" %}
 
@@ -255,7 +255,7 @@ Support is enabled by including the following module in the Overlay:
 
 ### Redis
 
-Support is enabled by including the following module in the Overlay:
+Support is enabled by including the following module in the WAR Overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-consent-redis" %}
 
@@ -263,7 +263,7 @@ Support is enabled by including the following module in the Overlay:
 
 ### CouchDb
 
-Support is enabled by including the following module in the Overlay:
+Support is enabled by including the following module in the WAR Overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-consent-couchdb" %}
 
@@ -272,7 +272,7 @@ Support is enabled by including the following module in the Overlay:
 
 ### REST
 
-Support is enabled by including the following module in the Overlay:
+Support is enabled by including the following module in the WAR Overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-consent-rest" %}
 
@@ -297,7 +297,7 @@ The consent decision object in transit will and must match the JSON structure ab
 Consent decisions can be stored on LDAP user objects. The decisions 
 are serialized into JSON and stored one-by-one in a multi-valued string attribute.
 
-Support is enabled by including the following module in the Overlay:
+Support is enabled by including the following module in the WAR Overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-consent-ldap" %}
 {% include {{ version }}/ldap-configuration.md configKey="cas.consent.ldap" %}
