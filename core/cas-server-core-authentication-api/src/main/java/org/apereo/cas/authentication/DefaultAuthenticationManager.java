@@ -18,20 +18,22 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * This is {@link PolicyBasedAuthenticationManager}, which provides common operations
+ * This is {@link DefaultAuthenticationManager}, which provides common operations
  * around an authentication manager implementation.
  *
  * @author Misagh Moayyed
@@ -40,7 +42,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 @Getter
-public class PolicyBasedAuthenticationManager implements AuthenticationManager {
+public class DefaultAuthenticationManager implements AuthenticationManager {
 
     private final AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
 
@@ -120,7 +122,8 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
      */
     protected void addAuthenticationMethodAttribute(final AuthenticationBuilder builder,
                                                     final Authentication authentication) {
-        authentication.getSuccesses().values().forEach(result -> builder.addAttribute(AUTHENTICATION_METHOD_ATTRIBUTE, result.getHandlerName()));
+        authentication.getSuccesses().values()
+            .forEach(result -> builder.addAttribute(AUTHENTICATION_METHOD_ATTRIBUTE, result.getHandlerName()));
     }
 
     /**
@@ -229,7 +232,8 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
      * @param transaction the transaction
      * @return the principal resolver linked to handler if any, or null.
      */
-    protected PrincipalResolver getPrincipalResolverLinkedToHandlerIfAny(final AuthenticationHandler handler, final AuthenticationTransaction transaction) {
+    protected PrincipalResolver getPrincipalResolverLinkedToHandlerIfAny(final AuthenticationHandler handler,
+                                                                         final AuthenticationTransaction transaction) {
         return this.authenticationEventExecutionPlan.getPrincipalResolver(handler, transaction);
     }
 
@@ -276,7 +280,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
 
         val handlerSet = this.authenticationEventExecutionPlan.getAuthenticationHandlers(transaction);
         LOGGER.debug("Candidate resolved authentication handlers for this transaction are [{}]", handlerSet);
-        
+
         try {
             val it = credentials.iterator();
             AuthenticationCredentialsThreadLocalBinder.clearInProgressAuthentication();
@@ -296,11 +300,11 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
 
                             val authnResult = builder.build();
                             AuthenticationCredentialsThreadLocalBinder.bindInProgress(authnResult);
-                            val failures = evaluateAuthenticationPolicies(authnResult, transaction, handlerSet);
-                            proceedWithNextHandler = !failures.getKey();
+                            val executionResult = evaluateAuthenticationPolicies(authnResult, transaction, handlerSet);
+                            proceedWithNextHandler = !executionResult.isSuccess();
                         } catch (final GeneralSecurityException e) {
                             handleAuthenticationException(e, handler.getName(), builder);
-                            proceedWithNextHandler = true;
+                            proceedWithNextHandler = shouldAuthenticationChainProceedOnFailure(transaction, e);
                         } catch (final Exception e) {
                             LOGGER.error("Authentication has failed. Credentials may be incorrect or CAS cannot "
                                 + "find authentication handler that supports [{}] of type [{}]. Examine the configuration to "
@@ -308,10 +312,11 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
                                 + "the authentication event.", credential, credential.getClass().getSimpleName());
 
                             handleAuthenticationException(e, handler.getName(), builder);
-                            proceedWithNextHandler = true;
+                            proceedWithNextHandler = shouldAuthenticationChainProceedOnFailure(transaction, e);
                         }
                     } else {
-                        LOGGER.debug("Authentication handler [{}] does not support the credential type [{}]. Trying next...", handler.getName(), credential);
+                        LOGGER.debug("Authentication handler [{}] does not support the credential type [{}].",
+                            handler.getName(), credential);
                     }
                 }
             }
@@ -341,10 +346,10 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         }
 
         val authentication = builder.build();
-        val failures = evaluateAuthenticationPolicies(authentication, transaction, authenticationHandlers);
-        if (!failures.getKey()) {
+        val executionResult = evaluateAuthenticationPolicies(authentication, transaction, authenticationHandlers);
+        if (!executionResult.isSuccess()) {
             publishEvent(new CasAuthenticationPolicyFailureEvent(this, builder.getFailures(), transaction, authentication));
-            failures.getValue().forEach(e -> handleAuthenticationException(e, e.getClass().getSimpleName(), builder));
+            executionResult.getFailures().forEach(e -> handleAuthenticationException(e, e.getClass().getSimpleName(), builder));
             throw new AuthenticationException(builder.getFailures(), builder.getSuccesses());
         }
     }
@@ -357,11 +362,11 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
      * @param authenticationHandlers the authentication handlers
      * @return true /false
      */
-    protected Pair<Boolean, Set<Throwable>> evaluateAuthenticationPolicies(final Authentication authentication,
-                                                                           final AuthenticationTransaction transaction,
-                                                                           final Set<AuthenticationHandler> authenticationHandlers) {
-        val failures = new LinkedHashSet<Throwable>(authenticationHandlers.size());
+    protected ChainingAuthenticationPolicyExecutionResult evaluateAuthenticationPolicies(final Authentication authentication,
+                                                                                         final AuthenticationTransaction transaction,
+                                                                                         final Set<AuthenticationHandler> authenticationHandlers) {
         val policies = authenticationEventExecutionPlan.getAuthenticationPolicies(transaction);
+        val executionResult = new ChainingAuthenticationPolicyExecutionResult();
 
         policies.forEach(p -> {
             try {
@@ -372,19 +377,21 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
                     .filter(handler -> transaction.getCredentials().stream().anyMatch(handler::supports))
                     .collect(Collectors.toCollection(LinkedHashSet::new));
                 val result = p.isSatisfiedBy(authentication, supportingHandlers, this.applicationContext, Optional.empty());
+
+                executionResult.getResults().add(result);
                 if (!result.isSuccess()) {
-                    failures.add(new AuthenticationException("Unable to satisfy authentication policy " + simpleName));
+                    executionResult.getFailures()
+                        .add(new AuthenticationException("Unable to satisfy authentication policy " + simpleName));
                 }
             } catch (final GeneralSecurityException e) {
                 LOGGER.debug(e.getMessage(), e);
-                FunctionUtils.doIfNotNull(e.getCause(), o -> failures.add(e.getCause()));
+                FunctionUtils.doIfNotNull(e.getCause(), o -> executionResult.getFailures().add(e.getCause()));
             } catch (final Exception e) {
                 LOGGER.debug(e.getMessage(), e);
-                failures.add(e);
+                executionResult.getFailures().add(e);
             }
         });
-
-        return Pair.of(failures.isEmpty(), failures);
+        return executionResult;
     }
 
     /**
@@ -407,6 +414,28 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         } else {
             LOGGER.error("[{}]: [{}]", name, msg);
             builder.addFailure(name, e);
+        }
+    }
+
+    private boolean shouldAuthenticationChainProceedOnFailure(final AuthenticationTransaction transaction,
+                                                              final Throwable failure) {
+        val policies = authenticationEventExecutionPlan.getAuthenticationPolicies(transaction);
+        return policies.stream().anyMatch(policy -> policy.shouldResumeOnFailure(failure));
+    }
+
+    @Getter
+    private static class ChainingAuthenticationPolicyExecutionResult {
+        private List<AuthenticationPolicyExecutionResult> results = new ArrayList<>();
+
+        private Set<Throwable> failures = new HashSet<>();
+
+        /**
+         * Indicate success, if no failures are present.
+         *
+         * @return the boolean
+         */
+        public boolean isSuccess() {
+            return failures.isEmpty();
         }
     }
 }

@@ -33,10 +33,11 @@ public class AllCredentialsValidatedAuthenticationPolicy extends BaseAuthenticat
 
     @Override
     public AuthenticationPolicyExecutionResult isSatisfiedBy(final Authentication authn,
-                                 final Set<AuthenticationHandler> authenticationHandlers,
-                                 final ConfigurableApplicationContext applicationContext,
-                                 final Optional<Serializable> assertion) {
-        LOGGER.debug("Successful authentications: [{}], credentials: [{}]", authn.getSuccesses().keySet(), authn.getCredentials());
+                                                             final Set<AuthenticationHandler> authenticationHandlers,
+                                                             final ConfigurableApplicationContext applicationContext,
+                                                             final Optional<Serializable> assertion) {
+        LOGGER.debug("Successful authentications: [{}], credentials: [{}]",
+            authn.getSuccesses().keySet(), authn.getCredentials());
         if (authn.getSuccesses().size() != authn.getCredentials().size()) {
             LOGGER.warn("Number of successful authentications, [{}], does not match the number of provided credentials, [{}].",
                 authn.getSuccesses().size(), authn.getCredentials().size());
