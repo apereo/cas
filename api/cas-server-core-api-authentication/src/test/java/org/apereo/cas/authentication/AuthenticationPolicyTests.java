@@ -24,7 +24,5 @@ public class AuthenticationPolicyTests {
         when(policy.getName()).thenCallRealMethod();
         assertNotNull(policy.getName());
         assertEquals(Ordered.LOWEST_PRECEDENCE, policy.getOrder());
-
     }
-
 }

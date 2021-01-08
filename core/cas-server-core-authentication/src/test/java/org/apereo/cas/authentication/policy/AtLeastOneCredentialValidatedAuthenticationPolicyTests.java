@@ -29,7 +29,7 @@ public class AtLeastOneCredentialValidatedAuthenticationPolicyTests {
         val input = new AtLeastOneCredentialValidatedAuthenticationPolicy();
         val builder = new DefaultAuthenticationBuilder(CoreAuthenticationTestUtils.getPrincipal());
         val authn = builder.addFailure("Prevented", new PreventedException("error")).build();
-        assertFalse(input.isSatisfiedBy(authn, Set.of(), mock(ConfigurableApplicationContext.class), Optional.empty()));
+        assertFalse(input.isSatisfiedBy(authn, Set.of(), mock(ConfigurableApplicationContext.class), Optional.empty()).isSuccess());
     }
 
     @Test
@@ -37,7 +37,7 @@ public class AtLeastOneCredentialValidatedAuthenticationPolicyTests {
         val input = new AtLeastOneCredentialValidatedAuthenticationPolicy(true);
         val builder = new DefaultAuthenticationBuilder(CoreAuthenticationTestUtils.getPrincipal());
         val authn = builder.addFailure("Prevented", new PreventedException("error")).build();
-        assertFalse(input.isSatisfiedBy(authn, Set.of(), mock(ConfigurableApplicationContext.class), Optional.empty()));
+        assertFalse(input.isSatisfiedBy(authn, Set.of(), mock(ConfigurableApplicationContext.class), Optional.empty()).isSuccess());
     }
 
     @Test
@@ -45,6 +45,6 @@ public class AtLeastOneCredentialValidatedAuthenticationPolicyTests {
         val input = new AtLeastOneCredentialValidatedAuthenticationPolicy();
         val builder = new DefaultAuthenticationBuilder(CoreAuthenticationTestUtils.getPrincipal());
         val authn = builder.addSuccess("Handler1", mock(AuthenticationHandlerExecutionResult.class)).build();
-        assertTrue(input.isSatisfiedBy(authn, Set.of(), mock(ConfigurableApplicationContext.class), Optional.empty()));
+        assertTrue(input.isSatisfiedBy(authn, Set.of(), mock(ConfigurableApplicationContext.class), Optional.empty()).isSuccess());
     }
 }

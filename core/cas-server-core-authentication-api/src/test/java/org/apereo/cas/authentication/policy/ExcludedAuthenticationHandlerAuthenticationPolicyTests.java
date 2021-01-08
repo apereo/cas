@@ -28,7 +28,7 @@ public class ExcludedAuthenticationHandlerAuthenticationPolicyTests {
         
         val input = new ExcludedAuthenticationHandlerAuthenticationPolicy(Set.of("Hello"), true);
         assertTrue(input.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication(), Set.of(),
-            applicationContext, Optional.empty()));
+            applicationContext, Optional.empty()).isSuccess());
 
     }
 

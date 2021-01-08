@@ -43,7 +43,7 @@ public class RestfulAuthenticationPolicyTests {
             webServer.start();
             val policy = new RestfulAuthenticationPolicy("http://localhost:9200");
             assertTrue(policy.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser"),
-                new LinkedHashSet<>(), applicationContext, Optional.empty()));
+                new LinkedHashSet<>(), applicationContext, Optional.empty()).isSuccess());
         } 
     }
 

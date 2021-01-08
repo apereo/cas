@@ -69,7 +69,7 @@ public class UniquePrincipalAuthenticationPolicyTests {
         this.ticketRegistry.deleteAll();
         val p = new UniquePrincipalAuthenticationPolicy(this.ticketRegistry);
         assertTrue(p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser"),
-            new LinkedHashSet<>(), applicationContext, Optional.empty()));
+            new LinkedHashSet<>(), applicationContext, Optional.empty()).isSuccess());
     }
 
     @Test
@@ -78,7 +78,7 @@ public class UniquePrincipalAuthenticationPolicyTests {
         this.ticketRegistry.deleteAll();
         val p = new UniquePrincipalAuthenticationPolicy(this.ticketRegistry);
         assertTrue(p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser"),
-            new LinkedHashSet<>(), applicationContext, Optional.of(mock(Assertion.class))));
+            new LinkedHashSet<>(), applicationContext, Optional.of(mock(Assertion.class))).isSuccess());
     }
 
     @Test

@@ -57,7 +57,8 @@ public class AuthenticationPolicyAwareServiceTicketValidationAuthorizer implemen
             try {
                 val simpleName = p.getClass().getSimpleName();
                 LOGGER.trace("Executing authentication policy [{}]", simpleName);
-                if (!p.isSatisfiedBy(primaryAuthentication, assertedHandlers, applicationContext, Optional.of(assertion))) {
+                val result = p.isSatisfiedBy(primaryAuthentication, assertedHandlers, applicationContext, Optional.of(assertion));
+                if (!result.isSuccess()) {
                     throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
                 }
             } catch (final Exception e) {

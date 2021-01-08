@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.policy;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationPolicyExecutionResult;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.principal.Principal;
@@ -56,10 +57,10 @@ public class RestfulAuthenticationPolicy extends BaseAuthenticationPolicy {
     }
 
     @Override
-    public boolean isSatisfiedBy(final Authentication authentication,
-                                 final Set<AuthenticationHandler> authenticationHandlers,
-                                 final ConfigurableApplicationContext applicationContext,
-                                 final Optional<Serializable> assertion) throws Exception {
+    public AuthenticationPolicyExecutionResult isSatisfiedBy(final Authentication authentication,
+                                                             final Set<AuthenticationHandler> authenticationHandlers,
+                                                             final ConfigurableApplicationContext applicationContext,
+                                                             final Optional<Serializable> assertion) throws Exception {
         HttpResponse response = null;
         val principal = authentication.getPrincipal();
         try {
@@ -70,7 +71,7 @@ public class RestfulAuthenticationPolicy extends BaseAuthenticationPolicy {
                 val ex = handleResponseStatusCode(statusCode, principal);
                 throw new GeneralSecurityException(ex);
             }
-            return true;
+            return AuthenticationPolicyExecutionResult.success();
         } finally {
             HttpUtils.close(response);
         }

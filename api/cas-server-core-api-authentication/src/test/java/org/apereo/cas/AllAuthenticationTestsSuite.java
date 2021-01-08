@@ -2,6 +2,7 @@ package org.apereo.cas;
 
 import org.apereo.cas.authentication.AuthenticationHandlerTests;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulatorTests;
+import org.apereo.cas.authentication.AuthenticationPolicyExecutionResultTests;
 import org.apereo.cas.authentication.AuthenticationPolicyTests;
 import org.apereo.cas.authentication.AuthenticationPostProcessorTests;
 import org.apereo.cas.authentication.AuthenticationPreProcessorTests;
@@ -27,6 +28,7 @@ import org.junit.runner.RunWith;
     AuthenticationHandlerTests.class,
     AuthenticationPolicyTests.class,
     ServiceTests.class,
+    AuthenticationPolicyExecutionResultTests.class,
     PersistentIdGeneratorTests.class,
     ServiceMatchingStrategyTests.class,
     PrincipalElectionStrategyTests.class,

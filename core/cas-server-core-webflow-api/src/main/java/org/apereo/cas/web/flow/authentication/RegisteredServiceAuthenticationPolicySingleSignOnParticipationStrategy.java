@@ -71,7 +71,8 @@ public class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrat
                 val criteria = authenticationPolicy.getCriteria();
                 if (criteria != null) {
                     val policy = criteria.toAuthenticationPolicy(registeredService);
-                    return policy.isSatisfiedBy(authentication, assertedHandlers, applicationContext, Optional.empty());
+                    val result = policy.isSatisfiedBy(authentication, assertedHandlers, applicationContext, Optional.empty());
+                    return result.isSuccess();
                 }
             }
         } finally {
