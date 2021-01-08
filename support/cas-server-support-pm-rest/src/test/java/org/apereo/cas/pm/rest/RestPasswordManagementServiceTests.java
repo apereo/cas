@@ -43,9 +43,9 @@ import static org.junit.jupiter.api.Assertions.*;
     properties = {
         "cas.authn.pm.rest.endpoint-url-change=http://localhost:9090",
         "cas.authn.pm.rest.endpoint-url-security-questions=http://localhost:9090",
-        "cas.authn.pm.rest.endpoint-url-email=http://localhost:9090",
+        "cas.authn.pm.rest.endpoint-url-email=http://localhost:9091",
         "cas.authn.pm.rest.endpoint-url-user=http://localhost:9090",
-        "cas.authn.pm.rest.endpoint-url-phone=http://localhost:9090",
+        "cas.authn.pm.rest.endpoint-url-phone=http://localhost:9092",
         "cas.authn.pm.rest.endpoint-username=username",
         "cas.authn.pm.rest.endpoint-password=password"
     })
@@ -66,7 +66,7 @@ public class RestPasswordManagementServiceTests {
     @Test
     public void verifyEmailFound() {
         val data = "casuser@example.org";
-        try (val webServer = new MockWebServer(9090,
+        try (val webServer = new MockWebServer(9091,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
@@ -94,7 +94,7 @@ public class RestPasswordManagementServiceTests {
     @Test
     public void verifyPhoneFound() {
         val data = "1234567890";
-        try (val webServer = new MockWebServer(9090,
+        try (val webServer = new MockWebServer(9092,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
