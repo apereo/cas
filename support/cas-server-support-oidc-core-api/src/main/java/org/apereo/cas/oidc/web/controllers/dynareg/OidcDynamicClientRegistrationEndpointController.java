@@ -111,7 +111,9 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
                 registeredService.setJwks(registrationRequest.getJwksUri());
             } else {
                 val jwks = registrationRequest.getJwks();
-                registeredService.setJwks(jwks.toJson());
+                if (jwks != null && !jwks.getJsonWebKeys().isEmpty()) {
+                    registeredService.setJwks(jwks.toJson());
+                }
             }
             if (StringUtils.isNotBlank(registrationRequest.getTokenEndpointAuthMethod())) {
                 registeredService.setTokenEndpointAuthenticationMethod(registrationRequest.getTokenEndpointAuthMethod());

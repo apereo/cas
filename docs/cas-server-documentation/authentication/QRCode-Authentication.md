@@ -91,7 +91,7 @@ client.send(stompMessage).subscribe();
 ## Obtaining JWT 
 
 The mobile device should ask for and then submit user credentials to the CAS 
-server using the [REST protocol](../protocol/REST-Protocol.html#jwt-ticket-granting-tickets) to 
+server using the [REST protocol](../protocol/REST-Protocol-Request-TicketGrantingTicket.html) to 
 obtain a JWT. The JWT request must also contain an additional request 
 parameter `QR_AUTHENTICATION_DEVICE_ID` which indicates the authorized device identifier for the user.
 
