@@ -45,4 +45,14 @@ public interface AuthenticationPolicy extends Ordered, Serializable {
     default String getName() {
         return this.getClass().getSimpleName();
     }
+
+    /**
+     * Should authentication chain resume on failure?
+     *
+     * @param failure the failure
+     * @return resume, or block
+     */
+    default boolean shouldResumeOnFailure(final Throwable failure) {
+        return failure != null;
+    }
 }

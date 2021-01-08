@@ -5,8 +5,6 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationPolicyExecutionResult;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
-import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
-import org.apereo.cas.util.scripting.GroovyShellScript;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 
@@ -23,7 +21,6 @@ import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import javax.persistence.Transient;
-
 import java.io.Serializable;
 import java.security.GeneralSecurityException;
 import java.util.Optional;
@@ -51,7 +48,7 @@ public class GroovyScriptAuthenticationPolicy extends BaseAuthenticationPolicy {
     @JsonIgnore
     @Transient
     @org.springframework.data.annotation.Transient
-    private transient ExecutableCompiledGroovyScript executableScript;
+    private transient WatchableGroovyScriptResource executableScript;
 
     public GroovyScriptAuthenticationPolicy(final String script) {
         this.script = script;
@@ -59,9 +56,9 @@ public class GroovyScriptAuthenticationPolicy extends BaseAuthenticationPolicy {
 
     @Override
     public AuthenticationPolicyExecutionResult isSatisfiedBy(final Authentication auth,
-                                 final Set<AuthenticationHandler> authenticationHandlers,
-                                 final ConfigurableApplicationContext applicationContext,
-                                 final Optional<Serializable> assertion) throws Exception {
+                                                             final Set<AuthenticationHandler> authenticationHandlers,
+                                                             final ConfigurableApplicationContext applicationContext,
+                                                             final Optional<Serializable> assertion) throws Exception {
         initializeWatchableScriptIfNeeded();
         val ex = getScriptExecutionResult(auth);
         if (ex != null && ex.isPresent()) {
@@ -70,18 +67,24 @@ public class GroovyScriptAuthenticationPolicy extends BaseAuthenticationPolicy {
         return AuthenticationPolicyExecutionResult.success();
     }
 
+    @Override
+    @SneakyThrows
+    public boolean shouldResumeOnFailure(final Throwable failure) {
+        initializeWatchableScriptIfNeeded();
+        val args = CollectionUtils.wrap("failure", failure, "logger", LOGGER);
+        executableScript.setBinding(args);
+        return executableScript.execute("shouldResumeOnFailure", Boolean.class, args.values().toArray());
+    }
+
     @SneakyThrows
     private void initializeWatchableScriptIfNeeded() {
         if (this.executableScript == null) {
-            val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(script);
             val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(script);
-
-            if (matcherFile.find()) {
-                val resource = ResourceUtils.getRawResourceFrom(matcherFile.group(2));
-                this.executableScript = new WatchableGroovyScriptResource(resource);
-            } else if (matcherInline.find()) {
-                this.executableScript = new GroovyShellScript(matcherInline.group(1));
+            if (!matcherFile.find()) {
+                throw new IllegalArgumentException("Unable to locate groovy script file at " + script);
             }
+            val resource = ResourceUtils.getRawResourceFrom(matcherFile.group(2));
+            this.executableScript = new WatchableGroovyScriptResource(resource);
         }
     }
 

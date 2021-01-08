@@ -2,11 +2,11 @@ package org.apereo.cas.support.inwebo.web.flow.actions;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationEventExecutionPlan;
+import org.apereo.cas.authentication.DefaultAuthenticationManager;
 import org.apereo.cas.authentication.DefaultAuthenticationResult;
 import org.apereo.cas.authentication.DefaultAuthenticationResultBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
-import org.apereo.cas.authentication.PolicyBasedAuthenticationManager;
 import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.model.support.mfa.InweboMultifactorProperties;
@@ -38,9 +38,9 @@ import java.text.MessageFormat;
 import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.springframework.webflow.context.ExternalContextHolder.setExternalContext;
-import static org.springframework.webflow.execution.RequestContextHolder.setRequestContext;
+import static org.mockito.Mockito.*;
+import static org.springframework.webflow.context.ExternalContextHolder.*;
+import static org.springframework.webflow.execution.RequestContextHolder.*;
 
 /**
  * This is the base class for action tests.
@@ -84,7 +84,7 @@ public abstract class BaseActionTests {
         authenticationEventExecutionPlan.registerAuthenticationHandler(new InweboAuthenticationHandler(mock(ServicesManager.class),
                 PrincipalFactoryUtils.newPrincipalFactory(), new InweboMultifactorProperties(), service));
         authenticationEventExecutionPlan.registerAuthenticationMetadataPopulator(new InweboAuthenticationDeviceMetadataPopulator());
-        val authenticationManager = new PolicyBasedAuthenticationManager(authenticationEventExecutionPlan, true, mock(ConfigurableApplicationContext.class));
+        val authenticationManager = new DefaultAuthenticationManager(authenticationEventExecutionPlan, true, mock(ConfigurableApplicationContext.class));
         val authenticationTransactionManager = new DefaultAuthenticationTransactionManager(mock(ApplicationEventPublisher.class), authenticationManager);
         val authenticationSystemSupport = new DefaultAuthenticationSystemSupport(authenticationTransactionManager, new DefaultPrincipalElectionStrategy());
         val context = CasWebflowEventResolutionConfigurationContext.builder()

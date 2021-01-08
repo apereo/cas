@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * Unit test for {@link PolicyBasedAuthenticationManager}.
+ * Unit test for {@link DefaultAuthenticationManager}.
  *
  * @author Marvin S. Addison
  * @since 4.0.0
@@ -40,7 +40,7 @@ import static org.mockito.Mockito.*;
 @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
 @Tag("Authentication")
 @Slf4j
-public class PolicyBasedAuthenticationManagerTests {
+public class DefaultAuthenticationManagerTests {
     private static final String HANDLER_A = "HandlerA";
 
     private static final String HANDLER_B = "HandlerB";
@@ -48,240 +48,6 @@ public class PolicyBasedAuthenticationManagerTests {
     private final AuthenticationTransaction transaction = DefaultAuthenticationTransaction.of(CoreAuthenticationTestUtils.getService(),
         mock(Credential.class, withSettings().serializable()),
         mock(Credential.class, withSettings().serializable()));
-
-    @Test
-    public void verifyAuthenticateFailsPreProcessor() {
-        val map = new HashMap<AuthenticationHandler, PrincipalResolver>();
-        map.put(newMockHandler(true), null);
-        map.put(newMockHandler(false), null);
-
-        val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
-        authenticationExecutionPlan.registerAuthenticationPreProcessor(transaction -> false);
-        val manager = new PolicyBasedAuthenticationManager(authenticationExecutionPlan,
-            false, mock(ConfigurableApplicationContext.class));
-        assertThrows(AuthenticationException.class, () -> manager.authenticate(transaction));
-    }
-
-    @Test
-    public void verifyNoHandlers() {
-        val map = new HashMap<AuthenticationHandler, PrincipalResolver>();
-        val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
-        val manager = new PolicyBasedAuthenticationManager(authenticationExecutionPlan,
-            false, mock(ConfigurableApplicationContext.class));
-        assertThrows(AuthenticationException.class, () -> manager.authenticate(transaction));
-    }
-
-    @Test
-    public void verifyResolverFails() {
-        val map = new HashMap<AuthenticationHandler, PrincipalResolver>();
-        val resolver = mock(PrincipalResolver.class);
-        when(resolver.supports(any())).thenReturn(Boolean.FALSE);
-
-        map.put(newMockHandler(true), resolver);
-        val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
-        val manager = new PolicyBasedAuthenticationManager(authenticationExecutionPlan,
-            false, mock(ConfigurableApplicationContext.class));
-        assertThrows(UnresolvedPrincipalException.class, () -> manager.authenticate(transaction));
-
-        when(resolver.supports(any())).thenReturn(Boolean.TRUE);
-        when(resolver.resolve(any(), any(), any())).thenThrow(new RuntimeException("Fails"));
-        assertThrows(UnresolvedPrincipalException.class, () -> manager.authenticate(transaction));
-    }
-
-    @Test
-    public void verifyResolverFailsAsFatal() {
-        val map = new HashMap<AuthenticationHandler, PrincipalResolver>();
-        val resolver = mock(PrincipalResolver.class);
-        when(resolver.supports(any())).thenReturn(Boolean.FALSE);
-
-        map.put(newMockHandler(true), resolver);
-        val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
-        val manager = new PolicyBasedAuthenticationManager(authenticationExecutionPlan,
-            true, mock(ConfigurableApplicationContext.class));
-        assertThrows(UnresolvedPrincipalException.class, () -> manager.authenticate(transaction));
-    }
-
-    @Test
-    public void verifyAuthWithNoCreds() {
-        val map = new HashMap<AuthenticationHandler, PrincipalResolver>();
-        map.put(newMockHandler(true), null);
-        val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
-        val manager = new PolicyBasedAuthenticationManager(authenticationExecutionPlan,
-            true, mock(ConfigurableApplicationContext.class));
-        assertThrows(AuthenticationException.class, () -> manager.authenticate(DefaultAuthenticationTransaction.of()));
-    }
-
-
-    @Test
-    public void verifyAuthenticateAnySuccess() {
-        val map = new HashMap<AuthenticationHandler, PrincipalResolver>();
-        map.put(newMockHandler(true), null);
-        map.put(newMockHandler(false), null);
-
-        val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
-        authenticationExecutionPlan.registerAuthenticationPolicy(new AtLeastOneCredentialValidatedAuthenticationPolicy());
-        val manager = new PolicyBasedAuthenticationManager(authenticationExecutionPlan,
-            false, mock(ConfigurableApplicationContext.class));
-
-        val auth = manager.authenticate(transaction);
-        assertEquals(1, auth.getSuccesses().size());
-        assertEquals(2, auth.getCredentials().size());
-    }
-
-    @Test
-    public void verifyAuthenticateAnyButTryAllSuccess() {
-        val map = new HashMap<AuthenticationHandler, PrincipalResolver>();
-        map.put(newMockHandler(true), null);
-        map.put(newMockHandler(false), null);
-        val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
-        authenticationExecutionPlan.registerAuthenticationPolicy(new AtLeastOneCredentialValidatedAuthenticationPolicy(true));
-        val manager = new PolicyBasedAuthenticationManager(authenticationExecutionPlan,
-            false, mock(ConfigurableApplicationContext.class));
-
-        val auth = manager.authenticate(transaction);
-        assertEquals(1, auth.getSuccesses().size());
-        assertEquals(1, auth.getFailures().size());
-        assertEquals(2, map.size());
-    }
-
-    @Test
-    public void verifyAuthenticateAnyFailure() {
-        val map = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>();
-        map.put(newMockHandler(false), null);
-        map.put(newMockHandler(false), null);
-
-        val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
-        authenticationExecutionPlan.registerAuthenticationPolicy(new AtLeastOneCredentialValidatedAuthenticationPolicy());
-        val manager = new PolicyBasedAuthenticationManager(authenticationExecutionPlan,
-            false, mock(ConfigurableApplicationContext.class));
-
-        assertThrows(AuthenticationException.class, () -> manager.authenticate(transaction));
-    }
-
-    @Test
-    public void verifyAuthenticateAnyFailureWithError() {
-        val map = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>();
-        map.put(newMockHandler(false, true), null);
-        map.put(newMockHandler(false, true), null);
-
-        val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
-        authenticationExecutionPlan.registerAuthenticationPolicy(new AtLeastOneCredentialValidatedAuthenticationPolicy());
-        val manager = new PolicyBasedAuthenticationManager(authenticationExecutionPlan,
-            false, mock(ConfigurableApplicationContext.class));
-
-        assertThrows(AuthenticationException.class, () -> manager.authenticate(transaction));
-    }
-
-    @Test
-    public void verifyAuthenticateAllSuccess() {
-        val map = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>();
-        map.put(newMockHandler(true), null);
-        map.put(newMockHandler(true), null);
-
-        val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
-        authenticationExecutionPlan.registerAuthenticationPolicy(new AllCredentialsValidatedAuthenticationPolicy());
-        val manager = new PolicyBasedAuthenticationManager(authenticationExecutionPlan,
-            false, mock(ConfigurableApplicationContext.class));
-
-        val auth = manager.authenticate(transaction);
-        assertEquals(2, auth.getSuccesses().size());
-        assertEquals(0, auth.getFailures().size());
-        assertEquals(2, auth.getCredentials().size());
-    }
-
-    @Test
-    public void verifyAuthenticatePolicyFailsGeneric() throws Exception {
-        val map = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>();
-        map.put(newMockHandler(true), null);
-
-        val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
-        val policy = mock(AuthenticationPolicy.class);
-        when(policy.isSatisfiedBy(any(), any(), any(), any()))
-            .thenThrow(new GeneralSecurityException(new FailedLoginException()));
-        authenticationExecutionPlan.registerAuthenticationPolicy(policy);
-        val manager = new PolicyBasedAuthenticationManager(authenticationExecutionPlan,
-            false, mock(ConfigurableApplicationContext.class));
-
-        assertThrows(AuthenticationException.class, () -> manager.authenticate(transaction));
-    }
-
-    @Test
-    public void verifyAuthenticatePolicyFails() throws Exception {
-        val map = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>();
-        map.put(newMockHandler(true), null);
-
-        val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
-        val policy = mock(AuthenticationPolicy.class);
-        when(policy.isSatisfiedBy(any(), any(), any(), any()))
-            .thenThrow(new IllegalArgumentException());
-        authenticationExecutionPlan.registerAuthenticationPolicy(policy);
-        val manager = new PolicyBasedAuthenticationManager(authenticationExecutionPlan,
-            false, mock(ConfigurableApplicationContext.class));
-
-        assertThrows(AuthenticationException.class, () -> manager.authenticate(transaction));
-    }
-
-    @Test
-    public void verifyAuthenticateAllFailure() {
-        val map = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>();
-        map.put(newMockHandler(false), null);
-        map.put(newMockHandler(false), null);
-
-        val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
-        authenticationExecutionPlan.registerAuthenticationPolicy(new AllCredentialsValidatedAuthenticationPolicy());
-        val manager = new PolicyBasedAuthenticationManager(authenticationExecutionPlan,
-            false, mock(ConfigurableApplicationContext.class));
-
-        assertThrows(AuthenticationException.class, () -> manager.authenticate(transaction));
-    }
-
-    @Test
-    public void verifyAuthenticateRequiredHandlerSuccess() {
-        val map = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>();
-        map.put(newMockHandler(HANDLER_A, true), null);
-        map.put(newMockHandler(HANDLER_B, false), null);
-
-        val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
-        authenticationExecutionPlan.registerAuthenticationPolicy(new RequiredAuthenticationHandlerAuthenticationPolicy(HANDLER_A));
-        val manager = new PolicyBasedAuthenticationManager(authenticationExecutionPlan,
-            false, mock(ConfigurableApplicationContext.class));
-
-
-        val auth = manager.authenticate(transaction);
-        assertEquals(1, auth.getSuccesses().size());
-        assertEquals(2, auth.getCredentials().size());
-    }
-
-    @Test
-    public void verifyAuthenticateRequiredHandlerFailure() {
-        val map = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>();
-        map.put(newMockHandler(HANDLER_A, true), null);
-        map.put(newMockHandler(HANDLER_B, false), null);
-
-        val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
-        authenticationExecutionPlan.registerAuthenticationPolicy(new RequiredAuthenticationHandlerAuthenticationPolicy(HANDLER_B));
-        val manager = new PolicyBasedAuthenticationManager(authenticationExecutionPlan,
-            false, mock(ConfigurableApplicationContext.class));
-
-        assertThrows(AuthenticationException.class, () -> manager.authenticate(transaction));
-    }
-
-    @Test
-    public void verifyAuthenticateRequiredHandlerTryAllSuccess() {
-        val map = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>();
-        map.put(newMockHandler(HANDLER_A, true), null);
-        map.put(newMockHandler(HANDLER_B, false), null);
-
-        val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
-        authenticationExecutionPlan.registerAuthenticationPolicy(new RequiredAuthenticationHandlerAuthenticationPolicy(Set.of(HANDLER_A), true));
-        val manager = new PolicyBasedAuthenticationManager(authenticationExecutionPlan, false,
-            mock(ConfigurableApplicationContext.class));
-
-        val auth = manager.authenticate(transaction);
-        assertEquals(1, auth.getSuccesses().size());
-        assertEquals(1, auth.getFailures().size());
-        assertEquals(2, auth.getCredentials().size());
-    }
 
     protected static ServicesManager mockServicesManager() {
         val svc = mock(ServicesManager.class);
@@ -362,5 +128,260 @@ public class PolicyBasedAuthenticationManagerTests {
         plan.registerAuthenticationHandlerResolver(new DefaultAuthenticationHandlerResolver());
         plan.registerAuthenticationPostProcessor((builder, transaction) -> LOGGER.trace("Running authentication post processor"));
         return plan;
+    }
+
+    @Test
+    public void verifyAuthenticateFailsPreProcessor() {
+        val map = new HashMap<AuthenticationHandler, PrincipalResolver>();
+        map.put(newMockHandler(true), null);
+        map.put(newMockHandler(false), null);
+
+        val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
+        authenticationExecutionPlan.registerAuthenticationPreProcessor(transaction -> false);
+        val manager = new DefaultAuthenticationManager(authenticationExecutionPlan,
+            false, mock(ConfigurableApplicationContext.class));
+        assertThrows(AuthenticationException.class, () -> manager.authenticate(transaction));
+    }
+
+    @Test
+    public void verifyNoHandlers() {
+        val map = new HashMap<AuthenticationHandler, PrincipalResolver>();
+        val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
+        val manager = new DefaultAuthenticationManager(authenticationExecutionPlan,
+            false, mock(ConfigurableApplicationContext.class));
+        assertThrows(AuthenticationException.class, () -> manager.authenticate(transaction));
+    }
+
+    @Test
+    public void verifyBlockingAuthnPolicy() throws Exception {
+        val map = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>();
+        map.put(newMockHandler(false, true), null);
+        map.put(newMockHandler(true), null);
+
+        val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
+        val policy = mock(AuthenticationPolicy.class);
+        when(policy.isSatisfiedBy(any(), any(), any(), any()))
+            .thenReturn(AuthenticationPolicyExecutionResult.success());
+        when(policy.shouldResumeOnFailure(any())).thenReturn(Boolean.FALSE);
+
+        authenticationExecutionPlan.registerAuthenticationPolicy(policy);
+        val manager = new DefaultAuthenticationManager(authenticationExecutionPlan,
+            false, mock(ConfigurableApplicationContext.class));
+
+        val testTransaction = DefaultAuthenticationTransaction.of(CoreAuthenticationTestUtils.getService(),
+            mock(Credential.class, withSettings().serializable()));
+
+        assertThrows(AuthenticationException.class, () -> manager.authenticate(testTransaction));
+    }
+
+    @Test
+    public void verifyResolverFails() {
+        val map = new HashMap<AuthenticationHandler, PrincipalResolver>();
+        val resolver = mock(PrincipalResolver.class);
+        when(resolver.supports(any())).thenReturn(Boolean.FALSE);
+
+        map.put(newMockHandler(true), resolver);
+        val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
+        val manager = new DefaultAuthenticationManager(authenticationExecutionPlan,
+            false, mock(ConfigurableApplicationContext.class));
+        assertThrows(UnresolvedPrincipalException.class, () -> manager.authenticate(transaction));
+
+        when(resolver.supports(any())).thenReturn(Boolean.TRUE);
+        when(resolver.resolve(any(), any(), any())).thenThrow(new RuntimeException("Fails"));
+        assertThrows(UnresolvedPrincipalException.class, () -> manager.authenticate(transaction));
+    }
+
+    @Test
+    public void verifyResolverFailsAsFatal() {
+        val map = new HashMap<AuthenticationHandler, PrincipalResolver>();
+        val resolver = mock(PrincipalResolver.class);
+        when(resolver.supports(any())).thenReturn(Boolean.FALSE);
+
+        map.put(newMockHandler(true), resolver);
+        val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
+        val manager = new DefaultAuthenticationManager(authenticationExecutionPlan,
+            true, mock(ConfigurableApplicationContext.class));
+        assertThrows(UnresolvedPrincipalException.class, () -> manager.authenticate(transaction));
+    }
+
+    @Test
+    public void verifyAuthWithNoCreds() {
+        val map = new HashMap<AuthenticationHandler, PrincipalResolver>();
+        map.put(newMockHandler(true), null);
+        val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
+        val manager = new DefaultAuthenticationManager(authenticationExecutionPlan,
+            true, mock(ConfigurableApplicationContext.class));
+        assertThrows(AuthenticationException.class, () -> manager.authenticate(DefaultAuthenticationTransaction.of()));
+    }
+
+    @Test
+    public void verifyAuthenticateAnySuccess() {
+        val map = new HashMap<AuthenticationHandler, PrincipalResolver>();
+        map.put(newMockHandler(true), null);
+        map.put(newMockHandler(false), null);
+
+        val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
+        authenticationExecutionPlan.registerAuthenticationPolicy(new AtLeastOneCredentialValidatedAuthenticationPolicy());
+        val manager = new DefaultAuthenticationManager(authenticationExecutionPlan,
+            false, mock(ConfigurableApplicationContext.class));
+
+        val auth = manager.authenticate(transaction);
+        assertEquals(1, auth.getSuccesses().size());
+        assertEquals(2, auth.getCredentials().size());
+    }
+
+    @Test
+    public void verifyAuthenticateAnyButTryAllSuccess() {
+        val map = new HashMap<AuthenticationHandler, PrincipalResolver>();
+        map.put(newMockHandler(true), null);
+        map.put(newMockHandler(false), null);
+        val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
+        authenticationExecutionPlan.registerAuthenticationPolicy(new AtLeastOneCredentialValidatedAuthenticationPolicy(true));
+        val manager = new DefaultAuthenticationManager(authenticationExecutionPlan,
+            false, mock(ConfigurableApplicationContext.class));
+
+        val auth = manager.authenticate(transaction);
+        assertEquals(1, auth.getSuccesses().size());
+        assertEquals(1, auth.getFailures().size());
+        assertEquals(2, map.size());
+    }
+
+    @Test
+    public void verifyAuthenticateAnyFailure() {
+        val map = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>();
+        map.put(newMockHandler(false), null);
+        map.put(newMockHandler(false), null);
+
+        val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
+        authenticationExecutionPlan.registerAuthenticationPolicy(new AtLeastOneCredentialValidatedAuthenticationPolicy());
+        val manager = new DefaultAuthenticationManager(authenticationExecutionPlan,
+            false, mock(ConfigurableApplicationContext.class));
+
+        assertThrows(AuthenticationException.class, () -> manager.authenticate(transaction));
+    }
+
+    @Test
+    public void verifyAuthenticateAnyFailureWithError() {
+        val map = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>();
+        map.put(newMockHandler(false, true), null);
+        map.put(newMockHandler(false, true), null);
+
+        val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
+        authenticationExecutionPlan.registerAuthenticationPolicy(new AtLeastOneCredentialValidatedAuthenticationPolicy());
+        val manager = new DefaultAuthenticationManager(authenticationExecutionPlan,
+            false, mock(ConfigurableApplicationContext.class));
+
+        assertThrows(AuthenticationException.class, () -> manager.authenticate(transaction));
+    }
+
+    @Test
+    public void verifyAuthenticateAllSuccess() {
+        val map = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>();
+        map.put(newMockHandler(true), null);
+        map.put(newMockHandler(true), null);
+
+        val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
+        authenticationExecutionPlan.registerAuthenticationPolicy(new AllCredentialsValidatedAuthenticationPolicy());
+        val manager = new DefaultAuthenticationManager(authenticationExecutionPlan,
+            false, mock(ConfigurableApplicationContext.class));
+
+        val auth = manager.authenticate(transaction);
+        assertEquals(2, auth.getSuccesses().size());
+        assertEquals(0, auth.getFailures().size());
+        assertEquals(2, auth.getCredentials().size());
+    }
+
+    @Test
+    public void verifyAuthenticatePolicyFailsGeneric() throws Exception {
+        val map = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>();
+        map.put(newMockHandler(true), null);
+
+        val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
+        val policy = mock(AuthenticationPolicy.class);
+        when(policy.isSatisfiedBy(any(), any(), any(), any()))
+            .thenThrow(new GeneralSecurityException(new FailedLoginException()));
+        authenticationExecutionPlan.registerAuthenticationPolicy(policy);
+        val manager = new DefaultAuthenticationManager(authenticationExecutionPlan,
+            false, mock(ConfigurableApplicationContext.class));
+
+        assertThrows(AuthenticationException.class, () -> manager.authenticate(transaction));
+    }
+
+    @Test
+    public void verifyAuthenticatePolicyFails() throws Exception {
+        val map = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>();
+        map.put(newMockHandler(true), null);
+
+        val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
+        val policy = mock(AuthenticationPolicy.class);
+        when(policy.isSatisfiedBy(any(), any(), any(), any()))
+            .thenThrow(new IllegalArgumentException());
+        authenticationExecutionPlan.registerAuthenticationPolicy(policy);
+        val manager = new DefaultAuthenticationManager(authenticationExecutionPlan,
+            false, mock(ConfigurableApplicationContext.class));
+
+        assertThrows(AuthenticationException.class, () -> manager.authenticate(transaction));
+    }
+
+    @Test
+    public void verifyAuthenticateAllFailure() {
+        val map = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>();
+        map.put(newMockHandler(false), null);
+        map.put(newMockHandler(false), null);
+
+        val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
+        authenticationExecutionPlan.registerAuthenticationPolicy(new AllCredentialsValidatedAuthenticationPolicy());
+        val manager = new DefaultAuthenticationManager(authenticationExecutionPlan,
+            false, mock(ConfigurableApplicationContext.class));
+
+        assertThrows(AuthenticationException.class, () -> manager.authenticate(transaction));
+    }
+
+    @Test
+    public void verifyAuthenticateRequiredHandlerSuccess() {
+        val map = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>();
+        map.put(newMockHandler(HANDLER_A, true), null);
+        map.put(newMockHandler(HANDLER_B, false), null);
+
+        val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
+        authenticationExecutionPlan.registerAuthenticationPolicy(new RequiredAuthenticationHandlerAuthenticationPolicy(HANDLER_A));
+        val manager = new DefaultAuthenticationManager(authenticationExecutionPlan,
+            false, mock(ConfigurableApplicationContext.class));
+
+
+        val auth = manager.authenticate(transaction);
+        assertEquals(1, auth.getSuccesses().size());
+        assertEquals(2, auth.getCredentials().size());
+    }
+
+    @Test
+    public void verifyAuthenticateRequiredHandlerFailure() {
+        val map = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>();
+        map.put(newMockHandler(HANDLER_A, true), null);
+        map.put(newMockHandler(HANDLER_B, false), null);
+
+        val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
+        authenticationExecutionPlan.registerAuthenticationPolicy(new RequiredAuthenticationHandlerAuthenticationPolicy(HANDLER_B));
+        val manager = new DefaultAuthenticationManager(authenticationExecutionPlan,
+            false, mock(ConfigurableApplicationContext.class));
+
+        assertThrows(AuthenticationException.class, () -> manager.authenticate(transaction));
+    }
+
+    @Test
+    public void verifyAuthenticateRequiredHandlerTryAllSuccess() {
+        val map = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>();
+        map.put(newMockHandler(HANDLER_A, true), null);
+        map.put(newMockHandler(HANDLER_B, false), null);
+
+        val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
+        authenticationExecutionPlan.registerAuthenticationPolicy(new RequiredAuthenticationHandlerAuthenticationPolicy(Set.of(HANDLER_A), true));
+        val manager = new DefaultAuthenticationManager(authenticationExecutionPlan, false,
+            mock(ConfigurableApplicationContext.class));
+
+        val auth = manager.authenticate(transaction);
+        assertEquals(1, auth.getSuccesses().size());
+        assertEquals(1, auth.getFailures().size());
+        assertEquals(2, auth.getCredentials().size());
     }
 }

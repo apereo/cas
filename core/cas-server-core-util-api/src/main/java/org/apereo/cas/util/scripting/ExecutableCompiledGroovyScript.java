@@ -39,6 +39,17 @@ public interface ExecutableCompiledGroovyScript extends AutoCloseable {
     <T> T execute(Object[] args, Class<T> clazz, boolean failOnError);
 
     /**
+     * Execute t.
+     *
+     * @param <T>        the type parameter
+     * @param methodName the method name
+     * @param clazz      the clazz
+     * @param args       the args
+     * @return the t
+     */
+    <T> T execute(String methodName, Class<T> clazz, Object... args);
+
+    /**
      * Sets binding.
      *
      * @param args the args

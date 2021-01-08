@@ -1,7 +1,7 @@
 ---
 layout: default
 title: CAS - OpenID Connect Authentication
-category: Authentication
+category: Protocols
 ---
 {% include variables.html %}
 
