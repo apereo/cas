@@ -335,7 +335,7 @@ To activate this functionality, you will need to choose an appropriate throttler
 The same throttling mechanism that handles the usual CAS server endpoints for authentication
 and ticket validation, etc is then activated for the REST endpoints that are supported for throttling. 
 
-To see the relevant options, [please review this guide](https://apereo.github.io/cas/development/configuration/Configuration-Properties.html#rest-api).
+To see the relevant options, [please review this guide](../configuration/Configuration-Properties.html#rest-api).
 
 ## Swagger API
 
