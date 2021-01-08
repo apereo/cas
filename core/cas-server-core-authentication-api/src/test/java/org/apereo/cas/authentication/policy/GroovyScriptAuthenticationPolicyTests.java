@@ -33,7 +33,7 @@ public class GroovyScriptAuthenticationPolicyTests {
             + '}';
         val p = new GroovyScriptAuthenticationPolicy(script);
         assertTrue(p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication(),
-            new LinkedHashSet<>(), mock(ConfigurableApplicationContext.class), Optional.empty()));
+            new LinkedHashSet<>(), mock(ConfigurableApplicationContext.class), Optional.empty()).isSuccess());
     }
 
     @Test

@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.policy;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationPolicyExecutionResult;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
@@ -57,7 +58,7 @@ public class GroovyScriptAuthenticationPolicy extends BaseAuthenticationPolicy {
     }
 
     @Override
-    public boolean isSatisfiedBy(final Authentication auth,
+    public AuthenticationPolicyExecutionResult isSatisfiedBy(final Authentication auth,
                                  final Set<AuthenticationHandler> authenticationHandlers,
                                  final ConfigurableApplicationContext applicationContext,
                                  final Optional<Serializable> assertion) throws Exception {
@@ -66,7 +67,7 @@ public class GroovyScriptAuthenticationPolicy extends BaseAuthenticationPolicy {
         if (ex != null && ex.isPresent()) {
             throw new GeneralSecurityException(ex.get());
         }
-        return true;
+        return AuthenticationPolicyExecutionResult.success();
     }
 
     @SneakyThrows
