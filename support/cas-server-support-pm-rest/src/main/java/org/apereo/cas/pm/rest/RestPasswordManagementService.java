@@ -76,7 +76,7 @@ public class RestPasswordManagementService extends BasePasswordManagementService
         headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
         headers.put("email", CollectionUtils.wrap(email));
         val entity = new HttpEntity<>(headers);
-        val result = restTemplate.exchange(rest.getEndpointUrlEmail(), HttpMethod.GET, entity, String.class);
+        val result = restTemplate.exchange(rest.getEndpointUrlUser(), HttpMethod.GET, entity, String.class);
 
         if (result.getStatusCodeValue() == HttpStatus.OK.value() && result.hasBody()) {
             return result.getBody();
