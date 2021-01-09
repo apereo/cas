@@ -46,7 +46,7 @@ public class ChainingAttributeReleasePolicyTests {
     @BeforeEach
     public void initialize() {
         ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
-            scriptResourceCacheManager, ApplicationContextProvider.BEAN_NAME_SCRIPT_RESOURCE_CACHE_MANAGER);
+            scriptResourceCacheManager, ScriptResourceCacheManager.BEAN_NAME);
         configureChainingReleasePolicy(0, 0);
     }
 

@@ -5,6 +5,10 @@ import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapSearchEntryHandlersProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
+import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
+import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -95,6 +99,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -527,19 +532,7 @@ public class LdapUtils {
      * @return Search filter with parameters applied.
      */
     public static FilterTemplate newLdaptiveSearchFilter(final String filterQuery, final String paramName, final List<String> params) {
-        val filter = new FilterTemplate();
-        filter.setFilter(filterQuery);
-        if (params != null) {
-            IntStream.range(0, params.size()).forEach(i -> {
-                if (filter.getFilter().contains("{" + i + '}')) {
-                    filter.setParameter(i, params.get(i));
-                } else {
-                    filter.setParameter(paramName, params.get(i));
-                }
-            });
-        }
-        LOGGER.debug("Constructed LDAP search filter [{}]", filter.format());
-        return filter;
+        return newLdaptiveSearchFilter(filterQuery, List.of(paramName), params);
     }
 
     /**
@@ -547,24 +540,59 @@ public class LdapUtils {
      *
      * @param filterQuery the filter query
      * @param paramName   the param name
-     * @param params      the params
+     * @param values      the params
      * @return the search filter
      */
-    public static FilterTemplate newLdaptiveSearchFilter(final String filterQuery, final List<String> paramName, final List<String> params) {
+    public static FilterTemplate newLdaptiveSearchFilter(final String filterQuery,
+                                                         final List<String> paramName,
+                                                         final List<String> values) {
         val filter = new FilterTemplate();
-        filter.setFilter(filterQuery);
-        if (params != null) {
-            IntStream.range(0, params.size()).forEach(i -> {
-                val value = params.get(i);
-                if (filter.getFilter().contains("{" + i + '}')) {
-                    filter.setParameter(i, value);
-                }
-                val name = paramName.get(i);
-                if (filter.getFilter().contains('{' + name + '}')) {
-                    filter.setParameter(name, value);
-                }
-            });
+        if (ResourceUtils.doesResourceExist(filterQuery)) {
+            ApplicationContextProvider.getScriptResourceCacheManager()
+                .ifPresentOrElse(cacheMgr -> {
+                    val cacheKey = ScriptResourceCacheManager.computeKey(filterQuery);
+                    var script = (ExecutableCompiledGroovyScript) null;
+                    if (cacheMgr.containsKey(cacheKey)) {
+                        script = cacheMgr.get(cacheKey);
+                        LOGGER.trace("Located cached groovy script [{}] for key [{}]", script, cacheKey);
+                    } else {
+                        val resource = Unchecked.supplier(() -> ResourceUtils.getRawResourceFrom(filterQuery)).get();
+                        LOGGER.trace("Groovy script [{}] for key [{}] is not cached", resource, cacheKey);
+                        script = new WatchableGroovyScriptResource(resource);
+                        cacheMgr.put(cacheKey, script);
+                        LOGGER.trace("Cached groovy script [{}] for key [{}]", script, cacheKey);
+                    }
+                    if (script != null) {
+                        val parameters = new LinkedHashMap<String, String>();
+                        IntStream.range(0, values.size())
+                            .forEachOrdered(i -> parameters.put(paramName.get(i), values.get(i)));
+                        val args = CollectionUtils.<String, Object>wrap("filter", filter,
+                            "parameters", parameters,
+                            "applicationContext", ApplicationContextProvider.getApplicationContext(),
+                            "logger", LOGGER);
+                        script.setBinding(args);
+                        script.execute(args.values().toArray(), FilterTemplate.class);
+                    }
+                },
+                    () -> {
+                        throw new RuntimeException("Script cache manager unavailable to handle LDAP filter");
+                    });
+        } else {
+            filter.setFilter(filterQuery);
+            if (values != null) {
+                IntStream.range(0, values.size()).forEach(i -> {
+                    val value = values.get(i);
+                    if (filter.getFilter().contains("{" + i + '}')) {
+                        filter.setParameter(i, value);
+                    }
+                    val name = paramName.get(i);
+                    if (filter.getFilter().contains('{' + name + '}')) {
+                        filter.setParameter(name, value);
+                    }
+                });
+            }
         }
+       
         LOGGER.debug("Constructed LDAP search filter [{}]", filter.format());
         return filter;
     }

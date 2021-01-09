@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.BasicCredentialMetaDataTests;
 import org.apereo.cas.authentication.CacheCredentialsMetaDataPopulatorTests;
 import org.apereo.cas.authentication.CoreAuthenticationUtilsTests;
 import org.apereo.cas.authentication.DefaultAuthenticationEventExecutionPlanTests;
+import org.apereo.cas.authentication.DefaultAuthenticationManagerTests;
 import org.apereo.cas.authentication.DefaultAuthenticationTests;
 import org.apereo.cas.authentication.DefaultPasswordEncoderTests;
 import org.apereo.cas.authentication.FileTrustStoreSslSocketFactoryTests;
@@ -68,6 +69,7 @@ import org.junit.runner.RunWith;
     NotPreventedAuthenticationPolicyTests.class,
     AllAuthenticationHandlersSucceededAuthenticationPolicyTests.class,
     BasicCredentialMetaDataTests.class,
+    DefaultAuthenticationManagerTests.class,
     CasCoreAuthenticationSupportConfigurationTests.class,
     ChainingPrincipalElectionStrategyTests.class,
     UsernamePasswordCredentialTests.class,

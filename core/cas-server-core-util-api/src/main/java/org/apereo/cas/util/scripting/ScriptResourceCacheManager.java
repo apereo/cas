@@ -18,6 +18,11 @@ public interface ScriptResourceCacheManager<K extends String, V extends Executab
     extends AutoCloseable, DisposableBean {
 
     /**
+     * Bean name for script resource cache manager.
+     */
+    String BEAN_NAME = "scriptResourceCacheManager";
+
+    /**
      * Compute key.
      *
      * @param bits the bits
@@ -25,6 +30,16 @@ public interface ScriptResourceCacheManager<K extends String, V extends Executab
      */
     static String computeKey(Pair<String, String> bits) {
         return DigestUtils.sha256(bits.getKey() + ':' + bits.getValue());
+    }
+
+    /**
+     * Compute key string.
+     *
+     * @param key the key
+     * @return the string
+     */
+    static String computeKey(final String key) {
+        return DigestUtils.sha256(key);
     }
 
     /**

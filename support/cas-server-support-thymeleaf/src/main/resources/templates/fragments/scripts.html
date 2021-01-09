@@ -14,7 +14,9 @@
     if (typeof resourceLoadedSuccessfully === "function") {
         resourceLoadedSuccessfully();
     }
-    cssVars({});
+    $(function() {
+        cssVars({onlyLegacy: true});
+    })
 </script>
 
 <script th:inline="javascript">

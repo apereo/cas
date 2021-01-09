@@ -189,7 +189,6 @@ simply deactivate LDAP altogether silently.
 # {{ include.configKey }}.deref-aliases=NEVER|SEARCHING|FINDING|ALWAYS
 # {{ include.configKey }}.dn-format=uid=%s,ou=people,dc=example,dc=org
 # {{ include.configKey }}.principal-attribute-password=password
-
 ```
 
 The following authentication types are supported:
@@ -200,6 +199,40 @@ The following authentication types are supported:
 | `AUTHENTICATED`         | Manager bind/search type of authentication. If `principalAttributePassword` is empty then a user simple bind is done to validate credentials. Otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it.
 | `DIRECT`                | Compute user DN from a format string and perform simple bind. This is relevant when no search is required to compute the DN needed for a bind operation. This option is useful when all users are under a single branch in the directory, e.g. `ou=Users,dc=example,dc=org`, or the username provided on the CAS login form is part of the DN, e.g. `uid=%s,ou=Users,dc=exmaple,dc=org`
 | `ANONYMOUS`             | Similar semantics as `AUTHENTICATED` except no `bindDn` and `bindCredential` may be specified to initialize the connection. If `principalAttributePassword` is empty then a user simple bind is done to validate credentials. Otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it.
+      
+### LDAP Scriptable Search Filter
+
+LDAP search filters can point to an external Groovy script to dynamically construct the final filter template. 
+  
+```properties
+# {{ include.configKey }}.search-filter=file:/path/to/LdapFilterQuery.groovy
+```
+                                                                      
+The script itself may be designed as:
+
+```groovy
+import org.ldaptive.*
+import org.springframework.context.*
+
+def run(Object[] args) {
+    def filter = (FilterTemplate) args[0]
+    def parameters = (Map) args[1]
+    def applicationContext = (ApplicationContext) args[2]
+    def logger = args[3]
+
+    logger.info("Configuring LDAP filter")
+    filter.setFilter("uid=something")
+}
+```
+
+The following parameters are passed to the script:
+
+| Parameter             | Description
+|---------------------------------------------------------------------------------------------------------
+| `filter`                 | `FilterTemplate` to be updated by the script and used for the LDAP query.
+| `parameters`            | Map of query parameters which may be used to construct the final filter.
+| `applicationContext`    | Reference to the Spring `ApplicationContext` reference.
+| `logger`                | The object responsible for issuing log messages such as `logger.info(...)`.
 
 ### LDAP Search Entry Handlers
 
