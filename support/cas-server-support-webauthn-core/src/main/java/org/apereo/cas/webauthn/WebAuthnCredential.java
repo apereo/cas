@@ -28,6 +28,12 @@ public class WebAuthnCredential extends OneTimeTokenCredential {
         super(token);
     }
 
+    /**
+     * Convert credential to byte array.
+     *
+     * @param webAuthnCredential the web authn credential
+     * @return the byte array
+     */
     @SneakyThrows
     public static ByteArray from(final WebAuthnCredential webAuthnCredential) {
         return ByteArray.fromBase64Url(webAuthnCredential.getToken());

@@ -153,6 +153,13 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
         return account;
     }
 
+    /**
+     * Authenticate internal.
+     *
+     * @param credential the credential
+     * @return the duo security authentication result
+     * @throws Exception the exception
+     */
     protected abstract DuoSecurityAuthenticationResult authenticateInternal(Credential credential) throws Exception;
 
     /**

@@ -74,6 +74,12 @@ public class MappableDistributedCacheManager<K extends Serializable, V extends D
         return getAll().stream().filter(filter).collect(Collectors.toList());
     }
 
+    /**
+     * Build key.
+     *
+     * @param key the key
+     * @return the string
+     */
     protected String buildKey(final K key) {
         return key.toString();
     }

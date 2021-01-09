@@ -50,6 +50,13 @@ public class RandomUtils {
         return nextLong(0, Long.MAX_VALUE);
     }
 
+    /**
+     * Next long and provide long.
+     *
+     * @param startInclusive the start inclusive
+     * @param endExclusive   the end exclusive
+     * @return the long
+     */
     public static long nextLong(final long startInclusive, final long endExclusive) {
         Validate.isTrue(endExclusive >= startInclusive,
             "Start value must be smaller or equal to end value.");
@@ -62,6 +69,13 @@ public class RandomUtils {
         return (long) nextDouble(startInclusive, endExclusive);
     }
 
+    /**
+     * Next double and provide double.
+     *
+     * @param startInclusive the start inclusive
+     * @param endInclusive   the end inclusive
+     * @return the double
+     */
     public static double nextDouble(final double startInclusive, final double endInclusive) {
         Validate.isTrue(endInclusive >= startInclusive,
             "Start value must be smaller or equal to end value.");

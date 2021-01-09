@@ -23,7 +23,17 @@ public interface CassandraSessionFactory extends AutoCloseable {
      */
     CqlSession getSession();
 
+    /**
+     * Gets cassandra template.
+     *
+     * @return the cassandra template
+     */
     CassandraTemplate getCassandraTemplate();
 
+    /**
+     * Gets cql template.
+     *
+     * @return the cql template
+     */
     CqlTemplate getCqlTemplate();
 }

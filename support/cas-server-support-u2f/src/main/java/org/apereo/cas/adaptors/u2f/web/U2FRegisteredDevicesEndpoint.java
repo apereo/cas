@@ -32,6 +32,11 @@ public class U2FRegisteredDevicesEndpoint extends BaseCasActuatorEndpoint {
         this.u2fDeviceRepository = u2fDeviceRepository;
     }
 
+    /**
+     * Fetch all and provide collection.
+     *
+     * @return the collection
+     */
     @ReadOperation(produces = MediaType.APPLICATION_JSON_VALUE)
     public Collection<? extends U2FDeviceRegistration> fetchAll() {
         return u2fDeviceRepository.getRegisteredDevices()
@@ -40,6 +45,12 @@ public class U2FRegisteredDevicesEndpoint extends BaseCasActuatorEndpoint {
             .collect(Collectors.toList());
     }
 
+    /**
+     * Fetch by username and provide collection.
+     *
+     * @param username the username
+     * @return the collection
+     */
     @ReadOperation(produces = MediaType.APPLICATION_JSON_VALUE)
     public Collection<? extends U2FDeviceRegistration> fetchBy(@Selector final String username) {
         return u2fDeviceRepository.getRegisteredDevices(username)

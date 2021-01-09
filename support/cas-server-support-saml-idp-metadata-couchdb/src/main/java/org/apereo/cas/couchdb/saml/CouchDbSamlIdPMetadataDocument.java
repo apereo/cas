@@ -16,6 +16,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class CouchDbSamlIdPMetadataDocument extends SamlIdPMetadataDocument {
+    private static final long serialVersionUID = 915217132219326234L;
+
     @JsonProperty("_id")
     private String cid;
 

@@ -90,6 +90,13 @@ public class Beans {
         return Duration.parse(value);
     }
 
+    /**
+     * Gets temp file path.
+     *
+     * @param prefix the prefix
+     * @param suffix the suffix
+     * @return the temp file path
+     */
     @SneakyThrows
     public static String getTempFilePath(final String prefix, final String suffix) {
         return File.createTempFile(prefix, suffix).getCanonicalPath();

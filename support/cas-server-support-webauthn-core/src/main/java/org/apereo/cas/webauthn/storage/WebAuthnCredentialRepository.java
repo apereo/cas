@@ -12,6 +12,11 @@ import com.yubico.webauthn.CredentialRepository;
  */
 public interface WebAuthnCredentialRepository extends RegistrationStorage, CredentialRepository, WebAuthnRegistrationStorageCleaner {
 
+    /**
+     * In memory web authn credential repository.
+     *
+     * @return the web authn credential repository
+     */
     static WebAuthnCredentialRepository inMemory() {
         return new InMemoryWebAuthn();
     }

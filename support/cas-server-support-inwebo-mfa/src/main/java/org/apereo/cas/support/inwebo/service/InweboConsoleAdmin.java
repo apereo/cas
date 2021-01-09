@@ -20,6 +20,12 @@ public class InweboConsoleAdmin extends WebServiceGatewaySupport {
 
     private final CasConfigurationProperties casProperties;
 
+    /**
+     * Login search.
+     *
+     * @param login the login
+     * @return the login search result
+     */
     public LoginSearchResult loginSearch(final String login) {
         val loginSearch = new LoginSearch();
         loginSearch.setUserid(0);

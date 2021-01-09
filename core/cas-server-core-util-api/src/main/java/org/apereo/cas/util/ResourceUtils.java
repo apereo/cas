@@ -139,6 +139,13 @@ public class ResourceUtils {
         return resource;
     }
 
+    /**
+     * Export classpath resource to file.
+     *
+     * @param parentDirectory the parent directory
+     * @param resource        the resource
+     * @return the resource
+     */
     @SneakyThrows
     public static Resource exportClasspathResourceToFile(final File parentDirectory, final Resource resource) {
         LOGGER.trace("Preparing classpath resource [{}]", resource);

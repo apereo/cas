@@ -17,6 +17,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CouchDbSamlMetadataDocument extends SamlMetadataDocument {
+    private static final long serialVersionUID = 6558457970842836213L;
+
     @JsonProperty("_id")
     private String cid;
 

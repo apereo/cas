@@ -11,6 +11,12 @@ import com.google.common.collect.Iterables;
  */
 @FunctionalInterface
 public interface MultifactorAuthenticationTrustRecordKeyGenerator {
+    /**
+     * Generate.
+     *
+     * @param record the record
+     * @return the string
+     */
     String generate(MultifactorAuthenticationTrustRecord record);
 
     /**

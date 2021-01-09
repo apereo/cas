@@ -44,6 +44,12 @@ public class OidcSingleLogoutMessageCreator implements SingleLogoutMessageCreato
         return builder.payload(StringUtils.EMPTY).build();
     }
 
+    /**
+     * Build jwt claims.
+     *
+     * @param request the request
+     * @return the jwt claims
+     */
     protected JwtClaims buildJwtClaims(final SingleLogoutRequestContext request) {
 
         val oidc = configurationContext.getCasProperties().getAuthn().getOidc();

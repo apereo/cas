@@ -53,5 +53,10 @@ public interface HttpClient {
      */
     org.apache.http.client.HttpClient getWrappedHttpClient();
 
+    /**
+     * Gets http client factory.
+     *
+     * @return the http client factory
+     */
     HttpClientFactory getHttpClientFactory();
 }

@@ -151,6 +151,11 @@ public enum WSFederationClaims {
         return Arrays.stream(WSFederationClaims.values()).anyMatch(c -> c.getUri().equalsIgnoreCase(claimUri));
     }
 
+    /**
+     * Gets claim.
+     *
+     * @return the claim
+     */
     public String getClaim() {
         val idx = StringUtils.lastIndexOf(this.uri, '/');
         return this.uri.substring(idx + 1);

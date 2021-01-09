@@ -58,6 +58,13 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
         return metadata;
     }
 
+    /**
+     * Write certificate and key.
+     *
+     * @param certificate       the certificate
+     * @param key               the key
+     * @param registeredService the registered service
+     */
     @SneakyThrows
     protected void writeCertificateAndKey(final File certificate, final File key,
                                           final Optional<SamlRegisteredService> registeredService) {

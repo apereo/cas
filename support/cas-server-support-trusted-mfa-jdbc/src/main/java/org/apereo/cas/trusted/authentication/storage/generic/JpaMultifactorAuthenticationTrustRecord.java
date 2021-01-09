@@ -23,6 +23,8 @@ import javax.persistence.Table;
 @Getter
 @DiscriminatorValue("JPA")
 public class JpaMultifactorAuthenticationTrustRecord extends MultifactorAuthenticationTrustRecord {
+    private static final long serialVersionUID = -5834988860677211091L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")

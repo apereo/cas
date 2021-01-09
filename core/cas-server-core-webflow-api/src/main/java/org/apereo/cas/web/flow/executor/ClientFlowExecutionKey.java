@@ -48,6 +48,13 @@ public class ClientFlowExecutionKey extends FlowExecutionKey {
         this.data = data;
     }
 
+    /**
+     * Parse.
+     *
+     * @param key the key
+     * @return the client flow execution key
+     * @throws BadlyFormattedFlowExecutionKeyException the badly formatted flow execution key exception
+     */
     public static ClientFlowExecutionKey parse(final String key) throws BadlyFormattedFlowExecutionKeyException {
         val tokens = Splitter.on('_').splitToList(key);
         if (tokens.size() != 2) {

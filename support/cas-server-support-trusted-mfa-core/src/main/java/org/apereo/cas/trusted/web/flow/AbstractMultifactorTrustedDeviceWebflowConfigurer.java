@@ -99,6 +99,11 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
         this.multifactorAuthenticationFlowDefinitionRegistries.forEach(this::registerMultifactorTrustedAuthentication);
     }
 
+    /**
+     * Register multifactor trusted authentication.
+     *
+     * @param registry the registry
+     */
     protected void registerMultifactorTrustedAuthentication(final FlowDefinitionRegistry registry) {
         validateFlowDefinitionConfiguration();
 

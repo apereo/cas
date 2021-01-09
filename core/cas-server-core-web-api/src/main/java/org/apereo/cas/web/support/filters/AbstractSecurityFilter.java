@@ -35,6 +35,11 @@ public abstract class AbstractSecurityFilter {
         THROW_ON_ERRORS = throwOnErrors;
     }
 
+    /**
+     * Log exception.
+     *
+     * @param e the exception
+     */
     protected static void logException(final Exception e) {
         LoggingUtils.error(LOGGER, e);
         if (isThrowOnErrors()) {

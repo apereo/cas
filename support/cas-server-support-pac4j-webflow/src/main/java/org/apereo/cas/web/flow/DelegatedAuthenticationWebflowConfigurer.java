@@ -42,12 +42,20 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
         }
     }
 
+    /**
+     * Create delegated client logout action.
+     */
     protected void createDelegatedClientLogoutAction() {
         val logoutFlow = getLogoutFlow();
         val state = getState(logoutFlow, CasWebflowConstants.STATE_ID_TERMINATE_SESSION);
         state.getEntryActionList().add(createEvaluateAction("delegatedAuthenticationClientLogoutAction"));
     }
 
+    /**
+     * Create client action action state.
+     *
+     * @param flow the flow
+     */
     protected void createClientActionActionState(final Flow flow) {
         val actionState = createActionState(flow, CasWebflowConstants.STATE_ID_DELEGATED_AUTHENTICATION,
             createEvaluateAction(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION));
@@ -66,6 +74,11 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
         setStartState(flow, actionState);
     }
 
+    /**
+     * Create stop webflow view state.
+     *
+     * @param flow the flow
+     */
     protected void createStopWebflowViewState(final Flow flow) {
         createDecisionState(flow, DECISION_STATE_CHECK_DELEGATED_AUTHN_FAILURE, "flowScope.unauthorizedRedirectUrl != null",
             CasWebflowConstants.STATE_ID_SERVICE_UNAUTHZ_CHECK, CasWebflowConstants.STATE_ID_STOP_WEBFLOW);

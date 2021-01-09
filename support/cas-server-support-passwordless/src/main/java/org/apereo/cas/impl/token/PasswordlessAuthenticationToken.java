@@ -53,6 +53,11 @@ public class PasswordlessAuthenticationToken implements Serializable {
     @Column(name = "EXP_DATE", length = Integer.MAX_VALUE, nullable = false)
     private ZonedDateTime expirationDate;
 
+    /**
+     * Is expired?
+     *
+     * @return the boolean
+     */
     @JsonIgnore
     public boolean isExpired() {
         val now = ZonedDateTime.now(ZoneOffset.UTC);

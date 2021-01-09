@@ -52,6 +52,11 @@ public class ExceptionOnlyFilter extends AbstractFilter {
         return getOnMismatch();
     }
 
+    /**
+     * New builder.
+     *
+     * @return the builder
+     */
     @PluginBuilderFactory
     public static Builder newBuilder() {
         return new Builder();

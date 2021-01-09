@@ -83,6 +83,11 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
      */
     public abstract Pair<String, String> buildSelfSignedSigningCert(Optional<SamlRegisteredService> registeredService);
 
+    /**
+     * New saml id p metadata document.
+     *
+     * @return the saml id p metadata document
+     */
     protected SamlIdPMetadataDocument newSamlIdPMetadataDocument() {
         return new SamlIdPMetadataDocument();
     }

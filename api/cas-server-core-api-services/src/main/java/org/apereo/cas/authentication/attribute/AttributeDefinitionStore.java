@@ -73,6 +73,13 @@ public interface AttributeDefinitionStore {
      */
     <T extends AttributeDefinition> Optional<T> locateAttributeDefinition(String key, Class<T> clazz);
 
+    /**
+     * Locate attribute definition.
+     *
+     * @param <T>       the type parameter
+     * @param predicate the predicate
+     * @return the optional
+     */
     <T extends AttributeDefinition> Optional<T> locateAttributeDefinition(Predicate<AttributeDefinition> predicate);
 
     /**
