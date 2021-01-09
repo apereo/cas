@@ -18,7 +18,7 @@ public class SamlIdPServicesManagerRegisteredServiceLocator extends DefaultServi
     public SamlIdPServicesManagerRegisteredServiceLocator(final SamlRegisteredServiceCachingMetadataResolver resolver) {
         setOrder(Ordered.HIGHEST_PRECEDENCE);
         setRegisteredServiceFilter((registeredService, service) -> {
-            val isSamlServiceProvider = registeredService.getClass().equals(SamlRegisteredService.class)
+            val isSamlServiceProvider = registeredService instanceof SamlRegisteredService
                 && service.getAttributes().containsKey(SamlProtocolConstants.PARAMETER_SAML_REQUEST);
             
             if (isSamlServiceProvider && registeredService.matches(service.getId())) {

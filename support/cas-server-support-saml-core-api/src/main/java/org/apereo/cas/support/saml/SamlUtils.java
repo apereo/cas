@@ -110,6 +110,14 @@ public class SamlUtils {
         return newSamlObject(objectType, qName);
     }
 
+    /**
+     * New saml object and provide type.
+     *
+     * @param <T>        the type parameter
+     * @param objectType the object type
+     * @param qName      the q name
+     * @return the t
+     */
     public static <T extends SAMLObject> T newSamlObject(final Class<T> objectType, final QName qName) {
         LOGGER.trace("Attempting to create SAMLObject for type: [{}] and QName: [{}]", objectType, qName);
         val builder = (SAMLObjectBuilder<T>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(qName);

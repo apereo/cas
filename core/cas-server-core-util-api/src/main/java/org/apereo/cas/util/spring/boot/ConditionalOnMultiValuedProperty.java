@@ -19,7 +19,17 @@ import java.lang.annotation.Target;
 @Documented
 @Conditional(MultiValuedPropertyCondition.class)
 public @interface ConditionalOnMultiValuedProperty {
+    /**
+     * Name.
+     *
+     * @return the string
+     */
     String name();
 
+    /**
+     * Value.
+     *
+     * @return the string [ ]
+     */
     String[] value();
 }

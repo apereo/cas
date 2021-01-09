@@ -52,6 +52,9 @@ public class EndpointLdapAuthenticationProvider implements AuthenticationProvide
     private final ConnectionFactory connectionFactory;
     private final Authenticator authenticator;
 
+    /**
+     * Destroy.
+     */
     public void destroy() {
         this.connectionFactory.close();
         this.authenticator.close();

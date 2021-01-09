@@ -157,6 +157,12 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
         return attributeDefinitions.isEmpty();
     }
 
+    /**
+     * To.
+     *
+     * @param resource the resource
+     * @return the attribute definition store
+     */
     @SneakyThrows
     public AttributeDefinitionStore to(final File resource) {
         val json = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.attributeDefinitions);

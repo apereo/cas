@@ -29,22 +29,48 @@ public enum TriStateBoolean implements Serializable {
 
     private final Boolean state;
 
+    /**
+     * From boolean.
+     *
+     * @param value the value
+     * @return the tri state boolean
+     */
     public static TriStateBoolean fromBoolean(final boolean value) {
         return value ? TriStateBoolean.TRUE : TriStateBoolean.FALSE;
     }
 
+    /**
+     * Is true.
+     *
+     * @return the boolean
+     */
     public boolean isTrue() {
         return Boolean.TRUE.equals(this.state);
     }
 
+    /**
+     * Is false.
+     *
+     * @return the boolean
+     */
     public boolean isFalse() {
         return Boolean.FALSE.equals(this.state);
     }
 
+    /**
+     * Is undefined.
+     *
+     * @return the boolean
+     */
     public boolean isUndefined() {
         return this.state == null;
     }
 
+    /**
+     * To boolean.
+     *
+     * @return the boolean
+     */
     public Boolean toBoolean() {
         return state;
     }

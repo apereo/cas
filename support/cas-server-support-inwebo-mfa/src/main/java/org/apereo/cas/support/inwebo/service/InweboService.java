@@ -175,6 +175,14 @@ public class InweboService {
         return MAPPER.readTree(conn.getInputStream());
     }
 
+    /**
+     * Build response.
+     *
+     * @param response  the response
+     * @param operation the operation
+     * @param err       the err
+     * @return the abstract inwebo response
+     */
     protected AbstractInweboResponse buildResponse(final AbstractInweboResponse response, final String operation, final String err) {
         if ("OK".equals(err)) {
             response.setResult(InweboResult.OK);

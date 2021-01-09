@@ -67,6 +67,12 @@ public class GrouperRegisteredServiceAccessStrategy extends TimeBasedRegisteredS
         return super.doPrincipalAttributesAllowServiceAccess(principal, allAttributes);
     }
 
+    /**
+     * Fetch ws get groups results.
+     *
+     * @param principal the principal
+     * @return the collection
+     */
     @Synchronized
     protected Collection<WsGetGroupsResult> fetchWsGetGroupsResults(final String principal) {
         if (!this.configProperties.isEmpty()) {

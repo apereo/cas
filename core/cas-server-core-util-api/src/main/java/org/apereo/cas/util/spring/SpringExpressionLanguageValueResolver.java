@@ -60,6 +60,11 @@ public class SpringExpressionLanguageValueResolver implements Function {
     protected SpringExpressionLanguageValueResolver() {
     }
 
+    /**
+     * Gets instance of the resolver as a singleton.
+     *
+     * @return the instance
+     */
     public static SpringExpressionLanguageValueResolver getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new SpringExpressionLanguageValueResolver();

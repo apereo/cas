@@ -22,6 +22,14 @@ import javax.servlet.http.HttpServletResponse;
 public class AcmeWellKnownChallengeController {
     private final AcmeChallengeRepository acmeChallengeRepository;
 
+    /**
+     * Handle request.
+     *
+     * @param token    the token
+     * @param request  the request
+     * @param response the response
+     * @return the string
+     */
     @GetMapping(value = "/.well-known/acme-challenge/{token}", produces = MediaType.TEXT_PLAIN_VALUE)
     public String handleRequest(@PathVariable(value = "token") final String token,
                               final HttpServletRequest request, final HttpServletResponse response) {

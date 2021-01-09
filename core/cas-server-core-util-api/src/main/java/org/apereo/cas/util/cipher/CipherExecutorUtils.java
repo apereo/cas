@@ -17,6 +17,14 @@ import lombok.val;
 public class CipherExecutorUtils {
 
 
+    /**
+     * New string cipher executor.
+     *
+     * @param <T>         the type parameter
+     * @param crypto      the crypto
+     * @param cipherClass the cipher class
+     * @return the t
+     */
     @SneakyThrows
     public static <T extends BaseStringCipherExecutor> T newStringCipherExecutor(final EncryptionJwtSigningJwtCryptographyProperties crypto,
                                                                                  final Class<T> cipherClass) {
@@ -31,6 +39,14 @@ public class CipherExecutorUtils {
         return cipher;
     }
 
+    /**
+     * New string cipher executor.
+     *
+     * @param <T>         the type parameter
+     * @param crypto      the crypto
+     * @param cipherClass the cipher class
+     * @return the t
+     */
     @SneakyThrows
     public static <T extends BaseStringCipherExecutor> T newStringCipherExecutor(final EncryptionOptionalSigningOptionalJwtCryptographyProperties crypto,
                                                                                  final Class<T> cipherClass) {

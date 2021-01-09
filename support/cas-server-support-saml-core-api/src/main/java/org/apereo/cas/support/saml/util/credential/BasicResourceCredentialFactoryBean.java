@@ -101,6 +101,11 @@ public class BasicResourceCredentialFactoryBean implements FactoryBean<BasicCred
         return credential;
     }
 
+    /**
+     * Gets public key.
+     *
+     * @return the public key
+     */
     protected PublicKey getPublicKey() {
         if (null == getPublicKeyInfo()) {
             return null;
