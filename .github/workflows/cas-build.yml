@@ -846,6 +846,7 @@ jobs:
           - recaptcha-login-v3
           - webauthn-register
           - webauthn-login
+          - saml2-idp-login
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK

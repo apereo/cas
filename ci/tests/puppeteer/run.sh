@@ -35,7 +35,10 @@ echo -e "\nBuilding CAS found in $PWD for dependencies [${dependencies}]"
 mv "$PWD"/webapp/cas-server-webapp-tomcat/build/libs/cas-server-webapp-tomcat-*.war "$PWD"/cas.war
 
 initScript=$(cat "${config}" | jq -j '.initScript // empty')
-[ -z "$result" ] && echo "Initialization script is: ${initScript}" && eval "$initScript"
+[ -z "$result" ] && \
+  echo "Initialization script: ${initScript}" && \
+  chmod +x "${initScript}" && \
+  eval "$initScript"
 
 properties=$(cat "${config}" | jq -j '.properties // empty | join(" ")')
 echo -e "\nLaunching CAS with properties [${properties}] and dependencies [${dependencies}]"

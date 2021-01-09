@@ -84,14 +84,14 @@ public class GroovyScriptResourceCacheManager implements ScriptResourceCacheMana
             LOGGER.trace("Located cached groovy script [{}] for key [{}]", script, cacheKey);
         } else {
             try {
-                val scriptPath = SpringExpressionLanguageValueResolver.getInstance().resolve(scriptResource);
-                if (ScriptingUtils.isExternalGroovyScript(scriptPath)) {
+                if (ScriptingUtils.isExternalGroovyScript(scriptResource)) {
+                    val scriptPath = SpringExpressionLanguageValueResolver.getInstance().resolve(scriptResource);
                     val resource = ResourceUtils.getResourceFrom(scriptPath);
                     script = new WatchableGroovyScriptResource(resource);
                 } else {
                     script = new GroovyShellScript(scriptResource);
                 }
-                LOGGER.trace("Groovy script [{}] for key [{}] is not cached", scriptPath, cacheKey);
+                LOGGER.trace("Groovy script [{}] for key [{}] is not cached", scriptResource, cacheKey);
                 put(cacheKey, script);
                 LOGGER.trace("Cached groovy script [{}] for key [{}]", script, cacheKey);
             } catch (final Exception e) {
