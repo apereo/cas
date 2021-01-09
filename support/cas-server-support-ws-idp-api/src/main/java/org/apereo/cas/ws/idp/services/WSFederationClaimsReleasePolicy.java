@@ -5,15 +5,9 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.AbstractRegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.LoggingUtils;
-import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
-import org.apereo.cas.util.scripting.GroovyShellScript;
-import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.scripting.ScriptingUtils;
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
-import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.ws.idp.WSFederationClaims;
 
 import com.google.common.collect.Maps;
@@ -22,7 +16,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -118,24 +111,7 @@ public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAt
                                                                     final String file) {
 
         ApplicationContextProvider.getScriptResourceCacheManager().ifPresentOrElse(cacheMgr -> {
-            val cacheKey = ScriptResourceCacheManager.computeKey(Pair.of(attributeName, file));
-            LOGGER.trace("Constructed cache key [{}] for attribute [{}] mapped as groovy script", cacheKey, attributeName);
-            var script = (ExecutableCompiledGroovyScript) null;
-            if (cacheMgr.containsKey(cacheKey)) {
-                script = cacheMgr.get(cacheKey);
-                LOGGER.trace("Located cached groovy script [{}] for key [{}]", script, cacheKey);
-            } else {
-                try {
-                    val scriptPath = SpringExpressionLanguageValueResolver.getInstance().resolve(file);
-                    val resource = ResourceUtils.getRawResourceFrom(scriptPath);
-                    LOGGER.trace("Groovy script [{}] for key [{}] is not cached", resource, cacheKey);
-                    script = new WatchableGroovyScriptResource(resource);
-                    cacheMgr.put(cacheKey, script);
-                    LOGGER.trace("Cached groovy script [{}] for key [{}]", script, cacheKey);
-                } catch (final Exception e) {
-                    LoggingUtils.error(LOGGER, e);
-                }
-            }
+            val script = cacheMgr.resolveScriptableResource(file, attributeName, file);
             if (script != null) {
                 fetchAttributeValueFromScript(script, attributeName, resolvedAttributes, attributesToRelease);
             }
@@ -151,19 +127,7 @@ public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAt
                                                                 final String inlineGroovy) {
         ApplicationContextProvider.getScriptResourceCacheManager()
             .ifPresentOrElse(cacheMgr -> {
-                val cacheKey = ScriptResourceCacheManager.computeKey(Pair.of(attributeName, inlineGroovy));
-                LOGGER.trace("Constructed cache key [{}] for attribute [{}] mapped as inline groovy script", cacheKey, attributeName);
-
-                var script = (ExecutableCompiledGroovyScript) null;
-                if (cacheMgr.containsKey(cacheKey)) {
-                    LOGGER.trace("Inline groovy script for key [{}] is not cached", cacheKey);
-                    script = cacheMgr.get(cacheKey);
-                } else {
-                    LOGGER.trace("Inline groovy script for key [{}] is not cached", cacheKey);
-                    script = new GroovyShellScript(inlineGroovy);
-                    cacheMgr.put(cacheKey, script);
-                    LOGGER.trace("Cached inline groovy script for key [{}]", cacheKey);
-                }
+                val script = cacheMgr.resolveScriptableResource(inlineGroovy, attributeName, inlineGroovy);
                 fetchAttributeValueFromScript(script, attributeName, resolvedAttributes, attributesToRelease);
             },
                 () -> {

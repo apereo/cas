@@ -3,10 +3,12 @@ package org.apereo.cas.util.scripting;
 import org.apereo.cas.util.DigestUtils;
 
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.tuple.Pair;
+import lombok.val;
 import org.springframework.beans.factory.DisposableBean;
 
+import java.util.Arrays;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link ScriptResourceCacheManager}.
@@ -25,21 +27,12 @@ public interface ScriptResourceCacheManager<K extends String, V extends Executab
     /**
      * Compute key.
      *
-     * @param bits the bits
+     * @param keys the keys
      * @return the key
      */
-    static String computeKey(Pair<String, String> bits) {
-        return DigestUtils.sha256(bits.getKey() + ':' + bits.getValue());
-    }
-
-    /**
-     * Compute key string.
-     *
-     * @param key the key
-     * @return the string
-     */
-    static String computeKey(final String key) {
-        return DigestUtils.sha256(key);
+    static String computeKey(final String... keys) {
+        val rawKey = Arrays.stream(keys).collect(Collectors.joining(":"));
+        return DigestUtils.sha256(rawKey);
     }
 
     /**
@@ -107,5 +100,15 @@ public interface ScriptResourceCacheManager<K extends String, V extends Executab
      * @return true/false
      */
     boolean isEmpty();
+
+    /**
+     * Resolve scriptable resource executable.
+     *
+     * @param scriptResource the script resource
+     * @param keys           the keys
+     * @return the executable compiled groovy script
+     */
+    ExecutableCompiledGroovyScript resolveScriptableResource(String scriptResource,
+                                                             String... keys);
 
 }

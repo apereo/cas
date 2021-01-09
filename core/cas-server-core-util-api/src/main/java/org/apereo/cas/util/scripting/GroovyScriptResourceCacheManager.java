@@ -1,9 +1,14 @@
 package org.apereo.cas.util.scripting;
 
+import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
+
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.RemovalListener;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import java.time.Duration;
 import java.util.Objects;
@@ -64,6 +69,30 @@ public class GroovyScriptResourceCacheManager implements ScriptResourceCacheMana
     @Override
     public boolean isEmpty() {
         return cache.asMap().isEmpty();
+    }
+
+    @Override
+    public ExecutableCompiledGroovyScript resolveScriptableResource(final String scriptResource,
+                                                                    final String... keys) {
+        val cacheKey = ScriptResourceCacheManager.computeKey(keys);
+        LOGGER.trace("Constructed cache key [{}] for keys [{}] mapped as groovy script", cacheKey, keys);
+        var script = (ExecutableCompiledGroovyScript) null;
+        if (containsKey(cacheKey)) {
+            script = get(cacheKey);
+            LOGGER.trace("Located cached groovy script [{}] for key [{}]", script, cacheKey);
+        } else {
+            try {
+                val scriptPath = SpringExpressionLanguageValueResolver.getInstance().resolve(scriptResource);
+                val resource = ResourceUtils.getResourceFrom(scriptPath);
+                LOGGER.trace("Groovy script [{}] for key [{}] is not cached", resource, cacheKey);
+                script = new WatchableGroovyScriptResource(resource);
+                put(cacheKey, script);
+                LOGGER.trace("Cached groovy script [{}] for key [{}]", script, cacheKey);
+            } catch (final Exception e) {
+                LoggingUtils.error(LOGGER, e);
+            }
+        }
+        return script;
     }
 
     @Override

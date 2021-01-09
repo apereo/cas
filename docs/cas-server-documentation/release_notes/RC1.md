@@ -126,6 +126,11 @@ for service providers can now be [managed via Redis](../installation/Configuring
 CAS can now enable support for the [(ACME) protocol](../integration/ACME-Integration.html) 
 using a certificate authority (CA) such as Let's Encrypt.
 
+### Gradle 6.8
+
+The CAS codebase is now using Gradle version `6.8` for internal builds. All plugins and build deprecation warnings
+are adjusted, fixed or removed to make for a smooth transition to version `7` as the next release of the Gradle build tool.
+
 ### Multifactor Trusted Devices via Redis 
 
 [Multifactor Trusted Devices](../mfa/Multifactor-TrustedDevice-Authentication.html) and user 
