@@ -5,6 +5,9 @@ import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapSearchEntryHandlersProperties;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.scripting.GroovyScriptResourceCacheManager;
+import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -18,6 +21,7 @@ import org.ldaptive.handler.CaseChangeEntryHandler;
 import org.ldaptive.sasl.Mechanism;
 import org.ldaptive.sasl.QualityOfProtection;
 import org.ldaptive.sasl.SecurityStrength;
+import org.springframework.context.support.StaticApplicationContext;
 
 import java.io.File;
 import java.net.URL;
@@ -51,6 +55,7 @@ public class LdapUtilsTests {
         input = LdapUtils.getBoolean(entry, "attr2", Boolean.TRUE);
         assertTrue(input);
     }
+
 
     @Test
     public void verifyGetLong() {
@@ -88,6 +93,30 @@ public class LdapUtilsTests {
         assertFalse(LdapUtils.executeDeleteOperation(factory, new LdapEntry()));
     }
 
+    @Test
+    public void verifyScriptedFilter() {
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+        ApplicationContextProvider.holdApplicationContext(appCtx);
+        assertThrows(RuntimeException.class,
+            () -> LdapUtils.newLdaptiveSearchFilter("classpath:LdapFilterQuery.groovy",
+                List.of("p1", "p2"), List.of("v1", "v2")));
+
+        val cacheMgr = new GroovyScriptResourceCacheManager();
+        ApplicationContextProvider.registerBeanIntoApplicationContext(appCtx, cacheMgr, ScriptResourceCacheManager.BEAN_NAME);
+        var filter = LdapUtils.newLdaptiveSearchFilter("classpath:LdapFilterQuery.groovy",
+            List.of("p1", "p2"), List.of("v1", "v2"));
+        assertNotNull(filter);
+        assertNotNull(filter.getFilter());
+        filter = LdapUtils.newLdaptiveSearchFilter("classpath:LdapFilterQuery.groovy",
+            List.of("p1", "p2"), List.of("v1", "v2"));
+        assertNotNull(filter);
+        assertNotNull(filter.getFilter());
+        filter = LdapUtils.newLdaptiveSearchFilter("classpath:UnknownLdapFilterQuery.groovy",
+            List.of("p1", "p2"), List.of("v1", "v2"));
+        assertNotNull(filter);
+    }
+    
     @Test
     public void verifyFilterByIndex() throws Exception {
         val filter = LdapUtils.newLdaptiveSearchFilter("cn={0}", List.of("casuser"));

@@ -86,6 +86,11 @@ has now removed the requirement for an XML foundation, allowing the construction
 [WebAuthN/FIDO2 Device registrations](../mfa/FIDO2-WebAuthn-Authentication.html) 
 may be managed using an external REST API.
 
+### Scriptable LDAP Queries
+
+Search filters used to query LDAP for results can now be designed as Groovy scripts
+to provide dynamic querying options.
+
 ### Inwebo MFA Integration
 
 Support for [inWebo](../mfa/Inwebo-Authentication.html) as a multifactor authentication provider is now available.
@@ -142,6 +147,7 @@ decisions for multifactor authentication may also be kept inside a Redis instanc
 - Amazon SDK
 - Hazelcast
 - Joda Time
+- Gradle  
 - Thymeleaf Dialect
 - Apache Ignite
 - BouncyCastle
