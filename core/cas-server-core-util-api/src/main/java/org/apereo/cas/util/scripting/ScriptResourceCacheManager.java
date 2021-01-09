@@ -104,12 +104,10 @@ public interface ScriptResourceCacheManager<K extends String, V extends Executab
     /**
      * Resolve scriptable resource executable.
      *
-     * @param <T>            the type parameter
      * @param scriptResource the script resource
      * @param keys           the keys
      * @return the executable compiled groovy script
      */
-    <T extends ExecutableCompiledGroovyScript> T resolveScriptableResource(String scriptResource,
-                                                                           String... keys);
+    ExecutableCompiledGroovyScript resolveScriptableResource(String scriptResource, String... keys);
 
 }
