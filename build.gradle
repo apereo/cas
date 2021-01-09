@@ -232,9 +232,6 @@ subprojects {
     configurations {
         tests
         provided
-        
-        runtimeClasspath.shouldResolveConsistentlyWith(compileClasspath)
-        testRuntimeClasspath.shouldResolveConsistentlyWith(runtimeClasspath)
     }
 
     jacocoTestReport {

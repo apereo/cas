@@ -451,6 +451,7 @@ layout: null
         *   [SAML2](#saml2authn)
             *   [Overview](/cas/{{ version }}/authentication/Configuring-SAML2-Authentication.html)
             *   [Delegation](/cas/{{ version }}/integration/Delegate-Authentication.html)    
+            *   [Clients](/cas/{{ version }}/services/SAML2-Service-Management.html)    
             *   [Attribute Release](/cas/{{ version }}/installation/Configuring-SAML2-Attribute-Release.html)
             *   [Metadata Management](/cas/{{ version }}/installation/Configuring-SAML2-DynamicMetadata.html)
             *   [NameID Selection](/cas/{{ version }}/installation/Configuring-SAML2-NameID.html)
