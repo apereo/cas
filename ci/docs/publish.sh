@@ -123,7 +123,7 @@ if [ -z "$GH_PAGES_TOKEN" ]; then
   echo "No GitHub token is defined to publish documentation"
   popd
   rm -Rf $PWD/gh-pages
-  exit 1
+  exit 0
 fi
 
 git config user.email "cas@apereo.org"

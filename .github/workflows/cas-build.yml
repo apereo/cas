@@ -81,8 +81,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-#        os: [ubuntu-latest, windows-latest, macos-latest]
-        os: [ubuntu-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
@@ -173,10 +172,10 @@ jobs:
     strategy:
       matrix:
         category:
-#          - spotbugsMain
-#          - spotbugsTest
-#          - checkstyleMain
-#          - checkstyleTest
+          - spotbugsMain
+          - spotbugsTest
+          - checkstyleMain
+          - checkstyleTest
           - checkLicense
     steps:
       - uses: actions/checkout@v2
@@ -211,15 +210,15 @@ jobs:
       matrix:
         check:
           - CheckDuplicateGradleConfiguration
-#          - CheckDuplicateTestConfiguration
-#          - CheckMissingClassInTestsSuite
-#          - CheckMissingTestsSuiteClassAnnotation
-#          - CheckMissingUtilityClassAnnotation
-#          - CheckRedundantTestConfigurationInheritance
-#          - CheckSpringConfigurationBeanProxying
-#          - CheckSpringConfigurationFactories
-#          - CheckMissingTestTagAnnotation
-#          - CheckEnforceLombokAnnotations
+          - CheckDuplicateTestConfiguration
+          - CheckMissingClassInTestsSuite
+          - CheckMissingTestsSuiteClassAnnotation
+          - CheckMissingUtilityClassAnnotation
+          - CheckRedundantTestConfigurationInheritance
+          - CheckSpringConfigurationBeanProxying
+          - CheckSpringConfigurationFactories
+          - CheckMissingTestTagAnnotation
+          - CheckEnforceLombokAnnotations
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -302,8 +301,8 @@ jobs:
       matrix:
         category:
           - tomcat
-#          - jetty
-#          - undertow
+          - jetty
+          - undertow
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -487,7 +486,7 @@ jobs:
   publish-docs:
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'push' }}
-#    needs: [cache]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -520,70 +519,69 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-#        os: [ubuntu-latest, windows-latest, macos-latest]
-        os: [ubuntu-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
         category:
-#          - rest
-#          - simple
-#          - groovy
-#          - filesystem
-#          - webflow
-#          - webflow-config
-#          - webflow-actions
-#          - webflow-events
-#          - webflow-mfa-actions
-#          - attributes
-#          - services
-#          - expiration-policy
-#          - password-ops
-#          - mfa
-#          - web
-#          - metrics
-#          - cas
-#          - logout
-#          - util
-#          - authentication
-#          - tickets
-#          - cas-config
-#          - actuator
-#          - webapp
-#          - ldap
-#          - x509
-#          - oauth
-#          - wsfed
-#          - uma
-#          - oidc
-#          - audit
-#          - saml
-#          - infinispan
-#          - spnego
-#          - hazelcast
+          - rest
+          - simple
+          - groovy
+          - filesystem
+          - webflow
+          - webflow-config
+          - webflow-actions
+          - webflow-events
+          - webflow-mfa-actions
+          - attributes
+          - services
+          - expiration-policy
+          - password-ops
+          - mfa
+          - web
+          - metrics
+          - cas
+          - logout
+          - util
+          - authentication
+          - tickets
+          - cas-config
+          - actuator
+          - webapp
+          - ldap
+          - x509
+          - oauth
+          - wsfed
+          - uma
+          - oidc
+          - audit
+          - saml
+          - infinispan
+          - spnego
+          - hazelcast
           - jmx
-#          - shell
-#          - mongo
-#          - memcached
-#          - sms
-#          - jdbc
-#          - mariadb
-#          - postgres
-#          - mssql
-#          - oracle
-#          - mysql
-#          - aws
-#          - ehcache
-#          - redis
-#          - dynamodb
-#          - radius
-#          - couchdb
-#          - couchbase
-#          - mail
-#          - kafka
-#          - ignite
-#          - cassandra
-#          - influxdb
-#          - zookeeper
-#          - jms
-#          - cosmosdb
+          - shell
+          - mongo
+          - memcached
+          - sms
+          - jdbc
+          - mariadb
+          - postgres
+          - mssql
+          - oracle
+          - mysql
+          - aws
+          - ehcache
+          - redis
+          - dynamodb
+          - radius
+          - couchdb
+          - couchbase
+          - mail
+          - kafka
+          - ignite
+          - cassandra
+          - influxdb
+          - zookeeper
+          - jms
+          - cosmosdb
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
@@ -679,8 +677,8 @@ jobs:
       matrix:
         category:
           - tomcat
-#          - jetty
-#          - undertow
+          - jetty
+          - undertow
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -796,64 +794,64 @@ jobs:
       fail-fast: false
       matrix:
         scenario:
-#          - login-success
-#          - block-missing-service
-#          - default-service
-#          - requiredattrs-service
-#          - invalid-pswd-reset
-#          - locale-param
-#          - generate-service-ticket
-#          - webauthn-primary-authn
-#          - authn-throttle
-#          - qrauthn-login
-#          - gauth-register
-#          - gauth-login
-#          - adaptive-login-blocked
-#          - duo-websdk-login
-#          - duo-universal-login
-#          - mfa-provider-selection
-#          - x509-optional-login
-#          - actuator-form-login
-#          - unauthz-service
-#          - account-locked-login
-#          - account-disabled-login
-#          - account-expired-login
-#          - account-change-pswd
-#          - account-invalidloc-login
-#          - account-invalidtime-login
-#          - ticket-validation-casv1
-#          - ticket-validation-casv2
-#          - ticket-validation-casv3
-#          - ticket-validation-casv3-json
-#          - ticket-validation-saml1
-#          - mfa-inwebo-browser
-#          - mfa-inwebo-push
-#          - aup-login
-#          - authy-mfa-login
-#          - logout-confirm
-#          - gua-login
-#          - surrogate-login-selection
-#          - simple-mfa-login
-#          - interrupt-login
-#          - oidc-authzcode-login
-#          - pac4j-delegated-login
-#          - renew-existing-sso
-#          - passwordless-requirepswd-login
-#          - passwordless-delegated-login
-#          - passwordless-mfa-login
-#          - passwordless-login
-#          - mfa-provider-unavailable
-#          - source-selection-login
-#          - custom-fields-login
-#          - forgot-username
-#          - forgot-password
-#          - attribute-consent
-#          - u2f-register
-#          - u2f-login
-#          - recaptcha-login-v2
-#          - recaptcha-login-v3
-#          - webauthn-register
-#          - webauthn-login
+          - login-success
+          - block-missing-service
+          - default-service
+          - requiredattrs-service
+          - invalid-pswd-reset
+          - locale-param
+          - generate-service-ticket
+          - webauthn-primary-authn
+          - authn-throttle
+          - qrauthn-login
+          - gauth-register
+          - gauth-login
+          - adaptive-login-blocked
+          - duo-websdk-login
+          - duo-universal-login
+          - mfa-provider-selection
+          - x509-optional-login
+          - actuator-form-login
+          - unauthz-service
+          - account-locked-login
+          - account-disabled-login
+          - account-expired-login
+          - account-change-pswd
+          - account-invalidloc-login
+          - account-invalidtime-login
+          - ticket-validation-casv1
+          - ticket-validation-casv2
+          - ticket-validation-casv3
+          - ticket-validation-casv3-json
+          - ticket-validation-saml1
+          - mfa-inwebo-browser
+          - mfa-inwebo-push
+          - aup-login
+          - authy-mfa-login
+          - logout-confirm
+          - gua-login
+          - surrogate-login-selection
+          - simple-mfa-login
+          - interrupt-login
+          - oidc-authzcode-login
+          - pac4j-delegated-login
+          - renew-existing-sso
+          - passwordless-requirepswd-login
+          - passwordless-delegated-login
+          - passwordless-mfa-login
+          - passwordless-login
+          - mfa-provider-unavailable
+          - source-selection-login
+          - custom-fields-login
+          - forgot-username
+          - forgot-password
+          - attribute-consent
+          - u2f-register
+          - u2f-login
+          - recaptcha-login-v2
+          - recaptcha-login-v3
+          - webauthn-register
+          - webauthn-login
           - saml2-idp-login
     steps:
       - uses: actions/checkout@v2
@@ -866,4 +864,3 @@ jobs:
       - name: Run Tests
         run: ./ci/tests/puppeteer/run.sh $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
 ##########################################################################
-
