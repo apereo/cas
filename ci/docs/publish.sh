@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+
 clear
 branchVersion="$1"
 
