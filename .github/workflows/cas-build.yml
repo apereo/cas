@@ -16,6 +16,7 @@ env:
   SONARCLOUD_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   PYTHON_VERSION: 3.8.2
+  RUBY_VERSION: 2.6
   JDK_CURRENT: 11.0.9
   JDK_LATEST: 15
   
@@ -501,6 +502,12 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - name: Set up Ruby
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+      - name: Install Ruby gems
+        run: gem install bundle
       - name: Publish Documentation
         run: ./ci/docs/publish.sh development
 
