@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 clear
 branchVersion="$1"
 
@@ -111,9 +112,8 @@ chmod +x ./build.sh
 #sudo gem install bundle
 bundle exec jekyll build --incremental
 
-
 if [ -z "$GH_PAGES_TOKEN" ]; then
-  echo "No GitHub token is defined"
+  echo "No GitHub token is defined to publish documentation"
   popd
   rm -Rf $PWD/gh-pages
   exit 1
