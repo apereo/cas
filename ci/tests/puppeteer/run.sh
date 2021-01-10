@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+
 #echo "Installing jq"
 #sudo apt-get install jq
 
@@ -37,9 +37,10 @@ echo -e "\nBuilding CAS found in $PWD for dependencies [${dependencies}]"
 mv "$PWD"/webapp/cas-server-webapp-tomcat/build/libs/cas-server-webapp-tomcat-*.war "$PWD"/cas.war
 
 initScript=$(cat "${config}" | jq -j '.initScript // empty')
-[ -z "$result" ] && \
+[ -z "$initScript" ] && \
   echo "Initialization script: ${initScript}" && \
-  eval "$initScript"
+  chmod +x "${initScript}" && \
+  eval "${initScript}"
 
 properties=$(cat "${config}" | jq -j '.properties // empty | join(" ")')
 properties="${properties//\%\{random\}/${random}}"
