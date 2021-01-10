@@ -58,7 +58,7 @@ cp -Rf $PWD/docs-includes/* "$PWD/gh-pages/_includes/$branchVersion"
 echo -e "Copied project documentation to $PWD/gh-pages/...\n"
 
 echo -e "Generating documentation site data...\n"
-./gradlew :docs:cas-server-documentation-processor:build -x check -x test -x javadoc --configure-on-demand
+./gradlew :docs:cas-server-documentation-processor:build --no-daemon -x check -x test -x javadoc --configure-on-demand
 pushd .
 cd docs/cas-server-documentation-processor
 rm -Rf $PWD/gh-pages/_data/"$branchVersion" > /dev/null
@@ -120,12 +120,13 @@ bundle exec jekyll build --incremental
 rm -Rf _site
 
 if [ -z "$GH_PAGES_TOKEN" ]; then
-  echo "No GitHub token is defined to publish documentation"
+  echo "No GitHub token is defined to publish documentation."
   popd
   rm -Rf $PWD/gh-pages
   exit 0
 fi
 
+echo -e "Configuring git repository settings...\n"
 git config user.email "cas@apereo.org"
 git config user.name "CAS"
 git config core.fileMode false
@@ -140,6 +141,7 @@ echo -e "Committing changes...\n"
 git commit -m "Published docs to [gh-pages] from $branchVersion. "
 
 echo -e "Pushing upstream to origin/gh-pages...\n"
+git remote -v
 git push -fq origin --all
 retVal=$?
 
