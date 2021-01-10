@@ -110,11 +110,11 @@ if [[ ${retVal} -eq 1 ]]; then
 fi
 
 pushd .
-echo -e "Building documentation site...\n"
 cd $PWD/gh-pages
-chmod +x ./build.sh
+echo -e "Installing documentation dependencies...\n"
 bundle install
-sudo bundle exec jekyll build --incremental
+echo -e "Building documentation site...\n"
+bundle exec jekyll build --incremental
 
 if [ -z "$GH_PAGES_TOKEN" ]; then
   echo "No GitHub token is defined to publish documentation"
