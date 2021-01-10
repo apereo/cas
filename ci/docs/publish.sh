@@ -112,9 +112,12 @@ fi
 pushd .
 cd $PWD/gh-pages
 echo -e "Installing documentation dependencies...\n"
-bundle install
+bundle install --full-index
+bundle update jekyll
+bundle update github-pages
 echo -e "Building documentation site...\n"
 bundle exec jekyll build --incremental
+rm -Rf _site
 
 if [ -z "$GH_PAGES_TOKEN" ]; then
   echo "No GitHub token is defined to publish documentation"
