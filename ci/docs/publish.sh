@@ -58,8 +58,9 @@ cp -Rf $PWD/docs-includes/* "$PWD/gh-pages/_includes/$branchVersion"
 echo -e "Copied project documentation to $PWD/gh-pages/...\n"
 
 echo -e "Generating documentation site data...\n"
-chmod +x docs/cas-server-documentation-processor/build/libs/casdocsgen.jar
+ls -R docs/cas-server-documentation-processor
 rm -Rf $PWD/gh-pages/_data/"$branchVersion" > /dev/null
+chmod +x docs/cas-server-documentation-processor/build/libs/casdocsgen.jar
 docs/cas-server-documentation-processor/build/libs/casdocsgen.jar "$PWD/gh-pages/_data" "$branchVersion"
 echo -e "Generated documentation data at $PWD/gh-pages/_data/$branchVersion...\n"
 
