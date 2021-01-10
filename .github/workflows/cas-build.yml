@@ -301,8 +301,8 @@ jobs:
       matrix:
         category:
           - tomcat
-          - jetty
-          - undertow
+#          - jetty
+#          - undertow
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -513,7 +513,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+#        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest]
         category:
 #          - rest
 #          - simple
