@@ -172,10 +172,10 @@ jobs:
     strategy:
       matrix:
         category:
-          - spotbugsMain
-          - spotbugsTest
-          - checkstyleMain
-          - checkstyleTest
+#          - spotbugsMain
+#          - spotbugsTest
+#          - checkstyleMain
+#          - checkstyleTest
           - checkLicense
     steps:
       - uses: actions/checkout@v2

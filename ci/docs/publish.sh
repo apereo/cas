@@ -57,10 +57,10 @@ cp -Rf $PWD/docs-latest/* "$PWD/gh-pages/$branchVersion"
 cp -Rf $PWD/docs-includes/* "$PWD/gh-pages/_includes/$branchVersion"
 echo -e "Copied project documentation to $PWD/gh-pages/...\n"
 
-pushd .
 echo -e "Generating documentation site data...\n"
+./gradlew :docs:cas-server-documentation-processor:build -x check -x test -x javadoc --configure-on-demand
+pushd .
 cd docs/cas-server-documentation-processor
-./gradlew build -x check -x test -x javadoc --configure-on-demand
 rm -Rf $PWD/gh-pages/_data/"$branchVersion" > /dev/null
 chmod +x ./build/libs/casdocsgen.jar
 ./build/libs/casdocsgen.jar "$PWD/gh-pages/_data" "$branchVersion"
