@@ -65,7 +65,7 @@ rm -Rf $PWD/gh-pages/_data/"$branchVersion" > /dev/null
 chmod +x ./build/libs/casdocsgen.jar
 ./build/libs/casdocsgen.jar "$PWD/gh-pages/_data" "$branchVersion"
 echo -e "Generated documentation data at $PWD/gh-pages/_data/$branchVersion...\n"
-pop
+popd
 
 rm -Rf $PWD/docs-latest
 rm -Rf $PWD/docs-includes
