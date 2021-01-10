@@ -40,13 +40,13 @@ const path = require('path');
     await page.waitForNavigation();
     await page.waitForTimeout(2000)
 
+    let metadataDir = path.join(__dirname, '/saml-md');
+    fs.rmdirSync(metadataDir, { recursive: true });
+
     let element = await page.$('div.entry-content p');
     const header = await page.evaluate(element => element.textContent, element);
     console.log(header)
     assert(header.startsWith("Your browser has completed the full SAML 2.0 round-trip"));
-
-    let metadataDir = path.join(__dirname, '/saml-md');
-    fs.rmdirSync(metadataDir, { recursive: true });
     
     await browser.close();
 })();
