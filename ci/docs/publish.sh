@@ -113,7 +113,6 @@ pushd .
 echo -e "Building documentation site...\n"
 cd $PWD/gh-pages
 chmod +x ./build.sh
-gem install bundle
 bundle exec jekyll build --incremental
 
 if [ -z "$GH_PAGES_TOKEN" ]; then
