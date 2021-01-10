@@ -1,7 +1,9 @@
 #!/bin/bash
-
+set -e
 #echo "Installing jq"
 #sudo apt-get install jq
+
+random=$(openssl rand -hex 8)
 
 echo "Installing Puppeteer"
 npm i --prefix "$PWD"/ci/tests/puppeteer puppeteer
@@ -40,6 +42,8 @@ initScript=$(cat "${config}" | jq -j '.initScript // empty')
   eval "$initScript"
 
 properties=$(cat "${config}" | jq -j '.properties // empty | join(" ")')
+properties="${properties//\%\{random\}/${random}}"
+
 echo -e "\nLaunching CAS with properties [${properties}] and dependencies [${dependencies}]"
 java -jar "$PWD"/cas.war ${properties} --spring.profiles.active=none --server.ssl.key-store="$keystore" &
 pid=$!
