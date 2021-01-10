@@ -37,7 +37,6 @@ mv "$PWD"/webapp/cas-server-webapp-tomcat/build/libs/cas-server-webapp-tomcat-*.
 initScript=$(cat "${config}" | jq -j '.initScript // empty')
 [ -z "$result" ] && \
   echo "Initialization script: ${initScript}" && \
-  chmod +x "${initScript}" && \
   eval "$initScript"
 
 properties=$(cat "${config}" | jq -j '.properties // empty | join(" ")')
