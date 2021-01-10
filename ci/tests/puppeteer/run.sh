@@ -37,16 +37,22 @@ echo -e "\nBuilding CAS found in $PWD for dependencies [${dependencies}]"
 mv "$PWD"/webapp/cas-server-webapp-tomcat/build/libs/cas-server-webapp-tomcat-*.war "$PWD"/cas.war
 
 initScript=$(cat "${config}" | jq -j '.initScript // empty')
-[ -z "$initScript" ] && \
+initScript="${initScript//\$\{PWD\}/${PWD}}"
+[ -n "${initScript}" ] && \
   echo "Initialization script: ${initScript}" && \
   chmod +x "${initScript}" && \
   eval "${initScript}"
 
+runArgs=$(cat "${config}" | jq -j '.jvmArgs // empty')
+runArgs="${runArgs//\$\{PWD\}/${PWD}}"
+[ -n "${runArgs}" ] && echo -e "\JVM runtime arguments: [${runArgs}]"
+
 properties=$(cat "${config}" | jq -j '.properties // empty | join(" ")')
+properties="${properties//\$\{PWD\}/${PWD}}"
 properties="${properties//\%\{random\}/${random}}"
 
 echo -e "\nLaunching CAS with properties [${properties}] and dependencies [${dependencies}]"
-java -jar "$PWD"/cas.war ${properties} --spring.profiles.active=none --server.ssl.key-store="$keystore" &
+java ${runArgs} -jar "$PWD"/cas.war ${properties} --spring.profiles.active=none --server.ssl.key-store="$keystore" &
 pid=$!
 echo -e "\nWaiting for CAS under process id ${pid}"
 until curl -k -L --output /dev/null --silent --fail https://localhost:8443/cas/login; do

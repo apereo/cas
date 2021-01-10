@@ -56,8 +56,9 @@ public class CasWebAppConfiguration implements WebMvcConfigurer {
         return bean;
     }
 
-    @ConditionalOnMissingBean(name = "localeResolver")
+    @ConditionalOnMissingBean(name = "casLocaleResolver")
     @Bean
+    @RefreshScope
     public LocaleResolver localeResolver() {
         val localeProps = casProperties.getLocale();
         val localeCookie = localeProps.getCookie();

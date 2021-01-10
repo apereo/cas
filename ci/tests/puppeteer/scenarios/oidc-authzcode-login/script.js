@@ -15,7 +15,7 @@ const assert = require('assert');
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
 
-    await page.waitForTimeout(15000)
+    await page.waitForTimeout(2000)
 
     let userInfoClaims = await page.$('#userInfoClaims');
     assert(await userInfoClaims.boundingBox() != null);

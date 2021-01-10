@@ -835,6 +835,7 @@ jobs:
           - interrupt-login
           - oidc-authzcode-login
           - pac4j-delegated-login
+          - pac4j-delegated-saml-login
           - renew-existing-sso
           - passwordless-requirepswd-login
           - passwordless-delegated-login
