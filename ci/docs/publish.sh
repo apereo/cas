@@ -58,56 +58,54 @@ cp -Rf $PWD/docs-includes/* "$PWD/gh-pages/_includes/$branchVersion"
 echo -e "Copied project documentation to $PWD/gh-pages/...\n"
 
 echo -e "Generating documentation site data...\n"
-./gradlew :docs:cas-server-documentation-processor:build --no-daemon -x check -x test -x javadoc --configure-on-demand
-pushd .
-cd docs/cas-server-documentation-processor
 rm -Rf $PWD/gh-pages/_data/"$branchVersion" > /dev/null
-chmod +x ./build/libs/casdocsgen.jar
-./build/libs/casdocsgen.jar "$PWD/gh-pages/_data" "$branchVersion"
+./gradlew :docs:cas-server-documentation-processor:build --no-daemon -x check -x test -x javadoc --configure-on-demand
+docgen="docs/cas-server-documentation-processor/build/libs/casdocsgen.jar"
+chmod +x ${docgen}
+${docgen} "$PWD/gh-pages/_data" "$branchVersion"
 echo -e "Generated documentation data at $PWD/gh-pages/_data/$branchVersion...\n"
-popd
 
 rm -Rf $PWD/docs-latest
 rm -Rf $PWD/docs-includes
 
-echo "Looking for badly named include fragments..."
-ls $PWD/gh-pages/_includes/$branchVersion/*.md | grep -v '\-configuration.md$'
-docsVal=$?
-if [ $docsVal == 0 ]; then
- echo "Found include fragments whose name does not end in '-configuration.md'"
- exit 1
-fi
+#echo "Looking for badly named include fragments..."
+#ls $PWD/gh-pages/_includes/$branchVersion/*.md | grep -v '\-configuration.md$'
+#docsVal=$?
+#if [ $docsVal == 0 ]; then
+# echo "Found include fragments whose name does not end in '-configuration.md'"
+# exit 1
+#fi
 
-echo "Looking for unused include fragments..."
-res=0
-files=$(ls $PWD/gh-pages/_includes/$branchVersion/*.md)
-for f in $files; do
- fname=$(basename "$f")
-#  echo "Looking for $fname in $PWD/gh-pages/$branchVersion";
- grep -r $fname "$PWD/gh-pages/$branchVersion" --include \*.md >/dev/null 2>&1
- docsVal=$?
- if [ $docsVal == 1 ]; then
-   grep -r $fname "$PWD/gh-pages/_includes/$branchVersion" --include \*.md >/dev/null 2>&1
-   docsVal=$?
- fi
- if [ $docsVal == 1 ]; then
-   echo "$fname fragment is unused."
-   res=1
- fi
-done
+#echo "Looking for unused include fragments..."
+#res=0
+#files=$(ls $PWD/gh-pages/_includes/$branchVersion/*.md)
+#for f in $files; do
+# fname=$(basename "$f")
+##  echo "Looking for $fname in $PWD/gh-pages/$branchVersion";
+# grep -r $fname "$PWD/gh-pages/$branchVersion" --include \*.md >/dev/null 2>&1
+# docsVal=$?
+# if [ $docsVal == 1 ]; then
+#   grep -r $fname "$PWD/gh-pages/_includes/$branchVersion" --include \*.md >/dev/null 2>&1
+#   docsVal=$?
+# fi
+# if [ $docsVal == 1 ]; then
+#   echo "$fname fragment is unused."
+#   res=1
+# fi
+#done
+#
+#if [ $res == 1 ]; then
+# echo "Found unused include fragments."
+# exit 1
+#fi
 
-if [ $res == 1 ]; then
- echo "Found unused include fragments."
- exit 1
-fi
-
-echo "Validating documentation links..."
-validateProjectDocumentation
-retVal=$?
-if [[ ${retVal} -eq 1 ]]; then
-  echo -e "Failed to validate documentation.\n"
-  exit ${retVal}
-fi
+#echo "Validating documentation links..."
+#validateProjectDocumentation
+#retVal=$?
+#if [[ ${retVal} -eq 1 ]]; then
+#  echo -e "Failed to validate documentation.\n"
+#  exit ${retVal}
+#fi
 
 pushd .
 cd $PWD/gh-pages
@@ -119,13 +117,6 @@ echo -e "Building documentation site...\n"
 bundle exec jekyll build --incremental
 rm -Rf _site
 
-if [ -z "$GH_PAGES_TOKEN" ]; then
-  echo "No GitHub token is defined to publish documentation."
-  popd
-  rm -Rf $PWD/gh-pages
-  exit 0
-fi
-
 echo -e "Configuring git repository settings...\n"
 git config user.email "cas@apereo.org"
 git config user.name "CAS"
@@ -135,13 +126,19 @@ echo -e "Configuring tracking branches for repository...\n"
 git branch -u origin/gh-pages
 
 echo -e "Adding changes to the git index...\n"
-git add -f . > /dev/null
+git add -f . 
 
 echo -e "Committing changes...\n"
 git commit -m "Published docs to [gh-pages] from $branchVersion. "
 
+if [ -z "$GH_PAGES_TOKEN" ]; then
+  echo "No GitHub token is defined to publish documentation."
+  popd
+  rm -Rf $PWD/gh-pages
+  exit 0
+fi
+
 echo -e "Pushing upstream to origin/gh-pages...\n"
-git remote -v
 git push -fq origin --all
 retVal=$?
 
