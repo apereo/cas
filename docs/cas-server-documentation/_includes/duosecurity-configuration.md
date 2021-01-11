@@ -1,15 +1,7 @@
-```properties
-# cas.authn.mfa.duo[0].duo-secret-key=
-# cas.authn.mfa.duo[0].rank=0
-# cas.authn.mfa.duo[0].duo-application-key=
-# cas.authn.mfa.duo[0].duo-integration-key=
-# cas.authn.mfa.duo[0].duo-api-host=
-# cas.authn.mfa.duo[0].trusted-device-enabled=false
-# cas.authn.mfa.duo[0].id=mfa-duo
-# cas.authn.mfa.duo[0].registration-url=https://registration.example.org/duo-enrollment
-# cas.authn.mfa.duo[0].name=
-# cas.authn.mfa.duo[0].order=
-```
+{% include casproperties.html
+modules="cas-server-support-duo"
+properties="cas.authn.mfa.duo[].bypass" %}
+
 
 - Web SDK Configuration
 

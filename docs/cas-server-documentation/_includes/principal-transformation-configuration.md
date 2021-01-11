@@ -21,15 +21,6 @@ def String run(final Object... args) {
 }
 ```
 
-The following options related to principal transformation support in CAS apply 
-equally to a number of CAS components (authentication handlers, etc):
-
-```properties
-# {{ include.configKey }}.principal-transformation.pattern=(.+)@example.org
-# {{ include.configKey }}.principal-transformation.groovy.location=file:///etc/cas/config/principal.groovy
-# {{ include.configKey }}.principal-transformation.suffix=
-# {{ include.configKey }}.principal-transformation.case-conversion=NONE|UPPERCASE|LOWERCASE
-# {{ include.configKey }}.principal-transformation.prefix=
-```
-
+{% capture property %}{{ include.configKey }}.principal-transformation{% endcapture %}
+{% include casproperties.html properties=property %}
 

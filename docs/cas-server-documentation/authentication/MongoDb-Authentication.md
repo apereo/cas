@@ -17,9 +17,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.mongo" %}
 
-{% include {{ version }}/mongodb-configuration.md configKey="cas.authn" %}
-
-{% include {{ version }}/mongodb-authentication-configuration.md %}
+{% include casproperties.html properties="cas.authn.mongo" excludes="principal-transformation,password-encoder" %}
 
 Accounts are expected to be found as such in collections:
 

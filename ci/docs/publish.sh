@@ -116,7 +116,7 @@ bundle update jekyll
 bundle update github-pages
 echo -e "\nBuilding documentation site...\n"
 bundle exec jekyll build --incremental
-rm -Rf _site
+rm -Rf _site .jekyll-metadata .sass-cache
 
 echo -e "\nConfiguring git repository settings...\n"
 git config user.email "cas@apereo.org"

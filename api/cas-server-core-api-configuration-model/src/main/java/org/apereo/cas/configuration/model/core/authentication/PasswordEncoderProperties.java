@@ -32,6 +32,22 @@ public class PasswordEncoderProperties implements Serializable {
      * the Spring Security's {@code PasswordEncoder} interface
      * if you wish you define your own encoder.
      *
+     * The following types may be used:
+     * <ul>
+     *     <li>{@code NONE}: No password encoding (i.e. plain-text) takes place.</li>
+     *     <li>{@code DEFAULT}: Use the {@code DefaultPasswordEncoder} of CAS. For message-digest
+     *     algorithms via {@link #getCharacterEncoding()} and {@link #getCharacterEncoding()}.</li>
+     *     <li>{@code BCRYPT}: Use the {@code BCryptPasswordEncoder} based on the strength provided and an optional secret.</li>
+     *     <li>{@code SCRYPT}: Use the {@code SCryptPasswordEncoder}.</li>
+     *     <li>{@code PBKDF2}: Use the {@code Pbkdf2PasswordEncoder} based on the strength provided and an optional secret.</li>
+     *     <li>{@code STANDARD}: Use the {@code StandardPasswordEncoder} based on the secret provided.</li>
+     *     <li>{@code SSHA}: Use the {@code LdapShaPasswordEncoder} supports Ldap SHA and SSHA (salted-SHA). The values
+     *     are base-64 encoded and have the label {SHA} (or {SSHA}) prepended to the encoded hash.</li>
+     *     <li>{@code GLIBC_CRYPT}: Use the {@code GlibcCryptPasswordEncoder} based on the
+     *     {@code encoding-algorithm}, strength provided and an optional secret.</li>
+     *     <li>{@code org.example.MyEncoder}: An implementation of {@code PasswordEncoder} of your own choosing.</li>
+     *     <li>{@code file:///path/to/script.groovy}: Path to a Groovy script charged with handling password encoding operations.</li>
+     * </ul>
      * @see PasswordEncoderTypes
      */
     @RequiredProperty
