@@ -1,12 +1,28 @@
-### Hibernate & JDBC
-
 Control global properties that are relevant to Hibernate,
 when CAS attempts to employ and utilize database resources,
 connections and queries.
 
-```properties
-# cas.jdbc.show-sql=true
-# cas.jdbc.gen-ddl=true
-# cas.jdbc.case-insensitive=false
-# cas.jdbc.physical-table-names.{table-name}={new-table-name}
-```
+{% assign properties = "cas.jdbc." | split: "," %}
+
+<table>
+    <tbody>
+    {% for prop in properties %} 
+        {% for module in site.data[version] %}
+            {% assign moduleEntry = module[1] %}
+            {% for cfg in moduleEntry %}
+                {% assign configBlock = cfg[1] %}
+                {% for config in configBlock %}
+                    {% if config.name contains prop %}  
+                        {% include casproperty.html 
+                            name=config.name 
+                            defaultValue=config.defaultValue 
+                            description=config.description 
+                            deprecationLevel=config.deprecationLevel
+                            deprecationReplacement=config.deprecationReplacement %}
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+        {% endfor %}
+    {% endfor %}
+    </tbody>
+</table>
