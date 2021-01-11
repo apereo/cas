@@ -68,56 +68,57 @@ echo -e "Generated documentation data at $PWD/gh-pages/_data/$branchVersion...\n
 rm -Rf $PWD/docs-latest
 rm -Rf $PWD/docs-includes
 
-#echo "Looking for badly named include fragments..."
-#ls $PWD/gh-pages/_includes/$branchVersion/*.md | grep -v '\-configuration.md$'
-#docsVal=$?
-#if [ $docsVal == 0 ]; then
-# echo "Found include fragments whose name does not end in '-configuration.md'"
-# exit 1
-#fi
+echo "Looking for badly named include fragments..."
+ls $PWD/gh-pages/_includes/$branchVersion/*.md | grep -v '\-configuration.md$'
+docsVal=$?
+if [ $docsVal == 0 ]; then
+ echo "Found include fragments whose name does not end in '-configuration.md'"
+ exit 1
+fi
 
-#echo "Looking for unused include fragments..."
-#res=0
-#files=$(ls $PWD/gh-pages/_includes/$branchVersion/*.md)
-#for f in $files; do
-# fname=$(basename "$f")
-##  echo "Looking for $fname in $PWD/gh-pages/$branchVersion";
-# grep -r $fname "$PWD/gh-pages/$branchVersion" --include \*.md >/dev/null 2>&1
-# docsVal=$?
-# if [ $docsVal == 1 ]; then
-#   grep -r $fname "$PWD/gh-pages/_includes/$branchVersion" --include \*.md >/dev/null 2>&1
-#   docsVal=$?
-# fi
-# if [ $docsVal == 1 ]; then
-#   echo "$fname fragment is unused."
-#   res=1
-# fi
-#done
-#
-#if [ $res == 1 ]; then
-# echo "Found unused include fragments."
-# exit 1
-#fi
+echo "Looking for unused include fragments..."
+res=0
+files=$(ls $PWD/gh-pages/_includes/$branchVersion/*.md)
+for f in $files; do
+ fname=$(basename "$f")
+#  echo "Looking for $fname in $PWD/gh-pages/$branchVersion";
+ grep -r $fname "$PWD/gh-pages/$branchVersion" --include \*.md >/dev/null 2>&1
+ docsVal=$?
+ if [ $docsVal == 1 ]; then
+   grep -r $fname "$PWD/gh-pages/_includes/$branchVersion" --include \*.md >/dev/null 2>&1
+   docsVal=$?
+ fi
+ if [ $docsVal == 1 ]; then
+   echo "$fname fragment is unused."
+   res=1
+ fi
+done
 
-#echo "Validating documentation links..."
-#validateProjectDocumentation
-#retVal=$?
-#if [[ ${retVal} -eq 1 ]]; then
-#  echo -e "Failed to validate documentation.\n"
-#  exit ${retVal}
-#fi
+if [ $res == 1 ]; then
+ echo "Found unused include fragments."
+ exit 1
+fi
+
+echo "Validating documentation links..."
+validateProjectDocumentation
+retVal=$?
+if [[ ${retVal} -eq 1 ]]; then
+  echo -e "Failed to validate documentation.\n"
+  exit ${retVal}
+fi
 
 pushd .
 cd $PWD/gh-pages
+
 echo -e "Installing documentation dependencies...\n"
 bundle install --full-index
 bundle update jekyll
 bundle update github-pages
-echo -e "Building documentation site...\n"
+echo -e "\nBuilding documentation site...\n"
 bundle exec jekyll build --incremental
 rm -Rf _site
 
-echo -e "Configuring git repository settings...\n"
+echo -e "\nConfiguring git repository settings...\n"
 git config user.email "cas@apereo.org"
 git config user.name "CAS"
 git config core.fileMode false
@@ -132,7 +133,7 @@ echo -e "Committing changes...\n"
 git commit -m "Published docs to [gh-pages] from $branchVersion. "
 
 if [ -z "$GH_PAGES_TOKEN" ]; then
-  echo "No GitHub token is defined to publish documentation."
+  echo -e "\nNo GitHub token is defined to publish documentation."
   popd
   rm -Rf $PWD/gh-pages
   exit 0
