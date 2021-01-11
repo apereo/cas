@@ -5,51 +5,35 @@ auto-generate them. The following instructions apply if you wish to manually and
 Note that if you are asked to create a <a href="https://tools.ietf.org/html/rfc7517">JWK</a> of a certain size for the key, you are to use
 the following set of commands to generate the token:
 
-<div class="language-groovy highlighter-rouge">
-  <div class="language-bash highlighter-rouge">
-    <div class="highlight">
-    <pre class="highlight pl-2 mt-3 pt-1 pb-2"><span class="nt">wget</span> https://raw.githubusercontent.com/apereo/cas/master/etc/jwk-gen.jar
-<span class="nt">java</span> -jar jwk-gen.jar -t oct -s [size]</pre>
-    </div>
-  </div>
-</div>
+```bash
+wget https://raw.githubusercontent.com/apereo/cas/master/etc/jwk-gen.jar
+java -jar jwk-gen.jar -t oct -s [size]
+```
+
 
 The outcome would be similar to:
 
-<div class="language-groovy highlighter-rouge">
-  <div class="language-bash highlighter-rouge">
-    <div class="highlight">
-    <pre class="highlight pl-2 mt-3 pt-1 pb-2">{
-  <span class="nt">"kty"</span>: "oct"
-  <span class="nt">"kid"</span>: "...",
-  <span class="nt">"k"</span>: "..."
-}</pre>
-    </div>
-  </div>
-</div>
+```json
+{
+  "kty": "oct"
+  "kid": "...",
+  "k": "..."
+}
+```
 
-The generated value for <code>k</code> needs to be assigned to the relevant CAS settings. Note that keys generated via
-the above algorithm are processed by CAS using the Advanced Encryption Standard (<code>AES</code>) algorithm which is a
+The generated value for `k` needs to be assigned to the relevant CAS settings. Note that keys generated via
+the above algorithm are processed by CAS using the Advanced Encryption Standard (`AES`) algorithm which is a
 specification for the encryption of electronic data established by the U.S. National Institute of Standards and Technology.
 
 The following cipher strategy types are available:
 
-<table class="mt-4">
-  <tbody>
-    <th>Type</th><th>Description</th>
-    <tr>
-      <td><code>ENCRYPT_AND_SIGN</code></td><td>Default strategy; encrypt values, and then sign.</td>
-    </tr>
-    <tr>
-      <td><code>SIGN_AND_ENCRYPT</code></td><td>Sign values, and then encrypt.</td>
-    </tr>
-  </tbody>
-</table>
+- `ENCRYPT_AND_SIGN`: Default strategy; encrypt values, and then sign.
+- `SIGN_AND_ENCRYPT`: Sign values, and then encrypt.
 
-<h3>RSA Keys</h3>
+#### RSA Keys
 
 Certain CAS features such as the ability to produce JWTs as CAS tickets
-may allow you to use the <code>RSA</code> algorithm with public/private keypairs for signing and encryption. This
+may allow you to use the `RSA` algorithm with public/private keypairs for signing and encryption. This
 behavior may prove useful generally in cases where the consumer of the CAS-encoded payload is an
 outsider and a client application that need not have access to the signing secrets directly and
 visibly and may only be given a half truth vis-a-vis a public key to verify the payload authenticity
@@ -63,17 +47,12 @@ use <code>AES</code> keys for signing and <code>RSA</code> keys for encryption, 
 In order to enable RSA functionality for signing payloads, you will need to
 generate a private/public keypair via the following sample commands:
 
-<div class="language-groovy highlighter-rouge">
-  <div class="language-bash highlighter-rouge">
-    <div class="highlight">
-    <pre class="highlight pl-2 mt-3 pt-1 pb-2">
-<span class="nt">openssl </span> genrsa -out private.key 2048
-<span class="nt">openssl "</span>rsa -pubout -in private.key -out public.key -inform PEM -outform DER</pre>
-    </div>
-  </div>
-</div>
+```bash
+openssl genrsa -out private.key 2048
+openssl rsa -pubout -in private.key -out public.key -inform PEM -outform DER
+```
 
-The private key path (i.e. <code>file:///path/to/private.key</code>) needs to be configured for the
+The private key path (i.e. `file:///path/to/private.key`) needs to be configured for the
 signing key in CAS properties for the relevant feature. The public key needs to be shared
 with client applications and consumers of the payload in order to validate the payload signature.
 
@@ -83,7 +62,7 @@ accepted by CAS and will cause runtime errors. Choose wisely.</p></div>
 
 In order to enable RSA functionality for encrypting payloads, you will need to essentially
 execute the reverse of the above operations. The client application will provide you with
-a public key which will be used to encrypt the payload and whose path (i.e. <code>file:///path/to/public.key</code>)
+a public key which will be used to encrypt the payload and whose path (i.e. `file:///path/to/public.key`)
 needs to be configured for the encryption key in CAS properties for the relevant feature.
 Once the payload is submitted, the client should use its own private key to decode the payload and unpack it.
 
