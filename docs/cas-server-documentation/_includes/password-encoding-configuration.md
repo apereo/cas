@@ -3,16 +3,8 @@
 Certain aspects of CAS such as authentication handling support configuration of
 password encoding. Most options are based on Spring Security's [support for password encoding](https://docs.spring.io/spring-security/site/docs/current/reference/html5/).
 
-The following options related to password encoding support in CAS apply 
-equally to a number of CAS components (authentication handlers, etc) given the component's *configuration key*:
-
-```properties
-# {{ include.configKey }}.password-encoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2
-# {{ include.configKey }}.password-encoder.character-encoding=
-# {{ include.configKey }}.password-encoder.encoding-algorithm=
-# {{ include.configKey }}.password-encoder.secret=
-# {{ include.configKey }}.password-encoder.strength=16
-```
+{% capture property %}{{ include.configKey }}.password-encoder{% endcapture %}
+{% include casproperties.html properties=property %}
 
 The following options are supported:
 
