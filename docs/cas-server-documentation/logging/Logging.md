@@ -35,8 +35,8 @@ and this is done using a custom ExceptionOnlyFilter nested in the CasAppender.
 
 ## Log4j2 Properties
 
-The log4j2.xml file includes properties for various settings and those can be set in the properties section
-of the log4j2.xml file, in a property file called `log4j2.component.properties` on the classpath, or as system 
+The `log4j2.xml` file includes properties for various settings and those can be set in the properties section
+of the `log4j2.xml` file, in a property file called `log4j2.component.properties` on the classpath, or as system 
 properties. If setting properties in a `log4j2.component.properties`, be sure to include:
 
 ```properties
