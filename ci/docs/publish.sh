@@ -63,6 +63,7 @@ rm -Rf $PWD/gh-pages/_data/"$branchVersion" > /dev/null
 docgen="docs/cas-server-documentation-processor/build/libs/casdocsgen.jar"
 chmod +x ${docgen}
 ${docgen} "$PWD/gh-pages/_data" "$branchVersion"
+rm -Rf docs/cas-server-documentation-processor/build
 echo -e "Generated documentation data at $PWD/gh-pages/_data/$branchVersion...\n"
 
 rm -Rf $PWD/docs-latest
