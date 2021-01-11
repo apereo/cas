@@ -2,7 +2,7 @@ package org.apereo.cas.consent;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.configuration.model.support.consent.ConsentProperties.Ldap;
+import org.apereo.cas.configuration.model.support.consent.LdapConsentProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
@@ -41,7 +41,7 @@ public class LdapConsentRepository implements ConsentRepository, DisposableBean 
 
     private final ConnectionFactory connectionFactory;
 
-    private final Ldap ldapProperties;
+    private final LdapConsentProperties ldapProperties;
 
     @Override
     public ConsentDecision findConsentDecision(final Service service,
@@ -50,7 +50,7 @@ public class LdapConsentRepository implements ConsentRepository, DisposableBean 
         val principal = authentication.getPrincipal().getId();
         val entry = readConsentEntry(principal);
         if (entry != null) {
-            val consentDecisions = entry.getAttribute(this.ldapProperties.getConsentAttributeName());
+            val consentDecisions = entry.getAttribute(ldapProperties.getConsentAttributeName());
             if (consentDecisions != null) {
                 val values = consentDecisions.getStringValues();
                 LOGGER.debug("Locating consent decision(s) for [{}] and service [{}]", principal, service.getId());
@@ -70,9 +70,9 @@ public class LdapConsentRepository implements ConsentRepository, DisposableBean 
     public Collection<? extends ConsentDecision> findConsentDecisions(final String principal) {
         val entry = readConsentEntry(principal);
         if (entry != null) {
-            val consentDecisions = entry.getAttribute(this.ldapProperties.getConsentAttributeName());
+            val consentDecisions = entry.getAttribute(ldapProperties.getConsentAttributeName());
             if (consentDecisions != null) {
-                LOGGER.debug("Located consent decision for [{}] at attribute [{}]", principal, this.ldapProperties.getConsentAttributeName());
+                LOGGER.debug("Located consent decision for [{}] at attribute [{}]", principal, ldapProperties.getConsentAttributeName());
                 return consentDecisions.getStringValues()
                     .stream()
                     .map(LdapConsentRepository::mapFromJson)

@@ -47,11 +47,16 @@ import java.util.function.Predicate;
 @EqualsAndHashCode(of = "attributeDefinitions")
 @ToString(of = "attributeDefinitions")
 public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore, DisposableBean, AutoCloseable {
-    private static final ObjectMapper MAPPER = new ObjectMapper()
-        .enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY)
-        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-        .setSerializationInclusion(JsonInclude.Include.NON_NULL)
-        .findAndRegisterModules();
+    private static final ObjectMapper MAPPER;
+
+    static {
+        MAPPER = new ObjectMapper()
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+            .findAndRegisterModules();
+        MAPPER.activateDefaultTyping(MAPPER.getPolymorphicTypeValidator(),
+            ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
+    }
 
     private final Map<String, AttributeDefinition> attributeDefinitions = new TreeMap<>();
 

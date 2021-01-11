@@ -32,9 +32,13 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceRepository {
-    private static final ObjectMapper MAPPER = new ObjectMapper()
-        .findAndRegisterModules()
-        .enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
+    private static final ObjectMapper MAPPER;
+
+    static {
+        MAPPER = new ObjectMapper().findAndRegisterModules();
+        MAPPER.activateDefaultTyping(MAPPER.getPolymorphicTypeValidator(),
+            ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
+    }
 
     private final U2FRestfulMultifactorProperties restProperties;
 

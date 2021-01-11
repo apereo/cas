@@ -22,8 +22,13 @@ import static org.junit.jupiter.api.Assertions.*;
 public class FullRegexRegisteredServiceMatchingStrategyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "FullRegexRegisteredServiceMatchingStrategyTests.json");
 
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules()
-        .enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
+    private static final ObjectMapper MAPPER;
+
+    static {
+        MAPPER = new ObjectMapper().findAndRegisterModules();
+        MAPPER.activateDefaultTyping(MAPPER.getPolymorphicTypeValidator(),
+            ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
+    }
 
     @Test
     public void verifySerialization() throws Exception {

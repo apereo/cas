@@ -18,7 +18,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@RequiresModule(name = "cas-server-support-okta-authentication", automated = true)
+@RequiresModule(name = "cas-server-support-okta-authentication")
 @Getter
 @Setter
 @Accessors(chain = true)

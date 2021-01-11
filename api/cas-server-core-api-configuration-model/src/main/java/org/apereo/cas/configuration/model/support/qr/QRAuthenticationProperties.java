@@ -1,12 +1,12 @@
 package org.apereo.cas.configuration.model.support.qr;
 
-import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -44,13 +44,6 @@ public class QRAuthenticationProperties implements Serializable {
     /**
      * Track registered devices in a repository backed by a JSON resource.
      */
-    private Json json = new Json();
-
-    @RequiresModule(name = "cas-server-support-qr-authentication", automated = true)
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class Json extends SpringResourceProperties {
-        private static final long serialVersionUID = 7179027843747126083L;
-    }
+    @NestedConfigurationProperty
+    private JsonQRAuthenticationProperties json = new JsonQRAuthenticationProperties();
 }

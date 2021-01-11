@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.support.oidc;
 
-import org.apereo.cas.configuration.model.RestEndpointProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -8,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 
@@ -55,13 +55,7 @@ public class OidcJsonWebKeystoreProperties implements Serializable {
     /**
      * Fetch JWKS via a REST endpoint.
      */
-    private Rest rest = new Rest();
+    @NestedConfigurationProperty
+    private RestfulOidcJsonWebKeystoreProperties rest = new RestfulOidcJsonWebKeystoreProperties();
 
-    @RequiresModule(name = "cas-server-support-oidc", automated = true)
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class Rest extends RestEndpointProperties {
-        private static final long serialVersionUID = 3659099897056632608L;
-    }
 }

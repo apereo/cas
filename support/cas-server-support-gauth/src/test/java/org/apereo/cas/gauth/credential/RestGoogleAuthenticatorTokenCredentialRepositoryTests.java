@@ -42,11 +42,16 @@ import static org.springframework.http.HttpStatus.*;
 @Getter
 @Tag("MFA")
 public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
-    private static final ObjectMapper MAPPER = new ObjectMapper()
-        .disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
-        .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-        .enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY)
-        .findAndRegisterModules();
+    private static final ObjectMapper MAPPER;
+
+    static {
+        MAPPER = new ObjectMapper()
+            .disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .findAndRegisterModules();
+        MAPPER.activateDefaultTyping(MAPPER.getPolymorphicTypeValidator(),
+            ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
+    }
 
     @Autowired
     @Qualifier("googleAuthenticatorInstance")

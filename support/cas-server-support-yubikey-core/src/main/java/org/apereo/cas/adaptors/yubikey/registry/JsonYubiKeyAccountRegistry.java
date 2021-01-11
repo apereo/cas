@@ -27,9 +27,13 @@ import java.util.Map;
 @Slf4j
 public class JsonYubiKeyAccountRegistry extends PermissiveYubiKeyAccountRegistry {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper()
-        .enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY)
-        .findAndRegisterModules();
+    private static final ObjectMapper MAPPER;
+
+    static {
+        MAPPER = new ObjectMapper().findAndRegisterModules();
+        MAPPER.activateDefaultTyping(MAPPER.getPolymorphicTypeValidator(),
+            ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
+    }
 
     private final Resource jsonResource;
 

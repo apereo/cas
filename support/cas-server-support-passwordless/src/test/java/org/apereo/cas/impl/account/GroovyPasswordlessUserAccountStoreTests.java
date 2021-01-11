@@ -25,11 +25,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = "cas.authn.passwordless.accounts.groovy.location=classpath:PasswordlessAccount.groovy")
 @Tag("Groovy")
 public class GroovyPasswordlessUserAccountStoreTests extends BasePasswordlessUserAccountStoreTests {
-    private static final ObjectMapper MAPPER = new ObjectMapper()
-        .enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY)
-        .setSerializationInclusion(JsonInclude.Include.NON_NULL)
-        .findAndRegisterModules();
-    
+    private static final ObjectMapper MAPPER;
+
+    static {
+        MAPPER = new ObjectMapper()
+            .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+            .findAndRegisterModules();
+        MAPPER.activateDefaultTyping(MAPPER.getPolymorphicTypeValidator(),
+            ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
+    }
+
     @Autowired
     @Qualifier("passwordlessUserAccountStore")
     private PasswordlessUserAccountStore passwordlessUserAccountStore;

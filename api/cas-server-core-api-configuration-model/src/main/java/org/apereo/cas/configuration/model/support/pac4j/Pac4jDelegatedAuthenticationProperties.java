@@ -400,7 +400,7 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
         }
     }
 
-    @RequiresModule(name = "cas-server-support-pac4j-webflow", automated = true)
+    @RequiresModule(name = "cas-server-support-pac4j-webflow")
     @Getter
     @Setter
     @Accessors(chain = true)

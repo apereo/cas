@@ -19,7 +19,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@RequiresModule(name = "cas-server-support-azuread-authentication", automated = true)
+@RequiresModule(name = "cas-server-support-azuread-authentication")
 @Getter
 @Setter
 @Accessors(chain = true)

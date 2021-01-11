@@ -24,11 +24,16 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Simple")
 public class DistributedCacheObjectTests {
-    private static final ObjectMapper MAPPER = new ObjectMapper()
-        .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
-        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-        .enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY)
-        .findAndRegisterModules();
+    private static final ObjectMapper MAPPER;
+
+    static {
+        MAPPER = new ObjectMapper()
+            .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .findAndRegisterModules();
+        MAPPER.activateDefaultTyping(MAPPER.getPolymorphicTypeValidator(),
+            ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
+    }
 
     @Test
     public void verifySerialization() throws Exception {
