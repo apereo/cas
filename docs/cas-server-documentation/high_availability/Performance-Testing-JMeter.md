@@ -18,7 +18,7 @@ Apache JMeter is a great performance testing tool that is used heavily within th
     * Note: Mac users can also use the popular HomeBrew package manager to install JMeter.
 * Windows:
   * Here is a tutorial for windows setup. 
-    * [http://toolsqa.com/jmeter/download-and-installation-jmeter/](http://toolsqa.com/jmeter/download-and-installation-jmeter/)
+    * [https://toolsqa.com/jmeter/download-and-installation-jmeter/](http://toolsqa.com/jmeter/download-and-installation-jmeter/)
 
 ## Sample Test Scripts
 

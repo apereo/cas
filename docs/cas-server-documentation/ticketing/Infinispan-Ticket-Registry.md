@@ -45,7 +45,7 @@ There are a variety of cache stores available to choose from, some of which are:
 - HBase
 - MongoDB
 
-See the [full list of implementations](http://infinispan.org/cache-store-implementations/).
+See the [full list of implementations](https://infinispan.org/cache-store-implementations).
 
 ## Distributed Cache
 

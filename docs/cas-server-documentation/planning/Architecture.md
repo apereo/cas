@@ -86,7 +86,7 @@ The authentication system is typically only processing requests at the start of 
 
 CAS uses the many aspects of the Spring Framework; most notably,
 [Spring MVC](http://docs.spring.io/spring/docs/current/spring-framework-reference/html/mvc.html) and
-[Spring Webflow](http://www.springsource.org/spring-web-flow). Spring provides a complete and extensible framework for
+[Spring Webflow](https://projects.spring.io/spring-webflow). Spring provides a complete and extensible framework for
 the core CAS codebase as well as for deployers; it's straightforward to customize or extend CAS behavior by hooking
 CAS and Spring API extension points. General knowledge of Spring is beneficial to understanding the interplay among
 some framework components, but it's not strictly required. 
