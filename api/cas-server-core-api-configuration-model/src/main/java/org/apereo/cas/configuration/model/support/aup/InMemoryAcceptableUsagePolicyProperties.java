@@ -15,7 +15,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@RequiresModule(name = "cas-server-support-aup-core", automated = true)
+@RequiresModule(name = "cas-server-support-aup-core")
 @Getter
 @Setter
 @Accessors(chain = true)

@@ -21,7 +21,7 @@ import java.util.stream.Stream;
  */
 @Getter
 @Setter
-@RequiresModule(name = "cas-server-support-notifications-fcm", automated = true)
+@RequiresModule(name = "cas-server-support-notifications-fcm")
 @Accessors(chain = true)
 public class GoogleFirebaseCloudMessagingProperties implements Serializable {
     private static final long serialVersionUID = -5679682641899738092L;

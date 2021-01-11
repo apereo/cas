@@ -78,8 +78,8 @@ public class GoogleRecaptchaProperties implements Serializable {
      * The google reCAPTCHA badge position (only if invisible is enabled).
      * Accepted values are:
      * <ul>
-     * <li>{@code bottomright}: default value.</li>
-     * <li>{@code bottomleft}</li>
+     * <li>{@code bottomright}: bottom right corner, default value.</li>
+     * <li>{@code bottomleft}: bottom left corner</li>
      * <li>{@code inline}: allows to control the CSS.</li>
      * </ul>
      */

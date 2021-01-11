@@ -129,9 +129,11 @@ public class JsonResourceAuthenticationHandlerTests {
         mapper
             .findAndRegisterModules()
             .setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
-            .enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY)
-            .writerWithDefaultPrettyPrinter()
-            .writeValue(resource.getFile(), accounts);
+            .writerWithDefaultPrettyPrinter();
+        mapper.activateDefaultTyping(mapper.getPolymorphicTypeValidator(),
+            ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
+
+        mapper.writeValue(resource.getFile(), accounts);
         this.handler = new JsonResourceAuthenticationHandler(null, mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), null, resource);
         this.handler.setPasswordPolicyConfiguration(new PasswordPolicyContext(15));

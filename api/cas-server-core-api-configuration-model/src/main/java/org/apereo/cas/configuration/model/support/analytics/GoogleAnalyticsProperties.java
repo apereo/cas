@@ -16,7 +16,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RequiresModule(name = "cas-server-support-google-analytics", automated = true)
+@RequiresModule(name = "cas-server-support-google-analytics")
 @Getter
 @Setter
 @Accessors(chain = true)

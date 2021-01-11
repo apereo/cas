@@ -17,7 +17,7 @@ import java.io.Serializable;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@RequiresModule(name = "cas-server-support-throttle", automated = true)
+@RequiresModule(name = "cas-server-support-throttle")
 @Getter
 @Setter
 @Accessors(chain = true)
@@ -84,7 +84,7 @@ public class ThrottleProperties implements Serializable {
     /**
      * Failure.
      */
-    @RequiresModule(name = "cas-server-support-throttle", automated = true)
+    @RequiresModule(name = "cas-server-support-throttle")
     @Getter
     @Setter
     @Accessors(chain = true)

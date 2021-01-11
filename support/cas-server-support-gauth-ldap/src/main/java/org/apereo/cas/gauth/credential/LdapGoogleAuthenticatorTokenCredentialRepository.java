@@ -42,11 +42,16 @@ import java.util.stream.Collectors;
 public class LdapGoogleAuthenticatorTokenCredentialRepository
     extends BaseGoogleAuthenticatorTokenCredentialRepository
     implements DisposableBean {
+    
+    private static final ObjectMapper MAPPER;
 
-    private static final ObjectMapper MAPPER = new ObjectMapper()
-        .enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY)
-        .setDefaultPrettyPrinter(new MinimalPrettyPrinter())
-        .findAndRegisterModules();
+    static {
+        MAPPER = new ObjectMapper()
+            .setDefaultPrettyPrinter(new MinimalPrettyPrinter())
+            .findAndRegisterModules();
+        MAPPER.activateDefaultTyping(MAPPER.getPolymorphicTypeValidator(),
+            ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
+    }
 
     private final ConnectionFactory connectionFactory;
 

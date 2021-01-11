@@ -486,7 +486,6 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
                 }
 
                 val client = new SAML2Client(cfg);
-
                 if (StringUtils.isBlank(saml.getClientName())) {
                     val count = index.intValue();
                     client.setName(client.getClass().getSimpleName() + count);

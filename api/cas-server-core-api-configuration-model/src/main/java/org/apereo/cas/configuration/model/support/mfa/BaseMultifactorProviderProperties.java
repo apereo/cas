@@ -77,6 +77,15 @@ public abstract class BaseMultifactorProviderProperties implements Serializable 
 
     /**
      * The failure mode policy for this MFA provider.
+     * The following failure modes are supported:
+     * <ul>
+     *     <li>{@code CLOSED}: Authentication is blocked if the provider cannot be reached.</li>
+     *     <li>{@code OPEN}: Authentication proceeds yet requested MFA is NOT
+     *     communicated to the client if provider is unavailable.</li>
+     *     <li>{@code PHANTOM}: Authentication proceeds and requested MFA is
+     *     communicated to the client if provider is unavailable.</li>
+     *     <li>{@code NONE}: Do not contact the provider at all to check for availability. Assume the provider is available.</li>
+     * </ul>
      */
     private String failureMode = "UNDEFINED";
 }
