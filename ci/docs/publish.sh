@@ -133,7 +133,7 @@ git add -f .
 echo -e "Committing changes...\n"
 git commit -m "Published docs to [gh-pages] from $branchVersion. "
 
-if [ -z "$GH_PAGES_TOKEN" ]; then
+if [ -z "$GH_PAGES_TOKEN" ] && [ "${GITHUB_REPOSITORY}" != "apereo/cas" ]; then
   echo -e "\nNo GitHub token is defined to publish documentation."
   popd
   rm -Rf $PWD/gh-pages
