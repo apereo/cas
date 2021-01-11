@@ -1,1 +1,1 @@
-{% include {{ version }}/rest-configuration.md configKey="cas.authn.adaptive.ip-intel.rest" %}
+{% include casproperties.html properties="cas.authn.adaptive.ip-intel.rest" %}

@@ -2,7 +2,6 @@ Control the location and other settings of the CAS logging configuration.
 
 ```properties
 # logging.config=file:/etc/cas/log4j2.xml
-# server.servlet.context-parameters.is-log4j-auto-initialization-disabled=true
        
 # cas.logging.mdc-enabled=true
 
