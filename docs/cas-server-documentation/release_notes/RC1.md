@@ -68,7 +68,9 @@ significant framework upgrade, the change should remain largely invisible to CAS
 Th collection of [end-to-end browser tests](../developer/Test-Process.html) based on Puppeteer 
 continue to grow to add additional scenarios and use cases, such as recaptcha, logout, and more.
 Furthermore, the CAS codebase is now running its entire tests suite against Ubuntu, Windows and MacOS
-platforms.
+platforms. New test categories are also added to account for SAML2 integration tests both as an
+identity provider and service provider, along with tests specific OpenID Connect authentication
+flows for `code`, `token`, `id_token` and more.
   
 ### Logout Confirmations
 

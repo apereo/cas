@@ -835,6 +835,8 @@ jobs:
           - interrupt-login
           - oidc-authzcode-login
           - oidc-debugger-code-login
+          - oidc-debugger-token-login
+          - oidc-debugger-idtoken-login
           - pac4j-delegated-login
           - pac4j-delegated-saml-login
           - renew-existing-sso
