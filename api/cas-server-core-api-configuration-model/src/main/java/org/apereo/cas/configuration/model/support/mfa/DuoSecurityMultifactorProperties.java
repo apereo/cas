@@ -43,8 +43,11 @@ public class DuoSecurityMultifactorProperties extends BaseMultifactorProviderPro
     private String duoSecretKey;
 
     /**
-     * The duoApplicationKey is a string, at least 40 characters long,
+     * The application key is a string, at least 40 characters long,
      * that you generate and keep secret from Duo.
+     * This is a required setting for the WebSDK integration types.
+     * Leaving this setting as blank will activate the Universal Prompt option.
+     * 
      * You can generate a random string in Python with:
      * &lt;pre&gt;
      * import os, hashlib

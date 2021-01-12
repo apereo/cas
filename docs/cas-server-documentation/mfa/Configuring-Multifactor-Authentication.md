@@ -38,6 +38,7 @@ The following multifactor providers are supported by CAS.
 | FIDO2 WebAuthN        | `mfa-webauthn`  | [See this guide](FIDO2-WebAuthn-Authentication.html).
 | CAS Simple            | `mfa-simple`    | [See this guide](Simple-Multifactor-Authentication.html).
 | Swivel Secure         | `mfa-swivel`    | [See this guide](SwivelSecure-Authentication.html).
+| Inwebo                | `mfa-inwebo`    | [See this guide](Inwebo-Authentication.html).
 | Custom                | Custom          | [See this guide](../mfa/Custom-MFA-Authentication.html).
 
 ## Triggers
@@ -106,7 +107,7 @@ failure mode set by the registered service.
 A default failure mode can be specified globally via CAS properties 
 and will be used in the case where no failure mode is set in either the provider or the registered service.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#multifactor-authentication).
+{% include {{ version }}/global-mfa-configuration.md %}
 
 ## Multiple Provider Selection
 
@@ -116,6 +117,8 @@ collection of providers based on their rank and will pick one with the highest
 priority. This use case may arise if multiple triggers are defined where each 
 decides on a different multifactor authentication provider, or the same 
 provider instance is configured multiple times with many instances.
+  
+{% include {{ version }}/provider-selection-mfa-configuration.md %}
 
 Provider selection may also be carried out using Groovy scripting strategies more dynamically. 
 The following example should serve as an outline of how to select multifactor providers based on a Groovy script:

@@ -150,13 +150,15 @@ public class ServiceRegistryProperties implements Serializable {
     private SmsProperties sms = new SmsProperties();
 
     /**
-     * Flag that indicates whether to initialise active service registry implementation with a default set of service definition included
+     * Flag that indicates whether to initialise active service
+     * registry implementation with a default set of service definition included
      * with CAS in JSON format.
      */
     private boolean initFromJson;
 
     /**
-     * Flag indicating whether a background watcher thread is enabled for the purposes of live reloading of service registry data changes
+     * Flag indicating whether a background watcher thread is enabled
+     * for the purposes of live reloading of service registry data changes
      * from persistent data store.
      */
     private boolean watcherEnabled = true;
@@ -173,7 +175,8 @@ public class ServiceRegistryProperties implements Serializable {
     private ServiceManagementTypes managementType = ServiceManagementTypes.DEFAULT;
     
     /**
-     * Services cache duration specifies the fixed duration for an entry to be automatically removed from the cache after its creation or update.
+     * Services cache duration specifies the fixed duration for an
+     * entry to be automatically removed from the cache after its creation or update.
     */
     private String cache = "PT5M";
 

@@ -55,13 +55,16 @@ public class AdaptiveAuthenticationProperties implements Serializable {
     private AdaptiveAuthenticationIPIntelligenceProperties ipIntel = new AdaptiveAuthenticationIPIntelligenceProperties();
 
     /**
-     * A map of ({@code mfaProviderId -> adaptiveRegexPattern}) that tells CAS when to trigger an MFA authentication transaction.
+     * A map of ({@code mfaProviderId -> adaptiveRegexPattern}) that tells
+     * CAS when to trigger an MFA authentication transaction.
      * <p>
-     * This property binds a valid mfa provider to an adaptive regex pattern representing either IP address, user-agent or geolocation.
-     * When either of those collected pieces of adaptive data matches configured regex pattern during authentication event,
-     * an MFA authentication transaction is triggered for an MFA provider represented by the map's key.
-     * <p>
-     * Default value is EMPTY Map.
+     * This property binds a valid mfa provider to an adaptive regex
+     * pattern representing either IP address, user-agent or geolocation.
+     * When either of those collected pieces of adaptive data matches
+     * configured regex pattern during authentication event,
+     * an MFA authentication transaction is triggered for an
+     * MFA provider represented by the map's key.
+     * </p>
      */
     private Map<String, String> requireMultifactor = new HashMap<>(0);
 

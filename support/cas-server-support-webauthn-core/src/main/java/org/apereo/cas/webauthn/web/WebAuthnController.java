@@ -58,6 +58,17 @@ public class WebAuthnController {
 
     private final WebAuthnServer server;
 
+    /**
+     * Start registration and provide response entity.
+     *
+     * @param username           the username
+     * @param displayName        the display name
+     * @param credentialNickname the credential nickname
+     * @param requireResidentKey the require resident key
+     * @param sessionTokenBase64 the session token base 64
+     * @return the response entity
+     * @throws Exception the exception
+     */
     @PostMapping(WEBAUTHN_ENDPOINT_REGISTER)
     public ResponseEntity<Object> startRegistration(
         @NonNull
@@ -87,6 +98,12 @@ public class WebAuthnController {
         return messagesJson(ResponseEntity.badRequest(), result.left().get());
     }
 
+    /**
+     * Finish registration and provide response entity.
+     *
+     * @param responseJson the response json
+     * @return the response entity
+     */
     @PostMapping(WEBAUTHN_ENDPOINT_REGISTER + WEBAUTHN_ENDPOINT_FINISH)
     public ResponseEntity<Object> finishRegistration(
         @RequestBody
@@ -95,6 +112,12 @@ public class WebAuthnController {
         return finishResponse(result, responseJson);
     }
 
+    /**
+     * Start authentication and provide response entity.
+     *
+     * @param username the username
+     * @return the response entity
+     */
     @PostMapping(WEBAUTHN_ENDPOINT_AUTHENTICATE)
     public ResponseEntity<Object> startAuthentication(
         @RequestParam("username")
@@ -106,6 +129,12 @@ public class WebAuthnController {
         return messagesJson(ResponseEntity.badRequest(), request.left().get());
     }
 
+    /**
+     * Finish authentication and create response entity.
+     *
+     * @param responseJson the response json
+     * @return the response entity
+     */
     @PostMapping(WEBAUTHN_ENDPOINT_AUTHENTICATE + WEBAUTHN_ENDPOINT_FINISH)
     public ResponseEntity<Object> finishAuthentication(
         @RequestBody

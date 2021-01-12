@@ -1,6 +1,6 @@
 package org.apereo.cas.web.flow.decorator;
 
-import org.apereo.cas.configuration.model.core.web.flow.WebflowLoginDecoratorProperties;
+import org.apereo.cas.configuration.model.core.web.flow.RestfulWebflowLoginDecoratorProperties;
 import org.apereo.cas.util.HttpUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,7 +27,7 @@ import java.util.Map;
 public class RestfulLoginWebflowDecorator implements WebflowDecorator {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
-    private final WebflowLoginDecoratorProperties.Rest restProperties;
+    private final RestfulWebflowLoginDecoratorProperties restProperties;
 
     @Override
     @SneakyThrows

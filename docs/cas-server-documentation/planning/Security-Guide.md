@@ -83,7 +83,7 @@ Forced authentication is suitable for services where higher security is desired 
 authentication is configured on a per-service basis, but the [service management](#service-management) facility
 provides some support for implementing forced authentication as a matter of centralized security policy.
 Forced authentication may be combined with 
-[multi-factor authentication](../configuration/Configuration-Properties.html#multifactor-authentication) features to
+[multi-factor authentication](../mfa/Configuring-Multifactor-Authentication.html) features to
 implement arbitrary service-specific access control policy.
 
 
@@ -156,7 +156,7 @@ open for all applications may create an opportunity for security attacks.
 A ticket-granting cookie is an HTTP cookie set by CAS upon the establishment of a single sign-on session.
 The cookie value is by default encrypted and signed via settings defined in CAS properties.
 While sample data is provided for initial deployments, these keys **MUST** be regenerated per your specific
-environment. Please [see this guide](../installation/Configuring-SSO.html) for more info.
+environment. Please [see this guide](../authentication/Configuring-SSO.html) for more info.
 
 ### Password Management Secure Links
 
@@ -173,7 +173,7 @@ Protocol tickets that are issued by CAS and shared with other applications such 
 <div class="alert alert-warning"><strong>Pay Attention</strong><p>Encrypting and signing a generated ticket will, depending on the encryption method and algorithm used, increase the generated ticket length. Not all CAS clients are equipped to handle lengthy ticket strings and may get upset with you. Evaluate existing integrations before turning this on and consider whether this feature is truly needed for your deployment.</p></div>
 
 
-{% include {{ version }}/signing-encryption.md configKey="cas.ticket" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
+{% include {{ version }}/signing-encryption-configuration.md configKey="cas.ticket" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
 
 
 ### Ticket Registry Encryption
@@ -224,7 +224,7 @@ and denial of service attacks. The feature is beneficial in environments where b
 equivalent features. In cases where this support is available in underlying systems, we encourage using it instead
 of CAS features; the justification is that enabling support in underlying systems provides the feature in all dependent
 systems including CAS. See the
-[login throttling configuration](../installation/Configuring-Authentication-Components.html#login-throttling)
+[login throttling configuration](../authentication/Configuring-Authentication-Components.html#login-throttling)
 section for further information.
 
 ### Credential Encryption
@@ -285,7 +285,7 @@ configured for forced authentication, authentication would be required for servi
 long-term session.
 
 Long term authentication support must be explicitly enabled through
-[configuration and UI customization](../installation/Configuring-Authentication-Components.html#long-term-authentication)
+[configuration and UI customization](../authentication/Configuring-Authentication-Components.html#long-term-authentication)
 during the installation process. Thus deployers choose to offer long-term authentication support, and when available
 users may elect to use it via selection on the CAS login form.
 

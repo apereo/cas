@@ -3,15 +3,9 @@ package org.apereo.cas.authentication.attribute;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
-import org.apereo.cas.util.LoggingUtils;
-import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
-import org.apereo.cas.util.scripting.GroovyShellScript;
-import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.scripting.ScriptingUtils;
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
-import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -26,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
-import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.lambda.Unchecked;
 
 import java.nio.charset.StandardCharsets;
@@ -159,25 +152,7 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
         val result = ApplicationContextProvider.getScriptResourceCacheManager();
         if (result.isPresent()) {
             val cacheMgr = result.get();
-            val cacheKey = ScriptResourceCacheManager.computeKey(Pair.of(attributeName, file));
-            LOGGER.trace("Constructed cache key [{}] for attribute [{}] mapped as groovy script", cacheKey, attributeName);
-            var script = (ExecutableCompiledGroovyScript) null;
-            if (cacheMgr.containsKey(cacheKey)) {
-                script = cacheMgr.get(cacheKey);
-                LOGGER.trace("Located cached groovy script [{}] for key [{}]", script, cacheKey);
-            } else {
-                try {
-                    val scriptPath = SpringExpressionLanguageValueResolver.getInstance().resolve(file);
-                    val resource = ResourceUtils.getResourceFrom(scriptPath);
-                    LOGGER.trace("Groovy script [{}] for key [{}] is not cached", resource, cacheKey);
-                    script = new WatchableGroovyScriptResource(resource);
-                    cacheMgr.put(cacheKey, script);
-                    LOGGER.trace("Cached groovy script [{}] for key [{}]", script, cacheKey);
-                } catch (final Exception e) {
-                    LoggingUtils.error(LOGGER, e);
-                    return new ArrayList<>(0);
-                }
-            }
+            val script = cacheMgr.resolveScriptableResource(file, attributeName, file);
             if (script != null) {
                 return fetchAttributeValueFromScript(script, attributeName, currentValues);
             }
@@ -192,20 +167,8 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
         val result = ApplicationContextProvider.getScriptResourceCacheManager();
         if (result.isPresent()) {
             val cacheMgr = result.get();
-            val cacheKey = ScriptResourceCacheManager.computeKey(Pair.of(attributeName, inlineGroovy));
-            LOGGER.trace("Constructed cache key [{}] for attribute [{}] mapped as inline groovy script", cacheKey, attributeName);
-
-            var executableScript = (ExecutableCompiledGroovyScript) null;
-            if (cacheMgr.containsKey(cacheKey)) {
-                LOGGER.trace("Inline groovy script for key [{}] is not cached", cacheKey);
-                executableScript = cacheMgr.get(cacheKey);
-            } else {
-                LOGGER.trace("Inline groovy script for key [{}] is not cached", cacheKey);
-                executableScript = new GroovyShellScript(inlineGroovy);
-                cacheMgr.put(cacheKey, executableScript);
-                LOGGER.trace("Cached inline groovy script for key [{}]", cacheKey);
-            }
-            return fetchAttributeValueFromScript(executableScript, attributeName, currentValues);
+            val script = cacheMgr.resolveScriptableResource(inlineGroovy, attributeName, inlineGroovy);
+            return fetchAttributeValueFromScript(script, attributeName, currentValues);
         }
         LOGGER.warn("No groovy script cache manager is available to execute attribute mappings");
         return new ArrayList<>(0);

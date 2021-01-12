@@ -34,6 +34,6 @@ Note that CAS server's actuator endpoints are by default secured. In order to al
 
 ## Configuration
 
-{% include {{ version }}/spring-bootadmin-server.md %}
+{% include {{ version }}/spring-bootadmin-server-configuration.md %}
 
 [bootadmindocs]: https://codecentric.github.io/spring-boot-admin/current/

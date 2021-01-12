@@ -59,7 +59,7 @@ public class UmaDeleteResourceSetRegistrationEndpointControllerTests extends Bas
         val resourceId = (long) model.get("resourceId");
 
         val context = new JEEContext(results.getLeft(), results.getMiddle());
-        val manager = new ProfileManager<>(context, context.getSessionStore());
+        val manager = new ProfileManager<>(context);
         manager.logout();
         response = umaDeleteResourceSetRegistrationEndpointController.deleteResourceSet(resourceId,
             results.getLeft(), results.getMiddle());

@@ -41,11 +41,9 @@ public abstract class BaseMultifactorProviderProperties implements Serializable 
      * no step-up authentication will be performed. If the opposite is true, CAS will route the authentication
      * flow to the required authentication level and upon success, will adjust the SSO session with the
      * new higher authentication level now satisfied.
-     * <p>
      * Ranking of authentication methods is done per provider via specific properties for each.
      * Note that the higher the rank value is, the higher on the security scale it remains.
      * A provider that ranks higher with a larger weight value trumps and override others with a lower value.
-     * </p>
      */
     private int rank;
 
@@ -77,6 +75,15 @@ public abstract class BaseMultifactorProviderProperties implements Serializable 
 
     /**
      * The failure mode policy for this MFA provider.
+     * The following failure modes are supported:
+     * <ul>
+     *     <li>{@code CLOSED}: Authentication is blocked if the provider cannot be reached.</li>
+     *     <li>{@code OPEN}: Authentication proceeds yet requested MFA is NOT
+     *     communicated to the client if provider is unavailable.</li>
+     *     <li>{@code PHANTOM}: Authentication proceeds and requested MFA is
+     *     communicated to the client if provider is unavailable.</li>
+     *     <li>{@code NONE}: Do not contact the provider at all to check for availability. Assume the provider is available.</li>
+     * </ul>
      */
     private String failureMode = "UNDEFINED";
 }

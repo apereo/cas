@@ -12,3 +12,5 @@ against the password on record determined by a configurable database query.
 # cas.authn.jdbc.query[0].field-disabled=
 # cas.authn.jdbc.query[0].principal-attribute-list=sn,cn:commonName,givenName
 ```
+
+{% include {{ version }}/authentication-credential-selection-configuration.md %}

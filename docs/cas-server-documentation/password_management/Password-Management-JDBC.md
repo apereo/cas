@@ -14,8 +14,8 @@ JDBC support is enabled by including the following dependencies in the WAR overl
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-pm-jdbc" %}
 
-{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.pm.jdbc" %
-{% include {{ version }}/password-encoding.md configKey="cas.authn.pm.jdbc" %}
+{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.pm.jdbc" %}
+{% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.pm.jdbc" %}
 {% include {{ version }}/jdbc-pswd-mgmt-configuration.md %}
 
 The expected database schema for the user accounts is:

@@ -11,3 +11,5 @@
 # cas.authn.okta.proxy-host=
 # cas.authn.okta.proxy-port=
 ```
+
+{% include {{ version }}/authentication-credential-selection-configuration.md %}

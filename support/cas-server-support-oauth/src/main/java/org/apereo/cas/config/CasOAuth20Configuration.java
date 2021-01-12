@@ -23,7 +23,6 @@ import org.apereo.cas.support.oauth.authenticator.OAuth20ProofKeyCodeExchangeAut
 import org.apereo.cas.support.oauth.authenticator.OAuth20RefreshTokenAuthenticator;
 import org.apereo.cas.support.oauth.authenticator.OAuth20UsernamePasswordAuthenticator;
 import org.apereo.cas.support.oauth.authenticator.OAuthAuthenticationClientProvider;
-import org.apereo.cas.support.oauth.profile.CasServerApiBasedTicketValidator;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfileDataCreator;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
@@ -69,6 +68,7 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20Reg
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationCodeAuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ClientCredentialsResponseBuilder;
+import org.apereo.cas.support.oauth.web.response.callback.OAuth20InvalidAuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResourceOwnerCredentialsResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20TokenAuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
@@ -99,6 +99,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
+import org.apereo.cas.util.InternalTicketValidator;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -139,7 +140,6 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -257,7 +257,7 @@ public class CasOAuth20Configuration {
         val server = casProperties.getServer();
 
         val cfg = new CasConfiguration(server.getLoginUrl());
-        val validator = new CasServerApiBasedTicketValidator(centralAuthenticationService.getObject(), webApplicationServiceFactory.getObject());
+        val validator = new InternalTicketValidator(centralAuthenticationService.getObject(), webApplicationServiceFactory.getObject());
         cfg.setDefaultTicketValidator(validator);
 
         val oauthCasClient = new CasClient(cfg);
@@ -548,15 +548,17 @@ public class CasOAuth20Configuration {
     @Bean
     @RefreshScope
     public Set<OAuth20AuthorizationResponseBuilder> oauthAuthorizationResponseBuilders() {
-        val builders = applicationContext.getBeansOfType(OAuth20AuthorizationResponseBuilder.class, false, true);
-        return new HashSet<>(builders.values());
+        val builders = new LinkedHashSet<OAuth20AuthorizationResponseBuilder>(2);
+        builders.add(oauthAuthorizationCodeResponseBuilder());
+        builders.add(oauthTokenResponseBuilder());
+        return builders;
     }
 
     @ConditionalOnMissingBean(name = "oauthAuthorizationRequestValidators")
     @Bean
     @RefreshScope
     public Set<OAuth20AuthorizationRequestValidator> oauthAuthorizationRequestValidators() {
-        val validators = new LinkedHashSet<OAuth20AuthorizationRequestValidator>(5);
+        val validators = new LinkedHashSet<OAuth20AuthorizationRequestValidator>(6);
         validators.add(oauthProofKeyCodeExchangeResponseTypeAuthorizationRequestValidator());
         validators.add(oauthAuthorizationCodeResponseTypeRequestValidator());
         validators.add(oauthIdTokenResponseTypeRequestValidator());
@@ -710,6 +712,12 @@ public class CasOAuth20Configuration {
             defaultOAuthCodeFactory(), servicesManager.getObject());
     }
 
+    @ConditionalOnMissingBean(name = "oauthInvalidAuthorizationBuilder")
+    @Bean
+    @RefreshScope
+    public OAuth20InvalidAuthorizationResponseBuilder oauthInvalidAuthorizationBuilder() {
+        return new OAuth20InvalidAuthorizationResponseBuilder(servicesManager.getObject());
+    }
 
     @ConditionalOnMissingBean(name = "oauthPrincipalFactory")
     @Bean
@@ -892,6 +900,7 @@ public class CasOAuth20Configuration {
             .consentApprovalViewResolver(consentApprovalViewResolver())
             .authenticationBuilder(oauthCasAuthenticationBuilder())
             .oauthAuthorizationResponseBuilders(oauthAuthorizationResponseBuilders())
+            .oauthInvalidAuthorizationResponseBuilder(oauthInvalidAuthorizationBuilder())
             .oauthRequestValidators(oauthAuthorizationRequestValidators())
             .build();
     }

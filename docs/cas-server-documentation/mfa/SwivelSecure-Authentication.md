@@ -20,7 +20,7 @@ Support is enabled by including the following module in the overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-swivel" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#swivel-secure).
+{% include {{ version }}/swivel-configuration.md %}
 
 ## Logging
 

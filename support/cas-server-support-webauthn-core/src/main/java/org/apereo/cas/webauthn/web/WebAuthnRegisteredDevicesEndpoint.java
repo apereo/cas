@@ -34,11 +34,25 @@ public class WebAuthnRegisteredDevicesEndpoint extends BaseCasActuatorEndpoint {
         this.registrationStorage = registrationStorage;
     }
 
+    /**
+     * Fetch collection.
+     *
+     * @param username the username
+     * @return the collection
+     */
     @ReadOperation(produces = MediaType.APPLICATION_JSON_VALUE)
     public Collection<? extends CredentialRegistration> fetch(@Selector final String username) {
         return registrationStorage.getRegistrationsByUsername(username);
     }
 
+    /**
+     * Write.
+     *
+     * @param username the username
+     * @param record   the record
+     * @return the boolean
+     * @throws Exception the exception
+     */
     @WriteOperation(produces = MediaType.APPLICATION_JSON_VALUE)
     public boolean write(@Selector final String username, final String record) throws Exception {
         val json = EncodingUtils.decodeBase64ToString(record);
@@ -46,11 +60,23 @@ public class WebAuthnRegisteredDevicesEndpoint extends BaseCasActuatorEndpoint {
         return registrationStorage.addRegistrationByUsername(username, registration);
     }
 
+    /**
+     * Delete.
+     *
+     * @param username the username
+     */
     @DeleteOperation
     public void delete(@Selector final String username) {
         registrationStorage.removeAllRegistrations(username);
     }
 
+    /**
+     * Delete.
+     *
+     * @param username     the username
+     * @param credentialId the credential id
+     * @throws Exception the exception
+     */
     @DeleteOperation
     public void delete(@Selector final String username, @Selector final String credentialId) throws Exception {
         val ba = ByteArray.fromBase64Url(credentialId);

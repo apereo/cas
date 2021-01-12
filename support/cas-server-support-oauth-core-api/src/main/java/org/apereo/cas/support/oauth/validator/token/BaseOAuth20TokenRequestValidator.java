@@ -85,7 +85,7 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
         }
 
         val context = new JEEContext(request, response, getConfigurationContext().getSessionStore());
-        val manager = new ProfileManager<>(context, context.getSessionStore());
+        val manager = new ProfileManager<>(context);
         val profile = manager.get(true);
         if (profile.isEmpty()) {
             LOGGER.warn("Could not locate authenticated profile for this request. Request is not authenticated");

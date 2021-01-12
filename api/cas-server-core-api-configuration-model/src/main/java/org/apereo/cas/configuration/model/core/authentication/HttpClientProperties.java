@@ -5,10 +5,9 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.springframework.core.io.Resource;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
-import java.security.KeyStore;
 
 /**
  * Configuration properties class for http.client.truststore.
@@ -48,7 +47,8 @@ public class HttpClientProperties implements Serializable {
     /**
      * Configuration properties namespace for embedded Java SSL trust store.
      */
-    private Truststore truststore = new Truststore();
+    @NestedConfigurationProperty
+    private HttpClientTrustStoreProperties truststore = new HttpClientTrustStoreProperties();
 
     /**
      * Whether CAS should accept local logout URLs.
@@ -74,34 +74,11 @@ public class HttpClientProperties implements Serializable {
     private int proxyPort;
 
     /**
-     * Whether the regular expression specified with {@code authorityValidationRegEx} should be handled as case-sensitive
-     * ({@code true}) or case-insensitive ({@code false}). If no {@code authorityValidationRegEx} is set, this value does not have any effect.
+     * Whether the regular expression specified with {@code authorityValidationRegEx}
+     * should be handled as case-sensitive
+     * ({@code true}) or case-insensitive ({@code false}). If
+     * no {@code authorityValidationRegEx} is set, this value does not have any effect.
      */
     private boolean authorityValidationRegExCaseSensitive = true;
 
-    @RequiresModule(name = "cas-server-core-authentication", automated = true)
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class Truststore implements Serializable {
-
-        private static final long serialVersionUID = -1357168622083627654L;
-
-        /**
-         * The CAS local truststore resource to contain certificates to the CAS deployment.
-         * In the event that local certificates are to be imported into the CAS running environment,
-         * a local truststore is provided by CAS to improve portability of configuration across environments.
-         */
-        private transient Resource file;
-
-        /**
-         * The truststore password.
-         */
-        private String psw = "changeit";
-
-        /**
-         * Truststore type used to create a SSL context for http client.
-         */
-        private String type = KeyStore.getDefaultType();
-    }
 }

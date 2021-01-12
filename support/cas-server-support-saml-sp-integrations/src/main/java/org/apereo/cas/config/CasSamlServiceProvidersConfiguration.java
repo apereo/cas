@@ -45,7 +45,7 @@ public class CasSamlServiceProvidersConfiguration implements InitializingBean {
     private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
-    @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
+    @Qualifier(SamlRegisteredServiceCachingMetadataResolver.DEFAULT_BEAN_NAME)
     private ObjectProvider<SamlRegisteredServiceCachingMetadataResolver> samlRegisteredServiceCachingMetadataResolver;
 
     @Override

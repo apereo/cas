@@ -82,8 +82,7 @@ in an iFrame controlled and owned by CAS. Rather, the prompt is now hosted on Du
 response from Duo Security is passed to CAS as a browser redirect and CAS will begin to negotiate and exchange that response in favor of
 a JWT that contains the multifactor authentication user profile details.
 
-This option only required settings for integration key, secret key, and API hostname. To see the relevant list of CAS 
-properties, please [review this guide](../configuration/Configuration-Properties.html#duosecurity).
+This option only required settings for integration key, secret key, and API hostname.
  
 ## Non-Browser MFA
 
@@ -95,7 +94,7 @@ translate into an out-of-band factor (push or phone) recommended by Duo as the b
 
 In order to successfully complete the authentication flow, CAS must also be configured with a method
 of primary authentication that is able to support non-web based environments 
-such as [Basic Authentication](../installation/Basic-Authentication.html).
+such as [Basic Authentication](../authentication/Basic-Authentication.html).
 
 Here is an example using `curl` that attempts to authenticate into a service by first exercising
 basic authentication while identifying the request content type as `application/cas`. It is assumed that the
@@ -108,7 +107,7 @@ curl --location --header "Content-Type: application/cas" https://apps.example.or
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#duosecurity).
+{% include {{ version }}/duosecurity-configuration.md %}
 
 ## Troubleshooting
 

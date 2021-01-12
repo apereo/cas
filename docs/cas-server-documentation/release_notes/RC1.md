@@ -60,38 +60,58 @@ The following items are new improvements and enhancements presented in this rele
 ### Spring Boot 2.4
                   
 CAS is now based on the Spring Boot `2.4.x` series which by extension also requires CAS to upgrade
-its dependency on related projects such as Spring and Spring Cloud. While this is a 
+its dependency on related projects such as [Spring and Spring Cloud](../planning/Architecture.html). While this is a 
 significant framework upgrade, the change should remain largely invisible to CAS users and adopters.
 
-### Puppeteer Tests
+### Testing Strategy
 
-Th collection of end-to-end browser tests continue to grow to add additional scenarios
-and use cases, such as recaptcha, logout, and more.
+Th collection of [end-to-end browser tests](../developer/Test-Process.html) based on Puppeteer 
+continue to grow to add additional scenarios and use cases, such as recaptcha, logout, and more.
+Furthermore, the CAS codebase is now running its entire tests suite against Ubuntu, Windows and MacOS
+platforms. New test categories are also added to account for SAML2 integration tests both as an
+identity provider and service provider, along with tests specific OpenID Connect authentication
+flows for `code`, `token`, `id_token` and more.
   
 ### Logout Confirmations
 
-Upon logout confirmations, the CAS user interface and confirmation screens are 
+Upon [logout confirmations](../installation/Logout-Single-Signout.html), the 
+CAS user interface and confirmation screens are 
 now able to list all applications linked to the existing SSO session.
 
 ### XML-less Spring Webflow
 
-The construction of various Spring Webflow flows and subflows has now removed the requirement
-for an XML foundation, allowing the construction of all flows to be dynamic.
+The construction of various [Spring Webflow flows](../webflow/Webflow-Customization.html) and (multifactor authentication) subflows 
+has now removed the requirement for an XML foundation, allowing the construction of all flows to be dynamic.
 
 ### WebAuthN REST Device Management
 
 [WebAuthN/FIDO2 Device registrations](../mfa/FIDO2-WebAuthn-Authentication.html) 
 may be managed using an external REST API.
+
+### Scriptable LDAP Queries
+
+Search filters used to query LDAP for results can now be designed as Groovy scripts
+to provide dynamic querying options.
+
+### Inwebo MFA Integration
+
+Support for [inWebo](../mfa/Inwebo-Authentication.html) as a multifactor authentication provider is now available.
  
 ### SCIM Provisioning
 
 Integration with [SCIM Provisioning](../integration/SCIM-Integration.html) is slightly
 improved to allow SCIM targets and settings per registered application.
 
-### WebAuthN REDIS Device Management
+### WebAuthN Redis Device Management
 
 [WebAuthN/FIDO2 Device registrations](../mfa/FIDO2-WebAuthn-Authentication.html)
 may be managed using a Redis database.
+
+### Grouper Access Strategy
+
+[Grouper Service Access Strategy](../services/Configuring-Service-Access-Strategy.html) can 
+now accept configuration properties 
+in the service definition to override the default Grouper settings.
 
 ### CORS Per Service
 
@@ -108,19 +128,33 @@ for service providers can now be [managed via Redis](../installation/Configuring
 CAS can now enable support for the [(ACME) protocol](../integration/ACME-Integration.html) 
 using a certificate authority (CA) such as Let's Encrypt.
 
+### Gradle 6.8
+
+The CAS codebase is now using Gradle version `6.8` for internal builds. All plugins and build deprecation warnings
+are adjusted, fixed or removed to make for a smooth transition to version `7` as the next release of the Gradle build tool.
+
 ### Multifactor Trusted Devices via Redis 
 
-[Trusted devices](../mfa/Multifactor-TrustedDevice-Authentication.html) and user 
+[Multifactor Trusted Devices](../mfa/Multifactor-TrustedDevice-Authentication.html) and user 
 decisions for multifactor authentication may also be kept inside a Redis instance.
 
 ## Other Stuff
      
-- The configuration of [Hazelcast clusters](../ticketing/Hazelcast-Ticket-Registry.html) can allow for specification of network interfaces.
+- [Hazelcast cluster configuration](../ticketing/Hazelcast-Ticket-Registry.html) allows specification of network interfaces.
 - Delegated authentication configuration can allow for a pre-defined callback/redirect URI.
-
+- Configuration metadata is corrected in a number of cases to make sure `@NestedConfigurationProperty` is properly set on fields.
+- Publishing Maven metadata into the local maven repository is corrected to include all CAS-required repositories.
  
 ## Library Upgrades
 
 - Spring Framework
 - Spring Boot
 - Spring Cloud
+- Hibernate
+- Amazon SDK
+- Hazelcast
+- Joda Time
+- Gradle  
+- Thymeleaf Dialect
+- Apache Ignite
+- BouncyCastle

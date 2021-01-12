@@ -43,7 +43,7 @@ public class UmaFindResourceSetRegistrationEndpointControllerTests extends BaseU
         assertNotNull(response.getBody());
 
         val context = new JEEContext(results.getLeft(), results.getMiddle());
-        val manager = new ProfileManager<>(context, context.getSessionStore());
+        val manager = new ProfileManager<>(context);
         manager.logout();
 
         response = umaFindResourceSetRegistrationEndpointController.findResourceSets(results.getLeft(), results.getMiddle());
@@ -63,7 +63,7 @@ public class UmaFindResourceSetRegistrationEndpointControllerTests extends BaseU
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 
         val context = new JEEContext(results.getLeft(), results.getMiddle());
-        val manager = new ProfileManager<>(context, context.getSessionStore());
+        val manager = new ProfileManager<>(context);
         manager.logout();
 
         response = umaFindResourceSetRegistrationEndpointController.findResourceSet(resourceId, results.getLeft(), results.getMiddle());

@@ -1,11 +1,11 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
-import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.util.LinkedCaseInsensitiveMap;
 
 import javax.security.auth.login.LoginException;
@@ -93,7 +93,8 @@ public class PasswordPolicyProperties implements Serializable {
     /**
      * Handle password policy via Groovy script.
      */
-    private Groovy groovy = new Groovy();
+    @NestedConfigurationProperty
+    private GroovyPasswordPolicyProperties groovy = new GroovyPasswordPolicyProperties();
 
     public enum PasswordPolicyHandlingOptions {
         /**
@@ -111,10 +112,4 @@ public class PasswordPolicyProperties implements Serializable {
         REJECT_RESULT_CODE
     }
 
-    @RequiresModule(name = "cas-server-core-authentication", automated = true)
-    @Getter
-    @Setter
-    public static class Groovy extends SpringResourceProperties {
-        private static final long serialVersionUID = 8079027843747126083L;
-    }
 }

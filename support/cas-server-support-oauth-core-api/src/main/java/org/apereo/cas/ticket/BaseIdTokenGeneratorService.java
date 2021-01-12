@@ -38,7 +38,7 @@ public abstract class BaseIdTokenGeneratorService implements IdTokenGeneratorSer
      */
     protected UserProfile getAuthenticatedProfile(final HttpServletRequest request, final HttpServletResponse response) {
         val context = new JEEContext(request, response, getConfigurationContext().getSessionStore());
-        val manager = new ProfileManager<>(context, context.getSessionStore());
+        val manager = new ProfileManager<>(context);
         val profile = manager.get(true);
 
         if (profile.isEmpty()) {

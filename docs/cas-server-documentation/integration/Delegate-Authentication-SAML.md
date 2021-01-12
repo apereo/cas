@@ -35,9 +35,9 @@ as a standalone discovery service.</p></div>
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-saml-idp-discovery" %}
 
-{% include {{ version }}/delegated-authentication.md configKey="cas.authn.pac4j.saml[0]" %}
+{% include {{ version }}/delegated-authentication-configuration.md configKey="cas.authn.pac4j.saml[0]" %}
 
-{% include {{ version }}/saml2-delegated-authentication.md configKey="cas.authn.pac4j.saml[0]" %}
+{% include {{ version }}/saml2-delegated-authentication-configuration.md configKey="cas.authn.pac4j.saml[0]" %}
 
 Identity provider discovery allows CAS 
 to [embed and present a discovery service](https://wiki.shibboleth.net/confluence/display/EDS10/Embedded+Discovery+Service) 
@@ -67,9 +67,6 @@ directly be consumed as a JSON file with the following structure:
   }]
 }]
 ```
-
-To see the relevant list of CAS properties, 
-please [review this guide](../configuration/Configuration-Properties.html#saml2-identity-provider-discovery).
 
 The following endpoints are available:
 

@@ -90,7 +90,7 @@ public class SamlIdPMetadataConfiguration {
     private ConfigurableApplicationContext applicationContext;
 
     @Autowired
-    @Qualifier("shibboleth.OpenSAMLConfig")
+    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
     private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
 
     @Autowired
@@ -201,7 +201,7 @@ public class SamlIdPMetadataConfiguration {
         return plan;
     }
 
-    @ConditionalOnMissingBean(name = "defaultSamlRegisteredServiceCachingMetadataResolver")
+    @ConditionalOnMissingBean(name = SamlRegisteredServiceCachingMetadataResolver.DEFAULT_BEAN_NAME)
     @Bean
     @RefreshScope
     public SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver() {

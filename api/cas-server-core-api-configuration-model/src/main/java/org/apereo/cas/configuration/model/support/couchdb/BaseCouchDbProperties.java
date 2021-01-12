@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.couchdb;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
@@ -25,15 +26,19 @@ public abstract class BaseCouchDbProperties implements Serializable {
     /**
      * Connection url.
      */
+    @RequiredProperty
     private String url = "http://localhost:5984";
 
     /**
      * Username for connection.
      */
+    @RequiredProperty
     private String username;
+
     /**
      * Password for connection.
      */
+    @RequiredProperty
     private String password;
 
     /**
@@ -97,9 +102,9 @@ public abstract class BaseCouchDbProperties implements Serializable {
     private int retries = 5;
 
     /**
-     * Database name. Defaults to +serviceRegistry+ and +ticketRegistry+ for the service and ticket registries,
-     * respectively.
+     * Database name.
      */
+    @RequiredProperty
     private String dbName;
 
     /**

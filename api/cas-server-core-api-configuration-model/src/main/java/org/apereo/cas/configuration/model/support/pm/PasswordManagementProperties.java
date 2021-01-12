@@ -11,6 +11,7 @@ import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -32,6 +33,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @Accessors(chain = true)
+@JsonFilter("PasswordManagementProperties")
 public class PasswordManagementProperties implements Serializable {
 
     private static final long serialVersionUID = -260644582798411176L;
@@ -87,12 +89,15 @@ public class PasswordManagementProperties implements Serializable {
     /**
      * Settings related to fetching usernames.
      */
-    private ForgotUsername forgotUsername = new ForgotUsername();
+    @NestedConfigurationProperty
+    private ForgotUsernamePasswordManagementProperties forgotUsername = 
+        new ForgotUsernamePasswordManagementProperties();
 
     /**
      * Settings related to password history management.
      */
-    private PasswordHistory history = new PasswordHistory();
+    @NestedConfigurationProperty
+    private PasswordHistoryProperties history = new PasswordHistoryProperties();
 
     /**
      * Handle password policy via Groovy script.
@@ -190,46 +195,7 @@ public class PasswordManagementProperties implements Serializable {
         @RequiredProperty
         private String endpointPassword;
     }
-
-    @RequiresModule(name = "cas-server-support-pm-webflow")
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class ForgotUsername implements Serializable {
-        private static final long serialVersionUID = 4850199066765183587L;
-
-        /**
-         * Email settings for notifications.
-         */
-        @NestedConfigurationProperty
-        private EmailProperties mail = new EmailProperties();
-
-        public ForgotUsername() {
-            this.mail.setAttributeName("mail");
-            this.mail.setText("Your current username is: %s");
-            this.mail.setSubject("Forgot Username");
-        }
-    }
-
-    @RequiresModule(name = "cas-server-support-pm-webflow")
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class PasswordHistory implements Serializable {
-        private static final long serialVersionUID = 2211199066765183587L;
-
-        /**
-         * Flag to indicate if password history tracking is enabled.
-         */
-        private boolean enabled;
-
-        /**
-         * Handle password history with Groovy.
-         */
-        @NestedConfigurationProperty
-        private SpringResourceProperties groovy = new SpringResourceProperties();
-    }
-
+    
     @RequiresModule(name = "cas-server-support-pm-webflow")
     @Getter
     @Setter

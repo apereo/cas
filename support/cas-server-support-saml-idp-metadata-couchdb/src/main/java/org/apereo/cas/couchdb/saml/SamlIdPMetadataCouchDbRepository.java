@@ -33,6 +33,12 @@ public class SamlIdPMetadataCouchDbRepository extends CouchDbRepositorySupport<C
         return db.queryView(view, CouchDbSamlIdPMetadataDocument.class).stream().findFirst().orElse(null);
     }
 
+    /**
+     * Gets for service.
+     *
+     * @param registeredService the registered service
+     * @return the for service
+     */
     @View(name = "service", map = "function(doc) { if (doc.metadata && doc.signingKey && doc.encryptionKey) { emit(doc._id, doc) } }")
     public CouchDbSamlIdPMetadataDocument getForService(final Optional<SamlRegisteredService> registeredService) {
         if (registeredService.isPresent()) {

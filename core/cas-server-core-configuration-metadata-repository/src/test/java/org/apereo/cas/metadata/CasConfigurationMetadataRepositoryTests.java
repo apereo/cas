@@ -7,6 +7,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.util.List;
 import java.util.Set;
 
@@ -33,16 +34,27 @@ public class CasConfigurationMetadataRepositoryTests {
     }
 
     @Test
-    public void verifyQueryOperation() {
-        val repository = new CasConfigurationMetadataRepository();
-        var properties = repository.query(ConfigurationMetadataCatalogQuery.builder().build());
+    public void verifyQueryOperation() throws Exception {
+        var properties = CasConfigurationMetadataCatalog.query(ConfigurationMetadataCatalogQuery
+            .builder()
+            .build());
         assertFalse(properties.properties().isEmpty());
-        properties = repository.query(ConfigurationMetadataCatalogQuery.builder().casExclusive(true).build());
+
+        val file = File.createTempFile("config", ".yml");
+        CasConfigurationMetadataCatalog.export(file, properties);
+        assertTrue(file.exists());
+
+        properties = CasConfigurationMetadataCatalog.query(ConfigurationMetadataCatalogQuery
+            .builder()
+            .queryType(ConfigurationMetadataCatalogQuery.QueryTypes.CAS)
+            .build());
         assertTrue(properties.properties().isEmpty());
-        properties = repository.query(ConfigurationMetadataCatalogQuery.builder()
+
+        properties = CasConfigurationMetadataCatalog.query(ConfigurationMetadataCatalogQuery
+            .builder()
             .modules(List.of("some-module-name"))
-            .casExclusive(true).build());
+            .queryType(ConfigurationMetadataCatalogQuery.QueryTypes.THIRD_PARTY)
+            .build());
         assertTrue(properties.properties().isEmpty());
     }
-
 }

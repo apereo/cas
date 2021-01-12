@@ -156,6 +156,15 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
         return attributes;
     }
 
+    /**
+     * Resolve attributes from attribute definition store and provide map.
+     *
+     * @param principal           the principal
+     * @param principalAttributes the principal attributes
+     * @param registeredService   the registered service
+     * @param selectedService     the selected service
+     * @return the map
+     */
     protected Map<String, List<Object>> resolveAttributesFromAttributeDefinitionStore(final Principal principal,
                                                                                       final Map<String, List<Object>> principalAttributes,
                                                                                       final RegisteredService registeredService,

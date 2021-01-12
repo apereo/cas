@@ -21,10 +21,10 @@ public class AuthenticationPolicyTests {
     public void verifyOperation() {
         val policy = mock(AuthenticationPolicy.class);
         when(policy.getOrder()).thenCallRealMethod();
+        when(policy.shouldResumeOnFailure(any())).thenCallRealMethod();
         when(policy.getName()).thenCallRealMethod();
         assertNotNull(policy.getName());
+        assertTrue(policy.shouldResumeOnFailure(new IllegalArgumentException()));
         assertEquals(Ordered.LOWEST_PRECEDENCE, policy.getOrder());
-
     }
-
 }

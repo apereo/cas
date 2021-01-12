@@ -2,7 +2,7 @@ package org.apereo.cas.web.security.authentication;
 
 import org.apereo.cas.authorization.LdapUserAttributesToRolesAuthorizationGenerator;
 import org.apereo.cas.authorization.LdapUserGroupsToRolesAuthorizationGenerator;
-import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
+import org.apereo.cas.configuration.model.core.monitor.ActuatorEndpointsMonitorProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.LdapUtils;
@@ -47,11 +47,14 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class EndpointLdapAuthenticationProvider implements AuthenticationProvider {
-    private final MonitorProperties.Endpoints.LdapSecurity ldapProperties;
+    private final ActuatorEndpointsMonitorProperties.LdapSecurity ldapProperties;
     private final SecurityProperties securityProperties;
     private final ConnectionFactory connectionFactory;
     private final Authenticator authenticator;
 
+    /**
+     * Destroy.
+     */
     public void destroy() {
         this.connectionFactory.close();
         this.authenticator.close();

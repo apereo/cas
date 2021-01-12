@@ -17,6 +17,62 @@ buildCache {
     }
 }
 
+dependencyResolutionManagement {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven {
+            url "https://build.shibboleth.net/nexus/content/repositories/releases"
+            content {
+                includeGroupByRegex "org\\.opensaml.*"
+                includeGroupByRegex "net\\.shibboleth.*"
+            }
+        }
+        maven {
+            url "https://dl.bintray.com/apereocas/webauthn-cas/"
+            mavenContent { releasesOnly() }
+        }
+        maven {
+            url "https://dl.bintray.com/apereocas/jradius/"
+            content {
+                includeGroupByRegex "net\\.jradius.*"
+            }
+        }
+        maven {
+            url "https://oss.sonatype.org/content/repositories/snapshots"
+            mavenContent { snapshotsOnly() }
+        }
+        maven {
+            url "https://oss.sonatype.org/content/repositories/releases"
+            mavenContent { releasesOnly() }
+        }
+        maven {
+            url "https://splunk.jfrog.io/splunk/ext-releases-local"
+            content {
+                includeGroupByRegex ".*splunk.*"
+            }
+            mavenContent { releasesOnly() }
+        }
+        maven {
+            url "https://dl.bintray.com/uniconiam/maven"
+            mavenContent { releasesOnly() }
+        }
+        maven {
+            url "https://repo.terracotta.org/maven2"
+            mavenContent { releasesOnly() }
+            content {
+                includeGroup "org.terracotta"
+            }
+        }
+        maven {
+            url "https://oss.jfrog.org/artifactory/oss-snapshot-local"
+            mavenContent { snapshotsOnly() }
+        }
+        jcenter()
+    }
+}
+
+
 rootProject.name = "cas-server"
 
 include "api:cas-server-core-api"
@@ -80,6 +136,7 @@ include "core:cas-server-core-webflow-api"
 include "core:cas-server-core-webflow-mfa"
 include "core:cas-server-core-webflow-mfa-api"
 
+include "docs:cas-server-documentation-processor"
 include "docs:cas-server-documentation"
 
 include "support:cas-server-support-acceptto-mfa"
@@ -203,6 +260,7 @@ include "support:cas-server-support-influxdb-core"
 include "support:cas-server-support-interrupt-api"
 include "support:cas-server-support-interrupt-core"
 include "support:cas-server-support-interrupt-webflow"
+include "support:cas-server-support-inwebo-mfa"
 include "support:cas-server-support-javamelody"
 include "support:cas-server-support-jdbc"
 include "support:cas-server-support-jdbc-authentication"

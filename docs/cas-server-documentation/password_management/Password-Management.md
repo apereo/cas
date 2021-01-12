@@ -9,7 +9,10 @@ category: Password Management
 # Password Management
 
 If authentication fails due to a rejected password policy, CAS is able to intercept
-that request and allow the user to update the account password in place. The password management features of CAS are rather modest, and alternatively should the functionality provide inadequate for your policy, you may always redirect CAS to use a separate and standalone application that is fully in charge of managing the account password and associated flows.
+that request and allow the user to update the account password in place. The password management 
+features of CAS are rather modest, and alternatively should the functionality provide inadequate 
+for your policy, you may always redirect CAS to use a separate and standalone application 
+that is fully in charge of managing the account password and associated flows.
 
 CAS may also allow users to reset their passwords voluntarily. Those who have forgotten their account password
 may receive a secure link with a time-based expiration policy at their registered email address and/or phone. The link
@@ -31,72 +34,26 @@ in your configuration and overlays. This is just to teach you that it exists.</p
 
 To learn more about available notification options, please [see this guide](../notifications/SMS-Messaging-Configuration.html) or [this guide](../notifications/Sending-Email-Configuration.html). 
 
-{% include {{ version }}/password-management-configuration.md %}
+{% include {{ version }}/pswd-mgmt-configuration.md %}
 
-{% include {{ version }}/email-notifications.md configKey="cas.authn.pm.reset" %}
+{% include {{ version }}/email-notifications-configuration.md configKey="cas.authn.pm.reset" %}
 
-{% include {{ version }}/sms-notifications.md configKey="cas.authn.pm.reset" %}
+{% include {{ version }}/sms-notifications-configuration.md configKey="cas.authn.pm.reset" %}
 
-{% include {{ version }}/signing-encryption.md configKey="cas.authn.pm.reset" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
+{% include {{ version }}/signing-encryption-configuration.md configKey="cas.authn.pm.reset" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
 
 {% include {{ version }}/webflow-configuration.md configKey="cas.authn.pm.webflow" %}
 
 ## reCAPTCHA Integration
 
-Password reset attempts can be protected and integrated with [Google reCAPTCHA](https://developers.google.com/recaptcha). This requires the presence of reCAPTCHA settings for the basic integration and instructing the password management flow to turn on and verify requests via reCAPTCHA. 
+Password reset attempts can be protected and integrated 
+with [Google reCAPTCHA](https://developers.google.com/recaptcha). This requires 
+the presence of reCAPTCHA settings for the basic integration and instructing 
+the password management flow to turn on and verify requests via reCAPTCHA. 
 
 ## Password History
 
-CAS allows for strategies to track and storage recycled password. Recycled 
-passwords are kept in storage for the user account and are examined upon password updates for validity. 
-
-{% include {{ version }}/pswd-history-configuration.md %}
-
-Once password history functionality is enabled, passwords can be tracked 
-in history via a Groovy or an in-memory backend. Specific storage 
-options may also provide their own support for password history.
-
-### Groovy
-
-Password history tracking, once enabled, can be handed off to an external Groovy script as such:
-
-```groovy
-def exists(Object[] args) {
-    def request = args[0]
-    def logger = args[1]
-    return false
-}
-
-def store(Object[] args) {
-    def request = args[0]
-    def logger = args[1]
-    return true
-}
-
-def fetchAll(Object[] args) {
-    def logger = args[0]
-    return []
-}
-
-def fetch(Object[] args) {
-    def username = args[0]
-    def logger = args[1]
-    return []
-}   
-
-def remove(Object[] args) { 
-    def username = args[0]
-    def logger = args[1]
-}
-
-def removeAll(Object[] args) { 
-    def logger = args[0]
-}
-```
-
-The `request` parameter encapsulates a `PasswordChangeRequest` object, carrying `username` and `password` fields.
-
-{% include {{ version }}/pswd-history-groovy-configuration.md %}
+To learn more, please [see this guide](Password-Management-History.html).
 
 ## JSON Storage
 

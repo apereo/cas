@@ -14,7 +14,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RequiresModule(name = "cas-server-support-rest", automated = true)
+@RequiresModule(name = "cas-server-support-rest")
 @Getter
 @Setter
 @Accessors(chain = true)

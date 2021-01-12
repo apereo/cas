@@ -268,16 +268,16 @@ Allow the CAS Spring Cloud configuration server to load settings from an Apache 
 
 ### Amazon Secrets Manager
 
-{% include {{ version }}/aws-integration.md configKey="cas.spring.cloud.aws.secrets-manager" %}
+{% include {{ version }}/aws-configuration.md configKey="cas.spring.cloud.aws.secrets-manager" %}
 
 ### Amazon Parameter Store
 
-{% include {{ version }}/aws-integration.md configKey="cas.spring.cloud.aws.ssm" %}
+{% include {{ version }}/aws-configuration.md configKey="cas.spring.cloud.aws.ssm" %}
 
 
 ### Amazon S3
 
-{% include {{ version }}/aws-integration.md configKey="cas.spring.cloud.aws.s3" %}
+{% include {{ version }}/aws-configuration.md configKey="cas.spring.cloud.aws.s3" %}
 
 ```properties
 # ${configuration-key}.bucket-name=cas-properties
@@ -301,7 +301,7 @@ Allow the CAS Spring Cloud configuration server to load settings from a RDBMS in
 
 Allow the CAS Spring Cloud configuration server to load settings from a REST API.
 
-{% include {{ version }}/rest-integration.md configKey="cas.spring.cloud.rest" %}
+{% include {{ version }}/rest-configuration.md configKey="cas.spring.cloud.rest" %}
 
 ## Configuration Security
 

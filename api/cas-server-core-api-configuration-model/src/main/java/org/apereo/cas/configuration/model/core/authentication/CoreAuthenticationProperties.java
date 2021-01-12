@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
-import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -31,45 +30,23 @@ public class CoreAuthenticationProperties implements Serializable {
      * defined via the definition of a registered service
      * and how it filters the required authentication handlers.
      */
-    private RegisteredServiceAuthenticationHandlerResolution serviceAuthenticationResolution = new RegisteredServiceAuthenticationHandlerResolution();
+    @NestedConfigurationProperty
+    private RegisteredServiceAuthenticationHandlerResolutionProperties serviceAuthenticationResolution =
+        new RegisteredServiceAuthenticationHandlerResolutionProperties();
 
     /**
      * Attempt to resolve/filter authentication handlers
      * for the current transaction based on what is globally
      * defined via an external groovy script.
      */
-    private GroovyAuthenticationHandlerResolution groovyAuthenticationResolution = new GroovyAuthenticationHandlerResolution();
+    @NestedConfigurationProperty
+    private GroovyAuthenticationHandlerResolutionProperties groovyAuthenticationResolution =
+        new GroovyAuthenticationHandlerResolutionProperties();
 
     /**
      * Customization of authentication engine and pre/post processing.
      */
     @NestedConfigurationProperty
     private AuthenticationEngineProperties engine = new AuthenticationEngineProperties();
-    
-    @RequiresModule(name = "cas-server-support-authentication", automated = true)
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class GroovyAuthenticationHandlerResolution extends SpringResourceProperties {
-        private static final long serialVersionUID = 8079027843747126083L;
 
-        /**
-         * The execution order of this resolver in the chain of authentication handler resolvers.
-         */
-        private int order;
-    }
-
-    @RequiresModule(name = "cas-server-support-authentication", automated = true)
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    @JsonFilter("RegisteredServiceAuthenticationHandlerResolution")
-    public static class RegisteredServiceAuthenticationHandlerResolution implements Serializable {
-        private static final long serialVersionUID = 8079027843747126083L;
-
-        /**
-         * The execution order of this resolver in the chain of authentication handler resolvers.
-         */
-        private int order;
-    }
 }

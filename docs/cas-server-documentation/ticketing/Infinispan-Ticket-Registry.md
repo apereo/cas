@@ -14,7 +14,7 @@ Infinispan integration is enabled by including the following dependency in the W
 
 {% include {{ version }}/infinispan-ticket-registry-configuration.md %}
 
-{% include {{ version }}/signing-encryption.md configKey="cas.ticket.registry.infinispan" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
+{% include {{ version }}/signing-encryption-configuration.md configKey="cas.ticket.registry.infinispan" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
 
 [Infinispan](http://infinispan.org/) is a distributed in-memory key/value data store with optional schema.
 It can be used both as an embedded Java library and as a language-independent service accessed remotely over a variety of protocols.
@@ -43,7 +43,7 @@ There are a variety of cache stores available to choose from, some of which are:
 - HBase
 - MongoDB
 
-See the [full list of implementations](http://infinispan.org/cache-store-implementations/).
+See the [full list of implementations](https://infinispan.org/cache-store-implementations).
 
 ## Distributed Cache
 

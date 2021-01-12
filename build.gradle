@@ -22,7 +22,7 @@ buildscript {
         classpath "io.franzbecker:gradle-lombok:$gradleLombokVersion"
         classpath "com.github.ben-manes:gradle-versions-plugin:$gradleDependencyVersionsVersion"
 
-        classpath "net.ltgt.gradle:gradle-errorprone-javacplugin-plugin:$gradleErrorProneVersion"
+        classpath "net.ltgt.gradle:gradle-errorprone-plugin:$gradleErrorProneVersion"
         classpath "org.owasp:dependency-check-gradle:$gradleDependencyCheckVersion"
         classpath "gradle.plugin.com.github.spotbugs.snom:spotbugs-gradle-plugin:$gradleSpotbugsVersion"
         classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:$gradleSonarqubeVersion"
@@ -51,6 +51,8 @@ ext {
     ci = System.getenv("CI") || Boolean.getBoolean("CI")
 
     excludedFilesFromTestCoverage = [
+        '**/docs/**',
+        '**/soap/generated/**',
         '**/**ConfigurationMetadata**',
         '**/**NtlmAuthenticationHandler**',
         '**/**CosmosDbServiceRegistry**',
@@ -188,16 +190,6 @@ allprojects {
         }
     }
 
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        jcenter()
-        maven {
-            url "$sonatypeReleasesRepositoryUrl"
-            mavenContent { releasesOnly() }
-        }
-    }
-
     javadoc {
         options.addBooleanOption('html5', true)
         failOnError = Boolean.getBoolean("ignoreJavadocFailures")
@@ -231,64 +223,11 @@ subprojects {
     }
 
     if (!rootProject.skipErrorProneCompiler) {
-        apply plugin: "net.ltgt.errorprone-javacplugin"
+        apply plugin: "net.ltgt.errorprone"
     }
     apply from: rootProject.file("gradle/tests.gradle")
 
     ext.libraries = rootProject.ext.libraries
-
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        maven {
-            url "https://build.shibboleth.net/nexus/content/repositories/releases"
-            content {
-                includeGroupByRegex "org\\.opensaml.*"
-                includeGroupByRegex "net\\.shibboleth.*"
-            }
-        }
-        maven {
-            url "https://dl.bintray.com/apereocas/webauthn-cas/"
-            mavenContent { releasesOnly() }
-        }
-        maven {
-            url "https://dl.bintray.com/apereocas/jradius/"
-            content {
-                includeGroupByRegex "net\\.jradius.*"
-            }
-        }
-        maven {
-            url "https://oss.sonatype.org/content/repositories/snapshots"
-            mavenContent { snapshotsOnly() }
-        }
-        maven {
-            url "https://oss.sonatype.org/content/repositories/releases"
-            mavenContent { releasesOnly() }
-        }
-        maven {
-            url "https://splunk.jfrog.io/splunk/ext-releases-local"
-            content {
-                includeGroupByRegex ".*splunk.*"
-            }
-            mavenContent { releasesOnly() }
-        }
-        maven {
-            url "https://dl.bintray.com/uniconiam/maven"
-            mavenContent { releasesOnly() }
-        }
-        maven {
-            url "https://repo.terracotta.org/maven2"
-            mavenContent { releasesOnly() }
-            content {
-                includeGroup "org.terracotta"
-            }
-        }
-        maven {
-            url "https://oss.jfrog.org/artifactory/oss-snapshot-local"
-            mavenContent { snapshotsOnly() }
-        }
-        jcenter()
-    }
 
     configurations {
         tests
@@ -334,15 +273,15 @@ subprojects {
      * evaluate sub-projects to apply plugins, etc.
      */
     afterEvaluate { project ->
-        if ((rootProject.publishReleases || rootProject.publishSnapshots) && projectShouldBePublished(project)) {
-            //logger.info "Project ${project.name} should be published"
+        if (projectShouldBePublished(project)) {
+            logger.info "Project ${project.name} should be published"
             apply from: rootProject.file("gradle/maven.gradle")
 
             publishing {
                 publications {
                     def isWarPluginApplied = project.plugins.hasPlugin("war")
                     if (isWarPluginApplied) {
-                        //logger.info "Project ${project.name} should be published as a WAR"
+                        logger.info "Project ${project.name} should be published as a WAR"
                         mavenWeb(MavenPublication) {
                             from components.web
                             pom {
@@ -353,7 +292,7 @@ subprojects {
                             }
                         }
                     } else {
-                        //logger.info "Project ${project.name} should be published as a JAR"
+                        logger.info "Project ${project.name} should be published as a JAR"
                         mavenJava(MavenPublication) {
                             from components.java
                             artifact tasks['sourcesJar']
@@ -444,26 +383,24 @@ subprojects {
     ext.buildJarFile = new File(project.buildDir, "libs/${project.name}-${project.version}.jar")
 
     [compileTestJava, compileJava].each {
-        it.doFirst {
-            it.options.fork = true
-            it.options.incremental = true
+        it.options.fork = true
+        it.options.incremental = true
 
-            def casCompilerArgs = ["-parameters"]
+        def casCompilerArgs = ["-parameters"]
 
-            def terminateCompilerOnWarning = project.ext.properties.get("terminateCompilerOnWarning", true)
-            if (terminateCompilerOnWarning) {
-                casCompilerArgs.add("-Werror")
-            }
-
-            if (!rootProject.skipErrorProneCompiler) {
-                it.options.errorprone.allErrorsAsWarnings = false
-                it.options.errorprone.disableWarningsInGeneratedCode = true
-                it.options.errorprone.errorproneArgs += ['-Xep:ParameterName:OFF', '-Xep:MissingOverride:OFF', '-Xep:MissingSummary:OFF']
-
-                casCompilerArgs.add("-XDcompilePolicy=byfile")
-            }
-            it.options.compilerArgs += casCompilerArgs
+        def terminateCompilerOnWarning = project.ext.properties.get("terminateCompilerOnWarning", true)
+        if (terminateCompilerOnWarning) {
+            casCompilerArgs.add("-Werror")
         }
+
+        if (!rootProject.skipErrorProneCompiler) {
+            it.options.errorprone.allErrorsAsWarnings = false
+            it.options.errorprone.disableWarningsInGeneratedCode = true
+            it.options.errorprone.errorproneArgs = ['-Xep:ParameterName:OFF', '-Xep:MissingOverride:OFF', '-Xep:MissingSummary:OFF']
+
+            casCompilerArgs.add("-XDcompilePolicy=byfile")
+        }
+        it.options.compilerArgs += casCompilerArgs
     }
 
     tasks.jar.onlyIf {
@@ -663,7 +600,7 @@ task verifyRequiredJavaVersion {
 }
 
 boolean projectShouldBePublished(Project project) {
-    return !["api", "core", "docs", "support", "webapp", "cas-server-documentation"].contains(project.name)
+    return !["api", "core", "docs", "support", "webapp"].contains(project.name) && !project.getPath().contains("cas-server-documentation")
 }
 
 

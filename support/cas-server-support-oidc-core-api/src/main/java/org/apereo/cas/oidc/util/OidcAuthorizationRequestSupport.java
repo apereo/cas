@@ -93,10 +93,17 @@ public class OidcAuthorizationRequestSupport {
      * @return the optional user profile
      */
     public static Optional<CommonProfile> isAuthenticationProfileAvailable(final JEEContext context) {
-        val manager = new ProfileManager<CommonProfile>(context, context.getSessionStore());
+        val manager = new ProfileManager<CommonProfile>(context);
         return manager.get(true);
     }
 
+    /**
+     * Gets redirect url with error.
+     *
+     * @param originalRedirectUrl the original redirect url
+     * @param errorCode           the error code
+     * @return the redirect url with error
+     */
     @SneakyThrows
     public static String getRedirectUrlWithError(final String originalRedirectUrl, final String errorCode) {
         val uriBuilder = new URIBuilder(originalRedirectUrl)
@@ -104,6 +111,13 @@ public class OidcAuthorizationRequestSupport {
         return uriBuilder.build().toASCIIString();
     }
 
+    /**
+     * Remove oidc prompt from authorization request.
+     *
+     * @param url    the url
+     * @param prompt the prompt
+     * @return the string
+     */
     @SneakyThrows
     public static String removeOidcPromptFromAuthorizationRequest(final String url, final String prompt) {
         val uriBuilder = new URIBuilder(url);

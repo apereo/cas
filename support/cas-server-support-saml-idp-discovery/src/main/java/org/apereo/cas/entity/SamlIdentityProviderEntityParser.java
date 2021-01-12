@@ -56,10 +56,19 @@ public class SamlIdentityProviderEntityParser implements DisposableBean {
         identityProviders.addAll(Arrays.asList(entity));
     }
 
+    /**
+     * Clear providers.
+     */
     public void clear() {
         identityProviders.clear();
     }
 
+    /**
+     * Import resource and provide boolean.
+     *
+     * @param resource the resource
+     * @return the boolean
+     */
     public boolean importResource(final Resource resource) {
         try {
             if (ResourceUtils.doesResourceExist(resource)) {

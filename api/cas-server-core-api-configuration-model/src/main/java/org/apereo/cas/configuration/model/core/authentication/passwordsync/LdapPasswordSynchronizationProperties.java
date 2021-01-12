@@ -13,7 +13,7 @@ import lombok.experimental.Accessors;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@RequiresModule(name = "cas-server-support-ldap", automated = true)
+@RequiresModule(name = "cas-server-support-ldap")
 @Getter
 @Setter
 @Accessors(chain = true)

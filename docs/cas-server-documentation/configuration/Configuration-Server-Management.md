@@ -242,7 +242,7 @@ MongoDb documents are required to be found in the collection `MongoDbProperty`, 
 }
 ```
 
-To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html#mongodb).
+To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Storage.html#mongodb).
 
 ##### HashiCorp Vault
 
@@ -262,7 +262,7 @@ Support is provided via the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-configuration-cloud-zookeeper" %}
 
-To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html#zookeeper).
+To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Storage.html#zookeeper).
 
 You will need to map CAS settings to ZooKeeper's nodes that contain values. The parent node for all settings should 
 match the configuration root value provided to CAS. Under the root, you could have folders such 
@@ -298,7 +298,7 @@ Support is provided via the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-configuration-cloud-aws-s3" %}
 
-See [this guide](Configuration-Properties.html#amazon-s3) for relevant settings.
+See [this guide](Configuration-Storage.html#amazon-s3) for relevant settings.
 
 ##### Amazon Secrets Manager
 
@@ -308,7 +308,7 @@ Support is provided via the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-configuration-cloud-aws-secretsmanager" %}
 
-See [this guide](Configuration-Properties.html#amazon-secrets-manager) for relevant settings.
+See [this guide](Configuration-Storage.html#amazon-secrets-manager) for relevant settings.
 
 ##### Amazon Systems Manager Parameter Store (SSM)
 
@@ -319,7 +319,7 @@ Support is provided via the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-configuration-cloud-aws-ssm" %}
 
-See [this guide](Configuration-Properties.html#amazon-parameter-store) for relevant settings.
+See [this guide](Configuration-Storage.html#amazon-parameter-store) for relevant settings.
 
 ##### DynamoDb
 
@@ -339,21 +339,24 @@ The `DynamoDbCasProperties` table is automatically created by CAS with the follo
 }
 ```
 
-See [this guide](Configuration-Properties.html#dynamodb) for relevant settings.
+See [this guide](Configuration-Storage.html#dynamodb) for relevant settings.
 
 ##### Azure KeyVault Secrets
 
-CAS is also able to use Microsoft Azure's KeyVault Secrets to locate properties and settings. Support is provided via the following dependency in the WAR overlay:
+CAS is also able to use Microsoft Azure's KeyVault Secrets to locate 
+properties and settings. Support is provided via the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-configuration-cloud-azure-keyvault" %}
 
-To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html#azure-keyvault-secrets).
+To see the relevant list of CAS properties for 
+this feature, please [review this guide](Configuration-Storage.html#azure-keyvault-secrets).
 
 **IMPORTANT**: The allowed  name pattern in Azure Key Vault is `^[0-9a-zA-Z-]+$`. For properties that contain 
-that contain `.` in the name (i.e. `cas.some.property`),  replace `.` with `-` when you store the setting in Azure Key Vault (i.e. `cas-some-property`). 
+that contain `.` in the name (i.e. `cas.some.property`),  replace `.` with `-` when 
+you store the setting in Azure Key Vault (i.e. `cas-some-property`). 
 The module will handle the transformation for you. 
 
-See [this guide](Configuration-Properties.html#azure-keyvault-secrets) for relevant settings.
+See [this guide](Configuration-Storage.html#azure-keyvault-secrets) for relevant settings.
 
 ##### JDBC
 
@@ -364,7 +367,7 @@ Support is provided via the following dependency in the WAR overlay:
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-configuration-cloud-jdbc" %}
 
 By default, settings are expected to be found under a `CAS_SETTINGS_TABLE` that contains the fields: `id`, `name` and `value`.
-To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html#jdbc).
+To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Storage.html#jdbc).
 
 ##### REST
 
@@ -376,7 +379,7 @@ Support is provided via the following dependency in the WAR overlay:
 
 The REST endpoint is expected to produce a `Map` in the payload with keys as the setting names
 and values as the setting value. To see the relevant list of CAS properties for this 
-feature, please [review this guide](Configuration-Properties.html#rest).
+feature, please [review this guide](Configuration-Storage.html#rest).
 
 #### CAS Server Cloud Configuration
 
@@ -435,7 +438,8 @@ This will cause the CAS server (as the client of the configuration server) to re
 
 ## Securing Settings
 
-To learn how sensitive CAS settings can be secured via encryption, [please review this guide](Configuration-Properties-Security.html).
+To learn how sensitive CAS settings can be secured 
+via encryption, [please review this guide](Configuration-Properties-Security.html).
 
 ## Reloading Changes
 
@@ -449,4 +453,5 @@ to manage configuration in a distributed deployment. Spring Cloud Bus links node
 distributed system with a lightweight message broker. This can then be used to broadcast state
 changes (e.g. configuration changes) or other management instructions.
 
-To learn how sensitive CAS settings can be secured via encryption, [please review this guide](Configuration-Management-Clustered.html).
+To learn how sensitive CAS settings can be secured via 
+encryption, [please review this guide](Configuration-Management-Clustered.html).

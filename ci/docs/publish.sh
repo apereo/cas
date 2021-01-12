@@ -1,11 +1,12 @@
 #!/bin/bash
 
+clear
 branchVersion="$1"
 
 function validateProjectDocumentation {
   HTML_PROOFER_IMAGE=hdeadman/html-proofer:latest
   DOCS_FOLDER=$PWD/gh-pages/"$branchVersion"
-  DOCS_OUTPUT=$PWD/gh-pages/"$branchVersion"/build/out
+  DOCS_OUTPUT=/tmp/build/out
   HTML_PROOFER_SCRIPT=$PWD/ci/docs/html-proofer-docs.rb
   
   echo "Running html-proof image: ${HTML_PROOFER_IMAGE} on ${DOCS_FOLDER} with output ${DOCS_OUTPUT} using ${HTML_PROOFER_SCRIPT}"
@@ -33,7 +34,6 @@ function validateProjectDocumentation {
 echo -e "Copying project documentation over to $PWD/docs-latest...\n"
 chmod -R 777 docs/cas-server-documentation
 cp -R docs/cas-server-documentation/ $PWD/docs-latest
-rm -Rf $PWD/docs-latest/build
 mv $PWD/docs-latest/_includes $PWD/docs-includes
 
 echo -e "Cloning the repository to push documentation...\n"
@@ -44,51 +44,114 @@ git clone --single-branch --depth 1 --branch gh-pages --quiet \
 
 echo -e "Removing previous documentation from $branchVersion...\n"
 rm -Rf $PWD/gh-pages/"$branchVersion" > /dev/null
+rm -Rf $PWD/gh-pages/_includes/"$branchVersion" > /dev/null
+rm -Rf $PWD/gh-pages/_data/"$branchVersion" > /dev/null
 
 echo -e "Creating $branchVersion directory...\n"
 mkdir -p "$PWD/gh-pages/$branchVersion"
 mkdir -p "$PWD/gh-pages/_includes/$branchVersion"
+mkdir -p "$PWD/gh-pages/_data/$branchVersion"
 
 echo -e "Copying new docs to $branchVersion...\n"
 cp -Rf $PWD/docs-latest/* "$PWD/gh-pages/$branchVersion"
 cp -Rf $PWD/docs-includes/* "$PWD/gh-pages/_includes/$branchVersion"
+echo -e "Copied project documentation to $PWD/gh-pages/...\n"
 
-rm -Rf "$PWD/gh-pages/$branchVersion/build"
-echo -e "Copied project documentation...\n"
+echo -e "Generating documentation site data...\n"
+rm -Rf $PWD/gh-pages/_data/"$branchVersion" > /dev/null
+./gradlew :docs:cas-server-documentation-processor:build --no-daemon -x check -x test -x javadoc --configure-on-demand
+docgen="docs/cas-server-documentation-processor/build/libs/casdocsgen.jar"
+chmod +x ${docgen}
+${docgen} "$PWD/gh-pages/_data" "$branchVersion"
+rm -Rf docs/cas-server-documentation-processor/build
+echo -e "Generated documentation data at $PWD/gh-pages/_data/$branchVersion...\n"
 
 rm -Rf $PWD/docs-latest
 rm -Rf $PWD/docs-includes
 
+echo "Looking for badly named include fragments..."
+ls $PWD/gh-pages/_includes/$branchVersion/*.md | grep -v '\-configuration.md$'
+docsVal=$?
+if [ $docsVal == 0 ]; then
+ echo "Found include fragments whose name does not end in '-configuration.md'"
+ exit 1
+fi
+
+echo "Looking for unused include fragments..."
+res=0
+files=$(ls $PWD/gh-pages/_includes/$branchVersion/*.md)
+for f in $files; do
+ fname=$(basename "$f")
+#  echo "Looking for $fname in $PWD/gh-pages/$branchVersion";
+ grep -r $fname "$PWD/gh-pages/$branchVersion" --include \*.md >/dev/null 2>&1
+ docsVal=$?
+ if [ $docsVal == 1 ]; then
+   grep -r $fname "$PWD/gh-pages/_includes/$branchVersion" --include \*.md >/dev/null 2>&1
+   docsVal=$?
+ fi
+ if [ $docsVal == 1 ]; then
+   echo "$fname fragment is unused."
+   res=1
+ fi
+done
+
+if [ $res == 1 ]; then
+ echo "Found unused include fragments."
+ exit 1
+fi
+
+echo "Validating documentation links..."
 validateProjectDocumentation
 retVal=$?
 if [[ ${retVal} -eq 1 ]]; then
-    echo -e "Failed to validate documentation.\n"
-#    exit ${retVal}
+  echo -e "Failed to validate documentation.\n"
+  exit ${retVal}
 fi
 
+pushd .
 cd $PWD/gh-pages
 
+echo -e "Installing documentation dependencies...\n"
+bundle install --full-index
+bundle update jekyll
+bundle update github-pages
+echo -e "\nBuilding documentation site...\n"
+bundle exec jekyll build --incremental
+rm -Rf _site .jekyll-metadata .sass-cache
+
+echo -e "\nConfiguring git repository settings...\n"
 git config user.email "cas@apereo.org"
 git config user.name "CAS"
+git config core.fileMode false
 
 echo -e "Configuring tracking branches for repository...\n"
 git branch -u origin/gh-pages
 
 echo -e "Adding changes to the git index...\n"
-rm -Rf "$branchVersion/build"
-git add -f .
+git add -f . 
 
 echo -e "Committing changes...\n"
-git commit -m "Published docs [gh-pages]. "
+git commit -m "Published docs to [gh-pages] from $branchVersion. "
+
+if [ -z "$GH_PAGES_TOKEN" ] && [ "${GITHUB_REPOSITORY}" != "apereo/cas" ]; then
+  echo -e "\nNo GitHub token is defined to publish documentation."
+  popd
+  rm -Rf $PWD/gh-pages
+  exit 0
+fi
 
 echo -e "Pushing upstream to origin/gh-pages...\n"
-#git push -fq origin --all
-#retVal=$?
-#rm -Rf $PWD/gh-pages
-#if [[ ${retVal} -eq 0 ]]; then
-#    echo -e "Successfully published documentation.\n"
-#    exit 0
-#else
-#    echo -e "Failed to publish documentation.\n"
-#    exit ${retVal}
-#fi
+git push -fq origin --all
+retVal=$?
+
+popd
+rm -Rf $PWD/gh-pages
+
+if [[ ${retVal} -eq 0 ]]; then
+   echo -e "Published documentation to $branchVersion.\n"
+   exit 0
+else
+   echo -e "Failed to publish documentation.\n"
+   exit ${retVal}
+fi
+

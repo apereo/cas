@@ -100,6 +100,11 @@ public class JwtTokenTicketBuilder implements TokenTicketBuilder {
         return jwtBuilder.build(request);
     }
 
+    /**
+     * Gets time to live.
+     *
+     * @return the time to live
+     */
     protected Long getTimeToLive() {
         val timeToLive = expirationPolicy.buildTicketExpirationPolicy().getTimeToLive();
         return Long.MAX_VALUE == timeToLive ? Long.valueOf(Integer.MAX_VALUE) : timeToLive;

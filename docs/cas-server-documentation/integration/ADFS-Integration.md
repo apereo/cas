@@ -16,7 +16,7 @@ available as attributes to CAS Server, and by extension CAS Clients.
 here allows CAS to use ADFS as an external identity provider. If you wish to do the 
 opposite, allowing ADFS to become a CAS client and using CAS as an identity 
 provider, you may take advantage of 
-<a href="../installation/Configuring-SAML2-Authentication.html">SAML2 support in CAS</a> 
+<a href="../authentication/Configuring-SAML2-Authentication.html">SAML2 support in CAS</a> 
 as one integration option.</p></div>
 
 Support is enabled by including the following dependency in the WAR overlay:
@@ -45,7 +45,7 @@ versions can be detected via the <code>java -version</code> command.</p></div>
 Adjust and provide settings for the ADFS instance, and make sure you have obtained the ADFS 
 signing certificate and made it available to CAS at a location that can be resolved at runtime.
 
-{% include {{ version }}/wsfed-delegated-authentication.md configKey="cas.authn.wsfed[0]" %}
+{% include {{ version }}/wsfed-delegated-authentication-configuration.md configKey="cas.authn.wsfed[0]" %}
 
 ## Encrypted Assertions
 
@@ -105,7 +105,8 @@ An optional step, the `casLogoutView.html` can be modified to place a link to AD
 ```
 
 Alternatively, you may simply instruct CAS to redirect to the above endpoint after logout operations have executed.
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#logout).
+
+{% include {{ version }}/logout-configuration.md %}
 
 ## Per-Service Relying Party Id
 

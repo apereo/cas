@@ -29,3 +29,7 @@ The docker images that are hosted on Docker Hub are *mostly* meant to be used
 as quickstarts and demos. You may also be able to use them as
 base images to add your customizations into the image. The image
 is built out of an existing [CAS overlay](WAR-Overlay-Installation.html).
+  
+## Kubernetes & Helm
+
+To learn how to use a CAS Helm chart to deploy CAS on a Kubernetes cluster, please [see this](Kubernetes-Helm-Deployment.html). 

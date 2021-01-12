@@ -1,11 +1,11 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
-import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 
@@ -46,7 +46,8 @@ public class PrincipalTransformationProperties implements Serializable {
     /**
      * Transform usernames using a Groovy resource.
      */
-    private Groovy groovy = new Groovy();
+    @NestedConfigurationProperty
+    private GroovyPrincipalTransformationProperties groovy = new GroovyPrincipalTransformationProperties();
 
     /**
      * Indicate whether the principal identifier should be transformed
@@ -56,7 +57,6 @@ public class PrincipalTransformationProperties implements Serializable {
     private CaseConversion caseConversion = CaseConversion.NONE;
 
     public enum CaseConversion {
-
         /**
          * No conversion.
          */
@@ -71,12 +71,4 @@ public class PrincipalTransformationProperties implements Serializable {
         UPPERCASE
     }
 
-    @RequiresModule(name = "cas-server-core-authentication", automated = true)
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class Groovy extends SpringResourceProperties {
-
-        private static final long serialVersionUID = 8079027843747126083L;
-    }
 }

@@ -124,7 +124,7 @@ public class CasCoreLogoutConfiguration {
             authenticationServiceSelectionPlan.getObject());
     }
 
-    @ConditionalOnMissingBean(name = "logoutManager")
+    @ConditionalOnMissingBean(name = LogoutManager.DEFAULT_BEAN_NAME)
     @RefreshScope
     @Autowired
     @Bean

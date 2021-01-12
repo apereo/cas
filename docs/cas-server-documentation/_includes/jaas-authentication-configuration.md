@@ -8,3 +8,5 @@
 # cas.authn.jaas[0].login-config-type=JavaLoginConfig
 # cas.authn.jaas[0].login-configuration-file=/path/to/jaas.con
 ```
+
+{% include {{ version }}/authentication-credential-selection-configuration.md %}

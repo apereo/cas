@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = CoreSamlConfigurationTests.SharedTestConfiguration.class)
 public class SamlUtilsTests {
     @Autowired
-    @Qualifier("shibboleth.OpenSAMLConfig")
+    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
     private OpenSamlConfigBean openSamlConfigBean;
 
     @Test

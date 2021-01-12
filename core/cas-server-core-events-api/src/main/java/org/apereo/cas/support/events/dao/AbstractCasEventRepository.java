@@ -117,5 +117,10 @@ public abstract class AbstractCasEventRepository implements CasEventRepository {
             .collect(Collectors.toSet());
     }
 
+    /**
+     * Save internal.
+     *
+     * @param event the event
+     */
     public abstract void saveInternal(CasEvent event);
 }

@@ -19,7 +19,7 @@ import java.util.stream.Stream;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@RequiresModule(name = "cas-server-support-reports", automated = true)
+@RequiresModule(name = "cas-server-support-reports")
 @Getter
 @Setter
 @ToString

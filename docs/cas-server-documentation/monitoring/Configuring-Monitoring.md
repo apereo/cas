@@ -23,73 +23,39 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-core-monitor" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#monitoring)
-and [this guide](../configuration/Configuration-Properties.html#memory).
+{% include {{ version }}/tgt-monitoring-configuration.md %}
+{% include {{ version }}/st-monitoring-configuration.md %}
+{% include {{ version }}/load-monitoring-configuration.md %}
+{% include {{ version }}/memory-monitoring-configuration.md %}
 
-<div class="alert alert-warning"><strong>YMMV</strong><p>In order to accurately and reliably report on ticket statistics, you are at the mercy of the underlying ticket registry to support the behavior in a performant manner which means that the infrastructure and network capabilities and latencies must be considered and carefully tuned. This might have become specially relevant in clustered deployments as depending on the ticket registry of choice, CAS may need to <i>interrogate</i> the entire cluster by running distributed queries to calculate ticket usage.</p></div>
+<div class="alert alert-warning"><strong>YMMV</strong><p>In order to accurately and reliably 
+report on ticket statistics, you are at the mercy of the underlying ticket registry to support 
+the behavior in a performant manner which means that the infrastructure and network capabilities 
+and latencies must be considered and carefully tuned. This might have become specially relevant 
+in clustered deployments as depending on the ticket registry of choice, CAS may need 
+to <i>interrogate</i> the entire cluster by running distributed queries to calculate ticket usage.</p></div>
 
 ## Memcached
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-memcached-monitor" %}
-
-{% include {{ version }}/memcached-integration.md configKey="cas.monitor.memcached" %}
-
-The actual memcached implementation may be supported via one of the following options, expected to be defined in the overlay.
-
-###  Spymemcached
-
-Enable support via the [spymemcached library](https://code.google.com/p/spymemcached/). 
-
-Support is enabled by including the following dependency in the WAR overlay:
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-memcached-spy" %}
-
-### AWS ElastiCache
-
-For clusters running the Memcached engine, ElastiCache supports Auto Discovery—the ability 
-for client programs to automatically identify all of the nodes in a cache cluster, 
-and to initiate and maintain connections to all of these nodes. 
-
-Support is enabled by including the following dependency in the WAR overlay:
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-memcached-aws-elasticache" %}
+Please [see this guide](Configuring-Monitoring-Memcached.html) for more info.
 
 ## Ehcache
 
-Monitor the status and state of a cache backed by Ehcache.
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-ehcache-monitor" %}
-
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#cache-monitors).
+Please [see this guide](Configuring-Monitoring-Ehcache.html) for more info.
 
 ## MongoDb
 
-Monitor the status and availability of a MongoDb database.
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-mongo-monitor" %}
-
-{% include {{ version }}/mongodb-configuration.md configKey="cas.monitor" %}
+Please [see this guide](Configuring-Monitoring-MongoDb.html) for more info.
 
 ## Hazelcast
 
-Monitor the status and state of a cache backed by Hazelcast.
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-hazelcast-monitor" %}
-
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#cache-monitors).
+Please [see this guide](Configuring-Monitoring-Hazelcast.html) for more info.
 
 ## JDBC
 
-Monitor the status and availability of a relational SQL database.
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-jdbc-monitor" %}
-
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#database-monitoring).
+Please [see this guide](Configuring-Monitoring-JDBC.html) for more info.
 
 ## LDAP
 
-Monitor the status and availability of an LDAP server.
+Please [see this guide](Configuring-Monitoring-LDAP.html) for more info.
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-ldap-monitor" %}
-
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#ldap-server-monitoring).

@@ -66,7 +66,7 @@ public class OidcImplicitIdTokenAndTokenAuthorizationResponseBuilderTests extend
         request.addParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.IDTOKEN_TOKEN.getType());
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response, new JEESessionStore());
-        val manager = new ProfileManager<>(context, context.getSessionStore());
+        val manager = new ProfileManager<>(context);
 
         val profile = new CommonProfile();
         profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);

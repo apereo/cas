@@ -160,6 +160,12 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
         throw new FailedLoginException("Could not authenticate account for " + credential.getUsername());
     }
 
+    /**
+     * Authenticate syncope user and provide result as json node.
+     *
+     * @param credential the credential
+     * @return the optional
+     */
     @SneakyThrows
     protected Optional<JsonNode> authenticateSyncopeUser(final UsernamePasswordCredential credential) {
         HttpResponse response = null;

@@ -23,13 +23,16 @@ is used, but when working with Unicode strings as properties values it does matt
 files using the ISO-8859-1 encoding. YAML files are loaded with UTF-8 encoding. If you are setting Unicode
 values try using a YAML configuration file.</p></div>
 
+{% include {{ version }}/casserver-configuration.md %}
+
 ## Overview
 
 CAS allows you to externalize your configuration so you can work with the same CAS instance in
 different environments. You can use properties files, YAML files, environment variables and
 command-line arguments to externalize configuration.
 
-CAS uses a very particular order that is designed to allow sensible overriding of values. Properties passed to the CAS web application 
+CAS uses a very particular order that is designed to allow 
+sensible overriding of values. Properties passed to the CAS web application 
 are considered in the following order:
 
 1. Command line arguments, starting with `--` (e.g. `--server.port=9000`)
@@ -53,9 +56,14 @@ place to manage external properties for CAS nodes across all environments. To le
 
 To learn more about how to extend and customize the CAS configuration, please [review this guide](Configuration-Management-Extensions.html).
 
+## Custom CAS Settings
+
+{% include {{ version }}/custom-settings-configuration.md %}
+
 ## Auto Configuration Strategy
 
-To see a complete list of CAS properties, please [review this guide](Configuration-Properties.html#configuration-storage).
+To see the relevant list of CAS properties for this
+feature, please [review this guide](Configuration-Storage.html).
 
 Note that CAS in most if not all cases will attempt to auto-configure the context based on the declaration
 and presence of feature-specific dedicated modules. This generally SHOULD relieve the deployer

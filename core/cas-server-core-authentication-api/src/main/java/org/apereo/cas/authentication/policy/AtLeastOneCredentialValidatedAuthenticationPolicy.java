@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.policy;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationPolicyExecutionResult;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
@@ -40,23 +41,25 @@ public class AtLeastOneCredentialValidatedAuthenticationPolicy extends BaseAuthe
     private final boolean tryAll;
 
     @Override
-    public boolean isSatisfiedBy(final Authentication authn, final Set<AuthenticationHandler> authenticationHandlers,
-                                 final ConfigurableApplicationContext applicationContext,
-                                 final Optional<Serializable> assertion) throws Exception {
+    public AuthenticationPolicyExecutionResult isSatisfiedBy(final Authentication authn,
+                                                             final Set<AuthenticationHandler> authenticationHandlers,
+                                                             final ConfigurableApplicationContext applicationContext,
+                                                             final Optional<Serializable> assertion) throws Exception {
         if (this.tryAll) {
             val sum = authn.getSuccesses().size() + authn.getFailures().size();
             if (authenticationHandlers.size() != sum) {
-                LOGGER.warn("Number of credentials [{}] does not match the sum of authentication successes and failures [{}]", authn.getCredentials().size(), sum);
-                return false;
+                LOGGER.warn("Credentials count [{}] does not match the sum of authentication successes and failures [{}]",
+                    authn.getCredentials().size(), sum);
+                return AuthenticationPolicyExecutionResult.failure();
             }
             LOGGER.debug("Authentication policy is satisfied with all authentication transactions");
-            return !authn.getSuccesses().isEmpty();
+            return AuthenticationPolicyExecutionResult.success(!authn.getSuccesses().isEmpty());
         }
         if (!authn.getSuccesses().isEmpty()) {
             LOGGER.debug("Authentication policy is satisfied having found at least one authentication transactions");
-            return true;
+            return AuthenticationPolicyExecutionResult.success();
         }
         LOGGER.warn("Authentication policy has failed to find a successful authentication transaction");
-        return false;
+        return AuthenticationPolicyExecutionResult.failure();
     }
 }

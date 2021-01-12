@@ -6,8 +6,8 @@ import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationTransactionManager;
 import org.apereo.cas.authentication.DefaultAuthenticationAttributeReleasePolicy;
 import org.apereo.cas.authentication.DefaultAuthenticationEventExecutionPlan;
+import org.apereo.cas.authentication.DefaultAuthenticationManager;
 import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
-import org.apereo.cas.authentication.PolicyBasedAuthenticationManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 
@@ -61,7 +61,7 @@ public class CasCoreAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationManager casAuthenticationManager() {
-        return new PolicyBasedAuthenticationManager(
+        return new DefaultAuthenticationManager(
             authenticationEventExecutionPlan.getObject(),
             casProperties.getPersonDirectory().isPrincipalResolutionFailureFatal(),
             applicationContext

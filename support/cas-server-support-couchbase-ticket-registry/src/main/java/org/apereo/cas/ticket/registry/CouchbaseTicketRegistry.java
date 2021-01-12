@@ -38,11 +38,30 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements DisposableBean {
-    private static final ObjectMapper MAPPER = new ObjectMapper()
-        .enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY)
-        .findAndRegisterModules();
+    private static final ObjectMapper MAPPER;
+
+    static {
+        MAPPER = new ObjectMapper().findAndRegisterModules();
+        MAPPER.activateDefaultTyping(MAPPER.getPolymorphicTypeValidator(),
+            ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
+    }
 
     private final CouchbaseClientFactory couchbase;
+
+    /**
+     * Get the expiration policy value of the ticket in seconds.
+     *
+     * @param ticket the ticket
+     * @return the exp value
+     */
+    private static Duration getTimeToLive(final Ticket ticket) {
+        val ttl = ticket.getExpirationPolicy().getTimeToLive();
+        if (ttl >= Integer.MAX_VALUE) {
+            return Duration.ofSeconds(0);
+        }
+        val expTime = ttl.intValue();
+        return Duration.ofSeconds(expTime);
+    }
 
     @Override
     public void addTicket(final Ticket ticketToAdd) {
@@ -155,17 +174,6 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
         val query = getQueryForAllTickets();
         return couchbase.select(query,
             QueryOptions.queryOptions().serializer(JacksonJsonSerializer.create(MAPPER)), false);
-    }
-
-    /**
-     * Get the expiration policy value of the ticket in seconds.
-     *
-     * @param ticket the ticket
-     * @return the exp value
-     */
-    private static Duration getTimeToLive(final Ticket ticket) {
-        val expTime = ticket.getExpirationPolicy().getTimeToLive().intValue();
-        return Duration.ofSeconds(expTime);
     }
 }
 

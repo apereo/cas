@@ -121,7 +121,7 @@ public abstract class BaseSamlIdPConfigurationTests {
     protected MetadataResolver casSamlIdPMetadataResolver;
 
     @Autowired
-    @Qualifier("shibboleth.OpenSAMLConfig")
+    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
     protected OpenSamlConfigBean openSamlConfigBean;
 
     @Autowired
@@ -137,7 +137,7 @@ public abstract class BaseSamlIdPConfigurationTests {
     protected SamlIdPObjectEncrypter samlIdPObjectEncrypter;
 
     @Autowired
-    @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
+    @Qualifier(SamlRegisteredServiceCachingMetadataResolver.DEFAULT_BEAN_NAME)
     protected SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver;
 
     @Autowired
@@ -172,7 +172,7 @@ public abstract class BaseSamlIdPConfigurationTests {
     protected CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
+    @Qualifier(SamlRegisteredServiceCachingMetadataResolver.DEFAULT_BEAN_NAME)
     protected SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver;
 
     @Autowired

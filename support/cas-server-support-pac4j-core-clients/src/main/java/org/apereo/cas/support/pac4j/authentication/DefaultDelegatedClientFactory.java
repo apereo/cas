@@ -486,7 +486,6 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
                 }
 
                 val client = new SAML2Client(cfg);
-
                 if (StringUtils.isBlank(saml.getClientName())) {
                     val count = index.intValue();
                     client.setName(client.getClass().getSimpleName() + count);
@@ -658,7 +657,8 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
     }
 
     @SneakyThrows
-    private static <T extends OidcConfiguration> T getOidcConfigurationForClient(final BasePac4jOidcClientProperties oidc, final Class<T> clazz) {
+    private static <T extends OidcConfiguration> T getOidcConfigurationForClient(final BasePac4jOidcClientProperties oidc,
+                                                                                 final Class<T> clazz) {
         val cfg = clazz.getDeclaredConstructor().newInstance();
         if (StringUtils.isNotBlank(oidc.getScope())) {
             cfg.setScope(oidc.getScope());

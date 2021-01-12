@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -53,7 +54,8 @@ public abstract class AbstractLdapProperties implements Serializable {
     private String keystoreType;
 
     /**
-     * Path to the keystore used to determine which certificates or certificate authorities should be trusted.
+     * Path to the keystore used to determine which certificates or
+     * certificate authorities should be trusted.
      * Used when connecting to an LDAP server via LDAPS or startTLS connection.
      * If left blank, the default truststore for the Java runtime is used.
      */
@@ -98,9 +100,24 @@ public abstract class AbstractLdapProperties implements Serializable {
      * Before the next bind attempt using that connection, the validator tries to
      * validate the connection again but fails because it’s no longer trying with the
      * configured bind credentials but with whatever user DN was used in the previous step.
-     * Given the validation failure, the connection is closed and CAS would deny access by default. Passivators attempt to reconnect
+     * Given the validation failure, the connection is closed and CAS would deny
+     * access by default. Passivators attempt to reconnect
      * to LDAP with the configured bind credentials, effectively resetting the connection
      * to what it should be after each bind request.
+     * Furthermore if you are seeing errors in the logs that resemble
+     * a 'Operation exception encountered, reopening connection' type of message, this
+     * usually is an indication that the connection pool’s validation timeout
+     * established and created by CAS is greater than the timeout configured
+     * in the LDAP server, or more likely, in the load balancer in front of
+     * the LDAP servers. You can adjust the LDAP server session’s timeout
+     * for connections, or you can teach CAS to use a validity period that
+     * is equal or less than the LDAP server session’s timeout.
+     * Accepted values are:
+     * <ul>
+     * <li>{@code NONE}: No passivation takes place.</li>
+     * <li>{@code BIND}: The default behavior which passivates a connection by performing a
+     * bind operation on it. This option requires the availability of bind credentials when establishing connections to LDAP.</li>
+     * </ul>
      */
     private String poolPassivator = "BIND";
 
@@ -165,6 +182,7 @@ public abstract class AbstractLdapProperties implements Serializable {
     /**
      * The LDAP url to the server. More than one may be specified, separated by space and/or comma.
      */
+    @RequiredProperty
     private String ldapUrl;
 
     /**
@@ -198,11 +216,13 @@ public abstract class AbstractLdapProperties implements Serializable {
      * <li>SASL mechanism provided - Use the given SASL mechanism to bind when initializing connections. </li>
      * </ul>
      */
+    @RequiredProperty
     private String bindDn;
 
     /**
      * The bind credential to use when connecting to LDAP.
      */
+    @RequiredProperty
     private String bindCredential;
 
     /**
@@ -243,13 +263,20 @@ public abstract class AbstractLdapProperties implements Serializable {
 
     /**
      * Hostname verification options.
-     * Accepted values are {@link LdapHostnameVerifierOptions#DEFAULT} and {@link LdapHostnameVerifierOptions#ANY}.
+     * Accepted values are {@link LdapHostnameVerifierOptions#DEFAULT}
+     * and {@link LdapHostnameVerifierOptions#ANY}.
      */
     private LdapHostnameVerifierOptions hostnameVerifier = LdapHostnameVerifierOptions.DEFAULT;
 
     /**
      * Trust Manager options.
-     * Accepted values are {@link LdapTrustManagerOptions#ANY}, {@link LdapTrustManagerOptions#DEFAULT}.
+     * Trust managers are responsible for managing the trust material that is used when making LDAP trust decisions,
+     * and for deciding whether credentials presented by a peer should be accepted.
+     * Accepted values are:
+     * * <ul>
+     * <li>{@code DEFAULT}: Enable and force the default JVM trust managers.</li>
+     * <li>{@code ANY}: Trust any client or server.</li>
+     * </ul>
      */
     private String trustManager;
 

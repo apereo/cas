@@ -87,15 +87,7 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledGroovySc
         return null;
     }
 
-    /**
-     * Execute t.
-     *
-     * @param <T>        the type parameter
-     * @param methodName the method name
-     * @param clazz      the clazz
-     * @param args       the args
-     * @return the t
-     */
+    @Override
     public <T> T execute(final String methodName, final Class<T> clazz, final Object... args) {
         return execute(methodName, clazz, true, args);
     }

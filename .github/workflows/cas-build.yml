@@ -16,6 +16,7 @@ env:
   SONARCLOUD_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   PYTHON_VERSION: 3.8.2
+  RUBY_VERSION: 2.6
   JDK_CURRENT: 11.0.9
   JDK_LATEST: 15
   
@@ -76,7 +77,7 @@ jobs:
 
   build:
     needs: [cache]
-    if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') }}
+    if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update')  }}
     strategy:
       fail-fast: false
       matrix:
@@ -111,7 +112,7 @@ jobs:
 
   build-latest-jdk:
     runs-on: ubuntu-latest
-    if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') }}
+    if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
     needs: [cache]
     steps:
       - uses: actions/checkout@v2
@@ -136,7 +137,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build]
     continue-on-error: true
-    if: ${{ !contains(github.head_ref, 'renovate') }}
+    if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -167,7 +168,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build]
     continue-on-error: true
-    if: ${{ !contains(github.head_ref, 'renovate') }}
+    if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
     strategy:
       matrix:
         category:
@@ -202,7 +203,7 @@ jobs:
 
   validate-codebase:
     runs-on: ubuntu-latest
-    if: ${{ !contains(github.head_ref, 'renovate') && !contains(github.event.head_commit.message, 'trigger dependency update') }}
+    if: ${{ !contains(github.head_ref, 'renovate') && !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
     needs: [cache]
     strategy:
       fail-fast: false
@@ -240,7 +241,7 @@ jobs:
   validate-javadocs:
     runs-on: ubuntu-latest
     needs: [build]
-    if: ${{ !contains(github.head_ref, 'renovate') }}
+    if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -266,7 +267,7 @@ jobs:
   validate-commandline-shell:
     runs-on: ubuntu-latest
     needs: [build]
-    if: ${{ !contains(github.head_ref, 'renovate') }}
+    if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -294,7 +295,7 @@ jobs:
   validate-webapp-embedded:
     runs-on: ubuntu-latest
     needs: [build]
-    if: ${{ !contains(github.head_ref, 'renovate') }}
+    if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
     strategy:
       fail-fast: false
       matrix:
@@ -327,7 +328,7 @@ jobs:
   validate-webapp-external-tomcat:
     runs-on: ubuntu-latest
     needs: [build]
-    if: ${{ !contains(github.head_ref, 'renovate') }}
+    if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -353,7 +354,7 @@ jobs:
   validate-spring-cloud-config-server:
     runs-on: ubuntu-latest
     needs: [build]
-    if: ${{ !contains(github.head_ref, 'renovate') }}
+    if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -381,7 +382,7 @@ jobs:
   validate-eureka-discovery-server:
     runs-on: ubuntu-latest
     needs: [build]
-    if: ${{ !contains(github.head_ref, 'renovate') }}
+    if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -407,7 +408,7 @@ jobs:
   validate-spring-boot-admin-server:
     runs-on: ubuntu-latest
     needs: [build]
-    if: ${{ !contains(github.head_ref, 'renovate') }}
+    if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -434,7 +435,7 @@ jobs:
   publish-snapshots:
     runs-on: ubuntu-latest
     needs: [build]
-    if: ${{ github.event_name == 'push' }}
+    if: ${{ github.event_name == 'push' && !contains(github.event.head_commit.message, 'documentation update') }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -461,6 +462,7 @@ jobs:
   publish-docker-image:
     runs-on: ubuntu-latest
     needs: [publish-snapshots]
+    if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
     steps:
       - name: Prepare
         run: |
@@ -485,6 +487,7 @@ jobs:
   publish-docs:
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'push' }}
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -499,14 +502,19 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - name: Set up Ruby
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+      - name: Install Ruby gems
+        run: gem install bundler
       - name: Publish Documentation
-        if: ${{ env.GH_PAGES_TOKEN != null  }}
         run: ./ci/docs/publish.sh development
 
 ##########################################################################
 
   tests:
-    if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') }}
+    if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
     needs: [cache]
     continue-on-error: false
     strategy:
@@ -664,6 +672,7 @@ jobs:
   tests-performance-locust:
     runs-on: ubuntu-latest
     needs: [build]
+    if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
     continue-on-error: true
     strategy:
       fail-fast: false
@@ -700,6 +709,7 @@ jobs:
   tests-performance-jmeter:
     runs-on: ubuntu-latest
     needs: [build]
+    if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
     continue-on-error: true
     strategy:
       fail-fast: false
@@ -733,7 +743,7 @@ jobs:
   report-dependency-updates:
     runs-on: ubuntu-latest
     needs: [cache]
-    if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' && contains(github.event.head_commit.message, 'dependency') }}
+    if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' && contains(github.event.head_commit.message, 'dependency update') }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -782,7 +792,7 @@ jobs:
   puppeteer-tests:
     runs-on: ubuntu-latest
     needs: [cache]
-    if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') }}
+    if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
     strategy:
       fail-fast: false
       matrix:
@@ -816,6 +826,9 @@ jobs:
           - ticket-validation-casv2
           - ticket-validation-casv3
           - ticket-validation-casv3-json
+          - ticket-validation-saml1
+          - mfa-inwebo-browser
+          - mfa-inwebo-push
           - aup-login
           - authy-mfa-login
           - logout-confirm
@@ -824,7 +837,11 @@ jobs:
           - simple-mfa-login
           - interrupt-login
           - oidc-authzcode-login
+          - oidc-debugger-code-login
+          - oidc-debugger-token-login
+          - oidc-debugger-idtoken-login
           - pac4j-delegated-login
+          - pac4j-delegated-saml-login
           - renew-existing-sso
           - passwordless-requirepswd-login
           - passwordless-delegated-login
@@ -842,6 +859,7 @@ jobs:
           - recaptcha-login-v3
           - webauthn-register
           - webauthn-login
+          - saml2-idp-login
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -853,4 +871,3 @@ jobs:
       - name: Run Tests
         run: ./ci/tests/puppeteer/run.sh $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
 ##########################################################################
-

@@ -104,14 +104,4 @@ public class CasConfigurationMetadataRepository {
             .filter(prop -> prop.getType().contains(clazz.getName()))
             .collect(Collectors.toSet());
     }
-
-    /**
-     * Query cas configuration metadata catalog.
-     *
-     * @param query the query
-     * @return the cas configuration metadata catalog
-     */
-    public CasConfigurationMetadataCatalog.CasPropertiesContainer query(final ConfigurationMetadataCatalogQuery query) {
-        return CasConfigurationMetadataCatalog.catalog(query);
-    }
 }

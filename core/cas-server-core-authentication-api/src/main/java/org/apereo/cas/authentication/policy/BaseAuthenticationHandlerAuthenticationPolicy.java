@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.policy;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationPolicyExecutionResult;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AccessLevel;
@@ -53,10 +54,10 @@ public abstract class BaseAuthenticationHandlerAuthenticationPolicy extends Base
     }
 
     @Override
-    public boolean isSatisfiedBy(final Authentication authn,
-        final Set<AuthenticationHandler> authenticationHandlers,
-        final ConfigurableApplicationContext applicationContext,
-        final Optional<Serializable> assertion) {
+    public AuthenticationPolicyExecutionResult isSatisfiedBy(final Authentication authn,
+                                                             final Set<AuthenticationHandler> authenticationHandlers,
+                                                             final ConfigurableApplicationContext applicationContext,
+                                                             final Optional<Serializable> assertion) {
         var credsOk = true;
         val sum = authn.getSuccesses().size() + authn.getFailures().size();
         if (this.tryAll) {
@@ -66,7 +67,7 @@ public abstract class BaseAuthenticationHandlerAuthenticationPolicy extends Base
         if (!credsOk) {
             LOGGER.warn("Number of provided credentials [{}] does not match the sum of authentication successes and failures [{}]. "
                 + "Successful authentication handlers are [{}]", authn.getCredentials().size(), sum, authn.getSuccesses().keySet());
-            return false;
+            return AuthenticationPolicyExecutionResult.failure();
         }
 
         return isSatisfiedByInternal(authn);
@@ -76,7 +77,7 @@ public abstract class BaseAuthenticationHandlerAuthenticationPolicy extends Base
      * Is satisfied by internal checks.
      *
      * @param authn the authn
-     * @return the boolean
+     * @return the policy execution result
      */
-    abstract boolean isSatisfiedByInternal(Authentication authn);
+    abstract AuthenticationPolicyExecutionResult isSatisfiedByInternal(Authentication authn);
 }

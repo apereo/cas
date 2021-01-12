@@ -15,4 +15,4 @@ You can also allow CAS to reach out to an external REST API to ask for
 the JSON web keyset. The expected response code is `200`
 where the response body should contain the contents of the JSON web keyset.
 
-{% include {{ version }}/rest-integration.md configKey="cas.authn.oidc.jwks.rest" %}
+{% include {{ version }}/rest-configuration.md configKey="cas.authn.oidc.jwks.rest" %}

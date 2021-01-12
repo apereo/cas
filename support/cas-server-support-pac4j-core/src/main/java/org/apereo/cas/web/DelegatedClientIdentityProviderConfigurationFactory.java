@@ -76,13 +76,15 @@ public class DelegatedClientIdentityProviderConfigurationFactory {
             uriBuilder.queryParam(CasProtocolConstants.PARAMETER_METHOD, "{method}");
             queryParams.put("method", methodParam);
         }
-        LOGGER.debug("Processing locale parameter [{}]", casProperties.getLocale().getParamName());
-        val localeParam = webContext.getRequestParameter(casProperties.getLocale().getParamName())
-            .map(String::valueOf).orElseGet(() -> casProperties.getLocale().getDefaultValue());
+        
+        val localProps = casProperties.getLocale();
+        LOGGER.debug("Processing locale parameter [{}]", localProps.getParamName());
+        val localeParam = webContext.getRequestParameter(localProps.getParamName())
+            .map(String::valueOf).orElseGet(localProps::getDefaultValue);
         if (StringUtils.isNotBlank(localeParam)) {
             LOGGER.debug("Processing locale parameter [{}] with value [{}]",
-                casProperties.getLocale().getParamName(), localeParam);
-            uriBuilder.queryParam(casProperties.getLocale().getParamName(), "{locale}");
+                localProps.getParamName(), localeParam);
+            uriBuilder.queryParam(localProps.getParamName(), "{locale}");
             queryParams.put("locale", localeParam);
         }
         val themeParam = webContext.getRequestParameter(casProperties.getTheme().getParamName())
