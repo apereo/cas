@@ -11,4 +11,6 @@ Stores authentication events into a RDBMS.
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-events-jpa" %}
 
-{% include {{ version }}/rdbms-configuration.md configKey="cas.events.jpa" %}
+{% include casproperties.html
+modules="cas-server-support-events-jpa"
+properties="cas.events.jpa" %}
