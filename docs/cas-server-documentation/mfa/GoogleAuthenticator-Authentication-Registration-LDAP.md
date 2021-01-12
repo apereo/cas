@@ -16,4 +16,4 @@ Account registration records are kept inside a designated configurable multi-val
 attribute as JSON blobs. The attribute values are parsed
 to load, save, update or delete accounts. The content of each attribute value can be signed/encrypted if necessary. 
 
-{% include {{ version }}/ldap-gauth-configuration.md %}
+{% include casproperties.html modules="cas-server-support-gauth-ldap" %}

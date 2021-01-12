@@ -14,4 +14,5 @@ Registration records and tokens may be kept inside a database instance via the f
 
 To learn how to configure database drivers, [please see this guide](../installation/JDBC-Drivers.html).
 
-{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.mfa.gauth.jpa" %}
+{% include casproperties.html modules="cas-server-support-gauth-jpa" %}
+

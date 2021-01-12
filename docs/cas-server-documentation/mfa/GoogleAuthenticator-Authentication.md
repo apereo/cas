@@ -22,13 +22,16 @@ Support is enabled by including the following module in the overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-gauth" %}
 
-{% include {{ version }}/gauth-configuration.md %}
+{% include casproperties.html
+modules="cas-server-support-gauth"
+properties="cas.authn.mfa.gauth.bypass,cas.authn.mfa.gauth.crypto" %}
 
-{% include {{ version }}/mfa-bypass-configuration.md configKey="cas.authn.mfa.gauth" %}
+A background *cleaner* process is also automatically scheduled to scan the
+repository periodically and remove expired device registration records
+based on configured parameters. In the default setting, devices
+expire after a fixed period since a user registered their device.
 
 {% include casproperties.html properties="cas.authn.mfa.gauth.cleaner" %}
-
-{% include {{ version }}/signing-encryption-configuration.md configKey="cas.authn.mfa.gauth" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
 
 ## Administrative Endpoints
 

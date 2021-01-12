@@ -26,4 +26,4 @@ grouperClient.webService.login = banderson
 grouperClient.webService.password = password
 ```
 
-{% include {{ version }}/grouper-mfa-trigger-configuration.md %}
+{% include casproperties.html properties="cas.authn.mfa.grouper-" %}

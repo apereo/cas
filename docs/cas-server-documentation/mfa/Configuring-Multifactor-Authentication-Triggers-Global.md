@@ -10,4 +10,5 @@ category: Multifactor Authentication
 
 MFA can be triggered for all applications and users regardless of individual settings.
 
-{% include {{ version }}/global-mfa-trigger-configuration.md %}
+{% include casproperties.html properties="cas.authn.mfa.global-provider-id" %}
+
