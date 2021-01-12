@@ -77,7 +77,7 @@ jobs:
 
   build:
     needs: [cache]
-    if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
+    if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update')  }}
     strategy:
       fail-fast: false
       matrix:
@@ -112,7 +112,7 @@ jobs:
 
   build-latest-jdk:
     runs-on: ubuntu-latest
-    if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') }}
+    if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
     needs: [cache]
     steps:
       - uses: actions/checkout@v2
