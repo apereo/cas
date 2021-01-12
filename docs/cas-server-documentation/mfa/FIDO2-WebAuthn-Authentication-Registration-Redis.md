@@ -13,5 +13,4 @@ Device registrations may be kept inside a Redis database instance by including t
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-webauthn-redis" %}
 
 {% include casproperties.html
-modules="cas-server-support-webauthn-redis"
-properties="cas.authn.mfa.web-authn.redis" %}
+modules="cas-server-support-webauthn-redis" %}
