@@ -22,3 +22,5 @@ The following parameters are passed:
 | `DELETE` | `/${id}`  as a path variable | Delete all device records matching that identifier. | `200`.
 
 {% include {{ version }}/rest-configuration.md configKey="cas.authn.mfa.u2f.rest" %}
+
+{% include casproperties.html properties="cas.authn.mfa.u2f.rest" %}

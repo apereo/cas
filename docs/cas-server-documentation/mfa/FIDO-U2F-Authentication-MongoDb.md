@@ -12,4 +12,6 @@ Device registrations may be kept inside a MongoDb instance by including the foll
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-u2f-mongo" %}
 
-{% include {{ version }}/mongodb-configuration.md configKey="cas.authn.mfa.u2f" %}
+{% include casproperties.html
+modules="cas-server-support-u2f-mongo"
+properties="cas.authn.mfa.u2f.mongo" %}
