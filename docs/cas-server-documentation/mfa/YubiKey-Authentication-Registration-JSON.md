@@ -19,4 +19,4 @@ The JSON structure is a map of user id to yubikey public id representing any par
 }
 ```
 
-{% include {{ version }}/json-yubikey-configuration.md %}
+{% include casproperties.html properties="cas.authn.mfa.yubikey.json" %}
