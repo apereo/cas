@@ -31,7 +31,7 @@ Support is enabled by adding the following module into the overlay:
 A background *cleaner* process is also automatically scheduled to scan the chosen 
 database periodically and remove expired records based on configured threshold parameters.
 
-{% include {{ version }}/job-scheduling-configuration.md configKey="cas.ticket.registry.cleaner" %}
+{% include casproperties.html properties="cas.ticket.registry.cleaner" %}
 
 <div class="alert alert-warning"><strong>Cleaner Usage</strong><p>In a clustered CAS deployment, it is best to keep the cleaner running on one designated CAS node only and turn it off on all others via CAS settings. Keeping the cleaner running on all nodes may likely lead to severe performance and locking issues.</p></div>
 

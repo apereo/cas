@@ -13,4 +13,6 @@ instance by including the following module in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-webauthn-jpa" %}
 
-{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.mfa.web-authn.jpa" %}
+{% include casproperties.html
+modules="cas-server-support-webauthn-jpa"
+properties="cas.authn.mfa.web-authn.jpa" %}
