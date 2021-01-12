@@ -58,8 +58,7 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
         setProviderName(pName);
         val iter = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.ITERATIONS);
         setKeyObtentionIterations(iter);
-        val iv = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.IV);
-        setInitializationVector(Boolean.parseBoolean(iv));
+        setInitializationVector();
     }
 
     /**
@@ -106,10 +105,8 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
      * They require an initialization vector (IV) parameter
      * http://www.jasypt.org/faq.html#i-receive-null-when-encrypting-decrypting
      */
-    public void setInitializationVector(boolean useIV) {
-        if (useIV) {
-            jasyptInstance.setIvGenerator(new RandomIvGenerator());
-        }
+    public void setInitializationVector() {
+        jasyptInstance.setIvGenerator(new RandomIvGenerator());
     }
 
     /**
@@ -258,11 +255,7 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
         /**
          * Jasypt password to use.
          */
-        PASSWORD("cas.standalone.configurationSecurity.psw", null),
-        /**
-         * Use (or not) Jasypt Initialization Vector (IV).
-         */
-        IV("cas.standalone.configurationSecurity.iv", "false");
+        PASSWORD("cas.standalone.configurationSecurity.psw", null);
 
         /**
          * The Name.

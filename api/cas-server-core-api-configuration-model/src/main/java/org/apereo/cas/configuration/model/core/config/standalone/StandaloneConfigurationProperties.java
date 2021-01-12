@@ -62,16 +62,11 @@ public class StandaloneConfigurationProperties implements Serializable {
         /**
          * Total number of iterations to use when deciphering settings.
          */
-            private long iteration;
+        private long iteration;
 
         /**
          * Secret key/password to use when deciphering settings.
          */
         private String psw;
-
-        /**
-         *  Use (or not) Jasypt Initialization Vector (IV)
-         */
-        private boolean iv;
     }
 }

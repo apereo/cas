@@ -315,9 +315,7 @@ secured, [please review this guide](Configuration-Properties-Security.html).
 # cas.standalone.configuration-security.provider=BC
 # cas.standalone.configuration-security.iterations=
 # cas.standalone.configuration-security.psw=
-# cas.standalone.configuration-security.iv=false
 ```
-> Initialization vector `IV` must be enabled with `PBEWithDigestAndAES` algorithms
 
 The above settings may be passed to CAS using any of the [strategies outline here](Configuration-Management.html#overview),
 though it might be more secure to pass them to CAS as either command-line or system properties.

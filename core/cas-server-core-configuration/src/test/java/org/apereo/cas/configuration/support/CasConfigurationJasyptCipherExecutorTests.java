@@ -101,9 +101,6 @@ public class CasConfigurationJasyptCipherExecutorTests {
     private boolean isAlgorithmFunctional(final String algorithm) {
         val jasyptTest = new CasConfigurationJasyptCipherExecutor(this.environment);
         jasyptTest.setAlgorithmForce(algorithm);
-        if (algorithm.contains("ANDAES_")) {
-            jasyptTest.setInitializationVector(true);
-        }
         val testValue = "Testing_" + algorithm;
         val value = jasyptTest.encryptValue(testValue);
         val result = jasyptTest.decode(value, ArrayUtils.EMPTY_OBJECT_ARRAY);
