@@ -28,7 +28,7 @@ MFA can be triggered for a specific application registered inside the CAS servic
 The following fields are accepted by the policy definition
 
 | Field                 | Description
-|-----------------------|-----------------------------------------------------------------------------------------------------
+|-----------------------|----------------------------------------------------------------------------
 | `multifactorAuthenticationProviders` | Set of multifactor provider ids that should trigger for this application.
 | `script`                  | Path to a script, whether external or internal, to trigger multifactor authentication dynamically.
 | `bypassEnabled`           | Whether multifactor authentication should be [bypassed](Configuring-Multifactor-Authentication-Bypass.html) for this service.

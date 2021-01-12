@@ -20,4 +20,6 @@ This option is more relevant if you have more than one provider configured or if
 
 Needless to say, the attributes need to have been resolved for the principal prior to this step.
 
+{% include casproperties.html properties="cas.authn.mfa.global-principal-" %}
+
 {% include {{ version }}/principal-attribute-mfa-trigger-configuration.md %}

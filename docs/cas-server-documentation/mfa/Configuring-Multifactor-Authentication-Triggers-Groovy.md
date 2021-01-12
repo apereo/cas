@@ -70,4 +70,4 @@ class MyExampleScript {
 }
 ```
 
-{% include {{ version }}/groovy-mfa-trigger-configuration.md %}
+{% include casproperties.html properties="cas.authn.mfa.groovy-script" %}

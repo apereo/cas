@@ -26,4 +26,4 @@ additional multifactor authentication events.
 
 An example of this scenario would be the "Access Challenge response" produced by RADIUS servers.
 
-{% include {{ version }}/authentication-attribute-mfa-trigger-configuration.md %}
+{% include casproperties.html properties="cas.authn.mfa.global-authentication-" %}

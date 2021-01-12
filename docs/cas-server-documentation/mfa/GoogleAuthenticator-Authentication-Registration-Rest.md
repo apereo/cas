@@ -45,18 +45,4 @@ The following endpoints need also be available:
 | `GET`     | `count`    | N/A             | `200`. Numeric count | Count all records
 | `GET`     | `count`    | `username`             | `200`. Numeric count | Count all records for the user
 
-{% include {{ version }}/rest-gauth-configuration.md %}
-
-### JSON
-
-Registration records may also be kept inside a single JSON file for all users.
-The behavior is only activated when a path to a JSON data store file is provided,
-and otherwise CAS may fallback to keeping records in memory. This feature is mostly
-useful during development and for demo purposes.
-
-{% include {{ version }}/json-gauth-configuration.md %}
-
-## REST Protocol Credential Extraction 
-
-In the event that the [CAS REST Protocol](../protocol/REST-Protocol.html) is turned on, a special credential extractor is injected into the REST authentication engine in order to recognize credentials and authenticate them as part of the REST request. 
-The expected parameter name in the request body is `gauthotp`. The account identifier may also be passed using the `gauthacct` parameter in the request body.
+{% include casproperties.html properties="cas.authn.mfa.gauth.rest" %}

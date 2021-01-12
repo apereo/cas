@@ -12,4 +12,5 @@ Registration records and tokens may be kept inside a CouchDb instance, via the f
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-gauth-couchdb" %}
 
-{% include {{ version }}/couchdb-configuration.md configKey="cas.authn.mfa.gauth" %}
+{% include casproperties.html modules="cas-server-support-gauth-couchdb" %}
+

@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -53,7 +54,8 @@ public abstract class AbstractLdapProperties implements Serializable {
     private String keystoreType;
 
     /**
-     * Path to the keystore used to determine which certificates or certificate authorities should be trusted.
+     * Path to the keystore used to determine which certificates or
+     * certificate authorities should be trusted.
      * Used when connecting to an LDAP server via LDAPS or startTLS connection.
      * If left blank, the default truststore for the Java runtime is used.
      */
@@ -180,6 +182,7 @@ public abstract class AbstractLdapProperties implements Serializable {
     /**
      * The LDAP url to the server. More than one may be specified, separated by space and/or comma.
      */
+    @RequiredProperty
     private String ldapUrl;
 
     /**
@@ -213,11 +216,13 @@ public abstract class AbstractLdapProperties implements Serializable {
      * <li>SASL mechanism provided - Use the given SASL mechanism to bind when initializing connections. </li>
      * </ul>
      */
+    @RequiredProperty
     private String bindDn;
 
     /**
      * The bind credential to use when connecting to LDAP.
      */
+    @RequiredProperty
     private String bindCredential;
 
     /**
