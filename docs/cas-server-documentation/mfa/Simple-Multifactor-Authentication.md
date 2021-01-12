@@ -22,7 +22,7 @@ Support is enabled by including the following module in the overlay:
 
 {% include casproperties.html
 modules="cas-server-support-simple-mfa"
-properties="cas.authn.mfa.simple" %} 
+properties="cas.authn.mfa.simple.bypass" %} 
 
 ## Registration
 

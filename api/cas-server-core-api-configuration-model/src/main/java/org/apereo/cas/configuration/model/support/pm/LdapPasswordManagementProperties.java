@@ -33,6 +33,13 @@ public class LdapPasswordManagementProperties extends AbstractLdapSearchProperti
     /**
      * The specific variant of LDAP
      * based on which update operations will be constructed.
+     * Accepted values are:
+     * * <ul>
+     * <li>{@code AD}</li>
+     * <li>{@code GENERIC}</li>
+     * <li>{@code FreeIPA}</li>
+     * <li>{@code EDirectory}</li>
+     * </ul>
      */
     private LdapType type = LdapType.AD;
 

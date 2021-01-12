@@ -21,5 +21,4 @@ The following parameters are passed:
 | `POST`           | Collection of records as JSON body | Store/Update registered devices. | `200`.
 
 {% include casproperties.html
-modules="cas-server-support-webauthn-rest"
-properties="cas.authn.mfa.web-authn.rest" %}
+modules="cas-server-support-webauthn-rest" %}

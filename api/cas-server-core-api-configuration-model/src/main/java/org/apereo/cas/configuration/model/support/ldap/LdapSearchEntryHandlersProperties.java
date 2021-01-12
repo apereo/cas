@@ -24,27 +24,47 @@ import java.io.Serializable;
 public class LdapSearchEntryHandlersProperties implements Serializable {
 
     private static final long serialVersionUID = -5198990160347131821L;
+
+
     /**
      * The type of search entry handler to choose.
-     * Accepted values are {@code OBJECT_GUID,OBJECT_SID,CASE_CHANGE,DN_ATTRIBUTE_ENTRY,MERGE,PRIMARY_GROUP,RANGE_ENTRY,RECURSIVE_ENTRY}
+     * Accepted values are:
+     * <ul>
+     * <li>{@code CASE_CHANGE}: Provides the ability to modify the case of search entry DNs, attribute names, and attribute values.</li>
+     * <li>{@code DN_ATTRIBUTE_ENTRY}: Adds the entry DN as an attribute to the result set. Provides
+     * a client side implementation of RFC 5020.</li>
+     * <li>{@code MERGE}: Merges the values of one or more attributes into a single attribute.</li>
+     * <li>{@code OBJECT_GUID}: Handles the {@code objectGUID} attribute fetching and conversion.</li>
+     * <li>{@code OBJECT_SID}: Handles the {@code objectSid} attribute fetching and conversion.</li>
+     * <li>{@code PRIMARY_GROUP}: Constructs the primary group SID and then searches for
+     * that group and puts it's DN in the 'memberOf' attribute of the original search entry.</li>
+     * <li>{@code RANGE_ENTRY}: Rewrites attributes returned from Active Directory to
+     * include all values by performing additional searches.</li>
+     * <li>{@code RECURSIVE_ENTRY}: This recursively searches based on a supplied
+     * attribute and merges those results into the original entry.</li>
+     * </ul>
      */
     private SearchEntryHandlerTypes type;
+
     /**
      * Provides the ability to modify the case of search entry DNs, attribute names, and attribute values.
      */
     @NestedConfigurationProperty
     private CaseChangeSearchEntryHandlersProperties caseChange = new CaseChangeSearchEntryHandlersProperties();
+
     /**
      * Adds the entry DN as an attribute to the result set. Provides a client side implementation of RFC 5020.
      */
     @NestedConfigurationProperty
     private DnAttributeSearchEntryHandlersProperties dnAttribute = new DnAttributeSearchEntryHandlersProperties();
+
     /**
      * Merges the values of one or more attributes into a single attribute. The merged attribute may or may not already
      * exist on the entry. If it does exist it's existing values will remain intact.
      */
     @NestedConfigurationProperty
     private MergeAttributesSearchEntryHandlersProperties mergeAttribute = new MergeAttributesSearchEntryHandlersProperties();
+
     /**
      * Constructs the primary group SID and then searches for that group and puts it's DN in the 'memberOf' attribute of the
      * original search entry. This handler requires that entries contain both the 'objectSid' and 'primaryGroupID'
@@ -54,6 +74,7 @@ public class LdapSearchEntryHandlersProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private PrimaryGroupIdSearchEntryHandlersProperties primaryGroupId = new PrimaryGroupIdSearchEntryHandlersProperties();
+
     /**
      * This recursively searches based on a supplied attribute and merges those results into the original entry.
      */

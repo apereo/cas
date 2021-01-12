@@ -13,5 +13,4 @@ Support is enabled by including the following dependencies in the WAR overlay:
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-yubikey-dynamodb" %}
 
 {% include casproperties.html
-modules="cas-server-support-yubikey-dynamodb"
-properties="cas.authn.mfa.yubikey.dynamo-db" %}
+modules="cas-server-support-yubikey-dynamodb" %}

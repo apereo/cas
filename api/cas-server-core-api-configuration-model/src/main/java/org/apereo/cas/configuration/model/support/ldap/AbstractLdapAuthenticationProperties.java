@@ -26,15 +26,27 @@ public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapS
     /**
      * The authentication type.
      * <ul>
-     * <li>AD - Users authenticate with sAMAccountName. </li>
-     * <li>AUTHENTICATED - Manager bind/search</li>
-     * <li>ANONYMOUS</li>
+     * <li>{@code AD} - Users authenticate with {code sAMAccountName}. </li>
+     *
+     * <li>{@code AUTHENTICATED} - Manager bind/search type of authentication.
+     * If {@code }principalAttributePassword}
+     * is empty then a user simple bind is done to validate credentials. Otherwise the given
+     * attribute is compared with the given {@code rincipalAttributePassword} using
+     * the {@code SHA} encrypted value of it.</li>
+     *
+     * <li>{@code ANONYMOUS}: Similar semantics as {@code AUTHENTICATED} except no {@code bindDn}
+     * and {@code bindCredential} may be specified to initialize the connection.
+     * If {@code principalAttributePassword} is empty then a user simple bind is done
+     * to validate credentials. Otherwise the given attribute is compared with
+     * the given {@code principalAttributePassword} using the {@code SHA} encrypted value of it.</li>
+     *
      * <li>DIRECT: Direct Bind - Compute user DN from format string and perform simple bind.
      * This is relevant when no search is required to compute the DN needed for a bind operation.
      * Use cases for this type are:
      * 1) All users are under a single branch in the directory, {@code e.g. ou=Users,dc=example,dc=org.}
      * 2) The username provided on the CAS login form is part of the DN, e.g.
      * {@code uid=%s,ou=Users,dc=example,dc=org}.</li>
+     * 
      * </ul>
      */
     @RequiredProperty

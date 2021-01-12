@@ -14,5 +14,4 @@ by including the following module in the WAR overlay:
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-u2f-jpa" %}
 
 {% include casproperties.html
-modules="cas-server-support-u2f-jpa"
-properties="cas.authn.mfa.u2f.jpa" %}
+modules="cas-server-support-u2f-jpa" %}
