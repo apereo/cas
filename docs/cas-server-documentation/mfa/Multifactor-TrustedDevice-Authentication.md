@@ -70,7 +70,7 @@ the cleaner running on one designated CAS
 node only and turn it off on all others via CAS settings. Keeping the cleaner running on all 
 nodes may likely lead to severe performance and locking issues.</p></div>
 
-{% include {{ version }}/job-scheduling-configuration.md configKey="cas.authn.mfa.trusted.cleaner" %}
+{% include casproperties.html properties="cas.authn.mfa.trusted.cleaner" %}
 
 ### Default
 

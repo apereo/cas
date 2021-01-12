@@ -15,4 +15,5 @@ Support is enabled by including the following module in the overlay:
 
 {% include {{ version }}/rdbms-configuration.md configKey="cas.authn.passwordless.tokens.jpa" %}
 
-{% include {{ version }}/job-scheduling-configuration.md configKey="cas.authn.passwordless.tokens.jpa.cleaner" %}
+{% include casproperties.html properties="cas.authn.passwordless.tokens.jpa.cleaner" %}
+
