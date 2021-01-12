@@ -4,11 +4,11 @@ Control global properties that are relevant to Hibernate,
 when CAS attempts to employ and utilize database resources,
 connections and queries.
 
-{% assign properties = "cas.jdbc." | split: "," %}
+{% assign jdbcProperties = "cas.jdbc." | split: "," %}
 
 <table>
     <tbody>
-    {% for prop in properties %} 
+    {% for prop in jdbcProperties %} 
         {% for module in site.data[version] %}
             {% assign moduleEntry = module[1] %}
             {% for cfg in moduleEntry %}
