@@ -29,7 +29,7 @@ public class CookieProperties implements Serializable {
     /**
      * Cookie name. Constructs a cookie with a specified name and value.
      * The name must conform to RFC 2965. That means it can contain only ASCII alphanumeric characters and
-     * cannot contain commas, semicolons, or white space or begin with a $ character.
+     * cannot contain commas, semicolons, or white space or begin with a {@code $} character.
      * The cookie's name cannot be changed after creation.
      * By default, cookies are created according to the RFC 2965 cookie specification.
      */
@@ -92,7 +92,7 @@ public class CookieProperties implements Serializable {
     /**
      * If a cookie is only intended to be accessed in a first party context, the
      * developer has the option to apply one of settings
-     * {@code SameSite=Lax or SameSite=Strict or SameSite=None} to prevent external access.
+     * {@code SameSite=Lax} or {@code SameSite=Strict} or {@code SameSite=None} to prevent external access.
      * <p>
      * To safeguard more websites and their users, the new secure-by-default model
      * assumes all cookies should be protected from external access unless otherwise

@@ -1,7 +1,7 @@
 ---
 layout: default
 title: CAS - Web Flow Acceptable Usage Policy
-category: Webflow Management
+category: Acceptable Usage Policy
 ---
 
 {% include variables.html %}
@@ -27,7 +27,7 @@ policy record is strongly tied to the identified user record. Implementing this 
 would require rather heavy modifications to the CAS webflow as well as alternative means of storing and remembering decisions
 such as cookies or browser storage, etc.</p></div>
 
-{% include {{ version }}/aup-configuration.md %}
+{% include casproperties.html modules="cas-server-support-aup-webflow" excludes=".ldap" %}
 
 ## Per Service 
 
