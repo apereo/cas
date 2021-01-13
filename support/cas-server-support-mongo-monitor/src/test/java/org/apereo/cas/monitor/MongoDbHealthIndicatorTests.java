@@ -81,7 +81,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.monitor.mongo.database-name=monitor"
     })
 @EnabledIfPortOpen(port = 27017)
-@SuppressWarnings("JdkObsolete")
+@SuppressWarnings("JavaUtilDate")
 public class MongoDbHealthIndicatorTests {
     @Autowired
     @Qualifier("mongoHealthIndicator")

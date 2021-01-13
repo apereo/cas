@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("Attributes")
-@SuppressWarnings("JdkObsolete")
+@SuppressWarnings("JavaUtilDate")
 public class ScimV1PrincipalAttributeMapperTests {
     @Test
     public void verifyAction() throws Exception {

@@ -25,11 +25,13 @@ import java.util.Map;
 public interface Principal extends Serializable {
 
     /**
+     * Principal id.
      * @return the unique id for the Principal
      */
     String getId();
 
     /**
+     * Principal attributes.
      * @return the map of configured attributes for this principal
      */
     default Map<String, List<Object>> getAttributes() {

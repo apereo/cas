@@ -28,7 +28,7 @@ public abstract class BaseAuditConfigurationTests {
     }
 
     @Test
-    @SuppressWarnings("JdkObsolete")
+    @SuppressWarnings("JavaUtilDate")
     public void verifyAuditManager() {
         val auditTrailManager = getAuditTrailManager();
         val time = LocalDate.now(ZoneOffset.UTC).minusDays(2);

@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("Audits")
-@SuppressWarnings("JdkObsolete")
+@SuppressWarnings("JavaUtilDate")
 public class FilterAndDelegateAuditTrailManagerTests {
 
     @Test

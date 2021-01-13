@@ -11,7 +11,5 @@ If you intend to use a DynamoDb database for auditing functionality, enable the 
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-audit-dynamodb" %}
 
-{% include {{ version }}/dynamodb-configuration.md configKey="cas.audit" %}
-
-{% include {{ version }}/dynamodb-audit-configuration.md %}
+{% include casproperties.html modules="cas-server-support-audit-dynamodb" %}
 

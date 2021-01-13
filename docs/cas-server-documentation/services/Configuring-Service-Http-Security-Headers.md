@@ -8,7 +8,11 @@ category: Services
 
 # Service HTTP Security Headers
 
-CAS has ability to control, on a per-service basis, whether certain security-related HTTP headers should be injected into the response. While headers are typically enabled and defined globally as part of the [CAS Security Filter](../planning/Security-Guide.html#cas-security-filter), the strategy described here allows one to disable/enable the injection of these headers for certain applications and service requests and override the global defaults.
+CAS has ability to control, on a per-service basis, whether certain security-related HTTP headers should be 
+injected into the response. While headers are typically enabled and defined globally as part 
+of the [CAS Security Filter](../planning/Security-Guide.html#cas-security-filter), the strategy 
+described here allows one to disable/enable the injection of these headers for certain 
+applications and service requests and override the global defaults.
  
 ## HTTP Headers
 
@@ -24,7 +28,7 @@ Supported HTTP headers in form of service properties are:
 | `httpHeaderEnableXSSProtection`      | Insert `X-XSS-Protection` headers into the response for this service.
 | `httpHeaderXFrameOptions`      | Override the `X-Frame-Options` header of the response for this service.
 
-{% include {{ version }}/http-webrequests-configuration.md %}
+{% include casproperties.html properties="cas.http-web-request" %}
 
 A sample JSON file follows:
 

@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ * CAS v2 ticket validation endpoint.
+ *
  * @author Misagh Moayyed
  * @since 4.2
  */

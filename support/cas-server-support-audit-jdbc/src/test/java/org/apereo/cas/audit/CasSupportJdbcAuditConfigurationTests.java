@@ -50,7 +50,6 @@ public class CasSupportJdbcAuditConfigurationTests extends BaseAuditConfiguratio
     private AuditTrailManager auditTrailManager;
 
     @Test
-    @SuppressWarnings("JdkObsolete")
     public void verifyCleaner() {
         inspektrAuditTrailCleaner.clean();
     }

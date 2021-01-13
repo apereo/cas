@@ -14,6 +14,8 @@ import javax.persistence.Embeddable;
 import javax.persistence.Table;
 
 /**
+ * Contact assigned to a service definition.
+ * 
  * @author Travis Schmidt
  * @since 5.2
  */

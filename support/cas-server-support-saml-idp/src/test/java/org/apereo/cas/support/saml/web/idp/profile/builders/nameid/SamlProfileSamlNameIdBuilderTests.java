@@ -107,6 +107,7 @@ public class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationT
     }
 
     @Test
+    @SuppressWarnings("JavaUtilDate")
     public void verifyEncryptedNameIdFormat() {
         val service = getSamlRegisteredServiceForTestShib();
         service.setRequiredNameIdFormat(NameID.ENCRYPTED);

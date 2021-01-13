@@ -57,7 +57,9 @@ WARN [...] - <Generated signing key XYZ of size ... . The generated key MUST be 
 
 You should then grab each generated key for encryption and signing, and put them inside your CAS properties for each setting.
 If you wish you manually generate keys, you may [use the following tool](https://github.com/mitreid-connect/json-web-key-generator).
- 
+
+{% include casproperties.html properties="cas.sso" %}
+
 ## Authentication Protocol vs. SSO
 
 Remember that the creation of an SSO session is entirely separate and has nothing to do with the authentication protocol used to establish
@@ -76,8 +78,6 @@ subsequent attempt to authenticate to a SSO-participating application.
 
 The cookie generation strategy can also be customized on a per-application basis. For additional details, 
 please [review this guide](../services/Configuring-Service-SSO-Policy.html).
-
-{% include {{ version }}/global-sso-configuration.md %}
 
 ## Disable Service SSO Access
 
@@ -108,8 +108,6 @@ A warning cookie set by CAS upon the establishment of the SSO session at the req
 The cookie is used later to warn and prompt the user before a service ticket is generated and access to the service application is granted.
 
 {% include casproperties.html properties="cas.warning-cookie" %}
-
-{% include {{ version }}/warning-cookie-configuration.md %}
 
 ## Public Workstations
 

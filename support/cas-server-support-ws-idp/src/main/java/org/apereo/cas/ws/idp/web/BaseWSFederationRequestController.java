@@ -40,7 +40,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-@SuppressWarnings("JdkObsolete")
+@SuppressWarnings("JavaUtilDate")
 public abstract class BaseWSFederationRequestController {
     private final WSFederationRequestConfigurationContext configContext;
 

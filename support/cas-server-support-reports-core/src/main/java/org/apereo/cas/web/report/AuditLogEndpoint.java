@@ -46,7 +46,7 @@ public class AuditLogEndpoint extends BaseCasActuatorEndpoint {
      * @return the auditlog
      */
     @ReadOperation
-    @SuppressWarnings("JdkObsolete")
+    @SuppressWarnings("JavaUtilDate")
     public Set<AuditActionContext> getAuditLog(@Selector final String interval) {
         if (StringUtils.isBlank(interval)) {
             val sinceDate = LocalDate.now(ZoneId.systemDefault()).minusDays(casProperties.getAudit().getNumberOfDaysInHistory());

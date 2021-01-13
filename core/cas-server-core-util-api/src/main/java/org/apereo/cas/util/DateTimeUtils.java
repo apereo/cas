@@ -22,10 +22,11 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * Date/Time utility methods.
  * @author Timur Duehr timur.duehr@nccgroup.trust
  * @since 5.0.0
  */
-@SuppressWarnings("JdkObsolete")
+@SuppressWarnings("JavaUtilDate")
 @UtilityClass
 public class DateTimeUtils {
 

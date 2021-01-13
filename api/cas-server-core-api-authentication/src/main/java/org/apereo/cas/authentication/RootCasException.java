@@ -48,9 +48,10 @@ public abstract class RootCasException extends RuntimeException {
 
 
     /**
-     * @return Returns the code. If there is a chained exception it recursively
+     * If there is a chained exception it recursively
      * calls {@code getCode()} on the cause of the chained exception rather than the returning
      * the code itself.
+     * @return Returns the code.
      */
     public String getCode() {
         val cause = this.getCause();

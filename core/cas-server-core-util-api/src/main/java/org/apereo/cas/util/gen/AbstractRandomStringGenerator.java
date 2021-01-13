@@ -72,9 +72,4 @@ public abstract class AbstractRandomStringGenerator implements RandomStringGener
         this.randomizer.nextBytes(random);
         return random;
     }
-
-    @Override
-    public byte[] getNewStringAsBytes() {
-        return this.getNewStringAsBytes(this.getDefaultLength());
-    }
 }

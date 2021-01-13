@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 @Tag("Utility")
-@SuppressWarnings("JdkObsolete")
+@SuppressWarnings("JavaUtilDate")
 public class DateTimeUtilsTests {
 
     @Test

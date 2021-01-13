@@ -137,7 +137,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
      * @param failures the failures
      * @return true/false
      */
-    @SuppressWarnings("JdkObsolete")
+    @SuppressWarnings("JavaUtilDate")
     protected boolean calculateFailureThresholdRateAndCompare(final List<Date> failures) {
         if (failures.size() < 2) {
             return false;

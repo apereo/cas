@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("RestfulApi")
 @Getter
-@SuppressWarnings("JdkObsolete")
+@SuppressWarnings("JavaUtilDate")
 public class RestAuditTrailManagerTests {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 

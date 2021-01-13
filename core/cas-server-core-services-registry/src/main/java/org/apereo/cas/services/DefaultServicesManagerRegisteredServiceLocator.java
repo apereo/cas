@@ -34,7 +34,7 @@ public class DefaultServicesManagerRegisteredServiceLocator implements ServicesM
         return candidates
             .stream()
             .filter(entry -> registeredServiceFilter.test(entry, service))
-            .filter(requestedFilter::test)
+            .filter(requestedFilter)
             .findFirst()
             .orElse(null);
     }

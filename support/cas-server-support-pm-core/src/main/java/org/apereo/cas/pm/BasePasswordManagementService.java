@@ -106,7 +106,7 @@ public class BasePasswordManagementService implements PasswordManagementService 
             claims.setJwtId(token);
             claims.setIssuer(issuer);
             claims.setAudience(issuer);
-            claims.setExpirationTimeMinutesInTheFuture(resetProperties.getExpirationMinutes());
+            claims.setExpirationTimeMinutesInTheFuture((float) resetProperties.getExpirationMinutes());
             claims.setIssuedAtToNow();
 
             val holder = ClientInfoHolder.getClientInfo();

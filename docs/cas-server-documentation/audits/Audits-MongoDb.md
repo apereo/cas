@@ -11,7 +11,5 @@ If you intend to use a MongoDb database for auditing functionality, enable the f
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-audit-mongo" %}
 
-{% include {{ version }}/mongodb-configuration.md configKey="cas.audit" %}
-
-{% include {{ version }}/mongodb-audit-configuration.md %}
+{% include casproperties.html modules="cas-server-support-audit-mongo" %}
 

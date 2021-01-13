@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("MFA")
-@SuppressWarnings("JdkObsolete")
+@SuppressWarnings("JavaUtilDate")
 public class DefaultYubiKeyAccountValidatorTests {
     @Test
     public void verifyAction() throws Exception {

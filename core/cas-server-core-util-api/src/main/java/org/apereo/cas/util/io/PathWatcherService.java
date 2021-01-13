@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 import static java.nio.file.StandardWatchEventKinds.*;
 
 /**
+ * Control watch operations on paths and files as a service.
  * @author David Rodriguez
  * @since 5.2.0
  */
@@ -46,15 +47,7 @@ public class PathWatcherService implements WatcherService, Runnable, Closeable, 
             file -> {
             });
     }
-
-    /**
-     * Instantiates a new Json service registry config watcher.
-     *
-     * @param watchablePath path that will be watched
-     * @param onCreate      action triggered when a new file is created
-     * @param onModify      action triggered when a file is modified
-     * @param onDelete      action triggered when a file is deleted
-     */
+    
     @SneakyThrows
     public PathWatcherService(final Path watchablePath, final Consumer<File> onCreate,
         final Consumer<File> onModify, final Consumer<File> onDelete) {

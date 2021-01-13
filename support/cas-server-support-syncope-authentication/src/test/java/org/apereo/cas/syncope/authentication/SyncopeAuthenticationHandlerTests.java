@@ -82,7 +82,7 @@ public class SyncopeAuthenticationHandlerTests {
     private AuthenticationHandler syncopeAuthenticationHandler;
 
     @Test
-    @SuppressWarnings("JdkObsolete")
+    @SuppressWarnings("JavaUtilDate")
     public void verifyHandlerPasses() {
         val user = MAPPER.createObjectNode();
         user.put("username", "casuser");

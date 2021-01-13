@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("Audits")
-@SuppressWarnings("JdkObsolete")
+@SuppressWarnings("JavaUtilDate")
 public class AuditActionContextJsonSerializerTests {
     @Test
     public void verifyOperation() {

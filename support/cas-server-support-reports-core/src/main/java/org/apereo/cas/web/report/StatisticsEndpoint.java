@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
+ * Statistics endpoint reports back on cas metrics and ticket stats.
  * @author Scott Battaglia
  * @since 3.3.5
  */

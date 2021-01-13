@@ -32,7 +32,7 @@ public class DelegatedClientJacksonModuleTests {
     private static final AbstractJacksonBackedStringSerializer SERIALIZER = new TransientSessionTicketStringSerializer();
 
     @Test
-    @SuppressWarnings("JdkObsolete")
+    @SuppressWarnings("JavaUtilDate")
     public void verifyOperation() throws Exception {
         val mapper = SERIALIZER.getObjectMapper();
         assertTrue(mapper.getRegisteredModuleIds().contains(DelegatedClientJacksonModule.class.getName()));

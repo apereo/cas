@@ -9,4 +9,6 @@ Control the location and other settings of the CAS logging configuration.
 # logging.level.org.apereo.cas=DEBUG
 ```
 
+{% include casproperties.html properties="logging,cas.logging" %}
+
 To disable log sanitization, start the container with the system property `CAS_TICKET_ID_SANITIZE_SKIP=true`.

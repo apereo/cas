@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Getter
 @RequiredArgsConstructor
-@SuppressWarnings("JdkObsolete")
+@SuppressWarnings("JavaUtilDate")
 public class DynamoDbAuditTrailManagerFacilitator {
     private final AuditDynamoDbProperties dynamoDbProperties;
 
@@ -116,7 +116,7 @@ public class DynamoDbAuditTrailManagerFacilitator {
      * @param localDate the local date
      * @return the audit records since
      */
-    @SuppressWarnings("JdkObsolete")
+    @SuppressWarnings("JavaUtilDate")
     public Set<? extends AuditActionContext> getAuditRecordsSince(final LocalDate localDate) {
         val keys = new HashMap<String, AttributeValue>();
         val time = DateTimeUtils.dateOf(localDate).getTime();
