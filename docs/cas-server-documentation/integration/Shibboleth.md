@@ -61,9 +61,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-saml-mdui" %}
 
-{% include casproperties.html modules="cas-server-support-saml-mdui"
-properties="cas.saml-metadata-ui.schedule" "%}
-
+{% include casproperties.html modules="cas-server-support-saml-mdui" properties="cas.saml-metadata-ui.schedule" %}
 
 ### Relying Party Metadata
 

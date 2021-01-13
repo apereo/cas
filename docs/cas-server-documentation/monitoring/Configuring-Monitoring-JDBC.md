@@ -12,5 +12,5 @@ Monitor the status and availability of a relational SQL database.
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-jdbc-monitor" %}
 
-{% include {{ version }}/jdbc-monitoring-configuration.md %}
+{% include casproperties.html modules="cas-server-support-jdbc-monitor" %}
 

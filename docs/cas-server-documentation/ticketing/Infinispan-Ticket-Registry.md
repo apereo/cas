@@ -12,9 +12,7 @@ Infinispan integration is enabled by including the following dependency in the W
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-infinispan-ticket-registry" %}
 
-{% include {{ version }}/infinispan-ticket-registry-configuration.md %}
-
-{% include {{ version }}/signing-encryption-configuration.md configKey="cas.ticket.registry.infinispan" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
+{% include casproperties.html modules="cas-server-support-infinispan-ticket-registry" %}
 
 [Infinispan](http://infinispan.org/) is a distributed in-memory key/value data store with optional schema.
 It can be used both as an embedded Java library and as a language-independent service accessed remotely over a variety of protocols.
