@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.support;
 
-import com.google.common.collect.Sets;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jasypt.registry.AlgorithmRegistry;
