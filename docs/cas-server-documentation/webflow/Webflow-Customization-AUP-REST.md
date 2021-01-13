@@ -26,4 +26,5 @@ output body is expected to be an instance of `AcceptableUsagePolicyTerms` as suc
 Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-aup-rest" %}
-{% include {{ version }}/rest-configuration.md configKey="cas.acceptable-usage-policy.rest" %}
+
+{% include casproperties.html modules="cas-server-support-aup-rest" %}

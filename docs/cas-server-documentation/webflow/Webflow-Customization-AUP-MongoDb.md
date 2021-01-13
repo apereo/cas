@@ -14,4 +14,4 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-aup-mongo" %}
 
-{% include {{ version }}/mongodb-configuration.md configKey="cas.acceptable-usage-policy" %}
+{% include casproperties.html modules="cas-server-support-aup-mongo" %}

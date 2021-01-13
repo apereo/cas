@@ -15,4 +15,4 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-aup-couchbase" %}
 
-{% include {{ version }}/couchbase-configuration.md configKey="cas.acceptable-usage-policy.couchbase" %}
+{% include casproperties.html modules="cas-server-support-aup-couchbase" %}
