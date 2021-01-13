@@ -43,7 +43,7 @@ public class InMemoryMultifactorAuthenticationTrustStorage extends BaseMultifact
     }
 
     @Override
-    @SuppressWarnings("JdkObsolete")
+    @SuppressWarnings("JavaUtilDate")
     public void remove(final ZonedDateTime expirationDate) {
         val results = storage.asMap()
             .values()

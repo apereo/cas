@@ -135,7 +135,7 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
     public <T extends AttributeDefinition> Optional<T> locateAttributeDefinition(final Predicate<AttributeDefinition> predicate) {
         return attributeDefinitions.values()
             .stream()
-            .filter(predicate::test)
+            .filter(predicate)
             .map(defn -> (T) defn)
             .findFirst();
     }

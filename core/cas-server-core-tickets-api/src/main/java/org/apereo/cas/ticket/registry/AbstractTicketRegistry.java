@@ -28,11 +28,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
+ * Base ticket registry class that implements common ticket-related ops.
+ * 
  * @author Scott Battaglia
  * @since 3.0.0
- * <p>
- * This is a published and supported CAS Server API.
- * </p>
  */
 @Slf4j
 @Setter

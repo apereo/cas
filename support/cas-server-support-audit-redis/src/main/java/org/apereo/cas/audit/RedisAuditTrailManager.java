@@ -38,7 +38,7 @@ public class RedisAuditTrailManager extends AbstractAuditTrailManager {
     }
 
     @Override
-    @SuppressWarnings("JdkObsolete")
+    @SuppressWarnings("JavaUtilDate")
     public Set<? extends AuditActionContext> getAuditRecordsSince(final LocalDate localDate) {
         val dt = DateTimeUtils.dateOf(localDate);
         LOGGER.debug("Retrieving audit records since [{}]", dt);
@@ -66,7 +66,7 @@ public class RedisAuditTrailManager extends AbstractAuditTrailManager {
         return this.redisTemplate.keys(getPatternAuditRedisKey());
     }
 
-    @SuppressWarnings("JdkObsolete")
+    @SuppressWarnings("JavaUtilDate")
     private static String getAuditRedisKey(final AuditActionContext context) {
         return CAS_AUDIT_CONTEXT_PREFIX + context.getWhenActionWasPerformed().getTime();
     }

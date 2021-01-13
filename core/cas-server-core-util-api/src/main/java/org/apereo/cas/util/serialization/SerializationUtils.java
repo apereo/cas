@@ -24,6 +24,7 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 @UtilityClass
+@SuppressWarnings("BanSerializableRead")
 public class SerializationUtils {
 
     /**

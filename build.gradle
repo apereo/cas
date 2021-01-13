@@ -396,7 +396,9 @@ subprojects {
         if (!rootProject.skipErrorProneCompiler) {
             it.options.errorprone.allErrorsAsWarnings = false
             it.options.errorprone.disableWarningsInGeneratedCode = true
-            it.options.errorprone.errorproneArgs = ['-Xep:ParameterName:OFF', '-Xep:MissingOverride:OFF', '-Xep:MissingSummary:OFF']
+            it.options.errorprone.errorproneArgs = ['-Xep:MissingOverride:OFF',
+                                                    '-Xep:HidingField:OFF',
+                                                    '-Xep:SameNameButDifferent:OFF']
 
             casCompilerArgs.add("-XDcompilePolicy=byfile")
         }

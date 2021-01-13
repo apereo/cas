@@ -5,6 +5,8 @@ import org.apereo.cas.authentication.Authentication;
 import java.time.ZonedDateTime;
 
 /**
+ * The interface to describe the status and status of the ticket,
+ * with metadata such as number of times used, last time used, etc.
  * @author Scott Battaglia
  * @since 3.0.0
  */

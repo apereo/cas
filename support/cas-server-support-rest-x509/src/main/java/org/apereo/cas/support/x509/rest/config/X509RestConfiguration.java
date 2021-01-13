@@ -22,6 +22,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 
 /**
+ * X509 Rest configuration class.
+ * 
  * @author Dmytro Fedonin
  * @since 5.1.0
  */

@@ -13,8 +13,6 @@ If you intend to use a database for auditing functionality, enable the following
 
 To learn how to configure database drivers, please [review this guide](../installation/JDBC-Drivers.html).
 
-{% include {{ version }}/rdbms-configuration.md configKey="cas.audit.jdbc" %}
-
-{% include {{ version }}/jdbc-audit-configuration.md %}
+{% include casproperties.html modules="cas-server-support-audit-jdbc" %}
 
 {% include {{ version }}/job-scheduling-configuration.md configKey="cas.audit.jdbc" %}

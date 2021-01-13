@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@SuppressWarnings("JdkObsolete")
+@SuppressWarnings("JavaUtilDate")
 public class RedisThrottledSubmissionHandlerInterceptorAdapter extends AbstractInspektrAuditHandlerInterceptorAdapter {
     private final transient RedisTemplate redisTemplate;
 
