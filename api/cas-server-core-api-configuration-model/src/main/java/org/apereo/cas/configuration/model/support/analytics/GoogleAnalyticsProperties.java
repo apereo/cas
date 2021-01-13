@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.analytics;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -29,6 +30,7 @@ public class GoogleAnalyticsProperties implements Serializable {
      * The tracking id. Configuring the tracking
      * activated google analytics in CAS on UI views, etc.
      */
+    @RequiredProperty
     private String googleAnalyticsTrackingId;
 
     /**

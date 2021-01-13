@@ -1,7 +1,7 @@
 ---
 layout: default
 title: CAS - Web Flow Acceptable Usage Policy
-category: Webflow Management
+category: Acceptable Usage Policy
 ---
 
 {% include variables.html %}

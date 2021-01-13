@@ -346,7 +346,7 @@ layout: null
         *   [File](/cas/{{ version }}/audits/Audits-File.html)
         *   [Couchbase](/cas/{{ version }}/audits/Audits-Couchbase.html)
         *   [CouchDb](/cas/{{ version }}/audits/Audits-CouchDb.html)
-        *   [JDBC](/cas/{{ version }}/audits/Audits-JDBC.html)
+        *   [JDBC](/cas/{{ version }}/audits/Audits-Database.html)
         *   [DynamoDb](/cas/{{ version }}/audits/Audits-DynamoDb.html)
         *   [MongoDb](/cas/{{ version }}/audits/Audits-MongoDb.html)
         *   [Redis](/cas/{{ version }}/audits/Audits-Redis.html)
