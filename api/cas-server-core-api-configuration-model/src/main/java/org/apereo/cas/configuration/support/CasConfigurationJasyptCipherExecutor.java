@@ -27,16 +27,6 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
     public static final String ENCRYPTED_VALUE_PREFIX = "{cas-cipher}";
 
     /**
-     * These algorithms don't work with Jasypt 1.9.3 (empty for now).
-     */
-    private static final String[] ALGORITHM_BLACKLIST = new String[]{ };
-
-    /**
-     * List version of blocked algorithms.
-     */
-    public static final Set<String> ALGORITHM_BLACKLIST_SET = Set.of(ALGORITHM_BLACKLIST);
-
-    /**
      * The Jasypt instance.
      */
     private final StandardPBEStringEncryptor jasyptInstance;
@@ -79,10 +69,6 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
      */
     public void setAlgorithm(final String alg) {
         if (StringUtils.isNotBlank(alg)) {
-            if (ALGORITHM_BLACKLIST_SET.contains(alg)) {
-                throw new IllegalArgumentException(
-                    String.format("Configured Jasypt algorithm [%s] doesn't work for decryption due to Jasypt bug", alg));
-            }
             LOGGER.debug("Configured Jasypt algorithm [{}]", alg);
             jasyptInstance.setAlgorithm(alg);
         }

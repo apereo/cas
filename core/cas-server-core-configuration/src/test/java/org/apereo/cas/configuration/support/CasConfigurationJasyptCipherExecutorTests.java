@@ -82,19 +82,13 @@ public class CasConfigurationJasyptCipherExecutorTests {
     }
 
     /**
-     * Test all algorithms and verify that algorithms known not to work still don't work.
-     * https://sourceforge.net/p/jasypt/bugs/32/
+     * Test all algorithms
      */
     @Test
     public void verifyAlgorithms() {
         val algorithms = (Set<String>) AlgorithmRegistry.getAllPBEAlgorithms();
-        val goodAlgorithms = Sets.difference(algorithms, CasConfigurationJasyptCipherExecutor.ALGORITHM_BLACKLIST_SET);
-
-        for (val algorithm : goodAlgorithms) {
+        for (val algorithm : algorithms) {
             assertTrue(isAlgorithmFunctional(algorithm));
-        }
-        for (val algorithm : CasConfigurationJasyptCipherExecutor.ALGORITHM_BLACKLIST_SET) {
-            assertFalse(isAlgorithmFunctional(algorithm));
         }
     }
 
