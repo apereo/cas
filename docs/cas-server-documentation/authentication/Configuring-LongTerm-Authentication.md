@@ -5,7 +5,6 @@ category: SSO & SLO
 ---
 {% include variables.html %}
 
-
 # Long Term Authentication
 
 This feature, also known as *Remember Me*, extends the length of the SSO session beyond the typical period of hours
@@ -30,7 +29,5 @@ registry component that provides for durable storage, such as the [JPA Ticket Re
 Adjust your expiration policy so that remember-me authentication requests are
 handled via a long-term timeout expiration policy, and other requests
 are handled via the CAS default SSO session expiration policy.
-                     
-{% include {{ version }}/tgc-configuration.md %}
 
-{% include {{ version }}/rememberme-tgt-expiration-policy-configuration.md %}
+{% include casproperties.html properties="cas.tgc,cas.ticket.tgt.remember-me" %}

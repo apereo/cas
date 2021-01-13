@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.mfa.gauth;
 
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -25,6 +26,7 @@ public class LdapGoogleAuthenticatorMultifactorProperties extends AbstractLdapSe
     /**
      * Name of LDAP attribute that holds GAuth account/credential as JSON.
      */
+    @RequiredProperty
     private String accountAttributeName = "casGAuthRecord";
 }
 

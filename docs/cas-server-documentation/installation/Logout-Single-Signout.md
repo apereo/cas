@@ -37,11 +37,13 @@ Upon logout, it may also be desirable to redirect back to a service. This is con
 link via the `service` parameter. The specified `service` must be registered in the service registry of CAS and enabled and
 CAS must be allowed to follow service redirects.
 
-{% include {{ version }}/logout-configuration.md %}
+{% include casproperties.html properties="cas.logout" %}
+
 
 ## Single Logout (SLO)
 
-CAS is designed to support single sign out: it means that it will be able to invalidate client application sessions in addition to its own SSO session.  
+CAS is designed to support single sign out: it means that it will be able to 
+invalidate client application sessions in addition to its own SSO session.  
 Whenever a ticket-granting ticket is explicitly expired, the logout protocol will be initiated. Clients that do not support the
 logout protocol may notice extra requests in their access logs that appear not to do anything.
 
@@ -57,7 +59,7 @@ contacted, and this may disrupt user experience negatively if those applications
 As an example, if user has logged into a portal application and an email application, logging out of one through SLO will
 also destroy the user session in the other which could mean data loss if the application is not carefully managing its session and user activity.
 
-{% include {{ version }}/slo-configuration.md %}
+{% include casproperties.html properties="cas.slo" %}
 
 ### Back Channel
 

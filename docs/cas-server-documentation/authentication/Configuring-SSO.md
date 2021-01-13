@@ -38,7 +38,7 @@ The following endpoints are provided by CAS:
 
 ## Configuration
 
-{% include {{ version }}/tgc-configuration.md %}
+{% include casproperties.html properties="cas.tgc" %}
 
 The cookie has the following properties:
 
@@ -107,6 +107,8 @@ please [review this guide](../services/Configuring-Service-SSO-Policy.html).
 A warning cookie set by CAS upon the establishment of the SSO session at the request of the user on the CAS login page.
 The cookie is used later to warn and prompt the user before a service ticket is generated and access to the service application is granted.
 
+{% include casproperties.html properties="cas.warning-cookie" %}
+
 {% include {{ version }}/warning-cookie-configuration.md %}
 
 ## Public Workstations
@@ -131,7 +133,7 @@ In the event that no `service` is submitted to CAS, you may specify a default
 service url to which CAS will redirect. Note that this default service, much like
 all other services, MUST be authorized and registered with CAS.
 
-{% include {{ version }}/views-configuration.md %}
+{% include casproperties.html properties="cas.view.default-redirect-url" %}
 
 ## Required Service
 
