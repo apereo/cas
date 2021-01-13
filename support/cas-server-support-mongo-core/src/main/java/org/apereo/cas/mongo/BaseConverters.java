@@ -161,7 +161,7 @@ public abstract class BaseConverters {
     /**
      * The type Date to zoned date time converter.
      */
-    @SuppressWarnings("JdkObsolete")
+    @SuppressWarnings("JavaUtilDate")
     public static class DateToZonedDateTimeConverter implements Converter<Date, ZonedDateTime> {
         @Override
         public ZonedDateTime convert(final Date source) {
@@ -198,7 +198,7 @@ public abstract class BaseConverters {
      */
     public static class ZonedDateTimeToDateConverter implements Converter<ZonedDateTime, Date> {
         @Override
-        @SuppressWarnings("JdkObsolete")
+        @SuppressWarnings("JavaUtilDate")
         public Date convert(final ZonedDateTime source) {
             return Optional.ofNullable(source).map(zonedDateTime -> Date.from(zonedDateTime.toInstant())).orElse(null);
         }
@@ -220,7 +220,7 @@ public abstract class BaseConverters {
      */
     public static class BsonTimestampToDateConverter implements Converter<BsonTimestamp, Date> {
         @Override
-        @SuppressWarnings("JdkObsolete")
+        @SuppressWarnings("JavaUtilDate")
         public Date convert(final BsonTimestamp source) {
             return new Date(source.getTime());
         }
@@ -253,7 +253,7 @@ public abstract class BaseConverters {
      */
     public static class BsonTimestampToStringConverter implements Converter<BsonTimestamp, String> {
         @Override
-        @SuppressWarnings("JdkObsolete")
+        @SuppressWarnings("JavaUtilDate")
         public String convert(final BsonTimestamp source) {
             return String.valueOf(source.getTime());
         }
@@ -281,7 +281,7 @@ public abstract class BaseConverters {
             }
             return null;
         }
-        @SuppressWarnings("JdkObsolete")
+        @SuppressWarnings("JavaUtilDate")
         private static class ZonedDateTimeCodec implements Codec<ZonedDateTime> {
             @Override
             public ZonedDateTime decode(final BsonReader reader, final DecoderContext decoderContext) {

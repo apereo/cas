@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ * CAS proxy validation endpoint.
+ *
  * @author Misagh Moayyed
  * @since 4.2
  */

@@ -28,7 +28,7 @@ public class MockAuditTrailManager implements AuditTrailManager {
     }
 
     @Override
-    @SuppressWarnings("JdkObsolete")
+    @SuppressWarnings("JavaUtilDate")
     public Set<? extends AuditActionContext> getAuditRecordsSince(final LocalDate localDate) {
         val dt = DateTimeUtils.dateOf(localDate);
         return auditRecords

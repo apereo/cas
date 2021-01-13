@@ -48,7 +48,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Getter
 @RequiredArgsConstructor
-@SuppressWarnings("JdkObsolete")
+@SuppressWarnings("JavaUtilDate")
 public class DynamoDbMultifactorTrustEngineFacilitator {
     private final DynamoDbTrustedDevicesMultifactorProperties dynamoDbProperties;
 

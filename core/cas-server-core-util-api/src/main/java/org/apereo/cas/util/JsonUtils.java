@@ -13,6 +13,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * JSON utility methods.
+ * 
  * @author Misagh Moayyed
  * @since 4.1
  */

@@ -28,7 +28,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-scim" %}
 
-{% include {{ version }}/scim-configuration.md %}
+{% include casproperties.html modules="cas-server-support-scim" %}
 
 ## Per Application
 

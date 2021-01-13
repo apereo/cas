@@ -166,6 +166,8 @@ public class JcifsConfig {
 
 
         /**
+         * Sets jcifs domain.
+         *
          * @param jcifsDomain the jcifsDomain to set
          */
         public void setJcifsDomain(final String jcifsDomain) {
@@ -176,6 +178,8 @@ public class JcifsConfig {
         }
 
         /**
+         * Sets jcifs domain controller.
+         *
          * @param jcifsDomainController the jcifsDomainController to set
          */
         public void setJcifsDomainController(final String jcifsDomainController) {
@@ -186,6 +190,8 @@ public class JcifsConfig {
         }
 
         /**
+         * Sets jcifs password.
+         *
          * @param jcifsPassword the jcifsPassword to set
          */
         public void setJcifsPassword(final String jcifsPassword) {
@@ -195,6 +201,8 @@ public class JcifsConfig {
         }
 
         /**
+         * Sets jcifs username.
+         *
          * @param jcifsUsername the jcifsUsername to set
          */
         public void setJcifsUsername(final String jcifsUsername) {
@@ -205,6 +213,8 @@ public class JcifsConfig {
         }
 
         /**
+         * Sets jcifs netbios wins.
+         *
          * @param jcifsNetbiosWins the jcifsNetbiosWins to set
          */
         public void setJcifsNetbiosWins(final String jcifsNetbiosWins) {

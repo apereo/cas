@@ -14,6 +14,8 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 /**
+ * Kryo serializer to handle {@link ZonedDateTime}.
+ *
  * @author Timur Duehr timur.duehr@nccgroup.trust
  * @since 5.0.0
  */
