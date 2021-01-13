@@ -90,7 +90,8 @@ for f in $files; do
    docsVal=$?
  fi
  if [ $docsVal == 1 ]; then
-   echo "$fname fragment is unused."
+   echo "$PWD/gh-pages/_includes/$branchVersion/$fname fragment is unused."
+   rm "docs/cas-server-documentation/_includes/$fname"
    res=1
  fi
 done
@@ -117,6 +118,12 @@ bundle update jekyll
 bundle update github-pages
 echo -e "\nBuilding documentation site...\n"
 bundle exec jekyll build --incremental
+retVal=$?
+if [[ ${retVal} -eq 1 ]]; then
+  echo -e "Failed to build documentation.\n"
+  exit ${retVal}
+fi
+
 rm -Rf _site .jekyll-metadata .sass-cache
 
 echo -e "\nConfiguring git repository settings...\n"

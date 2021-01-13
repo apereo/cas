@@ -20,11 +20,7 @@ Each ticket type is linked to a distinct table.
 You will need to provide CAS with your [AWS credentials](https://aws.amazon.com/console/). Also, to gain a better understanding
 of DynamoDb's core components and concepts, please [start with this guide](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Introduction.html) first.
 
-{% include {{ version }}/dynamodb-configuration.md configKey="cas.ticket.registry" %}
-
-{% include {{ version }}/signing-encryption-configuration.md configKey="cas.ticket.registry.dynamo-db" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
-
-{% include {{ version }}/dynamodb-ticket-registry-configuration.md %}
+{% include casproperties.html modules="cas-server-support-dynamodb-ticket-registry" %}
 
 ## Troubleshooting
 

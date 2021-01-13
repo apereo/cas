@@ -12,14 +12,13 @@ CouchDB integration is enabled by including the following dependency in the WAR 
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-couchdb-ticket-registry" %}
 
-
 [CouchDB](http://couchdb.apache.org) is a highly available, open source NoSQL database server based on
 [Erlang/OTP](http://www.erlang.org) and its mnesia database. The intention of this
 registry is to leverage the multi-master, multi-datacenter capabilities of CouchDB server to provide high availability to CAS.
 
 ## Configuration
 
-{% include {{ version }}/couchdb-configuration.md configKey="cas.ticket.registry.couch-db" %}
+{% include casproperties.html modules="cas-server-support-couchdb-ticket-registry" %}
 
 
 The only truly mandatory setting is the URL. However, CouchDB should not be used in admin party mode in production, so username and password are needed as well.

@@ -22,14 +22,14 @@ Distributed caches are recommended for HA architectures since they offer fault t
 
 ## TLS Replication
 
-Ignite supports replication over TLS for distributed caches composed of two or more nodes. To learn more about TLS replication with Ignite,
+Ignite supports replication over TLS for distributed caches 
+composed of two or more nodes. To learn more about TLS replication with Ignite,
 [see this resource](https://apacheignite.readme.io/docs/ssltls).
 
 
 ## Configuration
 
-{% include {{ version }}/ignite-ticket-registry-configuration.md %}
-{% include {{ version }}/signing-encryption-configuration.md configKey="cas.ticket.registry.ignite" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
+{% include casproperties.html modules="cas-server-support-ignite-ticket-registry" %}
 
 ## Troubleshooting
 

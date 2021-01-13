@@ -22,11 +22,7 @@ Support is enabled by adding the following module into the overlay:
 
 ## Configuration
 
-{% include {{ version }}/rdbms-configuration.md configKey="cas.ticket.registry.jpa" %}
-
-{% include {{ version }}/jpa-ticket-registry-configuration.md %}
-
-{% include {{ version }}/signing-encryption-configuration.md configKey="cas.ticket.registry.jpa" signingKeySize="512" encryptionKeySize="16" encryptionAlg="AES" %}
+{% include casproperties.html modules="cas-server-support-jpa-ticket-registry" %}
 
 A background *cleaner* process is also automatically scheduled to scan the chosen 
 database periodically and remove expired records based on configured threshold parameters.
