@@ -38,7 +38,7 @@ To learn more about available notification options, please [see this guide](../n
 
 {% include {{ version }}/email-notifications-configuration.md configKey="cas.authn.pm.reset" %}
 
-{% include {{ version }}/sms-notifications-configuration.md configKey="cas.authn.pm.reset" %}
+{% include casproperties.html properties="cas.authn.pm.reset.sms" %}
 
 {% include {{ version }}/signing-encryption-configuration.md configKey="cas.authn.pm.reset" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
 

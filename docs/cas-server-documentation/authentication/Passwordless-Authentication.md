@@ -106,10 +106,8 @@ Please [see this guide](Passwordless-Authentication-Tokens-Custom.html).
 
 
 ### Messaging & Notifications
-
-{% include {{ version }}/email-notifications-configuration.md configKey="cas.authn.passwordless.tokens" %}
-
-{% include {{ version }}/sms-notifications-configuration.md configKey="cas.authn.passwordless.tokens" %}
+                                     
+{% include casproperties.html properties="cas.authn.passwordless.tokens.mail,cas.authn.passwordless.tokens.sms" %}
 
 Users may be notified of tokens via text messages, mail, etc.
 To learn more about available options, please [see this guide](../notifications/SMS-Messaging-Configuration.html)

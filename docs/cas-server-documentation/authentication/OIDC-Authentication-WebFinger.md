@@ -95,7 +95,7 @@ status code where the body should contain `Map` representing the
 user account information. All other responses will lead to a `404` 
 response status back to the relying party.
 
-{% include {{ version }}/rest-configuration.md configKey="cas.authn.oidc.webfinger.user-info.rest" %}
+{% include casproperties.html properties="cas.authn.oidc.webfinger.user-info.rest" %}
 
 ### Custom UserInfo Repository
 

@@ -20,4 +20,4 @@ Device fingerprint can be calculated using the following ways:
 allowed to [ask and process geodata](../authentication/Configuring-Authentication-Events.html) provided by the browser.
 - User-agent header
 
-{% include {{ version }}/mfa-trusted-devicefingerprint-configuration.md %}
+{% include casproperties.html properties="cas.authn.mfa.trusted.device-fingerprint" %}

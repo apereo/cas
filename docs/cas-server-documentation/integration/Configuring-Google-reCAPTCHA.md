@@ -15,7 +15,7 @@ Support is enabled by including the following module in the WAR Overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-captcha" %}
 
-{% include {{ version }}/recaptcha-configuration.md %}
+{% include casproperties.html properties="cas.google-recaptcha" %}
 
 ## Internet Explorer
 

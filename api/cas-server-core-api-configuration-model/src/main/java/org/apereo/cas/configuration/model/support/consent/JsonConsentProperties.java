@@ -13,7 +13,7 @@ import lombok.experimental.Accessors;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@RequiresModule(name = "cas-server-consent-webflow")
+@RequiresModule(name = "cas-server-support-consent-webflow")
 @Getter
 @Setter
 @Accessors(chain = true)
