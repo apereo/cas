@@ -12,4 +12,4 @@ To learn more, [visit this site](http://www.clickatell.com/).
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-sms-clickatell" %}
 
-{% include {{ version }}/clickatell-configuration.md %}
+{% include casproperties.html module="cas-server-support-sms-clickatell" %}

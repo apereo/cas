@@ -16,8 +16,6 @@ Support is enabled by adding the following module into the overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-git-service-registry" %}
 
-{% include {{ version }}/git-configuration.md configKey="cas.service-registry`" %}
-
 {% include casproperties.html modules="cas-server-support-git-service-registry" %}
 
 <div class="alert alert-warning"><strong>No Interference!</strong><p>
@@ -25,5 +23,6 @@ Be careful to not manually modify the state of the git repository directory that
 interfering with CAS' own service management processes and ultimately may end up corrupting the state of the git repository.
 </p></div>
 
-The service registry is also able to auto detect changes as it will pull changes from defined remotes periodically. It will monitor changes to recognize
+The service registry is also able to auto detect changes as it will 
+pull changes from defined remotes periodically. It will monitor changes to recognize
 file additions, removals and updates and will auto-refresh CAS so changes may happen instantly.

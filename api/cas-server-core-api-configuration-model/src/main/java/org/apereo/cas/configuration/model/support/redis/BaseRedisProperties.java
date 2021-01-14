@@ -56,6 +56,7 @@ public class BaseRedisProperties implements Serializable {
     /**
      * Redis connection pool settings.
      */
+    @NestedConfigurationProperty
     private RedisPoolProperties pool = new RedisPoolProperties();
 
     /**

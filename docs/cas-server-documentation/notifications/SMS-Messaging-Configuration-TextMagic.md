@@ -12,4 +12,4 @@ To learn more, [visit this site](https://www.textmagic.com/).
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-sms-textmagic" %}
 
-{% include {{ version }}/textmagic-configuration.md %}
+{% include casproperties.html module="cas-server-support-sms-textmagic" %}

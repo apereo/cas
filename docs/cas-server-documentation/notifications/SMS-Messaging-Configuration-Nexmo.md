@@ -12,4 +12,4 @@ To learn more, [visit this site](https://dashboard.nexmo.com/).
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-sms-nexmo" %}
 
-{% include {{ version }}/nexmo-configuration.md %}
+{% include casproperties.html module="cas-server-support-sms-nexmo" %}

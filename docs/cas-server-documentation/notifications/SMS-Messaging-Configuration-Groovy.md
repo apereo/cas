@@ -24,4 +24,5 @@ def run(Object[] args) {
 }
 ```
 
-{% include {{ version }}/groovy-sms-configuration.md %}
+{% include casproperties.html properties="cas.sms-provider.groovy" %}
+

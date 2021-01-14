@@ -51,7 +51,7 @@ The `token` parameter may either be passed as a request parameter or a request
 header. The body of the response will include the ticket-granting ticket as 
 a JWT. Note that JWTs created are typically signed and encrypted by default with pre-generated keys. 
 
-{% include {{ version }}/jwt-tickets-configuration.md %}
+{% include casproperties.html properties="cas.authn.token" %}
 
 ## X509 Authentication
 
@@ -77,6 +77,8 @@ during TLS handshake, and have CAS server retrieve the certificate from the cont
 Support is enabled by including the following in your overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-rest-x509" %}
+
+{% include casproperties.html module="cas-server-support-rest-x509" %}
 
 ### TLS Client Authentication using a body parameter
 

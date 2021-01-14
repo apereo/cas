@@ -22,14 +22,7 @@ dependencies {
 
     implementation project(":core:cas-server-core-configuration-metadata-repository")
 
-    implementation libraries.log4j
-    implementation libraries.springbootconfigmetadata
-
-    compileOnlyApi libraries.springcloudeurekaserver
-    compileOnlyApi libraries.eurekaclient
-    compileOnlyApi libraries.ribbon
-    compileOnlyApi libraries.springcloudconsul
-    compileOnlyApi libraries.springintegration
-    compileOnlyApi libraries.activemq
-    compileOnlyApi libraries.javamelody
+    libraries.each {
+        implementation it.value
+    }
 }

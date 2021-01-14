@@ -76,12 +76,14 @@ a successful `200 - OK` response status, CAS expects the body of the HTTP respon
 }
 ```
 
-{% include {{ version }}/rest-saml2-idp-metadata-configuration.md %}
+{% include casproperties.html module="cas-server-support-saml-idp-metadata-rest" %}
 
 ### Identity Provider Metadata
 
-Metadata artifacts that belong to CAS as a SAML2 identity provider may also be managed and stored via REST APIs. Artifacts such as the metadata, signing and 
-encryption keys, etc are passed along to an external API endpoint in the following structure as the request body:
+Metadata artifacts that belong to CAS as a SAML2 identity provider 
+may also be managed and stored via REST APIs. Artifacts such as the metadata, signing and 
+encryption keys, etc are passed along to an external API 
+endpoint in the following structure as the request body:
 
 ```json
 {

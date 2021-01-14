@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.redis;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -28,6 +29,7 @@ public class RedisSentinelProperties implements Serializable {
     /**
      * Name of Redis server.
      */
+    @RequiredProperty
     private String master;
 
     /**
