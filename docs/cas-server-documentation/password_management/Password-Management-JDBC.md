@@ -14,9 +14,7 @@ JDBC support is enabled by including the following dependencies in the WAR overl
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-pm-jdbc" %}
 
-{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.pm.jdbc" %}
-{% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.pm.jdbc" %}
-{% include {{ version }}/jdbc-pswd-mgmt-configuration.md %}
+{% include casproperties.html module="cas-server-support-pm-jdbc" %}
 
 The expected database schema for the user accounts is:
 
@@ -32,4 +30,5 @@ create table pm_table_questions (id int, userid varchar(255), question varchar(2
 
 ## Password History
 
-This feature is does also enable password history tracking and storage. Managing passwords via JDBC will switch CAS to use the same JDBC configuration for password history.
+This feature is does also enable password history tracking and storage. Managing 
+passwords via JDBC will switch CAS to use the same JDBC configuration for password history.

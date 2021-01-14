@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.git.services;
 
 import org.apereo.cas.configuration.model.SpringResourceProperties;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
@@ -27,11 +28,13 @@ public abstract class BaseGitProperties implements Serializable {
      * The address of the git repository.
      * Could be a URL or a file-system path.
      */
+    @RequiredProperty
     private String repositoryUrl;
 
     /**
      * The branch to checkout and activate.
      */
+    @RequiredProperty
     private String activeBranch = "master";
 
     /**
@@ -39,6 +42,7 @@ public abstract class BaseGitProperties implements Serializable {
      * this will allow the list of branches to be fetched
      * separated by commas.
      */
+    @RequiredProperty
     private String branchesToClone = "master";
 
     /**
@@ -103,5 +107,6 @@ public abstract class BaseGitProperties implements Serializable {
      * Directory into which the repository would be cloned.
      */
     @NestedConfigurationProperty
+    @RequiredProperty
     private SpringResourceProperties cloneDirectory = new SpringResourceProperties();
 }

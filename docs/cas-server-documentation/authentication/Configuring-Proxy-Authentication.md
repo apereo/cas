@@ -126,19 +126,19 @@ Note that a large key size of `4096` may be required in order to allow CAS to en
 lengthy proxy-granting tickets. Choosing a small key size will may prevent CAS to correctly
 encrypt the ticket as there is a limit to the lengths the encryption algorithm of a particular size can handle.
 
-### Decrypt PGT
+### Decrypt Proxy-Granting Ticket
 
 Once the client application has received the `proxyGrantingTicket` id attribute in the CAS validation response, it can decrypt it
 via its own private key. Since the attribute is base64 encoded by default, it needs to be decoded first before
 decryption can occur. Here's a sample code snippet:
 
 ```java
-final Map<?, ?> attributes = ...
-final String encodedPgt = (String) attributes.get("proxyGrantingTicket");
-final PrivateKey privateKey = ...
-final Cipher cipher = Cipher.getInstance(privateKey.getAlgorithm());
-final byte[] cred64 = decodeBase64(encodedPgt);
+var attributes = new HashMap<>();
+var encodedPgt = (String) attributes.get("proxyGrantingTicket");
+var privateKey = ...
+var cipher = Cipher.getInstance(privateKey.getAlgorithm());
+var cred64 = decodeBase64(encodedPgt);
 cipher.init(Cipher.DECRYPT_MODE, privateKey);
-final byte[] cipherData = cipher.doFinal(cred64);
+var cipherData = cipher.doFinal(cred64);
 return new String(cipherData);
 ```

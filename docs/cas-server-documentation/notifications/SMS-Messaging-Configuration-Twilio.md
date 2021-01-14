@@ -11,5 +11,5 @@ category: Notifications
 To learn more, [visit this site](https://www.twilio.com/).
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-sms-twilio" %}
-
-{% include {{ version }}/twilio-configuration.md %}
+       
+{% include casproperties.html module="cas-server-support-sms-twilio" %}

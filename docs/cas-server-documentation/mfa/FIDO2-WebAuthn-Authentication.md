@@ -18,7 +18,9 @@ Support is enabled by including the following module in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-webauthn" %}
 
-{% include {{ version }}/webauthn-configuration.md %}
+{% include casproperties.html
+modules="cas-server-support-webauthn"
+properties="cas.authn.mfa.web-authn.bypass,cas.authn.mfa.web-authn.crypto" %}
 
 You may also need to declare the following repository in
 your CAS overlay to be able to resolve dependencies:

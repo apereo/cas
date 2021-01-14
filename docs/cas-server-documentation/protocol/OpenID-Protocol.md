@@ -33,7 +33,7 @@ as the OpenId Connect protocol whose details are <a href="OIDC-Protocol.html">do
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-openid-webflow" %}
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-openid-webflow,cas-server-support-openid" %}
 
 {% include casproperties.html modules="cas-server-support-openid-webflow" %}
 

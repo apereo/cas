@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.redis;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -19,6 +20,7 @@ import java.io.Serializable;
 @Setter
 @Accessors(chain = true)
 @RequiresModule(name = "cas-server-support-redis-core")
+@JsonFilter("RedisClusterNodeProperties")
 public class RedisClusterNodeProperties implements Serializable {
     private static final long serialVersionUID = 2912983343579258662L;
 

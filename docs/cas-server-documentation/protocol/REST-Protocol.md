@@ -24,7 +24,7 @@ Support is enabled by including the following to the overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-rest" %}
          
-{% include {{ version }}/rest-api-configuration.md %}
+{% include casproperties.html module="cas-server-support-rest" %}
 
 ## Multiple Credentials
 

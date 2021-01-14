@@ -12,12 +12,12 @@ CAS allows for strategies to track and storage recycled password. Recycled
 passwords are kept in storage for the user account and are 
 examined upon password updates for validity. 
 
-{% include {{ version }}/pswd-history-configuration.md %}
+{% include casproperties.html properties="cas.authn.pm.history" excludes=".groovy,.jdbc" %}
 
 Once password history functionality is enabled, passwords can be tracked 
 in history via a Groovy or an in-memory backend. Specific storage 
 options may also provide their own support for password history.
-
+ 
 ## Groovy
 
 Password history tracking, once enabled, can be handed off to an external Groovy script as such:
@@ -58,4 +58,4 @@ def removeAll(Object[] args) {
 
 The `request` parameter encapsulates a `PasswordChangeRequest` object, carrying `username` and `password` fields.
 
-{% include {{ version }}/pswd-history-groovy-configuration.md %}
+{% include casproperties.html properties="cas.authn.pm.history.groovy" %}

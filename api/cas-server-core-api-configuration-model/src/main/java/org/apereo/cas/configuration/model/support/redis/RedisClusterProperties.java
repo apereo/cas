@@ -1,7 +1,9 @@
 package org.apereo.cas.configuration.model.support.redis;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -20,6 +22,7 @@ import java.util.List;
 @Setter
 @Accessors(chain = true)
 @RequiresModule(name = "cas-server-support-redis-core")
+@JsonFilter("RedisClusterProperties")
 public class RedisClusterProperties implements Serializable {
     private static final long serialVersionUID = 5236837157740950831L;
 
@@ -31,6 +34,7 @@ public class RedisClusterProperties implements Serializable {
     /**
      * The cluster connection's password.
      */
+    @RequiredProperty
     private String password;
 
     /**
