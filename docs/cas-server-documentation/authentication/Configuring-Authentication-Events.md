@@ -22,6 +22,8 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-core-events" %}
 
+To learn how to configure database drivers, [please see this guide](../installation/JDBC-Drivers.html).
+
 {% include {{ version }}/events-configuration.md %}
 
 ## Recorded Data

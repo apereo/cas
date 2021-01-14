@@ -4,13 +4,6 @@ that this header does not originate with the client (e.g. the browser).
 
 {% include casproperties.html properties="cas.server.tomcat.ssl-valve" %}
 
-```properties
-# cas.server.tomcat.ssl-valve.enabled=false
-# cas.server.tomcat.ssl-valve.ssl-client-cert-header=ssl_client_cert
-# cas.server.tomcat.ssl-valve.ssl-cipher-header=ssl_cipher
-# cas.server.tomcat.ssl-valve.ssl-session-id-header=ssl_session_id
-# cas.server.tomcat.ssl-valve.ssl-cipher-user-key-size-header=ssl_cipher_usekeysize
-```
 
 Example HAProxy Configuration (snippet): Configure SSL frontend
 with cert optional, redirect to cas, if cert provided, put it on header.

@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.core.web.tomcat;
 
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -19,6 +20,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("CasEmbeddedApacheTomcatProperties")
 public class CasEmbeddedApacheTomcatProperties implements Serializable {
     private static final long serialVersionUID = -99143821503580896L;
 

@@ -17,7 +17,7 @@ import java.io.Serializable;
  * @deprecated 6.2
  * @since 5.0.0
  */
-@RequiresModule(name = "cas-server-support-openid")
+@RequiresModule(name = "cas-server-support-openid-webflow")
 @Getter
 @Setter
 @Deprecated(since = "6.2.0")

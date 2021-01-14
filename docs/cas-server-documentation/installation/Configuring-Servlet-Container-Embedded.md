@@ -5,20 +5,17 @@ category: Installation
 ---
 {% include variables.html %}
 
-# Embedded Servlet Container Configuration
+# Embedded Servlet Container
 
 Note that CAS itself ships with a number of embedded containers that allow the platform to be self-contained 
 as much as possible. These embedded containers are an integral part of the CAS software, are maintained and 
 updated usually for every release and surely are meant to and can be used in production deployments. 
 You **DO NOT** need to, but can if you want to, configure and deploy to an externally configured container. 
 
-## Embedded Container Configuration
+## Configuration
 
-{% include {{ version }}/embedded-container-configuration.md %}
-
-## X.509 Client Authentication
-
-{% include {{ version }}/embedded-container-x509-configuration.md %}
+{% include casproperties.html 
+properties="server.port,server.ssl,server.servlet,server.max-http-header-size,server.use-forward-headers,server.connection-timeout" %}
 
 ## Execution
 

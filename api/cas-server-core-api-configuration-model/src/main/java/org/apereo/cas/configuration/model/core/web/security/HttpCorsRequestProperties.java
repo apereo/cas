@@ -1,7 +1,9 @@
 package org.apereo.cas.configuration.model.core.web.security;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -20,6 +22,7 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("HttpCorsRequestProperties")
 public class HttpCorsRequestProperties implements Serializable {
 
     private static final long serialVersionUID = 5938828345939769185L;
@@ -27,6 +30,7 @@ public class HttpCorsRequestProperties implements Serializable {
     /**
      * Whether CORS should be enabled for http requests.
      */
+    @RequiredProperty
     private boolean enabled;
 
     /**

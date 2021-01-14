@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.web.tomcat;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
@@ -25,6 +26,7 @@ public class CasEmbeddedApacheTomcatSslValveProperties implements Serializable {
     /**
      * Enable the SSL valve for apache tomcat.
      */
+    @RequiredProperty
     private boolean enabled;
 
     /**

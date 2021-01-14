@@ -21,12 +21,10 @@ registered service in the Service Registry. The theme that is activated via
 this method will still preserve the default views for CAS but will apply 
 decorations such as CSS and Javascript to the views. The physical structure 
 of views cannot be modified via this method.
-             
-
 
 ### Configuration
 
-{% include {{ version }}/themes-configuration.md %}
+{% include casproperties.html properties="cas.theme." %}
 
 - Add a `[theme_name].properties` placed to the root of `src/main/resources` folder. 
 Contents of this file should match the following:

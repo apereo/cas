@@ -1,7 +1,9 @@
 package org.apereo.cas.configuration.model.core.web.tomcat;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -20,6 +22,7 @@ import java.util.List;
 @Getter
 @Accessors(chain = true)
 @Setter
+@JsonFilter("CasEmbeddedApacheSslHostConfigProperties")
 public class CasEmbeddedApacheSslHostConfigProperties implements Serializable {
 
     private static final long serialVersionUID = -32143821503580896L;
@@ -27,6 +30,7 @@ public class CasEmbeddedApacheSslHostConfigProperties implements Serializable {
     /**
      * Enable this host config.
      */
+    @RequiredProperty
     private boolean enabled;
 
     /**

@@ -36,7 +36,7 @@ configured automatically, as long as no broker URL is specified through configur
 By default, ActiveMQ creates a destination if it does not exist yet, so 
 destinations are resolved against their provided names.
 
-{% include {{ version }}/activemq-jms-ticket-registry-configuration.md %}
+{% include casproperties.html properties="spring.activemq" %}
 
 The default setting for ActiveMQ is that all persistent messages outside of a transaction 
 are sent to a broker are synchronous. This means that the send method is blocked until the 
@@ -57,7 +57,7 @@ Support is enabled by including the following dependency in the overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="spring-boot-starter-artemis" %}
 
-{% include {{ version }}/artemis-jms-ticket-registry-configuration.md %}
+{% include casproperties.html properties="spring.artemis" %}
 
 ## JNDI
 
@@ -65,7 +65,7 @@ If you are [running CAS in an application server](../installation/Configuring-Se
 CAS will attempt to locate a JMS connection using JNDI. By default, the locations 
 `java:/JmsXA` and `java:/XAConnectionFactory` will be checked. 
 
-{% include {{ version }}/jndi-jms-ticket-registry-configuration.md %}
+{% include casproperties.html properties="spring.jms" %}
 
 ## Troubleshooting
 
