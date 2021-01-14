@@ -43,4 +43,4 @@ def getSecurityQuestions(Object[] args) {
 }
 ```
 
-{% include {{ version }}/groovy-pswd-mgmt-configuration.md %}
+{% include casproperties.html properties="cas.authn.pm.groovy" %}

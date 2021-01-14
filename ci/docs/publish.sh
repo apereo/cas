@@ -117,7 +117,7 @@ bundle install --full-index
 bundle update jekyll
 bundle update github-pages
 echo -e "\nBuilding documentation site...\n"
-bundle exec jekyll build --incremental
+bundle exec jekyll build --incremental --profile 
 retVal=$?
 if [[ ${retVal} -eq 1 ]]; then
   echo -e "Failed to build documentation.\n"

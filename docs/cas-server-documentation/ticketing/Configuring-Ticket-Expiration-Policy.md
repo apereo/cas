@@ -71,7 +71,7 @@ The expiration policy applied to TGTs provides for most-recently-used expiration
 For example, a 2-hour time span with this policy in effect would require a `TGT` to be used every 2 hours or less, otherwise
 it would be marked as expired.
 
-{% include {{ version }}/timeout-tgt-expiration-policy-configuration.md %}
+{% include casproperties.html properties="cas.ticket.tgt.timeout" %}
 
 ### Hard Timeout
 
@@ -79,7 +79,7 @@ The hard timeout policy provides for finite ticket lifetime as measured from the
 for this policy means that a ticket created at 1PM may be used up until 5PM; subsequent attempts to use it will mark it expired
 and the user will be forced to re-authenticate.
 
-{% include {{ version }}/hard-timeout-tgt-expiration-policy-configuration.md %}
+{% include casproperties.html properties="cas.ticket.tgt.hard-timeout" %}
 
 ### Throttled
 
@@ -87,7 +87,7 @@ The throttled timeout policy extends the TimeoutExpirationPolicy with the concep
 most every N seconds. This policy was designed to thwart denial of service conditions where a rogue or misconfigured client
 attempts to consume CAS server resources by requesting high volumes of service tickets in a short time.
 
-{% include {{ version }}/throttled-timeout-tgt-expiration-policy-configuration.md %}
+{% include casproperties.html properties="cas.ticket.tgt.throttled-timeout" %}
 
 ### Never
 
@@ -108,7 +108,7 @@ ST expiration policy governs the time span during which an authenticated user ma
 This is the default policy applied to service tickets where a ticket is expired after a fixed number of uses or after a maximum
 period of inactivity elapses.
 
-{% include {{ version }}/st-configuration.md %}
+{% include casproperties.html properties="cas.ticket.st" %}
 
 ### Per Service
 
@@ -138,7 +138,7 @@ whose service ticket expiration policy is to deviate from the default configurat
 This is the default policy applied to proxy tickets where a ticket is expired after a fixed number of uses or after a maximum
 period of inactivity elapses. 
 
-{% include {{ version }}/pt-configuration.md %}
+{% include casproperties.html properties="cas.ticket.pt" %}
 
 ### Per Service
 
@@ -186,10 +186,12 @@ whose proxy granting ticket expiration policy is to deviate from the default con
 }
 ```
 
-{% include {{ version }}/pgt-configuration.md %}
+{% include casproperties.html properties="cas.ticket.pgt" %}
+
 
 ## Transient Session Ticket Policies
 
 TST expiration policy governs the time span during which CAS can track a specific activity tied to a session.
 
-{% include {{ version }}/tst-configuration.md %}
+{% include casproperties.html properties="cas.ticket.tst" %}
+
