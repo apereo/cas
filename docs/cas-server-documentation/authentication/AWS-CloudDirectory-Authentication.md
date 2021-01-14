@@ -25,9 +25,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.cloud-directory" %}
 
-{% include {{ version }}/aws-configuration.md configKey="cas.authn.cloud-directory" %}
-
-{% include {{ version }}/aws-clouddirectory-authentication-configuration.md %}
+{% include casproperties.html properties="cas.authn.cloud-directory" excludes="principal-transformation,password-encoder" %}
 
 AWS credentials are fetched from the following sources automatically, where relevant 
 and made possible via CAS configuration:

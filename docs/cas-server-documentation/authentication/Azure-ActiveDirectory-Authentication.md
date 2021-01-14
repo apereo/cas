@@ -21,11 +21,13 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.azure-active-directory" %}
 
-{% include {{ version }}/azuread-authentication-configuration.md %}
+{% include casproperties.html 
+properties="cas.authn.azure-active-directory" 
+excludes="principal-transformation,password-encoder" %}
 
 ## Principal Attributes
 
 The above dependency may also be used, in the event that principal attributes 
 need to be fetched from Azure Active Directory without necessarily authenticating credentials . 
 
-{% include {{ version }}/azuread-attribute-resolution-configuration.md %}
+{% include casproperties.html properties="cas.authn.attribute-repository.azure-active-directory" %}

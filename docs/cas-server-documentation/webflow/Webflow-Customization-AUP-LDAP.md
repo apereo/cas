@@ -14,4 +14,4 @@ via the same attribute. Support is enabled by including the following dependency
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-aup-ldap" %}
 
-{% include casproperties.html modules="cas-server-support-aup-ldap" %}
+{% include casproperties.html properties="cas.acceptable-usage-policy.ldap" %}

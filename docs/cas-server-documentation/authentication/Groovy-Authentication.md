@@ -15,7 +15,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-generic" %}
 
-{% include {{ version }}/groovy-authentication-configuration.md %}
+{% include casproperties.html properties="cas.authn.groovy" excludes="principal-transformation,password-encoder" %}
 
 The Groovy script may be designed as:
 

@@ -1,8 +1,10 @@
 package org.apereo.cas.configuration.model.support.consent;
 
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -17,6 +19,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("LdapConsentProperties")
 public class LdapConsentProperties extends AbstractLdapSearchProperties {
 
     private static final long serialVersionUID = 1L;
@@ -24,10 +27,12 @@ public class LdapConsentProperties extends AbstractLdapSearchProperties {
     /**
      * Type of LDAP directory.
      */
+    @RequiredProperty
     private LdapType type;
 
     /**
      * Name of LDAP attribute that holds consent decisions as JSON.
      */
+    @RequiredProperty
     private String consentAttributeName = "casConsentDecision";
 }

@@ -18,7 +18,7 @@ Support is enabled by including the following dependency in the overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-redis-service-registry" %}
 
-{% include {{ version }}/redis-configuration.md configKey="cas.service-registry" %}
+{% include casproperties.html modules="cas-server-support-redis-service-registry" %}
 
 ## Auto Initialization
 
