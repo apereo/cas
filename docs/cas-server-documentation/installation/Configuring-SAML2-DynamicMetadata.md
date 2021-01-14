@@ -76,7 +76,7 @@ a successful `200 - OK` response status, CAS expects the body of the HTTP respon
 }
 ```
 
-{% include casproperties.html module="cas-server-support-saml-idp-metadata-rest" %}
+{% include casproperties.html modules="cas-server-support-saml-idp-metadata-rest" %}
 
 ### Identity Provider Metadata
 

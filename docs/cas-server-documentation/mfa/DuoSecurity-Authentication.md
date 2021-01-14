@@ -69,17 +69,22 @@ working on a fix to restore the API behavior in a more secure way. In the meanwh
 
 ## Health Status
 
-CAS is able to contact Duo Security, on demand, in order to inquire the health status of the service using Duo Security's `ping` API. 
+CAS is able to contact Duo Security, on demand, in order to inquire 
+the health status of the service using Duo Security's `ping` API. 
 The results of the operations are recorded and reported using `health` endpoint 
 provided by [CAS Monitoring endpoints](../monitoring/Monitoring-Statistics.html).
 Of course, the same result throughout the Duo authentication flow is also used to determine failure modes.
  
 ## Universal Prompt
 
-Universal Prompt is a variation of Duo Multifactor Authentication that uses the [Duo OIDC Auth API](https://duo.com/docs/oauthapi). This is 
-an OIDC standards-based API for adding strong two-factor authentication to CAS. This option no longer displays the Duo Prompt 
-in an iFrame controlled and owned by CAS. Rather, the prompt is now hosted on Duo’s servers and displayed via browser redirects. The
-response from Duo Security is passed to CAS as a browser redirect and CAS will begin to negotiate and exchange that response in favor of
+Universal Prompt is a variation of Duo Multifactor Authentication 
+that uses the [Duo OIDC Auth API](https://duo.com/docs/oauthapi). This is 
+an OIDC standards-based API for adding strong two-factor authentication 
+to CAS. This option no longer displays the Duo Prompt 
+in an iFrame controlled and owned by CAS. Rather, the prompt is now 
+hosted on Duo’s servers and displayed via browser redirects. The
+response from Duo Security is passed to CAS as a browser redirect 
+and CAS will begin to negotiate and exchange that response in favor of
 a JWT that contains the multifactor authentication user profile details.
 
 This option only required settings for integration key, secret key, and API hostname.
@@ -107,7 +112,28 @@ curl --location --header "Content-Type: application/cas" https://apps.example.or
 
 ## Configuration
 
-{% include {{ version }}/duosecurity-configuration.md %}
+{% include casproperties.html
+modules="cas-server-support-duo"
+properties="cas.authn.mfa.duo[].bypass" %}
+
+#### Web SDK Configuration
+
+The `duo-application-key` is a required string, at least 40 characters long, that you
+generate and keep secret from Duo. You can generate a random string in Python with:
+
+```python
+import os, hashlib
+print hashlib.sha1(os.urandom(32)).hexdigest()
+```
+
+#### Universal Prompt Configuration
+
+Universal Prompt no longer requires you to generate and use a application
+key value. Instead, it requires a *client id* and *client secret*, which
+are known and taught CAS using the integration key and secret key
+configuration settings. You will need get your integration key, secret key, and API
+hostname from Duo Security when you register CAS as a protected application.
+
 
 ## Troubleshooting
 

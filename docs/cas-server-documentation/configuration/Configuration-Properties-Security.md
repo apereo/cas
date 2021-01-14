@@ -15,7 +15,9 @@ This document describes how to retrieve and secure CAS configuration and propert
 If you are running CAS in standalone mode without the presence of the configuration server,
 you can take advantage of built-in [Jasypt](http://www.jasypt.org/) functionality to decrypt sensitive CAS settings.
 
-Jasypt supplies command-line tools useful for performing encryption, decryption, etc. In order to use the tools, you should download the Jasypt distribution. Once unzipped, you will find a `jasypt-$VERSION/bin` directory a number of `bat|sh` scripts that you can use for encryption/decryption operations `(encrypt|decrypt).(bat|sh)`.
+Jasypt supplies command-line tools useful for performing encryption, decryption, etc. In 
+order to use the tools, you should download the Jasypt distribution. Once unzipped, you will find a `jasypt-$VERSION/bin` 
+directory a number of `bat|sh` scripts that you can use for encryption/decryption operations `(encrypt|decrypt).(bat|sh)`.
 
 Encrypted settings need to be placed into CAS configuration files as:
 
@@ -24,9 +26,11 @@ cas.something.sensitive={cas-cipher}FKSAJDFGYOS8F7GLHAKERGFHLSAJ
 ```
 
 You also need to instruct CAS to use the proper algorithm, decryption key and other relevant parameters
-when attempting to decrypt settings. To see the relevant list of CAS properties for this 
-feature, please [review this guide](Configuration-Storage.html#configuration-security).
+when attempting to decrypt settings. 
+   
+{% include casproperties.html properties="cas.standalone.configuration-security" %}
 
+The above settings may be passed to CAS as either command-line or system properties.
 
 ## Spring Cloud
 
@@ -35,11 +39,14 @@ the [Spring Cloud](https://github.com/spring-cloud/spring-cloud-config) project
 as [described in this guide](Configuration-Server-Management.html).
 
 The CAS configuration server exposes `/encrypt` and `/decrypt` endpoints to support encrypting and decrypting values.
-Both endpoints accept a `POST` payload; you can use `/encrypt` to secure and encrypt settings and place them inside your CAS configuration.
+Both endpoints accept a `POST` payload; you can use `/encrypt` to secure and 
+encrypt settings and place them inside your CAS configuration.
 CAS will auto-decrypt at the appropriate moment.
 
-To see the relevant list of CAS properties for this
-feature, please [review this guide](Configuration-Storage.html#configuration-security).
+{% include casproperties.html
+thirdPartyStartsWith="encrypt.key-store"
+thirdPartyExactMatch="spring.cloud.config.server.encrypt"
+%}
 
 <div class="alert alert-info"><strong>JCE Requirements</strong><p>To use the encryption and decryption
 features you need the full-strength "Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files"
@@ -91,8 +98,9 @@ Once vault is accessible and configured inside CAS, support is provided via the 
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-configuration-cloud-vault" %}
 
-To see the relevant list of CAS properties for this
-feature, please [review this guide](Configuration-Storage.html#vault).
+{% include casproperties.html
+thirdPartyStartsWith="spring.cloud.vault"
+%}
 
 With CAS, secrets are picked up at startup of the application server. CAS uses the data and settings
 from the application name (i.e. `cas`) and active profiles to determine contexts paths in
@@ -118,8 +126,10 @@ vault read secret/cas/native
 ```
 
 All settings and secrets that are stored inside Vault may be reloaded at any given time.
-To learn more about how CAS allows you to reload configuration changes, please [review this guide](Configuration-Management-Reload.html).
-To learn more about how configuration is managed and profiled by CAS, please [review this guide](Configuration-Management.html).
+To learn more about how CAS allows you to reload 
+configuration changes, please [review this guide](Configuration-Management-Reload.html).
+To learn more about how configuration is managed and profiled 
+by CAS, please [review this guide](Configuration-Management.html).
 
 ### Troubleshooting
 

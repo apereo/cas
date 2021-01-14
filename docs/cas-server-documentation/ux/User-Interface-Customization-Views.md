@@ -65,4 +65,4 @@ CAS allows on the ability to dynamically extend the login form by including addi
 Such fields are taught to CAS using settings and are then bound to the authentication flow and made available to all
 authentication handlers that wish to impose additional processes and rules using said fields.
 
-{% include {{ version }}/custom-login-fields-configuration.md %}
+{% include casproperties.html properties="cas.view.custom-login-form-fields" %}

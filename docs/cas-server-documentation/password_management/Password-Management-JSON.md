@@ -27,4 +27,4 @@ The outline of the JSON file may match the following:
 }
 ```
 
-{% include {{ version }}/json-pswd-mgmt-configuration.md %}
+{% include casproperties.html properties="cas.authn.pm.json" %}

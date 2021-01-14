@@ -18,7 +18,7 @@ Support is enabled by adding the following module into the overlay:
 
 ## Configuration
 
-{% include {{ version }}/aws-configuration.md configKey="cas.service-registry.amazon-s3" %}
+{% include casproperties.html modules="cas-server-support-aws-s3-service-registry" %}
 
 ## Troubleshooting
 
