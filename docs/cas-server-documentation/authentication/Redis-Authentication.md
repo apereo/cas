@@ -26,13 +26,13 @@ User accounts are mapped to a `username` field as the key. The user account reco
 
 {% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.redis" %}
 
-{% include {{ version }}/redis-configuration.md configKey="cas.authn" %}
+{% include casproperties.html properties="cas.authn.redis" 
+excludes="principal-transformation,password-encoder" %}
 
-{% include {{ version }}/redis-authentication-configuration.md %}
 
 ## Redis Principal Attributes
 
 The above dependency may also be used, in the event that principal attributes need to be fetched from a 
 Redis database without necessarily authenticating credentials against Redis. 
 
-{% include {{ version }}/redis-attribute-resolution-configuration.md %}
+{% include casproperties.html properties="cas.authn.attribute-repository.redis" %}

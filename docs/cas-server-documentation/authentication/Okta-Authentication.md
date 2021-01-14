@@ -21,4 +21,4 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.okta" %}
 
-{% include {{ version }}/okta-authentication-configuration.md %}
+{% include casproperties.html properties="cas.authn.okta" excludes="principal-transformation,password-encoder" %}

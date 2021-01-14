@@ -14,4 +14,4 @@ Support is provided via the following module:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-trusted-mfa-couchdb" %}
 
-{% include {{ version }}/couchdb-configuration.md configKey="cas.authn.mfa.trusted" %}
+{% include casproperties.html modules="cas-server-support-trusted-mfa-couchdb" %}

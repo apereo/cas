@@ -60,7 +60,9 @@ This feature is enabled via the following module:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-session-hazelcast" %}
 
-{% include casproperties.html properties="cas.webflow.session.hz" thirdParty="spring.session" %}
+{% include casproperties.html 
+properties="cas.webflow.session.hz" 
+thirdPartyStartsWith="spring.session,spring.session.hazelcast" %}
 
 ### Redis Session Replication
 
@@ -71,7 +73,8 @@ This feature is enabled via the following module:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-session-redis" %}
 
-{% include casproperties.html thirdParty="spring.session,spring.redis" excludes=".jdbc" %}
+{% include casproperties.html 
+thirdPartyStartsWith="spring.session,spring.redis" %}
 
 ### MongoDb Session Replication
 
@@ -82,7 +85,8 @@ This feature is enabled via the following module:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-session-mongo" %}
 
-{% include casproperties.html thirdParty="spring.data.mongodb" %}
+{% include casproperties.html 
+thirdPartyStartsWith="spring.session.mongo,spring.data.mongodb" %}
 
 ### JDBC Session Replication
 
@@ -93,5 +97,6 @@ This feature is enabled via the following module:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-session-jdbc" %}
 
-{% include casproperties.html thirdParty="spring.session,spring.datasource" %}
+{% include casproperties.html 
+thirdPartyStartsWith="spring.session,spring.datasource" %}
 

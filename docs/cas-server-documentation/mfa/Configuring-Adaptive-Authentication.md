@@ -47,7 +47,8 @@ header `clientIpAddress` under a `GET` request. The expected result status codes
 | `200`, `202`          | IP address is allowed and the request may proceed.
 | All Others            | Response body is expected to contain a score between `1` and `0`, (`1=Banned` and `0=Allowed`), indicating IP address suspiciousness.
 
-{% include {{ version }}/rest-ipintel-adaptive-authentication-configuration.md %}
+{% include casproperties.html properties="cas.authn.adaptive.ip-intel.rest" %}
+
 
 ### Groovy
 

@@ -15,4 +15,4 @@ Enable the following module in your configuration overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-throttle-redis" %}
 
-{% include {{ version }}/redis-configuration.md configKey="cas.audit" %}
+{% include casproperties.html modules="cas-server-support-throttle-redis" %}

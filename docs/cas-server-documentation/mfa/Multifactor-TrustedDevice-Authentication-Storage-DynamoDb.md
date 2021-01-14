@@ -14,4 +14,4 @@ Support is provided via the following module:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-trusted-mfa-dynamodb" %}
 
-{% include {{ version }}/dynamodb-mfa-trusted-device-configuration.md %}
+{% include casproperties.html modules="cas-server-support-trusted-mfa-dynamodb" %}

@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.aup;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -30,6 +31,7 @@ public class AcceptableUsagePolicyProperties implements Serializable {
     /**
      * Control AUP via LDAP.
      */
+    @NestedConfigurationProperty
     private List<LdapAcceptableUsagePolicyProperties> ldap = new ArrayList<>();
 
     /**
@@ -83,6 +85,7 @@ public class AcceptableUsagePolicyProperties implements Serializable {
     /**
      * Allows AUP to be turned off on startup.
      */
+    @RequiredProperty
     private boolean enabled = true;
 
     /**
@@ -94,6 +97,7 @@ public class AcceptableUsagePolicyProperties implements Serializable {
      * and compared for the right match to determine policy status.
      * If the attribute is not found, the policy status is considered as denied.
      */
+    @RequiredProperty
     private String aupAttributeName = "aupAccepted";
 
     /**
