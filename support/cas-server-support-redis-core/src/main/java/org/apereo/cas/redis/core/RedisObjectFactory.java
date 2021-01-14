@@ -169,7 +169,6 @@ public class RedisObjectFactory {
     }
 
     private static RedisConfiguration getStandaloneConfig(final BaseRedisProperties redis) {
-
         LOGGER.debug("Setting Redis standalone configuration on host [{}] and port [{}]", redis.getHost(), redis.getPort());
         val standaloneConfig = new RedisStandaloneConfiguration(redis.getHost(), redis.getPort());
         standaloneConfig.setDatabase(redis.getDatabase());

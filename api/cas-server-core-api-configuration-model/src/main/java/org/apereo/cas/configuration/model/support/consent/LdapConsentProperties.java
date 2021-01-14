@@ -15,7 +15,7 @@ import lombok.experimental.Accessors;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@RequiresModule(name = "cas-server-consent-support-ldap")
+@RequiresModule(name = "cas-server-support-consent-ldap")
 @Getter
 @Setter
 @Accessors(chain = true)
