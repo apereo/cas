@@ -61,5 +61,5 @@ Please remember that data stuffed into the webflow **MUST** be serializable and
 if you intend to pass along complex objects types and fancy data structures, you 
 need to make sure they can safely and ultimately transform into a simple `byte[]`.
 
-{% include {{ version }}/rest-configuration.md configKey="cas.webflow.login-decorator.rest" %}
+{% include casproperties.html properties="cas.webflow.login-decorator.rest" %}
 

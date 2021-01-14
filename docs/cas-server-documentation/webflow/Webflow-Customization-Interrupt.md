@@ -15,7 +15,8 @@ services are able to present notification messages to the user, provide options
 for redirects to external services, etc. A common use case deals with 
 presenting a *bulletin board* during the authentication flow to present 
 messages and announcements to select users and then optionally require the 
-audience to complete a certain task before CAS is able to honor the authentication request and establish a session.
+audience to complete a certain task before CAS is able to honor 
+the authentication request and establish a session.
 
 <div class="alert alert-info"><strong>Interrupt Sequence</strong><p>
 Note that the interrupt operations typically execute after the 
