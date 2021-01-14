@@ -19,4 +19,4 @@ where `${context-path}` is typically set to `/cas`.
 
 ## Configuration
 
-{% include casproperties.html modules="cas-server-support-javamelody" %}
+{% include casproperties.html thirdPartyStartsWith="javamelody." %}
