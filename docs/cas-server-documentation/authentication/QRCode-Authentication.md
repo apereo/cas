@@ -35,7 +35,7 @@ The following endpoints are provided by CAS:
 
 ## Configuration
 
-{% include {{ version }}/qr-authentication-configuration.md %}
+{% include casproperties.html modules="cas-server-support-qrlogin" %}
 
 ## Web Socket Communication
 
@@ -67,23 +67,23 @@ the Android platform based on [StompProtocolAndroid](https://github.com/NaikSoft
 import ua.naiksoftware.stomp.*;
 import ua.naiksoftware.stomp.dto.*;
 
-String jwt = "...";
-JSONStringer jsonWebToken = new JSONStringer().object()
+var jwt = "...";
+var jsonWebToken = new JSONStringer().object()
   .key("token").value(jwt).endObject();
 
-String channel = "...";      
-String deviceId = "...";
-List<StompHeader> headers = new ArrayList<>();
+var channel = "...";      
+var deviceId = "...";
+var headers = new ArrayList<>();
 headers.add(new StompHeader("QR_AUTHENTICATION_CHANNEL_ID", channel));
 headers.add(new StompHeader("QR_AUTHENTICATION_DEVICE_ID", deviceId));
 headers.add(new StompHeader(StompHeader.DESTINATION, "/qr/accept"));
 
 // wss://10.0.2.2 for ssl and localhost
-StompClient client = Stomp.over(Stomp.ConnectionProvider.OKHTTP, 
+var client = Stomp.over(Stomp.ConnectionProvider.OKHTTP, 
   "wss://10.0.2.2:8443/cas/qr-websocket/websocket", null, httpClient);
 
 client.connect();
-StompMessage stompMessage = 
+var stompMessage = 
   new StompMessage(StompCommand.SEND, headers, jsonWebToken.toString());
 client.send(stompMessage).subscribe();
 ```
@@ -96,7 +96,8 @@ obtain a JWT. The JWT request must also contain an additional request
 parameter `QR_AUTHENTICATION_DEVICE_ID` which indicates the authorized device identifier for the user.
 
 Once the JWT is received, the device may cache the JWT and establish a *session* for code reuse later. 
-The JWT should be sent to the CAS server's web socket channel for validation and login as demonstrated above. The generated
+The JWT should be sent to the CAS server's web socket channel 
+for validation and login as demonstrated above. The generated
 JWT is automatically signed and encrypted by CAS and can only be decoded by the CAS server.
 
 ## Web Socket Channel
@@ -117,9 +118,10 @@ implementations can be supplied using one of the strategies outlined below.
 
 ### JSON
 
-Authorized devices can be managed and tracked inside a single JSON resource, whose path is taught to CAS via settings. 
+Authorized devices can be managed and tracked inside a 
+single JSON resource, whose path is taught to CAS via settings. 
 
-{% include {{ version }}/json-qr-authentication-configuration.md %}
+{% include casproperties.html properties="cas.authn.qr.json" %}
 
 ### Custom
 

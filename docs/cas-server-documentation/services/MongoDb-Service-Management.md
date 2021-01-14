@@ -15,7 +15,7 @@ Support is enabled by adding the following module into the overlay:
 
 ## Configuration
 
-{% include {{ version }}/mongodb-configuration.md configKey="cas.service-registry" %}
+{% include casproperties.html modules="cas-server-support-mongo-service-registry" %}
 
 ## Auto Initialization
 

@@ -66,7 +66,7 @@ Identity providers for delegated authentication can be registered with CAS using
 Identity providers for delegated authentication can be provided to CAS 
 using an external REST endpoint. 
 
-{% include {{ version }}/rest-configuration.md configKey="cas.authn.pac4j.rest" %}
+{% include casproperties.html properties="cas.authn.pac4j.rest" %}
 
 This allows the CAS server to reach to 
 a remote REST endpoint whose responsibility is to produce the following payload in the response body:
@@ -88,7 +88,7 @@ The syntax and collection of available `properties` in the above
 payload is controlled by [Pac4j]((https://pac4j.org/docs/index.html). 
 The response that is returned must be accompanied by a 200 status code.
 
-{% include {{ version }}/rest-configuration.md configKey="cas.authn.pac4j.rest" %}
+{% include casproperties.html properties="cas.authn.pac4j.rest" %}
 
 ## User Interface
 
@@ -176,7 +176,7 @@ external/guest accounts with their equivalent found in the authentication source
 
 ### Groovy Provisioner
    
-{% include {{ version }}/groovy-provisioning-delegated-authentication-configuration.md %}
+{% include casproperties.html properties="cas.authn.pac4j.provisioning.groovy" %}
 
 Provisioning tasks can be carried out using an external Groovy script with the following structure:
 
@@ -201,7 +201,7 @@ It is not expected for the script to return a value. The following parameters ar
 
 ### REST Provisioner
 
-{% include {{ version }}/rest-configuration.md configKey="cas.authn.pac4j.provisioning.rest" %}
+{% include casproperties.html properties="cas.authn.pac4j.provisioning.rest" %}
 
 Provisioning tasks can be carried out using an external REST endpoint expected to receive the following:
      

@@ -25,4 +25,4 @@ would produce a response body similar to the following:
 }
 ```
 
-{% include {{ version }}/rest-configuration.md configKey="cas.authn.passwordless.accounts.rest" %}
+{% include casproperties.html properties="cas.authn.passwordless.accounts.rest" %}

@@ -13,7 +13,7 @@ import lombok.experimental.Accessors;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@RequiresModule(name = "cas-server-consent-mongo")
+@RequiresModule(name = "cas-server-support-consent-mongo")
 @Getter
 @Setter
 @Accessors(chain = true)

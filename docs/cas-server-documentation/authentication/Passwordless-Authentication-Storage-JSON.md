@@ -26,4 +26,4 @@ This strategy allows one to locate user records via a JSON resource, as such:
 }
 ```
 
-{% include {{ version }}/passwordless-json-accounts-configuration.md %}
+{% include casproperties.html properties="cas.authn.passwordless.accounts.json" %}

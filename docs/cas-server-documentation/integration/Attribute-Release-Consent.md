@@ -114,7 +114,7 @@ of the entire attribute consent policy will be used to determine attribute conse
 The default consent activation strategy can be replaced with an external Groovy script to determine whether the request 
 qualifies for consent. Path to the script is defined via CAS configuration properties.
 
-{% include {{ version }}/groovy-consent-activation-configuration.md %}
+{% include casproperties.html properties="cas.consent.activation-strategy-groovy-script" %}
 
 The script itself may be designed as such:
 
@@ -194,7 +194,7 @@ Valid values for `options` include:
 | `ATTRIBUTE_VALUE`         | Same as above, except that attributes values are also accounted for and trigger consent, if changed.
 | `ALWAYS`                  | Always ask for consent, regardless of change or context.
 
-{% include {{ version }}/json-consent-configuration.md %}
+{% include casproperties.html properties="cas.consent.json" %}
 
 ### Groovy
 
@@ -235,7 +235,7 @@ def Boolean deleteAll(final Object... args) {
 }
 ```
 
-{% include {{ version }}/groovy-consent-configuration.md %}
+{% include casproperties.html properties="cas.consent.groovy" %}
 
 ### JDBC
 
@@ -243,7 +243,7 @@ Support is enabled by including the following module in the WAR Overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-consent-jdbc" %}
 
-{% include {{ version }}/rdbms-configuration.md configKey="cas.consent.jpa" %}
+{% include casproperties.html modules="cas-server-support-consent-jdbc" %}
 
 ### MongoDb
 
@@ -251,7 +251,7 @@ Support is enabled by including the following module in the WAR Overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-consent-mongo" %}
 
-{% include {{ version }}/mongodb-configuration.md configKey="cas.consent" %}
+{% include casproperties.html modules="cas-server-support-consent-mongo" %}
 
 ### Redis
 
@@ -259,7 +259,7 @@ Support is enabled by including the following module in the WAR Overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-consent-redis" %}
 
-{% include {{ version }}/redis-configuration.md configKey="cas.consent" %}
+{% include casproperties.html modules="cas-server-support-consent-redis" %}
 
 ### CouchDb
 
@@ -267,8 +267,7 @@ Support is enabled by including the following module in the WAR Overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-consent-couchdb" %}
 
-{% include {{ version }}/couchdb-configuration.md configKey="cas.consent" %}
-
+{% include casproperties.html modules="cas-server-support-consent-couchdb" %}
 
 ### REST
 
@@ -276,7 +275,7 @@ Support is enabled by including the following module in the WAR Overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-consent-rest" %}
 
-{% include {{ version }}/rest-consent-configuration.md %}
+{% include casproperties.html modules="cas-server-support-consent-rest" %}
 
 Endpoints must be designed to accept/process `application/json`.
 
@@ -300,8 +299,8 @@ are serialized into JSON and stored one-by-one in a multi-valued string attribut
 Support is enabled by including the following module in the WAR Overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-consent-ldap" %}
-{% include {{ version }}/ldap-configuration.md configKey="cas.consent.ldap" %}
-{% include {{ version }}/ldap-consent-configuration.md %}
+
+{% include casproperties.html modules="cas-server-support-consent-ldap" %}
 
 
 ### Custom

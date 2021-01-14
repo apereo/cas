@@ -1,10 +1,4 @@
-{% include {{ version }}/rest-configuration.md configKey="cas.authn.attribute-repository.rest[0]" %}
-
-```properties
-# cas.authn.attribute-repository.rest[0].order=0
-# cas.authn.attribute-repository.rest[0].id=
-# cas.authn.attribute-repository.rest[0].case-insensitive=false
-```
+{% include casproperties.html properties="cas.authn.attribute-repository.rest" %}
 
 The authenticating user id is passed in form of a request parameter under `username`. The response is expected
 to be a JSON map as such:
