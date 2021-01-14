@@ -16,4 +16,5 @@ To map custom exceptions in the webflow, one would need map the exception in CAS
 authenticationFailure.MyAuthenticationException=Authentication has failed, but it did it my way!
 ```
 
-{% include {{ version }}/spring-webflow-exceptions-configuration.md %}
+{% include casproperties.html properties="cas.authn.errors" %}
+

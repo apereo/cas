@@ -19,8 +19,10 @@ to a servlet container like [Apache Tomcat](Configuring-Servlet-Container.html).
 
 ## What is a WAR Overlay?
 
-Overlays are a strategy to combat repetitive code and/or resources. Rather than downloading the CAS codebase and building from source,
-overlays allow you to download a pre-built vanilla CAS web application server provided by the project itself and override/insert specific behavior into it. At build time, the build installation process will attempt to download the provided 
+Overlays are a strategy to combat repetitive code and/or resources. Rather than downloading 
+the CAS codebase and building from source,
+overlays allow you to download a pre-built vanilla CAS web application server provided by the project itself and override/insert specific behavior into it. At build time, the build 
+installation process will attempt to download the provided 
 binary artifact first. Then the tool will locate your configuration files and settings made available 
 inside the same project directory and will merge those into the downloaded artifact in order to produce
 one wholesome archive (i.e. `cas.war`) . Overridden artifacts may include 
@@ -29,7 +31,8 @@ process to successfully execute, the location and names of the overridden artifa
 locally must **EXACTLY** match that of those provided by the project
 inside the originally downloaded archive. Java code in the overlay project's `src/main/java` 
 folder and resources in `src/main/resources` will end up in the `WEB-INF\classes` 
-folder of cas.war and they will be loaded by the classloader instead of resources with the same names in jar files inside `WEB-INF\lib`.  
+folder of cas.war and they will be loaded by the classloader instead of 
+resources with the same names in jar files inside `WEB-INF\lib`.  
 
 It goes without saying that while up-front ramp-up time could be slightly complicated, there are significant advantages to this approach:
 
@@ -40,7 +43,8 @@ It goes without saying that while up-front ramp-up time could be slightly compli
 
 ### Managing Overlays
 
-Most if not all aspects of CAS can be controlled by adding, removing, or modifying files in the overlay; it's also possible and indeed common to customize the behavior of
+Most if not all aspects of CAS can be controlled by adding, removing, or 
+modifying files in the overlay; it's also possible and indeed common to customize the behavior of
 CAS by adding third-party components that implement CAS APIs as Java source files or dependency references.
 
 The process of working with an overlay can be summarized in the following steps:
@@ -53,8 +57,10 @@ The process of working with an overlay can be summarized in the following steps:
 - After changes, rebuild and repeat the process as many times as possible.
 - Double check your changes inside the built binary artifact to make sure the overlay process is working.
 
-<div class="alert alert-warning"><strong>Be Exact</strong><p>Do NOT copy everything produced by the build. Attempt to keep changes and customizations to a 
-minimum and only grab what you actually need. Make sure the deployment environment is kept clean and precise, or you incur the risk of terrible upgrade issues and painful headaches.</p></div>
+<div class="alert alert-warning"><strong>Be Exact</strong><p>Do NOT copy everything produced by 
+the build. Attempt to keep changes and customizations to a 
+minimum and only grab what you actually need. Make sure the deployment environment 
+is kept clean and precise, or you incur the risk of terrible upgrade issues and painful headaches.</p></div>
 
 ## CAS WAR Overlays
 
@@ -79,9 +85,6 @@ use <code>git branch -a</code> to see available branches, and then <code>git che
 | Project                                                           | Build Directory                               | Source Directory
 |-------------------------------------------------------------------|-----------------------------------------------|-----------------------
 | [CAS WAR Overlay](https://github.com/apereo/cas-overlay-template) | `cas/build/cas-resources`     | `src/main/resources`
-
-The `cas/build/cas-resources` files are unzipped 
-from `cas.war!WEB-INF\lib\cas-server-webapp-resources-<version>.jar` via `gradle explodeWar` in the overlay. 
 
 To construct the overlay project, you need to copy directories and 
 files *that you need to customize* in the build directory over to the source directory.
@@ -117,7 +120,7 @@ the relevant dependency in the overlay `build.gradle` file.
 Overlaying or modifying CAS internal components and classes, <i>unless ABSOLUTELY required</i>, should be a last resort and is generally 
 considered a misguided malpractice. Where possible, avoid making custom changes to carry the maintenance burden solely on your own. 
 Avoid carrying . You will risk the stability and security of your deployment. If the enhancement 
-case is attractive or modest, contribute back to the project. Stop writing code, or rite it where it belongs.
+case is attractive or modest, contribute back to the project. Stop writing code, or write it where it belongs.
 </p></div>
 
 In order to include custom Java source, it should 

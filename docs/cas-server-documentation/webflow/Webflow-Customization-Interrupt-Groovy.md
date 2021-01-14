@@ -33,7 +33,7 @@ def run(final Object... args) {
 }
 ```
 
-{% include {{ version }}/groovy-interrupt-configuration.md %}
+{% include casproperties.html properties="cas.interrupt.groovy" %}
 
 The following parameters are passed to the script:
 

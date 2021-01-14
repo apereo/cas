@@ -16,7 +16,8 @@ layout: null
 
 * [Installation](#casinstallation)
     *   [Requirements](/cas/{{ version }}/planning/Installation-Requirements.html)
-    *   [WAR Overlays](/cas/{{ version }}/installation/WAR-Overlay-Installation.html)
+    *   [WAR Overlays](#waroverlaysreview)
+        *   [Overview](/cas/{{ version }}/installation/WAR-Overlay-Installation.html)
         *   [Bill of Materials](/cas/{{ version }}/installation/BOM-Dependency-Management.html)
         *   [CAS Initializr](/cas/{{ version }}/installation/WAR-Overlay-Initializr.html)
     *   [Command-line Shell](/cas/{{ version }}/installation/Configuring-Commandline-Shell.html) 
@@ -27,7 +28,7 @@ layout: null
         *   [Options](#servletoptions)
             *   [Embedded](#embeddedservlets)
                 *   [Overview](/cas/{{ version }}/installation/Configuring-Servlet-Container-Embedded.html)
-                *   [Tomcat](/cas/{{ version }}/installation/Configuring-Servlet-Container-Embedded-Tomcat.html)
+                *   [Apache Tomcat](/cas/{{ version }}/installation/Configuring-Servlet-Container-Embedded-Tomcat.html)
                 *   [Jetty](/cas/{{ version }}/installation/Configuring-Servlet-Container-Embedded-Jetty.html)
                 *   [Undertow](/cas/{{ version }}/installation/Configuring-Servlet-Container-Embedded-Undertow.html)
             *   [External](/cas/{{ version }}/installation/Configuring-Servlet-Container-External.html)
