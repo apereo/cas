@@ -14,4 +14,4 @@ LDAP support for surrogate authentication is enabled by including the following 
 
 Surrogate accounts may also be retrieved from an LDAP instance. Such accounts are expected to be found in a configured attribute defined for the primary user in LDAP whose value(s) may be examined against a regular expression pattern of your own choosing to further narrow down the list of authorized surrogate accounts. 
 
-{% include {{ version }}/ldap-accounts-surrogate-authentication-configuration.md %}
+{% include casproperties.html modules="cas-server-support-surrogate-authentication-ldap" %}

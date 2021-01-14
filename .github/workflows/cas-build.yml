@@ -240,7 +240,7 @@ jobs:
 
   validate-javadocs:
     runs-on: ubuntu-latest
-    needs: [cache]
+    needs: [build]
     if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
     steps:
       - uses: actions/checkout@v2
@@ -487,7 +487,7 @@ jobs:
   publish-docs:
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'push' }}
-    needs: [build]
+    needs: [cache]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK

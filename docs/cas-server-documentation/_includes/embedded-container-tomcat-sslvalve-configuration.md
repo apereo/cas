@@ -2,6 +2,8 @@ The Apache Tomcat `SSLValve` is a way to get a client certificate from an SSL pr
 running in front of Tomcat via an HTTP header. If you enable this, make sure your proxy is ensuring
 that this header does not originate with the client (e.g. the browser).
 
+{% include casproperties.html properties="cas.server.tomcat.ssl-valve" %}
+
 ```properties
 # cas.server.tomcat.ssl-valve.enabled=false
 # cas.server.tomcat.ssl-valve.ssl-client-cert-header=ssl_client_cert

@@ -14,8 +14,6 @@ CouchDb support for surrogate authentication is enabled by including the followi
 
 Surrogate accounts may also be retrieved from an CouchDb instance. By default, this takes 
 the form of surrogate/principal key/value pairs. Users authorized as surrogates may be 
-listed multiple times to authorize them to access multiple accounts. Additionally, the 
-CouchDb surrogate support may be configured to use a profile attribute containing a 
-list of principals the user may surrogate for with the `profileBased` property. 
+listed multiple times to authorize them to access multiple accounts.
 
-{% include {{ version }}/couchdb-accounts-surrogate-authentication-configuration.md %}
+{% include casproperties.html modules="cas-server-support-surrogate-authentication-couchdb" %}

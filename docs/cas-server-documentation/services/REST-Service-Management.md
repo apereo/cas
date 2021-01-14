@@ -12,7 +12,7 @@ category: Services
 
 ## Configuration
 
-{% include {{ version }}/rest-configuration.md configKey="cas.service-registry" %}
+{% include casproperties.html modules="cas-server-support-rest-service-registry" %}
 
 | Operation         | Method          | Body                       | Response
 |-------------------|-----------------|----------------------------------------------------------------------

@@ -18,7 +18,7 @@ Support is enabled by adding the following module into the overlay:
 
 {% include {{ version }}/git-configuration.md configKey="cas.service-registry`" %}
 
-{% include {{ version }}/git-service-registry-configuration.md %}
+{% include casproperties.html modules="cas-server-support-git-service-registry" %}
 
 <div class="alert alert-warning"><strong>No Interference!</strong><p>
 Be careful to not manually modify the state of the git repository directory that is cloned on the local server. By doing so, you risk 

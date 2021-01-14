@@ -180,7 +180,7 @@ interactions with external systems should be instrumented automatically.
 Trace data is captured automatically and passed along to [Zipkin](https://github.com/openzipkin/zipkin), which helps 
 gather timing data needed to troubleshoot latency problems.
 
-{% include {{ version }}/sleuth-configuration.md %}
+{% include casproperties.html thirdParty="spring.sleuth,spring.zipkin" %}
 
 ### Troubleshooting
 

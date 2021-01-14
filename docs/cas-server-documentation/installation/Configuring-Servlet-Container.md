@@ -129,15 +129,15 @@ java -jar /path/to/cas.war -Djava.util.logging.config.file=/path/to/logging.prop
 
 #### HTTP Proxying
 
-{% include {{ version }}/embedded-container-tomcat-httpproxy-configuration.md %}
+{% include casproperties.html properties="cas.server.tomcat.http-proxy" %}
 
 #### HTTP
 
-{% include {{ version }}/embedded-container-tomcat-http-configuration.md %}
+{% include casproperties.html properties="cas.server.tomcat.http." %}
 
 #### AJP
 
-{% include {{ version }}/embedded-container-tomcat-ajp-configuration.md %}
+{% include casproperties.html properties="cas.server.tomcat.ajp" %}
 
 #### SSL Valve
 
@@ -145,15 +145,15 @@ java -jar /path/to/cas.war -Djava.util.logging.config.file=/path/to/logging.prop
 
 #### Extended Access Log Valve
 
-{% include {{ version }}/embedded-container-tomcat-extended-accesslog-configuration.md %}
+{% include casproperties.html properties="cas.server.tomcat.ext-access-log" %}
 
 #### Rewrite Valve
 
-{% include {{ version }}/embedded-container-tomcat-rewritevalve-configuration.md %}
+{% include casproperties.html properties="cas.server.tomcat.rewrite-valve" %}
 
 #### Basic Authentication
 
-{% include {{ version }}/embedded-container-tomcat-basicauth-configuration.md %}
+{% include casproperties.html properties="cas.server.tomcat.basic-authn" %}
 
 #### Apache Portable Runtime (APR)
 
@@ -161,7 +161,7 @@ java -jar /path/to/cas.war -Djava.util.logging.config.file=/path/to/logging.prop
 
 #### Connector IO
 
-{% include {{ version }}/embedded-container-tomcat-connectorio-configuration.md %}
+{% include casproperties.html properties="cas.server.tomcat.socket" %}
 
 #### Session Clustering & Replication
 
@@ -171,15 +171,13 @@ java -jar /path/to/cas.war -Djava.util.logging.config.file=/path/to/logging.prop
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-webapp-jetty" %}
 
-### Embedded Jetty Container
-
-{% include {{ version }}/embedded-container-jetty-configuration.md %}
+{% include casproperties.html modules="cas-server-webapp-jetty" %}
 
 ### Undertow
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-webapp-undertow" %}
 
-{% include {{ version }}/embedded-container-undertow-configuration.md %}
+{% include casproperties.html modules="cas-server-webapp-undertow" %}
 
 ## External
 
@@ -204,7 +202,8 @@ responsible for upgrades, maintenance and all other manners of configuration suc
 not provide official support and troubleshooting guidelines, etc for an external container's configuration or issues. 
 Refer to the servlet container's own documentation for more info.
 
-Note for JBoss, Wildfly and EAP, you may need to add a `jboss-deloyment-structure.xml` file to `src/main/webapp/WEB-INF` in your overlay in order for CAS to start properly.
+Note for JBoss, Wildfly and EAP, you may need to add a `jboss-deloyment-structure.xml` file 
+to `src/main/webapp/WEB-INF` in your overlay in order for CAS to start properly.
 
 ```xml
 <jboss-deployment-structure>

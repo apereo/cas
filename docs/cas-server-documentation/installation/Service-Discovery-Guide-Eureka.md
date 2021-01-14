@@ -39,7 +39,7 @@ Support is added by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-eureka-client" %}
 
-{% include {{ version }}/eureka-service-discovery-configuration.md %}
+{% include casproperties.html thirdParty="eureka.client,spring.cloud.config.discovery" %}
 
 ### Authentication
 

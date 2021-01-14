@@ -79,7 +79,8 @@ sort of check needs to be done and verified for ad-hoc dynamic changes to the CA
 registry directory, if CAS is set to monitor for changes. Delays in replication and 
 schedule may force one node to overwrite changes to the other. 
 
-{% include {{ version }}/service-registry-replication-configuration.md %}
+{% include casproperties.html properties="cas.acceptable-usage-policy.groovy" %}
+
 
 For instance, consider the following scenario: there are two nodes in a CAS cluster 
 where CAS1 is set to monitor changes from `/etc/cas/services` on node N1 and CAS2 is 

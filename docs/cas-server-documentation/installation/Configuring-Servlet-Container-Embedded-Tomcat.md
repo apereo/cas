@@ -56,46 +56,46 @@ For instance:
 java -jar /path/to/cas.war -Djava.util.logging.config.file=/path/to/logging.properties
 ```
 
-## Embedded Apache Tomcat Container
+### Configuration
 
 {% include {{ version }}/embedded-container-tomcat-configuration.md %}
 
-### HTTP Proxying
+#### HTTP Proxying
 
 {% include {{ version }}/embedded-container-tomcat-httpproxy-configuration.md %}
 
-### HTTP
+#### HTTP
 
 {% include {{ version }}/embedded-container-tomcat-http-configuration.md %}
 
-### AJP
+#### AJP
 
 {% include {{ version }}/embedded-container-tomcat-ajp-configuration.md %}
 
-### SSL Valve
+#### SSL Valve
 
 {% include {{ version }}/embedded-container-tomcat-sslvalve-configuration.md %}
 
-### Extended Access Log Valve
+#### Extended Access Log Valve
 
 {% include {{ version }}/embedded-container-tomcat-extended-accesslog-configuration.md %}
 
-### Rewrite Valve
+#### Rewrite Valve
 
 {% include {{ version }}/embedded-container-tomcat-rewritevalve-configuration.md %}
 
-### Basic Authentication
+#### Basic Authentication
 
 {% include {{ version }}/embedded-container-tomcat-basicauth-configuration.md %}
 
-### Apache Portable Runtime (APR)
+#### Apache Portable Runtime (APR)
 
 {% include {{ version }}/embedded-container-tomcat-apr-configuration.md %}
 
-### Connector IO
+#### Connector IO
 
 {% include {{ version }}/embedded-container-tomcat-connectorio-configuration.md %}
 
-### Session Clustering & Replication
+#### Session Clustering & Replication
 
 {% include {{ version }}/embedded-container-tomcat-session-clustering-configuration.md %}
