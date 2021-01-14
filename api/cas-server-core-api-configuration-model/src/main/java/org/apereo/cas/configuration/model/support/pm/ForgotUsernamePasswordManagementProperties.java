@@ -29,6 +29,12 @@ public class ForgotUsernamePasswordManagementProperties implements Serializable 
     @NestedConfigurationProperty
     private EmailProperties mail = new EmailProperties();
 
+    /**
+     * Indicates whether forgot-username feature
+     * should activate captcha for ops that start the forgot-username flow.
+    */
+    private boolean captchaEnabled;
+
     public ForgotUsernamePasswordManagementProperties() {
         this.mail.setAttributeName("mail");
         this.mail.setText("Your current username is: %s");

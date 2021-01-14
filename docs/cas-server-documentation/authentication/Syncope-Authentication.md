@@ -27,7 +27,8 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 ## Attributes
 
-As part of a successful authentication attempt, the following attributes provided by Apache Syncope are collected by CAS:
+As part of a successful authentication attempt, the following attributes 
+provided by Apache Syncope are collected by CAS:
 
 | Attribute Name             
 |------------------------------------

@@ -137,7 +137,7 @@ The metadata location in the registration record above simply needs to be specif
 SAML metadata for registered service provider must be fetched from Git repositories defined in CAS configuration. 
 </p></div>
 
-{% include {{ version }}/git-saml2-idp-metadata-configuration.md %}
+{% include casproperties.html modules="cas-server-support-saml-idp-metadata-git" %}
 
 ### Identity Provider Metadata
 
@@ -182,7 +182,7 @@ The metadata location in the registration record above simply needs to be specif
 SAML metadata for registered service provider must be fetched from MongoDb data sources defined in CAS configuration. 
 </p></div>
 
-{% include {{ version }}/mongodb-saml2-idp-metadata-configuration.md %}
+{% include casproperties.html modules="cas-server-support-saml-idp-metadata-mongo" %}
 
 ### Identity Provider Metadata
 
@@ -233,7 +233,7 @@ The metadata location in the registration record above simply needs to be specif
 SAML metadata for registered service provider must be fetched from Redis data sources defined in CAS configuration. 
 </p></div>
 
-{% include {{ version }}/redis-saml2-idp-metadata-configuration.md %}
+{% include casproperties.html modules="cas-server-support-saml-idp-metadata-redis" %}
 
 ### Identity Provider Metadata
 
@@ -277,7 +277,7 @@ SAML service definitions must then be designed as follows to allow CAS to fetch 
 The metadata location in the registration record above simply needs to be specified as <code>jdbc://</code> to signal to CAS that SAML metadata for registered service provider must be fetched from JDBC data sources defined in CAS configuration. 
 </p></div>
 
-{% include {{ version }}/jpa-saml2-idp-metadata-configuration.md %}
+{% include casproperties.html modules="cas-server-support-saml-idp-metadata-jpa" %}
 
 ### Identity Provider Metadata
 
@@ -333,7 +333,7 @@ SAML service definitions must then be designed as follows to allow CAS to fetch 
 The metadata location in the registration record above simply needs to be specified as <code>couchdb://</code> to signal to CAS that SAML metadata for registered service provider must be fetched from CouchDb as defined in CAS configuration.
 </p></div>
 
-{% include {{ version }}/couchdb-saml2-idp-metadata-configuration.md %}
+{% include casproperties.html modules="cas-server-support-saml-idp-metadata-couchdb" %}
 
 ### Identity Provider Metadata
 
@@ -400,7 +400,7 @@ def Collection<MetadataResolver> run(final Object... args) {
 The parameters passed are as follows:
 
 | Parameter             | Description
-|-----------------------|--------------------------------------------------------------------------------------------------------------------
+|-----------------------|--------------------------------------------------------------------------------------
 | `registeredService`   | The object representing the corresponding service definition in the registry.
 | `samlConfigBean`      | The object representing the OpenSAML configuration class holding various builder and marshaller factory instances.
 | `samlProperties`      | The object responsible for capturing the CAS SAML IdP properties defined in the configuration.
@@ -442,7 +442,7 @@ The metadata location in the registration record above simply needs to be specif
 SAML metadata for registered service provider must be fetched from Amazon S3 defined in CAS configuration. 
 </p></div>
 
-{% include {{ version }}/aws-s3-saml2-idp-metadata-configuration.md %}
+{% include casproperties.html modules="cas-server-support-saml-idp-metadata-aws-s3" %}
 
 ### Identity Provider Metadata
 

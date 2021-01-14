@@ -25,7 +25,9 @@ The integration is able to handle the integration with DBFP and will set a cooki
 
 ## Configuration
 
-{% include {{ version }}/acceptto-configuration.md %}
+{% include casproperties.html
+modules="cas-server-support-acceptto-mfa"
+properties="cas.authn.mfa.acceptto.bypass" %}
 
 ## Session Replication
 

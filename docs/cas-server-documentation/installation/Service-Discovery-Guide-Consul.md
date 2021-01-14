@@ -55,7 +55,7 @@ Support is added by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-consul-client" %}
 
-{% include {{ version }}/consul-service-discovery-configuration.md %}
+{% include casproperties.html thirdParty="spring.cloud.consul,spring.cloud.config.discovery" %}
 
 ### Troubleshooting
 

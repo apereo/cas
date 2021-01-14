@@ -13,27 +13,4 @@ Enable in-memory session replication to replicate web application session deltas
 
 Most settings apply to the `DEFAULT` clustering type, which requires members to be defined via `clusterMembers` if multicast discovery doesn't work. The `cloudMembershipProvider` setting applies to the `CLOUD` type.
 
-```properties
-# cas.server.tomcat.clustering.enabled=false
-# cas.server.tomcat.clustering.clustering-type=DEFAULT|CLOUD
-# cas.server.tomcat.clustering.cluster-members=ip-address:port:index
-# cas.server.tomcat.clustering.cloud-membership-provider=kubernetes|dns|[MembershipProvider impl classname](https://github.com/apache/tomcat/blob/master/java/org/apache/catalina/tribes/MembershipProvider.java)
-# cas.server.tomcat.clustering.expire-sessions-on-shutdown=false
-# cas.server.tomcat.clustering.channel-send-options=8
-
-# cas.server.tomcat.clustering.receiver-port=4000
-# cas.server.tomcat.clustering.receiver-timeout=5000
-# cas.server.tomcat.clustering.receiver-max-threads=6
-# cas.server.tomcat.clustering.receiver-address=auto
-# cas.server.tomcat.clustering.receiver-auto-bind=100
-
-# cas.server.tomcat.clustering.membership-port=45564
-# cas.server.tomcat.clustering.membership-address=228.0.0.4
-# cas.server.tomcat.clustering.membership-frequency=500
-# cas.server.tomcat.clustering.membership-drop-time=3000
-# cas.server.tomcat.clustering.membership-recovery-enabled=true
-# cas.server.tomcat.clustering.membership-local-loopback-disabled=false
-# cas.server.tomcat.clustering.membership-recovery-counter=10
-
-# cas.server.tomcat.clustering.manager-type=DELTA|BACKUP
-```
+{% include casproperties.html properties="cas.server.tomcat.clustering" %}

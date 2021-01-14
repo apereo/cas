@@ -102,7 +102,7 @@ Content-Type: text/xml
 
 ## Configuration
 
-{% include {{ version }}/samlcore-configuration.md %}
+{% include casproperties.html properties="cas.saml-core" %}
 
 You may also need to declare the following repository in
 your CAS Overlay to be able to resolve dependencies:
