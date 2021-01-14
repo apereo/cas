@@ -32,8 +32,8 @@ The CAS Web application includes a number of localized message files:
 
 In order to "invoke" a specific language for the UI, the `/login` endpoint may be passed a `locale` parameter as such:
 
-```html
-https://cas.server.edu/login?locale=it
+```bash
+https://cas.server.org/login?locale=it
 ```
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>Note that not all languages are complete and accurate across CAS server releases as translations are entirely dependent upon community contributions.
@@ -51,10 +51,8 @@ In the event that the code is not found in the activated resource bundle, the co
 
 ### Localization
 
-{% include {{ version }}/localization-configuration.md %}
-
-{% include {{ version }}/cookie-configuration.md configKey="cas.locale.cookie" %}
+{% include casproperties.html properties="cas.locale." %}
 
 ### Message Bundles
 
-{% include {{ version }}/messagebundles-configuration.md %}
+{% include casproperties.html properties="cas.message-bundle." %}

@@ -58,19 +58,19 @@ java -jar /path/to/cas.war -Djava.util.logging.config.file=/path/to/logging.prop
 
 ### Configuration
 
-{% include {{ version }}/embedded-container-tomcat-configuration.md %}
+{% include casproperties.html properties="server.tomcat" %}
 
 #### HTTP Proxying
 
-{% include {{ version }}/embedded-container-tomcat-httpproxy-configuration.md %}
+{% include casproperties.html properties="cas.server.tomcat.http-proxy" %}
 
 #### HTTP
 
-{% include {{ version }}/embedded-container-tomcat-http-configuration.md %}
+{% include casproperties.html properties="cas.server.tomcat.http" %}
 
 #### AJP
 
-{% include {{ version }}/embedded-container-tomcat-ajp-configuration.md %}
+{% include casproperties.html properties="cas.server.tomcat.ajp" %}
 
 #### SSL Valve
 
@@ -78,15 +78,15 @@ java -jar /path/to/cas.war -Djava.util.logging.config.file=/path/to/logging.prop
 
 #### Extended Access Log Valve
 
-{% include {{ version }}/embedded-container-tomcat-extended-accesslog-configuration.md %}
+{% include casproperties.html properties="cas.server.tomcat.ext-access-log" %}
 
 #### Rewrite Valve
 
-{% include {{ version }}/embedded-container-tomcat-rewritevalve-configuration.md %}
+{% include casproperties.html properties="cas.server.tomcat.rewrite-valve" %}
 
 #### Basic Authentication
 
-{% include {{ version }}/embedded-container-tomcat-basicauth-configuration.md %}
+{% include casproperties.html properties="cas.server.tomcat.basic-authn" %}
 
 #### Apache Portable Runtime (APR)
 
@@ -94,7 +94,7 @@ java -jar /path/to/cas.war -Djava.util.logging.config.file=/path/to/logging.prop
 
 #### Connector IO
 
-{% include {{ version }}/embedded-container-tomcat-connectorio-configuration.md %}
+{% include casproperties.html properties="cas.server.tomcat.socket" %}
 
 #### Session Clustering & Replication
 

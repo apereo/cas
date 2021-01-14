@@ -49,7 +49,7 @@ The parameters passed are as follows:
 | `applicationContext`  | The Spring application context.
 | `logger`              | Logger object used to issue log messages where needed.
 
-{% include {{ version }}/groovy-spring-webflow-decorator-configuration.md %}
+{% include casproperties.html properties="cas.webflow.login-decorator.groovy" %}
 
 ## REST Decorators
 

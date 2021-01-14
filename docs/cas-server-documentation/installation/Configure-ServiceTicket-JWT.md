@@ -60,7 +60,7 @@ JWT support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-token-tickets" %}
 
-{% include {{ version }}/jwt-tickets-configuration.md %}
+{% include casproperties.html properties="cas.authn.token" %}
 
 ### Register Clients
 
@@ -84,8 +84,10 @@ Signal the relevant application in CAS service registry to produce JWTs for serv
 
 ### Configure Keys Per Service
 
-By default, the signing and encryption keys used to encode the JWT are global to the CAS server and can be defined via CAS settings. It is also possible
-to override the global keys on a per-service basis, allowing each application to use its own set of signing and encryption keys. To do so, configure
+By default, the signing and encryption keys used to encode the JWT are global 
+to the CAS server and can be defined via CAS settings. It is also possible
+to override the global keys on a per-service basis, allowing each application to 
+use its own set of signing and encryption keys. To do so, configure
 the service definition in the registry to match the following:
 
 ```json
@@ -141,23 +143,23 @@ import java.security.Key;
 
 ...
 
-final String signingKey = "...";
-final String encryptionKey = "...";
+var signingKey = "...";
+var encryptionKey = "...";
 
-final Key key = new AesKey(signingKey.getBytes(StandardCharsets.UTF_8));
+var key = new AesKey(signingKey.getBytes(StandardCharsets.UTF_8));
 
-final JsonWebSignature jws = new JsonWebSignature();
+var jws = new JsonWebSignature();
 jws.setCompactSerialization(secureJwt);
 jws.setKey(key);
 if (!jws.verifySignature()) {
     throw new Exception("JWT verification failed");
 }
 
-final byte[] decodedBytes = Base64.decodeBase64(jws.getEncodedPayload().getBytes(StandardCharsets.UTF_8));
-final String decodedPayload = new String(decodedBytes, StandardCharsets.UTF_8);
+var decodedBytes = Base64.decodeBase64(jws.getEncodedPayload().getBytes(StandardCharsets.UTF_8));
+var decodedPayload = new String(decodedBytes, StandardCharsets.UTF_8);
 
-final JsonWebEncryption jwe = new JsonWebEncryption();
-final JsonWebKey jsonWebKey = JsonWebKey.Factory
+var jwe = new JsonWebEncryption();
+var jsonWebKey = JsonWebKey.Factory
     .newJwk("\n" + "{\"kty\":\"oct\",\n" + " \"k\":\"" + encryptionKey + "\"\n" + "}");
 
 jwe.setCompactSerialization(decodedPayload);

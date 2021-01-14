@@ -124,7 +124,7 @@ if [[ ${retVal} -eq 1 ]]; then
   exit ${retVal}
 fi
 
-rm -Rf _site .jekyll-metadata .sass-cache
+rm -Rf _site .jekyll-metadata .sass-cache "$branchVersion/build"
 
 echo -e "\nConfiguring git repository settings...\n"
 git config user.email "cas@apereo.org"

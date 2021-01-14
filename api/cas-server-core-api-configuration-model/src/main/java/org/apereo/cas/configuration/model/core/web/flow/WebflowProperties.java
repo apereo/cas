@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.core.web.flow;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -20,6 +21,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("WebflowProperties")
 public class WebflowProperties implements Serializable {
 
     private static final long serialVersionUID = 4949978905279568311L;

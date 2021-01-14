@@ -1,10 +1,14 @@
 package org.apereo.cas.configuration.model.core.web.tomcat;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
 
 /**
  * This is {@link CasEmbeddedApacheSslHostConfigCertificateProperties}.
@@ -16,7 +20,8 @@ import lombok.experimental.Accessors;
 @Getter
 @Accessors(chain = true)
 @Setter
-public class CasEmbeddedApacheSslHostConfigCertificateProperties {
+@JsonFilter("CasEmbeddedApacheSslHostConfigCertificateProperties")
+public class CasEmbeddedApacheSslHostConfigCertificateProperties implements Serializable {
     private static final long serialVersionUID = -5412170529081298822L;
 
     /**
@@ -26,6 +31,7 @@ public class CasEmbeddedApacheSslHostConfigCertificateProperties {
      * dhparam and openssl ecparam, respectively. The output of the respective OpenSSL
      * command can simply be concatenated to the certificate file.
      */
+    @RequiredProperty
     private String certificateFile;
 
     /**
@@ -33,12 +39,14 @@ public class CasEmbeddedApacheSslHostConfigCertificateProperties {
      * The default value is the value of certificateFile and in this case both
      * certificate and private key have to be in this file (NOT RECOMMENDED).
      */
+    @RequiredProperty
     private String certificateKeyFile;
 
     /**
      * The password used to access the private key associated with the
      * server certificate from the specified file.
      */
+    @RequiredProperty
     private String certificateKeyPassword;
 
     /**
@@ -47,6 +55,7 @@ public class CasEmbeddedApacheSslHostConfigCertificateProperties {
      * The certificate chain used for Tomcat should not include the server certificate as its first element.
      * Note that when using more than one certificate for different types, they all must use the same certificate chain.
      */
+    @RequiredProperty
     private String certificateChainFile;
 
     /**
