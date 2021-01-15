@@ -61,7 +61,7 @@ Please [see this guide](OIDC-Authentication-Claims.html).
 
 ### Logout
 
-{% include {{ version }}/logout-oidc-configuration.md %}
+{% include casproperties.html properties="cas.authn.oidc.logout" %}
 
 ## Server Configuration
 

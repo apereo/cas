@@ -10,7 +10,7 @@ category: Monitoring & Statistics
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-memcached-monitor" %}
 
-{% include {{ version }}/memcached-configuration.md configKey="cas.monitor.memcached" %}
+{% include casproperties.html modules="cas-server-support-memcached-monitor,cas-server-support-memcached-core" %}
 
 The actual memcached implementation may be supported via one of the following options, expected to be defined in the overlay.
 

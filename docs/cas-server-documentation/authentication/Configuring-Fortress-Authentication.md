@@ -25,8 +25,8 @@ To enable this feature, ensure Apache Fortress is [installed](http://directory.a
 Next include the following module in the WAR overlay:  
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-fortress" %}
- 
-{% include {{ version }}/fortress-authentication-configuration.md %}
+
+{% include casproperties.html properties="cas.authn.fortress" excludes="principal-transformation,password-encoder" %}
 
 At this time, Apache Fortress support is limited to Apache Tomcat as the web container. 
 Support for additional containers such as Jetty will be worked out in future releases.

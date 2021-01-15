@@ -1,10 +1,6 @@
-### Groovy
+#### Groovy
 
-Execute a groovy script to detect authentication policy.
-
-```properties
-# cas.authn.policy.groovy[0].script=file:/etc/cas/config/account.groovy
-```
+{% include casproperties.html properties="cas.authn.policy.groovy" %}
 
 The script may be designed as:
 

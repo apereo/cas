@@ -9,4 +9,4 @@ category: Installation
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-webapp-undertow" %}
 
-{% include {{ version }}/embedded-container-undertow-configuration.md %}
+{% include casproperties.html thirdPartyStartsWith="server.undertow" %}

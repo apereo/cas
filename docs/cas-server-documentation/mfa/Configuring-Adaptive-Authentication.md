@@ -73,7 +73,7 @@ def run(Object[] args) {
 }
 ```
 
-{% include {{ version }}/groovy-ipintel-adaptive-authentication-configuration.md %}
+{% include casproperties.html properties="cas.authn.adaptive.ip-intel.groovy" %}
 
 ### BlackDot IP Intel
 

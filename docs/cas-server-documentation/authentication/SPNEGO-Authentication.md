@@ -209,7 +209,7 @@ Checks to see if the request's remote hostname matches a predefine pattern.
 Checks an LDAP instance for the remote hostname, to locate a pre-defined attribute whose mere existence
 would allow the webflow to resume to SPNEGO.
 
-{% include {{ version }}/ldap-spnego-configuration.md %}
+{% include casproperties.html properties="cas.authn.spnego.ldap,cas.authn.spnego.spnego-attribute-name" %}
 
 ## Logging
 
