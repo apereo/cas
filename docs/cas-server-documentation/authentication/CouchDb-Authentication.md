@@ -18,6 +18,4 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.couch-db" %}
 
-{% include {{ version }}/couchdb-configuration.md configKey="cas.authn" %}
-
-{% include {{ version }}/couchdb-authentication-configuration.md %}
+{% include casproperties.html properties="cas.authn.couch-db" excludes="principal-transformation,password-encoder" %}

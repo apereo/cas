@@ -21,7 +21,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.file" %}
 
-{% include {{ version }}/file-authentication-configuration.md %}
+{% include casproperties.html properties="cas.authn.file" excludes="principal-transformation,password-encoder" %}
 
 ## Example Password File
 
@@ -61,4 +61,4 @@ The accepted statuses are `OK`, `LOCKED`, `DISABLED`, `EXPIRED` and `MUST_CHANGE
 
 {% include {{ version }}/password-policy-configuration.md configKey="cas.authn.json.password-policy" %}
 
-{% include {{ version }}/json-authentication-configuration.md %}
+{% include casproperties.html properties="cas.authn.json" excludes="principal-transformation,password-encoder" %}

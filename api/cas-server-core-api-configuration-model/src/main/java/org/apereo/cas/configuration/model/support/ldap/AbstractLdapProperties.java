@@ -263,8 +263,6 @@ public abstract class AbstractLdapProperties implements Serializable {
 
     /**
      * Hostname verification options.
-     * Accepted values are {@link LdapHostnameVerifierOptions#DEFAULT}
-     * and {@link LdapHostnameVerifierOptions#ANY}.
      */
     private LdapHostnameVerifierOptions hostnameVerifier = LdapHostnameVerifierOptions.DEFAULT;
 

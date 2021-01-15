@@ -54,7 +54,7 @@ Support is enabled by including the following dependency in the overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-service-registry-stream-hazelcast" %}
 
-{% include {{ version }}/hazelcast-service-registry-replication-configuration.md %}
+{% include casproperties.html properties="cas.service-registry.stream.hazelcast" %}
 
 ## Apache Kafka
 
@@ -68,7 +68,7 @@ Support is enabled by including the following dependency in the overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-service-registry-stream-kafka" %}
 
-{% include {{ version }}/kafka-service-registry-replication-configuration.md %}
+{% include casproperties.html properties="cas.service-registry.stream.kafka" %}
 
 ## Replication Modes
 
@@ -77,10 +77,7 @@ active-active mode, you will need to make sure the service registry
 scheduler is carefully tuned in order to avoid surprises and overwrites. Likewise, the same 
 sort of check needs to be done and verified for ad-hoc dynamic changes to the CAS service 
 registry directory, if CAS is set to monitor for changes. Delays in replication and 
-schedule may force one node to overwrite changes to the other. 
-
-{% include casproperties.html properties="cas.acceptable-usage-policy.groovy" %}
-
+schedule may force one node to overwrite changes to the other.
 
 For instance, consider the following scenario: there are two nodes in a CAS cluster 
 where CAS1 is set to monitor changes from `/etc/cas/services` on node N1 and CAS2 is 

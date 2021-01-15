@@ -23,10 +23,8 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-core-monitor" %}
 
-{% include {{ version }}/tgt-monitoring-configuration.md %}
-{% include {{ version }}/st-monitoring-configuration.md %}
-{% include {{ version }}/load-monitoring-configuration.md %}
-{% include {{ version }}/memory-monitoring-configuration.md %}
+{% include casproperties.html 
+properties="cas.monitor.st,cas.monitor.tgt,cas.monitor.load,cas.monitor.free-mem-threshold" %}
 
 <div class="alert alert-warning"><strong>YMMV</strong><p>In order to accurately and reliably 
 report on ticket statistics, you are at the mercy of the underlying ticket registry to support 

@@ -15,7 +15,7 @@ Enable the following module in your configuration overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-throttle-couchdb" %}
 
-{% include {{ version }}/couchdb-configuration.md configKey="cas.authn.throttle" %}
+{% include casproperties.html modules="cas-server-support-throttle-couchdb" %}
 
 When using this feature the audit facility should be in synchronous mode. For additional instructions 
 on how to configure auditing, please [review the following guide](../audits/Audits.html).

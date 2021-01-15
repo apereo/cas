@@ -47,7 +47,7 @@ need to be updated to account for the following approach described here.</p></di
 
 Enable the caching and capturing of the credential in CAS properties.
 
-{% include {{ version }}/clearpass-configuration.md %}
+{% include casproperties.html properties="cas.clearpass." %}
 
 ## Create Keys
 

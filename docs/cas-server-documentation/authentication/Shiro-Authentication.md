@@ -27,7 +27,7 @@ for the given authentication handler to check their presence and report back.
 
 {% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.shiro" %}
 
-{% include {{ version }}/shiro-authentication-configuration.md %}
+{% include casproperties.html properties="cas.authn.shiro" excludes="principal-transformation,password-encoder" %}
 
 Sample `shiro.ini` that needs be placed on the classpath based on the example above:
 

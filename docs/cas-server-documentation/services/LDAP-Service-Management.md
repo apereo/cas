@@ -32,7 +32,7 @@ JSON objects. The format and syntax of the JSON is identical to that of
 [JSON Service Registry](JSON-Service-Management.html). That's all, as far as the schema goes.
 
 {% include {{ version }}/ldap-configuration.md configKey="cas.service-registry.ldap" %}
-{% include {{ version }}/ldap-service-registry-configuration.md %}
+{% include casproperties.html modules="cas.service-registry.ldap" %}
 
 ## Auto Initialization
 

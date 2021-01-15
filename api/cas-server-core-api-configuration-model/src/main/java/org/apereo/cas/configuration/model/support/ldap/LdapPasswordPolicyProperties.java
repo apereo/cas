@@ -27,7 +27,7 @@ public class LdapPasswordPolicyProperties extends PasswordPolicyProperties {
     private String customPolicyClass;
 
     /**
-     * LDAP type. Accepted values are {@code GENERIC,AD,FreeIPA,EDirectory}
+     * LDAP type.
      */
     private AbstractLdapProperties.LdapType type = AbstractLdapProperties.LdapType.GENERIC;
 

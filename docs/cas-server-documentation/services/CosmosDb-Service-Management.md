@@ -16,7 +16,7 @@ Support is enabled by adding the following module into the overlay:
 
 ## Configuration
 
-{% include {{ version }}/cosmosdb-service-registry-configuration.md %}
+{% include casproperties.html modules="cas-server-support-cosmosdb-service-registry" %}
 
 ## Troubleshooting
 

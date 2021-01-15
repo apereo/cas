@@ -87,7 +87,7 @@ Note that a valid email that is checked frequently must be used in the contact
 field or else the service might be disabled without notice. Furthermore, **DO NOT** exceed more 
 than 500 queries per day & 15 queries per minute. See [FAQ](https://getipintel.net/#FAQ) for further information.
 
-{% include {{ version }}/blackdot-ipintel-adaptive-authentication-configuration.md %}
+{% include casproperties.html properties="cas.authn.adaptive.ip-intel.black-dot" %}
 
 # Risk-based Authentication
 

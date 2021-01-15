@@ -31,8 +31,7 @@ public class AcceptableUsagePolicyProperties implements Serializable {
     /**
      * Control AUP via LDAP.
      */
-    @NestedConfigurationProperty
-    private ListableLdapAcceptableUsagePolicyProperties ldap = new ListableLdapAcceptableUsagePolicyProperties();
+    private List<LdapAcceptableUsagePolicyProperties> ldap = new ArrayList<>();
 
     /**
      * Control AUP via Redis.

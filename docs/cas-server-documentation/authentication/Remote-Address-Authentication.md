@@ -34,4 +34,5 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-generic-remote-webflow" %}
 
-{% include {{ version }}/remoteaddr-authentication-configuration.md %}
+{% include casproperties.html properties="cas.authn.remote-address" 
+excludes="principal-transformation,password-encoder" %}

@@ -6,4 +6,4 @@
 # cas.authn.oauth.user-profile-view-type=NESTED|FLAT
 ```
 
-{% include {{ version }}/casclient-configuration.md %}
+{% include casproperties.html properties="cas.client." %}
