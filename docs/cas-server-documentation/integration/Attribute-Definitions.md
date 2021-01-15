@@ -21,7 +21,7 @@ or defined inside a service definition, an attribute definition store allows one
 with special decorations to be considered during attribute resolution and release. The specification of the attribute definition store is entirely 
 optional and the store may not contain any attribute definitions.
 
-{% include casproperties.html properties="cas.person-directory.attribute-definition-store" %}
+{% include casproperties.html properties="cas.authn.attribute-repository.attribute-definition-store" %}
 
 ## JSON Attribute Definitions
 

@@ -67,10 +67,4 @@ public class PersonDirectoryPrincipalResolverProperties implements Serializable 
      */
     private String activeAttributeRepositoryIds;
 
-    /**
-     * Reference to the attribute definition store
-     * that contains metadata about attributes and their encoding specifics.
-     */
-    @NestedConfigurationProperty
-    private AttributeDefinitionStoreProperties attributeDefinitionStore = new AttributeDefinitionStoreProperties();
 }

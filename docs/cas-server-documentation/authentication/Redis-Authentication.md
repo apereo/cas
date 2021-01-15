@@ -22,12 +22,7 @@ User accounts are mapped to a `username` field as the key. The user account reco
 | `status`             | One of `OK`, `LOCKED`, `DISABLED`, `EXPIRED`, `MUST_CHANGE_PASSWORD`.
 | `attributes`         | User attributes modeled as `Map<String, List<Object>>`.
 
-{% include {{ version }}/principal-transformation-configuration.md configKey="cas.authn.redis" %}
-
-{% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.redis" %}
-
-{% include casproperties.html properties="cas.authn.redis" 
-excludes="principal-transformation,password-encoder" %}
+{% include casproperties.html properties="cas.authn.redis" %}
 
 
 ## Redis Principal Attributes

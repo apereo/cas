@@ -4,8 +4,6 @@
 
 {% include {{ version }}/persondirectory-configuration.md configKey="cas.authn.x509.principal" %}
 
-{% include {{ version }}/principal-transformation-configuration.md configKey="cas.authn.x509" %}
-
 X.509 principal resolution can act on the following principal types:
 
 | Type                    | Description
@@ -32,20 +30,20 @@ If no alternative attribute is specified then the principal will be null and CAS
 
 ### `CN_EDIPI` Principal Resolution
 
-{% include {{ version }}/edipi-principal-resolution-x509-authentication-configuration.md %}
+{% include casproperties.html properties="cas.authn.x509.cn-edipi" %}
 
 ### `RFC822_EMAIL` Principal Resolution
 
-{% include {{ version }}/rfc822-principal-resolution-x509-authentication-configuration.md %}
+{% include casproperties.html properties="cas.authn.x509.rfc822-email" %}
 
 ### `SERIAL_NO` Principal Resolution
 
-{% include {{ version }}/serialno-principal-resolution-x509-authentication-configuration.md %}
+{% include casproperties.html properties="cas.authn.x509.serial-no" %}
 
 ### `SERIAL_NO_DN` Principal Resolution
 
-{% include {{ version }}/serialno-dn-principal-resolution-x509-authentication-configuration.md %}
+{% include casproperties.html properties="cas.authn.x509.serial-no-dn" %}
 
 ### `SUBJECT_ALT_NAME` Principal Resolution
 
-{% include {{ version }}/subjectaltname-principal-resolution-x509-authentication-configuration.md %}
+{% include casproperties.html properties="cas.authn.x509.subject-alt-name" %}

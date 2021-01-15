@@ -48,6 +48,6 @@ The following aggregation strategies can be used to resolve and merge attributes
 when multiple attribute repository sources are defined to fetch data:
 
 | Type            | Description
-|-----------------|----------------------------------------------------------------------------------------------------
+|-----------------|-------------------------------------------------------------
 | `MERGE`         | Default. Query multiple repositories in order and merge the results into a single result set.
 | `CASCADE`       | Same as above; results from each query are passed down to the next attribute repository source.

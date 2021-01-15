@@ -11,16 +11,10 @@ category: Multifactor Authentication
 RADIUS support is enabled by only including the following dependency in the overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-radius" %}
+
 ## Configuration
 
-{% include {{ version }}/principal-transformation-configuration.md configKey="cas.authn.radius" %}
-
-{% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.radius" %}
-
-{% include casproperties.html
-modules="cas-server-support-radius"
-properties="cas.authn.radius"
-excludes="principal-transformation,password-encoder" %}
+{% include casproperties.html modules="cas-server-support-radius" properties="cas.authn.radius" %}
 
 You may also need to declare the following repository in
 your CAS overlay to be able to resolve dependencies:

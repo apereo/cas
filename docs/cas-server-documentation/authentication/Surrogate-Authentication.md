@@ -35,7 +35,8 @@ The following account stores may be configured and used to locate surrogates aut
 
 Surrogate accounts may be defined statically in the CAS configuration. 
 
-{% include {{ version }}/static-accounts-surrogate-authentication-configuration.md %}
+{% include casproperties.html properties="cas.authn.surrogate.simple.surrogates" %}
+
 
 ### JSON
    

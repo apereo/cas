@@ -7,5 +7,3 @@ If multiple iterations are used, the bytecode hash of the first iteration is reh
 is converted to hex before comparing it to the database value.
 
 {% include casproperties.html properties="cas.authn.jdbc.encode" %}
-
-{% include {{ version }}/authentication-credential-selection-configuration.md %}

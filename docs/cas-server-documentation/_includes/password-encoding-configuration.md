@@ -1,10 +1,13 @@
+---
+fragment:keep
+---
+<hr>
+
 #### Password Encoding
 
 Certain aspects of CAS such as authentication handling support configuration of
 password encoding. Most options are based on Spring Security's [support for password encoding](https://docs.spring.io/spring-security/site/docs/current/reference/html5/).
 
-{% capture property %}{{ include.configKey }}.password-encoder{% endcapture %}
-{% include casproperties.html properties=property %}
 
 The following options are supported:
 
@@ -47,7 +50,7 @@ specified as a path to a Groovy script, the structure of the script would be sim
 ```groovy
 import java.util.*
 
-def byte[] run(final Object... args) {
+byte[] run(final Object... args) {
     def rawPassword = args[0]
     def generatedSalt = args[1]
     def logger = args[2]
@@ -57,7 +60,7 @@ def byte[] run(final Object... args) {
     return ...
 }
 
-def Boolean matches(final Object... args) {
+Boolean matches(final Object... args) {
     def rawPassword = args[0]
     def encodedPassword = args[1]
     def logger = args[2]

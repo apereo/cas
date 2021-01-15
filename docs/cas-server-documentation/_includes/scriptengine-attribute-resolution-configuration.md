@@ -6,13 +6,7 @@ Similar to the Groovy option but more versatile, this option takes advantage of 
 scripting API to invoke Groovy, Python or Javascript scripting engines to compile a pre-defined script to resolve attributes.
 The following settings are relevant:
 
-```properties
-# cas.authn.attribute-repository.script[0].location=file:/etc/cas/script.groovy
-# cas.authn.attribute-repository.script[0].order=0
-# cas.authn.attribute-repository.script[0].id=
-# cas.authn.attribute-repository.script[0].case-insensitive=false
-# cas.authn.attribute-repository.script[0].engine-name=js|groovy|python
-```
+{% include casproperties.html properties="cas.authn.attribute-repository.script" %}
 
 While Javascript and Groovy should be natively supported by CAS, Python scripts may need
 to massage the CAS configuration to include the [Python modules](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22jython-standalone%22).

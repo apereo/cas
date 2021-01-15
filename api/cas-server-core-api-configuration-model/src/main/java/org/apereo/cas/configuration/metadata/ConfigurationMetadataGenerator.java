@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
  * <p>
  * Example:
  * {@code
- * private List<SomeClassProperties> list = new ArrayList<>(0)
+ * private var list = new ArrayList<>(0)
  * }
  * The generator additionally adds hints to the metadata generated to indicate
  * required properties and modules.

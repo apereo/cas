@@ -57,7 +57,7 @@ Support is enabled by including the following dependency in the final overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-configuration-cloud-amqp" %}
 
-{% include {{ version }}/rabbitmq-springcloud-configbus-configuration.md %}
+{% include casproperties.html thirdPartyStartsWith="spring.rabbitmq." %}
 
 ## Kafka
 

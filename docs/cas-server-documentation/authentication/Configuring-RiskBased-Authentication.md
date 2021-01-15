@@ -95,7 +95,8 @@ Support is enabled by including the following dependency in the overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-electrofence" %}
 
-{% include {{ version }}/riskbased-adaptive-authentication-configuration.md %}
+{% include casproperties.html
+properties="cas.authn.adaptive.reject,cas.authn.adaptive.require-multifactor" %}
 
 ### Messaging & Notifications
 

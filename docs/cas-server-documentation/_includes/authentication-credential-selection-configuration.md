@@ -1,3 +1,7 @@
+---
+fragment:keep
+---
+
 #### Authentication Credential Selection
 
 Certain authentication handlers are allowed to determine whether they can operate on the provided credential

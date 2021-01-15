@@ -2,7 +2,7 @@ package org.apereo.cas.configuration;
 
 import org.apereo.cas.configuration.model.core.CasJavaClientProperties;
 import org.apereo.cas.configuration.model.core.CasServerProperties;
-import org.apereo.cas.configuration.model.core.HostProperties;
+import org.apereo.cas.configuration.model.core.CasServerHostProperties;
 import org.apereo.cas.configuration.model.core.audit.AuditProperties;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationProperties;
 import org.apereo.cas.configuration.model.core.authentication.HttpClientProperties;
@@ -152,7 +152,7 @@ public class CasConfigurationProperties implements Serializable {
      * Settings that define this CAS host.
      */
     @NestedConfigurationProperty
-    private HostProperties host = new HostProperties();
+    private CasServerHostProperties host = new CasServerHostProperties();
 
     /**
      * Logout functionality.

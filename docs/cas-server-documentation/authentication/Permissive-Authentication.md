@@ -17,11 +17,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-generic" %}
 
-{% include {{ version }}/principal-transformation-configuration.md configKey="cas.authn.file" %}
-
-{% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.file" %}
-
-{% include casproperties.html properties="cas.authn.file" excludes="principal-transformation,password-encoder" %}
+{% include casproperties.html properties="cas.authn.file" %}
 
 ## Example Password File
 
@@ -53,12 +49,8 @@ specify additional account details mostly useful for development and basic testi
 }
 ```
 
-The accepted statuses are `OK`, `LOCKED`, `DISABLED`, `EXPIRED` and `MUST_CHANGE_PASSWORD`. 
-
-{% include {{ version }}/principal-transformation-configuration.md configKey="cas.authn.json" %}
-
-{% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.json" %}
+The accepted statuses are `OK`, `LOCKED`, `DISABLED`, `EXPIRED` and `MUST_CHANGE_PASSWORD`.
 
 {% include {{ version }}/password-policy-configuration.md configKey="cas.authn.json.password-policy" %}
 
-{% include casproperties.html properties="cas.authn.json" excludes="principal-transformation,password-encoder" %}
+{% include casproperties.html properties="cas.authn.json"  %}

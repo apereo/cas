@@ -1,3 +1,9 @@
+---
+fragment:keep
+---
+
+<hr>
+
 #### Principal Transformation
 
 Authentication handlers that generally deal with username-password credentials
@@ -20,7 +26,4 @@ def String run(final Object... args) {
     return providedUsername.concat("SomethingElse")
 }
 ```
-
-{% capture property %}{{ include.configKey }}.principal-transformation{% endcapture %}
-{% include casproperties.html properties=property %}
 

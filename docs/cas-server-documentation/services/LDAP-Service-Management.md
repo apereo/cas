@@ -31,8 +31,7 @@ Service definitions are by default stored inside the `serviceDefinitionAttribute
 JSON objects. The format and syntax of the JSON is identical to that of
 [JSON Service Registry](JSON-Service-Management.html). That's all, as far as the schema goes.
 
-{% include {{ version }}/ldap-configuration.md configKey="cas.service-registry.ldap" %}
-{% include casproperties.html modules="cas.service-registry.ldap" %}
+{% include casproperties.html modules="cas-server-support-ldap-service-registry" %}
 
 ## Auto Initialization
 

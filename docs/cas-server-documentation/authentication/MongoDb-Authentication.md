@@ -13,11 +13,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-mongo" %}
 
-{% include {{ version }}/principal-transformation-configuration.md configKey="cas.authn.mongo" %}
-
-{% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.mongo" %}
-
-{% include casproperties.html properties="cas.authn.mongo" excludes="principal-transformation,password-encoder" %}
+{% include casproperties.html properties="cas.authn.mongo" %}
 
 Accounts are expected to be found as such in collections:
 

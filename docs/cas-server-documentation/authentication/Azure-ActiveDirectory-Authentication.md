@@ -17,13 +17,9 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-azuread-authentication" %}
 
-{% include {{ version }}/principal-transformation-configuration.md configKey="cas.authn.azure-active-directory" %}
-
-{% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.azure-active-directory" %}
 
 {% include casproperties.html 
-properties="cas.authn.azure-active-directory" 
-excludes="principal-transformation,password-encoder" %}
+properties="cas.authn.azure-active-directory" %}
 
 ## Principal Attributes
 

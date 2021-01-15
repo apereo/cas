@@ -12,6 +12,17 @@
       }
     },
     {
+      "name": "cas.person-directory.attribute-definition-store",
+      "type": "java.lang.String",
+      "description": "Configuration scheme relevant for attribute definition store.",
+      "defaultValue": "DISSESSION",
+      "deprecation": {
+        "replacement": "cas.authn.attribute-repository.attribute-definition-store",
+        "reason": "Configuration of the attribute definition store is moved under attribute repositories.",
+        "level": "error"
+      }
+    },
+    {
       "name": "cas.authn.release-protocol-attributes",
       "type": "java.lang.Boolean",
       "description": "Whether to release authentication attributes.",

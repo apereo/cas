@@ -52,12 +52,8 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 ## Configuration
 
-{% include {{ version }}/principal-transformation-configuration.md configKey="cas.authn.soap" %}
 
-{% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.soap" %}
-
-{% include casproperties.html properties="cas.authn.soap" 
-excludes="principal-transformation,password-encoder" %}
+{% include casproperties.html properties="cas.authn.soap" %}
 
 The `status` returned in the SOAP response as interpreted as one of the following values:
 

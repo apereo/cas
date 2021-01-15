@@ -1,6 +1,5 @@
-```properties
-# cas.authn.x509.subject-dn.format=[DEFAULT,RFC1779,RFC2253,CANONICAL]
-```
+{% include casproperties.html properties="cas.authn.x509.subject-dn" %}
+
 
 | Type          | Description
 |---------------|----------------------------------------------------------------------

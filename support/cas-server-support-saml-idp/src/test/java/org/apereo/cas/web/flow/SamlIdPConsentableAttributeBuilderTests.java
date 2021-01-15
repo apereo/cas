@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("SAML")
 @TestPropertySource(properties =
-    "cas.person-directory.attribute-definition-store.json.location=classpath:/basic-definitions.json")
+    "cas.authn.attribute-repository.attribute-definition-store.json.location=classpath:/basic-definitions.json")
 public class SamlIdPConsentableAttributeBuilderTests extends BaseSamlIdPWebflowTests {
     @Autowired
     @Qualifier("attributeDefinitionStore")

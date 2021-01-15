@@ -23,11 +23,7 @@ of the authentication, so that in their absence, the authentication may fail.
 While by default these settings are optional, you may configure roles and/or permissions
 for the given authentication handler to check their presence and report back.
 
-{% include {{ version }}/principal-transformation-configuration.md configKey="cas.authn.shiro" %}
-
-{% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.shiro" %}
-
-{% include casproperties.html properties="cas.authn.shiro" excludes="principal-transformation,password-encoder" %}
+{% include casproperties.html properties="cas.authn.shiro" %}
 
 Sample `shiro.ini` that needs be placed on the classpath based on the example above:
 

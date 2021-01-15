@@ -7,17 +7,14 @@ using `management.endpoint.health.show-details` via the following conditions:
 | `always`             | Always display details of health monitors.
 | `when-authorized`   | Details are only shown to authorized users. Authorized roles can be configured using `management.endpoint.health.roles`.
 
-```properties
-# management.endpoint.health.show-details=never
-```
+{% include casproperties.html thirdParty="management.endpoint.health.show-details" %}
 
-The results and details of the `health` endpoints are produced by a number of health indicator components that may monitor different systems, such as LDAP connection
-pools, database connections, etc. Such health indicators are turned off by default and may individually be controlled and turned on via the following settings:
+The results and details of the `health` endpoints are produced by a number of 
+health indicator components that may monitor different systems, such as LDAP connection
+pools, database connections, etc. Such health indicators are turned off by 
+default and may individually be controlled and turned on via the following settings:
 
-```properties
-# management.health.<name>.enabled=true
-# management.health.defaults.enabled=false 
-```
+{% include casproperties.html properties="management.health" %}
 
 The following health indicator names are available, given the presence of the appropriate CAS feature:
 

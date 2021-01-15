@@ -23,7 +23,14 @@ is used, but when working with Unicode strings as properties values it does matt
 files using the ISO-8859-1 encoding. YAML files are loaded with UTF-8 encoding. If you are setting Unicode
 values try using a YAML configuration file.</p></div>
 
-{% include {{ version }}/casserver-configuration.md %}
+{% include casproperties.html properties="cas.server.name,cas.server.prefix,cas.server.scope,cas.host." %}
+
+On startup, CAS will display a banner along with some diagnostics info.
+In order to skip this step and summarize, set the system property `-DCAS_BANNER_SKIP=true`.
+
+CAS may also be conditionally configured to report, as part of the
+banner, whether a newer CAS release is available for an upgrade.
+This check is off by default and may be enabled with a system property of `-DCAS_UPDATE_CHECK_ENABLED=true`.
 
 ## Overview
 

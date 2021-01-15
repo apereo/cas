@@ -19,3 +19,5 @@
 # cas.authn.x509.refresh-interval-seconds=3600
 # cas.authn.x509.max-path-length-allow-unspecified=false
 ```
+
+

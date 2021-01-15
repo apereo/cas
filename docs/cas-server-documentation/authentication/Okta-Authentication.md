@@ -17,8 +17,4 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-okta-authentication" %}
 
-{% include {{ version }}/principal-transformation-configuration.md configKey="cas.authn.okta" %}
-
-{% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.okta" %}
-
-{% include casproperties.html properties="cas.authn.okta" excludes="principal-transformation,password-encoder" %}
+{% include casproperties.html properties="cas.authn.okta"  %}

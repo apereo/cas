@@ -23,7 +23,7 @@ to obtain a new (valid) `TGT`.
 
 This is the default option, which provides a hard-time out as well as a sliding window.
    
-{% include {{ version }}/tgt-configuration.md %}
+{% include casproperties.html properties="cas.ticket.tgt" %}
 
 Ticket expiration policies are activated in the following conditions:
 
@@ -44,8 +44,9 @@ Ticket expiration policies are activated in the following order:
 4. Throttled Timeout
 5. Hard Timeout
 6. Tickets always expire immediately.
-      
-{% include {{ version }}/default-tgt-expiration-policy-configuration.md %}
+
+{% include casproperties.html
+properties="cas.ticket.tgt.max-time-to-live-in-seconds,cas.ticket.tgt.time-to-kill-in-seconds" %}
 
 ### Per Service
 
