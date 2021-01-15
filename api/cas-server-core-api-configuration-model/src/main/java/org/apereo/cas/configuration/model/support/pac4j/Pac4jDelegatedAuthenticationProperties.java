@@ -291,13 +291,14 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
 
         /**
          * The requested scope from the provider.
+         *  The default scope is {@code user}, i.e. {@code read/write} access to the GitHub user account.
+         *  For a full list of possible scopes, <a href="https://developer.github.com/apps/building-oauth-apps/understanding-scopes-for-oauth-apps/">see this</a>).
          */
         private String scope;
 
         public Github() {
             setClientName("Github");
         }
-
     }
 
     @RequiresModule(name = "cas-server-support-pac4j-webflow")

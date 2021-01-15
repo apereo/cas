@@ -1,12 +1,5 @@
-If you wish to directly and separately retrieve attributes from a Groovy script,
-the following settings are then relevant:
+{% include casproperties.html properties="cas.authn.attribute-repository.groovy" %}
 
-```properties
-# cas.authn.attribute-repository.groovy[0].location=file:/etc/cas/attributes.groovy
-# cas.authn.attribute-repository.groovy[0].case-insensitive=false
-# cas.authn.attribute-repository.groovy[0].order=0
-# cas.authn.attribute-repository.groovy[0].id=
-```
 
 The Groovy script may be designed as:
 
