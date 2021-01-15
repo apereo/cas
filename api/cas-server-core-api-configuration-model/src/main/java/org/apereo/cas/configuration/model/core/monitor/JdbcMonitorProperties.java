@@ -1,7 +1,6 @@
 package org.apereo.cas.configuration.model.core.monitor;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
-import org.apereo.cas.configuration.model.support.mongo.BaseMongoDbProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;

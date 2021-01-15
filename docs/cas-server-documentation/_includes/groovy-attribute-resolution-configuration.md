@@ -1,6 +1,5 @@
 {% include casproperties.html properties="cas.authn.attribute-repository.groovy" %}
 
-
 The Groovy script may be designed as:
 
 ```groovy

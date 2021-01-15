@@ -134,7 +134,6 @@ may be entered into a web-based login form.
 
 {% include casproperties.html properties="cas.monitor.endpoints.jdbc" %}
 
-{% include {{ version }}/password-encoding-configuration.md configKey="cas.monitor.endpoints.jdbc" %}
 
 ### Enabling Endpoints
 

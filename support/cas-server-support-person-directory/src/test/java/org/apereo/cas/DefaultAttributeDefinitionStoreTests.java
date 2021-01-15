@@ -57,7 +57,7 @@ import static org.mockito.Mockito.*;
         "cas.authn.attribute-repository.stub.attributes.eppn=casuser",
         "cas.authn.attribute-repository.stub.attributes.mismatchedAttributeKey=someValue",
         "cas.server.scope=cas.org",
-        "cas.person-directory.attribute-definition-store.json.location=classpath:/basic-attribute-definitions.json"
+        "cas.authn.attribute-repository.attribute-definition-store.json.location=classpath:/basic-attribute-definitions.json"
     })
 @Tag("Attributes")
 @EnableConfigurationProperties(CasConfigurationProperties.class)

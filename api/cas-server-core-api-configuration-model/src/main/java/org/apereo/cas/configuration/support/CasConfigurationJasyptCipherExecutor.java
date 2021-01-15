@@ -1,10 +1,11 @@
 package org.apereo.cas.configuration.support;
 
+import org.apereo.cas.util.crypto.CipherExecutor;
+
 import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apereo.cas.util.crypto.CipherExecutor;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.jasypt.iv.RandomIvGenerator;

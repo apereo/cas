@@ -90,7 +90,7 @@ by the Web server terminating the SSL connection. Since an SSL peer may be confi
 certificates, the CAS X.509 handler provides a number of properties that place additional restrictions on
 acceptable client certificates.
 
-{% include {{ version }}/x509-authentication-configuration.md %}
+{% include casproperties.html properties="cas.authn.x509." %}
 
 ### X509 Certificate Extraction
 
@@ -146,7 +146,7 @@ This behavior is achieved by exposing a dedicated port for the embedded Apache T
 may forcefully require X.509 authentication for login and access. Doing so should automatically allow for an extra
 login option in the user interface to trigger the browser for X.509.
 
-{% include {{ version }}/webflow-x509-authentication-configuration.md %}
+{% include casproperties.html properties="cas.authn.x509.webflow" %}
 
 ### External Apache Tomcat
 

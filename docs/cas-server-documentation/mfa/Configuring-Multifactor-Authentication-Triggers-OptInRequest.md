@@ -14,7 +14,8 @@ that indicates the required MFA authentication flow. The parameter/header name
 is configurable, but its value must match the authentication provider id
 of an available MFA provider described above.
 
-{% include {{ version }}/httprequest-mfa-trigger-configuration.md %}
+{% include casproperties.html 
+properties="cas.authn.mfa.request-parameter,cas.authn.mfa.request-header,cas.authn.mfa.session-attribute" %}
 
 An example request that triggers an authentication flow based on a request parameter would be:
 

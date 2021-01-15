@@ -40,7 +40,8 @@ Support is enabled by including the following module in the overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-passwordless-webflow" %}
 
-{% include {{ version }}/passwordless-configuration.md %}
+{% include casproperties.html
+properties="cas.authn.passwordless.multifactor-authentication-activated,cas.authn.passwordless.delegated-authentication-activated" %}
 
 ## Account Stores
 
@@ -80,9 +81,7 @@ Please [see this guide](Passwordless-Authentication-Storage-Custom.html).
 
 The following strategies define how issued tokens may be managed by CAS. 
 
-{% include {{ version }}/passwordless-token-mgmt-configuration.md %}
-
-{% include {{ version }}/signing-encryption-configuration.md configKey="cas.authn.passwordless.tokens" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
+{% include casproperties.html properties="cas.authn.passwordless.accounts" %}
 
 ### Memory
 

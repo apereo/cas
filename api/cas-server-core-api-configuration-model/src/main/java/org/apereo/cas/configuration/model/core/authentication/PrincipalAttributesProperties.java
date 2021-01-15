@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -105,36 +106,43 @@ public class PrincipalAttributesProperties implements Serializable {
      * and additionally allow other specific principal attributes for only some applications
      * per their attribute release policy.
      */
+    @NestedConfigurationProperty
     private Set<String> defaultAttributesToRelease = new HashSet<>(0);
 
     /**
      * Retrieve attributes from multiple JDBC repositories.
      */
+    @NestedConfigurationProperty
     private List<JdbcPrincipalAttributesProperties> jdbc = new ArrayList<>(0);
 
     /**
      * Retrieve attributes from multiple Microsoft Graph instances.
      */
+    @NestedConfigurationProperty
     private List<AzureActiveDirectoryAttributesProperties> azureActiveDirectory = new ArrayList<>(0);
 
     /**
      * Retrieve attributes from multiple REST endpoints.
      */
+    @NestedConfigurationProperty
     private List<RestPrincipalAttributesProperties> rest = new ArrayList<>(0);
 
     /**
      * Retrieve attributes from multiple Groovy scripts.
      */
+    @NestedConfigurationProperty
     private List<GroovyPrincipalAttributesProperties> groovy = new ArrayList<>(0);
 
     /**
      * Retrieve attributes from multiple LDAP servers.
      */
+    @NestedConfigurationProperty
     private List<LdapPrincipalAttributesProperties> ldap = new ArrayList<>(0);
 
     /**
      * Retrieve attributes from multiple JSON file repositories.
      */
+    @NestedConfigurationProperty
     private List<JsonPrincipalAttributesProperties> json = new ArrayList<>(0);
 
     /**
@@ -145,6 +153,7 @@ public class PrincipalAttributesProperties implements Serializable {
     /**
      * Retrieve attributes from Couchbase repositories.
      */
+    @NestedConfigurationProperty
     private CouchbasePrincipalAttributesProperties couchbase = new CouchbasePrincipalAttributesProperties();
 
     /**
@@ -156,6 +165,7 @@ public class PrincipalAttributesProperties implements Serializable {
      * Use stubbed attribute definitions as the underlying attribute repository source.
      * Static attributes that need to be mapped to a hardcoded value belong here.
      */
+    @NestedConfigurationProperty
     private StubPrincipalAttributesProperties stub = new StubPrincipalAttributesProperties();
 
     /**
@@ -168,5 +178,13 @@ public class PrincipalAttributesProperties implements Serializable {
      * {@code grouperClient.webService.login = banderson}
      * {@code grouperClient.webService.password = password}
      */
+    @NestedConfigurationProperty
     private GrouperPrincipalAttributesProperties grouper = new GrouperPrincipalAttributesProperties();
+
+    /**
+     * Reference to the attribute definition store
+     * that contains metadata about attributes and their encoding specifics.
+     */
+    @NestedConfigurationProperty
+    private AttributeDefinitionStoreProperties attributeDefinitionStore = new AttributeDefinitionStoreProperties();
 }

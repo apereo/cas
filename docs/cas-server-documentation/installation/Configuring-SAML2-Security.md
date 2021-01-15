@@ -21,11 +21,7 @@ The configurations are generally determined based on the following order:
 
 In almost all cases, you should leave the defaults in place.
 
-{% include {{ version }}/saml2-idp-algorithms-configuration.md %}
-{% include {{ version }}/saml2-idp-logout-configuration.md %}
-{% include {{ version }}/saml2-idp-profiles-configuration.md %}
-{% include {{ version }}/saml2-idp-response-configuration.md %}
-{% include {{ version }}/saml2-idp-tickets-configuration.md %}
+{% include casproperties.html properties="cas.authn.saml-idp.algs,cas.authn.saml-idp.logout,cas.authn.saml-idp.profile,cas.authn.saml-idp.response,cas.authn.saml-idp.ticket" %}
 
 ## Encryption
 

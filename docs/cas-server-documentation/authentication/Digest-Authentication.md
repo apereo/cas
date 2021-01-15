@@ -23,8 +23,7 @@ please [review this guide](https://en.wikipedia.org/wiki/Digest_access_authentic
 
 ## Configuration
 
-{% include casproperties.html properties="cas.authn.digest" 
-excludes="principal-transformation,password-encoder" %}
+{% include casproperties.html properties="cas.authn.digest" %}
 
 ## Credential Management
 

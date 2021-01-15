@@ -90,9 +90,13 @@ for f in $files; do
    docsVal=$?
  fi
  if [ $docsVal == 1 ]; then
-   echo "$PWD/gh-pages/_includes/$branchVersion/$fname fragment is unused."
-   rm "docs/cas-server-documentation/_includes/$fname"
-   res=1
+   grep "fragment:keep" $f >/dev/null 2>&1
+   docsVal=$?
+   if [ $docsVal == 1 ]; then
+      echo "$f is unused."
+      rm "docs/cas-server-documentation/_includes/$fname"
+      res=1
+   fi
  fi
 done
 

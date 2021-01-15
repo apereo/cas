@@ -20,11 +20,6 @@ LDAP integration is enabled by including the following dependency in the overlay
 
 {% include {{ version }}/password-policy-configuration.md configKey="cas.authn.ldap[0].password-policy" %}
 
-### LDAP Password Encoding & Principal Transformation
-
-{% include {{ version }}/principal-transformation-configuration.md configKey="cas.authn.ldap[0]" %}
-
-{% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.ldap[0]" %}
 
 ## Password Policy Enforcement
 

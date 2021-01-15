@@ -10,8 +10,8 @@ category: Attributes
 
 CAS does allow for attributes to be retrieved from a variety of SQL databases.
 To learn how to configure database drivers, [please see this guide](../installation/JDBC-Drivers.html).
-           
-{% include {{ version }}/jdbc-attribute-resolution-configuration.md %}
+
+{% include casproperties.html properties="cas.authn.attribute-repository.jdbc" %}
 
 JDBC attribute sources can be defined based on the following mechanics:
 

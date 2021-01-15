@@ -13,27 +13,27 @@ typically upper-bound to the length of the CAS single sign-on session.
   
 ## OAuth Codes
 
-{% include {{ version }}/codes-oauth2-configuration.md %}
+{% include casproperties.html properties="cas.authn.oauth.code" %}
 
 ## OAuth Access Tokens
 
-{% include {{ version }}/accesstokens-oauth2-configuration.md %}
+{% include casproperties.html properties="cas.authn.oauth.access-token" %}
 
 ## OAuthJWT Access Tokens
 
-{% include {{ version }}/jwt-accesstokens-oauth2-configuration.md %}
+{% include casproperties.html properties="cas.authn.oauth.access-token" %}
 
 ## OAuth Device Tokens
 
-{% include {{ version }}/devicetokens-oauth2-configuration.md %}
+{% include casproperties.html properties="cas.authn.oauth.device-token" %}
 
 ## OAuth Refresh Tokens
 
-{% include {{ version }}/refreshtokens-oauth2-configuration.md %}
+{% include casproperties.html properties="cas.authn.oauth.refresh-token" %}
 
 ## OAuth Device User Codes
 
-{% include {{ version }}/deviceusercodes-oauth2-configuration.md %}
+{% include casproperties.html properties="cas.authn.oauth.device-user-code" %}
 
 ## Per Service
 

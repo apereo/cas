@@ -43,11 +43,9 @@ prior to production rollouts.</p></div>
 
 {% include {{ version }}/acceptusers-authentication-configuration.md %}
 
-{% include {{ version }}/principal-transformation-configuration.md configKey="cas.authn.accept" %}
 
 {% include {{ version }}/password-policy-configuration.md configKey="cas.authn.accept.password-policy" %}
 
-{% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.accept" %}
 
 ### Administrative Endpoints
 

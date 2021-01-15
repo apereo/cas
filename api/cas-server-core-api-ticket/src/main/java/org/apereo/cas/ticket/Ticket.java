@@ -23,7 +23,7 @@ public interface Ticket extends Serializable, Comparable<Ticket> {
 
     /**
      * Determines if the ticket is expired. Most common implementations might
-     * collaborate with <i>ExpirationPolicy </i> strategy.
+     * collaborate with <i>ExpirationPolicy</i> strategy.
      *
      * @return true, if the ticket is expired
      * @see ExpirationPolicy

@@ -14,9 +14,5 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-cassandra-authentication" %}
 
-{% include casproperties.html properties="cas.authn.cassandra" excludes="principal-transformation,password-encoder" %}
-
-{% include {{ version }}/principal-transformation-configuration.md configKey="cas.authn.cassandra" %}
-
-{% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.cassandra" %}
+{% include casproperties.html properties="cas.authn.cassandra" %}
 
