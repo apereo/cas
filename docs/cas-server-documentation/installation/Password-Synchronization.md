@@ -27,4 +27,4 @@ following dependencies in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-ldap" %}
 
-{% include {{ version }}/ldap-pswd-sync-configuration.md %}
+{% include casproperties.html properties="cas.authn.password-sync.ldap" %}

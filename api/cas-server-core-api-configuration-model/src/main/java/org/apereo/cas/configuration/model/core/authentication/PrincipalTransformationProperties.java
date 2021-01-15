@@ -52,10 +52,13 @@ public class PrincipalTransformationProperties implements Serializable {
     /**
      * Indicate whether the principal identifier should be transformed
      * into upper-case, lower-case, etc.
-     * Accepted values are {@code NONE, UPPERCASE, LOWERCASE}.
      */
     private CaseConversion caseConversion = CaseConversion.NONE;
 
+    /**
+     * Indicate whether the principal identifier should be transformed
+     * into upper-case, lower-case, etc.
+     */
     public enum CaseConversion {
         /**
          * No conversion.

@@ -1,6 +1,4 @@
-```properties
-# cas.authn.core.engine.groovy-post-processor.location=file:/etc/cas/config/GroovyPostProcessor.groovy
-```
+{% include casproperties.html properties="cas.authn.core.engine.groovy-post-processor" %}
 
 The script itself may be designed as:
 

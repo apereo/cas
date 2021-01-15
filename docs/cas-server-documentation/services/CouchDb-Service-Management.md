@@ -18,14 +18,11 @@ server to provide high availability to CAS across multiple data centers.
 
 ## Configuration
 
-{% include {{ version }}/couchdb-configuration.md configKey="cas.service-registry" %}
-
-The only truly mandatory setting is the URL. However, CouchDB should not be used in admin party mode in production, so username and password are needed as well.
+{% include casproperties.html modules="cas-server-support-couchdb-service-registry" %}
 
 ## Auto Initialization
 
 Upon startup and configuration permitting, the registry is able to auto initialize itself from default JSON service definitions available to CAS. See [this guide](AutoInitialization-Service-Management.html) for more info.
-
 
 ## Troubleshooting
 

@@ -38,7 +38,8 @@ and the module automatically takes care of all required changes. While this is t
 you may want to manually handle all such changes. For doing so, you will need to disable the CAS auto-configuration
 of the webflow.
 
-{% include {{ version }}/spring-webflow-configuration.md %}
+{% include casproperties.html properties="cas.webflow." %}
+
 
 <div class="alert alert-warning"><strong>Note</strong><p>Only attempt to 
 modify the Spring webflow configuration files by hand when/if absolutely necessary and the
@@ -94,7 +95,7 @@ any CAS view or webflow component using the variable `casProperties` to gain acc
 a specific setting. Remember that this syntax only allowed access to settings 
 that are *owned* by CAS, noted by its very own prefix.
 
-{% include {{ version }}/custom-settings-configuration.md %}
+{% include casproperties.html properties="cas.custom.properties" %}
 
 ## Troubleshooting
 

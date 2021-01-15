@@ -1,4 +1,4 @@
-### Authentication Credential Selection
+#### Authentication Credential Selection
 
 Certain authentication handlers are allowed to determine whether they can operate on the provided credential
 and as such lend themselves to be tried and tested during the authentication handler selection phase. The credential criteria

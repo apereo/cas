@@ -11,4 +11,4 @@ category: Attributes
 The following configuration describes how to fetch and retrieve 
 attributes from Microsoft Azure Active Directory attribute repositories.
 
-{% include {{ version }}/azuread-attribute-resolution-configuration.md %}
+{% include casproperties.html properties="cas.authn.attribute-repository.azure-active-directory" %}

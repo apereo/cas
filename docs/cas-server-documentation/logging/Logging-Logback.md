@@ -63,4 +63,4 @@ Sanitizing log data to remove sensitive ticket ids such as ticket-granting ticke
 may be worked out in future releases, you should be extra careful to cleanse log data prior to sharing it with external systems such as Splunk or Syslog, etc. 
 </p></div>
 
-{% include {{ version }}/logging-configuration.md %}
+{% include casproperties.html properties="cas.logging" thirdPartyStartsWith="logging." %}

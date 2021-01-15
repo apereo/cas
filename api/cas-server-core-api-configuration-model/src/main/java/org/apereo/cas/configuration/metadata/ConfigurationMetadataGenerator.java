@@ -140,8 +140,8 @@ public class ConfigurationMetadataGenerator {
             })
             .collect(Collectors.toSet());
 
-        for (val e : propertiesToProcess) {
-            val matcher = NESTED_CLASS_PATTERN.matcher(e.getType());
+        for (val prop : propertiesToProcess) {
+            val matcher = NESTED_CLASS_PATTERN.matcher(prop.getType());
             matcher.matches();
 
             val parent = matcher.group(1);
@@ -186,7 +186,7 @@ public class ConfigurationMetadataGenerator {
                     .forEach(member -> {
                         if (member.isEnumDeclaration()) {
                             val enumMem = member.asEnumDeclaration();
-                            val builder = new StringBuilder(e.getDescription());
+                            val builder = new StringBuilder(StringUtils.defaultString(prop.getDescription()));
                             enumMem.getEntries()
                                 .stream()
                                 .filter(entry -> entry.getJavadoc().isPresent())
@@ -194,7 +194,7 @@ public class ConfigurationMetadataGenerator {
                                     .append(':')
                                     .append(entry.getJavadoc().get().getDescription().toText())
                                     .append('.'));
-                            e.setDescription(builder.toString());
+                            prop.setDescription(builder.toString());
                         }
                         if (member.isClassOrInterfaceDeclaration()) {
                             val typeName = member.asClassOrInterfaceDeclaration();
@@ -207,7 +207,7 @@ public class ConfigurationMetadataGenerator {
 
                                     val creator = new ConfigurationMetadataPropertyCreator(
                                         false, resultProps, resultGroups, parent);
-                                    creator.createConfigurationProperty(field, e.getName());
+                                    creator.createConfigurationProperty(field, prop.getName());
 
                                     groups.addAll(resultGroups);
                                     properties.addAll(resultProps);

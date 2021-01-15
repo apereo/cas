@@ -125,8 +125,17 @@ public abstract class BaseAcceptableUsagePolicyRepository implements AcceptableU
         if (attributes != null && attributes.containsKey(aupProperties.getAupAttributeName())) {
             val value = CollectionUtils.toCollection(attributes.get(aupProperties.getAupAttributeName()));
             LOGGER.debug("Evaluating attribute value [{}] found for [{}]", value, aupProperties.getAupAttributeName());
-            return value.stream().anyMatch(v -> v.toString().equalsIgnoreCase(Boolean.TRUE.toString()));
+            return value.stream().anyMatch(v -> v.toString().equalsIgnoreCase(getAcceptedAttributeValue()));
         }
         return false;
+    }
+
+    /**
+     * Gets accepted attribute value.
+     *
+     * @return the accepted attribute value
+     */
+    protected String getAcceptedAttributeValue() {
+        return Boolean.TRUE.toString();
     }
 }

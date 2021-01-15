@@ -31,4 +31,4 @@ Allow CAS to become an OpenID Connect provider (OP).
 # cas.authn.oidc.user-info-encryption-encoding-values-supported=A128CBC-HS256,A192CBC-HS384,A256CBC-HS512,A128GCM,A192GCM,A256GCM
 ```
 
-{% include {{ version }}/casclient-configuration.md %}
+{% include casproperties.html properties="cas.client" %}

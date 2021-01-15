@@ -12,5 +12,5 @@ Monitor the status and state of a cache backed by Hazelcast.
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-hazelcast-monitor" %}
 
-{% include {{ version }}/cache-monitoring-configuration.md %}
+{% include casproperties.html properties="cas.monitor.warn." %}
 

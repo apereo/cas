@@ -112,7 +112,7 @@ may be entered into a web-based login form.
 
 ## Actuator Endpoint Configuration
 
-{% include {{ version }}/actuator-endpoints-configuration.md %}
+{% include casproperties.html thirdPartyStartsWith="management.endpoints" %}
 
 ### Basic Authentication Security
 
@@ -132,7 +132,7 @@ may be entered into a web-based login form.
 
 {% include {{ version }}/rdbms-configuration.md configKey="cas.monitor.endpoints.jdbc" %}
 
-{% include {{ version }}/jdbc-authentication-actuator-endpoints-configuration.md %}
+{% include casproperties.html properties="cas.monitor.endpoints.jdbc" %}
 
 {% include {{ version }}/password-encoding-configuration.md configKey="cas.monitor.endpoints.jdbc" %}
 

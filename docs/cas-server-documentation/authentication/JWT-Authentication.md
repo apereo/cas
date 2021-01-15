@@ -58,9 +58,9 @@ JWT authentication support is enabled by including the following dependency in t
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-token-webflow" %}
 
-{% include {{ version }}/jwt-authentication-configuration.md %}
+{% include {{ version }}/principal-transformation-configuration.md configKey="cas.authn.token" %}
 
-{% include {{ version }}/webflow-configuration.md configKey="cas.authn.token.webflow" %}
+{% include casproperties.html properties="cas.authn.token" excludes="principal-transformation,password-encoder" %}
 
 Configure the appropriate service in your service registry to hold the secrets:
 

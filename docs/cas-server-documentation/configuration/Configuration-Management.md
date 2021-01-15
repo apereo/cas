@@ -58,7 +58,7 @@ To learn more about how to extend and customize the CAS configuration, please [r
 
 ## Custom CAS Settings
 
-{% include {{ version }}/custom-settings-configuration.md %}
+{% include casproperties.html properties="cas.custom.properties" %}
 
 ## Auto Configuration Strategy
 

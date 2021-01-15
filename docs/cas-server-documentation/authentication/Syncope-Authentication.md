@@ -23,7 +23,8 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include {{ version }}/password-encoding-configuration.md configKey="cas.authn.syncope" %}
 
-{% include {{ version }}/syncope-authentication-configuration.md %}
+{% include casproperties.html properties="cas.authn.syncope" 
+excludes="principal-transformation,password-encoder" %}
 
 ## Attributes
 

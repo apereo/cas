@@ -12,5 +12,5 @@ Monitor the status and state of a cache backed by Ehcache.
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-ehcache-monitor" %}
 
-{% include {{ version }}/cache-monitoring-configuration.md %}
+{% include casproperties.html properties="cas.monitor.warn." %}
 
