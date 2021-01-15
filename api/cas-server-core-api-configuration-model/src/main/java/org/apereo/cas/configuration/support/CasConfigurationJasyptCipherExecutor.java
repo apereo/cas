@@ -85,9 +85,8 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
     }
 
     /**
-     * Since Jasypt v1.9.3 PBEWithDigestAndAES algorithms (from the JCE Provider of JAVA 8) are supported.
-     * They require an initialization vector (IV) parameter
-     * http://www.jasypt.org/faq.html#i-receive-null-when-encrypting-decrypting
+     * {@code PBEWithDigestAndAES} algorithms (from the JCE Provider of JAVA 8) are supported.
+     * They require an initialization vector (IV) parameter.
      */
     public void setInitializationVector() {
         jasyptInstance.setIvGenerator(new RandomIvGenerator());
