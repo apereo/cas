@@ -213,8 +213,6 @@ rather than something you alone have to maintain.</p></div>
 
 ## Configuration
 
-## SAML SPs
-
 Allow CAS to register and enable a number of built-in SAML service provider integrations.
 
 <div class="alert alert-warning"><strong>Remember</strong><p>SAML2 service provider integrations listed 
@@ -222,66 +220,35 @@ here simply attempt to automate CAS configuration based on known and documented 
 guidelines and recipes provided by the service provider owned by the vendor. These 
 recipes can change and break CAS over time.</p></div>
 
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.gitlab" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.hipchat" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.dropbox" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.openAthens" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.egnyte" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.ever-bridge" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.simplicity" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.app-dynamics" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.yuja" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.simplicity" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.new-relic" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.sserca" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.cherWell" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.famis" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.bynder" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.web-advisor" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.adobe-cloud" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.sans-sth" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.easy-iep" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.infinite-campus" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.slack" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.zendesk" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.gartner" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.arc-g-i-s" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.office365" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.sa-manage" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.salesforce" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.workday" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.academic-works" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.zoom" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.evernote" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.tableau" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.asana" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.box" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.service-now" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.net-partner" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.webex" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.in-common" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.amazon" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.concur-solutions" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.poll-everywhere" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.docuSign" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.safari-online" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.black-baud" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.give-campus" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.warp-wire" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.rocket-chat" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.arms-software" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.top-hat" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.academic-health-plans" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.confluence" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.jira" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.crash-plan" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.emma" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.qualtrics" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.neoGov" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.zimbra" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.pager-duty" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.cranium-cafe" %}
-{% include {{ version }}/saml2-sp-configuration.md configKey="cas.saml-sp.cccco" %}
+The settings defined for each service provider simply attempt to automate the creation of
+SAML service definition and nothing more. If you find the applicable settings lack in certain areas, it
+is best to fall back onto the native configuration strategy for registering
+SAML service providers with CAS which would depend on your service registry of choice.
+
+The SAML2 service provider supports the following settings:
+
+| Name                  |  Description
+|-----------------------|---------------------------------------------------------------------------
+| `metadata`            | Location of metadata for the service provider (i.e URL, path, etc)
+| `name`                | The name of the service provider registered in the service registry.
+| `description`         | The description of the service provider registered in the service registry.
+| `name-id-attribute`   | Attribute to use when generating name ids for this service provider.
+| `name-id-format`      | The forced NameID Format identifier (i.e. `urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress`).
+| `attributes`          | Attributes to release to the service provider, which may virtually be mapped and renamed.
+| `signature-location`  | Signature location to verify metadata.
+| `entity-ids`          | List of entity ids allowed for this service provider.
+| `sign-responses`      | Indicate whether responses should be signed. Default is `true`.
+| `sign-assertions`     | Indicate whether assertions should be signed. Default is `false`.
+
+The only required setting that would activate the automatic configuration for a
+service provider is the presence and definition of metadata. All other settings are optional.
+     
+{% include casproperties.html properties="cas.saml-sp" %}
+
+**Note**: For InCommon and other metadata aggregates, multiple entity ids can be specified to
+filter [the InCommon metadata](https://spaces.internet2.edu/display/InCFederation/Metadata+Aggregates). EntityIds
+can be regular expression patterns and are mapped to
+CAS' `serviceId` field in the registry. The signature location MUST BE the public key used to sign the metadata.
 
 ## Google Apps
 

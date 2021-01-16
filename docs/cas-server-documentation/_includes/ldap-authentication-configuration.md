@@ -11,8 +11,4 @@ Attributes retrieved directly as part of LDAP authentication trump all other att
 
 {% include casproperties.html properties="cas.authn.ldap" %}
 
-To fetch and resolve attributes that carry tags/options, consider tagging the mapped attribute as such:
 
-```properties
-# cas.authn.ldap[0].principal-attribute-list=homePostalAddress:homePostalAddress;
-```

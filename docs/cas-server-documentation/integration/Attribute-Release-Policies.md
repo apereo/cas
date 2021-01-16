@@ -63,7 +63,9 @@ authentication handlers, date/time of the authentication, etc.
 Releasing authentication attributes to service providers and applications can be
 controlled to some extent.
 
-{% include {{ version }}/protocol-attributes-configuration.md %}
+{% include casproperties.html properties="cas.authn.authentication-attribute-release" %}
+
+Protocol/authentication attributes may also be released conditionally on a per-service basis.
 
 ## Principal Attributes
 

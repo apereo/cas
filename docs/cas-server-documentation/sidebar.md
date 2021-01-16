@@ -52,7 +52,7 @@ layout: null
     *   [Authentication Policy](/cas/{{ version }}/authentication/Configuring-Authentication-Policy.html)
     *   [Resolution Strategy](/cas/{{ version }}/authentication/Configuring-Authentication-Resolution.html)
     *   [Pre/Post Processing](/cas/{{ version }}/authentication/Configuring-Authentication-PrePostProcessing.html)
-    *   [Methods](#authnmethods)
+    *   [Methods & Strategies](#authnmethods)
         *   [LDAP](/cas/{{ version }}/authentication/LDAP-Authentication.html)
             *   [Password Policy](/cas/{{ version }}/installation/Password-Policy-Enforcement.html)
         *   [Database](/cas/{{ version }}/authentication/Database-Authentication.html)

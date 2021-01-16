@@ -1,4 +1,5 @@
-This option reads all the groups from [a Grouper instance](https://incommon.org/software/grouper/) for the given CAS principal and adopts them as CAS attributes under a `grouperGroups` multi-valued attribute.
+This option reads all the groups from [a Grouper instance](https://incommon.org/software/grouper/) for 
+the given CAS principal and adopts them as CAS attributes under a `grouperGroups` multi-valued attribute.
 
 {% include casproperties.html properties="cas.authn.attribute-repository.grouper" %}
 

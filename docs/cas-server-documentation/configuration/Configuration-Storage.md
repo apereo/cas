@@ -204,11 +204,6 @@ Allow the CAS Spring Cloud configuration server to load settings from a RDBMS in
 
 {% include casproperties.html properties="cas.spring.cloud.jdbc" %}
 
-
-```properties
-# cas.spring.cloud.jdbc.sql=SELECT id, name, value FROM CAS_SETTINGS_TABLE
-```
-
 ### REST
 
 Allow the CAS Spring Cloud configuration server to load settings from a REST API.

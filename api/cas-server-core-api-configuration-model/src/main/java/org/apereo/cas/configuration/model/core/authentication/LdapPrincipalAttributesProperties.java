@@ -38,6 +38,13 @@ public class LdapPrincipalAttributesProperties extends AbstractLdapSearchPropert
      * to a different attribute. The key is the attribute fetched
      * from the data source and the value is the attribute name CAS should
      * use for virtual renames.
+     * 
+     * Attributes may be allowed to be virtually renamed and remapped. The key in the
+     * attribute map is the original attribute,
+     * and the value should be the virtually-renamed attribute.
+     *
+     * To fetch and resolve attributes that carry tags/options,
+     * consider tagging the mapped attribute as such: {@code affiliation=affiliation}.
      */
     private Map<String, String> attributes = new LinkedHashMap<>();
 

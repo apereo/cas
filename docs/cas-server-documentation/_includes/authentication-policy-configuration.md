@@ -18,7 +18,6 @@ would only be acceptable in a multi-factor authentication situation.
 
 {% include casproperties.html properties="cas.authn.policy.all" %}
 
-
 #### Source Selection
 
 Allows CAS to select authentication handlers based
@@ -26,8 +25,6 @@ on the credential source. This allows the authentication engine to restrict the 
 to the selected source or account repository, as opposed to every authentication handler.
 
 {% include casproperties.html properties="cas.authn.policy.source-selection-enabled" %}
-
-
 
 #### Unique Principal
 

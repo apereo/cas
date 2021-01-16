@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.core.authentication;
 import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -19,6 +20,7 @@ import lombok.experimental.Accessors;
 @Setter
 @Deprecated(since = "6.2.0")
 @Accessors(chain = true)
+@JsonFilter("ScriptedPrincipalAttributesProperties")
 public class ScriptedPrincipalAttributesProperties extends SpringResourceProperties {
 
     private static final long serialVersionUID = 4221139939506528713L;

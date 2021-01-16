@@ -5,7 +5,6 @@ category: Authentication
 ---
 {% include variables.html %}
 
-
 # Database Authentication
 
 Database authentication is enabled by including the following dependencies in the WAR overlay:
@@ -18,34 +17,37 @@ To learn how to configure database drivers, [please see this guide](../installat
 
 ### Query Database Authentication
 
-{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.jdbc.query[0]" %}
+Authenticates a user by comparing the user password (which can be encoded with a password encoder)
+against the password on record determined by a configurable database query.
 
-
-{% include {{ version }}/jdbc-query-authentication-configuration.md %}
+{% include casproperties.html properties="cas.authn.jdbc.query" %}
 
 
 ### Search Database Authentication
 
-{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.jdbc.search[0]" %}
+Searches for a user record by querying against a username and password;
+the user is authenticated if at least one result is found.
 
-
-{% include {{ version }}/jdbc-search-authentication-configuration.md %}
-
+{% include casproperties.html properties="cas.authn.jdbc.search" %}
 
 ### Bind Database Authentication
 
-{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.jdbc.bind[0]" %}
+Authenticates a user by attempting to create a database connection using the username and (hashed) password.
 
-
-{% include {{ version }}/jdbc-bind-authentication-configuration.md %}
+{% include casproperties.html properties="cas.authn.jdbc.bind" %}
 
 
 ### Encode Database Authentication
 
-{% include {{ version }}/rdbms-configuration.md configKey="cas.authn.jdbc.encode[0]" %}
+A JDBC querying handler that will pull back the password and the private salt value for a user and validate the encoded
+password using the public salt value. Assumes everything is inside the same database table. Supports settings for
+number of iterations as well as private salt.
 
+This password encoding method combines the private Salt and the public salt which it prepends to the password before hashing.
+If multiple iterations are used, the bytecode hash of the first iteration is rehashed without the salt values. The final hash
+is converted to hex before comparing it to the database value.
 
-{% include {{ version }}/jdbc-encode-authentication-configuration.md %}
+{% include casproperties.html properties="cas.authn.jdbc.encode" %}
 
 ## Password Policy Enforcement
 

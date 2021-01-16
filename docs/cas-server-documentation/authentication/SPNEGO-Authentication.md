@@ -194,7 +194,7 @@ current authentication/browser request. The state that is available to the webfl
 is `evaluateClientRequest` which will attempt to start SPNEGO authentication
 or resume normally, depending on the client action strategy chosen below.
 
-{% include {{ version }}/client-selection-spnego-configuration.md %}
+{% include casproperties.html properties="cas.authn.spnego.host-name-client-action-strategy,cas.authn.spnego.alternative-remote-host-attribute,cas.authn.spnego.ips-to-check-pattern,cas.authn.spnego.dns-timeout,cas.authn.spnego.host-name-pattern-string" %}
 
 ### By Remote IP
 
