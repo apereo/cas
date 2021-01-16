@@ -34,15 +34,7 @@ in your configuration and overlays. This is just to teach you that it exists.</p
 
 To learn more about available notification options, please [see this guide](../notifications/SMS-Messaging-Configuration.html) or [this guide](../notifications/Sending-Email-Configuration.html). 
 
-{% include {{ version }}/pswd-mgmt-configuration.md %}
-
-{% include {{ version }}/email-notifications-configuration.md configKey="cas.authn.pm.reset" %}
-
-{% include casproperties.html properties="cas.authn.pm.reset.sms" %}
-
-{% include {{ version }}/signing-encryption-configuration.md configKey="cas.authn.pm.reset" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
-
-{% include {{ version }}/webflow-configuration.md configKey="cas.authn.pm.webflow" %}
+{% include casproperties.html properties="cas.authn.pm.enabled,cas.authn.pm.captcha-enabled,cas.authn.pm.policy-pattern,cas.authn.pm.reset,cas.authn.pm.auto-login,cas.authn.pm.webflow" %}
 
 ## reCAPTCHA Integration
 

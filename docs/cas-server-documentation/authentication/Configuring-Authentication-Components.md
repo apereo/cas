@@ -85,7 +85,7 @@ Please see [authentication security policies](Configuring-Authentication-Policy.
 
 In the event that a separate resolver is put into place, control how the final principal should be constructed by default.
 
-{% include {{ version }}/persondirectory-configuration.md configKey="cas.person-directory" %}
+{% include casproperties.html properties="cas.person-directory" %}
 
 ### Principal Transformation
 

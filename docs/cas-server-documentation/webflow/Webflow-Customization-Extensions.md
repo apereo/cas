@@ -133,7 +133,7 @@ You may configure CAS to alter and auto-configure the webflow via a Groovy scrip
 This is the less elaborate option where you have modest access to CAS APIs that allow you alter the webflow. However, 
 configuration and scaffolding of the overlay and required dependencies is easier as all is provided by CAS at runtime.
 
-{% include {{ version }}/spring-webflow-auto-configuration.md %}
+{% include casproperties.html properties="cas.webflow.autoconfigure,cas.webflow.groovy" %}
 
 <div class="alert alert-warning"><strong>Stop Coding</strong><p>Remember that APIs provided 
 here, specifically executed as part of the Groovy script are considered implementations 

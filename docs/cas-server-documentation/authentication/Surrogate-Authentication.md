@@ -25,7 +25,7 @@ Surrogate authentication is enabled by including the following dependencies in t
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-surrogate-webflow" %}
 
-{% include {{ version }}/surrogate-authentication-configuration.md %}
+{% include casproperties.html properties="cas.authn.surrogate.separator,cas.authn.surrogate.tgt,cas.authn.surrogate.principal" %}
 
 ## Account Storage
 

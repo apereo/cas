@@ -1,6 +1,5 @@
 {% include casproperties.html properties="cas.authn.x509.subject-dn" %}
 
-
 | Type          | Description
 |---------------|----------------------------------------------------------------------
 | `DEFAULT`     | Calls certificate.getSubjectDN() method for backwards compatibility but that method is ["denigrated"](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/security/cert/X509Certificate.html#getIssuerDN()).

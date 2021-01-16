@@ -1,4 +1,4 @@
-### Hazelcast Configuration
+#### Hazelcast Configuration
 
 The following options related to Hazelcast support in CAS apply equally to a number of CAS components:
 
@@ -37,7 +37,7 @@ More advanced Hazelcast configuration settings are listed below, given the compo
 # {{ include.configKey }}.cluster.outbound-ports[0]=45000
 ```
 
-### Static WAN Replication
+#### Static WAN Replication
 
 ```properties
 # {{ include.configKey }}.cluster.wan-replication.enabled=false
@@ -60,7 +60,7 @@ More advanced Hazelcast configuration settings are listed below, given the compo
 # {{ include.configKey }}.cluster.wan-replication.targets[0].properties=
 ```
 
-### Multicast Discovery
+#### Multicast Discovery
 
 ```properties
 # {{ include.configKey }}.cluster.multicast-trusted-interfaces=
@@ -71,7 +71,7 @@ More advanced Hazelcast configuration settings are listed below, given the compo
 # {{ include.configKey }}.cluster.multicast-time-to-live=32
 ```
 
-### AWS EC2 Discovery
+#### AWS EC2 Discovery
 
 ```properties
 # {{ include.configKey }}.cluster.discovery.enabled=true
@@ -109,7 +109,7 @@ More advanced Hazelcast configuration settings are listed below, given the compo
 # {{ include.configKey }}.cluster.discovery.jclouds.credential-path=
 ```
 
-### Kubernetes Discovery
+#### Kubernetes Discovery
 
 ```properties
 # {{ include.configKey }}.cluster.discovery.enabled=true
@@ -125,7 +125,7 @@ More advanced Hazelcast configuration settings are listed below, given the compo
 # {{ include.configKey }}.api-token=
 ```
 
-### Docker Swarm Discovery
+#### Docker Swarm Discovery
 
 ```properties
 # {{ include.configKey }}.cluster.discovery.enabled=true
@@ -146,15 +146,7 @@ More advanced Hazelcast configuration settings are listed below, given the compo
 # {{ include.configKey }}.cluster.discovery.docker-swarm.member-provider.hazelcast-peer-port=5701
 ```
 
-### Microsoft Azure Discovery
+#### Microsoft Azure Discovery
 
-```properties
-# {{ include.configKey }}.cluster.discovery.enabled=true
-
-# {{ include.configKey }}.cluster.discovery.azure.subscription-id=
-# {{ include.configKey }}.cluster.discovery.azure.client-id=
-# {{ include.configKey }}.cluster.discovery.azure.client-secret=
-# {{ include.configKey }}.cluster.discovery.azure.tenant-id=
-# {{ include.configKey }}.cluster.discovery.azure.cluster-id=
-# {{ include.configKey }}.cluster.discovery.azure.group-name=
-```
+{% capture cfgkey %}{{ include.configKey }}.cluster.discovery.azure{% endcapture %}
+{% include casproperties.html properties=cfgkey %}

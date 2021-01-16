@@ -1,8 +1,5 @@
-```properties
-# cas.authn.x509.principal-type=SERIAL_NO|SERIAL_NO_DN|SUBJECT|SUBJECT_ALT_NAME|SUBJECT_DN
-```
-
-{% include {{ version }}/persondirectory-configuration.md configKey="cas.authn.x509.principal" %}
+      
+{% include casproperties.html properties="cas.authn.x509.principal,cas.authn.x509.principal-type" %}
 
 X.509 principal resolution can act on the following principal types:
 
@@ -20,9 +17,7 @@ For the `CN_EDIPI`,`SUBJECT_ALT_NAME`, and `RFC822_EMAIL` principal resolvers, s
 you may specify the following property in order to have a different attribute from the certificate used as the principal.  
 If no alternative attribute is specified then the principal will be null and CAS will fail auth or use a different authenticator.
 
-```properties
-# cas.authn.x509.alternate-principal-attribute=subjectDn|sigAlgOid|subjectX500Principal|x509Rfc822Email|x509subjectUPN
-```
+{% include casproperties.html properties="cas.authn.x509.alternate-principal-attribute" %}
 
 ### `SUBJECT_DN` Principal Resolution
 
