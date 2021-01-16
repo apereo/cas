@@ -41,7 +41,8 @@ for multifactor authentication. See the documentation for each specific provider
 
 ### Configuration
 
-{% include {{ version }}/mfa-bypass-configuration.md configKey="cas.authn.mfa.<provider-id>" %}
+Multifactor authentication bypass configuration is defined for each provider id. To learn more about the available settings,
+examine the configuration for your choice of multifactor authentication provider.
 
 Note that ticket validation requests shall successfully go through if multifactor authentication is
 bypassed for the given provider. In such cases, no authentication context is passed back to the application and

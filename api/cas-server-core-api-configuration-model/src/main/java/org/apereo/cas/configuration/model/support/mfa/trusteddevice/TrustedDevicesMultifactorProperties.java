@@ -46,6 +46,11 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
      * Indicates how record keys for trusted devices would be generated
      * so they can be signed/verified on fetch operations.
      * Acceptable values are {@code default}, {@code legacy}.
+     *
+     * * <ul>
+     * <li>{@code DEFAULT}: Uses a combination of the username, device name and device fingerprint to generate the device key.</li>
+     * <li>{@code LEGACY}: Deprecated. Uses a combination of the username, record date and device fingerprint to generate the device key.</li>
+     * </ul>
      */
     private String keyGeneratorType = "default";
 

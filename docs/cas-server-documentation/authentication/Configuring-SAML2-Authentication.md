@@ -122,7 +122,7 @@ repositories {
 
 ### Session Replication
 
-{% include {{ version }}/session-replication-configuration.md %}
+{% include casproperties.html properties="cas.session-replication" %}
 
 ### Administrative Endpoints
 

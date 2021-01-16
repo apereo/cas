@@ -43,7 +43,7 @@ The following endpoints are provided by CAS:
 
 ## Settings
 
-{% include {{ version }}/mfa-trusted-device-configuration.md %}
+{% include casproperties.html properties="cas.authn.mfa.trusted" %}
 
 ## Authentication Context
 

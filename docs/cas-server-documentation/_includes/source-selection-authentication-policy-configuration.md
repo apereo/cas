@@ -1,5 +1,4 @@
-
-### Source Selection
+#### Source Selection
 
 Allows CAS to select authentication handlers based 
 on the credential source. This allows the authentication engine to restrict the task of validating credentials

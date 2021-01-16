@@ -1,32 +1,8 @@
-### Password Policy Configuration
+<!-- fragment:keep -->
 
-The following  options are shared and apply when CAS is configured to integrate with 
-account sources and authentication strategies that support password policy 
-enforcement and detection. Note that certain setting may only be applicable if the 
-underlying account source is LDAP and are only taken into account if the 
-authentication strategy configured in CAS is able to honor and recognize them:
+<hr>
 
-```properties
-# {{ include.configKey }}.type=GENERIC|AD|FreeIPA|EDirectory
-
-# {{ include.configKey }}.enabled=true
-# {{ include.configKey }}.policy-attributes.account-locked=javax.security.auth.login.AccountLockedException
-# {{ include.configKey }}.login-failures=5
-# {{ include.configKey }}.warning-attribute-value=
-# {{ include.configKey }}.warning-attribute-name=
-# {{ include.configKey }}.display-warning-on-match=true
-# {{ include.configKey }}.warn-all=true
-# {{ include.configKey }}.warning-days=30
-# {{ include.configKey }}.account-state-handling-enabled=true
-
-# An implementation of `org.ldaptive.auth.AuthenticationResponseHandler`
-# {{ include.configKey }}.custom-policy-class=com.example.MyAuthenticationResponseHandler
-
-# {{ include.configKey }}.strategy=DEFAULT|GROOVY|REJECT_RESULT_CODE
-# {{ include.configKey }}.groovy.location=file:/etc/cas/config/password-policy.groovy
-```
-
-### Password Policy Strategies
+#### Password Policy Strategies
 
 Password policy strategy types are outlined below. The strategy evaluates the authentication 
 response received from LDAP, etc and is allowed to review it upfront in order to further 
@@ -47,7 +23,7 @@ import org.apereo.cas.*
 import org.apereo.cas.authentication.*
 import org.apereo.cas.authentication.support.*
 
-def List<MessageDescriptor> run(final Object... args) {
+List<MessageDescriptor> run(final Object... args) {
     def response = args[0]
     def configuration = args[1];
     def logger = args[2]

@@ -70,4 +70,7 @@ Support is enabled by including the following dependency in the final overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-configuration-cloud-kafka" %}
 
-{% include {{ version }}/kafka-springcloud-configbus-configuration.md %}
+Broadcast CAS configuration updates to other nodes in the cluster
+via [Kafka](http://docs.spring.io/spring-cloud-stream/docs/current/reference/htmlsingle/#_apache_kafka_binder).
+  
+{% include casproperties.html properties="spring.cloud.stream.kafka,spring.cloud.stream.bindings.output" %}

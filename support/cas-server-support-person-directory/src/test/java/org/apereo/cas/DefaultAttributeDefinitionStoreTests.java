@@ -322,7 +322,7 @@ public class DefaultAttributeDefinitionStoreTests {
 
     @Test
     public void verifyDefinitionsReload() {
-        val resource = casProperties.getPersonDirectory().getAttributeDefinitionStore().getJson().getLocation();
+        val resource = casProperties.getAuthn().getAttributeRepository().getAttributeDefinitionStore().getJson().getLocation();
         assertDoesNotThrow(new Executable() {
             @Override
             public void execute() throws Throwable {

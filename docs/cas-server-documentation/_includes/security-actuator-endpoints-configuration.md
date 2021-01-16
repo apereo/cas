@@ -4,11 +4,7 @@ controlled under the configuration key `cas.monitor.endpoints.endpoint.{{ includ
 There is a special endpoint named `defaults`  which serves as a
 shortcut that controls the security of all endpoints, if left undefined in CAS settings. 
 
-Accessing an endpoint over the web can be allowed via a special login form whose access and presence can be controlled via:
-
-```properties
-# cas.monitor.endpoints.form-login-enabled=false
-``` 
+{% include casproperties.html properties="cas.monitor.endpoints.form-login-enabled" %}
 
 Note that any individual endpoint must be first enabled before any security 
 can be applied. The security of all endpoints is controlled using the following settings:

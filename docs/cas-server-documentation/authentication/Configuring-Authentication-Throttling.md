@@ -84,8 +84,6 @@ Please [see this guide](Configuring-Authentication-Throttling-CouchDb.html) for 
 
 ## Configuration
 
-{% include {{ version }}/authentication-throttling-configuration.md configKey="cas.authn.throttle" %}
-
 {% include casproperties.html properties="cas.authn.throttle" %}
 
 ## High Availability
