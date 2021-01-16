@@ -22,9 +22,10 @@ synced across all nodes so they are persisted on disk. The broadcast mechanism n
 applies changes to the runtime and the running CAS instance. Ideally, you should be keeping track
 of CAS settings in a shared (git) repository (or better yet, inside a private Github repository perhaps)
 where you make a change in one place and it's broadcasted to all nodes. This model removes the need for
-synchronizing changes across disks and CAS nodes.  
+synchronizing changes across disks and CAS nodes.CAS uses the Spring Cloud Bus to manage configuration 
+in a distributed deployment. Spring Cloud Bus links nodes of a distributed system with a lightweight message broker.
 
-{% include {{ version }}/springcloud-configbus-configuration.md %}
+{% include casproperties.html thirdPartyStartsWith="spring.cloud.bus" %}
 
 The following endpoints are secured and exposed by the Spring Cloud Config Bus:
 

@@ -22,4 +22,4 @@ Needless to say, the attributes need to have been resolved for the principal pri
 
 {% include casproperties.html properties="cas.authn.mfa.global-principal-" %}
 
-{% include {{ version }}/principal-attribute-mfa-trigger-configuration.md %}
+

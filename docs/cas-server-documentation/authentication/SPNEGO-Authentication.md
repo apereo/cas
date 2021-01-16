@@ -171,7 +171,7 @@ URL, e.g. `https://cas.example.com`.
 
 Make sure you have at least specified the JCIFS Service Principal in the CAS configuration.
 
-{% include {{ version }}/spnego-configuration.md %}
+{% include casproperties.html properties="cas.authn.spnego,cas.authn.ntlm" %}
 
 You may provide a JAAS `login.conf` file:
 

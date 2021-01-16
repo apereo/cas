@@ -2,7 +2,7 @@ package org.apereo.cas.web.security;
 
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.core.monitor.ActuatorEndpointsMonitorProperties;
+import org.apereo.cas.configuration.model.core.monitor.JdbcSecurityActuatorEndpointsMonitorProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
 
 import lombok.RequiredArgsConstructor;
@@ -50,7 +50,8 @@ public class CasWebSecurityJdbcConfigurerAdapter extends WebSecurityConfigurerAd
      * @throws Exception the exception
      */
     protected void configureJdbcAuthenticationProvider(final AuthenticationManagerBuilder auth,
-                                                       final ActuatorEndpointsMonitorProperties.JdbcSecurity jdbc) throws Exception {
+                                                       final JdbcSecurityActuatorEndpointsMonitorProperties jdbc)
+        throws Exception {
         val passwordEncoder = PasswordEncoderUtils.newPasswordEncoder(jdbc.getPasswordEncoder(), applicationContext);
         auth.jdbcAuthentication()
             .passwordEncoder(passwordEncoder)

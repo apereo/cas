@@ -2,7 +2,8 @@ package org.apereo.cas.web.security;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.monitor.ActuatorEndpointProperties;
-import org.apereo.cas.configuration.model.core.monitor.ActuatorEndpointsMonitorProperties;
+import org.apereo.cas.configuration.model.core.monitor.JaasSecurityActuatorEndpointsMonitorProperties;
+import org.apereo.cas.configuration.model.core.monitor.LdapSecurityActuatorEndpointsMonitorProperties;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.web.ProtocolEndpointConfigurer;
 import org.apereo.cas.web.security.authentication.EndpointLdapAuthenticationProvider;
@@ -228,7 +229,7 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
      * @param ldap the ldap
      */
     protected void configureLdapAuthenticationProvider(final AuthenticationManagerBuilder auth,
-        final ActuatorEndpointsMonitorProperties.LdapSecurity ldap) {
+        final LdapSecurityActuatorEndpointsMonitorProperties ldap) {
         if (isLdapAuthorizationActive()) {
             val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
             val authenticator = LdapUtils.newLdaptiveAuthenticator(ldap);
@@ -247,7 +248,7 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
      * @throws Exception the exception
      */
     protected void configureJaasAuthenticationProvider(final AuthenticationManagerBuilder auth,
-                                                       final ActuatorEndpointsMonitorProperties.JaasSecurity jaas) throws Exception {
+                                                       final JaasSecurityActuatorEndpointsMonitorProperties jaas) throws Exception {
         val p = new JaasAuthenticationProvider();
         p.setLoginConfig(jaas.getLoginConfig());
         p.setLoginContextName(jaas.getLoginContextName());

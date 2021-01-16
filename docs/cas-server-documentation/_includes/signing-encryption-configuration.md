@@ -1,4 +1,7 @@
+<hr>
+
 <p/>
+
 This CAS feature is able to accept signing and encryption crypto keys. In most scenarios if keys are not provided, CAS will
 auto-generate them. The following instructions apply if you wish to manually and beforehand create the signing and encryption keys.
 

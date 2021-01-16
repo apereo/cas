@@ -2,7 +2,7 @@ package org.apereo.cas.web.security.authentication;
 
 import org.apereo.cas.authorization.LdapUserAttributesToRolesAuthorizationGenerator;
 import org.apereo.cas.authorization.LdapUserGroupsToRolesAuthorizationGenerator;
-import org.apereo.cas.configuration.model.core.monitor.ActuatorEndpointsMonitorProperties;
+import org.apereo.cas.configuration.model.core.monitor.LdapSecurityActuatorEndpointsMonitorProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.LdapUtils;
@@ -47,10 +47,20 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class EndpointLdapAuthenticationProvider implements AuthenticationProvider {
-    private final ActuatorEndpointsMonitorProperties.LdapSecurity ldapProperties;
+    private final LdapSecurityActuatorEndpointsMonitorProperties ldapProperties;
+
     private final SecurityProperties securityProperties;
+
     private final ConnectionFactory connectionFactory;
+
     private final Authenticator authenticator;
+
+    private static Authentication generateAuthenticationToken(final Authentication authentication,
+                                                              final List<SimpleGrantedAuthority> authorities) {
+        val username = authentication.getPrincipal().toString();
+        val credentials = authentication.getCredentials();
+        return new UsernamePasswordAuthenticationToken(username, credentials, authorities);
+    }
 
     /**
      * Destroy.
@@ -120,12 +130,6 @@ public class EndpointLdapAuthenticationProvider implements AuthenticationProvide
             throw new InsufficientAuthenticationException("Unexpected LDAP error", e);
         }
         throw new BadCredentialsException("Could not authenticate provided credentials");
-    }
-
-    private static Authentication generateAuthenticationToken(final Authentication authentication, final List<SimpleGrantedAuthority> authorities) {
-        val username = authentication.getPrincipal().toString();
-        val credentials = authentication.getCredentials();
-        return new UsernamePasswordAuthenticationToken(username, credentials, authorities);
     }
 
     @Override
