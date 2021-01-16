@@ -16,11 +16,6 @@ LDAP integration is enabled by including the following dependency in the overlay
 
 {% include {{ version }}/ldap-authentication-configuration.md %}
 
-### LDAP Password Policy
-
-{% include {{ version }}/password-policy-configuration.md configKey="cas.authn.ldap[0].password-policy" %}
-
-
 ## Password Policy Enforcement
 
 To learn how to enforce a password policy for LDAP, please [review this guide](../installation/Password-Policy-Enforcement.html).

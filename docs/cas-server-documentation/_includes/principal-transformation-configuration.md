@@ -1,6 +1,4 @@
----
-fragment:keep
----
+<!-- fragment:keep -->
 
 <hr>
 

@@ -12,7 +12,6 @@ metrics to Datadog, your API key must be provided:
 
 {% include casproperties.html thirdPartyStartsWith="management.metrics.export.datadog" %}
 
-
 ### Ganglia
 
 By default, metrics are exported to Ganglia running on your local 

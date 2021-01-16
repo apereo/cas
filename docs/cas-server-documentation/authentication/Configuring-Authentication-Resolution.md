@@ -11,9 +11,11 @@ category: Authentication
 Authentication handlers are typically defined globally and then executed and tried by the authentication engine. 
 The collection of handlers can be narrowed down using a selection criteria that defines an eligibility criteria
 for the handler based on the current authentication transaction, provided credentials, service definition policy
-and many other controls. 
+and many other controls.
 
-{% include {{ version }}/authentication-engine-configuration.md %}
+{% include casproperties.html
+properties="cas.authn.core.groovy-authentication-resolution,cas.authn.core.service-authentication-resolution" %}
+
 
 ## Per Registered Service
 

@@ -11,4 +11,4 @@ category: Installation
 
 ### Embedded Jetty Container
 
-{% include {{ version }}/embedded-container-jetty-configuration.md %}
+{% include casproperties.html thirdPartyStartsWith="server.jetty" %}

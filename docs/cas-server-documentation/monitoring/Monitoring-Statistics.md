@@ -116,24 +116,20 @@ may be entered into a web-based login form.
 
 ### Basic Authentication Security
 
-{% include {{ version }}/basic-authentication-actuator-endpoints-configuration.md %}
+{% include casproperties.html thirdPartyStartsWith="spring.security.user" %}
 
 ### JAAS Authentication Security
 
-{% include {{ version }}/jaas-authentication-actuator-endpoints-configuration.md %}
+{% include casproperties.html thirdPartyStartsWith="cas.monitor.endpoints.jaas" %}
 
 ### LDAP Authentication Security
 
 {% include {{ version }}/ldap-configuration.md configKey="cas.monitor.endpoints.ldap" %}
 
-{% include {{ version }}/ldap-authentication-actuator-endpoints-configuration.md %}
 
 ### JDBC Authentication Security
 
-{% include {{ version }}/rdbms-configuration.md configKey="cas.monitor.endpoints.jdbc" %}
-
 {% include casproperties.html properties="cas.monitor.endpoints.jdbc" %}
-
 
 ### Enabling Endpoints
 

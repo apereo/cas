@@ -213,7 +213,7 @@ environment and load balancers accordingly.
 
 ## Session Replication
 
-{% include {{ version }}/session-replication-configuration.md %}
+{% include casproperties.html properties="cas.session-replication" %}
 
 ## Sample Client Applications
 

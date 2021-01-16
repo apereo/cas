@@ -6,7 +6,6 @@ and their results are cached and merged.
 
 {% include {{ version }}/caching-attribute-resolution-configuration.md %}
 
-
 <div class="alert alert-info"><strong>Remember This</strong><p>Note that in certain cases,
 CAS authentication is able to retrieve and resolve attributes from the authentication 
 source in the same authentication request, which would

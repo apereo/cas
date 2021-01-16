@@ -122,7 +122,7 @@ public class CasPersonDirectoryConfiguration {
     @Bean
     @RefreshScope
     public AttributeDefinitionStore attributeDefinitionStore() throws Exception {
-        val resource = casProperties.getPersonDirectory().getAttributeDefinitionStore().getJson().getLocation();
+        val resource = casProperties.getAuthn().getAttributeRepository().getAttributeDefinitionStore().getJson().getLocation();
         val store = new DefaultAttributeDefinitionStore(resource);
         store.setScope(casProperties.getServer().getScope());
         return store;

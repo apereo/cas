@@ -19,12 +19,7 @@ JAAS components are provided in the CAS core module and require no additional de
 The JAAS handler delegates to the built-in JAAS subsystem to perform authentication according to the
 directives in the JAAS config file.
 
-
-{% include {{ version }}/jaas-authentication-configuration.md %}
-
-{% include {{ version }}/persondirectory-configuration.md configKey="cas.authn.jaas[0].principal" %}
-
-{% include {{ version }}/password-policy-configuration.md configKey="cas.authn.jaas[0].password-policy" %}
+{% include casproperties.html properties="cas.authn.jaas" %}
 
 ## JAAS Configuration File
 

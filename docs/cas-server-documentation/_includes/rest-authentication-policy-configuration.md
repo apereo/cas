@@ -1,4 +1,4 @@
-### REST
+#### REST
 
 Contact a REST endpoint via `POST` to detect authentication policy.
 The message body contains the CAS authenticated principal that can be used

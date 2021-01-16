@@ -21,14 +21,15 @@ The integration adds support for both multifactor authentication and QR password
 
 ## Integration with DBFP
 
-The integration is able to handle the integration with DBFP and will set a cookie named `jwt` that is passed to the Acceptto API. This parameter contains a value that the server uses to assess the risk of authentication request including browser fingerprint, IP address of user and GPS location of the user’s browser. The server compares this data with the history of user behavior data to detect anomalies.
+The integration is able to handle the integration with DBFP and will set a cookie 
+named `jwt` that is passed to the Acceptto API. This parameter contains a value that the server uses 
+to assess the risk of authentication request including browser fingerprint, IP address of user and 
+GPS location of the user’s browser. The server compares this data with the 
+history of user behavior data to detect anomalies.
 
 ## Configuration
 
 {% include casproperties.html
 modules="cas-server-support-acceptto-mfa"
-properties="cas.authn.mfa.acceptto.bypass" %}
+properties="cas.authn.mfa.acceptto.bypass,cas.session-replication" %}
 
-## Session Replication
-
-{% include {{ version }}/session-replication-configuration.md %}

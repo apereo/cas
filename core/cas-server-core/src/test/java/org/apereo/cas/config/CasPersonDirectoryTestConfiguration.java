@@ -50,7 +50,7 @@ public class CasPersonDirectoryTestConfiguration {
     @ConditionalOnMissingBean(name = "attributeDefinitionStore")
     @Bean
     public AttributeDefinitionStore attributeDefinitionStore() throws Exception {
-        val resource = casProperties.getPersonDirectory()
+        val resource = casProperties.getAuthn().getAttributeRepository()
             .getAttributeDefinitionStore().getJson().getLocation();
         if (ResourceUtils.doesResourceExist(resource)) {
             return new DefaultAttributeDefinitionStore(resource);

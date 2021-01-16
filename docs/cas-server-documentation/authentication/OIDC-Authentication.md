@@ -49,11 +49,11 @@ Please [see this guide](OIDC-Authentication-Claims.html).
 
 ## Configuration
 
-{% include {{ version }}/oidc-configuration.md %}
+{% include casproperties.html properties="cas.authn.oidc,cas.client" excludes=".jwks,.logout" %}
    
 ### JWKS
 
-{% include {{ version }}/jwks-oidc-configuration.md %}
+{% include casproperties.html properties="cas.authn.oidc.jwks" %}
 
 ### Scopes & Claims
 
@@ -71,7 +71,7 @@ You will need to configure your deployment environment and load-balancers accord
 
 ## Session Replication
 
-{% include {{ version }}/session-replication-configuration.md %}
+{% include casproperties.html properties="cas.session-replication" %}
 
 ## Sample Client Applications
 
