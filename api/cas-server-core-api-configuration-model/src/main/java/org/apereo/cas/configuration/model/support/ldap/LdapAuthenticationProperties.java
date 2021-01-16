@@ -70,7 +70,10 @@ public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProp
     /**
      * List of attributes to retrieve from LDAP.
      * Attributes can be virtually remapped to multiple names.
-     * Example {@code cn:commonName,givenName,eduPersonTargettedId:SOME_IDENTIFIER}
+     * Example {@code cn:commonName,givenName,eduPersonTargettedId:SOME_IDENTIFIER}.
+     *
+     * To fetch and resolve attributes that carry tags/options,
+     * consider tagging the mapped attribute as such: {@code homePostalAddress:homePostalAddress;}.
      */
     private List principalAttributeList = new ArrayList<>(0);
 

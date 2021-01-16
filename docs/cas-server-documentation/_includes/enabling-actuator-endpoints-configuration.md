@@ -12,8 +12,7 @@ To determine whether an endpoint is available, the calculation order for all end
 A number of available endpoint ids [should be listed here](../monitoring/Monitoring-Statistics.html).
 
 Endpoints may also be mapped to custom arbitrary endpoints. For example, 
-to remap the `health` endpoint to `healthcheck`,
-specify the following settings:
+to remap the `health` endpoint to `healthcheck`, specify the following settings:
 
 ```properties
 # management.endpoints.web.path-mapping.health=healthcheck

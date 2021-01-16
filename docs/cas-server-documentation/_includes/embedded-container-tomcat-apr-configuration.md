@@ -1,4 +1,3 @@
-
 Tomcat can use the [Apache Portable Runtime](https://tomcat.apache.org/tomcat-9.0-doc/apr.html) to provide superior
 scalability, performance, and better integration with native server technologies.
 

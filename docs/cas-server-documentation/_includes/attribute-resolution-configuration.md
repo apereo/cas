@@ -27,12 +27,6 @@ Note that if no *explicit* attribute mappings are defined, all permitted attribu
 may be retrieved by CAS from the attribute repository source and made available to the principal. On the other hand,
 if explicit attribute mappings are defined, then *only mapped attributes* are retrieved.
 
-Attributes may be allowed to be virtually renamed and remapped. The following definition, for instance, attempts to
-grab the attribute `uid` from the attribute source and rename it to `userId`:
-
-```properties
-# cas.authn.attribute-repository.[type-placeholder].attributes.uid=userId
-```
 
 The following merging strategies can be used to resolve conflicts when the same attribute are found from multiple sources:
 

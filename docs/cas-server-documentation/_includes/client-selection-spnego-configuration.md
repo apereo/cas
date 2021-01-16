@@ -1,1 +1,0 @@
-{% include casproperties.html properties="cas.authn.spnego.host-name-client-action-strategy,cas.authn.spnego.alternative-remote-host-attribute,cas.authn.spnego.ips-to-check-pattern,cas.authn.spnego.dns-timeout,cas.authn.spnego.host-name-pattern-string" %}
