@@ -8,7 +8,7 @@ Certain authentication handlers are allowed to determine whether they can operat
 and as such lend themselves to be tried and tested during the authentication handler selection phase. The credential criteria
 may be one of the following options:
 
-- A regular expression pattern that is tested against the credential identifier
+- A regular expression pattern that is tested against the credential identifier.
 - A fully qualified class name of your own design that looks similar to the below example:
 
 ```java
