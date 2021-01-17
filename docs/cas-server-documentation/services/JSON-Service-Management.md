@@ -27,7 +27,7 @@ A sample JSON file follows:
 }
 ```
 
-{% include casproperties.html modules="cas-server-support-support-json-service-registry" %}
+{% include casproperties.html modules="cas-server-support-json-service-registry" %}
 
 <div class="alert alert-warning"><strong>Clustering Services</strong><p>
 You MUST consider that if your CAS server deployment is clustered, each CAS node in the cluster must have

@@ -15,7 +15,7 @@ import lombok.experimental.Accessors;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiresModule(name = "cas-server-support-gauth-rest")
+@RequiresModule(name = "cas-server-support-gauth")
 @Getter
 @Setter
 @Accessors(chain = true)

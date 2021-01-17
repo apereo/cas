@@ -219,6 +219,7 @@ jobs:
           - CheckSpringConfigurationFactories
           - CheckMissingTestTagAnnotation
           - CheckEnforceLombokAnnotations
+          - CheckRequiredModuleAnnotationReferences
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK

@@ -47,12 +47,11 @@ public class ConfigurationMetadataUnitParser {
                 for (var i = 0; i < decl.getExtendedTypes().size(); i++) {
                     val parentType = decl.getExtendedTypes().get(i);
 
-
                     val instance = ConfigurationMetadataClassSourceLocator.getInstance();
                     val parentClazz = instance.locatePropertiesClassForType(parentType);
-                    val parentTypePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(this.sourcePath, parentClazz.getName());
+                    val parentTypePath = ConfigurationMetadataClassSourceLocator
+                        .buildTypeSourcePath(this.sourcePath, parentClazz.getName());
 
-                    
                     parseCompilationUnit(collectedProps, collectedGroups, property,
                         parentTypePath, parentClazz.getName(), indexNameWithBrackets);
                 }

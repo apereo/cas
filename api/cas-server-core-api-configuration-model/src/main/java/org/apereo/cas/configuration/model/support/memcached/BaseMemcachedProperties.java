@@ -61,7 +61,7 @@ public class BaseMemcachedProperties implements Serializable {
 
     /**
      * Indicate the transcoder type. Accepted values are {@code KRYO, SERIAL, WHALIN, WHALINV1}.
-     * The default is {code KRYO}.
+     * The default is {@code KRYO}.
      */
     private String transcoder = "KRYO";
 

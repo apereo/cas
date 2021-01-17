@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.core.authentication;
 
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -22,17 +23,12 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("PasswordPolicyProperties")
 public class PasswordPolicyProperties implements Serializable {
     private static final long serialVersionUID = -3878237508646993100L;
 
     /**
      * Decide how authentication should handle password policy changes.
-     * Acceptable values are:
-     * <ul>
-     * <li>{@code DEFAULT}: Default password policy rules handling account states.</li>
-     * <li>{@code GROOVY}: Handle account changes and warnings via Groovy scripts</li>
-     * <li>{@code REJECT_RESULT_CODE}: Handle account state only if the authentication result code isn't blocked</li>
-     * </ul>
      */
     private PasswordPolicyHandlingOptions strategy = PasswordPolicyHandlingOptions.DEFAULT;
 
@@ -96,6 +92,9 @@ public class PasswordPolicyProperties implements Serializable {
     @NestedConfigurationProperty
     private GroovyPasswordPolicyProperties groovy = new GroovyPasswordPolicyProperties();
 
+    /**
+     * The Password policy handling options.
+     */
     public enum PasswordPolicyHandlingOptions {
         /**
          * Default option to handle policy changes.

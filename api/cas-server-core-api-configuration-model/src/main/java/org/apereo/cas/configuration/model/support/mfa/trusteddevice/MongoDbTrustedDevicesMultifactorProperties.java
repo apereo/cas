@@ -17,7 +17,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
-@RequiresModule(name = "cas-server-support-trusted-mongo")
+@RequiresModule(name = "cas-server-support-trusted-mfa-mongo")
 @JsonFilter("MongoDbTrustedDevicesMultifactorProperties")
 public class MongoDbTrustedDevicesMultifactorProperties extends SingleCollectionMongoDbProperties {
 

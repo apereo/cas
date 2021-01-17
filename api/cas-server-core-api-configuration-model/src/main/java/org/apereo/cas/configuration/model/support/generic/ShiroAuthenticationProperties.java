@@ -20,7 +20,7 @@ import java.util.Set;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@RequiresModule(name = "cas-server-support-shiro")
+@RequiresModule(name = "cas-server-support-shiro-authentication")
 @Getter
 @Setter
 @Accessors(chain = true)

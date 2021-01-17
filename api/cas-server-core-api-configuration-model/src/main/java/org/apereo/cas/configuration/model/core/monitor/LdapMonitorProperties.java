@@ -16,7 +16,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@RequiresModule(name = "cas-server-core-ldap-monitor")
+@RequiresModule(name = "cas-server-support-ldap-monitor")
 @Getter
 @Setter
 @Accessors(chain = true)

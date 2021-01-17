@@ -57,11 +57,6 @@ public class Pac4jBaseClientProperties implements Serializable {
      * Determine how the callback url should be resolved.
      * Accepted values are:
      *
-     * <ul>
-     *     <li>{@code PATH_PARAMETER}: The client name is added to the path of the callback URL.</li>
-     *     <li>{@code QUERY_PARAMETER}: The client name is added to the path of a query parameter.</li>
-     *     <li>{@code NONE}: No name is added to the callback URL to be able to distinguish the client.</li>
-     * </ul>
      * Default is {@link CallbackUrlTypes#QUERY_PARAMETER}.
      */
     private CallbackUrlTypes callbackUrlType = CallbackUrlTypes.QUERY_PARAMETER;
@@ -83,14 +78,17 @@ public class Pac4jBaseClientProperties implements Serializable {
     public enum CallbackUrlTypes {
         /**
          * Path parameter callback url.
+         * The client name is added to the path of the callback URL.
          */
         PATH_PARAMETER,
         /**
          * Query parameter callback url.
+         * The client name is added to the path of a query parameter.
          */
         QUERY_PARAMETER,
         /**
          * No callback url.
+         * No name is added to the callback URL to be able to distinguish the client.
          */
         NONE
     }

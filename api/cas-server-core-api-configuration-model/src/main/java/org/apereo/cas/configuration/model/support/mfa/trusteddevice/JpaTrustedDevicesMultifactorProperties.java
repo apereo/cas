@@ -17,7 +17,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
-@RequiresModule(name = "cas-server-support-trusted-jdbc")
+@RequiresModule(name = "cas-server-support-trusted-mfa-jdbc")
 @JsonFilter("JpaTrustedDevicesMultifactorProperties")
 public class JpaTrustedDevicesMultifactorProperties extends AbstractJpaProperties {
     private static final long serialVersionUID = -8329950619696176349L;
