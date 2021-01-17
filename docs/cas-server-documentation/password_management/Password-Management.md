@@ -42,6 +42,14 @@ Password reset attempts can be protected and integrated
 with [Google reCAPTCHA](https://developers.google.com/recaptcha). This requires 
 the presence of reCAPTCHA settings for the basic integration and instructing 
 the password management flow to turn on and verify requests via reCAPTCHA. 
+ 
+## Forgot Username
+                                                                      
+CAS provides the ability to retrieve a forgotten username. This behavior is tightly integrated with the password
+management functionality where each account storage service is allowed to retrieve the user record using a supplied
+identifier from the user (typically an email address) and supply the username via email notifications, etc.
+
+{% include casproperties.html properties="cas.authn.pm.forgot-username" %}
 
 ## Password History
 

@@ -129,7 +129,7 @@ public class AuditProperties implements Serializable {
     private AuditDynamoDbProperties dynamoDb = new AuditDynamoDbProperties();
 
     /**
-     * Indicates whether catastrophic audit failures should simply be logged
+     * Indicates whether catastrophic audit failures should be logged
      * or whether errors should bubble up and thrown back.
      */
     private boolean ignoreAuditFailures;

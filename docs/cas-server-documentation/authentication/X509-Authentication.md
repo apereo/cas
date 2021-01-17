@@ -90,7 +90,7 @@ by the Web server terminating the SSL connection. Since an SSL peer may be confi
 certificates, the CAS X.509 handler provides a number of properties that place additional restrictions on
 acceptable client certificates.
 
-{% include casproperties.html properties="cas.authn.x509." %}
+{% include casproperties.html properties="cas.authn.x509." excludes="ldap" %}
 
 ### X509 Certificate Extraction
 
@@ -106,11 +106,11 @@ acceptable client certificates.
 
 ### X509 LDAP Integration
 
-{% include {{ version }}/ldap-configuration.md configKey="cas.authn.x509.ldap" %}
+{% include casproperties.html properties="cas.authn.x509.ldap" %}
 
 You may also fetch additional LDAP attributes using the principal extracted from the X509 certificate:
 
-{% include {{ version }}/ldap-attribute-resolution-configuration.md %}
+{% include casproperties.html properties="cas.authn.attribute-repository.ldap" %}
 
 ## Web Server Configuration
 

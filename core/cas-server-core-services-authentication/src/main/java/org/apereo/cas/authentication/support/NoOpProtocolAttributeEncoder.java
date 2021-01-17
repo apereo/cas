@@ -11,7 +11,7 @@ import java.util.Map;
 
 /**
  * This is {@link NoOpProtocolAttributeEncoder} that does no encoding of attributes received.
- * It will simply return the same exact collection of attributes received back to the caller.
+ * It will return the same exact collection of attributes received back to the caller.
  *
  * @author Misagh Moayyed
  * @since 5.0.0

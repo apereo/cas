@@ -49,7 +49,7 @@ public class GenerateServiceTicketAction extends AbstractAction {
      * <p>
      * In subsequent authentication flows where a TGT is available and only an ST needs to be
      * created, there are no cached copies of the credential, since we do have a TGT available.
-     * So we will simply grab the available authentication and produce the final result based on that.
+     * So we will grab the available authentication and produce the final result based on that.
      */
     @Override
     protected Event doExecute(final RequestContext context) {

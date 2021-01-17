@@ -40,7 +40,7 @@ public class StreamingServiceRegistryProperties implements Serializable {
     /**
      * Whether service registry events should be streamed and published
      * across a CAS cluster. One typical workflow is to enable the
-     * publisher on one master node and simply have others consume definitions
+     * publisher on one master node and have others consume definitions
      * and changes from the upstream master node in order to avoid overrides
      * and timing issues as changes may step over each other if
      * the service registry schedule is not timed correctly.

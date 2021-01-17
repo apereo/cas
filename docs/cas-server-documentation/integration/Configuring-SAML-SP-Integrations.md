@@ -9,7 +9,7 @@ category: Integration
 # SAML SP Integrations
 
 CAS provides built-in integration support for a number of SAML2 service providers. Configuring these service providers
-is simply about declaring the relevant properties in the CAS configuration as well as the configuration module below. Each integration,
+is about declaring the relevant properties in the CAS configuration as well as the configuration module below. Each integration,
 when configured appropriately, will register the service provider with the CAS service registry as a SAML SP and will follow
 a recipe (that is documented by the SP publicly) to configure attribute release policies, name ids and entity IDs. If you need to,
 you can review the registration record inside the CAS service registry to adjust options.
@@ -17,7 +17,7 @@ you can review the registration record inside the CAS service registry to adjust
 **NOTE:** In the event that special attributes and/or name ids are required for the integration, you are required
 to ensure all such [attributes are properly resolved](Attribute-Resolution.html) and are available to the CAS principal.
 
-<div class="alert alert-warning"><strong>Remember</strong><p>SAML2 service provider integrations listed here simply attempt to automate CAS configuration based on known and documented integration guidelines and recipes provided by the service provider owned by the vendor. These recipes can change and break CAS over time and needless to say, they need to be properly and thoroughly tested as the project itself does not have a subscription to each application to test for correctness. YMMV. If you find an issue with an automated integration strategy here, please <strong>speak up</strong>.</p></div>
+<div class="alert alert-warning"><strong>Remember</strong><p>SAML2 service provider integrations listed here attempt to automate CAS configuration based on known and documented integration guidelines and recipes provided by the service provider owned by the vendor. These recipes can change and break CAS over time and needless to say, they need to be properly and thoroughly tested as the project itself does not have a subscription to each application to test for correctness. YMMV. If you find an issue with an automated integration strategy here, please <strong>speak up</strong>.</p></div>
 
 Support is enabled by including the following module in the WAR Overlay:
 
@@ -216,11 +216,11 @@ rather than something you alone have to maintain.</p></div>
 Allow CAS to register and enable a number of built-in SAML service provider integrations.
 
 <div class="alert alert-warning"><strong>Remember</strong><p>SAML2 service provider integrations listed 
-here simply attempt to automate CAS configuration based on known and documented integration 
+here attempt to automate CAS configuration based on known and documented integration 
 guidelines and recipes provided by the service provider owned by the vendor. These 
 recipes can change and break CAS over time.</p></div>
 
-The settings defined for each service provider simply attempt to automate the creation of
+The settings defined for each service provider attempt to automate the creation of
 SAML service definition and nothing more. If you find the applicable settings lack in certain areas, it
 is best to fall back onto the native configuration strategy for registering
 SAML service providers with CAS which would depend on your service registry of choice.

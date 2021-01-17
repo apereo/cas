@@ -104,7 +104,7 @@ An optional step, the `casLogoutView.html` can be modified to place a link to AD
 <a href="https://adfs.example.org/adfs/ls/?wa=wsignout1.0">Logout</a>
 ```
 
-Alternatively, you may simply instruct CAS to redirect to the above endpoint after logout operations have executed.
+Alternatively, you may instruct CAS to redirect to the above endpoint after logout operations have executed.
 
 {% include casproperties.html properties="cas.logout." %}
 

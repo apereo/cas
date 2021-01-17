@@ -177,7 +177,7 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
     }
 
     /**
-     * An extension of the default where the exceptions are simply logged
+     * An extension of the default where the exceptions are logged
      * so CAS can fall back onto default themes.
      */
     private static class CasThemeResourceBundleMessageSource extends ResourceBundleMessageSource {

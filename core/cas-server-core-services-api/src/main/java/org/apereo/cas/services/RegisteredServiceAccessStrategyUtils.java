@@ -170,7 +170,7 @@ public class RegisteredServiceAccessStrategyUtils {
      * @param service                                      the service
      * @param registeredService                            the registered service
      * @param authentication                               the authentication
-     * @param retrievePrincipalAttributesFromReleasePolicy retrieve attributes from release policy or simply rely on the
+     * @param retrievePrincipalAttributesFromReleasePolicy retrieve attributes from release policy or rely on the
      *                                                     principal attributes already collected. Setting this value
      *                                                     to false bears the assumption that the policy has run already.
      * @throws UnauthorizedServiceException the unauthorized service exception

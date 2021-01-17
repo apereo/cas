@@ -143,7 +143,7 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
 
     /**
      * Principal id is and must be enforced to be the same for all authentications.
-     * Based on that restriction, it's safe to simply grab the first principal id in the chain
+     * Based on that restriction, it's safe to grab the first principal id in the chain
      * when composing the authentication chain for the caller.
      */
     private static Principal getPrimaryPrincipal(final PrincipalElectionStrategy principalElectionStrategy,

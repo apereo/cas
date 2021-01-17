@@ -220,7 +220,7 @@ you can pass along the location of the JAAS configuration file in form of a syst
 java -Djava.security.auth.login.config=file:/etc/cas/config/jaas.config -jar ...
 ```
 
-Alternatively, you may activate the login configuration type to be `JavaLoginConfig` in the CAS settings and simply specify the path
+Alternatively, you may activate the login configuration type to be `JavaLoginConfig` in the CAS settings and specify the path
 to the jaas configuration file there in the settings directly.
 
 For more information on configuration management, please [review this guide](../configuration/Configuration-Management.html).

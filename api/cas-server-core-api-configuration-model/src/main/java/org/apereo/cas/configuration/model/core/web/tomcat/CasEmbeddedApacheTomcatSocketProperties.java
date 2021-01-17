@@ -53,7 +53,7 @@ public class CasEmbeddedApacheTomcatSocketProperties implements Serializable {
      * An int expressing the relative importance of a short connection time.
      * Performance preferences are described by three integers whose values indicate the relative
      * importance of short connection time, low latency, and high bandwidth. The absolute values of the
-     * integers are irrelevant; in order to choose a protocol the values are simply compared, with larger values indicating
+     * integers are irrelevant; in order to choose a protocol the values are  compared, with larger values indicating
      * stronger preferences. Negative values disable the setting.
      * If the application prefers short connection time over both low latency and high bandwidth,
      * for example, then it could invoke this method with the values (1, 0, 0). If the application
@@ -66,7 +66,7 @@ public class CasEmbeddedApacheTomcatSocketProperties implements Serializable {
      * An int expressing the relative importance of low latency.
      * Performance preferences are described by three integers whose values indicate the relative
      * importance of short connection time, low latency, and high bandwidth. The absolute values of the
-     * integers are irrelevant; in order to choose a protocol the values are simply compared, with larger values indicating
+     * integers are irrelevant; in order to choose a protocol the values are compared, with larger values indicating
      * stronger preferences. Negative values disable the setting.
      * If the application prefers short connection time over both low latency and high bandwidth,
      * for example, then it could invoke this method with the values (1, 0, 0). If the application
@@ -79,7 +79,7 @@ public class CasEmbeddedApacheTomcatSocketProperties implements Serializable {
      * An int expressing the relative importance of high bandwidth.
      * Performance preferences are described by three integers whose values indicate the relative
      * importance of short connection time, low latency, and high bandwidth. The absolute values of the
-     * integers are irrelevant; in order to choose a protocol the values are simply compared, with larger values indicating
+     * integers are irrelevant; in order to choose a protocol the values are compared, with larger values indicating
      * stronger preferences. Negative values disable the setting.
      * If the application prefers short connection time over both low latency and high bandwidth,
      * for example, then it could invoke this method with the values (1, 0, 0). If the application

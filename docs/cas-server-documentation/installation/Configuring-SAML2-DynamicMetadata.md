@@ -135,7 +135,7 @@ Give the above definition, the expectation is that the git repository
 contains a `SAMLService.xml` file which may optionally also be accompanied by a `SAMLService.pem` file.
 
 <div class="alert alert-info"><strong>Metadata Location</strong><p>
-The metadata location in the registration record above simply needs to be specified as <code>git://</code> to signal to CAS that 
+The metadata location in the registration record above needs to be specified as <code>git://</code> to signal to CAS that 
 SAML metadata for registered service provider must be fetched from Git repositories defined in CAS configuration. 
 </p></div>
 
@@ -180,7 +180,7 @@ SAML service definitions must then be designed as follows to allow CAS to fetch 
 ```
 
 <div class="alert alert-info"><strong>Metadata Location</strong><p>
-The metadata location in the registration record above simply needs to be specified as <code>mongodb://</code> to signal to CAS that 
+The metadata location in the registration record above needs to be specified as <code>mongodb://</code> to signal to CAS that 
 SAML metadata for registered service provider must be fetched from MongoDb data sources defined in CAS configuration. 
 </p></div>
 
@@ -231,7 +231,7 @@ SAML service definitions must then be designed as follows to allow CAS to fetch 
 ```
 
 <div class="alert alert-info"><strong>Metadata Location</strong><p>
-The metadata location in the registration record above simply needs to be specified as <code>redis://</code> to signal to CAS that 
+The metadata location in the registration record above needs to be specified as <code>redis://</code> to signal to CAS that 
 SAML metadata for registered service provider must be fetched from Redis data sources defined in CAS configuration. 
 </p></div>
 
@@ -276,7 +276,7 @@ SAML service definitions must then be designed as follows to allow CAS to fetch 
 ```
 
 <div class="alert alert-info"><strong>Metadata Location</strong><p>
-The metadata location in the registration record above simply needs to be specified as <code>jdbc://</code> to signal to CAS that SAML metadata for registered service provider must be fetched from JDBC data sources defined in CAS configuration. 
+The metadata location in the registration record above needs to be specified as <code>jdbc://</code> to signal to CAS that SAML metadata for registered service provider must be fetched from JDBC data sources defined in CAS configuration. 
 </p></div>
 
 {% include casproperties.html modules="cas-server-support-saml-idp-metadata-jpa" %}
@@ -332,7 +332,7 @@ SAML service definitions must then be designed as follows to allow CAS to fetch 
 ```
 
 <div class="alert alert-info"><strong>Metadata Location</strong><p>
-The metadata location in the registration record above simply needs to be specified as <code>couchdb://</code> to signal to CAS that SAML metadata for registered service provider must be fetched from CouchDb as defined in CAS configuration.
+The metadata location in the registration record above needs to be specified as <code>couchdb://</code> to signal to CAS that SAML metadata for registered service provider must be fetched from CouchDb as defined in CAS configuration.
 </p></div>
 
 {% include casproperties.html modules="cas-server-support-saml-idp-metadata-couchdb" %}
@@ -391,7 +391,7 @@ def Collection<MetadataResolver> run(final Object... args) {
 
     /*
      Stuff happens where you build the relevant metadata resolver instance(s).
-     When done, simply wrap the results into a collection and return.
+     When done, wrap the results into a collection and return.
      A null or empty collection will be ignored by CAS.
   */
   def metadataResolver = ...
@@ -440,7 +440,7 @@ The following parameters are expected for the Amazon S3 object metadata:
 | `signature`           | The metadata signing certificate, if any.
 
 <div class="alert alert-info"><strong>Metadata Location</strong><p>
-The metadata location in the registration record above simply needs to be specified as <code>awss3://</code> to signal to CAS that 
+The metadata location in the registration record above needs to be specified as <code>awss3://</code> to signal to CAS that 
 SAML metadata for registered service provider must be fetched from Amazon S3 defined in CAS configuration. 
 </p></div>
 

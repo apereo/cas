@@ -116,7 +116,7 @@ public class JdbcPrincipalAttributesProperties extends AbstractJpaProperties {
      * the attribute, but the query attribute that is used in generating the
      * final query clause (i.e. {@code username}). The value can be {@code NONE, LOWER, UPPER}.
      *
-     * It's also possible to simply define a list of attributes without a
+     * It's also possible to define a list of attributes without a
      * case canonicalization override such as {@code username, attribute2}
      * in which case {@link #caseCanonicalization} will dictate the final outcome.
      */

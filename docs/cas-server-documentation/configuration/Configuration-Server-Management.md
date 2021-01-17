@@ -168,7 +168,7 @@ Various profiles exist to determine how configuration server should retrieve pro
 ##### Native
 
 The server is configured by default to load `cas.(properties|yml)` files from an external location that is `/etc/cas/config`.
-This location is constantly monitored by the server to detect external changes. Note that this location simply needs to
+This location is constantly monitored by the server to detect external changes. Note that this location needs to
 exist, and does not require any special permissions or structure. The name of the configuration file that goes inside this
 directory needs to match the `spring.application.name` (i.e. `cas.properties`).
 
@@ -384,9 +384,9 @@ feature, please [review this guide](Configuration-Storage.html#rest).
 #### CAS Server Cloud Configuration
 
 The cloud configuration modules provided above on this page by the CAS project directly may also be used verbatim inside 
-a CAS server overlay. Remember that the primary objective for these modules is to simply retrieve settings and properties 
+a CAS server overlay. Remember that the primary objective for these modules is to retrieve settings and properties 
 from a source. While they are mostly and primarily useful when activated inside the Spring Cloud Configuration server and 
-can be set to honor profiles and such, they nonetheless may also be used inside a CAS server overlay directly to simply 
+can be set to honor profiles and such, they nonetheless may also be used inside a CAS server overlay directly to 
 fetch settings from a source while running in standalone mode. In such scenarios, all sources of configuration regardless 
 of format or syntax will work alongside each other to retrieve settings and you can certainly mix and match as you see fit.
 
