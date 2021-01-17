@@ -26,7 +26,7 @@ public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapS
     /**
      * The authentication type.
      * <ul>
-     * <li>{@code AD} - Users authenticate with {code sAMAccountName}. </li>
+     * <li>{@code AD} - Users authenticate with {@code sAMAccountName}. </li>
      *
      * <li>{@code AUTHENTICATED} - Manager bind/search type of authentication.
      * If {@code }principalAttributePassword}

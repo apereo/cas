@@ -17,7 +17,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
-@RequiresModule(name = "cas-server-support-trusted-redis")
+@RequiresModule(name = "cas-server-support-trusted-mfa-redis")
 @JsonFilter("RedisTrustedDevicesMultifactorProperties")
 public class RedisTrustedDevicesMultifactorProperties extends BaseRedisProperties {
     private static final long serialVersionUID = -2261683393319585262L;

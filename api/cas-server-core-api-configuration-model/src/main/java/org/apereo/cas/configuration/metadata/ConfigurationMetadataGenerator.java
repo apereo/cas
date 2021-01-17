@@ -67,6 +67,9 @@ public class ConfigurationMetadataGenerator {
 
     private static final Pattern NESTED_TYPE_PATTERN = Pattern.compile("java\\.util\\.\\w+<(org\\.apereo\\.cas\\..+)>");
 
+    private static final Pattern MAP_TYPE_STRING_KEY_OBJECT_PATTERN =
+        Pattern.compile("java\\.util\\.Map<java\\.lang\\.String,\\s*(org\\.apereo\\.cas\\..+)>");
+
     private static final Pattern NESTED_CLASS_PATTERN = Pattern.compile("(.+)\\$(\\w+)");
 
     private final String buildDir;
@@ -102,6 +105,21 @@ public class ConfigurationMetadataGenerator {
         final Set<ConfigurationMetadataProperty> properties = jsonMap.get("properties");
         final Set<ConfigurationMetadataProperty> groups = jsonMap.get("groups");
 
+        processMappableProperties(properties, groups);
+        processNestedTypes(properties, groups);
+        
+        val hints = processHints(properties, groups);
+        processNestedEnumProperties(properties, groups);
+        processDeprecatedProperties(properties);
+
+        jsonMap.put("properties", properties);
+        jsonMap.put("groups", groups);
+        jsonMap.put("hints", hints);
+        MAPPER.writeValue(jsonFile, jsonMap);
+        MAPPER.writeValue(new File(buildDir, jsonFile.getName()), jsonMap);
+    }
+
+    private void processNestedTypes(final Set<ConfigurationMetadataProperty> properties, final Set<ConfigurationMetadataProperty> groups) {
         val collectedProps = new HashSet<ConfigurationMetadataProperty>(0);
         val collectedGroups = new HashSet<ConfigurationMetadataProperty>(0);
 
@@ -119,18 +137,34 @@ public class ConfigurationMetadataGenerator {
 
         properties.addAll(collectedProps);
         groups.addAll(collectedGroups);
-
-        val hints = processHints(properties, groups);
-
-        processNestedEnumProperties(properties, groups);
-        processDeprecatedProperties(properties);
-
-        jsonMap.put("properties", properties);
-        jsonMap.put("groups", groups);
-        jsonMap.put("hints", hints);
-        MAPPER.writeValue(jsonFile, jsonMap);
     }
 
+    private void processMappableProperties(final Set<ConfigurationMetadataProperty> properties,
+                                           final Set<ConfigurationMetadataProperty> groups) {
+        val collectedProps = new HashSet<ConfigurationMetadataProperty>(0);
+        val collectedGroups = new HashSet<ConfigurationMetadataProperty>(0);
+        
+        properties.forEach(property -> {
+            val matcher = MAP_TYPE_STRING_KEY_OBJECT_PATTERN.matcher(property.getType());
+            if (matcher.matches()) {
+                val valueType = matcher.group(1);
+
+                val typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(this.sourcePath, valueType);
+                val typeFile = new File(typePath);
+
+                if (typeFile.exists()) {
+                    val parser = new ConfigurationMetadataUnitParser(this.sourcePath);
+                    parser.parseCompilationUnit(collectedProps, collectedGroups, property, typePath,
+                        valueType, false);
+                } else {
+                    LOGGER.error("[{}] does not exist", typePath);
+                }
+            }
+        });
+        properties.addAll(collectedProps);
+        groups.addAll(collectedGroups);
+    }
+    
     private void processNestedEnumProperties(final Set<ConfigurationMetadataProperty> properties,
                                              final Set<ConfigurationMetadataProperty> groups) {
         val propertiesToProcess = properties.stream()

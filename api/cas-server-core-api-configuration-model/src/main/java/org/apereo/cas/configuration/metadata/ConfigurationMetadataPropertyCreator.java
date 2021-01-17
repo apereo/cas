@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.metadata;
 
 import org.apereo.cas.configuration.support.RelaxedPropertyNames;
 
+import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.expr.BooleanLiteralExpr;
 import com.github.javaparser.ast.expr.LiteralStringValueExpr;
@@ -65,8 +66,26 @@ public class ConfigurationMetadataPropertyCreator {
             || elementType.equals(Double.class.getSimpleName())
             || elementType.equals(Float.class.getSimpleName())) {
             prop.setType("java.lang." + elementType);
+        } else if (elementType.startsWith("Map<") || elementType.startsWith("List<") || elementType.startsWith("Set<")) {
+            prop.setType("java.util." + elementType);
+
+            var typeName = elementType.substring(elementType.indexOf('<') + 1, elementType.indexOf('>'));
+            var parent = fieldDecl.getParentNode().get();
+            parent.findFirst(EnumDeclaration.class, em -> em.getNameAsString().contains(typeName))
+                .ifPresent(em -> {
+                    var builder = collectJavadocsEnumFields(prop, em);
+                    prop.setDescription(builder.toString());
+                });
         } else {
             prop.setType(elementType);
+
+            var parent = fieldDecl.getParentNode().get();
+            parent.findFirst(EnumDeclaration.class, em -> em.getNameAsString().contains(elementType))
+                .ifPresent(em -> {
+                    var builder = collectJavadocsEnumFields(prop, em);
+                    prop.setDescription(builder.toString());
+                    em.getFullyQualifiedName().ifPresent(prop::setType);
+                });
         }
 
         val initializer = variable.getInitializer();
@@ -87,6 +106,22 @@ public class ConfigurationMetadataPropertyCreator {
         groups.add(grp);
 
         return prop;
+    }
+
+    private static StringBuilder collectJavadocsEnumFields(final ConfigurationMetadataProperty prop, final EnumDeclaration em) {
+        val builder = new StringBuilder(StringUtils.defaultString(prop.getDescription()));
+        builder.append("\nAvailable values:\n");
+        em.getEntries()
+            .stream()
+            .filter(entry -> entry.getJavadoc().isPresent())
+            .forEach(entry -> {
+                var text = entry.getJavadoc().get().getDescription().toText();
+                text = StringUtils.appendIfMissing(text, ".");
+                builder.append(String.format("{@code %s}", entry.getNameAsString()))
+                    .append(':')
+                    .append(text);
+            });
+        return builder;
     }
 
     private static class ComparableConfigurationMetadataProperty extends ConfigurationMetadataProperty {

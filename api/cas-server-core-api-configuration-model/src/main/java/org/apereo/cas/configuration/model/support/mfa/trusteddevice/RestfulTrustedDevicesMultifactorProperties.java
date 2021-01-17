@@ -17,7 +17,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
-@RequiresModule(name = "cas-server-support-trusted-rest")
+@RequiresModule(name = "cas-server-support-trusted-mfa-rest")
 @JsonFilter("RestfulTrustedDevicesMultifactorProperties")
 public class RestfulTrustedDevicesMultifactorProperties extends RestEndpointProperties {
     private static final long serialVersionUID = 3659099897056632608L;
