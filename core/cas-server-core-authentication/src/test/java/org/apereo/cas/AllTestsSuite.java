@@ -14,6 +14,7 @@ import org.apereo.cas.authentication.RememberMePasswordCredentialTests;
 import org.apereo.cas.authentication.UsernamePasswordCredentialTests;
 import org.apereo.cas.authentication.attribute.DefaultAttributeDefinitionTests;
 import org.apereo.cas.authentication.exceptions.UnresolvedPrincipalExceptionTests;
+import org.apereo.cas.authentication.handler.BlockingPrincipalNameTransformerTests;
 import org.apereo.cas.authentication.handler.ConvertCasePrincipalNameTransformerTests;
 import org.apereo.cas.authentication.handler.support.JaasAuthenticationHandlerSystemConfigurationTests;
 import org.apereo.cas.authentication.handler.support.JaasAuthenticationHandlerTests;
@@ -78,6 +79,7 @@ import org.junit.runner.RunWith;
     AcceptUsersAuthenticationHandlerTests.class,
     CacheCredentialsMetaDataPopulatorTests.class,
     OneTimePasswordCredentialTests.class,
+    BlockingPrincipalNameTransformerTests.class,
     UniquePrincipalAuthenticationPolicyTests.class,
     RestfulAuthenticationPolicyTests.class,
     FileTrustStoreSslSocketFactoryTests.class

@@ -44,6 +44,14 @@ public class PrincipalTransformationProperties implements Serializable {
     private String pattern;
 
     /**
+     * A regular expression that will be used against the username
+     * to match for blocking/forbidden values.
+     * If a match is found, an exception will be thrown
+     * and principal transformation will fail.
+     */
+    private String blockingPattern;
+
+    /**
      * Transform usernames using a Groovy resource.
      */
     @NestedConfigurationProperty
