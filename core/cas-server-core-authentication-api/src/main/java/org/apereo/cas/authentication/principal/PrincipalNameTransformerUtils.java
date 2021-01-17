@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
+import org.apereo.cas.util.transforms.BlockingPrincipalNameTransformer;
 import org.apereo.cas.util.transforms.ChainingPrincipalNameTransformer;
 import org.apereo.cas.util.transforms.ConvertCasePrincipalNameTransformer;
 import org.apereo.cas.util.transforms.GroovyPrincipalNameTransformer;
@@ -59,6 +60,11 @@ public class PrincipalNameTransformerUtils {
         if (p.getCaseConversion() == PrincipalTransformationProperties.CaseConversion.LOWERCASE) {
             val t = new ConvertCasePrincipalNameTransformer();
             t.setToUpperCase(false);
+            chain.addTransformer(t);
+        }
+
+        if (StringUtils.isNotBlank(p.getBlockingPattern())) {
+            val t = new BlockingPrincipalNameTransformer(p.getBlockingPattern());
             chain.addTransformer(t);
         }
 

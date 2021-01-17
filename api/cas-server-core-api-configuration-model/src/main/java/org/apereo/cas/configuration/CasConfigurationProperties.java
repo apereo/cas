@@ -1,8 +1,8 @@
 package org.apereo.cas.configuration;
 
 import org.apereo.cas.configuration.model.core.CasJavaClientProperties;
-import org.apereo.cas.configuration.model.core.CasServerProperties;
 import org.apereo.cas.configuration.model.core.CasServerHostProperties;
+import org.apereo.cas.configuration.model.core.CasServerProperties;
 import org.apereo.cas.configuration.model.core.audit.AuditProperties;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationProperties;
 import org.apereo.cas.configuration.model.core.authentication.HttpClientProperties;

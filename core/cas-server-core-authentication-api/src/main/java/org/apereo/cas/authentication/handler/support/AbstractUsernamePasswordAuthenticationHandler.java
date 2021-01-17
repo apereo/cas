@@ -45,7 +45,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
 
     private PasswordEncoder passwordEncoder = NoOpPasswordEncoder.getInstance();
 
-    private PrincipalNameTransformer principalNameTransformer = formUserId -> formUserId;
+    private PrincipalNameTransformer principalNameTransformer = String::trim;
 
     private PasswordPolicyContext passwordPolicyConfiguration;
 
