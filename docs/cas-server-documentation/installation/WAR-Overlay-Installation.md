@@ -37,9 +37,9 @@ resources with the same names in jar files inside `WEB-INF\lib`.
 It goes without saying that while up-front ramp-up time could be slightly complicated, there are significant advantages to this approach:
 
 1. There is no need to download/build from the source.
-2. Upgrades are tremendously easier in most cases by simply adjusting the build script to download the newer CAS release.
+2. Upgrades are tremendously easier in most cases by adjusting the build script to download the newer CAS release.
 3. Rather than hosting the entire software source code, as the deployer you **ONLY** keep your own local customizations which makes change tracking much easier.
-4. Tracking changes inside a source control repository is very lightweight, again simply because only relevant changes (and not the entire software) is managed.
+4. Tracking changes inside a source control repository is very lightweight, again because only relevant changes (and not the entire software) is managed.
 
 ### Managing Overlays
 
@@ -113,7 +113,7 @@ CAS can be deployed to a number of servlet containers. See [this guide](Configur
 ## Custom and Third-Party Source
 
 It is common to customize or extend the functionality of CAS by developing Java components that implement CAS APIs or
-to include third-party source by dependency references. Including third-party source is trivial; simply include
+to include third-party source by dependency references. Including third-party source is trivial; include
 the relevant dependency in the overlay `build.gradle` file. 
 
 <div class="alert alert-warning"><strong>Stop Coding</strong><p>

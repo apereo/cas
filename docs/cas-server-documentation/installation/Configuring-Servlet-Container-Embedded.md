@@ -34,7 +34,7 @@ Additionally, it is also possible to run CAS as a fully executable web applicati
 
 This is achieved via the build process of the deployment overlay where a 
 launch script is *inserted* at the beginning of the web application artifact. If you
- wish to see and examine the script, simply run the following commands:
+ wish to see and examine the script, run the following commands:
  
  ```bash
  # X is the number of lines from the beginning of the file

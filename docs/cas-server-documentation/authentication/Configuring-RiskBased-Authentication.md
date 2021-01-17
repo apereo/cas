@@ -20,7 +20,7 @@ In the event that the authentication attempt is considered risky well
 beyond the risk threshold, CAS may be allowed to take action and
 mitigate that risk.
 
-Simply put, the story told is:
+In summary, the story told is:
 
 >If an authentication request is at least [X%] risky, take action to mitigate that risk.
 

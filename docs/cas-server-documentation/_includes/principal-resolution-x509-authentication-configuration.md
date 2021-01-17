@@ -17,8 +17,6 @@ For the `CN_EDIPI`,`SUBJECT_ALT_NAME`, and `RFC822_EMAIL` principal resolvers, s
 you may specify the following property in order to have a different attribute from the certificate used as the principal.  
 If no alternative attribute is specified then the principal will be null and CAS will fail auth or use a different authenticator.
 
-{% include casproperties.html properties="cas.authn.x509.alternate-principal-attribute" %}
-
 ### `SUBJECT_DN` Principal Resolution
 
 {% include {{ version }}/subject-dnformat-x509-configuration.md %}

@@ -10,5 +10,5 @@ category: Attributes
 
 The following configuration describes how to fetch and retrieve attributes from LDAP attribute repositories.
 
-{% include {{ version }}/ldap-attribute-resolution-configuration.md %}
+{% include casproperties.html properties="cas.authn.attribute-repository.ldap" %}
 

@@ -58,7 +58,7 @@ Please see [this guide](Configuring-Authentication-Resolution.html) for more inf
 ### Authentication Sequence
 
 At runtime, CAS maintains a collection of authentication handlers/strategies that typically execute one after another. 
-Each CAS module that presents a form of authentication strategy will simply insert itself into this collection at 
+Each CAS module that presents a form of authentication strategy will insert itself into this collection at 
 bootstrap time. At the end of this process, the result of all authentication transactions is collected and optionally processed by 
 an authentication policy where success/failure of certain strategies/sources may be taken into account to fully satisfy the 
 authentication requirements. The collection of authentication handlers tries to preserve order in a rather more deterministic way. 

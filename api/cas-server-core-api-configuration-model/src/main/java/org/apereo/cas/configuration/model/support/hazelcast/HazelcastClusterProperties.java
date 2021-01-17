@@ -57,13 +57,14 @@ public class HazelcastClusterProperties implements Serializable {
 
     /**
      * Hazelcast has a flexible logging configuration and doesn't depend on any logging framework except JDK logging.
-     * It has in-built adaptors for a number of logging frameworks and also supports custom loggers by providing logging interfaces.
+     * It has in-built adaptors for a number of logging frameworks and
+     * also supports custom loggers by providing logging interfaces.
      * To use built-in adaptors you should set this setting to one of predefined types below.
      * <ul>
-     * <li>jdk: JDK logging</li>
-     * <li>log4j: Log4j</li>
-     * <li>slf4j: Slf4j</li>
-     * <li>none: Disable logging</li>
+     * <li>{@code jdk}: JDK logging</li>
+     * <li>{@code log4j}: Log4j</li>
+     * <li>{@code slf4j}: Slf4j</li>
+     * <li>{@code none}: Disable logging</li>
      * </ul>
      */
     private String loggingType = "slf4j";
@@ -80,7 +81,8 @@ public class HazelcastClusterProperties implements Serializable {
     private String instanceName;
 
     /**
-     * You may also want to choose to use only one port. In that case, you can disable the auto-increment feature of port.
+     * You may also want to choose to use only one port. In that case,
+     * you can disable the auto-increment feature of port.
      */
     private boolean portAutoIncrement = true;
 
@@ -152,18 +154,18 @@ public class HazelcastClusterProperties implements Serializable {
 
     /**
      * <ul>
-     * <li>FREE_HEAP_PERCENTAGE: Policy based on minimum free JVM heap memory percentage per JVM.</li>
-     * <li>FREE_HEAP_SIZE: Policy based on minimum free JVM heap memory in megabytes per JVM.</li>
-     * <li>FREE_NATIVE_MEMORY_PERCENTAGE: Policy based on minimum free native memory percentage per Hazelcast instance.</li>
-     * <li>FREE_NATIVE_MEMORY_SIZE: Policy based on minimum free native memory in megabytes per Hazelcast instance.</li>
-     * <li>PER_NODE: Policy based on maximum number of entries stored per data structure (map, cache etc) on each Hazelcast instance.</li>
-     * <li>PER_PARTITION: Policy based on maximum number of entries stored per data structure (map, cache etc) on each partition.</li>
-     * <li>USED_HEAP_PERCENTAGE: Policy based on maximum used JVM heap memory percentage per data structure (map, cache etc) on each Hazelcast instance
+     * <li>{@code FREE_HEAP_PERCENTAGE}: Policy based on minimum free JVM heap memory percentage per JVM.</li>
+     * <li>{@code FREE_HEAP_SIZE}: Policy based on minimum free JVM heap memory in megabytes per JVM.</li>
+     * <li>{@code FREE_NATIVE_MEMORY_PERCENTAGE}: Policy based on minimum free native memory percentage per Hazelcast instance.</li>
+     * <li>{@code FREE_NATIVE_MEMORY_SIZE}: Policy based on minimum free native memory in megabytes per Hazelcast instance.</li>
+     * <li>{@code PER_NODE}: Policy based on maximum number of entries stored per data structure (map, cache etc) on each Hazelcast instance.</li>
+     * <li>{@code PER_PARTITION}: Policy based on maximum number of entries stored per data structure (map, cache etc) on each partition.</li>
+     * <li>{@code USED_HEAP_PERCENTAGE}: Policy based on maximum used JVM heap memory percentage per data structure (map, cache etc) on each Hazelcast instance
      * .</li>
-     * <li>USED_HEAP_SIZE: Policy based on maximum used JVM heap memory in megabytes per data structure (map, cache etc) on each Hazelcast instance.</li>
-     * <li>USED_NATIVE_MEMORY_PERCENTAGE: Policy based on maximum used native memory percentage per data structure (map, cache etc) on each Hazelcast
+     * <li>{@code USED_HEAP_SIZE}: Policy based on maximum used JVM heap memory in megabytes per data structure (map, cache etc) on each Hazelcast instance.</li>
+     * <li>{@code USED_NATIVE_MEMORY_PERCENTAGE}: Policy based on maximum used native memory percentage per data structure (map, cache etc) on each Hazelcast
      * instance.</li>
-     * <li>USED_NATIVE_MEMORY_SIZE: Policy based on maximum used native memory in megabytes per data structure (map, cache etc) on each Hazelcast instance
+     * <li>{@code USED_NATIVE_MEMORY_SIZE}: Policy based on maximum used native memory in megabytes per data structure (map, cache etc) on each Hazelcast instance
      * .</li>
      * </ul>
      */

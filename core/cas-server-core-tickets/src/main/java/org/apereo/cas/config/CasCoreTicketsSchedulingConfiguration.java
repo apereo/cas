@@ -87,7 +87,7 @@ public class CasCoreTicketsSchedulingConfiguration {
     /**
      * The Ticket registry cleaner scheduler. Because the cleaner itself is marked
      * with {@link org.springframework.transaction.annotation.Transactional},
-     * we need to create a separate scheduler component that simply invokes it
+     * we need to create a separate scheduler component that invokes it
      * so that {@link Scheduled} annotations can be processed and not interfere
      * with transaction semantics of the cleaner.
      */

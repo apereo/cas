@@ -74,7 +74,7 @@ elements from the matching service in the service registry will be used all the 
 ### Service Registry Metadata
 
 You may also register the relying party in the CAS service registry as a regular 
-service application and simply specify a number of MDUI-like elements in the body of the registration record. An example follows:
+service application and specify a number of MDUI-like elements in the body of the registration record. An example follows:
 
 ```json
 {

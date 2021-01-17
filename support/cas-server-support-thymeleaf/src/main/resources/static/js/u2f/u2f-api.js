@@ -712,7 +712,7 @@ u2f.sendRegisterRequest = function(appId, registerRequests, registeredKeys, call
  * Dispatches a message to the extension to find out the supported
  * JS API version.
  * If the user is on a mobile phone and is thus using Google Authenticator instead
- * of the Chrome extension, don't send the request and simply return 0.
+ * of the Chrome extension, don't send the request and return 0.
  * @param {function((u2f.Error|u2f.GetJsApiVersionResponse))} callback
  * @param {number=} opt_timeoutSeconds
  */

@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils;
  * An implementation of {@link UniqueTicketIdGenerator} that is able auto-configure
  * the suffix based on the underlying host name.
  * <p>In order to assist with multi-node deployments, in scenarios where CAS configuration
- * and specially {@code application.properties} file is externalized, it would be ideal to simply just have one set
+ * and specially {@code application.properties} file is externalized, it would be ideal to just have one set
  * of configuration files for all nodes, such that there would for instance be one {@code application.properties} file
  * for all nodes. This would remove the need to copy/sync config files over across nodes, again in a
  * situation where they are externalized.

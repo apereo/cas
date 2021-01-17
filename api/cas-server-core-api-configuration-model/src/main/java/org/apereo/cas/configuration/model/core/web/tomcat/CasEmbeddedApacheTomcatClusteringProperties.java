@@ -119,7 +119,7 @@ public class CasEmbeddedApacheTomcatClusteringProperties implements Serializable
 
     /**
      * The frequency in milliseconds in which heartbeats are sent out. The default value is 500 ms.
-     * In most cases the default value is sufficient. Changing this value, simply changes the interval in between heartbeats.
+     * In most cases the default value is sufficient. Changing this value, changes the interval in between heartbeats.
      */
     private int membershipFrequency = 500;
 

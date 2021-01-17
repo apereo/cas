@@ -23,4 +23,4 @@ Trusted authentication is able to extract the remote authenticated user via the 
 
 {% include casproperties.html 
 properties="cas.authn.trusted" 
-excludes="mongo,dynamo-db,couch-db,redis,json,jpa,rest"" %}
+excludes="mongo,dynamo-db,couch-db,redis,json,jpa,rest" %}

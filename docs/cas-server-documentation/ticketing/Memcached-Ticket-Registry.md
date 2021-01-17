@@ -83,7 +83,7 @@ underlying spymemcached library. There are two choices:
 2. [CONSISTENT](https://github.com/couchbase/spymemcached/blob/2.9.0/src/main/java/net/spy/memcached/KetamaNodeLocator.java)
 
 The array modulus mechanism is the default and suitable for cases when the number of nodes in the memcached pool is
-expected to be consistent. The algorithm simply computes an index into the array of memcached nodes:
+expected to be consistent. The algorithm computes an index into the array of memcached nodes:
 
     hash(key) % length(nodes)
 
@@ -109,7 +109,7 @@ compact data, which benefits both storage requirements and throughput.
 ## High Availability Considerations
 
 Memcached does not provide for replication by design, but the client is tolerant to node failures with
-`failureMode="Redistribute"`. In this mode a write failure will simply cause the client to flag the node as failed
+`failureMode="Redistribute"`. In this mode a write failure will cause the client to flag the node as failed
 and remove it from the set of available nodes. It subsequently recomputes the node location function with the reduced
 node set to find a new node on which to store the key. If the node location function selects the same node,
 which is likely for the _CONSISTENT_ strategy, a backup node will be computed. The value is written to and read from

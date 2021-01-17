@@ -39,7 +39,7 @@ public class PersonDirectoryPrincipalResolverProperties implements Serializable 
     /**
      * When true, throws an error back indicating that principal resolution
      * has failed and no principal can be found based on the authentication requirements.
-     * Otherwise, simply logs the condition as an error without raising a catastrophic error.
+     * Otherwise, logs the condition as an error without raising a catastrophic error.
      */
     private boolean principalResolutionFailureFatal;
 

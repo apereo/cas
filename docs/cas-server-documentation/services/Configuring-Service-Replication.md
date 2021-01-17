@@ -94,4 +94,4 @@ itself when the service registry scheduler is set to very aggressive timeouts an
 can mostly be avoided by relaxing the reload operation to run on a long scheduler 
 such as every 2 hours. Alternatively, you may decide to run an active-passive setup 
 to only have one master node produce and broadcast changes and other slave/passive 
-nodes simply and only consume changes when needed.
+nodes and only consume changes when needed.

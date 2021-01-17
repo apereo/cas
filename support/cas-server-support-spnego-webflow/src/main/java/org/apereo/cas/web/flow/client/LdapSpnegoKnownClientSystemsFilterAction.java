@@ -122,7 +122,7 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
 
     /**
      * Verify spnego attribute value.
-     * This impl simply makes sure the attribute exists and has a value.
+     * This impl makes sure the attribute exists and has a value.
      *
      * @param attribute the ldap attribute
      * @return true if available. false otherwise.

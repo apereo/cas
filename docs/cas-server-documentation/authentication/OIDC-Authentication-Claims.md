@@ -7,7 +7,7 @@ category: Protocols
 
 # Claims - OpenID Connect Authentication
 
-OpenID connect claims are simply treated as normal CAS attributes that need to
+OpenID connect claims are treated as normal CAS attributes that need to
 be [resolved, mapped and released](../integration/Attribute-Release-Policies.html).
 
 ## Scope-based Claims

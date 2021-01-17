@@ -11,7 +11,11 @@ category: Ticketing
 CAS supports a pluggable and extensible policy framework to control the expiration policy of ticket-granting
 tickets (`TGT`), proxy-granting tickets (`PGT`), service tickets (`ST`) and proxy tickets (`PT`).
 
-<div class="alert alert-info"><strong>There Is More</strong><p>There are many other types of artifacts in CAS that take the base form of a ticket abstraction. Each protocol or feature may introduce a new ticket type that carries its own expiration policy and you will need to consult the documentation for that feature or behavior to realize how expiration policies for its own ticket types may be tuned and controlled.</p></div>
+<div class="alert alert-info"><strong>There Is More</strong><p>There are many other types of 
+artifacts in CAS that take the base form of a ticket abstraction. Each protocol or feature may 
+introduce a new ticket type that carries its own expiration policy and you will need to 
+consult the documentation for that feature or behavior to realize how expiration 
+policies for its own ticket types may be tuned and controlled.</p></div>
 
 ## Ticket-Granting Ticket Policies
 
@@ -22,8 +26,6 @@ to obtain a new (valid) `TGT`.
 ### Default
 
 This is the default option, which provides a hard-time out as well as a sliding window.
-   
-{% include casproperties.html properties="cas.ticket.tgt" %}
 
 Ticket expiration policies are activated in the following conditions:
 

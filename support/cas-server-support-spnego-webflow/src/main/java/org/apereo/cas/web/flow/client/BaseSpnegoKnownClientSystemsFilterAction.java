@@ -82,7 +82,7 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
     }
 
     /**
-     * Default implementation -- simply check the IP filter.
+     * Default implementation -- check the IP filter.
      *
      * @param remoteIp the remote ip
      * @return true boolean

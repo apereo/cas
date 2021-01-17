@@ -8,7 +8,7 @@ category: Planning
 
 We strongly recommend that you take advantage of the release candidates as they come out. Waiting 
 for a `GA` release is only going to set you up for unpleasant surprises. A `GA` 
-is simply [a tag and nothing more](https://apereo.github.io/2017/03/08/the-myth-of-ga-rel/). Note that CAS 
+is [a tag and nothing more](https://apereo.github.io/2017/03/08/the-myth-of-ga-rel/). Note that CAS 
 releases are *strictly* time-based releases; they are not scheduled or based on 
 specific benchmarks, statistics or completion of features. To gain confidence in 
 a particular release, it is strongly recommended that you start early by 

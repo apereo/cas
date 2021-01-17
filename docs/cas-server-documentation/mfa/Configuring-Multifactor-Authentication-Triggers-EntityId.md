@@ -14,7 +14,7 @@ a request parameter to CAS to be treated as a CAS registered service.
 This allows one to activate multifactor authentication policies based on the entity id that is registered
 This allows one to [activate multifactor authentication policies](#Per Application) based on the entity id that is registered
 in the CAS service registry. As a side benefit, the entity id can take advantage of all other CAS features
-such as access strategies and authorization rules simply because it's just another service definition known to CAS.
+such as access strategies and authorization rules because it's just another service definition known to CAS.
 
 To learn more about integration options and to understand how to delegate authentication to CAS 
 from a Shibboleth identity provider, please [see this guide](../integration/Shibboleth.html).

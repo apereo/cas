@@ -17,7 +17,7 @@ public class AopUtils {
      * Unwraps a join point that may be nested due to layered proxies.
      *
      * @param point Join point to unwrap.
-     * @return Innermost join point; if not nested, simply returns the argument.
+     * @return Innermost join point; if not nested, returns the argument.
      */
     public static JoinPoint unWrapJoinPoint(final JoinPoint point) {
         var naked = point;
