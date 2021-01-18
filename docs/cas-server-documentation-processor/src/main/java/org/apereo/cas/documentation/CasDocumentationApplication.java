@@ -9,8 +9,11 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * This is {@link CasDocumentationApplication}.
@@ -25,7 +28,7 @@ public class CasDocumentationApplication {
                 .queryType(ConfigurationMetadataCatalogQuery.QueryTypes.CAS)
                 .build());
 
-        var groups = new HashMap<String, List<CasReferenceProperty>>();
+        var groups = new HashMap<String, Set<CasReferenceProperty>>();
         results.properties()
             .stream()
             .filter(property -> StringUtils.isNotBlank(property.getModule()))
@@ -33,7 +36,7 @@ public class CasDocumentationApplication {
                 if (groups.containsKey(property.getModule())) {
                     groups.get(property.getModule()).add(property);
                 } else {
-                    var values = new ArrayList<CasReferenceProperty>();
+                    var values = new TreeSet<CasReferenceProperty>();
                     values.add(property);
                     groups.put(property.getModule(), values);
                 }
