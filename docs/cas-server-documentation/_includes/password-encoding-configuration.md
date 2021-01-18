@@ -1,7 +1,5 @@
 <!-- fragment:keep -->
 
-<hr>
-
 #### Password Encoding
 
 Certain aspects of CAS such as authentication handling support configuration of

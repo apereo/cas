@@ -42,7 +42,7 @@ public class PasswordEncoderProperties implements Serializable {
      *     <li>{@code PBKDF2}: Use the {@code Pbkdf2PasswordEncoder} based on the strength provided and an optional secret.</li>
      *     <li>{@code STANDARD}: Use the {@code StandardPasswordEncoder} based on the secret provided.</li>
      *     <li>{@code SSHA}: Use the {@code LdapShaPasswordEncoder} supports Ldap SHA and SSHA (salted-SHA). The values
-     *     are base-64 encoded and have the label {SHA} (or {SSHA}) prepended to the encoded hash.</li>
+     *     are base-64 encoded and have the label {SHA} or {SSHA} prepended to the encoded hash.</li>
      *     <li>{@code GLIBC_CRYPT}: Use the {@code GlibcCryptPasswordEncoder} based on the
      *     {@code encoding-algorithm}, strength provided and an optional secret.</li>
      *     <li>{@code org.example.MyEncoder}: An implementation of {@code PasswordEncoder} of your own choosing.</li>

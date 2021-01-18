@@ -1,7 +1,5 @@
 <!-- fragment:keep -->
 
-<hr>
-
 #### Principal Transformation
 
 Authentication handlers that generally deal with username-password credentials

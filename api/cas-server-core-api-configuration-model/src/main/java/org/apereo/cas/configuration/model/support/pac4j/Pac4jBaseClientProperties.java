@@ -55,8 +55,6 @@ public class Pac4jBaseClientProperties implements Serializable {
 
     /**
      * Determine how the callback url should be resolved.
-     * Accepted values are:
-     *
      * Default is {@link CallbackUrlTypes#QUERY_PARAMETER}.
      */
     private CallbackUrlTypes callbackUrlType = CallbackUrlTypes.QUERY_PARAMETER;

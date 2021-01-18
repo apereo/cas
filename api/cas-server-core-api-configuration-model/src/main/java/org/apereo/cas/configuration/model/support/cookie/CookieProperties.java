@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.support.cookie;
 
-import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -32,8 +31,9 @@ public class CookieProperties implements Serializable {
      * cannot contain commas, semicolons, or white space or begin with a {@code $} character.
      * The cookie's name cannot be changed after creation.
      * By default, cookies are created according to the RFC 2965 cookie specification.
+     * Cookie names are automatically calculated assigned by CAS at runtime, and there is usually
+     * no need to customize the name or assign it a different value unless a special use case warrants the change.
      */
-    @RequiredProperty
     private String name;
 
     /**
