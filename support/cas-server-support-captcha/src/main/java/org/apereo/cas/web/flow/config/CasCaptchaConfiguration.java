@@ -21,6 +21,8 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * This is {@link CasCaptchaConfiguration}.
@@ -66,7 +68,13 @@ public class CasCaptchaConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "initializeCaptchaAction")
     public Action initializeCaptchaAction() {
-        return new InitializeCaptchaAction(casProperties.getGoogleRecaptcha());
+        return new InitializeCaptchaAction(casProperties.getGoogleRecaptcha()) {
+            @Override
+            protected Event doExecute(final RequestContext requestContext) {
+                requestContext.getFlowScope().put("recaptchaLoginEnabled", googleRecaptchaProperties.isEnabled());
+                return super.doExecute(requestContext);
+            }
+        };
     }
 
     @Bean

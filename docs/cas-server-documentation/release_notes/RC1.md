@@ -78,6 +78,14 @@ Upon [logout confirmations](../installation/Logout-Single-Signout.html), the
 CAS user interface and confirmation screens are 
 now able to list all applications linked to the existing SSO session.
 
+### reCAPTCHA Integrations
+
+[Password Management](../password_management/Password-Management.html) extended 
+to offer a reCAPTCHA integration for its *Forgot Username* feature. This 
+change also separates the reCAPTCHA configuration namespace,
+allowing each CAS feature (login, password rest, etc) to separately own, control 
+and modify reCAPTCHA settings.
+
 ### XML-less Spring Webflow
 
 The construction of various [Spring Webflow flows](../webflow/Webflow-Customization.html) and (multifactor authentication) subflows 
