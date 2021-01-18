@@ -66,7 +66,7 @@ public class CasCaptchaConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "initializeCaptchaAction")
     public Action initializeCaptchaAction() {
-        return new InitializeCaptchaAction(casProperties);
+        return new InitializeCaptchaAction(casProperties.getGoogleRecaptcha());
     }
 
     @Bean

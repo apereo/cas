@@ -45,6 +45,7 @@ public class ConfigurationMetadataPropertyCreator {
             .findFirst()
             .orElseGet(variable::getNameAsString);
 
+
         val indexedGroup = propName.concat(indexNameWithBrackets ? "[]" : StringUtils.EMPTY);
         val indexedName = indexedGroup.concat(".").concat(name);
 
@@ -68,7 +69,6 @@ public class ConfigurationMetadataPropertyCreator {
             prop.setType("java.lang." + elementType);
         } else if (elementType.startsWith("Map<") || elementType.startsWith("List<") || elementType.startsWith("Set<")) {
             prop.setType("java.util." + elementType);
-
             var typeName = elementType.substring(elementType.indexOf('<') + 1, elementType.indexOf('>'));
             var parent = fieldDecl.getParentNode().get();
             parent.findFirst(EnumDeclaration.class, em -> em.getNameAsString().contains(typeName))

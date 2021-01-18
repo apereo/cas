@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.pm;
 
 import org.apereo.cas.configuration.model.core.web.flow.WebflowAutoConfigurationProperties;
+import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -56,6 +57,12 @@ public class PasswordManagementProperties implements Serializable {
     @RequiredProperty
     private String policyPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[$@$!%*?&])[A-Za-z\\d$@$!%*?&]{8,10}";
 
+    /**
+     * Google reCAPTCHA settings.
+     */
+    @NestedConfigurationProperty
+    private GoogleRecaptchaProperties googleRecaptcha = new GoogleRecaptchaProperties();
+    
     /**
      * Manage account passwords in LDAP.
      */
