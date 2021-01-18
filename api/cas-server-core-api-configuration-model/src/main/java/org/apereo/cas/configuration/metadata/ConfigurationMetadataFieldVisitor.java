@@ -70,6 +70,7 @@ public class ConfigurationMetadataFieldVisitor extends VoidVisitorAdapter<Config
         if (field.getJavadoc().isEmpty()) {
             LOGGER.error("Field [{}] has no Javadoc defined", field);
         }
+
         val creator = new ConfigurationMetadataPropertyCreator(indexNameWithBrackets, properties, groups, parentClass);
         val prop = creator.createConfigurationProperty(field, property.getName());
         processNestedClassOrInterfaceTypeIfNeeded(field, prop);

@@ -32,16 +32,25 @@ in your configuration and overlays. This is just to teach you that it exists.</p
 
 ## Configuration
 
-To learn more about available notification options, please [see this guide](../notifications/SMS-Messaging-Configuration.html) or [this guide](../notifications/Sending-Email-Configuration.html). 
+To learn more about available notification options, please [see this guide](../notifications/SMS-Messaging-Configuration.html) 
+or [this guide](../notifications/Sending-Email-Configuration.html). 
 
-{% include casproperties.html properties="cas.authn.pm.enabled,cas.authn.pm.captcha-enabled,cas.authn.pm.policy-pattern,cas.authn.pm.reset,cas.authn.pm.auto-login,cas.authn.pm.webflow" %}
+{% include casproperties.html 
+excludes=".google-recaptcha,.reset."
+properties="cas.authn.pm.enabled,cas.authn.pm.policy-pattern,cas.authn.pm.auto-login,cas.authn.pm.webflow" %}
 
-## reCAPTCHA Integration
+### Password Reset
+
+{% include casproperties.html properties="cas.authn.pm.reset" %}
+
+### reCAPTCHA Integration
 
 Password reset attempts can be protected and integrated 
 with [Google reCAPTCHA](https://developers.google.com/recaptcha). This requires 
 the presence of reCAPTCHA settings for the basic integration and instructing 
 the password management flow to turn on and verify requests via reCAPTCHA. 
+
+{% include casproperties.html properties="cas.authn.pm.google-recaptcha" %}
  
 ## Forgot Username
                                                                       

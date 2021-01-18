@@ -24,11 +24,10 @@
                                 <div class="banner banner-danger alert-dismissible mb-4"
                                     th:if="${flowRequestContext.messageContext.hasErrorMessages()}">
                                     <p th:each="message : ${flowRequestContext.messageContext.allMessages}"
-                                        th:utext="#{${message.text}}">
-                                        Message Text
+                                        th:utext="${message.text}">Message Text
                                     </p>
                                 </div>
-
+                                
                                 <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
                                 <input type="hidden" name="_eventId" value="findUsername" />
                                 <div class="d-flex">
@@ -51,6 +50,11 @@
 
                                 </div>
                             </section>
+
+                            <section class="p-4">
+                                <div th:replace="fragments/recaptcha :: recaptchaToken" />
+                            </section>
+
                             <div class="mdc-card__actions p-4">
                                 <button
                                     class="mdc-button mdc-button--raised mdc-card__action mdc-card__action--button mr-2"

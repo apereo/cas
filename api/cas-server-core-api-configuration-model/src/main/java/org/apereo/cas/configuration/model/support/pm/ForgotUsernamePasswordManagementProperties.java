@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.pm;
 
+import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -30,10 +31,10 @@ public class ForgotUsernamePasswordManagementProperties implements Serializable 
     private EmailProperties mail = new EmailProperties();
 
     /**
-     * Indicates whether forgot-username feature
-     * should activate captcha for ops that start the forgot-username flow.
-    */
-    private boolean captchaEnabled;
+     * Google reCAPTCHA settings.
+     */
+    @NestedConfigurationProperty
+    private GoogleRecaptchaProperties googleRecaptcha = new GoogleRecaptchaProperties();
 
     public ForgotUsernamePasswordManagementProperties() {
         this.mail.setAttributeName("mail");

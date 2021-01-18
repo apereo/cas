@@ -824,14 +824,25 @@ public interface CasWebflowConstants {
     String ACTION_ID_INIT_CAPTCHA = "initializeCaptchaAction";
 
     /**
-     * Action id 'validateCaptchaAction'.
+     * Action id 'passwordResetValidateCaptchaAction'.
      */
     String ACTION_ID_PASSWORD_RESET_VALIDATE_CAPTCHA = "passwordResetValidateCaptchaAction";
-    
+
+    /**
+     * Action id 'forgotUsernameValidateCaptchaAction'.
+     */
+    String ACTION_ID_FORGOT_USERNAME_VALIDATE_CAPTCHA = "forgotUsernameValidateCaptchaAction";
+
     /**
      * Action id 'passwordResetInitializeCaptchaAction'.
      */
     String ACTION_ID_PASSWORD_RESET_INIT_CAPTCHA = "passwordResetInitializeCaptchaAction";
+
+    /**
+     * Action id 'forgotUsernameInitializeCaptchaAction'.
+     */
+    String ACTION_ID_FORGOT_USERNAME_INIT_CAPTCHA = "forgotUsernameInitializeCaptchaAction";
+
 
     /**
      * Action id 'renderLoginFormAction'.

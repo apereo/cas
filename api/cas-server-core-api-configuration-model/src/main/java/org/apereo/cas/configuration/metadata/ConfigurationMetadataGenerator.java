@@ -154,6 +154,8 @@ public class ConfigurationMetadataGenerator {
 
                 if (typeFile.exists()) {
                     val parser = new ConfigurationMetadataUnitParser(this.sourcePath);
+                    property.setName(property.getName().concat(".[key]"));
+                    property.setId(property.getName());
                     parser.parseCompilationUnit(collectedProps, collectedGroups, property, typePath,
                         valueType, false);
                 } else {
