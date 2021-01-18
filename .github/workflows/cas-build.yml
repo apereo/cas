@@ -289,7 +289,13 @@ jobs:
       - name: Validate CAS Command-line Shell
         run: |
           casVersion=$(./gradlew casVersion --no-daemon -q)
-          java -jar support/cas-server-support-shell/build/libs/cas-server-support-shell-${casVersion}.jar @ci/tests/shell/cas-shell-script.sh
+          java -jar support/cas-server-support-shell/build/libs/cas-server-support-shell-${casVersion}.jar @ci/tests/shell/cas-shell-script.sh 2>&1 | tee cas-shell.out
+          # Check for stack traces in output that would indicate an error
+          count=$(grep -c cas-server-support-shell cas-shell.out)
+          if [ $count -ne 0 ]; then
+            echo "Found stacktrace in script output"
+            exit -1
+          fi
 
 ##########################################################################
 
