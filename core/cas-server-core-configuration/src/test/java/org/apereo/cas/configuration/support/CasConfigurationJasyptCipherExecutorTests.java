@@ -87,20 +87,21 @@ public class CasConfigurationJasyptCipherExecutorTests {
     @Test
     public void verifyOldEncryptedPasswordStillWorks() {
         val jasyptTest = new CasConfigurationJasyptCipherExecutor(this.environment);
-        jasyptTest.setAlgorithmForce("PBEWITHHMACSHA512ANDAES_256");
-        assertEquals(jasyptTest.decode("{cas-cipher}GxXRraiiFRMNDS81OAs6eo6qnhfHdfY1LrggFHRhfQo="), "testing");
+        jasyptTest.setAlgorithmForce("PBEWITHSHAAND256BITAES-CBC-BC");
+        assertEquals("testing", jasyptTest.decode("{cas-cipher}GxXRraiiFRMNDS81OAs6eo6qnhfHdfY1LrggFHRhfQo="));
     }
 
     /**
-     * This seeks to ensure that a password encrypted in a previous version of CAS can still be decrypted.
-     * Password encrypted with 6.3.0 shell and password of "P@$$w0rd".
+     * This seeks to ensure that a password encrypted with an initialization vector still works.
+     * Password encrypted with 6.4.0 and password of "P@$$w0rd".
      */
     @Test
     public void verifyEncryptedPasswordWithInitizializationVectorStillWorks() {
         val jasyptTest = new CasConfigurationJasyptCipherExecutor(this.environment);
         jasyptTest.setProviderName("BC");
         jasyptTest.setAlgorithmForce("PBEWITHSHAAND256BITAES-CBC-BC");
-        assertEquals(jasyptTest.decode("{cas-cipher}GxXRraiiFRMNDS81OAs6eo6qnhfHdfY1LrggFHRhfQo="), "testing");
+        jasyptTest.setInitializationVector();
+        assertEquals("testing", jasyptTest.decode("{cas-cipher}88HKpXCD888/ZP7hMAg7VdxljZD3fho5r5V7c15kPXovYCk4cBdpcxfd5vgcxTit"));
     }
 
     /**
