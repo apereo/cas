@@ -30,6 +30,8 @@ public class CasReferenceProperty implements Serializable, Comparable<CasReferen
 
     private final String description;
 
+    private final String shortDescription;
+
     private final String name;
 
     private final Object defaultValue;

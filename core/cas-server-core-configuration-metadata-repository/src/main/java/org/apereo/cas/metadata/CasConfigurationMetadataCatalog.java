@@ -139,6 +139,7 @@ public class CasConfigurationMetadataCatalog {
         val description = StringUtils.defaultString(
             StringUtils.defaultIfBlank(property.getDescription(), property.getShortDescription()));
         builder.description(description);
+        builder.shortDescription(property.getShortDescription());
         builder.name(property.getId());
         builder.defaultValue(ObjectUtils.defaultIfNull(property.getDefaultValue(), StringUtils.EMPTY));
 
