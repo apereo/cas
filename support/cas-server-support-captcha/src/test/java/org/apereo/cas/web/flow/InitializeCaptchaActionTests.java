@@ -50,5 +50,6 @@ public class InitializeCaptchaActionTests {
         setExternalContext(context.getExternalContext());
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, initializeCaptchaAction.execute(context).getId());
         assertNotNull(WebUtils.getRecaptchaSiteKey(context));
+        assertTrue(context.getFlowScope().contains("recaptchaLoginEnabled"));
     }
 }

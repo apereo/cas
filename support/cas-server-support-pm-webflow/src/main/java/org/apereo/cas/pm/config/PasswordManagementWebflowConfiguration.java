@@ -46,6 +46,8 @@ import org.springframework.web.servlet.HandlerAdapter;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.mvc.servlet.FlowHandler;
 import org.springframework.webflow.mvc.servlet.FlowHandlerAdapter;
@@ -245,7 +247,13 @@ public class PasswordManagementWebflowConfiguration {
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_PASSWORD_RESET_INIT_CAPTCHA)
         public Action passwordResetInitializeCaptchaAction() {
             val recaptcha = casProperties.getAuthn().getPm().getGoogleRecaptcha();
-            return new InitializeCaptchaAction(recaptcha);
+            return new InitializeCaptchaAction(recaptcha) {
+                @Override
+                protected Event doExecute(final RequestContext requestContext) {
+                    requestContext.getFlowScope().put("recaptchaPasswordManagementEnabled", recaptcha.isEnabled());
+                    return super.doExecute(requestContext);
+                }
+            };
         }
 
         @Bean
@@ -288,7 +296,13 @@ public class PasswordManagementWebflowConfiguration {
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_FORGOT_USERNAME_INIT_CAPTCHA)
         public Action forgotUsernameInitializeCaptchaAction() {
             val recaptcha = casProperties.getAuthn().getPm().getForgotUsername().getGoogleRecaptcha();
-            return new InitializeCaptchaAction(recaptcha);
+            return new InitializeCaptchaAction(recaptcha) {
+                @Override
+                protected Event doExecute(final RequestContext requestContext) {
+                    requestContext.getFlowScope().put("recaptchaForgotUsernameEnabled", recaptcha.isEnabled());
+                    return super.doExecute(requestContext);
+                }
+            };
         }
 
         @Bean

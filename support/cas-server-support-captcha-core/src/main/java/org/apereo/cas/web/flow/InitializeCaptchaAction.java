@@ -17,7 +17,10 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @RequiredArgsConstructor
 public class InitializeCaptchaAction extends AbstractAction {
-    private final GoogleRecaptchaProperties googleRecaptchaProperties;
+    /**
+     * The Google recaptcha properties.
+     */
+    protected final GoogleRecaptchaProperties googleRecaptchaProperties;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {

@@ -113,9 +113,9 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
 
             val usernameInfo = createViewState(flow, CasWebflowConstants.VIEW_ID_FORGOT_USERNAME_ACCT_INFO,
                 CasWebflowConstants.VIEW_ID_FORGOT_USERNAME_ACCT_INFO);
-            createTransitionForState(usernameInfo, "findUsername", CasWebflowConstants.STATE_ID_FORGOT_USERNAME_INSTRUCTIONS);
+            createTransitionForState(usernameInfo, "findUsername", CasWebflowConstants.STATE_ID_SEND_FORGOT_USERNAME_INSTRUCTIONS);
 
-            val sendUsernameInst = createActionState(flow, CasWebflowConstants.STATE_ID_FORGOT_USERNAME_INSTRUCTIONS,
+            val sendUsernameInst = createActionState(flow, CasWebflowConstants.STATE_ID_SEND_FORGOT_USERNAME_INSTRUCTIONS,
                 "sendForgotUsernameInstructionsAction");
             createTransitionForState(sendUsernameInst, CasWebflowConstants.TRANSITION_ID_SUCCESS,
                 CasWebflowConstants.VIEW_ID_SENT_FORGOT_USERNAME_ACCT_INFO);

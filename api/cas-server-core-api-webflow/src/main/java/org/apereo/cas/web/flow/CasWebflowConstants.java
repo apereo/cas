@@ -607,7 +607,7 @@ public interface CasWebflowConstants {
     /**
      * The view state 'sendForgotUsernameInstructions'.
      */
-    String STATE_ID_FORGOT_USERNAME_INSTRUCTIONS = "sendForgotUsernameInstructions";
+    String STATE_ID_SEND_FORGOT_USERNAME_INSTRUCTIONS = "sendForgotUsernameInstructions";
 
     /**
      * The view state 'passwordChangeAction'.
