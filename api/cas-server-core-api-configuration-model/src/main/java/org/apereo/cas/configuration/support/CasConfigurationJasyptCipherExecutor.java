@@ -26,6 +26,11 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
     public static final String ENCRYPTED_VALUE_PREFIX = "{cas-cipher}";
 
     /**
+     * Pattern for algorithms that require an initialization vector.
+     */
+    public static final String ALGS_THAT_REQUIRE_IV_PATTERN = "PBEWITHHMACSHA\\d+ANDAES_.*(?<!-BC)$";
+
+    /**
      * The Jasypt instance.
      */
     private final StandardPBEStringEncryptor jasyptInstance;
@@ -47,7 +52,11 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
         setProviderName(pName);
         val iter = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.ITERATIONS);
         setKeyObtentionIterations(iter);
-        setInitializationVector();
+        val initializationVector = Boolean.parseBoolean(
+                getJasyptParamFromEnv(environment, JasyptEncryptionParameters.INITIALIZATION_VECTOR));
+        if (initializationVector || requiresInitializationVector(alg)) {
+            setInitializationVector();
+        }
     }
 
     /**
@@ -91,6 +100,18 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
      */
     public void setInitializationVector() {
         jasyptInstance.setIvGenerator(new RandomIvGenerator());
+    }
+
+    /**
+     * Return true if the algorithm requires initialization vector.
+     * @param algorithm the algorithm to check
+     * @return true if algorithm requires initialization vector
+     */
+    public boolean requiresInitializationVector(final String algorithm) {
+        if (StringUtils.isNotBlank(algorithm)) {
+            return algorithm.matches(ALGS_THAT_REQUIRE_IV_PATTERN);
+        }
+        return false;
     }
 
     /**
@@ -225,11 +246,11 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
     public enum JasyptEncryptionParameters {
 
         /**
-         * Jasypt algorithm name to use.
+         * Jasypt algorithm name to use. Default is PBEWithMD5AndTripleDES.
          */
         ALGORITHM("cas.standalone.configuration-security.alg", "PBEWithMD5AndTripleDES"),
         /**
-         * Jasypt provider name to use.
+         * Jasypt provider name to use. None for Java, BC for BouncyCastle.
          */
         PROVIDER("cas.standalone.configuration-security.provider", null),
         /**
@@ -237,9 +258,19 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
          */
         ITERATIONS("cas.standalone.configuration-security.iterations", null),
         /**
-         * Jasypt password to use.
+         * Jasypt password to use for encryption and decryption.
          */
-        PASSWORD("cas.standalone.configuration-security.psw", null);
+        PASSWORD("cas.standalone.configuration-security.psw", null),
+        /**
+         * Use (or not) a Jasypt Initialization Vector (IV).
+         * An initialization vector must be enabled with `PBEWithDigestAndAES` algorithms that aren't BouncyCastle.
+         * Enabling an initialization vector will break passwords encrypted without one (e.g. previous versions of CAS).
+         * Toggling this value will also make existing encrypted passwords not work.
+         * Some algorithms require an initialization vector and in those cases it will be used regardless of this setting
+         * since backwards compatibility with existing passwords using those algorithms is not an issue.
+         * The default value is false so as not to break existing encrypted passwords.
+         */
+        INITIALIZATION_VECTOR("cas.standalone.configurationSecurity.initialization-vector", "false");
 
         /**
          * The Name.

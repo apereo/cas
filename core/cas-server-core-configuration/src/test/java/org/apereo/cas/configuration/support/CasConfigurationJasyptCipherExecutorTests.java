@@ -81,19 +81,58 @@ public class CasConfigurationJasyptCipherExecutorTests {
     }
 
     /**
-     * Test all algorithms
+     * This seeks to ensure that a password encrypted in a previous version of CAS can still be decrypted.
+     * Password encrypted with 6.3.0 shell and password of "P@$$w0rd".
      */
     @Test
-    public void verifyAlgorithms() {
+    public void verifyOldEncryptedPasswordStillWorks() {
+        val jasyptTest = new CasConfigurationJasyptCipherExecutor(this.environment);
+        jasyptTest.setAlgorithmForce("PBEWITHHMACSHA512ANDAES_256");
+        assertEquals(jasyptTest.decode("{cas-cipher}GxXRraiiFRMNDS81OAs6eo6qnhfHdfY1LrggFHRhfQo="), "testing");
+    }
+
+    /**
+     * This seeks to ensure that a password encrypted in a previous version of CAS can still be decrypted.
+     * Password encrypted with 6.3.0 shell and password of "P@$$w0rd".
+     */
+    @Test
+    public void verifyEncryptedPasswordWithInitizializationVectorStillWorks() {
+        val jasyptTest = new CasConfigurationJasyptCipherExecutor(this.environment);
+        jasyptTest.setProviderName("BC");
+        jasyptTest.setAlgorithmForce("PBEWITHSHAAND256BITAES-CBC-BC");
+        assertEquals(jasyptTest.decode("{cas-cipher}GxXRraiiFRMNDS81OAs6eo6qnhfHdfY1LrggFHRhfQo="), "testing");
+    }
+
+    /**
+     * Test all algorithms that should work without an initialization vector.
+     */
+    @Test
+    public void verifyAlgorithmsWithoutInitializationVector() {
         val algorithms = (Set<String>) AlgorithmRegistry.getAllPBEAlgorithms();
         for (val algorithm : algorithms) {
-            assertTrue(isAlgorithmFunctional(algorithm));
+            if (!algorithm.matches(CasConfigurationJasyptCipherExecutor.ALGS_THAT_REQUIRE_IV_PATTERN)) {
+                assertTrue(isAlgorithmFunctional(algorithm, false));
+            }
         }
     }
 
-    private boolean isAlgorithmFunctional(final String algorithm) {
+    /**
+     * Test all algorithms with an initialization vector.
+     */
+    @Test
+    public void verifyAlgorithmsWithInitializationVector() {
+        val algorithms = (Set<String>) AlgorithmRegistry.getAllPBEAlgorithms();
+        for (val algorithm : algorithms) {
+            assertTrue(isAlgorithmFunctional(algorithm, true));
+        }
+    }
+
+    private boolean isAlgorithmFunctional(final String algorithm, final boolean useInitializationVector) {
         val jasyptTest = new CasConfigurationJasyptCipherExecutor(this.environment);
         jasyptTest.setAlgorithmForce(algorithm);
+        if (useInitializationVector) {
+            jasyptTest.setInitializationVector();
+        }
         val testValue = "Testing_" + algorithm;
         val value = jasyptTest.encryptValue(testValue);
         val result = jasyptTest.decode(value, ArrayUtils.EMPTY_OBJECT_ARRAY);
