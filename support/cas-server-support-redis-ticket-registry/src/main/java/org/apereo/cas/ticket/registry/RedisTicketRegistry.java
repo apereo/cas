@@ -73,7 +73,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
                 if (predicate.test(result)) {
                     return result;
                 }
-                LOGGER.debug("The condition enforced by the predicate [{}] cannot successfully accept/test the ticket id [{}]", ticketId,
+                LOGGER.trace("The condition enforced by [{}] cannot successfully accept/test the ticket id [{}]", ticketId,
                     predicate.getClass().getSimpleName());
                 return null;
             }
@@ -116,7 +116,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
             LOGGER.debug("Fetched redis key [{}] for ticket [{}]", redisKey, ticket);
 
             val timeout = getTimeout(ticket);
-            this.client.boundValueOps(redisKey).set(encodeTicket, timeout, TimeUnit.SECONDS);
+            client.boundValueOps(redisKey).set(encodeTicket, timeout, TimeUnit.SECONDS);
             return encodeTicket;
         } catch (final Exception e) {
             LOGGER.error("Failed to update [{}]", ticket);

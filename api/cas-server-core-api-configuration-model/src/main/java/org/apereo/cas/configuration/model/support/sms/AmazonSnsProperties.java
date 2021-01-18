@@ -14,7 +14,7 @@ import lombok.experimental.Accessors;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RequiresModule(name = "cas-server-support-sms-clickatell")
+@RequiresModule(name = "cas-server-support-sms-aws-sns")
 @Getter
 @Setter
 @Accessors(chain = true)

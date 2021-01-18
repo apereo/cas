@@ -1,7 +1,5 @@
 <!-- fragment:keep -->
 
-<hr>
-
 #### Password Policy Strategies
 
 Password policy strategy types are outlined below. The strategy evaluates the authentication 

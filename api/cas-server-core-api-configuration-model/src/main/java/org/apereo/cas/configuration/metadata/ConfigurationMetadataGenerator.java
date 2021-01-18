@@ -220,14 +220,7 @@ public class ConfigurationMetadataGenerator {
                     .forEach(member -> {
                         if (member.isEnumDeclaration()) {
                             val enumMem = member.asEnumDeclaration();
-                            val builder = new StringBuilder(StringUtils.defaultString(prop.getDescription()));
-                            enumMem.getEntries()
-                                .stream()
-                                .filter(entry -> entry.getJavadoc().isPresent())
-                                .forEach(entry -> builder.append(entry.getNameAsString())
-                                    .append(':')
-                                    .append(entry.getJavadoc().get().getDescription().toText())
-                                    .append('.'));
+                            val builder = ConfigurationMetadataPropertyCreator.collectJavadocsEnumFields(prop, enumMem);
                             prop.setDescription(builder.toString());
                         }
                         if (member.isClassOrInterfaceDeclaration()) {

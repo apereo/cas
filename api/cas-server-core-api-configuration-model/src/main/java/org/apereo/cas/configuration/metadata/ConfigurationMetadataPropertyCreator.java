@@ -108,7 +108,14 @@ public class ConfigurationMetadataPropertyCreator {
         return prop;
     }
 
-    private static StringBuilder collectJavadocsEnumFields(final ConfigurationMetadataProperty prop, final EnumDeclaration em) {
+    /**
+     * Collect javadocs enum fields.
+     *
+     * @param prop the prop
+     * @param em   the em
+     * @return the string builder
+     */
+    public static StringBuilder collectJavadocsEnumFields(final ConfigurationMetadataProperty prop, final EnumDeclaration em) {
         val builder = new StringBuilder(StringUtils.defaultString(prop.getDescription()));
         builder.append("\nAvailable values:\n");
         em.getEntries()
@@ -117,6 +124,7 @@ public class ConfigurationMetadataPropertyCreator {
             .forEach(entry -> {
                 var text = entry.getJavadoc().get().getDescription().toText();
                 text = StringUtils.appendIfMissing(text, ".");
+                builder.append(' ');
                 builder.append(String.format("{@code %s}", entry.getNameAsString()))
                     .append(':')
                     .append(text);
