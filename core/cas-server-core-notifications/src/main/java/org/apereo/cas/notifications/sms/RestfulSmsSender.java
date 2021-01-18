@@ -1,6 +1,6 @@
 package org.apereo.cas.notifications.sms;
 
-import org.apereo.cas.configuration.model.support.sms.SmsProvidersProperties;
+import org.apereo.cas.configuration.model.support.sms.RestfulSmsProperties;
 import org.apereo.cas.util.HttpUtils;
 
 import lombok.Getter;
@@ -21,7 +21,7 @@ import java.util.HashMap;
 @Getter
 @RequiredArgsConstructor
 public class RestfulSmsSender implements SmsSender {
-    private final SmsProvidersProperties.Rest restProperties;
+    private final RestfulSmsProperties restProperties;
 
     @Override
     public boolean send(final String from, final String to, final String message) {
