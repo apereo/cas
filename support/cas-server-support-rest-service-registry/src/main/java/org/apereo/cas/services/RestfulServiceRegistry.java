@@ -104,7 +104,7 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
                 services.stream()
                     .map(this::invokeServiceRegistryListenerPostLoad)
                     .filter(Objects::nonNull)
-                    .peek(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)));
+                    .forEach(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)));
                 return services;
             }
         } catch (final Exception e) {
