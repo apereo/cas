@@ -3,8 +3,6 @@ package org.apereo.cas.consent;
 import org.apereo.cas.config.CasConsentRestConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -17,7 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.context.annotation.Primary;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -75,14 +73,6 @@ public class RestConsentRepositoryTests extends BaseConsentRepositoryTests {
     @TestConfiguration
     @Lazy(false)
     public static class RestConsentRepositoryTestConfiguration {
-        @Bean
-        @Primary
-        public ObjectMapper objectMapper() {
-            val mapper = new ObjectMapper().findAndRegisterModules();
-            mapper.activateDefaultTyping(mapper.getPolymorphicTypeValidator(),
-                ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
-            return mapper;
-        }
 
         @Bean
         public RestConsentRepositoryStorage restConsentRepositoryStorage() {
@@ -97,7 +87,7 @@ public class RestConsentRepositoryTests extends BaseConsentRepositoryTests {
             @Qualifier("restConsentRepositoryStorage")
             private RestConsentRepositoryStorage storage;
 
-            @GetMapping
+            @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
             public ResponseEntity find(@RequestHeader(value = "principal", required = false) final String principal,
                                        @RequestHeader(value = "service", required = false) final String service) {
                 if (StringUtils.isNotBlank(principal) && StringUtils.isNotBlank(service)) {
@@ -122,7 +112,7 @@ public class RestConsentRepositoryTests extends BaseConsentRepositoryTests {
                 return ResponseEntity.ok(results);
             }
 
-            @PostMapping
+            @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
             public ResponseEntity store(@RequestBody final ConsentDecision decision) {
                 if (storage.getRecords().containsKey(decision.getPrincipal())) {
                     val decisions = storage.getRecords().get(decision.getPrincipal());
@@ -134,7 +124,7 @@ public class RestConsentRepositoryTests extends BaseConsentRepositoryTests {
                 return ResponseEntity.ok().build();
             }
 
-            @DeleteMapping("/{decisionId}")
+            @DeleteMapping(path = "/{decisionId}", produces = MediaType.APPLICATION_JSON_VALUE)
             public ResponseEntity delete(@RequestHeader("principal") final String principal,
                                      @PathVariable final long decisionId) {
                 if (storage.getRecords().containsKey(principal)) {

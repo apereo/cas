@@ -2,17 +2,11 @@ package org.apereo.cas.util.serialization;
 
 import org.apereo.cas.util.DigestUtils;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.PrettyPrinter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -189,7 +183,12 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
      * @return the object mapper
      */
     protected ObjectMapper initializeObjectMapper() {
-        val mapper = new ObjectMapper(getJsonFactory());
+        val mapper = JacksonObjectMapperFactory
+            .builder()
+            .defaultTypingEnabled(isDefaultTypingEnabled())
+            .jsonFactory(getJsonFactory())
+            .build()
+            .toObjectMapper();
         configureObjectMapper(mapper);
         return mapper;
     }
@@ -200,26 +199,17 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
      * @param mapper the mapper
      */
     protected void configureObjectMapper(final ObjectMapper mapper) {
-        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            .configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
-        
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_DEFAULT);
-        mapper.setVisibility(PropertyAccessor.SETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC);
-        mapper.setVisibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC);
-        mapper.setVisibility(PropertyAccessor.IS_GETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC);
-
-        if (isDefaultTypingEnabled()) {
-            mapper.activateDefaultTyping(mapper.getPolymorphicTypeValidator(),
-                ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
-        }
-        mapper.findAndRegisterModules();
     }
 
     protected boolean isDefaultTypingEnabled() {
         return true;
     }
 
+    /**
+     * Gets json factory.
+     *
+     * @return the json factory
+     */
     protected JsonFactory getJsonFactory() {
         return null;
     }
