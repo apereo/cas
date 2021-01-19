@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.core.services;
 
-import org.apereo.cas.configuration.model.BaseRestEndpointProperties;
 import org.apereo.cas.configuration.model.support.aws.AmazonS3ServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.cassandra.serviceregistry.CassandraServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.cosmosdb.CosmosDbServiceRegistryProperties;
@@ -69,7 +68,7 @@ public class ServiceRegistryProperties implements Serializable {
      * Properties pertaining to REST service registry.
      */
     @NestedConfigurationProperty
-    private BaseRestEndpointProperties rest = new BaseRestEndpointProperties();
+    private RestfulServiceRegistryProperties rest = new RestfulServiceRegistryProperties();
 
     /**
      * Properties pertaining to redis service registry.
