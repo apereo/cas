@@ -92,7 +92,7 @@ public abstract class AbstractLdapProperties implements Serializable {
 
     /**
      * You may receive unexpected LDAP failures, when CAS is configured to authenticate
-     * using DIRECT or AUTHENTICATED types and LDAP is locked down to not allow anonymous binds/searches.
+     * using {@code DIRECT} or {@code AUTHENTICATED} types and LDAP is locked down to not allow anonymous binds/searches.
      * Every second attempt with a given LDAP connection from the pool would fail if it was on
      * the same connection as a failed login attempt, and the regular connection validator would
      * similarly fail. When a connection is returned back to a pool,

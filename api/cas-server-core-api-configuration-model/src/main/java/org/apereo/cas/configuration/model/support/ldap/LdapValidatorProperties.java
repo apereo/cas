@@ -26,6 +26,8 @@ public class LdapValidatorProperties implements Serializable {
     private static final long serialVersionUID = 1150417354213235193L;
 
     /**
+     * Determine the LDAP validator type.
+     * 
      * The following LDAP validators can be used to test connection health status:
      * <ul>
      * <li>{@code search}: Validates a connection is healthy by performing a search operation.
