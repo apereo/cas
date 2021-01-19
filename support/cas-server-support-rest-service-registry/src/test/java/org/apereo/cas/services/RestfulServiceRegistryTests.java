@@ -19,8 +19,8 @@ import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 
 import lombok.Getter;
+import lombok.val;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -31,6 +31,8 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -93,29 +95,30 @@ public class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
         public class ServicesController {
             private final InMemoryServiceRegistry serviceRegistry = new InMemoryServiceRegistry(applicationContext);
 
-            @DeleteMapping
-            public Integer findByServiceId(@RequestBody final RegisteredService service) {
+            @DeleteMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+            public ResponseEntity delete(@PathVariable(name = "id") final Long id) {
+                val service = serviceRegistry.findServiceById(id);
                 serviceRegistry.delete(service);
-                return HttpStatus.SC_OK;
+                return ResponseEntity.ok().build();
             }
 
-            @PostMapping
-            public RegisteredService save(@RequestBody final RegisteredService service) {
+            @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+            public ResponseEntity save(@RequestBody final RegisteredService service) {
                 serviceRegistry.save(service);
-                return service;
+                return ResponseEntity.ok(service);
             }
 
-            @GetMapping("/{id}")
-            public RegisteredService findServiceById(@PathVariable(name = "id") final String id) {
+            @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+            public ResponseEntity findServiceById(@PathVariable(name = "id") final String id) {
                 if (NumberUtils.isParsable(id)) {
-                    return serviceRegistry.findServiceById(Long.valueOf(id));
+                    return ResponseEntity.ok(serviceRegistry.findServiceById(Long.parseLong(id)));
                 }
-                return serviceRegistry.findServiceByExactServiceId(id);
+                return ResponseEntity.ok(serviceRegistry.findServiceByExactServiceId(id));
             }
 
-            @GetMapping
-            public RegisteredService[] load() {
-                return serviceRegistry.load().toArray(RegisteredService[]::new);
+            @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+            public ResponseEntity load() {
+                return ResponseEntity.ok(serviceRegistry.load());
             }
         }
     }

@@ -419,7 +419,6 @@ public class HttpUtils {
      * @param url               the url
      * @param basicAuthUsername the basic auth username
      * @param basicAuthPassword the basic auth password
-     * @param entity            the entity
      * @param parameters        the parameters
      * @param headers           the headers
      * @return the http response
@@ -427,29 +426,10 @@ public class HttpUtils {
     public static HttpResponse executeDelete(final String url,
         final String basicAuthUsername,
         final String basicAuthPassword,
-        final String entity,
         final Map<String, Object> parameters,
         final Map<String, Object> headers) {
         return execute(url, HttpMethod.DELETE.name(), basicAuthUsername,
-            basicAuthPassword, parameters, headers, entity, null);
-    }
-
-    /**
-     * Execute delete http response.
-     *
-     * @param url               the url
-     * @param basicAuthUsername the basic auth username
-     * @param basicAuthPassword the basic auth password
-     * @param parameters        the parameters
-     * @param headers           the headers
-     * @return the http response
-     */
-    public static HttpResponse executeDelete(final String url,
-        final String basicAuthUsername,
-        final String basicAuthPassword,
-        final Map<String, Object> parameters,
-        final Map<String, Object> headers) {
-        return executeDelete(url, basicAuthUsername, basicAuthPassword, null, parameters, headers);
+            basicAuthPassword, parameters, headers, null, null);
     }
 
     /**
@@ -463,7 +443,8 @@ public class HttpUtils {
     public static HttpResponse executeDelete(final String url,
         final String basicAuthUsername,
         final String basicAuthPassword) {
-        return executeDelete(url, basicAuthUsername, basicAuthPassword, null, new HashMap<>(0), new HashMap<>(0));
+        return executeDelete(url, basicAuthUsername, basicAuthPassword,
+            new HashMap<>(0), new HashMap<>(0));
     }
 
     /**

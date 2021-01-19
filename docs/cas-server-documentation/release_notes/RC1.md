@@ -152,7 +152,7 @@ decisions for multifactor authentication may also be kept inside a Redis instanc
 - Delegated authentication configuration can allow for a pre-defined callback/redirect URI.
 - Configuration metadata is corrected in a number of cases to make sure `@NestedConfigurationProperty` is properly set on fields.
 - Publishing Maven metadata into the local maven repository is corrected to include all CAS-required repositories.
- 
+- [REST Service Registry](../services/REST-Service-Management.html) has changed its `DELETE` specification, and will use the service numeric identifier as a path variable for expected delete operations. 
 ## Library Upgrades
 
 - Spring Framework

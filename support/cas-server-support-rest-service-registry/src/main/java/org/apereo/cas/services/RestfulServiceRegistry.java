@@ -1,24 +1,29 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.configuration.model.core.services.RestfulServiceRegistryProperties;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
+import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpResponse;
+import org.hjson.JsonValue;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestOperations;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 
-import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * This is {@link RestfulServiceRegistry}.
@@ -28,76 +33,103 @@ import java.util.stream.Stream;
  */
 @Slf4j
 public class RestfulServiceRegistry extends AbstractServiceRegistry {
-    private final transient RestOperations restTemplate;
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true)
+        .build()
+        .toObjectMapper();
 
-    private final String url;
-
-    private final MultiValueMap<String, String> headers;
-
-    private final RegisteredServiceEntityMapper registeredServiceEntityMapper;
+    private final RestfulServiceRegistryProperties properties;
 
     public RestfulServiceRegistry(final ConfigurableApplicationContext applicationContext,
-                                  final RestOperations restTemplate,
-                                  final String url,
-                                  final MultiValueMap<String, String> headers,
                                   final Collection<ServiceRegistryListener> serviceRegistryListeners,
-                                  final RegisteredServiceEntityMapper registeredServiceEntityMapper) {
+                                  final RestfulServiceRegistryProperties properties) {
         super(applicationContext, serviceRegistryListeners);
-        this.restTemplate = restTemplate;
-        this.url = url;
-        this.headers = headers;
-        this.registeredServiceEntityMapper = registeredServiceEntityMapper;
+        this.properties = properties;
+    }
+
+    private static Map<String, Object> getRequestHeaders() {
+        val headers = new HashMap<String, Object>();
+        headers.put("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+        headers.put("Accept", MediaType.APPLICATION_JSON_VALUE);
+        return headers;
     }
 
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
+        HttpResponse response = null;
         try {
             invokeServiceRegistryListenerPreSave(registeredService);
-            val result = registeredServiceEntityMapper.fromRegisteredService(registeredService);
-            val requestEntity = new HttpEntity<>(result, this.headers);
-            val responseEntity = restTemplate.exchange(this.url, HttpMethod.POST, requestEntity, Serializable.class);
-            if (responseEntity.getStatusCode().is2xxSuccessful()) {
-                return registeredServiceEntityMapper.toRegisteredService(responseEntity.getBody());
+            response = HttpUtils.executePost(properties.getUrl(), properties.getBasicAuthUsername(),
+                properties.getBasicAuthPassword(), MAPPER.writeValueAsString(registeredService),
+                Map.of(), getRequestHeaders());
+            if (response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
+                val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+                return MAPPER.readValue(JsonValue.readHjson(result).toString(), RegisteredService.class);
             }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
+        } finally {
+            HttpUtils.close(response);
         }
         return null;
     }
 
     @Override
     public boolean delete(final RegisteredService registeredService) {
-        val result = registeredServiceEntityMapper.fromRegisteredService(registeredService);
-        val responseEntity = restTemplate.exchange(this.url, HttpMethod.DELETE,
-            new HttpEntity<>(result, this.headers), Integer.class);
-        return responseEntity.getStatusCode().is2xxSuccessful();
+        HttpResponse response = null;
+        try {
+            val completeUrl = StringUtils.appendIfMissing(properties.getUrl(), "/")
+                .concat(Long.toString(registeredService.getId()));
+            invokeServiceRegistryListenerPreSave(registeredService);
+            response = HttpUtils.executeDelete(completeUrl, properties.getBasicAuthUsername(),
+                properties.getBasicAuthPassword(), Map.of(), getRequestHeaders());
+            return response.getStatusLine().getStatusCode() == HttpStatus.OK.value();
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        } finally {
+            HttpUtils.close(response);
+        }
+        return false;
     }
 
     @Override
     public Collection<RegisteredService> load() {
-        val responseEntity = restTemplate.exchange(this.url, HttpMethod.GET,
-            new HttpEntity<>(this.headers), Serializable[].class);
-        if (responseEntity.getStatusCode().is2xxSuccessful()) {
-            val results = responseEntity.getBody();
-            if (results != null) {
-                return Stream.of(results)
-                    .map((Function<Serializable, RegisteredService>) registeredServiceEntityMapper::toRegisteredService)
+        HttpResponse response = null;
+        try {
+            response = HttpUtils.executeGet(properties.getUrl(), properties.getBasicAuthUsername(),
+                properties.getBasicAuthPassword(), Map.of(), getRequestHeaders());
+            if (response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
+                val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+                val services = (List<RegisteredService>) MAPPER.readValue(result, List.class);
+                services.stream()
                     .map(this::invokeServiceRegistryListenerPostLoad)
                     .filter(Objects::nonNull)
-                    .peek(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)))
-                    .collect(Collectors.toList());
+                    .peek(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)));
+                return services;
             }
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        } finally {
+            HttpUtils.close(response);
         }
         return new ArrayList<>(0);
     }
 
     @Override
     public RegisteredService findServiceById(final long id) {
-        val completeUrl = StringUtils.appendIfMissing(this.url, "/").concat(Long.toString(id));
-        val responseEntity = restTemplate.exchange(completeUrl, HttpMethod.GET,
-            new HttpEntity<>(id, this.headers), Serializable.class);
-        if (responseEntity.getStatusCode().is2xxSuccessful()) {
-            return registeredServiceEntityMapper.toRegisteredService(responseEntity.getBody());
+        HttpResponse response = null;
+        try {
+            val completeUrl = StringUtils.appendIfMissing(properties.getUrl(), "/").concat(Long.toString(id));
+            response = HttpUtils.executeGet(completeUrl, properties.getBasicAuthUsername(),
+                properties.getBasicAuthPassword(), Map.of(), getRequestHeaders());
+            if (response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
+                val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+                return MAPPER.readValue(result, RegisteredService.class);
+            }
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        } finally {
+            HttpUtils.close(response);
         }
         return null;
     }

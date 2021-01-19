@@ -5,8 +5,8 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.consent.RestfulConsentProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -32,14 +32,10 @@ import java.util.List;
  */
 @RequiredArgsConstructor
 public class RestConsentRepository implements ConsentRepository {
-
-    private static final ObjectMapper MAPPER;
-
-    static {
-        MAPPER = new ObjectMapper().findAndRegisterModules();
-        MAPPER.activateDefaultTyping(MAPPER.getPolymorphicTypeValidator(),
-            ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
-    }
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true)
+        .build()
+        .toObjectMapper();
 
     private static final long serialVersionUID = 6583408864586270206L;
 
