@@ -98,7 +98,13 @@ public class TerminateSessionAction extends AbstractAction {
         return this.eventFactorySupport.event(this, CasWebflowConstants.STATE_ID_WARN);
     }
 
-    private String getTicketGrantingTicket(final RequestContext context) {
+    /**
+     * Retrieve the TGT identifier.
+     *
+     * @param context the action context
+     * @return the TGT identifier
+     */
+    protected String getTicketGrantingTicket(final RequestContext context) {
         val tgtId = WebUtils.getTicketGrantingTicketId(context);
         if (StringUtils.isBlank(tgtId)) {
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
