@@ -1,8 +1,6 @@
-package org.apereo.cas.services.util;
+package org.apereo.cas.services;
 
-import org.apereo.cas.services.AbstractRegisteredService;
-import org.apereo.cas.services.RegexRegisteredService;
-import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.web.CasYamlHttpMessageConverter;
 
 import lombok.val;
 import org.apache.commons.lang3.NotImplementedException;
@@ -12,20 +10,19 @@ import org.springframework.http.HttpInputMessage;
 import org.springframework.http.MediaType;
 import org.springframework.mock.http.MockHttpOutputMessage;
 
-import java.util.Collection;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * This is {@link RegisteredServiceYamlHttpMessageConverterTests}.
+ * This is {@link CasYamlHttpMessageConverterTests}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
  */
 @Tag("RegisteredService")
-public class RegisteredServiceYamlHttpMessageConverterTests {
+public class CasYamlHttpMessageConverterTests {
     private static AbstractRegisteredService getService() {
         val svc = new RegexRegisteredService();
         svc.setServiceId("Testing");
@@ -35,12 +32,9 @@ public class RegisteredServiceYamlHttpMessageConverterTests {
 
     @Test
     public void verifyOperation() throws Exception {
-        val input = new RegisteredServiceYamlHttpMessageConverter<>();
-        assertFalse(input.supports(Collection.class));
-        assertTrue(input.supports(RegisteredService.class));
+        val input = new CasYamlHttpMessageConverter();
         assertThrows(NotImplementedException.class,
-            () -> input.readInternal(RegisteredService.class, mock(HttpInputMessage.class)));
-
+            () -> input.read(RegisteredService.class, mock(HttpInputMessage.class)));
         val outputMessage = new MockHttpOutputMessage();
         input.write(getService(), MediaType.APPLICATION_JSON, outputMessage);
         assertNotNull(outputMessage.getBodyAsString());

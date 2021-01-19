@@ -39,7 +39,6 @@ import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrat
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
-import org.apereo.cas.services.util.RegisteredServiceYamlHttpMessageConverter;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -62,7 +61,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.env.Environment;
-import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 
@@ -141,11 +139,6 @@ public class CasCoreServicesConfiguration {
         val chain = new ChainingServicesManager();
         configurers.values().forEach(c -> chain.registerServiceManager(c.configureServicesManager()));
         return chain;
-    }
-
-    @Bean
-    public HttpMessageConverter yamlHttpMessageConverter() {
-        return new RegisteredServiceYamlHttpMessageConverter();
     }
 
     @Bean

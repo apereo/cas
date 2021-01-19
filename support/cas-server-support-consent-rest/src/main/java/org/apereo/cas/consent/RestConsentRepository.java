@@ -35,13 +35,13 @@ public class RestConsentRepository implements ConsentRepository {
 
     private static final ObjectMapper MAPPER;
 
-    private static final long serialVersionUID = 6583408864586270206L;
-
     static {
         MAPPER = new ObjectMapper().findAndRegisterModules();
         MAPPER.activateDefaultTyping(MAPPER.getPolymorphicTypeValidator(),
             ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
     }
+
+    private static final long serialVersionUID = 6583408864586270206L;
 
     private final RestfulConsentProperties properties;
 
@@ -52,6 +52,7 @@ public class RestConsentRepository implements ConsentRepository {
         try {
             val headers = new HashMap<String, Object>();
             headers.put("Content-Type", MediaType.APPLICATION_JSON);
+            headers.put("Accept", MediaType.APPLICATION_JSON);
             headers.put("principal", principal);
             response = HttpUtils.execute(properties.getUrl(), HttpMethod.GET.name(),
                 properties.getBasicAuthUsername(), properties.getBasicAuthPassword(),
@@ -73,12 +74,13 @@ public class RestConsentRepository implements ConsentRepository {
         try {
             val headers = new HashMap<String, Object>();
             headers.put("Content-Type", MediaType.APPLICATION_JSON);
+            headers.put("Accept", MediaType.APPLICATION_JSON);
             response = HttpUtils.execute(properties.getUrl(), HttpMethod.GET.name(),
                 properties.getBasicAuthUsername(), properties.getBasicAuthPassword(),
                 new HashMap<>(), headers);
             if (HttpStatus.valueOf(response.getStatusLine().getStatusCode()).is2xxSuccessful()) {
                 val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
-                return MAPPER.readValue(JsonValue.readHjson(result).toString(), List.class);
+                return MAPPER.readValue(result, List.class);
             }
         } finally {
             HttpUtils.close(response);
@@ -94,6 +96,7 @@ public class RestConsentRepository implements ConsentRepository {
         try {
             val headers = new HashMap<String, Object>();
             headers.put("Content-Type", MediaType.APPLICATION_JSON);
+            headers.put("Accept", MediaType.APPLICATION_JSON);
             headers.put("service", service.getId());
             headers.put("principal", authentication.getPrincipal().getId());
 
@@ -102,7 +105,7 @@ public class RestConsentRepository implements ConsentRepository {
                 new HashMap<>(), headers);
             if (HttpStatus.valueOf(response.getStatusLine().getStatusCode()).is2xxSuccessful()) {
                 val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
-                return MAPPER.readValue(JsonValue.readHjson(result).toString(), ConsentDecision.class);
+                return MAPPER.readValue(result, ConsentDecision.class);
             }
         } finally {
             HttpUtils.close(response);
@@ -117,6 +120,7 @@ public class RestConsentRepository implements ConsentRepository {
         try {
             val headers = new HashMap<String, Object>();
             headers.put("Content-Type", MediaType.APPLICATION_JSON);
+            headers.put("Accept", MediaType.APPLICATION_JSON);
 
             response = HttpUtils.execute(properties.getUrl(), HttpMethod.POST.name(),
                 properties.getBasicAuthUsername(), properties.getBasicAuthPassword(),
@@ -138,6 +142,7 @@ public class RestConsentRepository implements ConsentRepository {
         try {
             val headers = new HashMap<String, Object>();
             headers.put("Content-Type", MediaType.APPLICATION_JSON);
+            headers.put("Accept", MediaType.APPLICATION_JSON);
             headers.put("principal", principal);
 
             val deleteEndpoint = properties.getUrl().concat('/' + Long.toString(decisionId));

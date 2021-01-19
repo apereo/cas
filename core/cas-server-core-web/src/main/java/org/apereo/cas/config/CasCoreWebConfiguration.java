@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.ServiceFactoryConfigurer;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.web.CasYamlHttpMessageConverter;
 import org.apereo.cas.web.ProtocolEndpointConfigurer;
 import org.apereo.cas.web.SimpleUrlValidatorFactoryBean;
 import org.apereo.cas.web.UrlValidator;
@@ -27,6 +28,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
+import org.springframework.http.converter.HttpMessageConverter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -106,6 +108,11 @@ public class CasCoreWebConfiguration {
         return new SimpleUrlValidatorFactoryBean(allowLocalLogoutUrls, authorityValidationRegEx, authorityValidationRegExCaseSensitive);
     }
 
+    @Bean
+    public HttpMessageConverter yamlHttpMessageConverter() {
+        return new CasYamlHttpMessageConverter();
+    }
+    
     @Bean
     public ProtocolEndpointConfigurer casProtocolEndpointConfigurer() {
         return () -> List.of(

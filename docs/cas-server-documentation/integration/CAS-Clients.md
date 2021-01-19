@@ -39,7 +39,7 @@ their availability and accuracy may vary.
 
 The following programming frameworks have built-in support for CAS:
 
-* [Spring Security](http://static.springsource.org/spring-security/site/)
+* [Spring Security](https://spring.io/projects/spring-security)
 * [Apache Shiro](http://shiro.apache.org/cas.html)
 * [Pac4j](https://github.com/pac4j/pac4j)
 
