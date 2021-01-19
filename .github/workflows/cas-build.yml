@@ -291,7 +291,7 @@ jobs:
           casVersion=$(./gradlew casVersion --no-daemon -q)
           java -jar support/cas-server-support-shell/build/libs/cas-server-support-shell-${casVersion}.jar @ci/tests/shell/cas-shell-script.sh 2>&1 | tee cas-shell.out
           echo "Checking for stack traces in output that would indicate an error"
-          count=$(grep -c cas-server-support-shell cas-shell.out)
+          count=$(grep -c cas-server-support-shell cas-shell.out || true)
           test $count -eq 0
 
 ##########################################################################
