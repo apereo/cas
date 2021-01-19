@@ -1,12 +1,12 @@
 package org.apereo.cas.configuration.model.support.consent;
 
+import org.apereo.cas.configuration.model.BaseRestEndpointProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
-import java.io.Serializable;
 
 /**
  * This is {@link RestfulConsentProperties}.
@@ -18,12 +18,8 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class RestfulConsentProperties implements Serializable {
+@JsonFilter("RestfulConsentProperties")
+public class RestfulConsentProperties extends BaseRestEndpointProperties {
 
     private static final long serialVersionUID = -6909617495470495341L;
-
-    /**
-     * REST endpoint to use to which consent decision records will be submitted.
-     */
-    private String endpoint;
 }

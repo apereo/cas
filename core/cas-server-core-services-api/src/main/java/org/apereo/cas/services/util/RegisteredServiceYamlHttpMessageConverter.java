@@ -29,7 +29,7 @@ public class RegisteredServiceYamlHttpMessageConverter<T> extends AbstractHttpMe
 
     @Override
     protected boolean supports(final Class<?> clazz) {
-        return Collection.class.isAssignableFrom(clazz) || RegisteredService.class.isAssignableFrom(clazz);
+        return RegisteredService.class.isAssignableFrom(clazz);
     }
 
     @Override
@@ -38,7 +38,8 @@ public class RegisteredServiceYamlHttpMessageConverter<T> extends AbstractHttpMe
     }
 
     @Override
-    protected void writeInternal(final T t, final HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException {
+    protected void writeInternal(final T t, final HttpOutputMessage outputMessage)
+        throws IOException, HttpMessageNotWritableException {
         try (val writer = new OutputStreamWriter(outputMessage.getBody(), StandardCharsets.UTF_8)) {
             val serializer = new RegisteredServiceYamlSerializer();
             if (t instanceof Collection) {

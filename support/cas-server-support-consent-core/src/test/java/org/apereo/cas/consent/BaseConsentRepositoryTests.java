@@ -1,17 +1,26 @@
 package org.apereo.cas.consent;
 
-import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasConsentCoreConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
-import org.apereo.cas.config.CasCoreNotificationsConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.web.config.CasCookieConfiguration;
+import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 
 import lombok.Getter;
 import lombok.val;
@@ -96,11 +105,21 @@ public abstract class BaseConsentRepositoryTests {
     @SpringBootConfiguration
     @Import({
         CasConsentCoreConfiguration.class,
-        CasCoreServicesConfiguration.class,
-        CasCoreNotificationsConfiguration.class,
-        CasCoreAuditConfiguration.class,
+        CasCoreUtilConfiguration.class,
         CasCoreHttpConfiguration.class,
-        CasCoreUtilConfiguration.class
+        RefreshAutoConfiguration.class,
+        CasCoreWebConfiguration.class,
+        CasCoreLogoutConfiguration.class,
+        CasCoreWebflowConfiguration.class,
+        CasCookieConfiguration.class,
+        CasCoreMultifactorAuthenticationConfiguration.class,
+        CasMultifactorAuthenticationWebflowConfiguration.class,
+        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+        CasPersonDirectoryTestConfiguration.class,
+        CasCoreAuthenticationPrincipalConfiguration.class,
+        CasCoreAuthenticationPolicyConfiguration.class,
+        CasCoreAuthenticationSupportConfiguration.class,
+        CasCoreAuthenticationHandlersConfiguration.class
     })
     static class SharedTestConfiguration {
     }

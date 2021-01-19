@@ -92,14 +92,14 @@ it via its own private key. Since the attribute is base64 encoded by default, it
 decryption can occur. Here's a sample code snippet:
 
 ```java
-final Map<?, ?> attributes = ...
-final String encodedPsw = (String) attributes.get("credential");
+var attributes = ...
+varencodedPsw = (String) attributes.get("credential");
 
 /* Use the private.key file generated above. */
-final PrivateKey privateKey = ...
-final Cipher cipher = Cipher.getInstance(privateKey.getAlgorithm());
-final byte[] cred64 = decodeBase64(encodedPsw);
+var privateKey = ...
+var cipher = Cipher.getInstance(privateKey.getAlgorithm());
+var cred64 = decodeBase64(encodedPsw);
 cipher.init(Cipher.DECRYPT_MODE, privateKey);
-final byte[] cipherData = cipher.doFinal(cred64);
+var cipherData = cipher.doFinal(cred64);
 return new String(cipherData);
 ```
