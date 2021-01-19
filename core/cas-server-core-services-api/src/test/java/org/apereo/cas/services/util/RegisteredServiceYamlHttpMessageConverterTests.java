@@ -36,7 +36,7 @@ public class RegisteredServiceYamlHttpMessageConverterTests {
     @Test
     public void verifyOperation() throws Exception {
         val input = new RegisteredServiceYamlHttpMessageConverter<>();
-        assertTrue(input.supports(Collection.class));
+        assertFalse(input.supports(Collection.class));
         assertTrue(input.supports(RegisteredService.class));
         assertThrows(NotImplementedException.class,
             () -> input.readInternal(RegisteredService.class, mock(HttpInputMessage.class)));

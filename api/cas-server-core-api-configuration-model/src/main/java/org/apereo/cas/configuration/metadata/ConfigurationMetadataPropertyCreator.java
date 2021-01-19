@@ -117,18 +117,18 @@ public class ConfigurationMetadataPropertyCreator {
      */
     public static StringBuilder collectJavadocsEnumFields(final ConfigurationMetadataProperty prop, final EnumDeclaration em) {
         val builder = new StringBuilder(StringUtils.defaultString(prop.getDescription()));
-        builder.append("\nAvailable values:\n");
+        builder.append("\nAvailable values are as follows:\n");
+        builder.append("<ul>");
         em.getEntries()
             .stream()
             .filter(entry -> entry.getJavadoc().isPresent())
             .forEach(entry -> {
                 var text = entry.getJavadoc().get().getDescription().toText();
                 text = StringUtils.appendIfMissing(text, ".");
-                builder.append(' ');
-                builder.append(String.format("{@code %s}", entry.getNameAsString()))
-                    .append(':')
-                    .append(text);
+                val member = String.format("<li>{@code %s}: %s</li>", entry.getNameAsString(), text);
+                builder.append(member);
             });
+        builder.append("</ul>");
         return builder;
     }
 

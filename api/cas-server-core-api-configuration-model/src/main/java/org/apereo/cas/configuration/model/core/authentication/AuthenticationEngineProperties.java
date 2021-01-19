@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 
@@ -26,11 +27,13 @@ public class AuthenticationEngineProperties implements Serializable {
     /**
      * Groovy script to handle the authentication pre-processor.
      */
+    @NestedConfigurationProperty
     private GroovyAuthenticationEngineProcessorProperties groovyPreProcessor = new GroovyAuthenticationEngineProcessorProperties();
 
     /**
      * Groovy script to handle the authentication post-processor.
      */
+    @NestedConfigurationProperty
     private GroovyAuthenticationEngineProcessorProperties groovyPostProcessor = new GroovyAuthenticationEngineProcessorProperties();
 
 }

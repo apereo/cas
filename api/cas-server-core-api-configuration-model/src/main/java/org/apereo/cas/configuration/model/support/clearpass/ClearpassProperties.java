@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.clearpass;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
@@ -30,6 +31,7 @@ public class ClearpassProperties implements Serializable {
     /**
      * Enable clearpass and allow CAS to cache credentials.
      */
+    @RequiredProperty
     private boolean cacheCredential;
 
     /**

@@ -2,24 +2,26 @@ package org.apereo.cas.consent;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.model.support.consent.RestfulConsentProperties;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.HttpUtils;
 
-import lombok.Getter;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
+import lombok.SneakyThrows;
 import lombok.val;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpResponse;
+import org.hjson.JsonValue;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.client.RestTemplate;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -28,91 +30,124 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
-@ToString
-@Getter
 @RequiredArgsConstructor
 public class RestConsentRepository implements ConsentRepository {
 
+    private static final ObjectMapper MAPPER;
+
     private static final long serialVersionUID = 6583408864586270206L;
 
-    private final transient RestTemplate restTemplate;
+    static {
+        MAPPER = new ObjectMapper().findAndRegisterModules();
+        MAPPER.activateDefaultTyping(MAPPER.getPolymorphicTypeValidator(),
+            ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
+    }
 
-    private final String endpoint;
+    private final RestfulConsentProperties properties;
 
     @Override
+    @SneakyThrows
     public Collection<? extends ConsentDecision> findConsentDecisions(final String principal) {
-        val headers = new HttpHeaders();
-        headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
-        headers.put("principal", CollectionUtils.wrap(principal));
-        val entity = new HttpEntity<>(headers);
-        val result = restTemplate.exchange(this.endpoint, HttpMethod.GET, entity, List.class);
-        if (result.getStatusCodeValue() == HttpStatus.OK.value()) {
-            return result.getBody();
+        HttpResponse response = null;
+        try {
+            val headers = new HashMap<String, Object>();
+            headers.put("Content-Type", MediaType.APPLICATION_JSON);
+            headers.put("principal", principal);
+            response = HttpUtils.execute(properties.getUrl(), HttpMethod.GET.name(),
+                properties.getBasicAuthUsername(), properties.getBasicAuthPassword(),
+                new HashMap<>(), headers);
+            if (HttpStatus.valueOf(response.getStatusLine().getStatusCode()).is2xxSuccessful()) {
+                val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+                return MAPPER.readValue(JsonValue.readHjson(result).toString(), List.class);
+            }
+        } finally {
+            HttpUtils.close(response);
         }
         return new ArrayList<>(0);
     }
 
     @Override
+    @SneakyThrows
     public Collection<? extends ConsentDecision> findConsentDecisions() {
-        val headers = new HttpHeaders();
-        headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
-        val entity = new HttpEntity<>(headers);
-        val result = restTemplate.exchange(this.endpoint, HttpMethod.GET, entity, List.class);
-        if (result.getStatusCodeValue() == HttpStatus.OK.value()) {
-            return result.getBody();
+        HttpResponse response = null;
+        try {
+            val headers = new HashMap<String, Object>();
+            headers.put("Content-Type", MediaType.APPLICATION_JSON);
+            response = HttpUtils.execute(properties.getUrl(), HttpMethod.GET.name(),
+                properties.getBasicAuthUsername(), properties.getBasicAuthPassword(),
+                new HashMap<>(), headers);
+            if (HttpStatus.valueOf(response.getStatusLine().getStatusCode()).is2xxSuccessful()) {
+                val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+                return MAPPER.readValue(JsonValue.readHjson(result).toString(), List.class);
+            }
+        } finally {
+            HttpUtils.close(response);
         }
         return new ArrayList<>(0);
     }
 
     @Override
+    @SneakyThrows
     public ConsentDecision findConsentDecision(final Service service, final RegisteredService registeredService,
                                                final Authentication authentication) {
+        HttpResponse response = null;
         try {
-            val headers = new HttpHeaders();
-            headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
-            headers.put("service", CollectionUtils.wrap(service.getId()));
-            headers.put("principal", CollectionUtils.wrap(authentication.getPrincipal().getId()));
-            val entity = new HttpEntity<>(headers);
-            val result = restTemplate.exchange(this.endpoint, HttpMethod.GET, entity, ConsentDecision.class);
-            if (result.getStatusCodeValue() == HttpStatus.OK.value()) {
-                return result.getBody();
+            val headers = new HashMap<String, Object>();
+            headers.put("Content-Type", MediaType.APPLICATION_JSON);
+            headers.put("service", service.getId());
+            headers.put("principal", authentication.getPrincipal().getId());
+
+            response = HttpUtils.execute(properties.getUrl(), HttpMethod.GET.name(),
+                properties.getBasicAuthUsername(), properties.getBasicAuthPassword(),
+                new HashMap<>(), headers);
+            if (HttpStatus.valueOf(response.getStatusLine().getStatusCode()).is2xxSuccessful()) {
+                val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+                return MAPPER.readValue(JsonValue.readHjson(result).toString(), ConsentDecision.class);
             }
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
+        } finally {
+            HttpUtils.close(response);
         }
         return null;
     }
 
     @Override
+    @SneakyThrows
     public ConsentDecision storeConsentDecision(final ConsentDecision decision) {
+        HttpResponse response = null;
         try {
-            val headers = new HttpHeaders();
-            headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
-            val entity = new HttpEntity<>(decision, headers);
-            val result = restTemplate.exchange(this.endpoint, HttpMethod.POST, entity, ConsentDecision.class);
-            if (result.getStatusCodeValue() == HttpStatus.OK.value()) {
+            val headers = new HashMap<String, Object>();
+            headers.put("Content-Type", MediaType.APPLICATION_JSON);
+
+            response = HttpUtils.execute(properties.getUrl(), HttpMethod.POST.name(),
+                properties.getBasicAuthUsername(), properties.getBasicAuthPassword(),
+                headers, MAPPER.writeValueAsString(decision));
+            if (HttpStatus.valueOf(response.getStatusLine().getStatusCode()).is2xxSuccessful()) {
                 return decision;
             }
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
+        } finally {
+            HttpUtils.close(response);
         }
         return null;
     }
 
     @Override
+    @SneakyThrows
     public boolean deleteConsentDecision(final long decisionId, final String principal) {
+
+        HttpResponse response = null;
         try {
-            val headers = new HttpHeaders();
-            headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
-            headers.put("principal", CollectionUtils.wrap(principal));
-            val entity = new HttpEntity<>(headers);
-            val deleteEndpoint = this.endpoint.concat('/' + Long.toString(decisionId));
-            val result = restTemplate.exchange(deleteEndpoint, HttpMethod.DELETE, entity, Boolean.class);
-            return result.getStatusCodeValue() == HttpStatus.OK.value();
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
+            val headers = new HashMap<String, Object>();
+            headers.put("Content-Type", MediaType.APPLICATION_JSON);
+            headers.put("principal", principal);
+
+            val deleteEndpoint = properties.getUrl().concat('/' + Long.toString(decisionId));
+            response = HttpUtils.execute(deleteEndpoint,
+                HttpMethod.DELETE.name(),
+                properties.getBasicAuthUsername(), properties.getBasicAuthPassword(),
+                new HashMap<>(), headers);
+            return HttpStatus.valueOf(response.getStatusLine().getStatusCode()).is2xxSuccessful();
+        } finally {
+            HttpUtils.close(response);
         }
-        return false;
     }
 }
