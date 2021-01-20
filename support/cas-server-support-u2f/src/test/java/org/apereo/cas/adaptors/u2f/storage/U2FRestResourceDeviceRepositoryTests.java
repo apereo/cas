@@ -22,6 +22,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -101,23 +102,23 @@ public class U2FRestResourceDeviceRepositoryTests extends AbstractU2FDeviceRepos
         @RequestMapping("/")
         public static class DeviceRespositoryController {
 
-            @DeleteMapping
+            @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE)
             public void removeAll() {
                 DEVICES.clear();
             }
 
-            @PostMapping
+            @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
             public void writeDevicesBackToResource(final ArrayList<U2FDeviceRegistration> devices) {
                 DEVICES.addAll(devices);
             }
 
-            @DeleteMapping("/{id}")
+            @DeleteMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
             public void deleteRegisteredDevice(@PathVariable(name = "id") final String id) {
                 DEVICES.removeIf(d -> String.valueOf(d.getId()).equals(id));
             }
 
             @SneakyThrows
-            @GetMapping
+            @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
             public Map<String, List<U2FDeviceRegistration>> readDevicesFromResource() {
                 val results = new HashMap<String, List<U2FDeviceRegistration>>();
                 results.put(BaseResourceU2FDeviceRepository.MAP_KEY_DEVICES, DEVICES);
