@@ -29,7 +29,7 @@ public class CasEmbeddedApacheTomcatBasicAuthenticationProperties implements Ser
     private static final long serialVersionUID = 1164446071136700282L;
 
     /**
-     * Enable the SSL valve for apache tomcat.
+     * Enable Basic authentication for Tomcat.
      */
     @RequiredProperty
     private boolean enabled;
