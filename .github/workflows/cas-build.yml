@@ -852,7 +852,9 @@ jobs:
           - source-selection-login
           - custom-fields-login
           - forgot-username
+          - forgot-username-recaptcha
           - forgot-password
+          - forgot-password-recaptcha
           - attribute-consent
           - u2f-register
           - u2f-login
