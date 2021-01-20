@@ -18,7 +18,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casproperties.html properties="cas.authn.cognito"  %}
 
-When you create the *app client* entry in the Amazon Cognito management console, make sure the app is able to support the `ADMIN_NO_SRP_AUTH` authentication flow and it is *NOT* assigned a secret key.
+When you create the *app client* entry in the Amazon Cognito management console, ~~make sure the app is able to support the `ADMIN_NO_SRP_AUTH` authentication flow~~ and it is *NOT* assigned a secret key.
 
 ## Troubleshooting
 
