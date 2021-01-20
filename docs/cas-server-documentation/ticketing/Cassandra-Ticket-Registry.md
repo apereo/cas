@@ -29,5 +29,5 @@ To enable additional logging, configure the log4j configuration file to add the 
 
 ## Configuration
 
-{% include casproperties.html modules="cas-server-support-cassandra-ticket-registry" %}
+{% include casproperties.html properties="cas.ticket.registry.cassandra" %}
 

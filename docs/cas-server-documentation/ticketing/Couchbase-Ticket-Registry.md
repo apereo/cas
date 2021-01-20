@@ -18,7 +18,7 @@ registry is to leverage the capability of Couchbase server to provide high avail
 
 ## Configuration
 
-{% include casproperties.html modules="cas-server-support-couchbase-ticket-registry" %}
+{% include casproperties.html properties="cas.ticket.registry.couchbase" %}
 
 The Couchbase integration currently assumes that the ticket registries are stored
 in their own buckets. You may optionally set passwords for the buckets and optionally configure

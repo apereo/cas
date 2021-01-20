@@ -22,7 +22,7 @@ Support is enabled by adding the following module into the overlay:
 
 ## Configuration
 
-{% include casproperties.html modules="cas-server-support-jpa-ticket-registry" %}
+{% include casproperties.html properties="cas.ticket.registry.jpa" %}
 
 A background *cleaner* process is also automatically scheduled to scan the chosen 
 database periodically and remove expired records based on configured threshold parameters.

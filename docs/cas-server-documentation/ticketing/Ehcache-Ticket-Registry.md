@@ -40,7 +40,7 @@ Running a Terracotta cluster on Kubernetes can be done easily using the Terracot
 
 #### Configuration
 
-{% include casproperties.html modules="cas-server-support-ehcache3-ticket-registry" %}
+{% include casproperties.html properties="cas.ticket.registry.ehcache3" %}
 
 ### Eviction Policy
 
@@ -78,7 +78,7 @@ replication with Ehcache, [see this resource](https://www.ehcache.org/documentat
 
 #### Configuration
 
-{% include casproperties.html modules="cas-server-support-ehcache-ticket-registry" %}
+{% include casproperties.html properties="cas.ticket.registry.ehcache" %}
 
 The Ehcache configuration for `ehcache-replicated.xml` mentioned in the config follows. 
 Note that `${ehcache.otherServer}` would be replaced by a system property: `-Dehcache.otherserver=cas2`.

@@ -29,7 +29,7 @@ composed of two or more nodes. To learn more about TLS replication with Ignite,
 
 ## Configuration
 
-{% include casproperties.html modules="cas-server-support-ignite-ticket-registry" %}
+{% include casproperties.html properties="cas.ticket.registry.ignite" %}
 
 ## Troubleshooting
 

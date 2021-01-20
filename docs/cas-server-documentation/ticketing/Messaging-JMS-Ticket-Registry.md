@@ -26,7 +26,7 @@ identifier in order to avoid endless looping behavior and recursive needless inb
 
 ## Configuration
 
-{% include casproperties.html modules="cas-server-support-jms-ticket-registry" %}
+{% include casproperties.html properties="cas.ticket.registry.jms" %}
 
 ## ActiveMQ
 

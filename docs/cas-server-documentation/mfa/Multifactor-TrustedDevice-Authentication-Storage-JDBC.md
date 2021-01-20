@@ -16,4 +16,4 @@ Support is provided via the following module:
 
 To learn how to configure database drivers, [please see this guide](../installation/JDBC-Drivers.html).
 
-{% include casproperties.html modules="cas-server-support-trusted-mfa-jdbc" %}
+{% include casproperties.html properties="cas.authn.mfa.trusted.jpa" %}
