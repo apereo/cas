@@ -56,14 +56,24 @@ public class JdbcPrincipalAttributesProperties extends AbstractJpaProperties {
     /**
      * When constructing the final person object from the attribute repository,
      * indicate how the username should be canonicalized.
+     * Accepted values are:
+     * <ul>
+     * <li>{@code UPPER}: Transform the final person id into uppercase characters.</li>
+     * <li>{@code LOWER}: Transform the final person id into lowercase characters.</li>
+     * <li>{@code NONE}: Do nothing.</li>
+     * </ul>
      */
-    private CaseCanonicalizationMode caseCanonicalization = CaseCanonicalizationMode.NONE;
+    private String caseCanonicalization = CaseCanonicalizationMode.NONE.name();
 
     /**
      * Indicates how multiple attributes in a query should be concatenated together.
-     * The other option is OR.
+     * Accepted values are:
+     * * <ul>
+     * <li>{@code AND}: Concatenate attributes in the query using an AND-clause.</li>
+     * <li>{@code OR}: Concatenate attributes in the query using an OR-clause.</li>
+     * </ul>
      */
-    private QueryType queryType = QueryType.AND;
+    private String queryType = QueryType.AND.name();
 
     /**
      * Used only when there is a mapping of many rows to one user.
