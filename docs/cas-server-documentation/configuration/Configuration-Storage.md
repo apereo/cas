@@ -18,11 +18,11 @@ This section outlines strategies that can be used to store CAS configuration and
 
 This is the default configuration mode which indicates that CAS does NOT require connections
 to an external configuration server and will run in an embedded standalone mode.
-
+  
+{% include casproperties.html properties="cas.standalone." excludes="configuration-security %}
 ### By Directory
 
-CAS by default will attempt to locate settings and properties inside a given directory indicated
-under the setting name `cas.standalone.configuration-directory` and otherwise falls back to using:
+CAS by default will attempt to locate settings and properties inside a given directory and otherwise falls back to using:
 
 1. `/etc/cas/config`
 2. `/opt/cas/config`
@@ -49,8 +49,7 @@ cas.common.setting="value"
 
 ### By File
 
-There also exists a `cas.standalone.configuration-file` which can be 
-used to directly feed a collection of properties
+You can also use a dedicated configuration file to directly feed a collection of properties
 to CAS in form of a file or classpath resource. This is specially useful in cases 
 where a bare CAS server is deployed in the cloud without
 the extra ceremony of a configuration server or an external directory for 
