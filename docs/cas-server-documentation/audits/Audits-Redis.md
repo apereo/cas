@@ -11,5 +11,5 @@ If you intend to use a Redis database for auditing functionality, enable the fol
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-audit-redis" %}
 
-{% include casproperties.html modules="cas-server-support-audit-redis" %}
+{% include casproperties.html properties="cas.audit.redis" %}
 

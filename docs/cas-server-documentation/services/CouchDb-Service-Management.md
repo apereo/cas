@@ -18,7 +18,7 @@ server to provide high availability to CAS across multiple data centers.
 
 ## Configuration
 
-{% include casproperties.html modules="cas-server-support-couchdb-service-registry" %}
+{% include casproperties.html properties="cas.service-registry.couch-db" %}
 
 ## Auto Initialization
 

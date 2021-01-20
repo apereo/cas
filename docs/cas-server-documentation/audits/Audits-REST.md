@@ -14,5 +14,5 @@ this feature, enable the following module in your configuration:
 
 The body of the HTTP request is a JSON representation of the audit record. 
 
-{% include casproperties.html modules="cas-server-support-audit-rest" %}
+{% include casproperties.html properties="cas.audit.rest" %}
 

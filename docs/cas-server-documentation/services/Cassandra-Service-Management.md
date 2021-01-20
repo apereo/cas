@@ -18,7 +18,7 @@ Support is enabled by adding the following module into the overlay:
 
 ## Configuration
 
-{% include casproperties.html modules="cas.service-registry.cassandra" %}
+{% include casproperties.html properties="cas.service-registry.cassandra" %}
 
 ## Troubleshooting
 

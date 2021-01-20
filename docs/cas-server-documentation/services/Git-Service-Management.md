@@ -16,7 +16,7 @@ Support is enabled by adding the following module into the overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-git-service-registry" %}
 
-{% include casproperties.html modules="cas.service-registry.git" %}
+{% include casproperties.html properties="cas.service-registry.git" %}
 
 <div class="alert alert-warning"><strong>No Interference!</strong><p>
 Be careful to not manually modify the state of the git repository directory that is cloned on the local server. By doing so, you risk 

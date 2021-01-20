@@ -243,7 +243,7 @@ Support is enabled by including the following module in the WAR Overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-consent-jdbc" %}
 
-{% include casproperties.html modules="cas-server-support-consent-jdbc" %}
+{% include casproperties.html properties="cas.consent.jdbc" %}
 
 ### MongoDb
 
@@ -251,7 +251,7 @@ Support is enabled by including the following module in the WAR Overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-consent-mongo" %}
 
-{% include casproperties.html modules="cas-server-support-consent-mongo" %}
+{% include casproperties.html properties="cas.consent.mongo" %}
 
 ### Redis
 
@@ -259,7 +259,7 @@ Support is enabled by including the following module in the WAR Overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-consent-redis" %}
 
-{% include casproperties.html modules="cas-server-support-consent-redis" %}
+{% include casproperties.html properties="cas.consent.redis" %}
 
 ### CouchDb
 
@@ -267,7 +267,7 @@ Support is enabled by including the following module in the WAR Overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-consent-couchdb" %}
 
-{% include casproperties.html modules="cas-server-support-consent-couchdb" %}
+{% include casproperties.html properties="cas.consent.couch-db" %}
 
 ### REST
 
@@ -275,7 +275,7 @@ Support is enabled by including the following module in the WAR Overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-consent-rest" %}
 
-{% include casproperties.html modules="cas-server-support-consent-rest" %}
+{% include casproperties.html properties="cas.consent.rest" %}
 
 Endpoints must be designed to accept/process `application/json`.
 
@@ -300,7 +300,7 @@ Support is enabled by including the following module in the WAR Overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-consent-ldap" %}
 
-{% include casproperties.html modules="cas-server-support-consent-ldap" %}
+{% include casproperties.html properties="cas.consent.ldap" %}
 
 
 ### Custom

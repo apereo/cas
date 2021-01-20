@@ -84,17 +84,17 @@ public abstract class BaseAmazonWebServicesProperties implements Serializable {
     private boolean useReaper;
 
     /**
-     *  Optionally specifies the proxy host to connect through.
+     * Optionally specifies the proxy host to connect through.
      */
     private String proxyHost;
 
     /**
-     *  Optionally specifies the proxy password to connect through.
+     * Optionally specifies the proxy password to connect through.
      */
     private String proxyPassword;
 
     /**
-     *  Optionally specifies the proxy username to connect through.
+     * Optionally specifies the proxy username to connect through.
      */
     private String proxyUsername;
 

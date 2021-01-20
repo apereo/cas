@@ -17,7 +17,7 @@ Couchbase integration is enabled by including the following dependency in the WA
 
 ## Configuration
 
-{% include casproperties.html modules="cas-server-support-couchbase-service-registry" %}
+{% include casproperties.html properties="cas.service-registry.couchbase" %}
 
 The Couchbase integration currently assumes that the service registries are stored
 in their own buckets. Optionally set passwords for the buckets, optionally setup
