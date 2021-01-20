@@ -62,8 +62,8 @@ public class JasyptEncryptPropertyCommand {
         }
         cipher.setProviderName(provider);
         cipher.setKeyObtentionIterations(iterations);
-        if (initVector || cipher.requiresInitializationVector(alg)) {
-            cipher.setInitializationVector();
+        if (initVector || cipher.isVectorInitializationRequiredFor(alg)) {
+            cipher.configureInitializationVector();
         }
         val encrypted = cipher.encryptValue(value);
         LOGGER.info("==== Encrypted Value ====\n[{}]", encrypted);

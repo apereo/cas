@@ -42,4 +42,16 @@ public class StandaloneConfigurationSecurityProperties implements Serializable {
      * Secret key/password to use when deciphering settings.
      */
     private String psw;
+
+    /**
+     * An initialization vector is required for {@code PBEWithDigestAndAES} algorithms that aren't BouncyCastle.
+     * Enabling an initialization vector will break passwords encrypted without one (e.g. encrypted with version <= 6.3).
+     * Toggling this value will make pre-existing non-{@code PBEWithDigestAndAES} encrypted passwords not work.
+     * For non-BouncyCastle {@code PBEWithDigestAndAES} algorithms that require an initialization vector, one will be used
+     * regardless of this setting since backwards compatibility with existing passwords using those algorithms is not
+     * an issue (since they didn't work in previous CAS versions).
+     * The default value is false so as not to break existing encrypted passwords.
+     * In general the use of an initialization vector will increase the encrypted text's length.
+     */
+    private Boolean initializationVector;
 }

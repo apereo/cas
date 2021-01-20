@@ -54,8 +54,8 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
         setKeyObtentionIterations(iter);
         val initializationVector = Boolean.parseBoolean(
                 getJasyptParamFromEnv(environment, JasyptEncryptionParameters.INITIALIZATION_VECTOR));
-        if (initializationVector || requiresInitializationVector(alg)) {
-            setInitializationVector();
+        if (initializationVector || isVectorInitializationRequiredFor(alg)) {
+            configureInitializationVector();
         }
     }
 
@@ -95,10 +95,10 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
     }
 
     /**
-     * {@code PBEWithDigestAndAES} algorithms (from the JCE Provider of JAVA 8) are supported.
-     * They require an initialization vector (IV) parameter.
+     * {@code PBEWithDigestAndAES} algorithms (from the JCE Provider of JAVA 8) require an initialization vector.
+     * Other algorithms may also use an initialization vector and it will increase the encrypted text's length.
      */
-    public void setInitializationVector() {
+    public void configureInitializationVector() {
         jasyptInstance.setIvGenerator(new RandomIvGenerator());
     }
 
@@ -107,7 +107,7 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
      * @param algorithm the algorithm to check
      * @return true if algorithm requires initialization vector
      */
-    public boolean requiresInitializationVector(final String algorithm) {
+    public boolean isVectorInitializationRequiredFor(final String algorithm) {
         if (StringUtils.isNotBlank(algorithm)) {
             return algorithm.matches(ALGS_THAT_REQUIRE_IV_PATTERN);
         }
@@ -262,15 +262,9 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
          */
         PASSWORD("cas.standalone.configuration-security.psw", null),
         /**
-         * Use (or not) a Jasypt Initialization Vector (IV).
-         * An initialization vector must be enabled with `PBEWithDigestAndAES` algorithms that aren't BouncyCastle.
-         * Enabling an initialization vector will break passwords encrypted without one (e.g. previous versions of CAS).
-         * Toggling this value will also make existing encrypted passwords not work.
-         * Some algorithms require an initialization vector and in those cases it will be used regardless of this setting
-         * since backwards compatibility with existing passwords using those algorithms is not an issue.
-         * The default value is false so as not to break existing encrypted passwords.
+         * Use (or not) a Jasypt Initialization Vector.
          */
-        INITIALIZATION_VECTOR("cas.standalone.configurationSecurity.initialization-vector", "false");
+        INITIALIZATION_VECTOR("cas.standalone.configuration-security.initialization-vector", "false");
 
         /**
          * The Name.

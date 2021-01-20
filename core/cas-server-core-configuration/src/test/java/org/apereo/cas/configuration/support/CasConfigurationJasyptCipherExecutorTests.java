@@ -100,7 +100,7 @@ public class CasConfigurationJasyptCipherExecutorTests {
         val jasyptTest = new CasConfigurationJasyptCipherExecutor(this.environment);
         jasyptTest.setProviderName("BC");
         jasyptTest.setAlgorithmForce("PBEWITHSHAAND256BITAES-CBC-BC");
-        jasyptTest.setInitializationVector();
+        jasyptTest.configureInitializationVector();
         assertEquals("testing", jasyptTest.decode("{cas-cipher}88HKpXCD888/ZP7hMAg7VdxljZD3fho5r5V7c15kPXovYCk4cBdpcxfd5vgcxTit"));
     }
 
@@ -132,7 +132,7 @@ public class CasConfigurationJasyptCipherExecutorTests {
         val jasyptTest = new CasConfigurationJasyptCipherExecutor(this.environment);
         jasyptTest.setAlgorithmForce(algorithm);
         if (useInitializationVector) {
-            jasyptTest.setInitializationVector();
+            jasyptTest.configureInitializationVector();
         }
         val testValue = "Testing_" + algorithm;
         val value = jasyptTest.encryptValue(testValue);

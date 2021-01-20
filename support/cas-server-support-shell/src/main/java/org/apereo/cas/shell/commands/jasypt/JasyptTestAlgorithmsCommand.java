@@ -48,8 +48,8 @@ public class JasyptTestAlgorithmsCommand {
                 cipher.setPassword(password);
                 cipher.setKeyObtentionIterations("1");
                 cipher.setProviderName(provider);
-                if (cipher.requiresInitializationVector(algorithmStr)) {
-                    cipher.setInitializationVector();
+                if (cipher.isVectorInitializationRequiredFor(algorithmStr)) {
+                    cipher.configureInitializationVector();
                 }
                 try {
                     var encryptedValue = StringUtils.EMPTY;
