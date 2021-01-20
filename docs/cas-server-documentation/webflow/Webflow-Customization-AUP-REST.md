@@ -27,4 +27,4 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-aup-rest" %}
 
-{% include casproperties.html modules="cas-server-support-aup-rest" %}
+{% include casproperties.html properties="cas.acceptable-usage-policy.rest" %}

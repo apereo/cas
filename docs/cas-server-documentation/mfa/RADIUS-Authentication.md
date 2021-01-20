@@ -14,7 +14,7 @@ RADIUS support is enabled by only including the following dependency in the over
 
 ## Configuration
 
-{% include casproperties.html modules="cas-server-support-radius" properties="cas.authn.radius" %}
+{% include casproperties.html properties="cas.authn.radius" %}
 
 You may also need to declare the following repository in
 your CAS overlay to be able to resolve dependencies:

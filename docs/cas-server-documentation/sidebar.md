@@ -264,7 +264,9 @@ layout: null
             *   [MongoDb](/cas/{{ version }}/mfa/Multifactor-TrustedDevice-Authentication-Storage-MongoDb.html)
             *   [Redis](/cas/{{ version }}/mfa/Multifactor-TrustedDevice-Authentication-Storage-Redis.html)
             *   [REST](/cas/{{ version }}/mfa/Multifactor-TrustedDevice-Authentication-Storage-REST.html)
-    *   [Adaptive](/cas/{{ version }}/mfa/Configuring-Adaptive-Authentication.html)
+    *   [Adaptive](#adaptiveauthn)
+        *   [Overview]/cas/{{ version }}/mfa/Configuring-Adaptive-Authentication.html)
+        *   [GeoTracking]/cas/{{ version }}/authentication/GeoTracking-Authentication-Requests.html)
     
 *   [SSO & SLO](#ssoandslo) 
     *   [SSO Session](/cas/{{ version }}/authentication/Configuring-SSO.html)

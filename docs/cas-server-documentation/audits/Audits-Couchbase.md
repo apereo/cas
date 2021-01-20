@@ -11,4 +11,4 @@ If you intend to use a Couchbase database for auditing functionality, enable the
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-audit-couchbase" %}
 
-{% include casproperties.html modules="cas-server-support-audit-couchbase" %}
+{% include casproperties.html properties="cas.audit.couchbase" %}
