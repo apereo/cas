@@ -26,6 +26,12 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
     public static final String ENCRYPTED_VALUE_PREFIX = "{cas-cipher}";
 
     /**
+     * Pattern for algorithms that require an initialization vector.
+     * Regex matches all PBEWITHHMACSHA###ANDAES algorithms that aren't BouncyCastle.
+     */
+    public static final String ALGS_THAT_REQUIRE_IV_PATTERN = "PBEWITHHMACSHA\\d+ANDAES_.*(?<!-BC)$";
+
+    /**
      * The Jasypt instance.
      */
     private final StandardPBEStringEncryptor jasyptInstance;
@@ -47,7 +53,11 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
         setProviderName(pName);
         val iter = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.ITERATIONS);
         setKeyObtentionIterations(iter);
-        setInitializationVector();
+        val initializationVector = Boolean.parseBoolean(
+                getJasyptParamFromEnv(environment, JasyptEncryptionParameters.INITIALIZATION_VECTOR));
+        if (initializationVector || isVectorInitializationRequiredFor(alg)) {
+            configureInitializationVector();
+        }
     }
 
     /**
@@ -86,11 +96,23 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
     }
 
     /**
-     * {@code PBEWithDigestAndAES} algorithms (from the JCE Provider of JAVA 8) are supported.
-     * They require an initialization vector (IV) parameter.
+     * {@code PBEWithDigestAndAES} algorithms (from the JCE Provider of JAVA 8) require an initialization vector.
+     * Other algorithms may also use an initialization vector and it will increase the encrypted text's length.
      */
-    public void setInitializationVector() {
+    public void configureInitializationVector() {
         jasyptInstance.setIvGenerator(new RandomIvGenerator());
+    }
+
+    /**
+     * Return true if the algorithm requires initialization vector.
+     * @param algorithm the algorithm to check
+     * @return true if algorithm requires initialization vector
+     */
+    public boolean isVectorInitializationRequiredFor(final String algorithm) {
+        if (StringUtils.isNotBlank(algorithm)) {
+            return algorithm.matches(ALGS_THAT_REQUIRE_IV_PATTERN);
+        }
+        return false;
     }
 
     /**
@@ -229,7 +251,7 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
          */
         ALGORITHM("cas.standalone.configuration-security.alg", "PBEWithMD5AndTripleDES"),
         /**
-         * Jasypt provider name to use.
+         * Jasypt provider name to use. None for Java, {@code BC} for BouncyCastle.
          */
         PROVIDER("cas.standalone.configuration-security.provider", null),
         /**
@@ -237,9 +259,13 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
          */
         ITERATIONS("cas.standalone.configuration-security.iterations", null),
         /**
-         * Jasypt password to use.
+         * Jasypt password to use for encryption and decryption.
          */
-        PASSWORD("cas.standalone.configuration-security.psw", null);
+        PASSWORD("cas.standalone.configuration-security.psw", null),
+        /**
+         * Use (or not) a Jasypt Initialization Vector.
+         */
+        INITIALIZATION_VECTOR("cas.standalone.configuration-security.initialization-vector", "false");
 
         /**
          * The Name.
