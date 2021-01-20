@@ -82,7 +82,10 @@ public class HazelcastAwsDiscoveryProperties implements Serializable {
 
     /**
      * If you do not want to use access key and secret key, you can specify iam-role.
-     * Hazelcast fetches your credentials by using your IAM role.
+     * Hazelcast fetches your credentials by using your IAM role. This setting only affects
+     * deployments on Amazon EC2. If you are deploying CAS in an Amazon ECS environment,
+     * the role should not be specified. The role is fetched from the task definition
+     * that is assigned to run CAS.
      */
     private String iamRole;
 
