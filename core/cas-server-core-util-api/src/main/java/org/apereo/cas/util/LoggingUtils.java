@@ -59,9 +59,9 @@ public class LoggingUtils {
     }
 
     /**
-     * Get first non-null exception message, and return classname if all messages null.
+     * Get first non-null exception message, and return class name if all messages null.
      * @param throwable Top level throwable
-     * @return String containing first non-null exception message, or Throwable simple classname
+     * @return String containing first non-null exception message, or Throwable simple class name
      */
     protected static String getMessage(final Throwable throwable) {
         if (StringUtils.isEmpty(throwable.getMessage())) {
