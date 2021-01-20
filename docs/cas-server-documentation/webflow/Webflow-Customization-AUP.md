@@ -27,7 +27,7 @@ policy record is strongly tied to the identified user record. Implementing this 
 would require rather heavy modifications to the CAS webflow as well as alternative means of storing and remembering decisions
 such as cookies or browser storage, etc.</p></div>
 
-{% include casproperties.html modules="cas-server-support-aup-webflow" excludes=".ldap" %}
+{% include casproperties.html properties="cas.acceptable-usage-policy" excludes=".ldap" %}
 
 ## Per Service 
 

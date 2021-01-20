@@ -5,7 +5,6 @@ category: Authentication
 ---
 {% include variables.html %}
 
-
 # X.509 Authentication
 
 CAS X.509 authentication components provide a mechanism to authenticate users who present client certificates during
@@ -21,7 +20,8 @@ CAS can be configured to extract an X509 certificate from a header created by a 
 
 ## Overview
 
-Certificates are exchanged as part of the SSL (also called TLS) initialization that occurs when any browser connects to an `https` website.
+Certificates are exchanged as part of the SSL (also called TLS) initialization that 
+occurs when any browser connects to an `https` website.
 A certain number of public CA certificates are preinstalled in each browser. It is assumed that:
 
 - Your organization is already able to generate and distribute certificates that a user can install in their browser
@@ -40,7 +40,8 @@ If the browser is not already prepared to trust the CAS server, then an error me
 
 After the Server sends the certificate that identifies itself, it then can then send a list of names of Certificate 
 Authorities from which it is willing to accept certificates. Ideally, this list will include only one name; the name 
-of the internal institutional CA that issues internal intranet-only certificates that internally contain a field with the CAS Principal name.
+of the internal institutional CA that issues internal intranet-only 
+certificates that internally contain a field with the CAS Principal name.
 
 A user may install any number of certificates into the browser from any number of CA's. If only one of these certificates 
 comes from a CA named in the list of acceptable CA's sent by the server, then most browsers will automatically send that 
@@ -90,11 +91,22 @@ by the Web server terminating the SSL connection. Since an SSL peer may be confi
 certificates, the CAS X.509 handler provides a number of properties that place additional restrictions on
 acceptable client certificates.
 
-{% include casproperties.html properties="cas.authn.x509." excludes="ldap" %}
+{% include casproperties.html properties="cas.authn.x509." excludes="ldap,.webflow" %}
 
 ### X509 Certificate Extraction
 
-{% include {{ version }}/cert-extraction-x509-authentication-configuration.md %}
+These settings can be used to turn on and configure CAS to
+extract an X509 certificate from a base64 encoded certificate
+on a HTTP request header (placed there by a proxy in front of CAS).
+If this is set to true, it is important that the proxy cannot
+be bypassed by users and that the proxy ensures the header
+never originates from the browser.
+
+{% include casproperties.html properties="cas.authn.x509.extract-cert,cas.authn.x509.ssl-header-name" %}
+
+The specific parsing logic for the certificate is compatible
+with the Apache Tomcat `SSLValve` which can work with headers set by
+Apache HTTPD, Nginx, Haproxy, BigIP F5, etc.
 
 ### X509 Principal Resolution
 

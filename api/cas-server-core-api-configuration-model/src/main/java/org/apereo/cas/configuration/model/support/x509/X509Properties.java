@@ -50,7 +50,6 @@ public class X509Properties implements Serializable {
 
     /**
      * Default name of header containing certificate from the proxy.
-     * <p>
      * Format of header should be compatible with Tomcat SSLValve.
      */
     private static final String DEFAULT_CERT_HEADER_NAME = "ssl_client_cert";
@@ -85,15 +84,6 @@ public class X509Properties implements Serializable {
 
     /**
      * Indicates the type of principal resolution for X509.
-     * <ul>
-     * <li>{@code SERIAL_NO}: Resolve the principal by the serial number with a configurable radix,
-     * ranging from 2 to 36. If radix is 16, then the serial number could be filled with leading zeros to even the number of digits.</li>
-     * <li>{@code SERIAL_NO_DN}: Resolve the principal by serial number and issuer dn.</li>
-     * <li>{@code SUBJECT}: Resolve the principal by extracting one or more attribute values from the
-     * certificate subject DN and combining them with intervening delimiters.</li>
-     * <li>{@code SUBJECT_ALT_NAME}: Resolve the principal by the subject alternative name extension.</li>
-     * <li>{@code SUBJECT_DN}: The default type; Resolve the principal by the certificate’s subject dn.</li>
-     * </ul>
      */
     private PrincipalTypes principalType;
 
@@ -102,7 +92,8 @@ public class X509Properties implements Serializable {
      * <ul>
      * <li>{@code NONE}: No revocation is performed.</li>
      * <li>{@code CRL}: The CRL URI(s) mentioned in the certificate cRLDistributionPoints extension field.
-     * Caches are available to prevent excessive IO against CRL endpoints; CRL data is fetched if does not exist in the cache or if it is expired.</li>
+     * Caches are available to prevent excessive IO against CRL endpoints. CRL data
+     * is fetched if does not exist in the cache or if it is expired.</li>
      * <li>{@code RESOURCE}: A CRL hosted at a fixed location. The CRL is fetched at periodic intervals and cached.</li>
      * </ul>
      */
@@ -111,8 +102,10 @@ public class X509Properties implements Serializable {
     /**
      * To fetch CRLs, the following options are available:
      * <ul>
-     * <li>{@code RESOURCE}: By default, all revocation checks use fixed resources to fetch the CRL resource from the specified location.</li>
-     * <li>{@code LDAP}: A CRL resource may be fetched from a pre-configured attribute, in the event that the CRL resource location is an LDAP URI.</li>
+     * <li>{@code RESOURCE}: By default, all revocation checks use fixed
+     * resources to fetch the CRL resource from the specified location.</li>
+     * <li>{@code LDAP}: A CRL resource may be fetched from a pre-configured
+     * attribute, in the event that the CRL resource location is an LDAP URI.</li>
      * </ul>
      */
     private String crlFetcher = "RESOURCE";
@@ -264,7 +257,6 @@ public class X509Properties implements Serializable {
 
     /**
      * Whether to extract certificate from request.
-     * <p>
      * The default implementation extracts certificate from header via Tomcat SSLValve parsing logic
      * and using the {@link #DEFAULT_CERT_HEADER_NAME} header.
      * Must be false by default because if someone enables it they need to make sure they are
@@ -326,7 +318,7 @@ public class X509Properties implements Serializable {
     private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
 
     /**
-     * The  Principal types.
+     * The principal resolution types.
      */
     public enum PrincipalTypes {
 

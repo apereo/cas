@@ -33,7 +33,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-shibboleth" %}
 
-{% include casproperties.html modules="cas-server-support-shibboleth" %}
+{% include casproperties.html properties="cas.authn.shib-idp" %}
 
 ### Relying Party EntityId
 
@@ -61,7 +61,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-saml-mdui" %}
 
-{% include casproperties.html modules="cas-server-support-saml-mdui" properties="cas.saml-metadata-ui.schedule" %}
+{% include casproperties.html properties="cas.saml-metadata-ui" %}
 
 ### Relying Party Metadata
 

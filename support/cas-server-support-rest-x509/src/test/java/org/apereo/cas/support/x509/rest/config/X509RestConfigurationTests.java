@@ -53,7 +53,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreConfiguration.class,
     CasRestConfiguration.class
 },
-    properties = "cas.rest.tls-client-auth=true")
+    properties = "cas.rest.x509.tls-client-auth=true")
 @Tag("X509")
 public class X509RestConfigurationTests {
     @Autowired

@@ -15,7 +15,7 @@ REST support is enabled by including the following dependencies in the WAR overl
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-pm-rest" %}
 
-{% include casproperties.html modules="cas-server-support-pm-rest" %}
+{% include casproperties.html properties="cas.authn.pm.rest" %}
 
 | Endpoint                  | Method    | Headers             | Expected Response
 |---------------------------|-----------|------------------------------------------------------------------------

@@ -13,5 +13,4 @@ Support is enabled by including the following module in the overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-passwordless-jpa" %}
 
-{% include casproperties.html modules="cas-server-support-passwordless-jpa"
-properties="cas.authn.passwordless.tokens.jpa.cleaner" %}
+{% include casproperties.html properties="cas.authn.passwordless.tokens.jpa" %}

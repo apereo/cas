@@ -78,7 +78,7 @@ Support is enabled by including the following in your overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-rest-x509" %}
 
-{% include casproperties.html modules="cas-server-support-rest-x509" %}
+{% include casproperties.html properties="cas.rest.x509" %}
 
 ### TLS Client Authentication using a body parameter
 
