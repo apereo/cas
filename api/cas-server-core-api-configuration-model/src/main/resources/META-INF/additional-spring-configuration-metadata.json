@@ -23,6 +23,39 @@
       }
     },
     {
+      "name": "cas.rest.header-auth",
+      "type": "java.lang.Boolean",
+      "description": "Header extraction for x509",
+      "defaultValue": "true",
+      "deprecation": {
+        "replacement": "cas.rest.x509.header-auth",
+        "reason": "Configuration setting is moved to the new replacement",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.rest.body-auth",
+      "type": "java.lang.Boolean",
+      "description": "Body extraction for x509",
+      "defaultValue": "false",
+      "deprecation": {
+        "replacement": "cas.rest.x509.body-auth",
+        "reason": "Configuration setting is moved to the new replacement",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.rest.tls-client-auth",
+      "type": "java.lang.Boolean",
+      "description": "Body extraction for x509",
+      "defaultValue": "false",
+      "deprecation": {
+        "replacement": "cas.rest.x509.tls-client-auth",
+        "reason": "Configuration setting is moved to the new replacement",
+        "level": "error"
+      }
+    },
+    {
       "name": "cas.authn.release-protocol-attributes",
       "type": "java.lang.Boolean",
       "description": "Whether to release authentication attributes.",

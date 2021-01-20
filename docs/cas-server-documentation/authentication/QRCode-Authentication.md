@@ -35,7 +35,7 @@ The following endpoints are provided by CAS:
 
 ## Configuration
 
-{% include casproperties.html modules="cas-server-support-qrlogin" %}
+{% include casproperties.html properties="cas.authn.qr" %}
 
 ## Web Socket Communication
 

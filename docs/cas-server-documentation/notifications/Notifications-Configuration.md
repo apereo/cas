@@ -18,4 +18,4 @@ Support is enabled via the relevant modules using the following module:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-notifications-fcm" %}
 
-{% include casproperties.html modules="cas-server-support-notifications-fcm" %}
+{% include casproperties.html properties="cas.google-firebase-messaging" %}

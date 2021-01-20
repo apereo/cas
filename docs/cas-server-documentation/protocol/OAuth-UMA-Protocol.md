@@ -20,7 +20,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-oauth-uma" %}
 
-{% include casproperties.html modules="cas-server-support-oauth-uma" %}
+{% include casproperties.html properties="cas.authn.uma." excludes=".jpa" %}
 
 ## Resources Storage
 
@@ -33,7 +33,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-oauth-uma-jpa" %}
 
-{% include casproperties.html modules="cas-server-support-oauth-uma-jpa" %}
+{% include casproperties.html properties="cas.authn.uma.resource-set.jpa" %}
 
 ## Endpoints
 
