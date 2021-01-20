@@ -27,6 +27,7 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
 
     /**
      * Pattern for algorithms that require an initialization vector.
+     * Regex matches all PBEWITHHMACSHA###ANDAES algorithms that aren't BouncyCastle.
      */
     public static final String ALGS_THAT_REQUIRE_IV_PATTERN = "PBEWITHHMACSHA\\d+ANDAES_.*(?<!-BC)$";
 
@@ -246,11 +247,11 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
     public enum JasyptEncryptionParameters {
 
         /**
-         * Jasypt algorithm name to use. Default is PBEWithMD5AndTripleDES.
+         * Jasypt algorithm name to use.
          */
         ALGORITHM("cas.standalone.configuration-security.alg", "PBEWithMD5AndTripleDES"),
         /**
-         * Jasypt provider name to use. None for Java, BC for BouncyCastle.
+         * Jasypt provider name to use. None for Java, {@code BC} for BouncyCastle.
          */
         PROVIDER("cas.standalone.configuration-security.provider", null),
         /**
