@@ -76,7 +76,7 @@ a successful `200 - OK` response status, CAS expects the body of the HTTP respon
 }
 ```
 
-{% include casproperties.html modules="cas-server-support-saml-idp-metadata-rest" %}
+{% include casproperties.html properties="cas.authn.saml-idp.metadata.rest" %}
 
 ### Identity Provider Metadata
 
@@ -139,11 +139,14 @@ The metadata location in the registration record above needs to be specified as 
 SAML metadata for registered service provider must be fetched from Git repositories defined in CAS configuration. 
 </p></div>
 
-{% include casproperties.html modules="cas-server-support-saml-idp-metadata-git" %}
+{% include casproperties.html properties="cas.authn.saml-idp.metadata.git" %}
 
 ### Identity Provider Metadata
 
-Metadata artifacts that belong to CAS as a SAML2 identity provider may also be managed and stored via Git. Artifacts such as the metadata, signing and encryption keys, etc are kept on the file-system in distinct directory locations inside the repository and data is pushed to or pulled from git repositories on demand.
+Metadata artifacts that belong to CAS as a SAML2 identity provider may also be 
+managed and stored via Git. Artifacts such as the metadata, signing and encryption 
+keys, etc are kept on the file-system in distinct directory locations inside 
+the repository and data is pushed to or pulled from git repositories on demand.
 
 #### Per Service
 
@@ -184,7 +187,7 @@ The metadata location in the registration record above needs to be specified as 
 SAML metadata for registered service provider must be fetched from MongoDb data sources defined in CAS configuration. 
 </p></div>
 
-{% include casproperties.html modules="cas-server-support-saml-idp-metadata-mongo" %}
+{% include casproperties.html properties="cas.authn.saml-idp.metadata.mongo" %}
 
 ### Identity Provider Metadata
 
@@ -235,7 +238,7 @@ The metadata location in the registration record above needs to be specified as 
 SAML metadata for registered service provider must be fetched from Redis data sources defined in CAS configuration. 
 </p></div>
 
-{% include casproperties.html modules="cas-server-support-saml-idp-metadata-redis" %}
+{% include casproperties.html properties="cas.authn.saml-idp.metadata.redis" %}
 
 ### Identity Provider Metadata
 
@@ -279,11 +282,12 @@ SAML service definitions must then be designed as follows to allow CAS to fetch 
 The metadata location in the registration record above needs to be specified as <code>jdbc://</code> to signal to CAS that SAML metadata for registered service provider must be fetched from JDBC data sources defined in CAS configuration. 
 </p></div>
 
-{% include casproperties.html modules="cas-server-support-saml-idp-metadata-jpa" %}
+{% include casproperties.html properties="cas.authn.saml-idp.metadata.jpa" %}
 
 ### Identity Provider Metadata
 
-Metadata artifacts that belong to CAS as a SAML2 identity provider may also be managed and stored via JPA. Artifacts such as the metadata, signing and encryption keys, etc are kept
+Metadata artifacts that belong to CAS as a SAML2 identity provider may also be managed 
+and stored via JPA. Artifacts such as the metadata, signing and encryption keys, etc are kept
 inside a database table that would have the following structure:
 
 | Field                     | Description
@@ -335,7 +339,7 @@ SAML service definitions must then be designed as follows to allow CAS to fetch 
 The metadata location in the registration record above needs to be specified as <code>couchdb://</code> to signal to CAS that SAML metadata for registered service provider must be fetched from CouchDb as defined in CAS configuration.
 </p></div>
 
-{% include casproperties.html modules="cas-server-support-saml-idp-metadata-couchdb" %}
+{% include casproperties.html properties="cas.authn.saml-idp.metadata.couch-db" %}
 
 ### Identity Provider Metadata
 
@@ -444,7 +448,7 @@ The metadata location in the registration record above needs to be specified as 
 SAML metadata for registered service provider must be fetched from Amazon S3 defined in CAS configuration. 
 </p></div>
 
-{% include casproperties.html modules="cas-server-support-saml-idp-metadata-aws-s3" %}
+{% include casproperties.html properties="cas.authn.saml-idp.metadata.amazon-s3" %}
 
 ### Identity Provider Metadata
 

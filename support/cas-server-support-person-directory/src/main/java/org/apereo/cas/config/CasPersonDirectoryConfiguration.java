@@ -37,6 +37,7 @@ import org.apereo.services.persondir.support.GroovyPersonAttributeDao;
 import org.apereo.services.persondir.support.GrouperPersonAttributeDao;
 import org.apereo.services.persondir.support.JsonBackedComplexStubPersonAttributeDao;
 import org.apereo.services.persondir.support.MergingPersonAttributeDaoImpl;
+import org.apereo.services.persondir.support.QueryType;
 import org.apereo.services.persondir.support.RestfulPersonAttributeDao;
 import org.apereo.services.persondir.support.ScriptEnginePersonAttributeDao;
 import org.apereo.services.persondir.support.jdbc.AbstractJdbcPersonAttributeDao;
@@ -244,7 +245,7 @@ public class CasPersonDirectoryConfiguration {
             .stream()
             .map(entry -> Pair.of(entry.getKey(),
                 StringUtils.isBlank(entry.getValue())
-                    ? jdbc.getCaseCanonicalization()
+                    ? CaseCanonicalizationMode.valueOf(jdbc.getCaseCanonicalization().toUpperCase())
                     : CaseCanonicalizationMode.valueOf(entry.getValue().toUpperCase())))
             .collect(Collectors.toMap(Pair::getKey, Pair::getValue)));
         return dao;
@@ -275,9 +276,11 @@ public class CasPersonDirectoryConfiguration {
                         jdbcDao.setResultAttributeMapping(mapping);
                     }
                     jdbcDao.setRequireAllQueryAttributes(jdbc.isRequireAllAttributes());
-                    jdbcDao.setUsernameCaseCanonicalizationMode(jdbc.getCaseCanonicalization());
-                    jdbcDao.setDefaultCaseCanonicalizationMode(jdbc.getCaseCanonicalization());
-                    jdbcDao.setQueryType(jdbc.getQueryType());
+
+                    val caseMode = CaseCanonicalizationMode.valueOf(jdbc.getCaseCanonicalization().toUpperCase());
+                    jdbcDao.setUsernameCaseCanonicalizationMode(caseMode);
+                    jdbcDao.setDefaultCaseCanonicalizationMode(caseMode);
+                    jdbcDao.setQueryType(QueryType.valueOf(jdbc.getQueryType().toUpperCase()));
                     jdbcDao.setOrder(jdbc.getOrder());
                     list.add(jdbcDao);
                 });

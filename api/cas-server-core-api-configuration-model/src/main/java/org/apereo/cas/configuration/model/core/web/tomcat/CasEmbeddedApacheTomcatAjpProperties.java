@@ -101,7 +101,7 @@ public class CasEmbeddedApacheTomcatAjpProperties implements Serializable {
 
     /**
      * If this Connector is supporting non-SSL requests, and a request is received
-     * for which a matching &lt;security-constraint&gt; requires SSL transport,
+     * for which a matching {@code security-constraint} requires SSL transport,
      * Catalina will automatically redirect the request to the port number specified here.
      */
     private int redirectPort = -1;
