@@ -50,7 +50,7 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
     public OneTimeTokenAccount get(final String username, final long id) {
         return entityManager.createQuery("SELECT r FROM "
             + ENTITY_NAME + " r WHERE r.id=:id AND r.username = :username", JpaGoogleAuthenticatorAccount.class)
-            .setParameter("username", username)
+            .setParameter("username", username.trim())
             .setParameter("id", id)
             .getSingleResult();
     }
@@ -129,7 +129,7 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
     private List<JpaGoogleAuthenticatorAccount> fetchAccounts(final String username) {
         return entityManager.createQuery("SELECT r FROM "
             + ENTITY_NAME + " r WHERE r.username = :username", JpaGoogleAuthenticatorAccount.class)
-            .setParameter("username", username)
+            .setParameter("username", username.trim())
             .getResultList();
     }
 }

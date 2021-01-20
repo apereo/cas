@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.core.authentication;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -20,6 +21,7 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("LdapPrincipalAttributesProperties")
 public class LdapPrincipalAttributesProperties extends AbstractLdapSearchProperties {
 
     private static final long serialVersionUID = 5760065368731012063L;

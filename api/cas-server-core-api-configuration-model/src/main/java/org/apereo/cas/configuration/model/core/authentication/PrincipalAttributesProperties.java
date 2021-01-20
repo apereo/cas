@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.core.authentication;
 import org.apereo.cas.configuration.model.support.azuread.AzureActiveDirectoryAttributesProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -38,6 +39,7 @@ import java.util.concurrent.TimeUnit;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("PrincipalAttributesProperties")
 public class PrincipalAttributesProperties implements Serializable {
 
     private static final long serialVersionUID = -4515569588579072890L;
@@ -106,43 +108,36 @@ public class PrincipalAttributesProperties implements Serializable {
      * and additionally allow other specific principal attributes for only some applications
      * per their attribute release policy.
      */
-    @NestedConfigurationProperty
     private Set<String> defaultAttributesToRelease = new HashSet<>(0);
 
     /**
      * Retrieve attributes from multiple JDBC repositories.
      */
-    @NestedConfigurationProperty
     private List<JdbcPrincipalAttributesProperties> jdbc = new ArrayList<>(0);
 
     /**
      * Retrieve attributes from multiple Microsoft Graph instances.
      */
-    @NestedConfigurationProperty
     private List<AzureActiveDirectoryAttributesProperties> azureActiveDirectory = new ArrayList<>(0);
 
     /**
      * Retrieve attributes from multiple REST endpoints.
      */
-    @NestedConfigurationProperty
     private List<RestPrincipalAttributesProperties> rest = new ArrayList<>(0);
 
     /**
      * Retrieve attributes from multiple Groovy scripts.
      */
-    @NestedConfigurationProperty
     private List<GroovyPrincipalAttributesProperties> groovy = new ArrayList<>(0);
 
     /**
      * Retrieve attributes from multiple LDAP servers.
      */
-    @NestedConfigurationProperty
     private List<LdapPrincipalAttributesProperties> ldap = new ArrayList<>(0);
 
     /**
      * Retrieve attributes from multiple JSON file repositories.
      */
-    @NestedConfigurationProperty
     private List<JsonPrincipalAttributesProperties> json = new ArrayList<>(0);
 
     /**
