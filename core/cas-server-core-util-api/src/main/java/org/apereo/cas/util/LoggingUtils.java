@@ -64,9 +64,9 @@ public class LoggingUtils {
      * @return String containing first non-null exception message, or Throwable simple classname
      */
     protected static String getMessage(final Throwable throwable) {
-        if (throwable.getMessage() == null) {
-            val throwableList = ExceptionUtils.getThrowableList(throwable);
-            val message = throwableList.stream().map(t -> t.getMessage()).filter(m -> m != null).findFirst();
+        if (StringUtils.isEmpty(throwable.getMessage())) {
+            val message = ExceptionUtils.getThrowableList(throwable)
+                    .stream().map(t -> t.getMessage()).filter(m -> m != null).findFirst();
             if (message.isPresent()) {
                 return message.get();
             }
