@@ -31,11 +31,11 @@ public class CasConfigurationPropertiesEnvironmentManager {
     /**
      * Property name passed to the environment that indicates the path to the standalone configuration file.
      */
-    public static final String PROPERTY_CAS_STANDALONE_CONFIGURATION_FILE = "cas.standalone.configurationFile";
+    public static final String PROPERTY_CAS_STANDALONE_CONFIGURATION_FILE = "cas.standalone.configuration-file";
     /**
      * Property name passed to the environment that indicates the path to the standalone configuration directory.
      */
-    public static final String PROPERTY_CAS_STANDALONE_CONFIGURATION_DIRECTORY = "cas.standalone.configurationDirectory";
+    public static final String PROPERTY_CAS_STANDALONE_CONFIGURATION_DIRECTORY = "cas.standalone.configuration-directory";
 
     /**
      * Configuration directories for CAS, listed in order.
