@@ -17,4 +17,4 @@ REST support for surrogate authentication is enabled by including the following 
 | `GET`        | Whether principal can authenticate as a surrogate account.    | `surrogate`, `principal` | `202`
 | `GET`        | List of accounts principal is eligible to impersonate.        | `principal` | JSON list of usernames.
 
-{% include casproperties.html modules="cas-server-support-surrogate-authentication-rest" %}
+{% include casproperties.html properties="cas.authn.surrogate.rest" %}

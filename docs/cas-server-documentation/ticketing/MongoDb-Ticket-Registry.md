@@ -18,7 +18,7 @@ created to let MongoDb handle the expiration of each document and cleanup tasks.
 
 ## Configuration
 
-{% include casproperties.html modules="cas-server-support-mongo-ticket-registry" %}
+{% include casproperties.html properties="cas.ticket.registry.mongo" %}
 
 
 ## Troubleshooting

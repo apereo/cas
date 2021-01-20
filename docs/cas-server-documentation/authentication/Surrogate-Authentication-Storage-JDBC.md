@@ -16,4 +16,4 @@ Aside from the usual database settings, this mode requires the specification of
 two SQL queries; one that determines eligibility and one that is able to retrieve
 the list of accounts that can be impersonated for a given admin user. 
 
-{% include casproperties.html modules="cas-server-support-surrogate-authentication-jdbc" %}
+{% include casproperties.html properties="cas.authn.surrogate.jdbc" %}

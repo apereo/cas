@@ -18,7 +18,7 @@ registry is to leverage the multi-master, multi-datacenter capabilities of Couch
 
 ## Configuration
 
-{% include casproperties.html modules="cas-server-support-couchdb-ticket-registry" %}
+{% include casproperties.html properties="cas.ticket.registry.couch-db" %}
 
 
 The only truly mandatory setting is the URL. However, CouchDB should not be used in admin party mode in production, so username and password are needed as well.

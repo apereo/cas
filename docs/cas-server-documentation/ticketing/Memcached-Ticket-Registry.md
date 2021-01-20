@@ -104,7 +104,7 @@ compact data, which benefits both storage requirements and throughput.
 
 ## Configuration
 
-{% include casproperties.html modules="cas-server-support-memcached-ticket-registry" %}
+{% include casproperties.html properties="cas.ticket.registry.memcached" %}
 
 ## High Availability Considerations
 

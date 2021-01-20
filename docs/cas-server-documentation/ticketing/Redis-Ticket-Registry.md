@@ -20,7 +20,7 @@ The Redis ticket registry supports Redis Sentinel, which provides high availabil
 
 ## Configuration
 
-{% include casproperties.html modules="cas-server-support-redis-ticket-registry" %}
+{% include casproperties.html properties="cas.ticket.registry.redis" %}
 
 ### Eviction Policy
 

@@ -48,5 +48,5 @@ path to respond to verification challenges.
 
 ## Configuration
 
-{% include casproperties.html modules="cas-server-support-acme" %}
+{% include casproperties.html properties="cas.acme." %}
 
