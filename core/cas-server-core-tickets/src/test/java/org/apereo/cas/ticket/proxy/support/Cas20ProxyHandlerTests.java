@@ -32,7 +32,7 @@ public class Cas20ProxyHandlerTests {
     private TicketGrantingTicket proxyGrantingTicket;
 
     public Cas20ProxyHandlerTests() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     @BeforeEach

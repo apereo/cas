@@ -6,6 +6,7 @@ import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.MockWebServer;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
@@ -45,7 +46,8 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class RestfulSamlIdPMetadataGeneratorWithArtifactsTests extends BaseRestfulSamlMetadataTests {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     private static MockWebServer SERVER;
 

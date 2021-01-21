@@ -2,8 +2,11 @@ package org.apereo.cas.consent;
 
 import org.apereo.cas.config.CasConsentRestConfiguration;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,6 +54,8 @@ import java.util.stream.Collectors;
 @Getter
 @EnableAutoConfiguration
 public class RestConsentRepositoryTests extends BaseConsentRepositoryTests {
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Autowired
     @Qualifier("restConsentRepositoryStorage")
@@ -88,7 +93,8 @@ public class RestConsentRepositoryTests extends BaseConsentRepositoryTests {
             private RestConsentRepositoryStorage storage;
 
             @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-            public ResponseEntity find(@RequestHeader(value = "principal", required = false) final String principal,
+            @SneakyThrows
+            public ResponseEntity<String> find(@RequestHeader(value = "principal", required = false) final String principal,
                                        @RequestHeader(value = "service", required = false) final String service) {
                 if (StringUtils.isNotBlank(principal) && StringUtils.isNotBlank(service)) {
                     val results = storage.getRecords().get(principal)
@@ -97,19 +103,19 @@ public class RestConsentRepositoryTests extends BaseConsentRepositoryTests {
                         .findFirst();
 
                     if (results.isPresent()) {
-                        return ResponseEntity.ok(results.get());
+                        return ResponseEntity.ok(MAPPER.writeValueAsString(results.get()));
                     }
                     return ResponseEntity.notFound().build();
                 }
 
                 if (StringUtils.isNotBlank(principal)) {
-                    return ResponseEntity.ok(storage.getRecords().get(principal));
+                    return ResponseEntity.ok(MAPPER.writeValueAsString(storage.getRecords().get(principal)));
                 }
                 val results = storage.getRecords().values()
                     .stream()
                     .flatMap(List::stream)
                     .collect(Collectors.toList());
-                return ResponseEntity.ok(results);
+                return ResponseEntity.ok(MAPPER.writeValueAsString(results));
             }
 
             @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)

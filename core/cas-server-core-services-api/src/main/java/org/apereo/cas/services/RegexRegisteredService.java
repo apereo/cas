@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.authentication.principal.Service;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.StringUtils;
 
@@ -21,6 +22,7 @@ import javax.persistence.Entity;
 @Entity
 @DiscriminatorValue("regex")
 @EqualsAndHashCode(callSuper = true)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public class RegexRegisteredService extends AbstractRegisteredService {
     private static final long serialVersionUID = -8258660210826975771L;
 

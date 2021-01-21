@@ -3,6 +3,7 @@ package org.apereo.cas.services.support;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeFilter;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.serialization.SerializationUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -48,7 +49,7 @@ public class RegisteredServiceMutantRegexAttributeFilterTests {
 
     @BeforeEach
     public void initialize() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         when(this.registeredService.getName()).thenReturn("Sample test service1");
         when(this.registeredService.getServiceId()).thenReturn("https://www.apereo.org");
         this.filter = new RegisteredServiceMutantRegexAttributeFilter();

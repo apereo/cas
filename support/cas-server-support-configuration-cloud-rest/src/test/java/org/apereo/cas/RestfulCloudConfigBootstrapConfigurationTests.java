@@ -4,6 +4,7 @@ import org.apereo.cas.config.RestfulCloudConfigBootstrapConfiguration;
 import org.apereo.cas.config.RestfulPropertySourceLocator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.MockWebServer;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;

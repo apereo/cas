@@ -12,7 +12,6 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
-import org.hjson.JsonValue;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -64,7 +63,7 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
                 Map.of(), getRequestHeaders());
             if (response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
                 val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
-                return MAPPER.readValue(JsonValue.readHjson(result).toString(), RegisteredService.class);
+                return MAPPER.readValue(result, RegisteredService.class);
             }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);

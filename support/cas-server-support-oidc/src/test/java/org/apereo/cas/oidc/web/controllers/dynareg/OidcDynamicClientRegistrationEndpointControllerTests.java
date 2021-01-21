@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.web.controllers.dynareg;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.util.MockWebServer;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
