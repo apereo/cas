@@ -23,7 +23,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("RegisteredService")
 public class DefaultRegisteredServiceConsentPolicyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "DefaultRegisteredServiceConsentPolicyTests.json");
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
     public void verifySerializeToJson() throws IOException {

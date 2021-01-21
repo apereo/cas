@@ -30,7 +30,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = "cas.authn.passwordless.accounts.rest.url=http://localhost:9291")
 @Tag("RestfulApi")
 public class RestfulPasswordlessUserAccountStoreTests extends BasePasswordlessUserAccountStoreTests {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Autowired
     @Qualifier("passwordlessUserAccountStore")

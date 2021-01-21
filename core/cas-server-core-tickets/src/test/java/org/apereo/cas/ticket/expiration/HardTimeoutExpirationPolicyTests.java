@@ -26,7 +26,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class HardTimeoutExpirationPolicyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "hardTimeoutExpirationPolicy.json");
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
     private static final long TIMEOUT = 10;
 
     private HardTimeoutExpirationPolicy expirationPolicy;

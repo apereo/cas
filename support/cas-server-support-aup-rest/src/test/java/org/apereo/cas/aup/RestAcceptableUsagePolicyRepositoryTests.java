@@ -36,7 +36,8 @@ import static org.mockito.Mockito.*;
  */
 @Tag("RestfulApi")
 public class RestAcceptableUsagePolicyRepositoryTests {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
     public void verify() {

@@ -36,7 +36,8 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("RestfulApi")
 public class RestfulCloudConfigBootstrapConfigurationTests {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     private static final String STATIC_AUTHN_USERS = "casuser::WHATEVER";
 

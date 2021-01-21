@@ -27,7 +27,8 @@ import static org.mockito.Mockito.*;
 public class AnonymousRegisteredServiceUsernameAttributeProviderTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "anonymousRegisteredServiceUsernameAttributeProvider.json");
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
     private static final String CASROX = "casrox";
 
     @Test

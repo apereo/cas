@@ -24,7 +24,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("RestfulApi")
 public class CaptchaValidatorTests {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
     public void verifyLowScore() throws Exception {
