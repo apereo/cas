@@ -53,7 +53,7 @@ public class CouchDbAcceptableUsagePolicyRepository extends BaseAcceptableUsageP
         val profile = couchDb.findByUsername(credential.getId());
         var accepted = false;
         if (profile != null) {
-            val values = CollectionUtils.toCollection(profile.getAttribute(aupProperties.getAupAttributeName()));
+            val values = CollectionUtils.toCollection(profile.getAttribute(aupProperties.getCore().getAupAttributeName()));
             accepted = CollectionUtils.firstElement(values).map(value -> (Boolean) value).orElse(Boolean.FALSE);
         }
         if (accepted) {
@@ -68,12 +68,12 @@ public class CouchDbAcceptableUsagePolicyRepository extends BaseAcceptableUsageP
         val profile = couchDb.findByUsername(username);
         if (profile == null) {
             val doc = new CouchDbProfileDocument(username, null,
-                CollectionUtils.wrap(aupProperties.getAupAttributeName(), List.of(Boolean.TRUE)));
+                CollectionUtils.wrap(aupProperties.getCore().getAupAttributeName(), List.of(Boolean.TRUE)));
             couchDb.add(doc);
             return true;
         }
         var success = false;
-        profile.setAttribute(aupProperties.getAupAttributeName(), List.of(Boolean.TRUE));
+        profile.setAttribute(aupProperties.getCore().getAupAttributeName(), List.of(Boolean.TRUE));
         UpdateConflictException exception = null;
         for (var retries = 0; !success && retries < conflictRetries; retries++) {
             try {

@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.acceptable-usage-policy.mongo.password=secret",
     "cas.acceptable-usage-policy.mongo.database-name=acceptableUsagePolicy",
     "cas.acceptable-usage-policy.mongo.authentication-database-name=admin",
-    "cas.acceptable-usage-policy.aup-attribute-name=accepted"
+    "cas.acceptable-usage-policy.core.aup-attribute-name=accepted"
 })
 @Getter
 public class MongoDbAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicyRepositoryTests {

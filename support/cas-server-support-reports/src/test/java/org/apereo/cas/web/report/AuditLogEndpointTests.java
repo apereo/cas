@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @TestPropertySource(properties = {
     "management.endpoint.auditLog.enabled=true",
-    "cas.audit.number-of-days-in-history=30"
+    "cas.audit.engine.number-of-days-in-history=30"
 })
 @Tag("ActuatorEndpoint")
 public class AuditLogEndpointTests extends AbstractCasEndpointTests {

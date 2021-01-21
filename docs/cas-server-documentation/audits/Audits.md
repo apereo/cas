@@ -18,7 +18,7 @@ Note that the audit record management functionality of CAS supports handling mul
 record destinations at the same time. In other words, you may choose to route audit records 
 to both a database and a REST endpoint as well as any number of logger-based destinations all at the same time.
 
-{% include casproperties.html properties="cas.audit." excludes=".slf4j" %}
+{% include casproperties.html properties="cas.audit.engine." %}
 
 ## Administrative Endpoints
 

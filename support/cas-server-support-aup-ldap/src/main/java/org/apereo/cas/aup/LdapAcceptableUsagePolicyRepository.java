@@ -85,7 +85,7 @@ public class LdapAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
                 val result = response.get().get();
                 val currentDn = result.getMiddle().getEntry().getDn();
                 LOGGER.debug("Updating [{}]", currentDn);
-                val attributes = CollectionUtils.<String, Set<String>>wrap(aupProperties.getAupAttributeName(),
+                val attributes = CollectionUtils.<String, Set<String>>wrap(aupProperties.getCore().getAupAttributeName(),
                     CollectionUtils.wrapSet(result.getRight().getAupAcceptedAttributeValue()));
                 return LdapUtils.executeModifyOperation(currentDn, result.getLeft(), attributes);
             }

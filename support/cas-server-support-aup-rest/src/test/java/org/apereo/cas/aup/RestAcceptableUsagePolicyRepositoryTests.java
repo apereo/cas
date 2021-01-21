@@ -51,7 +51,7 @@ public class RestAcceptableUsagePolicyRepositoryTests {
         val ticketRegistrySupport = mock(TicketRegistrySupport.class);
         val props = new AcceptableUsagePolicyProperties();
         props.getRest().setUrl("http://localhost:9298");
-        props.setAupAttributeName("givenName");
+        props.getCore().setAupAttributeName("givenName");
         val r = new RestAcceptableUsagePolicyRepository(ticketRegistrySupport, props);
 
         val data = StringUtils.EMPTY;
@@ -76,7 +76,7 @@ public class RestAcceptableUsagePolicyRepositoryTests {
         val ticketRegistrySupport = mock(TicketRegistrySupport.class);
         val props = new AcceptableUsagePolicyProperties();
         props.getRest().setUrl("http://localhost:9299");
-        props.setAupAttributeName("givenName");
+        props.getCore().setAupAttributeName("givenName");
         val r = new RestAcceptableUsagePolicyRepository(ticketRegistrySupport, props);
 
         val data = StringUtils.EMPTY;
@@ -93,7 +93,7 @@ public class RestAcceptableUsagePolicyRepositoryTests {
         val ticketRegistrySupport = mock(TicketRegistrySupport.class);
         val props = new AcceptableUsagePolicyProperties();
         props.getRest().setUrl("http://localhost:9198");
-        props.setAupAttributeName("givenName");
+        props.getCore().setAupAttributeName("givenName");
         val r = new RestAcceptableUsagePolicyRepository(ticketRegistrySupport, props);
 
         val input = AcceptableUsagePolicyTerms.builder()

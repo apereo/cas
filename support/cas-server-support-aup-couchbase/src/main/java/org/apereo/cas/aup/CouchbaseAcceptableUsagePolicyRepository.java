@@ -42,7 +42,7 @@ public class CouchbaseAcceptableUsagePolicyRepository extends BaseAcceptableUsag
         try {
             val content = MAPPER.writeValueAsString(Map.of(
                 "username", credential.getId(),
-                aupProperties.getAupAttributeName(), Boolean.TRUE));
+                aupProperties.getCore().getAupAttributeName(), Boolean.TRUE));
             couchbase.bucketUpsertDefaultCollection(content);
             return true;
         } catch (final Exception e) {

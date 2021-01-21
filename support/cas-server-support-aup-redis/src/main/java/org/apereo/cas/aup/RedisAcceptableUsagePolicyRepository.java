@@ -42,7 +42,7 @@ public class RedisAcceptableUsagePolicyRepository extends BaseAcceptableUsagePol
     @Override
     public boolean submit(final RequestContext requestContext, final Credential credential) {
         try {
-            val redisKey = CAS_AUP_PREFIX + credential.getId() + ':' + aupProperties.getAupAttributeName();
+            val redisKey = CAS_AUP_PREFIX + credential.getId() + ':' + aupProperties.getCore().getAupAttributeName();
             this.redisTemplate.boundValueOps(redisKey).set(Boolean.TRUE);
             return true;
         } catch (final Exception e) {
