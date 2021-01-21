@@ -29,7 +29,8 @@ public class AuthyAuthenticationHandler extends AbstractPreAndPostProcessingAuth
     private final boolean forceVerification;
     private final AuthyClientInstance instance;
 
-    public AuthyAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+    public AuthyAuthenticationHandler(final String name, final ServicesManager servicesManager,
+                                      final PrincipalFactory principalFactory,
                                       final AuthyClientInstance instance, final boolean forceVerification,
                                       final Integer order) {
         super(name, servicesManager, principalFactory, order);
