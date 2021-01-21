@@ -37,7 +37,7 @@ import java.util.List;
 @Configuration("jdbcPasswordHistoryManagementConfiguration")
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnProperty(prefix = "cas.authn.pm.history", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(prefix = "cas.authn.pm.history.core", name = "enabled", havingValue = "true")
 public class JdbcPasswordHistoryManagementConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;

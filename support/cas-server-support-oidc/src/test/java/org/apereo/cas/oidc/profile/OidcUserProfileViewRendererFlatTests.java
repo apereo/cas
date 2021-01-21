@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 public class OidcUserProfileViewRendererFlatTests extends AbstractOidcTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(true).build().toObjectMapper();
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     @Test
     public void verifyOperation() throws Exception {

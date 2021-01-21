@@ -87,7 +87,7 @@ public class HazelcastConfigurationFactory {
         val cluster = hz.getCluster();
         val config = new Config();
 
-        config.setLicenseKey(hz.getLicenseKey());
+        config.setLicenseKey(hz.getCore().getLicenseKey());
 
         buildManagementCenterConfig(hz, config);
 
@@ -112,7 +112,7 @@ public class HazelcastConfigurationFactory {
         cluster.getOutboundPorts().forEach(networkConfig::addOutboundPortDefinition);
 
         if (cluster.getWanReplication().isEnabled()) {
-            if (!StringUtils.hasText(hz.getLicenseKey())) {
+            if (!StringUtils.hasText(hz.getCore().getLicenseKey())) {
                 throw new IllegalArgumentException("Cannot activate WAN replication, a Hazelcast enterprise feature, without a license key");
             }
             LOGGER.warn("Using Hazelcast WAN Replication requires a Hazelcast Enterprise subscription. Make sure you "
@@ -128,9 +128,7 @@ public class HazelcastConfigurationFactory {
 
         LOGGER.trace("Created Hazelcast network configuration [{}]", networkConfig);
         config.setNetworkConfig(networkConfig);
-
-        LOGGER.trace("Enables compression: [{}]", hz.isEnableCompression());
-        config.getSerializationConfig().setEnableCompression(hz.isEnableCompression());
+        config.getSerializationConfig().setEnableCompression(hz.getCore().isEnableCompression());
 
         val instanceName = StringUtils.hasText(cluster.getInstanceName())
             ? cluster.getInstanceName()
@@ -145,9 +143,8 @@ public class HazelcastConfigurationFactory {
 
     private static void buildManagementCenterConfig(final BaseHazelcastProperties hz, final Config config) {
         val managementCenter = new ManagementCenterConfig();
-
-        LOGGER.trace("Enables management center scripting: [{}]", hz.isEnableManagementCenterScripting());
-        managementCenter.setScriptingEnabled(hz.isEnableManagementCenterScripting());
+        LOGGER.trace("Enables management center scripting: [{}]", hz.getCore().isEnableManagementCenterScripting());
+        managementCenter.setScriptingEnabled(hz.getCore().isEnableManagementCenterScripting());
 
         config.setManagementCenterConfig(managementCenter);
     }

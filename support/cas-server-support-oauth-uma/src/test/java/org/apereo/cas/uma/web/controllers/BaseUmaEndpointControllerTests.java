@@ -60,7 +60,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Import({CasOAuthUmaConfiguration.class, CasOAuthUmaComponentSerializationConfiguration.class})
 @TestPropertySource(properties = {
     "spring.main.allow-bean-definition-overriding=true",
-    "cas.authn.uma.requesting-party-token.jwks-file=classpath:uma-keystore.jwks"
+    "cas.authn.uma.requesting-party-token.jwks-file.location=classpath:uma-keystore.jwks"
 })
 @Slf4j
 public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Tests {

@@ -75,7 +75,7 @@ public class PasswordManagementConfiguration implements InitializingBean {
     public PasswordHistoryService passwordHistoryService() {
         val pm = casProperties.getAuthn().getPm();
         val history = pm.getHistory();
-        if (pm.getCore().isEnabled() && history.isEnabled()) {
+        if (pm.getCore().isEnabled() && history.getCore().isEnabled()) {
             if (history.getGroovy().getLocation() != null) {
                 return new GroovyPasswordHistoryService(history.getGroovy().getLocation());
             }

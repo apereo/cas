@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 },
     properties = {
         "cas.authn.pm.core.enabled=true",
-        "cas.authn.pm.history.enabled=true",
+        "cas.authn.pm.history.core.enabled=true",
         "cas.authn.pm.history.groovy.location=classpath:PasswordHistoryService.groovy"
     })
 @Tag("Groovy")

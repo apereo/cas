@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilConfiguration.class
 }, properties = {
     "cas.authn.pm.core.enabled=true",
-    "cas.authn.pm.history.enabled=true"
+    "cas.authn.pm.history.core.enabled=true"
 })
 @Tag("PasswordOps")
 public class InMemoryPasswordHistoryServiceTests {

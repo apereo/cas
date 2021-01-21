@@ -63,7 +63,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 public class RestMultifactorAuthenticationTrustStorageTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(true).build().toObjectMapper();
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     @Autowired
     @Qualifier("mfaTrustEngine")

@@ -66,7 +66,7 @@ public class HazelcastConfigurationFactoryTests {
         val hz = new BaseHazelcastProperties();
         hz.getCluster().getWanReplication().setEnabled(true);
         assertThrows(IllegalArgumentException.class, () -> HazelcastConfigurationFactory.build(hz));
-        hz.setLicenseKey(UUID.randomUUID().toString());
+        hz.getCore().setLicenseKey(UUID.randomUUID().toString());
         hz.getCluster().getWanReplication().getTargets()
             .add(new HazelcastWANReplicationTargetClusterProperties()
                 .setClusterName(UUID.randomUUID().toString())
