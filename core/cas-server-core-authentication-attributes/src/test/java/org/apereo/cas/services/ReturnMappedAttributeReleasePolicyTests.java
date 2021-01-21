@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.CoreAttributesTestUtils;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import com.fasterxml.jackson.databind.ObjectMapper;

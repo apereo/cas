@@ -3,6 +3,7 @@ package org.apereo.cas.audit;
 import org.apereo.cas.config.CasSupportRestAuditConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;

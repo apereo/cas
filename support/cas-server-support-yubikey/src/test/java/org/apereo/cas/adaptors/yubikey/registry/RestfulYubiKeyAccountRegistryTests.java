@@ -10,8 +10,8 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.val;
@@ -49,13 +49,8 @@ import static org.springframework.http.HttpStatus.*;
         "cas.authn.mfa.yubikey.rest.url=http://localhost:6591"
     })
 public class RestfulYubiKeyAccountRegistryTests {
-    private static final ObjectMapper MAPPER;
-
-    static {
-        MAPPER = new ObjectMapper().findAndRegisterModules();
-        MAPPER.activateDefaultTyping(MAPPER.getPolymorphicTypeValidator(),
-            ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
-    }
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Autowired
     @Qualifier("yubiKeyAccountRegistry")

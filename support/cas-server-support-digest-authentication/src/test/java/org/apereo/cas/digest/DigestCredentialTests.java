@@ -1,5 +1,7 @@
 package org.apereo.cas.digest;
 
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -19,7 +21,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DigestCredentialTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "digestCredential.json");
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
     public void verifySerializeADigestCredentialToJson() throws IOException {

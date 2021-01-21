@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mfa.accepto.AccepttoEmailCredential;
 import org.apereo.cas.mfa.accepto.BaseAccepttoMultifactorAuthenticationTests;
 import org.apereo.cas.util.MockWebServer;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -48,7 +49,8 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.acceptto.registration-api-public-key.location=classpath:publickey.pem"
     })
 public class AccepttoMultifactorValidateUserDeviceRegistrationActionTests {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Autowired
     private CasConfigurationProperties casProperties;

@@ -2,6 +2,7 @@ package org.apereo.cas.services.consent;
 
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.model.TriStateBoolean;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;

@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyPrope
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.MockWebServer;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.support.WebUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;

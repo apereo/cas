@@ -39,7 +39,7 @@ public class DefaultCasCookieValueManagerTests {
 
     @BeforeEach
     public void initialize() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
 
         val request = new MockHttpServletRequest();
         request.setRemoteAddr(CLIENT_IP);

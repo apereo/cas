@@ -5,6 +5,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeFilter;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.serialization.SerializationUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -71,7 +72,7 @@ public class RegisteredServiceRegexAttributeFilterTests {
 
     @BeforeEach
     public void initialize() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
 
         when(this.registeredService.getName()).thenReturn("sample test service");
         when(this.registeredService.getServiceId()).thenReturn("https://www.jasig.org");

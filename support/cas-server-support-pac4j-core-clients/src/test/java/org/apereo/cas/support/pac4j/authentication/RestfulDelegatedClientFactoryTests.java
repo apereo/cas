@@ -2,6 +2,7 @@ package org.apereo.cas.support.pac4j.authentication;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.MockWebServer;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;

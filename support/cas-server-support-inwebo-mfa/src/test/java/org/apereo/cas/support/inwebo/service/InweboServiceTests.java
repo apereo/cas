@@ -7,6 +7,7 @@ import org.apereo.cas.support.inwebo.service.response.InweboDeviceNameResponse;
 import org.apereo.cas.support.inwebo.service.response.InweboResult;
 import org.apereo.cas.support.inwebo.service.soap.generated.LoginSearchResult;
 import org.apereo.cas.util.MockWebServer;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.ssl.SSLUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,7 +34,8 @@ import static org.mockito.Mockito.*;
  */
 @Tag("MFA")
 public class InweboServiceTests {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     private static final String OPERATION = "operation";
 

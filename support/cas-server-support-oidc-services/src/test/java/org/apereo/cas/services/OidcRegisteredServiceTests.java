@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.util.io.WatcherService;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
+ * Test cases for {@link OidcRegisteredService}.
  * @author Misagh Moayyed
  * @since 5.0.0
  */

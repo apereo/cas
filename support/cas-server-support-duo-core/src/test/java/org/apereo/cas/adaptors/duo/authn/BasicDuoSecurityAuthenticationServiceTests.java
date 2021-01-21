@@ -8,6 +8,7 @@ import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProp
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.duosecurity.client.Http;
 import com.duosecurity.duoweb.DuoWebException;

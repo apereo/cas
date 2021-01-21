@@ -6,8 +6,8 @@ import org.apereo.cas.configuration.model.core.authentication.GroovyAuthenticati
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.RestAuthenticationPolicyProperties;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -40,13 +40,8 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Utility")
 public class CoreAuthenticationUtilsTests {
-    private static final ObjectMapper MAPPER;
-
-    static {
-        MAPPER = new ObjectMapper().findAndRegisterModules();
-        MAPPER.activateDefaultTyping(MAPPER.getPolymorphicTypeValidator(),
-            ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
-    }
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
     public void verifyAttributeRepositories() {

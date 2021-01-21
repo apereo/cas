@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.mfa.accepto.BaseAccepttoMultifactorAuthenticationTests;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -49,7 +50,8 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.acceptto.registration-api-public-key.location=classpath:publickey.pem"
     })
 public class AccepttoMultifactorValidateChannelActionTests {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")

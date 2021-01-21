@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.principal.cache;
 
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
