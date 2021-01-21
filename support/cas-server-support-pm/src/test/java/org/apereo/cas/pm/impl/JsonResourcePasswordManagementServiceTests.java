@@ -72,8 +72,8 @@ import static org.junit.jupiter.api.Assertions.*;
 },
     properties = {
         "cas.authn.pm.json.location=classpath:jsonResourcePassword.json",
-        "cas.authn.pm.enabled=true",
-        "cas.authn.pm.policy-pattern=^Test1.+"
+        "cas.authn.pm.core.enabled=true",
+        "cas.authn.pm.core.policy-pattern=^Test1.+"
     })
 @Tag("FileSystem")
 public class JsonResourcePasswordManagementServiceTests {

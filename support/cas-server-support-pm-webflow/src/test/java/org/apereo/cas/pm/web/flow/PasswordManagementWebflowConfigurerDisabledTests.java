@@ -42,7 +42,7 @@ import static org.mockito.Mockito.*;
 })
 @TestPropertySource(properties = {
     "cas.authn.pm.reset.security-questions-enabled=false",
-    "cas.authn.pm.enabled=false"
+    "cas.authn.pm.core.enabled=false"
 })
 @Tag("WebflowConfig")
 public class PasswordManagementWebflowConfigurerDisabledTests extends BaseWebflowConfigurerTests {

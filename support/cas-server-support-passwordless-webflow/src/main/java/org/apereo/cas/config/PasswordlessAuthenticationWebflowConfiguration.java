@@ -132,7 +132,8 @@ public class PasswordlessAuthenticationWebflowConfiguration {
     @RefreshScope
     public Action determineDelegatedAuthenticationAction() {
         if (delegatedClientProviderFunction.getIfAvailable() != null) {
-            val selectorScriptResource = casProperties.getAuthn().getPasswordless().getDelegatedAuthenticationSelectorScript().getLocation();
+            val selectorScriptResource = casProperties.getAuthn().getPasswordless()
+                .getCore().getDelegatedAuthenticationSelectorScript().getLocation();
             return new DetermineDelegatedAuthenticationAction(casProperties, delegatedClientProviderFunction.getObject(),
                 new WatchableGroovyScriptResource(selectorScriptResource));
         }

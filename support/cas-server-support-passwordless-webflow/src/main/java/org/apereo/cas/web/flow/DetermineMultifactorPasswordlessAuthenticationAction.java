@@ -137,7 +137,7 @@ public class DetermineMultifactorPasswordlessAuthenticationAction extends Abstra
             LOGGER.trace("Passwordless account [{}] is not eligible for multifactor authentication", user);
             return false;
         }
-        return casProperties.getAuthn().getPasswordless().isMultifactorAuthenticationActivated();
+        return casProperties.getAuthn().getPasswordless().getCore().isMultifactorAuthenticationActivated();
 
     }
 }

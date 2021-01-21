@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@TestPropertySource(properties = "cas.authn.pm.enabled=true")
+@TestPropertySource(properties = "cas.authn.pm.core.enabled=true")
 @Tag("WebflowConfig")
 public class PasswordManagementWebflowConfigurerEnabledTests extends PasswordManagementWebflowConfigurerDisabledTests {
     @Override

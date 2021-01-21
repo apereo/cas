@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreNotificationsConfiguration.class,
     CasCoreUtilConfiguration.class
 }, properties = {
-    "cas.authn.pm.enabled=true",
+    "cas.authn.pm.core.enabled=true",
     "cas.authn.pm.groovy.location=classpath:/GroovyPasswordMgmt.groovy"
 })
 @Tag("Groovy")

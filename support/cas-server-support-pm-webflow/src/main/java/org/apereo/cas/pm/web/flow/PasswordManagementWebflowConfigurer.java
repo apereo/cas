@@ -103,7 +103,7 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
     private void createPasswordResetFlow() {
         val flow = getLoginFlow();
         if (flow != null) {
-            val autoLogin = casProperties.getAuthn().getPm().isAutoLogin();
+            val autoLogin = casProperties.getAuthn().getPm().getCore().isAutoLogin();
 
             val state = getState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM, ViewState.class);
             createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_RESET_PASSWORD,

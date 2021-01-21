@@ -48,6 +48,12 @@ public class CasConfigurationWatchServiceTests {
         when(manager.getStandaloneProfileConfigurationFile()).thenReturn(cas);
         val service = new CasConfigurationWatchService(manager, applicationContext);
         service.runPathWatchServices(mock(ApplicationReadyEvent.class));
+
+        val newFile = new File(cas.getParentFile(), "something");
+        FileUtils.writeStringToFile(newFile, "helloworld", StandardCharsets.UTF_8);
+        FileUtils.writeStringToFile(newFile, "helloworld-update", StandardCharsets.UTF_8, true);
+        FileUtils.deleteQuietly(newFile);
+        
         service.close();
     }
 }

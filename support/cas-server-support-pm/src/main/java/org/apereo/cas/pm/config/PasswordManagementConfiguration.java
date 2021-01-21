@@ -65,7 +65,7 @@ public class PasswordManagementConfiguration implements InitializingBean {
     @RefreshScope
     @Bean
     public PasswordValidationService passwordValidationService() {
-        val policyPattern = casProperties.getAuthn().getPm().getPolicyPattern();
+        val policyPattern = casProperties.getAuthn().getPm().getCore().getPolicyPattern();
         return new DefaultPasswordValidationService(policyPattern, passwordHistoryService());
     }
 
@@ -75,7 +75,7 @@ public class PasswordManagementConfiguration implements InitializingBean {
     public PasswordHistoryService passwordHistoryService() {
         val pm = casProperties.getAuthn().getPm();
         val history = pm.getHistory();
-        if (pm.isEnabled() && history.isEnabled()) {
+        if (pm.getCore().isEnabled() && history.isEnabled()) {
             if (history.getGroovy().getLocation() != null) {
                 return new GroovyPasswordHistoryService(history.getGroovy().getLocation());
             }
@@ -89,7 +89,7 @@ public class PasswordManagementConfiguration implements InitializingBean {
     @Bean
     public PasswordManagementService passwordChangeService() {
         val pm = casProperties.getAuthn().getPm();
-        if (pm.isEnabled()) {
+        if (pm.getCore().isEnabled()) {
             val location = pm.getJson().getLocation();
             if (location != null) {
                 LOGGER.debug("Configuring password management based on JSON resource [{}]", location);
@@ -112,10 +112,10 @@ public class PasswordManagementConfiguration implements InitializingBean {
 
             LOGGER.warn("No storage service (LDAP, Database, etc) is configured to handle the account update and password service operations. "
                 + "Password management functionality will have no effect and will be disabled until a storage service is configured. "
-                + "To explicitly disable the password management functionality, add 'cas.authn.pm.enabled=false' to the CAS configuration");
+                + "To explicitly disable the password management functionality, add 'cas.authn.pm.core.enabled=false' to the CAS configuration");
         } else {
             LOGGER.debug("Password management is disabled. To enable the password management functionality, "
-                + "add 'cas.authn.pm.enabled=true' to the CAS configuration and then configure storage options for account updates");
+                + "add 'cas.authn.pm.core.enabled=true' to the CAS configuration and then configure storage options for account updates");
         }
         return new NoOpPasswordManagementService(passwordManagementCipherExecutor(),
             casProperties.getServer().getPrefix(),
@@ -125,7 +125,7 @@ public class PasswordManagementConfiguration implements InitializingBean {
     @Override
     public void afterPropertiesSet() {
         val pm = casProperties.getAuthn().getPm();
-        if (pm.isEnabled()) {
+        if (pm.getCore().isEnabled()) {
             communicationsManager.getObject().validate();
         }
     }

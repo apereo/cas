@@ -104,6 +104,6 @@ public class DetermineDelegatedAuthenticationAction extends AbstractAction imple
             LOGGER.trace("Passwordless account [{}] is not eligible for delegated authentication", user);
             return false;
         }
-        return casProperties.getAuthn().getPasswordless().isDelegatedAuthenticationActivated();
+        return casProperties.getAuthn().getPasswordless().getCore().isDelegatedAuthenticationActivated();
     }
 }
