@@ -44,7 +44,7 @@ this behavior, it likely is preferable to turn off the session monitor.
 </p></div>
 
 For more information on the Hazelcast configuration options available,
-refer to [the Hazelcast configuration documentation](http://docs.hazelcast.org/docs/3.9.1/manual/html-single/index.html#hazelcast-configuration)
+refer to [the Hazelcast configuration documentation](http://docs.hazelcast.org/docs/4.1.1/manual/html-single/index.html#hazelcast-configuration)
 
 ## AWS EC2 Auto Discovery
 

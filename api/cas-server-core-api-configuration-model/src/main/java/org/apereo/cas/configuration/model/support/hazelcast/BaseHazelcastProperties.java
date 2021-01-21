@@ -68,23 +68,14 @@ public class BaseHazelcastProperties implements Serializable {
     private static final long serialVersionUID = 4204884717547468480L;
 
     /**
-     * Hazelcast enterprise license key.
-     */
-    private String licenseKey;
-
-    /**
-     * Enables compression when default java serialization is used.
-     */
-    private boolean enableCompression;
-
-    /**
-     * Enables scripting from Management Center.
-     */
-    private boolean enableManagementCenterScripting = true;
-
-    /**
      * Hazelcast cluster settings if CAS is able to auto-create caches.
      */
     @NestedConfigurationProperty
     private HazelcastClusterProperties cluster = new HazelcastClusterProperties();
+
+    /**
+     * Core configuration settings for hazelcast.
+     */
+    @NestedConfigurationProperty
+    private HazelcastCoreProperties core = new HazelcastCoreProperties();
 }

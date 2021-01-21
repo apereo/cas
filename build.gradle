@@ -571,6 +571,7 @@ task jacocoRootReport(type: JacocoReport) {
     reports {
         html.enabled = true
         xml.enabled = true
+        csv.enabled = true
     }
     onlyIf = {
         true

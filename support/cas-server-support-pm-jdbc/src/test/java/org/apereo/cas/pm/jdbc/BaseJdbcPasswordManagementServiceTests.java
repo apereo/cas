@@ -71,7 +71,7 @@ import javax.sql.DataSource;
 }, properties = {
     "cas.jdbc.show-sql=true",
     "cas.authn.pm.enabled=true",
-    "cas.authn.pm.history.enabled=true",
+    "cas.authn.pm.history.core.enabled=true",
     "cas.authn.pm.jdbc.auto-commit=false",
     "cas.authn.pm.jdbc.sql-security-questions=SELECT question, answer FROM pm_table_questions WHERE userid=?",
     "cas.authn.pm.jdbc.sql-find-email=SELECT email FROM pm_table_accounts WHERE userid=?",

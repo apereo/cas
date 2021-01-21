@@ -12,7 +12,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import java.io.Serializable;
 
 /**
- * This is {@link PasswordHistoryProperties}.
+ * This is {@link PasswordHistoryCoreProperties}.
  *
  * @author Misagh Moayyed
  * @since 6.4.0
@@ -21,19 +21,12 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("PasswordHistoryProperties")
-public class PasswordHistoryProperties implements Serializable {
-    private static final long serialVersionUID = 2211199066765183587L;
+@JsonFilter("PasswordHistoryCoreProperties")
+public class PasswordHistoryCoreProperties implements Serializable {
+    private static final long serialVersionUID = 2212199066765183587L;
 
     /**
-     * Password history core/common settings.
+     * Flag to indicate if password history tracking is enabled.
      */
-    @NestedConfigurationProperty
-    private PasswordHistoryCoreProperties core = new PasswordHistoryCoreProperties();
-
-    /**
-     * Handle password history with Groovy.
-     */
-    @NestedConfigurationProperty
-    private SpringResourceProperties groovy = new SpringResourceProperties();
+    private boolean enabled;
 }

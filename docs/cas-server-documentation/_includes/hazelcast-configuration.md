@@ -1,6 +1,6 @@
 #### Hazelcast Configuration
 
-{% capture cfgkey %}{{ include.configKey }}.license-key,{{ include.configKey }}.enable-compression,{{ include.configKey }}.enable-management-center-scripting{% endcapture %}
+{% capture cfgkey %}{{ include.configKey }}.core %}{% endcapture %}
 {% include casproperties.html properties=cfgkey %}
    
 #### Hazelcast Clusters
