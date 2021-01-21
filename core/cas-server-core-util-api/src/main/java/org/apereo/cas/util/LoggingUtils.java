@@ -1,7 +1,9 @@
 package org.apereo.cas.util;
 
 import lombok.experimental.UtilityClass;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 
 /**
@@ -31,7 +33,8 @@ public class LoggingUtils {
      * @param throwable the throwable
      */
     public static void error(final Logger logger, final Throwable throwable) {
-        error(logger, StringUtils.defaultIfEmpty(throwable.getMessage(), throwable.getClass().getSimpleName()), throwable);
+
+        error(logger, getMessage(throwable), throwable);
     }
 
     /**
@@ -41,7 +44,7 @@ public class LoggingUtils {
      * @param throwable the throwable
      */
     public static void warn(final Logger logger, final Throwable throwable) {
-        warn(logger, StringUtils.defaultIfEmpty(throwable.getMessage(), throwable.getClass().getSimpleName()), throwable);
+        warn(logger, getMessage(throwable), throwable);
     }
 
     /**
@@ -53,6 +56,22 @@ public class LoggingUtils {
      */
     public static void warn(final Logger logger, final String message, final Throwable throwable) {
         logger.warn(message, throwable);
+    }
+
+    /**
+     * Get first non-null exception message, and return class name if all messages null.
+     * @param throwable Top level throwable
+     * @return String containing first non-null exception message, or Throwable simple class name
+     */
+    static String getMessage(final Throwable throwable) {
+        if (StringUtils.isEmpty(throwable.getMessage())) {
+            val message = ExceptionUtils.getThrowableList(throwable)
+                    .stream().map(t -> t.getMessage()).filter(m -> m != null).findFirst();
+            if (message.isPresent()) {
+                return message.get();
+            }
+        }
+        return StringUtils.defaultIfEmpty(throwable.getMessage(), throwable.getClass().getSimpleName());
     }
 
 }
