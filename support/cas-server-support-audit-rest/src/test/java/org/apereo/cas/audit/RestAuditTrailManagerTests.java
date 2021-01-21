@@ -43,7 +43,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @Getter
 @SuppressWarnings("JavaUtilDate")
 public class RestAuditTrailManagerTests {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Autowired
     @Qualifier("restAuditTrailManager")

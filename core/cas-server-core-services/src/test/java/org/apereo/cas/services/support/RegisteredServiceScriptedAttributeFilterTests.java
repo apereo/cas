@@ -24,7 +24,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Groovy")
 public class RegisteredServiceScriptedAttributeFilterTests {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     private Map<String, List<Object>> givenAttributesMap;
 

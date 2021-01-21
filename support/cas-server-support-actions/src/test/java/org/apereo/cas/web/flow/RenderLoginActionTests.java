@@ -32,7 +32,8 @@ import static org.springframework.http.HttpStatus.OK;
  */
 @Tag("WebflowActions")
 public class RenderLoginActionTests extends AbstractWebflowActionsTests {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
     public void verifyNoRender() throws Exception {

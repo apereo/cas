@@ -48,7 +48,8 @@ import static org.springframework.http.HttpStatus.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("MFA")
 public class BasicDuoSecurityAuthenticationServiceTests {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Autowired
     private CasConfigurationProperties casProperties;

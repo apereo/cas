@@ -34,7 +34,8 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.oauth.user-profile-view-type=FLAT"
 })
 public class OidcUserProfileViewRendererFlatTests extends AbstractOidcTests {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
     public void verifyOperation() throws Exception {
