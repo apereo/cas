@@ -50,7 +50,7 @@ public class JdbcAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
     public boolean submit(final RequestContext requestContext, final Credential credential) {
         try {
             val jdbc = aupProperties.getJdbc();
-            var aupColumnName = aupProperties.getAupAttributeName();
+            var aupColumnName = aupProperties.getCore().getAupAttributeName();
             if (StringUtils.isNotBlank(jdbc.getAupColumn())) {
                 aupColumnName = jdbc.getAupColumn();
             }

@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = {
     "cas.acceptable-usage-policy.redis.host=localhost",
     "cas.acceptable-usage-policy.redis.port=6379",
-    "cas.acceptable-usage-policy.aup-attribute-name=accepted"
+    "cas.acceptable-usage-policy.core.aup-attribute-name=accepted"
 })
 @Getter
 public class RedisAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicyRepositoryTests {

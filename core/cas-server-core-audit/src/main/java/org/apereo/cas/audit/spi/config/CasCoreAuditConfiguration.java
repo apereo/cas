@@ -63,7 +63,7 @@ import java.util.Map;
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@ConditionalOnProperty(prefix = "cas.audit", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "cas.audit.engine", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class CasCoreAuditConfiguration {
 
     @Autowired
@@ -83,8 +83,9 @@ public class CasCoreAuditConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "auditTrailManagementAspect")
     public AuditTrailManagementAspect auditTrailManagementAspect() {
-        val audit = casProperties.getAudit();
-        val auditManager = new FilterAndDelegateAuditTrailManager(auditTrailExecutionPlan.getObject().getAuditTrailManagers(),
+        val audit = casProperties.getAudit().getEngine();
+        val auditManager = new FilterAndDelegateAuditTrailManager(
+            auditTrailExecutionPlan.getObject().getAuditTrailManagers(),
             audit.getSupportedActions(), audit.getExcludedActions());
         val auditRecordResolutionPlan = auditTrailRecordResolutionPlan.getObject();
         val aspect = new AuditTrailManagementAspect(
@@ -123,7 +124,7 @@ public class CasCoreAuditConfiguration {
 
     @Bean
     public FilterRegistrationBean casClientInfoLoggingFilter() {
-        val audit = casProperties.getAudit();
+        val audit = casProperties.getAudit().getEngine();
 
         val bean = new FilterRegistrationBean<ClientInfoThreadLocalFilter>();
         bean.setFilter(new ClientInfoThreadLocalFilter());
@@ -221,7 +222,7 @@ public class CasCoreAuditConfiguration {
     @Bean
     public AuditResourceResolver ticketValidationResourceResolver() {
         val audit = casProperties.getAudit();
-        if (audit.isIncludeValidationAssertion()) {
+        if (audit.getEngine().isIncludeValidationAssertion()) {
             return new TicketValidationResourceResolver();
         }
         return ticketResourceResolver();

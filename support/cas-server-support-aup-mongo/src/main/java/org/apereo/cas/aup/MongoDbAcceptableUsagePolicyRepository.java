@@ -39,7 +39,7 @@ public class MongoDbAcceptableUsagePolicyRepository extends BaseAcceptableUsageP
     @Override
     public boolean submit(final RequestContext requestContext, final Credential credential) {
         try {
-            val update = Update.update(aupProperties.getAupAttributeName(), Boolean.TRUE);
+            val update = Update.update(aupProperties.getCore().getAupAttributeName(), Boolean.TRUE);
             val query = new Query(Criteria.where("username").is(credential.getId()));
             this.mongoTemplate.updateFirst(query, update, aupProperties.getMongo().getCollection());
             return true;

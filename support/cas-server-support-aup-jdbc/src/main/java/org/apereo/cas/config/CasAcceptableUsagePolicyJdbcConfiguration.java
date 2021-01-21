@@ -29,7 +29,7 @@ import javax.sql.DataSource;
 @Configuration("casAcceptableUsagePolicyJdbcConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureAfter(CasCoreTicketsConfiguration.class)
-@ConditionalOnProperty(prefix = "cas.acceptable-usage-policy", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "cas.acceptable-usage-policy.core", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class CasAcceptableUsagePolicyJdbcConfiguration {
 
     @Autowired

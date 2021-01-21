@@ -30,7 +30,7 @@ public class JdbcAcceptableUsagePolicyProperties extends AbstractJpaProperties {
 
     /**
      * The column to store the AUP attribute. May differ from the profile attribute defined
-     * by {@link AcceptableUsagePolicyProperties#getAupAttributeName()}.
+     * by {@link AcceptableUsagePolicyCoreProperties#getAupAttributeName()}.
      * SQL query can be further customized by setting {@link #sqlUpdate}.
      */
     private String aupColumn;

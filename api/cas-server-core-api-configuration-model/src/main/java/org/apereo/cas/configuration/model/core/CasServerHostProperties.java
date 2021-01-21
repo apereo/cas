@@ -19,7 +19,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("HostProperties")
+@JsonFilter("CasServerHostProperties")
 public class CasServerHostProperties implements Serializable {
 
     private static final long serialVersionUID = 8624916460241033347L;

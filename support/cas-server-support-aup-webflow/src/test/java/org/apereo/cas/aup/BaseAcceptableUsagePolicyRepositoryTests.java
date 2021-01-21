@@ -123,7 +123,7 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
             val authentication = WebUtils.getAuthentication(context);
             var principal = authentication.getPrincipal();
             val attributes = new HashMap<>(principal.getAttributes());
-            attributes.put(casProperties.getAcceptableUsagePolicy().getAupAttributeName(), List.of(Boolean.TRUE));
+            attributes.put(casProperties.getAcceptableUsagePolicy().getCore().getAupAttributeName(), List.of(Boolean.TRUE));
             principal = RegisteredServiceTestUtils.getPrincipal(principal.getId(), attributes);
             WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(principal), context);
             assertTrue(getAcceptableUsagePolicyRepository().verify(context, c).isAccepted());

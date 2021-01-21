@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.acceptable-usage-policy.ldap[0].search-filter=cn={0}",
     "cas.acceptable-usage-policy.ldap[0].bind-dn=cn=Directory Manager",
     "cas.acceptable-usage-policy.ldap[0].bind-credential=password",
-    "cas.acceptable-usage-policy.aup-attribute-name=carLicense"
+    "cas.acceptable-usage-policy.core.aup-attribute-name=carLicense"
 })
 @Getter
 public class LdapAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicyRepositoryTests {
