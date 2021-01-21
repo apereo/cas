@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.hazelcast.discovery;
 
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -18,6 +19,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("HazelcastKubernetesDiscoveryProperties")
 public class HazelcastKubernetesDiscoveryProperties implements Serializable {
     private static final long serialVersionUID = 8590530159392472509L;
 
@@ -67,4 +69,37 @@ public class HazelcastKubernetesDiscoveryProperties implements Serializable {
      * token from the auto-injected file at: {@code /var/run/secrets/kubernetes.io/serviceaccount/token}.
      */
     private String apiToken;
+
+    /**
+     * Defines the pod label to lookup through the Service Discovery REST API of Kubernetes.
+     */
+    private String podLabelName;
+
+    /**
+     * Defines the pod label value to lookup through the Service Discovery REST API of Kubernetes.
+     */
+    private String podLabelValue;
+
+    /**
+     * Defines if the node name should be used as external address, instead of looking up the external IP using
+     * the {@code /nodes} resource. Default is false.
+     */
+    private boolean useNodeNameAsExternalAddress;
+
+    /**
+     * Defines the number of retries to Kubernetes API. Defaults to: 3.
+     */
+    private int apiRetries = 3;
+
+    /**
+     * CA Authority certificate from Kubernetes Master. Defaults to reading the certificate from the auto-injected file at:
+     * {@code /var/run/secrets/kubernetes.io/serviceaccount/ca.crt}.
+     */
+    private String caCertificate;
+
+    /**
+     * If specified with a value greater than 0, its value defines the
+     * endpoint port of the service (overriding the default).
+     */
+    private int servicePort;
 }
