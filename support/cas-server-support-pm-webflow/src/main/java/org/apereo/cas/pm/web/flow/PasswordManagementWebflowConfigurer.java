@@ -58,7 +58,7 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
 
     private void createAccountStatusViewStates(final Flow flow) {
         flow.getStartActionList().add(requestContext -> {
-            WebUtils.putPasswordManagementEnabled(requestContext, casProperties.getAuthn().getPm().isEnabled());
+            WebUtils.putPasswordManagementEnabled(requestContext, casProperties.getAuthn().getPm().getCore().isEnabled());
             return null;
         });
 
@@ -69,7 +69,7 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
         createViewState(flow, CasWebflowConstants.VIEW_ID_ACCOUNT_DISABLED, CasWebflowConstants.VIEW_ID_ACCOUNT_DISABLED);
         createViewState(flow, CasWebflowConstants.STATE_ID_PASSWORD_UPDATE_SUCCESS, CasWebflowConstants.VIEW_ID_PASSWORD_UPDATE_SUCCESS);
 
-        if (casProperties.getAuthn().getPm().isEnabled()) {
+        if (casProperties.getAuthn().getPm().getCore().isEnabled()) {
             configurePasswordResetFlow(flow, CasWebflowConstants.VIEW_ID_EXPIRED_PASSWORD);
             configurePasswordResetFlow(flow, CasWebflowConstants.VIEW_ID_MUST_CHANGE_PASSWORD);
             configurePasswordMustChangeForAuthnWarnings(flow);
@@ -206,7 +206,7 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
             "verifySecurityQuestions", Map.of("bind", Boolean.FALSE, "validate", Boolean.FALSE));
 
         pswdFlow.getStartActionList().add(requestContext -> {
-            WebUtils.putPasswordManagementEnabled(requestContext, casProperties.getAuthn().getPm().isEnabled());
+            WebUtils.putPasswordManagementEnabled(requestContext, casProperties.getAuthn().getPm().getCore().isEnabled());
             return null;
         });
         createViewState(pswdFlow, CasWebflowConstants.STATE_ID_PASSWORD_RESET_ERROR_VIEW, CasWebflowConstants.VIEW_ID_PASSWORD_RESET_ERROR);

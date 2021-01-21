@@ -30,31 +30,15 @@ public class WebflowProperties implements Serializable {
      * Encryption/signing setting for webflow.
      */
     @NestedConfigurationProperty
-    private EncryptionRandomizedSigningJwtCryptographyProperties crypto = new EncryptionRandomizedSigningJwtCryptographyProperties();
+    private EncryptionRandomizedSigningJwtCryptographyProperties crypto =
+        new EncryptionRandomizedSigningJwtCryptographyProperties();
 
     /**
-     * Whether CAS should take control of all spring webflow modifications
-     * and dynamically alter views, states and actions.
+     * Webflow auto configuration settings.
      */
-    private boolean autoconfigure = true;
-
-    /**
-     * Whether webflow should remain in "live reload" mode, able to auto detect
-     * changes and react. This is useful if the location of the webflow is externalized
-     * and changes are done ad-hoc to the webflow to accommodate changes.
-     */
-    private boolean refresh;
-
-    /**
-     * Whether flow executions should redirect after they pause before rendering.
-     */
-    private boolean alwaysPauseRedirect;
-
-    /**
-     * Whether flow executions redirect after they pause for transitions that remain in the same view state.
-     */
-    private boolean redirectSameState;
-
+    @NestedConfigurationProperty
+    private WebflowAutoConfigurationProperties autoConfiguration = new WebflowAutoConfigurationProperties();
+    
     /**
      * Webflow session management settings.
      */

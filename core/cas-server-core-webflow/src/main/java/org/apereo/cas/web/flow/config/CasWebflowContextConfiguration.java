@@ -155,7 +155,6 @@ public class CasWebflowContextConfiguration {
         val builder = new FlowBuilderServicesBuilder();
         builder.setViewFactoryCreator(viewFactoryCreator());
         builder.setExpressionParser(expressionParser());
-        builder.setDevelopmentMode(casProperties.getWebflow().isRefresh());
         return builder.build();
     }
 

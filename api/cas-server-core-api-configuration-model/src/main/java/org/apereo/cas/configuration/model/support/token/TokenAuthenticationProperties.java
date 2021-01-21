@@ -45,7 +45,7 @@ public class TokenAuthenticationProperties implements Serializable {
      * The webflow configuration.
      */
     @NestedConfigurationProperty
-    private WebflowAutoConfigurationProperties webflow = new WebflowAutoConfigurationProperties(100);
+    private WebflowAutoConfigurationProperties webflow = new WebflowAutoConfigurationProperties().setOrder(100);
     
     /**
      * Name of the authentication handler.

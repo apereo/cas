@@ -38,7 +38,7 @@ and the module automatically takes care of all required changes. While this is t
 you may want to manually handle all such changes. For doing so, you will need to disable the CAS auto-configuration
 of the webflow.
 
-{% include casproperties.html properties="cas.webflow." %}
+{% include casproperties.html properties="cas.webflow.auto-configuration." %}
 
 
 <div class="alert alert-warning"><strong>Note</strong><p>Only attempt to 
