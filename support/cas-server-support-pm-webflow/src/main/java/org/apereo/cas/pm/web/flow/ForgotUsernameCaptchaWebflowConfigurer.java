@@ -28,7 +28,7 @@ public class ForgotUsernameCaptchaWebflowConfigurer extends AbstractCasWebflowCo
     protected void doInitialize() {
         val flow = getLoginFlow();
         val pm = casProperties.getAuthn().getPm();
-        if (flow != null && pm.isEnabled() && pm.getForgotUsername().getGoogleRecaptcha().isEnabled()) {
+        if (flow != null && pm.getCore().isEnabled() && pm.getForgotUsername().getGoogleRecaptcha().isEnabled()) {
             flow.getStartActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_FORGOT_USERNAME_INIT_CAPTCHA));
 
             prependActionsToActionStateExecutionList(flow,

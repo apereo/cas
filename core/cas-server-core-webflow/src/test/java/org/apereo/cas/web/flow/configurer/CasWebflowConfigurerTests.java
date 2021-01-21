@@ -47,7 +47,7 @@ public class CasWebflowConfigurerTests {
     @Test
     public void verifyNoAutoConfig() {
         val props = new CasConfigurationProperties();
-        props.getWebflow().setAutoconfigure(false);
+        props.getWebflow().getAutoConfiguration().setEnabled(false);
         val cfg = new AbstractCasWebflowConfigurer(mock(FlowBuilderServices.class),
             mock(FlowDefinitionRegistry.class), new StaticApplicationContext(), props) {
         };

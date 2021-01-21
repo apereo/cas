@@ -29,7 +29,8 @@ public class WebflowAutoConfigurationProperties implements Serializable {
      */
     private int order;
 
-    public WebflowAutoConfigurationProperties(final int order) {
-        this.order = order;
-    }
+    /**
+     * Whether webflow auto-configuration should be enabled.
+     */
+    private boolean enabled = true;
 }

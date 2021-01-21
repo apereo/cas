@@ -20,7 +20,8 @@ public class InitPasswordChangeAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        PasswordManagementWebflowUtils.putPasswordResetPasswordPolicyPattern(requestContext, casProperties.getAuthn().getPm().getPolicyPattern());
+        PasswordManagementWebflowUtils.putPasswordResetPasswordPolicyPattern(requestContext,
+            casProperties.getAuthn().getPm().getCore().getPolicyPattern());
         return null;
     }
 }

@@ -55,7 +55,7 @@ public class PasswordManagementConfiguration implements InitializingBean {
     public CipherExecutor passwordManagementCipherExecutor() {
         val pm = casProperties.getAuthn().getPm();
         val crypto = pm.getReset().getCrypto();
-        if (pm.isEnabled() && crypto.isEnabled()) {
+        if (pm.getCore().isEnabled() && crypto.isEnabled()) {
             return CipherExecutorUtils.newStringCipherExecutor(crypto, PasswordResetTokenCipherExecutor.class);
         }
         return CipherExecutor.noOp();

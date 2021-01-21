@@ -92,10 +92,7 @@ public class CasCoreUtilConfiguration implements InitializingBean {
 
     @Bean
     public ObjectMapper objectMapper() {
-        return JacksonObjectMapperFactory.builder()
-            .defaultTypingEnabled(true)
-            .build()
-            .toObjectMapper();
+        return JacksonObjectMapperFactory.builder().build().toObjectMapper();
     }
 
     /**

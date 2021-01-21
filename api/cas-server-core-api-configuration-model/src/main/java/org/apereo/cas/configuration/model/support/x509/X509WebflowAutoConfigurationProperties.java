@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.core.web.flow.WebflowAutoConfiguration
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -18,6 +19,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("X509WebflowAutoConfigurationProperties")
 public class X509WebflowAutoConfigurationProperties extends WebflowAutoConfigurationProperties {
     private static final long serialVersionUID = 2744305877450488111L;
 
@@ -38,8 +40,8 @@ public class X509WebflowAutoConfigurationProperties extends WebflowAutoConfigura
      * Accepted values are {@code true, false, want}.
      */
     private String clientAuth = "want";
-    
-    public X509WebflowAutoConfigurationProperties(final int order) {
-        super(order);
+
+    public X509WebflowAutoConfigurationProperties() {
+        setOrder(100);
     }
 }
