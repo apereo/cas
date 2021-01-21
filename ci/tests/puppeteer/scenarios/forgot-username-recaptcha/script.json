@@ -1,7 +1,7 @@
 {
   "dependencies": "pm-webflow",
   "properties": [
-    "--cas.authn.pm.enabled=true",
+    "--cas.authn.pm.core.enabled=true",
 
     "--spring.mail.host=localhost",
     "--spring.mail.port=25000",

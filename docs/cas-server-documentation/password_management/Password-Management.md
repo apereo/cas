@@ -35,9 +35,7 @@ in your configuration and overlays. This is just to teach you that it exists.</p
 To learn more about available notification options, please [see this guide](../notifications/SMS-Messaging-Configuration.html) 
 or [this guide](../notifications/Sending-Email-Configuration.html). 
 
-{% include casproperties.html 
-excludes=".google-recaptcha,.reset."
-properties="cas.authn.pm.enabled,cas.authn.pm.policy-pattern,cas.authn.pm.auto-login,cas.authn.pm.webflow" %}
+{% include casproperties.html properties="cas.authn.pm.core,cas.authn.pm.webflow" %}
 
 ### Password Reset
 

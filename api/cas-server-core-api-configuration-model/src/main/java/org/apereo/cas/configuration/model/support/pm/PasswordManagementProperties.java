@@ -2,7 +2,6 @@ package org.apereo.cas.configuration.model.support.pm;
 
 import org.apereo.cas.configuration.model.core.web.flow.WebflowAutoConfigurationProperties;
 import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
-import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -33,23 +32,10 @@ public class PasswordManagementProperties implements Serializable {
     private static final long serialVersionUID = -260644582798411176L;
 
     /**
-     * Flag to indicate if password management facility is enabled.
+     * Password management core settings.
      */
-    @RequiredProperty
-    private boolean enabled;
-
-    /**
-     * Flag to indicate whether successful password change should trigger login automatically.
-     */
-    private boolean autoLogin;
-
-    /**
-     * A String value representing password policy regex pattern.
-     * Minimum 8 and Maximum 10 characters at least 1 Uppercase
-     * Alphabet, 1 Lowercase Alphabet, 1 Number and 1 Special Character.
-     */
-    @RequiredProperty
-    private String policyPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[$@$!%*?&])[A-Za-z\\d$@$!%*?&]{8,10}";
+    @NestedConfigurationProperty
+    private PasswordManagementCoreProperties core = new PasswordManagementCoreProperties();
 
     /**
      * Google reCAPTCHA settings.

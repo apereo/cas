@@ -1,8 +1,10 @@
 package org.apereo.cas.configuration.support;
 
+import org.apereo.cas.configuration.CasConfigurationWatchService;
 import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
 import org.apereo.cas.configuration.config.CasCoreBootstrapStandaloneConfiguration;
 import org.apereo.cas.configuration.config.CasCoreBootstrapStandaloneLocatorConfiguration;
+import org.apereo.cas.configuration.config.CasCoreBootstrapStandaloneWatchConfiguration;
 import org.apereo.cas.configuration.loader.ConfigurationPropertiesLoaderFactory;
 
 import lombok.val;
@@ -27,10 +29,16 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    CasCoreBootstrapStandaloneWatchConfiguration.class,
     CasCoreBootstrapStandaloneLocatorConfiguration.class,
     CasCoreBootstrapStandaloneConfiguration.class
 },
-    properties = {"spring.cloud.config.enabled=false", "spring.application.name=CAS"})
+    properties = {
+        "spring.cloud.config.enabled=false",
+        "spring.application.name=CAS",
+        "cas.events.track-configuration-modifications=true"
+    }
+)
 @Tag("CasConfiguration")
 public class DefaultCasConfigurationPropertiesSourceLocatorTests {
     static {
@@ -43,6 +51,10 @@ public class DefaultCasConfigurationPropertiesSourceLocatorTests {
     @Autowired
     @Qualifier("casConfigurationPropertiesSourceLocator")
     private CasConfigurationPropertiesSourceLocator casConfigurationPropertiesSourceLocator;
+
+    @Autowired
+    @Qualifier("casConfigurationWatchService")
+    private CasConfigurationWatchService casConfigurationWatchService;
 
     @Autowired
     private ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory;
@@ -58,6 +70,8 @@ public class DefaultCasConfigurationPropertiesSourceLocatorTests {
         val source = casConfigurationPropertiesSourceLocator.locate(environment, resourceLoader);
         assertTrue(source instanceof CompositePropertySource);
 
+        assertNotNull(casConfigurationWatchService);
+        
         val composite = (CompositePropertySource) source;
         assertEquals("https://cas.example.org:9999", composite.getProperty("cas.server.name"));
         assertEquals("https://cas.example.org/something", composite.getProperty("cas.server.prefix"));

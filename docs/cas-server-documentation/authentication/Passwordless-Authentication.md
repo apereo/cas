@@ -40,8 +40,7 @@ Support is enabled by including the following module in the overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-passwordless-webflow" %}
 
-{% include casproperties.html
-properties="cas.authn.passwordless.multifactor-authentication-activated,cas.authn.passwordless.delegated-authentication-activated" %}
+{% include casproperties.html properties="cas.authn.passwordless.core." %}
 
 ## Account Stores
 

@@ -83,7 +83,7 @@ import org.springframework.webflow.execution.Action;
     "spring.mail.host=localhost",
     "spring.mail.port=25000",
 
-    "cas.authn.pm.enabled=true",
+    "cas.authn.pm.core.enabled=true",
     "cas.authn.pm.groovy.location=classpath:PasswordManagementService.groovy",
     "cas.authn.pm.reset.mail.from=cas@example.org",
     "cas.authn.pm.forgot-username.mail.from=cas@example.org",

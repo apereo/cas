@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilConfiguration.class
 },
     properties = {
-        "cas.authn.pm.enabled=true",
+        "cas.authn.pm.core.enabled=true",
         "cas.authn.pm.history.enabled=true",
         "cas.authn.pm.history.groovy.location=classpath:PasswordHistoryService.groovy"
     })

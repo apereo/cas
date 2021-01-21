@@ -4,7 +4,7 @@
     "--cas.service-registry.init-from-json=true",
 
     "--cas.authn.passwordless.accounts.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/passwordless-delegated-login/accounts.json",
-    "--cas.authn.passwordless.delegated-authentication-selector-script.location=file:${PWD}/ci/tests/puppeteer/scenarios/passwordless-delegated-login/delegate-idp-selector.groovy",
+    "--cas.authn.passwordless.core.delegated-authentication-selector-script.location=file:${PWD}/ci/tests/puppeteer/scenarios/passwordless-delegated-login/delegate-idp-selector.groovy",
 
     "--cas.authn.pac4j.cas[0].login-url=https://github.com/apereo/cas",
     "--cas.authn.pac4j.cas[0].protocol=CAS30",
