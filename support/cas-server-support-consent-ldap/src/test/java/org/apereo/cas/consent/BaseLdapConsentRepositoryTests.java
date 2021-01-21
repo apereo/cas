@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public abstract class BaseLdapConsentRepositoryTests extends BaseConsentRepositoryTests {
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(true).build().toObjectMapper();
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     private static final String ATTR_NAME = "description";
 
