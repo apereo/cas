@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.support.hazelcast.discovery.HazelcastD
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -25,6 +26,7 @@ import java.util.stream.Stream;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("HazelcastClusterProperties")
 public class HazelcastClusterProperties implements Serializable {
 
     private static final long serialVersionUID = 1817784607045775145L;

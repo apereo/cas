@@ -144,7 +144,7 @@ public class InitialFlowSetupAction extends AbstractAction {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         WebUtils.putWarningCookie(context, Boolean.valueOf(this.warnCookieGenerator.retrieveCookieValue(request)));
 
-        WebUtils.putGeoLocationTrackingIntoFlowScope(context, casProperties.getEvents().isTrackGeolocation());
+        WebUtils.putGeoLocationTrackingIntoFlowScope(context, casProperties.getEvents().getCore().isTrackGeolocation());
         WebUtils.putRememberMeAuthenticationEnabled(context, casProperties.getTicket().getTgt().getRememberMe().isEnabled());
 
         val staticAuthEnabled = (casProperties.getAuthn().getAccept().isEnabled()

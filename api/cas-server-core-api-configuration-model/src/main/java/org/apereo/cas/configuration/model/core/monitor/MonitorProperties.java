@@ -27,14 +27,13 @@ public class MonitorProperties implements Serializable {
     private static final long serialVersionUID = -7047060071480971606L;
 
     /**
-     * The free memory threshold for the memory monitor.
-     * If the amount of free memory available reaches this point
-     * the memory monitor will report back a warning status as a health check.
+     * Options to monitor memory availability.
      */
-    private int freeMemThreshold = 10;
+    @NestedConfigurationProperty
+    private MemoryMonitorProperties memory = new MemoryMonitorProperties();
 
     /**
-     * Options for monitoring the status a nd production of TGTs.
+     * Options for monitoring the status and production of TGTs.
      */
     @NestedConfigurationProperty
     private TicketGrantingTicketMonitorProperties tgt = new TicketGrantingTicketMonitorProperties();

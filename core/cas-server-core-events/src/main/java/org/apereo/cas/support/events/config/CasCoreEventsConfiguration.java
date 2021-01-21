@@ -23,7 +23,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("casCoreEventsConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnProperty(prefix = "cas.events", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "cas.events.core", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class CasCoreEventsConfiguration {
 
     @Autowired

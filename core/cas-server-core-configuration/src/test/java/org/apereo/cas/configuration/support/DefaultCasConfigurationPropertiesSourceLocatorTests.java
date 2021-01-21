@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
     properties = {
         "spring.cloud.config.enabled=false",
         "spring.application.name=CAS",
-        "cas.events.track-configuration-modifications=true"
+        "cas.events.core.track-configuration-modifications=true"
     }
 )
 @Tag("CasConfiguration")

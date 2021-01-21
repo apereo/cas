@@ -24,7 +24,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 To learn how to configure database drivers, [please see this guide](../installation/JDBC-Drivers.html).
 
-{% include casproperties.html properties="cas.events.enabled,cas.events.track-geolocation,cas.events.track-configuration-modifications" %}
+{% include casproperties.html properties="cas.events.core." %}
 
 ## Recorded Data
 
