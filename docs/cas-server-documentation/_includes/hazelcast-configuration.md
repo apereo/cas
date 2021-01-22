@@ -1,6 +1,6 @@
 #### Hazelcast Configuration
 
-{% capture cfgkey %}{{ include.configKey }}.core %}{% endcapture %}
+{% capture cfgkey %}{{ include.configKey }}.core{% endcapture %}
 {% include casproperties.html properties=cfgkey %}
    
 #### Hazelcast Clusters

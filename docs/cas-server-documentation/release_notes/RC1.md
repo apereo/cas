@@ -56,7 +56,17 @@ minimum system/platform requirements for this release.
 ## New & Noteworthy
 
 The following items are new improvements and enhancements presented in this release.
-               
+
+### CAS Documentation
+
+CAS documentation has gone through a somewhat major overhaul in the way configuration settings are 
+managed and presented. The single-page catalog of all CAS settings has been replaced with individual
+snippets and fragments appropriate for each feature, and are included throughout the documentation
+pages where necessary, split into individual panes for required, optional and third-party settings. 
+
+The presentation and generation of CAS settings and their documentation is entirely driven by CAS configuration metadata,
+and this capability is ultimately powered by Github Pages and Jekyll that render the CAS documentation in the backend.
+
 ### Spring Boot 2.4
                   
 CAS is now based on the Spring Boot `2.4.x` series which by extension also requires CAS to upgrade

@@ -11,6 +11,11 @@ category: Developer
 This page documents the steps that a CAS developer/contributor should take for testing a CAS server deployment during development. For additional
 instructions and guidance on the general build process, please [see this page](Build-Process.html).
 
+<div class="alert alert-info"><strong>Contributions</strong><p>Patches submitted to the CAS codebase 
+in form of pull requests must pass all automated unit or integration tests, and/or 
+provide adequate unit or integration tests for the proposed changes. In the absence of appropriate test cases,
+the contribution most likely will not be accepted into the codebase and ultimately may be closed.</p></div>
+
 ## Testing Modules
 
 To test the functionality provided by a given CAS module, execute the following steps:
@@ -21,7 +26,7 @@ To test the functionality provided by a given CAS module, execute the following 
 implementation project(":support:cas-server-support-modulename")
 ```
 
-Alternatively, set a `casModules` property in the root project's `gradle.properties` or `~/.gradle/gradle.properties` to a 
+- Alternatively, set a `casModules` property in the root project's `gradle.properties` or `~/.gradle/gradle.properties` to a 
 comma separated list of modules without the `cas-server-` prefix:
 
 For example:
@@ -91,7 +96,7 @@ specific functionality such as successful logins, generation of tickets, etc.
 All functional and browser tests are executed by the [continuous integration system](Test-Process.html#continuous-integration). If you 
 are adding a new batch of tests, make sure the scenario (i.e. test) name is included in the CI configuration.
 
-To help simplify the testing process, you may use the following bash function in your `.profile`:
+To help simplify the testing process, you may use the following bash function in your `~/.profile`:
 
 ```bash
 function pupcas() {
@@ -106,7 +111,7 @@ function pupcas() {
 pupcas <scenario-name>
 ```
  
-To successfully run tests, you need to make [jq](https://stedolan.github.io/jq/) is installed.
+To successfully run tests, you need to make sure [jq](https://stedolan.github.io/jq/) is installed.
 
 ## Continuous Integration
 
