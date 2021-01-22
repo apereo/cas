@@ -82,7 +82,7 @@ The change has a number of major advantages when it comes to maintainability and
 
 - Configuration settings no longer need to be manually documented. If a setting is removed, renamed or updated in any way in the CAS codebase, its relevant reference in the documentation will be automatically updated
 - The documentation of each setting is directly extracted from the source code and the Javadoc for the field itself. If a setting is owned by a third-party library, its explanation no longer needs to be duplicated in the CAS documentation.
-- If a setting does not present any or adequate documentation, you're advised and encourages to find the relevant source and update its documentation in form of a contribution or pull request, whether it's owned by CAS or some other third-party library. Stop writing code, and write it where belongs. 
+- If a setting does not present any or adequate documentation, you're advised and encouraged to find the relevant source and update its documentation in form of a contribution or pull request, whether it's owned by CAS or some other third-party library.
 
 ### Spring Boot 2.4
                   

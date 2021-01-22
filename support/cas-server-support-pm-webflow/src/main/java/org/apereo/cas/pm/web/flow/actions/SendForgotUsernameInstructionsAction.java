@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
+import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
@@ -41,6 +42,10 @@ public class SendForgotUsernameInstructionsAction extends AbstractAction {
      */
     protected final PasswordManagementService passwordManagementService;
 
+    @Audit(action = "REQUEST_FORGOT_USERNAME",
+        principalResolverName = "REQUEST_FORGOT_USERNAME_PRINCIPAL_RESOLVER",
+        actionResolverName = "REQUEST_FORGOT_USERNAME_ACTION_RESOLVER",
+        resourceResolverName = "REQUEST_FORGOT_USERNAME_RESOURCE_RESOLVER")
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         communicationsManager.validate();
