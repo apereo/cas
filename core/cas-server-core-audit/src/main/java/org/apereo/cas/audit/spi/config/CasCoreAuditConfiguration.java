@@ -93,7 +93,8 @@ public class CasCoreAuditConfiguration {
             auditablePrincipalResolver(auditPrincipalIdProvider()),
             CollectionUtils.wrapList(auditManager),
             auditRecordResolutionPlan.getAuditActionResolvers(),
-            auditRecordResolutionPlan.getAuditResourceResolvers());
+            auditRecordResolutionPlan.getAuditResourceResolvers(),
+            auditRecordResolutionPlan.getAuditPrincipalResolvers());
         aspect.setFailOnAuditFailures(!audit.isIgnoreAuditFailures());
         return aspect;
     }

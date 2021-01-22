@@ -3,6 +3,7 @@ package org.apereo.cas.audit.spi.principal;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 
 import lombok.val;
+import org.aspectj.lang.JoinPoint;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link ChainingAuditPrincipalIdProviderTests}.
@@ -23,8 +25,10 @@ public class ChainingAuditPrincipalIdProviderTests {
     public void verifyOperation() {
         val chain = new ChainingAuditPrincipalIdProvider(new ArrayList<>());
         chain.addProvider(new DefaultAuditPrincipalIdProvider());
-        assertTrue(chain.supports(RegisteredServiceTestUtils.getAuthentication(), new Object(), null));
-        val principal = chain.getPrincipalIdFrom(RegisteredServiceTestUtils.getAuthentication(), new Object(), null);
+        assertTrue(chain.supports(mock(JoinPoint.class),
+            RegisteredServiceTestUtils.getAuthentication(), new Object(), null));
+        val principal = chain.getPrincipalIdFrom(mock(JoinPoint.class),
+            RegisteredServiceTestUtils.getAuthentication(), new Object(), null);
         assertEquals("test", principal);
     }
 
@@ -32,8 +36,8 @@ public class ChainingAuditPrincipalIdProviderTests {
     public void verifyAll() {
         val chain = new ChainingAuditPrincipalIdProvider(new ArrayList<>());
         chain.addProviders(List.of(new DefaultAuditPrincipalIdProvider()));
-        assertTrue(chain.supports(RegisteredServiceTestUtils.getAuthentication(), new Object(), null));
-        val principal = chain.getPrincipalIdFrom(RegisteredServiceTestUtils.getAuthentication(), new Object(), null);
+        assertTrue(chain.supports(mock(JoinPoint.class), RegisteredServiceTestUtils.getAuthentication(), new Object(), null));
+        val principal = chain.getPrincipalIdFrom(mock(JoinPoint.class), RegisteredServiceTestUtils.getAuthentication(), new Object(), null);
         assertEquals("test", principal);
         assertEquals(Integer.MAX_VALUE, chain.getOrder());
     }

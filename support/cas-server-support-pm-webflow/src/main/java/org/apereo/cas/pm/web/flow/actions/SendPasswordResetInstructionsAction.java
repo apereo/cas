@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.web.util.UriUtils;
 import org.springframework.webflow.action.AbstractAction;
@@ -76,7 +77,7 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
      * @param service                   service from the flow scope
      * @return URL a user can use to start the password reset process
      */
-    public String buildPasswordResetUrl(final String username,
+    protected String buildPasswordResetUrl(final String username,
                                         final PasswordManagementService passwordManagementService,
                                         final CasConfigurationProperties casProperties,
                                         final WebApplicationService service) {
@@ -108,6 +109,10 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
         return null;
     }
 
+    @Audit(action = "REQUEST_CHANGE_PASSWORD",
+        principalResolverName = "REQUEST_CHANGE_PASSWORD_PRINCIPAL_RESOLVER",
+        actionResolverName = "REQUEST_CHANGE_PASSWORD_ACTION_RESOLVER",
+        resourceResolverName = "REQUEST_CHANGE_PASSWORD_RESOURCE_RESOLVER")
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         communicationsManager.validate();

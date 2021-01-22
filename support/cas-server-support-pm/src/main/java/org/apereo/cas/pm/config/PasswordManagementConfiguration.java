@@ -20,8 +20,11 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.apereo.inspektr.audit.spi.support.BooleanAuditActionResolver;
+import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.apereo.inspektr.audit.spi.support.FirstParameterAuditResourceResolver;
+import org.apereo.inspektr.audit.spi.support.SpringWebflowActionExecutionAuditablePrincipalResolver;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +47,10 @@ import org.springframework.context.annotation.Configuration;
 public class PasswordManagementConfiguration implements InitializingBean {
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    @Qualifier("returnValueResourceResolver")
+    private ObjectProvider<AuditResourceResolver> returnValueResourceResolver;
 
     @Autowired
     @Qualifier("communicationsManager")
@@ -134,9 +141,13 @@ public class PasswordManagementConfiguration implements InitializingBean {
     public AuditTrailRecordResolutionPlanConfigurer passwordManagementAuditTrailRecordResolutionPlanConfigurer() {
         return plan -> {
             plan.registerAuditActionResolver("CHANGE_PASSWORD_ACTION_RESOLVER",
-                new BooleanAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_SUCCESS, AuditTrailConstants.AUDIT_ACTION_POSTFIX_FAILED));
-            plan.registerAuditResourceResolver("CHANGE_PASSWORD_RESOURCE_RESOLVER",
-                new FirstParameterAuditResourceResolver());
+                new BooleanAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_SUCCESS,
+                    AuditTrailConstants.AUDIT_ACTION_POSTFIX_FAILED));
+            plan.registerAuditResourceResolver("CHANGE_PASSWORD_RESOURCE_RESOLVER", new FirstParameterAuditResourceResolver());
+            plan.registerAuditActionResolver("REQUEST_CHANGE_PASSWORD_ACTION_RESOLVER", new DefaultAuditActionResolver());
+            plan.registerAuditResourceResolver("REQUEST_CHANGE_PASSWORD_RESOURCE_RESOLVER", returnValueResourceResolver.getObject());
+            plan.registerAuditPrincipalResolver("REQUEST_CHANGE_PASSWORD_PRINCIPAL_RESOLVER",
+                new SpringWebflowActionExecutionAuditablePrincipalResolver("username"));
         };
     }
 }
