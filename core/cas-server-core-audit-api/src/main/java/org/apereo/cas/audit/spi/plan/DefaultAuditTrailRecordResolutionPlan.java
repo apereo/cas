@@ -5,6 +5,7 @@ import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
 import lombok.Getter;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
+import org.apereo.inspektr.common.spi.PrincipalResolver;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -21,10 +22,16 @@ public class DefaultAuditTrailRecordResolutionPlan implements AuditTrailRecordRe
 
     private final Map<String, AuditResourceResolver> auditResourceResolvers = new LinkedHashMap<>(MAP_SIZE);
     private final Map<String, AuditActionResolver> auditActionResolvers = new LinkedHashMap<>(MAP_SIZE);
+    private final Map<String, PrincipalResolver> auditPrincipalResolvers = new LinkedHashMap<>(MAP_SIZE);
 
     @Override
     public void registerAuditResourceResolver(final String key, final AuditResourceResolver resolver) {
         this.auditResourceResolvers.put(key, resolver);
+    }
+
+    @Override
+    public void registerAuditPrincipalResolver(final String key, final PrincipalResolver resolver) {
+        this.auditPrincipalResolvers.put(key, resolver);
     }
 
     @Override

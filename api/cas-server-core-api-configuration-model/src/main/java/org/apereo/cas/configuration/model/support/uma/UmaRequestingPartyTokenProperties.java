@@ -9,7 +9,6 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
 
 import java.io.Serializable;
 

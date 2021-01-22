@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.Authentication;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.aspectj.lang.JoinPoint;
 
 import java.util.List;
 
@@ -39,17 +40,19 @@ public class ChainingAuditPrincipalIdProvider implements AuditPrincipalIdProvide
     }
 
     @Override
-    public String getPrincipalIdFrom(final Authentication authentication, final Object resultValue, final Exception exception) {
+    public String getPrincipalIdFrom(final JoinPoint auditTarget, final Authentication authentication,
+                                     final Object resultValue, final Exception exception) {
         val result = providers.stream()
-            .filter(p -> p.supports(authentication, resultValue, exception))
+            .filter(p -> p.supports(auditTarget, authentication, resultValue, exception))
             .findFirst()
             .orElseGet(DefaultAuditPrincipalIdProvider::new);
-        return result.getPrincipalIdFrom(authentication, resultValue, exception);
+        return result.getPrincipalIdFrom(auditTarget, authentication, resultValue, exception);
     }
 
     @Override
-    public boolean supports(final Authentication authentication, final Object resultValue, final Exception exception) {
-        return true;
+    public boolean supports(final JoinPoint auditTarget, final Authentication authentication,
+                            final Object resultValue, final Exception exception) {
+        return providers.stream().anyMatch(p -> p.supports(auditTarget, authentication, resultValue, exception));
     }
 
     @Override

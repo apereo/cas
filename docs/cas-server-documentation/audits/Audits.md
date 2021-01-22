@@ -98,6 +98,7 @@ The following events are tracked and recorded in the audit log:
 | `MULTIFACTOR_AUTHENTICATION_BYPASS`   | N/A
 | `SAVE_SERVICE`                        | `SUCCESS`, `FAILURE`
 | `SAVE_CONSENT`                        | `SUCCESS`, `FAILURE`
+| `REQUEST_CHANGE_PASSWORD`             | N/A
 | `CHANGE_PASSWORD`                     | `SUCCESS`, `FAILURE`
 | `DELETE_SERVICE`                      | `SUCCESS`, `FAILURE`
 | `SAML2_RESPONSE`                      | `CREATED`, `FAILED`
