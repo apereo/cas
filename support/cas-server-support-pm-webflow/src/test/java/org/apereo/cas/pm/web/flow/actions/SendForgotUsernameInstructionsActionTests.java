@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
 @Tag("Mail")
 public class SendForgotUsernameInstructionsActionTests extends BasePasswordManagementActionTests {
     @Autowired
-    @Qualifier("sendForgotUsernameInstructionsAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_SEND_FORGOT_USERNAME_INSTRUCTIONS_ACTION)
     private Action sendForgotUsernameInstructionsAction;
 
     @Test

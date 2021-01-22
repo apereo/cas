@@ -108,20 +108,6 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
             val state = getState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM, ViewState.class);
             createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_RESET_PASSWORD,
                 CasWebflowConstants.VIEW_ID_SEND_RESET_PASSWORD_ACCT_INFO);
-            createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_FORGOT_USERNAME,
-                CasWebflowConstants.VIEW_ID_FORGOT_USERNAME_ACCT_INFO);
-
-            val usernameInfo = createViewState(flow, CasWebflowConstants.VIEW_ID_FORGOT_USERNAME_ACCT_INFO,
-                CasWebflowConstants.VIEW_ID_FORGOT_USERNAME_ACCT_INFO);
-            createTransitionForState(usernameInfo, "findUsername", CasWebflowConstants.STATE_ID_SEND_FORGOT_USERNAME_INSTRUCTIONS);
-
-            val sendUsernameInst = createActionState(flow, CasWebflowConstants.STATE_ID_SEND_FORGOT_USERNAME_INSTRUCTIONS,
-                "sendForgotUsernameInstructionsAction");
-            createTransitionForState(sendUsernameInst, CasWebflowConstants.TRANSITION_ID_SUCCESS,
-                CasWebflowConstants.VIEW_ID_SENT_FORGOT_USERNAME_ACCT_INFO);
-            createTransitionForState(sendUsernameInst, CasWebflowConstants.TRANSITION_ID_ERROR, usernameInfo.getId());
-            createViewState(flow, CasWebflowConstants.VIEW_ID_SENT_FORGOT_USERNAME_ACCT_INFO,
-                CasWebflowConstants.VIEW_ID_SENT_FORGOT_USERNAME_ACCT_INFO);
 
             val viewState = createViewState(flow, CasWebflowConstants.VIEW_ID_SEND_RESET_PASSWORD_ACCT_INFO,
                 CasWebflowConstants.VIEW_ID_SEND_RESET_PASSWORD_ACCT_INFO);
