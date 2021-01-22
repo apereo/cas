@@ -39,7 +39,9 @@ In the event that you wish to use server-side session storage for managing t
 he webflow session, you will need to enable this behavior
 via CAS properties. 
 
-{% include casproperties.html properties="cas.webflow.session" thirdParty="spring.session" excludes=".jdbc" %}
+{% include casproperties.html properties="cas.webflow.session" 
+thirdPartyStartsWith="spring.session" 
+excludes=".jdbc,.hazelcast,.mongodb,.redis" %}
 
 Doing so will likely require you to also enable sticky sessions and/or session replication in a clustered deployment of CAS.
 
@@ -60,7 +62,7 @@ This feature is enabled via the following module:
 
 {% include casproperties.html 
 properties="cas.webflow.session.hz" 
-thirdPartyStartsWith="spring.session,spring.session.hazelcast" %}
+thirdPartyStartsWith="spring.session.hazelcast,spring.session.hazelcast" %}
 
 ### Redis Session Replication
 
@@ -72,7 +74,7 @@ This feature is enabled via the following module:
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-session-redis" %}
 
 {% include casproperties.html 
-thirdPartyStartsWith="spring.session,spring.redis" %}
+thirdPartyStartsWith="spring.session.redis,spring.redis" %}
 
 ### MongoDb Session Replication
 
@@ -84,7 +86,7 @@ This feature is enabled via the following module:
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-session-mongo" %}
 
 {% include casproperties.html 
-thirdPartyStartsWith="spring.session.mongo,spring.data.mongodb" %}
+thirdPartyStartsWith="spring.session.mongodb,spring.data.mongodb" %}
 
 ### JDBC Session Replication
 
@@ -96,5 +98,5 @@ This feature is enabled via the following module:
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-session-jdbc" %}
 
 {% include casproperties.html 
-thirdPartyStartsWith="spring.session,spring.datasource" %}
+thirdPartyStartsWith="spring.session.jdbc,spring.datasource" %}
 

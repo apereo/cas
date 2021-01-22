@@ -20,6 +20,7 @@ This is the default configuration mode which indicates that CAS does NOT require
 to an external configuration server and will run in an embedded standalone mode.
   
 {% include casproperties.html properties="cas.standalone." excludes="configuration-security" %}
+
 ### By Directory
 
 CAS by default will attempt to locate settings and properties inside a given directory and otherwise falls back to using:

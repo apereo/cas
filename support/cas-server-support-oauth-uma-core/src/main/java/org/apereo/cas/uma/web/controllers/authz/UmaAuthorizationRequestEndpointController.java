@@ -191,7 +191,7 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
             .encode();
 
         val timeout = Beans.newDuration(getUmaConfigurationContext().getCasProperties()
-            .getAuthn().getUma().getRequestingPartyToken().getMaxTimeToLiveInSeconds()).getSeconds();
+            .getAuthn().getOauth().getUma().getRequestingPartyToken().getMaxTimeToLiveInSeconds()).getSeconds();
         request.setAttribute(UmaPermissionTicket.class.getName(), permissionTicket);
         request.setAttribute(ResourceSet.class.getName(), resourceSet);
         val idToken = getUmaConfigurationContext().getRequestingPartyTokenGenerator().generate(request, response,

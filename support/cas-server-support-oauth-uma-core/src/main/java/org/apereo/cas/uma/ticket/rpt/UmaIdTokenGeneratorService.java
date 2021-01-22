@@ -73,7 +73,7 @@ public class UmaIdTokenGeneratorService extends BaseIdTokenGeneratorService {
 
         val claims = new JwtClaims();
         claims.setJwtId(UUID.randomUUID().toString());
-        claims.setIssuer(getConfigurationContext().getCasProperties().getAuthn().getUma().getIssuer());
+        claims.setIssuer(getConfigurationContext().getCasProperties().getAuthn().getOauth().getUma().getCore().getIssuer());
         claims.setAudience(String.valueOf(permissionTicket.getResourceSet().getId()));
 
         val expirationDate = NumericDate.now();

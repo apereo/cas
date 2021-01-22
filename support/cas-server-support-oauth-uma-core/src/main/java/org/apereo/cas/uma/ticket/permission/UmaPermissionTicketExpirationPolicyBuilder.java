@@ -45,7 +45,7 @@ public class UmaPermissionTicketExpirationPolicyBuilder implements ExpirationPol
      * @return the expiration policy
      */
     public ExpirationPolicy toTicketExpirationPolicy() {
-        val uma = casProperties.getAuthn().getUma();
+        val uma = casProperties.getAuthn().getOauth().getUma();
         return new HardTimeoutExpirationPolicy(Beans.newDuration(uma.getPermissionTicket().getMaxTimeToLiveInSeconds()).getSeconds());
     }
 }

@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.support.uma;
 
-import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -26,10 +25,10 @@ public class UmaProperties implements Serializable {
     private static final long serialVersionUID = 865028615694269276L;
 
     /**
-     * UMA issuer.
+     * Handles core settings.
      */
-    @RequiredProperty
-    private String issuer = "http://localhost:8080/cas";
+    @NestedConfigurationProperty
+    private UmaCoreProperties core = new UmaCoreProperties();
 
     /**
      * Handles settings related to permission tickets.

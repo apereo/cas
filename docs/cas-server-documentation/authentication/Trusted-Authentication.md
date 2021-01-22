@@ -21,6 +21,4 @@ Trusted authentication is able to extract the remote authenticated user via the 
 2. Username may be extracted from `HttpServletRequest#getUserPrincipal()`
 3. Username may be extracted from a request header whose name is defined in CAS settings.
 
-{% include casproperties.html 
-properties="cas.authn.trusted" 
-excludes="mongo,dynamo-db,couch-db,redis,json,jpa,rest" %}
+{% include casproperties.html properties="cas.authn.trusted" %}
