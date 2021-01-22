@@ -59,13 +59,30 @@ The following items are new improvements and enhancements presented in this rele
 
 ### CAS Documentation
 
-CAS documentation has gone through a somewhat major overhaul in the way configuration settings are 
-managed and presented. The single-page catalog of all CAS settings has been replaced with individual
+CAS documentation has gone through a cleanup effort to improve how configuration settings are 
+managed and presented. Configuration namespaces for CAS settings are presented as individual
 snippets and fragments appropriate for each feature, and are included throughout the documentation
-pages where necessary, split into individual panes for required, optional and third-party settings. 
+pages where necessary, split into panes for required, optional and third-party settings, etc. 
 
 The presentation and generation of CAS settings and their documentation is entirely driven by CAS configuration metadata,
 and this capability is ultimately powered by Github Pages and Jekyll that render the CAS documentation in the backend.
+
+Please note that as part of this change, a number of CAS configuration settings are moved around into new namespaces
+to make the generation of configuration metadata and relevant documentation snippets easier. Most likely, settings
+are moved into a new `.core.` or `.engine.` namespace. Some of the settings that are affected by this effort
+are: 
+
+- `cas.oidc`
+- `cas.authn.oauth.uma`
+- `cas.events`
+- `cas.acceptable-usage-policy` 
+- `cas.ticket.registry.hazelcast` 
+         
+The change has a number of major advantages when it comes to maintainability and correctness of documentation:
+
+- Configuration settings no longer need to be manually documented. If a setting is removed, renamed or updated in any way in the CAS codebase, its relevant reference in the documentation will be automatically updated
+- The documentation of each setting is directly extracted from the source code and the Javadoc for the field itself. If a setting is owned by a third-party library, its explanation no longer needs to be duplicated in the CAS documentation.
+- If a setting does not present any or adequate documentation, you're advised and encourages to find the relevant source and update its documentation in form of a contribution or pull request, whether it's owned by CAS or some other third-party library. Stop writing code, and write it where belongs. 
 
 ### Spring Boot 2.4
                   

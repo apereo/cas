@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class UmaRequestingPartyTokenJwksEndpointControllerTests extends BaseUmaEndpointControllerTests {
     @Test
     public void verifyUnknownFile() {
-        casProperties.getAuthn().getUma().getRequestingPartyToken()
+        casProperties.getAuthn().getOauth().getUma().getRequestingPartyToken()
             .getJwksFile().setLocation(new FileSystemResource(new File("/tmp/uma-unknown.jkws")));
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -39,7 +39,7 @@ public class UmaRequestingPartyTokenJwksEndpointControllerTests extends BaseUmaE
     public void verifyBadFile() throws Exception {
         val file = File.createTempFile("uma", ".jwks");
         FileUtils.write(file, "@@", StandardCharsets.UTF_8);
-        casProperties.getAuthn().getUma().getRequestingPartyToken()
+        casProperties.getAuthn().getOauth().getUma().getRequestingPartyToken()
             .getJwksFile().setLocation(new FileSystemResource(file));
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -48,8 +48,8 @@ public class UmaRequestingPartyTokenJwksEndpointControllerTests extends BaseUmaE
     }
 
     @Test
-    public void verifySuccess() throws Exception {
-        casProperties.getAuthn().getUma().getRequestingPartyToken()
+    public void verifySuccess() {
+        casProperties.getAuthn().getOauth().getUma().getRequestingPartyToken()
             .getJwksFile().setLocation(new ClassPathResource("uma-keystore.jwks"));
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

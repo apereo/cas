@@ -130,9 +130,9 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
     @RefreshScope
     @ConditionalOnMissingBean(name = "umaRequestingPartyTokenGenerator")
     public IdTokenGeneratorService umaRequestingPartyTokenGenerator() {
-        val uma = casProperties.getAuthn().getUma();
+        val uma = casProperties.getAuthn().getOauth().getUma();
         val jwks = uma.getRequestingPartyToken().getJwksFile().getLocation();
-        val signingService = new UmaRequestingPartyTokenSigningService(jwks, uma.getIssuer());
+        val signingService = new UmaRequestingPartyTokenSigningService(jwks, uma.getCore().getIssuer());
         val context = OAuth20ConfigurationContext.builder()
             .ticketRegistry(ticketRegistry.getObject())
             .servicesManager(servicesManager.getObject())

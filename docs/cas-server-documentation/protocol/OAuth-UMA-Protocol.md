@@ -20,7 +20,30 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-oauth-uma" %}
 
-{% include casproperties.html properties="cas.authn.uma." excludes=".jpa" %}
+{% include casproperties.html properties="cas.authn.oauth.uma.core"%}
+
+## Permission Tickets
+
+A permission represents a resource identifier and its corresponding scopes. At a single instance, the 
+resource server can only request permissions for access to the resources belonging to a 
+single resource owner, protected by a single authorization server. As the response, 
+the resource server receives a permission ticket which represents the 
+same permissions that the resource server requested.
+
+{% include casproperties.html properties="cas.authn.oauth.uma.permission-ticket"%}
+
+## Requesting Party Tokens
+
+The client can then obtain a Requesting Party Token (`RPT`) from the authorization 
+server by presenting the received permission ticket and any other required claims. `RPT` 
+will be issued with successful evaluation of policy conditions, 
+scopes, claims, and any other relevant information.
+
+A `RPT` is an OAuth access token associated with the UMA grant. An `RPT` is 
+unique to a requesting party, client, authorization server, resource server, 
+and resource owner. This token represents some number of granted permissions.
+
+{% include casproperties.html properties="cas.authn.oauth.uma.requesting-party-token"%}
 
 ## Resources Storage
 
@@ -33,7 +56,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-oauth-uma-jpa" %}
 
-{% include casproperties.html properties="cas.authn.uma.resource-set.jpa" %}
+{% include casproperties.html properties="cas.authn.oauth.uma.resource-set.jpa" %}
 
 ## Endpoints
 
