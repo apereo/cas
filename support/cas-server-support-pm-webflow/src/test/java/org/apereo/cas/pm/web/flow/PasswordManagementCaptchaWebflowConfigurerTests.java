@@ -1,6 +1,7 @@
 package org.apereo.cas.pm.web.flow;
 
 import org.apereo.cas.pm.config.PasswordManagementConfiguration;
+import org.apereo.cas.pm.config.PasswordManagementForgotUsernameConfiguration;
 import org.apereo.cas.pm.config.PasswordManagementWebflowConfiguration;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -25,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Import({
     PasswordManagementConfiguration.class,
     PasswordManagementWebflowConfiguration.class,
+    PasswordManagementForgotUsernameConfiguration.class,
     BaseWebflowConfigurerTests.SharedTestConfiguration.class
 })
 @TestPropertySource(properties = {

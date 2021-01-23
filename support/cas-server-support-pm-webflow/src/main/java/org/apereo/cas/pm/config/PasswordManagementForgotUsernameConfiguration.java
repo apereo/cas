@@ -1,11 +1,11 @@
 package org.apereo.cas.pm.config;
 
+import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.web.flow.ForgotUsernameCaptchaWebflowConfigurer;
 import org.apereo.cas.pm.web.flow.ForgotUsernameWebflowConfigurer;
-import org.apereo.cas.pm.web.flow.PasswordManagementWebflowConfigurer;
 import org.apereo.cas.pm.web.flow.actions.SendForgotUsernameInstructionsAction;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -13,8 +13,10 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.InitializeCaptchaAction;
 import org.apereo.cas.web.flow.ValidateCaptchaAction;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.inspektr.audit.spi.AuditResourceResolver;
+import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
+import org.apereo.inspektr.audit.spi.support.SpringWebflowActionExecutionAuditablePrincipalResolver;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -48,6 +50,10 @@ public class PasswordManagementForgotUsernameConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
+    @Qualifier("returnValueResourceResolver")
+    private ObjectProvider<AuditResourceResolver> returnValueResourceResolver;
+
+    @Autowired
     @Qualifier("communicationsManager")
     private ObjectProvider<CommunicationsManager> communicationsManager;
 
@@ -77,6 +83,16 @@ public class PasswordManagementForgotUsernameConfiguration {
         return new ForgotUsernameWebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getObject(),
             applicationContext, casProperties);
+    }
+
+    @Bean
+    public AuditTrailRecordResolutionPlanConfigurer forgotUsernameAuditTrailRecordResolutionPlanConfigurer() {
+        return plan -> {
+            plan.registerAuditActionResolver("REQUEST_FORGOT_USERNAME_ACTION_RESOLVER", new DefaultAuditActionResolver());
+            plan.registerAuditResourceResolver("REQUEST_FORGOT_USERNAME_RESOURCE_RESOLVER", returnValueResourceResolver.getObject());
+            plan.registerAuditPrincipalResolver("REQUEST_FORGOT_USERNAME_PRINCIPAL_RESOLVER",
+                new SpringWebflowActionExecutionAuditablePrincipalResolver(SendForgotUsernameInstructionsAction.REQUEST_PARAMETER_EMAIL));
+        };
     }
 
     @Bean

@@ -17,7 +17,7 @@ env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   PYTHON_VERSION: 3.8.2
   RUBY_VERSION: 2.6
-  JDK_CURRENT: 11.0.9
+  JDK_CURRENT: 11.0.10
   JDK_LATEST: 15
   
 ##########################################################################

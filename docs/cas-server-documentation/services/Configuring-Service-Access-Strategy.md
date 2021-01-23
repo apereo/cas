@@ -176,7 +176,7 @@ import java.util.*
 import java.net.*
 import org.apereo.cas.authentication.*
 
-def URI run(final Object... args) {
+URI run(final Object... args) {
     def registeredService = args[0]
     def requestContext = args[1]
     def applicationContext = args[2]
@@ -280,10 +280,14 @@ Service access is only allowed within `startingDateTime` and `endingDateTime`:
     "ssoEnabled" : true,
     "unauthorizedRedirectUrl" : "https://www.github.com",
     "startingDateTime" : "2015-11-01T13:19:54.132-07:00",
-    "endingDateTime" : "2015-11-10T13:19:54.248-07:00"
+    "endingDateTime" : "2015-11-10T13:19:54.248-07:00",
+    "zoneId" : "UTC"
   }
 }
 ```
+
+The configuration of the public key component qualifies to use the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.
+
 
 ## Remote Endpoint
 

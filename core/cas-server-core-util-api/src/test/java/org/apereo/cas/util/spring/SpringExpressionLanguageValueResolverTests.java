@@ -41,5 +41,11 @@ public class SpringExpressionLanguageValueResolverTests {
         assertEquals("file://etc/cas/config/file.json",
             resolver.resolve("file://${#systemProperties['cas.dir']}/file.json"));
 
+        assertNotNull(resolver.resolve("${#localDateTime}"));
+        assertNotNull(resolver.resolve("${#localDateTimeUtc}"));
+        assertNotNull(resolver.resolve("${#localDate}"));
+        assertNotNull(resolver.resolve("${#localDateUtc}"));
+        assertNotNull(resolver.resolve("${#zonedDateTime}"));
+        assertNotNull(resolver.resolve("${#zonedDateTimeUtc}"));
     }
 }

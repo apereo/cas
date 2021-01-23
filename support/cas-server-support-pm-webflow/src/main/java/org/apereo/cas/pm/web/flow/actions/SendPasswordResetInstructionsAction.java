@@ -44,6 +44,11 @@ import java.util.concurrent.TimeUnit;
 public class SendPasswordResetInstructionsAction extends AbstractAction {
 
     /**
+     * Parameter name to look up the user.
+     */
+    public static final String REQUEST_PARAMETER_USERNAME = "username";
+
+    /**
      * The CAS configuration properties.
      */
     protected final CasConfigurationProperties casProperties;
@@ -121,7 +126,7 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
         }
 
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        val username = request.getParameter("username");
+        val username = request.getParameter(REQUEST_PARAMETER_USERNAME);
 
         if (StringUtils.isBlank(username)) {
             LOGGER.warn("No username parameter is provided");

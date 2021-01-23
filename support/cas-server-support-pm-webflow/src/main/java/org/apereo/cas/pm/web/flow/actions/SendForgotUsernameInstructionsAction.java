@@ -27,6 +27,12 @@ import org.springframework.webflow.execution.RequestContext;
 @Slf4j
 @RequiredArgsConstructor
 public class SendForgotUsernameInstructionsAction extends AbstractAction {
+
+    /**
+     * Parameter name to look up the user.
+     */
+    public static final String REQUEST_PARAMETER_EMAIL = "email";
+
     /**
      * The CAS configuration properties.
      */
@@ -53,7 +59,7 @@ public class SendForgotUsernameInstructionsAction extends AbstractAction {
             return getErrorEvent("email.failed", "Unable to send email as no mail sender is defined", requestContext);
         }
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        val email = request.getParameter("email");
+        val email = request.getParameter(REQUEST_PARAMETER_EMAIL);
 
         if (StringUtils.isBlank(email)) {
             return getErrorEvent("email.required", "No email is provided", requestContext);
