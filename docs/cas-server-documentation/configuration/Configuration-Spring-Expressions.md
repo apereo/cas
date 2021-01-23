@@ -34,6 +34,17 @@ are expected to be preceded with the `#` character. The following predefined var
 | `randomString4`          | 4-character random word.
 | `randomString6`          | 6-character random word.
 | `randomString8`          | 8-character random word.
+| `localDateTime`          | Current date/time using system's default zone id.
+| `localDateTimeUtc`       | Current date/time using `UTC`.
+| `localDate`              | Current date using system's default zone id.
+| `localDateUtc`           | Current date using `UTC`.
+| `zonedDateTime`          | Current zoned date using system's default zone id.
+| `zonedDateTimeUtc`       | Current zoned date using `UTC`.
+| `localStartWorkDay`      | Start of current work day at `8am`.
+| `localEndWorkDay`        | End of current work day at `5pm`.
+| `localStartDay`          | Start of current day.
+| `localEndDay`            | End of current day.
+| `zoneId`                 | Default system's time zone id.
 
 ## Examples
 

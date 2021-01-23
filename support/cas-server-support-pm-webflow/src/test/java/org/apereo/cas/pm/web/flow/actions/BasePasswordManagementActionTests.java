@@ -25,6 +25,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.config.PasswordManagementConfiguration;
+import org.apereo.cas.pm.config.PasswordManagementForgotUsernameConfiguration;
 import org.apereo.cas.pm.config.PasswordManagementWebflowConfiguration;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.ticket.TicketFactory;
@@ -55,6 +56,7 @@ import org.springframework.webflow.execution.Action;
     RefreshAutoConfiguration.class,
     PasswordManagementConfiguration.class,
     PasswordManagementWebflowConfiguration.class,
+    PasswordManagementForgotUsernameConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
     CasCoreTicketsConfiguration.class,
@@ -85,8 +87,8 @@ import org.springframework.webflow.execution.Action;
 
     "cas.authn.pm.core.enabled=true",
     "cas.authn.pm.groovy.location=classpath:PasswordManagementService.groovy",
-    "cas.authn.pm.reset.mail.from=cas@example.org",
     "cas.authn.pm.forgot-username.mail.from=cas@example.org",
+    "cas.authn.pm.reset.mail.from=cas@example.org",
     "cas.authn.pm.reset.security-questions-enabled=true"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)

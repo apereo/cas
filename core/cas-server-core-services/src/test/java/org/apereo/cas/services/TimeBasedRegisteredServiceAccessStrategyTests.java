@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class TimeBasedRegisteredServiceAccessStrategyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "timeBasedRegisteredServiceAccessStrategy.json");
+
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
@@ -75,9 +76,17 @@ public class TimeBasedRegisteredServiceAccessStrategyTests {
     }
 
     @Test
+    public void checkExpressionLanguage() {
+        val authz = new TimeBasedRegisteredServiceAccessStrategy(true, true);
+        authz.setStartingDateTime("${#localStartDay}");
+        authz.setEndingDateTime("${#localEndDay}");
+        authz.setZoneId("${#zoneId}");
+        assertTrue(authz.isServiceAccessAllowed());
+    }
+
+    @Test
     public void checkAuthorizationByRangePassEndTime() {
-        val authz =
-            new TimeBasedRegisteredServiceAccessStrategy(true, true);
+        val authz = new TimeBasedRegisteredServiceAccessStrategy(true, true);
         authz.setStartingDateTime(ZonedDateTime.now(ZoneOffset.UTC).toString());
         authz.setEndingDateTime(ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(30).toString());
         assertTrue(authz.isServiceAccessAllowed());
