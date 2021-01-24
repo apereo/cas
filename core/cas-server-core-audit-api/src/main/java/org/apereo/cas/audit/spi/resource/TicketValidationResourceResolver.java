@@ -2,6 +2,7 @@ package org.apereo.cas.audit.spi.resource;
 
 import org.apereo.cas.util.AopUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.validation.Assertion;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,7 +26,8 @@ import java.util.LinkedHashMap;
 @Slf4j
 public class TicketValidationResourceResolver extends TicketAsFirstParameterResourceResolver {
 
-    private final ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     @Override
     public String[] resolveFrom(final JoinPoint joinPoint, final Object object) {
@@ -42,7 +44,7 @@ public class TicketValidationResourceResolver extends TicketAsFirstParameterReso
             val authn = assertion.getPrimaryAuthentication();
 
             try (val writer = new StringWriter()) {
-                val objectWriter = mapper.writer();
+                val objectWriter = MAPPER.writer();
 
                 val results = new LinkedHashMap<String, Object>();
                 results.put("principal", authn.getPrincipal().getId());

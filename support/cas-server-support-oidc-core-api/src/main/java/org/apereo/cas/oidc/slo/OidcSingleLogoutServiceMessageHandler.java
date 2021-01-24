@@ -26,6 +26,7 @@ import lombok.val;
 import org.apache.http.HttpResponse;
 import org.jose4j.jwt.ReservedClaimNames;
 import org.pac4j.core.util.CommonHelper;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 
 import java.util.Collection;
@@ -93,13 +94,15 @@ public class OidcSingleLogoutServiceMessageHandler extends BaseSingleLogoutServi
     protected boolean sendMessageToEndpoint(final LogoutHttpMessage msg, final SingleLogoutRequestContext request, final SingleLogoutMessage logoutMessage) {
 
         val payload = logoutMessage.getPayload();
-
         HttpResponse response = null;
         try {
-            response = HttpUtils.executePost(msg.getUrl().toExternalForm(),
-                CollectionUtils.wrap("logout_token", payload),
-                CollectionUtils.wrap("Content-Type", msg.getContentType()));
-
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .method(HttpMethod.POST)
+                .url(msg.getUrl().toExternalForm())
+                .parameters(CollectionUtils.wrap("logout_token", payload))
+                .headers(CollectionUtils.wrap("Content-Type", msg.getContentType()))
+                .build();
+            response = HttpUtils.execute(exec);
             if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
                 LOGGER.trace("Received OK logout response");
                 return true;

@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.EqualsAndHashCode;
@@ -10,6 +11,7 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.hjson.JsonValue;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 
 import java.nio.charset.StandardCharsets;
@@ -28,7 +30,8 @@ import java.util.Map;
 public class RestfulPrincipalFactory extends DefaultPrincipalFactory {
     private static final long serialVersionUID = -1344968589212057694L;
 
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     private final String url;
 
@@ -42,7 +45,15 @@ public class RestfulPrincipalFactory extends DefaultPrincipalFactory {
         try {
             val current = super.createPrincipal(id, attributes);
             val entity = MAPPER.writeValueAsString(current);
-            response = HttpUtils.executePost(this.url, this.basicAuthUsername, this.basicAuthPassword, entity);
+
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(this.basicAuthPassword)
+                .basicAuthUsername(this.basicAuthUsername)
+                .method(HttpMethod.POST)
+                .url(this.url)
+                .entity(entity)
+                .build();
+            response = HttpUtils.execute(exec);
             if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
                 val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
                 LOGGER.debug("Principal factory response received: [{}]", result);

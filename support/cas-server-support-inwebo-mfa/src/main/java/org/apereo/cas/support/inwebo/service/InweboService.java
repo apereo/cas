@@ -6,6 +6,7 @@ import org.apereo.cas.support.inwebo.service.response.InweboDeviceNameResponse;
 import org.apereo.cas.support.inwebo.service.response.InweboLoginSearchResponse;
 import org.apereo.cas.support.inwebo.service.response.InweboPushAuthenticateResponse;
 import org.apereo.cas.support.inwebo.service.response.InweboResult;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,8 +33,8 @@ import java.net.URL;
 @RequiredArgsConstructor
 @Getter
 public class InweboService {
-
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     private final CasConfigurationProperties casProperties;
 

@@ -8,6 +8,7 @@ import org.apereo.cas.mfa.accepto.web.flow.AccepttoWebflowUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -23,6 +24,7 @@ import org.apache.http.HttpStatus;
 import org.hjson.JsonValue;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
+import org.springframework.http.HttpMethod;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
@@ -30,7 +32,6 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -42,7 +43,8 @@ import java.util.Map;
 @Slf4j
 @RequiredArgsConstructor
 public class AccepttoQRCodeValidateWebSocketChannelAction extends AbstractAction {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     private final CasConfigurationProperties casProperties;
 
@@ -70,7 +72,12 @@ public class AccepttoQRCodeValidateWebSocketChannelAction extends AbstractAction
 
         HttpResponse apiResponse = null;
         try {
-            apiResponse = HttpUtils.executePost(url, parameters, new HashMap<>(0));
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .method(HttpMethod.POST)
+                .url(url)
+                .parameters(parameters)
+                .build();
+            apiResponse = HttpUtils.execute(exec);
             if (apiResponse != null) {
                 val status = apiResponse.getStatusLine().getStatusCode();
                 LOGGER.debug("Response API status code is [{}]", status);

@@ -23,6 +23,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.hjson.JsonValue;
+import org.springframework.http.HttpMethod;
 
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
@@ -60,8 +61,15 @@ public class ReturnRestfulAttributeReleasePolicy extends AbstractRegisteredServi
         HttpResponse response = null;
         try (val writer = new StringWriter()) {
             MAPPER.writer(new MinimalPrettyPrinter()).writeValue(writer, attributes);
-            response = HttpUtils.executePost(this.endpoint, writer.toString(),
-                CollectionUtils.wrap("principal", principal.getId(), "service", registeredService.getServiceId()));
+
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .method(HttpMethod.POST)
+                .url(this.endpoint)
+                .parameters(CollectionUtils.wrap("principal", principal.getId(),
+                    "service", registeredService.getServiceId()))
+                .entity(writer.toString())
+                .build();
+            response = HttpUtils.execute(exec);
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
                 LOGGER.debug("Policy response received: [{}]", result);

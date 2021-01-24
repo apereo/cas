@@ -82,7 +82,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
     }
 
     private static Boolean isRememberMeRecordedInAuthentication(final RequestContext requestContext) {
-        LOGGER.debug("Request does not indicate a remember-me authentication event. Locating authentication object from the request context...");
+        LOGGER.debug("Request does not indicate a remember-me authentication. Locating authentication from the request context...");
         val auth = WebUtils.getAuthentication(requestContext);
         if (auth == null) {
             return Boolean.FALSE;

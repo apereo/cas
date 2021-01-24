@@ -5,8 +5,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-
-import java.util.Map;
+import org.springframework.http.HttpMethod;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -22,12 +21,16 @@ public class HttpUtilsTests {
 
     @Test
     public void verifyExec() {
-        assertNull(HttpUtils.execute("http://localhost:1234", "GET", "user", "password", "entity"));
-        assertNull(HttpUtils.execute("http://localhost:1234", "GET", Map.of()));
-        assertNull(HttpUtils.executeGet("http://localhost:1234", "user", "password", Map.of()));
-        assertNotNull(HttpUtils.executeGet("http://localhost:1234", "https://httpbin.org:443"));
-        assertNotNull(HttpUtils.executeGet("http://localhost:1234", "http://httpbin.org"));
-        assertNull(HttpUtils.executeDelete("http://localhost:1234", "user", "password", Map.of(), Map.of()));
+        val exec = HttpUtils.HttpExecutionRequest.builder()
+            .basicAuthPassword("password")
+            .basicAuthUsername("user")
+            .method(HttpMethod.GET)
+            .entity("entity")
+            .url("http://localhost:8081")
+            .proxyUrl("http://localhost:8080")
+            .build();
+
+        assertNull(HttpUtils.execute(exec));
     }
 
     @Test

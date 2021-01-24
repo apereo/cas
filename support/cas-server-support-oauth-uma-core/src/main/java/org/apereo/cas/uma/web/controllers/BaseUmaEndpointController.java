@@ -6,6 +6,7 @@ import org.apereo.cas.uma.UmaConfigurationContext;
 import org.apereo.cas.uma.ticket.resource.InvalidResourceSetException;
 import org.apereo.cas.uma.ticket.resource.ResourceSet;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AccessLevel;
@@ -33,8 +34,8 @@ public abstract class BaseUmaEndpointController {
     /**
      * Json object mapper instance.
      */
-    protected static final ObjectMapper MAPPER = new ObjectMapper()
-        .findAndRegisterModules();
+    protected static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     private final UmaConfigurationContext umaConfigurationContext;
 

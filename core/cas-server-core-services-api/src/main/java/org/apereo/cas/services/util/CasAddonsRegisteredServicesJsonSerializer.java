@@ -7,6 +7,7 @@ import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +39,8 @@ public class CasAddonsRegisteredServicesJsonSerializer extends RegisteredService
 
     private static final String SERVICES_KEY = "services";
 
-    private final ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     private static RegisteredService convertServiceProperties(final Map serviceDataMap) {
         val service = new RegexRegisteredService();
@@ -71,7 +73,7 @@ public class CasAddonsRegisteredServicesJsonSerializer extends RegisteredService
     public Collection<RegisteredService> load(final InputStream stream) {
         val results = new ArrayList<RegisteredService>();
         try {
-            val servicesMap = (Map<String, List>) this.objectMapper.readValue(stream, Map.class);
+            val servicesMap = (Map<String, List>) MAPPER.readValue(stream, Map.class);
             val it = (Iterator<Map>) servicesMap.get(SERVICES_KEY).iterator();
             while (it.hasNext()) {
                 val record = it.next();

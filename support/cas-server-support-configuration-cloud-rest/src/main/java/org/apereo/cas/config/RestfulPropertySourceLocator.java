@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Splitter;
@@ -35,7 +36,8 @@ public class RestfulPropertySourceLocator implements PropertySourceLocator {
      */
     public static final String CAS_CONFIGURATION_PREFIX = "cas.spring.cloud.rest";
 
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     /**
      * Gets property.
@@ -65,7 +67,15 @@ public class RestfulPropertySourceLocator implements PropertySourceLocator {
 
             val headers = getHttpHeaders(environment);
             val method = StringUtils.defaultIfBlank(getPropertyFromEnvironment(environment, "method"), HttpMethod.GET.name());
-            response = HttpUtils.execute(url, method, basicAuthUsername, basicAuthPassword, headers);
+
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(basicAuthPassword)
+                .basicAuthUsername(basicAuthUsername)
+                .method(HttpMethod.valueOf(method.toUpperCase()))
+                .url(url)
+                .headers(headers)
+                .build();
+            response = HttpUtils.execute(exec);
             if (response != null && response.getEntity() != null) {
                 val results = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
                 LOGGER.trace("Received response from endpoint [{}] as [{}]", url, results);

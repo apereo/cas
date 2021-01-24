@@ -4,8 +4,8 @@ import org.apereo.cas.configuration.model.support.mfa.u2f.U2FRestfulMultifactorP
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 
 import java.io.Serializable;
@@ -32,13 +33,8 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceRepository {
-    private static final ObjectMapper MAPPER;
-
-    static {
-        MAPPER = new ObjectMapper().findAndRegisterModules();
-        MAPPER.activateDefaultTyping(MAPPER.getPolymorphicTypeValidator(),
-            ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
-    }
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     private final U2FRestfulMultifactorProperties restProperties;
 
@@ -55,8 +51,14 @@ public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceReposi
     public Map<String, List<U2FDeviceRegistration>> readDevicesFromResource() {
         HttpResponse response = null;
         try {
-            response = HttpUtils.executeGet(restProperties.getUrl(),
-                restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword());
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(restProperties.getBasicAuthPassword())
+                .basicAuthUsername(restProperties.getBasicAuthUsername())
+                .method(HttpMethod.GET)
+                .url(restProperties.getUrl())
+                .build();
+            
+            response = HttpUtils.execute(exec);
             if (Objects.requireNonNull(response).getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
                 return MAPPER.readValue(response.getEntity().getContent(),
                     new TypeReference<>() {
@@ -77,10 +79,16 @@ public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceReposi
             val newDevices = new HashMap<String, List<U2FDeviceRegistration>>();
             newDevices.put(MAP_KEY_DEVICES, list);
             MAPPER.writer(new MinimalPrettyPrinter()).writeValue(writer, newDevices);
-            response = HttpUtils.executePost(restProperties.getUrl(),
-                restProperties.getBasicAuthUsername(),
-                restProperties.getBasicAuthPassword(),
-                writer.toString());
+
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(restProperties.getBasicAuthPassword())
+                .basicAuthUsername(restProperties.getBasicAuthUsername())
+                .method(HttpMethod.POST)
+                .url(restProperties.getUrl())
+                .entity(writer.toString())
+                .build();
+
+            response = HttpUtils.execute(exec);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         } finally {
@@ -93,9 +101,13 @@ public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceReposi
         HttpResponse response = null;
         try {
             val url = StringUtils.appendIfMissing(restProperties.getUrl(), "/") + registration.getId();
-            response = HttpUtils.executeDelete(url,
-                restProperties.getBasicAuthUsername(),
-                restProperties.getBasicAuthPassword());
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(restProperties.getBasicAuthPassword())
+                .basicAuthUsername(restProperties.getBasicAuthUsername())
+                .method(HttpMethod.DELETE)
+                .url(url)
+                .build();
+            response = HttpUtils.execute(exec);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         } finally {
@@ -107,9 +119,13 @@ public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceReposi
     public void removeAll() {
         HttpResponse response = null;
         try {
-            response = HttpUtils.executeDelete(restProperties.getUrl(),
-                restProperties.getBasicAuthUsername(),
-                restProperties.getBasicAuthPassword());
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(restProperties.getBasicAuthPassword())
+                .basicAuthUsername(restProperties.getBasicAuthUsername())
+                .method(HttpMethod.DELETE)
+                .url(restProperties.getUrl())
+                .build();
+            response = HttpUtils.execute(exec);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         } finally {

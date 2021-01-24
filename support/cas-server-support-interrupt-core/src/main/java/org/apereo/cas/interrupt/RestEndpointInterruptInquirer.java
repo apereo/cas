@@ -19,6 +19,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.hjson.JsonValue;
+import org.springframework.http.HttpMethod;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.nio.charset.StandardCharsets;
@@ -66,9 +67,15 @@ public class RestEndpointInterruptInquirer extends BaseInterruptInquirer {
                 headers.put("Accept-Language", acceptedLanguage);
             }
 
-            response = HttpUtils.execute(restProperties.getUrl(), restProperties.getMethod(),
-                restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
-                parameters, headers);
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(restProperties.getBasicAuthPassword())
+                .basicAuthUsername(restProperties.getBasicAuthUsername())
+                .method(HttpMethod.valueOf(restProperties.getMethod().toUpperCase().trim()))
+                .url(restProperties.getUrl())
+                .parameters(parameters)
+                .headers(headers)
+                .build();
+            response = HttpUtils.execute(exec);
             if (response != null && response.getEntity() != null) {
                 val content = response.getEntity().getContent();
                 val result = IOUtils.toString(content, StandardCharsets.UTF_8);

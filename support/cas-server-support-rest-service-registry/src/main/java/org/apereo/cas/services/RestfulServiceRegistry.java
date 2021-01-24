@@ -13,6 +13,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
@@ -58,9 +59,15 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
         HttpResponse response = null;
         try {
             invokeServiceRegistryListenerPreSave(registeredService);
-            response = HttpUtils.executePost(properties.getUrl(), properties.getBasicAuthUsername(),
-                properties.getBasicAuthPassword(), MAPPER.writeValueAsString(registeredService),
-                Map.of(), getRequestHeaders());
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(properties.getBasicAuthPassword())
+                .basicAuthUsername(properties.getBasicAuthUsername())
+                .method(HttpMethod.POST)
+                .url(properties.getUrl())
+                .headers(getRequestHeaders())
+                .entity(MAPPER.writeValueAsString(registeredService))
+                .build();
+            response = HttpUtils.execute(exec);
             if (response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
                 val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
                 return MAPPER.readValue(result, RegisteredService.class);
@@ -80,8 +87,14 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
             val completeUrl = StringUtils.appendIfMissing(properties.getUrl(), "/")
                 .concat(Long.toString(registeredService.getId()));
             invokeServiceRegistryListenerPreSave(registeredService);
-            response = HttpUtils.executeDelete(completeUrl, properties.getBasicAuthUsername(),
-                properties.getBasicAuthPassword(), Map.of(), getRequestHeaders());
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(properties.getBasicAuthPassword())
+                .basicAuthUsername(properties.getBasicAuthUsername())
+                .method(HttpMethod.DELETE)
+                .url(completeUrl)
+                .headers(getRequestHeaders())
+                .build();
+            response = HttpUtils.execute(exec);
             return response.getStatusLine().getStatusCode() == HttpStatus.OK.value();
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
@@ -95,8 +108,14 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
     public Collection<RegisteredService> load() {
         HttpResponse response = null;
         try {
-            response = HttpUtils.executeGet(properties.getUrl(), properties.getBasicAuthUsername(),
-                properties.getBasicAuthPassword(), Map.of(), getRequestHeaders());
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(properties.getBasicAuthPassword())
+                .basicAuthUsername(properties.getBasicAuthUsername())
+                .method(HttpMethod.GET)
+                .url(properties.getUrl())
+                .headers(getRequestHeaders())
+                .build();
+            response = HttpUtils.execute(exec);
             if (response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
                 val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
                 val services = (List<RegisteredService>) MAPPER.readValue(result, List.class);
@@ -119,8 +138,14 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
         HttpResponse response = null;
         try {
             val completeUrl = StringUtils.appendIfMissing(properties.getUrl(), "/").concat(Long.toString(id));
-            response = HttpUtils.executeGet(completeUrl, properties.getBasicAuthUsername(),
-                properties.getBasicAuthPassword(), Map.of(), getRequestHeaders());
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(properties.getBasicAuthPassword())
+                .basicAuthUsername(properties.getBasicAuthUsername())
+                .method(HttpMethod.GET)
+                .url(completeUrl)
+                .headers(getRequestHeaders())
+                .build();
+            response = HttpUtils.execute(exec);
             if (response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
                 val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
                 return MAPPER.readValue(result, RegisteredService.class);

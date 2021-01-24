@@ -50,9 +50,14 @@ public class RestConsentRepository implements ConsentRepository {
             headers.put("Content-Type", MediaType.APPLICATION_JSON);
             headers.put("Accept", MediaType.APPLICATION_JSON);
             headers.put("principal", principal);
-            response = HttpUtils.execute(properties.getUrl(), HttpMethod.GET.name(),
-                properties.getBasicAuthUsername(), properties.getBasicAuthPassword(),
-                new HashMap<>(), headers);
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(properties.getBasicAuthPassword())
+                .basicAuthUsername(properties.getBasicAuthUsername())
+                .method(HttpMethod.GET)
+                .url(properties.getUrl())
+                .headers(headers)
+                .build();
+            response = HttpUtils.execute(exec);
             if (HttpStatus.valueOf(response.getStatusLine().getStatusCode()).is2xxSuccessful()) {
                 val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
                 return MAPPER.readValue(JsonValue.readHjson(result).toString(), List.class);
@@ -71,9 +76,14 @@ public class RestConsentRepository implements ConsentRepository {
             val headers = new HashMap<String, Object>();
             headers.put("Content-Type", MediaType.APPLICATION_JSON);
             headers.put("Accept", MediaType.APPLICATION_JSON);
-            response = HttpUtils.execute(properties.getUrl(), HttpMethod.GET.name(),
-                properties.getBasicAuthUsername(), properties.getBasicAuthPassword(),
-                new HashMap<>(), headers);
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(properties.getBasicAuthPassword())
+                .basicAuthUsername(properties.getBasicAuthUsername())
+                .method(HttpMethod.GET)
+                .url(properties.getUrl())
+                .headers(headers)
+                .build();
+            response = HttpUtils.execute(exec);
             if (HttpStatus.valueOf(response.getStatusLine().getStatusCode()).is2xxSuccessful()) {
                 val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
                 return MAPPER.readValue(result, List.class);
@@ -96,9 +106,14 @@ public class RestConsentRepository implements ConsentRepository {
             headers.put("service", service.getId());
             headers.put("principal", authentication.getPrincipal().getId());
 
-            response = HttpUtils.execute(properties.getUrl(), HttpMethod.GET.name(),
-                properties.getBasicAuthUsername(), properties.getBasicAuthPassword(),
-                new HashMap<>(), headers);
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(properties.getBasicAuthPassword())
+                .basicAuthUsername(properties.getBasicAuthUsername())
+                .method(HttpMethod.GET)
+                .url(properties.getUrl())
+                .headers(headers)
+                .build();
+            response = HttpUtils.execute(exec);
             if (HttpStatus.valueOf(response.getStatusLine().getStatusCode()).is2xxSuccessful()) {
                 val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
                 return MAPPER.readValue(result, ConsentDecision.class);
@@ -118,9 +133,15 @@ public class RestConsentRepository implements ConsentRepository {
             headers.put("Content-Type", MediaType.APPLICATION_JSON);
             headers.put("Accept", MediaType.APPLICATION_JSON);
 
-            response = HttpUtils.execute(properties.getUrl(), HttpMethod.POST.name(),
-                properties.getBasicAuthUsername(), properties.getBasicAuthPassword(),
-                headers, MAPPER.writeValueAsString(decision));
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(properties.getBasicAuthPassword())
+                .basicAuthUsername(properties.getBasicAuthUsername())
+                .method(HttpMethod.POST)
+                .url(properties.getUrl())
+                .headers(headers)
+                .entity(MAPPER.writeValueAsString(decision))
+                .build();
+            response = HttpUtils.execute(exec);
             if (HttpStatus.valueOf(response.getStatusLine().getStatusCode()).is2xxSuccessful()) {
                 return decision;
             }
@@ -142,10 +163,14 @@ public class RestConsentRepository implements ConsentRepository {
             headers.put("principal", principal);
 
             val deleteEndpoint = properties.getUrl().concat('/' + Long.toString(decisionId));
-            response = HttpUtils.execute(deleteEndpoint,
-                HttpMethod.DELETE.name(),
-                properties.getBasicAuthUsername(), properties.getBasicAuthPassword(),
-                new HashMap<>(), headers);
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(properties.getBasicAuthPassword())
+                .basicAuthUsername(properties.getBasicAuthUsername())
+                .method(HttpMethod.DELETE)
+                .url(deleteEndpoint)
+                .headers(headers)
+                .build();
+            response = HttpUtils.execute(exec);
             return HttpStatus.valueOf(response.getStatusLine().getStatusCode()).is2xxSuccessful();
         } finally {
             HttpUtils.close(response);

@@ -1,6 +1,10 @@
 package org.apereo.cas.util;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NonNull;
 import lombok.SneakyThrows;
+import lombok.experimental.SuperBuilder;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -23,7 +27,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -36,155 +39,71 @@ import java.util.Map;
 @Slf4j
 @UtilityClass
 public class HttpUtils {
-    private static final int MAP_SIZE = 8;
+    private static final int MAP_SIZE = 4;
 
     private static final int MAX_CONNECTIONS = 200;
 
     private static final int MAX_CONNECTIONS_PER_ROUTE = 20;
 
-    /**
-     * Execute http response.
-     *
-     * @param url               the url
-     * @param method            the method
-     * @param basicAuthUsername the basic auth username
-     * @param basicAuthPassword the basic auth password
-     * @param entity            the entity
-     * @return the http response
-     */
-    public static HttpResponse execute(final String url,
-        final String method,
-        final String basicAuthUsername,
-        final String basicAuthPassword,
-        final String entity) {
-        return execute(url, method, basicAuthUsername, basicAuthPassword,
-            new HashMap<>(0), new HashMap<>(0), entity, null);
-    }
+    @SuperBuilder
+    @Getter
+    public static class HttpExecutionRequest {
+        @NonNull
+        private final HttpMethod method;
+        
+        @NonNull
+        private final String url;
 
-    /**
-     * Execute http response.
-     *
-     * @param url               the url
-     * @param method            the method
-     * @param basicAuthUsername the basic auth username
-     * @param basicAuthPassword the basic auth password
-     * @param headers           the headers
-     * @param entity            the entity
-     * @return the http response
-     */
-    public static HttpResponse execute(final String url,
-        final String method,
-        final String basicAuthUsername,
-        final String basicAuthPassword,
-        final Map<String, Object> headers,
-        final String entity) {
-        return execute(url, method, basicAuthUsername, basicAuthPassword,
-            new HashMap<>(0), headers, entity, null);
-    }
+        private final String basicAuthUsername;
 
-    /**
-     * Execute http response.
-     *
-     * @param url               the url
-     * @param method            the method
-     * @param basicAuthUsername the basic auth username
-     * @param basicAuthPassword the basic auth password
-     * @return the http response
-     */
-    public static HttpResponse execute(final String url, final String method,
-        final String basicAuthUsername,
-        final String basicAuthPassword) {
-        return execute(url, method, basicAuthUsername, basicAuthPassword, new HashMap<>(0), new HashMap<>(0));
-    }
+        private final String basicAuthPassword;
 
-    /**
-     * Execute http response.
-     *
-     * @param url               the url
-     * @param method            the method
-     * @param basicAuthUsername the basic auth username
-     * @param basicAuthPassword the basic auth password
-     * @param headers           the headers
-     * @return the http response
-     */
-    public static HttpResponse execute(final String url, final String method,
-        final String basicAuthUsername, final String basicAuthPassword,
-        final Map<String, Object> headers) {
-        return execute(url, method, basicAuthUsername, basicAuthPassword, new HashMap<>(0), headers);
-    }
+        private final String entity;
 
-    /**
-     * Execute http response.
-     *
-     * @param url     the url
-     * @param method  the method
-     * @param headers the headers
-     * @return the http response
-     */
-    public static HttpResponse execute(final String url, final String method,
-        final Map<String, Object> headers) {
-        return execute(url, method, null, null, new HashMap<>(0), headers);
-    }
+        private final String proxyUrl;
 
-    /**
-     * Execute http response.
-     *
-     * @param url    the url
-     * @param method the method
-     * @return the http response
-     */
-    public static HttpResponse execute(final String url, final String method) {
-        return execute(url, method, null, null, new HashMap<>(0), new HashMap<>(0));
-    }
+        private final String bearerToken;
 
-    /**
-     * Execute http response.
-     *
-     * @param url               the url
-     * @param method            the method
-     * @param basicAuthUsername the basic auth username
-     * @param basicAuthPassword the basic auth password
-     * @param parameters        the parameters
-     * @param headers           the headers
-     * @return the http response
-     */
-    public static HttpResponse execute(final String url, final String method,
-        final String basicAuthUsername,
-        final String basicAuthPassword,
-        final Map<String, Object> parameters,
-        final Map<String, Object> headers) {
-        return execute(url, method, basicAuthUsername, basicAuthPassword, parameters, headers, null, null);
-    }
+        @Builder.Default
+        private final Map<String, Object> parameters = new LinkedHashMap<>(MAP_SIZE);
 
+        @Builder.Default
+        private final Map<String, Object> headers = new LinkedHashMap<>(MAP_SIZE);
+
+        /**
+         * Is basic authentication?
+         *
+         * @return the boolean
+         */
+        private boolean isBasicAuthentication() {
+            return StringUtils.isNotBlank(basicAuthUsername) && StringUtils.isNotBlank(basicAuthPassword);
+        }
+
+        /**
+         * Is bearer authentication?
+         *
+         * @return the boolean
+         */
+        private boolean isBearerAuthentication() {
+            return StringUtils.isNotBlank(bearerToken);
+        }
+    }
+    
     /**
      * Execute http request and produce a response.
      *
-     * @param url               the url
-     * @param method            the method
-     * @param basicAuthUsername the basic auth username
-     * @param basicAuthPassword the basic auth password
-     * @param parameters        the parameters
-     * @param headers           the headers
-     * @param entity            the entity
-     * @param proxyUrl          the proxy url
+     * @param execution the request
      * @return the http response
      */
-    public static HttpResponse execute(final String url,
-        final String method,
-        final String basicAuthUsername,
-        final String basicAuthPassword,
-        final Map<String, Object> parameters,
-        final Map<String, Object> headers,
-        final String entity,
-        final String proxyUrl) {
+    public static HttpResponse execute(final HttpExecutionRequest execution) {
         try {
-            val uri = buildHttpUri(url.trim(), parameters);
-            val request = getHttpRequestByMethod(method.toLowerCase().trim(), entity, uri);
-            headers.forEach((k, v) -> request.addHeader(k, v.toString()));
-            prepareHttpRequest(request, basicAuthUsername, basicAuthPassword);
+            val uri = buildHttpUri(execution.getUrl().trim(), execution.getParameters());
+            val request = getHttpRequestByMethod(execution.getMethod().name().toLowerCase().trim(), execution.getEntity(), uri);
+            execution.getHeaders().forEach((k, v) -> request.addHeader(k, v.toString()));
+            prepareHttpRequest(request, execution);
             val builder = getHttpClientBuilder();
-            if (StringUtils.isNotBlank(proxyUrl)) {
-                val proxyEndpoint = new URL(proxyUrl);
+            if (StringUtils.isNotBlank(execution.getProxyUrl())) {
+                val proxyEndpoint = new URL(execution.getProxyUrl());
                 val proxy = new HttpHost(proxyEndpoint.getHost(), proxyEndpoint.getPort(), proxyEndpoint.getProtocol());
                 builder.setProxy(proxy);
             }
@@ -213,248 +132,14 @@ public class HttpUtils {
     }
 
     /**
-     * Execute get http response.
-     *
-     * @param url               the url
-     * @param basicAuthUsername the basic auth username
-     * @param basicAuthPassword the basic auth password
-     * @param parameters        the parameters
-     * @return the http response
-     */
-    public static HttpResponse executeGet(final String url,
-        final String basicAuthUsername,
-        final String basicAuthPassword,
-        final Map<String, Object> parameters) {
-        return executeGet(url, basicAuthUsername, basicAuthPassword,
-            parameters, new HashMap<>(0), null);
-    }
-
-    /**
-     * Execute get http response.
-     *
-     * @param url               the url
-     * @param basicAuthUsername the basic auth username
-     * @param basicAuthPassword the basic auth password
-     * @param parameters        the parameters
-     * @param headers           the headers
-     * @return the http response
-     */
-    public static HttpResponse executeGet(final String url,
-        final String basicAuthUsername,
-        final String basicAuthPassword,
-        final Map<String, Object> parameters,
-        final Map<String, Object> headers) {
-        return executeGet(url, basicAuthUsername, basicAuthPassword, parameters, headers, null);
-    }
-
-    /**
-     * Execute get http response.
-     *
-     * @param url               the url
-     * @param basicAuthUsername the basic auth username
-     * @param basicAuthPassword the basic auth password
-     * @param parameters        the parameters
-     * @param headers           the headers
-     * @param proxyUrl          the proxy url
-     * @return the http response
-     */
-    public static HttpResponse executeGet(final String url,
-        final String basicAuthUsername,
-        final String basicAuthPassword,
-        final Map<String, Object> parameters,
-        final Map<String, Object> headers,
-        final String proxyUrl) {
-        return execute(url, HttpMethod.GET.name(), basicAuthUsername,
-            basicAuthPassword, parameters, headers, null, proxyUrl);
-    }
-
-    /**
-     * Execute get http response.
-     *
-     * @param url        the url
-     * @param parameters the parameters
-     * @param headers    the headers
-     * @return the http response
-     */
-    public static HttpResponse executeGet(final String url,
-        final Map<String, Object> parameters,
-        final Map<String, Object> headers) {
-        return execute(url, HttpMethod.GET.name(), null, null, parameters, headers);
-    }
-
-    /**
-     * Execute get http response.
-     *
-     * @param url        the url
-     * @param parameters the parameters
-     * @return the http response
-     */
-    public static HttpResponse executeGet(final String url,
-        final Map<String, Object> parameters) {
-        return executeGet(url, null, null, parameters);
-    }
-
-    /**
-     * Execute get http response.
-     *
-     * @param url the url
-     * @return the http response
-     */
-    public static HttpResponse executeGet(final String url) {
-        return executeGet(url, null, null, new LinkedHashMap<>(MAP_SIZE));
-    }
-
-    /**
-     * Execute get http response.
-     *
-     * @param url      the url
-     * @param proxyUrl the proxy url
-     * @return the http response
-     */
-    public static HttpResponse executeGet(final String url, final String proxyUrl) {
-        return executeGet(url, null, null, new LinkedHashMap<>(0), new LinkedHashMap<>(0), proxyUrl);
-    }
-
-    /**
-     * Execute get http response.
-     *
-     * @param url               the url
-     * @param basicAuthUsername the basic auth username
-     * @param basicAuthPassword the basic auth password
-     * @return the http response
-     */
-    public static HttpResponse executeGet(final String url,
-        final String basicAuthUsername,
-        final String basicAuthPassword) {
-        return executeGet(url, basicAuthUsername, basicAuthPassword, new HashMap<>(0));
-    }
-
-    /**
-     * Execute post http response.
-     *
-     * @param url               the url
-     * @param basicAuthUsername the basic auth username
-     * @param basicAuthPassword the basic auth password
-     * @param entity            the json entity
-     * @return the http response
-     */
-    public static HttpResponse executePost(final String url,
-        final String basicAuthUsername,
-        final String basicAuthPassword,
-        final String entity) {
-        return executePost(url, basicAuthUsername, basicAuthPassword, entity, new HashMap<>(0));
-    }
-
-    /**
-     * Execute post http response.
-     *
-     * @param url        the url
-     * @param entity     the json entity
-     * @param parameters the parameters
-     * @return the http response
-     */
-    public static HttpResponse executePost(final String url,
-        final String entity,
-        final Map<String, Object> parameters) {
-        return executePost(url, null, null, entity, parameters);
-    }
-
-    /**
-     * Execute post http response.
-     *
-     * @param url               the url
-     * @param basicAuthUsername the basic auth username
-     * @param basicAuthPassword the basic auth password
-     * @param entity            the json entity
-     * @param parameters        the parameters
-     * @return the http response
-     */
-    public static HttpResponse executePost(final String url,
-        final String basicAuthUsername,
-        final String basicAuthPassword,
-        final String entity,
-        final Map<String, Object> parameters) {
-        return executePost(url, basicAuthUsername, basicAuthPassword,
-            entity, parameters, new HashMap<>(0));
-    }
-
-    /**
-     * Execute post http response.
-     *
-     * @param url               the url
-     * @param basicAuthUsername the basic auth username
-     * @param basicAuthPassword the basic auth password
-     * @param entity            the entity
-     * @param parameters        the parameters
-     * @param headers           the headers
-     * @return the http response
-     */
-    public static HttpResponse executePost(final String url,
-        final String basicAuthUsername,
-        final String basicAuthPassword,
-        final String entity,
-        final Map<String, Object> parameters,
-        final Map<String, Object> headers) {
-        return execute(url, HttpMethod.POST.name(), basicAuthUsername,
-            basicAuthPassword, parameters, headers, entity, null);
-    }
-
-    /**
-     * Execute post http response.
-     *
-     * @param url        the url
-     * @param parameters the parameters
-     * @param headers    the headers
-     * @return the http response
-     */
-    public static HttpResponse executePost(final String url,
-        final Map<String, Object> parameters,
-        final Map<String, Object> headers) {
-        return execute(url, HttpMethod.POST.name(), null, null, parameters, headers, null, null);
-    }
-
-    /**
-     * Execute delete http response.
-     *
-     * @param url               the url
-     * @param basicAuthUsername the basic auth username
-     * @param basicAuthPassword the basic auth password
-     * @param parameters        the parameters
-     * @param headers           the headers
-     * @return the http response
-     */
-    public static HttpResponse executeDelete(final String url,
-        final String basicAuthUsername,
-        final String basicAuthPassword,
-        final Map<String, Object> parameters,
-        final Map<String, Object> headers) {
-        return execute(url, HttpMethod.DELETE.name(), basicAuthUsername,
-            basicAuthPassword, parameters, headers, null, null);
-    }
-
-    /**
-     * Execute delete http response.
-     *
-     * @param url               the url
-     * @param basicAuthUsername the basic auth username
-     * @param basicAuthPassword the basic auth password
-     * @return the http response
-     */
-    public static HttpResponse executeDelete(final String url,
-        final String basicAuthUsername,
-        final String basicAuthPassword) {
-        return executeDelete(url, basicAuthUsername, basicAuthPassword,
-            new HashMap<>(0), new HashMap<>(0));
-    }
-
-    /**
-     * Create headers org . springframework . http . http headers.
+     * Create headers.
      *
      * @param basicAuthUser     the basic auth user
      * @param basicAuthPassword the basic auth password
-     * @return the org . springframework . http . http headers
+     * @return http headers
      */
-    public static org.springframework.http.HttpHeaders createBasicAuthHeaders(final String basicAuthUser, final String basicAuthPassword) {
+    public static org.springframework.http.HttpHeaders createBasicAuthHeaders(final String basicAuthUser,
+                                                                              final String basicAuthPassword) {
         return HttpUtils.createBasicAuthHeaders(basicAuthUser, basicAuthPassword, "US-ASCII");
     }
 
@@ -466,8 +151,9 @@ public class HttpUtils {
      * @param basicCharset      The charset used to encode auth header
      * @return the org . springframework . http . http headers
      */
-    public static org.springframework.http.HttpHeaders createBasicAuthHeaders(final String basicAuthUser, final String basicAuthPassword,
-        final String basicCharset) {
+    public static org.springframework.http.HttpHeaders createBasicAuthHeaders(final String basicAuthUser,
+                                                                              final String basicAuthPassword,
+                                                                              final String basicCharset) {
         val acceptHeaders = new org.springframework.http.HttpHeaders();
         acceptHeaders.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
         if (StringUtils.isNotBlank(basicAuthUser) && StringUtils.isNotBlank(basicAuthPassword)) {
@@ -500,15 +186,17 @@ public class HttpUtils {
      * in cases where the URL endpoint does not actually produce the header
      * on its own.
      *
-     * @param request           the request
-     * @param basicAuthUsername the basic auth username
-     * @param basicAuthPassword the basic auth password
+     * @param request             the request
+     * @param execution           the execution request
      */
-    private static void prepareHttpRequest(final HttpUriRequest request, final String basicAuthUsername,
-        final String basicAuthPassword) {
-        if (StringUtils.isNotBlank(basicAuthUsername) && StringUtils.isNotBlank(basicAuthPassword)) {
-            val auth = EncodingUtils.encodeBase64(basicAuthUsername + ':' + basicAuthPassword);
+    private static void prepareHttpRequest(final HttpUriRequest request,
+                                           final HttpExecutionRequest execution) {
+        if (execution.isBasicAuthentication()) {
+            val auth = EncodingUtils.encodeBase64(execution.getBasicAuthUsername() + ':' + execution.getBasicAuthPassword());
             request.setHeader(HttpHeaders.AUTHORIZATION, "Basic " + auth);
+        }
+        if (execution.isBearerAuthentication()) {
+            request.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + execution.getBearerToken());
         }
     }
 

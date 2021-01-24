@@ -32,14 +32,20 @@ public class RestfulIPAddressIntelligenceService extends BaseIPAddressIntelligen
     public IPAddressIntelligenceResponse examineInternal(final RequestContext context, final String clientIpAddress) {
         HttpResponse response = null;
         try {
-            val restProperties = adaptiveAuthenticationProperties.getIpIntel().getRest();
+            val rest = adaptiveAuthenticationProperties.getIpIntel().getRest();
 
             val parameters = new HashMap<String, Object>();
             parameters.put("clientIpAddress", clientIpAddress);
-            response = HttpUtils.execute(restProperties.getUrl(), HttpMethod.GET.name(),
-                restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
-                parameters, new HashMap<>(0));
 
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(rest.getBasicAuthPassword())
+                .basicAuthUsername(rest.getBasicAuthUsername())
+                .method(HttpMethod.GET)
+                .url(rest.getUrl())
+                .parameters(parameters)
+                .build();
+
+            response = HttpUtils.execute(exec);
             if (response != null) {
                 val status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
                 if (status.equals(HttpStatus.FORBIDDEN) || status.equals(HttpStatus.UNAUTHORIZED)) {

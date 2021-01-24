@@ -13,6 +13,7 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 
 import javax.servlet.http.HttpServletRequest;
@@ -70,10 +71,14 @@ public class CaptchaValidator {
     public boolean validate(final String recaptchaResponse, final String userAgent) {
         HttpResponse response = null;
         try {
-            response = HttpUtils.executePost(this.verifyUrl,
-                CollectionUtils.wrap("secret", this.secret, "response", recaptchaResponse),
-                CollectionUtils.wrap("User-Agent", userAgent, "Accept-Language", "en-US,en;q=0.5"));
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .method(HttpMethod.POST)
+                .url(this.verifyUrl)
+                .headers(CollectionUtils.wrap("User-Agent", userAgent, "Accept-Language", "en-US,en;q=0.5"))
+                .parameters(CollectionUtils.wrap("secret", this.secret, "response", recaptchaResponse))
+                .build();
 
+            response = HttpUtils.execute(exec);
             if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
                 val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
                 if (StringUtils.isBlank(result)) {

@@ -8,6 +8,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.hjson.JsonValue;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 
 import java.nio.charset.StandardCharsets;
@@ -30,7 +32,8 @@ import java.util.Optional;
  */
 @Slf4j
 public class RestfulSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocator {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     private final RestSamlMetadataProperties properties;
 
@@ -48,8 +51,14 @@ public class RestfulSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocato
             val parameters = new HashMap<String, Object>();
             registeredService.ifPresent(service -> parameters.put("appliesTo",
                 SamlIdPMetadataGenerator.getAppliesToFor(registeredService)));
-            response = HttpUtils.executeGet(url, properties.getBasicAuthUsername(),
-                properties.getBasicAuthPassword(), parameters);
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(properties.getBasicAuthPassword())
+                .basicAuthUsername(properties.getBasicAuthUsername())
+                .method(HttpMethod.GET)
+                .url(properties.getUrl())
+                .parameters(parameters)
+                .build();
+            response = HttpUtils.execute(exec);
             if (response != null) {
                 val status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
                 if (status.is2xxSuccessful()) {

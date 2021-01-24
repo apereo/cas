@@ -1,6 +1,7 @@
 package org.apereo.cas.qr.authentication;
 
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,7 +27,8 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class JsonResourceQRAuthenticationDeviceRepository implements QRAuthenticationDeviceRepository {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     private final ConcurrentMap<String, String> devices = new ConcurrentHashMap<>();
 

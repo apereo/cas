@@ -1,8 +1,6 @@
 package org.apereo.cas.pm.config;
 
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.audit.AuditTrailConstants;
-import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.pm.PasswordManagementService;
@@ -31,11 +29,6 @@ import org.apereo.cas.web.flow.actions.StaticEventExecutionAction;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.inspektr.audit.spi.AuditResourceResolver;
-import org.apereo.inspektr.audit.spi.support.BooleanAuditActionResolver;
-import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
-import org.apereo.inspektr.audit.spi.support.FirstParameterAuditResourceResolver;
-import org.apereo.inspektr.audit.spi.support.SpringWebflowActionExecutionAuditablePrincipalResolver;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -69,10 +62,6 @@ import org.springframework.webflow.mvc.servlet.FlowHandlerAdapter;
 public class PasswordManagementWebflowConfiguration {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    @Qualifier("returnValueResourceResolver")
-    private ObjectProvider<AuditResourceResolver> returnValueResourceResolver;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -220,19 +209,6 @@ public class PasswordManagementWebflowConfiguration {
         return plan -> plan.registerWebflowConfigurer(passwordManagementWebflowConfigurer());
     }
 
-    @Bean
-    public AuditTrailRecordResolutionPlanConfigurer passwordManagementAuditTrailRecordResolutionPlanConfigurer() {
-        return plan -> {
-            plan.registerAuditActionResolver("CHANGE_PASSWORD_ACTION_RESOLVER",
-                new BooleanAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_SUCCESS,
-                    AuditTrailConstants.AUDIT_ACTION_POSTFIX_FAILED));
-            plan.registerAuditResourceResolver("CHANGE_PASSWORD_RESOURCE_RESOLVER", new FirstParameterAuditResourceResolver());
-            plan.registerAuditActionResolver("REQUEST_CHANGE_PASSWORD_ACTION_RESOLVER", new DefaultAuditActionResolver());
-            plan.registerAuditResourceResolver("REQUEST_CHANGE_PASSWORD_RESOURCE_RESOLVER", returnValueResourceResolver.getObject());
-            plan.registerAuditPrincipalResolver("REQUEST_CHANGE_PASSWORD_PRINCIPAL_RESOLVER",
-                new SpringWebflowActionExecutionAuditablePrincipalResolver(SendPasswordResetInstructionsAction.REQUEST_PARAMETER_USERNAME));
-        };
-    }
 
     @ConditionalOnProperty(prefix = "cas.authn.pm.google-recaptcha", name = "enabled", havingValue = "true")
     @Configuration(value = "passwordManagementCaptchaConfiguration", proxyBeanMethods = false)

@@ -25,6 +25,7 @@ import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.opensaml.saml.saml2.core.LogoutResponse;
 import org.opensaml.saml.saml2.core.StatusCode;
 import org.opensaml.saml.saml2.metadata.SingleLogoutService;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -182,9 +183,14 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
             ? sloService.getLocation()
             : sloService.getResponseLocation();
         LOGGER.debug("Sending logout response using [{}] binding to [{}]", sloService.getBinding(), location);
-        HttpUtils.executePost(location,
-            CollectionUtils.wrap(SamlProtocolConstants.PARAMETER_SAML_RESPONSE, message),
-            CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_XML_VALUE));
+
+        val exec = HttpUtils.HttpExecutionRequest.builder()
+            .method(HttpMethod.POST)
+            .url(location)
+            .parameters(CollectionUtils.wrap(SamlProtocolConstants.PARAMETER_SAML_RESPONSE, message))
+            .headers(CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_XML_VALUE))
+            .build();
+        HttpUtils.execute(exec);
     }
 
     /**

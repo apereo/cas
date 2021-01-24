@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.model.core.audit.AuditRestProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,6 +17,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.hjson.JsonValue;
+import org.springframework.http.HttpMethod;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
@@ -30,7 +32,8 @@ import java.util.Set;
  */
 @Slf4j
 public class RestAuditTrailManager extends AbstractAuditTrailManager {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     private final AuditActionContextJsonSerializer serializer = new AuditActionContextJsonSerializer();
 
@@ -47,8 +50,14 @@ public class RestAuditTrailManager extends AbstractAuditTrailManager {
         try {
             val auditJson = serializer.toString(audit);
             LOGGER.trace("Sending audit action context to REST endpoint [{}]", properties.getUrl());
-            response = HttpUtils.executePost(properties.getUrl(),
-                properties.getBasicAuthUsername(), properties.getBasicAuthPassword(), auditJson);
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(properties.getBasicAuthPassword())
+                .basicAuthUsername(properties.getBasicAuthUsername())
+                .method(HttpMethod.POST)
+                .url(properties.getUrl())
+                .entity(auditJson)
+                .build();
+            response = HttpUtils.execute(exec);
         } finally {
             HttpUtils.close(response);
         }
@@ -59,8 +68,14 @@ public class RestAuditTrailManager extends AbstractAuditTrailManager {
         HttpResponse response = null;
         try {
             LOGGER.debug("Sending query to audit REST endpoint to fetch records from [{}]", localDate);
-            response = HttpUtils.executeGet(properties.getUrl(), properties.getBasicAuthUsername(),
-                properties.getBasicAuthPassword(), CollectionUtils.wrap("date", String.valueOf(localDate.toEpochDay())));
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(properties.getBasicAuthPassword())
+                .basicAuthUsername(properties.getBasicAuthUsername())
+                .method(HttpMethod.GET)
+                .url(properties.getUrl())
+                .parameters(CollectionUtils.wrap("date", String.valueOf(localDate.toEpochDay())))
+                .build();
+            response = HttpUtils.execute(exec);
             if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
                 final TypeReference<Set<AuditActionContext>> values = new TypeReference<>() {
@@ -80,9 +95,13 @@ public class RestAuditTrailManager extends AbstractAuditTrailManager {
         HttpResponse response = null;
         try {
             LOGGER.debug("Sending query to audit REST endpoint to delete records");
-            response = HttpUtils.executeDelete(properties.getUrl(),
-                properties.getBasicAuthUsername(),
-                properties.getBasicAuthPassword());
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(properties.getBasicAuthPassword())
+                .basicAuthUsername(properties.getBasicAuthUsername())
+                .method(HttpMethod.DELETE)
+                .url(properties.getUrl())
+                .build();
+            response = HttpUtils.execute(exec);
             if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 LOGGER.debug("Deleted audit records successfully");
             }

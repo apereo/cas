@@ -2,8 +2,8 @@ package org.apereo.cas.adaptors.u2f.storage;
 
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.benmanes.caffeine.cache.LoadingCache;
@@ -28,13 +28,8 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class U2FJsonResourceDeviceRepository extends BaseResourceU2FDeviceRepository {
 
-    private static final ObjectMapper MAPPER;
-
-    static {
-        MAPPER = new ObjectMapper().findAndRegisterModules();
-        MAPPER.activateDefaultTyping(MAPPER.getPolymorphicTypeValidator(),
-            ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
-    }
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     private final Resource jsonResource;
 

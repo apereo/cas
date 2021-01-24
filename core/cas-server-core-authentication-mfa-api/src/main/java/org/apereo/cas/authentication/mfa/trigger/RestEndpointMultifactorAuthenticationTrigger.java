@@ -26,6 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
@@ -110,10 +111,16 @@ public class RestEndpointMultifactorAuthenticationTrigger implements Multifactor
         try {
             val rest = casProperties.getAuthn().getMfa().getRest();
             val entity = new RestEndpointEntity(principal.getId(), resolvedService.getId());
-            response = HttpUtils.execute(rest.getUrl(), rest.getMethod(),
-                rest.getBasicAuthUsername(), rest.getBasicAuthPassword(),
-                CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE),
-                MAPPER.writeValueAsString(entity));
+
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(rest.getBasicAuthPassword())
+                .basicAuthUsername(rest.getBasicAuthUsername())
+                .method(HttpMethod.valueOf(rest.getMethod().toUpperCase().trim()))
+                .url(rest.getUrl())
+                .headers(CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE))
+                .entity(MAPPER.writeValueAsString(entity))
+                .build();
+            response = HttpUtils.execute(exec);
             val status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
             if (status.is2xxSuccessful()) {
                 val content = response.getEntity().getContent();
