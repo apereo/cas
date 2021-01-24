@@ -55,7 +55,7 @@ public class RestfulSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocato
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
                 .method(HttpMethod.GET)
-                .url(properties.getUrl())
+                .url(url)
                 .parameters(parameters)
                 .build();
             response = HttpUtils.execute(exec);
