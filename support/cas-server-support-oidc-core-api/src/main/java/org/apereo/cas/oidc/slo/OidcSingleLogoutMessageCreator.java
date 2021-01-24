@@ -56,7 +56,7 @@ public class OidcSingleLogoutMessageCreator implements SingleLogoutMessageCreato
 
         val claims = new JwtClaims();
 
-        claims.setIssuer(oidc.getIssuer());
+        claims.setIssuer(oidc.getCore().getIssuer());
         claims.setSubject(request.getExecutionRequest().getTicketGrantingTicket().getAuthentication().getPrincipal().getId());
         claims.setAudience(((OidcRegisteredService) request.getRegisteredService()).getClientId());
         claims.setIssuedAtToNow();

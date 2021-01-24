@@ -458,7 +458,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @RefreshScope
     @ConditionalOnMissingBean(name = "oidcAttributeToScopeClaimMapper")
     public OidcAttributeToScopeClaimMapper oidcAttributeToScopeClaimMapper() {
-        val mappings = casProperties.getAuthn().getOidc().getClaimsMap();
+        val mappings = casProperties.getAuthn().getOidc().getCore().getClaimsMap();
         return new OidcDefaultAttributeToScopeClaimMapper(mappings);
     }
 
@@ -659,7 +659,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
         val oidc = casProperties.getAuthn().getOidc();
         return new OidcIdTokenSigningAndEncryptionService(oidcDefaultJsonWebKeystoreCache(),
             oidcServiceJsonWebKeystoreCache(),
-            oidc.getIssuer(),
+            oidc.getCore().getIssuer(),
             oidcServerDiscoverySettingsFactory().getObject());
     }
 
@@ -671,7 +671,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
         val oidc = casProperties.getAuthn().getOidc();
         return new OidcUserProfileSigningAndEncryptionService(oidcDefaultJsonWebKeystoreCache(),
             oidcServiceJsonWebKeystoreCache(),
-            oidc.getIssuer(),
+            oidc.getCore().getIssuer(),
             oidcServerDiscoverySettingsFactory().getObject());
     }
 
@@ -730,7 +730,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     public HandlerInterceptorAdapter oauthInterceptor() {
         val oidc = casProperties.getAuthn().getOidc();
         val mode = OidcConstants.DynamicClientRegistrationMode.valueOf(StringUtils.defaultIfBlank(
-            oidc.getDynamicClientRegistrationMode(),
+            oidc.getCore().getDynamicClientRegistrationMode(),
             OidcConstants.DynamicClientRegistrationMode.PROTECTED.name()));
 
         return new OidcHandlerInterceptorAdapter(requiresAuthenticationAccessTokenInterceptor.getObject(),
@@ -748,7 +748,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Bean
     public Collection<OidcCustomScopeAttributeReleasePolicy> userDefinedScopeBasedAttributeReleasePolicies() {
         val oidc = casProperties.getAuthn().getOidc();
-        return oidc.getUserDefinedScopes().entrySet()
+        return oidc.getCore().getUserDefinedScopes().entrySet()
             .stream()
             .map(k -> new OidcCustomScopeAttributeReleasePolicy(k.getKey(), CollectionUtils.wrapList(k.getValue().split(","))))
             .collect(Collectors.toSet());
@@ -837,7 +837,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
         val oidc = casProperties.getAuthn().getOidc();
         return new OidcRegisteredServiceJwtAccessTokenCipherExecutor(oidcDefaultJsonWebKeystoreCache(),
             oidcServiceJsonWebKeystoreCache(),
-            oidc.getIssuer());
+            oidc.getCore().getIssuer());
     }
 
     @Bean
@@ -933,7 +933,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
             singleLogoutServiceLogoutUrlBuilder.getObject(),
             casProperties.getSlo().isAsynchronous(),
             authenticationServiceSelectionPlan.getObject(),
-            casProperties.getAuthn().getOidc().getIssuer());
+            casProperties.getAuthn().getOidc().getCore().getIssuer());
     }
 
     @Bean
@@ -948,7 +948,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     public JwtBuilder oidcAccessTokenJwtBuilder() {
         val oidc = casProperties.getAuthn().getOidc();
         return new OAuth20JwtBuilder(
-            oidc.getIssuer(),
+            oidc.getCore().getIssuer(),
             oauthAccessTokenJwtCipherExecutor.getObject(),
             servicesManager.getObject(),
             oauthRegisteredServiceJwtAccessTokenCipherExecutor());

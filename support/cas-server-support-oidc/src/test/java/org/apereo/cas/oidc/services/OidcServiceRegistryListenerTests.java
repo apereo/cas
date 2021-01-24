@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OIDC")
 @TestPropertySource(properties =
-    "cas.authn.oidc.user-defined-scopes.SomeCustomScope=name"
+    "cas.authn.oidc.core.user-defined-scopes.SomeCustomScope=name"
 )
 public class OidcServiceRegistryListenerTests extends AbstractOidcTests {
 
