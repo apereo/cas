@@ -37,6 +37,7 @@ import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.AbstractMetadataResolver;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 
 import java.io.File;
@@ -198,7 +199,12 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
     protected HttpResponse fetchMetadata(final SamlRegisteredService service,
         final String metadataLocation, final CriteriaSet criteriaSet, final File backupFile) {
         LOGGER.debug("Fetching metadata from [{}]", metadataLocation);
-        return HttpUtils.executeGet(metadataLocation, service.getMetadataProxyLocation());
+        val exec = HttpUtils.HttpExecutionRequest.builder()
+            .method(HttpMethod.GET)
+            .url(metadataLocation)
+            .proxyUrl(service.getMetadataProxyLocation())
+            .build();
+        return HttpUtils.execute(exec);
     }
 
     /**

@@ -1,5 +1,7 @@
 package org.apereo.cas.uma.ticket.resource;
 
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.EqualsAndHashCode;
@@ -32,8 +34,8 @@ import java.util.HashSet;
 @NoArgsConstructor
 @Accessors(chain = true)
 public class ResourceSetPolicy implements Serializable {
-    private static final ObjectMapper MAPPER = new ObjectMapper()
-        .findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
     
     private static final long serialVersionUID = 1664113523427391736L;
 

@@ -13,6 +13,7 @@ import org.apache.http.HttpResponse;
 import org.hjson.JsonValue;
 import org.pac4j.config.client.PropertiesConfigFactory;
 import org.pac4j.core.client.Client;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 
 import java.nio.charset.StandardCharsets;
@@ -40,8 +41,13 @@ public class RestfulDelegatedClientFactory implements DelegatedClientFactory<Cli
         HttpResponse response = null;
         try {
             val restProperties = casProperties.getAuthn().getPac4j().getRest();
-            response = HttpUtils.execute(restProperties.getUrl(), restProperties.getMethod(),
-                restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword());
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(restProperties.getBasicAuthPassword())
+                .basicAuthUsername(restProperties.getBasicAuthUsername())
+                .method(HttpMethod.valueOf(restProperties.getMethod().toUpperCase().trim()))
+                .url(restProperties.getUrl())
+                .build();
+            response = HttpUtils.execute(exec);
             val statusCode = response.getStatusLine().getStatusCode();
             if (HttpStatus.valueOf(statusCode).is2xxSuccessful()) {
                 val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);

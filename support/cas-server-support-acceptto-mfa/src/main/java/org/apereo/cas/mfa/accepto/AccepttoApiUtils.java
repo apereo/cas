@@ -7,6 +7,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -23,6 +24,7 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.hjson.JsonValue;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.keys.AesKey;
+import org.springframework.http.HttpMethod;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.nio.charset.StandardCharsets;
@@ -42,7 +44,8 @@ import java.util.UUID;
 @UtilityClass
 @Slf4j
 public class AccepttoApiUtils {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     /**
      * Gets user email attribute.
@@ -101,7 +104,12 @@ public class AccepttoApiUtils {
 
         HttpResponse response = null;
         try {
-            response = HttpUtils.executePost(url, parameters, new HashMap<>(0));
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .method(HttpMethod.POST)
+                .url(url)
+                .parameters(parameters)
+                .build();
+            response = HttpUtils.execute(exec);
             if (response != null) {
                 val status = response.getStatusLine().getStatusCode();
                 LOGGER.debug("Response status code is [{}]", status);
@@ -170,7 +178,13 @@ public class AccepttoApiUtils {
         try {
             val authzPayload = buildAuthorizationHeaderPayloadForAuthentication(acceptto);
             val headers = CollectionUtils.<String, Object>wrap("Authorization", "Bearer " + authzPayload);
-            response = HttpUtils.executePost(url, parameters, headers);
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .method(HttpMethod.POST)
+                .url(url)
+                .parameters(parameters)
+                .headers(headers)
+                .build();
+            response = HttpUtils.execute(exec);
             val status = response.getStatusLine().getStatusCode();
             LOGGER.debug("Authentication response status code is [{}]", status);
             val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);

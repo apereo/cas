@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 
 import java.nio.charset.StandardCharsets;
@@ -42,10 +43,14 @@ public class RestfulWebAuthnCredentialRepository extends BaseWebAuthnCredentialR
         HttpResponse response = null;
         try {
             val parameters = CollectionUtils.<String, Object>wrap("username", username);
-            response = HttpUtils.executeGet(restProperties.getUrl(),
-                restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
-                parameters);
-
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(restProperties.getBasicAuthPassword())
+                .basicAuthUsername(restProperties.getBasicAuthUsername())
+                .method(HttpMethod.GET)
+                .url(restProperties.getUrl())
+                .parameters(parameters)
+                .build();
+            response = HttpUtils.execute(exec);
             if (Objects.requireNonNull(response).getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
                 val result = getCipherExecutor().decode(IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8));
                 return WebAuthnUtils.getObjectMapper().readValue(result, new TypeReference<List<CredentialRegistration>>() {
@@ -64,8 +69,13 @@ public class RestfulWebAuthnCredentialRepository extends BaseWebAuthnCredentialR
         val restProperties = getProperties().getAuthn().getMfa().getWebAuthn().getRest();
         HttpResponse response = null;
         try {
-            response = HttpUtils.executeGet(restProperties.getUrl(),
-                restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword());
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(restProperties.getBasicAuthPassword())
+                .basicAuthUsername(restProperties.getBasicAuthUsername())
+                .method(HttpMethod.GET)
+                .url(restProperties.getUrl())
+                .build();
+            response = HttpUtils.execute(exec);
             if (Objects.requireNonNull(response).getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
                 val result = getCipherExecutor().decode(IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8));
                 val records = WebAuthnUtils.getObjectMapper().readValue(result, new TypeReference<List<CredentialRegistration>>() {
@@ -88,9 +98,15 @@ public class RestfulWebAuthnCredentialRepository extends BaseWebAuthnCredentialR
         try {
             val parameters = CollectionUtils.<String, Object>wrap("username", username);
             val jsonRecords = getCipherExecutor().encode(WebAuthnUtils.getObjectMapper().writeValueAsString(records));
-            response = HttpUtils.executePost(restProperties.getUrl(),
-                restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
-                jsonRecords, parameters);
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(restProperties.getBasicAuthPassword())
+                .basicAuthUsername(restProperties.getBasicAuthUsername())
+                .method(HttpMethod.POST)
+                .url(restProperties.getUrl())
+                .entity(jsonRecords)
+                .parameters(parameters)
+                .build();
+            response = HttpUtils.execute(exec);
         } finally {
             HttpUtils.close(response);
         }

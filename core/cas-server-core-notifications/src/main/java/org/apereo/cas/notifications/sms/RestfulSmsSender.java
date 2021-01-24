@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.http.HttpResponse;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 
 import java.util.HashMap;
@@ -35,12 +36,17 @@ public class RestfulSmsSender implements SmsSender {
             }
             parameters.put("from", from);
             parameters.put("to", to);
-            response = HttpUtils.executePost(restProperties.getUrl(),
-                restProperties.getBasicAuthUsername(),
-                restProperties.getBasicAuthPassword(),
-                message,
-                parameters);
 
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(restProperties.getBasicAuthPassword())
+                .basicAuthUsername(restProperties.getBasicAuthUsername())
+                .method(HttpMethod.POST)
+                .url(restProperties.getUrl())
+                .parameters(parameters)
+                .entity(message)
+                .build();
+            
+            response = HttpUtils.execute(exec);
             if (response != null) {
                 val status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
                 return status.is2xxSuccessful();

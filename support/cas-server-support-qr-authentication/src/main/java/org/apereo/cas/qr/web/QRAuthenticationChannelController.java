@@ -5,6 +5,7 @@ import org.apereo.cas.qr.validation.QRAuthenticationTokenValidationRequest;
 import org.apereo.cas.qr.validation.QRAuthenticationTokenValidatorService;
 import org.apereo.cas.token.TokenConstants;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,7 +32,8 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 public class QRAuthenticationChannelController {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     private final MessageSendingOperations<String> messageTemplate;
 

@@ -15,6 +15,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.hjson.JsonValue;
+import org.springframework.http.HttpMethod;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -55,9 +56,14 @@ public class OidcRestfulWebFingerUserInfoRepository implements OidcWebFingerUser
     protected Map<String, Object> findAccountViaRestApi(final Map<String, Object> headers) {
         HttpResponse response = null;
         try {
-            response = HttpUtils.execute(properties.getUrl(), properties.getMethod(),
-                properties.getBasicAuthUsername(), properties.getBasicAuthPassword(),
-                new HashMap<>(0), headers);
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(properties.getBasicAuthPassword())
+                .basicAuthUsername(properties.getBasicAuthUsername())
+                .method(HttpMethod.valueOf(properties.getMethod().toUpperCase().trim()))
+                .url(properties.getUrl())
+                .headers(headers)
+                .build();
+            response = HttpUtils.execute(exec);
             if (response != null && response.getEntity() != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
                 return MAPPER.readValue(JsonValue.readHjson(result).toString(), Map.class);

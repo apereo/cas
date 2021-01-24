@@ -14,6 +14,7 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.hjson.JsonValue;
+import org.springframework.http.HttpMethod;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -42,9 +43,15 @@ public class RestfulPasswordlessUserAccountStore implements PasswordlessUserAcco
             val parameters = new HashMap<String, Object>();
             parameters.put("username", username);
 
-            response = HttpUtils.execute(restProperties.getUrl(), restProperties.getMethod(),
-                restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
-                parameters, new HashMap<>(0));
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(restProperties.getBasicAuthPassword())
+                .basicAuthUsername(restProperties.getBasicAuthUsername())
+                .method(HttpMethod.valueOf(restProperties.getMethod().toUpperCase().trim()))
+                .url(restProperties.getUrl())
+                .parameters(parameters)
+                .build();
+            response = HttpUtils.execute(exec);
+
             if (response != null && response.getEntity() != null) {
                 val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
                 val account = MAPPER.readValue(JsonValue.readHjson(result).toString(), PasswordlessUserAccount.class);

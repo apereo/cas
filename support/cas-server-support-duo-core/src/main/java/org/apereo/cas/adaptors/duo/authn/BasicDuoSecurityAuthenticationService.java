@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.duosecurity.duoweb.DuoWeb;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,7 +30,8 @@ import java.util.Optional;
 @Slf4j
 @EqualsAndHashCode(callSuper = true)
 public class BasicDuoSecurityAuthenticationService extends BaseDuoSecurityAuthenticationService {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     private static final long serialVersionUID = -6690808348975271382L;
 

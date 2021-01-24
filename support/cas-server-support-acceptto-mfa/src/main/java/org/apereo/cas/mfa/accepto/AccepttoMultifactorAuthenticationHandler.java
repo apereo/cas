@@ -9,6 +9,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.support.WebUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.hjson.JsonValue;
+import org.springframework.http.HttpMethod;
 
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
@@ -27,7 +29,6 @@ import javax.security.auth.login.FailedLoginException;
 
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,7 +41,8 @@ import java.util.Map;
 @Slf4j
 public class AccepttoMultifactorAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     private final AccepttoMultifactorProperties accepttoProperties;
 
@@ -78,7 +80,12 @@ public class AccepttoMultifactorAuthenticationHandler extends AbstractPreAndPost
 
             HttpResponse response = null;
             try {
-                response = HttpUtils.executePost(url, parameters, new HashMap<>(0));
+                val exec = HttpUtils.HttpExecutionRequest.builder()
+                    .method(HttpMethod.POST)
+                    .url(url)
+                    .parameters(parameters)
+                    .build();
+                response = HttpUtils.execute(exec);
                 if (response != null) {
                     val status = response.getStatusLine().getStatusCode();
                     if (status == HttpStatus.SC_OK) {

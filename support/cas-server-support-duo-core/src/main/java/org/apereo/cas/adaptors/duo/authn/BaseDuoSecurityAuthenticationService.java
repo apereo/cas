@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.duosecurity.client.Http;
 import com.duosecurity.duoweb.DuoWebException;
@@ -46,7 +47,8 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
 
     private static final int USER_ACCOUNT_CACHE_EXPIRATION_SECONDS = 5;
 
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     /**
      * Duo Properties.

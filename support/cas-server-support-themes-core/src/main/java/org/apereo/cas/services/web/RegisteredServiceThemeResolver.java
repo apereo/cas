@@ -128,13 +128,16 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
             if (resource instanceof UrlResource) {
                 val url = resource.getURL().toExternalForm();
                 LOGGER.debug("Executing URL [{}] to determine theme for [{}]", url, service.getId());
-                response = HttpUtils.executeGet(url, CollectionUtils.wrap("service", service.getId()));
+                val exec = HttpUtils.HttpExecutionRequest.builder()
+                    .parameters(CollectionUtils.wrap("service", service.getId()))
+                    .url(url)
+                    .build();
+                response = HttpUtils.execute(exec);
                 if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                     val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
                     return StringUtils.defaultIfBlank(result, getDefaultThemeName());
                 }
             }
-
             val messageSource = new CasThemeResourceBundleMessageSource();
             val theme = SpringExpressionLanguageValueResolver.getInstance().resolve(rService.getTheme());
             messageSource.setBasename(theme);

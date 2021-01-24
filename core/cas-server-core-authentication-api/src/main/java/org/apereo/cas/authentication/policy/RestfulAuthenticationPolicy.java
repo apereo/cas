@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,6 +19,7 @@ import lombok.Setter;
 import lombok.val;
 import org.apache.http.HttpResponse;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 
 import javax.security.auth.login.AccountExpiredException;
@@ -44,7 +46,8 @@ import java.util.Set;
 public class RestfulAuthenticationPolicy extends BaseAuthenticationPolicy {
     private static final long serialVersionUID = -7688729533538097898L;
 
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     private String endpoint;
 
@@ -65,7 +68,13 @@ public class RestfulAuthenticationPolicy extends BaseAuthenticationPolicy {
         val principal = authentication.getPrincipal();
         try {
             val entity = MAPPER.writeValueAsString(principal);
-            response = HttpUtils.executePost(this.endpoint, this.basicAuthUsername, this.basicAuthPassword, entity);
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(this.basicAuthPassword)
+                .basicAuthUsername(this.basicAuthUsername)
+                .method(HttpMethod.POST)
+                .entity(entity)
+                .build();
+            response = HttpUtils.execute(exec);
             val statusCode = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
             if (statusCode != HttpStatus.OK) {
                 val ex = handleResponseStatusCode(statusCode, principal);

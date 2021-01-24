@@ -3,6 +3,7 @@ package org.apereo.cas.entity;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.io.FileWatcherService;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,7 +29,8 @@ import java.util.Set;
  */
 @Slf4j
 public class SamlIdentityProviderEntityParser implements DisposableBean {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     @Getter
     private final Set<SamlIdentityProviderEntity> identityProviders = new LinkedHashSet<>(0);

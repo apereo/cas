@@ -15,6 +15,7 @@ import org.opensaml.saml.metadata.resolver.filter.MetadataFilterChain;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpMethod;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -57,7 +58,12 @@ public class DynamicMetadataResolverAdapter extends AbstractMetadataResolverAdap
                 val encodedId = EncodingUtils.urlEncode(entityId);
                 val url = resource.getURL().toExternalForm().concat(encodedId);
                 LOGGER.debug("Locating metadata input stream for [{}] via [{}]", encodedId, url);
-                response = HttpUtils.executeGet(url, Map.of(), Map.of("Accept", "*/*"));
+                val exec = HttpUtils.HttpExecutionRequest.builder()
+                    .method(HttpMethod.GET)
+                    .url(url)
+                    .headers(Map.of("Accept", "*/*"))
+                    .build();
+                response = HttpUtils.execute(exec);
                 if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                     val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
                     return new ByteArrayInputStream(result.getBytes(StandardCharsets.UTF_8));

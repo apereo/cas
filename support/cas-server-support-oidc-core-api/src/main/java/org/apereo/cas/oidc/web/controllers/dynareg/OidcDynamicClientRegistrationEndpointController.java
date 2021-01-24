@@ -18,6 +18,7 @@ import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
@@ -27,6 +28,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.hjson.JsonValue;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -50,7 +52,8 @@ import java.util.Objects;
  */
 @Slf4j
 public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20Controller {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     private static final int GENERATED_CLIENT_NAME_LENGTH = 8;
 
@@ -222,7 +225,11 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
         if (StringUtils.isNotBlank(registeredService.getSectorIdentifierUri())) {
             HttpResponse sectorResponse = null;
             try {
-                sectorResponse = HttpUtils.executeGet(registeredService.getSectorIdentifierUri());
+                val exec = HttpUtils.HttpExecutionRequest.builder()
+                    .method(HttpMethod.GET)
+                    .url(registeredService.getSectorIdentifierUri())
+                    .build();
+                sectorResponse = HttpUtils.execute(exec);
                 if (sectorResponse != null && sectorResponse.getStatusLine().getStatusCode() == org.apache.http.HttpStatus.SC_OK) {
                     val result = IOUtils.toString(sectorResponse.getEntity().getContent(), StandardCharsets.UTF_8);
                     val urls = MAPPER.readValue(JsonValue.readHjson(result).toString(), List.class);
