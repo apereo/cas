@@ -38,6 +38,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = RefreshAutoConfiguration.class, properties = {
     "cas.http-web-request.cors.allow-credentials=true",
     "cas.http-web-request.cors.allow-origins[0]=*",
+    "cas.http-web-request.cors.allow-origin-patterns[0]=https://*.example.com",
     "cas.http-web-request.cors.allow-methods[0]=*",
     "cas.http-web-request.cors.allow-headers[0]=*",
     "cas.http-web-request.cors.max-age=1600",
@@ -62,6 +63,7 @@ public class RegisteredServiceCorsConfigurationSourceTests {
         assertEquals(cors.getMaxAge(), config.getMaxAge().intValue());
         assertEquals(cors.getAllowHeaders(), config.getAllowedHeaders());
         assertEquals(cors.getAllowOrigins(), config.getAllowedOrigins());
+        assertEquals(cors.getAllowOriginPatterns(), config.getAllowedOriginPatterns());
         assertEquals(cors.getAllowMethods(), config.getAllowedMethods());
         assertEquals(cors.getExposedHeaders(), config.getExposedHeaders());
         assertTrue(config.getAllowCredentials().booleanValue());
@@ -78,6 +80,8 @@ public class RegisteredServiceCorsConfigurationSourceTests {
             new DefaultRegisteredServiceProperty(Set.of("12345")));
         props.put(RegisteredServiceProperty.RegisteredServiceProperties.CORS_ALLOWED_ORIGINS.getPropertyName(),
             new DefaultRegisteredServiceProperty(Set.of("12345")));
+        props.put(RegisteredServiceProperty.RegisteredServiceProperties.CORS_ALLOWED_ORIGIN_PATTERNS.getPropertyName(),
+                new DefaultRegisteredServiceProperty(Set.of("12345")));
         props.put(RegisteredServiceProperty.RegisteredServiceProperties.CORS_ALLOWED_METHODS.getPropertyName(),
             new DefaultRegisteredServiceProperty(Set.of("12345")));
         props.put(RegisteredServiceProperty.RegisteredServiceProperties.CORS_EXPOSED_HEADERS.getPropertyName(),
@@ -104,5 +108,6 @@ public class RegisteredServiceCorsConfigurationSourceTests {
         assertEquals(List.of("12345"), config.getAllowedOrigins());
         assertEquals(List.of("12345"), config.getAllowedMethods());
         assertEquals(List.of("12345"), config.getExposedHeaders());
+        assertEquals(List.of("12345"), config.getAllowedOriginPatterns());
     }
 }
