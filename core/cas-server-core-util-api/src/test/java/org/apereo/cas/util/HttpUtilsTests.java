@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.springframework.http.HttpMethod;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -24,6 +26,19 @@ public class HttpUtilsTests {
         val exec = HttpUtils.HttpExecutionRequest.builder()
             .basicAuthPassword("password")
             .basicAuthUsername("user")
+            .method(HttpMethod.GET)
+            .entity("entity")
+            .url("http://localhost:8081")
+            .proxyUrl("http://localhost:8080")
+            .build();
+
+        assertNull(HttpUtils.execute(exec));
+    }
+
+    @Test
+    public void verifyBearerToken() {
+        val exec = HttpUtils.HttpExecutionRequest.builder()
+            .bearerToken(UUID.randomUUID().toString())
             .method(HttpMethod.GET)
             .entity("entity")
             .url("http://localhost:8081")
