@@ -57,7 +57,10 @@ public class OidcRestfulJsonWebKeystoreGeneratorServiceTests extends AbstractOid
 
     @Test
     public void verifyFailsOperation() {
-        val resource = new OidcRestfulJsonWebKeystoreGeneratorService(new OidcProperties()).generate();
+        var oidcProperties = new OidcProperties();
+        oidcProperties.getJwks().getRest().setUrl("https://localhost:1234");
+        oidcProperties.getJwks().getRest().setMethod("get");
+        val resource = new OidcRestfulJsonWebKeystoreGeneratorService(oidcProperties).generate();
         assertNull(resource);
     }
 }
