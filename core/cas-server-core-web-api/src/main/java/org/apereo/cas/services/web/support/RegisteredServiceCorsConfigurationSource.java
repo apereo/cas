@@ -41,6 +41,7 @@ public class RegisteredServiceCorsConfigurationSource implements CorsConfigurati
         config.setAllowCredentials(cors.isAllowCredentials());
         config.setMaxAge(cors.getMaxAge());
         config.setAllowedOrigins(cors.getAllowOrigins());
+        config.setAllowedOriginPatterns(cors.getAllowOriginPatterns());
         config.setAllowedMethods(cors.getAllowMethods());
         config.setAllowedHeaders(cors.getAllowHeaders());
         config.setExposedHeaders(cors.getExposedHeaders());
@@ -59,6 +60,12 @@ public class RegisteredServiceCorsConfigurationSource implements CorsConfigurati
                 val result = RegisteredServiceProperties.CORS_ALLOWED_ORIGINS.getPropertyValues(registeredService, Set.class);
                 if (result != null) {
                     config.setAllowedOrigins(new ArrayList<>(result));
+                }
+            }
+            if (RegisteredServiceProperties.CORS_ALLOWED_ORIGIN_PATTERNS.isAssignedTo(registeredService)) {
+                val result = RegisteredServiceProperties.CORS_ALLOWED_ORIGIN_PATTERNS.getPropertyValues(registeredService, Set.class);
+                if (result != null) {
+                    config.setAllowedOriginPatterns(new ArrayList<>(result));
                 }
             }
             if (RegisteredServiceProperties.CORS_ALLOWED_METHODS.isAssignedTo(registeredService)) {

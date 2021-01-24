@@ -55,12 +55,13 @@ following properties are supported:
 
 | Name                                      | Description
 |-----------------------|-----------------------------------------------------------------------
-| `corsAllowCredentials`    | Whether user credentials are supported. 
-| `corsMaxAge`              | Configure how long, as a duration, the response from a pre-flight request can be cached by clients. 
-| `corsAllowedOrigins`      | Set the origins to allow. The special value `*` allows all domains.
-| `corsAllowedMethods`      | Set the HTTP methods to allow, e.g. `GET`, etc. The special value `*` allows all methods.
-| `corsAllowedHeaders`      | Set the list of headers that a pre-flight request can list as allowed for use during an actual request. The special value `*` allows actual requests to send any header. 
-| `corsExposedHeaders`      | List of response headers that a response might have and can be exposed. The special value `*` allows all headers to be exposed for non-credentialed requests.
+| `corsAllowCredentials`      | Whether user credentials are supported. 
+| `corsMaxAge`                | Configure how long, as a duration, the response from a pre-flight request can be cached by clients. 
+| `corsAllowedOrigins`        | Set the origins to allow. The special value `*` allows all domains but cannot be used when credentials allowed.
+| `corsAllowedOriginPatterns` | Set the origins patterns to allow. Patterns may be used when credentials allowed, e.g. https://*.example.com.
+| `corsAllowedMethods`        | Set the HTTP methods to allow, e.g. `GET`, etc. The special value `*` allows all methods.
+| `corsAllowedHeaders`        | Set the list of headers that a pre-flight request can list as allowed for use during an actual request. The special value `*` allows actual requests to send any header. 
+| `corsExposedHeaders`        | List of response headers that a response might have and can be exposed. The special value `*` allows all headers to be exposed for non-credentialed requests.
 
 A sample JSON file follows:
 

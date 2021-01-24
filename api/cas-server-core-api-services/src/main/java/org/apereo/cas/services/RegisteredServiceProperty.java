@@ -193,9 +193,14 @@ public interface RegisteredServiceProperty extends Serializable {
          */
         CORS_MAX_AGE("corsMaxAge", StringUtils.EMPTY),
         /**
-         * Define allowed origins for CORS requests.
+         * Define allowed origins for CORS requests. Cannot use * when credentials are allowed.
          */
         CORS_ALLOWED_ORIGINS("corsAllowedOrigins", StringUtils.EMPTY),
+        /**
+         * Define patterns of allowed origins for CORS requests. (e.g.
+         * 'https://*.example.com') Patterns can be used when credentials are allowed.
+         */
+        CORS_ALLOWED_ORIGIN_PATTERNS("corsAllowedOriginPatterns", StringUtils.EMPTY),
         /**
          * Define allowed methods for CORS requests.
          */
