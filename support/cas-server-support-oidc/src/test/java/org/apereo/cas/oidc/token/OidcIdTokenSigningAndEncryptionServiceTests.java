@@ -24,8 +24,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OIDC")
 @TestPropertySource(properties = {
-    "cas.authn.oidc.id-token-signing-alg-values-supported=RS256,RS384,RS512",
-    "cas.authn.oidc.id-token-encryption-encoding-values-supported=A128CBC-HS256,A192CBC-HS384,A256CBC-HS512,A128GCM,A192GCM,A256GCM"
+    "cas.authn.oidc.discovery.id-token-signing-alg-values-supported=RS256,RS384,RS512",
+    "cas.authn.oidc.discovery.id-token-encryption-encoding-values-supported=A128CBC-HS256,A192CBC-HS384,A256CBC-HS512,A128GCM,A192GCM,A256GCM"
 })
 public class OidcIdTokenSigningAndEncryptionServiceTests extends AbstractOidcTests {
 

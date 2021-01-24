@@ -132,17 +132,18 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
             claims.setClaim(OAuth20Constants.NONCE, attributes.get(OAuth20Constants.NONCE).get(0));
         }
         generateAccessTokenHash(accessToken, service, claims);
-        LOGGER.trace("Comparing principal attributes [{}] with supported claims [{}]", principal.getAttributes(), oidc.getClaims());
+        LOGGER.trace("Comparing principal attributes [{}] with supported claims [{}]",
+            principal.getAttributes(), oidc.getDiscovery().getClaims());
 
         principal.getAttributes().entrySet()
             .stream()
             .filter(entry -> {
-                if (oidc.getClaims().contains(entry.getKey())) {
+                if (oidc.getDiscovery().getClaims().contains(entry.getKey())) {
                     LOGGER.trace("Found supported claim [{}]", entry.getKey());
                     return true;
                 }
                 LOGGER.warn("Claim [{}] is not defined as a supported claim among [{}]. Skipping...",
-                    entry.getKey(), oidc.getClaims());
+                    entry.getKey(), oidc.getDiscovery().getClaims());
                 return false;
             })
             .forEach(entry -> {
