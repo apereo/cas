@@ -24,6 +24,7 @@ import org.apache.http.HttpStatus;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.theme.AbstractThemeResolver;
 import org.springframework.webflow.execution.RequestContextHolder;
 
@@ -131,6 +132,7 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
                 val exec = HttpUtils.HttpExecutionRequest.builder()
                     .parameters(CollectionUtils.wrap("service", service.getId()))
                     .url(url)
+                    .method(HttpMethod.GET)
                     .build();
                 response = HttpUtils.execute(exec);
                 if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
