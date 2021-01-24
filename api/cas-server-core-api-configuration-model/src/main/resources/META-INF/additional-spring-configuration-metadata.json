@@ -1,10 +1,35 @@
 {
   "properties": [
     {
+      "name": "cas.authn.oidc.issuer",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.oidc.core.issuer",
+        "reason": "Issuer is now moved into the core namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.oidc.scopes",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.oidc.discovery.scopes",
+        "reason": "Scopes settings is now moved into the core namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.oidc.claims",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.oidc.discovery.claims",
+        "reason": "Claims setting is now moved into the core namespace.",
+        "level": "error"
+      }
+    },
+    {
       "name": "cas.session-replication.session-cookie-name",
       "type": "java.lang.String",
-      "description": "Choose the name of the cookie for session replication.",
-      "defaultValue": "DISSESSION",
       "deprecation": {
         "replacement": "cas.session-replication.cookie.name",
         "reason": "Cookie settings are moved to a new cookie namespace under cas.session-replication.",
@@ -14,8 +39,6 @@
     {
       "name": "cas.acceptable-usage-policy.enabled",
       "type": "java.lang.Boolean",
-      "description": "Activate acceptable usage policy",
-      "defaultValue": "true",
       "deprecation": {
         "replacement": "cas.acceptable-usage-policy.core.enabled",
         "reason": "Configuration setting is moved to the new core namespace",
@@ -25,8 +48,6 @@
     {
       "name": "cas.person-directory.attribute-definition-store",
       "type": "java.lang.String",
-      "description": "Configuration scheme relevant for attribute definition store.",
-      "defaultValue": "DISSESSION",
       "deprecation": {
         "replacement": "cas.authn.attribute-repository.attribute-definition-store",
         "reason": "Configuration of the attribute definition store is moved under attribute repositories.",
@@ -36,8 +57,6 @@
     {
       "name": "cas.rest.header-auth",
       "type": "java.lang.Boolean",
-      "description": "Header extraction for x509",
-      "defaultValue": "true",
       "deprecation": {
         "replacement": "cas.rest.x509.header-auth",
         "reason": "Configuration setting is moved to the new replacement",
@@ -47,8 +66,6 @@
     {
       "name": "cas.rest.body-auth",
       "type": "java.lang.Boolean",
-      "description": "Body extraction for x509",
-      "defaultValue": "false",
       "deprecation": {
         "replacement": "cas.rest.x509.body-auth",
         "reason": "Configuration setting is moved to the new replacement",
@@ -58,8 +75,6 @@
     {
       "name": "cas.rest.tls-client-auth",
       "type": "java.lang.Boolean",
-      "description": "Body extraction for x509",
-      "defaultValue": "false",
       "deprecation": {
         "replacement": "cas.rest.x509.tls-client-auth",
         "reason": "Configuration setting is moved to the new replacement",
@@ -69,8 +84,6 @@
     {
       "name": "cas.authn.release-protocol-attributes",
       "type": "java.lang.Boolean",
-      "description": "Whether to release authentication attributes.",
-      "defaultValue": true,
       "deprecation": {
         "replacement": "cas.authn.authentication-attribute-release.enabled",
         "reason": "Property moved to new namespace under cas.authn.authentication-attribute-release.* settings.",
@@ -80,8 +93,6 @@
     {
       "name": "cas.authn.mfa.gauth.rest.endpoint-url",
       "type": "java.lang.String",
-      "description": "URL to manage Google Authenticator credentials.",
-      "defaultValue": "",
       "deprecation": {
         "replacement": "cas.authn.mfa.gauth.rest.url",
         "reason": "Property renamed to be consistent with other RESt-based configuration.",
@@ -91,7 +102,6 @@
     {
       "name": "cas.ticket.registry.hazelcast.cluster.max-heap-size-percentage",
       "type": "java.lang.Boolean",
-      "description": "Maximum size of the map.",
       "deprecation": {
         "replacement": "cas.ticket.registry.hazelcast.cluster.max-size",
         "reason": "Property renamed to new\"cas.ticket.registry.hazelcast.cluster.max-size.",
@@ -101,7 +111,6 @@
     {
       "name": "cas.ticket.registry.hazelcast.cluster.wan-replication.targets[0].group-name",
       "type": "java.lang.Boolean",
-      "description": "Maximum size of the map.",
       "deprecation": {
         "reason": "Property is removed in Hazelcast 4",
         "level": "error"
@@ -110,7 +119,6 @@
     {
       "name": "cas.service-registry.config.location",
       "type": "java.lang.String",
-      "description": "Location of the JSON/YAML service registry files",
       "deprecation": {
         "replacement": "cas.service-registry.json.location",
         "reason": "Property renamed, use cas.service-registry.json.location instead.",
@@ -120,7 +128,6 @@
     {
       "name": "cas.authn.saml-idp.scope",
       "type": "java.lang.String",
-      "description": "Definition of scope for CAS acting as a SAML IdP.",
       "deprecation": {
         "replacement": "cas.server.scope",
         "reason": "Property is moved to cas.server.scope to be applied globally.",
@@ -130,8 +137,6 @@
     {
       "name": "cas.authn.x509.principal-sn-radix",
       "type": "java.lang.Integer",
-      "description": "X509 principal extraction config.",
-      "defaultValue": 10,
       "deprecation": {
         "replacement": "cas.authn.x509.serial-no.principal-s-n-radix",
         "reason": "Property renamed due to x509 settings reorganization.",
@@ -141,8 +146,6 @@
     {
       "name": "cas.authn.x509.principal-hex-sn-zero-padding",
       "type": "java.lang.Boolean",
-      "description": "X509 principal extraction config.",
-      "defaultValue": true,
       "deprecation": {
         "replacement": "cas.authn.x509.serial-no.principal-hex-s-n-zero-padding",
         "reason": "Property renamed due to x509 settings reorganization.",
@@ -152,8 +155,6 @@
     {
       "name": "cas.authn.x509.value-delimiter",
       "type": "java.lang.String",
-      "description": "X509 principal extraction config.",
-      "defaultValue": ",",
       "deprecation": {
         "replacement": "cas.authn.x509.serial-no-dn.value-delimiter",
         "reason": "Property renamed due to x509 settings reorganization.",
@@ -163,8 +164,6 @@
     {
       "name": "cas.authn.x509.serial-number-prefix",
       "type": "java.lang.String",
-      "description": "X509 principal extraction config.",
-      "defaultValue": "SERIALNUMBER=",
       "deprecation": {
         "replacement": "cas.authn.x509.serial-no-dn.serial-number-prefix",
         "reason": "Property renamed due to x509 settings reorganization.",
@@ -174,8 +173,6 @@
     {
       "name": "cas.server.basic-authn.enabled",
       "type": "java.lang.Boolean",
-      "description": "Enable basic auth on tomcat.",
-      "defaultValue": false,
       "deprecation": {
         "replacement": "cas.server.tomcat.basic-authn.enabled",
         "reason": "cas.server.* moved to cas.server.tomcat.*.",
@@ -185,8 +182,6 @@
     {
       "name": "cas.tomcat.clustering.enabled",
       "type": "java.lang.Boolean",
-      "description": "Enable tomcat clustering.",
-      "defaultValue": false,
       "deprecation": {
         "replacement": "cas.server.tomcat.clustering.enabled",
         "reason": "cas.server.* moved to cas.server.tomcat.*.",
@@ -196,8 +191,6 @@
     {
       "name": "cas.server.http.enabled",
       "type": "java.lang.Boolean",
-      "description": "Enable tomcat HTTP.",
-      "defaultValue": false,
       "deprecation": {
         "replacement": "cas.server.tomcat.http.enabled",
         "reason": "cas.server.* moved to cas.server.tomcat.*.",
@@ -207,8 +200,6 @@
     {
       "name": "cas.server.http-proxy.enabled",
       "type": "java.lang.Boolean",
-      "description": "Enable tomcat http proxy.",
-      "defaultValue": false,
       "deprecation": {
         "replacement": "cas.server.tomcat.http-proxy.enabled",
         "reason": "cas.server.* moved to cas.server.tomcat.*.",
@@ -218,8 +209,6 @@
     {
       "name": "cas.admin-pages-security.actuator-endpoints-enabled",
       "type": "java.lang.Boolean",
-      "description": "Enable actuator endpoints.",
-      "defaultValue": false,
       "deprecation": {
         "reason": "cas.adminPagesSecurity.* moved to management.endpoints.*., e.g. management.endpoints.enabled-by-default.",
         "level": "error"
@@ -228,18 +217,14 @@
     {
       "name": "cas.admin-pages-security.ip",
       "type": "java.lang.String",
-      "description": "Enable actuator endpoints.",
-      "defaultValue": "127.0.0.1",
       "deprecation": {
-        "reason": "management endpoints security under cas.monitor.endpoints.endpoint.*. e.g. cas.monitor.endpoints.endpoint.defaults.access[0].",
+        "reason": "management endpoints security under cas.monitor.endpoints.endpoint.*",
         "level": "error"
       }
     },
     {
       "name": "cas.authn.x509.cache-time-to-idle-seconds",
       "type": "java.lang.Integer",
-      "description": "Old Ehcache 2 setting, no longer applicable.",
-      "defaultValue": 0,
       "deprecation": {
         "replacement": "cas.authn.x509.cache-time-to-live-seconds",
         "reason": "This setting no longer applies to the ehcache 3 cache used for x509 CRL caching.",
@@ -249,7 +234,6 @@
     {
       "name": "cas.authn.pac4j.saml[0].single-logout-requests",
       "type": "java.lang.Boolean",
-      "description": "Whether logout requests and responses should be signed.",
       "deprecation": {
         "replacement": "cas.authn.pac4j.saml[0].sign-service-provider-logout-request",
         "reason": "It is a duplication of cas.authn.pac4j.saml[0].sign-service-provider-logout-request.",
@@ -259,8 +243,6 @@
     {
       "name": "cas.service-registry.git.private-key-path",
       "type": "java.lang.String",
-      "description": "Set private key path for git service registry.",
-      "defaultValue": false,
       "deprecation": {
         "replacement": "cas.service-registry.git.private-key.location",
         "reason": "Type changed from File to Resource, but still needs to resolve to File.",
@@ -270,8 +252,6 @@
     {
       "name": "cas.service-registry.git.clone-directory",
       "type": "java.lang.String",
-      "description": "Set the target directory for cloning the git service registry.",
-      "defaultValue": true,
       "deprecation": {
         "replacement": "cas.service-registry.git.clone-directory.location",
         "reason": "Type changed from String to Resource.",
@@ -281,8 +261,6 @@
     {
       "name": "cas.authn.saml-idp.metadata.git.private-key-path",
       "type": "java.lang.String",
-      "description": "Set private key path for git SAML IDP metadata.",
-      "defaultValue": false,
       "deprecation": {
         "replacement": "cas.authn.saml-idp.metadata.git.private-key.location",
         "reason": "Type changed from File to Resource, but still needs to resolve to File.",
@@ -292,8 +270,6 @@
     {
       "name": "cas.authn.saml-idp.metadata.git.clone-directory",
       "type": "java.lang.String",
-      "description": "Set the target directory for cloning the git SAML IDP metadata.",
-      "defaultValue": true,
       "deprecation": {
         "replacement": "cas.authn.saml-idp.metadata.git.clone-directory.location",
         "reason": "Type changed from String to Resource.",

@@ -129,7 +129,7 @@ public class OAuth20IntrospectionEndpointController extends BaseOAuth20Controlle
         introspect.setClientId(service.getClientId());
         introspect.setScope("CAS");
         introspect.setAud(service.getServiceId());
-        introspect.setIss(getOAuthConfigurationContext().getCasProperties().getAuthn().getOidc().getIssuer());
+        introspect.setIss(getOAuthConfigurationContext().getCasProperties().getAuthn().getOidc().getCore().getIssuer());
 
         if (ticket != null) {
             introspect.setActive(true);

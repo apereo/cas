@@ -100,14 +100,14 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
         claims.setJwtId(jwtId);
         claims.setClaim(OidcConstants.CLAIM_SESSIOND_ID, DigestUtils.sha(jwtId));
 
-        claims.setIssuer(oidc.getIssuer());
+        claims.setIssuer(oidc.getCore().getIssuer());
         claims.setAudience(accessToken.getClientId());
 
         val expirationDate = NumericDate.now();
         expirationDate.addSeconds(timeoutInSeconds);
         claims.setExpirationTime(expirationDate);
         claims.setIssuedAtToNow();
-        claims.setNotBeforeMinutesInThePast(oidc.getSkew());
+        claims.setNotBeforeMinutesInThePast(oidc.getCore().getSkew());
         claims.setSubject(principal.getId());
 
         val mfa = getConfigurationContext().getCasProperties().getAuthn().getMfa();

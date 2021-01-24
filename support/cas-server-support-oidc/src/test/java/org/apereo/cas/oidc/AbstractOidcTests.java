@@ -117,7 +117,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = AbstractOidcTests.SharedTestConfiguration.class,
     properties = {
         "spring.main.allow-bean-definition-overriding=true",
-        "cas.authn.oidc.issuer=https://sso.example.org/cas/oidc",
+        "cas.authn.oidc.core.issuer=https://sso.example.org/cas/oidc",
         "cas.authn.oidc.jwks.jwks-file=classpath:keystore.jwks"
     })
 @DirtiesContext
@@ -367,7 +367,7 @@ public abstract class AbstractOidcTests {
     }
 
     protected JwtClaims getClaims(final String clientId) {
-        return getClaims("casuser", casProperties.getAuthn().getOidc().getIssuer(), clientId, clientId);
+        return getClaims("casuser", casProperties.getAuthn().getOidc().getCore().getIssuer(), clientId, clientId);
     }
 
     protected static JwtClaims getClaims(final String subject, final String issuer,
