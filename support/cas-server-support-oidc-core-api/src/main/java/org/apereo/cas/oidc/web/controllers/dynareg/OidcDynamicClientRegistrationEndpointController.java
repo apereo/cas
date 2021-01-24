@@ -152,7 +152,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
             }
 
             val properties = getOAuthConfigurationContext().getCasProperties();
-            val supportedScopes = new HashSet<>(properties.getAuthn().getOidc().getScopes());
+            val supportedScopes = new HashSet<>(properties.getAuthn().getOidc().getDiscovery().getScopes());
             val prefix = properties.getServer().getPrefix();
             val clientResponse = OidcClientRegistrationUtils.getClientRegistrationResponse(registeredService, prefix);
 

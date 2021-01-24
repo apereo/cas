@@ -49,8 +49,12 @@ Please [see this guide](OIDC-Authentication-Claims.html).
 
 ## Configuration
 
-{% include casproperties.html properties="cas.authn.oidc,cas.client" excludes=".jwks,.logout" %}
-   
+{% include casproperties.html properties="cas.authn.oidc.core,cas.client" %}
+
+### Discovery
+
+{% include casproperties.html properties="cas.authn.oidc.discovery" %}
+
 ### JWKS
 
 {% include casproperties.html properties="cas.authn.oidc.jwks" %}

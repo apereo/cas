@@ -5,7 +5,7 @@
     "--cas.server.prefix=${cas.server.name}/cas",
 
     "--cas.authn.oidc.issuer=https://localhost:8443/cas/oidc/",
-    "--cas.authn.oidc.scopes=openid,profile,email,address,phone",
+    "--cas.authn.oidc.discovery.scopes=openid,profile,email,address,phone",
     "--cas.authn.oidc.jwks.jwks-file=file:/tmp/keystore.jwks",
 
     "--cas.authn.attribute-repository.stub.attributes.email=casuser@apereo.org",
