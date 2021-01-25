@@ -1,6 +1,15 @@
 {
   "properties": [
     {
+      "name": "cas.audit.slf4j.audit-format",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.audit.engine.audit-format",
+        "reason": "audit-format is now moved into the engine namespace.",
+        "level": "error"
+      }
+    },
+    {
       "name": "cas.authn.oidc.issuer",
       "type": "java.lang.String",
       "deprecation": {

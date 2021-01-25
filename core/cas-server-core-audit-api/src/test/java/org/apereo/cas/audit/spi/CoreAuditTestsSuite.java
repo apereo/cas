@@ -2,6 +2,7 @@ package org.apereo.cas.audit.spi;
 
 import org.apereo.cas.audit.spi.plan.DefaultAuditTrailRecordResolutionPlanTests;
 import org.apereo.cas.audit.spi.principal.ChainingAuditPrincipalIdProviderTests;
+import org.apereo.cas.audit.spi.resource.CredentialsAsFirstParameterResourceResolverTests;
 import org.apereo.cas.audit.spi.resource.MessageBundleAwareResourceResolverTests;
 import org.apereo.cas.audit.spi.resource.ServiceAuditResourceResolverTests;
 import org.apereo.cas.audit.spi.resource.TicketAsFirstParameterResourceResolverTests;
@@ -22,6 +23,7 @@ import org.junit.runner.RunWith;
     DefaultAuditTrailRecordResolutionPlanTests.class,
     TicketAsFirstParameterResourceResolverTests.class,
     ChainingAuditPrincipalIdProviderTests.class,
+    CredentialsAsFirstParameterResourceResolverTests.class,
     FilterAndDelegateAuditTrailManagerTests.class,
     MessageBundleAwareResourceResolverTests.class
 })

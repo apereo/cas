@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.credential;
 
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -43,6 +44,7 @@ public class UsernamePasswordCredential extends AbstractCredential {
 
     private @Size(min = 1, message = "username.required") String username;
 
+    @JsonIgnore
     private @Size(min = 1, message = "password.required") String password;
 
     private String source;
