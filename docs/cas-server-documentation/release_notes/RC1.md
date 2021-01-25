@@ -177,9 +177,13 @@ decisions for multifactor authentication may also be kept inside a Redis instanc
      
 - [Hazelcast cluster configuration](../ticketing/Hazelcast-Ticket-Registry.html) allows specification of network interfaces.
 - Delegated authentication configuration can allow for a pre-defined callback/redirect URI.
+- [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) now includes a few additional expressions common for date/time operations.
 - Configuration metadata is corrected in a number of cases to make sure `@NestedConfigurationProperty` is properly set on fields.
 - Publishing Maven metadata into the local maven repository is corrected to include all CAS-required repositories.
+- [Audit logs](../audits/Audits.html) attempt to produce syntactically correct JSON output for certain resources rather than relying on `toString()` methods for nested objects, when audit format is configured to produce JSON payloads.
 - [REST Service Registry](../services/REST-Service-Management.html) has changed its `DELETE` specification, and will use the service numeric identifier as a path variable for expected delete operations. 
+- [Time-based service access strategy](../services/Configuring-Service-Access-Strategy.html) can now take advantage of [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) for its configuration.
+
 ## Library Upgrades
 
 - Spring Framework
@@ -190,6 +194,8 @@ decisions for multifactor authentication may also be kept inside a Redis instanc
 - Hazelcast
 - Joda Time
 - Gradle  
+- HikariCP
+- CouchDb Client
 - Thymeleaf Dialect
 - Apache Ignite
 - BouncyCastle
