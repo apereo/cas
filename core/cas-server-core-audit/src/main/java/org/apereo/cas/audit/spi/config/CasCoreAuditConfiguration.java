@@ -12,11 +12,8 @@ import org.apereo.cas.audit.spi.plan.DefaultAuditTrailRecordResolutionPlan;
 import org.apereo.cas.audit.spi.principal.ChainingAuditPrincipalIdProvider;
 import org.apereo.cas.audit.spi.principal.ThreadLocalAuditPrincipalResolver;
 import org.apereo.cas.audit.spi.resource.CredentialsAsFirstParameterResourceResolver;
-import org.apereo.cas.audit.spi.resource.MessageBundleAwareResourceResolver;
-import org.apereo.cas.audit.spi.resource.NullableReturnValueAuditResourceResolver;
 import org.apereo.cas.audit.spi.resource.ServiceAccessEnforcementAuditResourceResolver;
 import org.apereo.cas.audit.spi.resource.ServiceAuditResourceResolver;
-import org.apereo.cas.audit.spi.resource.ShortenedReturnValueAsStringAuditResourceResolver;
 import org.apereo.cas.audit.spi.resource.TicketAsFirstParameterResourceResolver;
 import org.apereo.cas.audit.spi.resource.TicketValidationResourceResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -29,7 +26,10 @@ import org.apereo.inspektr.audit.AuditTrailManagementAspect;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
+import org.apereo.inspektr.audit.spi.support.MessageBundleAwareResourceResolver;
+import org.apereo.inspektr.audit.spi.support.NullableReturnValueAuditResourceResolver;
 import org.apereo.inspektr.audit.spi.support.ObjectCreationAuditActionResolver;
+import org.apereo.inspektr.audit.spi.support.ShortenedReturnValueAsStringAuditResourceResolver;
 import org.apereo.inspektr.audit.support.AbstractStringAuditTrailManager;
 import org.apereo.inspektr.audit.support.Slf4jLoggingAuditTrailManager;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
@@ -87,6 +87,9 @@ public class CasCoreAuditConfiguration {
         val auditManager = new FilterAndDelegateAuditTrailManager(
             auditTrailExecutionPlan.getObject().getAuditTrailManagers(),
             audit.getSupportedActions(), audit.getExcludedActions());
+
+        val auditFormat = AbstractStringAuditTrailManager.AuditFormats.valueOf(audit.getAuditFormat().name());
+
         val auditRecordResolutionPlan = auditTrailRecordResolutionPlan.getObject();
         val aspect = new AuditTrailManagementAspect(
             audit.getAppCode(),
@@ -94,7 +97,8 @@ public class CasCoreAuditConfiguration {
             CollectionUtils.wrapList(auditManager),
             auditRecordResolutionPlan.getAuditActionResolvers(),
             auditRecordResolutionPlan.getAuditResourceResolvers(),
-            auditRecordResolutionPlan.getAuditPrincipalResolvers());
+            auditRecordResolutionPlan.getAuditPrincipalResolvers(),
+            auditFormat);
         aspect.setFailOnAuditFailures(!audit.isIgnoreAuditFailures());
         return aspect;
     }
@@ -263,7 +267,7 @@ public class CasCoreAuditConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "credentialsAsFirstParameterResourceResolver")
     public CredentialsAsFirstParameterResourceResolver credentialsAsFirstParameterResourceResolver() {
-        return new CredentialsAsFirstParameterResourceResolver(casProperties);
+        return new CredentialsAsFirstParameterResourceResolver();
     }
 
     @ConditionalOnMissingBean(name = "auditPrincipalIdProvider")
@@ -284,8 +288,6 @@ public class CasCoreAuditConfiguration {
             val slf4jManager = new Slf4jLoggingAuditTrailManager();
             slf4jManager.setUseSingleLine(slf4j.isUseSingleLine());
             slf4jManager.setEntrySeparator(slf4j.getSinglelineSeparator());
-            slf4jManager.setAuditFormat(AbstractStringAuditTrailManager.AuditFormats.valueOf(
-                casProperties.getAudit().getEngine().getAuditFormat().name()));
             plan.registerAuditTrailManager(slf4jManager);
         };
     }

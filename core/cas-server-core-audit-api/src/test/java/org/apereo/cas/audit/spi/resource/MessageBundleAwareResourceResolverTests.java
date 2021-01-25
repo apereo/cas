@@ -3,6 +3,7 @@ package org.apereo.cas.audit.spi.resource;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 
 import lombok.val;
+import org.apereo.inspektr.audit.spi.support.MessageBundleAwareResourceResolver;
 import org.aspectj.lang.JoinPoint;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;

@@ -1,15 +1,14 @@
 package org.apereo.cas.audit.spi.resource;
 
 import org.apereo.cas.audit.AuditableExecutionResult;
+import org.apereo.cas.util.DigestUtils;
 
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
 import org.aspectj.lang.JoinPoint;
 
+import java.util.HashMap;
 import java.util.Objects;
 
 /**
@@ -20,24 +19,20 @@ import java.util.Objects;
  */
 public class ServiceAccessEnforcementAuditResourceResolver extends ReturnValueAsStringResourceResolver {
 
-    private static final int ABBREV_LENGTH = 40;
-
     @Override
     public String[] resolveFrom(final JoinPoint auditableTarget, final Object returnValue) {
         Objects.requireNonNull(returnValue, "AuditableExecutionResult must not be null");
         val serviceAccessCheckResult = AuditableExecutionResult.class.cast(returnValue);
         val accessCheckOutcome = "Service Access "
             + BooleanUtils.toString(serviceAccessCheckResult.isExecutionFailure(), "Denied", "Granted");
-
-        val builder = new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)
-            .append("result", accessCheckOutcome);
+        val values = new HashMap<>();
+        values.put("result", accessCheckOutcome);
         serviceAccessCheckResult.getService()
-            .ifPresent(service -> builder.append("service", StringUtils.abbreviate(service.getId(), ABBREV_LENGTH)));
+            .ifPresent(service -> values.put("service", DigestUtils.abbreviate(service.getId())));
         serviceAccessCheckResult.getAuthentication()
-            .ifPresent(authn -> builder.append("principal", authn.getPrincipal()));
+            .ifPresent(authn -> values.put("principal", authn.getPrincipal()));
         serviceAccessCheckResult.getRegisteredService()
-            .ifPresent(regSvc -> builder.append("requiredAttributes", regSvc.getAccessStrategy().getRequiredAttributes()));
-
-        return new String[]{builder.toString()};
+            .ifPresent(regSvc -> values.put("requiredAttributes", regSvc.getAccessStrategy().getRequiredAttributes()));
+        return new String[]{auditFormat.serialize(values)};
     }
 }

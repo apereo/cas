@@ -6,11 +6,10 @@ import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 
 import lombok.val;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
 import org.aspectj.lang.JoinPoint;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -36,14 +35,12 @@ public class OAuth20UserProfileDataAuditResourceResolver extends ReturnValueAsSt
             clientId = accessToken.getClientId();
         }
 
-        val result = new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)
-            .append("id", profileMap.get(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ID))
-            .append("client_id", clientId)
-            .append("service", service)
-            .append("scopes", accessToken.getScopes())
-            .append("attributes", profileMap.get(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES))
-            .toString();
-
-        return new String[]{result};
+        val values = new HashMap<>();
+        values.put("id", profileMap.get(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ID));
+        values.put("client_id", clientId);
+        values.put("service", service);
+        values.put("scopes", accessToken.getScopes());
+        values.put("attributes", profileMap.get(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES));
+        return new String[]{auditFormat.serialize(values)};
     }
 }
