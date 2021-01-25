@@ -965,4 +965,8 @@ public interface CasWebflowConstants {
      * Action id 'sendForgotUsernameInstructionsAction .
      */
     String ACTION_ID_SEND_FORGOT_USERNAME_INSTRUCTIONS_ACTION = "sendForgotUsernameInstructionsAction";
+    /**
+     * Action id 'oneTimeTokenAuthenticationWebflowAction .
+     */
+    String ACTION_ID_OTP_AUTHENTICATION_ACTION = "oneTimeTokenAuthenticationWebflowAction";
 }

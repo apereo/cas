@@ -101,4 +101,24 @@ public class AuditEngineProperties implements Serializable {
      * CAS actions.
      */
     private List<String> excludedActions = new ArrayList<>();
+
+    /**
+     * The audit format to use in the logs.
+     */
+    private AuditFormatTypes auditFormat = AuditFormatTypes.DEFAULT;
+
+    /**
+     * The audit format types.
+     */
+    public enum AuditFormatTypes {
+        /**
+         * Default audit format.
+         */
+        DEFAULT,
+        /**
+         * Output audit logs as JSON strings
+         * where necessary/possible.
+         */
+        JSON
+    }
 }

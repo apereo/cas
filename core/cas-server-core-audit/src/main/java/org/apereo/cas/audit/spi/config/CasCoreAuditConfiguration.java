@@ -263,7 +263,7 @@ public class CasCoreAuditConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "credentialsAsFirstParameterResourceResolver")
     public CredentialsAsFirstParameterResourceResolver credentialsAsFirstParameterResourceResolver() {
-        return new CredentialsAsFirstParameterResourceResolver();
+        return new CredentialsAsFirstParameterResourceResolver(casProperties);
     }
 
     @ConditionalOnMissingBean(name = "auditPrincipalIdProvider")
@@ -280,12 +280,13 @@ public class CasCoreAuditConfiguration {
     @ConditionalOnProperty(prefix = "cas.audit.slf4j", name = "enabled", havingValue = "true", matchIfMissing = true)
     public AuditTrailExecutionPlanConfigurer casAuditTrailExecutionPlanConfigurer() {
         return plan -> {
-            val audit = casProperties.getAudit().getSlf4j();
-            val slf4j = new Slf4jLoggingAuditTrailManager();
-            slf4j.setUseSingleLine(audit.isUseSingleLine());
-            slf4j.setEntrySeparator(audit.getSinglelineSeparator());
-            slf4j.setAuditFormat(AbstractStringAuditTrailManager.AuditFormats.valueOf(audit.getAuditFormat().toUpperCase()));
-            plan.registerAuditTrailManager(slf4j);
+            val slf4j = casProperties.getAudit().getSlf4j();
+            val slf4jManager = new Slf4jLoggingAuditTrailManager();
+            slf4jManager.setUseSingleLine(slf4j.isUseSingleLine());
+            slf4jManager.setEntrySeparator(slf4j.getSinglelineSeparator());
+            slf4jManager.setAuditFormat(AbstractStringAuditTrailManager.AuditFormats.valueOf(
+                casProperties.getAudit().getEngine().getAuditFormat().name()));
+            plan.registerAuditTrailManager(slf4jManager);
         };
     }
 
