@@ -26,6 +26,8 @@ public class JacksonObjectMapperFactory {
 
     private final boolean singleValueAsArray;
 
+    private final boolean singleArrayElementUnwrapped;
+
     private final JsonFactory jsonFactory;
 
     /**
@@ -46,12 +48,16 @@ public class JacksonObjectMapperFactory {
     protected ObjectMapper initialize(final ObjectMapper mapper) {
         mapper
             .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
+            .configure(SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, isSingleArrayElementUnwrapped())
+
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, isFailOnUnknownProperties())
             .configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true)
             .configure(DeserializationFeature.READ_ENUMS_USING_TO_STRING, false)
             .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, isSingleValueAsArray())
+
             .disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+            
             .setSerializationInclusion(JsonInclude.Include.NON_DEFAULT)
             .setVisibility(PropertyAccessor.SETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC)
             .setVisibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC)

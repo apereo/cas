@@ -59,7 +59,7 @@ import java.util.stream.Stream;
 @UtilityClass
 public class OAuth20Utils {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(false).build().toObjectMapper();
+        .singleArrayElementUnwrapped(true).build().toObjectMapper();
 
     /**
      * Write to the output this error.
