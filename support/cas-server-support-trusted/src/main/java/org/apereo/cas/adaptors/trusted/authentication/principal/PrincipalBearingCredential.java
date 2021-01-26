@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -27,6 +28,7 @@ import lombok.ToString;
 @Setter
 @ToString(callSuper = true)
 @AllArgsConstructor
+@NoArgsConstructor
 public class PrincipalBearingCredential extends AbstractCredential {
     
     private static final long serialVersionUID = 8866786438439775669L;
