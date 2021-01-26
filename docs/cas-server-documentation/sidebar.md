@@ -340,6 +340,7 @@ layout: null
     *   [Logging](#loggingoverview)
         *   [Overview](/cas/{{ version }}/logging/Logging.html)
         *   [Cloudwatch](/cas/{{ version }}/logging/Logging-Cloudwatch.html)
+        *   [SQS](/cas/{{ version }}/logging/Logging-SQS.html)
         *   [Loggly](/cas/{{ version }}/logging/Logging-Loggly.html)
         *   [Logstash](/cas/{{ version }}/logging/Logging-Logstash.html)
         *   [MDC](/cas/{{ version }}/logging/Logging-MDC.html)

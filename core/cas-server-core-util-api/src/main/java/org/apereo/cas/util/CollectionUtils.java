@@ -586,7 +586,7 @@ public class CollectionUtils {
      * @param inputList the input list
      * @return the map
      */
-    public static Map<String, String> convertDirectedListToMap(final List<String> inputList) {
+    public static Map<String, String> convertDirectedListToMap(final Collection<String> inputList) {
         val mappings = new TreeMap<String, String>();
         inputList
             .stream()

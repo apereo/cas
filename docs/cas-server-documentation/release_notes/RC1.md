@@ -118,6 +118,10 @@ and modify reCAPTCHA settings.
 The construction of various [Spring Webflow flows](../webflow/Webflow-Customization.html) and (multifactor authentication) subflows 
 has now removed the requirement for an XML foundation, allowing the construction of all flows to be dynamic.
 
+### AWS SQS Logging
+
+A dedicated logging appender is now available to support routing logs to [AWS SQS](../logging/Logging-SQS.html).
+
 ### WebAuthN REST Device Management
 
 [WebAuthN/FIDO2 Device registrations](../mfa/FIDO2-WebAuthn-Authentication.html) 
