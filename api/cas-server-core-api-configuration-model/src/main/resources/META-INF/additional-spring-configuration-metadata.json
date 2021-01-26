@@ -1,6 +1,42 @@
 {
   "properties": [
     {
+      "name": "cas.audit.alternate-client-addr-header-name",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.audit.engine.alternate-client-addr-header-name",
+        "reason": "alternate-client-addr-header-name setting is now moved into the engine namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.pm.enabled",
+      "type": "java.lang.Boolean",
+      "deprecation": {
+        "replacement": "cas.authn.pm.core.enabled",
+        "reason": "enabled setting is now moved into the core namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.pm.policy-pattern",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.pm.core.policy-pattern",
+        "reason": "policy-pattern setting is now moved into the core namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.events.enabled",
+      "type": "java.lang.Boolean",
+      "deprecation": {
+        "replacement": "cas.events.core.enabled",
+        "reason": "enabled setting is now moved into the core namespace.",
+        "level": "error"
+      }
+    },
+    {
       "name": "cas.audit.slf4j.audit-format",
       "type": "java.lang.String",
       "deprecation": {

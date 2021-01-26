@@ -4,6 +4,7 @@ import org.apereo.cas.util.DateTimeUtils;
 
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
+import org.apereo.inspektr.audit.FilterAndDelegateAuditTrailManager;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 

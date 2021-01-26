@@ -56,8 +56,8 @@ public class HttpCorsRequestProperties implements Serializable {
 
     /**
      * Comma-separated list of origin patterns to allow. Unlike allowed origins which only
-     * supports '*', origin patterns are more flexible (for example
-     * 'https://*.example.com') and can be used when credentials are allowed. When no
+     * supports {@code *}, origin patterns are more flexible (for example
+     * {@code https://*.example.com}) and can be used when credentials are allowed. When no
      * allowed origin patterns or allowed origins are set, CORS support is disabled.
      */
     private List<String> allowOriginPatterns = new ArrayList<>(0);
