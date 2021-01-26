@@ -2,6 +2,8 @@ package org.apereo.cas.audit.spi;
 
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apereo.inspektr.audit.AuditActionContext;
 
 /**
@@ -18,4 +20,9 @@ public class AuditActionContextJsonSerializer extends AbstractJacksonBackedStrin
         return AuditActionContext.class;
     }
 
+    @Override
+    protected void configureObjectMapper(final ObjectMapper mapper) {
+        mapper.enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        super.configureObjectMapper(mapper);
+    }
 }

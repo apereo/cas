@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
 @Getter
 public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleAuthenticatorTokenCredentialRepository {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(true).build().toObjectMapper();
+        .defaultTypingEnabled(true).singleValueAsArray(true).build().toObjectMapper();
 
     private final GoogleAuthenticatorMultifactorProperties gauth;
 

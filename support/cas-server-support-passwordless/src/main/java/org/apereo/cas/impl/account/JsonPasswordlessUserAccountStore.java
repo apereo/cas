@@ -18,7 +18,7 @@ import java.util.Map;
  */
 public class JsonPasswordlessUserAccountStore extends SimplePasswordlessUserAccountStore {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(true).build().toObjectMapper();
+        .defaultTypingEnabled(true).singleValueAsArray(true).build().toObjectMapper();
 
     public JsonPasswordlessUserAccountStore(final Resource resource) {
         super(readFromResource(resource));

@@ -24,6 +24,8 @@ public class JacksonObjectMapperFactory {
 
     private final boolean failOnUnknownProperties;
 
+    private final boolean singleValueAsArray;
+
     private final JsonFactory jsonFactory;
 
     /**
@@ -47,7 +49,7 @@ public class JacksonObjectMapperFactory {
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, isFailOnUnknownProperties())
             .configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true)
             .configure(DeserializationFeature.READ_ENUMS_USING_TO_STRING, false)
-            .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true)
+            .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, isSingleValueAsArray())
             .disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
             .setSerializationInclusion(JsonInclude.Include.NON_DEFAULT)

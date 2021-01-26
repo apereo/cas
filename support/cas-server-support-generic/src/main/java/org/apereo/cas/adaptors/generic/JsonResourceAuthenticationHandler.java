@@ -49,7 +49,11 @@ import java.util.Map;
 @Slf4j
 public class JsonResourceAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(true).failOnUnknownProperties(true).build().toObjectMapper();
+        .defaultTypingEnabled(true)
+        .failOnUnknownProperties(true)
+        .singleValueAsArray(true)
+        .build()
+        .toObjectMapper();
 
     private final Resource resource;
 

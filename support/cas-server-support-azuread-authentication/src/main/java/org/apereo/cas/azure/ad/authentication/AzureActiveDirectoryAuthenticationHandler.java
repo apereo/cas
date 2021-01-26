@@ -41,7 +41,7 @@ import java.util.concurrent.Executors;
 @Slf4j
 public class AzureActiveDirectoryAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(false).build().toObjectMapper();
+        .singleValueAsArray(true).build().toObjectMapper();
 
     private final String loginUrl;
 
