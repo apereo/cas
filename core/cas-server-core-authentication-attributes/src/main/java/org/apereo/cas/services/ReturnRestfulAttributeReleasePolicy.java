@@ -50,7 +50,7 @@ public class ReturnRestfulAttributeReleasePolicy extends AbstractRegisteredServi
     private static final long serialVersionUID = -6249488544306639050L;
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(false).build().toObjectMapper();
+        .singleValueAsArray(true).build().toObjectMapper();
 
     private String endpoint;
 

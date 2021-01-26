@@ -41,7 +41,7 @@ import java.nio.charset.Charset;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasRestAuthenticationConfiguration {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(false).build().toObjectMapper();
+        .defaultTypingEnabled(false).singleValueAsArray(true).build().toObjectMapper();
 
     @Autowired
     @Qualifier("servicesManager")
