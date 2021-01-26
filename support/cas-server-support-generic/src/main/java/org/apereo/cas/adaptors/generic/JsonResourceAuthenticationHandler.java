@@ -15,10 +15,9 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RegexUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Splitter;
 import lombok.extern.slf4j.Slf4j;
@@ -49,17 +48,8 @@ import java.util.Map;
  */
 @Slf4j
 public class JsonResourceAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
-    private static final ObjectMapper MAPPER;
-
-    static {
-        MAPPER = new ObjectMapper()
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true)
-            .configure(DeserializationFeature.READ_ENUMS_USING_TO_STRING, false)
-            .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true)
-            .findAndRegisterModules();
-        MAPPER.activateDefaultTyping(MAPPER.getPolymorphicTypeValidator(),
-            ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
-    }
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).failOnUnknownProperties(true).build().toObjectMapper();
 
     private final Resource resource;
 

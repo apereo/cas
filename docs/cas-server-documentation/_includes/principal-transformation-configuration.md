@@ -1,6 +1,6 @@
 <!-- fragment:keep -->
 
-#### Principal Transformation
+<p/>
 
 Authentication handlers that generally deal with username-password credentials
 can be configured to transform the user id prior to executing the authentication sequence.
