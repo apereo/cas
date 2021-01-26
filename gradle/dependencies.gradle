@@ -898,6 +898,15 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                 }
         ],
+        awssqs         : [
+                dependencies.create("software.amazon.awssdk:sqs:$amazonSdkVersion") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                }
+        ],
         apachevelocity          : [
                 dependencies.create("org.apache.velocity:velocity-engine-core:$apacheVelocityEngineVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
