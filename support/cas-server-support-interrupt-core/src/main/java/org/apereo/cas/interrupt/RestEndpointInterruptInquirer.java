@@ -4,7 +4,7 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.configuration.model.support.interrupt.InterruptProperties;
+import org.apereo.cas.configuration.model.support.interrupt.RestfulInterruptProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
@@ -40,7 +40,7 @@ public class RestEndpointInterruptInquirer extends BaseInterruptInquirer {
         .configure(DeserializationFeature.READ_ENUMS_USING_TO_STRING, false)
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-    private final InterruptProperties.Rest restProperties;
+    private final RestfulInterruptProperties restProperties;
 
     @Override
     public InterruptResponse inquireInternal(final Authentication authentication,

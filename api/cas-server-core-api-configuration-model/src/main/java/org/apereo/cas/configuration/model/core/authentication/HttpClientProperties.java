@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.core.authentication;
 
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -19,6 +20,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("HttpClientProperties")
 public class HttpClientProperties implements Serializable {
 
     private static final long serialVersionUID = -7494946569869245770L;
@@ -52,14 +54,14 @@ public class HttpClientProperties implements Serializable {
 
     /**
      * Whether CAS should accept local logout URLs.
-     * For example http(s)://localhost/logout
+     * For example {@code http(s)://localhost/logout}.
      */
     private boolean allowLocalLogoutUrls;
 
     /**
      * If specified the regular expression will be used to validate the url's authority.
      */
-    private String authorityValidationRegEx;
+    private String authorityValidationRegex;
 
     /**
      * Send requests via a proxy; define the hostname.
@@ -74,10 +76,9 @@ public class HttpClientProperties implements Serializable {
     private int proxyPort;
 
     /**
-     * Whether the regular expression specified with {@code authorityValidationRegEx}
-     * should be handled as case-sensitive
-     * ({@code true}) or case-insensitive ({@code false}). If
-     * no {@code authorityValidationRegEx} is set, this value does not have any effect.
+     * Whether the regular expression specified with {@link #authorityValidationRegex}
+     * should be handled as case-sensitive ({@code true}) or case-insensitive ({@code false}). If
+     * no {@link #authorityValidationRegex} is set, this value does not have any effect.
      */
     private boolean authorityValidationRegExCaseSensitive = true;
 

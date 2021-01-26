@@ -6,11 +6,8 @@ import org.apereo.cas.gauth.BaseGoogleAuthenticatorTests;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.crypto.CipherExecutor;
-import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.Getter;
 import lombok.val;
@@ -28,6 +25,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static java.nio.charset.StandardCharsets.*;
+import static org.apereo.cas.util.serialization.JacksonObjectMapperFactory.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.HttpStatus.*;
 
@@ -42,14 +40,8 @@ import static org.springframework.http.HttpStatus.*;
 @Getter
 @Tag("MFA")
 public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
-    private static final ObjectMapper MAPPER;
-
-    static {
-        MAPPER = JacksonObjectMapperFactory.builder()
-            .defaultTypingEnabled(true).build().toObjectMapper()
-            .disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
-            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-    }
+    private static final ObjectMapper MAPPER = builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Autowired
     @Qualifier("googleAuthenticatorInstance")

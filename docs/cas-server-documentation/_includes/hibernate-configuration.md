@@ -1,4 +1,4 @@
-<hr>
+<p/>
 
 Control global properties that are relevant to Hibernate,
 when CAS attempts to employ and utilize database resources,

@@ -1,6 +1,6 @@
 <!-- fragment:keep -->
 
-#### Password Encoding
+<p/>
 
 Certain aspects of CAS such as authentication handling support configuration of
 password encoding. Most options are based on Spring Security's [support for password encoding](https://docs.spring.io/spring-security/site/docs/current/reference/html5/).

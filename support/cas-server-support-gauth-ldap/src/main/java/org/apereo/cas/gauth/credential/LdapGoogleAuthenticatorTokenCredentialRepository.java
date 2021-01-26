@@ -6,10 +6,9 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.Getter;
@@ -43,15 +42,8 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
     extends BaseGoogleAuthenticatorTokenCredentialRepository
     implements DisposableBean {
     
-    private static final ObjectMapper MAPPER;
-
-    static {
-        MAPPER = new ObjectMapper()
-            .setDefaultPrettyPrinter(new MinimalPrettyPrinter())
-            .findAndRegisterModules();
-        MAPPER.activateDefaultTyping(MAPPER.getPolymorphicTypeValidator(),
-            ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
-    }
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     private final ConnectionFactory connectionFactory;
 

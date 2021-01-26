@@ -22,8 +22,10 @@ import lombok.experimental.SuperBuilder;
 public class JacksonObjectMapperFactory {
     private final boolean defaultTypingEnabled;
 
+    private final boolean failOnUnknownProperties;
+
     private final JsonFactory jsonFactory;
-    
+
     /**
      * Produce an object mapper for YAML serialization/de-serialization.
      *
@@ -40,20 +42,24 @@ public class JacksonObjectMapperFactory {
      * @return the object mapper
      */
     protected ObjectMapper initialize(final ObjectMapper mapper) {
-        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            .configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
-
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_DEFAULT);
-        mapper.setVisibility(PropertyAccessor.SETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC);
-        mapper.setVisibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC);
-        mapper.setVisibility(PropertyAccessor.IS_GETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC);
+        mapper
+            .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, isFailOnUnknownProperties())
+            .configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true)
+            .configure(DeserializationFeature.READ_ENUMS_USING_TO_STRING, false)
+            .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true)
+            .disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .setSerializationInclusion(JsonInclude.Include.NON_DEFAULT)
+            .setVisibility(PropertyAccessor.SETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC)
+            .setVisibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC)
+            .setVisibility(PropertyAccessor.IS_GETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC)
+            .findAndRegisterModules();
 
         if (isDefaultTypingEnabled()) {
             mapper.activateDefaultTyping(mapper.getPolymorphicTypeValidator(),
                 ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
         }
-        mapper.findAndRegisterModules();
         return mapper;
     }
 }
