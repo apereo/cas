@@ -6,12 +6,10 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -42,18 +40,8 @@ import java.util.stream.Collectors;
 @Slf4j
 @Getter
 public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleAuthenticatorTokenCredentialRepository {
-    private static final ObjectMapper MAPPER;
-
-    static {
-        MAPPER = new ObjectMapper()
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true)
-            .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true)
-            .disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
-            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-            .findAndRegisterModules();
-        MAPPER.activateDefaultTyping(MAPPER.getPolymorphicTypeValidator(),
-            ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
-    }
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     private final GoogleAuthenticatorMultifactorProperties gauth;
 

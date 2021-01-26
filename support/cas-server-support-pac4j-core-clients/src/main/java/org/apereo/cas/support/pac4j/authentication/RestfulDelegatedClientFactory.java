@@ -2,6 +2,7 @@ package org.apereo.cas.support.pac4j.authentication;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,8 @@ import java.util.Map;
 @Slf4j
 @RequiredArgsConstructor
 public class RestfulDelegatedClientFactory implements DelegatedClientFactory<Client> {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     private final CasConfigurationProperties casProperties;
 

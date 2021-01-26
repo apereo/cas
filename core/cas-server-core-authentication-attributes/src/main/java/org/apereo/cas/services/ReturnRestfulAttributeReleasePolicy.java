@@ -5,11 +5,11 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -49,9 +49,8 @@ public class ReturnRestfulAttributeReleasePolicy extends AbstractRegisteredServi
 
     private static final long serialVersionUID = -6249488544306639050L;
 
-    private static final ObjectMapper MAPPER = new ObjectMapper()
-        .findAndRegisterModules()
-        .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     private String endpoint;
 

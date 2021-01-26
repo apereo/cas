@@ -29,7 +29,8 @@ public class MongoDbConsentRepository implements ConsentRepository {
     public ConsentDecision findConsentDecision(final Service service,
                                                final RegisteredService registeredService,
                                                final Authentication authentication) {
-        val query = new Query(Criteria.where("service").is(service.getId()).and("principal").is(authentication.getPrincipal().getId()));
+        val query = new Query(Criteria.where("service").is(service.getId())
+            .and("principal").is(authentication.getPrincipal().getId()));
         return this.mongoTemplate.findOne(query, ConsentDecision.class, this.collectionName);
     }
 

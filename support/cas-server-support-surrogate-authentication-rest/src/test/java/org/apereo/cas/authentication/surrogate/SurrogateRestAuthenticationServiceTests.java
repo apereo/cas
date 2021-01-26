@@ -5,8 +5,8 @@ import org.apereo.cas.config.SurrogateRestAuthenticationConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.val;
@@ -37,10 +37,8 @@ import static org.junit.jupiter.api.Assertions.*;
     properties = "cas.authn.surrogate.rest.url=http://localhost:9301")
 @Getter
 public class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthenticationServiceTests {
-    private static final ObjectMapper MAPPER = new ObjectMapper()
-        .findAndRegisterModules()
-        .configure(DeserializationFeature.READ_ENUMS_USING_TO_STRING, false)
-        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     @Autowired
     @Qualifier("surrogateAuthenticationService")

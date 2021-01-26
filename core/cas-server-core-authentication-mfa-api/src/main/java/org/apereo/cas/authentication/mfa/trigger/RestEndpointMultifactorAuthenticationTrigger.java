@@ -11,6 +11,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.EqualsAndHashCode;
@@ -45,7 +46,8 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 public class RestEndpointMultifactorAuthenticationTrigger implements MultifactorAuthenticationTrigger {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     private final CasConfigurationProperties casProperties;
 
