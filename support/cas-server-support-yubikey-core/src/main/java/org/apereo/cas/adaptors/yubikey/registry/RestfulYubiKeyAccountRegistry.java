@@ -18,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -68,6 +69,7 @@ public class RestfulYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
                 .method(HttpMethod.POST)
                 .url(restProperties.getUrl())
+                .headers(CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE))
                 .entity(MAPPER.writeValueAsString(account))
                 .build();
             response = HttpUtils.execute(exec);

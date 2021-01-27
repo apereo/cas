@@ -24,6 +24,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.hjson.JsonValue;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
@@ -67,6 +68,7 @@ public class ReturnRestfulAttributeReleasePolicy extends AbstractRegisteredServi
                 .parameters(CollectionUtils.wrap("principal", principal.getId(),
                     "service", registeredService.getServiceId()))
                 .entity(writer.toString())
+                .headers(CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE))
                 .build();
             response = HttpUtils.execute(exec);
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {

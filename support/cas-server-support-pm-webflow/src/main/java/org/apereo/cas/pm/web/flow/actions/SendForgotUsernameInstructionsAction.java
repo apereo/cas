@@ -2,6 +2,7 @@ package org.apereo.cas.pm.web.flow.actions;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
+import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
@@ -83,8 +84,8 @@ public class SendForgotUsernameInstructionsAction extends AbstractAction {
 
     private boolean sendForgotUsernameEmailToAccount(final String email, final String username) {
         val reset = casProperties.getAuthn().getPm().getForgotUsername().getMail();
-        val text = reset.getFormattedBody(username);
-        return this.communicationsManager.email(reset, email, text);
+        val body = EmailMessageBodyBuilder.builder().properties(reset).build().produce();
+        return this.communicationsManager.email(reset, email, body);
     }
 
     private Event getErrorEvent(final String code, final String defaultMessage, final RequestContext requestContext) {

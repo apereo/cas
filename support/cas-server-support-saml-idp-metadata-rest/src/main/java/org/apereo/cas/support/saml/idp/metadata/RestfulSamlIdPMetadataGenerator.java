@@ -5,6 +5,7 @@ import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerat
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGeneratorConfigurationContext;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -19,6 +20,7 @@ import org.apache.http.HttpResponse;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 
 import java.util.Optional;
 
@@ -55,6 +57,7 @@ public class RestfulSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerato
                 .basicAuthUsername(properties.getBasicAuthUsername())
                 .method(HttpMethod.POST)
                 .url(url)
+                .headers(CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE))
                 .entity(MAPPER.writeValueAsString(doc))
                 .build();
             response = HttpUtils.execute(exec);

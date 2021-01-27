@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.AuthenticationPolicyExecutionResult;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
@@ -21,6 +22,7 @@ import org.apache.http.HttpResponse;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
@@ -74,6 +76,7 @@ public class RestfulAuthenticationPolicy extends BaseAuthenticationPolicy {
                 .basicAuthUsername(this.basicAuthUsername)
                 .method(HttpMethod.POST)
                 .entity(entity)
+                .headers(CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE))
                 .build();
             response = HttpUtils.execute(exec);
             val statusCode = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
