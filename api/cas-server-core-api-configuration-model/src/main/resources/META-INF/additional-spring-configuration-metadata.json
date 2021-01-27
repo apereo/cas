@@ -50,7 +50,34 @@
       "type": "java.lang.String",
       "deprecation": {
         "replacement": "cas.authn.oidc.core.issuer",
-        "reason": "Issuer is now moved into the core namespace.",
+        "reason": "issuer is now moved into the core namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.oidc.dynamic-client-registration-mode",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.oidc.core.dynamic-client-registration-mode",
+        "reason": "dynamic-client-registration-mode is now moved into the core namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.oidc.user-defined-scopes",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.oidc.core.user-defined-scopes",
+        "reason": "user-defined-scopes is now moved into the core namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.oidc.claims-map",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.oidc.core.claims-map",
+        "reason": "claims-map is now moved into the core namespace.",
         "level": "error"
       }
     },
@@ -59,7 +86,7 @@
       "type": "java.lang.String",
       "deprecation": {
         "replacement": "cas.authn.oidc.discovery.scopes",
-        "reason": "Scopes settings is now moved into the core namespace.",
+        "reason": "scopes settings is now moved into the discovery namespace.",
         "level": "error"
       }
     },
@@ -68,7 +95,43 @@
       "type": "java.lang.String",
       "deprecation": {
         "replacement": "cas.authn.oidc.discovery.claims",
-        "reason": "Claims setting is now moved into the core namespace.",
+        "reason": "claims setting is now moved into the discovery namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.oidc.response-types-supported",
+      "type": "java.util.List",
+      "deprecation": {
+        "replacement": "cas.authn.oidc.discovery.response-types-supported",
+        "reason": "response-types-supported setting is now moved into the discovery namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.oidc.subject-types",
+      "type": "java.util.List",
+      "deprecation": {
+        "replacement": "cas.authn.oidc.discovery.subject-types",
+        "reason": "subject-types setting is now moved into the discovery namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.oidc.claim-types-supported",
+      "type": "java.util.List",
+      "deprecation": {
+        "replacement": "cas.authn.oidc.discovery.claim-types-supported",
+        "reason": "claim-types-supported setting is now moved into the discovery namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.oidc.grant-types-supported",
+      "type": "java.util.List",
+      "deprecation": {
+        "replacement": "cas.authn.oidc.discovery.grant-types-supported",
+        "reason": "grant-types-supported setting is now moved into the discovery namespace.",
         "level": "error"
       }
     },
