@@ -2,6 +2,7 @@ package org.apereo.cas.impl.notify;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
+import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -32,7 +33,8 @@ public class AuthenticationRiskEmailNotifier extends BaseAuthenticationRiskNotif
             return;
         }
         val addresses = principal.getAttributes().get(mail.getAttributeName());
-        addresses.forEach(address -> this.communicationsManager.email(mail, address.toString(), mail.getFormattedBody()));
+        val body = EmailMessageBodyBuilder.builder().properties(mail).build().produce();
+        addresses.forEach(address -> this.communicationsManager.email(mail, address.toString(), body));
 
     }
 }

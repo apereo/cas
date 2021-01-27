@@ -18,6 +18,7 @@ import org.apache.http.HttpStatus;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.hjson.JsonValue;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
@@ -56,6 +57,7 @@ public class RestAuditTrailManager extends AbstractAuditTrailManager {
                 .method(HttpMethod.POST)
                 .url(properties.getUrl())
                 .entity(auditJson)
+                .headers(CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE))
                 .build();
             response = HttpUtils.execute(exec);
         } finally {

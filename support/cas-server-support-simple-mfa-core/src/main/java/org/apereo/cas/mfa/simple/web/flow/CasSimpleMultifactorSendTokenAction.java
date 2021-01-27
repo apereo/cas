@@ -6,6 +6,7 @@ import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationConstants;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCommunicationStrategy;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicketFactory;
 import org.apereo.cas.notifications.CommunicationsManager;
+import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
@@ -22,6 +23,8 @@ import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import java.util.List;
 
 /**
  * This is {@link CasSimpleMultifactorSendTokenAction}.
@@ -102,8 +105,9 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractAction {
         final Ticket token) {
         if (communicationsManager.isMailSenderDefined()) {
             val mailProperties = properties.getMail();
-            return communicationsManager.email(principal, mailProperties.getAttributeName(),
-                mailProperties, mailProperties.getFormattedBody(token.getId()));
+            val body = EmailMessageBodyBuilder.builder().properties(mailProperties)
+                .parameters(List.of(token.getId())).build().produce();
+            return communicationsManager.email(principal, mailProperties.getAttributeName(), mailProperties, body);
         }
         return false;
     }

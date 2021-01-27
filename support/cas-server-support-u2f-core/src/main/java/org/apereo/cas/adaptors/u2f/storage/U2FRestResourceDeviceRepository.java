@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
 import org.apereo.cas.configuration.model.support.mfa.u2f.U2FRestfulMultifactorProperties;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -16,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 
 import java.io.Serializable;
 import java.io.StringWriter;
@@ -85,6 +87,7 @@ public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceReposi
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
                 .method(HttpMethod.POST)
                 .url(restProperties.getUrl())
+                .headers(CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE))
                 .entity(writer.toString())
                 .build();
 

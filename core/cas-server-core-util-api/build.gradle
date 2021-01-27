@@ -13,5 +13,6 @@ dependencies {
     implementation libraries.bouncycastle
     implementation libraries.semver
     implementation libraries.oshi
+    implementation libraries.apachevelocity
 }
 

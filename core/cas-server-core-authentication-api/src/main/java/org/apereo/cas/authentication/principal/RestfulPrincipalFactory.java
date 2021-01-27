@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
@@ -13,6 +14,7 @@ import org.apache.http.HttpResponse;
 import org.hjson.JsonValue;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -52,6 +54,7 @@ public class RestfulPrincipalFactory extends DefaultPrincipalFactory {
                 .method(HttpMethod.POST)
                 .url(this.url)
                 .entity(entity)
+                .headers(CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE))
                 .build();
             response = HttpUtils.execute(exec);
             if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {

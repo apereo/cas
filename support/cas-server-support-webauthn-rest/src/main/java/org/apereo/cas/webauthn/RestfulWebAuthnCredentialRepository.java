@@ -16,6 +16,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -104,6 +105,7 @@ public class RestfulWebAuthnCredentialRepository extends BaseWebAuthnCredentialR
                 .method(HttpMethod.POST)
                 .url(restProperties.getUrl())
                 .entity(jsonRecords)
+                .headers(CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE))
                 .parameters(parameters)
                 .build();
             response = HttpUtils.execute(exec);

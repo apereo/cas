@@ -1,6 +1,7 @@
 package org.apereo.cas.notifications.sms;
 
 import org.apereo.cas.configuration.model.support.sms.RestfulSmsProperties;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
 
 import lombok.Getter;
@@ -10,6 +11,7 @@ import org.apache.http.HttpResponse;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 
 import java.util.HashMap;
 
@@ -44,6 +46,7 @@ public class RestfulSmsSender implements SmsSender {
                 .url(restProperties.getUrl())
                 .parameters(parameters)
                 .entity(message)
+                .headers(CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE))
                 .build();
             
             response = HttpUtils.execute(exec);

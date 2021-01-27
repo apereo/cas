@@ -1,4 +1,4 @@
-package org.apereo.cas.sms;
+package org.apereo.cas.notifications.sms;
 
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.notifications.CommunicationsManager;
