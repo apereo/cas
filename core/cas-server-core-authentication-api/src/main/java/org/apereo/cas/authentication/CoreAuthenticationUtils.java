@@ -371,7 +371,7 @@ public class CoreAuthenticationUtils {
             LOGGER.trace("Activating authentication policy [{}]", RestfulAuthenticationPolicy.class.getSimpleName());
             return policyProps.getRest()
                 .stream()
-                .map(r -> new RestfulAuthenticationPolicy(r.getUrl(), r.getBasicAuthUsername(), r.getBasicAuthPassword()))
+                .map(RestfulAuthenticationPolicy::new)
                 .collect(Collectors.toList());
         }
 

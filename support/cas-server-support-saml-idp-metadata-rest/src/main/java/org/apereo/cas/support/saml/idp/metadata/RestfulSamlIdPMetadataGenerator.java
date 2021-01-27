@@ -52,12 +52,15 @@ public class RestfulSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerato
         val url = StringUtils.appendIfMissing(properties.getUrl(), "/").concat("idp");
         HttpResponse response = null;
         try {
+            val headers = CollectionUtils.<String, Object>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+            headers.putAll(properties.getHeaders());
+
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
                 .method(HttpMethod.POST)
                 .url(url)
-                .headers(CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE))
+                .headers(headers)
                 .entity(MAPPER.writeValueAsString(doc))
                 .build();
             response = HttpUtils.execute(exec);

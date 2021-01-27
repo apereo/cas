@@ -58,6 +58,8 @@ public class RestfulUrlTemplateResolver extends ThemeFileTemplateResolver {
             headers.put("locale", request.getLocale().getCountry());
             headers.putAll(HttpRequestUtils.getRequestHeaders(request));
         }
+        headers.putAll(rest.getHeaders());
+
         HttpResponse response = null;
         try {
             val exec = HttpUtils.HttpExecutionRequest.builder()

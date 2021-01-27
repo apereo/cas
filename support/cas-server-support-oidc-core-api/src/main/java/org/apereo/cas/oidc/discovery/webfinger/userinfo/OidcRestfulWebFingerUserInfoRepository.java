@@ -54,6 +54,7 @@ public class OidcRestfulWebFingerUserInfoRepository implements OidcWebFingerUser
     protected Map<String, Object> findAccountViaRestApi(final Map<String, Object> headers) {
         HttpResponse response = null;
         try {
+            headers.putAll(properties.getHeaders());
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())

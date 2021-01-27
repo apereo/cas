@@ -64,12 +64,14 @@ public class RestfulYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     public boolean update(final YubiKeyAccount account) {
         HttpResponse response = null;
         try {
+            val headers = CollectionUtils.<String, Object>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+            headers.putAll(restProperties.getHeaders());
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(restProperties.getBasicAuthPassword())
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
                 .method(HttpMethod.POST)
                 .url(restProperties.getUrl())
-                .headers(CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE))
+                .headers(headers)
                 .entity(MAPPER.writeValueAsString(account))
                 .build();
             response = HttpUtils.execute(exec);

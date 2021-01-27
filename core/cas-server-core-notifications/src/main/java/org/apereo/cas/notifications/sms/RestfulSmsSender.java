@@ -39,6 +39,8 @@ public class RestfulSmsSender implements SmsSender {
             parameters.put("from", from);
             parameters.put("to", to);
 
+            val headers = CollectionUtils.<String, Object>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+            headers.putAll(restProperties.getHeaders());
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(restProperties.getBasicAuthPassword())
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
@@ -46,7 +48,7 @@ public class RestfulSmsSender implements SmsSender {
                 .url(restProperties.getUrl())
                 .parameters(parameters)
                 .entity(message)
-                .headers(CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE))
+                .headers(headers)
                 .build();
             
             response = HttpUtils.execute(exec);

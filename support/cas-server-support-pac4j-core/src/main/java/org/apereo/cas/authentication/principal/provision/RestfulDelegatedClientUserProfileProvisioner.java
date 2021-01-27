@@ -39,7 +39,8 @@ public class RestfulDelegatedClientUserProfileProvisioner extends BaseDelegatedC
             headers.put("profileAttributes", profile.getAttributes());
             headers.put("authenticationAttributes", profile.getAuthenticationAttributes());
             headers.put("clientName", client.getName());
-
+            headers.putAll(restProperties.getHeaders());
+            
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(restProperties.getBasicAuthPassword())
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
