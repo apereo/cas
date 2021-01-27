@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
+import org.apereo.cas.configuration.model.RestEndpointProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -35,11 +36,7 @@ public class RestfulPrincipalFactory extends DefaultPrincipalFactory {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
-    private final String url;
-
-    private final String basicAuthUsername;
-
-    private final String basicAuthPassword;
+    private final RestEndpointProperties properties;
 
     @Override
     public Principal createPrincipal(final String id, final Map<String, List<Object>> attributes) {
@@ -48,13 +45,16 @@ public class RestfulPrincipalFactory extends DefaultPrincipalFactory {
             val current = super.createPrincipal(id, attributes);
             val entity = MAPPER.writeValueAsString(current);
 
+            val headers = CollectionUtils.<String, Object>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+            headers.putAll(properties.getHeaders());
+
             val exec = HttpUtils.HttpExecutionRequest.builder()
-                .basicAuthPassword(this.basicAuthPassword)
-                .basicAuthUsername(this.basicAuthUsername)
+                .basicAuthPassword(properties.getBasicAuthPassword())
+                .basicAuthUsername(properties.getBasicAuthUsername())
                 .method(HttpMethod.POST)
-                .url(this.url)
+                .url(properties.getUrl())
                 .entity(entity)
-                .headers(CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE))
+                .headers(headers)
                 .build();
             response = HttpUtils.execute(exec);
             if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
@@ -67,7 +67,7 @@ public class RestfulPrincipalFactory extends DefaultPrincipalFactory {
         } finally {
             HttpUtils.close(response);
         }
-        LOGGER.error("Unable to create principal from REST endpoint [{}] for [{}]", this.url, id);
+        LOGGER.error("Unable to create principal from REST endpoint [{}] for [{}]", properties.getUrl(), id);
         return null;
     }
 }

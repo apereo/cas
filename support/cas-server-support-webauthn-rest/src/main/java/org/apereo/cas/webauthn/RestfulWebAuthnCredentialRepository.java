@@ -97,6 +97,8 @@ public class RestfulWebAuthnCredentialRepository extends BaseWebAuthnCredentialR
         val restProperties = getProperties().getAuthn().getMfa().getWebAuthn().getRest();
         HttpResponse response = null;
         try {
+            val headers = CollectionUtils.<String, Object>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+            headers.putAll(restProperties.getHeaders());
             val parameters = CollectionUtils.<String, Object>wrap("username", username);
             val jsonRecords = getCipherExecutor().encode(WebAuthnUtils.getObjectMapper().writeValueAsString(records));
             val exec = HttpUtils.HttpExecutionRequest.builder()
@@ -105,7 +107,7 @@ public class RestfulWebAuthnCredentialRepository extends BaseWebAuthnCredentialR
                 .method(HttpMethod.POST)
                 .url(restProperties.getUrl())
                 .entity(jsonRecords)
-                .headers(CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE))
+                .headers(headers)
                 .parameters(parameters)
                 .build();
             response = HttpUtils.execute(exec);

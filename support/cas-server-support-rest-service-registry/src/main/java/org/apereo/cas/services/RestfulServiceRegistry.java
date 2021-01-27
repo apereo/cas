@@ -47,10 +47,11 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
         this.properties = properties;
     }
 
-    private static Map<String, Object> getRequestHeaders() {
+    private static Map<String, Object> getRequestHeaders(final RestfulServiceRegistryProperties properties) {
         val headers = new HashMap<String, Object>();
         headers.put("Content-Type", MediaType.APPLICATION_JSON_VALUE);
         headers.put("Accept", MediaType.APPLICATION_JSON_VALUE);
+        headers.putAll(properties.getHeaders());
         return headers;
     }
 
@@ -64,7 +65,7 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
                 .basicAuthUsername(properties.getBasicAuthUsername())
                 .method(HttpMethod.POST)
                 .url(properties.getUrl())
-                .headers(getRequestHeaders())
+                .headers(getRequestHeaders(properties))
                 .entity(MAPPER.writeValueAsString(registeredService))
                 .build();
             response = HttpUtils.execute(exec);
@@ -92,7 +93,7 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
                 .basicAuthUsername(properties.getBasicAuthUsername())
                 .method(HttpMethod.DELETE)
                 .url(completeUrl)
-                .headers(getRequestHeaders())
+                .headers(getRequestHeaders(properties))
                 .build();
             response = HttpUtils.execute(exec);
             return response.getStatusLine().getStatusCode() == HttpStatus.OK.value();
@@ -113,7 +114,7 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
                 .basicAuthUsername(properties.getBasicAuthUsername())
                 .method(HttpMethod.GET)
                 .url(properties.getUrl())
-                .headers(getRequestHeaders())
+                .headers(getRequestHeaders(properties))
                 .build();
             response = HttpUtils.execute(exec);
             if (response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
@@ -143,7 +144,7 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
                 .basicAuthUsername(properties.getBasicAuthUsername())
                 .method(HttpMethod.GET)
                 .url(completeUrl)
-                .headers(getRequestHeaders())
+                .headers(getRequestHeaders(properties))
                 .build();
             response = HttpUtils.execute(exec);
             if (response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {

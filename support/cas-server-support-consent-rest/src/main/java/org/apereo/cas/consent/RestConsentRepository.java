@@ -50,6 +50,8 @@ public class RestConsentRepository implements ConsentRepository {
             headers.put("Content-Type", MediaType.APPLICATION_JSON);
             headers.put("Accept", MediaType.APPLICATION_JSON);
             headers.put("principal", principal);
+            headers.putAll(properties.getHeaders());
+
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
@@ -76,6 +78,8 @@ public class RestConsentRepository implements ConsentRepository {
             val headers = new HashMap<String, Object>();
             headers.put("Content-Type", MediaType.APPLICATION_JSON);
             headers.put("Accept", MediaType.APPLICATION_JSON);
+            headers.putAll(properties.getHeaders());
+
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
@@ -105,6 +109,7 @@ public class RestConsentRepository implements ConsentRepository {
             headers.put("Accept", MediaType.APPLICATION_JSON);
             headers.put("service", service.getId());
             headers.put("principal", authentication.getPrincipal().getId());
+            headers.putAll(properties.getHeaders());
 
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(properties.getBasicAuthPassword())
@@ -132,6 +137,7 @@ public class RestConsentRepository implements ConsentRepository {
             val headers = new HashMap<String, Object>();
             headers.put("Content-Type", MediaType.APPLICATION_JSON);
             headers.put("Accept", MediaType.APPLICATION_JSON);
+            headers.putAll(properties.getHeaders());
 
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(properties.getBasicAuthPassword())
@@ -158,10 +164,10 @@ public class RestConsentRepository implements ConsentRepository {
         HttpResponse response = null;
         try {
             val headers = new HashMap<String, Object>();
-            headers.put("Content-Type", MediaType.APPLICATION_JSON);
-            headers.put("Accept", MediaType.APPLICATION_JSON);
+            headers.put("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+            headers.put("Accept", MediaType.APPLICATION_JSON_VALUE);
             headers.put("principal", principal);
-
+            headers.putAll(properties.getHeaders());
             val deleteEndpoint = properties.getUrl().concat('/' + Long.toString(decisionId));
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(properties.getBasicAuthPassword())

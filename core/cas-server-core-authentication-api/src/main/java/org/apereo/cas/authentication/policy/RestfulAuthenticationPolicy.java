@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.AuthenticationPolicyExecutionResult;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.configuration.model.core.authentication.RestAuthenticationPolicyProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -51,15 +52,7 @@ public class RestfulAuthenticationPolicy extends BaseAuthenticationPolicy {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
-    private String endpoint;
-
-    private String basicAuthUsername;
-
-    private String basicAuthPassword;
-
-    public RestfulAuthenticationPolicy(final String endpoint) {
-        this.endpoint = endpoint;
-    }
+    private final RestAuthenticationPolicyProperties properties;
 
     @Override
     public AuthenticationPolicyExecutionResult isSatisfiedBy(final Authentication authentication,
@@ -71,9 +64,9 @@ public class RestfulAuthenticationPolicy extends BaseAuthenticationPolicy {
         try {
             val entity = MAPPER.writeValueAsString(principal);
             val exec = HttpUtils.HttpExecutionRequest.builder()
-                .url(this.endpoint)
-                .basicAuthPassword(this.basicAuthPassword)
-                .basicAuthUsername(this.basicAuthUsername)
+                .url(properties.getUrl())
+                .basicAuthPassword(properties.getBasicAuthUsername())
+                .basicAuthUsername(properties.getBasicAuthPassword())
                 .method(HttpMethod.POST)
                 .entity(entity)
                 .headers(CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE))

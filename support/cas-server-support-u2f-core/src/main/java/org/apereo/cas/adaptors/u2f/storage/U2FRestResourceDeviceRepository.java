@@ -82,12 +82,14 @@ public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceReposi
             newDevices.put(MAP_KEY_DEVICES, list);
             MAPPER.writer(new MinimalPrettyPrinter()).writeValue(writer, newDevices);
 
+            val headers = CollectionUtils.<String, Object>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+            headers.putAll(restProperties.getHeaders());
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(restProperties.getBasicAuthPassword())
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
                 .method(HttpMethod.POST)
                 .url(restProperties.getUrl())
-                .headers(CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE))
+                .headers(headers)
                 .entity(writer.toString())
                 .build();
 
