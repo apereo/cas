@@ -48,11 +48,13 @@ public class RestAuditTrailManager extends AbstractAuditTrailManager {
         HttpResponse response = null;
         try {
             val auditJson = serializer.toString(audit);
+            val headers = CollectionUtils.<String, Object>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+            headers.putAll(properties.getHeaders());
             LOGGER.trace("Sending audit action context to REST endpoint [{}]", properties.getUrl());
             response = HttpUtils.executePost(properties.getUrl(),
                 properties.getBasicAuthUsername(), properties.getBasicAuthPassword(),
                 auditJson, Map.of(),
-                CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE));
+                headers);
         } finally {
             HttpUtils.close(response);
         }

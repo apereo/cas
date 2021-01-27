@@ -806,6 +806,7 @@ The following options related to features in CAS that provide REST support to fe
 # ${configurationKey}.case-insensitive=false
 # ${configurationKey}.basic-auth-username=uid
 # ${configurationKey}.basic-auth-password=password
+# ${configurationKey}.headers.key=value
 # ${configurationKey}.url=https://rest.somewhere.org/attributes
 ```
 
