@@ -1,10 +1,10 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Splitter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -15,10 +15,9 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.env.PropertySource;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -62,8 +61,7 @@ public class RestfulPropertySourceLocator implements PropertySourceLocator {
 
             val basicAuthUsername = getPropertyFromEnvironment(environment, "basicAuthUsername");
             val basicAuthPassword = getPropertyFromEnvironment(environment, "basicAuthPassword");
-
-            val headers = getHttpHeaders(environment);
+            val headers = CollectionUtils.<String, Object>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
             val method = StringUtils.defaultIfBlank(getPropertyFromEnvironment(environment, "method"), HttpMethod.GET.name());
             response = HttpUtils.execute(url, method, basicAuthUsername, basicAuthPassword, headers);
             if (response != null && response.getEntity() != null) {
@@ -79,26 +77,5 @@ public class RestfulPropertySourceLocator implements PropertySourceLocator {
         }
 
         return new PropertiesPropertySource(getClass().getSimpleName(), props);
-    }
-
-    /**
-     * Gets http headers.
-     *
-     * @param environment the environment
-     * @return the http headers
-     */
-    protected HashMap<String, Object> getHttpHeaders(final Environment environment) {
-        val headersPassed = getPropertyFromEnvironment(environment, "headers");
-
-        val headers = new HashMap<String, Object>();
-        if (StringUtils.isNotBlank(headersPassed)) {
-            Arrays.stream(headersPassed.split(";")).forEach(headerAndValue -> {
-                val values = Splitter.on(":").splitToList(headerAndValue);
-                if (values.size() == 2) {
-                    headers.put(values.get(0), values.get(1));
-                }
-            });
-        }
-        return headers;
     }
 }

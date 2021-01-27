@@ -49,7 +49,6 @@ public class RestfulCloudConfigBootstrapConfigurationTests {
     public static void setup() throws Exception {
         val response = MAPPER.writeValueAsString(Map.of("cas.authn.accept.users", STATIC_AUTHN_USERS));
         System.setProperty(RestfulPropertySourceLocator.CAS_CONFIGURATION_PREFIX + '.' + "url", "http://localhost:9345");
-        System.setProperty(RestfulPropertySourceLocator.CAS_CONFIGURATION_PREFIX + '.' + "headers", "H1:V1;H2:V2");
         SERVER = new MockWebServer(9345, new ByteArrayResource(response.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.TOO_MANY_REQUESTS);
         SERVER.start();
     }
