@@ -844,6 +844,7 @@ jobs:
           - oidc-debugger-code-login
           - oidc-debugger-token-login
           - oidc-debugger-idtoken-login
+          - oidc-debugger-idtoken-token-login
           - pac4j-delegated-login
           - pac4j-delegated-saml-login
           - renew-existing-sso

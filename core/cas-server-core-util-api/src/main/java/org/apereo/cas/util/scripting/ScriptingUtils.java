@@ -45,8 +45,10 @@ import java.util.regex.Pattern;
 @Slf4j
 @UtilityClass
 public class ScriptingUtils {
+    @SuppressWarnings("InlineFormatString")
     private static final String INLINE_PATTERN = "%s\\s*\\{\\s*(.+)\\s*\\}";
-    
+
+    @SuppressWarnings("InlineFormatString")
     private static final String FILE_PATTERN = "(file|classpath):(.+\\.%s)";
 
     /**
