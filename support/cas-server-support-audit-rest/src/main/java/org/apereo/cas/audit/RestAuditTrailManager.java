@@ -16,10 +16,12 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.hjson.JsonValue;
+import org.springframework.http.MediaType;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -48,7 +50,9 @@ public class RestAuditTrailManager extends AbstractAuditTrailManager {
             val auditJson = serializer.toString(audit);
             LOGGER.trace("Sending audit action context to REST endpoint [{}]", properties.getUrl());
             response = HttpUtils.executePost(properties.getUrl(),
-                properties.getBasicAuthUsername(), properties.getBasicAuthPassword(), auditJson);
+                properties.getBasicAuthUsername(), properties.getBasicAuthPassword(),
+                auditJson, Map.of(),
+                CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE));
         } finally {
             HttpUtils.close(response);
         }

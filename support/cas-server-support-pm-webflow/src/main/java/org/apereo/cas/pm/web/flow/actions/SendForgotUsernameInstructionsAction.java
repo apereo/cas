@@ -70,7 +70,14 @@ public class SendForgotUsernameInstructionsAction extends AbstractAction {
         return getErrorEvent("username.failed", "Failed to send the username to the given email address", requestContext);
     }
 
-    private boolean sendForgotUsernameEmailToAccount(final String email, final String username) {
+    /**
+     * Send forgot username email to account.
+     *
+     * @param email    the email
+     * @param username the username
+     * @return the boolean
+     */
+    protected boolean sendForgotUsernameEmailToAccount(final String email, final String username) {
         val reset = casProperties.getAuthn().getPm().getForgotUsername().getMail();
         val text = reset.getFormattedBody(username);
         return this.communicationsManager.email(reset, email, text);

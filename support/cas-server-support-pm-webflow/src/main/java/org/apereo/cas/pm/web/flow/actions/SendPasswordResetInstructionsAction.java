@@ -136,8 +136,8 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
             val pm = casProperties.getAuthn().getPm();
             LOGGER.debug("Generated password reset URL [{}]; Link is only active for the next [{}] minute(s)",
                 url, pm.getReset().getExpirationMinutes());
-            val sendEmail = sendPasswordResetEmailToAccount(email, url);
-            val sendSms = sendPasswordResetSmsToAccount(phone, url);
+            val sendEmail = sendPasswordResetEmailToAccount(username, email, url);
+            val sendSms = sendPasswordResetSmsToAccount(username, phone, url);
             if (sendEmail || sendSms) {
                 return success(url);
             }
@@ -151,11 +151,12 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
     /**
      * Send password reset sms to account.
      *
-     * @param to  the to
-     * @param url the url
-     * @return true/false
+     * @param username the username
+     * @param to       the to
+     * @param url      the url
+     * @return true /false
      */
-    protected boolean sendPasswordResetSmsToAccount(final String to, final String url) {
+    protected boolean sendPasswordResetSmsToAccount(final String username, final String to, final String url) {
         if (StringUtils.isNotBlank(to)) {
             LOGGER.debug("Sending password reset URL [{}] via SMS to [{}]", url, to);
             val reset = casProperties.getAuthn().getPm().getReset().getSms();
@@ -168,11 +169,12 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
     /**
      * Send password reset email to account.
      *
-     * @param to  the to
-     * @param url the url
-     * @return true/false
+     * @param username the username
+     * @param to       the to
+     * @param url      the url
+     * @return true /false
      */
-    protected boolean sendPasswordResetEmailToAccount(final String to, final String url) {
+    protected boolean sendPasswordResetEmailToAccount(final String username, final String to, final String url) {
         if (StringUtils.isNotBlank(to)) {
             val reset = casProperties.getAuthn().getPm().getReset().getMail();
             val text = reset.getFormattedBody(url);
