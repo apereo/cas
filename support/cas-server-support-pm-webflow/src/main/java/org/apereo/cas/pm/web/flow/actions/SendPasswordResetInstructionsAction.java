@@ -148,7 +148,7 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
             val pm = casProperties.getAuthn().getPm();
             LOGGER.debug("Generated password reset URL [{}]; Link is only active for the next [{}] minute(s)",
                 url, pm.getReset().getExpirationMinutes());
-            val sendEmail = sendPasswordResetEmailToAccount(email, url, username);
+            val sendEmail = sendPasswordResetEmailToAccount(username, email, url);
             val sendSms = sendPasswordResetSmsToAccount(phone, url);
             if (sendEmail || sendSms) {
                 return success(url);
@@ -190,7 +190,7 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
             val reset = casProperties.getAuthn().getPm().getReset().getMail();
             val text = EmailMessageBodyBuilder.builder()
                 .properties(reset)
-                .parameters(List.of(url, username, to))
+                .parameters(List.of(url))
                 .build()
                 .produce();
             LOGGER.debug("Sending password reset URL [{}] via email to [{}] for username [{}]", url, to, username);
