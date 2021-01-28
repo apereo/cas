@@ -25,7 +25,7 @@ public class MetadataQueryProtocolMetadataResolverTests extends BaseSamlIdPServi
     @Test
     public void verifyResolverSupports() throws Exception {
         val props = new SamlIdPProperties();
-        props.getMetadata().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
+        props.getMetadata().getFileSystem().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
         val resolver = new MetadataQueryProtocolMetadataResolver(props, openSamlConfigBean);
         val service = new SamlRegisteredService();
         service.setMetadataLocation("http://www.testshib.org/metadata/testshib-providers.xml");
@@ -37,7 +37,7 @@ public class MetadataQueryProtocolMetadataResolverTests extends BaseSamlIdPServi
     @Test
     public void verifyResolverResolves() throws Exception {
         val props = new SamlIdPProperties();
-        props.getMetadata().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
+        props.getMetadata().getFileSystem().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
         val resolver = new MetadataQueryProtocolMetadataResolver(props, openSamlConfigBean);
         val service = new SamlRegisteredService();
         service.setId(100);
@@ -51,7 +51,7 @@ public class MetadataQueryProtocolMetadataResolverTests extends BaseSamlIdPServi
     @Test
     public void verifyResolverFails() throws Exception {
         val props = new SamlIdPProperties();
-        props.getMetadata().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
+        props.getMetadata().getFileSystem().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
         val resolver = new MetadataQueryProtocolMetadataResolver(props, openSamlConfigBean);
         val service = new SamlRegisteredService();
         service.setId(100);

@@ -33,7 +33,7 @@ public class SamlRegisteredServiceMetadataResolverCacheLoaderTests extends BaseS
     public void verifyClasspathByExpression() throws Exception {
         System.setProperty("SP_REF", "classpath:sample-sp.xml");
         val props = new SamlIdPProperties();
-        props.getMetadata().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
+        props.getMetadata().getFileSystem().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
 
         val plan = new DefaultSamlRegisteredServiceMetadataResolutionPlan();
         plan.registerMetadataResolver(new ClasspathResourceMetadataResolver(props, openSamlConfigBean));
@@ -56,7 +56,7 @@ public class SamlRegisteredServiceMetadataResolverCacheLoaderTests extends BaseS
         System.setProperty("SP_REF", mdFile.getCanonicalPath());
 
         val props = new SamlIdPProperties();
-        props.getMetadata().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
+        props.getMetadata().getFileSystem().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
 
         val plan = new DefaultSamlRegisteredServiceMetadataResolutionPlan();
         plan.registerMetadataResolver(new FileSystemResourceMetadataResolver(props, openSamlConfigBean));

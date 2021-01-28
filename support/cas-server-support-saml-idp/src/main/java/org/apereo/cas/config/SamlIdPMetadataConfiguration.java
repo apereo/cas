@@ -163,7 +163,7 @@ public class SamlIdPMetadataConfiguration {
     public SamlIdPMetadataLocator samlIdPMetadataLocator() {
         val idp = casProperties.getAuthn().getSamlIdp();
         val location = SpringExpressionLanguageValueResolver.getInstance()
-            .resolve(idp.getMetadata().getLocation());
+            .resolve(idp.getMetadata().getFileSystem().getLocation());
         val metadataLocation = ResourceUtils.getRawResourceFrom(location);
         return new FileSystemSamlIdPMetadataLocator(metadataLocation);
     }

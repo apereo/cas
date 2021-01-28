@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("SAML")
-@TestPropertySource(properties = "cas.authn.saml-idp.metadata.location=classpath:metadata/")
+@TestPropertySource(properties = "cas.authn.saml-idp.metadata.file-system.location=classpath:metadata/")
 public class SamlIdPObjectEncrypterTests extends BaseSamlIdPConfigurationTests {
     @Test
     public void verifyEncOptional() {

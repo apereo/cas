@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.saml-idp.metadata.mongo.password=secret",
     "cas.authn.saml-idp.metadata.mongo.authentication-database-name=admin",
     "cas.authn.saml-idp.metadata.mongo.idp-metadata-collection=saml-idp-metadata-resolver",
-    "cas.authn.saml-idp.metadata.location=file:/tmp"
+    "cas.authn.saml-idp.metadata.file-system.location=file:/tmp"
 })
 @Tag("MongoDb")
 @EnabledIfPortOpen(port = 27017)

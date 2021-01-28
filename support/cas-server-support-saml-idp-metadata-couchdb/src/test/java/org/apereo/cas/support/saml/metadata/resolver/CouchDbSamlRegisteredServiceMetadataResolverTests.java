@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.*;
     BaseSamlIdPMetadataTests.SharedTestConfiguration.class
 },
     properties = {
-        "cas.authn.saml-idp.metadata.location=classpath:",
+        "cas.authn.saml-idp.metadata.file-system.location=classpath:",
         "cas.authn.saml-idp.metadata.couch-db.db-name=saml_resolver",
         "cas.authn.saml-idp.metadata.couch-db.username=cas",
         "cas.authn.saml-idp.metadata.couch-db.caching=false",

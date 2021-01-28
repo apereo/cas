@@ -41,7 +41,7 @@ public class FileSystemResourceMetadataResolverTests extends BaseSamlIdPServices
 
         PROPERTIES = new SamlIdPProperties();
         val path = new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath();
-        PROPERTIES.getMetadata().setLocation(path);
+        PROPERTIES.getMetadata().getFileSystem().setLocation(path);
     }
 
     @Test

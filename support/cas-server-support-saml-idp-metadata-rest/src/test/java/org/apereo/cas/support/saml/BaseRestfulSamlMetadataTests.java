@@ -23,7 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 },
     properties = {
         "cas.authn.saml-idp.metadata.rest.url=http://localhost:8078",
-        "cas.authn.saml-idp.metadata.location=${#systemProperties['java.io.tmpdir']}/saml"
+        "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/saml"
     }
 )
 @EnableConfigurationProperties(CasConfigurationProperties.class)

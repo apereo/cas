@@ -34,7 +34,7 @@ public class SamlRegisteredServiceMetadataExpirationPolicyTests extends BaseSaml
         val policy = new SamlRegisteredServiceMetadataExpirationPolicy(5);
 
         val props = new SamlIdPProperties();
-        props.getMetadata().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
+        props.getMetadata().getFileSystem().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
 
         val service = new SamlRegisteredService();
         service.setMetadataExpirationDuration(StringUtils.EMPTY);
@@ -60,7 +60,7 @@ public class SamlRegisteredServiceMetadataExpirationPolicyTests extends BaseSaml
         val policy = new SamlRegisteredServiceMetadataExpirationPolicy(5);
 
         val props = new SamlIdPProperties();
-        props.getMetadata().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
+        props.getMetadata().getFileSystem().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
 
         val service = new SamlRegisteredService();
         service.setMetadataExpirationDuration(StringUtils.EMPTY);
