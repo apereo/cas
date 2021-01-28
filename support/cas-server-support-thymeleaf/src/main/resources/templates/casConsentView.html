@@ -67,8 +67,10 @@
                         <table id="attributesTable" class="mdc-data-table__table">
                             <thead>
                             <tr class="mdc-data-table__header-row">
-                                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Attribute</th>
-                                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Value(s)</th>
+                                <th class="mdc-data-table__header-cell" role="columnheader" scope="col"
+                                    th:utext="#{screen.consent.attributes.attribute}">Attribute</th>
+                                <th class="mdc-data-table__header-cell" role="columnheader" scope="col"
+                                    th:utext="#{screen.consent.attributes.values}">Value(s)</th>
                             </tr>
                             </thead>
                             <tbody class="mdc-data-table__content">
@@ -113,7 +115,7 @@
                             </div>
                             <label for="optionAlways" th:utext="#{screen.consent.options.always}">Always</label>
                         </div>
-                        <div class="mdc-typography mdc-typography--body2 pl-4 ml-4" aria-hidden="true"
+                        <div class="mdc-typography mdc-typography--body2 pl-4 ml-4 consent-option-description" aria-hidden="true"
                              th:text="#{screen.consent.options.desc.always(${service.id})}">
                             This will be displayed on your public profile
                         </div>
@@ -134,9 +136,9 @@
                                 </div>
                                 <div class="mdc-radio__ripple"></div>
                             </div>
-                            <label for="optionAlways" th:utext="#{screen.consent.options.attributename}">Always</label>
+                            <label for="optionAttributeName" th:utext="#{screen.consent.options.attributename}">Always</label>
                         </div>
-                        <div class="mdc-typography mdc-typography--body2 pl-4 ml-4" aria-hidden="true"
+                        <div class="mdc-typography mdc-typography--body2 pl-4 ml-4 consent-option-description" aria-hidden="true"
                              th:text="#{screen.consent.options.desc.attributename(${service.id})}">
                             This will be displayed on your public profile
                         </div>
@@ -157,9 +159,9 @@
                                 </div>
                                 <div class="mdc-radio__ripple"></div>
                             </div>
-                            <label for="optionAttributeName" th:utext="#{screen.consent.options.attributevalue}">Attribute Value</label>
+                            <label for="optionAttributeValue" th:utext="#{screen.consent.options.attributevalue}">Attribute Value</label>
                         </div>
-                        <div class="mdc-typography mdc-typography--body2 pl-4 ml-4" aria-hidden="true"
+                        <div class="mdc-typography mdc-typography--body2 pl-4 ml-4 consent-option-description" aria-hidden="true"
                              th:utext="#{screen.consent.options.desc.attributevalue.intro} +
                                 '<ul><li>' +
                                 #{screen.consent.options.desc.attributevalue.first(${service.id})} +
