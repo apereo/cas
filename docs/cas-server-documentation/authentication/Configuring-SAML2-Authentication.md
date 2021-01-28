@@ -118,11 +118,7 @@ repositories {
 }
 ```
 
-{% include {{ version }}/saml2-idp-configuration.md %}
-
-### Session Replication
-
-{% include casproperties.html properties="cas.session-replication" %}
+{% include casproperties.html properties="cas.authn.saml-idp.core,cas.client,cas.session-replication" %}
 
 ### Administrative Endpoints
 
@@ -209,8 +205,6 @@ will always use its own signing certificate for signing of the responses generat
 
 Also note that support for attribute queries need to be explicitly enabled and the behavior is off by default, given it imposes a burden on 
 CAS and the underlying ticket registry to keep track of attributes and responses as tickets and have them be later used and looked up.
-
-{% include {{ version }}/saml2-idp-configuration.md %}
 
 ## Client Libraries
 

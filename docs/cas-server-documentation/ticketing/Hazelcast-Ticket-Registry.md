@@ -44,7 +44,7 @@ this behavior, it likely is preferable to turn off the session monitor.
 </p></div>
 
 For more information on the Hazelcast configuration options available,
-refer to [the Hazelcast configuration documentation](http://docs.hazelcast.org/docs/4.1.1/manual/html-single/index.html#hazelcast-configuration)
+refer to [the Hazelcast documentation](http://docs.hazelcast.org/docs/4.1.1/manual/html-single/index.html#hazelcast-configuration)
 
 ## AWS EC2 Auto Discovery
 
@@ -60,7 +60,7 @@ Support is enabled by the following module:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-hazelcast-discovery-aws" %}
 
-{% include {{ version }}/hazelcast-awsec2-configuration.md configKey="cas.ticket.registry.hazelcast" %}
+{% include casproperties.html properties="cas.ticket.registry.hazelcast.cluster.discovery.aws" %}
 
 ## Apache jclouds Auto Discovery
 
@@ -75,7 +75,7 @@ cloud environments, [please see this link](https://jclouds.apache.org/reference/
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-hazelcast-discovery-jclouds" %}
 
-{% include {{ version }}/hazelcast-apachejclouds-configuration.md configKey="cas.ticket.registry.hazelcast" %}
+{% include casproperties.html properties="cas.ticket.registry.hazelcast.cluster.discovery.jclouds" %}
 
 ## Microsoft Azure Auto Discovery
 
@@ -90,7 +90,7 @@ is that every VM can access each other either by private or public IP address.
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-hazelcast-discovery-azure" %}
 
-{% include {{ version }}/hazelcast-azure-configuration.md configKey="cas.ticket.registry.hazelcast" %}
+{% include casproperties.html properties="cas.ticket.registry.hazelcast.cluster.discovery.azure" %}
 
 ## Kubernetes Auto Discovery
 
@@ -106,7 +106,7 @@ See [this link](https://github.com/hazelcast/hazelcast-kubernetes) for more info
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-hazelcast-discovery-kubernetes" %}
 
-{% include {{ version }}/hazelcast-kubernetes-configuration.md configKey="cas.ticket.registry.hazelcast" %}
+{% include casproperties.html properties="cas.ticket.registry.hazelcast.cluster.discovery.kubernetes" %}
 
 ## Docker Swarm Auto Discovery
 
@@ -116,7 +116,7 @@ See [this link](https://github.com/bitsofinfo/hazelcast-docker-swarm-discovery-s
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-hazelcast-discovery-swarm" %}
 
-{% include {{ version }}/hazelcast-swarm-configuration.md configKey="cas.ticket.registry.hazelcast" %}
+{% include casproperties.html properties="cas.ticket.registry.hazelcast.cluster.discovery.docker-swarm" %}
 
 ## Multicast Auto Discovery
 
@@ -135,7 +135,7 @@ each member will wait 60 seconds before moving on. Be careful when providing a h
 value. Also, be careful not to set the value too low, or the members might give 
 up too early and create their own cluster.
 
-{% include {{ version }}/hazelcast-multicastdiscovery-configuration.md configKey="cas.ticket.registry.hazelcast" %}
+{% include casproperties.html properties="cas.ticket.registry.hazelcast.cluster.discovery.multicast-" %}
 
 ## WAN Replication
 
@@ -156,7 +156,7 @@ See [this page](https://hazelcast.com/products/wan-replication/) for more inform
 
 Defining WAN replication endpoints in CAS is done using static endpoints and discovery.
 
-{% include {{ version }}/hazelcast-staticwan-configuration.md configKey="cas.ticket.registry.hazelcast" %}
+{% include casproperties.html properties="cas.ticket.registry.hazelcast.cluster.wan-replication" %}
 
 ## Logging
 
