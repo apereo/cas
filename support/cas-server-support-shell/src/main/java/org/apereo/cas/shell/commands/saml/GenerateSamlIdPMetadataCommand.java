@@ -81,7 +81,7 @@ public class GenerateSamlIdPMetadataCommand {
 
         if (generateMetadata) {
             val props = new CasConfigurationProperties();
-            props.getAuthn().getSamlIdp().setEntityId(entityId);
+            props.getAuthn().getSamlIdp().getCore().setEntityId(entityId);
             props.getServer().setScope(scope);
             props.getServer().setPrefix(serverPrefix);
 

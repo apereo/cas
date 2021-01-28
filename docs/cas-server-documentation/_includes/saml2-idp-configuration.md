@@ -1,1 +1,1 @@
-{% include casproperties.html properties="cas.authn.saml-idp.entity-id,cas.authn.saml-idp.replicate-sessions,cas.authn.saml-idp.authentication-context-class-mappings,cas.authn.saml-idp.attribute-friendly-names,cas.authn.saml-idp.attribute-query-profile-enabled,cas.client" %}
+{% include casproperties.html properties="cas.authn.saml-idp.core,cas.client" %}

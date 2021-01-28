@@ -69,7 +69,7 @@ public class DefaultAuthnContextClassRefBuilderTests extends BaseSamlIdPConfigur
     @Test
     public void verifyRefedsContext() {
         val props = new CasConfigurationProperties();
-        props.getAuthn().getSamlIdp().getAuthenticationContextClassMappings()
+        props.getAuthn().getSamlIdp().getCore().getAuthenticationContextClassMappings()
             .add(String.format("https://refeds.org/profile/mfa->%s", TestMultifactorAuthenticationProvider.ID));
         
         val builder = new DefaultAuthnContextClassRefBuilder(props);

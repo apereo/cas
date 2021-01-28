@@ -251,7 +251,7 @@ public class SamlIdPObjectSigner {
         val criteriaSet = new CriteriaSet();
         criteriaSet.add(new SignatureSigningConfigurationCriterion(config));
         criteriaSet.add(new UsageCriterion(UsageType.SIGNING));
-        criteriaSet.add(new EntityIdCriterion(samlIdp.getEntityId()));
+        criteriaSet.add(new EntityIdCriterion(samlIdp.getCore().getEntityId()));
         criteriaSet.add(new EntityRoleCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME));
         criteriaSet.add(new SamlIdPSamlRegisteredServiceCriterion(service));
 

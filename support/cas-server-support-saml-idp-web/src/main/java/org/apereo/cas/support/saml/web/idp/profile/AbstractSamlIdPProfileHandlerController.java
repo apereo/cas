@@ -223,7 +223,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * @return the authentication context mappings
      */
     protected Map<String, String> getAuthenticationContextMappings() {
-        val authnContexts = samlProfileHandlerConfigurationContext.getCasProperties().getAuthn().getSamlIdp().getAuthenticationContextClassMappings();
+        val authnContexts = samlProfileHandlerConfigurationContext.getCasProperties().getAuthn().getSamlIdp().getCore().getAuthenticationContextClassMappings();
         return CollectionUtils.convertDirectedListToMap(authnContexts);
     }
 
@@ -237,7 +237,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      */
     protected String buildRedirectUrlByRequestedAuthnContext(final String initialUrl, final AuthnRequest authnRequest, final HttpServletRequest request) {
         val authenticationContextClassMappings = samlProfileHandlerConfigurationContext.getCasProperties()
-            .getAuthn().getSamlIdp().getAuthenticationContextClassMappings();
+            .getAuthn().getSamlIdp().getCore().getAuthenticationContextClassMappings();
         if (authnRequest.getRequestedAuthnContext() == null || authenticationContextClassMappings == null || authenticationContextClassMappings.isEmpty()) {
             return initialUrl;
         }
@@ -472,7 +472,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      */
     protected void autoConfigureCookiePath(final HttpServletRequest request) {
         val casProperties = samlProfileHandlerConfigurationContext.getCasProperties();
-        if (casProperties.getAuthn().getSamlIdp().isReplicateSessions()
+        if (casProperties.getAuthn().getSamlIdp().getCore().isReplicateSessions()
             && casProperties.getSessionReplication().getCookie().isAutoConfigureCookiePath()) {
 
             val contextPath = request.getContextPath();
