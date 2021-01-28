@@ -243,7 +243,7 @@ public class SamlIdPObjectSigner {
         val mdCredentialResolver = new SamlIdPMetadataCredentialResolver();
         val roleDescriptorResolver = SamlIdPUtils.getRoleDescriptorResolver(
             casSamlIdPMetadataResolver,
-            samlIdp.getMetadata().isRequireValidMetadata());
+            samlIdp.getMetadata().getCore().isRequireValidMetadata());
         mdCredentialResolver.setRoleDescriptorResolver(roleDescriptorResolver);
         mdCredentialResolver.setKeyInfoCredentialResolver(DefaultSecurityConfigurationBootstrap.buildBasicInlineKeyInfoCredentialResolver());
         mdCredentialResolver.initialize();
@@ -287,7 +287,7 @@ public class SamlIdPObjectSigner {
         val privateKeyFactoryBean = new PrivateKeyFactoryBean();
         privateKeyFactoryBean.setLocation(signingKey);
         if (StringUtils.isBlank(registeredService.getSigningKeyAlgorithm())) {
-            privateKeyFactoryBean.setAlgorithm(samlIdp.getMetadata().getPrivateKeyAlgName());
+            privateKeyFactoryBean.setAlgorithm(samlIdp.getAlgs().getPrivateKeyAlgName());
         } else {
             privateKeyFactoryBean.setAlgorithm(registeredService.getSigningKeyAlgorithm());
         }

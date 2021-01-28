@@ -269,7 +269,7 @@ public class SamlIdPObjectEncrypter {
         mdCredentialResolver.setKeyInfoCredentialResolver(keyInfoResolver);
 
         val roleDescriptorResolver = SamlIdPUtils.getRoleDescriptorResolver(adaptor,
-            samlIdPProperties.getMetadata().isRequireValidMetadata());
+            samlIdPProperties.getMetadata().getCore().isRequireValidMetadata());
 
         mdCredentialResolver.setRoleDescriptorResolver(roleDescriptorResolver);
         mdCredentialResolver.initialize();

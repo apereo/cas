@@ -70,4 +70,10 @@ public class SamlIdPAlgorithmsProperties implements Serializable {
      * The Override signature canonicalization algorithm.
      */
     private String overrideSignatureCanonicalizationAlgorithm;
+
+    /**
+     * Algorithm name to use when generating or locating private key
+     * for signing operations..
+     */
+    private String privateKeyAlgName = "RSA";
 }

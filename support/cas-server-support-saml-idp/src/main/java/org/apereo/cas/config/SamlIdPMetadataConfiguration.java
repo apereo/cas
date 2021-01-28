@@ -117,8 +117,8 @@ public class SamlIdPMetadataConfiguration {
         val idp = casProperties.getAuthn().getSamlIdp();
         val resolver = new SamlIdPMetadataResolver(samlIdPMetadataLocator(),
             samlIdPMetadataGenerator(), openSamlConfigBean.getObject());
-        resolver.setFailFastInitialization(idp.getMetadata().isFailFast());
-        resolver.setRequireValidMetadata(idp.getMetadata().isRequireValidMetadata());
+        resolver.setFailFastInitialization(idp.getMetadata().getCore().isFailFast());
+        resolver.setRequireValidMetadata(idp.getMetadata().getCore().isRequireValidMetadata());
         resolver.setId(idp.getCore().getEntityId());
         return resolver;
     }
@@ -206,7 +206,7 @@ public class SamlIdPMetadataConfiguration {
     @RefreshScope
     public SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver() {
         return new SamlRegisteredServiceDefaultCachingMetadataResolver(
-            casProperties.getAuthn().getSamlIdp().getMetadata().getCacheExpirationMinutes(),
+            casProperties.getAuthn().getSamlIdp().getMetadata().getCore().getCacheExpirationMinutes(),
             chainingMetadataResolverCacheLoader()
         );
     }

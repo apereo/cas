@@ -193,8 +193,8 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
                                                                 final List<MetadataFilter> metadataFilterList) throws Exception {
         val md = samlIdPProperties.getMetadata();
         metadataProvider.setParserPool(this.configBean.getParserPool());
-        metadataProvider.setFailFastInitialization(md.isFailFast());
-        metadataProvider.setRequireValidMetadata(md.isRequireValidMetadata());
+        metadataProvider.setFailFastInitialization(md.getCore().isFailFast());
+        metadataProvider.setRequireValidMetadata(md.getCore().isRequireValidMetadata());
         metadataProvider.setId(metadataProvider.getClass().getCanonicalName());
 
         buildMetadataFilters(service, metadataProvider, metadataFilterList);

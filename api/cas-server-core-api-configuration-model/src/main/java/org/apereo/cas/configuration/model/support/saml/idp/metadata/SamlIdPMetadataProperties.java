@@ -10,7 +10,6 @@ import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link SamlIdPMetadataProperties}.
@@ -28,15 +27,10 @@ public class SamlIdPMetadataProperties implements Serializable {
     private static final long serialVersionUID = -1020542741768471305L;
 
     /**
-     * Whether invalid metadata should eagerly fail quickly on startup
-     * once the resource is parsed.
+     * Core and common settings related to saml2 metadata management.
      */
-    private boolean failFast = true;
-
-    /**
-     * Whether valid metadata is required.
-     */
-    private boolean requireValidMetadata = true;
+    @NestedConfigurationProperty
+    private SamlIdPMetadataCoreProperties core = new SamlIdPMetadataCoreProperties();
 
     /**
      * Forcefully download and fetch metadata files
@@ -46,18 +40,6 @@ public class SamlIdPMetadataProperties implements Serializable {
     private boolean forceMetadataRefresh = true;
 
     /**
-     * How long should metadata be cached in minutes.
-     */
-    private long cacheExpirationMinutes = TimeUnit.DAYS.toMinutes(1);
-
-    /**
-     * Directory location of SAML metadata and signing/encryption keys.
-     * This directory will be used to hold the configuration files.
-     */
-    @RequiredProperty
-    private String location = "file:/etc/cas/saml";
-
-    /**
      * Directory location where downloaded SAML metadata is cached
      * as backup files. If left undefined, the directory is calculated
      * off of {@link #getLocation()}. The directory location
@@ -65,6 +47,13 @@ public class SamlIdPMetadataProperties implements Serializable {
      */
     private String metadataBackupLocation;
 
+    /**
+     * Directory location of SAML metadata and signing/encryption keys.
+     * This directory will be used to hold the configuration files.
+     */
+    @RequiredProperty
+    private String location = "file:/etc/cas/saml";
+    
     /**
      * Properties pertaining to mongo db saml metadata resolvers.
      */
@@ -106,11 +95,6 @@ public class SamlIdPMetadataProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private CouchDbSamlMetadataProperties couchDb = new CouchDbSamlMetadataProperties();
-
-    /**
-     * Algorithm name to use when generating private key.
-     */
-    private String privateKeyAlgName = "RSA";
 
     /**
      * Metadata management settings via MDQ protocol.
