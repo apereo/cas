@@ -61,7 +61,7 @@ Please [see this guide](OIDC-Authentication-Claims.html).
 
 ### Scopes & Claims
 
-{% include {{ version }}/claims-oidc-configuration.md %}
+{% include casproperties.html properties="cas.authn.oidc.core" %}
 
 ### Logout
 

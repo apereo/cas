@@ -326,26 +326,6 @@ public class X509Properties implements Serializable {
     public enum PrincipalTypes {
 
         /**
-         * Create principal by subject.
-         */
-        SUBJECT,
-        /**
-         * Create principal by subject DN.
-         */
-        SUBJECT_DN,
-        /**
-         * Create principal by serial no.
-         */
-        SERIAL_NO,
-        /**
-         * Create principal by serial no and DN.
-         */
-        SERIAL_NO_DN,
-        /**
-         * Create principal by subject alternative name.
-         */
-        SUBJECT_ALT_NAME,
-        /**
          * Create principal by common name and EDIPI.
          */
         CN_EDIPI,
@@ -354,6 +334,32 @@ public class X509Properties implements Serializable {
          * The subject alternative name field contains a list of various types of names, one type is RFC822 e-mail
          * address. This will return the first e-mail address that is found (if there are more than one).
          */
-        RFC822_EMAIL
+        RFC822_EMAIL,
+        /**
+         * Create principal by serial no.
+         * Resolve the principal by the serial number with a configurable <strong>radix</strong>, ranging from 2 to 36.
+         * If {@code radix} is {@code 16}, then the serial number could be filled with leading zeros to even the number of digits.
+         */
+        SERIAL_NO,
+        /**
+         * Create principal by serial no and DN.
+         */
+        SERIAL_NO_DN,
+        /**
+         * Create principal by subject.
+         * Resolve the principal by extracting one or more attribute values from the
+         * certificate subject DN and combining them with intervening delimiters.
+         */
+        SUBJECT,
+        /**
+         * Create principal by subject alternative name.
+         * Resolve the principal by the subject alternative name extension. (type: otherName)
+         */
+        SUBJECT_ALT_NAME,
+        /**
+         * Create principal by subject DN.
+         */
+        SUBJECT_DN
+
     }
 }
