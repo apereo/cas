@@ -10,6 +10,33 @@
       }
     },
     {
+      "name": "cas.authn.saml-idp.metadata.basic-authn-username",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.saml-idp.metadata.mdq.basic-authn-username",
+        "reason": "basic-authn-username setting is now moved into the mdq namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.saml-idp.metadata.basic-authn-password",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.saml-idp.metadata.mdq.basic-authn-password",
+        "reason": "basic-authn-password setting is now moved into the mdq namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.saml-idp.metadata.supported-content-types",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.saml-idp.metadata.mdq.supported-content-types",
+        "reason": "supported-content-types setting is now moved into the mdq namespace.",
+        "level": "error"
+      }
+    },
+    {
       "name": "cas.authn.saml-idp.entity-id",
       "type": "java.lang.String",
       "deprecation": {
