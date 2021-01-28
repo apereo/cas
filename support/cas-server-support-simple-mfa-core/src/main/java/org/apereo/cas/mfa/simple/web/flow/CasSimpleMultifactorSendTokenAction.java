@@ -24,7 +24,7 @@ import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.util.List;
+import java.util.Map;
 
 /**
  * This is {@link CasSimpleMultifactorSendTokenAction}.
@@ -106,7 +106,7 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractAction {
         if (communicationsManager.isMailSenderDefined()) {
             val mailProperties = properties.getMail();
             val body = EmailMessageBodyBuilder.builder().properties(mailProperties)
-                .parameters(List.of(token.getId())).build().produce();
+                .parameters(Map.of("token", token.getId())).build().produce();
             return communicationsManager.email(principal, mailProperties.getAttributeName(), mailProperties, body);
         }
         return false;

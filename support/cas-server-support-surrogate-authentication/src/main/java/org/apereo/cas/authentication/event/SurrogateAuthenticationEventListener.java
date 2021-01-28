@@ -15,7 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 
-import java.util.List;
+import java.util.Map;
 
 /**
  * This is {@link SurrogateAuthenticationEventListener}.
@@ -77,7 +77,8 @@ public class SurrogateAuthenticationEventListener {
             val emailAttribute = mail.getAttributeName();
             val to = principal.getAttributes().get(emailAttribute);
             if (to != null) {
-                val body = EmailMessageBodyBuilder.builder().properties(mail).parameters(List.of(eventDetails)).build().produce();
+                val body = EmailMessageBodyBuilder.builder().properties(mail)
+                    .parameters(Map.of("event", eventDetails)).build().produce();
                 this.communicationsManager.email(mail, to.toString(), body);
             } else {
                 LOGGER.trace("The principal has no [{}] attribute, cannot send email notification", emailAttribute);

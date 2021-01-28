@@ -17,7 +17,7 @@ import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.util.List;
+import java.util.Map;
 
 /**
  * This is {@link DisplayBeforePasswordlessAuthenticationAction}.
@@ -62,7 +62,8 @@ public class DisplayBeforePasswordlessAuthenticationAction extends AbstractActio
         communicationsManager.validate();
         if (communicationsManager.isMailSenderDefined() && StringUtils.isNotBlank(user.getEmail())) {
             val mail = passwordlessProperties.getTokens().getMail();
-            val body = EmailMessageBodyBuilder.builder().properties(mail).parameters(List.of(token)).build().produce();
+            val body = EmailMessageBodyBuilder.builder().properties(mail)
+                .parameters(Map.of("token", token)).build().produce();
             communicationsManager.email(mail, user.getEmail(), body);
         }
         if (communicationsManager.isSmsSenderDefined() && StringUtils.isNotBlank(user.getPhone())) {
