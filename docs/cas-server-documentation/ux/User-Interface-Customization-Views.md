@@ -13,8 +13,24 @@ templates folder. Add any views that require customization to the `src/main/reso
 Any files found in that module can be overridden by putting them in the same location under
 `src/main/resources` in the CAS overlay project. The Gradle build script for the overlay has tasks that help get resources 
 from the CAS web application to the correct location in the CAS overlay. 
-          
-{% include {{ version }}/views-configuration.md %}
+  
+## Configuration
+
+{% include casproperties.html properties="cas.view.template-" %}
+
+### CAS v1
+
+{% include casproperties.html properties="cas.view.cas1" %}
+
+### CAS v2
+
+{% include casproperties.html properties="cas.view.cas2" %}
+
+### CAS v3
+
+{% include casproperties.html properties="cas.view.cas3" %}
+
+## Externalized Views
 
 Views also may be externalized outside the web application conditionally and individually, provided the external path 
 via CAS settings. If a view template file is not found at the externalized path, the 
@@ -37,9 +53,14 @@ Upon a successful `200` status result, the response body is expected to contain 
 
 ## Thymeleaf
 
-CAS uses [Thymeleaf](https://www.thymeleaf.org) for its markup rendering engine. Each template is decorated by `layout.html` template file, which provides a layout structure for the template's content. Individual components optimized for re-use among multiple templates are stored in the `src/main/resources/templates/fragments` folder, and referenced by the templates in `src/main/resources/templates`.
+CAS uses [Thymeleaf](https://www.thymeleaf.org) for its markup rendering engine. Each template is 
+decorated by `layout.html` template file, which provides a layout structure for the template's content. Individual 
+components optimized for re-use among multiple templates are stored in the `src/main/resources/templates/fragments` 
+folder, and referenced by the templates in `src/main/resources/templates`.
 
 Refer to the [Thymeleaf documentation](https://www.thymeleaf.org/) for more information on its use and syntax.
+
+{% include casproperties.html properties="spring.thymeleaf" %}
 
 ## Warning Before Accessing Application
 

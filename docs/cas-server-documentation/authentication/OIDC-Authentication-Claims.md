@@ -72,7 +72,7 @@ such that you may bundle attributes together, then you need to first register yo
 define its attribute bundle and then use it a given service definition such as `eduPerson` above.
 Such user-defined scopes are also able to override the definition of system scopes.
 
-{% include {{ version }}/claims-oidc-configuration.md %}
+{% include casproperties.html properties="cas.authn.oidc.core" %}
 
 ## Releasing Claims
 

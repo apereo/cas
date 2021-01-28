@@ -110,11 +110,35 @@ Apache HTTPD, Nginx, Haproxy, BigIP F5, etc.
 
 ### X509 Principal Resolution
 
-{% include {{ version }}/principal-resolution-x509-authentication-configuration.md %}
+{% include casproperties.html properties="cas.authn.x509.principal,cas.authn.x509.principal-type" %}
+
+### `SUBJECT_DN` Principal Resolution
+
+{% include casproperties.html properties="cas.authn.x509.subject-dn" %}
+
+### `CN_EDIPI` Principal Resolution
+
+{% include casproperties.html properties="cas.authn.x509.cn-edipi" %}
+
+### `RFC822_EMAIL` Principal Resolution
+
+{% include casproperties.html properties="cas.authn.x509.rfc822-email" %}
+
+### `SERIAL_NO` Principal Resolution
+
+{% include casproperties.html properties="cas.authn.x509.serial-no" %}
+
+### `SERIAL_NO_DN` Principal Resolution
+
+{% include casproperties.html properties="cas.authn.x509.serial-no-dn" %}
+
+### `SUBJECT_ALT_NAME` Principal Resolution
+
+{% include casproperties.html properties="cas.authn.x509.subject-alt-name" %}
 
 ### X509 CRL Fetching / Revocation
 
-{% include {{ version }}/crl-x509-authentication-configuration.md %}
+{% include casproperties.html properties="cas.authn.x509.crl-,cas.authn.x509.revocation-checker,cas.authn.x509.cache-" %}
 
 ### X509 LDAP Integration
 
