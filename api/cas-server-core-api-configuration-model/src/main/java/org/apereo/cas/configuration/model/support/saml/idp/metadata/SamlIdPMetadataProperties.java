@@ -33,19 +33,12 @@ public class SamlIdPMetadataProperties implements Serializable {
     private SamlIdPMetadataCoreProperties core = new SamlIdPMetadataCoreProperties();
 
     /**
-     * Forcefully download and fetch metadata files
-     * form URL sources and disregard any cached copies
-     * of the metadata.
+     * Settings related to saml2 metadata management,
+     * when fetching or handling metadata over http endpoints
+     * from URL resources.
      */
-    private boolean forceMetadataRefresh = true;
-
-    /**
-     * Directory location where downloaded SAML metadata is cached
-     * as backup files. If left undefined, the directory is calculated
-     * off of {@link #getLocation()}. The directory location
-     * should also support and be resolvable via Spring expression language.
-     */
-    private String metadataBackupLocation;
+    @NestedConfigurationProperty
+    private SamlIdPMetadataHttpProperties http = new SamlIdPMetadataHttpProperties();
 
     /**
      * Directory location of SAML metadata and signing/encryption keys.

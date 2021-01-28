@@ -74,7 +74,7 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
         super(samlIdPProperties, configBean);
 
         val md = samlIdPProperties.getMetadata();
-        val backupLocation = StringUtils.defaultIfBlank(md.getMetadataBackupLocation(), md.getLocation());
+        val backupLocation = StringUtils.defaultIfBlank(md.getHttp().getMetadataBackupLocation(), md.getLocation());
         val location = SpringExpressionLanguageValueResolver.getInstance().resolve(backupLocation);
         this.metadataBackupDirectory = new File(ResourceUtils.getRawResourceFrom(location).getFile(), DIRNAME_METADATA_BACKUPS);
         try {
@@ -98,7 +98,7 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
             val metadataResource = new UrlResource(metadataLocation);
 
             val backupFile = getMetadataBackupFile(metadataResource, service);
-            if (backupFile.exists() && samlIdPProperties.getMetadata().isForceMetadataRefresh()) {
+            if (backupFile.exists() && samlIdPProperties.getMetadata().getHttp().isForceMetadataRefresh()) {
                 cleanUpExpiredBackupMetadataFilesFor(metadataResource, service);
             }
             val canonicalPath = backupFile.getCanonicalPath();
