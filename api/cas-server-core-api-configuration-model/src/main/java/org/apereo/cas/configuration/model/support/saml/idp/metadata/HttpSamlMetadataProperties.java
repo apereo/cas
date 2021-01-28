@@ -10,7 +10,7 @@ import lombok.experimental.Accessors;
 import java.io.Serializable;
 
 /**
- * This is {@link SamlIdPMetadataHttpProperties}.
+ * This is {@link HttpSamlMetadataProperties}.
  *
  * @author Misagh Moayyed
  * @since 6.4.0
@@ -19,8 +19,8 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("SamlIdPMetadataHttpProperties")
-public class SamlIdPMetadataHttpProperties implements Serializable {
+@JsonFilter("HttpSamlMetadataProperties")
+public class HttpSamlMetadataProperties implements Serializable {
 
     private static final long serialVersionUID = -8226473583467202828L;
 

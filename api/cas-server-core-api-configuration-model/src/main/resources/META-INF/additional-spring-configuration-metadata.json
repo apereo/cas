@@ -10,6 +10,15 @@
       }
     },
     {
+      "name": "cas.authn.saml-idp.metadata.location",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.saml-idp.metadata.file-system.location",
+        "reason": "location setting is now moved into the file-system namespace.",
+        "level": "error"
+      }
+    },
+    {
       "name": "cas.authn.saml-idp.metadata.basic-authn-username",
       "type": "java.lang.String",
       "deprecation": {

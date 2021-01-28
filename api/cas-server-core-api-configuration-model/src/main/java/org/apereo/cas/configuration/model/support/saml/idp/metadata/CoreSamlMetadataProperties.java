@@ -11,7 +11,7 @@ import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 
 /**
- * This is {@link SamlIdPMetadataCoreProperties}.
+ * This is {@link CoreSamlMetadataProperties}.
  *
  * @author Misagh Moayyed
  * @since 6.4.0
@@ -20,8 +20,8 @@ import java.util.concurrent.TimeUnit;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("SamlIdPMetadataCoreProperties")
-public class SamlIdPMetadataCoreProperties implements Serializable {
+@JsonFilter("CoreSamlMetadataProperties")
+public class CoreSamlMetadataProperties implements Serializable {
 
     private static final long serialVersionUID = -8116473583467202828L;
 

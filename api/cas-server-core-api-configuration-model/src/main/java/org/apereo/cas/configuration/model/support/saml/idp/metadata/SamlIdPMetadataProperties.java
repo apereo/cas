@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.support.saml.idp.metadata;
 
-import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -30,7 +29,7 @@ public class SamlIdPMetadataProperties implements Serializable {
      * Core and common settings related to saml2 metadata management.
      */
     @NestedConfigurationProperty
-    private SamlIdPMetadataCoreProperties core = new SamlIdPMetadataCoreProperties();
+    private CoreSamlMetadataProperties core = new CoreSamlMetadataProperties();
 
     /**
      * Settings related to saml2 metadata management,
@@ -38,14 +37,14 @@ public class SamlIdPMetadataProperties implements Serializable {
      * from URL resources.
      */
     @NestedConfigurationProperty
-    private SamlIdPMetadataHttpProperties http = new SamlIdPMetadataHttpProperties();
+    private HttpSamlMetadataProperties http = new HttpSamlMetadataProperties();
 
     /**
-     * Directory location of SAML metadata and signing/encryption keys.
-     * This directory will be used to hold the configuration files.
+     * Settings related to saml2 metadata management,
+     * when fetching or handling metadata using the file system.
      */
-    @RequiredProperty
-    private String location = "file:/etc/cas/saml";
+    @NestedConfigurationProperty
+    private FileSystemSamlMetadataProperties fileSystem = new FileSystemSamlMetadataProperties();
     
     /**
      * Properties pertaining to mongo db saml metadata resolvers.
