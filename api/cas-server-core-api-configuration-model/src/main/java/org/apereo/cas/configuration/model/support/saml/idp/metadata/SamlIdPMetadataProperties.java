@@ -10,8 +10,6 @@ import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -115,22 +113,8 @@ public class SamlIdPMetadataProperties implements Serializable {
     private String privateKeyAlgName = "RSA";
 
     /**
-     * Basic auth username in case the metadata instance is connecting to an MDQ server.
+     * Metadata management settings via MDQ protocol.
      */
-    private String basicAuthnUsername;
-
-    /**
-     * Basic auth password in case the metadata instance is connecting to an MDQ server.
-     */
-    private String basicAuthnPassword;
-
-    /**
-     * Supported content types in case the metadata instance is connecting to an MDQ server.
-     */
-    private List<String> supportedContentTypes = new ArrayList<>(0);
-
-    public SamlIdPMetadataProperties() {
-        supportedContentTypes.add("application/xml");
-        supportedContentTypes.add("text/xml");
-    }
+    @NestedConfigurationProperty
+    private MDQSamlMetadataProperties mdq = new MDQSamlMetadataProperties();
 }

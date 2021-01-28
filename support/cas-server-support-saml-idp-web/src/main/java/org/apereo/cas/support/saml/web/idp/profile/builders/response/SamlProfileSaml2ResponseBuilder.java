@@ -60,7 +60,7 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
         val configContext = getSamlResponseBuilderConfigurationContext();
         if (StringUtils.isBlank(service.getIssuerEntityId())) {
             samlResponse.setIssuer(buildSamlResponseIssuer(configContext.getCasProperties()
-                .getAuthn().getSamlIdp().getEntityId()));
+                .getAuthn().getSamlIdp().getCore().getEntityId()));
         } else {
             samlResponse.setIssuer(buildSamlResponseIssuer(service.getIssuerEntityId()));
         }
@@ -70,7 +70,7 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
         samlResponse.setDestination(location);
 
         if (configContext.getCasProperties()
-            .getAuthn().getSamlIdp().isAttributeQueryProfileEnabled()) {
+            .getAuthn().getSamlIdp().getCore().isAttributeQueryProfileEnabled()) {
             storeAttributeQueryTicketInRegistry(assertion, request, adaptor);
         }
 

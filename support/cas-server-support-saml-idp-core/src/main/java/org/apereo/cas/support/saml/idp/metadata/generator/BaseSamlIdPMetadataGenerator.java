@@ -34,7 +34,7 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
     @SneakyThrows
     public SamlIdPMetadataDocument generate(final Optional<SamlRegisteredService> registeredService) {
         val idp = configurationContext.getCasProperties().getAuthn().getSamlIdp();
-        LOGGER.debug("Preparing to generate metadata for entityId [{}]", idp.getEntityId());
+        LOGGER.debug("Preparing to generate metadata for entityId [{}]", idp.getCore().getEntityId());
         val samlIdPMetadataLocator = configurationContext.getSamlIdPMetadataLocator();
         if (!samlIdPMetadataLocator.exists(registeredService)) {
             val owner = SamlIdPMetadataGenerator.getAppliesToFor(registeredService);
@@ -156,7 +156,7 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
         try (val writer = new StringWriter()) {
             IOUtils.copy(template.getInputStream(), writer, StandardCharsets.UTF_8);
             val resolver = SpringExpressionLanguageValueResolver.getInstance();
-            val entityId = resolver.resolve(idp.getEntityId());
+            val entityId = resolver.resolve(idp.getCore().getEntityId());
             val scope = resolver.resolve(configurationContext.getCasProperties().getServer().getScope());
             val metadata = writer.toString()
                 .replace("${entityId}", entityId)

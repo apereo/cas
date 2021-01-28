@@ -106,7 +106,7 @@ public class SamlIdPProfileSingleLogoutMessageCreator extends AbstractSaml20Obje
 
         var samlLogoutRequest = newLogoutRequest(id, issueInstant,
             request.getLogoutUrl().toExternalForm(),
-            newIssuer(samlIdPProperties.getEntityId()),
+            newIssuer(samlIdPProperties.getCore().getEntityId()),
             request.getTicketId(),
             nameId);
 

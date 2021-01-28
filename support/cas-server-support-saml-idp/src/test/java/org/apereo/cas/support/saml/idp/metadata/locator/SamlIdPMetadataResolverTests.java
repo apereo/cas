@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("SAML")
 @TestPropertySource(properties = {
-    "cas.authn.saml-idp.entity-id=https://cas.example.org/idp",
+    "cas.authn.saml-idp.core.entity-id=https://cas.example.org/idp",
     "cas.authn.saml-idp.metadata.location=${#systemProperties['java.io.tmpdir']}/idp-metadata"
 })
 @EnableRetry
@@ -30,7 +30,7 @@ public class SamlIdPMetadataResolverTests extends BaseSamlIdPConfigurationTests 
 
     @Test
     public void verifyOperation() throws Exception {
-        val criteria = new CriteriaSet(new EntityIdCriterion(casProperties.getAuthn().getSamlIdp().getEntityId()));
+        val criteria = new CriteriaSet(new EntityIdCriterion(casProperties.getAuthn().getSamlIdp().getCore().getEntityId()));
 
         val result1 = casSamlIdPMetadataResolver.resolve(criteria);
         assertFalse(Iterables.isEmpty(result1));

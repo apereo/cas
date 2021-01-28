@@ -10,6 +10,33 @@
       }
     },
     {
+      "name": "cas.authn.saml-idp.entity-id",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.saml-idp.core.entity-id",
+        "reason": "entity-id setting is now moved into the core namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.saml-idp.authentication-context-class-mappings",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.saml-idp.core.authentication-context-class-mappings",
+        "reason": "authentication-context-class-mappings setting is now moved into the core namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.saml-idp.attribute-friendly-names",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.saml-idp.core.attribute-friendly-names",
+        "reason": "attribute-friendly-names setting is now moved into the core namespace.",
+        "level": "error"
+      }
+    },
+    {
       "name": "cas.authn.pm.enabled",
       "type": "java.lang.Boolean",
       "deprecation": {

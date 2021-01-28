@@ -119,7 +119,7 @@ public class SamlIdPMetadataConfiguration {
             samlIdPMetadataGenerator(), openSamlConfigBean.getObject());
         resolver.setFailFastInitialization(idp.getMetadata().isFailFast());
         resolver.setRequireValidMetadata(idp.getMetadata().isRequireValidMetadata());
-        resolver.setId(idp.getEntityId());
+        resolver.setId(idp.getCore().getEntityId());
         return resolver;
     }
 

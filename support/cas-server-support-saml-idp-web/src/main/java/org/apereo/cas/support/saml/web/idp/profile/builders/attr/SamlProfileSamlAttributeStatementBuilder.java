@@ -98,7 +98,7 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
         val nameFormats = new HashMap<>(resp.configureAttributeNameFormats());
         nameFormats.putAll(samlRegisteredService.getAttributeNameFormats());
 
-        val globalFriendlyNames = samlIdPProperties.getAttributeFriendlyNames();
+        val globalFriendlyNames = samlIdPProperties.getCore().getAttributeFriendlyNames();
         val friendlyNames = new HashMap<>(CollectionUtils.convertDirectedListToMap(globalFriendlyNames));
 
         attributeDefinitionStore.getAttributeDefinitions()

@@ -214,7 +214,7 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
         val id = '_' + String.valueOf(RandomUtils.nextLong());
         val builder = configurationContext.getLogoutResponseBuilder();
         val status = builder.newStatus(StatusCode.SUCCESS, "Success");
-        val issuer = builder.newIssuer(configurationContext.getCasProperties().getAuthn().getSamlIdp().getEntityId());
+        val issuer = builder.newIssuer(configurationContext.getCasProperties().getAuthn().getSamlIdp().getCore().getEntityId());
 
         val location = StringUtils.isBlank(sloService.getResponseLocation())
             ? sloService.getLocation()

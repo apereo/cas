@@ -338,7 +338,7 @@ public class SamlIdPEndpointsConfiguration {
         return new SamlIdPSaml1ArtifactResolutionProfileHandlerController(context);
     }
 
-    @ConditionalOnProperty(prefix = "cas.authn.saml-idp", name = "attribute-query-profile-enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = "cas.authn.saml-idp.core", name = "attribute-query-profile-enabled", havingValue = "true")
     @Bean
     @RefreshScope
     public SamlIdPSaml2AttributeQueryProfileHandlerController saml2AttributeQueryProfileHandlerController() {
@@ -389,7 +389,7 @@ public class SamlIdPEndpointsConfiguration {
     @Bean
     @RefreshScope
     public SessionStore<JEEContext> samlIdPDistributedSessionStore() {
-        val replicate = casProperties.getAuthn().getSamlIdp().isReplicateSessions();
+        val replicate = casProperties.getAuthn().getSamlIdp().getCore().isReplicateSessions();
         if (replicate) {
             return new DistributedJEESessionStore(centralAuthenticationService.getObject(),
                 ticketFactory.getObject(), samlIdPDistributedSessionCookieGenerator());

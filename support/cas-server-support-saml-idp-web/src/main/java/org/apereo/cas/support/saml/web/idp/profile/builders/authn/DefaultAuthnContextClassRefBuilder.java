@@ -84,7 +84,7 @@ public class DefaultAuthnContextClassRefBuilder implements AuthnContextClassRefB
         authnContextClassRefs.forEach(c -> LOGGER.debug("Requested AuthN Context [{}]", c.getURI()));
         val casAssertion = Assertion.class.cast(assertion);
 
-        val authnContexts = casProperties.getAuthn().getSamlIdp().getAuthenticationContextClassMappings();
+        val authnContexts = casProperties.getAuthn().getSamlIdp().getCore().getAuthenticationContextClassMappings();
         val definedContexts = CollectionUtils.convertDirectedListToMap(authnContexts);
         val mappedMethod = authnContextClassRefs.stream()
             .filter(ref -> definedContexts.containsKey(ref.getURI()))

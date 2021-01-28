@@ -30,7 +30,7 @@ public class DefaultSamlArtifactTicketFactoryTests extends BaseSamlIdPConfigurat
     public void verifyOperation() {
         val tgt = new MockTicketGrantingTicket("casuser");
         val ticketId = samlArtifactTicketFactory.create(UUID.randomUUID().toString(), tgt.getAuthentication(),
-            tgt, casProperties.getAuthn().getSamlIdp().getEntityId(),
+            tgt, casProperties.getAuthn().getSamlIdp().getCore().getEntityId(),
             "https://www.example.org", getAuthnRequestFor("helloworld"));
         assertNotNull(ticketId);
         assertNotNull(ticketId.getPrefix());
