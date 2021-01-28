@@ -40,7 +40,7 @@ public class SamlIdPObjectSignatureValidator extends SamlObjectSignatureValidato
                                                                final RequestAbstractType profileRequest) throws Exception {
 
         val idp = casProperties.getAuthn().getSamlIdp();
-        return SamlIdPUtils.getRoleDescriptorResolver(casSamlIdPMetadataResolver, idp.getMetadata().isRequireValidMetadata());
+        return SamlIdPUtils.getRoleDescriptorResolver(casSamlIdPMetadataResolver, idp.getMetadata().getCore().isRequireValidMetadata());
     }
 
     @Override
