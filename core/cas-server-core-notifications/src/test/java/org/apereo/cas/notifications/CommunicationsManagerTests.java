@@ -22,6 +22,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -80,7 +81,8 @@ public class CommunicationsManagerTests {
         props.setText(tempFile.getCanonicalPath());
         props.setSubject("Subject");
         props.setFrom("cas@example.org");
-        val body = EmailMessageBodyBuilder.builder().properties(props).parameters(List.of("param1", "param2")).build().produce();
+        val body = EmailMessageBodyBuilder.builder().properties(props)
+            .parameters(Map.of("k1", "param1", "k2", "param2")).build().produce();
         assertTrue(communicationsManager.email(props, "sample@example.org", body));
     }
 

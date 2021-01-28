@@ -14,7 +14,7 @@ import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 
-import java.util.List;
+import java.util.Map;
 
 /**
  * This is {@link RegisteredServicesEventListener}.
@@ -76,7 +76,8 @@ public class RegisteredServicesEventListener {
         communicationsManager.validate();
         if (communicationsManager.isMailSenderDefined()) {
             val mail = serviceRegistry.getMail();
-            val body = EmailMessageBodyBuilder.builder().properties(mail).parameters(List.of(serviceName)).build().produce();
+            val body = EmailMessageBodyBuilder.builder().properties(mail)
+                .parameters(Map.of("service", serviceName)).build().produce();
             contacts
                 .stream()
                 .filter(c -> StringUtils.isNotBlank(c.getEmail()))

@@ -32,7 +32,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -190,7 +190,7 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
             val reset = casProperties.getAuthn().getPm().getReset().getMail();
             val text = EmailMessageBodyBuilder.builder()
                 .properties(reset)
-                .parameters(List.of(url))
+                .parameters(Map.of("url", url))
                 .build()
                 .produce();
             LOGGER.debug("Sending password reset URL [{}] via email to [{}] for username [{}]", url, to, username);

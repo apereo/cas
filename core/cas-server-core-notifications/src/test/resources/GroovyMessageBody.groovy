@@ -1,3 +1,7 @@
 def run(Object[] args) {
-    return String.format("%s, %s", args[0], args[1]);
+    def params = (args[0] as Map).values()
+    def logger = args[1]
+
+    logger.info("Parameters are {}", args[0])
+    return String.format("%s, %s", params[0], params[1]);
 }
