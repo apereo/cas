@@ -44,7 +44,7 @@ public class StreamServicesHazelcastProperties extends BaseStreamServicesPropert
     private BaseHazelcastProperties config = new BaseHazelcastProperties();
 
     public StreamServicesHazelcastProperties() {
-        config.getCluster().setPort(PORT);
-        config.getCluster().setInstanceName("localhost-services-replication");
+        config.getCluster().getNetwork().setPort(PORT);
+        config.getCluster().getCore().setInstanceName("localhost-services-replication");
     }
 }
