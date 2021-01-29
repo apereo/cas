@@ -8,11 +8,15 @@ category: Multifactor Authentication
 
 # Custom Multifactor Authentication
 
-To create your own custom multifactor authentication provider, you will need to design components that primarily register a customized authentication flow into the CAS webflow engine under a unique identifier. Later on, you will also need to consider strategies by which your custom multifactor authentication provider [can be triggered](Configuring-Multifactor-Authentication-Triggers.html).
+To create your own custom multifactor authentication provider, you will need to design components that primarily register a customized 
+authentication flow into the CAS webflow engine under a unique identifier. Later on, you will also need to consider strategies by which 
+your custom multifactor authentication provider [can be triggered](Configuring-Multifactor-Authentication-Triggers.html).
 
 ## Provider ID
 
-Each multifactor provider is assigned a unique identifier that is typically mapped or made equal to the underlying webflow. The unique identifier can be any arbitrary string of your choosing, provided it's kept distinct and sensible as it, depending on use case, may be used in other systems and by other applications to act as a trigger.
+Each multifactor provider is assigned a unique identifier that is typically mapped or made equal to the underlying webflow. The unique 
+identifier can be any arbitrary string of your choosing, provided it's kept distinct and sensible as it, depending on 
+use case, may be used in other systems and by other applications to act as a trigger.
 
 For the purposes of this guide, let's choose `mfa-custom` as our provider id.
 
@@ -100,7 +104,7 @@ public class CustomAuthenticatorSubsystemConfiguration {
 
     @Bean
     public CasWebflowExecutionPlanConfigurer customWebflowExecutionPlanConfigurer() {
-        return plan -> plan.registerWebflowConfigurer(CustomAuthenticatorWebflowConfigurer());
+        return plan -> plan.registerWebflowConfigurer(customWebflowConfigurer());
     }
     ...
 }
