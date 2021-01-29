@@ -197,7 +197,9 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
         if (StringUtils.isNotBlank(to)) {
             val reset = casProperties.getAuthn().getPm().getReset().getMail();
             val parameters = CollectionUtils.<String, Object>wrap("url", url);
-            val person = principalResolver.resolve(new BasicIdentifiableCredential().setId(username));
+            val credential = new BasicIdentifiableCredential();
+            credential.setId(username);
+            val person = principalResolver.resolve(credential);
             FunctionUtils.doIfNotNull(person, principal -> parameters.put("principal", principal));
 
             val text = EmailMessageBodyBuilder.builder()

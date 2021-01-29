@@ -45,10 +45,10 @@ public class HazelcastConfigurationFactoryTests {
     @Test
     public void verifyDefaultJoinConfig() {
         val hz = new BaseHazelcastProperties();
-        hz.getCluster().setMulticastEnabled(true);
-        hz.getCluster().setMulticastGroup("127.0.0.1");
-        hz.getCluster().setMulticastPort(8765);
-        hz.getCluster().setMulticastTrustedInterfaces("127.0.0.1");
+        hz.getCluster().getDiscovery().getMulticast().setEnabled(true);
+        hz.getCluster().getDiscovery().getMulticast().setGroup("127.0.0.1");
+        hz.getCluster().getDiscovery().getMulticast().setPort(8765);
+        hz.getCluster().getDiscovery().getMulticast().setTrustedInterfaces("127.0.0.1");
         val result = HazelcastConfigurationFactory.build(hz);
         assertNotNull(result);
     }

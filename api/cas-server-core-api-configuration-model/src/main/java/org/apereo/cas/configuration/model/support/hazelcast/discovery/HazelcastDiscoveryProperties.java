@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.hazelcast.discovery;
 
+import org.apereo.cas.configuration.model.support.hazelcast.HazelcastClusterMulticastProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -69,4 +70,10 @@ public class HazelcastDiscoveryProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private HazelcastDockerSwarmDiscoveryProperties dockerSwarm = new HazelcastDockerSwarmDiscoveryProperties();
+
+    /**
+     * Multicast discovery settings.
+     */
+    @NestedConfigurationProperty
+    private HazelcastClusterMulticastProperties multicast = new HazelcastClusterMulticastProperties();
 }

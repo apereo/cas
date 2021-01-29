@@ -75,6 +75,7 @@ are:
 - `cas.oidc`
 - `cas.authn.oauth.uma`
 - `cas.events`
+- `cas.authn.saml-idp`
 - `cas.acceptable-usage-policy` 
 - `cas.ticket.registry.hazelcast` 
          
