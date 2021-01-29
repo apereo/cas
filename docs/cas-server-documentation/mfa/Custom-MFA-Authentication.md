@@ -97,7 +97,7 @@ public class CustomAuthenticatorSubsystemConfiguration {
 
     @Bean
     public CasWebflowExecutionPlanConfigurer customWebflowExecutionPlanConfigurer() {
-        return plan -> plan.registerWebflowConfigurer(CustomAuthenticatorWebflowConfigurer());
+        return plan -> plan.registerWebflowConfigurer(customWebflowConfigurer());
     }
     ...
 }
