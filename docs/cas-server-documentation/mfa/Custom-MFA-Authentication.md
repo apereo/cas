@@ -20,24 +20,6 @@ use case, may be used in other systems and by other applications to act as a tri
 
 For the purposes of this guide, let's choose `mfa-custom` as our provider id.
 
-## Webflow XML Configuration
-
-The flow configuration file needs to be placed inside a `src/main/resources/webflow/mfa-custom` 
-directory, named as `mfa-custom.xml` whose outline is sampled below:
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<flow xmlns="http://www.springframework.org/schema/webflow"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd">
-
-    <!-- 
-        Define states and actions... 
-    -->
-    <end-state id="success" />
-</flow>
-```
-
 ## Register Webflow Configuration
 
 The custom provider itself is its own standalone webflow that is then registered with the primary authentication flow.
@@ -59,6 +41,9 @@ public class CustomAuthenticatorWebflowConfigurer extends AbstractCasMultifactor
     }
 }
 ```
+   
+The `CustomAuthenticatorWebflowConfigurer` must be able to construct the webflow definition dynamically
+using CAS-provided APIs. See the CAS codebase to review and learn from other implementations
 
 ## Design Provider
 
@@ -73,7 +58,8 @@ public class CustomMultifactorAuthenticationProvider extends AbstractMultifactor
 
 ## Register Provider
 
-The custom webflow configuration needs to be registered with CAS. The outline of the configuration registration is sampled and summarized below:
+The custom webflow configuration needs to be registered with CAS. The outline of 
+the configuration registration is sampled and summarized below:
 
 ```java
 package org.example.cas;
@@ -98,6 +84,7 @@ public class CustomAuthenticatorSubsystemConfiguration {
     }
 
     @Bean
+    @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer customWebflowConfigurer() {
         return new CustomAuthenticatorWebflowConfigurer(...);
     } 
