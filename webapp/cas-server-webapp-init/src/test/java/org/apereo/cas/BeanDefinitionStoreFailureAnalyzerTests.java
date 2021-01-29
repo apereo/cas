@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.core.CasServerProperties;
 import org.apereo.cas.web.BeanDefinitionStoreFailureAnalyzer;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -20,6 +21,7 @@ import static org.springframework.beans.factory.support.BeanDefinitionBuilder.ge
  * @author Hal Deadman
  * @since 6.4.0
  */
+@Tag("Utility")
 public class BeanDefinitionStoreFailureAnalyzerTests {
 
     @Test
