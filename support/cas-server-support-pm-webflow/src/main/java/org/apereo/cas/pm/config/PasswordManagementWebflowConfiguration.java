@@ -1,6 +1,7 @@
 package org.apereo.cas.pm.config;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.pm.PasswordManagementService;
@@ -60,6 +61,10 @@ import org.springframework.webflow.mvc.servlet.FlowHandlerAdapter;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class PasswordManagementWebflowConfiguration {
+    @Autowired
+    @Qualifier("defaultPrincipalResolver")
+    private ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
+
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
@@ -156,7 +161,7 @@ public class PasswordManagementWebflowConfiguration {
     public Action sendPasswordResetInstructionsAction() {
         return new SendPasswordResetInstructionsAction(casProperties, communicationsManager.getObject(),
             passwordManagementService.getObject(), ticketRegistry.getObject(),
-            ticketFactory.getObject());
+            ticketFactory.getObject(), defaultPrincipalResolver.getObject());
     }
 
     @ConditionalOnMissingBean(name = "verifyPasswordResetRequestAction")

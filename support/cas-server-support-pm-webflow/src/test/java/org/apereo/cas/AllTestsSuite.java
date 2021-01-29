@@ -11,6 +11,7 @@ import org.apereo.cas.pm.web.flow.actions.HandlePasswordExpirationWarningMessage
 import org.apereo.cas.pm.web.flow.actions.InitPasswordChangeActionTests;
 import org.apereo.cas.pm.web.flow.actions.InitPasswordResetActionTests;
 import org.apereo.cas.pm.web.flow.actions.PasswordChangeActionTests;
+import org.apereo.cas.pm.web.flow.actions.SendForgotUsernameInstructionsActionEmailMessageBodyTests;
 import org.apereo.cas.pm.web.flow.actions.SendForgotUsernameInstructionsActionTests;
 import org.apereo.cas.pm.web.flow.actions.SendPasswordResetInstructionsActionTests;
 import org.apereo.cas.pm.web.flow.actions.ValidatePasswordResetTokenActionTests;
@@ -38,6 +39,7 @@ import org.junit.runner.RunWith;
     PasswordChangeActionTests.class,
     ForgotUsernameCaptchaWebflowConfigurerTests.class,
     ValidatePasswordResetTokenActionTests.class,
+    SendForgotUsernameInstructionsActionEmailMessageBodyTests.class,
     VerifyPasswordResetRequestActionSecurityQuestionsDisabledTests.class,
     PasswordManagementCaptchaWebflowConfigurerTests.class,
     PasswordManagementSingleSignOnParticipationStrategyTests.class,

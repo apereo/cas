@@ -11,11 +11,16 @@ CAS can act as a SAML2 identity provider accepting authentication requests and p
 
 If you intend to allow CAS to delegate authentication to an external SAML2 identity provider, you need to [review this guide](../integration/Delegate-Authentication.html).
 
-<div class="alert alert-info"><strong>SAML Specification</strong><p>This document solely focuses on what one might do to turn on SAML2 support inside CAS. It is not to describe/explain the numerous characteristics of the SAML2 protocol itself. If you are unsure about the concepts referred to on this page, please start with reviewing the <a href="http://docs.oasis-open.org/security/saml/Post2.0/sstc-saml-tech-overview-2.0.html">SAML2 Specification</a>.</p></div>
+<div class="alert alert-info"><strong>SAML Specification</strong><p>This document solely focuses on what one might do to turn on SAML2 
+support inside CAS. It is not to describe/explain the numerous characteristics of the SAML2 protocol itself. If you are unsure 
+about the concepts referred to on this page, please start with reviewing 
+the <a href="http://docs.oasis-open.org/security/saml/Post2.0/sstc-saml-tech-overview-2.0.html">SAML2 Specification</a>.</p></div>
 
 ## Federation Interop Evaluation
 
-The CAS project strives to conform to the [SAML V2.0 Implementation Profile for Federation Interoperability](https://kantarainitiative.github.io/SAMLprofiles/fedinterop.html). An evaluation of the requirements against the current CAS release is available [here](https://docs.google.com/spreadsheets/d/1NYN5n6AaNxz0UxwkzIDuXMYL1JUKNZZlSzLZEDUw4Aw/edit?usp=sharing). It is recommended that you view, evaluate and comment on functionality that is currently either absent or marked questionable where verification is needed.
+The CAS project strives to conform to the [SAML V2.0 Implementation Profile for Federation Interoperability](https://kantarainitiative.github.io/SAMLprofiles/fedinterop.html). An 
+evaluation of the requirements against the current CAS release is available [here](https://docs.google.com/spreadsheets/d/1NYN5n6AaNxz0UxwkzIDuXMYL1JUKNZZlSzLZEDUw4Aw/edit?usp=sharing). It 
+is recommended that you view, evaluate and comment on functionality that is currently either absent or marked questionable where verification is needed.
 
 ## SAML Endpoints
 
@@ -31,10 +36,10 @@ The following CAS endpoints respond to supported SAML2 profiles:
 - `/idp/profile/SAML2/SOAP/AttributeQuery`
 - `/idp/profile/SAML1/SOAP/ArtifactResolution`
 
-## Identity Provider Metadata
+## Metadata Management
 
-SAML2 identity provider metadata can be managed in dynamics ways 
-as well. To learn more, please [review this guide](../installation/Configuring-SAML2-DynamicMetadata.html).
+Handling and storing SAML2 identity provider or service provider metadata 
+can be done in a few ways. To learn more, please [review this guide](../installation/Configuring-SAML2-DynamicMetadata.html).
 
 ## Configuration
 
@@ -68,42 +73,6 @@ The following endpoints are provided by CAS:
 
 Please [see this guide](../services/SAML2-Service-Management.html) to learn more 
 about how to configure SAML2 service providers.
-
-### Metadata Aggregates
-
-CAS services are fundamentally recognized and loaded by service identifiers taught to CAS typically via
-regular expressions. This allows for common groupings of applications and services by
-url patterns (i.e. "Everything that belongs to `example.org` is registered with CAS).
-With aggregated metadata, CAS essentially does double
-authorization checks because it will first attempt to find the entity id
-in its collection of resolved metadata components and then it looks to
-see if that entity id is authorized via the pattern that is assigned to
-that service definition. This means you can do one of several things:
-
-1. Open up the pattern to allow everything that is authorized in the metadata.
-2. Restrict the pattern to only a select few entity ids found in the
-metadata. This is essentially the same thing as defining metadata criteria
-to filter down the list of resolved relying parties and entity ids except that its done
-after the fact once the metadata is fully loaded and parsed.
-3. You can also instruct CAS to filter metadata
-entities by a defined criteria at resolution time when it reads the
-metadata itself. This is essentially the same thing as forcing the pattern
-to match entity ids, except that it's done while CAS is reading the
-metadata and thus load times are improved.
-
-### Metadata Resolution
-
-Service provider metadata is fetched and loaded on demand for every service and then cached in a global cache for a 
-configurable duration. Subsequent requests for service metadata will always consult the cache first and if missed, 
-will resort to actually resolving the metadata by loading or contacting the configured resource. 
-Each service provider definition that is registered with CAS may optionally also specifically an expiration period of 
-metadata resolution to override the default global value.
-
-#### Dynamic Metadata Resolution
-
-In addition to the more traditional means of managing service provider metadata such as direct XML files or URLs, CAS 
-provides support for a number of other strategies to fetch metadata more dynamically with the likes of MDQ and more.
-To learn more, please [review this guide](../installation/Configuring-SAML2-DynamicMetadata.html).
 
 ### Security Configuration
 
