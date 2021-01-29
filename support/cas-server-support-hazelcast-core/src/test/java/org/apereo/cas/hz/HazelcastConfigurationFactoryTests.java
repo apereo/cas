@@ -26,7 +26,7 @@ public class HazelcastConfigurationFactoryTests {
             "latest_update", "latest_access", "put_if_absent", "other"};
         Arrays.stream(policies).forEach(policy -> {
             val hz = new BaseHazelcastProperties();
-            hz.getCluster().setMapMergePolicy(policy);
+            hz.getCluster().getCore().setMapMergePolicy(policy);
             val result = HazelcastConfigurationFactory.buildMapConfig(hz, "mapName", 10);
             assertNotNull(result);
         });
@@ -35,9 +35,9 @@ public class HazelcastConfigurationFactoryTests {
     @Test
     public void verifyLocalPublic() {
         val hz = new BaseHazelcastProperties();
-        hz.getCluster().setLocalAddress("127.0.0.1");
-        hz.getCluster().setPublicAddress("127.0.0.1");
-        hz.getCluster().setNetworkInterfaces("127.0.0.1,*");
+        hz.getCluster().getNetwork().setLocalAddress("127.0.0.1");
+        hz.getCluster().getNetwork().setPublicAddress("127.0.0.1");
+        hz.getCluster().getNetwork().setNetworkInterfaces("127.0.0.1,*");
         val result = HazelcastConfigurationFactory.build(hz);
         assertNotNull(result);
     }

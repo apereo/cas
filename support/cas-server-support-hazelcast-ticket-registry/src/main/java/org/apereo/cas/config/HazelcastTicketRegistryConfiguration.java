@@ -60,7 +60,7 @@ public class HazelcastTicketRegistryConfiguration {
     @Bean(destroyMethod = "shutdown")
     public HazelcastInstance casTicketRegistryHazelcastInstance() {
         val hz = casProperties.getTicket().getRegistry().getHazelcast();
-        LOGGER.debug("Creating Hazelcast instance for members [{}]", hz.getCluster().getMembers());
+        LOGGER.debug("Creating Hazelcast instance for members [{}]", hz.getCluster().getNetwork().getMembers());
         val hazelcastInstance = Hazelcast.newHazelcastInstance(HazelcastConfigurationFactory.build(hz));
         val catalog = ticketCatalog.getObject();
         catalog.findAll()
@@ -71,7 +71,6 @@ public class HazelcastTicketRegistryConfiguration {
             .forEach(m -> hazelcastInstance.getConfig().addMapConfig(m));
         return hazelcastInstance;
     }
-
 
     @Bean
     public TicketRegistryCleaner ticketRegistryCleaner() {

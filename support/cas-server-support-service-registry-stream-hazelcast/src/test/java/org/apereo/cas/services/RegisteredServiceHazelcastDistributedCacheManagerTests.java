@@ -34,7 +34,7 @@ public class RegisteredServiceHazelcastDistributedCacheManagerTests {
     @BeforeEach
     public void initialize() {
         val properties = new BaseHazelcastProperties();
-        properties.getCluster().setInstanceName(getClass().getSimpleName());
+        properties.getCluster().getCore().setInstanceName(getClass().getSimpleName());
         val config = HazelcastConfigurationFactory.build(properties,
             HazelcastConfigurationFactory.buildMapConfig(properties, "cache", 10));
         this.hz = Hazelcast.newHazelcastInstance(config);
