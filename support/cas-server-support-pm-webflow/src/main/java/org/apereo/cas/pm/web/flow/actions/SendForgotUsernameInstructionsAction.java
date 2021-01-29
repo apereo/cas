@@ -101,7 +101,9 @@ public class SendForgotUsernameInstructionsAction extends AbstractAction {
      */
     protected boolean sendForgotUsernameEmailToAccount(final String email, final String username) {
         val parameters = CollectionUtils.<String, Object>wrap("email", email);
-        val person = principalResolver.resolve(new BasicIdentifiableCredential().setId(username));
+        val credential = new BasicIdentifiableCredential();
+        credential.setId(username);
+        val person = principalResolver.resolve(credential);
         FunctionUtils.doIfNotNull(person, principal -> parameters.put("principal", principal));
         val reset = casProperties.getAuthn().getPm().getForgotUsername().getMail();
         val body = EmailMessageBodyBuilder.builder().properties(reset).parameters(parameters).build().produce();

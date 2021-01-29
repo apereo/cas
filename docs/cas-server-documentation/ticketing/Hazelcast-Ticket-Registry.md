@@ -135,7 +135,7 @@ each member will wait 60 seconds before moving on. Be careful when providing a h
 value. Also, be careful not to set the value too low, or the members might give 
 up too early and create their own cluster.
 
-{% include casproperties.html properties="cas.ticket.registry.hazelcast.cluster.discovery.multicast-" %}
+{% include casproperties.html properties="cas.ticket.registry.hazelcast.cluster.discovery.multicast." %}
 
 ## WAN Replication
 

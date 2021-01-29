@@ -214,18 +214,19 @@ public class HazelcastConfigurationFactory {
             .setConnectionTimeoutSeconds(cluster.getTimeout());
         LOGGER.trace("Created Hazelcast TCP/IP configuration [{}] for members [{}]", tcpIpConfig, cluster.getMembers());
 
-        val multicastConfig = new MulticastConfig().setEnabled(cluster.isMulticastEnabled());
-        if (cluster.isMulticastEnabled()) {
+        val multicast = cluster.getDiscovery().getMulticast();
+        val multicastConfig = new MulticastConfig().setEnabled(multicast.isEnabled());
+        if (multicast.isEnabled()) {
             LOGGER.debug("Created Hazelcast Multicast configuration [{}]", multicastConfig);
-            multicastConfig.setMulticastGroup(cluster.getMulticastGroup());
-            multicastConfig.setMulticastPort(cluster.getMulticastPort());
+            multicastConfig.setMulticastGroup(multicast.getGroup());
+            multicastConfig.setMulticastPort(multicast.getPort());
 
-            val trustedInterfaces = StringUtils.commaDelimitedListToSet(cluster.getMulticastTrustedInterfaces());
+            val trustedInterfaces = StringUtils.commaDelimitedListToSet(multicast.getTrustedInterfaces());
             if (!trustedInterfaces.isEmpty()) {
                 multicastConfig.setTrustedInterfaces(trustedInterfaces);
             }
-            multicastConfig.setMulticastTimeoutSeconds(cluster.getMulticastTimeout());
-            multicastConfig.setMulticastTimeToLive(cluster.getMulticastTimeToLive());
+            multicastConfig.setMulticastTimeoutSeconds(multicast.getTimeout());
+            multicastConfig.setMulticastTimeToLive(multicast.getTimeToLive());
         } else {
             LOGGER.debug("Skipped Hazelcast Multicast configuration since feature is disabled");
         }
