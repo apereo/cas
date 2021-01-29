@@ -11,7 +11,9 @@ category: Developer
 This page documents the steps that a CAS developer/contributor should take for building a CAS server locally.
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>
-If you are about to deploy and configure CAS, you are in the <strong>WRONG PLACE</strong>! To deploy CAS locally, use the WAR Overlay method described in the project documentation for a specific CAS version. Cloning, downloading and building the CAS codebase from source is <strong>ONLY</strong> required if you wish to contribute to the development of the project.
+If you are about to deploy and configure CAS, you are in the <strong>WRONG PLACE</strong>! To deploy CAS locally, use the 
+WAR Overlay method described in the project documentation for a specific CAS version. Cloning, downloading and building the 
+CAS codebase from source is <strong>ONLY</strong> required if you wish to contribute to the development of the project.
 </p></div>
 
 ## Source Checkout
@@ -304,7 +306,7 @@ alias bc='clear; cas; cd webapp/cas-server-webapp-tomcat ; \
 
 # Install jars for use with a CAS overlay project
 alias bci='clear; cas; \
-    ./gradlew clean build install --configure-on-demand \
+    ./gradlew clean build publishToMavenLocal --configure-on-demand \
     --build-cache --parallel \
     -x test -x javadoc -x check --stacktrace \
     -DskipNestedConfigMetadataGen=true \
