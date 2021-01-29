@@ -33,27 +33,14 @@ and latencies must be considered and carefully tuned. This might have become spe
 in clustered deployments as depending on the ticket registry of choice, CAS may need 
 to <i>interrogate</i> the entire cluster by running distributed queries to calculate ticket usage.</p></div>
 
-## Memcached
+### Advanced
 
-Please [see this guide](Configuring-Monitoring-Memcached.html) for more info.
+Monitors can also be managed using any one of the following strategies.
 
-## Ehcache
-
-Please [see this guide](Configuring-Monitoring-Ehcache.html) for more info.
-
-## MongoDb
-
-Please [see this guide](Configuring-Monitoring-MongoDb.html) for more info.
-
-## Hazelcast
-
-Please [see this guide](Configuring-Monitoring-Hazelcast.html) for more info.
-
-## JDBC
-
-Please [see this guide](Configuring-Monitoring-JDBC.html) for more info.
-
-## LDAP
-
-Please [see this guide](Configuring-Monitoring-LDAP.html) for more info.
-
+| Storage        | Description                                         
+|----------------------------------------------------------------------------
+| Memcached      | [this guide](Configuring-Monitoring-Memcached.html)  
+| Ehcache        | [this guide](Configuring-Monitoring-Ehcache.html)  
+| MongoDb        | [this guide](Configuring-Monitoring-MongoDb.html)  
+| JDBC           | [this guide](Configuring-Monitoring-JDBC.html)  
+| LDAP           | [this guide](Configuring-Monitoring-LDAP.html)
