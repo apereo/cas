@@ -91,6 +91,7 @@ public class CustomAuthenticatorSubsystemConfiguration {
     }
 
     @Bean
+    @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer customWebflowConfigurer() {
         return new CustomAuthenticatorWebflowConfigurer(...);
     } 
