@@ -40,7 +40,7 @@ This may be overkill and involves all the pain that comes with SSL (e.g. trust &
 This chart uses `StatefulSet` for CAS rather than a `Deployment` but this may change in the future or
 become configurable. 
 
-The Boot Admin CAS server discovery method should probably change to "cloud" discovery eventually.
+The Spring Boot Admin CAS server discovery method should probably change to "cloud" discovery eventually.
 
 ## Installing CAS on local Kubernetes Installation
 
@@ -61,35 +61,36 @@ There are multiple options for running a Kubernetes cluster on Mac, Windows or L
 they all require Linux as a VM or as the host OS. The CAS Helm Chart is installed and tested
 on a K3S Kubernetes installation as part of the continuous integration scripts of the CAS Initializr 
 so that method should always work, but it does require users of Windows and Mac to install
-a Linux virtual machine (e.g. running Ubuntu);
+a Linux virtual machine (e.g. running Ubuntu).
 
-- [k3s](https://k3s.io/) - Works on linux, very light-weight and easy to install for development. 
-  Installing Docker is not required. 
+### K3S Kubernetes
+
+[k3s](https://k3s.io/) works on linux, very light-weight and easy to install for development. Installing Docker is not required. 
   
-```shell script
-  # install k3s, without traefik ingress controller
-  curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --disable traefik" sh
-  # the following export is needed for helm, put in profile
-  export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
-  # build a CAS image from the overlay generated from Initializr
-  ./gradlew clean build jibBuildTar --refresh-dependencies
-  # import the image to k3s (k3s can pull images from registries but can't see local docker images)
-  k3s ctr images import build/jib-image.tar
-  # verify the image is loaded
-  k3s ctr images ls | grep cas
-  # Go to folder with helm chart
-  cd helm 
-  # create secret for tomcat
-  ./create-cas-server-keystore-secret.sh
-  # create secret for ingress controller to use with CAS ingress (nginx-ingress will use default if not created)
-  ./create-ingress-tls.sh
-  # create configmap containing SSL trust store
-  ./create-truststore.sh
-  # install cas-server helm chart
-  helm upgrade --install cas-server ./cas-server
-  ``` 
+```bash
+# install k3s, without traefik ingress controller
+curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --disable traefik" sh
+# the following export is needed for helm, put in profile
+export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+# build a CAS image from the overlay generated from Initializr
+./gradlew clean build jibBuildTar --refresh-dependencies
+# import the image to k3s (k3s can pull images from registries but can't see local docker images)
+k3s ctr images import build/jib-image.tar
+# verify the image is loaded
+k3s ctr images ls | grep cas
+# Go to folder with helm chart
+cd helm 
+# create secret for tomcat
+./create-cas-server-keystore-secret.sh
+# create secret for ingress controller to use with CAS ingress (nginx-ingress will use default if not created)
+./create-ingress-tls.sh
+# create configmap containing SSL trust store
+./create-truststore.sh
+# install cas-server helm chart
+helm upgrade --install cas-server ./cas-server
+``` 
 
-### Other Options 
+#### Other Options 
 
 - [Docker Desktop](https://www.docker.com/products/docker-desktop)
   - Install Docker Desktop
@@ -104,16 +105,14 @@ a Linux virtual machine (e.g. running Ubuntu);
 
 - [Minikube](https://minikube.sigs.k8s.io/docs/start/)
 
-
 ### Install Ingress Controller
 
-The CAS Helm chart is only tested with Kubernetes ingress-nginx, feel free to add support for other ingress controllers.
+The CAS Helm chart is only tested with Kubernetes ingress-nginx, feel free to add support for other ingress controllers. Kubernetes Nginx 
+Ingress Installation Guide can be found [here](https://kubernetes.github.io/ingress-nginx/deploy/).
 
-[Kubernetes Nginx Ingress Installation Guide](https://kubernetes.github.io/ingress-nginx/deploy/)
+To install the Ingress controller using Helm and the `ingress-nginx` Helm chart:
 
-To install the ingress controller using Helm and the ingress-nginx Helm chart:
-
-```shell script
+```bash
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 kubectl create namespace ingress-nginx
 helm install --namespace ingress-nginx ingress-nginx ingress-nginx/ingress-nginx
@@ -190,6 +189,4 @@ If the CAS pod is running, browse to `https://cas.example.org/cas/login`.
 There is also an ingress for the CAS Spring Boot Admin server that should be accessible
 using the host name specified for the Boot Admin's ingress.  
 The CAS Spring Boot Admin server has its own ingress since it is meant to be internally accessible 
-and CAS is likely external, but both could be internal or external. 
-
-
+and CAS is likely external, but both could be internal or external.

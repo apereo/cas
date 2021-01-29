@@ -1,6 +1,8 @@
 package org.apereo.cas.pm.web.flow.actions;
 
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
@@ -14,6 +16,7 @@ import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
@@ -32,7 +35,6 @@ import org.springframework.webflow.execution.RequestContext;
 
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -74,6 +76,12 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
      * Ticket factory instance.
      */
     protected final TicketFactory ticketFactory;
+
+    /**
+     * The principal resolver to resolve the user
+     * and fetch attributes for follow-up ops, such as email message body building.
+     */
+    protected final PrincipalResolver principalResolver;
 
     /**
      * Utility method to generate a password reset URL.
@@ -188,9 +196,13 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
     protected boolean sendPasswordResetEmailToAccount(final String username, final String to, final String url) {
         if (StringUtils.isNotBlank(to)) {
             val reset = casProperties.getAuthn().getPm().getReset().getMail();
+            val parameters = CollectionUtils.<String, Object>wrap("url", url);
+            val person = principalResolver.resolve(new BasicIdentifiableCredential().setId(username));
+            FunctionUtils.doIfNotNull(person, principal -> parameters.put("principal", principal));
+
             val text = EmailMessageBodyBuilder.builder()
                 .properties(reset)
-                .parameters(Map.of("url", url))
+                .parameters(parameters)
                 .build()
                 .produce();
             LOGGER.debug("Sending password reset URL [{}] via email to [{}] for username [{}]", url, to, username);

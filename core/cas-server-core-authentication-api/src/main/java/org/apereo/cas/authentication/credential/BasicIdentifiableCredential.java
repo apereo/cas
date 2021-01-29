@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 
 /**
  * This is {@link BasicIdentifiableCredential}, a simple credential implementation
@@ -23,6 +24,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
+@Accessors(chain = true)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public class BasicIdentifiableCredential extends AbstractCredential {
     private static final long serialVersionUID = -700605020472810939L;
