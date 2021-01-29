@@ -121,6 +121,11 @@ public class CustomAuthenticatorSubsystemConfiguration {
                 loginFlowDefinitionRegistry,
                 customFlowRegistry());
     }
+    
+    @Bean
+    public CasWebflowExecutionPlanConfigurer customWebflowExecutionPlanConfigurer() {
+        return plan -> plan.registerWebflowConfigurer(customWebflowConfigurer());
+    }
     ...
 }
 ```
