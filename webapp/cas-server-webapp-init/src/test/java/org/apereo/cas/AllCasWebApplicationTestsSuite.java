@@ -10,8 +10,10 @@ import org.junit.runner.RunWith;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@SelectClasses({CasEmbeddedContainerUtilsTests.class,
-                BeanDefinitionStoreFailureAnalyzerTests.class})
+@SelectClasses({
+    CasEmbeddedContainerUtilsTests.class,
+    BeanDefinitionStoreFailureAnalyzerTests.class
+})
 @RunWith(JUnitPlatform.class)
 public class AllCasWebApplicationTestsSuite {
 }
