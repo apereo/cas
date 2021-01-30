@@ -9,10 +9,6 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * This is {@link HazelcastCoreClusterProperties}.
@@ -29,7 +25,7 @@ public class HazelcastCoreClusterProperties implements Serializable {
     private static final long serialVersionUID = -8374968308106013185L;
 
     /**
-     * With {@code PartitionGroupConfig, you can control how primary and backup partitions are mapped to physical Members.
+     * With {@code PartitionGroupConfig}, you can control how primary and backup partitions are mapped to physical Members.
      * Hazelcast will always place partitions on different partition groups so as to provide redundancy.
      * Accepted value are: {@code PER_MEMBER, HOST_AWARE, CUSTOM, ZONE_AWARE, SPI}.
      * In all cases a partition will never be created on the same group. If there are more partitions defined than
