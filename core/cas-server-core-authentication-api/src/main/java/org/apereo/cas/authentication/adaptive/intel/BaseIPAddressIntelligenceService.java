@@ -28,8 +28,9 @@ public abstract class BaseIPAddressIntelligenceService implements IPAddressIntel
     }
 
     private boolean isClientIpAddressRejected(final String clientIp) {
-        return StringUtils.isNotBlank(this.adaptiveAuthenticationProperties.getRejectIpAddresses())
-            && Pattern.compile(this.adaptiveAuthenticationProperties.getRejectIpAddresses()).matcher(clientIp).find();
+        val rejectIpAddresses = this.adaptiveAuthenticationProperties.getPolicy().getRejectIpAddresses();
+        return StringUtils.isNotBlank(rejectIpAddresses)
+            && Pattern.compile(rejectIpAddresses).matcher(clientIp).find();
     }
 
     @Override

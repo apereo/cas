@@ -48,7 +48,7 @@ public class DefaultAdaptiveAuthenticationPolicy implements AdaptiveAuthenticati
         }
         LOGGER.debug("User agent [{}] is authorized to proceed", userAgent);
         if (this.geoLocationService != null && location != null && StringUtils.isNotBlank(clientIp)
-            && StringUtils.isNotBlank(this.adaptiveAuthenticationProperties.getRejectCountries())) {
+            && StringUtils.isNotBlank(this.adaptiveAuthenticationProperties.getPolicy().getRejectCountries())) {
             val loc = this.geoLocationService.locate(clientIp, location);
             if (loc != null) {
                 LOGGER.debug("Determined geolocation to be [{}]", loc);
@@ -65,13 +65,15 @@ public class DefaultAdaptiveAuthenticationPolicy implements AdaptiveAuthenticati
     }
 
     private boolean isGeoLocationCountryRejected(final GeoLocationResponse finalLoc) {
-        return StringUtils.isNotBlank(this.adaptiveAuthenticationProperties.getRejectCountries())
-            && Pattern.compile(this.adaptiveAuthenticationProperties.getRejectCountries()).matcher(finalLoc.build()).find();
+        val rejectCountries = this.adaptiveAuthenticationProperties.getPolicy().getRejectCountries();
+        return StringUtils.isNotBlank(rejectCountries)
+            && Pattern.compile(rejectCountries).matcher(finalLoc.build()).find();
     }
 
     private boolean isUserAgentRejected(final String userAgent) {
-        return StringUtils.isNotBlank(this.adaptiveAuthenticationProperties.getRejectBrowsers())
-            && Pattern.compile(this.adaptiveAuthenticationProperties.getRejectBrowsers()).matcher(userAgent).find();
+        val rejectBrowsers = this.adaptiveAuthenticationProperties.getPolicy().getRejectBrowsers();
+        return StringUtils.isNotBlank(rejectBrowsers)
+            && Pattern.compile(rejectBrowsers).matcher(userAgent).find();
     }
 
     private boolean isIpAddressRejected(final RequestContext requestContext, final String clientIp) {

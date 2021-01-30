@@ -64,7 +64,7 @@ public class RestfulIPAddressIntelligenceServiceTests {
             assertNotNull(result);
             assertTrue(result.isRanked());
 
-            props.setRejectIpAddresses("123\\..*");
+            props.getPolicy().setRejectIpAddresses("123\\..*");
             service = new RestfulIPAddressIntelligenceService(props);
             result = service.examine(new MockRequestContext(), "123.1.2.3");
             assertNotNull(result);

@@ -40,7 +40,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@TestPropertySource(properties = "cas.authn.adaptive.require-multifactor.mfa-dummy=MSIE")
+@TestPropertySource(properties = "cas.authn.adaptive.policy.require-multifactor.mfa-dummy=MSIE")
 @Tag("WebflowEvents")
 public class AdaptiveMultifactorAuthenticationPolicyEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired

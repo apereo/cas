@@ -51,7 +51,7 @@ public class TimedMultifactorAuthenticationTriggerTests extends BaseMultifactorA
         timeProps.setOnOrAfterHour(0);
         timeProps.setOnOrBeforeHour(24);
         timeProps.setOnDays(List.of("Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"));
-        props.getAuthn().getAdaptive().getRequireTimedMultifactor().add(timeProps);
+        props.getAuthn().getAdaptive().getPolicy().getRequireTimedMultifactor().add(timeProps);
 
         var trigger = new TimedMultifactorAuthenticationTrigger(props, applicationContext);
         var result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
@@ -76,7 +76,7 @@ public class TimedMultifactorAuthenticationTriggerTests extends BaseMultifactorA
         timeProps.setOnOrBeforeHour(2);
         timeProps.setOnDays(List.of("Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"));
 
-        props.getAuthn().getAdaptive().getRequireTimedMultifactor().add(timeProps);
+        props.getAuthn().getAdaptive().getPolicy().getRequireTimedMultifactor().add(timeProps);
         assertThrows(AuthenticationException.class,
             () -> trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class)));
     }
