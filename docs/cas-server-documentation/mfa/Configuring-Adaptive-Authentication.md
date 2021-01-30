@@ -20,7 +20,7 @@ to an mfa provider where successful matching of rules allows for the multifactor
 
 ## Configuration
 
-{% include {{ version }}/adaptive-authentication-configuration.md %}
+{% include casproperties.html properties="cas.authn.adaptive.policy" %}
 
 To enable adaptive authentication, you will need to allow CAS to geo-locate authentication requests.
 To learn more, please [see this guide](../authentication/GeoTracking-Authentication-Requests.html)

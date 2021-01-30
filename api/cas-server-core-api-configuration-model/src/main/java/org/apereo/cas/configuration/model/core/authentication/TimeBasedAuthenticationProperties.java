@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -29,6 +30,7 @@ public class TimeBasedAuthenticationProperties implements Serializable {
     /**
      * The mfa provider id that should be triggered.
      */
+    @RequiredProperty
     private String providerId;
 
     /**

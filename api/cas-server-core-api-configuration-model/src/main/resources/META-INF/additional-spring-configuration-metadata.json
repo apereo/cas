@@ -1,6 +1,42 @@
 {
   "properties": [
     {
+      "name": "cas.ticket.registry.hazelcast.cluster.members",
+      "type": "java.util.List",
+      "deprecation": {
+        "replacement": "cas.ticket.registry.hazelcast.cluster.network.members",
+        "reason": "members setting is now moved into the network namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.ticket.registry.hazelcast.cluster.port",
+      "type": "java.lang.Integer",
+      "deprecation": {
+        "replacement": "cas.ticket.registry.hazelcast.cluster.network.port",
+        "reason": "port setting is now moved into the network namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.ticket.registry.hazelcast.cluster.instance-name",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.ticket.registry.hazelcast.cluster.network.instance-name",
+        "reason": "instance-name setting is now moved into the network namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.ticket.registry.hazelcast.cluster.port-auto-increment",
+      "type": "java.lang.Boolean",
+      "deprecation": {
+        "replacement": "cas.ticket.registry.hazelcast.cluster.network.port-auto-increment",
+        "reason": "port-auto-increment setting is now moved into the network namespace.",
+        "level": "error"
+      }
+    },
+    {
       "name": "cas.audit.alternate-client-addr-header-name",
       "type": "java.lang.String",
       "deprecation": {
