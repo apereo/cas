@@ -158,7 +158,7 @@ public class OpenIdConfiguration {
             .argumentExtractor(argumentExtractor.getObject())
             .proxyHandler(proxy20Handler.getObject())
             .requestedContextValidator(requestedContextValidator.getObject())
-            .authnContextAttribute(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute())
+            .authnContextAttribute(casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute())
             .validationAuthorizers(validationAuthorizers.getObject())
             .renewEnabled(casProperties.getSso().isRenewAuthnEnabled())
             .validationViewFactory(serviceValidationViewFactory.getObject())

@@ -254,11 +254,11 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
     public MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector() {
         val mfa = casProperties.getAuthn().getMfa();
 
-        val script = mfa.getProviderSelectorGroovyScript();
-        if (script != null) {
-            return new GroovyScriptMultifactorAuthenticationProviderSelector(script);
+        val script = mfa.getCore().getProviderSelectorGroovyScript();
+        if (script.getLocation() != null) {
+            return new GroovyScriptMultifactorAuthenticationProviderSelector(script.getLocation());
         }
-        if (mfa.isProviderSelectionEnabled()) {
+        if (mfa.getCore().isProviderSelectionEnabled()) {
             return new ChainingMultifactorAuthenticationProviderSelector(failureModeEvaluator.getObject());
         }
         return new RankedMultifactorAuthenticationProviderSelector();
@@ -270,7 +270,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
     public CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver() {
         val mfa = casProperties.getAuthn().getMfa();
 
-        val selectiveResolver = mfa.isProviderSelectionEnabled()
+        val selectiveResolver = mfa.getCore().isProviderSelectionEnabled()
             ? compositeProviderSelectionMultifactorWebflowEventResolver()
             : selectiveAuthenticationProviderWebflowEventResolver();
 

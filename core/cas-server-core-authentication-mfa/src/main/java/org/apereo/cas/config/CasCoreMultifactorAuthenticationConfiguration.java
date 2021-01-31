@@ -51,7 +51,7 @@ public class CasCoreMultifactorAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "authenticationContextValidator")
     public MultifactorAuthenticationContextValidator authenticationContextValidator() {
         val mfa = casProperties.getAuthn().getMfa();
-        val contextAttribute = mfa.getAuthenticationContextAttribute();
+        val contextAttribute = mfa.getCore().getAuthenticationContextAttribute();
         val authnAttributeName = mfa.getTrusted().getAuthenticationContextAttribute();
         return new DefaultMultifactorAuthenticationContextValidator(contextAttribute, authnAttributeName, applicationContext);
     }

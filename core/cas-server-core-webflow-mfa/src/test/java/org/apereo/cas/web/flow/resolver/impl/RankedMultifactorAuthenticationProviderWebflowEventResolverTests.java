@@ -158,7 +158,7 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolverTests ex
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
         val tgt = new MockTicketGrantingTicket("casuser", Map.of(),
-            Map.of(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(), List.of(TestMultifactorAuthenticationProvider.ID)));
+            Map.of(casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute(), List.of(TestMultifactorAuthenticationProvider.ID)));
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
         cas.addTicket(tgt);
 
@@ -185,7 +185,7 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolverTests ex
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
         val tgt = new MockTicketGrantingTicket("casuser", Map.of(),
-            Map.of(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(), List.of(TestMultifactorAuthenticationProvider.ID)));
+            Map.of(casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute(), List.of(TestMultifactorAuthenticationProvider.ID)));
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
         cas.addTicket(tgt);
 

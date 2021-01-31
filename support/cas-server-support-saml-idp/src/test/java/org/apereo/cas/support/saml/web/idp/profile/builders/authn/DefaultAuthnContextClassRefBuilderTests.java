@@ -83,7 +83,7 @@ public class DefaultAuthnContextClassRefBuilderTests extends BaseSamlIdPConfigur
         when(authnRequest.getRequestedAuthnContext()).thenReturn(context);
         val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(
             samlRegisteredServiceCachingMetadataResolver, service, authnRequest);
-        val assertion = getAssertion(Map.of(props.getAuthn().getMfa().getAuthenticationContextAttribute(),
+        val assertion = getAssertion(Map.of(props.getAuthn().getMfa().getCore().getAuthenticationContextAttribute(),
             TestMultifactorAuthenticationProvider.ID));
         val result = builder.build(assertion, authnRequest, adaptor.get(), service);
         assertEquals("https://refeds.org/profile/mfa", result);

@@ -128,7 +128,7 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
         val authentication = CoreAuthenticationTestUtils.getAuthentication("casuser",
             CollectionUtils.wrap(OAuth20Constants.STATE, List.of("some-state"),
                 OAuth20Constants.NONCE, List.of("some-nonce"),
-                mfa.getAuthenticationContextAttribute(), List.of("context-cass"),
+                mfa.getCore().getAuthenticationContextAttribute(), List.of("context-cass"),
                 AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS, List.of("Handler1")));
         when(tgt.getAuthentication()).thenReturn(authentication);
 

@@ -95,6 +95,6 @@ public class CasCoreAuthenticationConfiguration {
         }
         return new DefaultAuthenticationAttributeReleasePolicy(release.getOnlyRelease(),
             release.getNeverRelease(),
-            casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
+            casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute());
     }
 }

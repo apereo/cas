@@ -235,7 +235,7 @@ public class WebAuthnConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "webAuthnAuthenticationMetaDataPopulator")
     public AuthenticationMetaDataPopulator webAuthnAuthenticationMetaDataPopulator() {
-        val authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
+        val authenticationContextAttribute = casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute();
         return new AuthenticationContextAttributeMetaDataPopulator(
             authenticationContextAttribute,
             webAuthnAuthenticationHandler(),

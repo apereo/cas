@@ -204,7 +204,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
 
     private AuthenticationMetaDataPopulator duoAuthenticationMetaDataPopulator(final AuthenticationHandler authenticationHandler) {
         return new AuthenticationContextAttributeMetaDataPopulator(
-            casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
+            casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute(),
             authenticationHandler,
             duoProviderBean().getProvider(authenticationHandler.getName()).getId()
         );
