@@ -24,6 +24,13 @@ public class JsonServiceRegistryProperties extends SpringResourceProperties {
 
     private static final long serialVersionUID = -3022199446494732533L;
 
+    /**
+     * Flag indicating whether a background watcher thread is enabled
+     * for the purposes of live reloading of service registry data changes
+     * from persistent data store.
+     */
+    private boolean watcherEnabled = true;
+
     public JsonServiceRegistryProperties() {
         setLocation(new ClassPathResource("services"));
     }

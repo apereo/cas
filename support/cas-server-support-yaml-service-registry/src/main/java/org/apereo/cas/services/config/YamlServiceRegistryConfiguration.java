@@ -62,7 +62,7 @@ public class YamlServiceRegistryConfiguration {
             registeredServiceReplicationStrategy.getObject(),
             resourceNamingStrategy.getObject(),
             serviceRegistryListeners.getObject());
-        if (registry.isWatcherEnabled()) {
+        if (registry.getYaml().isWatcherEnabled()) {
             yaml.enableDefaultWatcherService();
         }
         return yaml;

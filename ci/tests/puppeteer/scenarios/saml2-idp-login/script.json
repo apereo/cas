@@ -15,7 +15,7 @@
 
     "--logging.level.org.apereo.cas=debug",
 
-    "--cas.service-registry.init-from-json=true",
+    "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/saml2-idp-login/services"
   ],
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/saml2-idp-login/init.sh"

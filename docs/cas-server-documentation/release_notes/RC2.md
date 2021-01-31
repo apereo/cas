@@ -48,6 +48,22 @@ cas.version=6.4.0-RC2
 
 The following items are new improvements and enhancements presented in this release. 
 
+### CAS Documentation
+
+CAS documentation has gone through a cleanup effort to improve how configuration settings are
+managed and presented. Configuration namespaces for CAS settings are presented as individual
+snippets and fragments appropriate for each feature, and are included throughout the documentation
+pages where necessary, split into panes for required, optional and third-party settings, etc.
+
+The presentation and generation of CAS settings and their documentation is entirely driven by CAS configuration metadata,
+and this capability is ultimately powered by Github Pages and Jekyll that render the CAS documentation in the backend.
+
+Please note that as part of this change, a number of CAS configuration settings are moved around into new namespaces
+to make the generation of configuration metadata and relevant documentation snippets easier. Most likely, settings
+are moved into a new `.core.` or `.engine.` or `.policy` namespace. Some of the settings that are affected by this effort
+are:
+
+- `cas.authn.adaptive`
 
 ## Other Stuff
 

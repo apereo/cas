@@ -36,7 +36,7 @@ public class PasswordEncoderProperties implements Serializable {
      * <ul>
      *     <li>{@code NONE}: No password encoding (i.e. plain-text) takes place.</li>
      *     <li>{@code DEFAULT}: Use the {@code DefaultPasswordEncoder} of CAS. For message-digest
-     *     algorithms via {@link #getCharacterEncoding()} and {@link #getCharacterEncoding()}.</li>
+     *     algorithms via {@code character-encoding} and {@code encoding-algorithm}.</li>
      *     <li>{@code BCRYPT}: Use the {@code BCryptPasswordEncoder} based on the strength provided and an optional secret.</li>
      *     <li>{@code SCRYPT}: Use the {@code SCryptPasswordEncoder}.</li>
      *     <li>{@code PBKDF2}: Use the {@code Pbkdf2PasswordEncoder} based on the strength provided and an optional secret.</li>

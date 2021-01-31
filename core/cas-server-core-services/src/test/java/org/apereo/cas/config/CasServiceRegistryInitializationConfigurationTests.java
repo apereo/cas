@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreNotificationsConfiguration.class,
     CasServiceRegistryInitializationConfiguration.class
 },
-    properties = "cas.service-registry.init-from-json=true"
+    properties = "cas.service-registry.core.init-from-json=true"
 )
 public class CasServiceRegistryInitializationConfigurationTests {
     @Autowired

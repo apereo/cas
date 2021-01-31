@@ -1,6 +1,6 @@
 {
   "dependencies": "core",
   "properties": [
-    "--cas.service-registry.init-from-json=false"
+    "--cas.service-registry.core.init-from-json=false"
   ]
 }

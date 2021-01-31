@@ -1,7 +1,7 @@
 {
   "dependencies": "passwordless-webflow,pac4j-webflow",
   "properties": [
-    "--cas.service-registry.init-from-json=true",
+    "--cas.service-registry.core.init-from-json=true",
 
     "--cas.authn.passwordless.accounts.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/passwordless-delegated-login/accounts.json",
     "--cas.authn.passwordless.core.delegated-authentication-selector-script.location=file:${PWD}/ci/tests/puppeteer/scenarios/passwordless-delegated-login/delegate-idp-selector.groovy",
