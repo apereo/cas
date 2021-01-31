@@ -64,9 +64,12 @@ are moved into a new `.core.` or `.engine.` or `.policy` namespace. Some of the 
 are:
 
 - `cas.authn.adaptive`
+- `cas.service-registry`
 
 ## Other Stuff
-
+      
+- A number of Docker images used for integration tests, such as DynamoDb, MySQL, MariaDb, etc are now updated to their latest versions.
+- A special failure analyzer for Spting Boot is now available to analyze startup failures more accurately and with better logs.
 
 ## Library Upgrades
 

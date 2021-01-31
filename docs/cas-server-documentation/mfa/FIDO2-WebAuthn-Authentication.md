@@ -78,30 +78,18 @@ By default, a repository implementation is included that collects
 user device registrations and saves them into memory.
 This option should only be used for demo and testing purposes.
 
-### JSON
+### Others
 
-Please [see this guide](FIDO2-WebAuthn-Authentication-Registration-JSON.html) for more info.
+Device registrations can also be managed using any one of the following strategies.
 
-### MongoDb
+| Storage          | Description                                         
+|--------------------------------------------------------------------------------------------------
+| JSON     | [See this guide](FIDO2-WebAuthn-Authentication-Registration-JSON.html).  
+| MongoDb     | [See this guide](FIDO2-WebAuthn-Authentication-Registration-MongoDb.html).  
+| LDAP     | [See this guide](FIDO2-WebAuthn-Authentication-Registration-LDAP.html).  
+| JPA     | [See this guide](FIDO2-WebAuthn-Authentication-Registration-JPA.html).  
+| Redis     | [See this guide](FIDO2-WebAuthn-Authentication-Registration-Redis.html).  
+| DynamoDb     | [See this guide](FIDO2-WebAuthn-Authentication-Registration-DynamoDb.html).
+| REST     | [See this guide](FIDO2-WebAuthn-Authentication-Registration-REST.html).
 
-Please [see this guide](FIDO2-WebAuthn-Authentication-Registration-MongoDb.html) for more info.
 
-### LDAP
-
-Please [see this guide](FIDO2-WebAuthn-Authentication-Registration-LDAP.html) for more info.
-
-### JPA
-
-Please [see this guide](FIDO2-WebAuthn-Authentication-Registration-JPA.html) for more info.
-
-### Redis
-
-Please [see this guide](FIDO2-WebAuthn-Authentication-Registration-Redis.html) for more info.
-
-### DynamoDb
-
-Please [see this guide](FIDO2-WebAuthn-Authentication-Registration-DynamoDb.html) for more info.
-
-### REST
-
-Please [see this guide](FIDO2-WebAuthn-Authentication-Registration-Rest.html) for more info.
