@@ -55,7 +55,7 @@ public class RequestSessionAttributeMultifactorAuthenticationPolicyEventResolver
         context.getRootFlow().getGlobalTransitionSet().add(transition);
 
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
-        request.getSession(true).setAttribute(casProperties.getAuthn().getMfa().getSessionAttribute(), TestMultifactorAuthenticationProvider.ID);
+        request.getSession(true).setAttribute(casProperties.getAuthn().getMfa().getTriggers().getHttp().getSessionAttribute(), TestMultifactorAuthenticationProvider.ID);
         results = requestSessionAttributeAuthenticationPolicyWebflowEventResolver.resolve(context);
         assertNotNull(results);
         assertEquals(1, results.size());

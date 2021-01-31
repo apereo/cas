@@ -256,7 +256,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         if (p.isPresent()) {
             val mappedClazz = mappings.get(p.get().getURI());
             return initialUrl + '&' + samlProfileHandlerConfigurationContext.getCasProperties()
-                .getAuthn().getMfa().getRequestParameter() + '=' + mappedClazz;
+                .getAuthn().getMfa().getTriggers().getHttp().getRequestParameter() + '=' + mappedClazz;
         }
 
         return initialUrl;

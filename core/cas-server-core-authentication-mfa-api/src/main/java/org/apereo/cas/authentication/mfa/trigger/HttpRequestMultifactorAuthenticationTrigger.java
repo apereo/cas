@@ -80,21 +80,21 @@ public class HttpRequestMultifactorAuthenticationTrigger implements MultifactorA
      */
     @SuppressWarnings("JdkObsolete")
     protected List<String> resolveEventFromHttpRequest(final HttpServletRequest request) {
-        val mfaRequestHeader = casProperties.getAuthn().getMfa().getRequestHeader();
+        val mfaRequestHeader = casProperties.getAuthn().getMfa().getTriggers().getHttp().getRequestHeader();
         val headers = request.getHeaders(mfaRequestHeader);
         if (headers != null && headers.hasMoreElements()) {
             LOGGER.debug("Received request header [{}] as [{}]", mfaRequestHeader, headers);
             return Collections.list(headers);
         }
 
-        val mfaRequestParameter = casProperties.getAuthn().getMfa().getRequestParameter();
+        val mfaRequestParameter = casProperties.getAuthn().getMfa().getTriggers().getHttp().getRequestParameter();
         val params = request.getParameterValues(mfaRequestParameter);
         if (params != null && params.length > 0) {
             LOGGER.debug("Received request parameter [{}] as [{}]", mfaRequestParameter, params);
             return Arrays.stream(params).collect(Collectors.toList());
         }
 
-        val attributeName = casProperties.getAuthn().getMfa().getSessionAttribute();
+        val attributeName = casProperties.getAuthn().getMfa().getTriggers().getHttp().getSessionAttribute();
         val session = request.getSession(false);
         var attributeValue = Optional.ofNullable(session).map(httpSession -> httpSession.getAttribute(attributeName)).orElse(null);
         if (attributeValue == null) {

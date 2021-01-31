@@ -76,7 +76,7 @@ sake of establishing an SSO session without logging in to any CAS-reliant servic
 As such, CAS optionally allows adopters to not bother to prompt for credentials when no target application is presented
 and instead presents a message when users visit CAS directly without specifying a service.
 
-{% include casproperties.html properties="cas.sso.allow-missing-service-parameter,cas.sso.create-sso-cookie-on-renew-authn,cas.sso.proxy-authn-enabled,cas.sso.renew-authn-enabled,cas.sso.sso-enabled,cas.sso.required-service-pattern" %}
+{% include casproperties.html properties="cas.sso." %}
 
 ## Acceptable Usage Policy
 

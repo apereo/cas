@@ -49,7 +49,7 @@ the authenticated principal contains a `mail` attribute whose values contain `em
 import java.util.*
 
 class MyExampleScript {
-    def String run(final Object... args) {
+    String run(final Object... args) {
         def service = args[0]
         def registeredService = args[1]
         def authentication = args[2]
