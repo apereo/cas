@@ -66,16 +66,18 @@ bootRun {
 
 
 processResources {
-    filter org.apache.tools.ant.filters.ReplaceTokens, tokens: [
-        "javaVersion": project.sourceCompatibility,
-            
-        "casVersion": project.property("casVersion"),
-        "version": project.property("version"),
-        "springBootVersion": project.property("springBootVersion"),
-        "gradleDependencyManagementPluginVersion": project.property("gradleDependencyManagementPluginVersion"),
-        "tomcatVersion": project.property("tomcatVersion"),
-        "jibVersion": project.property("jibVersion")
-    ]
+    filesMatching(['**/*.yml', '**/*.properties']) {
+        filter org.apache.tools.ant.filters.ReplaceTokens, tokens: [
+                "javaVersion"                            : project.sourceCompatibility,
+
+                "casVersion"                             : project.property("casVersion"),
+                "version"                                : project.property("version"),
+                "springBootVersion"                      : project.property("springBootVersion"),
+                "gradleDependencyManagementPluginVersion": project.property("gradleDependencyManagementPluginVersion"),
+                "tomcatVersion"                          : project.property("tomcatVersion"),
+                "jibVersion"                             : project.property("jibVersion")
+        ]
+    }
 }
 
 task copyWrapper(type: Copy) {
