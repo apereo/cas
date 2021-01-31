@@ -1,7 +1,7 @@
 package org.apereo.cas.configuration.model.support.mfa.yubikey;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
-import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorProviderProperties;
+import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This is {@link YubiKeyMultifactorProperties}.
+ * This is {@link YubiKeyMultifactorAuthenticationProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
@@ -30,7 +30,7 @@ import java.util.Map;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("YubiKeyMultifactorProperties")
-public class YubiKeyMultifactorProperties extends BaseMultifactorProviderProperties {
+public class YubiKeyMultifactorAuthenticationProperties extends BaseMultifactorAuthenticationProviderProperties {
 
     /**
      * Provider id by default.
@@ -123,7 +123,7 @@ public class YubiKeyMultifactorProperties extends BaseMultifactorProviderPropert
     private EncryptionJwtSigningJwtCryptographyProperties crypto =
         new EncryptionJwtSigningJwtCryptographyProperties();
 
-    public YubiKeyMultifactorProperties() {
+    public YubiKeyMultifactorAuthenticationProperties() {
         setId(DEFAULT_IDENTIFIER);
         crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
         crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);

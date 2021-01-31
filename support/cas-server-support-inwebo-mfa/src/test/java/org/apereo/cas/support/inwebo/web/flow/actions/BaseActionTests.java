@@ -9,7 +9,7 @@ import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
 import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
-import org.apereo.cas.configuration.model.support.mfa.InweboMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.InweboMultifactorAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.inwebo.authentication.InweboAuthenticationDeviceMetadataPopulator;
 import org.apereo.cas.support.inwebo.authentication.InweboAuthenticationHandler;
@@ -82,7 +82,7 @@ public abstract class BaseActionTests {
 
         val authenticationEventExecutionPlan = new DefaultAuthenticationEventExecutionPlan();
         authenticationEventExecutionPlan.registerAuthenticationHandler(new InweboAuthenticationHandler(mock(ServicesManager.class),
-                PrincipalFactoryUtils.newPrincipalFactory(), new InweboMultifactorProperties(), service));
+                PrincipalFactoryUtils.newPrincipalFactory(), new InweboMultifactorAuthenticationProperties(), service));
         authenticationEventExecutionPlan.registerAuthenticationMetadataPopulator(new InweboAuthenticationDeviceMetadataPopulator());
         val authenticationManager = new DefaultAuthenticationManager(authenticationEventExecutionPlan, true, mock(ConfigurableApplicationContext.class));
         val authenticationTransactionManager = new DefaultAuthenticationTransactionManager(mock(ApplicationEventPublisher.class), authenticationManager);

@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.yubikey;
 
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
-import org.apereo.cas.configuration.model.support.mfa.yubikey.YubiKeyMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.yubikey.YubiKeyMultifactorAuthenticationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.LoggingUtils;
@@ -42,7 +42,7 @@ public class YubiKeyMultifactorAuthenticationProvider extends AbstractMultifacto
 
     @Override
     public String getId() {
-        return StringUtils.defaultIfBlank(super.getId(), YubiKeyMultifactorProperties.DEFAULT_IDENTIFIER);
+        return StringUtils.defaultIfBlank(super.getId(), YubiKeyMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
     }
 
     @Override

@@ -69,7 +69,8 @@ are:
 ## Other Stuff
       
 - A number of Docker images used for integration tests, such as DynamoDb, MySQL, MariaDb, etc are now updated to their latest versions.
-- A special failure analyzer for Spting Boot is now available to analyze startup failures more accurately and with better logs.
+- A special failure analyzer for Spring Boot is now available to analyze startup failures more accurately and with better logs.
+- Support for the legacy syntax for JSON service definitions based on CAS Addons as well as the old `org.jasig` namespace has been removed. 
 
 ## Library Upgrades
 

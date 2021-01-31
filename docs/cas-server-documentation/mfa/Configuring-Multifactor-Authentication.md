@@ -40,6 +40,10 @@ The following multifactor providers are supported by CAS.
 | Swivel Secure         | `mfa-swivel`    | [See this guide](SwivelSecure-Authentication.html).
 | Inwebo                | `mfa-inwebo`    | [See this guide](Inwebo-Authentication.html).
 | Custom                | Custom          | [See this guide](../mfa/Custom-MFA-Authentication.html).
+  
+## Configuration
+
+
 
 ## Triggers
 
@@ -51,23 +55,7 @@ To learn more, [please see this guide](Configuring-Multifactor-Authentication-Tr
 Each multifactor provider is equipped with options to allow for MFA 
 bypass. To learn more, [please see this guide](../mfa/Configuring-Multifactor-Authentication-Bypass.html).
 
-## Failure Modes
-
-The authentication policy by default supports fail-closed mode, which means that if you attempt to exercise a particular
-provider available to CAS and the provider cannot be reached, authentication will be stopped and an error
-will be displayed. You can of course change this behavior so that authentication proceeds without exercising the provider
-functionality, if that provider cannot respond.
-
-The following failure modes are supported:
-
-| Field                | Description
-|----------------------|----------------------------------
-| `CLOSED`             | Authentication is blocked if the provider cannot be reached.
-| `OPEN`               | Authentication proceeds yet requested MFA is NOT communicated to the client if provider is unavailable.
-| `PHANTOM`            | Authentication proceeds and requested MFA is communicated to the client if provider is unavailable.
-| `NONE`               | Do not contact the provider at all to check for availability. Assume the provider is available.
-
-### Failure Mode Selection
+## Failure Modes Selection
 
 CAS will consult the current configuration in the event that the provider 
 being requested is unreachable to determine how to proceed.  
@@ -81,7 +69,7 @@ If no actionable failure mode is encountered the user will be shown a generic "A
 
 ### Failure Mode by Registered Service
 
-Set as part of the "multifactorPolicy".  This location will override a failure a mode set at any other location.
+Set as part of the `multifactorPolicy` which will override a failure a mode set at any other location.
 
 ```json
 {
@@ -96,19 +84,6 @@ Set as part of the "multifactorPolicy".  This location will override a failure a
 }
 ```
 
-### Failure Mode by Multifactor Authentication Provider
-
-Each defined multifactor authentication provider can set its own failure mode policy. Failure modes 
-set at this location will override the global failure mode, but defer to any 
-failure mode set by the registered service.
-
-### Global Failure Mode
-
-A default failure mode can be specified globally via CAS properties 
-and will be used in the case where no failure mode is set in either the provider or the registered service.
-
-{% include casproperties.html properties="cas.authn.mfa.global-failure-mode,cas.authn.mfa.authentication-context-attribute,cas.authn.mfa.content-type" %}
-
 
 ## Multiple Provider Selection
 
@@ -118,9 +93,6 @@ collection of providers based on their rank and will pick one with the highest
 priority. This use case may arise if multiple triggers are defined where each 
 decides on a different multifactor authentication provider, or the same 
 provider instance is configured multiple times with many instances.
-  
-{% include casproperties.html properties="cas.authn.mfa.provider-selector-groovy-script,cas.authn.mfa.provider-selection-enabled" %}
-
 
 Provider selection may also be carried out using Groovy scripting strategies more dynamically. 
 The following example should serve as an outline of how to select multifactor providers based on a Groovy script:

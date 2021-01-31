@@ -11,7 +11,7 @@ import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
- * This is {@link CasSimpleMultifactorProperties}.
+ * This is {@link CasSimpleMultifactorAuthenticationProperties}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
@@ -21,7 +21,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("CasSimpleMultifactorProperties")
-public class CasSimpleMultifactorProperties extends BaseMultifactorProviderProperties {
+public class CasSimpleMultifactorAuthenticationProperties extends BaseMultifactorAuthenticationProviderProperties {
     /**
      * Provider id by default.
      */
@@ -56,7 +56,7 @@ public class CasSimpleMultifactorProperties extends BaseMultifactorProviderPrope
     @NestedConfigurationProperty
     private SmsProperties sms = new SmsProperties();
 
-    public CasSimpleMultifactorProperties() {
+    public CasSimpleMultifactorAuthenticationProperties() {
         setId(DEFAULT_IDENTIFIER);
     }
 }

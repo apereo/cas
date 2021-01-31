@@ -26,7 +26,7 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
@@ -104,7 +104,7 @@ public abstract class BaseDuoSecurityTests {
 
     public static MultifactorAuthenticationProvider getDuoSecurityMultifactorAuthenticationProvider() {
         val provider = new TestMultifactorAuthenticationProvider();
-        provider.setId(DuoSecurityMultifactorProperties.DEFAULT_IDENTIFIER);
+        provider.setId(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
         return provider;
     }
 

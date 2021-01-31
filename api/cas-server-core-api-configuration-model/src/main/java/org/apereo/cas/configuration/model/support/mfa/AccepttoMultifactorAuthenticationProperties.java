@@ -11,7 +11,7 @@ import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
- * This is {@link AccepttoMultifactorProperties}.
+ * This is {@link AccepttoMultifactorAuthenticationProperties}.
  *
  * @author Misagh Moayyed
  * @since 6.1.0
@@ -21,7 +21,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("AccepttoMultifactorProperties")
-public class AccepttoMultifactorProperties extends BaseMultifactorProviderProperties {
+public class AccepttoMultifactorAuthenticationProperties extends BaseMultifactorAuthenticationProviderProperties {
     /**
      * Provider id by default.
      */
@@ -121,7 +121,7 @@ public class AccepttoMultifactorProperties extends BaseMultifactorProviderProper
     @NestedConfigurationProperty
     private SpringResourceProperties registrationApiPublicKey = new SpringResourceProperties();
 
-    public AccepttoMultifactorProperties() {
+    public AccepttoMultifactorAuthenticationProperties() {
         setId(DEFAULT_IDENTIFIER);
     }
 }

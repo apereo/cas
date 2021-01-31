@@ -9,7 +9,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 /**
- * This is {@link AuthyMultifactorProperties}.
+ * This is {@link AuthyMultifactorAuthenticationProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
@@ -19,7 +19,7 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("AuthyMultifactorProperties")
-public class AuthyMultifactorProperties extends BaseMultifactorProviderProperties {
+public class AuthyMultifactorAuthenticationProperties extends BaseMultifactorAuthenticationProviderProperties {
 
     /**
      * Provider id by default.
@@ -73,7 +73,7 @@ public class AuthyMultifactorProperties extends BaseMultifactorProviderPropertie
      */
     private boolean trustedDeviceEnabled;
 
-    public AuthyMultifactorProperties() {
+    public AuthyMultifactorAuthenticationProperties() {
         setId(DEFAULT_IDENTIFIER);
     }
 }

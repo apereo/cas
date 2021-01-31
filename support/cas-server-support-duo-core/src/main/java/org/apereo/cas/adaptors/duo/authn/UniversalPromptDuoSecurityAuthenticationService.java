@@ -2,7 +2,7 @@ package org.apereo.cas.adaptors.duo.authn;
 
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpClient;
@@ -33,14 +33,14 @@ public class UniversalPromptDuoSecurityAuthenticationService extends BaseDuoSecu
     private final Client duoClient;
 
     public UniversalPromptDuoSecurityAuthenticationService(
-        final DuoSecurityMultifactorProperties duoProperties,
+        final DuoSecurityMultifactorAuthenticationProperties duoProperties,
         final HttpClient httpClient,
         final CasConfigurationProperties casProperties) {
         this(duoProperties, httpClient, getDuoClient(duoProperties, casProperties));
     }
 
     UniversalPromptDuoSecurityAuthenticationService(
-        final DuoSecurityMultifactorProperties duoProperties,
+        final DuoSecurityMultifactorAuthenticationProperties duoProperties,
         final HttpClient httpClient,
         final Client duoClient) {
         super(duoProperties, httpClient);
@@ -140,7 +140,7 @@ public class UniversalPromptDuoSecurityAuthenticationService extends BaseDuoSecu
     }
 
     @SneakyThrows
-    private static Client getDuoClient(final DuoSecurityMultifactorProperties duoProperties,
+    private static Client getDuoClient(final DuoSecurityMultifactorAuthenticationProperties duoProperties,
         final CasConfigurationProperties casProperties) {
         return new Client(duoProperties.getDuoIntegrationKey(),
             duoProperties.getDuoSecretKey(),

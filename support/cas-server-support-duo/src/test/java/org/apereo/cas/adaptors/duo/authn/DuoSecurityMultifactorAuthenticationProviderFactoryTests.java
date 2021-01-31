@@ -4,7 +4,7 @@ import org.apereo.cas.BaseCasWebflowMultifactorAuthenticationTests;
 import org.apereo.cas.adaptors.duo.BaseDuoSecurityTests;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderFactoryBean;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -35,7 +35,7 @@ public class DuoSecurityMultifactorAuthenticationProviderFactoryTests extends Ba
     @Autowired
     @Qualifier("duoProviderFactory")
     private MultifactorAuthenticationProviderFactoryBean<
-        DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorProperties>
+        DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorAuthenticationProperties>
         duoProviderFactory;
 
     @Test

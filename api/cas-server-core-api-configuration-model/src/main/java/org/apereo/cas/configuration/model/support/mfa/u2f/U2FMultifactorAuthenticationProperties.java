@@ -1,7 +1,7 @@
 package org.apereo.cas.configuration.model.support.mfa.u2f;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
-import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorProviderProperties;
+import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
 import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -15,7 +15,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import java.util.concurrent.TimeUnit;
 
 /**
- * This is {@link U2FMultifactorProperties}.
+ * This is {@link U2FMultifactorAuthenticationProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("U2FMultifactorProperties")
-public class U2FMultifactorProperties extends BaseMultifactorProviderProperties {
+public class U2FMultifactorAuthenticationProperties extends BaseMultifactorAuthenticationProviderProperties {
 
     /**
      * Provider id by default.
@@ -119,7 +119,7 @@ public class U2FMultifactorProperties extends BaseMultifactorProviderProperties 
     @NestedConfigurationProperty
     private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
 
-    public U2FMultifactorProperties() {
+    public U2FMultifactorAuthenticationProperties() {
         crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
         crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
         setId(DEFAULT_IDENTIFIER);

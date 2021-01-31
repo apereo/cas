@@ -24,7 +24,7 @@ import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMeta
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -117,7 +117,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     @ConditionalOnMissingBean(name = "duoProviderFactory")
     @Bean
     @RefreshScope
-    public MultifactorAuthenticationProviderFactoryBean<DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorProperties> duoProviderFactory() {
+    public MultifactorAuthenticationProviderFactoryBean<DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorAuthenticationProperties> duoProviderFactory() {
         return new DuoSecurityMultifactorAuthenticationProviderFactory(httpClient.getObject(), duoSecurityBypassEvaluator.getObject(),
             failureModeEvaluator.getObject(), casProperties);
     }
@@ -125,7 +125,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     @ConditionalOnMissingBean(name = "duoProviderBean")
     @Bean
     @RefreshScope
-    public MultifactorAuthenticationProviderBean<DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorProperties> duoProviderBean() {
+    public MultifactorAuthenticationProviderBean<DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorAuthenticationProperties> duoProviderBean() {
         return new MultifactorAuthenticationProviderBean(duoProviderFactory(),
             applicationContext.getDefaultListableBeanFactory(),
             casProperties.getAuthn().getMfa().getDuo());

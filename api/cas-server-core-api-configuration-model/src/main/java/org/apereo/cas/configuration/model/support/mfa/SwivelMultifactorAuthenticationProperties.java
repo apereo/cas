@@ -9,7 +9,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 /**
- * This is {@link SwivelMultifactorProperties}.
+ * This is {@link SwivelMultifactorAuthenticationProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
@@ -19,7 +19,7 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("SwivelMultifactorProperties")
-public class SwivelMultifactorProperties extends BaseMultifactorProviderProperties {
+public class SwivelMultifactorAuthenticationProperties extends BaseMultifactorAuthenticationProviderProperties {
 
     /**
      * Provider id by default.
@@ -56,7 +56,7 @@ public class SwivelMultifactorProperties extends BaseMultifactorProviderProperti
      */
     private boolean trustedDeviceEnabled;
 
-    public SwivelMultifactorProperties() {
+    public SwivelMultifactorAuthenticationProperties() {
         setId(DEFAULT_IDENTIFIER);
     }
 }

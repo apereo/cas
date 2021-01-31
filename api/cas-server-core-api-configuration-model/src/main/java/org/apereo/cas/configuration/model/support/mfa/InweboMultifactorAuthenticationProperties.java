@@ -20,7 +20,7 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("InweboMultifactorProperties")
-public class InweboMultifactorProperties extends BaseMultifactorProviderProperties {
+public class InweboMultifactorAuthenticationProperties extends BaseMultifactorAuthenticationProviderProperties {
 
     /**
      * Provider id by default.
@@ -69,7 +69,7 @@ public class InweboMultifactorProperties extends BaseMultifactorProviderProperti
      */
     private boolean trustedDeviceEnabled;
 
-    public InweboMultifactorProperties() {
+    public InweboMultifactorAuthenticationProperties() {
         setId(DEFAULT_IDENTIFIER);
     }
 }

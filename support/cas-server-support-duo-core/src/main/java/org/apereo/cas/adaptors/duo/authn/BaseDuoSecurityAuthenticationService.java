@@ -3,7 +3,7 @@ package org.apereo.cas.adaptors.duo.authn;
 import org.apereo.cas.adaptors.duo.DuoSecurityUserAccount;
 import org.apereo.cas.adaptors.duo.DuoSecurityUserAccountStatus;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -53,7 +53,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
     /**
      * Duo Properties.
      */
-    protected final DuoSecurityMultifactorProperties duoProperties;
+    protected final DuoSecurityMultifactorAuthenticationProperties duoProperties;
 
     /**
      * Http client used to make calls to duo.
@@ -70,7 +70,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
      * @param duoProperties the duo properties
      * @param httpClient    the http client
      */
-    protected BaseDuoSecurityAuthenticationService(final DuoSecurityMultifactorProperties duoProperties,
+    protected BaseDuoSecurityAuthenticationService(final DuoSecurityMultifactorAuthenticationProperties duoProperties,
         final HttpClient httpClient) {
         this.duoProperties = duoProperties;
         this.httpClient = httpClient;

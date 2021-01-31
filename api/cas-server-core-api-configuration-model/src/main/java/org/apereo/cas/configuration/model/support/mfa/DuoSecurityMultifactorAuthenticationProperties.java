@@ -10,7 +10,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 /**
- * This is {@link DuoSecurityMultifactorProperties}.
+ * This is {@link DuoSecurityMultifactorAuthenticationProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
@@ -21,7 +21,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @EqualsAndHashCode(of = {"duoApiHost", "duoIntegrationKey", "duoSecretKey", "duoApplicationKey"}, callSuper = true)
 @JsonFilter("DuoSecurityMultifactorProperties")
-public class DuoSecurityMultifactorProperties extends BaseMultifactorProviderProperties {
+public class DuoSecurityMultifactorAuthenticationProperties extends BaseMultifactorAuthenticationProviderProperties {
 
     /**
      * Provider id by default.
@@ -78,7 +78,7 @@ public class DuoSecurityMultifactorProperties extends BaseMultifactorProviderPro
      */
     private boolean trustedDeviceEnabled;
 
-    public DuoSecurityMultifactorProperties() {
+    public DuoSecurityMultifactorAuthenticationProperties() {
         setId(DEFAULT_IDENTIFIER);
     }
 }

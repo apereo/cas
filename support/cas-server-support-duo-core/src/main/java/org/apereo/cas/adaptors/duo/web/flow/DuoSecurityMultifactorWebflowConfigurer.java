@@ -2,7 +2,7 @@ package org.apereo.cas.adaptors.duo.web.flow;
 
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityCredential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.trusted.web.flow.AbstractMultifactorTrustedDeviceWebflowConfigurer;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -102,7 +102,7 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
 
         duoConfig
             .stream()
-            .filter(DuoSecurityMultifactorProperties::isTrustedDeviceEnabled)
+            .filter(DuoSecurityMultifactorAuthenticationProperties::isTrustedDeviceEnabled)
             .forEach(duo -> {
                 val id = duo.getId();
                 LOGGER.debug("Activating multifactor trusted authentication for webflow [{}]", id);
@@ -111,7 +111,7 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
             });
     }
 
-    private FlowDefinitionRegistry buildDuoFlowRegistry(final DuoSecurityMultifactorProperties properties) {
+    private FlowDefinitionRegistry buildDuoFlowRegistry(final DuoSecurityMultifactorAuthenticationProperties properties) {
         val modelBuilder = new DynamicFlowModelBuilder();
 
         createDuoFlowVariables(modelBuilder);
@@ -137,7 +137,7 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
         setStartState(flow, actionState);
     }
 
-    private FlowDefinitionRegistry createDuoFlowDefinitionRegistry(final DuoSecurityMultifactorProperties p,
+    private FlowDefinitionRegistry createDuoFlowDefinitionRegistry(final DuoSecurityMultifactorAuthenticationProperties p,
         final DynamicFlowModelBuilder modelBuilder) {
         val holder = new DefaultFlowModelHolder(modelBuilder);
         val flowBuilder = new FlowModelFlowBuilder(holder);
@@ -147,7 +147,7 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
     }
 
     private static void createDuoFlowStates(final DynamicFlowModelBuilder modelBuilder,
-        final DuoSecurityMultifactorProperties properties) {
+        final DuoSecurityMultifactorAuthenticationProperties properties) {
         val states = new ArrayList<AbstractStateModel>();
 
         createDuoInitializeLoginAction(states);
