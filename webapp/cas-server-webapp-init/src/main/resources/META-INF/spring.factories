@@ -1,1 +1,0 @@
-org.springframework.boot.diagnostics.FailureAnalyzer=org.apereo.cas.web.BeanDefinitionStoreFailureAnalyzer
