@@ -17,8 +17,9 @@ service registry that stores one or more registered services containing metadata
 * [Attribute release](../integration/Attribute-Release.html) - Provide user details to services for authorization and personalization.
 * [Proxy control](Configuring-Service-Proxy-Policy.html) - Further restrict authorized services by granting/denying proxy authentication capability.
 * [Theme control](../ux/User-Interface-Customization.html) - Define alternate CAS themes to be used for particular services.
+    
+{% include casproperties.html properties="cas.service-registry.core,cas.service-registry.schedule,cas.service-registry.cache" %}
 
-{% include {{ version }}/service-registry-configuration.md %}
 
 ## Administrative Endpoints
 

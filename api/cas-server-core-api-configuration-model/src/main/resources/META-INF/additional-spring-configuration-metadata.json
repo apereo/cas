@@ -1,6 +1,15 @@
 {
   "properties": [
     {
+      "name": "cas.service.registry.init-from-json",
+      "type": "java.lang.Boolean",
+      "deprecation": {
+        "replacement": "cas.service.registry.core.init-from-json",
+        "reason": "init-from-json setting is now moved into the core namespace.",
+        "level": "error"
+      }
+    },
+    {
       "name": "cas.ticket.registry.hazelcast.cluster.members",
       "type": "java.util.List",
       "deprecation": {

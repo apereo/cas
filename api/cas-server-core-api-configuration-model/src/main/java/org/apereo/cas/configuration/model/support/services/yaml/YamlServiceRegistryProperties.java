@@ -24,6 +24,13 @@ public class YamlServiceRegistryProperties extends SpringResourceProperties {
 
     private static final long serialVersionUID = 4863603996990314548L;
 
+    /**
+     * Flag indicating whether a background watcher thread is enabled
+     * for the purposes of live reloading of service registry data changes
+     * from persistent data store.
+     */
+    private boolean watcherEnabled = true;
+
     public YamlServiceRegistryProperties() {
         setLocation(new ClassPathResource("services"));
     }
