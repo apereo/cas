@@ -20,9 +20,7 @@ Support is enabled by including the following module in the overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-simple-mfa" %}
 
-{% include casproperties.html
-modules="cas-server-support-simple-mfa"
-properties="cas.authn.mfa.simple.bypass" %} 
+{% include casproperties.html properties="cas.authn.mfa.simple" %}
 
 ## Registration
 

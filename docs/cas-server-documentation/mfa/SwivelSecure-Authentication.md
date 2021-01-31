@@ -20,9 +20,7 @@ Support is enabled by including the following module in the overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-swivel" %}
 
-{% include casproperties.html
-modules="cas-server-support-swivel"
-properties="cas.authn.mfa.swivel.bypass" %}
+{% include casproperties.html properties="cas.authn.mfa.swivel" %}
 
 ## Logging
 

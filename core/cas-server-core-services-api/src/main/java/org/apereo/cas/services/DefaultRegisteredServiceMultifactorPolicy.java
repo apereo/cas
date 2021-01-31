@@ -1,6 +1,6 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderFailureModes;
+import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.EqualsAndHashCode;

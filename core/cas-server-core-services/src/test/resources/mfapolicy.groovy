@@ -9,8 +9,8 @@ class GroovyMultifactorPolicy extends DefaultRegisteredServiceMultifactorPolicy 
     }
 
     @Override
-    MultifactorAuthenticationProviderFailureModes getFailureMode() {
-        MultifactorAuthenticationProviderFailureModes.OPEN
+    BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes getFailureMode() {
+        BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.OPEN
     }
 
     @Override

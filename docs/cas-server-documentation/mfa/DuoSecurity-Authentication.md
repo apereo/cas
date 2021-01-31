@@ -112,9 +112,7 @@ curl --location --header "Content-Type: application/cas" https://apps.example.or
 
 ## Configuration
 
-{% include casproperties.html
-modules="cas-server-support-duo"
-properties="cas.authn.mfa.duo[].bypass" %}
+{% include casproperties.html properties="cas.authn.mfa.duo" %}
 
 #### Web SDK Configuration
 

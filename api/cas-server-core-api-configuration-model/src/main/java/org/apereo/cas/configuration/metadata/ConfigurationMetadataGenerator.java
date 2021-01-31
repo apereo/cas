@@ -272,7 +272,7 @@ public class ConfigurationMetadataGenerator {
                 val matcher = PATTERN_GENERICS.matcher(grp.getType());
                 val className = matcher.find() ? matcher.group(1) : grp.getType();
                 val clazz = ClassUtils.getClass(className);
-
+                
                 val hint = new ConfigurationMetadataHint();
                 hint.setName(entry.getName());
 
