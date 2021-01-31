@@ -87,18 +87,17 @@ expected to be found at `/etc/cas/config/saml/metadata/SampleService-1000`.
 Service provider or identity provider metadata can also be managed using any one of the following strategies. 
 
 | Storage          | Description                                         
-|----------------------------------------------------------------------------
-| Metadata Query Protocol           | [this guide](Configuring-SAML2-DynamicMetadata-MDQ.html)  
-| HTTP/HTTPS                        | [this guide](Configuring-SAML2-DynamicMetadata-HTTP.html)  
-| REST                              | [this guide](Configuring-SAML2-DynamicMetadata-REST.html)  
-| Git                               | [this guide](Configuring-SAML2-DynamicMetadata-Git.html)  
-| MongoDb                           | [this guide](Configuring-SAML2-DynamicMetadata-MongoDb.html)  
-| Redis                             | [this guide](Configuring-SAML2-DynamicMetadata-Redis.html)  
-| JPA                               | [this guide](Configuring-SAML2-DynamicMetadata-JPA.html)  
-| CouchDb                           | [this guide](Configuring-SAML2-DynamicMetadata-CouchDb.html)  
-| Groovy                            | [this guide](Configuring-SAML2-DynamicMetadata-Groovy.html)  
-| Amazon S3                         | [this guide](Configuring-SAML2-DynamicMetadata-AmazonS3.html)  
-
+|--------------------------------------------------------------------------------------------------
+| Metadata Query Protocol           | [See this guide](Configuring-SAML2-DynamicMetadata-MDQ.html).  
+| HTTP/HTTPS                        | [See this guide](Configuring-SAML2-DynamicMetadata-HTTP.html).  
+| REST                              | [See this guide](Configuring-SAML2-DynamicMetadata-REST.html).  
+| Git                               | [See this guide](Configuring-SAML2-DynamicMetadata-Git.html).  
+| MongoDb                           | [See this guide](Configuring-SAML2-DynamicMetadata-MongoDb.html).  
+| Redis                             | [See this guide](Configuring-SAML2-DynamicMetadata-Redis.html).  
+| JPA                               | [See this guide](Configuring-SAML2-DynamicMetadata-JPA.html).  
+| CouchDb                           | [See this guide](Configuring-SAML2-DynamicMetadata-CouchDb.html).  
+| Groovy                            | [See this guide](Configuring-SAML2-DynamicMetadata-Groovy.html).  
+| Amazon S3                         | [See this guide](Configuring-SAML2-DynamicMetadata-AmazonS3.html).
 
 ### SAML Services
 
