@@ -125,7 +125,7 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolverTests ex
     public void verifyAuthnResolvesMfaEvent() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
-        request.addParameter(casProperties.getAuthn().getMfa().getRequestParameter(), TestMultifactorAuthenticationProvider.ID);
+        request.addParameter(casProperties.getAuthn().getMfa().getTriggers().getHttp().getRequestParameter(), TestMultifactorAuthenticationProvider.ID);
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
@@ -153,7 +153,7 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolverTests ex
     public void verifyAuthnResolvesMfaContextValidatedNoForceExecution() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
-        request.addParameter(casProperties.getAuthn().getMfa().getRequestParameter(), TestMultifactorAuthenticationProvider.ID);
+        request.addParameter(casProperties.getAuthn().getMfa().getTriggers().getHttp().getRequestParameter(), TestMultifactorAuthenticationProvider.ID);
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
@@ -180,7 +180,7 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolverTests ex
     public void verifyAuthnResolvesMfaContextValidated() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
-        request.addParameter(casProperties.getAuthn().getMfa().getRequestParameter(), TestMultifactorAuthenticationProvider.ID);
+        request.addParameter(casProperties.getAuthn().getMfa().getTriggers().getHttp().getRequestParameter(), TestMultifactorAuthenticationProvider.ID);
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 

@@ -38,27 +38,12 @@ public class MultifactorAuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private MultifactorAuthenticationCoreProperties core = new MultifactorAuthenticationCoreProperties();
-    
-    /**
-     * MFA can be triggered for a specific authentication request,
-     * provided the  request  contains a session/request attribute that indicates the required MFA authentication flow.
-     * The attribute name is configurable, but its value must match the authentication provider id of an available MFA provider.
-     */
-    private String sessionAttribute = "authn_method";
 
     /**
-     * MFA can be triggered for a specific authentication request,
-     * provided the initial request to the CAS /login endpoint contains a request header that indicates the required MFA authentication flow.
-     * The header name is configurable, but its value must match the authentication provider id of an available MFA provider.
+     * Multifactor authentication core/common settings for triggering mfa.
      */
-    private String requestHeader = "authn_method";
-
-    /**
-     * MFA can be triggered for a specific authentication request,
-     * provided the initial request to the CAS /login endpoint contains a parameter that indicates the required MFA authentication flow.
-     * The parameter name is configurable, but its value must match the authentication provider id of an available MFA provider.
-     */
-    private String requestParameter = "authn_method";
+    @NestedConfigurationProperty
+    private MultifactorAuthenticationTriggersProperties triggers = new MultifactorAuthenticationTriggersProperties();
 
     /**
      * MFA can be triggered based on the results of a remote REST endpoint of your design.

@@ -65,6 +65,8 @@ are:
 
 - `cas.authn.adaptive`
 - `cas.service-registry`
+- `cas.authn.mfa`
+- `cas.attribute-repository`
 
 ## Other Stuff
       
