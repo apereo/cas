@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.duo.authn;
 
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
-import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.services.RegisteredService;
 
 import lombok.AllArgsConstructor;
@@ -41,7 +41,7 @@ public class DefaultDuoSecurityMultifactorAuthenticationProvider extends Abstrac
 
     @Override
     public String getId() {
-        return StringUtils.defaultIfBlank(super.getId(), DuoSecurityMultifactorProperties.DEFAULT_IDENTIFIER);
+        return StringUtils.defaultIfBlank(super.getId(), DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
     }
 
     @Override

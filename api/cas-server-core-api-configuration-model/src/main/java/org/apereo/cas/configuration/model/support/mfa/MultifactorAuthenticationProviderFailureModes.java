@@ -1,17 +1,17 @@
-package org.apereo.cas.services;
+package org.apereo.cas.configuration.model.support.mfa;
 
 /**
- * This is {@link RegisteredServiceMultifactorPolicyFailureModes}.
+ * This is {@link MultifactorAuthenticationProviderFailureModes}.
  *
  * @author Misagh Moayyed
- * @since 6.1.0
+ * @since 6.4.0
  */
-public enum RegisteredServiceMultifactorPolicyFailureModes {
+public enum MultifactorAuthenticationProviderFailureModes {
     /**
      * Disallow MFA, proceed with authentication but don't communicate MFA to the RP.
      */
     OPEN,
-    
+
     /**
      * Disallow MFA, block with authentication.
      */

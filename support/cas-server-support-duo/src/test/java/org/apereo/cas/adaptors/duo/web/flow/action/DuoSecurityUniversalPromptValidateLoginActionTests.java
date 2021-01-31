@@ -10,7 +10,7 @@ import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBean;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -137,7 +137,7 @@ public class DuoSecurityUniversalPromptValidateLoginActionTests extends BaseCasW
     public static class DuoSecurityUniversalPromptValidateLoginActionTestConfiguration {
         @Bean
         public MultifactorAuthenticationProviderBean
-            <DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorProperties> duoProviderBean() throws Exception {
+            <DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorAuthenticationProperties> duoProviderBean() throws Exception {
 
             val token = new Token();
             token.setSub("casuser");
@@ -151,8 +151,8 @@ public class DuoSecurityUniversalPromptValidateLoginActionTests extends BaseCasW
                 .thenReturn(DuoSecurityAuthenticationResult.builder().success(true).username("casuser").build());
 
             val provider = mock(DuoSecurityMultifactorAuthenticationProvider.class);
-            when(provider.getId()).thenReturn(DuoSecurityMultifactorProperties.DEFAULT_IDENTIFIER);
-            when(provider.createUniqueId()).thenReturn(DuoSecurityMultifactorProperties.DEFAULT_IDENTIFIER);
+            when(provider.getId()).thenReturn(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
+            when(provider.createUniqueId()).thenReturn(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
             when(provider.validateId(anyString())).thenReturn(Boolean.TRUE);
             when(provider.getDuoAuthenticationService()).thenReturn(duoAuthService);
             val bean = mock(MultifactorAuthenticationProviderBean.class);

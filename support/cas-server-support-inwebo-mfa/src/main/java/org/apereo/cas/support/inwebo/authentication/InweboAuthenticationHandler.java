@@ -4,7 +4,7 @@ import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.configuration.model.support.mfa.InweboMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.InweboMultifactorAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.inwebo.service.InweboService;
 
@@ -28,7 +28,7 @@ public class InweboAuthenticationHandler extends AbstractPreAndPostProcessingAut
 
     public InweboAuthenticationHandler(final ServicesManager servicesManager,
                                        final PrincipalFactory principalFactory,
-                                       final InweboMultifactorProperties inweboProperties,
+                                       final InweboMultifactorAuthenticationProperties inweboProperties,
                                        final InweboService service) {
         super(inweboProperties.getName(),
               servicesManager,

@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.duo.authn;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.http.HttpClient;
 
@@ -40,7 +40,7 @@ public class UniversalPromptDuoSecurityAuthenticationServiceTests {
         val duoClient = mock(Client.class);
         when(duoClient.healthCheck()).thenThrow(new RuntimeException());
 
-        val duoProperties = new DuoSecurityMultifactorProperties();
+        val duoProperties = new DuoSecurityMultifactorAuthenticationProperties();
         val service = new UniversalPromptDuoSecurityAuthenticationService(duoProperties, mock(HttpClient.class), duoClient);
         assertTrue(service.getDuoClient().isPresent());
         assertFalse(service.ping());
@@ -50,7 +50,7 @@ public class UniversalPromptDuoSecurityAuthenticationServiceTests {
     public void verifyPing() throws Exception {
         val duoClient = mock(Client.class);
         when(duoClient.healthCheck()).thenReturn(new HealthCheckResponse());
-        val duoProperties = new DuoSecurityMultifactorProperties();
+        val duoProperties = new DuoSecurityMultifactorAuthenticationProperties();
         val service = new UniversalPromptDuoSecurityAuthenticationService(duoProperties, mock(HttpClient.class), duoClient);
         assertTrue(service.getDuoClient().isPresent());
         assertTrue(service.ping());
@@ -86,7 +86,7 @@ public class UniversalPromptDuoSecurityAuthenticationServiceTests {
 
         when(duoClient.exchangeAuthorizationCodeFor2FAResult(anyString(), anyString())).thenReturn(token);
 
-        val duoProperties = new DuoSecurityMultifactorProperties();
+        val duoProperties = new DuoSecurityMultifactorAuthenticationProperties();
         val service = new UniversalPromptDuoSecurityAuthenticationService(duoProperties,
             mock(HttpClient.class), duoClient);
         val result = service.authenticate(credential);

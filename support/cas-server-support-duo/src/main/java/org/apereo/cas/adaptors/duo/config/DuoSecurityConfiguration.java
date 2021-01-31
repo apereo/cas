@@ -15,7 +15,7 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBean;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -52,7 +52,7 @@ public class DuoSecurityConfiguration {
     @Qualifier("duoProviderBean")
     private ObjectProvider<MultifactorAuthenticationProviderBean<
         DuoSecurityMultifactorAuthenticationProvider,
-        DuoSecurityMultifactorProperties>> duoProviderBean;
+        DuoSecurityMultifactorAuthenticationProperties>> duoProviderBean;
 
     @Autowired
     @Qualifier("defaultTicketFactory")

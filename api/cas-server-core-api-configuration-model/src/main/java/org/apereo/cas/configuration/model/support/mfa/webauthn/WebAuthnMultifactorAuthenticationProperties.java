@@ -2,7 +2,7 @@ package org.apereo.cas.configuration.model.support.mfa.webauthn;
 
 import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
-import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorProviderProperties;
+import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
 import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -16,7 +16,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import java.util.concurrent.TimeUnit;
 
 /**
- * This is {@link WebAuthnMultifactorProperties}.
+ * This is {@link WebAuthnMultifactorAuthenticationProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 @Getter
 @Setter
 @JsonFilter("WebAuthnMultifactorProperties")
-public class WebAuthnMultifactorProperties extends BaseMultifactorProviderProperties {
+public class WebAuthnMultifactorAuthenticationProperties extends BaseMultifactorAuthenticationProviderProperties {
 
     /**
      * Provider id by default.
@@ -191,7 +191,7 @@ public class WebAuthnMultifactorProperties extends BaseMultifactorProviderProper
     @NestedConfigurationProperty
     private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
 
-    public WebAuthnMultifactorProperties() {
+    public WebAuthnMultifactorAuthenticationProperties() {
         setId(DEFAULT_IDENTIFIER);
         crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
         crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);

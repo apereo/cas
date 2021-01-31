@@ -2,7 +2,7 @@ package org.apereo.cas.adaptors.duo.web.flow;
 
 import org.apereo.cas.adaptors.duo.BaseDuoSecurityTests;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.configurer.BaseMultifactorWebflowConfigurerTests;
 
@@ -53,12 +53,12 @@ public class DuoSecurityUniversalPromptMultifactorWebflowConfigurerTests extends
 
     @Override
     protected FlowDefinitionRegistry getMultifactorFlowDefinitionRegistry() {
-        return this.applicationContext.getBean(DuoSecurityMultifactorProperties.DEFAULT_IDENTIFIER, FlowDefinitionRegistry.class);
+        return this.applicationContext.getBean(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER, FlowDefinitionRegistry.class);
     }
 
     @Override
     protected String getMultifactorEventId() {
-        return DuoSecurityMultifactorProperties.DEFAULT_IDENTIFIER;
+        return DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER;
     }
 
 }

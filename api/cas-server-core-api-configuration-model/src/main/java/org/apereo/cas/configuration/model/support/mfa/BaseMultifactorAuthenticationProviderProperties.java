@@ -11,7 +11,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import java.io.Serializable;
 
 /**
- * This is {@link BaseMultifactorProviderProperties}.
+ * This is {@link BaseMultifactorAuthenticationProviderProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
@@ -21,7 +21,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(of = "id")
 @Accessors(chain = true)
 @RequiresModule(name = "cas-server-core-authentication-mfa")
-public abstract class BaseMultifactorProviderProperties implements Serializable {
+public abstract class BaseMultifactorAuthenticationProviderProperties implements Serializable {
 
     private static final long serialVersionUID = -2690281104343633871L;
 
@@ -74,16 +74,14 @@ public abstract class BaseMultifactorProviderProperties implements Serializable 
     private String name;
 
     /**
-     * The failure mode policy for this MFA provider.
-     * The following failure modes are supported:
-     * <ul>
-     *     <li>{@code CLOSED}: Authentication is blocked if the provider cannot be reached.</li>
-     *     <li>{@code OPEN}: Authentication proceeds yet requested MFA is NOT
-     *     communicated to the client if provider is unavailable.</li>
-     *     <li>{@code PHANTOM}: Authentication proceeds and requested MFA is
-     *     communicated to the client if provider is unavailable.</li>
-     *     <li>{@code NONE}: Do not contact the provider at all to check for availability. Assume the provider is available.</li>
-     * </ul>
+     * The failure mode policy for this MFA provider. The authentication policy by default
+     * supports fail-closed mode, which means that if you attempt to
+     * exercise a particular provider available to CAS and the provider cannot be reached, authentication
+     * will be stopped and an error will be displayed. You can of course change this behavior so that authentication
+     * proceeds without exercising the provider functionality, if that provider cannot respond.
+     * Each defined multifactor authentication provider can set its own failure mode policy. Failure modes set at this location
+     * will override the global failure mode, but defer to any failure mode set by the registered service.
      */
-    private String failureMode = "UNDEFINED";
+    private MultifactorAuthenticationProviderFailureModes failureMode = MultifactorAuthenticationProviderFailureModes.CLOSED;
+
 }

@@ -6,7 +6,7 @@ import org.apereo.cas.adaptors.duo.authn.DuoSecurityUniversalPromptCredential;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBean;
-import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.util.LoggingUtils;
@@ -35,11 +35,11 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
     private final CentralAuthenticationService centralAuthenticationService;
 
     private final MultifactorAuthenticationProviderBean<
-        DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorProperties> duoProviderBean;
+        DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorAuthenticationProperties> duoProviderBean;
 
     public DuoSecurityUniversalPromptValidateLoginAction(final CasWebflowEventResolver duoAuthenticationWebflowEventResolver,
         final CentralAuthenticationService centralAuthenticationService,
-        final MultifactorAuthenticationProviderBean<DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorProperties> duoProviderBean) {
+        final MultifactorAuthenticationProviderBean<DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorAuthenticationProperties> duoProviderBean) {
         super(duoAuthenticationWebflowEventResolver);
         this.centralAuthenticationService = centralAuthenticationService;
         this.duoProviderBean = duoProviderBean;

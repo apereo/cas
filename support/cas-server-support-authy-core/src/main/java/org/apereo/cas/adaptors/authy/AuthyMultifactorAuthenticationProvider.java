@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.authy;
 
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
-import org.apereo.cas.configuration.model.support.mfa.AuthyMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.AuthyMultifactorAuthenticationProperties;
 
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -19,7 +19,7 @@ public class AuthyMultifactorAuthenticationProvider extends AbstractMultifactorA
 
     @Override
     public String getId() {
-        return StringUtils.defaultIfBlank(super.getId(), AuthyMultifactorProperties.DEFAULT_IDENTIFIER);
+        return StringUtils.defaultIfBlank(super.getId(), AuthyMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
     }
 
     @Override

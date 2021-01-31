@@ -67,45 +67,18 @@ The attribute must be resolved using the [CAS attribute resolution strategy](../
 If the attribute contains a value of `false`, CAS will attempt to
 ask for policy acceptance. Upon accepting the policy, the result will be stored back into storage.
 
-### Default
-
-To learn more, please [see this guide](Webflow-Customization-AUP-Default.html).
-
-### Groovy
-
-To learn more, please [see this guide](Webflow-Customization-AUP-Groovy.html).
-
-### LDAP
-
-To learn more, please [see this guide](Webflow-Customization-AUP-LDAP.html).
-
-### MongoDb
-
-To learn more, please [see this guide](Webflow-Customization-AUP-MongoDb.html).
-
-### Redis
-
-To learn more, please [see this guide](Webflow-Customization-AUP-Redis.html).
-
-### CouchDb
-
-To learn more, please [see this guide](Webflow-Customization-AUP-CouchDb.html).
-
-### Couchbase
-
-To learn more, please [see this guide](Webflow-Customization-AUP-Couchbase.html).
-
-### JDBC
-
-To learn more, please [see this guide](Webflow-Customization-AUP-JDBC.html).
-
-### REST
-
-To learn more, please [see this guide](Webflow-Customization-AUP-REST.html).
-
-### Custom
-
-To learn more, please [see this guide](Webflow-Customization-AUP-Custom.html).
+| Storage          | Description                                         
+|------------------------------------------------------------------------------------
+| Default     | [See this guide](Webflow-Customization-AUP-Default.html).
+| Groovy     | [See this guide](Webflow-Customization-AUP-Groovy.html).
+| LDAP     | [See this guide](Webflow-Customization-AUP-LDAP.html).
+| MongoDb     | [See this guide](Webflow-Customization-AUP-MongoDb.html).
+| Redis     | [See this guide](Webflow-Customization-AUP-Redis.html).
+| CouchDb     | [See this guide](Webflow-Customization-AUP-CouchDb.html).
+| Couchbase     | [See this guide](Webflow-Customization-AUP-Couchbase.html).
+| JDBC     | [See this guide](Webflow-Customization-AUP-JDBC.html).
+| REST     | [See this guide](Webflow-Customization-AUP-REST.html).
+| Custom     | [See this guide](Webflow-Customization-AUP-Custom.html).
 
 ## Policy Terms
 

@@ -1,7 +1,7 @@
 package org.apereo.cas.support.inwebo;
 
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
-import org.apereo.cas.configuration.model.support.mfa.InweboMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.InweboMultifactorAuthenticationProperties;
 
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -19,7 +19,7 @@ public class InweboMultifactorAuthenticationProvider extends AbstractMultifactor
 
     @Override
     public String getId() {
-        return StringUtils.defaultIfBlank(super.getId(), InweboMultifactorProperties.DEFAULT_IDENTIFIER);
+        return StringUtils.defaultIfBlank(super.getId(), InweboMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
     }
 
     @Override

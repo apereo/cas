@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.swivel.web.flow.rest;
 
-import org.apereo.cas.configuration.model.support.mfa.SwivelMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.SwivelMultifactorAuthenticationProperties;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -25,7 +25,7 @@ import java.net.URL;
 @RestController
 @RequiredArgsConstructor
 public class SwivelTuringImageGeneratorController {
-    private final SwivelMultifactorProperties swivel;
+    private final SwivelMultifactorAuthenticationProperties swivel;
 
     /**
      * Generate.

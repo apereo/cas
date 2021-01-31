@@ -1,7 +1,7 @@
 package org.apereo.cas.mfa.simple.web.flow;
 
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.configuration.model.support.mfa.CasSimpleMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.CasSimpleMultifactorAuthenticationProperties;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationConstants;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCommunicationStrategy;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicketFactory;
@@ -43,7 +43,7 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractAction {
 
     private final CasSimpleMultifactorAuthenticationTicketFactory ticketFactory;
 
-    private final CasSimpleMultifactorProperties properties;
+    private final CasSimpleMultifactorAuthenticationProperties properties;
 
     private final CasSimpleMultifactorTokenCommunicationStrategy tokenCommunicationStrategy;
 
@@ -86,7 +86,7 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractAction {
     }
 
     private static boolean isSmsSent(final CommunicationsManager communicationsManager,
-        final CasSimpleMultifactorProperties properties,
+        final CasSimpleMultifactorAuthenticationProperties properties,
         final Principal principal,
         final Ticket token) {
         if (communicationsManager.isSmsSenderDefined()) {
@@ -100,7 +100,7 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractAction {
     }
 
     private static boolean isMailSent(final CommunicationsManager communicationsManager,
-        final CasSimpleMultifactorProperties properties,
+        final CasSimpleMultifactorAuthenticationProperties properties,
         final Principal principal,
         final Ticket token) {
         if (communicationsManager.isMailSenderDefined()) {

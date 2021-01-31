@@ -5,7 +5,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProviderFactoryBea
 import org.apereo.cas.authentication.bypass.ChainingMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.util.http.HttpClient;
 
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 @RequiredArgsConstructor
 @Slf4j
 public class DuoSecurityMultifactorAuthenticationProviderFactory implements
-    MultifactorAuthenticationProviderFactoryBean<DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorProperties> {
+    MultifactorAuthenticationProviderFactoryBean<DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorAuthenticationProperties> {
 
     private final HttpClient httpClient;
 
@@ -34,7 +34,7 @@ public class DuoSecurityMultifactorAuthenticationProviderFactory implements
     private final CasConfigurationProperties casProperties;
 
     @Override
-    public DuoSecurityMultifactorAuthenticationProvider createProvider(final DuoSecurityMultifactorProperties properties) {
+    public DuoSecurityMultifactorAuthenticationProvider createProvider(final DuoSecurityMultifactorAuthenticationProperties properties) {
         val provider = new DefaultDuoSecurityMultifactorAuthenticationProvider();
         provider.setRegistrationUrl(properties.getRegistrationUrl());
         provider.setDuoAuthenticationService(getDuoAuthenticationService(properties));
@@ -53,7 +53,7 @@ public class DuoSecurityMultifactorAuthenticationProviderFactory implements
      * @return the multifactor authentication provider bypass
      */
     protected MultifactorAuthenticationProviderBypassEvaluator getMultifactorAuthenticationProviderBypass(
-        final DuoSecurityMultifactorProperties properties) {
+        final DuoSecurityMultifactorAuthenticationProperties properties) {
         return bypassEvaluator.filterMultifactorAuthenticationProviderBypassEvaluatorsBy(properties.getId());
     }
 
@@ -63,7 +63,7 @@ public class DuoSecurityMultifactorAuthenticationProviderFactory implements
      * @param properties the properties
      * @return the duo authentication service
      */
-    protected DuoSecurityAuthenticationService getDuoAuthenticationService(final DuoSecurityMultifactorProperties properties) {
+    protected DuoSecurityAuthenticationService getDuoAuthenticationService(final DuoSecurityMultifactorAuthenticationProperties properties) {
         if (StringUtils.isBlank(properties.getDuoApplicationKey())) {
             LOGGER.trace("Activating universal prompt authentication service for duo security");
             return new UniversalPromptDuoSecurityAuthenticationService(properties, httpClient, casProperties);

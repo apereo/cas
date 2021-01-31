@@ -1,7 +1,7 @@
 package org.apereo.cas.webauthn;
 
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
-import org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnMultifactorAuthenticationProperties;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -21,6 +21,6 @@ public class WebAuthnMultifactorAuthenticationProvider extends AbstractMultifact
 
     @Override
     public String getId() {
-        return StringUtils.defaultIfBlank(super.getId(), WebAuthnMultifactorProperties.DEFAULT_IDENTIFIER);
+        return StringUtils.defaultIfBlank(super.getId(), WebAuthnMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
     }
 }

@@ -2,7 +2,7 @@ package org.apereo.cas.adaptors.duo.web.flow.action;
 
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBean;
-import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
@@ -31,7 +31,7 @@ public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractAction
     private final TicketRegistry ticketRegistry;
 
     private final MultifactorAuthenticationProviderBean<
-        DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorProperties> duoProviderBean;
+        DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorAuthenticationProperties> duoProviderBean;
 
     private final TicketFactory ticketFactory;
 

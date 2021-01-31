@@ -1,7 +1,7 @@
 package org.apereo.cas.mfa.accepto;
 
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.configuration.model.support.mfa.AccepttoMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.AccepttoMultifactorAuthenticationProperties;
 import org.apereo.cas.mfa.accepto.web.flow.AccepttoWebflowUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
@@ -54,7 +54,7 @@ public class AccepttoApiUtils {
      * @param acceptto       the acceptto
      * @return the user email attribute
      */
-    public String getUserEmail(final Authentication authentication, final AccepttoMultifactorProperties acceptto) {
+    public String getUserEmail(final Authentication authentication, final AccepttoMultifactorAuthenticationProperties acceptto) {
         val attributes = authentication.getPrincipal().getAttributes();
         LOGGER.debug("Current principal attributes are [{}]", attributes);
 
@@ -70,7 +70,7 @@ public class AccepttoApiUtils {
      * @param acceptto       the acceptto
      * @return the user group
      */
-    public List<String> getUserGroup(final Authentication authentication, final AccepttoMultifactorProperties acceptto) {
+    public List<String> getUserGroup(final Authentication authentication, final AccepttoMultifactorAuthenticationProperties acceptto) {
         val attributes = authentication.getPrincipal().getAttributes();
         LOGGER.debug("Current principal attributes are [{}]", attributes);
 
@@ -87,7 +87,7 @@ public class AccepttoApiUtils {
      * @param acceptto       the acceptto
      * @return the map
      */
-    public static Map isUserValid(final Authentication authentication, final AccepttoMultifactorProperties acceptto) {
+    public static Map isUserValid(final Authentication authentication, final AccepttoMultifactorAuthenticationProperties acceptto) {
         val url = StringUtils.appendIfMissing(acceptto.getApiUrl(), "/") + "is_user_valid";
         val email = getUserEmail(authentication, acceptto);
 
@@ -138,7 +138,7 @@ public class AccepttoApiUtils {
      * @return the map
      */
     public static Map authenticate(final Authentication authentication,
-                                   final AccepttoMultifactorProperties acceptto,
+                                   final AccepttoMultifactorAuthenticationProperties acceptto,
                                    final RequestContext requestContext,
                                    final PublicKey apiResponsePublicKey) {
         val url = acceptto.getRegistrationApiUrl();
@@ -211,7 +211,7 @@ public class AccepttoApiUtils {
         return new HashMap<>(0);
     }
 
-    private static String buildAuthorizationHeaderPayloadForAuthentication(final AccepttoMultifactorProperties acceptto) {
+    private static String buildAuthorizationHeaderPayloadForAuthentication(final AccepttoMultifactorAuthenticationProperties acceptto) {
         val claims = new JwtClaims();
         claims.setClaim("uid", acceptto.getOrganizationId());
         claims.setExpirationTimeMinutesInTheFuture(1);
@@ -232,7 +232,7 @@ public class AccepttoApiUtils {
      * @param acceptto       the acceptto
      * @return true/false
      */
-    public static boolean isUserDevicePaired(final Authentication authentication, final AccepttoMultifactorProperties acceptto) {
+    public static boolean isUserDevicePaired(final Authentication authentication, final AccepttoMultifactorAuthenticationProperties acceptto) {
         val results = isUserValid(authentication, acceptto);
         return results != null && results.containsKey("device_paired") && BooleanUtils.toBoolean(results.get("device_paired").toString());
     }
@@ -246,7 +246,7 @@ public class AccepttoApiUtils {
      * @return the string
      * @throws Exception the exception
      */
-    public static String generateQRCodeHash(final Authentication authentication, final AccepttoMultifactorProperties acceptto,
+    public static String generateQRCodeHash(final Authentication authentication, final AccepttoMultifactorAuthenticationProperties acceptto,
                                             final String invitationToken) throws Exception {
         val email = getUserEmail(authentication, acceptto);
         val hash = CollectionUtils.wrap("invitation_token", invitationToken, "email_address", email);

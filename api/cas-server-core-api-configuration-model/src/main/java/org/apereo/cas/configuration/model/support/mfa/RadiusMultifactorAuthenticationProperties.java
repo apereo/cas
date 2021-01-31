@@ -11,7 +11,7 @@ import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
- * This is {@link RadiusMultifactorProperties}.
+ * This is {@link RadiusMultifactorAuthenticationProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
@@ -21,7 +21,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("RadiusMultifactorProperties")
-public class RadiusMultifactorProperties extends BaseMultifactorProviderProperties {
+public class RadiusMultifactorAuthenticationProperties extends BaseMultifactorAuthenticationProviderProperties {
 
     /**
      * Provider id by default.
@@ -67,7 +67,7 @@ public class RadiusMultifactorProperties extends BaseMultifactorProviderProperti
      */
     private boolean trustedDeviceEnabled;
 
-    public RadiusMultifactorProperties() {
+    public RadiusMultifactorAuthenticationProperties() {
         setId(DEFAULT_IDENTIFIER);
     }
 }

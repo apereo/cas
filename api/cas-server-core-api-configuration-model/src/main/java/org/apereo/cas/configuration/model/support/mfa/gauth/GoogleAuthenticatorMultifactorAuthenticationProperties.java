@@ -1,7 +1,7 @@
 package org.apereo.cas.configuration.model.support.mfa.gauth;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
-import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorProviderProperties;
+import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
 import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -14,7 +14,7 @@ import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
- * This is {@link GoogleAuthenticatorMultifactorProperties}.
+ * This is {@link GoogleAuthenticatorMultifactorAuthenticationProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
@@ -24,7 +24,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("GoogleAuthenticatorMultifactorProperties")
-public class GoogleAuthenticatorMultifactorProperties extends BaseMultifactorProviderProperties {
+public class GoogleAuthenticatorMultifactorAuthenticationProperties extends BaseMultifactorAuthenticationProviderProperties {
 
     /**
      * Provider id by default.
@@ -130,7 +130,7 @@ public class GoogleAuthenticatorMultifactorProperties extends BaseMultifactorPro
     @NestedConfigurationProperty
     private ScheduledJobProperties cleaner = new ScheduledJobProperties("PT1M", "PT1M");
 
-    public GoogleAuthenticatorMultifactorProperties() {
+    public GoogleAuthenticatorMultifactorAuthenticationProperties() {
         setId(DEFAULT_IDENTIFIER);
         crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
         crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);

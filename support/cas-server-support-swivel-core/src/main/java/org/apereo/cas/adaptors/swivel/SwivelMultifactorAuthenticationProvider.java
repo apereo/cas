@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.swivel;
 
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
-import org.apereo.cas.configuration.model.support.mfa.SwivelMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.SwivelMultifactorAuthenticationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.LoggingUtils;
 
@@ -43,7 +43,7 @@ public class SwivelMultifactorAuthenticationProvider extends AbstractMultifactor
 
     @Override
     public String getId() {
-        return StringUtils.defaultIfBlank(super.getId(), SwivelMultifactorProperties.DEFAULT_IDENTIFIER);
+        return StringUtils.defaultIfBlank(super.getId(), SwivelMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
     }
 
     /**
