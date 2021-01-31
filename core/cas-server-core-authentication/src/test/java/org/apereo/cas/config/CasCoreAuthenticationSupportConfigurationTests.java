@@ -52,7 +52,7 @@ import static org.mockito.Mockito.*;
         "cas.authn.core.engine.groovy-pre-processor.location=classpath:GroovyPostProcessor.groovy",
         "cas.authn.core.engine.groovy-post-processor.location=classpath:GroovyPreProcessor.groovy",
         "cas.authn.authentication-attribute-release.enabled=false",
-        "cas.authn.attribute-repository.expiration-time=0",
+        "cas.authn.attribute-repository.core.expiration-time=0",
         "cas.authn.policy.source-selection-enabled=true"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
