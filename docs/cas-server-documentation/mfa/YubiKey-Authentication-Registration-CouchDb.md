@@ -12,8 +12,7 @@ Support is enabled by including the following dependencies in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-yubikey-couchdb" %}
 
-{% include casproperties.html
-modules="cas-server-support-yubikey-couchdb" %}
+{% include casproperties.html properties="cas.authn.mfa.yubikey.couch-db" %}
 
 The registration records are kept inside a single CouchDb database of your choosing that will be auto-created by CAS.
 The structure of this database's documents is as follows:

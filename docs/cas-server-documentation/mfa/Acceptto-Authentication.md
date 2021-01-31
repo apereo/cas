@@ -29,7 +29,5 @@ history of user behavior data to detect anomalies.
 
 ## Configuration
 
-{% include casproperties.html
-modules="cas-server-support-acceptto-mfa"
-properties="cas.authn.mfa.acceptto.bypass,cas.session-replication" %}
+{% include casproperties.html properties="cas.authn.mfa.acceptto,cas.session-replication" %}
 

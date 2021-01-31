@@ -19,9 +19,7 @@ Support is enabled by including the following module in the overlay:
 
 ## Configuration
 
-{% include casproperties.html
-modules="cas-server-support-authy"
-properties="cas.authn.mfa.authy.bypass" %}
+{% include casproperties.html properties="cas.authn.mfa.authy" %}
 
 ## Registration
 

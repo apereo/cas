@@ -3,7 +3,7 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.BaseCasWebflowMultifactorAuthenticationTests;
 import org.apereo.cas.authentication.DefaultMultifactorAuthenticationFailureModeEvaluator;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
-import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderFailureModes;
+import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -35,7 +35,7 @@ public class MultifactorAuthenticationFailureActionTests extends BaseCasWebflowM
     @Qualifier("mfaFailureAction")
     private Action mfaFailureAction;
 
-    protected void executeAction(final MultifactorAuthenticationProviderFailureModes mode, final String transitionId) throws Exception {
+    protected void executeAction(final BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes mode, final String transitionId) throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -56,9 +56,9 @@ public class MultifactorAuthenticationFailureActionTests extends BaseCasWebflowM
 
     @Test
     public void verifyOperations() throws Exception {
-        executeAction(MultifactorAuthenticationProviderFailureModes.CLOSED, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
-        executeAction(MultifactorAuthenticationProviderFailureModes.NONE, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
-        executeAction(MultifactorAuthenticationProviderFailureModes.PHANTOM, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
-        executeAction(MultifactorAuthenticationProviderFailureModes.UNDEFINED, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
+        executeAction(BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.CLOSED, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
+        executeAction(BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.NONE, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
+        executeAction(BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.PHANTOM, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
+        executeAction(BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.UNDEFINED, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
     }
 }

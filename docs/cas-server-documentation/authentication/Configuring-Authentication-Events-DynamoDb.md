@@ -11,6 +11,5 @@ Stores authentication events into a DynamoDb database.
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-events-dynamodb" %}
 
-{% include casproperties.html
-modules="cas-server-support-events-dynamodb" %}
+{% include casproperties.html properties="cas.events.dynamodb-db" %}
 

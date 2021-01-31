@@ -1,7 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
-import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderFailureModes;
+import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.services.support.RegisteredServiceMappedRegexAttributeFilter;
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
@@ -238,7 +238,7 @@ public abstract class AbstractServiceRegistryTests {
         val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), registeredServiceClass);
         val policy =
             new DefaultRegisteredServiceMultifactorPolicy();
-        policy.setFailureMode(MultifactorAuthenticationProviderFailureModes.PHANTOM);
+        policy.setFailureMode(BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.PHANTOM);
 
         val set = new HashSet<String>();
         set.add("duoAuthenticationProvider");

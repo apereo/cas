@@ -17,5 +17,4 @@ attribute as JSON blobs. The attribute values are parsed
 to load, save, update or delete accounts. The content of each attribute
 value can be signed/encrypted if necessary. 
 
-{% include casproperties.html
-modules="cas-server-support-webauthn-ldap" %}
+{% include casproperties.html properties="cas.authn.mfa.webauthn.ldap" %}

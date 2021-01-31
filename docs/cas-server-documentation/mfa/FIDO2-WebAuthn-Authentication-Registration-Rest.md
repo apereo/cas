@@ -20,5 +20,4 @@ The following parameters are passed:
 | `GET`            | `username`      | Retrieve all records for user.  | `200` status code Collection of JSON records in the body.
 | `POST`           | Collection of records as JSON body | Store/Update registered devices. | `200`.
 
-{% include casproperties.html
-modules="cas-server-support-webauthn-rest" %}
+{% include casproperties.html properties="cas.authn.mfa.webauthn.rest" %}

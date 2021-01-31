@@ -2,7 +2,7 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderFailureModes;
+import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 
 import lombok.val;
@@ -32,24 +32,24 @@ public class DefaultMultifactorAuthenticationFailureModeEvaluatorTests {
     @Test
     public void verifyOperations() {
         executeEvaluation(
-            MultifactorAuthenticationProviderFailureModes.UNDEFINED,
-            MultifactorAuthenticationProviderFailureModes.UNDEFINED,
-            MultifactorAuthenticationProviderFailureModes.PHANTOM);
+            BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.UNDEFINED,
+            BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.UNDEFINED,
+            BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.PHANTOM);
 
         executeEvaluation(
-            MultifactorAuthenticationProviderFailureModes.OPEN,
-            MultifactorAuthenticationProviderFailureModes.CLOSED,
-            MultifactorAuthenticationProviderFailureModes.CLOSED);
+            BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.OPEN,
+            BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.CLOSED,
+            BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.CLOSED);
 
         executeEvaluation(
-            MultifactorAuthenticationProviderFailureModes.NONE,
-            MultifactorAuthenticationProviderFailureModes.UNDEFINED,
-            MultifactorAuthenticationProviderFailureModes.NONE);
+            BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.NONE,
+            BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.UNDEFINED,
+            BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.NONE);
     }
 
-    protected void executeEvaluation(final MultifactorAuthenticationProviderFailureModes providerMode,
-                                     final MultifactorAuthenticationProviderFailureModes serviceMode,
-                                     final MultifactorAuthenticationProviderFailureModes expected) {
+    protected void executeEvaluation(final BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes providerMode,
+                                     final BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes serviceMode,
+                                     final BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes expected) {
         val eval = new DefaultMultifactorAuthenticationFailureModeEvaluator(casProperties);
 
         val provider = new TestMultifactorAuthenticationProvider();

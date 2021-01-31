@@ -11,6 +11,5 @@ Stores authentication events into a MongoDb NoSQL database.
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-events-mongo" %}
 
-{% include casproperties.html
-modules="cas-server-support-events-mongo" %}
+{% include casproperties.html properties="cas.events.mongo" %}
 

@@ -1,7 +1,7 @@
 package org.apereo.cas.web.flow;
 
 
-import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderFailureModes;
+import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -17,6 +17,6 @@ public class MultifactorAuthenticationFailureOpenActionTests extends Multifactor
     @Override
     @Test
     public void verifyOperations() throws Exception {
-        executeAction(MultifactorAuthenticationProviderFailureModes.OPEN, CasWebflowConstants.TRANSITION_ID_BYPASS);
+        executeAction(BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.OPEN, CasWebflowConstants.TRANSITION_ID_BYPASS);
     }
 }
