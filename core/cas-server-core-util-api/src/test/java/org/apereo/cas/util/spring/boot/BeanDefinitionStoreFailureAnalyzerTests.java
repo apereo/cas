@@ -1,7 +1,6 @@
-package org.apereo.cas;
+package org.apereo.cas.util.spring.boot;
 
 import org.apereo.cas.configuration.model.core.CasServerProperties;
-import org.apereo.cas.web.BeanDefinitionStoreFailureAnalyzer;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
