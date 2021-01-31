@@ -1363,6 +1363,14 @@ initializr:
           bom: cas-bom
           aliases:
             - cloudwatch
+        - name: cas-server-support-logging-config-sqs
+          id: support-logging-config-sqs
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-logging-config-sqs
+          description: Apereo CAS Core Logging AWS SQS
+          bom: cas-bom
+          aliases:
+            - awssqs
         - name: cas-server-support-logging-config-splunk
           id: support-logging-config-splunk
           groupId: org.apereo.cas
@@ -1715,6 +1723,14 @@ initializr:
           bom: cas-bom
           aliases:
             - radiusmfa
+        - name: cas-server-support-inwebo-mfa
+          id: support-inwebo-mfa
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-inwebo-mfa
+          description: Apereo CAS Inweb MFA Support
+          bom: cas-bom
+          aliases:
+            - inwebo
         - name: cas-server-support-redis-authentication
           id: support-redis-authentication
           groupId: org.apereo.cas
@@ -1874,6 +1890,12 @@ initializr:
           artifactId: cas-server-support-saml-idp-metadata-couchdb
           description: Apereo CAS SAML Identity Provider Metadata Resolution Via CouchDb
           bom: cas-bom
+        - name: cas-server-support-saml-idp-metadata-redis
+          id: support-saml-idp-metadata-redis
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-saml-idp-metadata-redis
+          description: Apereo CAS SAML Identity Provider Metadata Resolution Via Redis
+          bom: cas-bom
         - name: cas-server-support-saml-idp-metadata-git
           id: support-saml-idp-metadata-git
           groupId: org.apereo.cas
@@ -1891,12 +1913,6 @@ initializr:
           groupId: org.apereo.cas
           artifactId: cas-server-support-saml-idp-metadata-mongo
           description: Apereo CAS SAML Identity Provider Metadata Resolution Via MongoDb
-          bom: cas-bom
-        - name: cas-server-support-saml-idp-metadata-redis
-          id: support-saml-idp-metadata-redis
-          groupId: org.apereo.cas
-          artifactId: cas-server-support-saml-idp-metadata-redis
-          description: Apereo CAS SAML Identity Provider Metadata Resolution Via Redis
           bom: cas-bom
         - name: cas-server-support-saml-idp-metadata-rest
           id: support-saml-idp-metadata-rest
@@ -2306,6 +2322,12 @@ initializr:
           artifactId: cas-server-support-trusted-mfa-couchdb
           description: Apereo CAS Trusted MFA Browser/Device CouchDb Support
           bom: cas-bom
+        - name: cas-server-support-trusted-mfa-redis
+          id: support-trusted-mfa-redis
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-trusted-mfa-redis
+          description: Apereo CAS Trusted MFA Browser/Device Redis Support
+          bom: cas-bom
         - name: cas-server-support-trusted-mfa-dynamodb
           id: support-trusted-mfa-dynamodb
           groupId: org.apereo.cas
@@ -2323,12 +2345,6 @@ initializr:
           groupId: org.apereo.cas
           artifactId: cas-server-support-trusted-mfa-mongo
           description: Apereo CAS Trusted MFA Browser/Device Mongo Support
-          bom: cas-bom
-        - name: cas-server-support-trusted-mfa-redis
-          id: support-trusted-mfa-redis
-          groupId: org.apereo.cas
-          artifactId: cas-server-support-trusted-mfa-redis
-          description: Apereo CAS Trusted MFA Browser/Device Redis Support
           bom: cas-bom
         - name: cas-server-support-trusted-mfa-rest
           id: support-trusted-mfa-rest
@@ -2429,14 +2445,6 @@ initializr:
           bom: cas-bom
           aliases:
             - webauthn-jpa
-        - name: cas-server-support-webauthn-mongo
-          id: support-webauthn-mongo
-          groupId: org.apereo.cas
-          artifactId: cas-server-support-webauthn-mongo
-          description: Apereo CAS WebAuthN MongoDb Support
-          bom: cas-bom
-          aliases:
-            - webauthn-mongo
         - name: cas-server-support-webauthn-redis
           id: support-webauthn-redis
           groupId: org.apereo.cas
@@ -2445,6 +2453,14 @@ initializr:
           bom: cas-bom
           aliases:
             - webauthn-redis
+        - name: cas-server-support-webauthn-mongo
+          id: support-webauthn-mongo
+          groupId: org.apereo.cas
+          artifactId: cas-server-support-webauthn-mongo
+          description: Apereo CAS WebAuthN MongoDb Support
+          bom: cas-bom
+          aliases:
+            - webauthn-mongo
         - name: cas-server-support-webauthn-dynamodb
           id: support-webauthn-dynamodb
           groupId: org.apereo.cas
