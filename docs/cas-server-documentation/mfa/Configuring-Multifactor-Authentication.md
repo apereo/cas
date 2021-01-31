@@ -41,9 +41,9 @@ The following multifactor providers are supported by CAS.
 | Inwebo                | `mfa-inwebo`    | [See this guide](Inwebo-Authentication.html).
 | Custom                | Custom          | [See this guide](../mfa/Custom-MFA-Authentication.html).
   
-## Configuration
+## Core Configuration
 
-
+{% include casproperties.html properties="cas.authn.mfa.core" %}
 
 ## Triggers
 
@@ -101,7 +101,7 @@ The following example should serve as an outline of how to select multifactor pr
 import java.util.*
 
 class SampleGroovyProviderSelection {
-    def String run(final Object... args) {
+    String run(final Object... args) {
         def service = args[0]
         def principal = args[1]
         def providersCollection = args[2]
@@ -141,11 +141,6 @@ Ranking of authentication methods is done per provider via specific properties f
 the higher the rank value is, the higher on the security scale it remains. A provider that ranks higher with a larger weight value trumps
 and override others with a lower value.
 
-## Provider Selection Menu
-
-If more than one multifactor authentication provider qualifies for the authentication request, CAS may be configured to
-present all choices to the user, allowing them to select a provider that makes the most sense at a given time. This approach
-is an alternative strategy to ranking providers.
 
 ## Trusted Devices/Browsers
 

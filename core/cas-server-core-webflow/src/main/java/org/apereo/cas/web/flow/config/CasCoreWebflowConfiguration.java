@@ -195,7 +195,7 @@ public class CasCoreWebflowConfiguration {
     @ConditionalOnMissingBean(name = "checkWebAuthenticationRequestAction")
     @RefreshScope
     public Action checkWebAuthenticationRequestAction() {
-        return new CheckWebAuthenticationRequestAction(casProperties.getAuthn().getMfa().getContentType());
+        return new CheckWebAuthenticationRequestAction(casProperties.getAuthn().getMfa().getCore().getContentType());
     }
 
     @Bean

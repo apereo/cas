@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@SpringBootTest(classes = RefreshAutoConfiguration.class, properties = "cas.authn.mfa.global-failure-mode=PHANTOM")
+@SpringBootTest(classes = RefreshAutoConfiguration.class, properties = "cas.authn.mfa.core.global-failure-mode=PHANTOM")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("MFA")
 public class DefaultMultifactorAuthenticationFailureModeEvaluatorTests {

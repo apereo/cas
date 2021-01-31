@@ -151,7 +151,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @ConditionalOnMissingBean(name = "googleAuthenticatorAuthenticationMetaDataPopulator")
     public AuthenticationMetaDataPopulator googleAuthenticatorAuthenticationMetaDataPopulator() {
         return new AuthenticationContextAttributeMetaDataPopulator(
-            casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
+            casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute(),
             googleAuthenticatorAuthenticationHandler(),
             googleAuthenticatorMultifactorAuthenticationProvider().getId()
         );

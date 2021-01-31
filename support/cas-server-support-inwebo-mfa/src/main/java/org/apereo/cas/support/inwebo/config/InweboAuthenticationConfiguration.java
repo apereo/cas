@@ -92,7 +92,7 @@ public class InweboAuthenticationConfiguration {
     @RefreshScope
     public AuthenticationMetaDataPopulator inweboAuthenticationMetaDataPopulator() {
         return new AuthenticationContextAttributeMetaDataPopulator(
-                casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
+                casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute(),
                 inweboAuthenticationHandler(),
                 inweboMultifactorAuthenticationProvider().getId()
         );

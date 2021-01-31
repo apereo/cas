@@ -41,7 +41,7 @@ public class DefaultChainingMultifactorAuthenticationProviderTests {
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         provider.setBypassEvaluator(new HttpRequestMultifactorAuthenticationProviderBypassEvaluator(props, provider.getId()));
         val casProperties = new CasConfigurationProperties();
-        casProperties.getAuthn().getMfa().setGlobalFailureMode(MultifactorAuthenticationProviderFailureModes.OPEN);
+        casProperties.getAuthn().getMfa().getCore().setGlobalFailureMode(MultifactorAuthenticationProviderFailureModes.OPEN);
         val failureEvaluator = new DefaultMultifactorAuthenticationFailureModeEvaluator(casProperties);
         val p = new DefaultChainingMultifactorAuthenticationProvider(failureEvaluator);
         p.addMultifactorAuthenticationProviders(provider);

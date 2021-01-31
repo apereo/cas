@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
+import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.model.support.mfa.gauth.GoogleAuthenticatorMultifactorAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.mfa.trusteddevice.TrustedDevicesMultifactorProperties;
 import org.apereo.cas.configuration.model.support.mfa.u2f.U2FMultifactorAuthenticationProperties;
@@ -12,7 +13,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import org.springframework.core.io.Resource;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -34,20 +34,11 @@ public class MultifactorAuthenticationProperties implements Serializable {
     private static final long serialVersionUID = 7416521468929733907L;
 
     /**
-     * Attribute returned in the final CAS validation payload
-     * that indicates the authentication context class satisfied
-     * in the event of a multifactor authentication attempt.
+     * Multifactor authentication core/common settings.
      */
-    private String authenticationContextAttribute = "authnContextClass";
-
-    /**
-     * Defines the global failure mode for the entire deployment.
-     * This is meant to be used a shortcut to define the policy globally
-     * rather than per application. Applications registered with CAS can still
-     * define a failure mode and override the global.
-     */
-    private MultifactorAuthenticationProviderFailureModes globalFailureMode = MultifactorAuthenticationProviderFailureModes.CLOSED;
-
+    @NestedConfigurationProperty
+    private MultifactorAuthenticationCoreProperties core = new MultifactorAuthenticationCoreProperties();
+    
     /**
      * MFA can be triggered for a specific authentication request,
      * provided the  request  contains a session/request attribute that indicates the required MFA authentication flow.
@@ -82,7 +73,8 @@ public class MultifactorAuthenticationProperties implements Serializable {
      * MFA can be triggered based on the results of a groovy script of your own design.
      * The outcome of the script should determine the MFA provider id that CAS should attempt to activate.
      */
-    private transient Resource groovyScript;
+    @NestedConfigurationProperty
+    private SpringResourceProperties groovyScript = new SpringResourceProperties();
 
     /**
      * This is a more generic variant of the {@link #globalPrincipalAttributeNameTriggers}.
@@ -91,7 +83,8 @@ public class MultifactorAuthenticationProperties implements Serializable {
      * you need to design a strategy to dynamically decide on the provider that should be activated for the request.
      * The decision is handed off to a Predicate implementation that define in a Groovy script whose location is taught to CAS.
      */
-    private transient Resource globalPrincipalAttributePredicate;
+    @NestedConfigurationProperty
+    private SpringResourceProperties globalPrincipalAttributePredicate = new SpringResourceProperties();
 
     /**
      * MFA can be triggered for all users/subjects carrying a specific attribute that matches one of the conditions below.
@@ -137,14 +130,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
      * if the account is qualified for multifactor authentication.
      */
     private String globalAuthenticationAttributeValueRegex;
-
-    /**
-     * Content-type that is expected to be specified by non-web clients such as curl, etc in the
-     * event that the provider supports variations of non-browser based MFA.
-     * The value is treated as a regular expression.
-     */
-    private String contentType = "application/cas";
-
+    
     /**
      * MFA can be triggered for all applications and users regardless of individual settings.
      * This setting holds the value of an MFA provider that shall be activated for all requests,
@@ -160,27 +146,6 @@ public class MultifactorAuthenticationProperties implements Serializable {
      * etc where a successful match against a provider id shall activate the chosen MFA provider.
      */
     private String grouperGroupField;
-
-    /**
-     * In the event that multiple multifactor authentication
-     * providers are determined for a multifactor authentication transaction,
-     * by default CAS will attempt to sort the collection of providers based on their rank and
-     * will pick one with the highest priority. This use case may arise if multiple triggers
-     * are defined where each decides on a different multifactor authentication provider, or
-     * the same provider instance is configured multiple times with many instances.
-     * Provider selection may also be carried out using Groovy scripting strategies more dynamically.
-     * The following example should serve as an outline of how to select multifactor providers based on a Groovy script.
-     */
-    private transient Resource providerSelectorGroovyScript;
-
-    /**
-     * In the event that multiple multifactor authentication providers are determined for a multifactor authentication transaction,
-     * this setting will allow one to interactively choose a provider out of the list of available providers.
-     * A trigger may be designed to support more than one provider, and rather than letting CAS auto-determine
-     * the selected provider via scripts or ranking strategies, this method puts the choice back onto the user
-     * to decide which provider makes the most sense at any given time.
-     */
-    private boolean providerSelectionEnabled;
 
     /**
      * Activate and configure a multifactor authentication provider via U2F FIDO.

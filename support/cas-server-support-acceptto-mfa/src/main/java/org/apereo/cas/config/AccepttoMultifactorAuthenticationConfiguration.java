@@ -287,7 +287,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
     @RefreshScope
     public AuthenticationMetaDataPopulator casAccepttoQRCodeAuthenticationMetaDataPopulator() {
         return new AuthenticationContextAttributeMetaDataPopulator(
-            casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
+            casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute(),
             casAccepttoQRCodeAuthenticationHandler(),
             casAccepttoMultifactorAuthenticationProvider.getObject().getId()
         );

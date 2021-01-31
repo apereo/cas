@@ -81,7 +81,7 @@ public class AccepttoMultifactorAuthenticationEventExecutionPlanConfiguration {
     @ConditionalOnMissingBean(name = "casAccepttoMultifactorAuthenticationMetaDataPopulator")
     public AuthenticationMetaDataPopulator casAccepttoMultifactorAuthenticationMetaDataPopulator() {
         return new AuthenticationContextAttributeMetaDataPopulator(
-            casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
+            casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute(),
             casAccepttoMultifactorAuthenticationHandler(),
             casAccepttoMultifactorAuthenticationProvider().getId()
         );
