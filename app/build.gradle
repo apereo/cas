@@ -1,7 +1,7 @@
 plugins {
     id "org.springframework.boot" version "${springBootVersion}"
     id "io.spring.dependency-management" version "${springDependencyManagementPluginVersion}"
-    id "io.freefair.lombok" version "${lombokPluginVersion}"
+    id "io.freefair.lombok" version "${gradleFreeFairPluginVersion}"
     id "java-library"
 }
 
@@ -62,6 +62,16 @@ bootRun {
 
     def appArgList = []
     args = appArgList
+}
+
+
+processResources {
+    filter org.apache.tools.ant.filters.ReplaceTokens, tokens: [
+        "casVersion": project.property("casVersion"),
+        "version": project.property("version"),
+        "javaVersion": project.sourceCompatibility,
+        "springBootVersion": project.property("springBootVersion")
+    ]
 }
 
 task copyWrapper(type: Copy) {

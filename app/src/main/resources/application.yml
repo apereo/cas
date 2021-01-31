@@ -24,17 +24,17 @@ initializr:
   name:
     value: cas
   description:
-    value: 'CAS WAR overlay to use as a starting template for CAS deployments.'
+    value: 'WAR overlay to use as a starting template for Apereo CAS deployments.'
   group-id:
     value: org.apereo.cas
   artifact-id:
     value: cas
   version:
-    value: 0.0.2
+    value: @version@
   package-name:
     value: org.apereo
   javaVersions:
-    - id: 11
+    - id: @javaVersion@
       default: true
   languages:
     - name: Java
@@ -62,7 +62,7 @@ initializr:
       default: false
       action: /starter.tgz
   boot-versions:
-    - id: 2.4.1
+    - id: @springBootVersion@
       default: true
   env:
     force-ssl: true
@@ -70,7 +70,7 @@ initializr:
       cas-bom:
         groupId: org.apereo.cas
         artifactId: cas-server-support-bom
-        version: 6.4.0-RC1
+        version: @casVersion@
   dependencies:
     - name: api
       content:
