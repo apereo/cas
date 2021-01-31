@@ -74,6 +74,7 @@ processResources {
                 "version"                                : project.property("version"),
                 "springBootVersion"                      : project.property("springBootVersion"),
                 "gradleDependencyManagementPluginVersion": project.property("gradleDependencyManagementPluginVersion"),
+                "gradleFreeFairPluginVersion"            : project.property("gradleFreeFairPluginVersion"),
                 "tomcatVersion"                          : project.property("tomcatVersion"),
                 "jibVersion"                             : project.property("jibVersion")
         ]
