@@ -70,7 +70,7 @@ initializr:
       cas-bom:
         groupId: org.apereo.cas
         artifactId: cas-server-support-bom
-        version: 6.4.0-SNAPSHOT
+        version: 6.4.0-RC1
   dependencies:
     - name: api
       content:

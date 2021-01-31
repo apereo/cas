@@ -3,3 +3,6 @@
 build
 tmp
 **/out
+*.orig
+**/target
+**/bin
