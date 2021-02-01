@@ -44,5 +44,13 @@ public class MultifactorAuthenticationTriggersProperties implements Serializable
      * Activate MFA based on properties or attributes of the principal.
      */
     @NestedConfigurationProperty
-    private PrincipalAttributeMultifactorAuthenticationProperties principal = new PrincipalAttributeMultifactorAuthenticationProperties();
+    private PrincipalAttributeMultifactorAuthenticationProperties principal =
+        new PrincipalAttributeMultifactorAuthenticationProperties();
+
+    /**
+     * Activate MFA based on properties or attributes of the authentication.
+     */
+    @NestedConfigurationProperty
+    private AuthenticationAttributeMultifactorAuthenticationProperties authentication =
+        new AuthenticationAttributeMultifactorAuthenticationProperties();
 }

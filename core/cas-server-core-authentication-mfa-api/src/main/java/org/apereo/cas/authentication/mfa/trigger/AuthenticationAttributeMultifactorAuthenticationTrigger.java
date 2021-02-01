@@ -48,7 +48,7 @@ public class AuthenticationAttributeMultifactorAuthenticationTrigger implements 
     public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication, final RegisteredService registeredService,
                                                                    final HttpServletRequest httpServletRequest, final Service service) {
 
-        val mfa = casProperties.getAuthn().getMfa();
+        val mfa = casProperties.getAuthn().getMfa().getTriggers().getAuthentication();
         val globalAuthenticationAttributeValueRegex = mfa.getGlobalAuthenticationAttributeValueRegex();
         val attributeNames = commaDelimitedListToSet(mfa.getGlobalAuthenticationAttributeNameTriggers());
 
