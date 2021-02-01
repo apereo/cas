@@ -53,36 +53,6 @@ public class MultifactorAuthenticationProperties implements Serializable {
     private SpringResourceProperties groovyScript = new SpringResourceProperties();
 
     /**
-     * This is a more generic variant of the {@link #globalPrincipalAttributeNameTriggers}.
-     * It may be useful in cases where there
-     * is more than one provider configured and available in the application runtime and
-     * you need to design a strategy to dynamically decide on the provider that should be activated for the request.
-     * The decision is handed off to a Predicate implementation that define in a Groovy script whose location is taught to CAS.
-     */
-    @NestedConfigurationProperty
-    private SpringResourceProperties globalPrincipalAttributePredicate = new SpringResourceProperties();
-
-    /**
-     * MFA can be triggered for all users/subjects carrying a specific attribute that matches one of the conditions below.
-     * <ul>
-     * <li>Trigger MFA based on a principal attribute(s) whose value(s) matches a regex pattern.
-     * Note that this behavior is only applicable if there is only a single MFA provider configured,
-     * since that would allow CAS to know what provider to next activate.</li>
-     * <li>Trigger MFA based on a principal attribute(s) whose value(s) EXACTLY matches an MFA provider.
-     * This option is more relevant if you have more than one provider configured or if you have the flexibility
-     * of assigning provider ids to attributes as values.</li>
-     * </ul>
-     * Needless to say, the attributes need to have been resolved for the principal prior to this step.
-     */
-    private String globalPrincipalAttributeNameTriggers;
-
-    /**
-     * The regular expression that is cross matches against the principal attribute to determine
-     * if the account is qualified for multifactor authentication.
-     */
-    private String globalPrincipalAttributeValueRegex;
-
-    /**
      * MFA can be triggered for all users/subjects whose authentication event/metadata has resolved a specific attribute that
      * matches one of the below conditions:
      * <ul>
