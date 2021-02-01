@@ -74,7 +74,8 @@ public class DefaultMultifactorAuthenticationProviderResolverTests {
         applicationContext.refresh();
 
         val casProperties = new CasConfigurationProperties();
-        casProperties.getAuthn().getMfa().setGlobalAuthenticationAttributeNameTriggers("mfa-authn");
+        casProperties.getAuthn().getMfa()
+            .getTriggers().getAuthentication().setGlobalAuthenticationAttributeNameTriggers("mfa-authn");
 
         val resolver = new DefaultMultifactorAuthenticationProviderResolver();
         val trigger = new AuthenticationAttributeMultifactorAuthenticationTrigger(casProperties, resolver, applicationContext);
