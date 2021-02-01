@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.authentication.principal.Service;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.ArrayList;
@@ -138,4 +139,14 @@ public class DefaultChainingServiceRegistry extends AbstractServiceRegistry impl
             })
             .forEach(serviceRegistry -> serviceRegistry.save(service));
     }
+
+    @Override
+    public RegisteredService findServiceBy(final String id) {
+        return serviceRegistries.stream()
+                .map(registry -> registry.findServiceBy(id))
+                .filter(Objects::nonNull)
+                .findFirst()
+                 .orElse(null);
+    }
+
 }
