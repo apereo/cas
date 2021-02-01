@@ -62,7 +62,7 @@ public class RestEndpointMultifactorAuthenticationTrigger implements Multifactor
                                                                    final RegisteredService registeredService,
                                                                    final HttpServletRequest httpServletRequest,
                                                                    final Service service) {
-        val restEndpoint = casProperties.getAuthn().getMfa().getRest();
+        val restEndpoint = casProperties.getAuthn().getMfa().getTriggers().getRest();
         if (service == null || authentication == null) {
             LOGGER.trace("No service or authentication is available to determine event for principal");
             return Optional.empty();
@@ -111,7 +111,7 @@ public class RestEndpointMultifactorAuthenticationTrigger implements Multifactor
     protected String callRestEndpointForMultifactor(final Principal principal, final Service resolvedService) {
         HttpResponse response = null;
         try {
-            val rest = casProperties.getAuthn().getMfa().getRest();
+            val rest = casProperties.getAuthn().getMfa().getTriggers().getRest();
             val entity = new RestEndpointEntity(principal.getId(), resolvedService.getId());
 
             val headers = CollectionUtils.<String, Object>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);

@@ -30,4 +30,13 @@ public class MultifactorAuthenticationTriggersProperties implements Serializable
      */
     @NestedConfigurationProperty
     private MultifactorAuthenticationHttpTriggerProperties http = new MultifactorAuthenticationHttpTriggerProperties();
+
+    /**
+     * MFA can be triggered based on the results of a remote REST endpoint of your design.
+     * If the endpoint is configured, CAS shall issue a POST, providing the principal and the service url.
+     * The body of the response in the event of a successful 200 status code is
+     * expected to be the MFA provider id which CAS should activate.
+     */
+    @NestedConfigurationProperty
+    private RestfulMultifactorAuthenticationProperties rest = new RestfulMultifactorAuthenticationProperties();
 }

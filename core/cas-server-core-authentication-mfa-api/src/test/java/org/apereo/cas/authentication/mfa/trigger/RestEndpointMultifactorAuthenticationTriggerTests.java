@@ -41,7 +41,7 @@ public class RestEndpointMultifactorAuthenticationTriggerTests extends BaseMulti
             new ByteArrayResource(response, "Output"), HttpStatus.OK)) {
             webServer.start();
             val props = new CasConfigurationProperties();
-            props.getAuthn().getMfa().getRest().setUrl("http://localhost:9313");
+            props.getAuthn().getMfa().getTriggers().getRest().setUrl("http://localhost:9313");
             val trigger = new RestEndpointMultifactorAuthenticationTrigger(props,
                 new DefaultMultifactorAuthenticationProviderResolver(),
                 applicationContext);
@@ -58,7 +58,7 @@ public class RestEndpointMultifactorAuthenticationTriggerTests extends BaseMulti
             new ByteArrayResource(response, "Output"), HttpStatus.OK)) {
             webServer.start();
             val props = new CasConfigurationProperties();
-            props.getAuthn().getMfa().getRest().setUrl("http://localhost:9313");
+            props.getAuthn().getMfa().getTriggers().getRest().setUrl("http://localhost:9313");
             val trigger = new RestEndpointMultifactorAuthenticationTrigger(props,
                 new DefaultMultifactorAuthenticationProviderResolver(),
                 applicationContext);
@@ -75,7 +75,7 @@ public class RestEndpointMultifactorAuthenticationTriggerTests extends BaseMulti
             new ByteArrayResource(response, "Output"), HttpStatus.UNAUTHORIZED)) {
             webServer.start();
             val props = new CasConfigurationProperties();
-            props.getAuthn().getMfa().getRest().setUrl("http://localhost:9313");
+            props.getAuthn().getMfa().getTriggers().getRest().setUrl("http://localhost:9313");
             val trigger = new RestEndpointMultifactorAuthenticationTrigger(props,
                 new DefaultMultifactorAuthenticationProviderResolver(),
                 applicationContext);
@@ -93,7 +93,7 @@ public class RestEndpointMultifactorAuthenticationTriggerTests extends BaseMulti
             applicationContext);
         var result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
         assertTrue(result.isEmpty());
-        props.getAuthn().getMfa().getRest().setUrl("http://localhost:9313");
+        props.getAuthn().getMfa().getTriggers().getRest().setUrl("http://localhost:9313");
         result = trigger.isActivated(null, null, this.httpRequest, mock(Service.class));
         assertTrue(result.isEmpty());
     }
