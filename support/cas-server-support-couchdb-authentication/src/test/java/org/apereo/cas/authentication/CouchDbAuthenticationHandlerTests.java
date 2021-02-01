@@ -85,7 +85,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.couch-db.password-attribute=password",
         "cas.authn.couch-db.username=cas",
         "cas.authn.couch-db.password=password",
-        "cas.authn.pac4j.typed-id-used=false"
+        "cas.authn.pac4j.core.typed-id-used=false"
     })
 @Tag("CouchDb")
 @EnabledIfPortOpen(port = 5984)
