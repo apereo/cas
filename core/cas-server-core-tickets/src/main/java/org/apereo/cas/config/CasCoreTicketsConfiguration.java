@@ -175,7 +175,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @Bean
     @Lazy
     public ProxyTicketFactory defaultProxyTicketFactory() {
-        val onlyTrackMostRecentSession = casProperties.getTicket().getTgt().isOnlyTrackMostRecentSession();
+        val onlyTrackMostRecentSession = casProperties.getTicket().getTgt().getCore().isOnlyTrackMostRecentSession();
         return new DefaultProxyTicketFactory(proxyTicketExpirationPolicy(),
             uniqueIdGeneratorsMap.getObject(),
             protocolTicketCipherExecutor(),
@@ -195,7 +195,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @RefreshScope
     public UniqueTicketIdGenerator proxyGrantingTicketUniqueIdGenerator() {
         return new ProxyGrantingTicketIdGenerator(
-            casProperties.getTicket().getTgt().getMaxLength(),
+            casProperties.getTicket().getTgt().getCore().getMaxLength(),
             casProperties.getHost().getName());
     }
 
@@ -204,7 +204,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @RefreshScope
     public UniqueTicketIdGenerator ticketGrantingTicketUniqueIdGenerator() {
         return new TicketGrantingTicketIdGenerator(
-            casProperties.getTicket().getTgt().getMaxLength(),
+            casProperties.getTicket().getTgt().getCore().getMaxLength(),
             casProperties.getHost().getName());
     }
 
@@ -241,7 +241,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @Bean
     @RefreshScope
     public ServiceTicketFactory defaultServiceTicketFactory() {
-        val onlyTrackMostRecentSession = casProperties.getTicket().getTgt().isOnlyTrackMostRecentSession();
+        val onlyTrackMostRecentSession = casProperties.getTicket().getTgt().getCore().isOnlyTrackMostRecentSession();
         return new DefaultServiceTicketFactory(serviceTicketExpirationPolicy(),
             uniqueIdGeneratorsMap.getObject(),
             onlyTrackMostRecentSession,

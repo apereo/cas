@@ -60,26 +60,8 @@ public class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTe
 
     @Test
     @SneakyThrows
-    public void verifyLegacyServiceDefinition() {
-        val resource = new ClassPathResource("Legacy-10000003.json");
-        val serializer = new RegisteredServiceJsonSerializer();
-        val service = serializer.from(resource.getInputStream());
-        assertNotNull(service);
-    }
-
-    @Test
-    @SneakyThrows
     public void verifyRequiredHandlersServiceDefinition() {
         val resource = new ClassPathResource("RequiredHandlers-10000004.json");
-        val serializer = new RegisteredServiceJsonSerializer();
-        val service = serializer.from(resource.getInputStream());
-        assertNotNull(service);
-    }
-
-    @Test
-    @SneakyThrows
-    public void verifyMultifactorNotSetFailureMode() {
-        val resource = new ClassPathResource("MFA-FailureMode-1.json");
         val serializer = new RegisteredServiceJsonSerializer();
         val service = serializer.from(resource.getInputStream());
         assertNotNull(service);

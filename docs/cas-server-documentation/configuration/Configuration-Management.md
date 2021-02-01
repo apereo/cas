@@ -20,7 +20,7 @@ The following strategies may be used to fully extend the CAS configuration model
 <div class="alert alert-info"><strong>YAML or Properties?</strong><p>CAS configuration allows for both
 YAML and Properties syntax in any of the below strategies used. It generally does not matter which syntax 
 is used, but when working with Unicode strings as properties values it does matter. Spring loads properties
-files using the ISO-8859-1 encoding. YAML files are loaded with UTF-8 encoding. If you are setting Unicode
+files using the `ISO-8859-1` encoding. YAML files are loaded with UTF-8 encoding. If you are setting Unicode
 values try using a YAML configuration file.</p></div>
 
 {% include casproperties.html properties="cas.server.name,cas.server.prefix,cas.server.scope,cas.host." %}

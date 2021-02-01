@@ -9,7 +9,7 @@ category: Ticketing
 # Ticket Expiration Policies
 
 CAS supports a pluggable and extensible policy framework to control the expiration policy of ticket-granting
-tickets (`TGT`), proxy-granting tickets (`PGT`), service tickets (`ST`) and proxy tickets (`PT`).
+tickets (`TGT`), proxy-granting tickets (`PGT`), service tickets (`ST`), proxy tickets (`PT`), etc.
 
 <div class="alert alert-info"><strong>There Is More</strong><p>There are many other types of 
 artifacts in CAS that take the base form of a ticket abstraction. Each protocol or feature may 
@@ -19,13 +19,15 @@ policies for its own ticket types may be tuned and controlled.</p></div>
 
 ## Ticket-Granting Ticket Policies
 
-`TGT` expiration policy governs the time span during which an authenticated user may grant STs with a valid (non-expired) `TGT` without
+`TGT` expiration policy governs the time span during which an authenticated user may grant `ST`s with a valid (non-expired) `TGT` without
 having to re-authenticate. An attempt to grant an ST with an expired `TGT` would require the user to re-authenticate
 to obtain a new (valid) `TGT`.
 
 ### Default
 
 This is the default option, which provides a hard-time out as well as a sliding window.
+
+{% include casproperties.html properties="cas.ticket.tgt.core,cas.ticket.tgt.primary" %}
 
 Ticket expiration policies are activated in the following conditions:
 
@@ -46,9 +48,6 @@ Ticket expiration policies are activated in the following order:
 4. Throttled Timeout
 5. Hard Timeout
 6. Tickets always expire immediately.
-
-{% include casproperties.html
-properties="cas.ticket.tgt.max-time-to-live-in-seconds,cas.ticket.tgt.time-to-kill-in-seconds" %}
 
 ### Per Service
 

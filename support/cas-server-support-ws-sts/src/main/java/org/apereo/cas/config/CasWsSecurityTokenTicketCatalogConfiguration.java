@@ -33,7 +33,7 @@ public class CasWsSecurityTokenTicketCatalogConfiguration extends BaseTicketCata
         val definition = buildTicketDefinition(plan, SecurityTokenTicket.PREFIX, DefaultSecurityTokenTicket.class, Ordered.HIGHEST_PRECEDENCE);
         val properties = definition.getProperties();
         properties.setStorageName("wsSecurityTokenTicketsCache");
-        properties.setStorageTimeout(casProperties.getTicket().getTgt().getMaxTimeToLiveInSeconds());
+        properties.setStorageTimeout(casProperties.getTicket().getTgt().getPrimary().getMaxTimeToLiveInSeconds());
         registerTicketDefinition(plan, definition);
     }
 }

@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.core.ticket;
 
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -19,56 +20,46 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("TicketGrantingTicketProperties")
 public class TicketGrantingTicketProperties implements Serializable {
 
     private static final long serialVersionUID = 2349079252583399336L;
 
     /**
-     * Maximum length of TGTs.
+     * Primary/default expiration policy settings.
      */
-    private int maxLength = 50;
+    @NestedConfigurationProperty
+    private PrimaryTicketExpirationPolicyProperties primary = new PrimaryTicketExpirationPolicyProperties();
 
     /**
-     * Maximum time in seconds TGTs would be live in CAS server.
+     * Core/common settings.
      */
-    private int maxTimeToLiveInSeconds = 28_800;
+    @NestedConfigurationProperty
+    private TicketGrantingTicketCoreProperties core = new TicketGrantingTicketCoreProperties();
 
     /**
-     * Time in seconds after which TGTs would be destroyed after a period of inactivity.
-     */
-    private int timeToKillInSeconds = 7_200;
-
-    /**
-     * Flag to control whether to track most recent SSO sessions.
-     * As multiple tickets may be issued for the same application, this impacts
-     * how session information is tracked for every ticket which then
-     * has a subsequent impact on logout.
-     */
-    private boolean onlyTrackMostRecentSession = true;
-
-    /**
-     * Hard timeout for TGTs.
+     * Hard timeout for tickets.
      */
     @NestedConfigurationProperty
     private HardTimeoutTicketExpirationPolicyProperties hardTimeout =
         new HardTimeoutTicketExpirationPolicyProperties();
 
     /**
-     * Throttled timeout for TGTs.
+     * Throttled timeout for tickets.
      */
     @NestedConfigurationProperty
     private ThrottledTimeoutTicketExpirationPolicyProperties throttledTimeout =
         new ThrottledTimeoutTicketExpirationPolicyProperties();
 
     /**
-     * Timeout for TGTs.
+     * Timeout for tickets.
      */
     @NestedConfigurationProperty
     private TimeoutTicketExpirationPolicyProperties timeout =
         new TimeoutTicketExpirationPolicyProperties();
 
     /**
-     * Remember me for TGTs.
+     * Remember me for tickets.
      */
     @NestedConfigurationProperty
     private RememberMeAuthenticationProperties rememberMe =

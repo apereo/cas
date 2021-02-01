@@ -21,7 +21,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-pac4j-webflow" %}
 
-{% include casproperties.html properties="cas.authn.pac4j.core" %}
+{% include casproperties.html properties="cas.authn.pac4j.core,cas.session-replication" %}
 
 <div class="alert alert-info"><strong>Note</strong><p>The client issuing the authentication request 
 can be of any type (SAML, OAuth2, OpenID Connect, etc) and is allowed to submit the 

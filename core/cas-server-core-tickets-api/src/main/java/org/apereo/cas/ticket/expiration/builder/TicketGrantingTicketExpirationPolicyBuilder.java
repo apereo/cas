@@ -62,7 +62,7 @@ public class TicketGrantingTicketExpirationPolicyBuilder implements ExpirationPo
      */
     protected ExpirationPolicy toTicketGrantingTicketExpirationPolicy() {
         val tgt = casProperties.getTicket().getTgt();
-        if (tgt.getMaxTimeToLiveInSeconds() <= 0 && tgt.getTimeToKillInSeconds() <= 0) {
+        if (tgt.getPrimary().getMaxTimeToLiveInSeconds() <= 0 && tgt.getPrimary().getTimeToKillInSeconds() <= 0) {
             LOGGER.warn("Ticket-granting ticket expiration policy is set to NEVER expire tickets.");
             return NeverExpiresExpirationPolicy.INSTANCE;
         }
@@ -88,10 +88,10 @@ public class TicketGrantingTicketExpirationPolicyBuilder implements ExpirationPo
             return new HardTimeoutExpirationPolicy(tgt.getHardTimeout().getTimeToKillInSeconds());
         }
 
-        if (tgt.getMaxTimeToLiveInSeconds() > 0 && tgt.getTimeToKillInSeconds() > 0) {
+        if (tgt.getPrimary().getMaxTimeToLiveInSeconds() > 0 && tgt.getPrimary().getTimeToKillInSeconds() > 0) {
             LOGGER.debug("Ticket-granting ticket expiration policy is based on hard/idle timeouts of [{}]/[{}] seconds",
-                tgt.getMaxTimeToLiveInSeconds(), tgt.getTimeToKillInSeconds());
-            return new TicketGrantingTicketExpirationPolicy(tgt.getMaxTimeToLiveInSeconds(), tgt.getTimeToKillInSeconds());
+                tgt.getPrimary().getMaxTimeToLiveInSeconds(), tgt.getPrimary().getTimeToKillInSeconds());
+            return new TicketGrantingTicketExpirationPolicy(tgt.getPrimary().getMaxTimeToLiveInSeconds(), tgt.getPrimary().getTimeToKillInSeconds());
         }
         LOGGER.warn("Ticket-granting ticket expiration policy is set to ALWAYS expire tickets.");
         return new AlwaysExpiresExpirationPolicy();
