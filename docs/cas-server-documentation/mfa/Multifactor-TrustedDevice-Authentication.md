@@ -89,4 +89,4 @@ Device registrations can also be managed using any one of the following strategi
 | MongoDb     | [See this guide](Multifactor-TrustedDevice-Authentication-Storage-MongoDb.html).  
 | DynamoDb     | [See this guide](Multifactor-TrustedDevice-Authentication-Storage-DynamoDb.html).  
 | Redis     | [See this guide](Multifactor-TrustedDevice-Authentication-Storage-Redis.html).  
-| REST     | [See this guide](Multifactor-TrustedDevice-Authentication-Storage-REST.html).  
+| REST     | [See this guide](Multifactor-TrustedDevice-Authentication-Storage-Rest.html).  

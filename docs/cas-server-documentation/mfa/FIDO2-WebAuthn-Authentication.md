@@ -88,6 +88,6 @@ Device registrations can also be managed using any one of the following strategi
 | JPA     | [See this guide](FIDO2-WebAuthn-Authentication-Registration-JPA.html).  
 | Redis     | [See this guide](FIDO2-WebAuthn-Authentication-Registration-Redis.html).  
 | DynamoDb     | [See this guide](FIDO2-WebAuthn-Authentication-Registration-DynamoDb.html).
-| REST     | [See this guide](FIDO2-WebAuthn-Authentication-Registration-REST.html).
+| REST     | [See this guide](FIDO2-WebAuthn-Authentication-Registration-Rest.html).
 
 
