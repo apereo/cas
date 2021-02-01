@@ -183,7 +183,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
 
     @Override
     protected Event doPreExecute(final RequestContext context) throws Exception {
-        if (configContext.getCasProperties().getAuthn().getPac4j().isReplicateSessions()
+        if (configContext.getCasProperties().getAuthn().getPac4j().getCore().isReplicateSessions()
             && configContext.getCasProperties().getSessionReplication().getCookie().isAutoConfigureCookiePath()) {
 
             val contextPath = context.getExternalContext().getContextPath();

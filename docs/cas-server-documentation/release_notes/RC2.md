@@ -67,6 +67,7 @@ are:
 - `cas.service-registry`
 - `cas.authn.mfa`
 - `cas.attribute-repository`
+- `cas.authn.pac4j`
 
 ## Other Stuff
       

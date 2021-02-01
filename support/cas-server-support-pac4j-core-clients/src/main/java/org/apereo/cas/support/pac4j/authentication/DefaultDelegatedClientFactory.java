@@ -513,7 +513,7 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
                 && StringUtils.isNotBlank(oauth.getSecret()))
             .forEach(oauth -> {
                 val client = new GenericOAuth20Client();
-                client.setProfileId(StringUtils.defaultIfBlank(oauth.getPrincipalAttributeId(), pac4jProperties.getPrincipalAttributeId()));
+                client.setProfileId(StringUtils.defaultIfBlank(oauth.getPrincipalAttributeId(), pac4jProperties.getCore().getPrincipalAttributeId()));
                 client.setKey(oauth.getId());
                 client.setSecret(oauth.getSecret());
                 client.setProfileAttrs(oauth.getProfileAttrs());
@@ -595,7 +595,7 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
                 client.setCallbackUrlResolver(new QueryParameterCallbackUrlResolver());
         }
         this.customizers.forEach(customizer -> customizer.customize(client));
-        if (!casProperties.getAuthn().getPac4j().isLazyInit()) {
+        if (!casProperties.getAuthn().getPac4j().getCore().isLazyInit()) {
             client.init();
         }
     }

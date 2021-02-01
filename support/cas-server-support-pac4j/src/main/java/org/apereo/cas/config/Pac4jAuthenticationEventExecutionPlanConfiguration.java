@@ -104,7 +104,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope
     public SessionStore<JEEContext> delegatedClientDistributedSessionStore() {
-        val replicate = casProperties.getAuthn().getPac4j().isReplicateSessions();
+        val replicate = casProperties.getAuthn().getPac4j().getCore().isReplicateSessions();
         if (replicate) {
             return new DistributedJEESessionStore(centralAuthenticationService.getObject(),
                 ticketFactory.getObject(), delegatedClientDistributedSessionCookieGenerator());
@@ -152,7 +152,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "clientAuthenticationHandler")
     public AuthenticationHandler clientAuthenticationHandler() {
-        val pac4j = casProperties.getAuthn().getPac4j();
+        val pac4j = casProperties.getAuthn().getPac4j().getCore();
         val h = new DelegatedClientAuthenticationHandler(pac4j.getName(),
             pac4j.getOrder(),
             servicesManager.getObject(),
@@ -222,7 +222,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     @ConditionalOnMissingBean(name = "delegatedAuthenticationLogoutExecutionPlanConfigurer")
     public LogoutExecutionPlanConfigurer delegatedAuthenticationLogoutExecutionPlanConfigurer() {
         return plan -> {
-            val replicate = casProperties.getAuthn().getPac4j().isReplicateSessions();
+            val replicate = casProperties.getAuthn().getPac4j().getCore().isReplicateSessions();
             if (replicate) {
                 plan.registerLogoutPostProcessor(ticketGrantingTicket -> {
                     val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
