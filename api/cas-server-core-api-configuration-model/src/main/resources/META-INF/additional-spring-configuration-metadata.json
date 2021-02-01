@@ -1,6 +1,24 @@
 {
   "properties": [
     {
+      "name": "cas.authn.mfa.global-authentication-attribute-name-triggers",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.mfa.triggers.authentication.global-authentication-attribute-name-triggers",
+        "reason": "global-authentication-attribute-name-triggers setting is now moved into the cas.authn.mfa.triggers.authentication namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.mfa.global-authentication-attribute-value-regex",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.mfa.triggers.authentication.global-authentication-attribute-value-regex",
+        "reason": "global-authentication-attribute-value-regex setting is now moved into the cas.authn.mfa.triggers.authentication namespace.",
+        "level": "error"
+      }
+    },
+    {
       "name": "cas.authn.mfa.global-principal-attribute-name-triggers",
       "type": "java.lang.String",
       "deprecation": {
