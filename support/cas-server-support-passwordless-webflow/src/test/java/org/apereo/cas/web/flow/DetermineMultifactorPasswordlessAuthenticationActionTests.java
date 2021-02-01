@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = {
     "cas.authn.passwordless.accounts.simple.casuser=casuser@example.org",
     "cas.authn.passwordless.core.multifactor-authentication-activated=true",
-    "cas.authn.mfa.global-provider-id=" + TestMultifactorAuthenticationProvider.ID
+    "cas.authn.mfa.triggers.global.global-provider-id=" + TestMultifactorAuthenticationProvider.ID
 })
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class DetermineMultifactorPasswordlessAuthenticationActionTests extends BasePasswordlessAuthenticationActionTests {

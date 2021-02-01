@@ -53,22 +53,6 @@ public class MultifactorAuthenticationProperties implements Serializable {
     private SpringResourceProperties groovyScript = new SpringResourceProperties();
 
     /**
-     * MFA can be triggered for all applications and users regardless of individual settings.
-     * This setting holds the value of an MFA provider that shall be activated for all requests,
-     * regardless.
-     */
-    private String globalProviderId;
-
-    /**
-     * MFA can be triggered by Grouper groups to which the authenticated principal is assigned.
-     * Groups are collected by CAS and then cross-checked against all available/configured MFA providers.
-     * The group’s comparing factor MUST be defined in CAS to activate this behavior and
-     * it can be based on the group’s name, display name,
-     * etc where a successful match against a provider id shall activate the chosen MFA provider.
-     */
-    private String grouperGroupField;
-
-    /**
      * Activate and configure a multifactor authentication provider via U2F FIDO.
      */
     @NestedConfigurationProperty

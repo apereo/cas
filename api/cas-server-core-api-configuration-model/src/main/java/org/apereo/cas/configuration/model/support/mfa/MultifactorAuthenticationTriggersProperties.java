@@ -53,4 +53,18 @@ public class MultifactorAuthenticationTriggersProperties implements Serializable
     @NestedConfigurationProperty
     private AuthenticationAttributeMultifactorAuthenticationProperties authentication =
         new AuthenticationAttributeMultifactorAuthenticationProperties();
+
+    /**
+     * Activate MFA based on grouper integration.
+     */
+    @NestedConfigurationProperty
+    private GrouperMultifactorAuthenticationProperties grouper =
+        new GrouperMultifactorAuthenticationProperties();
+
+    /**
+     * Activate MFA globally.
+     */
+    @NestedConfigurationProperty
+    private GlobalMultifactorAuthenticationProperties global =
+        new GlobalMultifactorAuthenticationProperties();
 }
