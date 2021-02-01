@@ -1,6 +1,15 @@
 {
   "properties": [
     {
+      "name": "cas.authn.mfa.global-provider-id",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.mfa.triggers.global.global-provider-id",
+        "reason": "global-provider-id setting is now moved into the cas.authn.mfa.triggers.global namespace.",
+        "level": "error"
+      }
+    },
+    {
       "name": "cas.authn.mfa.global-authentication-attribute-name-triggers",
       "type": "java.lang.String",
       "deprecation": {
