@@ -23,7 +23,7 @@ import java.io.Serializable;
 @JsonFilter("MultifactorAuthenticationTriggersProperties")
 public class MultifactorAuthenticationTriggersProperties implements Serializable {
 
-    private static final long serialVersionUID = 7411521468929733907L;
+    private static final long serialVersionUID = 7410521468929733907L;
 
     /**
      * MFA triggers that operate based on the http request properties.
@@ -39,4 +39,10 @@ public class MultifactorAuthenticationTriggersProperties implements Serializable
      */
     @NestedConfigurationProperty
     private RestfulMultifactorAuthenticationProperties rest = new RestfulMultifactorAuthenticationProperties();
+
+    /**
+     * Activate MFA based on properties or attributes of the principal.
+     */
+    @NestedConfigurationProperty
+    private PrincipalAttributeMultifactorAuthenticationProperties principal = new PrincipalAttributeMultifactorAuthenticationProperties();
 }

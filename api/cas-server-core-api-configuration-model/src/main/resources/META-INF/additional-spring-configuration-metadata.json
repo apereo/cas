@@ -1,6 +1,33 @@
 {
   "properties": [
     {
+      "name": "cas.authn.mfa.global-principal-attribute-name-triggers",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.mfa.triggers.principal.global-principal-attribute-name-triggers",
+        "reason": "global-principal-attribute-name-triggers setting is now moved into the cas.authn.mfa.triggers.principal namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.mfa.global-principal-attribute-value-regex",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.mfa.triggers.principal.global-principal-attribute-value-regex",
+        "reason": "global-principal-attribute-value-regex setting is now moved into the cas.authn.mfa.triggers.principal namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.mfa.rest.url",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.mfa.triggers.rest.url",
+        "reason": "url setting is now moved into the cas.authn.mfa.triggers.rest namespace.",
+        "level": "error"
+      }
+    },
+    {
       "name": "cas.ticket.tgt.max-time-to-live-in-seconds",
       "type": "java.lang.Integer",
       "deprecation": {
