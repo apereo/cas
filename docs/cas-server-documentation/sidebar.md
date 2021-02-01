@@ -263,7 +263,7 @@ layout: null
             *   [JSON](/cas/{{ version }}/mfa/Multifactor-TrustedDevice-Authentication-Storage-JSON.html)
             *   [MongoDb](/cas/{{ version }}/mfa/Multifactor-TrustedDevice-Authentication-Storage-MongoDb.html)
             *   [Redis](/cas/{{ version }}/mfa/Multifactor-TrustedDevice-Authentication-Storage-Redis.html)
-            *   [REST](/cas/{{ version }}/mfa/Multifactor-TrustedDevice-Authentication-Storage-REST.html)
+            *   [REST](/cas/{{ version }}/mfa/Multifactor-TrustedDevice-Authentication-Storage-Rest.html)
     *   [Adaptive](#adaptiveauthn)
         *   [Overview](/cas/{{ version }}/mfa/Configuring-Adaptive-Authentication.html)
         *   [GeoTracking](/cas/{{ version }}/authentication/GeoTracking-Authentication-Requests.html)
