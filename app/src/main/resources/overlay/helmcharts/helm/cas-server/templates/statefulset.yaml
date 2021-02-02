@@ -35,7 +35,7 @@ spec:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       volumes:
         {{- range $.Values.casServerContainer.casConfigMounts }}
-        {{- $configMount := printf "%s-%s" "cas-config" . | replace "." "-" }}
+        {{- $configMount := printf "%s-%s" "cas-config" . | replace "." "-" | replace "_" "-" | lower }}
         - name: {{ $configMount | quote }}
           configMap:
             name: {{ include "cas-server.fullname" $ }}-casconfig
@@ -71,7 +71,7 @@ spec:
               value: {{ .Values.casServerContainer.warPath | quote }}
             {{- end }}
             {{- if .Values.casServerContainer.profiles }}
-            - name: SPRING_PROFILES
+            - name: CAS_SPRING_PROFILES
               value: {{ .Values.casServerContainer.profiles | quote }}
             {{- end }}
             {{- if .Values.casServerContainer.jvm.maxHeapOpt }}
@@ -120,7 +120,7 @@ spec:
               protocol: TCP
           volumeMounts:
             {{- range $.Values.casServerContainer.casConfigMounts }}
-            {{- $configMount := printf "%s-%s" "cas-config" . | replace "." "-" }}
+            {{- $configMount := printf "%s-%s" "cas-config" . | replace "." "-" | replace "_" "-" | lower }}
             {{- $configMountPath := printf "%s/%s" "/etc/cas/config" . }}
             - name: {{ $configMount | quote }}
               mountPath: {{ $configMountPath }}
