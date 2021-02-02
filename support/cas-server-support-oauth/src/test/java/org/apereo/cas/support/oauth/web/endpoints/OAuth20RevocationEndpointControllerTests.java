@@ -40,7 +40,7 @@ public class OAuth20RevocationEndpointControllerTests extends AbstractOAuth20Tes
     }
 
     @Test
-    public void verifyNoGivenToken() {
+    public void verifyNoGivenToken() throws Exception {
         this.servicesManager.save(getRegisteredService(REDIRECT_URI, CLIENT_SECRET, new HashSet<>()));
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.POST.name(),
@@ -56,7 +56,7 @@ public class OAuth20RevocationEndpointControllerTests extends AbstractOAuth20Tes
     }
 
     @Test
-    public void verifyGivenInvalidClientId() {
+    public void verifyGivenInvalidClientId() throws Exception {
         this.servicesManager.save(getRegisteredService(REDIRECT_URI, CLIENT_SECRET, new HashSet<>()));
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.POST.name(),
@@ -73,7 +73,7 @@ public class OAuth20RevocationEndpointControllerTests extends AbstractOAuth20Tes
     }
 
     @Test
-    public void verifyGivenInvalidClientSecret() {
+    public void verifyGivenInvalidClientSecret() throws Exception {
         this.servicesManager.save(getRegisteredService(REDIRECT_URI, CLIENT_SECRET, new HashSet<>()));
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.POST.name(),
@@ -90,7 +90,7 @@ public class OAuth20RevocationEndpointControllerTests extends AbstractOAuth20Tes
     }
 
     @Test
-    public void verifyGivenTokenNotInRegistry() {
+    public void verifyGivenTokenNotInRegistry() throws Exception {
         this.servicesManager.save(getRegisteredService(REDIRECT_URI, CLIENT_SECRET, new HashSet<>()));
         this.servicesManager.save(getRegisteredService(REDIRECT_URI, PUBLIC_CLIENT_ID, StringUtils.EMPTY, new HashSet<>()));
 
@@ -114,7 +114,7 @@ public class OAuth20RevocationEndpointControllerTests extends AbstractOAuth20Tes
     }
 
     @Test
-    public void verifyGivenUnsupportedToken() {
+    public void verifyGivenUnsupportedToken() throws Exception {
         val principal = createPrincipal();
         val service = getRegisteredService(REDIRECT_URI, CLIENT_SECRET, new HashSet<>());
         this.servicesManager.save(service);
@@ -135,7 +135,7 @@ public class OAuth20RevocationEndpointControllerTests extends AbstractOAuth20Tes
     }
 
     @Test
-    public void verifyGivenAccessTokenInRegistry() {
+    public void verifyGivenAccessTokenInRegistry() throws Exception {
         val principal = createPrincipal();
         val service = getRegisteredService(REDIRECT_URI, CLIENT_SECRET, new HashSet<>());
         val publicService = getRegisteredService(REDIRECT_URI, PUBLIC_CLIENT_ID, StringUtils.EMPTY, new HashSet<>());
@@ -181,7 +181,7 @@ public class OAuth20RevocationEndpointControllerTests extends AbstractOAuth20Tes
     }
 
     @Test
-    public void verifyGivenRefreshTokenInRegistry() {
+    public void verifyGivenRefreshTokenInRegistry() throws Exception {
         val principal = createPrincipal();
         val service = getRegisteredService(REDIRECT_URI, CLIENT_SECRET, new HashSet<>());
         val publicService = getRegisteredService(REDIRECT_URI, PUBLIC_CLIENT_ID, StringUtils.EMPTY, new HashSet<>());
@@ -205,7 +205,6 @@ public class OAuth20RevocationEndpointControllerTests extends AbstractOAuth20Tes
         assertEquals(HttpStatus.OK.value(), mockResponse.getStatus());
         assertNull(this.ticketRegistry.getTicket(refreshToken.getId()));
         assertNull(this.ticketRegistry.getTicket(accessToken.getId()));
-
 
         val accessToken2 = addAccessToken(principal, publicService);
         val refreshToken2 = addRefreshToken(principal, publicService, accessToken2);
