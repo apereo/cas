@@ -237,11 +237,11 @@ public class OidcConfiguration implements WebMvcConfigurer {
 
     @Autowired
     @Qualifier("requiresAuthenticationAccessTokenInterceptor")
-    private ObjectProvider<SecurityInterceptor> requiresAuthenticationAccessTokenInterceptor;
+    private ObjectProvider<HandlerInterceptor> requiresAuthenticationAccessTokenInterceptor;
 
     @Autowired
     @Qualifier("requiresAuthenticationAuthorizeInterceptor")
-    private ObjectProvider<SecurityInterceptor> requiresAuthenticationAuthorizeInterceptor;
+    private ObjectProvider<HandlerInterceptor> requiresAuthenticationAuthorizeInterceptor;
 
     @Autowired
     @Qualifier("oauthCasAuthenticationBuilder")
