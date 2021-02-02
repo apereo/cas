@@ -15,6 +15,7 @@ import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.JEESessionStore;
+import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.oauth.client.OAuth10Client;
 import org.pac4j.oauth.client.OAuth20Client;
 import org.pac4j.oauth.config.OAuth10Configuration;
@@ -56,6 +57,10 @@ public class DelegatedClientWebflowManagerTests {
     @Autowired
     @Qualifier("delegatedClientWebflowManager")
     private DelegatedClientWebflowManager delegatedClientWebflowManager;
+
+    @Autowired
+    @Qualifier("delegatedClientDistributedSessionStore")
+    private SessionStore delegatedClientDistributedSessionStore;
 
     private JEEContext context;
 
@@ -150,7 +155,7 @@ public class DelegatedClientWebflowManagerTests {
         val client = new SAML2Client(config);
         val ticket = delegatedClientWebflowManager.store(context, client);
         assertNotNull(ticketRegistry.getTicket(ticket.getId()));
-        assertEquals(ticket.getId(), JEESessionStore.INSTANCE.get(context, SAML2StateGenerator.SAML_RELAY_STATE_ATTRIBUTE).get());
+        assertEquals(ticket.getId(), delegatedClientDistributedSessionStore.get(context, SAML2StateGenerator.SAML_RELAY_STATE_ATTRIBUTE).get());
 
         httpServletRequest.addParameter("RelayState", ticket.getId());
         val service = delegatedClientWebflowManager.retrieve(requestContext, context, client);
@@ -164,7 +169,7 @@ public class DelegatedClientWebflowManagerTests {
         val client = new SAML2Client(config);
         val ticket = delegatedClientWebflowManager.store(context, client);
         assertNotNull(ticketRegistry.getTicket(ticket.getId()));
-        assertEquals(ticket.getId(), JEESessionStore.INSTANCE.get(context,
+        assertEquals(ticket.getId(), delegatedClientDistributedSessionStore.get(context,
             SAML2StateGenerator.SAML_RELAY_STATE_ATTRIBUTE).get());
         httpServletRequest.addParameter("RelayState", ticket.getId());
         ticket.markTicketExpired();
