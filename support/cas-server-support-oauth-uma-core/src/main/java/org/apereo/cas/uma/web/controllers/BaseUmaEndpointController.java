@@ -14,8 +14,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.pac4j.core.context.JEEContext;
-import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
+import org.pac4j.core.profile.UserProfile;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.MultiValueMap;
 
@@ -47,12 +47,12 @@ public abstract class BaseUmaEndpointController {
      * @param requiredPermission the required permission
      * @return the authenticated profile
      */
-    protected CommonProfile getAuthenticatedProfile(final HttpServletRequest request,
-                                                    final HttpServletResponse response,
-                                                    final String requiredPermission) {
-        val context = new JEEContext(request, response, getUmaConfigurationContext().getSessionStore());
-        val manager = new ProfileManager<CommonProfile>(context);
-        val profileResult = manager.get(true);
+    protected UserProfile getAuthenticatedProfile(final HttpServletRequest request,
+                                                  final HttpServletResponse response,
+                                                  final String requiredPermission) {
+        val context = new JEEContext(request, response);
+        val manager = new ProfileManager(context, getUmaConfigurationContext().getSessionStore());
+        val profileResult = manager.getProfile();
         if (profileResult.isEmpty()) {
             throw new AuthenticationException("Unable to locate authenticated profile");
         }

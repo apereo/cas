@@ -63,7 +63,6 @@ import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostDecoder;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostSimpleSignDecoder;
 import org.opensaml.saml.saml2.core.Response;
-import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.ObjectProvider;
@@ -388,13 +387,13 @@ public class SamlIdPEndpointsConfiguration {
     @ConditionalOnMissingBean(name = "samlIdPDistributedSessionStore")
     @Bean
     @RefreshScope
-    public SessionStore<JEEContext> samlIdPDistributedSessionStore() {
+    public SessionStore samlIdPDistributedSessionStore() {
         val replicate = casProperties.getAuthn().getSamlIdp().getCore().isReplicateSessions();
         if (replicate) {
             return new DistributedJEESessionStore(centralAuthenticationService.getObject(),
                 ticketFactory.getObject(), samlIdPDistributedSessionCookieGenerator());
         }
-        return new JEESessionStore();
+        return JEESessionStore.INSTANCE;
     }
 
     @ConditionalOnMissingBean(name = "samlIdPSingleLogoutRedirectionStrategy")

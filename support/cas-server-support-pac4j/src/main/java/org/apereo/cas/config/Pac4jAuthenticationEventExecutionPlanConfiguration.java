@@ -103,13 +103,13 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     @ConditionalOnMissingBean(name = "delegatedClientDistributedSessionStore")
     @Bean
     @RefreshScope
-    public SessionStore<JEEContext> delegatedClientDistributedSessionStore() {
+    public SessionStore delegatedClientDistributedSessionStore() {
         val replicate = casProperties.getAuthn().getPac4j().getCore().isReplicateSessions();
         if (replicate) {
             return new DistributedJEESessionStore(centralAuthenticationService.getObject(),
                 ticketFactory.getObject(), delegatedClientDistributedSessionCookieGenerator());
         }
-        return new JEESessionStore();
+        return JEESessionStore.INSTANCE;
     }
 
     @ConditionalOnMissingBean(name = "delegatedClientDistributedSessionCookieGenerator")
@@ -229,7 +229,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
                     val response = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
                     if (request != null && response != null) {
                         val store = delegatedClientDistributedSessionStore();
-                        store.destroySession(new JEEContext(request, response, store));
+                        store.destroySession(new JEEContext(request, response));
                     }
                 });
             }

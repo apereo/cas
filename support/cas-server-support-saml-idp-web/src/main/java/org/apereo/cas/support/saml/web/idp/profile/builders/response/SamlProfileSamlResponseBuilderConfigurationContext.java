@@ -19,7 +19,6 @@ import org.apache.velocity.app.VelocityEngine;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.binding.artifact.SAMLArtifactMap;
 import org.opensaml.saml.saml2.core.Assertion;
-import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
 
 /**
@@ -58,7 +57,7 @@ public class SamlProfileSamlResponseBuilderConfigurationContext {
 
     private final transient SamlProfileObjectBuilder<? extends SAMLObject> samlSoapResponseBuilder;
 
-    private final transient SessionStore<JEEContext> sessionStore;
+    private final transient SessionStore sessionStore;
 
     private final transient CentralAuthenticationService centralAuthenticationService;
 }

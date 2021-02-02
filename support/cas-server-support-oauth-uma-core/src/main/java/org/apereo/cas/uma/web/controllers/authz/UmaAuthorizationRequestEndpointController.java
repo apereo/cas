@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.hjson.JsonValue;
-import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.core.profile.UserProfile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -112,7 +112,7 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
     protected ResponseEntity handleMismatchedClaims(final HttpServletRequest request,
         final HttpServletResponse response,
         final ResourceSet resourceSet,
-        final CommonProfile profileResult,
+        final UserProfile profileResult,
         final UmaResourceSetClaimPermissionResult analysisResult,
         final UmaPermissionTicket permissionTicket) {
 
@@ -157,9 +157,9 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
      * @return the response entity
      */
     protected ResponseEntity generateRequestingPartyToken(final HttpServletRequest request, final HttpServletResponse response,
-        final CommonProfile profileResult, final UmaAuthorizationRequest umaRequest,
-        final UmaPermissionTicket permissionTicket, final ResourceSet resourceSet) {
-        val currentAat = profileResult.getAttribute(OAuth20AccessToken.class.getName(), OAuth20AccessToken.class);
+                                                          final UserProfile profileResult, final UmaAuthorizationRequest umaRequest,
+                                                          final UmaPermissionTicket permissionTicket, final ResourceSet resourceSet) {
+        val currentAat = (OAuth20AccessToken) profileResult.getAttribute(OAuth20AccessToken.class.getName());
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(getUmaConfigurationContext().getServicesManager(),
             OAuth20Utils.getClientIdFromAuthenticatedProfile(profileResult));
 

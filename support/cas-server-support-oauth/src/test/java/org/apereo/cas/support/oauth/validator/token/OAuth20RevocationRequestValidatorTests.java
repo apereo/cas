@@ -14,6 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.session.JEESessionStore;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -57,7 +58,7 @@ public class OAuth20RevocationRequestValidatorTests {
 
         registerTicket(SUPPORTING_SERVICE_TICKET);
 
-        this.validator = new OAuth20RevocationRequestValidator(servicesManager);
+        this.validator = new OAuth20RevocationRequestValidator(servicesManager, JEESessionStore.INSTANCE);
     }
 
     @Test

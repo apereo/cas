@@ -27,7 +27,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.JEEContext;
-import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -114,7 +113,7 @@ public class DelegatedClientAuthenticationActionTests {
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
 
         val client = builtClients.findClient("FacebookClient").get();
-        val webContext = new JEEContext(request, new MockHttpServletResponse(), new JEESessionStore());
+        val webContext = new JEEContext(request, new MockHttpServletResponse());
         val ticket = delegatedClientWebflowManager.store(webContext, client);
         request.addParameter(DelegatedClientWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
 
@@ -142,7 +141,7 @@ public class DelegatedClientAuthenticationActionTests {
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
 
         val client = builtClients.findClient("FacebookClient").get();
-        val webContext = new JEEContext(request, new MockHttpServletResponse(), new JEESessionStore());
+        val webContext = new JEEContext(request, new MockHttpServletResponse());
         val ticket = delegatedClientWebflowManager.store(webContext, client);
         request.addParameter(DelegatedClientWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
 
@@ -194,7 +193,7 @@ public class DelegatedClientAuthenticationActionTests {
         val response = new MockHttpServletResponse();
 
         val client = builtClients.findClient("FacebookClient").get();
-        val webContext = new JEEContext(request, new MockHttpServletResponse(), new JEESessionStore());
+        val webContext = new JEEContext(request, new MockHttpServletResponse());
         val ticket = delegatedClientWebflowManager.store(webContext, client);
         request.addParameter(DelegatedClientWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
 
@@ -224,7 +223,7 @@ public class DelegatedClientAuthenticationActionTests {
         val service = CoreAuthenticationTestUtils.getService("https://delegated3.example.org");
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
         val client = builtClients.findClient("FacebookClient").get();
-        val webContext = new JEEContext(request, new MockHttpServletResponse(), new JEESessionStore());
+        val webContext = new JEEContext(request, new MockHttpServletResponse());
         val ticket = delegatedClientWebflowManager.store(webContext, client);
         request.addParameter(DelegatedClientWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
 
@@ -271,7 +270,7 @@ public class DelegatedClientAuthenticationActionTests {
         }
 
         val client = builtClients.findClient("SAML2Client").get();
-        val webContext = new JEEContext(request, response, new JEESessionStore());
+        val webContext = new JEEContext(request, response);
 
         val ticket = delegatedClientWebflowManager.store(webContext, client);
         request.addParameter(DelegatedClientWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());

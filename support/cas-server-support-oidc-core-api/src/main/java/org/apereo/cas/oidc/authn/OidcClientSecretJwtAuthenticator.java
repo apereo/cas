@@ -15,6 +15,8 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.context.WebContext;
+import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.context.ApplicationContext;
@@ -32,19 +34,21 @@ import java.util.List;
 public class OidcClientSecretJwtAuthenticator extends BaseOidcJwtAuthenticator {
 
     public OidcClientSecretJwtAuthenticator(final ServicesManager servicesManager,
-        final AuditableExecution registeredServiceAccessStrategyEnforcer,
-        final TicketRegistry ticketRegistry,
-        final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
-        final CasConfigurationProperties casProperties,
-        final ApplicationContext applicationContext) {
+                                            final AuditableExecution registeredServiceAccessStrategyEnforcer,
+                                            final TicketRegistry ticketRegistry,
+                                            final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
+                                            final CasConfigurationProperties casProperties,
+                                            final ApplicationContext applicationContext) {
         super(servicesManager, registeredServiceAccessStrategyEnforcer,
             ticketRegistry, webApplicationServiceServiceFactory, casProperties, applicationContext);
     }
 
     @Override
     @SneakyThrows
-    public void validate(final UsernamePasswordCredentials credentials,
-        final WebContext webContext) {
+    public void validate(final Credentials creds,
+                         final WebContext webContext,
+                         final SessionStore sessionStore) {
+        val credentials = (UsernamePasswordCredentials) creds;
         val registeredService = verifyCredentials(credentials, webContext);
         if (registeredService == null) {
             LOGGER.warn("Unable to verify credentials");

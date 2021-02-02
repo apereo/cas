@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -58,7 +59,7 @@ public class OidcPrivateKeyJwtAuthenticatorTests extends AbstractOidcTests {
         val credentials = getCredential(request, OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER,
             new String(jwt, StandardCharsets.UTF_8), registeredService.getClientId());
 
-        auth.validate(credentials, context);
+        auth.validate(credentials, context, JEESessionStore.INSTANCE);
         assertNotNull(credentials.getUserProfile());
     }
 
@@ -75,7 +76,7 @@ public class OidcPrivateKeyJwtAuthenticatorTests extends AbstractOidcTests {
         val registeredService = getOidcRegisteredService();
         val credentials = getCredential(request, "unknown", "unknown", registeredService.getClientId());
 
-        auth.validate(credentials, context);
+        auth.validate(credentials, context, JEESessionStore.INSTANCE);
         assertNull(credentials.getUserProfile());
     }
 
@@ -90,12 +91,12 @@ public class OidcPrivateKeyJwtAuthenticatorTests extends AbstractOidcTests {
         val context = new JEEContext(request, response);
 
         val credentials = new UsernamePasswordCredentials(OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER, null);
-        auth.validate(credentials, context);
+        auth.validate(credentials, context, JEESessionStore.INSTANCE);
         assertNull(credentials.getUserProfile());
     }
 
     private UsernamePasswordCredentials getCredential(final MockHttpServletRequest request,
-        final String uid, final String password, final String clientId) {
+                                                      final String uid, final String password, final String clientId) {
         val credentials = new UsernamePasswordCredentials(uid, password);
 
         val code = defaultOAuthCodeFactory.create(RegisteredServiceTestUtils.getService(),

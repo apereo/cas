@@ -15,6 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.exception.CredentialsException;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -52,7 +53,7 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
         request.addParameter(OAuth20Constants.CODE, "CODE-1234567890");
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         assertThrows(CredentialsException.class,
-            () -> authenticator.validate(credentials, ctx));
+            () -> authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE));
     }
 
 
@@ -70,7 +71,7 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
         request.addParameter(OAuth20Constants.CODE_VERIFIER, "ABCD123");
         request.addParameter(OAuth20Constants.CODE, "CODE-1234567890");
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        authenticator.validate(credentials, ctx);
+        authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE);
         assertNotNull(credentials.getUserProfile());
         assertEquals("clientWithoutSecret", credentials.getUserProfile().getId());
     }
@@ -90,7 +91,7 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
         request.addParameter(OAuth20Constants.CLIENT_SECRET, "secret");
         request.addParameter(OAuth20Constants.CODE, "CODE-1234567890");
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        authenticator.validate(credentials, ctx);
+        authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE);
         assertNotNull(credentials.getUserProfile());
         assertEquals("client", credentials.getUserProfile().getId());
     }
@@ -105,11 +106,11 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
                 new MockTicketGrantingTicket("casuser"),
                 new ArrayList<>(), "ABCD123",
                 "plain", "clientid12345", new HashMap<>()));
-        request.addHeader("Authorization", "Basic " + new String(EncodingUtils.encodeBase64("client:secret")));
+        request.addHeader("Authorization", "Basic " + EncodingUtils.encodeBase64("client:secret"));
         request.addParameter(OAuth20Constants.CODE_VERIFIER, "ABCD123");
         request.addParameter(OAuth20Constants.CODE, "CODE-1234567890");
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        authenticator.validate(credentials, ctx);
+        authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE);
         assertNotNull(credentials.getUserProfile());
         assertEquals("client", credentials.getUserProfile().getId());
     }
@@ -129,7 +130,7 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
         request.addParameter(OAuth20Constants.CODE_VERIFIER, "ABCD123");
         request.addParameter(OAuth20Constants.CODE, ticket.getId());
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        authenticator.validate(credentials, ctx);
+        authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE);
         assertNotNull(credentials.getUserProfile());
         assertEquals("clientWithoutSecret", credentials.getUserProfile().getId());
     }
@@ -150,7 +151,7 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
         request.addParameter(OAuth20Constants.CODE, ticket.getId());
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         assertThrows(CredentialsException.class,
-            () -> authenticator.validate(credentials, ctx));
+            () -> authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE));
     }
 
     @Test
@@ -169,7 +170,7 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
         request.addParameter(OAuth20Constants.CLIENT_SECRET, "secret");
         request.addParameter(OAuth20Constants.CODE, ticket.getId());
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        authenticator.validate(credentials, ctx);
+        authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE);
         assertNotNull(credentials.getUserProfile());
         assertEquals("client", credentials.getUserProfile().getId());
     }
@@ -185,12 +186,12 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
             new MockTicketGrantingTicket("casuser"),
             new ArrayList<>(), hash, "s256", "clientid12345", new HashMap<>());
         ticketRegistry.addTicket(ticket);
-        request.addHeader("Authorization", "Basic " + new String(EncodingUtils.encodeBase64("client:secret")));
-        request.addHeader("Authorization", "Basic " + new String(EncodingUtils.encodeBase64("client:secret")));
+        request.addHeader("Authorization", "Basic " + EncodingUtils.encodeBase64("client:secret"));
+        request.addHeader("Authorization", "Basic " + EncodingUtils.encodeBase64("client:secret"));
         request.addParameter(OAuth20Constants.CODE_VERIFIER, "ABCD123");
         request.addParameter(OAuth20Constants.CODE, ticket.getId());
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        authenticator.validate(credentials, ctx);
+        authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE);
         assertNotNull(credentials.getUserProfile());
         assertEquals("client", credentials.getUserProfile().getId());
     }
@@ -211,6 +212,6 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
         request.addParameter(OAuth20Constants.CLIENT_SECRET, "secret");
         request.addParameter(OAuth20Constants.CODE, ticket.getId());
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        assertThrows(CredentialsException.class, () -> authenticator.validate(credentials, ctx));
+        assertThrows(CredentialsException.class, () -> authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE));
     }
 }

@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.JEESessionStore;
+import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -37,10 +38,10 @@ public class BasicAuthenticationAction extends AbstractNonInteractiveCredentials
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
             val extractor = new BasicAuthExtractor();
-            val webContext = new JEEContext(request, response, new JEESessionStore());
-            val credentialsResult = extractor.extract(webContext);
+            val webContext = new JEEContext(request, response);
+            val credentialsResult = extractor.extract(webContext, JEESessionStore.INSTANCE);
             if (credentialsResult.isPresent()) {
-                val credentials = credentialsResult.get();
+                val credentials = (UsernamePasswordCredentials) credentialsResult.get();
                 LOGGER.debug("Received basic authentication request from credentials [{}]", credentials);
                 return new UsernamePasswordCredential(credentials.getUsername(), credentials.getPassword());
             }

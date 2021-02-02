@@ -15,7 +15,6 @@ import org.apereo.cas.web.support.ArgumentExtractor;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.pac4j.core.client.Clients;
-import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.saml.client.SAML2Client;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,10 +62,6 @@ public class SamlIdentityProviderDiscoveryConfiguration {
     private ObjectProvider<ArgumentExtractor> argumentExtractor;
 
     @Autowired
-    @Qualifier("delegatedClientDistributedSessionStore")
-    private ObjectProvider<SessionStore> delegatedClientDistributedSessionStore;
-
-    @Autowired
     private ConfigurableApplicationContext applicationContext;
 
     @Autowired
@@ -103,8 +98,7 @@ public class SamlIdentityProviderDiscoveryConfiguration {
             builtClients.getObject(),
             new DelegatedAuthenticationAccessStrategyHelper(servicesManager.getObject(),
                 registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer.getObject()),
-            argumentExtractor.getObject(),
-            delegatedClientDistributedSessionStore.getObject()
+            argumentExtractor.getObject()
         );
     }
 

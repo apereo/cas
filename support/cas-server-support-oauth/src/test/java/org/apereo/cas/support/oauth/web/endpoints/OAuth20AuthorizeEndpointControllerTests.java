@@ -175,7 +175,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val session = new MockHttpSession();
         mockRequest.setSession(session);
         val sessionStore = oAuth20AuthorizeEndpointController.getOAuthConfigurationContext().getSessionStore();
-        val context = new JEEContext(mockRequest, mockResponse, sessionStore);
+        val context = new JEEContext(mockRequest, mockResponse);
         sessionStore.set(context, Pac4jConstants.USER_PROFILES, CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
 
         val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
@@ -207,7 +207,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val session = new MockHttpSession();
         mockRequest.setSession(session);
         val sessionStore = oAuth20AuthorizeEndpointController.getOAuthConfigurationContext().getSessionStore();
-        val context = new JEEContext(mockRequest, mockResponse, sessionStore);
+        val context = new JEEContext(mockRequest, mockResponse);
         val ticket = new MockTicketGrantingTicket("casuser");
         oAuth20AuthorizeEndpointController.getOAuthConfigurationContext().getTicketRegistry().addTicket(ticket);
         sessionStore.set(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, ticket.getId());
@@ -251,7 +251,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val session = new MockHttpSession();
         mockRequest.setSession(session);
         val sessionStore = oAuth20AuthorizeEndpointController.getOAuthConfigurationContext().getSessionStore();
-        val context = new JEEContext(mockRequest, mockResponse, sessionStore);
+        val context = new JEEContext(mockRequest, mockResponse);
         val ticket = new MockTicketGrantingTicket("casuser");
         oAuth20AuthorizeEndpointController.getOAuthConfigurationContext().getTicketRegistry().addTicket(ticket);
         sessionStore.set(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, ticket.getId());
@@ -307,7 +307,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         profile.addAttributes(attributes);
 
         val sessionStore = oAuth20AuthorizeEndpointController.getOAuthConfigurationContext().getSessionStore();
-        val context = new JEEContext(mockRequest, mockResponse, sessionStore);
+        val context = new JEEContext(mockRequest, mockResponse);
         val ticket = new MockTicketGrantingTicket("casuser");
         oAuth20AuthorizeEndpointController.getOAuthConfigurationContext().getTicketRegistry().addTicket(ticket);
         sessionStore.set(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, ticket.getId());
@@ -365,7 +365,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         profile.addAttributes(attributes);
 
         val sessionStore = oAuth20AuthorizeEndpointController.getOAuthConfigurationContext().getSessionStore();
-        val context = new JEEContext(mockRequest, mockResponse, sessionStore);
+        val context = new JEEContext(mockRequest, mockResponse);
         val ticket = new MockTicketGrantingTicket("casuser");
         oAuth20AuthorizeEndpointController.getOAuthConfigurationContext().getTicketRegistry().addTicket(ticket);
         sessionStore.set(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, ticket.getId());
@@ -423,7 +423,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val session = new MockHttpSession();
         mockRequest.setSession(session);
         val sessionStore = oAuth20AuthorizeEndpointController.getOAuthConfigurationContext().getSessionStore();
-        val context = new JEEContext(mockRequest, mockResponse, sessionStore);
+        val context = new JEEContext(mockRequest, mockResponse);
         val ticket = new MockTicketGrantingTicket("casuser");
         oAuth20AuthorizeEndpointController.getOAuthConfigurationContext().getTicketRegistry().addTicket(ticket);
         sessionStore.set(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, ticket.getId());
@@ -476,7 +476,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val session = new MockHttpSession();
         mockRequest.setSession(session);
         val sessionStore = oAuth20AuthorizeEndpointController.getOAuthConfigurationContext().getSessionStore();
-        val context = new JEEContext(mockRequest, mockResponse, sessionStore);
+        val context = new JEEContext(mockRequest, mockResponse);
         val ticket = new MockTicketGrantingTicket("casuser");
         oAuth20AuthorizeEndpointController.getOAuthConfigurationContext().getTicketRegistry().addTicket(ticket);
         sessionStore.set(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, ticket.getId());
@@ -530,7 +530,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val session = new MockHttpSession();
         mockRequest.setSession(session);
         val sessionStore = oAuth20AuthorizeEndpointController.getOAuthConfigurationContext().getSessionStore();
-        val context = new JEEContext(mockRequest, mockResponse, sessionStore);
+        val context = new JEEContext(mockRequest, mockResponse);
         val ticket = new MockTicketGrantingTicket("casuser");
         oAuth20AuthorizeEndpointController.getOAuthConfigurationContext().getTicketRegistry().addTicket(ticket);
         sessionStore.set(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, ticket.getId());
@@ -582,7 +582,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val session = new MockHttpSession();
         mockRequest.setSession(session);
         val sessionStore = oAuth20AuthorizeEndpointController.getOAuthConfigurationContext().getSessionStore();
-        val context = new JEEContext(mockRequest, mockResponse, sessionStore);
+        val context = new JEEContext(mockRequest, mockResponse);
         val ticket = new MockTicketGrantingTicket("casuser");
         oAuth20AuthorizeEndpointController.getOAuthConfigurationContext().getTicketRegistry().addTicket(ticket);
         sessionStore.set(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, ticket.getId());
@@ -635,7 +635,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val session = new MockHttpSession();
         mockRequest.setSession(session);
         val sessionStore = oAuth20AuthorizeEndpointController.getOAuthConfigurationContext().getSessionStore();
-        val context = new JEEContext(mockRequest, mockResponse, sessionStore);
+        val context = new JEEContext(mockRequest, mockResponse);
         val ticket = new MockTicketGrantingTicket("casuser");
         oAuth20AuthorizeEndpointController.getOAuthConfigurationContext().getTicketRegistry().addTicket(ticket);
         sessionStore.set(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, ticket.getId());
@@ -676,7 +676,7 @@ public class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Test
         val session = new MockHttpSession();
         mockRequest.setSession(session);
         val sessionStore = oAuth20AuthorizeEndpointController.getOAuthConfigurationContext().getSessionStore();
-        val context = new JEEContext(mockRequest, mockResponse, sessionStore);
+        val context = new JEEContext(mockRequest, mockResponse);
         val ticket = new MockTicketGrantingTicket("casuser");
         oAuth20AuthorizeEndpointController.getOAuthConfigurationContext().getTicketRegistry().addTicket(ticket);
         sessionStore.set(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, ticket.getId());

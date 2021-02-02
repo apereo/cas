@@ -79,7 +79,7 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
                                                    final HttpServletResponse response) throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
-        val context = new JEEContext(request, response, getOAuthConfigurationContext().getSessionStore());
+        val context = new JEEContext(request, response);
         val accessToken = getAccessTokenFromRequest(request);
         if (StringUtils.isBlank(accessToken)) {
             LOGGER.error("Missing [{}] from the request", OAuth20Constants.ACCESS_TOKEN);

@@ -29,9 +29,8 @@ public class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
     public void verifyBypassedBySession() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
-        val store = new JEESessionStore();
-        val context = new JEEContext(request, response, store);
-        store.set(context, OAuth20Constants.BYPASS_APPROVAL_PROMPT, "true");
+        val context = new JEEContext(request, response);
+        JEESessionStore.INSTANCE.set(context, OAuth20Constants.BYPASS_APPROVAL_PROMPT, "true");
         val service = getOAuthRegisteredService(UUID.randomUUID().toString(), "https://google.com");
         assertNotNull(consentApprovalViewResolver.resolve(context, service));
     }
@@ -43,8 +42,7 @@ public class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
         request.setQueryString(OidcConstants.PROMPT + '=' + OidcConstants.PROMPT_CONSENT);
         
         val response = new MockHttpServletResponse();
-        val store = new JEESessionStore();
-        val context = new JEEContext(request, response, store);
+        val context = new JEEContext(request, response);
 
         val service = getOidcRegisteredService(UUID.randomUUID().toString());
         assertNotNull(consentApprovalViewResolver.resolve(context, service));
@@ -56,8 +54,7 @@ public class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
         request.setRequestURI("https://cas.org/something");
         
         val response = new MockHttpServletResponse();
-        val store = new JEESessionStore();
-        val context = new JEEContext(request, response, store);
+        val context = new JEEContext(request, response);
 
         val service = getOidcRegisteredService(UUID.randomUUID().toString());
         assertNotNull(consentApprovalViewResolver.resolve(context, service));

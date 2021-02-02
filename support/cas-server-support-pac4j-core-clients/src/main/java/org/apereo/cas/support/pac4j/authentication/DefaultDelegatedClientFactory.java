@@ -54,7 +54,7 @@ import org.pac4j.oidc.config.KeycloakOidcConfiguration;
 import org.pac4j.oidc.config.OidcConfiguration;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.config.SAML2Configuration;
-import org.pac4j.saml.metadata.SAML2ServiceProvicerRequestedAttribute;
+import org.pac4j.saml.metadata.SAML2ServiceProviderRequestedAttribute;
 import org.pac4j.saml.store.SAMLMessageStoreFactory;
 
 import java.security.interfaces.ECPrivateKey;
@@ -456,7 +456,7 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
 
                 if (!saml.getRequestedAttributes().isEmpty()) {
                     saml.getRequestedAttributes().stream()
-                        .map(attribute -> new SAML2ServiceProvicerRequestedAttribute(attribute.getName(), attribute.getFriendlyName(),
+                        .map(attribute -> new SAML2ServiceProviderRequestedAttribute(attribute.getName(), attribute.getFriendlyName(),
                             attribute.getNameFormat(), attribute.isRequired()))
                         .forEach(attribute -> cfg.getRequestedServiceProviderAttributes().add(attribute));
                 }
@@ -649,7 +649,7 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
         if (oidc.getGeneric().isEnabled()) {
             LOGGER.debug("Building generic OpenID Connect client...");
             val generic = getOidcConfigurationForClient(oidc.getGeneric(), OidcConfiguration.class);
-            val oc = new OidcClient<>(generic);
+            val oc = new OidcClient(generic);
             configureClient(oc, oidc.getGeneric());
             return oc;
         }
