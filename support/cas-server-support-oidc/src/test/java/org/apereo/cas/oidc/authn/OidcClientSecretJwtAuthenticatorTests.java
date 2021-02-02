@@ -13,6 +13,7 @@ import org.jose4j.keys.AesKey;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -59,7 +60,7 @@ public class OidcClientSecretJwtAuthenticatorTests extends AbstractOidcTests {
 
         val credentials = getCredentials(request, OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER,
             new String(jwt, StandardCharsets.UTF_8), registeredService.getClientId());
-        auth.validate(credentials, context);
+        auth.validate(credentials, context, JEESessionStore.INSTANCE);
         assertNotNull(credentials.getUserProfile());
     }
 
@@ -75,7 +76,7 @@ public class OidcClientSecretJwtAuthenticatorTests extends AbstractOidcTests {
 
         val registeredService = getOidcRegisteredService();
         val credentials = getCredentials(request, "unknown", "----", registeredService.getClientId());
-        auth.validate(credentials, context);
+        auth.validate(credentials, context, JEESessionStore.INSTANCE);
         assertNull(credentials.getUserProfile());
     }
 
@@ -92,7 +93,7 @@ public class OidcClientSecretJwtAuthenticatorTests extends AbstractOidcTests {
         val registeredService = getOidcRegisteredService();
         val credentials = getCredentials(request, OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER,
             "----", registeredService.getClientId());
-        auth.validate(credentials, context);
+        auth.validate(credentials, context, JEESessionStore.INSTANCE);
         assertNull(credentials.getUserProfile());
     }
 

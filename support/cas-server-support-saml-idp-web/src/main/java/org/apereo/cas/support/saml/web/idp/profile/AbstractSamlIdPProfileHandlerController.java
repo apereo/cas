@@ -287,7 +287,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
 
             val samlRequest = EncodingUtils.encodeBase64(writer.toString().getBytes(StandardCharsets.UTF_8));
             val sessionStore = samlProfileHandlerConfigurationContext.getSessionStore();
-            val context = new JEEContext(request, response, sessionStore);
+            val context = new JEEContext(request, response);
             sessionStore.set(context, SamlProtocolConstants.PARAMETER_SAML_REQUEST, samlRequest);
             sessionStore.set(context, SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, SAMLBindingSupport.getRelayState(messageContext));
             val url = builder.buildURL();

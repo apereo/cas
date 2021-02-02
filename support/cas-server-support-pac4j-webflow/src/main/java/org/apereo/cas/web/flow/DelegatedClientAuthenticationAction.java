@@ -97,7 +97,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         try {
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
-            val webContext = new JEEContext(request, response, configContext.getSessionStore());
+            val webContext = new JEEContext(request, response);
 
             val clientName = request.getParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER);
             LOGGER.trace("Delegated authentication is handled by client name [{}]", clientName);
@@ -165,7 +165,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         return Optional.empty();
     }
 
-    private boolean isDelegatedClientAuthorizedForService(final Client<Credentials> client,
+    private boolean isDelegatedClientAuthorizedForService(final Client client,
                                                           final Service service) {
         return configContext.getDelegatedAuthenticationAccessStrategyHelper()
             .isDelegatedClientAuthorizedForService(client, service);
@@ -226,7 +226,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
      * @param webContext     the web context
      * @param requestContext the request context
      */
-    protected void populateContextWithClientCredential(final BaseClient<Credentials> client, final JEEContext webContext,
+    protected void populateContextWithClientCredential(final BaseClient client, final JEEContext webContext,
                                                        final RequestContext requestContext) {
         LOGGER.debug("Fetching credentials from delegated client [{}]", client);
         val credentials = getCredentialsFromDelegatedClient(webContext, client);
@@ -242,8 +242,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
      * @param client     the client
      * @return the credentials from delegated client
      */
-    protected Credentials getCredentialsFromDelegatedClient(final JEEContext webContext, final BaseClient<Credentials> client) {
-        val credentials = client.getCredentials(webContext);
+    protected Credentials getCredentialsFromDelegatedClient(final JEEContext webContext, final BaseClient client) {
+        val credentials = client.getCredentials(webContext, configContext.getSessionStore());
         LOGGER.debug("Retrieved credentials from client as [{}]", credentials);
         if (credentials.isEmpty()) {
             throw new IllegalArgumentException("Unable to determine credentials from the context with client " + client.getName());
@@ -259,7 +259,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
      * @param service    the service
      * @return the base client
      */
-    protected BaseClient<Credentials> findDelegatedClientByName(final HttpServletRequest request,
+    protected BaseClient findDelegatedClientByName(final HttpServletRequest request,
                                                                 final String clientName, final Service service) {
         val clientResult = configContext.getClients().findClient(clientName);
         if (clientResult.isEmpty()) {

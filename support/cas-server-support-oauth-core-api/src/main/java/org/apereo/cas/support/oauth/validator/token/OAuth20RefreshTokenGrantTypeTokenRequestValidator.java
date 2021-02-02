@@ -30,8 +30,9 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidator extends BaseOAuth
     @Override
     protected boolean validateInternal(final JEEContext context, final String grantType,
         final ProfileManager manager, final UserProfile uProfile) {
+
         val request = context.getNativeRequest();
-        val clientId = OAuth20Utils.getClientIdAndClientSecret(context).getLeft();
+        val clientId = OAuth20Utils.getClientIdAndClientSecret(context, getConfigurationContext().getSessionStore()).getLeft();
         if (!HttpRequestUtils.doesParameterExist(request, OAuth20Constants.REFRESH_TOKEN) || clientId.isEmpty()) {
             return false;
         }

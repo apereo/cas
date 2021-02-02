@@ -10,6 +10,7 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -17,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
+import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -30,6 +32,7 @@ import java.util.Objects;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Getter
 public class PasswordChangeAction extends AbstractAction {
 
     private static final String PASSWORD_VALIDATION_FAILURE_CODE = "pm.validationFailure";
@@ -58,7 +61,8 @@ public class PasswordChangeAction extends AbstractAction {
             }
             if (passwordManagementService.change(creds, bean)) {
                 WebUtils.putCredential(requestContext, new UsernamePasswordCredential(creds.getUsername(), bean.getPassword()));
-                return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_PASSWORD_UPDATE_SUCCESS);
+                LOGGER.info("Password successfully changed for [{}]", bean.getUsername());
+                return getSuccessEvent(requestContext, creds, bean);
             }
         } catch (final InvalidPasswordException e) {
             return getErrorEvent(requestContext,
@@ -72,13 +76,27 @@ public class PasswordChangeAction extends AbstractAction {
     }
 
     /**
+     * Finalize password change success.
+     *
+     * @param requestContext the request context
+     * @param credential     the credential
+     * @param bean           the bean
+     * @return the event
+     */
+    protected Event getSuccessEvent(final RequestContext requestContext, final UsernamePasswordCredential credential, final PasswordChangeRequest bean) {
+        return new EventFactorySupport()
+            .event(this, CasWebflowConstants.TRANSITION_ID_PASSWORD_UPDATE_SUCCESS,
+                new LocalAttributeMap<>("passwordChangeRequest", bean));
+    }
+
+    /**
      * Gets password change request.
      *
      * @param requestContext the request context
      * @param c              the c
      * @return the password change request
      */
-    protected PasswordChangeRequest getPasswordChangeRequest(final RequestContext requestContext, final UsernamePasswordCredential c) {
+    protected static PasswordChangeRequest getPasswordChangeRequest(final RequestContext requestContext, final UsernamePasswordCredential c) {
         val bean = requestContext.getFlowScope().get(PasswordManagementWebflowConfigurer.FLOW_VAR_ID_PASSWORD, PasswordChangeRequest.class);
         bean.setUsername(c.getUsername());
         return bean;

@@ -152,7 +152,7 @@ public class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends 
 
             val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
             val response = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
-            val context = new JEEContext(request, response, samlIdPDistributedSessionStore);
+            val context = new JEEContext(request, response);
             
             samlIdPDistributedSessionStore.set(context, SamlProtocolConstants.PARAMETER_SAML_REQUEST, samlRequest);
             val attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal("casuser",
@@ -190,7 +190,7 @@ public class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends 
 
             val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
             val response = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
-            val context = new JEEContext(request, response, samlIdPDistributedSessionStore);
+            val context = new JEEContext(request, response);
 
             samlIdPDistributedSessionStore.set(context, SamlProtocolConstants.PARAMETER_SAML_REQUEST, samlRequest);
             val attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal("casuser",
@@ -228,7 +228,7 @@ public class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends 
 
             val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
             val response = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
-            val context = new JEEContext(request, response, samlIdPDistributedSessionStore);
+            val context = new JEEContext(request, response);
 
             samlIdPDistributedSessionStore.set(context, SamlProtocolConstants.PARAMETER_SAML_REQUEST, samlRequest);
             val attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal("casuser",

@@ -63,7 +63,7 @@ public class CasOAuth20ThrottleConfiguration {
 
     @ConditionalOnMissingBean(name = "requiresAuthenticationAuthorizeInterceptor")
     @Bean
-    public SecurityInterceptor requiresAuthenticationAuthorizeInterceptor() {
+    public HandlerInterceptor requiresAuthenticationAuthorizeInterceptor() {
         val interceptor = new SecurityInterceptor(oauthSecConfig.getObject(),
             Authenticators.CAS_OAUTH_CLIENT, JEEHttpActionAdapter.INSTANCE);
         interceptor.setAuthorizers(DefaultAuthorizers.IS_FULLY_AUTHENTICATED);
@@ -72,7 +72,7 @@ public class CasOAuth20ThrottleConfiguration {
 
     @ConditionalOnMissingBean(name = "requiresAuthenticationAccessTokenInterceptor")
     @Bean
-    public SecurityInterceptor requiresAuthenticationAccessTokenInterceptor() {
+    public HandlerInterceptor requiresAuthenticationAccessTokenInterceptor() {
         val secConfig = oauthSecConfig.getObject();
         val clients = Objects.requireNonNull(secConfig).getClients()
             .findAllClients()

@@ -25,7 +25,6 @@ import lombok.Setter;
 import lombok.ToString;
 import org.jasig.cas.client.validation.TicketValidator;
 import org.opensaml.saml.common.SAMLObject;
-import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
 
 /**
@@ -82,5 +81,5 @@ public class SamlProfileHandlerConfigurationContext {
 
     private final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder;
 
-    private final SessionStore<JEEContext> sessionStore;
+    private final SessionStore sessionStore;
 }

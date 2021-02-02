@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.core.context.JEEContext;
-import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.core.http.callback.CallbackUrlResolver;
 import org.pac4j.core.http.url.UrlResolver;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -42,7 +41,7 @@ public class OidcCasClientRedirectActionBuilderTests extends AbstractOidcTests {
         request.setRequestURI("https://cas.org/something");
         request.setQueryString(OidcConstants.PROMPT + prompt);
         val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response, new JEESessionStore());
+        val context = new JEEContext(request, response);
 
         val casClient = new CasClient(new CasConfiguration("https://caslogin.com"));
         val callback = mock(CallbackUrlResolver.class);

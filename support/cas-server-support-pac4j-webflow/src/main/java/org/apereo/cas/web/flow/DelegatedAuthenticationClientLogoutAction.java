@@ -12,8 +12,8 @@ import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.exception.http.HttpAction;
 import org.pac4j.core.http.adapter.JEEHttpActionAdapter;
-import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
+import org.pac4j.core.profile.UserProfile;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -38,7 +38,7 @@ import java.util.Optional;
 public class DelegatedAuthenticationClientLogoutAction extends AbstractAction {
     private final Clients clients;
 
-    private final SessionStore<JEEContext> sessionStore;
+    private final SessionStore sessionStore;
 
     /**
      * Finds the current profile from the context.
@@ -46,9 +46,9 @@ public class DelegatedAuthenticationClientLogoutAction extends AbstractAction {
      * @param webContext A web context (request + response).
      * @return The common profile active.
      */
-    private static CommonProfile findCurrentProfile(final JEEContext webContext) {
-        val pm = new ProfileManager<CommonProfile>(webContext);
-        val profile = pm.get(true);
+    private UserProfile findCurrentProfile(final JEEContext webContext) {
+        val pm = new ProfileManager(webContext, this.sessionStore);
+        val profile = pm.getProfile();
         return profile.orElse(null);
     }
 
@@ -57,7 +57,7 @@ public class DelegatedAuthenticationClientLogoutAction extends AbstractAction {
         try {
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-            val context = new JEEContext(request, response, this.sessionStore);
+            val context = new JEEContext(request, response);
 
             val currentProfile = findCurrentProfile(context);
             val clientResult = currentProfile == null
@@ -71,11 +71,11 @@ public class DelegatedAuthenticationClientLogoutAction extends AbstractAction {
                 val targetUrl = service != null ? service.getId() : null;
                 LOGGER.debug("Logout target url based on service [{}] is [{}]", service, targetUrl);
                 
-                val actionResult = client.getLogoutAction(context, currentProfile, targetUrl);
+                val actionResult = client.getLogoutAction(context, this.sessionStore, currentProfile, targetUrl);
                 if (actionResult.isPresent()) {
                     val action = (HttpAction) actionResult.get();
                     LOGGER.debug("Adapting logout action [{}] for client [{}]", action, client);
-                    new JEEHttpActionAdapter().adapt(action, context);
+                    JEEHttpActionAdapter.INSTANCE.adapt(action, context);
                 }
             } else {
                 LOGGER.debug("The current client cannot be found; No logout action can execute");

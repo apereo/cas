@@ -37,12 +37,11 @@ public class SessionStoreTicketGrantingTicketActionTests extends AbstractWebflow
         RequestContextHolder.setRequestContext(context);
         ExternalContextHolder.setExternalContext(context.getExternalContext());
         WebUtils.putTicketGrantingTicketInScopes(context, new MockTicketGrantingTicket("casuser"));
-        val sessionStore = new JEESessionStore();
-        val action = new SessionStoreTicketGrantingTicketAction(sessionStore);
+        val action = new SessionStoreTicketGrantingTicketAction(JEESessionStore.INSTANCE);
         val result = action.execute(context);
         assertNull(result);
-        val webContext = new JEEContext(request, response, sessionStore);
-        assertTrue(sessionStore.get(webContext, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID).isPresent());
+        val webContext = new JEEContext(request, response);
+        assertTrue(JEESessionStore.INSTANCE.get(webContext, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID).isPresent());
     }
 
 }

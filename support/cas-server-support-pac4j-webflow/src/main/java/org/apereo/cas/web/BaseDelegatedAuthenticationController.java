@@ -15,7 +15,6 @@ import org.pac4j.core.client.Clients;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
-import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.exception.http.WithContentAction;
 import org.pac4j.core.exception.http.WithLocationAction;
 import org.pac4j.core.util.Pac4jConstants;
@@ -46,7 +45,7 @@ public abstract class BaseDelegatedAuthenticationController {
 
     private final DelegatedClientWebflowManager delegatedClientWebflowManager;
 
-    private final SessionStore<JEEContext> sessionStore;
+    private final SessionStore sessionStore;
 
     private final CasConfigurationProperties casProperties;
 
@@ -79,9 +78,9 @@ public abstract class BaseDelegatedAuthenticationController {
      * @return the resulting view
      */
     @SneakyThrows
-    protected View getResultingView(final IndirectClient<Credentials> client, final JEEContext webContext, final Ticket ticket) {
+    protected View getResultingView(final IndirectClient client, final JEEContext webContext, final Ticket ticket) {
         client.init();
-        val actionResult = client.getRedirectionActionBuilder().getRedirectionAction(webContext);
+        val actionResult = client.getRedirectionActionBuilder().getRedirectionAction(webContext, this.sessionStore);
         if (actionResult.isPresent()) {
             val action = actionResult.get();
             LOGGER.debug("Determined final redirect action for client [{}] as [{}]", client, action);

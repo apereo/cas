@@ -208,7 +208,8 @@ public class DelegatedAuthenticationWebflowConfiguration {
             ticketFactory.getObject(),
             casProperties,
             authenticationRequestServiceSelectionStrategies.getObject(),
-            argumentExtractor.getObject()
+            argumentExtractor.getObject(),
+            delegatedClientDistributedSessionStore.getObject()
         );
     }
 
@@ -241,13 +242,11 @@ public class DelegatedAuthenticationWebflowConfiguration {
     @Bean
     @RefreshScope
     public Function<RequestContext, Set<DelegatedClientIdentityProviderConfiguration>> delegatedClientIdentityProviderConfigurationFunction() {
-        val helper = new DelegatedAuthenticationAccessStrategyHelper(this.servicesManager.getObject(),
+        val helper = new DelegatedAuthenticationAccessStrategyHelper(servicesManager.getObject(),
             delegatedAuthenticationPolicyAuditableEnforcer.getObject());
-
         return new DelegatedClientIdentityProviderConfigurationFunction(servicesManager.getObject(),
             authenticationRequestServiceSelectionStrategies.getObject(),
             builtClients.getObject(),
-            delegatedClientDistributedSessionStore.getObject(),
             helper,
             casProperties);
     }

@@ -18,8 +18,6 @@ import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.JEEContext;
-import org.pac4j.core.context.session.SessionStore;
-import org.pac4j.core.credentials.Credentials;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -44,8 +42,6 @@ public class DelegatedClientIdentityProviderConfigurationFunction implements Fun
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
 
     private final Clients clients;
-
-    private final SessionStore<JEEContext> sessionStore;
 
     private final DelegatedAuthenticationAccessStrategyHelper delegatedAuthenticationAccessStrategyHelper;
 
@@ -78,7 +74,7 @@ public class DelegatedClientIdentityProviderConfigurationFunction implements Fun
         }
     }
 
-    private boolean isDelegatedClientAuthorizedForService(final Client<Credentials> client,
+    private boolean isDelegatedClientAuthorizedForService(final Client client,
                                                           final Service service) {
         return delegatedAuthenticationAccessStrategyHelper.isDelegatedClientAuthorizedForService(client, service);
     }
@@ -90,7 +86,7 @@ public class DelegatedClientIdentityProviderConfigurationFunction implements Fun
 
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
-        val webContext = new JEEContext(request, response, this.sessionStore);
+        val webContext = new JEEContext(request, response);
 
         LOGGER.debug("Initialized context with request parameters [{}]", webContext.getRequestParameters());
         val allClients = this.clients.findAllClients();

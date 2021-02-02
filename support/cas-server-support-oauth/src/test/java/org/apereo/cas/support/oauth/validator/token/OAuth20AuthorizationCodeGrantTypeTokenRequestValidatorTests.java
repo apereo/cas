@@ -125,7 +125,7 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests extends
 
         val context = OAuth20ConfigurationContext.builder()
             .servicesManager(serviceManager)
-            .sessionStore(new JEESessionStore())
+            .sessionStore(JEESessionStore.INSTANCE)
             .ticketRegistry(mockingTicketRegistry)
             .webApplicationServiceServiceFactory(new WebApplicationServiceFactory())
             .registeredServiceAccessStrategyEnforcer(new RegisteredServiceAccessStrategyAuditableEnforcer())

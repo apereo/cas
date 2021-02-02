@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.core.credentials.TokenCredentials;
 import org.pac4j.core.exception.CredentialsException;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -32,7 +33,8 @@ public class UmaRequestingPartyTokenAuthenticatorTests extends BaseUmaEndpointCo
         assertThrows(CredentialsException.class, new Executable() {
             @Override
             public void execute() {
-                input.validate(credentials, new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse()));
+                val webContext = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());
+                input.validate(credentials, webContext, JEESessionStore.INSTANCE);
             }
         });
     }

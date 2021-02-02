@@ -29,7 +29,7 @@ public class OidcCallbackAuthorizeViewResolver implements OAuth20CallbackAuthori
     public ModelAndView resolve(final JEEContext ctx, final ProfileManager manager, final String url) {
         val prompt = OidcAuthorizationRequestSupport.getOidcPromptFromAuthorizationRequest(url);
         if (prompt.contains(OidcConstants.PROMPT_NONE)) {
-            val result = manager.get(true);
+            val result = manager.getProfile();
             if (result.isPresent()) {
                 LOGGER.trace("Redirecting to URL [{}] without prompting for login", url);
                 return new ModelAndView(new RedirectView(url));

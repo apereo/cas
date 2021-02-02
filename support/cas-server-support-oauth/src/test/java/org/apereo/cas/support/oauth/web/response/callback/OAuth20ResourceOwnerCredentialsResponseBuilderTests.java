@@ -14,7 +14,6 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.JEEContext;
-import org.pac4j.core.context.session.JEESessionStore;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -35,7 +34,7 @@ public class OAuth20ResourceOwnerCredentialsResponseBuilderTests extends Abstrac
     public void verifyOperation() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response, new JEESessionStore());
+        val context = new JEEContext(request, response);
 
         val holder = AccessTokenRequestDataHolder.builder()
             .clientId(CLIENT_ID)
@@ -56,7 +55,7 @@ public class OAuth20ResourceOwnerCredentialsResponseBuilderTests extends Abstrac
     public void verifyModelAndViewPost() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response, new JEESessionStore());
+        val context = new JEEContext(request, response);
 
         request.addParameter(OAuth20Constants.RESPONSE_MODE, OAuth20ResponseModeTypes.FORM_POST.getType());
         assertNotNull(oauthResourceOwnerCredentialsResponseBuilder.buildResponseModelAndView(context, servicesManager,
@@ -67,7 +66,7 @@ public class OAuth20ResourceOwnerCredentialsResponseBuilderTests extends Abstrac
     public void verifyModelAndView() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response, new JEESessionStore());
+        val context = new JEEContext(request, response);
         assertNotNull(oauthResourceOwnerCredentialsResponseBuilder.buildResponseModelAndView(context, servicesManager,
             CLIENT_ID, "https://example.org", Map.of("key", "value")));
     }

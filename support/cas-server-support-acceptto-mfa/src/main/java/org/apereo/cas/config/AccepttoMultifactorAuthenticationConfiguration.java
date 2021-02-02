@@ -45,7 +45,6 @@ import org.apereo.cas.web.support.CookieUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jose4j.keys.RsaKeyUtil;
-import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.ObjectProvider;
@@ -183,7 +182,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "mfaAccepttoDistributedSessionStore")
     @Bean
-    public SessionStore<JEEContext> mfaAccepttoDistributedSessionStore() {
+    public SessionStore mfaAccepttoDistributedSessionStore() {
         val cookie = casProperties.getSessionReplication().getCookie();
         val cookieGenerator = CookieUtils.buildCookieRetrievingGenerator(cookie);
         return new DistributedJEESessionStore(centralAuthenticationService.getObject(), ticketFactory.getObject(), cookieGenerator);

@@ -18,6 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.session.JEESessionStore;
+import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.http.HttpStatus;
@@ -92,8 +94,8 @@ public class RegisteredServiceResource {
     private Authentication authenticateRequest(final HttpServletRequest request, final HttpServletResponse response) {
         val extractor = new BasicAuthExtractor();
         val webContext = new JEEContext(request, response);
-        val credentialsResult = extractor.extract(webContext);
-        val credentials = credentialsResult.get();
+        val credentialsResult = extractor.extract(webContext, JEESessionStore.INSTANCE);
+        val credentials = (UsernamePasswordCredentials) credentialsResult.get();
         LOGGER.debug("Received basic authentication request from credentials [{}]", credentials);
         val c = new UsernamePasswordCredential(credentials.getUsername(), credentials.getPassword());
         val serviceRequest = this.serviceFactory.createService(request);

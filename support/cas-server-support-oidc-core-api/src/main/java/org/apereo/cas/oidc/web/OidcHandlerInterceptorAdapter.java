@@ -7,9 +7,8 @@ import org.apereo.cas.support.oauth.web.OAuth20HandlerInterceptorAdapter;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
 
 import lombok.extern.slf4j.Slf4j;
-import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,20 +23,20 @@ import java.util.Set;
  */
 @Slf4j
 public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdapter {
-    private final HandlerInterceptorAdapter requiresAuthenticationDynamicRegistrationInterceptor;
+    private final HandlerInterceptor requiresAuthenticationDynamicRegistrationInterceptor;
 
-    private final HandlerInterceptorAdapter requiresAuthenticationClientConfigurationInterceptor;
+    private final HandlerInterceptor requiresAuthenticationClientConfigurationInterceptor;
 
     private final OidcConstants.DynamicClientRegistrationMode dynamicClientRegistrationMode;
 
-    public OidcHandlerInterceptorAdapter(final HandlerInterceptorAdapter requiresAuthenticationAccessTokenInterceptor,
-                                         final HandlerInterceptorAdapter requiresAuthenticationAuthorizeInterceptor,
-                                         final HandlerInterceptorAdapter requiresAuthenticationDynamicRegistrationInterceptor,
-                                         final HandlerInterceptorAdapter requiresAuthenticationClientConfigurationInterceptor,
+    public OidcHandlerInterceptorAdapter(final HandlerInterceptor requiresAuthenticationAccessTokenInterceptor,
+                                         final HandlerInterceptor requiresAuthenticationAuthorizeInterceptor,
+                                         final HandlerInterceptor requiresAuthenticationDynamicRegistrationInterceptor,
+                                         final HandlerInterceptor requiresAuthenticationClientConfigurationInterceptor,
                                          final OidcConstants.DynamicClientRegistrationMode dynamicClientRegistrationMode,
                                          final Collection<AccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors,
                                          final ServicesManager servicesManager,
-                                         final SessionStore<JEEContext> sessionStore,
+                                         final SessionStore sessionStore,
                                          final Set<OAuth20AuthorizationRequestValidator> oauthAuthorizationRequestValidators) {
         super(requiresAuthenticationAccessTokenInterceptor, requiresAuthenticationAuthorizeInterceptor,
               accessTokenGrantRequestExtractors, servicesManager, sessionStore, oauthAuthorizationRequestValidators);

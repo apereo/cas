@@ -97,7 +97,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.webflow.execution.Action;
 
 import java.time.ZoneOffset;
@@ -138,7 +138,7 @@ public abstract class AbstractOidcTests {
 
     @Autowired
     @Qualifier("oauthInterceptor")
-    protected HandlerInterceptorAdapter oauthInterceptor;
+    protected HandlerInterceptor oauthInterceptor;
 
     @Autowired
     @Qualifier("oidcWebFingerDiscoveryService")

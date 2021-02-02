@@ -8,6 +8,7 @@ import org.apereo.cas.services.ServicesManager;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.TokenCredentials;
 
 import javax.security.auth.login.AccountNotFoundException;
@@ -31,9 +32,11 @@ public abstract class AbstractTokenWrapperAuthenticationHandler extends
     private final PrincipalNameTransformer principalNameTransformer;
 
     protected AbstractTokenWrapperAuthenticationHandler(final String name, final ServicesManager servicesManager,
-                                                     final PrincipalFactory principalFactory,
-                                                     final Integer order, final PrincipalNameTransformer principalNameTransformer) {
-        super(name, servicesManager, principalFactory, order);
+                                                        final PrincipalFactory principalFactory,
+                                                        final Integer order,
+                                                        final PrincipalNameTransformer principalNameTransformer,
+                                                        final SessionStore sessionStore) {
+        super(name, servicesManager, principalFactory, order, sessionStore);
         this.principalNameTransformer = Objects.requireNonNullElseGet(principalNameTransformer, () -> formUserId -> formUserId);
     }
 

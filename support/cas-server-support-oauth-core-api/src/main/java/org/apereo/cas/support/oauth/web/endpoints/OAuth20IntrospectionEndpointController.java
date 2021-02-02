@@ -76,14 +76,14 @@ public class OAuth20IntrospectionEndpointController extends BaseOAuth20Controlle
         try {
             val authExtractor = new BasicAuthExtractor();
 
-            val context = new JEEContext(request, response, getOAuthConfigurationContext().getSessionStore());
-            val credentialsResult = authExtractor.extract(context);
+            val context = new JEEContext(request, response);
+            val credentialsResult = authExtractor.extract(context, getOAuthConfigurationContext().getSessionStore());
 
             if (credentialsResult.isEmpty()) {
                 return buildUnauthorizedResponseEntity(OAuth20Constants.INVALID_CLIENT, true);
             }
 
-            val credentials = credentialsResult.get();
+            val credentials = (UsernamePasswordCredentials) credentialsResult.get();
             val service = OAuth20Utils.getRegisteredOAuthServiceByClientId(
                 getOAuthConfigurationContext().getServicesManager(), credentials.getUsername());
             if (service == null) {

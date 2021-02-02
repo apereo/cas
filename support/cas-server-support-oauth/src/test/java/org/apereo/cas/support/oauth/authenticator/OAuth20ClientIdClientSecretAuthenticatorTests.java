@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -28,7 +29,8 @@ public class OAuth20ClientIdClientSecretAuthenticatorTests extends BaseOAuth20Au
 
     @BeforeEach
     public void init() {
-        authenticator = new OAuth20ClientIdClientSecretAuthenticator(servicesManager, serviceFactory,
+        authenticator = new OAuth20ClientIdClientSecretAuthenticator(servicesManager,
+            serviceFactory,
             new RegisteredServiceAccessStrategyAuditableEnforcer(),
             new OAuth20RegisteredServiceCipherExecutor(),
             ticketRegistry,
@@ -40,7 +42,7 @@ public class OAuth20ClientIdClientSecretAuthenticatorTests extends BaseOAuth20Au
         val credentials = new UsernamePasswordCredentials("client", "secret");
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        authenticator.validate(credentials, ctx);
+        authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE);
         assertNotNull(credentials.getUserProfile());
         assertEquals("client", credentials.getUserProfile().getId());
     }
@@ -53,7 +55,7 @@ public class OAuth20ClientIdClientSecretAuthenticatorTests extends BaseOAuth20Au
 
         request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.PASSWORD.name());
 
-        authenticator.validate(credentials, ctx);
+        authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE);
         assertNull(credentials.getUserProfile());
     }
 
@@ -71,7 +73,7 @@ public class OAuth20ClientIdClientSecretAuthenticatorTests extends BaseOAuth20Au
         request.addParameter(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
 
         assertFalse(authenticator.canAuthenticate(ctx));
-        authenticator.validate(credentials, ctx);
+        authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE);
         assertNull(credentials.getUserProfile());
 
 

@@ -39,7 +39,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.pac4j.core.config.Config;
-import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -122,7 +121,7 @@ public class OAuth20ConfigurationContext {
 
     private final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder;
 
-    private final SessionStore<JEEContext> sessionStore;
+    private final SessionStore sessionStore;
 
     private final CipherExecutor<Serializable, String> registeredServiceCipherExecutor;
 

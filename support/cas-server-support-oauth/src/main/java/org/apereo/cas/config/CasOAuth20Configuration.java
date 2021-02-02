@@ -114,11 +114,8 @@ import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.config.Config;
-import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.core.context.session.SessionStore;
-import org.pac4j.core.credentials.TokenCredentials;
-import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.credentials.extractor.BearerAuthExtractor;
 import org.pac4j.core.http.url.UrlResolver;
@@ -245,7 +242,7 @@ public class CasOAuth20Configuration {
         val clientList = oauthSecConfigClients();
         val config = new Config(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()), clientList);
         config.setSessionStore(oauthDistributedSessionStore());
-        Config.setProfileManagerFactory("CASOAuthSecurityProfileManager", webContext ->
+        Config.setProfileManagerFactory("CASOAuthSecurityProfileManager", (webContext, sessionStore) ->
             new OAuth20ClientIdAwareProfileManager(webContext, config.getSessionStore(), servicesManager.getObject()));
         return config;
     }
@@ -261,7 +258,7 @@ public class CasOAuth20Configuration {
         cfg.setDefaultTicketValidator(validator);
 
         val oauthCasClient = new CasClient(cfg);
-        oauthCasClient.setRedirectionActionBuilder(webContext ->
+        oauthCasClient.setRedirectionActionBuilder((webContext, sessionStore) ->
             oauthCasClientRedirectActionBuilder().build(oauthCasClient, webContext));
         oauthCasClient.setName(Authenticators.CAS_OAUTH_CLIENT);
         oauthCasClient.setUrlResolver(casCallbackUrlResolver());
@@ -329,7 +326,7 @@ public class CasOAuth20Configuration {
     @Bean
     @RefreshScope
     public ConsentApprovalViewResolver consentApprovalViewResolver() {
-        return new OAuth20ConsentApprovalViewResolver(casProperties);
+        return new OAuth20ConsentApprovalViewResolver(casProperties, oauthDistributedSessionStore());
     }
 
     @ConditionalOnMissingBean(name = "callbackAuthorizeViewResolver")
@@ -342,7 +339,7 @@ public class CasOAuth20Configuration {
     @ConditionalOnMissingBean(name = "oAuthClientAuthenticator")
     @Bean
     @RefreshScope
-    public Authenticator<UsernamePasswordCredentials> oAuthClientAuthenticator() {
+    public Authenticator oAuthClientAuthenticator() {
         return new OAuth20ClientIdClientSecretAuthenticator(servicesManager.getObject(),
             webApplicationServiceFactory.getObject(),
             registeredServiceAccessStrategyEnforcer.getObject(),
@@ -354,7 +351,7 @@ public class CasOAuth20Configuration {
     @ConditionalOnMissingBean(name = "oAuthProofKeyCodeExchangeAuthenticator")
     @Bean
     @RefreshScope
-    public Authenticator<UsernamePasswordCredentials> oAuthProofKeyCodeExchangeAuthenticator() {
+    public Authenticator oAuthProofKeyCodeExchangeAuthenticator() {
         return new OAuth20ProofKeyCodeExchangeAuthenticator(this.servicesManager.getObject(),
             webApplicationServiceFactory.getObject(),
             registeredServiceAccessStrategyEnforcer.getObject(),
@@ -366,7 +363,7 @@ public class CasOAuth20Configuration {
     @ConditionalOnMissingBean(name = "oAuthRefreshTokenAuthenticator")
     @Bean
     @RefreshScope
-    public Authenticator<UsernamePasswordCredentials> oAuthRefreshTokenAuthenticator() {
+    public Authenticator oAuthRefreshTokenAuthenticator() {
         return new OAuth20RefreshTokenAuthenticator(this.servicesManager.getObject(),
             webApplicationServiceFactory.getObject(),
             registeredServiceAccessStrategyEnforcer.getObject(),
@@ -378,17 +375,19 @@ public class CasOAuth20Configuration {
     @ConditionalOnMissingBean(name = "oAuthUserAuthenticator")
     @Bean
     @RefreshScope
-    public Authenticator<UsernamePasswordCredentials> oAuthUserAuthenticator() {
-        return new OAuth20UsernamePasswordAuthenticator(authenticationSystemSupport.getObject(),
+    public Authenticator oAuthUserAuthenticator() {
+        return new OAuth20UsernamePasswordAuthenticator(
+            authenticationSystemSupport.getObject(),
             servicesManager.getObject(),
             webApplicationServiceFactory.getObject(),
-            oauthRegisteredServiceCipherExecutor());
+            oauthRegisteredServiceCipherExecutor(),
+            oauthDistributedSessionStore());
     }
 
     @ConditionalOnMissingBean(name = "oAuthAccessTokenAuthenticator")
     @Bean
     @RefreshScope
-    public Authenticator<TokenCredentials> oAuthAccessTokenAuthenticator() {
+    public Authenticator oAuthAccessTokenAuthenticator() {
         return new OAuth20AccessTokenAuthenticator(ticketRegistry.getObject(), accessTokenJwtBuilder());
     }
 
@@ -596,7 +595,7 @@ public class CasOAuth20Configuration {
     @RefreshScope
     public OAuth20TokenRequestValidator oauthRevocationRequestValidator() {
         val svcManager = servicesManager.getObject();
-        return new OAuth20RevocationRequestValidator(svcManager);
+        return new OAuth20RevocationRequestValidator(svcManager, oauthDistributedSessionStore());
     }
 
     @Bean
@@ -833,13 +832,13 @@ public class CasOAuth20Configuration {
 
     @ConditionalOnMissingBean(name = "oauthDistributedSessionStore")
     @Bean
-    public SessionStore<JEEContext> oauthDistributedSessionStore() {
+    public SessionStore oauthDistributedSessionStore() {
         val replicate = casProperties.getAuthn().getOauth().isReplicateSessions();
         if (replicate) {
             return new DistributedJEESessionStore(centralAuthenticationService.getObject(),
                 ticketFactory.getObject(), oauthDistributedSessionCookieGenerator());
         }
-        return new JEESessionStore();
+        return JEESessionStore.INSTANCE;
     }
 
     @RefreshScope

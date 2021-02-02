@@ -99,7 +99,7 @@ public class TokenAuthenticationHandlerTests {
 
     @Test
     public void verifyKeysAreSane() throws Exception {
-        val g = new JwtGenerator<>();
+        val g = new JwtGenerator();
         g.setSignatureConfiguration(new SecretSignatureConfiguration(SIGNING_SECRET, JWSAlgorithm.HS256));
         g.setEncryptionConfiguration(new SecretEncryptionConfiguration(ENCRYPTION_SECRET, JWEAlgorithm.DIR, EncryptionMethod.A192CBC_HS384));
 
@@ -114,7 +114,7 @@ public class TokenAuthenticationHandlerTests {
 
     @Test
     public void verifyNoService() {
-        val g = new JwtGenerator<>();
+        val g = new JwtGenerator();
 
         val profile = new CommonProfile();
         profile.setId("casuser");
@@ -125,7 +125,7 @@ public class TokenAuthenticationHandlerTests {
 
     @Test
     public void verifyNoSigning() throws Exception {
-        val g = new JwtGenerator<>();
+        val g = new JwtGenerator();
 
         val profile = new CommonProfile();
         profile.setId("casuser");
@@ -136,7 +136,7 @@ public class TokenAuthenticationHandlerTests {
 
     @Test
     public void verifyNoEnc() throws Exception {
-        val g = new JwtGenerator<>();
+        val g = new JwtGenerator();
         g.setSignatureConfiguration(new SecretSignatureConfiguration(SIGNING_SECRET, JWSAlgorithm.HS256));
 
         val profile = new CommonProfile();

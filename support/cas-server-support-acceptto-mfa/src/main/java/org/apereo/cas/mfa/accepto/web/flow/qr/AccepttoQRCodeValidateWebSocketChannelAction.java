@@ -48,13 +48,13 @@ public class AccepttoQRCodeValidateWebSocketChannelAction extends AbstractAction
 
     private final CasConfigurationProperties casProperties;
 
-    private final SessionStore<JEEContext> sessionStore;
+    private final SessionStore sessionStore;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-        val webContext = new JEEContext(request, response, this.sessionStore);
+        val webContext = new JEEContext(request, response);
 
         val channel = request.getParameter("channel");
         if (channel == null) {
@@ -93,7 +93,7 @@ public class AccepttoQRCodeValidateWebSocketChannelAction extends AbstractAction
                     if (success) {
                         val email = results.get("user_email").toString();
                         LOGGER.trace("Storing channel [{}] in http session", channel);
-                        AccepttoWebflowUtils.storeChannelInSessionStore(channel, webContext);
+                        AccepttoWebflowUtils.storeChannelInSessionStore(channel, webContext, sessionStore);
                         WebUtils.putCredential(requestContext, new AccepttoEmailCredential(email));
                         return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_FINALIZE);
                     }

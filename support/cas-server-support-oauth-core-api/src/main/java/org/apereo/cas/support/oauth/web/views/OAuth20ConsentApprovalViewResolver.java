@@ -11,6 +11,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.session.SessionStore;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.HashMap;
@@ -31,18 +32,23 @@ public class OAuth20ConsentApprovalViewResolver implements ConsentApprovalViewRe
      */
     protected final CasConfigurationProperties casProperties;
 
+    /**
+     * Session store reference.
+     */
+    protected final SessionStore sessionStore;
+
     @Override
     public ModelAndView resolve(final JEEContext context, final OAuthRegisteredService service) {
         var bypassApprovalParameter = context.getRequestParameter(OAuth20Constants.BYPASS_APPROVAL_PROMPT)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
         if (StringUtils.isBlank(bypassApprovalParameter)) {
-            bypassApprovalParameter = (String) context.getSessionStore()
+            bypassApprovalParameter = (String) this.sessionStore
                 .get(context, OAuth20Constants.BYPASS_APPROVAL_PROMPT)
                 .map(String::valueOf).orElse(StringUtils.EMPTY);
         }
         LOGGER.trace("Bypassing approval prompt for service [{}]: [{}]", service, bypassApprovalParameter);
         if (Boolean.TRUE.toString().equalsIgnoreCase(bypassApprovalParameter) || isConsentApprovalBypassed(context, service)) {
-            context.getSessionStore().set(context, OAuth20Constants.BYPASS_APPROVAL_PROMPT, Boolean.TRUE.toString());
+            sessionStore.set(context, OAuth20Constants.BYPASS_APPROVAL_PROMPT, Boolean.TRUE.toString());
             return new ModelAndView();
         }
         return redirectToApproveView(context, service);

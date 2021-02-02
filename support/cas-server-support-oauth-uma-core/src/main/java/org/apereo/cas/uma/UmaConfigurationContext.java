@@ -16,7 +16,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
 
 /**
@@ -40,6 +39,6 @@ public class UmaConfigurationContext {
     private final CasConfigurationProperties casProperties;
     private final UmaResourceSetClaimPermissionExaminer claimPermissionExaminer;
     private final IdTokenGeneratorService requestingPartyTokenGenerator;
-    private final SessionStore<JEEContext> sessionStore;
+    private final SessionStore sessionStore;
     private final CentralAuthenticationService centralAuthenticationService;
 }

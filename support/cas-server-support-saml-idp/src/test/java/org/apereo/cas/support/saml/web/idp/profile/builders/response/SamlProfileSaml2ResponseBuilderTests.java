@@ -79,7 +79,7 @@ public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurati
 
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
-        val webContext = new JEEContext(request, response, samlIdPDistributedSessionStore);
+        val webContext = new JEEContext(request, response);
         samlIdPDistributedSessionStore.set(webContext, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, tgt.getId());
 
         val service = getSamlRegisteredServiceForTestShib(true, true);

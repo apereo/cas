@@ -6,7 +6,7 @@ import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.client.BaseClient;
-import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.core.profile.UserProfile;
 import org.springframework.core.io.Resource;
 
 /**
@@ -24,7 +24,7 @@ public class GroovyDelegatedClientUserProfileProvisioner extends BaseDelegatedCl
     }
 
     @Override
-    public void execute(final Principal principal, final CommonProfile profile, final BaseClient client) {
+    public void execute(final Principal principal, final UserProfile profile, final BaseClient client) {
         val args = new Object[]{principal, profile, client, LOGGER};
         watchableScript.execute(args, Void.class);
     }

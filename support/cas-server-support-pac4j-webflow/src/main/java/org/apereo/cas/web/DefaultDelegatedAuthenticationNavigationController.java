@@ -33,7 +33,7 @@ public class DefaultDelegatedAuthenticationNavigationController extends BaseDele
 
     public DefaultDelegatedAuthenticationNavigationController(final Clients clients,
                                                               final DelegatedClientWebflowManager delegatedClientWebflowManager,
-                                                              final SessionStore<JEEContext> sessionStore,
+                                                              final SessionStore sessionStore,
                                                               final CasConfigurationProperties casProperties) {
         super(clients, delegatedClientWebflowManager, sessionStore, casProperties);
     }
@@ -64,7 +64,7 @@ public class DefaultDelegatedAuthenticationNavigationController extends BaseDele
             }
             val client = IndirectClient.class.cast(clientResult.get());
             client.init();
-            val webContext = new JEEContext(request, response, getSessionStore());
+            val webContext = new JEEContext(request, response);
             val ticket = getDelegatedClientWebflowManager().store(webContext, client);
 
             return getResultingView(client, webContext, ticket);

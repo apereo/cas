@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.WebContext;
+import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -16,8 +17,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.util.HashMap;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link OAuth20ClientIdAwareProfileManagerTests}.
@@ -28,7 +28,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @Tag("OAuth")
 public class OAuth20ClientIdAwareProfileManagerTests extends AbstractOAuth20Tests {
 
-    protected OAuth20ClientIdAwareProfileManager<CommonProfile> profileManager;
+    protected OAuth20ClientIdAwareProfileManager profileManager;
+
     protected WebContext context;
 
     @BeforeEach
@@ -36,7 +37,7 @@ public class OAuth20ClientIdAwareProfileManagerTests extends AbstractOAuth20Test
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         context = new JEEContext(request, response);
-        profileManager = new OAuth20ClientIdAwareProfileManager<>(context, context.getSessionStore(), servicesManager);
+        profileManager = new OAuth20ClientIdAwareProfileManager(context, JEESessionStore.INSTANCE, servicesManager);
     }
 
     @Test
@@ -45,7 +46,7 @@ public class OAuth20ClientIdAwareProfileManagerTests extends AbstractOAuth20Test
         profile.setId(ID);
         profile.setClientName(CLIENT_ID);
         profileManager.save(true, profile, false);
-        val profiles = profileManager.getAll(true);
+        val profiles = profileManager.getProfiles();
         assertNotNull(profiles);
         assertEquals(1, profiles.size());
     }
@@ -57,8 +58,8 @@ public class OAuth20ClientIdAwareProfileManagerTests extends AbstractOAuth20Test
         profile.setClientName(CLIENT_ID);
         val sessionProfiles = new HashMap<String, CommonProfile>(1);
         sessionProfiles.put(CLIENT_ID, profile);
-        context.getSessionStore().set(context, Pac4jConstants.USER_PROFILES, sessionProfiles);
-        val profiles = profileManager.getAll(true);
+        JEESessionStore.INSTANCE.set(context, Pac4jConstants.USER_PROFILES, sessionProfiles);
+        val profiles = profileManager.getProfiles();
         assertNotNull(profiles);
         assertEquals(0, profiles.size());
     }

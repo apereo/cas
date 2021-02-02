@@ -13,7 +13,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.JEEContext;
-import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.saml.client.SAML2Client;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -53,8 +52,6 @@ public class SamlIdentityProviderDiscoveryFeedController {
     private final DelegatedAuthenticationAccessStrategyHelper delegatedAuthenticationAccessStrategyHelper;
 
     private final ArgumentExtractor argumentExtractor;
-
-    private final SessionStore<JEEContext> sessionStore;
 
     @GetMapping(path = "/feed", produces = MediaType.APPLICATION_JSON_VALUE)
     public Collection<SamlIdentityProviderEntity> getDiscoveryFeed() {
@@ -112,7 +109,7 @@ public class SamlIdentityProviderDiscoveryFeedController {
             .findFirst()
             .orElseThrow();
 
-        val webContext = new JEEContext(httpServletRequest, httpServletResponse, this.sessionStore);
+        val webContext = new JEEContext(httpServletRequest, httpServletResponse);
         val service = this.argumentExtractor.extractService(httpServletRequest);
         if (delegatedAuthenticationAccessStrategyHelper.isDelegatedClientAuthorizedForService(samlClient, service)) {
             val provider = DelegatedClientIdentityProviderConfigurationFactory.builder()

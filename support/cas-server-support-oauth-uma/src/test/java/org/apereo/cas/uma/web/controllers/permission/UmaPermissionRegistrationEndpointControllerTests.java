@@ -74,8 +74,8 @@ public class UmaPermissionRegistrationEndpointControllerTests extends BaseUmaEnd
         body = createUmaPermissionRegistrationRequest(resourceId).toJson();
 
         val context = new JEEContext(results.getLeft(), results.getMiddle());
-        val manager = new ProfileManager<>(context);
-        manager.logout();
+        val manager = new ProfileManager(context, oauthDistributedSessionStore);
+        manager.removeProfiles();
 
         val commonProfile = new CommonProfile();
         commonProfile.setClientName("CasClient");

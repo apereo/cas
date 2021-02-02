@@ -61,7 +61,6 @@ import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.saml.saml2.ecp.Response;
-import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,7 +95,7 @@ public class SamlIdPConfiguration {
 
     @Autowired
     @Qualifier("samlIdPDistributedSessionStore")
-    private ObjectProvider<SessionStore<JEEContext>> samlIdPDistributedSessionStore;
+    private ObjectProvider<SessionStore> samlIdPDistributedSessionStore;
 
     @Autowired
     private CasConfigurationProperties casProperties;

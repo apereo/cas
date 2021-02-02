@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.WebContext;
-import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -113,11 +113,11 @@ public class OidcAuthorizationRequestSupportTests {
         val request = new MockHttpServletRequest();
         request.setRequestURI("https://www.example.org");
         request.setQueryString("param=value");
-        val context = new JEEContext(request, new MockHttpServletResponse(), mock(SessionStore.class));
+        val context = new JEEContext(request, new MockHttpServletResponse());
         val profile = new CommonProfile();
         context.setRequestAttribute(Pac4jConstants.USER_PROFILES,
             CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
-        assertTrue(OidcAuthorizationRequestSupport.isAuthenticationProfileAvailable(context).isPresent());
+        assertTrue(OidcAuthorizationRequestSupport.isAuthenticationProfileAvailable(context, JEESessionStore.INSTANCE).isPresent());
     }
 
     @Test

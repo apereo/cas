@@ -72,7 +72,6 @@ import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.Subject;
-import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -162,7 +161,7 @@ public abstract class BaseSamlIdPConfigurationTests {
 
     @Autowired
     @Qualifier("samlIdPDistributedSessionStore")
-    protected SessionStore<JEEContext> samlIdPDistributedSessionStore;
+    protected SessionStore samlIdPDistributedSessionStore;
 
     @Autowired
     @Qualifier("samlObjectSignatureValidator")

@@ -33,9 +33,9 @@ public class OAuth20PasswordGrantTypeTokenRequestValidator extends BaseOAuth20To
     protected boolean validateInternal(final JEEContext context, final String grantType,
                                        final ProfileManager manager, final UserProfile uProfile) {
 
-        val clientIdAndSecret = OAuth20Utils.getClientIdAndClientSecret(context);
+        val clientIdAndSecret = OAuth20Utils.getClientIdAndClientSecret(context, getConfigurationContext().getSessionStore());
 
-        if (clientIdAndSecret == null || StringUtils.isBlank(clientIdAndSecret.getKey())) {
+        if (StringUtils.isBlank(clientIdAndSecret.getKey())) {
             return false;
         }
         val clientId = clientIdAndSecret.getKey();

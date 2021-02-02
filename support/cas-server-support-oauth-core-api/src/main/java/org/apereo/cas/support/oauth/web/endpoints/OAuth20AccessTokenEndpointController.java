@@ -77,7 +77,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
             val requestHolder = examineAndExtractAccessTokenGrantRequest(request, response);
             LOGGER.debug("Creating access token for [{}]", requestHolder);
             AuthenticationCredentialsThreadLocalBinder.bindCurrent(requestHolder.getAuthentication());
-            val context = new JEEContext(request, response, getOAuthConfigurationContext().getSessionStore());
+            val context = new JEEContext(request, response);
             val tokenResult = getOAuthConfigurationContext().getAccessTokenGenerator().generate(requestHolder);
             LOGGER.debug("Access token generated result is: [{}]", tokenResult);
             return generateAccessTokenResponse(request, response, requestHolder, context, tokenResult);
@@ -168,7 +168,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
      */
     private boolean verifyAccessTokenRequest(final HttpServletRequest request, final HttpServletResponse response) {
         val validators = getOAuthConfigurationContext().getAccessTokenGrantRequestValidators();
-        val context = new JEEContext(request, response, getOAuthConfigurationContext().getSessionStore());
+        val context = new JEEContext(request, response);
         return validators.stream()
             .filter(ext -> ext.supports(context))
             .findFirst()

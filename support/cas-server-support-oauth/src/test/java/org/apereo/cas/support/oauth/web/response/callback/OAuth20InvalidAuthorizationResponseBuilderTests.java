@@ -9,7 +9,6 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.JEEContext;
-import org.pac4j.core.context.session.JEESessionStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -39,7 +38,7 @@ public class OAuth20InvalidAuthorizationResponseBuilderTests extends AbstractOAu
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
-        val context = new JEEContext(request, response, new JEESessionStore());
+        val context = new JEEContext(request, response);
         assertFalse(oauthInvalidAuthorizationBuilder.supports(context));
 
         context.setRequestAttribute(OAuth20Constants.ERROR, OAuth20Constants.INVALID_REQUEST);
@@ -59,7 +58,7 @@ public class OAuth20InvalidAuthorizationResponseBuilderTests extends AbstractOAu
         request.addParameter(OAuth20Constants.REDIRECT_URI, "https://github.com/apereo/cas");
 
         val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response, new JEESessionStore());
+        val context = new JEEContext(request, response);
         assertFalse(oauthInvalidAuthorizationBuilder.supports(context));
 
         context.setRequestAttribute(OAuth20Constants.ERROR, OAuth20Constants.INVALID_REQUEST);
@@ -91,7 +90,7 @@ public class OAuth20InvalidAuthorizationResponseBuilderTests extends AbstractOAu
         request.addParameter("ParameterWhichShouldNotComingBack", "notAtAll");
 
         val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response, new JEESessionStore());
+        val context = new JEEContext(request, response);
         assertFalse(oauthInvalidAuthorizationBuilder.supports(context));
 
         context.setRequestAttribute(OAuth20Constants.ERROR, OAuth20Constants.INVALID_REQUEST);

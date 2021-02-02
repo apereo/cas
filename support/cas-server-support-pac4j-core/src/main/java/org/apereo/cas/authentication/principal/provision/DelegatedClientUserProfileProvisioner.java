@@ -3,7 +3,7 @@ package org.apereo.cas.authentication.principal.provision;
 import org.apereo.cas.authentication.principal.Principal;
 
 import org.pac4j.core.client.BaseClient;
-import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.core.profile.UserProfile;
 
 /**
  * This is {@link DelegatedClientUserProfileProvisioner}.
@@ -20,7 +20,7 @@ public interface DelegatedClientUserProfileProvisioner {
      * @param profile   the profile
      * @param client    the client
      */
-    default void execute(final Principal principal, final CommonProfile profile, final BaseClient client) {
+    default void execute(final Principal principal, final UserProfile profile, final BaseClient client) {
     }
 
     /**

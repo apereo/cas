@@ -43,7 +43,7 @@ public abstract class BaseTokenSigningAndEncryptionService implements OAuth20Tok
      * @return the json web encryption
      */
     @SneakyThrows
-    protected String encryptToken(final String encryptionAlg,
+    protected static String encryptToken(final String encryptionAlg,
                                   final String encryptionEncoding,
                                   final String keyIdHeaderValue,
                                   final Key publicKey,

@@ -21,6 +21,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.WebContext;
+import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.exception.CredentialsException;
@@ -36,7 +38,7 @@ import java.io.Serializable;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator<UsernamePasswordCredentials> {
+public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
     @Getter
     private final ServicesManager servicesManager;
 
@@ -53,10 +55,11 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator<U
     private final PrincipalResolver principalResolver;
 
     @Override
-    public void validate(final UsernamePasswordCredentials credentials, final WebContext context) throws CredentialsException {
+    public void validate(final Credentials credentials, final WebContext context, final SessionStore sessionStore) throws CredentialsException {
         LOGGER.debug("Authenticating credential [{}]", credentials);
 
-        val id = credentials.getUsername();
+        val upc = (UsernamePasswordCredentials) credentials;
+        val id = upc.getUsername();
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, id);
         if (registeredService == null) {
             LOGGER.debug("Unable to locate registered service for [{}]", id);
@@ -71,9 +74,9 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator<U
             val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
             accessResult.throwExceptionIfNeeded();
 
-            validateCredentials(credentials, registeredService, context);
+            validateCredentials(upc, registeredService, context, sessionStore);
 
-            val credential = new UsernamePasswordCredential(credentials.getUsername(), credentials.getPassword());
+            val credential = new UsernamePasswordCredential(upc.getUsername(), upc.getPassword());
             val principal = principalResolver.resolve(credential);
 
             val profile = new CommonProfile();
@@ -91,10 +94,12 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator<U
      * @param credentials       the credentials
      * @param registeredService the registered service
      * @param context           the context
+     * @param sessionStore      the session store
      */
     protected void validateCredentials(final UsernamePasswordCredentials credentials,
                                        final OAuthRegisteredService registeredService,
-                                       final WebContext context) {
+                                       final WebContext context,
+                                       final SessionStore sessionStore) {
         if (!OAuth20Utils.checkClientSecret(registeredService, credentials.getPassword(), registeredServiceCipherExecutor)) {
             throw new CredentialsException("Client Credentials provided is not valid for registered service: " + registeredService.getName());
         }
