@@ -32,7 +32,7 @@ spec:
       {{- toYaml .Values.podSecurityContext | nindent 8 }}
       volumes:
         {{- range $.Values.bootAdminContainer.casConfigMounts }}
-          {{- $configMount := printf "%s-%s" "bootadmin-config" . | replace "." "-" }}
+          {{- $configMount := printf "%s-%s" "bootadmin-config" . | replace "." "-" | replace "_" "-" | lower }}
           - name: {{ $configMount | quote }}
             configMap:
               name: {{ include "cas-server.bootadminname" $ }}-config
@@ -55,7 +55,7 @@ spec:
           {{- include "cas-server.tplvalues.render" ( dict "value" .Values.bootAdminContainer.extraVolumes "context" $ ) | nindent 10 }}
           {{- end }}
       containers:
-        - name: {{ .Chart.Name }}
+        - name: cas-boot-admin
           securityContext:
           {{- toYaml .Values.securityContext | nindent 12 }}
           image: {{ include "cas-server.bootadminImageName" . }}
@@ -66,7 +66,7 @@ spec:
               value: {{ .Values.bootAdminContainer.warPath | quote }}
             {{- end }}
             {{- if .Values.bootAdminContainer.profiles }}
-            - name: SPRING_PROFILES
+            - name: CAS_SPRING_PROFILES
               value: {{ .Values.bootAdminContainer.profiles | quote }}
             {{- end }}
             {{- if .Values.bootAdminContainer.jvm.maxHeapOpt }}
@@ -115,7 +115,7 @@ spec:
               protocol: TCP
           volumeMounts:
             {{- range $.Values.bootAdminContainer.casConfigMounts }}
-            {{- $configMount := printf "%s-%s" "bootadmin-config" . | replace "." "-" }}
+            {{- $configMount := printf "%s-%s" "bootadmin-config" . | replace "." "-" | replace "_" "-" | lower }}
             {{- $configMountPath := printf "%s/%s" "/etc/cas/config" . }}
             - name: {{ $configMount | quote }}
               mountPath: {{ $configMountPath }}
