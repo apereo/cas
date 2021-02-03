@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicketFactory;
+import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationUniqueTicketIdGenerator;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
@@ -120,5 +121,25 @@ public class CasSimpleMultifactorAuthenticationHandlerTests {
         val handler = new CasSimpleMultifactorAuthenticationHandler(getClass().getSimpleName(),
             servicesManager, PrincipalFactoryUtils.newPrincipalFactory(), centralAuthenticationService, 0);
         assertThrows(FailedLoginException.class, () -> handler.authenticate(credential));
+    }
+    
+    @Test
+    public void verifySuccessfulAuthenticationWithTokenWithoutPrefix() {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        RequestContextHolder.setRequestContext(context);
+        ExternalContextHolder.setExternalContext(context.getExternalContext());
+
+        WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);
+
+        val factory = (CasSimpleMultifactorAuthenticationTicketFactory) defaultTicketFactory.get(CasSimpleMultifactorAuthenticationTicket.class);
+        val ticket = factory.create(RegisteredServiceTestUtils.getService(), Map.of());
+        ticketRegistry.addTicket(ticket);
+        val ticketWithoutPrefix = ticket.getId().substring(CasSimpleMultifactorAuthenticationTicket.PREFIX.length()
+            + CasSimpleMultifactorAuthenticationUniqueTicketIdGenerator.SEPARATOR.length());
+        val credential = new CasSimpleMultifactorTokenCredential(ticket.getId());
+        assertNotNull(casSimpleMultifactorAuthenticationHandler.authenticate(credential).getPrincipal());
     }
 }
