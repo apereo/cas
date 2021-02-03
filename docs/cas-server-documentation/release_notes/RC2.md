@@ -51,6 +51,10 @@ The following items are new improvements and enhancements presented in this rele
 
 ## Other Stuff
 
+ - The default value for `cas.service-registry.git.branches-to-clone` and `cas.authn.saml-idp.metadata.git.branches-to-clone`
+   changed from `master` to `*` which means all branches will be cloned by default. The properties may contain a list of
+   branches, but the list must include the branch specified in the `cas.service-registry.git.active-branch` 
+   or `cas.authn.saml-idp.metadata.git.active-branch` property. 
 
 ## Library Upgrades
 
