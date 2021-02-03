@@ -55,25 +55,27 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
 
     @Override
     public String findEmail(final PasswordManagementQuery query) {
-        val email = findAttribute(query, List.of(properties.getReset().getMail().getAttributeName()));
+        val email = findAttribute(query, List.of(properties.getReset().getMail().getAttributeName()),
+            CollectionUtils.wrap(query.getUsername()));
         if (EmailValidator.getInstance().isValid(email)) {
-            LOGGER.debug("Email address [{}] for [{}] appears valid", email, query);
+            LOGGER.debug("Email address [{}] for [{}] appears valid", email, query.getUsername());
             return email;
         }
-        LOGGER.warn("Email address [{}] for [{}] is not valid", email, query);
+        LOGGER.warn("Email address [{}] for [{}] is not valid", email, query.getUsername());
         return null;
     }
 
     @Override
     public String findPhone(final PasswordManagementQuery query) {
-        return findAttribute(query, List.of(properties.getReset().getSms().getAttributeName()));
+        return findAttribute(query, List.of(properties.getReset().getSms().getAttributeName()),
+            CollectionUtils.wrap(query.getUsername()));
     }
 
     @Override
     public String findUsername(final PasswordManagementQuery query) {
         return findAttribute(query, properties.getLdap().stream()
             .map(LdapPasswordManagementProperties::getUsernameAttribute)
-            .collect(Collectors.toList()));
+            .collect(Collectors.toList()), CollectionUtils.wrap(query.getEmail()));
     }
 
     @Override
@@ -118,18 +120,21 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
     /**
      * Perform LDAP search by username, returning the requested attribute.
      *
-     * @param attributeNames name of the attribute
+     * @param context         the context
+     * @param attributeNames  name of the attribute
+     * @param ldapFilterParam the ldap filter param
      * @return String value of attribute; null if user/attribute not present
      */
-    private String findAttribute(final PasswordManagementQuery context, final List<String> attributeNames) {
+    protected String findAttribute(final PasswordManagementQuery context,
+                                   final List<String> attributeNames,
+                                   final List<String> ldapFilterParam) {
         try {
             return this.ldapProperties
                 .stream()
                 .sorted(Comparator.comparing(LdapPasswordManagementProperties::getName))
                 .map(Unchecked.function(ldap -> {
                     val filter = LdapUtils.newLdaptiveSearchFilter(ldap.getSearchFilter(),
-                        LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
-                        CollectionUtils.wrap(context.getUsername()));
+                        LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, ldapFilterParam);
                     LOGGER.debug("Constructed LDAP filter [{}] to locate account", filter);
                     val ldapConnectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
                     val response = LdapUtils.executeSearchOperation(ldapConnectionFactory, ldap.getBaseDn(), filter, ldap.getPageSize());

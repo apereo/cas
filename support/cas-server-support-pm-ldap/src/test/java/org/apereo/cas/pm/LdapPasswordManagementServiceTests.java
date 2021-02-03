@@ -85,7 +85,7 @@ public class LdapPasswordManagementServiceTests extends BaseLdapPasswordManageme
     public void verifyUser() {
         val uid = passwordChangeService.findUsername(PasswordManagementQuery.builder().email("caspm@example.org").build());
         assertEquals("CasPasswordManagement", uid);
-        assertNull(passwordChangeService.findUsername(PasswordManagementQuery.builder().username("unknown").build()));
+        assertNull(passwordChangeService.findUsername(PasswordManagementQuery.builder().email("unknown").build()));
     }
 
     @Test

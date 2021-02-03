@@ -2,6 +2,7 @@ package org.apereo.cas.pm;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.springframework.util.LinkedMultiValueMap;
 
@@ -15,6 +16,7 @@ import java.io.Serializable;
  */
 @SuperBuilder
 @Getter
+@ToString(exclude = "record")
 public class PasswordManagementQuery implements Serializable {
     private static final long serialVersionUID = -769463174930246283L;
 
