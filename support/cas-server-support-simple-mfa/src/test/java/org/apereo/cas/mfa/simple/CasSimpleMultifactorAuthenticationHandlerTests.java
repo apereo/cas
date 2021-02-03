@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicketFactory;
-import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationUniqueTicketIdGenerator;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
@@ -137,8 +136,7 @@ public class CasSimpleMultifactorAuthenticationHandlerTests {
         val factory = (CasSimpleMultifactorAuthenticationTicketFactory) defaultTicketFactory.get(CasSimpleMultifactorAuthenticationTicket.class);
         val ticket = factory.create(RegisteredServiceTestUtils.getService(), Map.of());
         ticketRegistry.addTicket(ticket);
-        String ticketIdWithoutPrefix = ticket.getId().substring(CasSimpleMultifactorAuthenticationTicket.PREFIX.length()
-            + CasSimpleMultifactorAuthenticationUniqueTicketIdGenerator.SEPARATOR.length());
+        String ticketIdWithoutPrefix = ticket.getId().substring(CasSimpleMultifactorAuthenticationTicket.PREFIX.length() + 1);
         val credential = new CasSimpleMultifactorTokenCredential(ticketIdWithoutPrefix);
         assertNotNull(casSimpleMultifactorAuthenticationHandler.authenticate(credential).getPrincipal());
     }
