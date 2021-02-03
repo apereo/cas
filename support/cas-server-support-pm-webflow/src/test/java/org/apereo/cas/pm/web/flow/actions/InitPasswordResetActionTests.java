@@ -1,11 +1,11 @@
 package org.apereo.cas.pm.web.flow.actions;
 
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
+import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
@@ -34,7 +34,7 @@ public class InitPasswordResetActionTests extends BasePasswordManagementActionTe
         request.setLocalAddr("1.2.3.4");
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
 
-        val token = passwordManagementService.createToken("casuser");
+        val token = passwordManagementService.createToken(PasswordManagementQuery.builder().username("casuser").build());
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
@@ -50,7 +50,7 @@ public class InitPasswordResetActionTests extends BasePasswordManagementActionTe
     @Test
     public void verifyActionUserlessToken() throws Exception {
         val request = new MockHttpServletRequest();
-        val token = passwordManagementService.createToken(StringUtils.EMPTY);
+        val token = passwordManagementService.createToken(PasswordManagementQuery.builder().build());
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         context.getFlowScope().put("token", token);

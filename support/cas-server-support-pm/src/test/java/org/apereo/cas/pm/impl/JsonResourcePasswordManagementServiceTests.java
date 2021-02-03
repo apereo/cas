@@ -22,6 +22,7 @@ import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.pm.PasswordChangeRequest;
+import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordValidationService;
 import org.apereo.cas.pm.config.PasswordManagementConfiguration;
@@ -87,33 +88,34 @@ public class JsonResourcePasswordManagementServiceTests {
 
     @Test
     public void verifyUserEmailCanBeFound() {
-        val email = passwordChangeService.findEmail("casuser");
+        val email = passwordChangeService.findEmail(PasswordManagementQuery.builder().username("casuser").build());
         assertEquals("casuser@example.org", email);
     }
 
     @Test
     public void verifyUserCanBeFound() {
-        val user = passwordChangeService.findUsername("casuser@example.org");
+        val user = passwordChangeService.findUsername(PasswordManagementQuery.builder().email("casuser@example.net").build());
         assertEquals("casuser", user);
     }
 
     @Test
     public void verifyUserPhoneCanBeFound() {
-        val phone = passwordChangeService.findPhone("casuser");
+        val phone = passwordChangeService.findPhone(PasswordManagementQuery.builder().username("casuser").build());
         assertEquals("1234567890", phone);
     }
 
     @Test
     public void verifyUserEmailCanNotBeFound() {
-        val email = passwordChangeService.findEmail("casusernotfound");
+        val email = passwordChangeService.findEmail(PasswordManagementQuery.builder().username("casusernotfound").build());
         assertNull(email);
     }
 
     @Test
     public void verifyUserQuestionsCanBeFound() {
-        val questions = passwordChangeService.getSecurityQuestions("casuser");
+        val questions = passwordChangeService.getSecurityQuestions(PasswordManagementQuery.builder().username("casuser").build());
         assertEquals(2, questions.size());
-        assertTrue(passwordChangeService.getSecurityQuestions(UUID.randomUUID().toString()).isEmpty());
+        assertTrue(passwordChangeService.getSecurityQuestions(
+            PasswordManagementQuery.builder().username(UUID.randomUUID().toString()).build()).isEmpty());
     }
 
     @Test

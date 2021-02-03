@@ -6,6 +6,7 @@ import org.apereo.cas.config.pm.RestPasswordManagementConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordHistoryService;
+import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.config.PasswordManagementConfiguration;
 import org.apereo.cas.util.MockWebServer;
@@ -70,7 +71,7 @@ public class RestPasswordManagementServiceTests {
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-            val email = this.passwordChangeService.findEmail("casuser");
+            val email = this.passwordChangeService.findEmail(PasswordManagementQuery.builder().username("casuser").build());
             webServer.stop();
             assertNotNull(email);
             assertEquals(data, email);
@@ -84,7 +85,7 @@ public class RestPasswordManagementServiceTests {
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-            val username = this.passwordChangeService.findUsername("casuser@example.org");
+            val username = this.passwordChangeService.findUsername(PasswordManagementQuery.builder().email("casuser@example.org").build());
             webServer.stop();
             assertNotNull(username);
             assertEquals(data, username);
@@ -98,7 +99,7 @@ public class RestPasswordManagementServiceTests {
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-            val ph = this.passwordChangeService.findPhone("casuser");
+            val ph = this.passwordChangeService.findPhone(PasswordManagementQuery.builder().username("casuser").build());
             webServer.stop();
             assertNotNull(ph);
             assertEquals(data, ph);
@@ -124,7 +125,7 @@ public class RestPasswordManagementServiceTests {
                 props.getAuthn().getPm(),
                 passwordHistoryService);
 
-            val questions = passwordService.getSecurityQuestions("casuser");
+            val questions = passwordService.getSecurityQuestions(PasswordManagementQuery.builder().username("casuser").build());
             assertFalse(questions.isEmpty());
             assertTrue(questions.containsKey("question1"));
             webServer.stop();

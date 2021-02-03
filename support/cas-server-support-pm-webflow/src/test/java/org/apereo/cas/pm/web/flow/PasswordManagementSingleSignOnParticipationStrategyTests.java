@@ -1,5 +1,6 @@
 package org.apereo.cas.pm.web.flow;
 
+import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.web.flow.actions.BasePasswordManagementActionTests;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
@@ -42,7 +43,7 @@ public class PasswordManagementSingleSignOnParticipationStrategyTests extends Ba
         val s = new PasswordManagementSingleSignOnParticipationStrategy(centralAuthenticationService);
         val ctx = new MockRequestContext();
 
-        val token = passwordManagementService.createToken("casuser");
+        val token = passwordManagementService.createToken(PasswordManagementQuery.builder().username("casuser").build());
         val transientFactory = (TransientSessionTicketFactory) ticketFactory.get(TransientSessionTicket.class);
         val serverPrefix = casProperties.getServer().getPrefix();
         val service = webApplicationServiceFactory.createService(serverPrefix);

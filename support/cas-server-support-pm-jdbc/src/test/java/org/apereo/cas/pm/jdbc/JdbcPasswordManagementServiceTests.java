@@ -2,6 +2,7 @@ package org.apereo.cas.pm.jdbc;
 
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.pm.PasswordChangeRequest;
+import org.apereo.cas.pm.PasswordManagementQuery;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,31 +24,31 @@ public class JdbcPasswordManagementServiceTests extends BaseJdbcPasswordManageme
 
     @Test
     public void verifyUserEmailCanBeFound() {
-        val email = passwordChangeService.findEmail("casuser");
+        val email = passwordChangeService.findEmail(PasswordManagementQuery.builder().username("casuser").build());
         assertEquals("casuser@example.org", email);
-        assertNull(passwordChangeService.findEmail("unknown"));
-        assertNull(passwordChangeService.findEmail("baduser"));
+        assertNull(passwordChangeService.findEmail(PasswordManagementQuery.builder().username("unknown").build()));
+        assertNull(passwordChangeService.findEmail(PasswordManagementQuery.builder().username("baduser").build()));
     }
 
     @Test
     public void verifyUserCanBeFound() {
-        val user = passwordChangeService.findUsername("casuser@example.org");
+        val user = passwordChangeService.findUsername(PasswordManagementQuery.builder().email("casuser@example.org").build());
         assertEquals("casuser", user);
-        assertNull(passwordChangeService.findUsername("unknown"));
+        assertNull(passwordChangeService.findUsername(PasswordManagementQuery.builder().email("unknown").build()));
     }
 
     @Test
     public void verifyPhoneNumberCanBeFound() {
-        val phone = passwordChangeService.findPhone("casuser");
+        val phone = passwordChangeService.findPhone(PasswordManagementQuery.builder().username("casuser").build());
         assertEquals("1234567890", phone);
-        assertNull(passwordChangeService.findPhone("whatever"));
-        assertNull(passwordChangeService.findPhone("baduser"));
+        assertNull(passwordChangeService.findPhone(PasswordManagementQuery.builder().username("whatever").build()));
+        assertNull(passwordChangeService.findPhone(PasswordManagementQuery.builder().username("baduser").build()));
     }
 
 
     @Test
     public void verifyUserQuestionsCanBeFound() {
-        val questions = passwordChangeService.getSecurityQuestions("casuser");
+        val questions = passwordChangeService.getSecurityQuestions(PasswordManagementQuery.builder().username("casuser").build());
         assertEquals(2, questions.size());
         assertTrue(questions.containsKey("question1"));
         assertTrue(questions.containsKey("question2"));
