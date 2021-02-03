@@ -4,6 +4,7 @@ import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.impl.history.BasePasswordHistoryService;
 import org.apereo.cas.pm.impl.history.PasswordHistoryEntity;
 
+import lombok.Getter;
 import lombok.ToString;
 import lombok.val;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +22,7 @@ import java.util.Collection;
  */
 @Transactional(transactionManager = "transactionManagerPasswordHistory")
 @ToString
+@Getter
 public class JdbcPasswordHistoryService extends BasePasswordHistoryService {
     private static final String SELECT_QUERY = "SELECT p FROM JdbcPasswordHistoryEntity p ";
 
