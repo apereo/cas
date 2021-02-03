@@ -138,4 +138,14 @@ public class DefaultChainingServiceRegistry extends AbstractServiceRegistry impl
             })
             .forEach(serviceRegistry -> serviceRegistry.save(service));
     }
+
+    @Override
+    public RegisteredService findServiceBy(final String id) {
+        return serviceRegistries.stream()
+                .map(registry -> registry.findServiceBy(id))
+                .filter(Objects::nonNull)
+                .findFirst()
+                 .orElse(null);
+    }
+
 }
