@@ -88,13 +88,15 @@ and, as always, you are encouraged to try and test the upgrade as much as possib
 
 ## Scriptable Email Messages
 
-The construction of the [email message body](../notifications/Sending-Email-Configuration.html) can now be scripted using an external Groovy script.
+The construction of the [email message body](../notifications/Sending-Email-Configuration.html) can 
+now be scripted using an external Groovy script.
 
 ## Other Stuff
       
-- A number of Docker images used for integration tests, such as DynamoDb, MySQL, MariaDb, etc are now updated to their latest versions.
+- A number of Docker images used for [integration tests](../developer/Test-Process.html), such as DynamoDb, MySQL, MariaDb, etc are now updated to their latest versions.
 - A special failure analyzer for Spring Boot is now available to analyze startup failures more accurately and with better logs.
-- Support for the legacy syntax for JSON service definitions based on CAS Addons as well as the old `org.jasig` namespace has been removed. 
+- Support for the legacy syntax for [JSON service definitions](../services/JSON-Service-Management.html) based on CAS Addons as well as the old `org.jasig` namespace has been removed. 
+- Reworking internal components and APIs for [password management](../password_management/Password-Management.html) to make customizations easier, specially when multiple fields may be involved to locate the user record.
 
 ## Library Upgrades
 
