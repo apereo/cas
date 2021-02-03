@@ -58,15 +58,24 @@ public class SendForgotUsernameInstructionsAction extends AbstractAction {
             return getErrorEvent("email.invalid", "Provided email address is invalid", requestContext);
         }
 
+        return locateUserAndProcess(requestContext, email);
+    }
+
+    /**
+     * Process forgot username email and do a lookup.
+     *
+     * @param requestContext the request context
+     * @param email          the email
+     * @return the event
+     */
+    protected Event locateUserAndProcess(final RequestContext requestContext, final String email) {
         val username = passwordManagementService.findUsername(email);
         if (StringUtils.isBlank(username)) {
             return getErrorEvent("username.missing", "No username could be located for the given email address", requestContext);
         }
-
         if (sendForgotUsernameEmailToAccount(email, username)) {
             return success();
         }
-
         return getErrorEvent("username.failed", "Failed to send the username to the given email address", requestContext);
     }
 
@@ -83,7 +92,15 @@ public class SendForgotUsernameInstructionsAction extends AbstractAction {
         return this.communicationsManager.email(reset, email, text);
     }
 
-    private Event getErrorEvent(final String code, final String defaultMessage, final RequestContext requestContext) {
+    /**
+     * Locate and return the error event.
+     *
+     * @param code           the error code
+     * @param defaultMessage the default message
+     * @param requestContext the request context
+     * @return the event
+     */
+    protected Event getErrorEvent(final String code, final String defaultMessage, final RequestContext requestContext) {
         val messages = requestContext.getMessageContext();
         messages.addMessage(new MessageBuilder()
             .error()

@@ -8,6 +8,7 @@ import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -31,6 +32,7 @@ import java.util.Map;
  * @since 5.1.0
  */
 @Slf4j
+@Getter
 public class JdbcPasswordManagementService extends BasePasswordManagementService {
 
     private final JdbcTemplate jdbcTemplate;
