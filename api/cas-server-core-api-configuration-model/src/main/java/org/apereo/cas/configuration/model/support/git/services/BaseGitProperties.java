@@ -32,18 +32,19 @@ public abstract class BaseGitProperties implements Serializable {
     private String repositoryUrl;
 
     /**
-     * The branch to checkout and activate.
+     * The branch to checkout and activate, defaults to {@code master}.
      */
     @RequiredProperty
     private String activeBranch = "master";
 
     /**
      * If the repository is to be cloned,
-     * this will allow the list of branches to be fetched
-     * separated by commas.
+     * this will allow a select list of branches to be fetched.
+     * List the branch names separated by commas or use {@code *} to clone all branches.
+     * Defaults to all branches.
      */
     @RequiredProperty
-    private String branchesToClone = "master";
+    private String branchesToClone = "*";
 
     /**
      * Username used to access or push to the repository.
@@ -94,7 +95,7 @@ public abstract class BaseGitProperties implements Serializable {
     /**
      * When establishing an ssh session, determine if default
      * identities loaded on the machine should be excluded/removed
-     * and identity should only be limitd to those loaded from given keys.
+     * and identity should only be limited to those loaded from given keys.
      */
     private boolean clearExistingIdentities;
 
