@@ -36,6 +36,7 @@ may convey additional information about the nature of the request or the authent
 | `principal`                         | CAS authenticated principal id.
 
 Additionally, all available request attributes, headers, and parameters are exposed as variables.
+> :warning: **These variables potentially include the password.** If you set includeMDC to true in syslog appender, these informations will be sent to syslog.
 
 The above variables may be used in logging patterns:
 
