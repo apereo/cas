@@ -51,7 +51,7 @@ public class CasSimpleMultifactorAuthenticationHandler extends AbstractPreAndPos
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
         val tokenCredential = (CasSimpleMultifactorTokenCredential) credential;
-        String tokenId = tokenCredential.getId();
+        var tokenId = tokenCredential.getId();
         if (!tokenId.startsWith(CasSimpleMultifactorAuthenticationTicket.PREFIX)) {
             tokenId = CasSimpleMultifactorAuthenticationTicket.PREFIX + CasSimpleMultifactorAuthenticationUniqueTicketIdGenerator.SEPARATOR + tokenId;
         }
