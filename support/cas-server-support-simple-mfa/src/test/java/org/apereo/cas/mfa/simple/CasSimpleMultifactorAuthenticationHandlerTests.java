@@ -131,10 +131,12 @@ public class CasSimpleMultifactorAuthenticationHandlerTests {
         RequestContextHolder.setRequestContext(context);
         ExternalContextHolder.setExternalContext(context.getExternalContext());
 
-        WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);
+        val principal = RegisteredServiceTestUtils.getPrincipal();
+        WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(principal), context);
 
         val factory = (CasSimpleMultifactorAuthenticationTicketFactory) defaultTicketFactory.get(CasSimpleMultifactorAuthenticationTicket.class);
-        val ticket = factory.create(RegisteredServiceTestUtils.getService(), Map.of());
+        val ticket = factory.create(RegisteredServiceTestUtils.getService(),
+            Map.of(CasSimpleMultifactorAuthenticationConstants.PROPERTY_PRINCIPAL, principal));
         ticketRegistry.addTicket(ticket);
         val ticketIdWithoutPrefix = ticket.getId().substring(CasSimpleMultifactorAuthenticationTicket.PREFIX.length() + 1);
         val credential = new CasSimpleMultifactorTokenCredential(ticketIdWithoutPrefix);
