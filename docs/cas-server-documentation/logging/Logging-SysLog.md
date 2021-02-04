@@ -29,7 +29,9 @@ messages needs to be routed over to this instance:
 
 ```
 
-> :warning: Mapped Diagnostic Context (MDC) may contain the password. Setting includeMDC to true sends clear password to syslog.
+<div class="alert alert-warning">
+  <strong>Pay Attention</strong><br /> [Mapped Diagnostic Context](Logging-MDC.html) (`MDC`) may contain the password. Setting `includeMDC=true` sends clear password as variable to syslog.
+</div>
 
 You can also configure the remote destination output over
 SSL and specify the related keystore configuration:
