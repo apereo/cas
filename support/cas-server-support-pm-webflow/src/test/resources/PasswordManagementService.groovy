@@ -1,4 +1,4 @@
-import org.apereo.cas.pm.InvalidPasswordException
+import org.apereo.cas.pm.*
 
 def change(Object[] args) {
     def credential = args[0]
@@ -14,7 +14,7 @@ def change(Object[] args) {
 }
 
 def findEmail(Object[] args) {
-    def username = args[0]
+    def username = (args[0] as PasswordManagementQuery).username
     def logger = args[1]
     if (username.equals("none")) {
         return null
@@ -23,7 +23,7 @@ def findEmail(Object[] args) {
 }
 
 def getSecurityQuestions(Object[] args) {
-    def username = args[0]
+    def username = (args[0] as PasswordManagementQuery).username
     def logger = args[1]
     if (username.equals("noquestions")) {
         return [:]
@@ -32,7 +32,7 @@ def getSecurityQuestions(Object[] args) {
 }
 
 def findPhone(Object[] args) {
-    def username = args[0]
+    def username = (args[0] as PasswordManagementQuery).username
     def logger = args[1]
     if (username.equals("none")) {
         return null
@@ -41,7 +41,7 @@ def findPhone(Object[] args) {
 }
 
 def findUsername(Object[] args) {
-    def email = args[0]
+    def email = (args[0] as PasswordManagementQuery).email
     def logger = args[1]
     if (email.contains("@baddomain")) {
         return null

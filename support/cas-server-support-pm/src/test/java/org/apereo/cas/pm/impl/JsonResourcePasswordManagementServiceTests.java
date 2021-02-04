@@ -94,7 +94,7 @@ public class JsonResourcePasswordManagementServiceTests {
 
     @Test
     public void verifyUserCanBeFound() {
-        val user = passwordChangeService.findUsername(PasswordManagementQuery.builder().email("casuser@example.net").build());
+        val user = passwordChangeService.findUsername(PasswordManagementQuery.builder().email("casuser@example.org").build());
         assertEquals("casuser", user);
     }
 

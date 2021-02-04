@@ -93,14 +93,19 @@ now be scripted using an external Groovy script.
 
 ## Other Stuff
       
-- A number of Docker images used for [integration tests](../developer/Test-Process.html), such as DynamoDb, MySQL, MariaDb, etc are now updated to their latest versions.
+- A number of Docker images used for [integration tests](../developer/Test-Process.html), such as 
+  DynamoDb, MySQL, MariaDb, etc are now updated to their latest versions.
 - A special failure analyzer for Spring Boot is now available to analyze startup failures more accurately and with better logs.
-- Support for the legacy syntax for [JSON service definitions](../services/JSON-Service-Management.html) based on CAS Addons as well as the old `org.jasig` namespace has been removed. 
-- Reworking internal components and APIs for [password management](../password_management/Password-Management.html) to make customizations easier, specially when multiple fields may be involved to locate the user record.
+- Support for the legacy syntax for [JSON service definitions](../services/JSON-Service-Management.html) 
+  based on CAS Addons as well as the old `org.jasig` namespace has been removed. 
+- Reworking internal components and APIs for [password management](../password_management/Password-Management.html) to 
+  make customizations easier, specially when multiple fields may be involved to locate the user record. The work here may present
+  breaking changes, specially if you are handling password 
+  management operations via external [Groovy scripts](../password_management/Password-Management-Groovy.html).
 - The default value for `cas.service-registry.git.branches-to-clone` and `cas.authn.saml-idp.metadata.git.branches-to-clone`
-   changed from `master` to `*` which means all branches will be cloned by default. The properties may contain a list of
-   branches, but the list must include the branch specified in the `cas.service-registry.git.active-branch` 
-   or `cas.authn.saml-idp.metadata.git.active-branch` property. 
+  changed from `master` to `*` which means all branches will be cloned by default. The properties may contain a list of
+  branches, but the list must include the branch specified in the `cas.service-registry.git.active-branch`
+  or `cas.authn.saml-idp.metadata.git.active-branch` property. 
 
 ## Library Upgrades
 
