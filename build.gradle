@@ -489,6 +489,8 @@ subprojects {
         api libraries.javaxel
         api libraries.javax
 
+        annotationProcessor libraries.springindexer
+        
         if (!Boolean.getBoolean("skipSpotbugs") && projectShouldBePublished(project)) {
             spotbugsPlugins libraries.findbugscontrib
             spotbugsPlugins libraries.findbugssec
