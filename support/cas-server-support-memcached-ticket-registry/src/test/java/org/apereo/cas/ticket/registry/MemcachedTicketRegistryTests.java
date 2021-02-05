@@ -1,6 +1,9 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationComponentSerializationConfiguration;
 import org.apereo.cas.config.CasCoreServicesComponentSerializationConfiguration;
 import org.apereo.cas.config.CasCoreTicketComponentSerializationConfiguration;
@@ -49,6 +52,7 @@ import static org.mockito.Mockito.*;
     CasCoreAuthenticationComponentSerializationConfiguration.class,
     CasCoreServicesComponentSerializationConfiguration.class,
     CasOAuth20ComponentSerializationConfiguration.class,
+    CasAuthenticationEventExecutionPlanTestConfiguration.class,
     MemcachedTicketRegistryTests.MemcachedTicketRegistryTestConfiguration.class,
     BaseTicketRegistryTests.SharedTestConfiguration.class
 },
@@ -56,6 +60,7 @@ import static org.mockito.Mockito.*;
         "cas.ticket.registry.memcached.servers=localhost:11211",
         "cas.ticket.registry.memcached.failure-mode=Redistribute",
         "cas.ticket.registry.memcached.locator-type=ARRAY_MOD",
+        "cas.ticket.registry.memcached.transcoder=KRYO",
         "cas.ticket.registry.memcached.hash-algorithm=FNV1A_64_HASH",
         "cas.ticket.registry.memcached.kryo-registration-required=true"
     })
@@ -70,6 +75,14 @@ public class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
+
+    @Autowired
+    @Qualifier("centralAuthenticationService")
+    private CentralAuthenticationService centralAuthenticationService;
+
+    @Autowired
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private AuthenticationSystemSupport authenticationSystemSupport;
 
     @Override
     protected boolean isIterableRegistry() {
@@ -107,7 +120,7 @@ public class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
             }
         });
     }
-    
+
     @TestConfiguration("MemcachedTicketRegistryTestConfiguration")
     @Lazy(false)
     public static class MemcachedTicketRegistryTestConfiguration implements ComponentSerializationPlanConfigurer {

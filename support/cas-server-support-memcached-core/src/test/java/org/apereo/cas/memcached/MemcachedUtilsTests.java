@@ -20,7 +20,7 @@ public class MemcachedUtilsTests {
     @Test
     public void verifySerial() {
         val props = new BaseMemcachedProperties();
-        props.setTranscoder("serial");
+        props.setTranscoder(BaseMemcachedProperties.TranscoderTypes.SERIAL);
         val coder = MemcachedUtils.newTranscoder(props);
         assertNotNull(coder);
     }
@@ -28,7 +28,7 @@ public class MemcachedUtilsTests {
     @Test
     public void verifyWhalin() {
         val props = new BaseMemcachedProperties();
-        props.setTranscoder("whalin");
+        props.setTranscoder(BaseMemcachedProperties.TranscoderTypes.WHALIN);
         val coder = MemcachedUtils.newTranscoder(props);
         assertNotNull(coder);
     }
@@ -36,7 +36,7 @@ public class MemcachedUtilsTests {
     @Test
     public void verifyWhalinv1() {
         val props = new BaseMemcachedProperties();
-        props.setTranscoder("whalinv1");
+        props.setTranscoder(BaseMemcachedProperties.TranscoderTypes.WHALINV1);
         val coder = MemcachedUtils.newTranscoder(props);
         assertNotNull(coder);
     }
@@ -44,7 +44,7 @@ public class MemcachedUtilsTests {
     @Test
     public void verifyKryo() {
         val props = new BaseMemcachedProperties();
-        props.setTranscoder("kryo");
+        props.setTranscoder(BaseMemcachedProperties.TranscoderTypes.KRYO);
         val coder = MemcachedUtils.newTranscoder(props);
         assertNotNull(coder);
     }
