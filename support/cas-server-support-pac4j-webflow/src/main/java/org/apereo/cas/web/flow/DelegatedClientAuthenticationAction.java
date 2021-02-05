@@ -9,6 +9,7 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.actions.AbstractAuthenticationAction;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -21,6 +22,8 @@ import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.credentials.Credentials;
+import org.pac4j.core.exception.http.HttpAction;
+import org.pac4j.core.http.adapter.JEEHttpActionAdapter;
 import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
@@ -94,11 +97,11 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
 
     @Override
     public Event doExecute(final RequestContext context) {
-        try {
-            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-            val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
-            val webContext = new JEEContext(request, response);
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
+        val webContext = new JEEContext(request, response);
 
+        try {
             val clientName = request.getParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER);
             LOGGER.trace("Delegated authentication is handled by client name [{}]", clientName);
 
@@ -136,6 +139,11 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             if (response.getStatus() == HttpStatus.UNAUTHORIZED.value()) {
                 throw new UnauthorizedAuthenticationException("Authentication is not authorized: " + response.getStatus());
             }
+        } catch (final HttpAction e) {
+            FunctionUtils.doIf(LOGGER.isDebugEnabled(),
+                o -> LOGGER.debug(e.getMessage(), e), o -> LOGGER.info(e.getMessage())).accept(e);
+            JEEHttpActionAdapter.INSTANCE.adapt(e, webContext);
+            return success();
         } catch (final UnauthorizedServiceException e) {
             LOGGER.warn(e.getMessage(), e);
             throw e;

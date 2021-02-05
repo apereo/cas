@@ -23,11 +23,19 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.opensaml.saml.saml1.binding.encoding.impl.HTTPPostEncoder;
+import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
+import org.pac4j.core.context.HttpConstants;
 import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.exception.http.OkAction;
 import org.pac4j.core.util.Pac4jConstants;
+import org.pac4j.saml.client.SAML2Client;
+import org.pac4j.saml.transport.DefaultPac4jSAMLResponse;
+import org.pac4j.saml.transport.Pac4jHTTPPostEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -49,6 +57,9 @@ import org.springframework.webflow.test.MockFlowExecutionContext;
 import org.springframework.webflow.test.MockFlowSession;
 import org.springframework.webflow.test.MockRequestContext;
 
+import java.nio.charset.StandardCharsets;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -128,8 +139,48 @@ public class DelegatedClientAuthenticationActionTests {
     }
 
     @Test
-    @SneakyThrows
-    public void verifyFinishAuthentication() {
+    public void verifySaml2LogoutResponse() throws Exception {
+        val client = builtClients.findClient("SAML2Client").get();
+
+        val request = new MockHttpServletRequest();
+        request.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, client.getName());
+        val webContext = new JEEContext(request, new MockHttpServletResponse());
+        request.setMethod("POST");
+        
+        val logoutResponse = "<samlp:LogoutResponse xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" "
+            + "xmlns:saml=\"urn:oasis:names:tc:SAML:2.0:assertion\" "
+            + "ID=\"_6c3737282f007720e736f0f4028feed8cb9b40291c\" Version=\"2.0\" "
+            + "IssueInstant=\"" + ZonedDateTime.now(ZoneOffset.UTC) + "\" "
+            + "Destination=\"http://callback.example.org?client_name=SAML2Client&amp;logoutendpoint=true\" "
+            + "InResponseTo=\"ONELOGIN_21df91a89767879fc0f7df6a1490c6000c81644d\">%n"
+            + "  <saml:Issuer>https://cas.example.org/idp</saml:Issuer>%n"
+            + "  <samlp:Status>%n"
+            + "    <samlp:StatusCode Value=\"urn:oasis:names:tc:SAML:2.0:status:Success\"/>%n"
+            + "  </samlp:Status>%n"
+            + "</samlp:LogoutResponse>";
+
+        request.setContent(EncodingUtils.encodeBase64(logoutResponse).getBytes(StandardCharsets.UTF_8));
+
+        val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
+        servicesManager.save(RegisteredServiceTestUtils.getRegisteredService(service.getId(), Map.of()));
+        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
+        
+        val ticket = delegatedClientWebflowManager.store(webContext, client);
+        request.addParameter(DelegatedClientWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
+        request.addParameter(Pac4jConstants.LOGOUT_ENDPOINT_PARAMETER, "https://httpbin.org/post");
+
+        val context = new MockRequestContext();
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        setRequestContext(context);
+        setExternalContext(context.getExternalContext());
+
+        val event = delegatedAuthenticationAction.execute(context);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
+    }
+    
+    @Test
+    public void verifyFinishAuthentication() throws Exception {
         val request = new MockHttpServletRequest();
         request.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "FacebookClient");
 
@@ -166,8 +217,7 @@ public class DelegatedClientAuthenticationActionTests {
     }
 
     @Test
-    @SneakyThrows
-    public void verifyFailedAuthentication() {
+    public void verifyFailedAuthentication() throws Exception {
         val mockRequest = new MockHttpServletRequest();
         mockRequest.setParameter("error_message", "bad authn");
         mockRequest.setParameter("error_code", "403");
@@ -186,8 +236,7 @@ public class DelegatedClientAuthenticationActionTests {
     }
 
     @Test
-    @SneakyThrows
-    public void verifySsoAuthentication() {
+    public void verifySsoAuthentication() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -213,8 +262,7 @@ public class DelegatedClientAuthenticationActionTests {
     }
 
     @Test
-    @SneakyThrows
-    public void verifySsoAuthenticationUnauthz() {
+    public void verifySsoAuthenticationUnauthz() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
