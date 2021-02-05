@@ -3,9 +3,9 @@ package org.apereo.cas.adaptors.jdbc;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.jpa.JpaPersistenceProviderContext;
 import org.apereo.cas.util.CollectionUtils;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,6 +13,9 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,9 +24,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.security.auth.login.FailedLoginException;
 import javax.sql.DataSource;
-
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.0.0
  */
 @Tag("JDBC")
+@Import(NamedQueryDatabaseAuthenticationHandlerTests.DatabaseTestConfiguration.class)
 public class NamedQueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthenticationHandlerTests {
 
     @Autowired
@@ -46,8 +50,7 @@ public class NamedQueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAu
     }
 
     @BeforeEach
-    @SneakyThrows
-    public void initialize() {
+    public void initialize() throws Exception {
         try (val c = this.dataSource.getConnection()) {
             try (val s = c.createStatement()) {
                 c.setAutoCommit(true);
@@ -57,8 +60,7 @@ public class NamedQueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAu
     }
 
     @AfterEach
-    @SneakyThrows
-    public void afterEachTest() {
+    public void afterEachTest() throws Exception {
         try (val c = this.dataSource.getConnection()) {
             try (val s = c.createStatement()) {
                 c.setAutoCommit(true);
@@ -68,9 +70,8 @@ public class NamedQueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAu
     }
 
     @Test
-    @SneakyThrows
-    public void verifySuccess() {
-        val sql = "SELECT * FROM cas_named_users where username=:username";
+    public void verifySuccess() throws Exception {
+        val sql = "SELECT * FROM CAS_NAMED_USERS where username=:username";
         val map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(List.of("phone:phoneNumber"));
         val q = new QueryDatabaseAuthenticationHandler("namedHandler",
             null, PrincipalFactoryUtils.newPrincipalFactory(), 0,
@@ -85,9 +86,8 @@ public class NamedQueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAu
     }
 
     @Test
-    @SneakyThrows
-    public void verifySuccessWithCount() {
-        val sql = "SELECT count(*) as total FROM cas_named_users where username=:username AND password=:password";
+    public void verifySuccessWithCount() throws Exception {
+        val sql = "SELECT count(*) as total FROM CAS_NAMED_USERS where username=:username AND password=:password";
         val map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(List.of("phone:phoneNumber"));
         val q = new QueryDatabaseAuthenticationHandler("namedHandler",
             null, PrincipalFactoryUtils.newPrincipalFactory(), 0,
@@ -103,7 +103,7 @@ public class NamedQueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAu
 
     @Test
     public void verifyFailsWithMissingTotalField() {
-        val sql = "SELECT count(*) FROM cas_named_users where username=:username AND password=:password";
+        val sql = "SELECT count(*) FROM CAS_NAMED_USERS where username=:username AND password=:password";
         val q = new QueryDatabaseAuthenticationHandler("namedHandler",
             null, PrincipalFactoryUtils.newPrincipalFactory(), 0,
             this.dataSource, sql, null,
@@ -113,7 +113,15 @@ public class NamedQueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAu
             () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("whatever", "psw0")));
     }
 
-    @Entity(name = "cas_named_users")
+    @TestConfiguration("TestConfiguration")
+    public static class DatabaseTestConfiguration {
+         @Bean
+        public JpaPersistenceProviderContext persistenceProviderContext() {
+             return new JpaPersistenceProviderContext().setIncludeEntityClasses(Set.of(UsersTable.class.getName()));
+         }
+    }
+
+    @Entity(name = "CAS_NAMED_USERS")
     public static class UsersTable {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)

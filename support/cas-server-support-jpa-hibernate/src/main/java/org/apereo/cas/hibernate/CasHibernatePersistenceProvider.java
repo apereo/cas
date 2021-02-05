@@ -33,6 +33,9 @@ public class CasHibernatePersistenceProvider extends HibernatePersistenceProvide
     @Override
     public EntityManagerFactory createContainerEntityManagerFactory(final PersistenceUnitInfo info, final Map properties) {
         val filtered = CollectionUtils.intersection(info.getManagedClassNames(), providerContext.getIncludeEntityClasses());
+        if (info.getManagedClassNames().isEmpty() && !providerContext.getIncludeEntityClasses().isEmpty()) {
+            filtered.addAll(providerContext.getIncludeEntityClasses());
+        }
         LOGGER.trace("Filtered entity classes for entity manager are [{}]", filtered);
         val mergedClassesAndPackages = new HashSet<String>(filtered);
         if (info instanceof SmartPersistenceUnitInfo) {

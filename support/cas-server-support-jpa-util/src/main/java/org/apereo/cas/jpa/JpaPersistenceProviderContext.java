@@ -2,6 +2,7 @@ package org.apereo.cas.jpa;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -14,6 +15,7 @@ import java.util.Set;
  */
 @Getter
 @Setter
+@Accessors(chain = true)
 public class JpaPersistenceProviderContext {
     private Set<String> includeEntityClasses = new LinkedHashSet<>();
 }

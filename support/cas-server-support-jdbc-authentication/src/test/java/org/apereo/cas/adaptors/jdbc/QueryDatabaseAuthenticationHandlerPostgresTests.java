@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.jdbc;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.jpa.JpaPersistenceProviderContext;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 import org.apereo.cas.util.serialization.SerializationUtils;
@@ -15,6 +16,9 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 
 import javax.persistence.Column;
@@ -25,6 +29,7 @@ import javax.persistence.Id;
 import javax.sql.DataSource;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -44,6 +49,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @EnabledIfPortOpen(port = 5432)
 @Tag("Postgres")
+@Import(QueryDatabaseAuthenticationHandlerPostgresTests.DatabaseTestConfiguration.class)
 public class QueryDatabaseAuthenticationHandlerPostgresTests extends BaseDatabaseAuthenticationHandlerTests {
     private static final String SQL = "SELECT * FROM caspgusers where username=?";
 
@@ -96,7 +102,14 @@ public class QueryDatabaseAuthenticationHandlerPostgresTests extends BaseDatabas
         assertNotNull(SerializationUtils.serialize(result));
     }
 
-
+    @TestConfiguration("TestConfiguration")
+    public static class DatabaseTestConfiguration {
+        @Bean
+        public JpaPersistenceProviderContext persistenceProviderContext() {
+            return new JpaPersistenceProviderContext().setIncludeEntityClasses(Set.of(QueryDatabaseAuthenticationHandlerPostgresTests.UsersTable.class.getName()));
+        }
+    }
+    
     @SuppressWarnings("unused")
     @Entity(name = "caspgusers")
     public static class UsersTable {

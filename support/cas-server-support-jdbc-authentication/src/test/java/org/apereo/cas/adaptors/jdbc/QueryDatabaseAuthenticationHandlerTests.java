@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
+import org.apereo.cas.jpa.JpaPersistenceProviderContext;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
 
@@ -17,6 +18,9 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.persistence.Column;
@@ -30,6 +34,7 @@ import javax.sql.DataSource;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -41,6 +46,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SuppressWarnings("JDBCExecuteWithNonConstantString")
 @Tag("JDBC")
+@Import(QueryDatabaseAuthenticationHandlerTests.DatabaseTestConfiguration.class)
 public class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthenticationHandlerTests {
     private static final String SQL = "SELECT * FROM casusers where username=?";
 
@@ -178,6 +184,14 @@ public class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthent
 
         q.setPasswordEncoder(encoder);
         assertNotNull(q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "pswbc2")));
+    }
+
+    @TestConfiguration("TestConfiguration")
+    public static class DatabaseTestConfiguration {
+        @Bean
+        public JpaPersistenceProviderContext persistenceProviderContext() {
+            return new JpaPersistenceProviderContext().setIncludeEntityClasses(Set.of(QueryDatabaseAuthenticationHandlerTests.UsersTable.class.getName()));
+        }
     }
 
     @SuppressWarnings("unused")

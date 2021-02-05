@@ -178,11 +178,11 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val username = request.getParameter(REQUEST_PARAMETER_USERNAME);
 
+        val builder = PasswordManagementQuery.builder();
         if (StringUtils.isBlank(username)) {
             LOGGER.warn("No username parameter is provided");
-            return null;
         }
-        return PasswordManagementQuery.builder().username(username).build();
+        return builder.username(username).build();
     }
 
     /**
