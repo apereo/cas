@@ -89,29 +89,39 @@ Create the name of the service account to use
 Return the proper cas-server image name
 */}}
 {{- define "cas-server.imageName" -}}
-{{- $repositoryName := .Values.image.repository  | toString -}}
-{{- $registryName := default "" .Values.image.registry  | toString -}}
-{{- $tag := default .Chart.AppVersion .Values.image.tag  | toString -}}
-{{- if ne $registryName "" }}
-    {{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
-{{- else -}}
-    {{- printf "%s:%s" $repositoryName $tag -}}
-{{- end -}}
+{{ include "common.images.image" (dict "imageRoot" .Values.image "global" .Values.global) }}
 {{- end -}}
 
 {{/*
 Return the proper cas-server boot admin image name
 */}}
 {{- define "cas-server.bootadminImageName" -}}
-{{- $repositoryName := .Values.bootadminimage.repository  | toString -}}
-{{- $registryName := default "" .Values.bootadminimage.registry  | toString -}}
-{{- $tag := default .Chart.AppVersion .Values.bootadminimage.tag  | toString -}}
-{{- if ne $registryName "" }}
-    {{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
-{{- else -}}
-    {{- printf "%s:%s" $repositoryName $tag -}}
+{{ include "common.images.image" (dict "imageRoot" .Values.bootadminimage "global" .Values.global) }}
 {{- end -}}
+
+{{/*
+Return the proper image name (for the init container volume-permissions image)
+*/}}
+{{- define "cas-server.volumePermissions.image" -}}
+{{ include "common.images.image" (dict "imageRoot" .Values.volumePermissions.image "global" .Values.global) }}
 {{- end -}}
+
+{{/*
+Return the proper image name
+{{ include "common.images.image" ( dict "imageRoot" .Values.path.to.the.image "global" $) }}
+*/}}
+{{- define "common.images.image" -}}
+{{- $registryName := .imageRoot.registry -}}
+{{- $repositoryName := .imageRoot.repository -}}
+{{- $tag := .imageRoot.tag | toString -}}
+{{- if .global }}
+    {{- if .global.imageRegistry }}
+     {{- $registryName = .global.imageRegistry -}}
+    {{- end -}}
+{{- end -}}
+{{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
+{{- end -}}
+
 
 
 {{/*

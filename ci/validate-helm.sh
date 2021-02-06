@@ -54,11 +54,22 @@ helm lint cas-server
 echo "Installing ingress controller and waiting for it to start"
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 kubectl create namespace ingress-nginx || true
-helm upgrade --install --namespace ingress-nginx ingress-nginx ingress-nginx/ingress-nginx
+# install with some options that we don't necessarily need here but may be important in some deployments
+# proxy-buffer-size is needed for nginx to handle large OIDC related headers and avoids 502 error from nginx
+# use-forwarded-headers is needed if your ingress controller is behind another proxy, should be false if not behind another proxy
+# enable-underscores-in-headers is important if you are trying to use a header with an underscore from another proxy
+helm upgrade --install --namespace ingress-nginx ingress-nginx ingress-nginx/ingress-nginx \
+  --set controller.config.enable-underscores-in-headers=true \
+  --set controller.config.use-forwarded-headers=true \
+  --set controller.config.proxy-buffer-size=16k
+
 kubectl wait --namespace ingress-nginx \
   --for=condition=ready pod \
   --selector=app.kubernetes.io/component=controller \
   --timeout=120s
+
+echo "Deleting cas-server helm chart if it already exists"
+helm delete cas-server --namespace $NAMESPACE || true
 
 echo "Install cas-server helm chart"
 echo "Using local jib image imported into k3s"

@@ -43,7 +43,7 @@ logdir:
 # CAS Server container properties
 casServerContainer:
   ## Roll on upgrade changes deployment when helm upgrade runs, forcing pod to restart
-  alwaysRoll: true
+  alwaysRoll: false
   ## JVM Settings
   ## JVM settings only used if command not set, use args to set app arguments
   jvm:
@@ -224,7 +224,7 @@ casServerContainer:
 # CAS Boot-Admin Server container properties
 bootAdminContainer:
   ## Roll on upgrade changes deployment when helm upgrade runs, forcing pod to restart
-  alwaysRoll: true
+  alwaysRoll: false
   ## JVM Settings
   ## JVM settings only used if command not set, use args to set app arguments
   jvm:
@@ -364,16 +364,21 @@ bootAdminContainer:
 
 podAnnotations: {}
 
-podSecurityContext: {}
-  # fsGroup: 2000
+## Pod security context
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
+##
+podSecurityContext:
+  enabled: true
+  fsGroup: 1000
 
-securityContext: {}
+containerSecurityContext:
+  enabled: false
   # capabilities:
   #   drop:
   #   - ALL
   # readOnlyRootFilesystem: true
   # runAsNonRoot: true
-  # runAsUser: 1000
+  runAsUser: 1000
 
 ## Override parts of this ingress in your own values file with appropriate host names
 ## This currently is only set up to work with Nginx Ingress Controller from Kubernetes project
@@ -490,3 +495,78 @@ serviceAccount:
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
   name: ""
+
+
+## CAS can use a persistent volume to store config such as services and saml IDP/SP metadata that it pulls from git
+## Enable persistence using Persistent Volume Claims
+## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
+##
+persistence:
+  ## If true, use a Persistent Volume Claim for data folder mounted where you specify using mountPath
+  ##
+  enabled: true
+  ## Persistent Volume Storage Class
+  ## If defined, storageClassName: <storageClass>
+  ## If set to "-", storageClassName: "", which disables dynamic provisioning
+  ## If undefined (the default) or set to null, no storageClassName spec is
+  ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+  ##   GKE, AWS & OpenStack)
+  ##
+  # storageClass: "-"
+  ## Persistent Volume Claim annotations
+  ##
+  annotations:
+  ## Persistent Volume Access Mode
+  ##
+  accessModes:
+    - ReadWriteOnce
+  ## Persistent Volume size
+  ##
+  size: 2Gi
+  ## The path the volume will be mounted at, will contain writable folder called "data" under mountPath,
+  ## if volumePermissions init container creates it
+  ##
+  mountPath: /var/cas
+
+## Init containers parameters:
+## volumePermissions: Change the owner and group of the persistent volume mountpoint to runAsUser:fsGroup values from
+## the securityContext section.
+##
+volumePermissions:
+  enabled: false
+  image:
+    registry: docker.io
+    repository: alpine
+    tag: latest
+    pullPolicy: Always
+    ## Optionally specify an array of imagePullSecrets.
+    ## Secrets must be manually created in the namespace.
+    ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+    ##
+    # pullSecrets:
+    #   - myRegistryKeySecretName
+  ## Init container' resource requests and limits
+  ## ref: http://kubernetes.io/docs/user-guide/compute-resources/
+  ##
+  resources:
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    limits: {}
+    #   cpu: 100m
+    #   memory: 128Mi
+    requests: {}
+    #   cpu: 100m
+    #   memory: 128Mi
+  ## Init container Security Context
+  ## Note: the chown of the data folder is done to securityContext.runAsUser
+  ## and not the below volumePermissions.securityContext.runAsUser
+  ## When runAsUser is set to special value "auto", init container will try to chown the
+  ## data folder to autodetermined user&group, using commands: `id -u`:`id -G | cut -d" " -f2`
+  ## "auto" is especially useful for OpenShift which has scc with dynamic userids (and 0 is not allowed).
+  ## You may want to use this volumePermissions.securityContext.runAsUser="auto" in combination with
+  ## pod securityContext.enabled=false and shmVolume.chmod.enabled=false
+  ##
+  securityContext:
+    runAsUser: 0
