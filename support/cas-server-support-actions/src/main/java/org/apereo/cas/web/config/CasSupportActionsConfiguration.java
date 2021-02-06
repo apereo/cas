@@ -327,7 +327,7 @@ public class CasSupportActionsConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(name = "terminateSessionAction")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_TERMINATE_SESSION)
     @RefreshScope
     public Action terminateSessionAction() {
         return new TerminateSessionAction(centralAuthenticationService.getObject(),
@@ -347,7 +347,7 @@ public class CasSupportActionsConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(name = "logoutViewSetupAction")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_LOGOUT_VIEW_SETUP)
     public Action logoutViewSetupAction() {
         return new LogoutViewSetupAction(casProperties);
     }

@@ -813,6 +813,15 @@ public class WebUtils {
     }
 
     /**
+     * Remove logout redirect url.
+     *
+     * @param context the context
+     */
+    public static void removeLogoutRedirectUrl(final RequestContext context) {
+        context.getFlowScope().remove("logoutRedirectUrl");
+    }
+
+    /**
      * Put remember me authentication enabled.
      *
      * @param context the context
@@ -1519,5 +1528,25 @@ public class WebUtils {
      */
     public static String getSingleLogoutRequest(final HttpServletRequest request) {
         return (String) request.getAttribute("singleLogoutRequest");
+    }
+
+    /**
+     * Gets delegated authentication client name.
+     *
+     * @param requestContext the request context
+     * @return the delegated authentication client name
+     */
+    public static String getDelegatedAuthenticationClientName(final RequestContext requestContext) {
+        return requestContext.getFlowScope().get("delegatedAuthenticationClientName", String.class);
+    }
+
+    /**
+     * Put delegated authentication client name.
+     *
+     * @param requestContext the request context
+     * @param clientName     the client name
+     */
+    public static void putDelegatedAuthenticationClientName(final RequestContext requestContext, final String clientName) {
+        requestContext.getFlowScope().put("delegatedAuthenticationClientName", clientName);
     }
 }
