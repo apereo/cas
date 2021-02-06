@@ -113,15 +113,18 @@ Return the proper image name
 {{- define "common.images.image" -}}
 {{- $registryName := .imageRoot.registry -}}
 {{- $repositoryName := .imageRoot.repository -}}
-{{- $tag := .imageRoot.tag | toString -}}
+{{- $tag := default "latest" .imageRoot.tag  | toString -}}
 {{- if .global }}
     {{- if .global.imageRegistry }}
      {{- $registryName = .global.imageRegistry -}}
     {{- end -}}
 {{- end -}}
-{{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
+{{- if ne $registryName "" }}
+    {{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
+{{- else -}}
+    {{- printf "%s:%s" $repositoryName $tag -}}
 {{- end -}}
-
+{{- end -}}
 
 
 {{/*

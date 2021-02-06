@@ -100,7 +100,7 @@ spec:
         {{- if .Values.initContainers }}
         {{- include "cas-server.tplvalues.render" (dict "value" .Values.initContainers "context" $) | nindent 8 }}
         {{- end }}
-      {{- end }}        
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           {{- if .Values.containerSecurityContext.enabled }}

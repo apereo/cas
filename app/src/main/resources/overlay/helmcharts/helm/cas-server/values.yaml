@@ -11,7 +11,7 @@ image:
   repository: "apereo/cas"
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+  tag: "latest"
 
 bootadminimage:
   registry: "docker.io"
