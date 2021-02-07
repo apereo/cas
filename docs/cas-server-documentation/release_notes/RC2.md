@@ -96,8 +96,11 @@ now be scripted using an external Groovy script.
 - A number of Docker images used for [integration tests](../developer/Test-Process.html), such as 
   DynamoDb, MySQL, MariaDb, etc are now updated to their latest versions.
 - A special failure analyzer for Spring Boot is now available to analyze startup failures more accurately and with better logs.
+- In [delegated authentication](../integration/Delegate-Authentication-SAML.html) to SAML2 identity providers,
+  handling SAML2 logout requests and responses should now properly honor final redirects back to the calling application.
 - Support for the legacy syntax for [JSON service definitions](../services/JSON-Service-Management.html) 
   based on CAS Addons as well as the old `org.jasig` namespace has been removed. 
+- Local interception and changing the default user interface language can now be forced regardless of the http request.  
 - Reworking internal components and APIs for [password management](../password_management/Password-Management.html) to 
   make customizations easier, specially when multiple fields may be involved to locate the user record. The work here may present
   breaking changes, specially if you are handling password 
@@ -106,6 +109,8 @@ now be scripted using an external Groovy script.
   changed from `master` to `*` which means all branches will be cloned by default. The properties may contain a list of
   branches, but the list must include the branch specified in the `cas.service-registry.git.active-branch`
   or `cas.authn.saml-idp.metadata.git.active-branch` property. 
+- References to [Bintray repositories](https://jfrog.com/blog/into-the-sunset-bintray-jcenter-gocenter-and-chartcenter/) 
+  have been removed and updated with more maintainable replacements.
 
 ## Library Upgrades
 

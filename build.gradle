@@ -52,6 +52,7 @@ ext {
     excludedFilesFromTestCoverage = [
         '**/docs/**',
         '**/soap/generated/**',
+        '**/com/duosecurity/**',
         '**/**ConfigurationMetadata**',
         '**/**NtlmAuthenticationHandler**',
         '**/**CosmosDbServiceRegistry**',
@@ -401,7 +402,7 @@ subprojects {
                                                     '-Xep:HidingField:OFF',
                                                     '-Xep:MissingSummary:OFF',
                                                     '-Xep:SameNameButDifferent:OFF']
-
+            it.options.errorprone.excludedPaths = ".*com/duosecurity.*"
             casCompilerArgs.add("-XDcompilePolicy=byfile")
         }
         it.options.compilerArgs += casCompilerArgs

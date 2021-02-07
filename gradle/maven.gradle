@@ -174,12 +174,6 @@ ext.createPomRepositories = { node ->
     repository.appendNode("snapshots").appendNode("enabled", "false")
 
     repository = repositories.appendNode("repository")
-    repository.appendNode("id", "jcenter")
-    repository.appendNode("url", "https://jcenter.bintray.com")
-    repository.appendNode("releases").appendNode("enabled", "true")
-    repository.appendNode("snapshots").appendNode("enabled", "false")
-
-    repository = repositories.appendNode("repository")
     repository.appendNode("id", "shib-release")
     repository.appendNode("url", "https://build.shibboleth.net/nexus/content/repositories/releases")
     repository.appendNode("releases").appendNode("enabled", "true")
@@ -194,24 +188,6 @@ ext.createPomRepositories = { node ->
     repository = repositories.appendNode("repository")
     repository.appendNode("id", "couchbase")
     repository.appendNode("url", "https://files.couchbase.com/maven2/")
-    repository.appendNode("releases").appendNode("enabled", "true")
-    repository.appendNode("snapshots").appendNode("enabled", "false")
-
-    repository = repositories.appendNode("repository")
-    repository.appendNode("id", "uniconiam")
-    repository.appendNode("url", "https://dl.bintray.com/uniconiam/maven")
-    repository.appendNode("releases").appendNode("enabled", "true")
-    repository.appendNode("snapshots").appendNode("enabled", "false")
-
-    repository = repositories.appendNode("repository")
-    repository.appendNode("id", "apereocaswebauthn")
-    repository.appendNode("url", "https://dl.bintray.com/apereocas/webauthn-cas")
-    repository.appendNode("releases").appendNode("enabled", "true")
-    repository.appendNode("snapshots").appendNode("enabled", "false")
-
-    repository = repositories.appendNode("repository")
-    repository.appendNode("id", "apereocasjradius")
-    repository.appendNode("url", "https://dl.bintray.com/apereocas/jradius/")
     repository.appendNode("releases").appendNode("enabled", "true")
     repository.appendNode("snapshots").appendNode("enabled", "false")
 

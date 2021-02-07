@@ -29,16 +29,6 @@ dependencyResolutionManagement {
             }
         }
         maven {
-            url "https://dl.bintray.com/apereocas/webauthn-cas/"
-            mavenContent { releasesOnly() }
-        }
-        maven {
-            url "https://dl.bintray.com/apereocas/jradius/"
-            content {
-                includeGroupByRegex "net\\.jradius.*"
-            }
-        }
-        maven {
             url "https://oss.sonatype.org/content/repositories/snapshots"
             mavenContent { snapshotsOnly() }
         }
@@ -51,10 +41,6 @@ dependencyResolutionManagement {
             content {
                 includeGroupByRegex ".*splunk.*"
             }
-            mavenContent { releasesOnly() }
-        }
-        maven {
-            url "https://dl.bintray.com/uniconiam/maven"
             mavenContent { releasesOnly() }
         }
         maven {
