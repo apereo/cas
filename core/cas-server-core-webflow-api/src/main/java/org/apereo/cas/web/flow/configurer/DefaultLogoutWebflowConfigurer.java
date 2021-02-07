@@ -46,7 +46,7 @@ public class DefaultLogoutWebflowConfigurer extends AbstractCasWebflowConfigurer
             createFrontLogoutActionState(flow);
             createLogoutPropagationEndState(flow);
             createLogoutViewState(flow);
-            createFinishLogoutDecisionState(flow);
+            createFinishLogoutState(flow);
             configureFlowStartState(flow, terminateSessionActionState);
         }
     }
@@ -76,10 +76,10 @@ public class DefaultLogoutWebflowConfigurer extends AbstractCasWebflowConfigurer
      *
      * @param flow the flow
      */
-    protected void createFinishLogoutDecisionState(final Flow flow) {
-        createDecisionState(flow, CasWebflowConstants.DECISION_STATE_FINISH_LOGOUT,
-            "flowScope.logoutRedirectUrl != null",
-            CasWebflowConstants.STATE_ID_REDIRECT_VIEW, CasWebflowConstants.STATE_ID_LOGOUT_VIEW);
+    protected void createFinishLogoutState(final Flow flow) {
+        val actionState = createActionState(flow, CasWebflowConstants.STATE_ID_FINISH_LOGOUT, CasWebflowConstants.ACTION_ID_FINISH_LOGOUT);
+        createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_REDIRECT, CasWebflowConstants.STATE_ID_REDIRECT_VIEW);
+        createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_FINISH, CasWebflowConstants.STATE_ID_LOGOUT_VIEW);
     }
 
     /**
@@ -123,7 +123,7 @@ public class DefaultLogoutWebflowConfigurer extends AbstractCasWebflowConfigurer
      * @param flow the flow
      */
     private void createDoLogoutActionState(final Flow flow) {
-        val actionState = createActionState(flow, CasWebflowConstants.STATE_ID_DO_LOGOUT, "logoutAction");
+        val actionState = createActionState(flow, CasWebflowConstants.STATE_ID_DO_LOGOUT, CasWebflowConstants.ACTION_ID_LOGOUT);
         createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_FINISH, CasWebflowConstants.STATE_ID_FINISH_LOGOUT);
         createTransitionForState(actionState, "front", CasWebflowConstants.STATE_ID_FRONT_LOGOUT);
     }

@@ -20,16 +20,6 @@ Duo offers several options for authenticating users:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-duo" %}
 
-You may need to add the following repositories to the WAR overlay:
-
-```groovy
-repositories {
-    maven { 
-        mavenContent { releasesOnly() }
-        url "https://dl.bintray.com/uniconiam/maven" 
-    }
-}
-```
 
 ## Administrative Endpoints
 

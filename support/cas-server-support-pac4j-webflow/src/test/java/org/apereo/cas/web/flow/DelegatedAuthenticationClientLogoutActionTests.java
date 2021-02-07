@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebflowActions")
 public class DelegatedAuthenticationClientLogoutActionTests {
     @Autowired
-    @Qualifier("delegatedAuthenticationClientLogoutAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_LOGOUT)
     private Action delegatedAuthenticationClientLogoutAction;
 
     @Autowired

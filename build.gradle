@@ -6,7 +6,6 @@ defaultTasks "clean", "build"
 buildscript {
     repositories {
         mavenCentral()
-        jcenter()
         gradlePluginPortal()
         maven {
             url "https://maven.eveoh.nl/content/repositories/releases"
@@ -87,7 +86,8 @@ if (!Boolean.getBoolean("skipSonarqube")) {
 
     sonarqube {
         def exclusions = rootProject.excludedFilesFromTestCoverage.join(",")
-        def token = providers.systemProperty("SONARCLOUD_TOKEN").forUseAtConfigurationTime().getOrElse(System.getenv("SONARCLOUD_TOKEN"))
+        def token = providers.systemProperty("SONARCLOUD_TOKEN").forUseAtConfigurationTime()
+                .getOrElse(System.getenv("SONARCLOUD_TOKEN"))
         properties {
             property "sonar.host.url", "https://sonarcloud.io"
             property "sonar.projectName", "cas"
@@ -184,7 +184,8 @@ allprojects {
             downloadJavadoc = false
             jdkName = project.targetCompatibility
             excludeDirs += file(".gradle")
-            [".settings", "classes", "bin", "out", "docs", "dependency-cache", "libs", "reports", "resources", "test-results", "tmp"].each {
+            [".settings", "classes", "bin", "out", "docs", "dependency-cache", "libs",
+             "reports", "resources", "test-results", "tmp"].each {
                 excludeDirs += file("$buildDir/$it")
             }
         }
