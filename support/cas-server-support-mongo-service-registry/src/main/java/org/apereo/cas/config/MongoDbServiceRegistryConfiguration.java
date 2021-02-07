@@ -18,9 +18,11 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.index.TextIndexDefinition;
 
 import javax.net.ssl.SSLContext;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * This is {@link MongoDbServiceRegistryConfiguration}.
@@ -53,6 +55,15 @@ public class MongoDbServiceRegistryConfiguration {
 
         val mongoTemplate = factory.buildMongoTemplate(mongo);
         factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
+
+        val collection = mongoTemplate.getCollection(mongo.getCollection());
+        val columnsIndex = new TextIndexDefinition.TextIndexDefinitionBuilder()
+            .onField("id")
+            .onField("serviceId")
+            .onField("name")
+            .build();
+        MongoDbConnectionFactory.createOrUpdateIndexes(mongoTemplate, collection, List.of(columnsIndex));
+
         return mongoTemplate;
     }
 
