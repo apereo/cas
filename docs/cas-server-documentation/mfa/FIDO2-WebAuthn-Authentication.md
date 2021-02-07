@@ -20,18 +20,6 @@ Support is enabled by including the following module in the WAR overlay:
 
 {% include casproperties.html properties="cas.authn.mfa.web-authn" %}
 
-You may also need to declare the following repository in
-your CAS overlay to be able to resolve dependencies:
-
-```groovy       
-repositories {
-    maven { 
-        mavenContent { releasesOnly() }
-        url "https://dl.bintray.com/apereocas/webauthn-cas" 
-    }
-}
-```
-
 ## Primary Authentication
 
 It is possible to allow WebAuthN to act as a standalone authentication strategy for primary authentication. Using this approach,
