@@ -50,6 +50,7 @@ dependencyResolutionManagement {
                 includeGroup "org.terracotta"
             }
         }
+        jcenter()
     }
 }
 
