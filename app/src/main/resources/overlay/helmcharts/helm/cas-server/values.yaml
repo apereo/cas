@@ -3,6 +3,7 @@
 # Declare variables to be passed into your templates.
 
 casServerName: cas.example.org
+casMgmtServerName: casmgmt.example.org
 
 replicaCount: 1
 
@@ -18,6 +19,12 @@ bootadminimage:
   repository: "hdeadman/cas-bootadmin-server"
   pullPolicy: IfNotPresent
   tag: "latest"
+
+mgmtimage:
+  registry: "docker.io"
+  repository: "apereo/cas-management"
+  pullPolicy: IfNotPresent
+  tag: "v6.3.0"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -361,6 +368,150 @@ bootAdminContainer:
           </Loggers>
       </Configuration>
 
+# CAS Management Server container properties
+mgmtContainer:
+  ## Roll on upgrade changes deployment when helm upgrade runs, forcing pod to restart
+  alwaysRoll: false
+  ## JVM Settings
+  ## JVM settings only used if command not set, use args to set app arguments
+  jvm:
+    ## Extra JVM options
+    ##
+    extraOpts: '-Djavax.net.ssl.trustStore=/etc/cas/truststore -Djavax.net.ssl.trustStoreType=PKCS12 -Djavax.net.ssl.trustStorePassword=changeit'
+    ## Memory settings: If these aren't defined, java will calc values automatically, but requires setting limits on pod
+    ## so it doesn't base heap size on host memory
+    maxHeapOpt: -Xmx1G
+    newHeapOpt: -Xms250M
+    debugEnabled: true
+    debugSuspend: "n" # could be n or y, must quote or yaml changes to boolean
+  warPath: 'cas-management.war'
+  ## Override cmd
+  ##
+  command:
+  ## Override args
+  ##
+  args:
+    - '--spring.config.additional-location=file:/etc/cas/config/' # directories should end in / and have protocol
+    - '--logging.config=file:/etc/cas/config/log4j2.xml'
+
+  profiles: 'standalone'
+
+  ## extraVolumes and extraVolumeMounts allows you to mount other volumes
+  ## Examples:
+  ## extraVolumeMounts:
+  ##   - name: extras
+  ##     mountPath: /usr/share/extras
+  ##     readOnly: true
+  ## extraVolumes:
+  ##   - name: extras
+  ##     emptyDir: {}
+  ##
+  extraVolumeMounts:
+    - name: truststore
+      mountPath: /etc/cas/truststore
+      subPath: truststore
+
+  extraVolumes:
+    - name: truststore
+      configMap:
+        name: cas-truststore
+        defaultMode: 0444
+
+  ## Url to use for readiness, startupprobe, and liveliness check, change to health actuator if the module is available
+  ## Naming it "default" in case in future template supports individual urls for the different checks, with this as default if they aren't specified
+  defaultStatusUrl: '/cas-management/actuator/health'
+
+  # number of startup probe failures before it will be killed, set high if trying to debug startup issues
+  # liveness and readiness failure threshold might be 1 but startup failure threshold accounts for
+  # failures while server is starting up
+  startupFailureThreshold: 30
+  livenessFailureThreshold: 1
+  readinessFailureThreshold: 1
+  readinessInitialDelaySeconds: 45
+  livenessInitialDelaySeconds: 120
+
+  ## An array to add extra env vars
+  ## For example:
+  ## extraEnvVars:
+  ##  - name: MY_ENV_VAR
+  ##    value: env_var_value
+  ##
+  extraEnvVars: []
+
+  ## Name of a ConfigMap containing extra env vars
+  ##
+  extraEnvVarsConfigMap: ''
+
+  # name of secret containing mgmt server keystore
+  serverKeystoreExistingSecret: cas-server-keystore
+  # folder that should container the keystore
+  serverKeystoreMountPath: '/etc/cas/thekeystore'
+  # name of keystore file in container and in secret
+  serverKeystoreSubPath: 'thekeystore'
+
+  ## Name of a Secret containing extra env vars
+  ##
+  extraEnvVarsSecret: ''
+  ## Choose which config files from casConfig to mount
+  casConfigMounts:
+    - 'application-standalone.properties'
+    - 'application-standalone.yml'
+    - 'log4j2.xml'
+  ## Create various config files from casConfig that may or may not be mounted
+  casConfig:
+    application-standalone.properties: |-
+      server.ssl.enabled=true
+      server.ssl.key-store=file:/etc/cas/thekeystore
+      server.ssl.key-store-type=PKCS12
+      server.ssl.key-store-password=changeit
+      server.ssl.trust-store=file:/etc/cas/truststore
+      server.ssl.trust-store-type=PKCS12
+      server.ssl.trust-store-password=changeit
+
+    application-standalone.yml: |-
+      ---
+      cas:
+        server:
+          name: https://{{ .Values.casServerName }}
+      mgmt:
+        serverName: https://{{ .Values.casMgmtServerName }}
+        enableDiscoveryEndpointCall: false # turning off b/c external call to cas requires external DNS, need internal URL
+
+    log4j2.xml: |-
+      <?xml version="1.0" encoding="UTF-8" ?>
+      <Configuration monitorInterval="5">
+          <Properties>
+            <Property name="cas.log.dir">.</Property>
+            <Property name="cas.log.level">info</Property>
+          </Properties>
+          <Appenders>
+              <Console name="casConsole" target="SYSTEM_OUT">
+                  <PatternLayout pattern="%highlight{%d %p [%c] - &lt;%m&gt;%n}"/>
+              </Console>
+
+              <RollingFile name="casFile" fileName="cas-management.log" append="true"
+                           filePattern="cas-management-%d{yyyy-MM-dd-HH}-%i.log">
+                  <PatternLayout pattern="%highlight{%d %p [%c] - &lt;%m&gt;%n}" />
+                  <Policies>
+                      <OnStartupTriggeringPolicy />
+                      <SizeBasedTriggeringPolicy size="10 MB"/>
+                      <TimeBasedTriggeringPolicy />
+                  </Policies>
+              </RollingFile>
+          </Appenders>
+          <Loggers>
+              <Logger name="org.apereo" level="${sys:cas.log.level}" />
+              <Logger name="org.apache" level="info" />
+              <Logger name="org.pac4j" level="info" />
+              <Logger name="org.springframework" level="warn" />
+              <Logger name="org.springframework.boot" level="info" />
+              <Root level="info">
+                  <AppenderRef ref="casFile" />
+                  <AppenderRef ref="casConsole" />
+              </Root>
+          </Loggers>
+      </Configuration>
+
 
 podAnnotations: {}
 
@@ -453,10 +604,54 @@ bootadmin:
     tls:
       - secretName: cas-server-ingress-tls
         hosts:
-          - cas.example.org
+          - casadmin.example.org
           - kubernetes.docker.internal
 
-# Request some resources so kubernetes will schedule somewhere with enough resources
+## Override parts of this ingress in your own values file with appropriate host names
+## This currently is only set up to work with Nginx Ingress Controller from Kubernetes project
+mgmt:
+  service:
+    type: ClusterIP
+    port: 8443
+  listenPortHttps: 8443
+  listenPortJvmDebug: 5005
+  # Request some resources so kubernetes will schedule somewhere with enough resources
+  # Limits can also be set if desired
+  resources:
+    requests:
+      cpu: 50m
+      memory: 384Mi
+  #  limits:
+  #    cpu: 100m
+  #    memory: 128Mi
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/session-cookie-samesite: "None"
+      nginx.ingress.kubernetes.io/session-cookie-conditional-samesite-none: "true"
+      nginx.ingress.kubernetes.io/affinity: "cookie"
+      nginx.ingress.kubernetes.io/session-cookie-name: "sticky-session-route"
+      nginx.ingress.kubernetes.io/session-cookie-hash: "sha1"
+      nginx.ingress.kubernetes.io/secure-backends: "true"
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    hosts:
+      - host: casmgmt.example.org
+        paths:
+          - "/cas-management"
+      - host: kubernetes.docker.internal
+        paths:
+          - "/cas-management"
+    tls:
+      - secretName: cas-server-ingress-tls
+        hosts:
+          - casmgmt.example.org
+          - kubernetes.docker.internal
+
+# Request some resources for main cas server so kubernetes will schedule somewhere with enough resources
 # Limits can also be set if desired
 resources: 
   requests:

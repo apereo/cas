@@ -1,0 +1,182 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "cas-server.mgmtname" . }}
+  labels: {{- include "cas-server.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "cas-mgmt.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{ if .Values.mgmtContainer.alwaysRoll }}
+        rollme: {{ randAlphaNum 5 | quote }}
+        {{- else }}
+        rollme: "rolldisabled"
+      {{- end }}
+      labels:
+        {{- include "cas-mgmt.selectorLabels" . | nindent 8 }}
+        {{- include "cas-mgmt.labels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "cas-server.serviceAccountName" . }}
+      {{- if .Values.podSecurityContext.enabled }}
+      securityContext: {{- omit .Values.podSecurityContext "enabled" | toYaml | nindent 8 }}
+      {{- end }}
+      volumes:
+        {{- range $.Values.mgmtContainer.casConfigMounts }}
+          {{- $configMount := printf "%s-%s" "mgmt-config" . | replace "." "-" | replace "_" "-" | lower }}
+          - name: {{ $configMount | quote }}
+            configMap:
+              name: {{ include "cas-server.mgmtname" $ }}-config
+              defaultMode: 0444
+          {{- end }}
+          - name: scripts
+            configMap:
+              name: {{ include "cas-server.fullname" . }}-scripts
+              defaultMode: 0555
+          {{- if .Values.mgmtContainer.serverKeystoreExistingSecret }}
+          - name: cas-server-keystore
+            secret:
+              secretName: {{ .Values.mgmtContainer.serverKeystoreExistingSecret }}
+              defaultMode: 0444
+              items:
+                - key: {{ .Values.mgmtContainer.serverKeystoreSubPath }}
+                  path: {{ .Values.mgmtContainer.serverKeystoreSubPath }}
+          {{- end }}
+          {{- if .Values.mgmtContainer.extraVolumes }}
+          {{- include "cas-server.tplvalues.render" ( dict "value" .Values.mgmtContainer.extraVolumes "context" $ ) | nindent 10 }}
+          {{- end }}
+      containers:
+        - name: cas-mgmt
+          {{- if .Values.containerSecurityContext.enabled }}
+          securityContext: {{- omit .Values.containerSecurityContext "enabled" | toYaml | nindent 12 }}
+          {{- end }}
+          image: {{ include "cas-server.mgmtImageName" . }}
+          imagePullPolicy: {{ .Values.mgmtimage.pullPolicy }}
+          env:
+            {{- if .Values.mgmtContainer.warPath }}
+            - name: CAS_MGMT_WAR
+              value: {{ .Values.mgmtContainer.warPath | quote }}
+            {{- end }}
+            {{- if .Values.mgmtContainer.profiles }}
+            - name: CAS_SPRING_PROFILES
+              value: {{ .Values.mgmtContainer.profiles | quote }}
+            {{- end }}
+            {{- if .Values.mgmtContainer.jvm.maxHeapOpt }}
+            - name: MAX_HEAP_OPT
+              value: {{ .Values.mgmtContainer.jvm.maxHeapOpt | quote }}
+            {{- end }}
+            {{- if .Values.mgmtContainer.jvm.minHeapOpt }}
+            - name: MIN_HEAP_OPT
+              value: {{ .Values.mgmtContainer.jvm.minHeapOpt | quote }}
+            {{- end }}
+            {{- if .Values.mgmtContainer.jvm.extraOpts }}
+            - name: JVM_EXTRA_OPTS
+              value: {{ .Values.mgmtContainer.jvm.extraOpts | quote }}
+            {{- end }}
+            - name: JAVA_ENABLE_DEBUG
+              value: {{ .Values.mgmtContainer.jvm.debugEnabled | quote }}
+            - name: JAVA_DEBUG_SUSPEND
+              value: {{ .Values.mgmtContainer.jvm.debugSuspend | quote }}
+            {{- if .Values.mgmtContainer.extraEnvVars }}
+            {{- include "cas-server.tplvalues.render" (dict "value" .Values.mgmtContainer.extraEnvVars "context" $) | nindent 12 }}
+            {{- end }}
+          envFrom:
+            {{- if .Values.mgmtContainer.extraEnvVarsConfigMap }}
+            - configMapRef:
+                name: {{ .Values.mgmtContainer.extraEnvVarsConfigMap }}
+            {{- end }}
+            {{- if .Values.mgmtContainer.extraEnvVarsSecret }}
+            - secretRef:
+                name: {{ .Values.mgmtContainer.extraEnvVarsSecret }}
+          {{- end }}
+          {{- if .Values.mgmtContainer.command }}
+          command: {{- include "cas-server.tplvalues.render" (dict "value" .Values.mgmtContainer.command "context" $) | nindent 12 }}
+          {{- else }}
+          command:
+            - '/entrypoint.sh'
+          {{- end }}
+          {{- if .Values.mgmtContainer.args }}
+          args: {{- include "cas-server.tplvalues.render" (dict "value" .Values.mgmtContainer.args "context" $) | nindent 12 }}
+          {{- end }}
+          ports:
+            - name: https
+              containerPort: {{ .Values.mgmt.listenPortHttps }}
+              protocol: TCP
+            - name: jvm-debug
+              containerPort: {{ .Values.mgmt.listenPortJvmDebug }}
+              protocol: TCP
+          volumeMounts:
+            {{- range $.Values.mgmtContainer.casConfigMounts }}
+            {{- $configMount := printf "%s-%s" "mgmt-config" . | replace "." "-" | replace "_" "-" | lower }}
+            {{- $configMountPath := printf "%s/%s" "/etc/cas/config" . }}
+            - name: {{ $configMount | quote }}
+              mountPath: {{ $configMountPath }}
+              subPath: {{ . | quote }}
+            {{- end }}
+            - name: scripts
+              mountPath: /entrypoint.sh
+              subPath: mgmt-entrypoint.sh
+            {{- if .Values.mgmtContainer.serverKeystoreExistingSecret }}
+            - name: cas-server-keystore
+              mountPath: {{ .Values.mgmtContainer.serverKeystoreMountPath }}
+              subPath: {{ .Values.mgmtContainer.serverKeystoreSubPath }}
+            {{- end }}
+            {{- if .Values.mgmtContainer.extraVolumeMounts }}
+            {{- include "cas-server.tplvalues.render" ( dict "value" .Values.mgmtContainer.extraVolumeMounts "context" $ ) | nindent 12 }}
+          {{- end }}
+          startupProbe:
+            httpGet:
+              path: {{ .Values.mgmtContainer.defaultStatusUrl }}
+              port: https
+              scheme: HTTPS
+              {{- if .Values.mgmtContainer.defaultStatusHeaders }}
+              {{- include "cas-server.tplvalues.render" ( dict "value" .Values.mgmtContainer.defaultStatusHeaders "context" $ ) | nindent 14 }}
+              {{- end }}
+            failureThreshold: {{ .Values.mgmtContainer.startupFailureThreshold }}
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.mgmtContainer.defaultStatusUrl }}
+              port: https
+              scheme: HTTPS
+              {{- if .Values.mgmtContainer.defaultStatusHeaders }}
+              {{- include "cas-server.tplvalues.render" ( dict "value" .Values.mgmtContainer.defaultStatusHeaders "context" $ ) | nindent 14 }}
+              {{- end }}
+            initialDelaySeconds: {{ .Values.mgmtContainer.readinessInitialDelaySeconds }}
+            periodSeconds: 5
+            failureThreshold: {{ .Values.mgmtContainer.readinessFailureThreshold }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.mgmtContainer.defaultStatusUrl }}
+              port: https
+              scheme: HTTPS
+              {{- if .Values.mgmtContainer.defaultStatusHeaders }}
+              {{- include "cas-server.tplvalues.render" ( dict "value" .Values.mgmtContainer.defaultStatusHeaders "context" $ ) | nindent 14 }}
+              {{- end }}
+            initialDelaySeconds: {{ .Values.mgmtContainer.livenessInitialDelaySeconds }}
+            periodSeconds: 15
+            failureThreshold: {{ .Values.mgmtContainer.livenessFailureThreshold }}
+          resources:
+      {{- toYaml .Values.mgmt.resources | nindent 12 }}
+      {{- with .Values.mgmt.nodeSelector }}
+      nodeSelector:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.mgmt.affinity }}
+      affinity:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.mgmt.tolerations }}
+      tolerations:
+      {{- toYaml . | nindent 8 }}
+  {{- end }}

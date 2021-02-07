@@ -12,7 +12,7 @@ fi
 mkdir tmp
 cd tmp
 # create project dir from initializer with support boot admin, metrics, and git service registry
-curl http://localhost:8080/starter.tgz -d dependencies=core,bootadmin,metrics,gitsvc | tar -xzvf -
+curl http://localhost:8080/starter.tgz -d dependencies=core,bootadmin,metrics,gitsvc,jsonsvc | tar -xzvf -
 echo Killing initializer pid $pid
 kill -9 $pid &> /dev/null
 
@@ -91,10 +91,14 @@ echo "CAS Server Logs..."
 kubectl logs cas-server-0 --namespace $NAMESPACE | tee cas.out
 echo "CAS Boot Admin Server Logs..."
 kubectl logs -l cas.server-type=bootadmin --tail=-1 --namespace $NAMESPACE | tee cas-bootadmin.out
+echo "CAS Boot Admin Server Logs..."
+kubectl logs -l cas.server-type=mgmt --tail=-1 --namespace $NAMESPACE | tee cas-mgmt.out
 echo "Checking cas server log for startup message"
 grep "Started CasWebApplication" cas.out
 echo "Checking bootadmin server log for startup message"
 grep "Started CasSpringBootAdminServerWebApplication" cas-bootadmin.out
+echo "Checking mgmt server log for startup message"
+grep "Found settings" cas-mgmt.out
 
 echo "Running chart built-in test"
 helm test --namespace $NAMESPACE cas-server
