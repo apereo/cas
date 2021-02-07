@@ -46,17 +46,6 @@ SPNEGO support is enabled by including the following dependency in the WAR overl
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-spnego-webflow" %}
 
-You may also need to declare the following repository in your CAS overlay to be able to resolve dependencies:
-
-```groovy
-repositories {
-    maven { 
-        mavenContent { releasesOnly() }
-        url "https://dl.bintray.com/uniconiam/maven" 
-    }
-}
-```
-
 ## Configuration
 
 The following steps are required to turn on the SPNEGO functionality.

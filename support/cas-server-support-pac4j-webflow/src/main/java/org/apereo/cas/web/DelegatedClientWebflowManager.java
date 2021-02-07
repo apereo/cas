@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TransientSessionTicket;
@@ -215,7 +216,7 @@ public class DelegatedClientWebflowManager {
         if (StringUtils.isBlank(clientId)) {
             if (client instanceof SAML2Client) {
                 LOGGER.debug("Client identifier could not found in request parameters. Looking at relay-state for the SAML2 client");
-                clientId = webContext.getRequestParameter("RelayState")
+                clientId = webContext.getRequestParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE)
                     .map(String::valueOf).orElse(StringUtils.EMPTY);
             }
         }

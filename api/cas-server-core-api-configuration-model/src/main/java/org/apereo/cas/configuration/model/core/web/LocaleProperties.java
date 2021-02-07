@@ -36,6 +36,12 @@ public class LocaleProperties implements Serializable {
     private String defaultValue = "en";
 
     /**
+     * When set to true, locale resolution via request parameters
+     * and such is ignored and the locale default value is always enforced.
+     */
+    private boolean forceDefaultLocale;
+
+    /**
      * Control the properties of the cookie created to hold language changes.
      */
     @NestedConfigurationProperty

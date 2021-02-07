@@ -64,11 +64,6 @@ dependencyResolutionManagement {
                 includeGroup "org.terracotta"
             }
         }
-        maven {
-            url "https://oss.jfrog.org/artifactory/oss-snapshot-local"
-            mavenContent { snapshotsOnly() }
-        }
-        jcenter()
     }
 }
 

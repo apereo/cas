@@ -14,6 +14,7 @@ import org.pac4j.core.exception.http.HttpAction;
 import org.pac4j.core.http.adapter.JEEHttpActionAdapter;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
+import org.pac4j.saml.state.SAML2StateGenerator;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -53,6 +54,25 @@ public class DelegatedAuthenticationClientLogoutAction extends AbstractAction {
     }
 
     @Override
+    protected Event doPreExecute(final RequestContext requestContext) {
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
+        val context = new JEEContext(request, response);
+
+        val currentProfile = findCurrentProfile(context);
+        val clientResult = currentProfile == null
+            ? Optional.<Client>empty()
+            : clients.findClient(currentProfile.getClientName());
+        if (clientResult.isPresent()) {
+            val client = clientResult.get();
+            LOGGER.debug("Handling logout for delegated authentication client [{}]", client);
+            WebUtils.putDelegatedAuthenticationClientName(requestContext, client.getName());
+            sessionStore.set(context, SAML2StateGenerator.SAML_RELAY_STATE_ATTRIBUTE, client.getName());
+        }
+        return null;
+    }
+
+    @Override
     protected Event doExecute(final RequestContext requestContext) {
         try {
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
@@ -70,8 +90,8 @@ public class DelegatedAuthenticationClientLogoutAction extends AbstractAction {
                 val service = WebUtils.getService(requestContext);
                 val targetUrl = service != null ? service.getId() : null;
                 LOGGER.debug("Logout target url based on service [{}] is [{}]", service, targetUrl);
-                
-                val actionResult = client.getLogoutAction(context, this.sessionStore, currentProfile, targetUrl);
+
+                val actionResult = client.getLogoutAction(context, sessionStore, currentProfile, targetUrl);
                 if (actionResult.isPresent()) {
                     val action = (HttpAction) actionResult.get();
                     LOGGER.debug("Adapting logout action [{}] for client [{}]", action, client);

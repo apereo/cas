@@ -400,6 +400,11 @@ public interface CasWebflowConstants {
     String STATE_ID_DENY = "deny";
 
     /**
+     * The state 'finalizeWarning'.
+     */
+    String STATE_ID_FINALIZE_WARNING = "finalizeWarning";
+
+    /**
      * The state 'registerDevice'.
      */
     String STATE_ID_REGISTER_DEVICE = "registerDevice";
@@ -741,10 +746,6 @@ public interface CasWebflowConstants {
      * Decisions.
      ****************************************
      */
-    /**
-     * The decision state 'finishLogout'.
-     */
-    String DECISION_STATE_FINISH_LOGOUT = "finishLogout";
 
     /**
      * Action to check if login should redirect to password reset subflow.
@@ -910,6 +911,19 @@ public interface CasWebflowConstants {
     String ACTION_ID_LOGOUT_VIEW_SETUP = "logoutViewSetupAction";
 
     /**
+     * Action id 'serviceWarningAction'.
+     */
+    String ACTION_ID_SERVICE_WARNING = "serviceWarningAction";
+    /**
+     * Action id 'finishLogoutAction'.
+     */
+    String ACTION_ID_FINISH_LOGOUT = "finishLogoutAction";
+    /**
+     * Action id 'logoutAction'.
+     */
+    String ACTION_ID_LOGOUT = "logoutAction";
+    
+    /**
      * Action id 'authenticationExceptionHandler'.
      */
     String ACTION_ID_AUTHENTICATION_EXCEPTION_HANDLER = "authenticationExceptionHandler";
@@ -928,6 +942,17 @@ public interface CasWebflowConstants {
      * Action id `delegatedAuthenticationAction`.
      */
     String ACTION_ID_DELEGATED_AUTHENTICATION = "delegatedAuthenticationAction";
+
+    /**
+     * Action id `delegatedAuthenticationClientLogoutAction`.
+     */
+    String ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_LOGOUT = "delegatedAuthenticationClientLogoutAction";
+
+
+    /**
+     * Action id `delegatedAuthenticationClientFinishLogoutAction`.
+     */
+    String ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_FINISH_LOGOUT = "delegatedAuthenticationClientFinishLogoutAction";
 
     /**
      * Action id `renewAuthenticationRequestCheckAction`.

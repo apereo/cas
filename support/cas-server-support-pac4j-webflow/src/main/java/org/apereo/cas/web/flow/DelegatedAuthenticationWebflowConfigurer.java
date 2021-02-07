@@ -8,6 +8,7 @@ import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Event;
@@ -36,7 +37,7 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
     protected void doInitialize() {
         val flow = getLoginFlow();
         if (flow != null) {
-            createClientActionActionState(flow);
+            createClientActionState(flow);
             createStopWebflowViewState(flow);
             createDelegatedClientLogoutAction();
         }
@@ -47,8 +48,12 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
      */
     protected void createDelegatedClientLogoutAction() {
         val logoutFlow = getLogoutFlow();
-        val state = getState(logoutFlow, CasWebflowConstants.STATE_ID_TERMINATE_SESSION);
-        state.getEntryActionList().add(createEvaluateAction("delegatedAuthenticationClientLogoutAction"));
+
+        val terminateSessionState = getState(logoutFlow, CasWebflowConstants.STATE_ID_TERMINATE_SESSION);
+        terminateSessionState.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_LOGOUT));
+
+        val finishLogout = getState(logoutFlow, CasWebflowConstants.STATE_ID_FINISH_LOGOUT, ActionState.class);
+        finishLogout.getExitActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_FINISH_LOGOUT));
     }
 
     /**
@@ -56,7 +61,7 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
      *
      * @param flow the flow
      */
-    protected void createClientActionActionState(final Flow flow) {
+    protected void createClientActionState(final Flow flow) {
         val actionState = createActionState(flow, CasWebflowConstants.STATE_ID_DELEGATED_AUTHENTICATION,
             createEvaluateAction(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION));
         
