@@ -1,6 +1,15 @@
 {
   "properties": [
     {
+      "name": "cas.authn.mfa.provider-selection-enabled",
+      "type": "java.lang.Boolean",
+      "deprecation": {
+        "replacement": "cas.authn.mfa.core.provider-selection-enabled",
+        "reason": "provider-selection-enabled setting is now moved into the cas.authn.mfa.core namespace.",
+        "level": "error"
+      }
+    },
+    {
       "name": "cas.authn.mfa.global-provider-id",
       "type": "java.lang.String",
       "deprecation": {
