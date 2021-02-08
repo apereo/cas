@@ -3593,6 +3593,8 @@ ext.libraries = [
                     exclude(group: "org.webjars", module: "popper.js")
                     exclude(group: "org.webjars", module: "jquery")
                 },
+                dependencies.create("org.webjars:font-awesome:$fontAwesomeVersion") {
+                },
                 dependencies.create("org.webjars:datatables:$datatablesVersion") {
                     exclude(group: "org.webjars", module: "jquery")
                 },
