@@ -1,8 +1,8 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
 import org.apereo.cas.util.MockWebServer;
-import org.apereo.cas.web.CaptchaValidator;
+import org.apereo.cas.web.GoogleCaptchaV2Validator;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -45,7 +45,7 @@ public class ValidateCaptchaActionTests {
         val request = new MockHttpServletRequest();
 
         val data = "{\"success\": true }";
-        request.addParameter(CaptchaValidator.REQUEST_PARAM_RECAPTCHA_RESPONSE, data);
+        request.addParameter(GoogleCaptchaV2Validator.REQUEST_PARAM_RECAPTCHA_RESPONSE, data);
 
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
@@ -67,9 +67,8 @@ public class ValidateCaptchaActionTests {
             new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
 
-            val props = new CasConfigurationProperties();
-            props.getGoogleRecaptcha().setVerifyUrl("http://localhost:9305");
-            val validateAction = new ValidateCaptchaAction(props.getGoogleRecaptcha());
+            val props = new GoogleRecaptchaProperties().setVerifyUrl("http://localhost:9305");
+            val validateAction = new ValidateCaptchaAction(new GoogleCaptchaV2Validator(props));
 
             val result = validateAction.execute(context);
             assertNotNull(result);

@@ -720,10 +720,12 @@ public class WebUtils {
      */
     public static void putRecaptchaPropertiesFlowScope(final RequestContext context, final GoogleRecaptchaProperties googleRecaptcha) {
         val flowScope = context.getFlowScope();
-        flowScope.put("recaptchaSiteKey", googleRecaptcha.getSiteKey());
-        flowScope.put("recaptchaInvisible", googleRecaptcha.isInvisible());
-        flowScope.put("recaptchaPosition", googleRecaptcha.getPosition());
-        flowScope.put("recaptchaVersion", googleRecaptcha.getVersion().name().toLowerCase());
+        if (googleRecaptcha.isEnabled()) {
+            flowScope.put("recaptchaSiteKey", googleRecaptcha.getSiteKey());
+            flowScope.put("recaptchaInvisible", googleRecaptcha.isInvisible());
+            flowScope.put("recaptchaPosition", googleRecaptcha.getPosition());
+            flowScope.put("recaptchaVersion", googleRecaptcha.getVersion().name().toLowerCase());
+        }
     }
 
     /**

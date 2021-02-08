@@ -15,7 +15,7 @@
     "--cas.authn.pm.google-recaptcha.verify-url=https://www.google.com/recaptcha/api/siteverify",
     "--cas.authn.pm.google-recaptcha.site-key=7Let09ISAAAAAL-ip28pWHPkk-DtRz5HNpT4lVDf",
     "--cas.authn.pm.google-recaptcha.secret=7Let09ISAAAAAIwdE2YXEQ3k4BBRmfGabOQpA3ka",
-    "--cas.authn.pm.google-recaptcha.version=V2",
+    "--cas.authn.pm.google-recaptcha.version=GOOGLE_RECAPTCHA_V2",
     "--cas.authn.pm.google-recaptcha.invisible=false",
     
     "--cas.authn.pm.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/forgot-password-recaptcha/accounts.json"

@@ -19,6 +19,7 @@ import org.apereo.cas.pm.web.flow.actions.VerifyPasswordResetRequestAction;
 import org.apereo.cas.pm.web.flow.actions.VerifySecurityQuestionsAction;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.web.CaptchaValidator;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -236,7 +237,7 @@ public class PasswordManagementWebflowConfiguration {
         @Bean
         public Action passwordResetValidateCaptchaAction() {
             val recaptcha = casProperties.getAuthn().getPm().getGoogleRecaptcha();
-            return new ValidateCaptchaAction(recaptcha);
+            return new ValidateCaptchaAction(CaptchaValidator.getInstance(recaptcha));
         }
 
         @RefreshScope

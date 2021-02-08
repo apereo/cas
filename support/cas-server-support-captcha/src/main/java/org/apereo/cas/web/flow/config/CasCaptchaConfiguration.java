@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.web.CaptchaValidator;
 import org.apereo.cas.web.flow.CasCaptchaWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -59,9 +60,16 @@ public class CasCaptchaConfiguration {
 
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "captchaValidator")
+    public CaptchaValidator captchaValidator() {
+        return CaptchaValidator.getInstance(casProperties.getGoogleRecaptcha());
+    }
+
+    @RefreshScope
+    @Bean
     @ConditionalOnMissingBean(name = "validateCaptchaAction")
     public Action validateCaptchaAction() {
-        return new ValidateCaptchaAction(casProperties.getGoogleRecaptcha());
+        return new ValidateCaptchaAction(captchaValidator());
     }
 
     @RefreshScope

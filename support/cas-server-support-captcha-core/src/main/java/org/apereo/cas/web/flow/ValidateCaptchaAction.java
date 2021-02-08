@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
 import org.apereo.cas.web.CaptchaValidator;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -22,21 +21,19 @@ import org.springframework.webflow.execution.RequestContext;
 @Slf4j
 @RequiredArgsConstructor
 public class ValidateCaptchaAction extends AbstractAction {
-    private final GoogleRecaptchaProperties recaptchaProperties;
+    private final CaptchaValidator captchaValidator;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val userAgent = WebUtils.getHttpServletRequestUserAgentFromRequestContext();
 
-        val gRecaptchaResponse = CaptchaValidator.getRecaptchaResponse(recaptchaProperties.getVersion(), request);
+        val gRecaptchaResponse = captchaValidator.getRecaptchaResponse(request);
         if (StringUtils.isBlank(gRecaptchaResponse)) {
             LOGGER.warn("Recaptcha response/token is missing from the request");
             return getError(requestContext);
         }
-
-        val validator = new CaptchaValidator(recaptchaProperties.getVerifyUrl(), recaptchaProperties.getSecret(), recaptchaProperties.getScore());
-        val result = validator.validate(gRecaptchaResponse, userAgent);
+        val result = captchaValidator.validate(gRecaptchaResponse, userAgent);
         if (result) {
             LOGGER.debug("Recaptcha has successfully validated the request");
             return null;
