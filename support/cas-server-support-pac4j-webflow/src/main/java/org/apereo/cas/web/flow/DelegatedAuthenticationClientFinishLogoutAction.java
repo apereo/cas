@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.support.saml.SamlProtocolConstants;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -58,6 +59,8 @@ public class DelegatedAuthenticationClientFinishLogoutAction extends AbstractAct
                         } catch (final HttpAction action) {
                             LOGGER.debug("Adapting logout response via [{}]", action.toString());
                             JEEHttpActionAdapter.INSTANCE.adapt(action, context);
+                        } catch (final Exception e) {
+                            LoggingUtils.error(LOGGER, e);
                         }
                     });
             }
@@ -69,7 +72,6 @@ public class DelegatedAuthenticationClientFinishLogoutAction extends AbstractAct
                     LOGGER.debug("Located client from webflow state: [{}]", client);
                     val logoutRedirect = WebUtils.getLogoutRedirectUrl(requestContext, String.class);
                     val validator = client.getLogoutValidator();
-                    validator.setExpectedDestination(context.getNativeRequest().getRequestURL().toString());
                     validator.setPostLogoutURL(logoutRedirect);
                     LOGGER.debug("Captured post logout url: [{}]", logoutRedirect);
                     WebUtils.putLogoutRedirectUrl(requestContext, null);
