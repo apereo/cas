@@ -60,15 +60,31 @@ public class DelegatedAuthenticationClientFinishLogoutActionTests {
         val result = delegatedAuthenticationClientFinishLogoutAction.execute(context);
         assertNull(result);
         val samlClient = (SAML2Client) builtClients.findClient("SAML2Client").get();
-        assertNotNull(samlClient.getLogoutValidator().getExpectedDestination());
         assertEquals("https://google.com", samlClient.getLogoutValidator().getPostLogoutURL());
         assertNull(WebUtils.getLogoutRedirectUrl(context, String.class));
 
     }
 
     @Test
-    @Order(100)
+    @Order(99)
     public void verifyOperationWithRelay() throws Exception {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        request.addParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, "SAML2Client");
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        val samlClient = (SAML2Client) builtClients.findClient("SAML2Client").get();
+        val handler = mock(SAML2ProfileHandler.class);
+        when(handler.receive(any())).thenThrow(new IllegalArgumentException());
+        samlClient.setLogoutProfileHandler(handler);
+
+        val result = delegatedAuthenticationClientFinishLogoutAction.execute(context);
+        assertNull(result);
+    }
+
+    @Test
+    @Order(100)
+    public void verifyOperationFailsWithError() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, "SAML2Client");

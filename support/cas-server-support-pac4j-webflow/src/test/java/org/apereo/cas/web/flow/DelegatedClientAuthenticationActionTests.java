@@ -138,19 +138,8 @@ public class DelegatedClientAuthenticationActionTests {
         request.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, client.getName());
         val webContext = new JEEContext(request, new MockHttpServletResponse());
         request.setMethod("POST");
-        
-        val logoutResponse = "<samlp:LogoutResponse xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" "
-            + "xmlns:saml=\"urn:oasis:names:tc:SAML:2.0:assertion\" "
-            + "ID=\"_6c3737282f007720e736f0f4028feed8cb9b40291c\" Version=\"2.0\" "
-            + "IssueInstant=\"" + ZonedDateTime.now(ZoneOffset.UTC) + "\" "
-            + "Destination=\"http://callback.example.org?client_name=SAML2Client&amp;logoutendpoint=true\" "
-            + "InResponseTo=\"ONELOGIN_21df91a89767879fc0f7df6a1490c6000c81644d\">%n"
-            + "  <saml:Issuer>https://cas.example.org/idp</saml:Issuer>%n"
-            + "  <samlp:Status>%n"
-            + "    <samlp:StatusCode Value=\"urn:oasis:names:tc:SAML:2.0:status:Success\"/>%n"
-            + "  </samlp:Status>%n"
-            + "</samlp:LogoutResponse>";
 
+        val logoutResponse = getLogoutResponse();
         request.setContent(EncodingUtils.encodeBase64(logoutResponse).getBytes(StandardCharsets.UTF_8));
 
         val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
@@ -170,7 +159,22 @@ public class DelegatedClientAuthenticationActionTests {
         val event = delegatedAuthenticationAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
     }
-    
+
+    private static String getLogoutResponse() {
+        val logoutResponse = "<samlp:LogoutResponse xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" "
+            + "xmlns:saml=\"urn:oasis:names:tc:SAML:2.0:assertion\" "
+            + "ID=\"_6c3737282f007720e736f0f4028feed8cb9b40291c\" Version=\"2.0\" "
+            + "IssueInstant=\"" + ZonedDateTime.now(ZoneOffset.UTC) + "\" "
+            + "Destination=\"http://callback.example.org?client_name=SAML2Client&amp;logoutendpoint=true\" "
+            + "InResponseTo=\"ONELOGIN_21df91a89767879fc0f7df6a1490c6000c81644d\">%n"
+            + "  <saml:Issuer>https://cas.example.org/idp</saml:Issuer>%n"
+            + "  <samlp:Status>%n"
+            + "    <samlp:StatusCode Value=\"urn:oasis:names:tc:SAML:2.0:status:Success\"/>%n"
+            + "  </samlp:Status>%n"
+            + "</samlp:LogoutResponse>";
+        return logoutResponse;
+    }
+
     @Test
     public void verifyFinishAuthentication() throws Exception {
         val request = new MockHttpServletRequest();
