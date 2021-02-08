@@ -864,6 +864,7 @@ jobs:
           - u2f-login
           - recaptcha-login-v2
           - recaptcha-login-v3
+          - hcaptcha-login
           - webauthn-register
           - webauthn-login
           - saml2-idp-login

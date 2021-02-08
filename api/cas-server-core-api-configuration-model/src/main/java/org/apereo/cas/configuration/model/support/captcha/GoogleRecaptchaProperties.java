@@ -32,18 +32,22 @@ public class GoogleRecaptchaProperties implements Serializable {
         /**
          * V2 version of the recaptcha API.
          */
-        V2,
+        GOOGLE_RECAPTCHA_V2,
         /**
          * V3 version of the recaptcha API.
          */
-        V3
+        GOOGLE_RECAPTCHA_V3,
+        /**
+         * hCaptcha.
+         */
+        HCAPTCHA
     }
 
     /**
      * Indicate the version of the recaptcha api.
      * Accepted values are: {@code V2, V3}.
      */
-    private RecaptchaVersions version = RecaptchaVersions.V2;
+    private RecaptchaVersions version = RecaptchaVersions.GOOGLE_RECAPTCHA_V2;
 
     /**
      * Whether google reCAPTCHA should be enabled.
