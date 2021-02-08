@@ -18,7 +18,8 @@ if [ -f "${JAVA_CACERTS}" ]; then
   keytool -importkeystore -noprompt -srckeystore "${JAVA_CACERTS}" -srcstorepass "${STORE_PASS}" -destkeystore "${TRUST_STORE}" -deststoretype PKCS12 -deststorepass "${STORE_PASS}"
 else
   echo "Missing ${JAVA_CACERTS} JAVA_HOME is ${JAVA_HOME}"
-  if [ - d "${JAVA_HOME}" ]; then
+  if [ -d "${JAVA_HOME}" ]; then
+    find ${JAVA_HOME} -name cacerts -print
     find ${JAVA_HOME} -name cacerts -exec keytool -importkeystore -noprompt -srckeystore {} -srcstorepass "${STORE_PASS}" -destkeystore "${TRUST_STORE}" -deststoretype PKCS12 -deststorepass "${STORE_PASS}" \;
   fi
 fi
