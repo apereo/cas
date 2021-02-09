@@ -7,12 +7,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.query.Collation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
 import javax.persistence.NoResultException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Locale;
 
 /**
  * This is {@link GoogleAuthenticatorMongoDbTokenRepository}.
@@ -36,7 +38,9 @@ public class GoogleAuthenticatorMongoDbTokenRepository extends BaseOneTimeTokenR
     public GoogleAuthenticatorToken get(final String uid, final Integer otp) {
         try {
             val query = new Query();
-            query.addCriteria(Criteria.where("userId").is(uid).and("token").is(otp));
+            query.addCriteria(Criteria.where("userId").is(uid).and("token").is(otp))
+                .collation(Collation.of(Locale.ENGLISH).strength(Collation.ComparisonLevel.primary()));
+            
             return this.mongoTemplate.findOne(query, GoogleAuthenticatorToken.class, this.collectionName);
         } catch (final NoResultException e) {
             LOGGER.debug("No record could be found for google authenticator id [{}]", uid);
@@ -70,7 +74,8 @@ public class GoogleAuthenticatorMongoDbTokenRepository extends BaseOneTimeTokenR
     public void remove(final String uid, final Integer otp) {
         try {
             val query = new Query();
-            query.addCriteria(Criteria.where("userId").is(uid).and("token").is(otp));
+            query.addCriteria(Criteria.where("userId").is(uid).and("token").is(otp))
+                .collation(Collation.of(Locale.ENGLISH).strength(Collation.ComparisonLevel.primary()));
             this.mongoTemplate.remove(query, GoogleAuthenticatorToken.class, this.collectionName);
         } catch (final Exception e) {
             LOGGER.warn(e.getMessage(), e);
@@ -81,7 +86,9 @@ public class GoogleAuthenticatorMongoDbTokenRepository extends BaseOneTimeTokenR
     public void remove(final String uid) {
         try {
             val query = new Query();
-            query.addCriteria(Criteria.where("userId").is(uid));
+            query.addCriteria(Criteria.where("userId").is(uid))
+                .collation(Collation.of(Locale.ENGLISH).strength(Collation.ComparisonLevel.primary()));
+            
             this.mongoTemplate.remove(query, GoogleAuthenticatorToken.class, this.collectionName);
         } catch (final Exception e) {
             LOGGER.warn(e.getMessage(), e);
@@ -103,7 +110,9 @@ public class GoogleAuthenticatorMongoDbTokenRepository extends BaseOneTimeTokenR
     public long count(final String uid) {
         try {
             val query = new Query();
-            query.addCriteria(Criteria.where("userId").is(uid));
+            query.addCriteria(Criteria.where("userId").is(uid))
+                .collation(Collation.of(Locale.ENGLISH).strength(Collation.ComparisonLevel.primary()));
+            
             return this.mongoTemplate.count(query, GoogleAuthenticatorToken.class, this.collectionName);
         } catch (final Exception e) {
             LOGGER.warn(e.getMessage(), e);
