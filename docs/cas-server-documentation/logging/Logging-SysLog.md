@@ -30,7 +30,7 @@ messages needs to be routed over to this instance:
 ```
 
 <div class="alert alert-warning">
-  <strong>Pay Attention</strong><br /><a href="Logging-MDC.html">Mapped Diagnostic Context</a> (`MDC`) may contain the password. Setting `includeMDC=true` sends clear password as variable to syslog.
+  <strong>Pay Attention</strong><br /><a href="Logging-MDC.html">Mapped Diagnostic Context</a> (<code>MDC</code>) may contain the password. Setting <code>includeMDC=true</code> sends clear password as a variable to SysLog.
 </div>
 
 You can also configure the remote destination output over
