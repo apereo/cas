@@ -308,7 +308,7 @@ Finally in your CAS properties, the new `settingName` setting can be used as a r
 
 ##### Amazon S3
 
-CAS is also able to use [Amazon S3](https://docs.aws.amazon.com/AmazonS3/latest/dev) to locate properties and settings.
+CAS is also able to use [Amazon S3](https://aws.amazon.com/s3/) to locate properties and settings.
 
 Support is provided via the following dependency in the WAR overlay:
  
