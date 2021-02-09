@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessin
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket;
+import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationUniqueTicketIdGenerator;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.util.LoggingUtils;
@@ -50,30 +51,34 @@ public class CasSimpleMultifactorAuthenticationHandler extends AbstractPreAndPos
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
         val tokenCredential = (CasSimpleMultifactorTokenCredential) credential;
-        LOGGER.debug("Received token [{}]", tokenCredential.getId());
+        var tokenId = tokenCredential.getId();
+        if (!tokenId.startsWith(CasSimpleMultifactorAuthenticationTicket.PREFIX)) {
+            tokenId = CasSimpleMultifactorAuthenticationTicket.PREFIX + CasSimpleMultifactorAuthenticationUniqueTicketIdGenerator.SEPARATOR + tokenId;
+        }
+        LOGGER.debug("Received token [{}]", tokenId);
 
         val authentication = WebUtils.getInProgressAuthentication();
         val uid = authentication.getPrincipal().getId();
 
         try {
             LOGGER.debug("Received principal id [{}]. Attempting to locate token in registry...", uid);
-            val acct = centralAuthenticationService.getTicket(tokenCredential.getId(), CasSimpleMultifactorAuthenticationTicket.class);
+            val acct = centralAuthenticationService.getTicket(tokenId, CasSimpleMultifactorAuthenticationTicket.class);
             val properties = acct.getProperties();
             if (!properties.containsKey(CasSimpleMultifactorAuthenticationConstants.PROPERTY_PRINCIPAL)) {
-                LOGGER.warn("Unable to locate principal for token [{}]", tokenCredential.getId());
+                LOGGER.warn("Unable to locate principal for token [{}]", tokenId);
                 deleteToken(acct);
-                throw new FailedLoginException("Failed to authenticate code " + tokenCredential.getId());
+                throw new FailedLoginException("Failed to authenticate code " + tokenId);
             }
             val principal = Principal.class.cast(properties.get(CasSimpleMultifactorAuthenticationConstants.PROPERTY_PRINCIPAL));
             if (!principal.equals(authentication.getPrincipal())) {
-                LOGGER.warn("Principal assigned to token [{}] is unauthorized for of token [{}]", principal.getId(), tokenCredential.getId());
+                LOGGER.warn("Principal assigned to token [{}] is unauthorized for of token [{}]", principal.getId(), tokenId);
                 deleteToken(acct);
-                throw new FailedLoginException("Failed to authenticate code " + tokenCredential.getId());
+                throw new FailedLoginException("Failed to authenticate code " + tokenId);
             }
             deleteToken(acct);
 
             LOGGER.debug("Validated token [{}] successfully for [{}]. Creating authentication result and building principal...",
-                tokenCredential.getId(), uid);
+                tokenId, uid);
             return createHandlerResult(tokenCredential, this.principalFactory.createPrincipal(uid));
         } catch (final AbstractTicketException e) {
             LoggingUtils.error(LOGGER, e);
