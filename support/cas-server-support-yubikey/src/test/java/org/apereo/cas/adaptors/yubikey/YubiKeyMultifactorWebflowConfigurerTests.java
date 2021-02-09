@@ -23,7 +23,7 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
         "cas.authn.mfa.yubikey.json-file=file:${java.io.tmpdir}/yubikey.json",
         "cas.authn.mfa.yubikey.trusted-device-enabled=true",
         "cas.authn.mfa.yubikey.multiple-device-registration-enabled=true",
-        "cas.authn.mfa.trusted.device-registration-enabled=true"
+        "cas.authn.mfa.trusted.core.device-registration-enabled=true"
     })
 @Tag("WebflowConfig")
 @Getter

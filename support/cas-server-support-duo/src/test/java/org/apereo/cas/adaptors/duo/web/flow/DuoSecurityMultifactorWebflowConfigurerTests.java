@@ -25,7 +25,7 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
         "cas.authn.mfa.duo[0].duo-integration-key=QRSTUVWXYZ",
         "cas.authn.mfa.duo[0].duo-api-host=theapi.duosecurity.com",
         "cas.authn.mfa.duo[0].trusted-device-enabled=true",
-        "cas.authn.mfa.trusted.device-registration-enabled=true"
+        "cas.authn.mfa.trusted.core.device-registration-enabled=true"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("WebflowConfig")

@@ -69,7 +69,7 @@ public class MultifactorAuthenticationVerifyTrustAction extends AbstractAction {
         MultifactorAuthenticationTrustUtils.setMultifactorAuthenticationTrustedInScope(requestContext);
         MultifactorAuthenticationTrustUtils.trackTrustedMultifactorAuthenticationAttribute(
             authn,
-            trustedProperties.getAuthenticationContextAttribute());
+            trustedProperties.getCore().getAuthenticationContextAttribute());
         return yes();
     }
 }
