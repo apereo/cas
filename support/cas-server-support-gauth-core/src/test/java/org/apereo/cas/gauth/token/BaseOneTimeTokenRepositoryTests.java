@@ -47,6 +47,15 @@ public abstract class BaseOneTimeTokenRepositoryTests {
     }
 
     @Test
+    public void verifyCaseInsensitiveUser() {
+        var token = (OneTimeToken) new GoogleAuthenticatorToken(1234, CASUSER.toUpperCase());
+        oneTimeTokenAuthenticatorTokenRepository.store(token);
+        assertTrue(oneTimeTokenAuthenticatorTokenRepository.exists(CASUSER.toLowerCase(), 1234));
+        token = oneTimeTokenAuthenticatorTokenRepository.get(CASUSER.toLowerCase(), 1234);
+        assertTrue(token.getId() > 0);
+    }
+    
+    @Test
     public void verifyTokensWithUniqueIdsSave() {
         val token = new GoogleAuthenticatorToken(1111, CASUSER);
         oneTimeTokenAuthenticatorTokenRepository.store(token);
