@@ -47,11 +47,7 @@ public class DefaultChainingServiceRegistry extends AbstractServiceRegistry impl
 
     @Override
     public boolean delete(final RegisteredService registeredService) {
-        return serviceRegistries.stream()
-            .map(registry -> registry.delete(registeredService))
-            .filter(Boolean::booleanValue)
-            .findAny()
-            .orElse(Boolean.FALSE);
+        return serviceRegistries.stream().allMatch(registry -> registry.delete(registeredService));
     }
 
     @Override
