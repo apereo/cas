@@ -9,6 +9,8 @@ import org.springframework.core.io.Resource;
 
 import java.io.Serializable;
 import java.security.KeyStore;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Configuration properties class for http.client.truststore.
@@ -78,6 +80,11 @@ public class HttpClientProperties implements Serializable {
      * ({@code true}) or case-insensitive ({@code false}). If no {@code authorityValidationRegEx} is set, this value does not have any effect.
      */
     private boolean authorityValidationRegExCaseSensitive = true;
+
+    /**
+     * The default headers to use for any HTTP connection.
+     */
+    private Map<String, String> defaultHeaders = new HashMap<>();
 
     @RequiresModule(name = "cas-server-core-authentication", automated = true)
     @Getter
