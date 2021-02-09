@@ -9,6 +9,8 @@ import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Configuration properties class for http.client.truststore.
@@ -82,4 +84,8 @@ public class HttpClientProperties implements Serializable {
      */
     private boolean authorityValidationRegExCaseSensitive = true;
 
+    /**
+     * The default headers to use for any HTTP connection.
+     */
+    private Map<String, String> defaultHeaders = new HashMap<>();
 }
