@@ -77,7 +77,7 @@ public class MultifactorAuthenticationSetTrustAction extends AbstractAction {
         LOGGER.debug("Trusted authentication session exists for [{}]", authn.getPrincipal().getId());
         MultifactorAuthenticationTrustUtils.trackTrustedMultifactorAuthenticationAttribute(
             authn,
-            trustedProperties.getAuthenticationContextAttribute());
+            trustedProperties.getCore().getAuthenticationContextAttribute());
         WebUtils.putAuthentication(authn, requestContext);
         return success();
     }

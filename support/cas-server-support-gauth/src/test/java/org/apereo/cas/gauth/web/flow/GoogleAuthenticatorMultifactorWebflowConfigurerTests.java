@@ -20,7 +20,7 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
     properties = {
         "cas.authn.mfa.gauth.json.location=classpath:/repository.json",
         "cas.authn.mfa.gauth.trusted-device-enabled=true",
-        "cas.authn.mfa.trusted.device-registration-enabled=true"
+        "cas.authn.mfa.trusted.core.device-registration-enabled=true"
     })
 @Tag("WebflowConfig")
 @Getter

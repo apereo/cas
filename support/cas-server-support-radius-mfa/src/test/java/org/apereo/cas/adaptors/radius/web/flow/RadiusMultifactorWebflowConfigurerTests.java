@@ -17,7 +17,7 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
  */
 @SpringBootTest(classes = BaseRadiusMultifactorAuthenticationTests.SharedTestConfiguration.class,
     properties = {
-        "cas.authn.mfa.trusted.device-registration-enabled=true",
+        "cas.authn.mfa.trusted.core.device-registration-enabled=true",
 
         "cas.authn.radius.client.shared-secret=NoSecret",
         "cas.authn.radius.client.inet-address=localhost,localguest",

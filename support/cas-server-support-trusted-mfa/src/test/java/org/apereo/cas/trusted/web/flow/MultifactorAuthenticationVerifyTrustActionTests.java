@@ -97,7 +97,7 @@ public class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMul
         assertEquals("yes", mfaVerifyTrustAction.execute(context).getId());
 
         assertTrue(MultifactorAuthenticationTrustUtils.isMultifactorAuthenticationTrustedInScope(context));
-        assertTrue(authn.getAttributes().containsKey(casProperties.getAuthn().getMfa().getTrusted().getAuthenticationContextAttribute()));
+        assertTrue(authn.getAttributes().containsKey(casProperties.getAuthn().getMfa().getTrusted().getCore().getAuthenticationContextAttribute()));
     }
 
     @Test

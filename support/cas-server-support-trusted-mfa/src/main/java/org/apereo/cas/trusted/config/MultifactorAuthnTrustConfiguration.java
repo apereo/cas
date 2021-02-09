@@ -4,6 +4,7 @@ import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.authentication.PseudoPlatformTransactionManager;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.mfa.trusteddevice.TrustedDevicesMultifactorCoreProperties;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustCipherExecutor;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecordKeyGenerator;
@@ -108,8 +109,8 @@ public class MultifactorAuthnTrustConfiguration {
     @Bean
     @RefreshScope
     public MultifactorAuthenticationTrustRecordKeyGenerator mfaTrustRecordKeyGenerator() {
-        val type = casProperties.getAuthn().getMfa().getTrusted().getKeyGeneratorType();
-        if (type.equalsIgnoreCase("default")) {
+        val type = casProperties.getAuthn().getMfa().getTrusted().getCore().getKeyGeneratorType();
+        if (type == TrustedDevicesMultifactorCoreProperties.TrustedDevicesKeyGeneratorTypes.DEFAULT) {
             return new DefaultMultifactorAuthenticationTrustRecordKeyGenerator();
         }
         return new LegacyMultifactorAuthenticationTrustRecordKeyGenerator();
