@@ -10,10 +10,12 @@ import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.ssl.SSLContexts;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,7 @@ import org.springframework.core.annotation.Order;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
+import java.util.ArrayList;
 
 /**
  * This is {@link CasCoreHttpConfiguration}.
@@ -117,6 +120,10 @@ public class CasCoreHttpConfiguration {
         c.setSslSocketFactory(trustStoreSslSocketFactory());
         c.setHostnameVerifier(hostnameVerifier());
         c.setSslContext(sslContext());
+
+        val defaultHeaders = new ArrayList<Header>();
+        httpClient.getDefaultHeaders().forEach((name, value) -> defaultHeaders.add(new BasicHeader(name, value)));
+        c.setDefaultHeaders(defaultHeaders);
 
         return c;
     }
