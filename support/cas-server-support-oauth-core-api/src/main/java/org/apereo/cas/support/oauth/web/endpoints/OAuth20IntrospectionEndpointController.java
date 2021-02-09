@@ -106,7 +106,7 @@ public class OAuth20IntrospectionEndpointController extends BaseOAuth20Controlle
                     LOGGER.trace(e.getMessage(), e);
                     LOGGER.info("Unable to fetch access token [{}]: [{}]", accessToken, e.getMessage());
                 }
-                val introspect = createIntrospectionValidResponse(service, ticket);
+                val introspect = createIntrospectionValidResponse(ticket);
                 result = new ResponseEntity<>(introspect, HttpStatus.OK);
             }
         } catch (final Exception e) {
@@ -119,16 +119,14 @@ public class OAuth20IntrospectionEndpointController extends BaseOAuth20Controlle
     /**
      * Create introspection response OAuth introspection access token response.
      *
-     * @param service the service
      * @param ticket  the ticket
      * @return the OAuth introspection access token response
      */
-    protected OAuth20IntrospectionAccessTokenResponse createIntrospectionValidResponse(final OAuthRegisteredService service,
-        final OAuth20AccessToken ticket) {
+    protected OAuth20IntrospectionAccessTokenResponse createIntrospectionValidResponse(final OAuth20AccessToken ticket) {
         val introspect = new OAuth20IntrospectionAccessTokenResponse();
-        introspect.setClientId(service.getClientId());
+        introspect.setClientId(ticket.getClientId());
         introspect.setScope("CAS");
-        introspect.setAud(service.getServiceId());
+        introspect.setAud(ticket.getService().getId());
         introspect.setIss(getOAuthConfigurationContext().getCasProperties().getAuthn().getOidc().getCore().getIssuer());
 
         if (ticket != null) {
