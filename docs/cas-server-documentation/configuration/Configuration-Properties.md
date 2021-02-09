@@ -4608,6 +4608,7 @@ a local truststore is provided by CAS to improve portability of configuration ac
 # cas.http-client.allow-local-logout-urls=false
 # cas.http-client.authority-validation-reg-ex=
 # cas.http-client.authority-validation-reg-ex-case-sensitive=true
+# cas.http-client.default-headers=
 
 # cas.http-client.truststore.psw=changeit
 # cas.http-client.truststore.file=classpath:/truststore.jks
