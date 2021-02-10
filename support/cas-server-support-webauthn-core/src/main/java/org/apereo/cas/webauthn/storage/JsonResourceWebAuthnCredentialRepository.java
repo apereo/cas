@@ -12,12 +12,15 @@ import lombok.val;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 
+import java.time.Clock;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -72,8 +75,16 @@ public class JsonResourceWebAuthnCredentialRepository extends BaseWebAuthnCreden
 
     @Override
     @SneakyThrows
-    protected void update(final String username, final Collection<CredentialRegistration> records) {
+    protected void update(final String username, final Collection<CredentialRegistration> givenRecords) {
         val storage = readFromJsonRepository();
+        val records = givenRecords.stream()
+            .map(record -> {
+                if (record.getRegistrationTime() == null) {
+                    return record.withRegistrationTime(Instant.now(Clock.systemUTC()));
+                }
+                return record;
+            })
+            .collect(Collectors.toList());
         storage.put(username, new LinkedHashSet<>(records));
         WebAuthnUtils.getObjectMapper().writerWithDefaultPrettyPrinter().writeValue(location.getFile(), storage);
     }

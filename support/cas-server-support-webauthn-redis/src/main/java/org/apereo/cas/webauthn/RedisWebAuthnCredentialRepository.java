@@ -11,6 +11,8 @@ import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.data.redis.core.RedisTemplate;
 
+import java.time.Clock;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
@@ -60,11 +62,19 @@ public class RedisWebAuthnCredentialRepository extends BaseWebAuthnCredentialRep
 
     @Override
     @SneakyThrows
-    protected void update(final String username, final Collection<CredentialRegistration> records) {
+    protected void update(final String username, final Collection<CredentialRegistration> givenRecords) {
         val redisKey = buildRedisKeyForRecord(username);
-        if (records.isEmpty()) {
+        if (givenRecords.isEmpty()) {
             redisTemplate.delete(redisKey);
         } else {
+            val records = givenRecords.stream()
+                .map(record -> {
+                    if (record.getRegistrationTime() == null) {
+                        return record.withRegistrationTime(Instant.now(Clock.systemUTC()));
+                    }
+                    return record;
+                })
+                .collect(Collectors.toList());
             val jsonRecords = getCipherExecutor().encode(WebAuthnUtils.getObjectMapper().writeValueAsString(records));
             val entry = RedisWebAuthnCredentialRegistration.builder()
                 .records(jsonRecords)

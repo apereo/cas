@@ -1,5 +1,6 @@
 package org.apereo.cas.webauthn;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,6 +28,7 @@ public class WebAuthnUtils {
         .addMixIn(RegisteredCredential.RegisteredCredentialBuilder.class, RegisteredCredentialBuilderMixin.class)
         .findAndRegisterModules()
         .setDefaultPrettyPrinter(new DefaultPrettyPrinter())
+        .setSerializationInclusion(JsonInclude.Include.NON_NULL)
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
     /**
