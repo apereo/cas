@@ -48,6 +48,6 @@ public class CouchDbGoogleAuthenticatorToken extends GoogleAuthenticatorToken {
         setId(oneTimeToken.getId());
         setIssuedDateTime(oneTimeToken.getIssuedDateTime());
         setToken(oneTimeToken.getToken());
-        setUserId(oneTimeToken.getUserId());
+        setUserId(oneTimeToken.getUserId().trim().toLowerCase());
     }
 }

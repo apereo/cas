@@ -31,6 +31,7 @@ public abstract class BaseOneTimeTokenCredentialRepository implements OneTimeTok
      */
     protected OneTimeTokenAccount encode(final OneTimeTokenAccount account) {
         account.setSecretKey(tokenCredentialCipher.encode(account.getSecretKey()));
+        account.setUsername(account.getUsername().trim().toLowerCase());
         return account;
     }
 

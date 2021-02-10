@@ -48,7 +48,7 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseGo
     @Override
     public Collection<? extends OneTimeTokenAccount> get(final String userName) {
         if (contains(userName)) {
-            val account = this.accounts.get(userName);
+            val account = this.accounts.get(userName.toLowerCase().trim());
             return decode(account);
         }
         return new ArrayList<>(0);
@@ -57,7 +57,7 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseGo
     @Override
     public OneTimeTokenAccount save(final OneTimeTokenAccount account) {
         val encoded = encode(account);
-        val records = accounts.getOrDefault(account.getUsername(), new ArrayList<>());
+        val records = accounts.getOrDefault(account.getUsername().trim().toLowerCase(), new ArrayList<>());
         records.add(encoded);
         accounts.put(account.getUsername(), records);
         return encoded;
@@ -66,8 +66,8 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseGo
     @Override
     public OneTimeTokenAccount update(final OneTimeTokenAccount account) {
         val encoded = encode(account);
-        if (accounts.containsKey(account.getUsername())) {
-            val records = accounts.get(account.getUsername());
+        if (accounts.containsKey(account.getUsername().toLowerCase().trim())) {
+            val records = accounts.get(account.getUsername().toLowerCase().trim());
             records.stream()
                 .filter(rec -> rec.getId() == account.getId())
                 .findFirst()
@@ -87,7 +87,7 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseGo
 
     @Override
     public void delete(final String username) {
-        this.accounts.remove(username);
+        this.accounts.remove(username.toLowerCase().trim());
     }
 
     @Override
@@ -97,7 +97,7 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseGo
 
     @Override
     public long count(final String username) {
-        return get(username).size();
+        return get(username.toLowerCase().trim()).size();
     }
 
     @Override
@@ -106,6 +106,6 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseGo
     }
 
     private boolean contains(final String username) {
-        return this.accounts.containsKey(username);
+        return this.accounts.containsKey(username.toLowerCase().trim());
     }
 }
