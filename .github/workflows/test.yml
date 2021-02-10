@@ -71,6 +71,7 @@ jobs:
             
 ##########################################################################
   testcategories:
+    needs: [cache]
     runs-on: ubuntu-latest
     outputs:
       categories: ${{ steps.get-categories.outputs.categories }}
