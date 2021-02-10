@@ -89,6 +89,7 @@ jobs:
   tests:
     if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
     needs: [testcategories]
+    runs-on: ubuntu-latest
     continue-on-error: false
     strategy:
       fail-fast: false
