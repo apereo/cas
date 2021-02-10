@@ -20,8 +20,8 @@ hasDocker() {
 printHelp() {
     hasDocker
     echo -e "\nUsage: ./testcas.sh --category [category1,category2,...] [--help] [--test TestClass] [--ignore-failures] [--no-wrapper] [--no-retry] [--debug] [--no-parallel] [--dry-run] [--info] [--with-coverage] [--no-build-cache] \n"
-    echo -e "Fetching test categories from the build...\n"
-     ./gradlew -q testCategories
+    echo -e "To see what test categories are available, use:\n"
+    echo -e "\t./gradlew -q testCategories"
     echo -e "\nPlease see the test script for details."
 }
 
@@ -123,25 +123,25 @@ while (( "$#" )); do
             metrics|stats)
                 task+="testMetrics "
                 ;;
-            services|regsvc)
+            services|regsvc|registeredservice)
                 task+="testRegisteredService "
                 ;;
-            actuator|endpoint)
+            actuator|endpoint|actuatorendpoint)
                 task+="testActuatorEndpoint "
                 ;;
             utility|utils|util)
                 task+="testUtility "
                 ;;
-            wsfed)
+            wsfed|wsfederation)
                 task+="testWSFederation "
                 ;;
             attrs|attr|attributes)
                 task+="testAttributes "
                 ;;
-            expiration-policy|exppolicy|expp)
+            expiration-policy|exppolicy|expp|expirationpolicy)
                 task+="testExpirationPolicy "
                 ;;
-            password-ops|pswd|pswd-ops|psw)
+            password-ops|pswd|pswd-ops|psw|passwordops)
                 task+="testPasswordOps "
                 ;;
             sms)
@@ -156,7 +156,7 @@ while (( "$#" )); do
             filesystem|files|file|fsys)
                 task+="testFileSystem "
                 ;;
-            config|casconfig|ccfg|cfg|cas-config)
+            config|casconfig|ccfg|cfg|cas-config|casconfiguration)
                 task+="testCasConfiguration "
                 ;;
             groovy|script)
@@ -180,7 +180,7 @@ while (( "$#" )); do
             jmx|jmx)
                 task+="testJMX "
                 ;;
-            rest|restful|restapi)
+            rest|restful|restapi|restfulapi)
                 task+="testRestfulApi "
                 ;;
             webflow-mfa-actions|swf-mfa_actions)
@@ -216,7 +216,7 @@ while (( "$#" )); do
             simple|unit)
                 task+="testSimple "
                 ;;
-            mssql)
+            mssql|mssqlserver)
                 hasDocker && ./ci/tests/mssqlserver/run-mssql-server.sh
                 task+="testMsSqlServer "
                 ;;
@@ -269,7 +269,7 @@ while (( "$#" )); do
                 hasDocker && ./ci/tests/kafka/run-kafka-server.sh
                 task+="testKafka "
                 ;;
-            aws|amz)
+            aws|amz|amazonwebservices)
                 hasDocker && ./ci/tests/aws/run-aws-server.sh
                 task+="testAmazonWebServices "
                 ;;
@@ -300,6 +300,11 @@ while (( "$#" )); do
             activemq|amq|jms)
                 hasDocker && ./ci/tests/activemq/run-activemq-server.sh
                 task+="testJMS "
+                ;;
+            *)
+                echo -e "Unable to recognize test category: ${item}"
+                printHelp
+                exit 1
                 ;;
             esac
         done

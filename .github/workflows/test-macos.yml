@@ -1,4 +1,4 @@
-name: Unit & Integration Tests
+name: Tests - MacOS
 
 env:
   JAVA_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
@@ -32,7 +32,7 @@ jobs:
           access_token: ${{ github.token }}
 
 
-##########################################################################
+  ##########################################################################
 
   initialize:
     runs-on: ubuntu-latest
@@ -45,7 +45,7 @@ jobs:
       - name: Initialize
         run: ls ./ci && chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
 
-##########################################################################
+  ##########################################################################
 
   cache:
     runs-on: ubuntu-latest
@@ -67,8 +67,8 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-            
-##########################################################################
+
+  ##########################################################################
   testcategories:
     needs: [cache]
     runs-on: ubuntu-latest
@@ -84,8 +84,8 @@ jobs:
         run: ./gradlew --build-cache --configure-on-demand --no-daemon -q testCategories
       - id: get-categories
         run: echo "::set-output name=categories::$(./gradlew --build-cache --configure-on-demand --no-daemon -q testCategories)]}"
-##########################################################################
-  
+  ##########################################################################
+
   tests:
     if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
     needs: [testcategories]
@@ -93,7 +93,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [macos-latest]
         category: ${{fromJSON(needs.testcategories.outputs.categories)}}
     runs-on: ${{ matrix.os }}
     steps:
@@ -105,74 +105,12 @@ jobs:
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
         shell: bash
-      - name: Initialize Windows
-        run: sc stop MongoDB
-        if: matrix.os == 'windows-latest'
       - uses: actions/cache@v2
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - name: Run Tests with Coverage
-        run: ./testcas.sh --with-coverage --category ${{ matrix.category }}
-        if: matrix.os == 'ubuntu-latest'
-      - name: Run Tests without Coverage
+      - name: Run Tests
         run: ./testcas.sh --category ${{ matrix.category }}
         shell: bash
-        if: matrix.os != 'ubuntu-latest'
-      - name: "Upload to Codecov"
-        uses: "codecov/codecov-action@v1"
-        with:
-          file: ./build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml
-          flags: ${{ matrix.category }}
-          name: ${{ matrix.category }}
-        if: matrix.os == 'ubuntu-latest'
-      - name: "Upload coverage file"
-        uses: "actions/upload-artifact@v2"
-        with:
-          name: "cas-tests-${{ matrix.category }}.coverage"
-          path: "./build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
-        if: matrix.os == 'ubuntu-latest'
-
-##########################################################################
-
-  upload_coverage:
-    runs-on: ubuntu-latest
-    needs: [tests]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: "Download coverage files"
-        uses: "actions/download-artifact@v2"
-        with:
-          path: "reports"
-      - name: "Collect Files for SonarCloud"
-        run: |
-          find $PWD -type f -name 'jacocoRootReport.xml'
-          export files=''
-          for file in $(find $PWD -type f -name 'jacocoRootReport.xml'); do export files="$file,${files}"; done
-          export files="${files%?}"
-          echo $files
-          echo "SONAR_COVERAGE_REPORTS=${files}" >> $GITHUB_ENV
-      - name: Upload Coverage to SonarCloud
-        if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' && env.SONARCLOUD_TOKEN != null }}
-        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel sonarqube -x javadoc -Dsonar.login="${SONARCLOUD_TOKEN}" -DskipNestedConfigMetadataGen=true -DshowStandardStreams=true -Dsonar.coverage.jacoco.xmlReportPaths="${SONAR_COVERAGE_REPORTS}"
-      - name: "Collect Files for Codacy"
-        run: |
-          find $PWD -type f -name 'jacocoRootReport.xml'
-          export files=''
-          for file in $(find . -type f -name 'jacocoRootReport.xml'); do export files="$file,${files}"; done
-          export files="${files%?}"
-          echo $files
-          echo "CODACY_COVERAGE_REPORTS=${files}" >> $GITHUB_ENV
-      - name: Upload Coverage to Codacy
-        if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' && env.CODACY_PROJECT_TOKEN != null }}
-        uses: codacy/codacy-coverage-reporter-action@master
-        with:
-          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-          coverage-reports: ${{ env.CODACY_COVERAGE_REPORTS }}
-
