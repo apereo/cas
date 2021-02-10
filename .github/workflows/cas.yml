@@ -15,7 +15,6 @@ env:
   CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
   SONARCLOUD_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  PYTHON_VERSION: 3.8.2
   RUBY_VERSION: 2.6
   JDK_CURRENT: 11.0.10
   JDK_LATEST: 15
@@ -39,7 +38,10 @@ jobs:
         with:
           workflow_id: 1291155,1328268
           access_token: ${{ github.token }}
-          
+
+
+##########################################################################
+
   initialize:
     runs-on: ubuntu-latest
     steps:
@@ -131,112 +133,6 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew --build-cache --configure-on-demand --no-daemon build -x test -x javadoc -x check --parallel
 
-##########################################################################
-
-  codeql-analysis:
-    runs-on: ubuntu-latest
-    needs: [build]
-    continue-on-error: true
-    if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v2
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v1
-        with:
-          languages: java
-          queries: security-and-quality
-      - name: Autobuild
-        uses: github/codeql-action/autobuild@v1
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v1
-  static-analysis:
-    runs-on: ubuntu-latest
-    needs: [build]
-    continue-on-error: true
-    if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
-    strategy:
-      matrix:
-        category:
-          - spotbugsMain
-          - spotbugsTest
-          - checkstyleMain
-          - checkstyleTest
-          - checkLicense
-    steps:
-      - uses: actions/checkout@v2
-#      - name: Setup tmate session
-#        uses: mxschmitt/action-tmate@v3
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v2
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: Run Analysis
-        run: ./gradlew --build-cache --configure-on-demand --parallel --no-daemon ${{ matrix.category }} -x test -x javadoc -DskipNestedConfigMetadataGen=true -DshowStandardStreams=true
-        
-##########################################################################
-
-  validate-codebase:
-    runs-on: ubuntu-latest
-    if: ${{ !contains(github.head_ref, 'renovate') && !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
-    needs: [cache]
-    strategy:
-      fail-fast: false
-      matrix:
-        check:
-          - CheckDuplicateGradleConfiguration
-          - CheckDuplicateTestConfiguration
-          - CheckMissingClassInTestsSuite
-          - CheckMissingTestsSuiteClassAnnotation
-          - CheckMissingUtilityClassAnnotation
-          - CheckRedundantTestConfigurationInheritance
-          - CheckSpringConfigurationBeanProxying
-          - CheckSpringConfigurationFactories
-          - CheckMissingTestTagAnnotation
-          - CheckEnforceLombokAnnotations
-          - CheckRequiredModuleAnnotationReferences
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v2
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - name: Validate Codebase
-        run: java ./ci/checks/${{ matrix.check }}.java .
-        
 ##########################################################################
 
   validate-javadocs:
@@ -673,77 +569,6 @@ jobs:
           coverage-reports: ${{ env.CODACY_COVERAGE_REPORTS }}
   ##########################################################################
   
-  tests-performance-locust:
-    runs-on: ubuntu-latest
-    needs: [build]
-    if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
-    continue-on-error: true
-    strategy:
-      fail-fast: false
-      matrix:
-        category:
-          - tomcat
-          - jetty
-          - undertow
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - uses: actions/setup-python@v2
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v2
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: Locust Performance Tests
-        run: ./ci/tests/perf/perftests-locust.sh ${{ matrix.category }}
-
-##########################################################################
-
-  tests-performance-jmeter:
-    runs-on: ubuntu-latest
-    needs: [build]
-    if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
-    continue-on-error: true
-    strategy:
-      fail-fast: false
-      matrix:
-        category:
-          - tomcat
-          - jetty
-          - undertow
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v2
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: JMeter Performance Tests
-        run: ./ci/tests/perf/perftests-jmeter.sh ${{ matrix.category }}
-
-##########################################################################
-
   report-dependency-updates:
     runs-on: ubuntu-latest
     needs: [cache]
