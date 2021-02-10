@@ -70,77 +70,24 @@ jobs:
             ${{ runner.os }}-gradle-
             
 ##########################################################################
-
+  testcategories:
+    runs-on: ubuntu-latest
+    outputs:
+      categories: ${{ steps.get-categories.outputs.categories }}
+    steps:
+      - id: get-categories
+        run: echo "::set-output name=categories::$(./gradlew --build-cache --configure-on-demand --no-daemon downloadDependencies -q testCategories)]}"
+##########################################################################
+  
   tests:
     if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
-    needs: [cache]
+    needs: [testcategories]
     continue-on-error: false
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        category:
-          - rest
-          - simple
-          - groovy
-          - filesystem
-          - webflow
-          - webflow-config
-          - webflow-actions
-          - webflow-events
-          - webflow-mfa-actions
-          - attributes
-          - services
-          - expiration-policy
-          - password-ops
-          - mfa
-          - web
-          - metrics
-          - cas
-          - logout
-          - util
-          - authentication
-          - tickets
-          - cas-config
-          - actuator
-          - webapp
-          - ldap
-          - x509
-          - oauth
-          - wsfed
-          - uma
-          - oidc
-          - audit
-          - saml
-          - infinispan
-          - spnego
-          - hazelcast
-          - jmx
-          - shell
-          - mongo
-          - memcached
-          - sms
-          - jdbc
-          - mariadb
-          - postgres
-          - mssql
-          - oracle
-          - mysql
-          - aws
-          - ehcache
-          - redis
-          - dynamodb
-          - radius
-          - couchdb
-          - couchbase
-          - mail
-          - kafka
-          - ignite
-          - cassandra
-          - influxdb
-          - zookeeper
-          - jms
-          - cosmosdb
+        category: ${{fromJSON(needs.testcategories.outputs.categories)}}
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
