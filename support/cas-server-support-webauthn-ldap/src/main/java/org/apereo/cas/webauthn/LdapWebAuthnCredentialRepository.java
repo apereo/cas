@@ -19,6 +19,8 @@ import org.ldaptive.LdapException;
 import org.springframework.beans.factory.DisposableBean;
 
 import java.io.IOException;
+import java.time.Clock;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -102,6 +104,12 @@ public class LdapWebAuthnCredentialRepository extends BaseWebAuthnCredentialRepo
             executeModifyOperation(new HashSet<>(0), Optional.ofNullable(locateLdapEntryFor(username)));
         } else {
             val results = records.stream()
+                .map(record -> {
+                    if (record.getRegistrationTime() == null) {
+                        return record.withRegistrationTime(Instant.now(Clock.systemUTC()));
+                    }
+                    return record;
+                })
                 .map(Unchecked.function(reg -> WebAuthnUtils.getObjectMapper().writeValueAsString(records)))
                 .map(reg -> getCipherExecutor().encode(reg))
                 .collect(Collectors.toSet());

@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 
+import java.time.Clock;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -62,6 +64,12 @@ public class DynamoDbWebAuthnCredentialRepository extends BaseWebAuthnCredential
             facilitator.remove(username);
         } else {
             val jsonRecords = records.stream()
+                .map(record -> {
+                    if (record.getRegistrationTime() == null) {
+                        return record.withRegistrationTime(Instant.now(Clock.systemUTC()));
+                    }
+                    return record;
+                })
                 .map(Unchecked.function(record -> getCipherExecutor().encode(WebAuthnUtils.getObjectMapper().writeValueAsString(record))))
                 .collect(Collectors.toList());
             val entry = DynamoDbWebAuthnCredentialRegistration.builder()
