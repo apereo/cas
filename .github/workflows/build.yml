@@ -32,7 +32,6 @@ jobs:
         with:
           access_token: ${{ github.token }}
 
-
 ##########################################################################
 
   initialize:
@@ -68,8 +67,7 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-
-
+            
 ##########################################################################
 
   build:
