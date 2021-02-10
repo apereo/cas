@@ -48,8 +48,8 @@ public class JsonResourceWebAuthnCredentialRepository extends BaseWebAuthnCreden
     @Override
     public Collection<CredentialRegistration> getRegistrationsByUsername(final String username) {
         val storage = readFromJsonRepository();
-        return storage.containsKey(username)
-            ? storage.get(username)
+        return storage.containsKey(username.trim().toLowerCase())
+            ? storage.get(username.trim().toLowerCase())
             : new HashSet<>(0);
     }
 
@@ -85,7 +85,7 @@ public class JsonResourceWebAuthnCredentialRepository extends BaseWebAuthnCreden
                 return record;
             })
             .collect(Collectors.toList());
-        storage.put(username, new LinkedHashSet<>(records));
+        storage.put(username.trim().toLowerCase(), new LinkedHashSet<>(records));
         WebAuthnUtils.getObjectMapper().writerWithDefaultPrettyPrinter().writeValue(location.getFile(), storage);
     }
 }

@@ -37,7 +37,7 @@ public class DynamoDbWebAuthnCredentialRepository extends BaseWebAuthnCredential
 
     @Override
     public Collection<CredentialRegistration> getRegistrationsByUsername(final String username) {
-        return facilitator.getAccountsBy(username)
+        return facilitator.getAccountsBy(username.trim().toLowerCase())
             .map(DynamoDbWebAuthnCredentialRegistration::getRecords)
             .flatMap(List::stream)
             .map(record -> getCipherExecutor().decode(record))
@@ -61,7 +61,7 @@ public class DynamoDbWebAuthnCredentialRepository extends BaseWebAuthnCredential
     protected void update(final String username, final Collection<CredentialRegistration> records) {
         if (records.isEmpty()) {
             LOGGER.debug("No records are provided for [{}] so entry will be removed", username);
-            facilitator.remove(username);
+            facilitator.remove(username.trim().toLowerCase());
         } else {
             val jsonRecords = records.stream()
                 .map(record -> {
@@ -74,7 +74,7 @@ public class DynamoDbWebAuthnCredentialRepository extends BaseWebAuthnCredential
                 .collect(Collectors.toList());
             val entry = DynamoDbWebAuthnCredentialRegistration.builder()
                 .records(jsonRecords)
-                .username(username)
+                .username(username.trim().toLowerCase())
                 .build();
             facilitator.save(entry);
         }

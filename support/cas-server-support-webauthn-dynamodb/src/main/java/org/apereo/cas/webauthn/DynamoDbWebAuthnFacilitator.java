@@ -96,7 +96,7 @@ public class DynamoDbWebAuthnFacilitator {
     public Stream<DynamoDbWebAuthnCredentialRegistration> getAccountsBy(final String username) {
         return getRecordsByKeys(DynamoDbQueryBuilder.builder()
             .operator(ComparisonOperator.EQ)
-            .attributeValue(List.of(AttributeValue.builder().s(username).build()))
+            .attributeValue(List.of(AttributeValue.builder().s(username.trim().toLowerCase()).build()))
             .key(ColumnNames.PRINCIPAL.getColumnName())
             .build());
     }
@@ -156,7 +156,7 @@ public class DynamoDbWebAuthnFacilitator {
             return items
                 .stream()
                 .map(item -> {
-                    val username = item.get(ColumnNames.PRINCIPAL.getColumnName()).s();
+                    val username = item.get(ColumnNames.PRINCIPAL.getColumnName()).s().trim().toLowerCase();
                     val records = item.get(ColumnNames.RECORDS.getColumnName()).l();
                     return DynamoDbWebAuthnCredentialRegistration.builder()
                         .username(username)
@@ -177,7 +177,9 @@ public class DynamoDbWebAuthnFacilitator {
      */
     private static Map<String, AttributeValue> buildTableAttributeValuesMap(final DynamoDbWebAuthnCredentialRegistration record) {
         val values = new HashMap<String, AttributeValue>();
-        values.put(ColumnNames.PRINCIPAL.getColumnName(), AttributeValue.builder().s(String.valueOf(record.getUsername())).build());
+        values.put(ColumnNames.PRINCIPAL.getColumnName(),
+            AttributeValue.builder()
+                .s(record.getUsername().trim().toLowerCase()).build());
         val records = record.getRecords()
             .stream()
             .map(value -> AttributeValue.builder().s(value).build())

@@ -183,7 +183,7 @@ while (( "$#" )); do
             rest|restful|restapi|restfulapi)
                 task+="testRestfulApi "
                 ;;
-            webflow-mfa-actions|swf-mfa_actions)
+            webflow-mfa-actions|swf-mfa_actions|webflowmfaactions)
                 task+="testWebflowMfaActions "
                 ;;
             webflowactions|swfactions|webflow-actions)
