@@ -121,4 +121,25 @@ public class CasSimpleMultifactorAuthenticationHandlerTests {
             servicesManager, PrincipalFactoryUtils.newPrincipalFactory(), centralAuthenticationService, 0);
         assertThrows(FailedLoginException.class, () -> handler.authenticate(credential));
     }
+    
+    @Test
+    public void verifySuccessfulAuthenticationWithTokenWithoutPrefix() throws Exception {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        RequestContextHolder.setRequestContext(context);
+        ExternalContextHolder.setExternalContext(context.getExternalContext());
+
+        val principal = RegisteredServiceTestUtils.getPrincipal();
+        WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(principal), context);
+
+        val factory = (CasSimpleMultifactorAuthenticationTicketFactory) defaultTicketFactory.get(CasSimpleMultifactorAuthenticationTicket.class);
+        val ticket = factory.create(RegisteredServiceTestUtils.getService(),
+            Map.of(CasSimpleMultifactorAuthenticationConstants.PROPERTY_PRINCIPAL, principal));
+        ticketRegistry.addTicket(ticket);
+        val ticketIdWithoutPrefix = ticket.getId().substring(CasSimpleMultifactorAuthenticationTicket.PREFIX.length() + 1);
+        val credential = new CasSimpleMultifactorTokenCredential(ticketIdWithoutPrefix);
+        assertNotNull(casSimpleMultifactorAuthenticationHandler.authenticate(credential).getPrincipal());
+    }
 }
