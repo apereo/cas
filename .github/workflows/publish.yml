@@ -30,9 +30,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 1
     steps:
-      - uses: styfle/cancel-workflow-action@0.3.1
+      - uses: styfle/cancel-workflow-action@0.7.0
         with:
-          workflow_id: 1291155,1328268
           access_token: ${{ github.token }}
 
 
@@ -71,8 +70,7 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-
-
+            
 ##########################################################################
 
   publish-snapshots:
@@ -93,9 +91,6 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
       - name: Publish SNAPSHOTs
         if: ${{ env.SONATYPE_USER != null && env.SONATYPE_PWD != null }}
         run: ./gradlew -DpublishSnapshots=true --build-cache --configure-on-demand --no-daemon --parallel -Dorg.gradle.internal.http.socketTimeout=180000 -Dorg.gradle.internal.http.connectionTimeout=180000 build publish -x test -x javadoc -x check -DsonatypeUsername="${SONATYPE_USER}" -DsonatypePassword="${SONATYPE_PWD}"

@@ -27,9 +27,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 1
     steps:
-      - uses: styfle/cancel-workflow-action@0.3.1
+      - uses: styfle/cancel-workflow-action@0.7.0
         with:
-          workflow_id: 1291155,1328268
           access_token: ${{ github.token }}
 
 
@@ -76,6 +75,8 @@ jobs:
     outputs:
       categories: ${{ steps.get-categories.outputs.categories }}
     steps:
+      - id: print-categories
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon downloadDependencies -q testCategories
       - id: get-categories
         run: echo "::set-output name=categories::$(./gradlew --build-cache --configure-on-demand --no-daemon downloadDependencies -q testCategories)]}"
 ##########################################################################
@@ -88,7 +89,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        category: ${{fromJSON(needs.testcategories.outputs.categories)}}
+        category: ${{ fromJson(["coding-standard", "phpstan-rules"]) }}
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
