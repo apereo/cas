@@ -54,6 +54,7 @@ jobs:
         run: ls ./ci && chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
 
 ##########################################################################
+
   cache:
     runs-on: ubuntu-latest
     needs: [initialize]
@@ -74,6 +75,7 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+
 
 ##########################################################################
 
@@ -135,203 +137,6 @@ jobs:
 
 ##########################################################################
 
-  validate-javadocs:
-    runs-on: ubuntu-latest
-    needs: [build]
-    if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v2
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: Validate Javadocs
-        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel javadoc -x test -x check -DskipNestedConfigMetadataGen=true --parallel
-
-##########################################################################
-
-  validate-commandline-shell:
-    runs-on: ubuntu-latest
-    needs: [build]
-    if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v2
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: Validate CAS Command-line Shell
-        run: |
-          casVersion=$(./gradlew casVersion --no-daemon -q)
-          java -jar support/cas-server-support-shell/build/libs/cas-server-support-shell-${casVersion}.jar @ci/tests/shell/cas-shell-script.sh 2>&1 | tee cas-shell.out
-          echo "Checking for stack traces in output that would indicate an error"
-          count=$(grep -c cas-server-support-shell cas-shell.out || true)
-          test $count -eq 0
-
-##########################################################################
-
-  validate-webapp-embedded:
-    runs-on: ubuntu-latest
-    needs: [build]
-    if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
-    strategy:
-      fail-fast: false
-      matrix:
-        category:
-          - tomcat
-          - jetty
-          - undertow
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v2
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: Validate Web Application Server
-        run: ./ci/tests/webapp/validate-embedded-webapp.sh ${{ matrix.category }}
-
-##########################################################################
-
-  validate-webapp-external-tomcat:
-    runs-on: ubuntu-latest
-    needs: [build]
-    if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v2
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: Validate Web Application Server via External Apache Tomcat
-        run: ./ci/tests/webapp/validate-external-webapp.sh tomcat
-
-##########################################################################
-
-  validate-spring-cloud-config-server:
-    runs-on: ubuntu-latest
-    needs: [build]
-    if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v2
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-#      - name: Setup tmate session
-#        uses: mxschmitt/action-tmate@v2
-      - name: Validate Spring Cloud Configuration Server
-        run: ./ci/tests/webapp/validate-configserver-webapp.sh
-
-##########################################################################
-
-  validate-eureka-discovery-server:
-    runs-on: ubuntu-latest
-    needs: [build]
-    if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v2
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: Validate Eureka Discovery Server
-        run: ./ci/tests/webapp/validate-eurekaserver-webapp.sh
-
-##########################################################################
-
-  validate-spring-boot-admin-server:
-    runs-on: ubuntu-latest
-    needs: [build]
-    if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v2
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-      - name: Validate Spring Boot Admin Server
-        run: ./ci/tests/webapp/validate-bootadmin-webapp.sh
-
-
-##########################################################################
-
   publish-snapshots:
     runs-on: ubuntu-latest
     needs: [build]
@@ -357,7 +162,7 @@ jobs:
         if: ${{ env.SONATYPE_USER != null && env.SONATYPE_PWD != null }}
         run: ./gradlew -DpublishSnapshots=true --build-cache --configure-on-demand --no-daemon --parallel -Dorg.gradle.internal.http.socketTimeout=180000 -Dorg.gradle.internal.http.connectionTimeout=180000 build publish -x test -x javadoc -x check -DsonatypeUsername="${SONATYPE_USER}" -DsonatypePassword="${SONATYPE_PWD}"
 
-  ##########################################################################
+##########################################################################
 
   publish-docker-image:
     runs-on: ubuntu-latest
@@ -381,6 +186,7 @@ jobs:
           cd work
           ls
           ./docker-push.sh "${DOCKER_USER}" "${DOCKER_PWD}" latest
+
 
 ##########################################################################
 
@@ -528,7 +334,9 @@ jobs:
           name: "cas-tests-${{ matrix.category }}.coverage"
           path: "./build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
         if: matrix.os == 'ubuntu-latest'
+
 ##########################################################################
+
   upload_coverage:
     runs-on: ubuntu-latest
     needs: [tests]
@@ -567,7 +375,8 @@ jobs:
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
           coverage-reports: ${{ env.CODACY_COVERAGE_REPORTS }}
-  ##########################################################################
+          
+##########################################################################
   
   report-dependency-updates:
     runs-on: ubuntu-latest
@@ -590,6 +399,7 @@ jobs:
       - name: Report Dependency Updates
         run: |
           ./gradlew --build-cache --configure-on-demand --no-daemon --parallel -x test -x javadoc dependencyUpdates -Drevision=release -DskipNestedConfigMetadataGen=true -DgradleReleaseChannel=current
+
 
 ##########################################################################
 
