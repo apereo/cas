@@ -36,7 +36,7 @@ import org.springframework.data.redis.core.RedisTemplate;
  */
 @Configuration("SamlIdPRedisIdPMetadataConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnExpression(value = "${cas.authn.saml-idp.metadata.redis.idp-metadata-enabled:false} and ${cas.authn.saml-idp.metadata.redis:true}")
+@ConditionalOnExpression(value = "${cas.authn.saml-idp.metadata.redis.idp-metadata-enabled:false} and ${cas.authn.saml-idp.metadata.redis.enabled:true}")
 @Slf4j
 public class SamlIdPRedisIdPMetadataConfiguration {
 
