@@ -95,11 +95,11 @@ public class GoogleAuthenticatorRedisTokenRepository extends BaseOneTimeTokenRep
     }
 
     private static String getGoogleAuthenticatorTokenRedisKey(final String username, final Integer otp) {
-        return CAS_PREFIX + KEY_SEPARATOR + username + KEY_SEPARATOR + otp;
+        return CAS_PREFIX + KEY_SEPARATOR + username.trim().toLowerCase() + KEY_SEPARATOR + otp;
     }
 
     private static String getGoogleAuthenticatorTokenRedisKey(final String username) {
-        return CAS_PREFIX + KEY_SEPARATOR + username + KEY_SEPARATOR + '*';
+        return CAS_PREFIX + KEY_SEPARATOR + username.trim().toLowerCase() + KEY_SEPARATOR + '*';
     }
 
     private static String getGoogleAuthenticatorTokenRedisKey(final Integer otp) {
