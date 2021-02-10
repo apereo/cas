@@ -109,12 +109,11 @@ jobs:
       - name: Validate CAS Command-line Shell
         run: |
           casVersion=$(./gradlew casVersion --no-daemon -q)
+          ./gradlew :support:cas-server-support-shell:build -DskipNestedConfigMetadataGen=true -x check -x javadoc  --no-daemon --build-cache --configure-on-demand --parallel
           java -jar support/cas-server-support-shell/build/libs/cas-server-support-shell-${casVersion}.jar @ci/tests/shell/cas-shell-script.sh 2>&1 | tee cas-shell.out
           echo "Checking for stack traces in output that would indicate an error"
           count=$(grep -c cas-server-support-shell cas-shell.out || true)
           test $count -eq 0
-
-
 
 ##########################################################################
 

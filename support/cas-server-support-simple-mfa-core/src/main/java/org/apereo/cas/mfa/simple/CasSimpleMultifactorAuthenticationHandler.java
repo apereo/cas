@@ -30,10 +30,10 @@ public class CasSimpleMultifactorAuthenticationHandler extends AbstractPreAndPos
     private final CentralAuthenticationService centralAuthenticationService;
 
     public CasSimpleMultifactorAuthenticationHandler(final String name,
-        final ServicesManager servicesManager,
-        final PrincipalFactory principalFactory,
-        final CentralAuthenticationService centralAuthenticationService,
-        final Integer order) {
+                                                     final ServicesManager servicesManager,
+                                                     final PrincipalFactory principalFactory,
+                                                     final CentralAuthenticationService centralAuthenticationService,
+                                                     final Integer order) {
         super(name, servicesManager, principalFactory, order);
         this.centralAuthenticationService = centralAuthenticationService;
     }
@@ -51,10 +51,7 @@ public class CasSimpleMultifactorAuthenticationHandler extends AbstractPreAndPos
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
         val tokenCredential = (CasSimpleMultifactorTokenCredential) credential;
-        var tokenId = tokenCredential.getId();
-        if (!tokenId.startsWith(CasSimpleMultifactorAuthenticationTicket.PREFIX)) {
-            tokenId = CasSimpleMultifactorAuthenticationTicket.PREFIX + CasSimpleMultifactorAuthenticationUniqueTicketIdGenerator.SEPARATOR + tokenId;
-        }
+        val tokenId = CasSimpleMultifactorAuthenticationUniqueTicketIdGenerator.normalize(tokenCredential.getId());
         LOGGER.debug("Received token [{}]", tokenId);
 
         val authentication = WebUtils.getInProgressAuthentication();
@@ -77,8 +74,7 @@ public class CasSimpleMultifactorAuthenticationHandler extends AbstractPreAndPos
             }
             deleteToken(acct);
 
-            LOGGER.debug("Validated token [{}] successfully for [{}]. Creating authentication result and building principal...",
-                tokenId, uid);
+            LOGGER.debug("Validated token [{}] successfully for [{}].", tokenId, uid);
             return createHandlerResult(tokenCredential, this.principalFactory.createPrincipal(uid));
         } catch (final AbstractTicketException e) {
             LoggingUtils.error(LOGGER, e);
