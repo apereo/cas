@@ -38,7 +38,7 @@ public class CouchDbGoogleAuthenticatorAccount extends GoogleAuthenticatorAccoun
         val account = CouchDbGoogleAuthenticatorAccount.builder()
             .id(acct.getId())
             .name(acct.getName())
-            .username(acct.getUsername())
+            .username(acct.getUsername().trim().toLowerCase())
             .secretKey(acct.getSecretKey())
             .validationCode(acct.getValidationCode())
             .scratchCodes(acct.getScratchCodes())

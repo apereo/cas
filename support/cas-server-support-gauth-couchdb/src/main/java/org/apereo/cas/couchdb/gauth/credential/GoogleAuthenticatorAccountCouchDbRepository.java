@@ -37,7 +37,7 @@ public class GoogleAuthenticatorAccountCouchDbRepository extends CouchDbReposito
     @View(name = "by_username", map = "function(doc) { if(doc.secretKey) { emit(doc.username, doc) } }")
     public List<CouchDbGoogleAuthenticatorAccount> findByUsername(final String username) {
         try {
-            return queryView("by_username", username);
+            return queryView("by_username", username.trim().toLowerCase());
         } catch (final DocumentNotFoundException e) {
             LOGGER.trace(e.getMessage(), e);
         }
@@ -73,7 +73,7 @@ public class GoogleAuthenticatorAccountCouchDbRepository extends CouchDbReposito
      */
     @View(name = "count_by_username", map = "function(doc) { if(doc.secretKey) { emit(doc.username, doc._id, doc) } }", reduce = "_count")
     public long count(final String username) {
-        val rows = db.queryView(createQuery("count_by_username").key(username)).getRows();
+        val rows = db.queryView(createQuery("count_by_username").key(username.trim().toLowerCase())).getRows();
         return rows.isEmpty() ? 0 : rows.get(0).getValueAsInt();
     }
     
@@ -99,7 +99,7 @@ public class GoogleAuthenticatorAccountCouchDbRepository extends CouchDbReposito
     @View(name = "by_id_username", map = "function(doc) { emit([doc.id, doc.username], doc) }")
     public OneTimeTokenAccount findByIdAndUsername(final long id, final String username) {
         try {
-            val view = createQuery("by_id_username").key(ComplexKey.of(id, username)).limit(1);
+            val view = createQuery("by_id_username").key(ComplexKey.of(id, username.trim().toLowerCase())).limit(1);
             return db.queryView(view, CouchDbGoogleAuthenticatorAccount.class).stream().findFirst().orElse(null);
         } catch (final DocumentNotFoundException e) {
             LOGGER.trace(e.getMessage(), e);
