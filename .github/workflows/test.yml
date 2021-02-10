@@ -75,6 +75,7 @@ jobs:
     outputs:
       categories: ${{ steps.get-categories.outputs.categories }}
     steps:
+      - uses: actions/checkout@v2
       - id: print-categories
         run: ./gradlew --build-cache --configure-on-demand --no-daemon downloadDependencies -q testCategories
       - id: get-categories
