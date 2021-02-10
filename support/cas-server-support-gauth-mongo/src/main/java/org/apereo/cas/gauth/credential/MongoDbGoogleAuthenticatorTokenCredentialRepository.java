@@ -16,8 +16,8 @@ import org.springframework.data.mongodb.core.query.Query;
 import javax.persistence.NoResultException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Locale;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 @Getter
 public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleAuthenticatorTokenCredentialRepository {
     private final MongoOperations mongoTemplate;
+
     private final String collectionName;
 
     public MongoDbGoogleAuthenticatorTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator,

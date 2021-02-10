@@ -55,7 +55,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
                 return null;
             }
 
-            val account = map.get(username);
+            val account = map.get(username.trim().toLowerCase());
             if (account != null) {
                 return decode(account);
             }
@@ -73,7 +73,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
     public void save(final String userName, final String secretKey,
                      final int validationCode, final List<Integer> scratchCodes) {
         LOGGER.debug("Storing google authenticator account for [{}]", userName);
-        val account = new OneTimeTokenAccount(userName, secretKey, validationCode, scratchCodes);
+        val account = new OneTimeTokenAccount(userName.trim().toLowerCase(), secretKey, validationCode, scratchCodes);
         update(account);
     }
 
@@ -84,7 +84,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
 
             LOGGER.debug("Found [{}] account(s) and added google authenticator account for [{}]", accounts.size(), account.getUsername());
             val encoded = encode(account);
-            accounts.put(account.getUsername(), encoded);
+            accounts.put(account.getUsername().trim().toLowerCase(), encoded);
 
             writeAccountsToJsonRepository(accounts);
             return encoded;
@@ -103,7 +103,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
     public void delete(final String username) {
         try {
             val accounts = readAccountsFromJsonRepository();
-            accounts.remove(username);
+            accounts.remove(username.trim().toLowerCase());
             writeAccountsToJsonRepository(accounts);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
