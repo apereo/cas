@@ -57,7 +57,7 @@ public class JpaWebAuthnCredentialRepository extends BaseWebAuthnCredentialRepos
     public Collection<CredentialRegistration> getRegistrationsByUsername(final String username) {
         val records = entityManager.createQuery(
             SELECT_QUERY.concat("WHERE r.username = :username"), JpaWebAuthnCredentialRegistration.class)
-            .setParameter("username", username)
+            .setParameter("username", username.trim().toLowerCase())
             .getResultList();
 
         return records.stream()
@@ -94,13 +94,13 @@ public class JpaWebAuthnCredentialRepository extends BaseWebAuthnCredentialRepos
             @Override
             protected void doInTransactionWithoutResult(final TransactionStatus status) {
                 val count = entityManager.createQuery(UPDATE_QUERY.concat("SET r.records=:records WHERE r.username = :username"))
-                    .setParameter("username", username)
+                    .setParameter("username", username.trim().toLowerCase())
                     .setParameter("records", jsonRecords)
                     .executeUpdate();
 
                 if (count == 0) {
                     val record = JpaWebAuthnCredentialRegistration.builder()
-                        .username(username)
+                        .username(username.trim().toLowerCase())
                         .records(jsonRecords)
                         .build();
                     entityManager.merge(record);

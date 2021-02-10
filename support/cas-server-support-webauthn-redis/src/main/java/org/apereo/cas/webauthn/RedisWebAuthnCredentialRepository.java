@@ -78,7 +78,7 @@ public class RedisWebAuthnCredentialRepository extends BaseWebAuthnCredentialRep
             val jsonRecords = getCipherExecutor().encode(WebAuthnUtils.getObjectMapper().writeValueAsString(records));
             val entry = RedisWebAuthnCredentialRegistration.builder()
                 .records(jsonRecords)
-                .username(username)
+                .username(username.trim().toLowerCase())
                 .build();
             redisTemplate.boundValueOps(redisKey).set(entry);
         }
@@ -100,6 +100,6 @@ public class RedisWebAuthnCredentialRepository extends BaseWebAuthnCredentialRep
     }
 
     private static String buildRedisKeyForRecord(final String username) {
-        return CAS_WEB_AUTHN_PREFIX + username;
+        return CAS_WEB_AUTHN_PREFIX + username.trim().toLowerCase();
     }
 }
