@@ -90,9 +90,6 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
       - name: Locust Performance Tests
         run: ./ci/tests/perf/perftests-locust.sh ${{ matrix.category }}
 
@@ -124,9 +121,6 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
       - name: JMeter Performance Tests
         run: ./ci/tests/perf/perftests-jmeter.sh ${{ matrix.category }}
 
