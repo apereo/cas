@@ -40,7 +40,7 @@ public class MongoDbWebAuthnCredentialRepository extends BaseWebAuthnCredentialR
     @Override
     public Collection<CredentialRegistration> getRegistrationsByUsername(final String username) {
         val query = new Query().addCriteria(Criteria.where(MongoDbWebAuthnCredentialRegistration.FIELD_USERNAME).is(username))
-            .collation(Collation.of(Locale.ENGLISH).strength(Collation.ComparisonLevel.primary()))
+            .collation(Collation.of(Locale.ENGLISH).strength(Collation.ComparisonLevel.primary()));
         val records = mongoTemplate.find(query, MongoDbWebAuthnCredentialRegistration.class,
             getProperties().getAuthn().getMfa().getWebAuthn().getMongo().getCollection());
         return records.stream()
@@ -55,7 +55,7 @@ public class MongoDbWebAuthnCredentialRepository extends BaseWebAuthnCredentialR
     @Override
     protected Stream<CredentialRegistration> load() {
         val query = new Query().addCriteria(Criteria.where(MongoDbWebAuthnCredentialRegistration.FIELD_USERNAME).exists(true))
-            .collation(Collation.of(Locale.ENGLISH).strength(Collation.ComparisonLevel.primary()))
+            .collation(Collation.of(Locale.ENGLISH).strength(Collation.ComparisonLevel.primary()));
         val records = mongoTemplate.find(query, MongoDbWebAuthnCredentialRegistration.class,
             getProperties().getAuthn().getMfa().getWebAuthn().getMongo().getCollection());
         return records.stream()
@@ -70,7 +70,7 @@ public class MongoDbWebAuthnCredentialRepository extends BaseWebAuthnCredentialR
     @SneakyThrows
     protected void update(final String username, final Collection<CredentialRegistration> records) {
         val query = new Query(Criteria.where(MongoDbWebAuthnCredentialRegistration.FIELD_USERNAME).is(username))
-            .collation(Collation.of(Locale.ENGLISH).strength(Collation.ComparisonLevel.primary()))
+            .collation(Collation.of(Locale.ENGLISH).strength(Collation.ComparisonLevel.primary()));
         val collection = getProperties().getAuthn().getMfa().getWebAuthn().getMongo().getCollection();
         if (records.isEmpty()) {
             LOGGER.debug("No records are provided for [{}] so entry will be removed", username);
