@@ -32,7 +32,7 @@ public class JpaGoogleAuthenticatorAccount extends GoogleAuthenticatorAccount {
 
     public JpaGoogleAuthenticatorAccount(final String username, final String secretKey,
                                          final int validationCode, final List<Integer> scratchCodes) {
-        super(username, secretKey, validationCode, scratchCodes);
+        super(username.trim().toLowerCase(), secretKey, validationCode, scratchCodes);
         this.id = System.currentTimeMillis();
     }
 }

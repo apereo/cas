@@ -125,11 +125,11 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
     }
 
     private static String getGoogleAuthenticatorRedisKey(final String username) {
-        return CAS_PREFIX + KEY_SEPARATOR + username;
+        return CAS_PREFIX + KEY_SEPARATOR + username.trim().toLowerCase();
     }
 
     private Set<String> getGoogleAuthenticatorTokenKeys(final String username) {
-        val key = CAS_PREFIX + KEY_SEPARATOR + username;
+        val key = CAS_PREFIX + KEY_SEPARATOR + username.trim().toLowerCase();
         LOGGER.trace("Fetching Google Authenticator records based on key [{}]", key);
         return this.template.keys(key);
     }

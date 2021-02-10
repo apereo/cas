@@ -58,7 +58,7 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
     private JpaGoogleAuthenticatorAccount fetchAccount(final String username) {
         return this.entityManager.createQuery("SELECT r FROM "
             + ENTITY_NAME + " r where r.username = :username", JpaGoogleAuthenticatorAccount.class)
-            .setParameter("username", username)
+            .setParameter("username", username.toLowerCase().trim())
             .getSingleResult();
     }
 
