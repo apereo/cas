@@ -1,6 +1,6 @@
-package org.apereo.cas.support.saml;
+package org.apereo.cas.aup;
 
-import org.apereo.cas.config.SamlIdPRedisIdPMetadataConfiguration;
+import org.apereo.cas.config.CasAcceptableUsagePolicyRedisConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,14 +14,14 @@ import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
- * This class is testing that the conditional expression on the SamlIdPRedisIdPMetadataConfiguration class works.
- * The class should not be created because one of the properties is false.
+ * This class is testing that the conditional expression on the CasAcceptableUsagePolicyRedisConfiguration class works.
+ * The positive test is done implicitly by other tests that use the CasAcceptableUsagePolicyRedisConfiguration class.
  * @since 6.4.0
  */
-@SpringBootTest(classes = SamlIdPRedisIdPMetadataConfiguration.class)
+@SpringBootTest(classes = CasAcceptableUsagePolicyRedisConfiguration.class)
 @TestPropertySource(properties = {
-        "cas.authn.saml-idp.metadata.redis.idp-metadata-enabled=true",
-        "cas.authn.saml-idp.metadata.redis.enabled=false"
+        "cas.acceptable-usage-policy.core.enabled=false",
+        "cas.acceptable-usage-policy.core.redis.enabled=true"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class ConditionalOnExpressionNegativeTests {
@@ -29,9 +29,10 @@ public class ConditionalOnExpressionNegativeTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    public void verifyConfigClassNotLoaded() {
+    public void verifyConfigClassLoaded() {
         String[] beans = applicationContext.getBeanDefinitionNames();
-        assertFalse(Arrays.stream(beans).anyMatch("redisSamlIdPMetadataConnectionFactory"::equalsIgnoreCase));
+        assertFalse(Arrays.stream(beans).anyMatch("redisAcceptableUsagePolicyTemplate"::equalsIgnoreCase));
+        assertFalse(Arrays.stream(beans).anyMatch("redisAcceptableUsagePolicyConnectionFactory"::equalsIgnoreCase));
     }
 
 }

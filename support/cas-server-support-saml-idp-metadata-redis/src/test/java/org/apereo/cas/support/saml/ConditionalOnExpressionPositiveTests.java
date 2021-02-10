@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest(classes = SamlIdPRedisIdPMetadataConfiguration.class)
 @TestPropertySource(properties = {
         "cas.authn.saml-idp.metadata.redis.idp-metadata-enabled=true",
-        "cas.acceptable-usage-policy.core.redis.enabled=true"
+        "cas.authn.saml-idp.metadata.redis.enabled=true"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class ConditionalOnExpressionPositiveTests {
