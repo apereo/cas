@@ -89,7 +89,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        category: ${{ fromJson(["coding-standard", "phpstan-rules"]) }}
+        category: ${{ fromJson("['coding-standard', 'phpstan-rules']") }}
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
