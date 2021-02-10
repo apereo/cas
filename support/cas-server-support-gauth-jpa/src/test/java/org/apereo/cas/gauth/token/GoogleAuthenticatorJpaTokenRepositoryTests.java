@@ -31,6 +31,7 @@ import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfigu
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import lombok.Getter;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -85,4 +86,9 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Getter
 @Tag("JDBC")
 public class GoogleAuthenticatorJpaTokenRepositoryTests extends BaseOneTimeTokenRepositoryTests {
+
+    @BeforeEach
+    public void setup() {
+        oneTimeTokenAuthenticatorTokenRepository.removeAll();
+    }
 }
