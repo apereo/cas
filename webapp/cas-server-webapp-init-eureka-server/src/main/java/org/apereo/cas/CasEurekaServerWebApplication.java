@@ -3,6 +3,7 @@ package org.apereo.cas;
 import org.apereo.cas.util.AsciiArtUtils;
 import org.apereo.cas.util.DateTimeUtils;
 
+import com.netflix.discovery.provider.DiscoveryJerseyProvider;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -24,6 +25,7 @@ import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfigurat
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.event.EventListener;
 
 import java.time.Instant;
@@ -46,7 +48,8 @@ import java.time.Instant;
     CassandraAutoConfiguration.class,
     MetricsAutoConfiguration.class,
     DataSourceTransactionManagerAutoConfiguration.class,
-    RedisRepositoriesAutoConfiguration.class},
+    RedisRepositoriesAutoConfiguration.class
+},
     proxyBeanMethods = false)
 @EnableEurekaServer
 @NoArgsConstructor

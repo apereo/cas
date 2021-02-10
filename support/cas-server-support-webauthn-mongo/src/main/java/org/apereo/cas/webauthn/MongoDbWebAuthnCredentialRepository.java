@@ -82,7 +82,8 @@ public class MongoDbWebAuthnCredentialRepository extends BaseWebAuthnCredentialR
             })
             .collect(Collectors.toList());
 
-        val query = new Query(Criteria.where(MongoDbWebAuthnCredentialRegistration.FIELD_USERNAME).is(username));
+        val query = new Query(Criteria.where(MongoDbWebAuthnCredentialRegistration.FIELD_USERNAME).is(username))
+            .collation(Collation.of(Locale.ENGLISH).strength(Collation.ComparisonLevel.primary()));
         val collection = getProperties().getAuthn().getMfa().getWebAuthn().getMongo().getCollection();
         if (records.isEmpty()) {
             LOGGER.debug("No records are provided for [{}] so entry will be removed", username);
