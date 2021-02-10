@@ -23,11 +23,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 1
     steps:
-      - uses: styfle/cancel-workflow-action@0.3.1
+      - uses: styfle/cancel-workflow-action@0.7.0
         with:
-          workflow_id: 1291155,1328268
           access_token: ${{ github.token }}
-
 
 ##########################################################################
 
@@ -85,9 +83,6 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
       - name: Validate Javadocs
         run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel javadoc -x test -x check -DskipNestedConfigMetadataGen=true --parallel
 
@@ -111,9 +106,6 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
       - name: Validate CAS Command-line Shell
         run: |
           casVersion=$(./gradlew casVersion --no-daemon -q)
@@ -151,9 +143,6 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
       - name: Validate Web Application Server
         run: ./ci/tests/webapp/validate-embedded-webapp.sh ${{ matrix.category }}
 
@@ -177,9 +166,6 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
       - name: Validate Web Application Server via External Apache Tomcat
         run: ./ci/tests/webapp/validate-external-webapp.sh tomcat
 
@@ -203,11 +189,6 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
-#      - name: Setup tmate session
-#        uses: mxschmitt/action-tmate@v2
       - name: Validate Spring Cloud Configuration Server
         run: ./ci/tests/webapp/validate-configserver-webapp.sh
 
@@ -231,9 +212,6 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
       - name: Validate Eureka Discovery Server
         run: ./ci/tests/webapp/validate-eurekaserver-webapp.sh
 
@@ -257,9 +235,6 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - uses: actions/download-artifact@v2
-        with:
-          name: binary-artifacts
       - name: Validate Spring Boot Admin Server
         run: ./ci/tests/webapp/validate-bootadmin-webapp.sh
 
