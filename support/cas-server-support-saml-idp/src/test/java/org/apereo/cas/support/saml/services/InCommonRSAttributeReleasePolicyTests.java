@@ -40,10 +40,14 @@ public class InCommonRSAttributeReleasePolicyTests extends BaseSamlIdPConfigurat
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         registeredService.setAttributeReleasePolicy(filter);
         val attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal("casuser",
-            CollectionUtils.wrap("eduPersonPrincipalName", "cas-eduPerson-user")),
+            CollectionUtils.wrap("eduPersonPrincipalName", "cas-eduPerson-user", 
+                "mail", "cas@example.org",
+                "sn", "surname")),
             CoreAuthenticationTestUtils.getService(), registeredService);
         assertFalse(attributes.isEmpty());
         assertTrue(attributes.containsKey("eduPersonPrincipalName"));
+        assertTrue(attributes.containsKey("mail"));
+        assertTrue(attributes.containsKey("sn"));
     }
 
     @Test
