@@ -1,5 +1,7 @@
 package org.apereo.cas;
 
+import org.apereo.cas.support.saml.ConditionalOnExpressionNegativeTests;
+import org.apereo.cas.support.saml.ConditionalOnExpressionPositiveTests;
 import org.apereo.cas.support.saml.idp.metadata.RedisSamlIdPMetadataGeneratorTests;
 import org.apereo.cas.support.saml.idp.metadata.RedisSamlIdPMetadataLocatorTests;
 import org.apereo.cas.support.saml.metadata.resolver.RedisSamlRegisteredServiceMetadataResolverTests;
@@ -17,7 +19,9 @@ import org.junit.runner.RunWith;
 @SelectClasses({
     RedisSamlIdPMetadataGeneratorTests.class,
     RedisSamlIdPMetadataLocatorTests.class,
-    RedisSamlRegisteredServiceMetadataResolverTests.class
+    RedisSamlRegisteredServiceMetadataResolverTests.class,
+    ConditionalOnExpressionPositiveTests.class,
+    ConditionalOnExpressionNegativeTests.class
 })
 @RunWith(JUnitPlatform.class)
 public class RedisSamlTestsSuite {
