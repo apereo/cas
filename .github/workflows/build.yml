@@ -73,6 +73,7 @@ jobs:
 
   build:
     needs: [cache]
+    continue-on-error: false
     if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
     strategy:
       fail-fast: false
@@ -110,6 +111,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
     needs: [cache]
+    continue-on-error: false
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
