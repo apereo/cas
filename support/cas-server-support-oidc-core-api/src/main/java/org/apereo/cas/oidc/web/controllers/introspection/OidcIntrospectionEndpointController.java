@@ -1,7 +1,6 @@
 package org.apereo.cas.oidc.web.controllers.introspection;
 
 import org.apereo.cas.oidc.OidcConstants;
-import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20IntrospectionEndpointController;
 import org.apereo.cas.support.oauth.web.response.introspection.OAuth20IntrospectionAccessTokenResponse;
@@ -60,8 +59,8 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
     }
 
     @Override
-    protected OAuth20IntrospectionAccessTokenResponse createIntrospectionValidResponse(final OAuthRegisteredService service, final OAuth20AccessToken ticket) {
-        val r = super.createIntrospectionValidResponse(service, ticket);
+    protected OAuth20IntrospectionAccessTokenResponse createIntrospectionValidResponse(final OAuth20AccessToken ticket) {
+        val r = super.createIntrospectionValidResponse(ticket);
         if (r.isActive()) {
             r.setScope(String.join(" ", ticket.getScopes()));
         }
