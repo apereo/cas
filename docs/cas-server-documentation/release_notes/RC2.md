@@ -48,13 +48,77 @@ cas.version=6.4.0-RC2
 
 The following items are new improvements and enhancements presented in this release. 
 
+### CAS Documentation
+
+CAS documentation has gone through a cleanup effort to improve how configuration settings are
+managed and presented. Configuration namespaces for CAS settings are presented as individual
+snippets and fragments appropriate for each feature, and are included throughout the documentation
+pages where necessary, split into panes for required, optional and third-party settings, etc.
+
+The presentation and generation of CAS settings and their documentation is entirely driven by CAS configuration metadata,
+and this capability is ultimately powered by Github Pages and Jekyll that render the CAS documentation in the backend.
+
+Please note that as part of this change, a number of CAS configuration settings are moved around into new namespaces
+to make the generation of configuration metadata and relevant documentation snippets easier. Most likely, settings
+are moved into a new `.core.` or `.engine.` or `.policy` namespace. Some of the settings that are affected by this effort
+are:
+
+- `cas.authn.adaptive`
+- `cas.service-registry`
+- `cas.authn.mfa`
+- `cas.attribute-repository`
+- `cas.authn.pac4j`
+- `cas.ticket.tgt`
+
+<div class="alert alert-info">
+<strong>Note</strong><br/>Configuration changes for the most commonly-used settings
+are recorded in the CAS configuration metadata catalog to note the change and the possible replacement.
+You should be receiving warnings and/or instructions on startup if your configuration is affected by
+the above changes. 
+</div>
+
+## Pac4j v5
+
+The Pac4j library, mainly responsible for delegated authentication, is now upgraded to `v5`. This is a major upgrade
+with many API changes that affect the internal workings of CAS when it comes to dealing with an external identity provider
+or managing the internal implementation of OpenID Connect and SAML2 protocols when CAS is acting as a standalone identity provider.
+Pac4j `v5` is not quite final yet, and we are taking advantage of the early release candidate here to do as much work upfront
+as possible to handle the final upgrade better in the future. As a result, some things may not be immediately functional
+and, as always, you are encouraged to try and test the upgrade as much as possible to avoid surprises.
+
+## Scriptable Email Messages
+
+The construction of the [email message body](../notifications/Sending-Email-Configuration.html) can 
+now be scripted using an external Groovy script.
 
 ## Other Stuff
-
- - The default value for `cas.service-registry.git.branches-to-clone` and `cas.authn.saml-idp.metadata.git.branches-to-clone`
-   changed from `master` to `*` which means all branches will be cloned by default. The properties may contain a list of
-   branches, but the list must include the branch specified in the `cas.service-registry.git.active-branch` 
-   or `cas.authn.saml-idp.metadata.git.active-branch` property. 
+      
+- A number of Docker images used for [integration tests](../developer/Test-Process.html), such as 
+  DynamoDb, MySQL, MariaDb, etc are now updated to their latest versions.
+- A special failure analyzer for Spring Boot is now available to analyze startup failures more accurately and with better logs.
+- In [delegated authentication](../integration/Delegate-Authentication-SAML.html) to SAML2 identity providers,
+  handling SAML2 logout requests and responses should now properly honor final redirects back to the calling application.
+- Support for the legacy syntax for [JSON service definitions](../services/JSON-Service-Management.html) 
+  based on CAS Addons as well as the old `org.jasig` namespace has been removed. 
+- Local interception and changing the default user interface language can now be forced regardless of the http request.  
+- Reworking internal components and APIs for [password management](../password_management/Password-Management.html) to 
+  make customizations easier, specially when multiple fields may be involved to locate the user record. The work here may present
+  breaking changes, specially if you are handling password 
+  management operations via external [Groovy scripts](../password_management/Password-Management-Groovy.html).
+- The default value for `cas.service-registry.git.branches-to-clone` and `cas.authn.saml-idp.metadata.git.branches-to-clone`
+  changed from `master` to `*` which means all branches will be cloned by default. The properties may contain a list of
+  branches, but the list must include the branch specified in the `cas.service-registry.git.active-branch`
+  or `cas.authn.saml-idp.metadata.git.active-branch` property. 
+- References to [Bintray repositories](https://jfrog.com/blog/into-the-sunset-bintray-jcenter-gocenter-and-chartcenter/) 
+  have been removed and updated with more maintainable replacements.
 
 ## Library Upgrades
 
+- Apache Tomcat
+- Nimbus OIDC
+- Nimbus JWT
+- Google Maps
+- Couchbase Client
+- MariaDb Driver
+- Spring Cloud
+- Pac4j

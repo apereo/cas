@@ -252,7 +252,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
         if (ctx != null) {
             LOGGER.trace("Located application context. Retrieving default attributes for release, if any");
             val props = ctx.getAutowireCapableBeanFactory().getBean(CasConfigurationProperties.class);
-            val defaultAttrs = props.getAuthn().getAttributeRepository().getDefaultAttributesToRelease();
+            val defaultAttrs = props.getAuthn().getAttributeRepository().getCore().getDefaultAttributesToRelease();
             LOGGER.debug("Default attributes for release are: [{}]", defaultAttrs);
             val defaultAttributesToRelease = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
             defaultAttrs.forEach(key -> {

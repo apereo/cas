@@ -20,16 +20,6 @@ Duo offers several options for authenticating users:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-duo" %}
 
-You may need to add the following repositories to the WAR overlay:
-
-```groovy
-repositories {
-    maven { 
-        mavenContent { releasesOnly() }
-        url "https://dl.bintray.com/uniconiam/maven" 
-    }
-}
-```
 
 ## Administrative Endpoints
 
@@ -112,9 +102,7 @@ curl --location --header "Content-Type: application/cas" https://apps.example.or
 
 ## Configuration
 
-{% include casproperties.html
-modules="cas-server-support-duo"
-properties="cas.authn.mfa.duo[].bypass" %}
+{% include casproperties.html properties="cas.authn.mfa.duo" %}
 
 #### Web SDK Configuration
 

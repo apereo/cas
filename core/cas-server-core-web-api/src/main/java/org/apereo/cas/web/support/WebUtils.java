@@ -720,10 +720,12 @@ public class WebUtils {
      */
     public static void putRecaptchaPropertiesFlowScope(final RequestContext context, final GoogleRecaptchaProperties googleRecaptcha) {
         val flowScope = context.getFlowScope();
-        flowScope.put("recaptchaSiteKey", googleRecaptcha.getSiteKey());
-        flowScope.put("recaptchaInvisible", googleRecaptcha.isInvisible());
-        flowScope.put("recaptchaPosition", googleRecaptcha.getPosition());
-        flowScope.put("recaptchaVersion", googleRecaptcha.getVersion().name().toLowerCase());
+        if (googleRecaptcha.isEnabled()) {
+            flowScope.put("recaptchaSiteKey", googleRecaptcha.getSiteKey());
+            flowScope.put("recaptchaInvisible", googleRecaptcha.isInvisible());
+            flowScope.put("recaptchaPosition", googleRecaptcha.getPosition());
+            flowScope.put("recaptchaVersion", googleRecaptcha.getVersion().name().toLowerCase());
+        }
     }
 
     /**
@@ -810,6 +812,15 @@ public class WebUtils {
      */
     public static <T> T getLogoutRedirectUrl(final RequestContext context, final Class<T> clazz) {
         return context.getFlowScope().get("logoutRedirectUrl", clazz);
+    }
+
+    /**
+     * Remove logout redirect url.
+     *
+     * @param context the context
+     */
+    public static void removeLogoutRedirectUrl(final RequestContext context) {
+        context.getFlowScope().remove("logoutRedirectUrl");
     }
 
     /**
@@ -1519,5 +1530,25 @@ public class WebUtils {
      */
     public static String getSingleLogoutRequest(final HttpServletRequest request) {
         return (String) request.getAttribute("singleLogoutRequest");
+    }
+
+    /**
+     * Gets delegated authentication client name.
+     *
+     * @param requestContext the request context
+     * @return the delegated authentication client name
+     */
+    public static String getDelegatedAuthenticationClientName(final RequestContext requestContext) {
+        return requestContext.getFlowScope().get("delegatedAuthenticationClientName", String.class);
+    }
+
+    /**
+     * Put delegated authentication client name.
+     *
+     * @param requestContext the request context
+     * @param clientName     the client name
+     */
+    public static void putDelegatedAuthenticationClientName(final RequestContext requestContext, final String clientName) {
+        requestContext.getFlowScope().put("delegatedAuthenticationClientName", clientName);
     }
 }

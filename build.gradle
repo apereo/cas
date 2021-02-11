@@ -6,7 +6,6 @@ defaultTasks "clean", "build"
 buildscript {
     repositories {
         mavenCentral()
-        jcenter()
         gradlePluginPortal()
         maven {
             url "https://maven.eveoh.nl/content/repositories/releases"
@@ -53,6 +52,7 @@ ext {
     excludedFilesFromTestCoverage = [
         '**/docs/**',
         '**/soap/generated/**',
+        '**/com/duosecurity/**',
         '**/**ConfigurationMetadata**',
         '**/**NtlmAuthenticationHandler**',
         '**/**CosmosDbServiceRegistry**',
@@ -87,7 +87,8 @@ if (!Boolean.getBoolean("skipSonarqube")) {
 
     sonarqube {
         def exclusions = rootProject.excludedFilesFromTestCoverage.join(",")
-        def token = providers.systemProperty("SONARCLOUD_TOKEN").forUseAtConfigurationTime().getOrElse(System.getenv("SONARCLOUD_TOKEN"))
+        def token = providers.systemProperty("SONARCLOUD_TOKEN").forUseAtConfigurationTime()
+                .getOrElse(System.getenv("SONARCLOUD_TOKEN"))
         properties {
             property "sonar.host.url", "https://sonarcloud.io"
             property "sonar.projectName", "cas"
@@ -184,7 +185,8 @@ allprojects {
             downloadJavadoc = false
             jdkName = project.targetCompatibility
             excludeDirs += file(".gradle")
-            [".settings", "classes", "bin", "out", "docs", "dependency-cache", "libs", "reports", "resources", "test-results", "tmp"].each {
+            [".settings", "classes", "bin", "out", "docs", "dependency-cache", "libs",
+             "reports", "resources", "test-results", "tmp"].each {
                 excludeDirs += file("$buildDir/$it")
             }
         }
@@ -193,10 +195,9 @@ allprojects {
     javadoc {
         options.addBooleanOption('html5', true)
         failOnError = Boolean.getBoolean("ignoreJavadocFailures")
-        excludes = ['**/generated/**']
+        excludes = ['**/generated/**', '**/com/duosecurity/**']
     }
-
-
+    
 }
 
 subprojects {
@@ -400,7 +401,7 @@ subprojects {
                                                     '-Xep:HidingField:OFF',
                                                     '-Xep:MissingSummary:OFF',
                                                     '-Xep:SameNameButDifferent:OFF']
-
+            it.options.errorprone.excludedPaths = ".*com/duosecurity.*"
             casCompilerArgs.add("-XDcompilePolicy=byfile")
         }
         it.options.compilerArgs += casCompilerArgs
@@ -489,6 +490,8 @@ subprojects {
         api libraries.javaxel
         api libraries.javax
 
+        annotationProcessor libraries.springindexer
+        
         if (!Boolean.getBoolean("skipSpotbugs") && projectShouldBePublished(project)) {
             spotbugsPlugins libraries.findbugscontrib
             spotbugsPlugins libraries.findbugssec

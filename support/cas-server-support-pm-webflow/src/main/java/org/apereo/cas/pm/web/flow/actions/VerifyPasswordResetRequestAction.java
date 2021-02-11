@@ -3,6 +3,7 @@ package org.apereo.cas.pm.web.flow.actions;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.BasePasswordManagementService;
+import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
 import org.apereo.cas.ticket.TransientSessionTicket;
@@ -53,11 +54,12 @@ public class VerifyPasswordResetRequestAction extends AbstractAction {
             val username = passwordManagementService.parseToken(token);
             centralAuthenticationService.deleteTicket(tst.getId());
 
+            val query = PasswordManagementQuery.builder().username(username).build();
             PasswordManagementWebflowUtils.putPasswordResetToken(requestContext, token);
             val pm = casProperties.getAuthn().getPm();
             if (pm.getReset().isSecurityQuestionsEnabled()) {
                 val questions = BasePasswordManagementService
-                    .canonicalizeSecurityQuestions(passwordManagementService.getSecurityQuestions(username));
+                    .canonicalizeSecurityQuestions(passwordManagementService.getSecurityQuestions(query));
                 if (questions.isEmpty()) {
                     LOGGER.warn("No security questions could be found for [{}]", username);
                     return error();

@@ -19,4 +19,17 @@ public class CasSimpleMultifactorAuthenticationUniqueTicketIdGenerator implement
     public String getNewTicketId(final String prefix) {
         return prefix + SEPARATOR + RandomUtils.randomNumeric(this.tokenLength);
     }
+
+    /**
+     * Normalize ticket.
+     *
+     * @param tokenId the token id
+     * @return the string
+     */
+    public static String normalize(final String tokenId) {
+        if (!tokenId.startsWith(CasSimpleMultifactorAuthenticationTicket.PREFIX)) {
+            return CasSimpleMultifactorAuthenticationTicket.PREFIX + SEPARATOR + tokenId;
+        }
+        return tokenId;
+    }
 }

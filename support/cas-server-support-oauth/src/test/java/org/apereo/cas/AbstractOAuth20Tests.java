@@ -95,7 +95,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.HttpStatus;
 import org.pac4j.core.context.HttpConstants;
-import org.pac4j.springframework.web.SecurityInterceptor;
+import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -225,6 +225,10 @@ public abstract class AbstractOAuth20Tests {
     protected OAuth20AccessTokenEndpointController accessTokenController;
 
     @Autowired
+    @Qualifier("oauthDistributedSessionStore")
+    protected SessionStore oauthDistributedSessionStore;
+
+    @Autowired
     @Qualifier("oauthAuthorizationCodeResponseBuilder")
     protected OAuth20AuthorizationResponseBuilder oauthAuthorizationCodeResponseBuilder;
 
@@ -254,7 +258,7 @@ public abstract class AbstractOAuth20Tests {
 
     @Autowired
     @Qualifier("requiresAuthenticationAccessTokenInterceptor")
-    protected SecurityInterceptor requiresAuthenticationInterceptor;
+    protected HandlerInterceptor requiresAuthenticationInterceptor;
 
     @Autowired
     protected ConfigurableApplicationContext applicationContext;

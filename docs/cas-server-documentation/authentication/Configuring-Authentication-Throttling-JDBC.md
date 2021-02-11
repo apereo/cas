@@ -16,5 +16,4 @@ Enable the following module in your configuration overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-throttle-jdbc" %}
 
-{% include casproperties.html
-modules="cas-server-support-throttle-jdbc" %}
+{% include casproperties.html properties="cas.authn.throttle.jdbc" %}

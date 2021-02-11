@@ -1,7 +1,7 @@
 {
   "dependencies": "u2f",
   "properties": [
-    "--cas.service-registry.init-from-json=true",
+    "--cas.service-registry.core.init-from-json=true",
     "--cas.authn.mfa.u2f.crypto.enabled=false",
     "--cas.authn.mfa.u2f.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/u2f-login/accounts.json"
   ]

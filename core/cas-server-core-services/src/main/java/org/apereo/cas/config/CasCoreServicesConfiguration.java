@@ -235,10 +235,10 @@ public class CasCoreServicesConfiguration {
     @ConditionalOnMissingBean(name = "servicesManagerCache")
     public Cache<Long, RegisteredService> servicesManagerCache() {
         val serviceRegistry = casProperties.getServiceRegistry();
-        val duration = Beans.newDuration(serviceRegistry.getCache());
+        val duration = Beans.newDuration(serviceRegistry.getCache().getDuration());
         return Caffeine.newBuilder()
-            .initialCapacity(serviceRegistry.getCacheCapacity())
-            .maximumSize(serviceRegistry.getCacheSize())
+            .initialCapacity(serviceRegistry.getCache().getCacheCapacity())
+            .maximumSize(serviceRegistry.getCache().getCacheSize())
             .expireAfterWrite(duration)
             .recordStats()
             .build();
@@ -246,7 +246,7 @@ public class CasCoreServicesConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "defaultServicesManagerExecutionPlanConfigurer")
-    @ConditionalOnProperty(prefix = "cas.service-registry", name = "management-type", havingValue = "DEFAULT", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "cas.service-registry.core", name = "management-type", havingValue = "DEFAULT", matchIfMissing = true)
     public ServicesManagerExecutionPlanConfigurer defaultServicesManagerExecutionPlanConfigurer() {
         return () -> {
             val activeProfiles = Arrays.stream(environment.getActiveProfiles()).collect(Collectors.toSet());
@@ -278,7 +278,7 @@ public class CasCoreServicesConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "domainServicesManagerExecutionPlanConfigurer")
-    @ConditionalOnProperty(prefix = "cas.service-registry", name = "management-type", havingValue = "DOMAIN")
+    @ConditionalOnProperty(prefix = "cas.service-registry.core", name = "management-type", havingValue = "DOMAIN")
     public ServicesManagerExecutionPlanConfigurer domainServicesManagerExecutionPlanConfigurer() {
         return () -> {
             val activeProfiles = Arrays.stream(environment.getActiveProfiles()).collect(Collectors.toSet());

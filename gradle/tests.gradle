@@ -1,5 +1,3 @@
-import java.time.Duration
-
 enum TestCategories {
     Kafka,
     Logout,
@@ -67,10 +65,12 @@ enum TestCategories {
 if (rootProject.tasks.findByName("testCategories") == null) {
     rootProject.tasks.create(name: "testCategories", description: "Display all available test categories") {
         doLast {
-            println("Found ${TestCategories.values().length} test categories:")
-            println(TestCategories.values().toSorted({ o1, o2 ->
-                o1.name().compareTo(o2.name())
-            }))
+            def result = TestCategories.values()
+                    .toSorted({ o1, o2 ->
+                        o1.name().compareTo(o2.name())
+                    })
+                    .collect { it.name().toLowerCase() }
+            println(groovy.json.JsonOutput.toJson(result))
         }
     }
 }
@@ -180,11 +180,11 @@ Results for test suite [${desc.displayName}]: ${result.resultType} @ ${new java.
 }
 
 def shouldTest(Project project, String category) {
-    def foundTest = gradle.startParameter.taskNames.any {task -> task.matches(/^test${category}$/) }
+    def foundTest = gradle.startParameter.taskNames.any { task -> task.matches(/^test${category}$/) }
     if (!foundTest) {
         logger.debug "No tests with category ${category} found for ${project.name}"
     }
-    return !Boolean.getBoolean("skipTests") && foundTest  && hasTestsOfCategory(project, category)
+    return !Boolean.getBoolean("skipTests") && foundTest && hasTestsOfCategory(project, category)
 }
 
 def hasTestsOfCategory(Project project, String category) {

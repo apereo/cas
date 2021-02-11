@@ -73,19 +73,19 @@ public class ADPasswordManagementServiceTests extends BaseLdapPasswordManagement
 
     @Test
     public void verifyFindEmail() {
-        val email = passwordChangeService.findEmail("changepassword");
+        val email = passwordChangeService.findEmail(PasswordManagementQuery.builder().username("changepassword").build());
         assertEquals("changepassword@example.org", email);
     }
 
     @Test
     public void verifyFindPhone() {
-        val ph = passwordChangeService.findPhone("changepassword");
+        val ph = passwordChangeService.findPhone(PasswordManagementQuery.builder().username("changepassword").build());
         assertEquals("1234567890", ph);
     }
 
     @Test
     public void verifyFindSecurityQuestions() {
-        val questions = passwordChangeService.getSecurityQuestions("changepassword");
+        val questions = passwordChangeService.getSecurityQuestions(PasswordManagementQuery.builder().username("changepassword").build());
         assertEquals(2, questions.size());
         assertTrue(questions.containsKey("DepartmentQuestion"));
         assertEquals("CompanyAnswer", questions.get("DepartmentQuestion"));

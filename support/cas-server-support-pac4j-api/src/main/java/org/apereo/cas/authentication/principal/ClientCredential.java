@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.pac4j.core.credentials.Credentials;
-import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.core.profile.UserProfile;
 
 import java.util.UUID;
 
@@ -54,7 +54,7 @@ public class ClientCredential implements Credential {
     /**
      * The user profile after authentication.
      */
-    private CommonProfile userProfile;
+    private UserProfile userProfile;
 
     @Override
     public String getId() {

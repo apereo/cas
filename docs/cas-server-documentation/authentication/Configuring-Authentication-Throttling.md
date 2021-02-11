@@ -20,8 +20,7 @@ Enable the following module in your configuration overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-throttle-bucket4j" %}
 
-{% include casproperties.html
-modules="cas-server-support-throttle-bucket4j" %}
+{% include casproperties.html properties="cas.authn.throttle.bucket4j" %}
 
 ## Failure Throttling
 

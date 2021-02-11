@@ -32,9 +32,7 @@ The following endpoints are provided by CAS:
 
 ## Configuration
 
-{% include casproperties.html
-modules="cas-server-support-yubikey"
-properties="cas.authn.mfa.yubikey.bypass,cas.authn.mfa.yubikey.crypto" %}
+{% include casproperties.html properties="cas.authn.mfa.yubikey" %}
 
 By default, all YubiKey accounts for users are allowed to authenticate. Devices that 
 need to be authorized for authentication need to have followed an out-of-band 

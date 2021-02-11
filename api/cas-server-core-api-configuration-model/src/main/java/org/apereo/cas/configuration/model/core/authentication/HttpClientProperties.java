@@ -86,6 +86,9 @@ public class HttpClientProperties implements Serializable {
 
     /**
      * The default headers to use for any HTTP connection.
+     * This is defined as map, where the key is the header name
+     * and the value is the header value that should be sent
+     * along with request.
      */
     private Map<String, String> defaultHeaders = new HashMap<>();
 }

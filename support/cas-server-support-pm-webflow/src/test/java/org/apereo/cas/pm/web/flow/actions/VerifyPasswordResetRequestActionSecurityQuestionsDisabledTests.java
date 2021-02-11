@@ -1,5 +1,6 @@
 package org.apereo.cas.pm.web.flow.actions;
 
+import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
@@ -42,7 +43,7 @@ public class VerifyPasswordResetRequestActionSecurityQuestionsDisabledTests exte
         request.setLocalAddr("1.2.3.4");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
-        val token = passwordManagementService.createToken("casuser");
+        val token = passwordManagementService.createToken(PasswordManagementQuery.builder().username("casuser").build());
         val transientFactory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
         val serverPrefix = casProperties.getServer().getPrefix();
         val service = webApplicationServiceFactory.createService(serverPrefix);

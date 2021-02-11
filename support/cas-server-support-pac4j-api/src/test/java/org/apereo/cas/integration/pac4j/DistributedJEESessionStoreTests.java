@@ -83,7 +83,7 @@ public class DistributedJEESessionStoreTests {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val store = new DistributedJEESessionStore(centralAuthenticationService, ticketFactory, cookieGenerator);
-        val context = new JEEContext(request, response, store);
+        val context = new JEEContext(request, response);
 
         assertNotNull(request.getSession());
 

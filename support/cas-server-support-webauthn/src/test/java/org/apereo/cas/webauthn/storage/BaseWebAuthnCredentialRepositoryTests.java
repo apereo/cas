@@ -53,16 +53,16 @@ public abstract class BaseWebAuthnCredentialRepositoryTests {
     @Test
     public void verifyOperation() throws Exception {
         val id = getUsername();
-        val registration = getCredentialRegistration(id);
+        val registration = getCredentialRegistration(id.toLowerCase());
 
-        assertTrue(webAuthnCredentialRepository.addRegistrationByUsername(id, registration));
-        assertFalse(webAuthnCredentialRepository.getCredentialIdsForUsername(id).isEmpty());
+        assertTrue(webAuthnCredentialRepository.addRegistrationByUsername(id.toLowerCase(), registration));
+        assertFalse(webAuthnCredentialRepository.getCredentialIdsForUsername(id.toUpperCase()).isEmpty());
 
         val ba = ByteArray.fromBase64Url(id);
-        assertTrue(webAuthnCredentialRepository.getRegistrationByUsernameAndCredentialId(id, ba).isPresent());
+        assertTrue(webAuthnCredentialRepository.getRegistrationByUsernameAndCredentialId(id.toUpperCase(), ba).isPresent());
         assertFalse(webAuthnCredentialRepository.getRegistrationsByUserHandle(ba).isEmpty());
-        assertFalse(webAuthnCredentialRepository.getRegistrationsByUsername(id).isEmpty());
-        assertFalse(webAuthnCredentialRepository.getUserHandleForUsername(id).isEmpty());
+        assertFalse(webAuthnCredentialRepository.getRegistrationsByUsername(id.toUpperCase()).isEmpty());
+        assertFalse(webAuthnCredentialRepository.getUserHandleForUsername(id.toUpperCase()).isEmpty());
         assertFalse(webAuthnCredentialRepository.getUsernameForUserHandle(ba).isEmpty());
         assertFalse(webAuthnCredentialRepository.lookup(ba, ba).isEmpty());
         assertFalse(webAuthnCredentialRepository.lookupAll(ba).isEmpty());
@@ -73,8 +73,8 @@ public abstract class BaseWebAuthnCredentialRepositoryTests {
         val result = constructor.newInstance(true, ba, ba, id, 1, true, List.of());
         webAuthnCredentialRepository.updateSignatureCount(result);
 
-        webAuthnCredentialRepository.removeAllRegistrations(id);
-        webAuthnCredentialRepository.removeRegistrationByUsername(id, registration);
+        webAuthnCredentialRepository.removeAllRegistrations(id.toUpperCase());
+        webAuthnCredentialRepository.removeRegistrationByUsername(id.toUpperCase(), registration);
         assertTrue(webAuthnCredentialRepository.lookup(ba, ba).isEmpty());
 
         assertDoesNotThrow(new Executable() {

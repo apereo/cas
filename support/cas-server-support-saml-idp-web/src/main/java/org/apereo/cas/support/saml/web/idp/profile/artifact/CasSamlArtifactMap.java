@@ -34,7 +34,7 @@ public class CasSamlArtifactMap extends BasicSAMLArtifactMap {
 
     private final CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
-    private final SessionStore<JEEContext> samlIdPDistributedSessionStore;
+    private final SessionStore samlIdPDistributedSessionStore;
 
     private final CentralAuthenticationService centralAuthenticationService;
 
@@ -49,7 +49,7 @@ public class CasSamlArtifactMap extends BasicSAMLArtifactMap {
             ticketGrantingTicketCookieGenerator, ticketRegistry, request);
         if (ticketGrantingTicket == null) {
             ticketGrantingTicket = samlIdPDistributedSessionStore
-                .get(new JEEContext(request, response, samlIdPDistributedSessionStore), WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID)
+                .get(new JEEContext(request, response), WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID)
                 .map(ticketId -> centralAuthenticationService.getTicket(ticketId.toString(), TicketGrantingTicket.class))
                 .orElse(null);
         }

@@ -77,7 +77,7 @@ public class CasCoreAuthenticationPrincipalConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "globalPrincipalAttributeRepository")
     public RegisteredServicePrincipalAttributesRepository globalPrincipalAttributeRepository() {
-        val props = casProperties.getAuthn().getAttributeRepository();
+        val props = casProperties.getAuthn().getAttributeRepository().getCore();
         val cacheTime = props.getExpirationTime();
         if (cacheTime <= 0) {
             LOGGER.warn("Caching for the global principal attribute repository is disabled");

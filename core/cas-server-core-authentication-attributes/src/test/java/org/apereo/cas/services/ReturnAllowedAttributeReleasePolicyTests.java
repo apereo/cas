@@ -33,7 +33,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Attributes")
 @SpringBootTest(classes = RefreshAutoConfiguration.class,
-    properties = "cas.authn.attribute-repository.default-attributes-to-release=cn,mail")
+    properties = "cas.authn.attribute-repository.core.default-attributes-to-release=cn,mail")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class ReturnAllowedAttributeReleasePolicyTests {
 

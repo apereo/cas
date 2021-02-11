@@ -59,7 +59,7 @@ public class OidcAuthorizeEndpointControllerTests extends AbstractOidcTests {
         profile.setId("casuser");
 
         val sessionStore = oidcAuthorizeEndpointController.getOAuthConfigurationContext().getSessionStore();
-        val context = new JEEContext(mockRequest, mockResponse, sessionStore);
+        val context = new JEEContext(mockRequest, mockResponse);
         val ticket = new MockTicketGrantingTicket("casuser");
         oidcAuthorizeEndpointController.getOAuthConfigurationContext().getTicketRegistry().addTicket(ticket);
         sessionStore.set(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, ticket.getId());

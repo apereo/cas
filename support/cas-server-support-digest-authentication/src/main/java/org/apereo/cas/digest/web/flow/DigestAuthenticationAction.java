@@ -16,6 +16,7 @@ import lombok.val;
 import org.pac4j.core.context.HttpConstants;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.JEESessionStore;
+import org.pac4j.http.credentials.DigestCredentials;
 import org.pac4j.http.credentials.extractor.DigestAuthExtractor;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -56,9 +57,9 @@ public class DigestAuthenticationAction extends AbstractNonInteractiveCredential
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
 
             val extractor = new DigestAuthExtractor();
-            val webContext = new JEEContext(request, response, new JEESessionStore());
+            val webContext = new JEEContext(request, response);
 
-            val credentialsResult = extractor.extract(webContext);
+            val credentialsResult = extractor.extract(webContext, JEESessionStore.INSTANCE);
             if (credentialsResult.isEmpty()) {
                 response.addHeader(HttpConstants.AUTHENTICATE_HEADER,
                     DigestAuthenticationUtils.createAuthenticateHeader(this.realm, this.authenticationMethod, this.nonce));
@@ -66,7 +67,7 @@ public class DigestAuthenticationAction extends AbstractNonInteractiveCredential
                 return null;
             }
 
-            val credentials = credentialsResult.get();
+            val credentials = (DigestCredentials) credentialsResult.get();
             LOGGER.debug("Received digest authentication request from credentials [{}] ", credentials);
             val credential = this.credentialRetriever.findCredential(credentials.getUsername(), this.realm);
             LOGGER.trace("Digest credential password on record for [{}] is [{}]", credentials.getUsername(), credential);

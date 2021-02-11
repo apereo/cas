@@ -105,7 +105,7 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     public AuthenticationMetaDataPopulator authyAuthenticationMetaDataPopulator() {
         return new AuthenticationContextAttributeMetaDataPopulator(
-            casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
+            casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute(),
             authyAuthenticationHandler(),
             authyAuthenticatorMultifactorAuthenticationProvider().getId()
         );

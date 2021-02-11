@@ -8,6 +8,7 @@ import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.web.flow.ForgotUsernameCaptchaWebflowConfigurer;
 import org.apereo.cas.pm.web.flow.ForgotUsernameWebflowConfigurer;
 import org.apereo.cas.pm.web.flow.actions.SendForgotUsernameInstructionsAction;
+import org.apereo.cas.web.CaptchaValidator;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -129,7 +130,7 @@ public class PasswordManagementForgotUsernameConfiguration {
         @Bean
         public Action forgotUsernameValidateCaptchaAction() {
             val recaptcha = casProperties.getAuthn().getPm().getForgotUsername().getGoogleRecaptcha();
-            return new ValidateCaptchaAction(recaptcha);
+            return new ValidateCaptchaAction(CaptchaValidator.getInstance(recaptcha));
         }
 
         @RefreshScope

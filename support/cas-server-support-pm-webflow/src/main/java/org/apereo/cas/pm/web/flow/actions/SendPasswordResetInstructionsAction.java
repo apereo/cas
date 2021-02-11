@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
+import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
 import org.apereo.cas.ticket.ExpirationPolicy;
@@ -93,10 +94,12 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
      * @return URL a user can use to start the password reset process
      */
     protected String buildPasswordResetUrl(final String username,
-                                        final PasswordManagementService passwordManagementService,
-                                        final CasConfigurationProperties casProperties,
-                                        final WebApplicationService service) {
-        val token = passwordManagementService.createToken(username);
+                                           final PasswordManagementService passwordManagementService,
+                                           final CasConfigurationProperties casProperties,
+                                           final WebApplicationService service) {
+
+        val query = PasswordManagementQuery.builder().username(username).build();
+        val token = passwordManagementService.createToken(query);
         if (StringUtils.isNotBlank(username) && StringUtils.isNotBlank(token)) {
             val transientFactory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
             val pm = casProperties.getAuthn().getPm();
@@ -106,7 +109,7 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
                 ExpirationPolicy.class.getName(), HardTimeoutExpirationPolicy.builder().timeToKillInSeconds(expirationSeconds).build());
             val ticket = transientFactory.create(service, properties);
             this.ticketRegistry.addTicket(ticket);
-            
+
             val resetUrl = new StringBuilder(casProperties.getServer().getPrefix())
                 .append('/').append(CasWebflowConfigurer.FLOW_ID_LOGIN).append('?')
                 .append(PasswordManagementWebflowUtils.REQUEST_PARAMETER_NAME_PASSWORD_RESET_TOKEN).append('=').append(ticket.getId());
@@ -135,28 +138,25 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
             return getErrorEvent("contact.failed", "Unable to send email as no mail sender is defined", requestContext);
         }
 
-        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        val username = request.getParameter(REQUEST_PARAMETER_USERNAME);
-
-        if (StringUtils.isBlank(username)) {
-            LOGGER.warn("No username parameter is provided");
+        val query = buildPasswordManagementQuery(requestContext);
+        if (StringUtils.isBlank(query.getUsername())) {
             return getErrorEvent("username.required", "No username is provided", requestContext);
         }
 
-        val email = passwordManagementService.findEmail(username);
-        val phone = passwordManagementService.findPhone(username);
+        val email = passwordManagementService.findEmail(query);
+        val phone = passwordManagementService.findPhone(query);
         if (StringUtils.isBlank(email) && StringUtils.isBlank(phone)) {
             LOGGER.warn("No recipient is provided with a valid email/phone");
             return getErrorEvent("contact.invalid", "Provided email address or phone number is invalid", requestContext);
         }
 
         val service = WebUtils.getService(requestContext);
-        val url = buildPasswordResetUrl(username, passwordManagementService, casProperties, service);
+        val url = buildPasswordResetUrl(query.getUsername(), passwordManagementService, casProperties, service);
         if (StringUtils.isNotBlank(url)) {
             val pm = casProperties.getAuthn().getPm();
             LOGGER.debug("Generated password reset URL [{}]; Link is only active for the next [{}] minute(s)",
                 url, pm.getReset().getExpirationMinutes());
-            val sendEmail = sendPasswordResetEmailToAccount(username, email, url);
+            val sendEmail = sendPasswordResetEmailToAccount(query.getUsername(), email, url);
             val sendSms = sendPasswordResetSmsToAccount(phone, url);
             if (sendEmail || sendSms) {
                 return success(url);
@@ -166,6 +166,23 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
         }
         LOGGER.error("Failed to notify account [{}]", email);
         return getErrorEvent("contact.failed", "Failed to send the password reset link via email address or phone", requestContext);
+    }
+
+    /**
+     * Build password management query.
+     *
+     * @param requestContext the request context
+     * @return the password management query
+     */
+    protected PasswordManagementQuery buildPasswordManagementQuery(final RequestContext requestContext) {
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        val username = request.getParameter(REQUEST_PARAMETER_USERNAME);
+
+        val builder = PasswordManagementQuery.builder();
+        if (StringUtils.isBlank(username)) {
+            LOGGER.warn("No username parameter is provided");
+        }
+        return builder.username(username).build();
     }
 
     /**

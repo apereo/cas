@@ -44,7 +44,7 @@ public class DefaultMultifactorAuthenticationProviderResolverTests {
         applicationContext.refresh();
 
         val casProperties = new CasConfigurationProperties();
-        casProperties.getAuthn().getMfa().setGlobalPrincipalAttributeNameTriggers("mfa-principal");
+        casProperties.getAuthn().getMfa().getTriggers().getPrincipal().setGlobalPrincipalAttributeNameTriggers("mfa-principal");
 
         val resolver = new DefaultMultifactorAuthenticationProviderResolver();
         val trigger = new PrincipalAttributeMultifactorAuthenticationTrigger(casProperties, resolver, applicationContext);
@@ -61,7 +61,7 @@ public class DefaultMultifactorAuthenticationProviderResolverTests {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         val casProperties = new CasConfigurationProperties();
-        casProperties.getAuthn().getMfa().setGlobalPrincipalAttributeNameTriggers("does-not-exist");
+        casProperties.getAuthn().getMfa().getTriggers().getPrincipal().setGlobalPrincipalAttributeNameTriggers("does-not-exist");
         val resolver = new DefaultMultifactorAuthenticationProviderResolver();
         val trigger = new PrincipalAttributeMultifactorAuthenticationTrigger(casProperties, resolver, applicationContext);
         assertProviderResolutionFromManyProviders(trigger, applicationContext, false);
@@ -74,7 +74,8 @@ public class DefaultMultifactorAuthenticationProviderResolverTests {
         applicationContext.refresh();
 
         val casProperties = new CasConfigurationProperties();
-        casProperties.getAuthn().getMfa().setGlobalAuthenticationAttributeNameTriggers("mfa-authn");
+        casProperties.getAuthn().getMfa()
+            .getTriggers().getAuthentication().setGlobalAuthenticationAttributeNameTriggers("mfa-authn");
 
         val resolver = new DefaultMultifactorAuthenticationProviderResolver();
         val trigger = new AuthenticationAttributeMultifactorAuthenticationTrigger(casProperties, resolver, applicationContext);

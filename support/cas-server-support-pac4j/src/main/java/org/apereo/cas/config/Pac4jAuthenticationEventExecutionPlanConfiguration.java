@@ -103,13 +103,13 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     @ConditionalOnMissingBean(name = "delegatedClientDistributedSessionStore")
     @Bean
     @RefreshScope
-    public SessionStore<JEEContext> delegatedClientDistributedSessionStore() {
-        val replicate = casProperties.getAuthn().getPac4j().isReplicateSessions();
+    public SessionStore delegatedClientDistributedSessionStore() {
+        val replicate = casProperties.getAuthn().getPac4j().getCore().isReplicateSessions();
         if (replicate) {
             return new DistributedJEESessionStore(centralAuthenticationService.getObject(),
                 ticketFactory.getObject(), delegatedClientDistributedSessionCookieGenerator());
         }
-        return new JEESessionStore();
+        return JEESessionStore.INSTANCE;
     }
 
     @ConditionalOnMissingBean(name = "delegatedClientDistributedSessionCookieGenerator")
@@ -152,7 +152,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "clientAuthenticationHandler")
     public AuthenticationHandler clientAuthenticationHandler() {
-        val pac4j = casProperties.getAuthn().getPac4j();
+        val pac4j = casProperties.getAuthn().getPac4j().getCore();
         val h = new DelegatedClientAuthenticationHandler(pac4j.getName(),
             pac4j.getOrder(),
             servicesManager.getObject(),
@@ -222,14 +222,14 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     @ConditionalOnMissingBean(name = "delegatedAuthenticationLogoutExecutionPlanConfigurer")
     public LogoutExecutionPlanConfigurer delegatedAuthenticationLogoutExecutionPlanConfigurer() {
         return plan -> {
-            val replicate = casProperties.getAuthn().getPac4j().isReplicateSessions();
+            val replicate = casProperties.getAuthn().getPac4j().getCore().isReplicateSessions();
             if (replicate) {
                 plan.registerLogoutPostProcessor(ticketGrantingTicket -> {
                     val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
                     val response = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
                     if (request != null && response != null) {
                         val store = delegatedClientDistributedSessionStore();
-                        store.destroySession(new JEEContext(request, response, store));
+                        store.destroySession(new JEEContext(request, response));
                     }
                 });
             }

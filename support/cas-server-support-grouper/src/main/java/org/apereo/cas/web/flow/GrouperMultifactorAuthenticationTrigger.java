@@ -53,7 +53,8 @@ public class GrouperMultifactorAuthenticationTrigger implements MultifactorAuthe
     public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
                                                                    final RegisteredService registeredService,
                                                                    final HttpServletRequest request, final Service service) {
-        val grouperField = casProperties.getAuthn().getMfa().getGrouperGroupField().toUpperCase();
+        val grouperField = casProperties.getAuthn().getMfa()
+            .getTriggers().getGrouper().getGrouperGroupField().toUpperCase();
         if (StringUtils.isBlank(grouperField)) {
             LOGGER.debug("No group field is defined to process for Grouper multifactor trigger");
             return Optional.empty();

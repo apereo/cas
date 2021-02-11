@@ -23,7 +23,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.JEEContext;
-import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -60,8 +59,8 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
 
         ensureSessionReplicationIsAutoconfiguredIfNeedBe(request);
 
-        val context = new JEEContext(request, response, getOAuthConfigurationContext().getSessionStore());
-        val manager = new ProfileManager<CommonProfile>(context);
+        val context = new JEEContext(request, response);
+        val manager = new ProfileManager(context, getOAuthConfigurationContext().getSessionStore());
 
         if (context.getRequestAttribute(OAuth20Constants.ERROR).isPresent()) {
             val mv = getOAuthConfigurationContext().getOauthInvalidAuthorizationResponseBuilder().build(context);
@@ -141,7 +140,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
      * @return whether the request is authenticated or not
      */
     private static boolean isRequestAuthenticated(final ProfileManager manager) {
-        val opt = manager.get(true);
+        val opt = manager.getProfile();
         return opt.isPresent();
     }
 
@@ -154,11 +153,11 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
      * @param clientId          the client id
      * @return the model and view
      */
-    protected ModelAndView redirectToCallbackRedirectUrl(final ProfileManager<CommonProfile> manager,
+    protected ModelAndView redirectToCallbackRedirectUrl(final ProfileManager manager,
                                                          final OAuthRegisteredService registeredService,
                                                          final JEEContext context,
                                                          final String clientId) {
-        val profile = manager.get(true).orElseThrow();
+        val profile = manager.getProfile().orElseThrow();
         val service = getOAuthConfigurationContext().getAuthenticationBuilder()
             .buildService(registeredService, context, false);
         LOGGER.trace("Created service [{}] based on registered service [{}]", service, registeredService);

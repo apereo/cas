@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.x509.principal-type=SUBJECT_DN",
         "cas.authn.attribute-repository.groovy[0].location=classpath:/GroovyAttributeDao.groovy",
         "cas.authn.attribute-repository.groovy[0].order=1",
-        "cas.authn.attribute-repository.merger=multivalued"
+        "cas.authn.attribute-repository.core.merger=multivalued"
     })
 @Tag("X509")
 public class X509SubjectDNPrincipalResolverAggregateTests {

@@ -36,6 +36,7 @@ import org.opensaml.saml.saml2.metadata.Endpoint;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.impl.AssertionConsumerServiceBuilder;
 import org.pac4j.core.context.WebContext;
+import org.pac4j.core.context.session.SessionStore;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
@@ -57,16 +58,18 @@ public class SamlIdPUtils {
      *
      * @param <T>                the type parameter
      * @param context            the context
+     * @param sessionStore       the session store
      * @param openSamlConfigBean the open saml config bean
      * @param clazz              the clazz
      * @return the request
      * @throws Exception the exception
      */
     public static <T extends RequestAbstractType> T retrieveSamlRequest(final WebContext context,
-                                            final OpenSamlConfigBean openSamlConfigBean,
-                                            final Class<T> clazz) throws Exception {
-        LOGGER.debug("Retrieving authentication request from scope");
-        val requestValue = context.getSessionStore()
+                                                                        final SessionStore sessionStore,
+                                                                        final OpenSamlConfigBean openSamlConfigBean,
+                                                                        final Class<T> clazz) throws Exception {
+        LOGGER.trace("Retrieving authentication request from scope");
+        val requestValue = sessionStore
             .get(context, SamlProtocolConstants.PARAMETER_SAML_REQUEST)
             .orElse(StringUtils.EMPTY)
             .toString();

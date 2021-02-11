@@ -66,7 +66,7 @@ public class OAuth20PasswordGrantTypeTokenRequestValidatorTests {
             .servicesManager(serviceManager)
             .webApplicationServiceServiceFactory(new WebApplicationServiceFactory())
             .registeredServiceAccessStrategyEnforcer(new RegisteredServiceAccessStrategyAuditableEnforcer())
-            .sessionStore(new JEESessionStore())
+            .sessionStore(JEESessionStore.INSTANCE)
             .build();
         this.validator = new OAuth20PasswordGrantTypeTokenRequestValidator(context);
     }

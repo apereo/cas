@@ -6,7 +6,7 @@ import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationService;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
-import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.util.MockServletContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
@@ -52,7 +52,7 @@ public class DuoSecurityDetermineUserAccountActionTests {
         val duoService = mock(DuoSecurityAuthenticationService.class);
         when(duoService.getUserAccount(anyString())).thenReturn(account);
         val provider = mock(DuoSecurityMultifactorAuthenticationProvider.class);
-        when(provider.getId()).thenReturn(DuoSecurityMultifactorProperties.DEFAULT_IDENTIFIER);
+        when(provider.getId()).thenReturn(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
         when(provider.getDuoAuthenticationService()).thenReturn(duoService);
         when(provider.getRegistrationUrl()).thenReturn("https://registration.duo.com");
         when(provider.matches(anyString())).thenReturn(Boolean.TRUE);

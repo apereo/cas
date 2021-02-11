@@ -124,7 +124,7 @@ ext.libraries = [
                     exclude(group: "org.eclipse.jetty", module: "jetty-eclipse")
                     exclude(group: "org.glassfish.jersey.containers", module: "jersey-container-servlet-core")
                 },
-                dependencies.create("org.apereo.cas:cas-server-webauthn-helper:$casWebauthnVersion") {
+                dependencies.create("org.apereo:cas-server-webauthn-helper:$casWebauthnVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
@@ -1241,11 +1241,6 @@ ext.libraries = [
         jcifs                   : [
                 dependencies.create("jcifs:jcifs:$jcifsVersion") {
                     exclude(group: "javax.servlet", module: "servlet-api")
-
-                },
-                dependencies.create("org.samba.jcifs:jcifs-ext:$jcifsExtVersion") {
-                    exclude(group: "javax.servlet", module: "servlet-api")
-
                 }
         ],
         snakeyaml               : [
@@ -3242,7 +3237,16 @@ ext.libraries = [
                     exclude(group: "com.h2database", module: "h2")
                 }
         ],
-
+        springindexer : [
+                dependencies.create("org.springframework:spring-context-indexer:$springVersion") {
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-expression")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                }
+        ],
         spring                  : [
                 dependencies.create("org.springframework:spring-aop:$springVersion") {
                     exclude(group: "org.springframework", module: "spring-context")
@@ -3251,7 +3255,6 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.springframework", module: "spring-expression")
                     exclude(group: "org.springframework", module: "spring-webmvc")
-
                 },
                 dependencies.create("org.springframework:spring-beans:$springVersion") {
                     exclude(group: "org.springframework", module: "spring-context")
@@ -3262,10 +3265,17 @@ ext.libraries = [
 
                 },
                 dependencies.create("org.springframework:spring-context:$springVersion") {
-
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-expression")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                    exclude(group: "org.springframework", module: "spring-beans")
                 },
                 dependencies.create("org.springframework:spring-context-support:$springVersion") {
-
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-expression")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-beans")
                 },
                 dependencies.create("org.springframework.retry:spring-retry:$springRetryVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
@@ -3546,9 +3556,6 @@ ext.libraries = [
                     exclude(group: "com.google.guava", module: "guava")
                 },
         duojava                 : [
-                dependencies.create("net.unicon.iam:duo-java:$duoWebSdkVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                },
                 dependencies.create("com.duosecurity:duo-client:$duoClientVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 },
@@ -3585,6 +3592,8 @@ ext.libraries = [
                 dependencies.create("org.webjars:bootstrap:$bootstrapVersion") {
                     exclude(group: "org.webjars", module: "popper.js")
                     exclude(group: "org.webjars", module: "jquery")
+                },
+                dependencies.create("org.webjars:font-awesome:$fontAwesomeVersion") {
                 },
                 dependencies.create("org.webjars:datatables:$datatablesVersion") {
                     exclude(group: "org.webjars", module: "jquery")

@@ -59,7 +59,7 @@ public class AccepttoMultifactorValidateChannelActionTests {
 
     @Autowired
     @Qualifier("mfaAccepttoDistributedSessionStore")
-    private SessionStore<JEEContext> mfaAccepttoDistributedSessionStore;
+    private SessionStore mfaAccepttoDistributedSessionStore;
 
     @Test
     public void verifyOperation() throws Exception {
@@ -77,12 +77,12 @@ public class AccepttoMultifactorValidateChannelActionTests {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
-            val webContext = new JEEContext(request, response, mfaAccepttoDistributedSessionStore);
+            val webContext = new JEEContext(request, response);
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
             val authn = CoreAuthenticationTestUtils.getAuthentication("casuser");
             WebUtils.putAuthentication(authn, context);
-            AccepttoWebflowUtils.storeChannelInSessionStore("test-channel", webContext);
-            AccepttoWebflowUtils.storeAuthenticationInSessionStore(authn, webContext);
+            AccepttoWebflowUtils.storeChannelInSessionStore("test-channel", webContext, mfaAccepttoDistributedSessionStore);
+            AccepttoWebflowUtils.storeAuthenticationInSessionStore(authn, webContext, mfaAccepttoDistributedSessionStore);
             RequestContextHolder.setRequestContext(context);
             val result = action.doExecute(context);
             assertEquals(CasWebflowConstants.TRANSITION_ID_FINALIZE, result.getId());

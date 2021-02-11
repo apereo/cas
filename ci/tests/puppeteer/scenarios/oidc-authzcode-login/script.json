@@ -10,7 +10,7 @@
     "--cas.authn.oidc.core.user-defined-scopes.MyCustomScope=cn,given:name",
     "--cas.authn.oidc.jwks.jwks-file=file:/tmp/keystore.jwks",
 
-    "--cas.service-registry.init-from-json=true",
+    "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/oidc-authzcode-login/services"
   ]
 }

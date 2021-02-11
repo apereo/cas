@@ -31,8 +31,8 @@ import org.apache.commons.lang3.tuple.Triple;
 import org.apache.http.HttpHeaders;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
-import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
+import org.pac4j.core.profile.UserProfile;
 import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -165,11 +165,11 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
         return resRequest;
     }
 
-    protected static ResourceSetPolicy createUmaPolicyRegistrationRequest(final CommonProfile profile) {
+    protected static ResourceSetPolicy createUmaPolicyRegistrationRequest(final UserProfile profile) {
         return createUmaPolicyRegistrationRequest(profile, CollectionUtils.wrapHashSet("read", "write"));
     }
 
-    protected static ResourceSetPolicy createUmaPolicyRegistrationRequest(final CommonProfile profile, final Collection<String> scopes) {
+    protected static ResourceSetPolicy createUmaPolicyRegistrationRequest(final UserProfile profile, final Collection<String> scopes) {
         val policy = new ResourceSetPolicy();
         val perm = new ResourceSetPolicyPermission();
         perm.setScopes(new HashSet<>(scopes));
@@ -194,10 +194,10 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
      * @param response the response
      * @return the current profile
      */
-    protected CommonProfile getCurrentProfile(final HttpServletRequest request, final HttpServletResponse response) {
-        val ctx = new JEEContext(request, response, this.oauthDistributedSessionStore);
-        val manager = new ProfileManager<CommonProfile>(ctx);
-        val userProfileResult = manager.get(true);
+    protected UserProfile getCurrentProfile(final HttpServletRequest request, final HttpServletResponse response) {
+        val ctx = new JEEContext(request, response);
+        val manager = new ProfileManager(ctx, oauthDistributedSessionStore);
+        val userProfileResult = manager.getProfile();
         if (userProfileResult.isEmpty()) {
             LOGGER.info("Unable to determine the user profile from the context");
             return null;

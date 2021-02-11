@@ -20,7 +20,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.pac4j.core.client.Clients;
-import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -70,7 +69,7 @@ public class DelegatedClientAuthenticationConfigurationContext {
 
     private final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy;
 
-    private final SessionStore<JEEContext> sessionStore;
+    private final SessionStore sessionStore;
 
     private final DelegatedAuthenticationAccessStrategyHelper delegatedAuthenticationAccessStrategyHelper;
 

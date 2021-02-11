@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import lombok.SneakyThrows;
 import lombok.val;
-import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.core.profile.UserProfile;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -55,7 +55,7 @@ public class UmaResourceRegistrationRequest implements Serializable {
      * @return the resource set
      */
     @JsonIgnore
-    public ResourceSet asResourceSet(final CommonProfile profileResult) {
+    public ResourceSet asResourceSet(final UserProfile profileResult) {
         val resourceSet = new ResourceSet();
         resourceSet.setIconUri(getIconUri());
         resourceSet.setId(getId());

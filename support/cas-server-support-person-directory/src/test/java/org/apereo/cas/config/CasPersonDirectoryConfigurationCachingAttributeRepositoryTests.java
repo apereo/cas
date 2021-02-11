@@ -23,8 +23,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilConfiguration.class
 }, properties = {
     "cas.authn.attribute-repository.json[0].location=classpath:/json-attribute-repository.json",
-    "cas.authn.attribute-repository.expiration-time=30",
-    "cas.authn.attribute-repository.expiration-time-unit=seconds"
+    "cas.authn.attribute-repository.core.expiration-time=30",
+    "cas.authn.attribute-repository.core.expiration-time-unit=seconds"
 })
 @Tag("Attributes")
 public class CasPersonDirectoryConfigurationCachingAttributeRepositoryTests {

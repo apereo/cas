@@ -16,6 +16,7 @@ import org.apereo.cas.web.flow.configurer.DynamicFlowModelBuilder;
 import org.apereo.cas.web.flow.configurer.GroovyWebflowConfigurer;
 import org.apereo.cas.web.flow.configurer.plan.DefaultCasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.executor.WebflowExecutorFactory;
+import org.apereo.cas.web.support.CasLocaleChangeInterceptor;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -171,9 +172,7 @@ public class CasWebflowContextConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "localeChangeInterceptor")
     public LocaleChangeInterceptor localeChangeInterceptor() {
-        val bean = new LocaleChangeInterceptor();
-        bean.setParamName(this.casProperties.getLocale().getParamName());
-        return bean;
+        return new CasLocaleChangeInterceptor(casProperties.getLocale());
     }
 
     @Lazy(false)

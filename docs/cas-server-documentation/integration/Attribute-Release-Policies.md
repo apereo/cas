@@ -85,7 +85,7 @@ release policy of the service, such that for instance, you can devise rules to a
 and `cn` to every application, and additionally allow other specific principal attributes for 
 only some applications per their attribute release policy.
 
-{% include casproperties.html properties="cas.authn.attribute-repository.default-attributes-to-release" %}
+{% include casproperties.html properties="cas.authn.attribute-repository.core.default-attributes-to-release" %}
 
 ### Return All
 

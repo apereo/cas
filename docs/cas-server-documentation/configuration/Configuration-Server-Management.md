@@ -24,15 +24,16 @@ The CAS server web application responds to the following strategies that dictate
 This is the default configuration mode which indicates that CAS does **NOT** require connections to an external configuration server
 and will run in an embedded *standalone mode*. When this option is turned on, CAS by default will attempt to locate settings and properties
 inside a given directory and otherwise falls back to using `/etc/cas/config` as the configuration directory.
-You may instruct CAS to use this setting via the methods [outlined here](Configuration-Management.html#overview). 
-
+You may instruct CAS to use this setting via the methods [outlined here](Configuration-Management.html#overview).
 
 Similar to the Spring Cloud external configuration server, the contents of this directory include `(cas|application).(yml|properties)`
 files that can be used to control CAS behavior. Also, note that this configuration directory can be monitored by CAS to auto-pick up changes
 and refresh the application context as needed. Please [review this guide](Configuration-Management-Reload.html#reload-strategy) to learn more.
 
 Note that by default, all CAS settings and configuration is controlled via the embedded `application.properties` file in the CAS server
-web application. There is also an embedded `application.yml` file that allows you to override all defaults if you wish to ship the configuration inside the main CAS web application and not rely on externalized configuration files. If you prefer properties to yaml, then `application-standalone.properties` will override `application.properties` as well. 
+web application. There is also an embedded `application.yml` file that allows you to override all defaults if you wish to ship the 
+configuration inside the main CAS web application and not rely on externalized configuration files. If you prefer 
+properties to yaml, then `application-standalone.properties` will override `application.properties` as well. 
 
 Settings found in external configuration files are and will be able to override the defaults provided by CAS. The naming of the configuration files 
 inside the CAS configuration directory follows the below pattern:
@@ -44,7 +45,8 @@ inside the CAS configuration directory follows the below pattern:
 This allows you to, if needed, split your settings into multiple property files and then locate them by assigning their name
 to the list of active profiles (i.e. `spring.profiles.active=standalone,testldap,stagingMfa`)
 
-Configuration files are loaded in the following order where `spring.profiles.active=standalone,profile1,profile2`. Note that the last configuration file loaded will override any duplicate properties from configuration files loaded earlier:
+Configuration files are loaded in the following order where `spring.profiles.active=standalone,profile1,profile2`. Note 
+that the last configuration file loaded will override any duplicate properties from configuration files loaded earlier:
 
 1. `application.(properties|yml|yaml) `
 2. (lower case) `spring.application.name.(properties|yml|yaml)`  
@@ -56,13 +58,26 @@ Configuration files are loaded in the following order where `spring.profiles.act
 8. `application-profile2.(properties|yml|yaml)`
 9. `profile2.(properties|yml|yaml)`     
 
-If two configuration files with same base name and different extensions exist, they are processed in the order of `properties`, `yml` and then `yaml` and then `groovy` (last one processed wins where duplicate properties exist). These external configuration files will override files located in the classpath (e.g. files from `src/main/resources` in your CAS overlay that end up in `WEB-INF/classes`) but the internal files are loaded per the [spring boot](https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html) rules which differ from the CAS standalone configuration rules described here (e.g. <profile>.properties would not be loaded from classpath but `application-<profile>.properties` would).
+If two configuration files with same base name and different extensions exist, they are processed in the order 
+of `properties`, `yml` and then `yaml` and then `groovy` (last one processed wins where duplicate properties exist). These 
+external configuration files will override files located in the classpath (e.g. files from `src/main/resources` in 
+your CAS overlay that end up in `WEB-INF/classes`) but the internal files are loaded per 
+the [spring boot](https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html) rules 
+which differ from the CAS standalone configuration rules described here (e.g. <profile>.properties 
+would not be loaded from classpath but `application-<profile>.properties` would).
+
+## Handling Overrides
 
 <div class="alert alert-warning"><strong>Remember</strong><p>You are advised to not overlay or otherwise
-modify the built in <code>application.properties</code> or <code>bootstrap.properties</code> files. This will only complicate and weaken your deployment.
-Instead try to comply with the CAS defaults and bootstrap CAS as much as possible via the defaults, override via <code>application.yml</code>, <code>application-standalone.properties</code> or
+modify the built in <code>application.properties</code> or <code>bootstrap.properties</code> files. 
+This will only complicate and weaken your deployment.
+Instead try to comply with the CAS defaults and bootstrap CAS as much as possible via the defaults, 
+override via <code>application.yml</code>, <code>application-standalone.properties</code> or
 use the <a href="Configuration-Management.html#overview">outlined strategies</a>. Likewise, try to instruct CAS to locate
 configuration files external to its own. Premature optimization will only lead to chaos.</p></div>
+
+{% include casproperties.html 
+thirdPartyStartsWith="spring.cloud.config.override-system-properties,spring.cloud.config.allow-override,spring.cloud.config.override-none" %}
 
 ### Spring Cloud
 
@@ -112,13 +127,15 @@ The following endpoints are secured and exposed by the configuration server:
 | `/actuator/cas/default`           | Describes what the configuration server knows about the `default` settings profile.
 | `/actuator/cas/native`            | Describes what the configuration server knows about the `native` settings profile.
 
-Once you have the configuration server deployed and assuming the credentials used to secure the configuration server match the example below, you can observe the collection of settings via:
+Once you have the configuration server deployed and assuming the credentials used to secure 
+the configuration server match the example below, you can observe the collection of settings via:
 
 ```bash
 curl -u casuser:Mellon https://config.server.url:8888/casconfigserver/cas/native
 ```
 
-Assuming actuator endpoints are enabled in the configuration, you can also observe the collection of property sources that provide settings to the configuration server:
+Assuming actuator endpoints are enabled in the configuration, you can also observe 
+the collection of property sources that provide settings to the configuration server:
 
 ```bash
 curl -u casuser:Mellon https://config.server.url:8888/casconfigserver/actuator/env
@@ -133,7 +150,8 @@ Remember that actuator endpoints typically are prefixed with <code>/actuator</co
 To let the CAS server web application (or any other client for that matter) talk to the configuration server,
 the following settings need to be applied to CAS' own `src/main/resources/bootstrap.properties` file.
 The properties to configure the CAS server web application as the client of the configuration server
-must necessarily be read in before the rest of the application’s configuration is read from the configuration server, during the *bootstrap* phase.
+must necessarily be read in before the rest of the application’s 
+configuration is read from the configuration server, during the *bootstrap* phase.
 
 ```properties
 spring.cloud.config.uri=https://casuser:Mellon@config.server.url:8888/casconfigserver
@@ -151,7 +169,7 @@ where the default bindings in the client app are the following:
 "label" = "master"
 ```
 
-All of them can be overridden by setting `spring.cloud.config.*` (where `*` is "name", "profile" or "label").
+All of them can be overridden by setting `spring.cloud.config.*` (where `*` is `name`, `profile` or `label`).
 The "label" is useful for rolling back to previous versions of configuration; with the default Config Server implementation
 it can be a git label, branch name or commit id. Label can also be provided as a comma-separated list,
 in which case the items in the list are tried on-by-one until one succeeds. This can be useful when working on a feature
@@ -172,6 +190,8 @@ This location is constantly monitored by the server to detect external changes. 
 exist, and does not require any special permissions or structure. The name of the configuration file that goes inside this
 directory needs to match the `spring.application.name` (i.e. `cas.properties`).
 
+{% include casproperties.html thirdPartyStartsWith="spring.cloud.config.server.native" %}
+
 If you want to use additional configuration files, they need to have the
 form `application-<profile>.(properties|yml)`.
 A file named `application.(properties|yml)` will be included by default. The profile specific
@@ -180,7 +200,7 @@ controlled via the `src/main/resources/bootstrap.properties` file:
 
 ```properties
 spring.profiles.active=native
-spring.cloud.config.server.native.searchLocations=file:///etc/cas/config
+spring.cloud.config.server.native.search-locations=file:///etc/cas/config
 spring.profiles.include=profile1,profile2
 ```
 
@@ -190,7 +210,8 @@ An example of an external `.properties` file hosted by an external location foll
 cas.server.name=...
 ```
 
-You could have just as well used a `cas.yml` file to host the changes.
+You could have just as well used a `cas.yml` file to host the changes. Note that 
+the default profile is activated using `spring.profiles.active=native`.
 
 ##### Default
 
@@ -199,21 +220,10 @@ Such repositories can either be local to the deployment, or they could be on the
 cloud-based repositories can either be in form of a username/password, or via SSH so as long the appropriate keys are configured in the
 CAS deployment environment which is really no different than how one would normally access a git repository via SSH.
 
-```properties
-# spring.profiles.active=default
-# spring.cloud.config.server.git.uri=https://github.com/repoName/config
-# spring.cloud.config.server.git.uri=file://${user.home}/config
-# spring.cloud.config.server.git.username=
-# spring.cloud.config.server.git.password=
-
-# spring.cloud.config.server.svn.basedir=
-# spring.cloud.config.server.svn.uri=
-# spring.cloud.config.server.svn.username=
-# spring.cloud.config.server.svn.password=
-# spring.cloud.config.server.svn.default-label=trunk
-```
+{% include casproperties.html thirdPartyStartsWith="spring.cloud.config.server.git,spring.cloud.config.server.svn" %}
 
 Needless to say, the repositories could use both YAML and properties syntax to host configuration files.
+The default profile is activated using `spring.profiles.active=default`.
 
 <div class="alert alert-info"><strong>Keep What You Need!</strong><p>Again, in all of the above strategies,
 an adopter is encouraged to only keep and maintain properties needed for their particular deployment. It is
@@ -292,7 +302,7 @@ Finally in your CAS properties, the new `settingName` setting can be used as a r
 
 ##### Amazon S3
 
-CAS is also able to use [Amazon S3](https://docs.aws.amazon.com/AmazonS3/latest/dev) to locate properties and settings.
+CAS is also able to use [Amazon S3](https://aws.amazon.com/s3/) to locate properties and settings.
 
 Support is provided via the following dependency in the WAR overlay:
 

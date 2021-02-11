@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.session.SessionStore;
 import org.springframework.core.Ordered;
 
 /**
@@ -26,11 +27,13 @@ import org.springframework.core.Ordered;
 public class OAuth20RevocationRequestValidator implements OAuth20TokenRequestValidator {
     private final ServicesManager servicesManager;
 
+    private final SessionStore sessionStore;
+
     private int order = Ordered.LOWEST_PRECEDENCE;
 
     @Override
     public boolean validate(final JEEContext context) {
-        val clientId = OAuth20Utils.getClientIdAndClientSecret(context).getLeft();
+        val clientId = OAuth20Utils.getClientIdAndClientSecret(context, sessionStore).getLeft();
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
 
         if (registeredService == null) {
@@ -48,7 +51,7 @@ public class OAuth20RevocationRequestValidator implements OAuth20TokenRequestVal
             return false;
         }
 
-        val clientId = OAuth20Utils.getClientIdAndClientSecret(context).getLeft();
+        val clientId = OAuth20Utils.getClientIdAndClientSecret(context, sessionStore).getLeft();
         return StringUtils.isNotBlank(clientId);
     }
 }

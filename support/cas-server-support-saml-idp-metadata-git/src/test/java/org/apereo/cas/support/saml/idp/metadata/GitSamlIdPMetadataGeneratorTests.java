@@ -45,12 +45,13 @@ public class GitSamlIdPMetadataGeneratorTests extends BaseGitSamlMetadataTests {
             }
             val gitDir = new File(FileUtils.getTempDirectory(), "cas-saml-metadata");
             if (gitDir.exists()) {
-                PathUtils.deleteDirectory(gitDir.toPath(),
-                        StandardDeleteOption.OVERRIDE_READ_ONLY);
+                PathUtils.deleteDirectory(gitDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
             }
             val git = Git.init().setDirectory(gitDir).setBare(false).call();
             FileUtils.write(new File(gitDir, "readme.txt"), "text", StandardCharsets.UTF_8);
+            git.add().addFilepattern("*.*").call();
             git.commit().setSign(false).setMessage("Initial commit").call();
+            assertTrue(gitDir.exists());
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
             fail(e.getMessage(), e);
@@ -65,8 +66,7 @@ public class GitSamlIdPMetadataGeneratorTests extends BaseGitSamlMetadataTests {
         }
         val gitDir = new File(FileUtils.getTempDirectory(), "cas-saml-metadata");
         if (gitDir.exists()) {
-            PathUtils.deleteDirectory(gitDir.toPath(),
-                    StandardDeleteOption.OVERRIDE_READ_ONLY);
+            PathUtils.deleteDirectory(gitDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
         }
     }
 

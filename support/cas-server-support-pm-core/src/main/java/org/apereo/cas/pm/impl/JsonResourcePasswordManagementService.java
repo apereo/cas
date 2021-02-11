@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.model.support.pm.PasswordManagementPropertie
 import org.apereo.cas.pm.BasePasswordManagementService;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordHistoryService;
+import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
@@ -74,29 +75,29 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
     }
 
     @Override
-    public String findEmail(final String username) {
-        val account = this.jsonBackedAccounts.getOrDefault(username, null);
+    public String findEmail(final PasswordManagementQuery query) {
+        val account = this.jsonBackedAccounts.getOrDefault(query.getUsername(), null);
         return Optional.ofNullable(account).map(JsonBackedAccount::getEmail).orElse(null);
     }
 
     @Override
-    public String findPhone(final String username) {
-        val account = this.jsonBackedAccounts.getOrDefault(username, null);
+    public String findPhone(final PasswordManagementQuery query) {
+        val account = this.jsonBackedAccounts.getOrDefault(query.getUsername(), null);
         return Optional.ofNullable(account).map(JsonBackedAccount::getPhone).orElse(null);
     }
 
     @Override
-    public String findUsername(final String email) {
+    public String findUsername(final PasswordManagementQuery query) {
         val result = this.jsonBackedAccounts.entrySet()
             .stream()
-            .filter(entry -> entry.getValue().getEmail().equalsIgnoreCase(email))
+            .filter(entry -> entry.getValue().getEmail().equalsIgnoreCase(query.getEmail()))
             .findFirst();
         return result.map(Map.Entry::getKey).orElse(null);
     }
 
     @Override
-    public Map<String, String> getSecurityQuestions(final String username) {
-        val account = this.jsonBackedAccounts.getOrDefault(username, null);
+    public Map<String, String> getSecurityQuestions(final PasswordManagementQuery query) {
+        val account = this.jsonBackedAccounts.getOrDefault(query.getUsername(), null);
         if (account != null) {
             return account.getSecurityQuestions();
         }

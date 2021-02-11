@@ -30,7 +30,7 @@ public class AuthenticationAttributeMultifactorAuthenticationTriggerTests extend
     @Order(1)
     public void verifyOperationByProvider() {
         val props = new CasConfigurationProperties();
-        val mfa = props.getAuthn().getMfa();
+        val mfa = props.getAuthn().getMfa().getTriggers().getAuthentication();
         mfa.setGlobalAuthenticationAttributeNameTriggers("category");
         mfa.setGlobalAuthenticationAttributeValueRegex(".+object.*");
         val trigger = new AuthenticationAttributeMultifactorAuthenticationTrigger(props,
@@ -48,7 +48,7 @@ public class AuthenticationAttributeMultifactorAuthenticationTriggerTests extend
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext, otherProvider);
 
         val props = new CasConfigurationProperties();
-        val mfa = props.getAuthn().getMfa();
+        val mfa = props.getAuthn().getMfa().getTriggers().getAuthentication();
         mfa.setGlobalAuthenticationAttributeNameTriggers("mfa-mode");
         mfa.setGlobalAuthenticationAttributeValueRegex(otherProvider.getId());
         val trigger = new AuthenticationAttributeMultifactorAuthenticationTrigger(props,

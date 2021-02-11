@@ -76,7 +76,7 @@ public class DefaultDelegatedClientFactoryTests {
         cas.setProtocol(CasProtocol.SAML.name());
         cas.setPrincipalAttributeId("uid");
         cas.setCssClass("cssclass");
-        props.setLazyInit(false);
+        props.getCore().setLazyInit(false);
         props.getCas().add(cas);
 
         val casSettings = new CasConfigurationProperties();

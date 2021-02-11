@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,7 +35,7 @@ public class GroovyRegisteredServiceMultifactorPolicyTests {
         val authz = new GroovyRegisteredServiceMultifactorPolicy();
         authz.setGroovyScript("classpath:mfapolicy.groovy");
 
-        assertEquals(RegisteredServiceMultifactorPolicyFailureModes.OPEN, authz.getFailureMode());
+        assertEquals(BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.OPEN, authz.getFailureMode());
         assertEquals("Test", authz.getPrincipalAttributeNameTrigger());
         assertEquals("TestMatch", authz.getPrincipalAttributeValueToMatch());
         assertTrue(authz.getMultifactorAuthenticationProviders().contains("mfa-something"));

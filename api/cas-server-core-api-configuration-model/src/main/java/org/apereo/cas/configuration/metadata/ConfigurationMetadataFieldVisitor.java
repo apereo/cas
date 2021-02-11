@@ -6,6 +6,7 @@ import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -53,6 +54,9 @@ public class ConfigurationMetadataFieldVisitor extends VoidVisitorAdapter<Config
 
     private final String sourcePath;
 
+    @Getter
+    private ConfigurationMetadataProperty result;
+
     private static boolean shouldTypeBeExcluded(final ClassOrInterfaceType type) {
         return EXCLUDED_TYPES.matcher(type.getNameAsString()).matches();
     }
@@ -72,8 +76,8 @@ public class ConfigurationMetadataFieldVisitor extends VoidVisitorAdapter<Config
         }
 
         val creator = new ConfigurationMetadataPropertyCreator(indexNameWithBrackets, properties, groups, parentClass);
-        val prop = creator.createConfigurationProperty(field, property.getName());
-        processNestedClassOrInterfaceTypeIfNeeded(field, prop);
+        result = creator.createConfigurationProperty(field, property.getName());
+        processNestedClassOrInterfaceTypeIfNeeded(field, result);
     }
 
     private void processNestedClassOrInterfaceTypeIfNeeded(final FieldDeclaration n, final ConfigurationMetadataProperty prop) {

@@ -169,6 +169,32 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
     }
 
     @Test
+    public void verifyCaseSensitivity() {
+        val casuser = getUsernameUnderTest().toLowerCase();
+        val acct = getAccount("verifyCaseSensitivity", casuser);
+        assertNotNull(acct);
+        val repo = getRegistry("verifyCaseSensitivity");
+
+        var toSave = OneTimeTokenAccount.builder()
+            .username(acct.getUsername())
+            .secretKey(acct.getSecretKey())
+            .validationCode(acct.getValidationCode())
+            .scratchCodes(acct.getScratchCodes())
+            .name(casuser)
+            .build();
+        toSave = repo.save(toSave);
+        assertNotNull(toSave);
+        assertNotNull(repo.get(toSave.getId()));
+        assertNotNull(repo.get(toSave.getUsername().toUpperCase(), toSave.getId()));
+        assertEquals(1, repo.count());
+        assertEquals(1, repo.count(toSave.getUsername().toUpperCase()));
+        repo.delete(acct.getUsername().toUpperCase());
+        assertTrue(repo.load().isEmpty());
+        assertEquals(0, repo.count());
+        assertEquals(0, repo.count(toSave.getUsername().toUpperCase()));
+    }
+    
+    @Test
     public void verifyGetWithDecodedSecret() {
         val casuser = getUsernameUnderTest();
         when(cipherExecutor.encode(PLAIN_SECRET)).thenReturn("abc321");

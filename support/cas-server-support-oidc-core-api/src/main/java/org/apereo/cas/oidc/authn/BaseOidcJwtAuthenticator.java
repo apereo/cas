@@ -33,30 +33,36 @@ import org.springframework.context.ApplicationContext;
  */
 @Slf4j
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public abstract class BaseOidcJwtAuthenticator implements Authenticator<UsernamePasswordCredentials> {
+public abstract class BaseOidcJwtAuthenticator implements Authenticator {
 
     /**
      * Services Manager.
      */
     protected final ServicesManager servicesManager;
+
     /**
      * Registered service access strategy.
      */
     protected final AuditableExecution registeredServiceAccessStrategyEnforcer;
+
     /**
      * Ticket registry.
      */
     protected final TicketRegistry ticketRegistry;
+
     /**
      * Web application service factory.
      */
     protected final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory;
+
     /**
      * CAS properties.
      */
     protected final CasConfigurationProperties casProperties;
 
-    /** Resource loader instance. */
+    /**
+     * Resource loader instance.
+     */
     protected final ApplicationContext applicationContext;
 
     /**

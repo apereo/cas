@@ -1,7 +1,7 @@
 package org.apereo.cas.mfa.accepto;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.configuration.model.support.mfa.AccepttoMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.AccepttoMultifactorAuthenticationProperties;
 import org.apereo.cas.mfa.accepto.web.flow.AccepttoWebflowUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.MockServletContext;
@@ -48,7 +48,7 @@ public class AccepttoApiUtilsTests {
         val authentication = CoreAuthenticationTestUtils.getAuthentication(
             CoreAuthenticationTestUtils.getPrincipal(Map.of("email", List.of("cas@example.org"))));
 
-        val properties = new AccepttoMultifactorProperties();
+        val properties = new AccepttoMultifactorAuthenticationProperties();
         properties.setEmailAttribute("email");
         assertNotNull(AccepttoApiUtils.getUserEmail(authentication, properties));
     }
@@ -58,14 +58,14 @@ public class AccepttoApiUtilsTests {
         val authentication = CoreAuthenticationTestUtils.getAuthentication(
             CoreAuthenticationTestUtils.getPrincipal(Map.of("group", List.of("staff"))));
 
-        val properties = new AccepttoMultifactorProperties();
+        val properties = new AccepttoMultifactorAuthenticationProperties();
         properties.setGroupAttribute("group");
         assertNotNull(AccepttoApiUtils.getUserGroup(authentication, properties));
     }
 
     @Test
     public void verifyUserValid() throws Exception {
-        val properties = new AccepttoMultifactorProperties();
+        val properties = new AccepttoMultifactorAuthenticationProperties();
         properties.setGroupAttribute("group");
         properties.setEmailAttribute("email");
         properties.setApplicationId("appid");
@@ -88,7 +88,7 @@ public class AccepttoApiUtilsTests {
 
     @Test
     public void verifyUserDevicePaired() throws Exception {
-        val properties = new AccepttoMultifactorProperties();
+        val properties = new AccepttoMultifactorAuthenticationProperties();
         properties.setGroupAttribute("group");
         properties.setEmailAttribute("email");
         properties.setApplicationId("appid");
@@ -109,7 +109,7 @@ public class AccepttoApiUtilsTests {
 
     @Test
     public void verifyQR() throws Exception {
-        val properties = new AccepttoMultifactorProperties();
+        val properties = new AccepttoMultifactorAuthenticationProperties();
         properties.setGroupAttribute("group");
         properties.setEmailAttribute("email");
         properties.setApplicationId("appid");
@@ -126,7 +126,7 @@ public class AccepttoApiUtilsTests {
 
     @Test
     public void verifyAuthenticate() throws Exception {
-        val properties = new AccepttoMultifactorProperties();
+        val properties = new AccepttoMultifactorAuthenticationProperties();
         properties.setGroupAttribute("group");
         properties.setEmailAttribute("email");
         properties.setApplicationId("appid");

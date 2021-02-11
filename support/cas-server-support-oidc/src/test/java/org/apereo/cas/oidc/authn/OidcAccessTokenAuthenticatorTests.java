@@ -6,6 +6,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.core.credentials.TokenCredentials;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -32,7 +33,7 @@ public class OidcAccessTokenAuthenticatorTests extends AbstractOidcTests {
         ticketRegistry.addTicket(at);
         val credentials = new TokenCredentials(at.getId());
 
-        auth.validate(credentials, ctx);
+        auth.validate(credentials, ctx, JEESessionStore.INSTANCE);
 
         val userProfile = credentials.getUserProfile();
         assertNotNull(userProfile);
@@ -54,7 +55,7 @@ public class OidcAccessTokenAuthenticatorTests extends AbstractOidcTests {
         val at = getAccessToken("helloworld", "clientid");
         ticketRegistry.addTicket(at);
         val credentials = new TokenCredentials(at.getId());
-        auth.validate(credentials, ctx);
+        auth.validate(credentials, ctx, JEESessionStore.INSTANCE);
         assertNull(credentials.getUserProfile());
     }
 }

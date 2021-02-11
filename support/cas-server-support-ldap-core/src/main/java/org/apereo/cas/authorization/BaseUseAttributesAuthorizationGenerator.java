@@ -14,6 +14,7 @@ import org.ldaptive.LdapException;
 import org.ldaptive.SearchOperation;
 import org.pac4j.core.authorization.generator.AuthorizationGenerator;
 import org.pac4j.core.context.WebContext;
+import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.exception.AccountNotFoundException;
 import org.pac4j.core.profile.UserProfile;
 
@@ -65,7 +66,7 @@ public abstract class BaseUseAttributesAuthorizationGenerator implements Authori
     }
 
     @Override
-    public Optional<UserProfile> generate(final WebContext context, final UserProfile profile) {
+    public Optional<UserProfile> generate(final WebContext context, final SessionStore sessionStore, final UserProfile profile) {
         val username = profile.getId();
 
         try {

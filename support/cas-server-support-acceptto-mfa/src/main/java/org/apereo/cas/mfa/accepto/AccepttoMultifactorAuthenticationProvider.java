@@ -1,7 +1,7 @@
 package org.apereo.cas.mfa.accepto;
 
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
-import org.apereo.cas.configuration.model.support.mfa.AccepttoMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.AccepttoMultifactorAuthenticationProperties;
 import org.apereo.cas.services.RegisteredService;
 
 import lombok.NoArgsConstructor;
@@ -21,7 +21,7 @@ public class AccepttoMultifactorAuthenticationProvider extends AbstractMultifact
 
     @Override
     public String getId() {
-        return StringUtils.defaultIfBlank(super.getId(), AccepttoMultifactorProperties.DEFAULT_IDENTIFIER);
+        return StringUtils.defaultIfBlank(super.getId(), AccepttoMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
     }
 
     @Override

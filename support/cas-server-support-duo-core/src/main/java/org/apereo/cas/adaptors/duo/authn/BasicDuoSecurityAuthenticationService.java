@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.duo.authn;
 
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -35,7 +35,7 @@ public class BasicDuoSecurityAuthenticationService extends BaseDuoSecurityAuthen
 
     private static final long serialVersionUID = -6690808348975271382L;
 
-    public BasicDuoSecurityAuthenticationService(final DuoSecurityMultifactorProperties duoProperties,
+    public BasicDuoSecurityAuthenticationService(final DuoSecurityMultifactorAuthenticationProperties duoProperties,
         final HttpClient httpClient) {
         super(duoProperties, httpClient);
     }

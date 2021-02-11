@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +30,7 @@ import java.util.UUID;
 @Transactional(transactionManager = "ticketTransactionManager")
 @Slf4j
 @RequiredArgsConstructor
-public class DistributedJEESessionStore implements SessionStore<JEEContext> {
+public class DistributedJEESessionStore implements SessionStore {
     private static final String SESSION_ID_IN_REQUEST_ATTRIBUTE = "sessionIdInRequestAttribute";
 
     private final CentralAuthenticationService centralAuthenticationService;
@@ -37,21 +38,23 @@ public class DistributedJEESessionStore implements SessionStore<JEEContext> {
     private final TicketFactory ticketFactory;
 
     private final CasCookieBuilder cookieGenerator;
-
+    
     @Override
-    public String getOrCreateSessionId(final JEEContext context) {
-        var sessionId = getSessionId(context);
+    public Optional<String> getSessionId(final WebContext webContext, final boolean create) {
+        var sessionId = fetchSessionIdFromContext(webContext);
         if (StringUtils.isBlank(sessionId)) {
             sessionId = UUID.randomUUID().toString();
             LOGGER.trace("Generated session id: [{}]", sessionId);
+            
+            val context = JEEContext.class.cast(webContext);
             cookieGenerator.addCookie(context.getNativeRequest(), context.getNativeResponse(), sessionId);
             context.setRequestAttribute(SESSION_ID_IN_REQUEST_ATTRIBUTE, sessionId);
         }
-        return sessionId;
+        return Optional.of(sessionId);
     }
 
     @Override
-    public Optional get(final JEEContext context, final String key) {
+    public Optional get(final WebContext context, final String key) {
         LOGGER.trace("Getting key: [{}]", key);
         val ticket = getTransientSessionTicketForSession(context);
         if (ticket == null) {
@@ -61,9 +64,9 @@ public class DistributedJEESessionStore implements SessionStore<JEEContext> {
     }
 
     @Override
-    public void set(final JEEContext context, final String key, final Object value) {
+    public void set(final WebContext context, final String key, final Object value) {
         LOGGER.trace("Setting key: [{}]", key);
-        val sessionId = getOrCreateSessionId(context);
+        val sessionId = fetchSessionIdFromContext(context);
 
         val properties = new HashMap<String, Serializable>();
         if (value instanceof Serializable) {
@@ -87,11 +90,13 @@ public class DistributedJEESessionStore implements SessionStore<JEEContext> {
     }
 
     @Override
-    public boolean destroySession(final JEEContext context) {
+    public boolean destroySession(final WebContext webContext) {
         try {
-            val sessionId = getOrCreateSessionId(context);
+            val sessionId = fetchSessionIdFromContext(webContext);
             val ticketId = TransientSessionTicketFactory.normalizeTicketId(sessionId);
             this.centralAuthenticationService.deleteTicket(ticketId);
+
+            val context = JEEContext.class.cast(webContext);
             cookieGenerator.removeCookie(context.getNativeResponse());
             LOGGER.trace("Removes session cookie and ticket: [{}]", ticketId);
             return true;
@@ -102,36 +107,43 @@ public class DistributedJEESessionStore implements SessionStore<JEEContext> {
     }
 
     @Override
-    public Optional getTrackableSession(final JEEContext context) {
-        val sessionId = getOrCreateSessionId(context);
+    public Optional getTrackableSession(final WebContext context) {
+        val sessionId = fetchSessionIdFromContext(context);
         LOGGER.trace("Track sessionId: [{}]", sessionId);
         return Optional.of(sessionId);
     }
 
     @Override
-    public Optional<SessionStore<JEEContext>> buildFromTrackableSession(final JEEContext context, final Object trackableSession) {
+    public Optional<SessionStore> buildFromTrackableSession(final WebContext context, final Object trackableSession) {
         context.setRequestAttribute(SESSION_ID_IN_REQUEST_ATTRIBUTE, trackableSession);
         LOGGER.trace("Force sessionId: [{}]", trackableSession);
         return Optional.of(this);
     }
 
     @Override
-    public boolean renewSession(final JEEContext context) {
+    public boolean renewSession(final WebContext context) {
         return false;
     }
 
-    private String getSessionId(final JEEContext context) {
-        var sessionId = (String) context.getRequestAttribute(SESSION_ID_IN_REQUEST_ATTRIBUTE).orElse(null);
+    /**
+     * Fetch session id from context.
+     *
+     * @param webContext the web context
+     * @return the string
+     */
+    protected String fetchSessionIdFromContext(final WebContext webContext) {
+        var sessionId = (String) webContext.getRequestAttribute(SESSION_ID_IN_REQUEST_ATTRIBUTE).orElse(null);
         if (StringUtils.isBlank(sessionId)) {
+            val context = JEEContext.class.cast(webContext);
             sessionId = cookieGenerator.retrieveCookieValue(context.getNativeRequest());
         }
         LOGGER.trace("Generated session id: [{}]", sessionId);
         return sessionId;
     }
 
-    private TransientSessionTicket getTransientSessionTicketForSession(final JEEContext context) {
+    private TransientSessionTicket getTransientSessionTicketForSession(final WebContext context) {
         try {
-            val sessionId = getOrCreateSessionId(context);
+            val sessionId = fetchSessionIdFromContext(context);
             val ticketId = TransientSessionTicketFactory.normalizeTicketId(sessionId);
 
             LOGGER.trace("fetching ticket: [{}]", ticketId);

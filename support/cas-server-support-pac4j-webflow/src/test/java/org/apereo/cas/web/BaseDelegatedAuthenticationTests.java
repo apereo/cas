@@ -38,6 +38,8 @@ import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.WebContext;
+import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.oauth.client.FacebookClient;
 import org.pac4j.oauth.credentials.OAuth20Credentials;
@@ -141,11 +143,11 @@ public abstract class BaseDelegatedAuthenticationTests {
 
             val facebookClient = new FacebookClient() {
                 @Override
-                protected Optional<OAuth20Credentials> retrieveCredentials(final WebContext context) {
+                public Optional<Credentials> retrieveCredentials(final WebContext context, final SessionStore sessionStore) {
                     return Optional.of(new OAuth20Credentials("fakeVerifier"));
                 }
             };
-            facebookClient.setProfileCreator((credentials, context) -> {
+            facebookClient.setProfileCreator((credentials, context, store) -> {
                 val profile = new CommonProfile();
                 profile.setClientName(facebookClient.getName());
                 profile.setId("casuser");

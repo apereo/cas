@@ -98,7 +98,7 @@ public class BasePasswordManagementService implements PasswordManagementService 
     }
 
     @Override
-    public String createToken(final String to) {
+    public String createToken(final PasswordManagementQuery query) {
         try {
             val token = UUID.randomUUID().toString();
             val claims = new JwtClaims();
@@ -118,8 +118,8 @@ public class BasePasswordManagementService implements PasswordManagementService 
                     claims.setStringClaim("client", holder.getClientIpAddress());
                 }
             }
-            claims.setSubject(to);
-            LOGGER.debug("Creating password management token for [{}]", to);
+            claims.setSubject(query.getUsername());
+            LOGGER.debug("Creating password management token for [{}]", query.getUsername());
             val json = claims.toJson();
 
             LOGGER.debug("Encoding the generated JSON token...");

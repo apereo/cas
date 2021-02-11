@@ -9,6 +9,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -22,37 +23,17 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-support-trusted-mfa")
 @Getter
 @Setter
+@Accessors(chain = true)
 @JsonFilter("TrustedDevicesMultifactorProperties")
 public class TrustedDevicesMultifactorProperties implements Serializable {
 
     private static final long serialVersionUID = 1505013239016790473L;
 
     /**
-     * If an MFA request is bypassed due to a trusted authentication decision, applications will
-     * receive a special attribute as part of the validation payload that indicates this behavior.
-     * Applications must further account for the scenario where they ask for an MFA mode and
-     * yet don’t receive confirmation of it in the response given the authentication
-     * session was trusted and MFA bypassed.
+     * Trusted devices core settings.
      */
-    private String authenticationContextAttribute = "isFromTrustedMultifactorAuthentication";
-
-    /**
-     * Indicates whether CAS should ask for device registration consent
-     * or execute it automatically.
-     */
-    private boolean deviceRegistrationEnabled = true;
-
-    /**
-     * Indicates how record keys for trusted devices would be generated
-     * so they can be signed/verified on fetch operations.
-     * Acceptable values are {@code default}, {@code legacy}.
-     *
-     * * <ul>
-     * <li>{@code DEFAULT}: Uses a combination of the username, device name and device fingerprint to generate the device key.</li>
-     * <li>{@code LEGACY}: Deprecated. Uses a combination of the username, record date and device fingerprint to generate the device key.</li>
-     * </ul>
-     */
-    private String keyGeneratorType = "default";
+    @NestedConfigurationProperty
+    private TrustedDevicesMultifactorCoreProperties core = new TrustedDevicesMultifactorCoreProperties();
 
     /**
      * Store devices records via REST.

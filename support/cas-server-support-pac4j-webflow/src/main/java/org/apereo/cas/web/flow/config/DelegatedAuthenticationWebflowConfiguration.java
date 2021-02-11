@@ -18,6 +18,7 @@ import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.DelegatedAuthenticationClientFinishLogoutAction;
 import org.apereo.cas.web.flow.DelegatedAuthenticationClientLogoutAction;
 import org.apereo.cas.web.flow.DelegatedAuthenticationErrorViewResolver;
 import org.apereo.cas.web.flow.DelegatedAuthenticationWebflowConfigurer;
@@ -152,11 +153,19 @@ public class DelegatedAuthenticationWebflowConfiguration {
         return new DelegatedAuthenticationErrorViewResolver(conventionErrorViewResolver.getObject());
     }
 
-    @ConditionalOnMissingBean(name = "delegatedAuthenticationClientLogoutAction")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_LOGOUT)
     @Bean
     @RefreshScope
     public Action delegatedAuthenticationClientLogoutAction() {
         return new DelegatedAuthenticationClientLogoutAction(builtClients.getObject(),
+            delegatedClientDistributedSessionStore.getObject());
+    }
+
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_FINISH_LOGOUT)
+    @Bean
+    @RefreshScope
+    public Action delegatedAuthenticationClientFinishLogoutAction() {
+        return new DelegatedAuthenticationClientFinishLogoutAction(builtClients.getObject(),
             delegatedClientDistributedSessionStore.getObject());
     }
 
@@ -208,7 +217,8 @@ public class DelegatedAuthenticationWebflowConfiguration {
             ticketFactory.getObject(),
             casProperties,
             authenticationRequestServiceSelectionStrategies.getObject(),
-            argumentExtractor.getObject()
+            argumentExtractor.getObject(),
+            delegatedClientDistributedSessionStore.getObject()
         );
     }
 
@@ -241,13 +251,11 @@ public class DelegatedAuthenticationWebflowConfiguration {
     @Bean
     @RefreshScope
     public Function<RequestContext, Set<DelegatedClientIdentityProviderConfiguration>> delegatedClientIdentityProviderConfigurationFunction() {
-        val helper = new DelegatedAuthenticationAccessStrategyHelper(this.servicesManager.getObject(),
+        val helper = new DelegatedAuthenticationAccessStrategyHelper(servicesManager.getObject(),
             delegatedAuthenticationPolicyAuditableEnforcer.getObject());
-
         return new DelegatedClientIdentityProviderConfigurationFunction(servicesManager.getObject(),
             authenticationRequestServiceSelectionStrategies.getObject(),
             builtClients.getObject(),
-            delegatedClientDistributedSessionStore.getObject(),
             helper,
             casProperties);
     }

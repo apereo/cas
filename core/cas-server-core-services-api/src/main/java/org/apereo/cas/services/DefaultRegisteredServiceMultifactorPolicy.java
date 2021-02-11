@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -30,7 +32,7 @@ public class DefaultRegisteredServiceMultifactorPolicy implements RegisteredServ
 
     private Set<String> multifactorAuthenticationProviders = new LinkedHashSet<>(0);
 
-    private RegisteredServiceMultifactorPolicyFailureModes failureMode = RegisteredServiceMultifactorPolicyFailureModes.UNDEFINED;
+    private MultifactorAuthenticationProviderFailureModes failureMode = MultifactorAuthenticationProviderFailureModes.UNDEFINED;
 
     private String principalAttributeNameTrigger;
 

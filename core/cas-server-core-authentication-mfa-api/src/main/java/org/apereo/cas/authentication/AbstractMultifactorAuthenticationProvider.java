@@ -1,8 +1,8 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
+import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.RegisteredServiceMultifactorPolicyFailureModes;
 
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -32,7 +32,7 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
 
     private MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator;
 
-    private String failureMode = "UNDEFINED";
+    private MultifactorAuthenticationProviderFailureModes failureMode = MultifactorAuthenticationProviderFailureModes.UNDEFINED;
 
     private String id;
 
@@ -46,10 +46,5 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
     @Override
     public boolean matches(final String identifier) {
         return StringUtils.isNotBlank(getId()) && getId().matches(identifier);
-    }
-
-    @Override
-    public RegisteredServiceMultifactorPolicyFailureModes getFailureMode() {
-        return RegisteredServiceMultifactorPolicyFailureModes.valueOf(failureMode);
     }
 }

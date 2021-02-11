@@ -19,6 +19,8 @@ import org.ldaptive.LdapException;
 import org.springframework.beans.factory.DisposableBean;
 
 import java.io.IOException;
+import java.time.Clock;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -96,11 +98,19 @@ public class LdapWebAuthnCredentialRepository extends BaseWebAuthnCredentialRepo
 
     @Override
     @SneakyThrows
-    protected void update(final String username, final Collection<CredentialRegistration> records) {
-        if (records.isEmpty()) {
+    protected void update(final String username, final Collection<CredentialRegistration> givenRecords) {
+        if (givenRecords.isEmpty()) {
             LOGGER.debug("No records are provided for [{}] so entry will be removed", username);
             executeModifyOperation(new HashSet<>(0), Optional.ofNullable(locateLdapEntryFor(username)));
         } else {
+            val records = givenRecords.stream()
+                .map(record -> {
+                    if (record.getRegistrationTime() == null) {
+                        return record.withRegistrationTime(Instant.now(Clock.systemUTC()));
+                    }
+                    return record;
+                })
+                .collect(Collectors.toList());
             val results = records.stream()
                 .map(Unchecked.function(reg -> WebAuthnUtils.getObjectMapper().writeValueAsString(records)))
                 .map(reg -> getCipherExecutor().encode(reg))
@@ -113,7 +123,7 @@ public class LdapWebAuthnCredentialRepository extends BaseWebAuthnCredentialRepo
         try {
             val ldapProperties = getProperties().getAuthn().getMfa().getWebAuthn().getLdap();
             val searchFilter = '(' + ldapProperties.getSearchFilter() + ')';
-            val filter = LdapUtils.newLdaptiveSearchFilter(searchFilter, CollectionUtils.wrapList(principal));
+            val filter = LdapUtils.newLdaptiveSearchFilter(searchFilter, CollectionUtils.wrapList(principal.trim().toLowerCase()));
             LOGGER.debug("Locating LDAP entry via filter [{}] based on attribute [{}]", filter,
                 ldapProperties.getAccountAttributeName());
             val response = LdapUtils.executeSearchOperation(this.connectionFactory, ldapProperties.getBaseDn(),

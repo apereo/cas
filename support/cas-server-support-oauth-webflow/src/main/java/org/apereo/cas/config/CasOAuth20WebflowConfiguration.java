@@ -11,7 +11,6 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.login.SessionStoreTicketGrantingTicketAction;
 
 import lombok.val;
-import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,7 +66,7 @@ public class CasOAuth20WebflowConfiguration {
 
     @Autowired
     @Qualifier("oauthDistributedSessionStore")
-    private ObjectProvider<SessionStore<JEEContext>> oauthDistributedSessionStore;
+    private ObjectProvider<SessionStore> oauthDistributedSessionStore;
 
 
     @ConditionalOnMissingBean(name = "oauth20LogoutWebflowConfigurer")

@@ -43,7 +43,7 @@ public class GroovyScriptMultifactorAuthenticationTrigger implements Multifactor
     public GroovyScriptMultifactorAuthenticationTrigger(final CasConfigurationProperties casProperties,
                                                         final ApplicationContext applicationContext) {
         this.casProperties = casProperties;
-        val groovyScript = casProperties.getAuthn().getMfa().getGroovyScript();
+        val groovyScript = casProperties.getAuthn().getMfa().getGroovyScript().getLocation();
         this.watchableScript = new WatchableGroovyScriptResource(groovyScript);
         this.applicationContext = applicationContext;
     }
@@ -52,7 +52,7 @@ public class GroovyScriptMultifactorAuthenticationTrigger implements Multifactor
     public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
                                                                    final RegisteredService registeredService,
                                                                    final HttpServletRequest httpServletRequest, final Service service) {
-        val groovyScript = casProperties.getAuthn().getMfa().getGroovyScript();
+        val groovyScript = casProperties.getAuthn().getMfa().getGroovyScript().getLocation();
         if (groovyScript == null) {
             LOGGER.trace("No groovy script is configured for multifactor authentication");
             return Optional.empty();

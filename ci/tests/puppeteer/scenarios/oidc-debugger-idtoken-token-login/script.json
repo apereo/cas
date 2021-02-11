@@ -13,7 +13,7 @@
     "--cas.authn.attribute-repository.stub.attributes.gender=female",
     "--cas.authn.attribute-repository.stub.attributes.preferred_username=casuser",
 
-    "--cas.service-registry.init-from-json=true",
+    "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/oidc-debugger-idtoken-token-login/services"
   ]
 }

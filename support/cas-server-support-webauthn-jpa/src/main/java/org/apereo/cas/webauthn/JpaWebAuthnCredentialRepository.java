@@ -19,6 +19,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.time.Clock;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -55,7 +57,7 @@ public class JpaWebAuthnCredentialRepository extends BaseWebAuthnCredentialRepos
     public Collection<CredentialRegistration> getRegistrationsByUsername(final String username) {
         val records = entityManager.createQuery(
             SELECT_QUERY.concat("WHERE r.username = :username"), JpaWebAuthnCredentialRegistration.class)
-            .setParameter("username", username)
+            .setParameter("username", username.trim().toLowerCase())
             .getResultList();
 
         return records.stream()
@@ -78,19 +80,27 @@ public class JpaWebAuthnCredentialRepository extends BaseWebAuthnCredentialRepos
 
     @Override
     @SneakyThrows
-    public void update(final String username, final Collection<CredentialRegistration> records) {
+    public void update(final String username, final Collection<CredentialRegistration> givenRecords) {
+        val records = givenRecords.stream()
+            .map(record -> {
+                if (record.getRegistrationTime() == null) {
+                    return record.withRegistrationTime(Instant.now(Clock.systemUTC()));
+                }
+                return record;
+            })
+            .collect(Collectors.toList());
         val jsonRecords = getCipherExecutor().encode(WebAuthnUtils.getObjectMapper().writeValueAsString(records));
         new TransactionTemplate(transactionManager).execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(final TransactionStatus status) {
                 val count = entityManager.createQuery(UPDATE_QUERY.concat("SET r.records=:records WHERE r.username = :username"))
-                    .setParameter("username", username)
+                    .setParameter("username", username.trim().toLowerCase())
                     .setParameter("records", jsonRecords)
                     .executeUpdate();
 
                 if (count == 0) {
                     val record = JpaWebAuthnCredentialRegistration.builder()
-                        .username(username)
+                        .username(username.trim().toLowerCase())
                         .records(jsonRecords)
                         .build();
                     entityManager.merge(record);

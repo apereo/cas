@@ -59,8 +59,8 @@ public class UmaDeleteResourceSetRegistrationEndpointControllerTests extends Bas
         val resourceId = (long) model.get("resourceId");
 
         val context = new JEEContext(results.getLeft(), results.getMiddle());
-        val manager = new ProfileManager<>(context);
-        manager.logout();
+        val manager = new ProfileManager(context, oauthDistributedSessionStore);
+        manager.removeProfiles();
         response = umaDeleteResourceSetRegistrationEndpointController.deleteResourceSet(resourceId,
             results.getLeft(), results.getMiddle());
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());

@@ -4,7 +4,7 @@ import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.configuration.model.support.mfa.AccepttoMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.AccepttoMultifactorAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
@@ -44,11 +44,11 @@ public class AccepttoMultifactorAuthenticationHandler extends AbstractPreAndPost
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
-    private final AccepttoMultifactorProperties accepttoProperties;
+    private final AccepttoMultifactorAuthenticationProperties accepttoProperties;
 
     public AccepttoMultifactorAuthenticationHandler(final ServicesManager servicesManager,
                                                     final PrincipalFactory principalFactory,
-                                                    final AccepttoMultifactorProperties accepttoProperties) {
+                                                    final AccepttoMultifactorAuthenticationProperties accepttoProperties) {
         super(accepttoProperties.getName(),
             servicesManager,
             principalFactory,

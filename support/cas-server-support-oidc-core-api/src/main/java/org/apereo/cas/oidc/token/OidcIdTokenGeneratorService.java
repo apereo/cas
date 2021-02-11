@@ -58,7 +58,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
         }
 
         val oidcRegisteredService = (OidcRegisteredService) registeredService;
-        val context = new JEEContext(request, response, getConfigurationContext().getSessionStore());
+        val context = new JEEContext(request, response);
         LOGGER.trace("Attempting to produce claims for the id token [{}]", accessToken);
         val authenticatedProfile = getAuthenticatedProfile(request, response);
         val claims = buildJwtClaims(request, accessToken, timeoutInSeconds,
@@ -113,8 +113,8 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
         val mfa = getConfigurationContext().getCasProperties().getAuthn().getMfa();
         val attributes = authentication.getAttributes();
 
-        if (attributes.containsKey(mfa.getAuthenticationContextAttribute())) {
-            val val = CollectionUtils.toCollection(attributes.get(mfa.getAuthenticationContextAttribute()));
+        if (attributes.containsKey(mfa.getCore().getAuthenticationContextAttribute())) {
+            val val = CollectionUtils.toCollection(attributes.get(mfa.getCore().getAuthenticationContextAttribute()));
             claims.setStringClaim(OidcConstants.ACR, val.iterator().next().toString());
         }
         if (attributes.containsKey(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS)) {

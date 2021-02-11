@@ -39,7 +39,7 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
     private MessageContext bindRelayStateParameter(final HttpServletRequest request,
                                                    final HttpServletResponse response) {
         val messageContext = new MessageContext();
-        val context = new JEEContext(request, response, samlProfileHandlerConfigurationContext.getSessionStore());
+        val context = new JEEContext(request, response);
         val relayState = samlProfileHandlerConfigurationContext.getSessionStore()
             .get(context, SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE).orElse(StringUtils.EMPTY).toString();
         LOGGER.trace("Relay state is [{}]", relayState);
@@ -87,8 +87,8 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
         autoConfigureCookiePath(request);
 
         LOGGER.info("Received SAML callback profile request [{}]", request.getRequestURI());
-        val authnRequest = SamlIdPUtils.retrieveSamlRequest(new JEEContext(request, response,
-                samlProfileHandlerConfigurationContext.getSessionStore()),
+        val authnRequest = SamlIdPUtils.retrieveSamlRequest(new JEEContext(request, response),
+                samlProfileHandlerConfigurationContext.getSessionStore(),
             samlProfileHandlerConfigurationContext.getOpenSamlConfigBean(),
             AuthnRequest.class);
         

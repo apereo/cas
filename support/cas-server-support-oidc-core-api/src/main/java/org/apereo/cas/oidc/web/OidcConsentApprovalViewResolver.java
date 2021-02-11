@@ -10,6 +10,7 @@ import org.apereo.cas.support.oauth.web.views.OAuth20ConsentApprovalViewResolver
 
 import lombok.val;
 import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.session.SessionStore;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -22,8 +23,9 @@ import java.util.Map;
  */
 public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewResolver {
 
-    public OidcConsentApprovalViewResolver(final CasConfigurationProperties casProperties) {
-        super(casProperties);
+    public OidcConsentApprovalViewResolver(final CasConfigurationProperties casProperties,
+                                           final SessionStore sessionStore) {
+        super(casProperties, sessionStore);
     }
 
     @Override

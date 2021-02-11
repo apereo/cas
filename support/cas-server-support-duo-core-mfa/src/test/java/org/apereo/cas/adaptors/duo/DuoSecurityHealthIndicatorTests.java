@@ -2,7 +2,7 @@ package org.apereo.cas.adaptors.duo;
 
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationService;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
-import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.val;
@@ -34,7 +34,7 @@ public class DuoSecurityHealthIndicatorTests {
         when(duoService.getApiHost()).thenReturn("https://api.duosecurity.com");
 
         val bean = mock(DuoSecurityMultifactorAuthenticationProvider.class);
-        when(bean.getId()).thenReturn(DuoSecurityMultifactorProperties.DEFAULT_IDENTIFIER);
+        when(bean.getId()).thenReturn(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
         when(bean.getDuoAuthenticationService()).thenReturn(duoService);
         ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, bean, "duoProvider");
 

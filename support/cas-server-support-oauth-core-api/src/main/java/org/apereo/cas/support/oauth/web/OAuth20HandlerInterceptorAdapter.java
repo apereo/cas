@@ -11,7 +11,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.servlet.AsyncHandlerInterceptor;
+import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,27 +29,28 @@ import java.util.regex.Pattern;
  * @since 5.1.0
  */
 @RequiredArgsConstructor
-public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter {
+public class OAuth20HandlerInterceptorAdapter implements AsyncHandlerInterceptor {
     /**
      * Access token interceptor.
      */
-    protected final HandlerInterceptorAdapter requiresAuthenticationAccessTokenInterceptor;
+    protected final HandlerInterceptor requiresAuthenticationAccessTokenInterceptor;
 
     /**
      * Authorization interceptor.
      */
-    protected final HandlerInterceptorAdapter requiresAuthenticationAuthorizeInterceptor;
+    protected final HandlerInterceptor requiresAuthenticationAuthorizeInterceptor;
 
     private final Collection<AccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors;
 
     private final ServicesManager servicesManager;
 
-    private final SessionStore<JEEContext> sessionStore;
+    private final SessionStore sessionStore;
 
     private final Set<OAuth20AuthorizationRequestValidator> oauthAuthorizationRequestValidators;
 
     @Override
-    public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response,
+    public boolean preHandle(final HttpServletRequest request,
+                             final HttpServletResponse response,
                              final Object handler) throws Exception {
         if (requestRequiresAuthentication(request, response)) {
             return requiresAuthenticationAccessTokenInterceptor.preHandle(request, response, handler);
@@ -70,7 +72,7 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
     * @return true/false
     */
     protected boolean clientNeedAuthentication(final HttpServletRequest request, final HttpServletResponse response) {
-        val clientId = OAuth20Utils.getClientIdAndClientSecret(new JEEContext(request, response, sessionStore)).getLeft();
+        val clientId = OAuth20Utils.getClientIdAndClientSecret(new JEEContext(request, response), this.sessionStore).getLeft();
         if (clientId.isEmpty()) {
             return true;
         }
@@ -135,14 +137,13 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
         }
 
         val accessTokenRequest = isAccessTokenRequest(request, response);
+        val extractor = extractAccessTokenGrantRequest(request);
         if (!accessTokenRequest) {
-            val extractor = extractAccessTokenGrantRequest(request);
             if (extractor.isPresent()) {
                 val ext = extractor.get();
                 return ext.requestMustBeAuthenticated();
             }
         } else {
-            val extractor = extractAccessTokenGrantRequest(request);
             if (extractor.isPresent()) {
                 val ext = extractor.get();
                 return ext.getResponseType() != OAuth20ResponseTypes.DEVICE_CODE;
@@ -169,7 +170,7 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
         val requestPath = request.getRequestURI();
 
         if (doesUriMatchPattern(requestPath, OAuth20Constants.AUTHORIZE_URL)) {
-            return isValidAuthorizeRequest(new JEEContext(request, response, sessionStore));
+            return isValidAuthorizeRequest(new JEEContext(request, response));
         }
 
         return false;

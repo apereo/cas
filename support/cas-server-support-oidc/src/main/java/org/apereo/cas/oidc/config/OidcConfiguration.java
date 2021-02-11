@@ -146,7 +146,6 @@ import org.jose4j.jwk.PublicJsonWebKey;
 import org.pac4j.core.authorization.authorizer.DefaultAuthorizers;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.session.SessionStore;
-import org.pac4j.core.credentials.TokenCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.credentials.extractor.BearerAuthExtractor;
 import org.pac4j.core.http.adapter.JEEHttpActionAdapter;
@@ -165,10 +164,10 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
@@ -238,11 +237,11 @@ public class OidcConfiguration implements WebMvcConfigurer {
 
     @Autowired
     @Qualifier("requiresAuthenticationAccessTokenInterceptor")
-    private ObjectProvider<SecurityInterceptor> requiresAuthenticationAccessTokenInterceptor;
+    private ObjectProvider<HandlerInterceptor> requiresAuthenticationAccessTokenInterceptor;
 
     @Autowired
     @Qualifier("requiresAuthenticationAuthorizeInterceptor")
-    private ObjectProvider<SecurityInterceptor> requiresAuthenticationAuthorizeInterceptor;
+    private ObjectProvider<HandlerInterceptor> requiresAuthenticationAuthorizeInterceptor;
 
     @Autowired
     @Qualifier("oauthCasAuthenticationBuilder")
@@ -385,7 +384,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
 
     @Bean
     public ConsentApprovalViewResolver consentApprovalViewResolver() {
-        return new OidcConsentApprovalViewResolver(casProperties);
+        return new OidcConsentApprovalViewResolver(casProperties, oauthDistributedSessionStore.getObject());
     }
 
     @Bean
@@ -399,7 +398,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    public HandlerInterceptorAdapter requiresAuthenticationDynamicRegistrationInterceptor() {
+    public HandlerInterceptor requiresAuthenticationDynamicRegistrationInterceptor() {
         val clients = String.join(",",
             Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN,
             Authenticators.CAS_OAUTH_CLIENT_ACCESS_TOKEN_AUTHN,
@@ -411,7 +410,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    public HandlerInterceptorAdapter requiresAuthenticationClientConfigurationInterceptor() {
+    public HandlerInterceptor requiresAuthenticationClientConfigurationInterceptor() {
         val clients = String.join(",", OidcConstants.CAS_OAUTH_CLIENT_CONFIG_ACCESS_TOKEN_AUTHN);
         val interceptor = new SecurityInterceptor(oauthSecConfig.getObject(), clients, JEEHttpActionAdapter.INSTANCE);
         interceptor.setAuthorizers(DefaultAuthorizers.IS_FULLY_AUTHENTICATED);
@@ -727,7 +726,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    public HandlerInterceptorAdapter oauthInterceptor() {
+    public HandlerInterceptor oauthInterceptor() {
         val oidc = casProperties.getAuthn().getOidc();
         val mode = OidcConstants.DynamicClientRegistrationMode.valueOf(StringUtils.defaultIfBlank(
             oidc.getCore().getDynamicClientRegistrationMode(),
@@ -890,7 +889,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    public Authenticator<TokenCredentials> oAuthAccessTokenAuthenticator() {
+    public Authenticator oAuthAccessTokenAuthenticator() {
         return new OidcAccessTokenAuthenticator(ticketRegistry.getObject(),
             oidcTokenSigningAndEncryptionService(), servicesManager.getObject(),
             oidcAccessTokenJwtBuilder());

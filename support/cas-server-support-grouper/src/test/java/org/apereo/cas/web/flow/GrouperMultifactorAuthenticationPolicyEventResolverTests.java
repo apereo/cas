@@ -39,7 +39,8 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@SpringBootTest(classes = BaseGrouperConfigurationTests.SharedTestConfiguration.class, properties = "cas.authn.mfa.grouper-group-field=name")
+@SpringBootTest(classes = BaseGrouperConfigurationTests.SharedTestConfiguration.class,
+    properties = "cas.authn.mfa.triggers.grouper.grouper-group-field=name")
 @Tag("WebflowEvents")
 public class GrouperMultifactorAuthenticationPolicyEventResolverTests {
     @Autowired

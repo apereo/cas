@@ -5,7 +5,7 @@ import org.apereo.cas.adaptors.duo.authn.DuoSecurityCredential;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
-import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.util.MockServletContext;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -58,7 +58,7 @@ public class DuoSecurityPrepareWebLoginFormActionTests {
 
         val duoService = mock(DuoSecurityAuthenticationService.class);
         val provider = mock(DuoSecurityMultifactorAuthenticationProvider.class);
-        when(provider.getId()).thenReturn(DuoSecurityMultifactorProperties.DEFAULT_IDENTIFIER);
+        when(provider.getId()).thenReturn(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
         when(provider.getDuoAuthenticationService()).thenReturn(duoService);
         when(provider.matches(anyString())).thenReturn(Boolean.TRUE);
 

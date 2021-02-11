@@ -38,7 +38,7 @@ The following endpoints are provided by CAS:
 
 ## Configuration
 
-{% include casproperties.html properties="cas.tgc" %}
+{% include casproperties.html properties="cas.tgc,cas.ticket.tgt.core" %}
 
 The cookie has the following properties:
 

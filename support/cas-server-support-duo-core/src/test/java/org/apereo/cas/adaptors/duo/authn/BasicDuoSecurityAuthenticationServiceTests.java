@@ -4,7 +4,7 @@ import org.apereo.cas.adaptors.duo.DuoSecurityUserAccountStatus;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.http.HttpClient;
@@ -163,7 +163,7 @@ public class BasicDuoSecurityAuthenticationServiceTests {
         try (val webServer = new MockWebServer(9310,
             new ByteArrayResource(entity.getBytes(UTF_8), "Output"), OK)) {
             webServer.start();
-            val props = new DuoSecurityMultifactorProperties().setDuoApiHost("http://localhost:9310");
+            val props = new DuoSecurityMultifactorAuthenticationProperties().setDuoApiHost("http://localhost:9310");
             val service = new BasicDuoSecurityAuthenticationService(props, httpClient);
             assertTrue(service.ping());
         }

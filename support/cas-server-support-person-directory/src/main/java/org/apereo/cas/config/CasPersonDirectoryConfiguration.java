@@ -171,7 +171,7 @@ public class CasPersonDirectoryConfiguration {
     @ConditionalOnMissingBean(name = "cachingAttributeRepository")
     @RefreshScope
     public IPersonAttributeDao cachingAttributeRepository() {
-        val props = casProperties.getAuthn().getAttributeRepository();
+        val props = casProperties.getAuthn().getAttributeRepository().getCore();
         if (props.getExpirationTime() <= 0) {
             LOGGER.warn("Attribute repository caching is disabled");
             return aggregatingAttributeRepository();
@@ -196,15 +196,14 @@ public class CasPersonDirectoryConfiguration {
         val aggregate = getAggregateAttributeRepository();
 
         val properties = casProperties.getAuthn().getAttributeRepository();
-        val merger = StringUtils.defaultIfBlank(properties.getMerger(), "replace").trim();
+        val merger = StringUtils.defaultIfBlank(properties.getCore().getMerger(), "replace").trim();
         LOGGER.trace("Configured merging strategy for attribute sources is [{}]", merger);
         aggregate.setMerger(CoreAuthenticationUtils.getAttributeMerger(merger));
 
         val list = personDirectoryAttributeRepositoryPlan().getAttributeRepositories();
         aggregate.setPersonAttributeDaos(list);
 
-        aggregate.setRequireAll(properties.isRequireAllRepositorySources());
-
+        aggregate.setRequireAll(properties.getCore().isRequireAllRepositorySources());
         if (list.isEmpty()) {
             LOGGER.debug("No attribute repository sources are available/defined to merge together.");
         } else {
@@ -219,7 +218,7 @@ public class CasPersonDirectoryConfiguration {
 
     private AbstractAggregatingDefaultQueryPersonAttributeDao getAggregateAttributeRepository() {
         val properties = casProperties.getAuthn().getAttributeRepository();
-        val aggregation = StringUtils.defaultIfBlank(properties.getAggregation(), "merge").trim().toLowerCase();
+        val aggregation = StringUtils.defaultIfBlank(properties.getCore().getAggregation(), "merge").trim().toLowerCase();
         switch (aggregation) {
             case "cascade":
             case "query":

@@ -12,5 +12,4 @@ Device registrations may be kept inside a CouchDb instance by including the foll
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-u2f-couchdb" %}
 
-{% include casproperties.html
-modules="cas-server-support-u2f-couchdb" %}
+{% include casproperties.html properties="cas.authn.mfa.u2f.couch-db" %}

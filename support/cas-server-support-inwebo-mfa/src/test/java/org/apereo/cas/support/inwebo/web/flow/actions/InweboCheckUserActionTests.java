@@ -1,7 +1,7 @@
 package org.apereo.cas.support.inwebo.web.flow.actions;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.mfa.InweboMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.InweboMultifactorAuthenticationProperties;
 import org.apereo.cas.support.inwebo.service.response.InweboLoginSearchResponse;
 import org.apereo.cas.support.inwebo.service.response.InweboResult;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -32,7 +32,7 @@ public class InweboCheckUserActionTests extends BaseActionTests {
     public void setUp() {
         super.setUp();
 
-        val inwebo = new InweboMultifactorProperties();
+        val inwebo = new InweboMultifactorAuthenticationProperties();
         inwebo.setSiteAlias(SITE_ALIAS);
         val casProperties = new CasConfigurationProperties();
         casProperties.getAuthn().getMfa().setInwebo(inwebo);

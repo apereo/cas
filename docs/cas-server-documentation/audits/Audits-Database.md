@@ -13,6 +13,4 @@ If you intend to use a database for auditing functionality, enable the following
 
 To learn how to configure database drivers, please [review this guide](../installation/JDBC-Drivers.html).
 
-{% include casproperties.html 
-modules="cas-server-support-audit-jdbc"
-properties="cas.audit.jdbc.schedule" %}
+{% include casproperties.html properties="cas.audit.jdbc" %}

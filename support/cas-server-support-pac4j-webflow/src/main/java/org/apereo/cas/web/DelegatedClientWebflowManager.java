@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TransientSessionTicket;
@@ -21,6 +22,7 @@ import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.WebContext;
+import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.util.generator.StaticValueGenerator;
 import org.pac4j.oauth.client.OAuth10Client;
 import org.pac4j.oauth.client.OAuth20Client;
@@ -64,6 +66,8 @@ public class DelegatedClientWebflowManager {
 
     private final ArgumentExtractor argumentExtractor;
 
+    private final SessionStore sessionStore;
+
     /**
      * Store.
      *
@@ -87,7 +91,6 @@ public class DelegatedClientWebflowManager {
         this.centralAuthenticationService.addTicket(ticket);
         webContext.setRequestAttribute(PARAMETER_CLIENT_ID, ticketId);
 
-        val sessionStore = webContext.getSessionStore();
         if (client instanceof SAML2Client) {
             sessionStore.set(webContext, SAML2StateGenerator.SAML_RELAY_STATE_ATTRIBUTE, ticketId);
         }
@@ -208,30 +211,35 @@ public class DelegatedClientWebflowManager {
      * @return the delegated client id
      */
     protected String getDelegatedClientId(final WebContext webContext, final Client client) {
-        var clientId = webContext.getRequestParameter(PARAMETER_CLIENT_ID);
-        if (clientId.isEmpty()) {
+        var clientId = webContext.getRequestParameter(PARAMETER_CLIENT_ID)
+            .map(String::valueOf).orElse(StringUtils.EMPTY);
+        if (StringUtils.isBlank(clientId)) {
             if (client instanceof SAML2Client) {
-                LOGGER.debug("Client identifier could not found as part of the request parameters. Looking at relay-state for the SAML2 client");
-                clientId = webContext.getRequestParameter("RelayState");
-            }
-            if (client instanceof OAuth20Client || client instanceof OidcClient) {
-                LOGGER.debug("Client identifier could not found as part of the request parameters. Looking at state for the OAuth2/Oidc client");
-                clientId = webContext.getRequestParameter(OAuth20Configuration.STATE_REQUEST_PARAMETER);
-            }
-            if (client instanceof OAuth10Client) {
-                LOGGER.debug("Client identifier could not be found as part of request parameters. Looking at session store for the OAuth1 client");
-                val sessionStore = webContext.getSessionStore();
-                clientId = sessionStore.get(webContext, OAUTH10_CLIENT_ID_SESSION_KEY);
-                sessionStore.set(webContext, OAUTH10_CLIENT_ID_SESSION_KEY, null);
-            }
-            if (client instanceof CasClient) {
-                LOGGER.debug("Client identifier could not be found as part of request parameters. Looking at the session store for the CAS client");
-                val sessionStore = webContext.getSessionStore();
-                clientId = sessionStore.get(webContext, CAS_CLIENT_ID_SESSION_KEY);
-                sessionStore.set(webContext, CAS_CLIENT_ID_SESSION_KEY, null);
+                LOGGER.debug("Client identifier could not found in request parameters. Looking at relay-state for the SAML2 client");
+                clientId = webContext.getRequestParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE)
+                    .map(String::valueOf).orElse(StringUtils.EMPTY);
             }
         }
-        LOGGER.debug("Located delegated client identifier for this request as [{}]", clientId);
-        return clientId.map(String::valueOf).orElse(StringUtils.EMPTY);
+
+        if (StringUtils.isBlank(clientId) && (client instanceof OAuth20Client || client instanceof OidcClient)) {
+            LOGGER.debug("Client identifier could not found in request parameters. Looking at state for the OAuth2/Oidc client");
+            clientId = webContext.getRequestParameter(OAuth20Configuration.STATE_REQUEST_PARAMETER)
+                .map(String::valueOf).orElse(StringUtils.EMPTY);
+        }
+
+        if (StringUtils.isBlank(clientId) && (client instanceof OAuth10Client)) {
+            LOGGER.debug("Client identifier could not be found in request parameters. Looking at session store for the OAuth1 client");
+            clientId = sessionStore.get(webContext, OAUTH10_CLIENT_ID_SESSION_KEY)
+                .map(Object::toString).orElse(StringUtils.EMPTY);
+            sessionStore.set(webContext, OAUTH10_CLIENT_ID_SESSION_KEY, null);
+        }
+        if (StringUtils.isBlank(clientId) && (client instanceof CasClient)) {
+            LOGGER.debug("Client identifier could not be found in request parameters. Looking at the session store for the CAS client");
+            clientId = sessionStore.get(webContext, CAS_CLIENT_ID_SESSION_KEY)
+                .map(Object::toString).orElse(StringUtils.EMPTY);
+            sessionStore.set(webContext, CAS_CLIENT_ID_SESSION_KEY, null);
+        }
+        LOGGER.debug("Located delegated client identifier [{}]", clientId);
+        return clientId;
     }
 }

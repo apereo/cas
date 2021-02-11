@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.mfa.MultifactorAuthenticationTestUtils;
-import org.apereo.cas.services.RegisteredServiceMultifactorPolicyFailureModes;
+import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,7 @@ public abstract class BaseAbstractMultifactorAuthenticationProviderTests {
         val p = getMultifactorAuthenticationProvider();
         assertNotNull(p.getId());
         assertNotNull(p.getFriendlyName());
-        assertEquals(RegisteredServiceMultifactorPolicyFailureModes.UNDEFINED, p.getFailureMode());
+        assertEquals(BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.UNDEFINED, p.getFailureMode());
         val id = p.createUniqueId();
         assertTrue(p.validateId(id));
     }

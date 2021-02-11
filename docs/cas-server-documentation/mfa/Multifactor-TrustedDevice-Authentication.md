@@ -43,7 +43,7 @@ The following endpoints are provided by CAS:
 
 ## Settings
 
-{% include casproperties.html properties="cas.authn.mfa.trusted" %}
+{% include casproperties.html properties="cas.authn.mfa.trusted.core,cas.authn.mfa.trusted.crypto" %}
 
 ## Authentication Context
 
@@ -77,30 +77,16 @@ nodes may likely lead to severe performance and locking issues.</p></div>
 If you do nothing, by default records are kept inside the runtime memory and cached for a configurable amount of time.
 This is most useful if you have a very small deployment with a small user base or if you wish to demo the functionality.
 
-### JSON
+### Others
 
-Please [see this guide](Multifactor-TrustedDevice-Authentication-Storage-JSON.html).
+Device registrations can also be managed using any one of the following strategies.
 
-### JDBC
-
-Please [see this guide](Multifactor-TrustedDevice-Authentication-Storage-JDBC.html).
-
-### CouchDb
-
-Please [see this guide](Multifactor-TrustedDevice-Authentication-Storage-CouchDb.html).
-
-### MongoDb
-
-Please [see this guide](Multifactor-TrustedDevice-Authentication-Storage-MongoDb.html).
-
-### DynamoDb
-
-Please [see this guide](Multifactor-TrustedDevice-Authentication-Storage-DynamoDb.html).
-
-### Redis
-
-Please [see this guide](Multifactor-TrustedDevice-Authentication-Storage-Redis.html).
-
-### REST
-
-Please [see this guide](Multifactor-TrustedDevice-Authentication-Storage-Rest.html).
+| Storage          | Description                                         
+|--------------------------------------------------------------------------------------------------
+| JSON     | [See this guide](Multifactor-TrustedDevice-Authentication-Storage-JSON.html).  
+| JDBC     | [See this guide](Multifactor-TrustedDevice-Authentication-Storage-JDBC.html).  
+| CouchDb     | [See this guide](Multifactor-TrustedDevice-Authentication-Storage-CouchDb.html).  
+| MongoDb     | [See this guide](Multifactor-TrustedDevice-Authentication-Storage-MongoDb.html).  
+| DynamoDb     | [See this guide](Multifactor-TrustedDevice-Authentication-Storage-DynamoDb.html).  
+| Redis     | [See this guide](Multifactor-TrustedDevice-Authentication-Storage-Redis.html).  
+| REST     | [See this guide](Multifactor-TrustedDevice-Authentication-Storage-Rest.html).  
