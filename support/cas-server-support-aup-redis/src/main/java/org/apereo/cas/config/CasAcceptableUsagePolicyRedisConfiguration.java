@@ -27,7 +27,7 @@ import org.springframework.data.redis.core.RedisTemplate;
  */
 @Configuration("casAcceptableUsagePolicyRedisConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnExpression(value = "${cas.acceptable-usage-policy.core.enabled:true} and ${cas.acceptable-usage-policy.core.redis.enabled:true}")
+@ConditionalOnExpression(value = "${cas.acceptable-usage-policy.core.enabled:true} and ${cas.acceptable-usage-policy.redis.enabled:true}")
 public class CasAcceptableUsagePolicyRedisConfiguration {
 
     @Autowired

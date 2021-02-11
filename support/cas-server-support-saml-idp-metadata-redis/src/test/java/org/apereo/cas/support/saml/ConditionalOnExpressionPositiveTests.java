@@ -2,6 +2,9 @@ package org.apereo.cas.support.saml;
 
 import org.apereo.cas.config.SamlIdPRedisIdPMetadataConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+
+import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -17,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * This class is testing that the conditional expression on the SamlIdPRedisIdPMetadataConfiguration class works.
  * @since 6.4.0
  */
+@Tag("Redis")
 @SpringBootTest(classes = SamlIdPRedisIdPMetadataConfiguration.class)
 @TestPropertySource(properties = {
         "cas.authn.saml-idp.metadata.redis.idp-metadata-enabled=true",
@@ -29,7 +33,7 @@ public class ConditionalOnExpressionPositiveTests {
 
     @Test
     public void verifyConfigClassLoaded() {
-        String[] beans = applicationContext.getBeanDefinitionNames();
+        val beans = applicationContext.getBeanDefinitionNames();
         assertTrue(Arrays.stream(beans).anyMatch("redisSamlIdPMetadataConnectionFactory"::equalsIgnoreCase));
         assertTrue(Arrays.stream(beans).anyMatch("redisSamlIdPMetadataTemplate"::equalsIgnoreCase));
     }

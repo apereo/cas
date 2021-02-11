@@ -2,6 +2,9 @@ package org.apereo.cas.aup;
 
 import org.apereo.cas.config.CasAcceptableUsagePolicyRedisConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+
+import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -18,10 +21,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
  * The positive test is done implicitly by other tests that use the CasAcceptableUsagePolicyRedisConfiguration class.
  * @since 6.4.0
  */
+@Tag("Redis")
 @SpringBootTest(classes = CasAcceptableUsagePolicyRedisConfiguration.class)
 @TestPropertySource(properties = {
         "cas.acceptable-usage-policy.core.enabled=false",
-        "cas.acceptable-usage-policy.core.redis.enabled=true"
+        "cas.acceptable-usage-policy.redis.enabled=true"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class ConditionalOnExpressionNegativeTests {
@@ -30,7 +34,7 @@ public class ConditionalOnExpressionNegativeTests {
 
     @Test
     public void verifyConfigClassLoaded() {
-        String[] beans = applicationContext.getBeanDefinitionNames();
+        val beans = applicationContext.getBeanDefinitionNames();
         assertFalse(Arrays.stream(beans).anyMatch("redisAcceptableUsagePolicyTemplate"::equalsIgnoreCase));
         assertFalse(Arrays.stream(beans).anyMatch("redisAcceptableUsagePolicyConnectionFactory"::equalsIgnoreCase));
     }
