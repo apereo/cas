@@ -18,7 +18,7 @@ public class InCommonRSAttributeReleasePolicy extends MetadataEntityAttributesAt
     private static final long serialVersionUID = 1532960981124784595L;
 
     private static final List<String> ALLOWED_ATTRIBUTES = CollectionUtils.wrapList("eduPersonPrincipalName",
-        "eduPersonTargetedID", "email", "displayName", "givenName", "surname", "eduPersonScopedAffiliation");
+        "eduPersonTargetedID", "mail", "displayName", "givenName", "sn", "eduPersonScopedAffiliation");
 
     public InCommonRSAttributeReleasePolicy() {
         setAllowedAttributes(ALLOWED_ATTRIBUTES);
