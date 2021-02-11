@@ -68,6 +68,7 @@ jobs:
   validate-javadocs:
     runs-on: ubuntu-latest
     needs: [cache]
+    continue-on-error: false
     if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
     steps:
       - uses: actions/checkout@v2
@@ -91,6 +92,7 @@ jobs:
   validate-commandline-shell:
     runs-on: ubuntu-latest
     needs: [cache]
+    continue-on-error: false
     if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
     steps:
       - uses: actions/checkout@v2
@@ -120,6 +122,7 @@ jobs:
   validate-webapp-embedded:
     runs-on: ubuntu-latest
     needs: [cache]
+    continue-on-error: false
     if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
     strategy:
       fail-fast: false
@@ -150,6 +153,7 @@ jobs:
   validate-webapp-external-tomcat:
     runs-on: ubuntu-latest
     needs: [cache]
+    continue-on-error: false
     if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
     steps:
       - uses: actions/checkout@v2
@@ -173,6 +177,7 @@ jobs:
   validate-spring-cloud-config-server:
     runs-on: ubuntu-latest
     needs: [cache]
+    continue-on-error: false
     if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
     steps:
       - uses: actions/checkout@v2
@@ -196,6 +201,7 @@ jobs:
   validate-eureka-discovery-server:
     runs-on: ubuntu-latest
     needs: [cache]
+    continue-on-error: false
     if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
     steps:
       - uses: actions/checkout@v2
@@ -219,6 +225,7 @@ jobs:
   validate-spring-boot-admin-server:
     runs-on: ubuntu-latest
     needs: [cache]
+    continue-on-error: false
     if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
     steps:
       - uses: actions/checkout@v2

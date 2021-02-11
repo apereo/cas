@@ -133,6 +133,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ !contains(github.head_ref, 'renovate') && !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
     needs: [cache]
+    continue-on-error: false
     strategy:
       fail-fast: false
       matrix:

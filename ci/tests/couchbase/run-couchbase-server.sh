@@ -46,24 +46,24 @@ echo -e "Creating Couchbase testbucket bucket..."
 curl -u 'admin:password' -d 'name=testbucket' -d 'bucketType=couchbase' -d 'ramQuotaMB=220' -d 'authType=sasl' -d \
 'saslPassword=password' http://localhost:8091/pools/default/buckets
 
-curl -u 'admin:password' -X PUT --data "roles=bucket_full_access[testbucket]&password=password" \
-       -H "Content-Type: application/x-www-form-urlencoded" \
-       http://localhost:8091/settings/rbac/users/local/testbucket
+#curl -u 'admin:password' -X PUT --data "roles=admin[testbucket]&password=password" \
+#       -H "Content-Type: application/x-www-form-urlencoded" \
+#       http://localhost:8091/settings/rbac/users/local/testbucket
 
 echo -e "Creating Couchbase pplbucket bucket..."
 curl -u 'admin:password' -d 'name=pplbucket' -d 'bucketType=couchbase' -d 'ramQuotaMB=220' -d 'authType=sasl' -d \
 'saslPassword=password' http://localhost:8091/pools/default/buckets
 
-curl -u 'admin:password' -X PUT --data "roles=bucket_full_access[pplbucket]&password=password" \
-       -H "Content-Type: application/x-www-form-urlencoded" \
-       http://localhost:8091/settings/rbac/users/local/pplbucket
+#curl -u 'admin:password' -X PUT --data "roles=admin[pplbucket]&password=password" \
+#       -H "Content-Type: application/x-www-form-urlencoded" \
+#       http://localhost:8091/settings/rbac/users/local/pplbucket
 
 echo -e "Creating Couchbase casbucket bucket..."
 curl -u 'admin:password' -d 'name=casbucket' -d 'bucketType=couchbase' -d 'ramQuotaMB=120' -d authType='none' \
       http://localhost:8091/pools/default/buckets
-curl -u 'admin:password' -X PUT --data "roles=bucket_full_access[casbucket]&password=password" \
-       -H "Content-Type: application/x-www-form-urlencoded" \
-       http://localhost:8091/settings/rbac/users/local/casbucket
+#curl -u 'admin:password' -X PUT --data "roles=cluster_admin[casbucket]&password=password" \
+#       -H "Content-Type: application/x-www-form-urlencoded" \
+#       http://localhost:8091/settings/rbac/users/local/casbucket
        
 echo -e "\n*************************************************************"
 echo -e "Loading Couchbase buckets..."
