@@ -25,6 +25,12 @@ public class BaseRedisProperties implements Serializable {
     private static final long serialVersionUID = -2600996981339638782L;
 
     /**
+     * Whether the module is enabled or not, defaults to true.
+     */
+    @RequiredProperty
+    private boolean enabled = true;
+
+    /**
      * Database index used by the connection factory.
      */
     @RequiredProperty
