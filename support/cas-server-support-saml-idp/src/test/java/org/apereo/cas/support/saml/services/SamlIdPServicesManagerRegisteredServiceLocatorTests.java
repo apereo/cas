@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.services;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
+import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.util.CollectionUtils;
@@ -61,6 +62,51 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
             service, r -> r.matches("https://sp.testshib.org/shibboleth-sp"));
         assertNotNull(result);
     }
+
+    @Test
+    public void verifyEntityIdParam() {
+        assertNotNull(samlIdPServicesManagerRegisteredServiceLocator);
+        assertEquals(Ordered.HIGHEST_PRECEDENCE, samlIdPServicesManagerRegisteredServiceLocator.getOrder());
+        val service1 = RegisteredServiceTestUtils.getRegisteredService(".+");
+        service1.setEvaluationOrder(10);
+
+        val service2 = getSamlRegisteredServiceFor(false, false, false, ".+");
+        service2.setEvaluationOrder(9);
+
+        val candidateServices = CollectionUtils.wrapList(service1, service2);
+        Collections.sort(candidateServices);
+
+        val service = webApplicationServiceFactory.createService("https://sp.testshib.org/shibboleth-sp");
+        service.setAttributes(Map.of(SamlProtocolConstants.PARAMETER_ENTITY_ID, List.of(service.getId())));
+
+        val result = samlIdPServicesManagerRegisteredServiceLocator.locate(
+            (List) candidateServices,
+            service, r -> r.matches("https://sp.testshib.org/shibboleth-sp"));
+        assertNotNull(result);
+    }
+
+    @Test
+    public void verifyProviderIdParam() {
+        assertNotNull(samlIdPServicesManagerRegisteredServiceLocator);
+        assertEquals(Ordered.HIGHEST_PRECEDENCE, samlIdPServicesManagerRegisteredServiceLocator.getOrder());
+        val service1 = RegisteredServiceTestUtils.getRegisteredService(".+");
+        service1.setEvaluationOrder(10);
+
+        val service2 = getSamlRegisteredServiceFor(false, false, false, ".+");
+        service2.setEvaluationOrder(9);
+
+        val candidateServices = CollectionUtils.wrapList(service1, service2);
+        Collections.sort(candidateServices);
+
+        val service = webApplicationServiceFactory.createService("https://sp.testshib.org/shibboleth-sp");
+        service.setAttributes(Map.of(SamlIdPConstants.PROVIDER_ID, List.of(service.getId())));
+
+        val result = samlIdPServicesManagerRegisteredServiceLocator.locate(
+            (List) candidateServices,
+            service, r -> r.matches("https://sp.testshib.org/shibboleth-sp"));
+        assertNotNull(result);
+    }
+
 
     @Test
     public void verifyReverseOperation() {
