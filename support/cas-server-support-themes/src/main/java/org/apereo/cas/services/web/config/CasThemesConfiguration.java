@@ -57,6 +57,9 @@ public class CasThemesConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    private ObjectProvider<ThymeleafProperties> properties;
+
     @Bean
     public Supplier<Map<String, String>> serviceThemeResolverSupportedBrowsers() {
         val map = new HashMap<String, String>();
@@ -111,9 +114,8 @@ public class CasThemesConfiguration {
     }
     
     @Bean
-    @Autowired
     @ConditionalOnMissingBean(name = "themesStaticResourcesWebMvcConfigurer")
-    public WebMvcConfigurer themesStaticResourcesWebMvcConfigurer(final ThymeleafProperties properties) {
+    public WebMvcConfigurer themesStaticResourcesWebMvcConfigurer() {
         return new WebMvcConfigurer() {
             @Override
             public void addResourceHandlers(final ResourceHandlerRegistry registry) {
@@ -128,7 +130,8 @@ public class CasThemesConfiguration {
                     LOGGER.debug("Adding resource handler for resources [{}]", (Object[]) resources);
                     registration.addResourceLocations(templatePrefixes.toArray(ArrayUtils.EMPTY_STRING_ARRAY));
                     registration.setUseLastModified(true);
-                    val chainRegistration = registration.resourceChain(properties.isCache());
+                    val cache = properties.getIfAvailable() != null && properties.getObject().isCache();
+                    val chainRegistration = registration.resourceChain(cache);
                     val resolver = new PathResourceResolver();
                     resolver.setAllowedLocations(resources);
                     chainRegistration.addResolver(resolver);

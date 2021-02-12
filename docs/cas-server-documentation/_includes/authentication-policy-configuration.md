@@ -9,7 +9,6 @@ and try every handler even if one prior succeeded.
 
 {% include casproperties.html properties="cas.authn.policy.any" %}
 
-
 #### All
 
 Satisfied if and only if all given credentials are successfully authenticated.
