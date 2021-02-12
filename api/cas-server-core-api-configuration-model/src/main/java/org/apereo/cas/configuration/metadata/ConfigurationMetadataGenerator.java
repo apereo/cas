@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -305,6 +306,7 @@ public class ConfigurationMetadataGenerator {
                     if (f != null && f.isAnnotationPresent(DurationCapable.class)) {
                         val propertyHint = new ValueHint();
                         propertyHint.setDescription(DurationCapable.class.getName());
+                        propertyHint.setValue(toJson(List.of(DurationCapable.class.getName())));
                         hint.getValues().add(propertyHint);
                     }
                 }));
