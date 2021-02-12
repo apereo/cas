@@ -97,6 +97,9 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
         val principalAttributes = resolveAttributesFromPrincipalAttributeRepository(principal, registeredService);
         LOGGER.debug("Found principal attributes [{}] for [{}]", principalAttributes, principal.getId());
 
+        LOGGER.trace("Finding requested attribute definitions");
+        getRequestedDefinitions().forEach(a -> principalAttributes.putIfAbsent(a, List.of()));
+
         val attributesFromDefinitions = resolveAttributesFromAttributeDefinitionStore(principal, principalAttributes, registeredService, selectedService);
         LOGGER.trace("Resolved principal attributes [{}] for [{}] from attribute definition store", attributesFromDefinitions, principal.getId());
 

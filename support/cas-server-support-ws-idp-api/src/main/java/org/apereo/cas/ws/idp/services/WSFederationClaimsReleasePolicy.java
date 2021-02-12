@@ -185,4 +185,9 @@ public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAt
             LOGGER.warn("Groovy-scripted attribute returned no value for [{}]", attributeName);
         }
     }
+
+    @Override
+    public List<String> getRequestedDefinitions() {
+        return new ArrayList<>(allowedAttributes.keySet());
+    }
 }
