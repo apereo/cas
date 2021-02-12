@@ -1,4 +1,4 @@
-{{- if .Values.mgmt.ingress.enabled -}}
+{{- if and .Values.mgmt.enabled .Values.mgmt.ingress.enabled -}}
 {{- $fullName := include "cas-server.mgmtname" . -}}
 {{- $svcPort := .Values.mgmt.service.port -}}
 {{- $kubeVersion := .Capabilities.KubeVersion.Version -}}
@@ -50,4 +50,4 @@ spec:
             {{- end }}
           {{- end }}
     {{- end }}
-  {{- end }}
+{{- end }}

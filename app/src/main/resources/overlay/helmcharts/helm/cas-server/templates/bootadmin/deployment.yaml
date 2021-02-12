@@ -1,10 +1,11 @@
+{{- if .Values.bootadmin.enabled -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "cas-server.bootadminname" . }}
   labels: {{- include "cas-server.labels" . | nindent 4 }}
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.bootadmin.replicaCount }}
   selector:
     matchLabels:
       {{- include "cas-bootadmin.selectorLabels" . | nindent 6 }}
@@ -180,3 +181,4 @@ spec:
       tolerations:
       {{- toYaml . | nindent 8 }}
   {{- end }}
+{{- end }}

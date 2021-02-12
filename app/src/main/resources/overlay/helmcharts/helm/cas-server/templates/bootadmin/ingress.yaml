@@ -1,4 +1,4 @@
-{{- if .Values.bootadmin.ingress.enabled -}}
+{{- if and .Values.bootadmin.enabled .Values.bootadmin.ingress.enabled -}}
 {{- $fullName := include "cas-server.bootadminname" . -}}
 {{- $svcPort := .Values.bootadmin.service.port -}}
 {{- $kubeVersion := .Capabilities.KubeVersion.Version -}}
@@ -50,4 +50,4 @@ spec:
             {{- end }}
           {{- end }}
     {{- end }}
-  {{- end }}
+{{- end }}

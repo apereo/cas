@@ -1,3 +1,4 @@
+{{- if .Values.mgmt.enabled -}}
 apiVersion: v1
 kind: Service
 metadata:
@@ -13,3 +14,4 @@ spec:
       name: https
   selector:
     {{- include "cas-mgmt.selectorLabels" . | nindent 4 }}
+{{- end }}

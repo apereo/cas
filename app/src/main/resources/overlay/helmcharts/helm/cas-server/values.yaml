@@ -566,6 +566,8 @@ cas:
 ## Override parts of this ingress in your own values file with appropriate host names
 ## This currently is only set up to work with Nginx Ingress Controller from Kubernetes project
 bootadmin:
+  enabled: true
+  replicaCount: 1
   service:
     type: ClusterIP
     port: 8443
@@ -610,6 +612,8 @@ bootadmin:
 ## Override parts of this ingress in your own values file with appropriate host names
 ## This currently is only set up to work with Nginx Ingress Controller from Kubernetes project
 mgmt:
+  enabled: true
+  replicaCount: 1
   service:
     type: ClusterIP
     port: 8443
