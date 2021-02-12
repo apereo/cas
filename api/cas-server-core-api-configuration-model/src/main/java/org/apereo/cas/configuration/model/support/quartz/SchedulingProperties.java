@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.quartz;
 
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -33,11 +34,13 @@ public class SchedulingProperties implements Serializable {
      * String representation of a start delay of loading data for a data store implementation.
      * This is the delay between scheduler startup and first job’s execution
      */
+    @DurationCapable
     private String startDelay = "PT15S";
 
     /**
      * String representation of a repeat interval of re-loading data for an data store implementation.
      * This is the timeout between consecutive job’s executions.
      */
+    @DurationCapable
     private String repeatInterval = "PT2M";
 }

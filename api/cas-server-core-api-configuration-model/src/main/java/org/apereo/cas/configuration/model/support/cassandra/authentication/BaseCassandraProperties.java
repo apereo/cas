@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.cassandra.authentication;
 
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -71,6 +72,7 @@ public abstract class BaseCassandraProperties implements Serializable {
      * The request timeout.
      * This defines how long the driver will wait for a given Cassandra node to answer a query.
      */
+    @DurationCapable
     private String timeout = "PT5S";
 
     /**

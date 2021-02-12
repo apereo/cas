@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.acme;
 
 import org.apereo.cas.configuration.model.SpringResourceProperties;
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -92,5 +93,6 @@ public class AcmeProperties implements Serializable {
      * Delay interval between to retry attempts when executing certificate orders
      * or checking for status of an existing order or challenge acknowledgement.
      */
+    @DurationCapable
     private String retryInternal = "PT2S";
 }

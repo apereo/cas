@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support;
 
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
@@ -41,6 +42,7 @@ public class ConnectionPoolingProperties implements Serializable {
      * A value of zero specifies that the timeout is the default system timeout
      * if there is one; otherwise, it specifies that there is no timeout.
      */
+    @DurationCapable
     private String maxWait = "PT2S";
 
     /**

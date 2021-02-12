@@ -20,6 +20,8 @@ import java.io.Serializable;
 public class CasReferenceProperty implements Serializable, Comparable<CasReferenceProperty> {
     private static final long serialVersionUID = 6084780445748297104L;
 
+    private final boolean duration;
+    
     private final boolean required;
 
     private final String module;

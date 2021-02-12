@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.oauth;
 
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -27,5 +28,6 @@ public class OAuthRefreshTokenProperties implements Serializable {
     /**
      * Hard timeout beyond which the refresh token is considered expired.
      */
+    @DurationCapable
     private String timeToKillInSeconds = "P14D";
 }

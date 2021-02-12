@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.metadata;
 
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.PropertyOwner;
 import org.apereo.cas.configuration.support.RelaxedPropertyNames;
 import org.apereo.cas.configuration.support.RequiredProperty;
@@ -299,6 +300,11 @@ public class ConfigurationMetadataGenerator {
                         val propertyHint = new ValueHint();
                         propertyHint.setValue(toJson(Map.of("owner", clazz.getName())));
                         propertyHint.setDescription(RequiredProperty.class.getName());
+                        hint.getValues().add(propertyHint);
+                    }
+                    if (f != null && f.isAnnotationPresent(DurationCapable.class)) {
+                        val propertyHint = new ValueHint();
+                        propertyHint.setDescription(DurationCapable.class.getName());
                         hint.getValues().add(propertyHint);
                     }
                 }));

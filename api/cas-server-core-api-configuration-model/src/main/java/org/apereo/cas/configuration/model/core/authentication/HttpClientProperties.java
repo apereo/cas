@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -30,16 +31,19 @@ public class HttpClientProperties implements Serializable {
     /**
      * Connection timeout for all operations that reach out to URL endpoints.
      */
+    @DurationCapable
     private String connectionTimeout = "PT5S";
 
     /**
      * Read timeout for all operations that reach out to URL endpoints.
      */
+    @DurationCapable
     private String readTimeout = "PT5S";
 
     /**
      * Indicates timeout for async operations.
      */
+    @DurationCapable
     private String asyncTimeout = "PT5S";
 
     /**

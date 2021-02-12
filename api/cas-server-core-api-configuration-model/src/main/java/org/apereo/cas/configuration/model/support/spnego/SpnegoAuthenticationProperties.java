@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.spnego;
 
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -57,6 +58,7 @@ public class SpnegoAuthenticationProperties implements Serializable {
     /**
      * Spnego JCIFS timeout.
      */
+    @DurationCapable
     private String timeout = "PT5M";
 
     /**

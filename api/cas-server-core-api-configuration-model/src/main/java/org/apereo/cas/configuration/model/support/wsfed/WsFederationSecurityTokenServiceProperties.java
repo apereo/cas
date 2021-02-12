@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.wsfed;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
@@ -67,16 +68,19 @@ public class WsFederationSecurityTokenServiceProperties implements Serializable 
      * Get how long (in seconds) a client-supplied Created Element is allowed to be in the future.
      * The default is 60 seconds to avoid common problems relating to clock skew.
      */
+    @DurationCapable
     private String conditionsFutureTimeToLive = "PT60S";
 
     /**
      * Set the default lifetime in seconds for issued SAML tokens.
      */
+    @DurationCapable
     private String conditionsLifetime = "PT30M";
 
     /**
      * Set the maximum lifetime in seconds for issued SAML tokens.
      */
+    @DurationCapable
     private String conditionsMaxLifetime = "PT12H";
 
     /**

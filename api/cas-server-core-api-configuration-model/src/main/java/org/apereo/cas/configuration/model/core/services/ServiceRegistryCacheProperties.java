@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.services;
 
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -27,6 +28,7 @@ public class ServiceRegistryCacheProperties implements Serializable {
      * Services cache duration specifies the fixed duration for an
      * entry to be automatically removed from the cache after its creation or update.
      */
+    @DurationCapable
     private String duration = "PT5M";
 
     /**

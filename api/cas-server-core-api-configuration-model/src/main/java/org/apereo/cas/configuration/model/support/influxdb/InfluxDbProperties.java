@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.influxdb;
 
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -68,6 +69,7 @@ public class InfluxDbProperties implements Serializable {
      * The interval used to run batch jobs
      * to flush points.
      */
+    @DurationCapable
     private String batchInterval = "PT5S";
 
     /**

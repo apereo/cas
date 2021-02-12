@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.git.services;
 
 import org.apereo.cas.configuration.model.SpringResourceProperties;
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -102,6 +103,7 @@ public abstract class BaseGitProperties implements Serializable {
     /**
      * Timeout for git operations such as push and pull in seconds.
      */
+    @DurationCapable
     private String timeout = "PT10S";
 
     /**
