@@ -167,6 +167,8 @@ public abstract class AbstractOAuth20Tests {
 
     public static final String OTHER_REDIRECT_URI = "http://someotherurl";
 
+    public static final String SERVICE_URL = "http://serviceurl";
+
     public static final String ID = "casuser";
 
     public static final String NAME = "attributeName";
@@ -688,7 +690,7 @@ public abstract class AbstractOAuth20Tests {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
         val mockResponse = new MockHttpServletResponse();
 
-        val service = RegisteredServiceTestUtils.getService("example");
+        val service = RegisteredServiceTestUtils.getService(SERVICE_URL);
         val holder = AccessTokenRequestDataHolder.builder()
             .clientId(registeredService.getClientId())
             .service(service)
