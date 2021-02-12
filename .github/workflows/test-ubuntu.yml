@@ -113,7 +113,7 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - name: Run Tests with Coverage
+      - name: Run Tests
         run: ./testcas.sh --with-coverage --category ${{ matrix.category }}
       - name: "Upload to Codecov"
         uses: "codecov/codecov-action@v1"
@@ -121,7 +121,7 @@ jobs:
           file: ./build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml
           flags: ${{ matrix.category }}
           name: ${{ matrix.category }}
-      - name: "Upload coverage file"
+      - name: "Upload Coverage Report"
         uses: "actions/upload-artifact@v2"
         with:
           name: "cas-tests-${{ matrix.category }}.coverage"
