@@ -31,6 +31,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
+
 /**
  * This is {@link SamlProfileSamlAttributeStatementBuilder}.
  *
@@ -100,13 +103,20 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
 
         val globalFriendlyNames = samlIdPProperties.getAttributeFriendlyNames();
         val friendlyNames = new HashMap<>(CollectionUtils.convertDirectedListToMap(globalFriendlyNames));
+        val urns = new HashMap<String, String>();
 
         attributeDefinitionStore.getAttributeDefinitions()
             .stream()
             .filter(defn -> defn instanceof SamlIdPAttributeDefinition)
             .map(SamlIdPAttributeDefinition.class::cast)
-            .filter(defn -> StringUtils.isNotBlank(defn.getFriendlyName()))
-            .forEach(defn -> friendlyNames.put(defn.getKey(), defn.getFriendlyName()));
+            .forEach(defn -> {
+                if (StringUtils.isNotBlank(defn.getFriendlyName())) {
+                    friendlyNames.put(defn.getKey(), defn.getFriendlyName());
+                }
+                if (StringUtils.isNotBlank(defn.getUrn())) {
+                    urns.put(defn.getKey(), defn.getUrn());
+                }
+            });
 
         friendlyNames.putAll(samlRegisteredService.getAttributeFriendlyNames());
 
@@ -117,10 +127,12 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
             }
             val friendlyName = friendlyNames.getOrDefault(e.getKey(), null);
 
-            val name = attributeDefinitionStore.locateAttributeDefinition(e.getKey())
-                .map(AttributeDefinition::getName)
-                .filter(StringUtils::isNotBlank)
-                .orElseGet(e::getKey);
+            val name = urns.containsKey(e.getKey())
+                    ? urns.get(e.getKey())
+                    : attributeDefinitionStore.locateAttributeDefinition(e.getKey())
+                        .map(AttributeDefinition::getName)
+                        .filter(StringUtils::isNotBlank)
+                        .orElseGet(e::getKey);
 
             LOGGER.trace("Creating SAML attribute [{}] with value [{}], friendlyName [{}]", name, e.getValue(), friendlyName);
             val attribute = newAttribute(friendlyName, name, e.getValue(),
