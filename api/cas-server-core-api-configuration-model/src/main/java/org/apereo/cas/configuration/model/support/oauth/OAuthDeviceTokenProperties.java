@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.oauth;
 
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -27,6 +28,7 @@ public class OAuthDeviceTokenProperties implements Serializable {
     /**
      * Hard timeout to kill the access token and expire it.
      */
+    @DurationCapable
     private String maxTimeToLiveInSeconds = "PT5M";
 
     /**
@@ -34,5 +36,6 @@ public class OAuthDeviceTokenProperties implements Serializable {
      * The client should attempt to acquire an access token every few seconds (at a rate specified by interval)
      * by POSTing to the access token endpoint on the server.
      */
+    @DurationCapable
     private String refreshInterval = "PT15S";
 }

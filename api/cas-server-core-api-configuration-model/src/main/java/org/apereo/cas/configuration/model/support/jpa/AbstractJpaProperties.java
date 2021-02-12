@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.jpa;
 
 import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -105,6 +106,7 @@ public abstract class AbstractJpaProperties implements Serializable {
     /**
      * Controls the maximum amount of time that a connection is allowed to sit idle in the pool.
      */
+    @DurationCapable
     private String idleTimeout = "PT10M";
 
     /**

@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.spnego;
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.core.web.flow.WebflowAutoConfigurationProperties;
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -77,6 +78,7 @@ public class SpnegoProperties implements Serializable {
     /**
      * When validating clients, specifies the DNS timeout used to look up an address.
      */
+    @DurationCapable
     private String dnsTimeout = "PT2S";
 
     /**

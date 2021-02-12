@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.core.monitor;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
@@ -30,5 +31,6 @@ public class JdbcMonitorProperties extends AbstractJpaProperties {
      * When monitoring the JDBC connection pool, indicates the amount of time the operation must wait
      * before it times outs and considers the pool in bad shape.
      */
+    @DurationCapable
     private String maxWait = "PT5S";
 }

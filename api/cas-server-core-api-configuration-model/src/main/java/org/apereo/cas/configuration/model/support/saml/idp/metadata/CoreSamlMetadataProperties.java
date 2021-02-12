@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.saml.idp.metadata;
 
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -33,6 +34,7 @@ public class CoreSamlMetadataProperties implements Serializable {
     /**
      * How long should metadata be cached.
      */
+    @DurationCapable
     private String cacheExpiration = "PT24H";
 
     /**

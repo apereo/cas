@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.pac4j.oidc;
 
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -24,6 +25,7 @@ public class Pac4jAppleOidcClientProperties extends BasePac4jOidcClientPropertie
     /**
      * Client secret expiration timeout.
      */
+    @DurationCapable
     private String timeout = "PT30S";
 
     /**

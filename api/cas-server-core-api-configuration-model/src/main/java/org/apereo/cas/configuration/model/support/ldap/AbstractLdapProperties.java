@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -134,11 +135,13 @@ public abstract class AbstractLdapProperties implements Serializable {
     /**
      * Period at which validation operations may time out.
      */
+    @DurationCapable
     private String validateTimeout = "PT5S";
 
     /**
      * Period at which pool should be validated.
      */
+    @DurationCapable
     private String validatePeriod = "PT5M";
 
     /**
@@ -151,12 +154,14 @@ public abstract class AbstractLdapProperties implements Serializable {
      * Removes connections from the pool based on how long they have been idle in the available queue.
      * Prunes connections that have been idle for more than the indicated amount.
      */
+    @DurationCapable
     private String idleTime = "PT10M";
 
     /**
      * Removes connections from the pool based on how long they have been idle in the available queue.
      * Run the pruning process at the indicated interval.
      */
+    @DurationCapable
     private String prunePeriod = "PT2H";
 
     /**
@@ -166,6 +171,7 @@ public abstract class AbstractLdapProperties implements Serializable {
      * This option should be used with a blocking connection pool when you need to control the exact
      * number of connections that can be created
      */
+    @DurationCapable
     private String blockWaitTime = "PT3S";
 
     /**
@@ -193,11 +199,13 @@ public abstract class AbstractLdapProperties implements Serializable {
     /**
      * Sets the maximum amount of time that connects will block.
      */
+    @DurationCapable
     private String connectTimeout = "PT5S";
 
     /**
      * Duration of time to wait for responses.
      */
+    @DurationCapable
     private String responseTimeout = "PT5S";
 
     /**

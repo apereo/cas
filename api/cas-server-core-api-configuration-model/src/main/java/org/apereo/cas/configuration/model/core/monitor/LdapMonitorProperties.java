@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.core.monitor;
 
 import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -28,6 +29,7 @@ public class LdapMonitorProperties extends AbstractLdapProperties {
      * When monitoring the LDAP connection pool, indicates the amount of time the operation must wait
      * before it times outs and considers the pool in bad shape.
      */
+    @DurationCapable
     private String maxWait = "PT5S";
 
     /**

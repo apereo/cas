@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.aws;
 
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -66,16 +67,19 @@ public abstract class BaseAmazonWebServicesProperties implements Serializable {
     /**
      * Connection timeout.
      */
+    @DurationCapable
     private String connectionTimeout = "5000";
 
     /**
      * Socket timeout.
      */
+    @DurationCapable
     private String socketTimeout = "5000";
 
     /**
      * Client execution timeout.
      */
+    @DurationCapable
     private String clientExecutionTimeout = "10000";
 
     /**

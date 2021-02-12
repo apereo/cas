@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.cookie;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
@@ -28,6 +29,7 @@ public class TicketGrantingCookieProperties extends CookieProperties {
     /**
      * If remember-me is enabled, specifies the maximum age of the cookie.
      */
+    @DurationCapable
     private String rememberMeMaxAge = "P14D";
 
     /**

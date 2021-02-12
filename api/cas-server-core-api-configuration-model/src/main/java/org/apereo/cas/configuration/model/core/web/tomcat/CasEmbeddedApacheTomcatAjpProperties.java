@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.web.tomcat;
 
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -75,6 +76,7 @@ public class CasEmbeddedApacheTomcatAjpProperties implements Serializable {
      * The default timeout for asynchronous requests in milliseconds. If
      * not specified, this attribute is set to 10000 (10 seconds).
      */
+    @DurationCapable
     private String asyncTimeout = "PT5S";
 
     /**

@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.wsfed;
 
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -60,6 +61,7 @@ public class WsFederationDelegationProperties implements Serializable {
     /**
      * Tolerance value used to skew assertions to support clock drift.
      */
+    @DurationCapable
     private String tolerance = "PT10S";
 
     /**

@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.ehcache;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -73,6 +74,7 @@ public class EhcacheProperties implements Serializable {
      * @deprecated Since 6.2
      */
     @Deprecated(since = "6.2.0")
+    @DurationCapable
     private String replicationInterval = "PT10S";
 
     /**

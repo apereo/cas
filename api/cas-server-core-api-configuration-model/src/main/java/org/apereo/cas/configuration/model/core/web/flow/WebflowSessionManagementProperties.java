@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.web.flow;
 
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -31,6 +32,7 @@ public class WebflowSessionManagementProperties implements Serializable {
      * timeout occurs on an attempt to acquire a conversation lock. The default is 30 seconds.
      * Only relevant if session storage is done on the server.
      */
+    @DurationCapable
     private String lockTimeout = "PT30S";
 
     /**
