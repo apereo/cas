@@ -11,6 +11,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -38,8 +39,9 @@ public class RestfulSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocato
     private final RestSamlMetadataProperties properties;
 
     public RestfulSamlIdPMetadataLocator(final CipherExecutor<String, String> metadataCipherExecutor,
+                                         final Cache<String, SamlIdPMetadataDocument> metadataCache,
                                          final RestSamlMetadataProperties properties) {
-        super(metadataCipherExecutor);
+        super(metadataCipherExecutor, metadataCache);
         this.properties = properties;
     }
 

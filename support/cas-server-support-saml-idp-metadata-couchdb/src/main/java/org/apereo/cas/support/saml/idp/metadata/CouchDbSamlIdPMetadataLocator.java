@@ -6,6 +6,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import com.github.benmanes.caffeine.cache.Cache;
 import lombok.val;
 
 import java.util.Optional;
@@ -21,8 +22,9 @@ public class CouchDbSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocato
     private final SamlIdPMetadataCouchDbRepository couchDb;
 
     public CouchDbSamlIdPMetadataLocator(final CipherExecutor<String, String> metadataCipherExecutor,
+                                         final Cache<String, SamlIdPMetadataDocument> metadataCache,
                                          final SamlIdPMetadataCouchDbRepository couchDb) {
-        super(metadataCipherExecutor);
+        super(metadataCipherExecutor, metadataCache);
         this.couchDb = couchDb;
     }
 

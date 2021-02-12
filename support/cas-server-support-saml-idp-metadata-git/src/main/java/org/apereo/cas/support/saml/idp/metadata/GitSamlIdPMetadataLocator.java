@@ -6,6 +6,7 @@ import org.apereo.cas.support.saml.idp.metadata.locator.FileSystemSamlIdPMetadat
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 
+import com.github.benmanes.caffeine.cache.Cache;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -29,8 +30,8 @@ import java.util.Optional;
 public class GitSamlIdPMetadataLocator extends FileSystemSamlIdPMetadataLocator {
     private final GitRepository gitRepository;
 
-    public GitSamlIdPMetadataLocator(final GitRepository gitRepository) {
-        super(gitRepository.getRepositoryDirectory());
+    public GitSamlIdPMetadataLocator(final GitRepository gitRepository, final Cache<String, SamlIdPMetadataDocument> metadataCache) {
+        super(gitRepository.getRepositoryDirectory(), metadataCache);
         this.gitRepository = gitRepository;
     }
 

@@ -6,6 +6,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import com.github.benmanes.caffeine.cache.Cache;
 import lombok.val;
 import org.springframework.data.redis.core.RedisTemplate;
 
@@ -26,8 +27,9 @@ public class RedisSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocator 
     private final transient RedisTemplate<String, SamlIdPMetadataDocument> redisTemplate;
 
     public RedisSamlIdPMetadataLocator(final CipherExecutor<String, String> metadataCipherExecutor,
+                                       final Cache<String, SamlIdPMetadataDocument> metadataCache,
                                        final RedisTemplate<String, SamlIdPMetadataDocument> redisTemplate) {
-        super(metadataCipherExecutor);
+        super(metadataCipherExecutor, metadataCache);
         this.redisTemplate = redisTemplate;
     }
 

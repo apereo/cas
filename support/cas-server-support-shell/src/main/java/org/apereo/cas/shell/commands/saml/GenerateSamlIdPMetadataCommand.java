@@ -8,6 +8,7 @@ import org.apereo.cas.support.saml.idp.metadata.writer.DefaultSamlIdPCertificate
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -65,7 +66,8 @@ public class GenerateSamlIdPMetadataCommand {
             help = "Comma separated list of other subject alternative names for the certificate (besides entityId)",
             defaultValue = StringUtils.EMPTY) final String subjectAltNames) {
 
-        val locator = new FileSystemSamlIdPMetadataLocator(new File(metadataLocation));
+        val locator = new FileSystemSamlIdPMetadataLocator(new File(metadataLocation),
+            Caffeine.newBuilder().initialCapacity(1).maximumSize(1).build());
         val writer = new DefaultSamlIdPCertificateAndKeyWriter();
         writer.setHostname(entityId);
         if (StringUtils.isNotBlank(subjectAltNames)) {

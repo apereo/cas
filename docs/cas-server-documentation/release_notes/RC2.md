@@ -66,6 +66,8 @@ are:
 - `cas.authn.adaptive`
 - `cas.service-registry`
 - `cas.authn.mfa`
+- `cas.authn.mfa.trusted`
+- `cas.authn.saml-idp`
 - `cas.attribute-repository`
 - `cas.authn.pac4j`
 - `cas.ticket.tgt`

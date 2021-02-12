@@ -6,6 +6,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -27,9 +28,10 @@ public class MongoDbSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocato
     private final String collectionName;
 
     public MongoDbSamlIdPMetadataLocator(final CipherExecutor<String, String> metadataCipherExecutor,
+                                         final Cache<String, SamlIdPMetadataDocument> metadataCache,
                                          final MongoTemplate mongoTemplate,
                                          final String collectionName) {
-        super(metadataCipherExecutor);
+        super(metadataCipherExecutor, metadataCache);
         this.mongoTemplate = mongoTemplate;
         this.collectionName = collectionName;
     }
