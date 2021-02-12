@@ -20,13 +20,13 @@
                     <label for="deviceName"
                            class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">
 
-                        <input class="mdc-text-field__input pwd"
-                               type="password"
+                        <input class="mdc-text-field__input"
+                               type="text"
                                name="deviceName"
                                id="deviceName"
                                th:field="*{deviceName}"
                                size="25"
-                               autocomplete="off" />
+                               autocomplete="off" required />
 
                         <span class="mdc-notched-outline">
                             <span class="mdc-notched-outline__leading"></span>
@@ -41,7 +41,7 @@
 
                 <div><p>How long should we remember this device?</p></div>
                 <div class="d-flex mt-2">
-                    <div class="mr-2">
+                    <div id="expirationField" class="mr-2" style="display:none">
                         <label for="expiration" class="mdc-text-field mdc-text-field--outlined">
                             <input class="mdc-text-field__input"
                                    type="number"
@@ -61,7 +61,7 @@
                     </div>
                     
                     <select name="timeUnit" id="timeUnit" class="custom-select" th:field="*{timeUnit}"
-                            onchange="let hide = this.value!=='FOREVER'; $('#expiration').toggle(hide)">
+                            onchange="let hide = this.value!=='FOREVER'; $('#expirationField').toggle(hide)">
                         <option value="SECONDS">Seconds</option>
                         <option value="MINUTES">Minutes</option>
                         <option value="HOURS">Hours</option>
@@ -74,17 +74,16 @@
                 </div>
 
                 <div class="d-flex mt-3">
-                    <button class="mdc-button mdc-button--raised" accesskey="s"
-                        th:value="#{cas.mfa.registerdevice.button.register}">
+                    <button class="mdc-button mdc-button--raised" accesskey="s">
                         <span class="mdc-button__label"
                             th:text="#{cas.mfa.registerdevice.button.register}">Register</span>
                     </button>&nbsp;
-                    <button class="mdc-button mdc-button--raised" name="resend" accesskey="k"
-                        th:value="#{cas.mfa.registerdevice.button.skip}">
+                    <button class="mdc-button mdc-button--raised" accesskey="k" formnovalidate
+                        onclick="$('#eventId').val('skip');">
                         <span class="mdc-button__label" th:text="#{cas.mfa.registerdevice.button.skip}">Skip</span>
                     </button>
                 </div>
-                <input type="hidden" name="_eventId_submit" value="Register" />
+                <input type="hidden" id="eventId" name="_eventId" value="submit" />
                 <input type="hidden" name="geolocation" />
                 <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
             </form>
