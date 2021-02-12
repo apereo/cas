@@ -66,6 +66,8 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
         createStateModelBinding(viewRegister, CasWebflowConstants.VAR_ID_MFA_TRUST_RECORD, MultifactorAuthenticationTrustBean.class);
         createTransitionForState(viewRegister, CasWebflowConstants.TRANSITION_ID_SUBMIT,
             CasWebflowConstants.STATE_ID_REGISTER_TRUSTED_DEVICE, Map.of("bind", Boolean.TRUE, "validate", Boolean.TRUE));
+        createTransitionForState(viewRegister, CasWebflowConstants.TRANSITION_ID_SKIP, CasWebflowConstants.STATE_ID_SUCCESS,
+            Map.of("bind", Boolean.FALSE, "validate", Boolean.FALSE));
     }
 
     private void validateFlowDefinitionConfiguration() {
