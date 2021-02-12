@@ -17,7 +17,7 @@ The outcome would be similar to:
 
 ```json
 {
-  "kty": "oct"
+  "kty": "oct",
   "kid": "...",
   "k": "..."
 }
@@ -27,10 +27,7 @@ The generated value for `k` needs to be assigned to the relevant CAS settings. N
 the above algorithm are processed by CAS using the Advanced Encryption Standard (`AES`) algorithm which is a
 specification for the encryption of electronic data established by the U.S. National Institute of Standards and Technology.
 
-The following cipher strategy types are available:
-
-- `ENCRYPT_AND_SIGN`: Default strategy; encrypt values, and then sign.
-- `SIGN_AND_ENCRYPT`: Sign values, and then encrypt.
+{% if include.includeRsaKeys == "true" %}
 
 #### RSA Keys
 
@@ -68,6 +65,6 @@ a public key which will be used to encrypt the payload and whose path (i.e. `fil
 needs to be configured for the encryption key in CAS properties for the relevant feature.
 Once the payload is submitted, the client should use its own private key to decode the payload and unpack it.
 
+{% endif %}
+
 <hr>
-
-

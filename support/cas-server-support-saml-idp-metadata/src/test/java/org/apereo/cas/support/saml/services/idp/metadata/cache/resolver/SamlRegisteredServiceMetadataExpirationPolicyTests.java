@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.saml.services.BaseSamlIdPServicesTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCacheKey;
@@ -31,7 +32,7 @@ import static org.mockito.Mockito.*;
 public class SamlRegisteredServiceMetadataExpirationPolicyTests extends BaseSamlIdPServicesTests {
     @Test
     public void verifyPolicyByEntityCache() throws Exception {
-        val policy = new SamlRegisteredServiceMetadataExpirationPolicy(5);
+        val policy = new SamlRegisteredServiceMetadataExpirationPolicy(Beans.newDuration("PT5M"));
 
         val props = new SamlIdPProperties();
         props.getMetadata().getFileSystem().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
@@ -57,8 +58,7 @@ public class SamlRegisteredServiceMetadataExpirationPolicyTests extends BaseSaml
 
     @Test
     public void verifyPolicyBySpEntityCache() throws Exception {
-        val policy = new SamlRegisteredServiceMetadataExpirationPolicy(5);
-
+        val policy = new SamlRegisteredServiceMetadataExpirationPolicy(Beans.newDuration("PT5M"));
         val props = new SamlIdPProperties();
         props.getMetadata().getFileSystem().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
 

@@ -5,6 +5,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import net.shibboleth.tool.xmlsectool.XMLSecTool;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.InitializingBean;
@@ -53,8 +54,24 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
     @Override
     @SneakyThrows
     protected String writeMetadata(final String metadata, final Optional<SamlRegisteredService> registeredService) {
-        FileUtils.write(getConfigurationContext().getSamlIdPMetadataLocator()
-            .resolveMetadata(registeredService).getFile(), metadata, StandardCharsets.UTF_8);
+        val metadataFile = getConfigurationContext().getSamlIdPMetadataLocator().resolveMetadata(registeredService).getFile();
+        FileUtils.write(metadataFile, metadata, StandardCharsets.UTF_8);
+
+        val mdProps = getConfigurationContext().getCasProperties().getAuthn().getSamlIdp().getMetadata();
+        if (mdProps.getFileSystem().isSignMetadata()) {
+            val signingCert = getConfigurationContext().getSamlIdPMetadataLocator()
+                .resolveSigningCertificate(registeredService).getFile();
+            val signingKey = getConfigurationContext().getSamlIdPMetadataLocator()
+                .resolveSigningKey(registeredService).getFile();
+            val args = new String[]{"--sign",
+                "--referenceIdAttributeName", "ID",
+                "--signatureAlgorithm", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256",
+                "--inFile", metadataFile.getCanonicalPath(),
+                "--certificate", signingCert.getCanonicalPath(),
+                "--keyFile", signingKey.getCanonicalPath(),
+                "--outFile", metadataFile.getCanonicalPath()};
+            XMLSecTool.main(args);
+        }
         return metadata;
     }
 

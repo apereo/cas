@@ -55,6 +55,7 @@ import org.pac4j.oidc.config.OidcConfiguration;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.config.SAML2Configuration;
 import org.pac4j.saml.metadata.SAML2ServiceProviderRequestedAttribute;
+import org.pac4j.saml.metadata.XMLSecSAML2MetadataSigner;
 import org.pac4j.saml.store.SAMLMessageStoreFactory;
 
 import java.security.interfaces.ECPrivateKey;
@@ -417,6 +418,7 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
                 cfg.setForceAuth(saml.isForceAuth());
                 cfg.setPassive(saml.isPassive());
                 cfg.setSignMetadata(saml.isSignServiceProviderMetadata());
+                cfg.setMetadataSigner(new XMLSecSAML2MetadataSigner(cfg));
                 cfg.setAuthnRequestSigned(saml.isSignAuthnRequest());
                 cfg.setSpLogoutRequestSigned(saml.isSignServiceProviderLogoutRequest());
                 cfg.setAcceptedSkew(saml.getAcceptedSkew());
@@ -431,10 +433,8 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
                 cfg.setAttributeConsumingServiceIndex(saml.getAttributeConsumingServiceIndex());
 
                 try {
-                    val clazz = ClassUtils.getClass(
-                        DefaultDelegatedClientFactory.class.getClassLoader(), saml.getMessageStoreFactory());
-                    cfg.setSamlMessageStoreFactory(
-                        SAMLMessageStoreFactory.class.cast(clazz.getDeclaredConstructor().newInstance()));
+                    val clazz = ClassUtils.getClass(DefaultDelegatedClientFactory.class.getClassLoader(), saml.getMessageStoreFactory());
+                    cfg.setSamlMessageStoreFactory(SAMLMessageStoreFactory.class.cast(clazz.getDeclaredConstructor().newInstance()));
                 } catch (final Exception e) {
                     LOGGER.error("Unable to instantiate message store factory class [{}]", saml.getMessageStoreFactory());
                     LoggingUtils.error(LOGGER, e);

@@ -31,4 +31,11 @@ public class FileSystemSamlMetadataProperties implements Serializable {
      */
     @RequiredProperty
     private String location = "file:/etc/cas/saml";
+
+    /**
+     * Whether metadata generated on disk should be digitally signed.
+     * Signing operations use the saml2 identity provider's
+     * signing certificate and signing key.
+     */
+    private boolean signMetadata;
 }

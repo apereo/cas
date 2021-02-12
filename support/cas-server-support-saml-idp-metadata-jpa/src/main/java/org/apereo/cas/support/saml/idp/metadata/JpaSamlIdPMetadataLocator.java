@@ -6,6 +6,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -32,8 +33,9 @@ public class JpaSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocator {
     @PersistenceContext(unitName = "samlMetadataIdPEntityManagerFactory")
     private transient EntityManager entityManager;
 
-    public JpaSamlIdPMetadataLocator(final CipherExecutor<String, String> metadataCipherExecutor) {
-        super(metadataCipherExecutor);
+    public JpaSamlIdPMetadataLocator(final CipherExecutor<String, String> metadataCipherExecutor,
+                                     final Cache<String, SamlIdPMetadataDocument> metadataCache) {
+        super(metadataCipherExecutor, metadataCache);
     }
 
     @Override

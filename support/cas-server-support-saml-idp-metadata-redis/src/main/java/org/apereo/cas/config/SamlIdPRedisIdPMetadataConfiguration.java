@@ -13,6 +13,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -46,6 +47,10 @@ public class SamlIdPRedisIdPMetadataConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    @Qualifier("samlIdPMetadataCache")
+    private ObjectProvider<Cache<String, SamlIdPMetadataDocument>> samlIdPMetadataCache;
+    
     @Autowired
     @Qualifier("samlSelfSignedCertificateWriter")
     private ObjectProvider<SamlIdPCertificateAndKeyWriter> samlSelfSignedCertificateWriter;
@@ -99,6 +104,7 @@ public class SamlIdPRedisIdPMetadataConfiguration {
     public SamlIdPMetadataLocator samlIdPMetadataLocator() {
         return new RedisSamlIdPMetadataLocator(
             redisSamlIdPMetadataCipherExecutor(),
+            samlIdPMetadataCache.getObject(),
             redisSamlIdPMetadataTemplate());
     }
 }

@@ -54,6 +54,7 @@ jobs:
   cache:
     runs-on: ubuntu-latest
     needs: [initialize]
+    if: ${{ !contains(github.event.head_commit.message, 'documentation update') }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK

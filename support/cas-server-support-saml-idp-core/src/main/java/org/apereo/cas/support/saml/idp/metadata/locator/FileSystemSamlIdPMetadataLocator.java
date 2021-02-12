@@ -5,6 +5,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import com.github.benmanes.caffeine.cache.Cache;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -28,12 +29,12 @@ import java.util.Optional;
 public class FileSystemSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocator {
     private final File metadataLocation;
 
-    public FileSystemSamlIdPMetadataLocator(final Resource resource) throws Exception {
-        this(resource.getFile());
+    public FileSystemSamlIdPMetadataLocator(final Resource resource, final Cache<String, SamlIdPMetadataDocument> metadataCache) throws Exception {
+        this(resource.getFile(), metadataCache);
     }
 
-    public FileSystemSamlIdPMetadataLocator(final File resource) {
-        super(CipherExecutor.noOpOfStringToString());
+    public FileSystemSamlIdPMetadataLocator(final File resource, final Cache<String, SamlIdPMetadataDocument> metadataCache) {
+        super(CipherExecutor.noOpOfStringToString(), metadataCache);
         this.metadataLocation = resource;
     }
 

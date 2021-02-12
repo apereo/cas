@@ -15,6 +15,7 @@ import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -28,8 +29,8 @@ import java.util.concurrent.TimeUnit;
 public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<SamlRegisteredServiceCacheKey, MetadataResolver> {
     private final long defaultExpiration;
 
-    public SamlRegisteredServiceMetadataExpirationPolicy(final long metadataCacheExpirationMinutes) {
-        this.defaultExpiration = TimeUnit.MINUTES.toNanos(metadataCacheExpirationMinutes);
+    public SamlRegisteredServiceMetadataExpirationPolicy(final Duration metadataCacheExpiration) {
+        this.defaultExpiration = metadataCacheExpiration.toNanos();
     }
 
     @Override

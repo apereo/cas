@@ -8,7 +8,6 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link CoreSamlMetadataProperties}.
@@ -32,9 +31,9 @@ public class CoreSamlMetadataProperties implements Serializable {
     private boolean failFast = true;
 
     /**
-     * How long should metadata be cached in minutes.
+     * How long should metadata be cached.
      */
-    private long cacheExpirationMinutes = TimeUnit.DAYS.toMinutes(1);
+    private String cacheExpiration = "PT24H";
 
     /**
      * Whether valid metadata is required.

@@ -10,6 +10,8 @@ import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 
+import java.time.Duration;
+
 /**
  * An adaptation of metadata resolver which handles the resolution of metadata resources
  * inside a cache. It basically is a fancy wrapper around a cache, and constructs the cache
@@ -27,12 +29,12 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
 
     private final LoadingCache<SamlRegisteredServiceCacheKey, MetadataResolver> cache;
 
-    public SamlRegisteredServiceDefaultCachingMetadataResolver(final long metadataCacheExpirationMinutes,
+    public SamlRegisteredServiceDefaultCachingMetadataResolver(final Duration metadataCacheExpiration,
                                                                final SamlRegisteredServiceMetadataResolverCacheLoader loader) {
         this.chainingMetadataResolverCacheLoader = loader;
         this.cache = Caffeine.newBuilder()
             .maximumSize(MAX_CACHE_SIZE)
-            .expireAfter(new SamlRegisteredServiceMetadataExpirationPolicy(metadataCacheExpirationMinutes))
+            .expireAfter(new SamlRegisteredServiceMetadataExpirationPolicy(metadataCacheExpiration))
             .build(this.chainingMetadataResolverCacheLoader);
     }
 
