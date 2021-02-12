@@ -18,7 +18,6 @@ import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.github.benmanes.caffeine.cache.Cache;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -157,7 +156,6 @@ public class SamlIdPJpaIdPMetadataConfiguration {
 
     @RefreshScope
     @Bean
-    @SneakyThrows
     public SamlIdPMetadataLocator samlIdPMetadataLocator() {
         return new JpaSamlIdPMetadataLocator(jpaSamlIdPMetadataCipherExecutor(), samlIdPMetadataCache.getObject());
     }

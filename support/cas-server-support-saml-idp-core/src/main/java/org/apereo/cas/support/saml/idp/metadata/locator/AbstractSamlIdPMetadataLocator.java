@@ -121,7 +121,7 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
     public final SamlIdPMetadataDocument fetch(final Optional<SamlRegisteredService> registeredService) {
         val key = buildCacheKey(registeredService);
 
-        return metadataCache.get(key, k -> {
+        return getMetadataCache().get(key, k -> {
             val metadataDocument = fetchInternal(registeredService);
             if (metadataDocument != null && metadataDocument.isValid()) {
                 LOGGER.trace("Fetched and cached SAML IdP metadata document [{}] under key [{}]", metadataDocument, key);
