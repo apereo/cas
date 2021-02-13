@@ -9,6 +9,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.query.Collation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
@@ -16,6 +17,7 @@ import javax.persistence.NoResultException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
@@ -29,6 +31,7 @@ import java.util.stream.Collectors;
 @Getter
 public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleAuthenticatorTokenCredentialRepository {
     private final MongoOperations mongoTemplate;
+
     private final String collectionName;
 
     public MongoDbGoogleAuthenticatorTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator,
@@ -44,7 +47,8 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoo
     public OneTimeTokenAccount get(final String username) {
         try {
             val query = new Query();
-            query.addCriteria(Criteria.where("username").is(username));
+            query.addCriteria(Criteria.where("username").is(username))
+                .collation(Collation.of(Locale.ENGLISH).strength(Collation.ComparisonLevel.primary()));
             val r = this.mongoTemplate.findOne(query, GoogleAuthenticatorAccount.class, this.collectionName);
             if (r != null) {
                 return decode(r);
@@ -90,7 +94,8 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoo
     @Override
     public void delete(final String username) {
         val query = new Query();
-        query.addCriteria(Criteria.where("username").is(username));
+        query.addCriteria(Criteria.where("username").is(username))
+            .collation(Collation.of(Locale.ENGLISH).strength(Collation.ComparisonLevel.primary()));
         this.mongoTemplate.remove(query, GoogleAuthenticatorAccount.class, this.collectionName);
     }
 

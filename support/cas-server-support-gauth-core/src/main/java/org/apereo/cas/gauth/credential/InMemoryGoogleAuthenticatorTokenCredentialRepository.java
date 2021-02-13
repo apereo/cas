@@ -32,7 +32,7 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseGo
     @Override
     public OneTimeTokenAccount get(final String userName) {
         if (contains(userName)) {
-            val account = this.accounts.get(userName);
+            val account = this.accounts.get(userName.toLowerCase().trim());
             return decode(account);
         }
         return null;
@@ -42,14 +42,14 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseGo
     public void save(final String userName, final String secretKey,
                      final int validationCode,
                      final List<Integer> scratchCodes) {
-        val account = new OneTimeTokenAccount(userName, secretKey, validationCode, scratchCodes);
+        val account = new OneTimeTokenAccount(userName.trim().toLowerCase(), secretKey, validationCode, scratchCodes);
         update(account);
     }
 
     @Override
     public OneTimeTokenAccount update(final OneTimeTokenAccount account) {
         val encoded = encode(account);
-        this.accounts.put(account.getUsername(), encoded);
+        this.accounts.put(account.getUsername().trim().toLowerCase(), encoded);
         return encoded;
     }
 
@@ -64,7 +64,7 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseGo
 
     @Override
     public void delete(final String username) {
-        this.accounts.remove(username);
+        this.accounts.remove(username.toLowerCase().trim());
     }
 
     @Override
