@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.oauth;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionOptionalSigningOptionalJwtCryptographyProperties;
+import org.apereo.cas.configuration.model.support.cookie.CookieProperties;
 import org.apereo.cas.configuration.model.support.uma.UmaProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -35,6 +36,13 @@ public class OAuthProperties implements Serializable {
      * via means and libraries outside of CAS.
      */
     private boolean replicateSessions;
+
+    /**
+     * The pac4j framework sets a CSRF cookie as part of its Oauth configuration.
+     * This allows the pac4j cookie property defaults to be overridden but the cookie name, pinToSession, comment and
+     */
+    @NestedConfigurationProperty
+    private CookieProperties csrfCookie = new CsrfCookieProperties();
 
     /**
      * Crypto settings that sign/encrypt secrets.
