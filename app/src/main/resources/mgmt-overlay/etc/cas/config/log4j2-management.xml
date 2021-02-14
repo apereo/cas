@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Specify the refresh internal in seconds. -->
+<Configuration monitorInterval="5">
+    <Properties>
+        <!--
+        Default log directory is the current directory but that can be overridden with -Dcas.log.dir=<logdir>
+        Or you can change this property to a new default
+        -->
+        <Property name="cas.log.dir" >.</Property>
+        <!-- To see more CAS specific logging, adjust this property to info or debug or run server with -Dcas.log.leve=debug -->
+        <Property name="cas.log.level" >info</Property>
+    </Properties>
+    <Appenders>
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d %p [%c] - &lt;%m&gt;%n"/>
+        </Console>
+        <RollingFile name="cas-management" fileName="${sys:cas.log.dir}/cas-management.log" append="true"
+                     filePattern="${sys:cas.log.dir}/cas-management-%d{yyyy-MM-dd-HH}-%i.log.gz">
+            <PatternLayout pattern="%d %p [%c] - %m%n"/>
+            <Policies>
+                <OnStartupTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="512 KB"/>
+                <TimeBasedTriggeringPolicy />
+            </Policies>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <AsyncLogger name="org.springframework" level="warn" />
+        <AsyncLogger name="org.springframework.amqp" level="error" />
+        <AsyncLogger name="org.springframework.webflow" level="warn" />
+        <AsyncLogger name="org.springframework.web" level="warn" />
+        <AsyncLogger name="org.springframework.context.annotation" level="error" />
+        <AsyncLogger name="org.pac4j" level="info" />
+        <AsyncLogger name="org.apereo" level="${sys:cas.log.level}/"/>
+        <AsyncLogger name="org.thymeleaf" level="warn" />
+        <AsyncLogger name="org.apereo.inspektr.audit.support.Slf4jLoggingAuditTrailManager" level="info"/>
+        <Root level="warn">
+            <AppenderRef ref="cas-management"/>
+            <AppenderRef ref="console"/>
+        </Root>
+    </Loggers>
+</Configuration>

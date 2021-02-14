@@ -8,12 +8,14 @@ import lombok.val;
 import org.apereo.cas.initializr.contrib.ChainingSingleResourceProjectContributor;
 import org.apereo.cas.overlay.casmgmt.buildsystem.CasManagementOverlayBuildSystem;
 import org.apereo.cas.overlay.casmgmt.buildsystem.CasManagementOverlayGradleBuild;
+import org.apereo.cas.overlay.casmgmt.contrib.CasManagementOverlayConfigurationPropertiesContributor;
 import org.apereo.cas.overlay.casmgmt.contrib.CasManagementOverlayGradleBuildContributor;
 import org.apereo.cas.overlay.casmgmt.contrib.CasManagementOverlayGradlePropertiesContributor;
 import org.apereo.cas.overlay.casmgmt.contrib.CasManagementOverlayGradleSettingsContributor;
+import org.apereo.cas.overlay.casmgmt.contrib.CasManagementOverlayLoggingConfigurationContributor;
 import org.apereo.cas.overlay.casmgmt.contrib.CasManagementOverlayReadMeContributor;
+import org.apereo.cas.overlay.casmgmt.contrib.CasManagementOverlayUsersConfigurationContributor;
 import org.apereo.cas.overlay.casmgmt.contrib.docker.CasManagementOverlayDockerContributor;
-import org.apereo.cas.overlay.casserver.contrib.docker.CasOverlayDockerContributor;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -39,6 +41,15 @@ public class CasManagementOverlayProjectGenerationConfiguration {
         chain.addContributor(new CasManagementOverlayGradlePropertiesContributor(applicationContext));
         chain.addContributor(new CasManagementOverlayGradleSettingsContributor());
         chain.addContributor(new CasManagementOverlayReadMeContributor(applicationContext));
+        return chain;
+    }
+
+    @Bean
+    public ChainingSingleResourceProjectContributor casMgmtOverlayConfigurationContributor() {
+        var chain = new ChainingSingleResourceProjectContributor();
+        chain.addContributor(new CasManagementOverlayConfigurationPropertiesContributor(applicationContext));
+        chain.addContributor(new CasManagementOverlayLoggingConfigurationContributor());
+        chain.addContributor(new CasManagementOverlayUsersConfigurationContributor());
         return chain;
     }
 

@@ -19,10 +19,6 @@ public class CasOverlayConfigurationPropertiesContributor extends TemplatedProje
 
     @Override
     protected Object contributeInternal(final ProjectDescription project) {
-        val modules = project.getRequestedDependencies().values()
-            .stream()
-            .map(Dependency::getArtifactId)
-            .collect(Collectors.toList());
         return CasConfigurationMetadataCatalog.query(
             ConfigurationMetadataCatalogQuery.builder()
                 .queryType(ConfigurationMetadataCatalogQuery.QueryTypes.CAS)
