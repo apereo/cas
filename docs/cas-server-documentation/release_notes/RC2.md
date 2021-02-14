@@ -102,7 +102,7 @@ now be scripted using an external Groovy script.
   handling SAML2 logout requests and responses should now properly honor final redirects back to the calling application.
 - Support for the legacy syntax for [JSON service definitions](../services/JSON-Service-Management.html) 
   based on CAS Addons as well as the old `org.jasig` namespace has been removed. 
-- Local interception and changing the default user interface language can now be forced regardless of the http request.  
+- Locale interception and changing the default user interface language can now be forced regardless of the http request.  
 - Reworking internal components and APIs for [password management](../password_management/Password-Management.html) to 
   make customizations easier, specially when multiple fields may be involved to locate the user record. The work here may present
   breaking changes, specially if you are handling password 
@@ -113,6 +113,11 @@ now be scripted using an external Groovy script.
   or `cas.authn.saml-idp.metadata.git.active-branch` property. 
 - References to [Bintray repositories](https://jfrog.com/blog/into-the-sunset-bintray-jcenter-gocenter-and-chartcenter/) 
   have been removed and updated with more maintainable replacements.
+- SAML2 IdP metadata generators now allow for dynamic customizations at runtime when generating metadata.
+- When using [delegated authentication](../integration/Delegate-Authentication-SAML.html) to SAML2 identity providers, the service provider metadata
+can now be signed using the `XMLSec` tool.
+- [SAML2 IdP metadata](../installation/Configuring-SAML2-DynamicMetadata.html) can now be signed.
+- Minor improvements to indexing operations for [MongoDb ticket registry](../ticketing/MongoDb-Ticket-Registry.html).
 
 ## Library Upgrades
 

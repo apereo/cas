@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.idp.metadata.generator;
 
+import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
@@ -12,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.opensaml.saml.saml2.metadata.EntityDescriptor;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
@@ -100,7 +103,7 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
      * @return the saml id p metadata document
      */
     protected SamlIdPMetadataDocument finalizeMetadataDocument(final SamlIdPMetadataDocument doc,
-        final Optional<SamlRegisteredService> registeredService) {
+                                                               final Optional<SamlRegisteredService> registeredService) {
         return doc;
     }
 
@@ -145,9 +148,9 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
      */
     @SneakyThrows
     private String buildMetadataGeneratorParameters(final Pair<String, String> signing,
-        final Pair<String, String> encryption,
-        final Optional<SamlRegisteredService> registeredService) {
-        
+                                                    final Pair<String, String> encryption,
+                                                    final Optional<SamlRegisteredService> registeredService) {
+
         val template = configurationContext.getApplicationContext().getResource("classpath:/template-idp-metadata.xml");
         val signingCert = SamlIdPMetadataGenerator.cleanCertificate(signing.getKey());
         val encryptionCert = SamlIdPMetadataGenerator.cleanCertificate(encryption.getKey());
@@ -158,13 +161,22 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
             val resolver = SpringExpressionLanguageValueResolver.getInstance();
             val entityId = resolver.resolve(idp.getCore().getEntityId());
             val scope = resolver.resolve(configurationContext.getCasProperties().getServer().getScope());
-            val metadata = writer.toString()
+            var metadata = writer.toString()
                 .replace("${entityId}", entityId)
                 .replace("${scope}", scope)
                 .replace("${idpEndpointUrl}", getIdPEndpointUrl())
                 .replace("${encryptionKey}", encryptionCert)
                 .replace("${signingKey}", signingCert);
 
+            val customizers = configurationContext.getApplicationContext()
+                .getBeansOfType(SamlIdPMetadataCustomizer.class, false, true).values();
+            if (!customizers.isEmpty()) {
+                val entityDescriptor = SamlUtils.transformSamlObject(configurationContext.getOpenSamlConfigBean(), metadata, EntityDescriptor.class);
+                customizers.stream()
+                    .sorted(AnnotationAwareOrderComparator.INSTANCE)
+                    .forEach(customizer -> customizer.customize(entityDescriptor, registeredService));
+                metadata = SamlUtils.transformSamlObject(configurationContext.getOpenSamlConfigBean(), entityDescriptor).toString();
+            }
             writeMetadata(metadata, registeredService);
             return metadata;
         }
