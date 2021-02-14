@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.git.GitRepository;
 import org.apereo.cas.git.GitRepositoryBuilder;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.idp.metadata.GitSamlIdPMetadataCipherExecutor;
 import org.apereo.cas.support.saml.idp.metadata.GitSamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.GitSamlIdPMetadataLocator;
@@ -48,6 +49,10 @@ public class SamlIdPGitIdPMetadataConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
+    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+    private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
+    
+    @Autowired
     @Qualifier("samlIdPMetadataCache")
     private ObjectProvider<Cache<String, SamlIdPMetadataDocument>> samlIdPMetadataCache;
 
@@ -89,6 +94,7 @@ public class SamlIdPGitIdPMetadataConfiguration {
             .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter.getObject())
             .applicationContext(applicationContext)
             .casProperties(casProperties)
+            .openSamlConfigBean(openSamlConfigBean.getObject())
             .metadataCipherExecutor(gitSamlIdPMetadataCipherExecutor())
             .build();
         return new GitSamlIdPMetadataGenerator(context, gitIdPMetadataRepositoryInstance());

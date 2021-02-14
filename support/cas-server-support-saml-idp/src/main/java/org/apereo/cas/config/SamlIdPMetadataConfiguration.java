@@ -146,6 +146,7 @@ public class SamlIdPMetadataConfiguration {
             .applicationContext(applicationContext)
             .metadataCipherExecutor(CipherExecutor.noOpOfStringToString())
             .casProperties(casProperties)
+            .openSamlConfigBean(openSamlConfigBean.getObject())
             .build();
         return new FileSystemSamlIdPMetadataGenerator(context);
     }

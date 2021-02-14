@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.saml.SamlIdPMetadataCouchDbRepository;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.idp.metadata.CouchDbSamlIdPMetadataCipherExecutor;
 import org.apereo.cas.support.saml.idp.metadata.CouchDbSamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.CouchDbSamlIdPMetadataLocator;
@@ -50,6 +51,10 @@ public class CouchDbSamlIdPMetadataConfiguration {
     @Autowired
     @Qualifier("samlSelfSignedCertificateWriter")
     private ObjectProvider<SamlIdPCertificateAndKeyWriter> samlSelfSignedCertificateWriter;
+
+    @Autowired
+    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+    private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
@@ -116,6 +121,7 @@ public class CouchDbSamlIdPMetadataConfiguration {
             .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter.getObject())
             .applicationContext(applicationContext)
             .casProperties(casProperties)
+            .openSamlConfigBean(openSamlConfigBean.getObject())
             .metadataCipherExecutor(couchDbSamlIdPMetadataCipherExecutor())
             .build();
 

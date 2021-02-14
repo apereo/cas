@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.idp.metadata.generator;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.writer.SamlIdPCertificateAndKeyWriter;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -31,4 +32,6 @@ public class SamlIdPMetadataGeneratorConfigurationContext {
     private final ConfigurableApplicationContext applicationContext;
 
     private final CasConfigurationProperties casProperties;
+
+    private final OpenSamlConfigBean openSamlConfigBean;
 }

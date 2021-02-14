@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.jpa.JpaBeanFactory;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.idp.metadata.JpaSamlIdPMetadataCipherExecutor;
 import org.apereo.cas.support.saml.idp.metadata.JpaSamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.JpaSamlIdPMetadataLocator;
@@ -74,8 +75,13 @@ public class SamlIdPJpaIdPMetadataConfiguration {
     @Qualifier("samlIdPMetadataCache")
     private ObjectProvider<Cache<String, SamlIdPMetadataDocument>> samlIdPMetadataCache;
 
+    @Autowired
+    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+    private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
+    
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "jpaSamlMetadataIdPVendorAdapter")
     public JpaVendorAdapter jpaSamlMetadataIdPVendorAdapter() {
         return jpaBeanFactory.getObject().newJpaVendorAdapter(casProperties.getJdbc());
     }
@@ -146,6 +152,7 @@ public class SamlIdPJpaIdPMetadataConfiguration {
             .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter.getObject())
             .applicationContext(applicationContext)
             .casProperties(casProperties)
+            .openSamlConfigBean(openSamlConfigBean.getObject())
             .metadataCipherExecutor(jpaSamlIdPMetadataCipherExecutor())
             .build();
 

@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.idp.metadata.AmazonS3SamlIdPMetadataCipherExecutor;
 import org.apereo.cas.support.saml.idp.metadata.AmazonS3SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.AmazonS3SamlIdPMetadataLocator;
@@ -48,6 +49,10 @@ public class AmazonS3SamlIdPMetadataConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
+    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+    private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
+    
+    @Autowired
     @Qualifier("samlSelfSignedCertificateWriter")
     private ObjectProvider<SamlIdPCertificateAndKeyWriter> samlSelfSignedCertificateWriter;
 
@@ -86,6 +91,7 @@ public class AmazonS3SamlIdPMetadataConfiguration {
             .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter.getObject())
             .applicationContext(applicationContext)
             .casProperties(casProperties)
+            .openSamlConfigBean(openSamlConfigBean.getObject())
             .metadataCipherExecutor(amazonS3SamlIdPMetadataCipherExecutor())
             .build();
         val generator = new AmazonS3SamlIdPMetadataGenerator(context,

@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.redis.core.RedisObjectFactory;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.idp.metadata.RedisSamlIdPMetadataCipherExecutor;
 import org.apereo.cas.support.saml.idp.metadata.RedisSamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.RedisSamlIdPMetadataLocator;
@@ -40,6 +41,10 @@ import org.springframework.data.redis.core.RedisTemplate;
 @ConditionalOnExpression(value = "${cas.authn.saml-idp.metadata.redis.idp-metadata-enabled:false} and ${cas.authn.saml-idp.metadata.redis.enabled:true}")
 @Slf4j
 public class SamlIdPRedisIdPMetadataConfiguration {
+
+    @Autowired
+    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+    private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
@@ -94,6 +99,7 @@ public class SamlIdPRedisIdPMetadataConfiguration {
             .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter.getObject())
             .applicationContext(applicationContext)
             .casProperties(casProperties)
+            .openSamlConfigBean(openSamlConfigBean.getObject())
             .metadataCipherExecutor(redisSamlIdPMetadataCipherExecutor())
             .build();
         return new RedisSamlIdPMetadataGenerator(context, redisSamlIdPMetadataTemplate());

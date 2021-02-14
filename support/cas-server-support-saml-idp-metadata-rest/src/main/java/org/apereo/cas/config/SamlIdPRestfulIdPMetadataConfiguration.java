@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.idp.metadata.RestfulSamlIdPMetadataCipherExecutor;
 import org.apereo.cas.support.saml.idp.metadata.RestfulSamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.RestfulSamlIdPMetadataLocator;
@@ -38,6 +39,10 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnProperty(prefix = "cas.authn.saml-idp.metadata.rest", name = "idp-metadata-enabled", havingValue = "true")
 @Slf4j
 public class SamlIdPRestfulIdPMetadataConfiguration {
+
+    @Autowired
+    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+    private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
@@ -79,6 +84,7 @@ public class SamlIdPRestfulIdPMetadataConfiguration {
             .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter.getObject())
             .applicationContext(applicationContext)
             .casProperties(casProperties)
+            .openSamlConfigBean(openSamlConfigBean.getObject())
             .metadataCipherExecutor(restfulSamlIdPMetadataCipherExecutor())
             .build();
         return new RestfulSamlIdPMetadataGenerator(context);

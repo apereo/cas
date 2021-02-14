@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.idp.metadata.MongoDbSamlIdPMetadataCipherExecutor;
 import org.apereo.cas.support.saml.idp.metadata.MongoDbSamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.MongoDbSamlIdPMetadataLocator;
@@ -43,6 +44,10 @@ import javax.net.ssl.SSLContext;
 @Slf4j
 public class SamlIdPMongoDbIdPMetadataConfiguration {
 
+    @Autowired
+    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+    private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
+    
     @Autowired
     @Qualifier("samlIdPMetadataCache")
     private ObjectProvider<Cache<String, SamlIdPMetadataDocument>> samlIdPMetadataCache;
@@ -100,6 +105,7 @@ public class SamlIdPMongoDbIdPMetadataConfiguration {
             .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter.getObject())
             .applicationContext(applicationContext)
             .casProperties(casProperties)
+            .openSamlConfigBean(openSamlConfigBean.getObject())
             .metadataCipherExecutor(mongoDbSamlIdPMetadataCipherExecutor())
             .build();
         return new MongoDbSamlIdPMetadataGenerator(context, mongoDbSamlIdPMetadataTemplate(),
