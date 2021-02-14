@@ -28,7 +28,7 @@ apply plugin: "org.springframework.boot"
 dependencyManagement {
     imports {
         mavenBom "org.apereo.cas:cas-mgmt-support-bom:${project.'casmgmt.version'}"
-        mavenBom "org.apereo.cas:cas-server-support-bom:${project.'cas.version'}"
+//        mavenBom "org.apereo.cas:cas-server-support-bom:${project.'cas.version'}"
     }
 }
 
@@ -65,7 +65,7 @@ bootRun {
 }
 
 dependencies {
-    
+    implementation "org.apereo.cas:cas-mgmt-webapp-init"
 }
 
 task run(group: "build", description: "Run the CAS management web application in embedded container mode") {
