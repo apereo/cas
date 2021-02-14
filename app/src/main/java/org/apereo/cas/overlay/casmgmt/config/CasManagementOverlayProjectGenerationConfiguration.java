@@ -37,7 +37,7 @@ public class CasManagementOverlayProjectGenerationConfiguration {
     @Bean
     public ChainingSingleResourceProjectContributor casMgmtOverlayGradleConfigurationContributor() {
         var chain = new ChainingSingleResourceProjectContributor();
-        chain.addContributor(new CasManagementOverlayGradleBuildContributor());
+        chain.addContributor(new CasManagementOverlayGradleBuildContributor(applicationContext));
         chain.addContributor(new CasManagementOverlayGradlePropertiesContributor(applicationContext));
         chain.addContributor(new CasManagementOverlayGradleSettingsContributor());
         chain.addContributor(new CasManagementOverlayReadMeContributor(applicationContext));

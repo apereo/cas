@@ -66,6 +66,9 @@ bootRun {
 
 dependencies {
     implementation "org.apereo.cas:cas-mgmt-webapp-init"
+    {{#dependencies}}
+    implementation "{{groupId}}:{{artifactId}}"
+    {{/dependencies}}
 }
 
 task run(group: "build", description: "Run the CAS management web application in embedded container mode") {
