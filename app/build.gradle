@@ -66,13 +66,16 @@ bootRun {
 
 
 processResources {
-    filesMatching(['**/*.yml', '**/*.properties']) {
+    filesMatching(['**/*.yml', '**/*.properties', '**/*.md']) {
         filter org.apache.tools.ant.filters.ReplaceTokens, tokens: [
                 "javaVersion"                            : project.sourceCompatibility,
 
                 "casVersion"                             : project.property("casVersion"),
+                "casMgmtVersion"                         : project.property("casMgmtVersion"),
+                "casMgmtCasVersion"                      : project.property("casMgmtCasVersion"),
                 "version"                                : project.property("version"),
                 "springBootVersion"                      : project.property("springBootVersion"),
+                "casMgmtSpringBootVersion"               : project.property("casMgmtSpringBootVersion"),
                 "gradleDependencyManagementPluginVersion": project.property("gradleDependencyManagementPluginVersion"),
                 "gradleFreeFairPluginVersion"            : project.property("gradleFreeFairPluginVersion"),
                 "tomcatVersion"                          : project.property("tomcatVersion"),

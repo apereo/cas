@@ -87,6 +87,10 @@ initializr:
         groupId: org.apereo.cas
         artifactId: cas-server-support-bom
         version: @casVersion@
+      cas-mgmt-bom:
+        groupId: org.apereo.cas
+        artifactId: cas-mgmt-support-bom
+        version: @casMgmtVersion@
   dependencies:
     - name: api
       content:

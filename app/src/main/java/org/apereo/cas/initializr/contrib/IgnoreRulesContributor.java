@@ -1,6 +1,7 @@
 package org.apereo.cas.initializr.contrib;
 
 import io.spring.initializr.generator.project.contributor.ProjectContributor;
+import org.springframework.core.Ordered;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.FileCopyUtils;
@@ -28,5 +29,10 @@ public class IgnoreRulesContributor implements ProjectContributor {
         }
         Resource resource = this.resolver.getResource(resourcePattern);
         FileCopyUtils.copy(resource.getInputStream(), Files.newOutputStream(output, StandardOpenOption.APPEND));
+    }
+
+    @Override
+    public int getOrder() {
+        return Ordered.LOWEST_PRECEDENCE;
     }
 }

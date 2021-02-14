@@ -1,0 +1,102 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${project.springBootVersion}"
+        classpath "io.freefair.gradle:maven-plugin:${project.gradleFreeFairPluginVersion}"
+        classpath "io.freefair.gradle:lombok-plugin:${project.gradleFreeFairPluginVersion}"
+        classpath "io.spring.gradle:dependency-management-plugin:${project.gradleDependencyManagementPluginVersion}"
+    }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { url 'https://oss.sonatype.org/content/repositories/releases' }
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+    maven { url 'https://build.shibboleth.net/nexus/content/repositories/releases/' }
+}
+
+apply plugin: "io.spring.dependency-management"
+apply plugin: "io.freefair.war-overlay"
+apply plugin: "war"
+apply plugin: "org.springframework.boot"
+
+dependencyManagement {
+    imports {
+        mavenBom "org.apereo.cas:cas-mgmt-support-bom:${project.'casmgmt.version'}"
+        mavenBom "org.apereo.cas:cas-server-support-bom:${project.'cas.version'}"
+    }
+}
+
+configurations.all {
+    resolutionStrategy {
+        cacheChangingModulesFor 0, "seconds"
+        cacheDynamicVersionsFor 0, "seconds"
+        preferProjectModules()
+    }
+}
+
+war {
+    entryCompression = ZipEntryCompression.STORED
+}
+
+springBoot {
+    mainClassName = "org.apereo.cas.mgmt.web.CasManagementWebApplication"
+}
+
+bootWar {
+    if (project.hasProperty('executable')) {
+        launchScript()
+    }
+
+    archiveName "cas-management.war"
+    baseName "cas-management"
+
+    excludeDevtools = false
+}
+
+bootRun {
+    sourceResources sourceSets.main
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+dependencies {
+    
+}
+
+task run(group: "build", description: "Run the CAS management web application in embedded container mode") {
+    dependsOn build
+    doLast {
+        def casRunArgs = Arrays.asList("-Xmx4048M -XX:+TieredCompilation -XX:TieredStopAtLevel=1".split(" "))
+        javaexec {
+            main = "-jar"
+            jvmArgs = casRunArgs
+            args = ["build/libs/cas-management.war"]
+            logger.info "Started ${commandLine}"
+        }
+    }
+}
+
+bootWar {
+    entryCompression = ZipEntryCompression.STORED
+    overlays {
+        cas {
+            from "org.apereo.cas:cas-mgmt-webapp${project.appServer}:${project.'casmgmt.version'}@war"
+            provided = false
+            excludes = []
+        }
+    }
+}
+
+task copyCasConfiguration(type: Copy, group: "build",
+        description: "Copy the CAS configuration to /etc/cas/config") {
+    from "etc/cas/config"
+    into new File('/etc/cas/config').absolutePath
+    doFirst {
+        new File('/etc/cas/config').mkdirs()
+    }
+}

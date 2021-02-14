@@ -3,7 +3,6 @@ buildscript {
         mavenLocal()
         gradlePluginPortal()
         mavenCentral()
-        jcenter()
     }
     dependencies {
         classpath "de.undercouch:gradle-download-task:${project.gradleDownloadTaskVersion}"
@@ -18,7 +17,6 @@ buildscript {
 repositories {
     mavenLocal()
     mavenCentral()
-    jcenter()
     maven {
         url "https://dl.bintray.com/apereocas/webauthn-cas/"
         mavenContent { releasesOnly() }
