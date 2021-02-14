@@ -39,7 +39,8 @@ public class OAuthProperties implements Serializable {
 
     /**
      * The pac4j framework sets a CSRF cookie as part of its Oauth configuration.
-     * This allows the pac4j cookie property defaults to be overridden but the cookie name, pinToSession, comment and
+     * This allows the pac4j cookie property defaults to be overridden but the cookie name, pinToSession, and comment
+     * do are not used by pac4j. Defaults are set to pac4j defaults.
      */
     @NestedConfigurationProperty
     private CookieProperties csrfCookie = new CsrfCookieProperties();
