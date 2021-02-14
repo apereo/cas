@@ -45,19 +45,35 @@ initializr:
       id: war
       default: true
   types:
-    - name: Gradle Project
-      id: gradle-project
+    - name: CAS Overlay Gradle Project Zip
+      id: cas-overlay
       description: Generate a Gradle-based project as a zip file
       tags:
-        build: overlay
+        build: cas-overlay
         format: project
       default: true
       action: /starter.zip
-    - name: Gradle Project
-      id: gradle-project
+    - name: CAS Overlay Gradle Project TGZ
+      id: cas-overlay
       description: Generate a Gradle-based project as a tgz file
       tags:
-        build: overlay
+        build: cas-overlay
+        format: project
+      default: false
+      action: /starter.tgz
+    - name: CAS Management Overlay Gradle Project Zip
+      id: cas-mgmt-overlay
+      description: Generate a Gradle-based project as a zip file
+      tags:
+        build: cas-mgmt-overlay
+        format: project
+      default: true
+      action: /starter.zip
+    - name: CAS Management Overlay Gradle Project TGZ
+      id: cas-mgmt-overlay
+      description: Generate a Gradle-based project as a tgz file
+      tags:
+        build: cas-mgmt-overlay
         format: project
       default: false
       action: /starter.tgz

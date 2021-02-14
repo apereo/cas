@@ -1,5 +1,5 @@
 Apereo CAS Overlay Template
-=======================
+=======================================
 
 CAS Overlay to use as a starting template for CAS deployments.
 
@@ -53,12 +53,12 @@ The generated directory structure should match the following:
 ```
 ├── redbeard.properties
 ├── static
-│   └── themes
-│       └── redbeard
-│           ├── css
-│           │   └── cas.css
-│           └── js
-│               └── cas.js
+│ └── themes
+│     └── redbeard
+│         ├── css
+│         │ └── cas.css
+│         └── js
+│             └── cas.js
 └── templates
     └── redbeard
         └── fragments
@@ -143,7 +143,8 @@ Same strategy applies to Windows too, provided you switch `$HOME` to its equival
 
 # Deployment
 
-- Create a keystore file `thekeystore` under `/etc/cas`. Use the password `changeit` for both the keystore and the key/certificate entries. This can either be done using the JDK's `keytool` utility or via the following command:
+- Create a keystore file `thekeystore` under `/etc/cas`. Use the password `changeit` for both the 
+  keystore and the key/certificate entries. This can either be done using the JDK's `keytool` utility or via the following command:
 
 ```bash
 ./gradlew[.bat] createKeystore
@@ -185,7 +186,8 @@ The following strategies outline how to build and deploy CAS Docker images.
 
 ### Spring Boot
 
-You can build a container image using the [Spring Boot Gradle build plugin](https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/html/). This approach does not require a Dockerfile. You build the image 
+You can build a container image using the [Spring Boot Gradle build plugin](https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/html/). 
+This approach does not require a Dockerfile. You build the image 
 using the same standard container format as you get from `docker build` - and it can work in environments where docker is not installed.
 This task requires access to a Docker daemon. By default, it will communicate with a Docker daemon over a local connection.
 
@@ -195,7 +197,10 @@ This task requires access to a Docker daemon. By default, it will communicate wi
 
 ### Jib
 
-The overlay embraces the [Jib Gradle Plugin](https://github.com/GoogleContainerTools/jib) to provide easy-to-use out-of-the-box tooling for building CAS docker images. Jib is an open-source Java containerizer from Google that lets Java developers build containers using the tools they know. It is a container image builder that handles all the steps of packaging your application into a container image. It does not require you to write a Dockerfile or have Docker installed, and it is directly integrated into the overlay.
+The overlay embraces the [Jib Gradle Plugin](https://github.com/GoogleContainerTools/jib) to provide easy-to-use out-of-the-box tooling for 
+building CAS docker images. Jib is an open-source Java containerizer from Google that lets Java developers build containers using the tools 
+they know. It is a container image builder that handles all the steps of packaging your application into a container image. It does 
+not require you to write a Dockerfile or have Docker installed, and it is directly integrated into the overlay.
 
 ```bash
 ./gradlew build jibDockerBuild
