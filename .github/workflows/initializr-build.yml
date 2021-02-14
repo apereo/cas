@@ -4,7 +4,7 @@ env:
   JAVA_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server -XX:+UseG1GC"
   GRADLE_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server -XX:+UseG1GC"
   TERM: xterm-256color
-  JDK_CURRENT: 11.0.8
+  JDK_CURRENT: 11.0.10
   HELM_CURRENT: v3.4.1
   DOCKER_USER: ${{ secrets.DOCKER_USER }}
   DOCKER_PWD: ${{ secrets.DOCKER_PWD }}
@@ -34,7 +34,7 @@ jobs:
         with:
           name: binary-artifacts
           path: ./**/build/libs/*.*
-  validate:
+  validate-cas-overlay:
     needs: [build]
     runs-on: ubuntu-latest
     steps:
@@ -48,10 +48,24 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: binary-artifacts
-#      - name: Setup tmate session
-#        uses: mxschmitt/action-tmate@v3
-      - name: Validate Overlay
-        run: ./ci/validate.sh
+      - name: Validate CAS Overlay
+        run: ./ci/validate-cas-overlay.sh
+  validate-cas-mgmt-overlay:
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
+      - name: Validate CAS Overlay
+        run: ./ci/validate-cas-mgmt-overlay.sh
   publish:
     needs: [build]
     runs-on: ubuntu-latest
