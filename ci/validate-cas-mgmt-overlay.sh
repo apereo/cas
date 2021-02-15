@@ -12,7 +12,20 @@ kill -9 $pid
 echo "Building CAS Mgmt Overlay"
 ./gradlew clean build --no-daemon
 
-chmod +x *.sh
+echo "Launched CAS with pid ${pid}. Waiting for server to come online..."
+touch ./users.json
+java -jar build/libs/cas-management.war --mgmt.user-properties-file=file:${PWD}/users.json \
+  --spring.profiles.active=none --server.ssl.enabled=false --server.port=8444 &
+pid=$!
+sleep 5
+
+until curl -k -L --output /dev/null --silent --fail http://localhost:8444/cas-management; do
+    echo -n '.'
+    sleep 5
+done
+echo -e "\n\nReady!"
+kill -9 $pid
 
 echo "Build Container Image w/ Docker"
+chmod +x *.sh
 ./docker-build.sh
