@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source ./ci/functions.sh
+
 java -jar app/build/libs/app.jar &
 pid=$!
 sleep 15
@@ -24,4 +26,22 @@ done
 echo -e "\n\nReady!"
 kill -9 $pid
 
+downloadTomcat
+mv build/libs/casdiscoveryserver.war ${CATALINA_HOME}/webapps/casdiscoveryserver.war
 
+export SPRING_SECURITY_USER_PASSWORD=password
+export SPRING_SECURITY_USER_NAME=casuser
+
+${CATALINA_HOME}/bin/startup.sh & >/dev/null 2>&1
+pid=$!
+sleep 30
+rc=`curl -k -L -u casuser:password --connect-timeout 60 -s  -I -w "%{http_code}" http://localhost:8080/casdiscoveryserver`
+${CATALINA_HOME}/bin/shutdown.sh & >/dev/null 2>&1
+kill -9 $pid
+if [ "$rc" == 200 ]; then
+    echo "Deployed the web application successfully."
+    exit 0
+else
+    echo "Failed to deploy the web application with status $rc."
+    exit 1
+fi
