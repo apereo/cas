@@ -74,7 +74,7 @@ bootRun {
 }
 
 dependencies {
-    implementation "org.apereo.cas:cas-server-webapp-init-eureka-server"
+    compileOnly "org.apereo.cas:cas-server-webapp-init-eureka-server"
 }
 
 bootWar {

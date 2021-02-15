@@ -10,3 +10,4 @@ task casVersion(description: "Display current CAS version") {
         println rootProject.casVersion
     }
 }
+

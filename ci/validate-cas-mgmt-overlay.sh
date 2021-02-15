@@ -14,7 +14,7 @@ echo "Building CAS Mgmt Overlay"
 
 echo "Launching CAS Mgmt Overlay"
 touch ./users.json
-java -jar build/libs/cas-management.war --spring.profiles.active=none --logging.level.org.springframework.boot.web=debug --mgmt.user-properties-file=file:${PWD}/users.json --server.ssl.enabled=false &
+java -jar build/libs/cas-management.war --spring.profiles.active=none --mgmt.user-properties-file=file:${PWD}/users.json --server.ssl.enabled=false &
 pid=$!
 sleep 5
 echo "Launched CAS with pid ${pid}. Waiting for server to come online..."

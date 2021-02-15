@@ -74,7 +74,7 @@ bootRun {
 }
 
 dependencies {
-    implementation "org.apereo.cas:cas-server-webapp-init-config-server"
+    compileOnly "org.apereo.cas:cas-server-webapp-init-config-server"
 }
 
 bootWar {

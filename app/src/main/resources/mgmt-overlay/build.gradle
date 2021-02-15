@@ -76,7 +76,8 @@ java {
 }
 
 dependencies {
-    implementation "org.apereo.cas:cas-mgmt-webapp-init"
+    compileOnly "org.apereo.cas:cas-mgmt-webapp-init"
+    
     {{#dependencies}}
     implementation "{{groupId}}:{{artifactId}}"
     {{/dependencies}}
