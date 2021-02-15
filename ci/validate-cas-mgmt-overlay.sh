@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source ./ci/functions.sh
+
 java -jar app/build/libs/app.jar &
 pid=$!
 sleep 15
@@ -29,4 +31,23 @@ kill -9 $pid
 echo "Build Container Image w/ Docker"
 chmod +x *.sh
 ./docker-build.sh
+
+
+downloadTomcat
+mv build/libs/cas-management.war ${CATALINA_HOME}/webapps/cas-management.war
+
+export MGMT_USER-PROPERTIES-FILE=file:${PWD}/users.json
+${CATALINA_HOME}/bin/startup.sh & >/dev/null 2>&1
+pid=$!
+sleep 30
+rc=`curl -L -k -u casuser:password --connect-timeout 60 -s  -I -w "%{http_code}" http://localhost:8080/cas-management`
+${CATALINA_HOME}/bin/shutdown.sh & >/dev/null 2>&1
+kill -9 $pid
+if [ "$rc" == 200 ]; then
+    echo "Deployed the web application successfully."
+    exit 0
+else
+    echo "Failed to deploy the web application with status $rc."
+    exit 1
+fi
 
