@@ -15,6 +15,7 @@ buildscript {
 repositories {
     mavenLocal()
     mavenCentral()
+    jcenter()
     maven { url 'https://oss.sonatype.org/content/repositories/releases' }
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
     maven { url 'https://build.shibboleth.net/nexus/content/repositories/releases/' }
