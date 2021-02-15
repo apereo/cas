@@ -1,14 +1,16 @@
-package org.apereo.cas.overlay.casmgmt.buildsystem;
+package org.apereo.cas.overlay.configserver.buildsystem;
 
 import io.spring.initializr.generator.buildsystem.Build;
 import io.spring.initializr.generator.buildsystem.BuildItemResolver;
 import io.spring.initializr.generator.buildsystem.BuildSettings;
 import io.spring.initializr.generator.buildsystem.gradle.GradleBuildSettings;
 
-public class CasManagementOverlayGradleBuild extends Build {
+import java.util.List;
+
+public class CasConfigServerOverlayGradleBuild extends Build {
     private final GradleBuildSettings.Builder settings = new GradleBuildSettings.Builder();
 
-    public CasManagementOverlayGradleBuild(final BuildItemResolver buildItemResolver) {
+    public CasConfigServerOverlayGradleBuild(final BuildItemResolver buildItemResolver) {
         super(buildItemResolver);
     }
 

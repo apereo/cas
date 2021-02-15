@@ -77,6 +77,22 @@ initializr:
         format: project
       default: false
       action: /starter.tgz
+    - name: CAS Config Server Overlay Gradle Project Zip
+      id: cas-config-server-overlay
+      description: Generate a Gradle-based project as a zip file
+      tags:
+        build: cas-config-server-overlay
+        format: project
+      default: true
+      action: /starter.zip
+    - name: CAS Config Server Overlay Gradle Project TGZ
+      id: cas-config-server-overlay
+      description: Generate a Gradle-based project as a tgz file
+      tags:
+        build: cas-config-server-overlay
+        format: project
+      default: false
+      action: /starter.tgz
   boot-versions:
     - id: @springBootVersion@
       default: true

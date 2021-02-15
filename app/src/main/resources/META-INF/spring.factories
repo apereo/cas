@@ -1,8 +1,10 @@
 io.spring.initializr.generator.project.ProjectGenerationConfiguration=\
   org.apereo.cas.initializr.config.CasInitializrConfiguration, \
   org.apereo.cas.overlay.casserver.config.CasOverlayProjectGenerationConfiguration, \
-  org.apereo.cas.overlay.casmgmt.config.CasManagementOverlayProjectGenerationConfiguration
+  org.apereo.cas.overlay.casmgmt.config.CasManagementOverlayProjectGenerationConfiguration,\
+  org.apereo.cas.overlay.configserver.config.CasConfigServerOverlayProjectGenerationConfiguration
 
 io.spring.initializr.generator.buildsystem.BuildSystemFactory=\
   org.apereo.cas.overlay.casserver.buildsystem.CasOverlayBuildSystemFactory,\
-  org.apereo.cas.overlay.casmgmt.buildsystem.CasManagementOverlayBuildSystemFactory
+  org.apereo.cas.overlay.casmgmt.buildsystem.CasManagementOverlayBuildSystemFactory,\
+  org.apereo.cas.overlay.configserver.buildsystem.CasConfigServerOverlayBuildSystemFactory

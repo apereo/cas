@@ -1,0 +1,80 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${project.springBootVersion}"
+        classpath "io.freefair.gradle:maven-plugin:${project.gradleFreeFairPluginVersion}"
+        classpath "io.freefair.gradle:lombok-plugin:${project.gradleFreeFairPluginVersion}"
+        classpath "io.spring.gradle:dependency-management-plugin:${project.gradleDependencyManagementPluginVersion}"
+    }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { url 'https://oss.sonatype.org/content/repositories/releases' }
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+    maven { url 'https://build.shibboleth.net/nexus/content/repositories/releases/' }
+}
+
+apply plugin: "io.spring.dependency-management"
+apply plugin: "io.freefair.war-overlay"
+apply plugin: "war"
+apply plugin: "org.springframework.boot"
+
+dependencyManagement {
+    imports {
+        mavenBom "org.apereo.cas:cas-server-support-bom:${project.'cas.version'}"
+    }
+}
+
+configurations.all {
+    resolutionStrategy {
+        cacheChangingModulesFor 0, "seconds"
+        cacheDynamicVersionsFor 0, "seconds"
+        preferProjectModules()
+    }
+}
+
+war {
+    entryCompression = ZipEntryCompression.STORED
+}
+
+springBoot {
+    mainClassName = "org.apereo.cas.CasConfigurationServerWebApplication"
+}
+
+bootWar {
+    if (project.hasProperty('executable')) {
+        launchScript()
+    }
+
+    archiveName "casconfigserver.war"
+    baseName "casconfigserver"
+
+    excludeDevtools = false
+}
+
+bootRun {
+    sourceResources sourceSets.main
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+dependencies {
+    implementation "org.apereo.cas:cas-server-webapp-init-config-server"
+}
+
+bootWar {
+    entryCompression = ZipEntryCompression.STORED
+    overlays {
+        cas {
+            from "org.apereo.cas:cas-server-webapp-config-server:${project.'cas.version'}@war"
+            provided = false
+            excludes = []
+        }
+    }
+}
+
