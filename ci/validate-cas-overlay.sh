@@ -36,9 +36,6 @@ echo "Configuration Metadata Export"
 echo "Exploding WAR"
 ./gradlew explodeWar
 
-echo "Building Container Image via Spring Boot"
-./gradlew bootBuildImage
-
 echo "Build Container Image w/ Docker"
 ./docker-build.sh
 

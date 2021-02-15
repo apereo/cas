@@ -24,5 +24,4 @@ done
 echo -e "\n\nReady!"
 kill -9 $pid
 
-echo "Building Container Image via Spring Boot"
-./gradlew bootBuildImage
+
