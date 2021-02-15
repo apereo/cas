@@ -1,0 +1,17 @@
+{{- if .Values.mgmt.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "cas-server.mgmtname" . }}
+  labels:
+    {{- include "cas-server.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.mgmt.service.type }}
+  ports:
+    - port: {{ .Values.mgmt.service.port }}
+      targetPort: https
+      protocol: TCP
+      name: https
+  selector:
+    {{- include "cas-mgmt.selectorLabels" . | nindent 4 }}
+{{- end }}

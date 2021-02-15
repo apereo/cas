@@ -1,0 +1,9 @@
+{{- if .Values.mgmt.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "cas-server.mgmtname" . }}-config
+  labels: {{- include "cas-server.labels" . | nindent 4 }}
+data:
+  {{- include "cas-server.tplvalues.render" (dict "value" .Values.mgmtContainer.casConfig "context" $) | nindent 2 }}
+{{- end }}

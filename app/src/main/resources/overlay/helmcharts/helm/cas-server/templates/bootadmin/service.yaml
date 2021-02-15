@@ -1,3 +1,4 @@
+{{- if .Values.bootadmin.enabled -}}
 apiVersion: v1
 kind: Service
 metadata:
@@ -13,3 +14,4 @@ spec:
       name: https
   selector:
     {{- include "cas-bootadmin.selectorLabels" . | nindent 4 }}
+{{- end }}

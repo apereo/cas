@@ -1,6 +1,6 @@
-{{- if and .Values.bootadmin.enabled .Values.bootadmin.ingress.enabled -}}
-{{- $fullName := include "cas-server.bootadminname" . -}}
-{{- $svcPort := .Values.bootadmin.service.port -}}
+{{- if and .Values.mgmt.enabled .Values.mgmt.ingress.enabled -}}
+{{- $fullName := include "cas-server.mgmtname" . -}}
+{{- $svcPort := .Values.mgmt.service.port -}}
 {{- $kubeVersion := .Capabilities.KubeVersion.Version -}}
 {{- if semverCompare ">=1.19.0" $kubeVersion }}
 apiVersion: networking.k8s.io/v1
@@ -12,14 +12,14 @@ metadata:
   name: {{ $fullName }}
   labels:
     {{- include "cas-server.labels" . | nindent 4 }}
-  {{- with .Values.bootadmin.ingress.annotations }}
+  {{- with .Values.mgmt.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  {{- if .Values.bootadmin.ingress.tls }}
+  {{- if .Values.mgmt.ingress.tls }}
   tls:
-    {{- range .Values.bootadmin.ingress.tls }}
+    {{- range .Values.mgmt.ingress.tls }}
     - hosts:
         {{- range .hosts }}
         - {{ . | quote }}
@@ -28,7 +28,7 @@ spec:
     {{- end }}
   {{- end }}
   rules:
-    {{- range .Values.bootadmin.ingress.hosts }}
+    {{- range .Values.mgmt.ingress.hosts }}
     - host: {{ .host | quote }}
       http:
         paths:
