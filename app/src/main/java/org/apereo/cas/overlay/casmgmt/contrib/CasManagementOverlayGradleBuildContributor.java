@@ -1,7 +1,6 @@
 package org.apereo.cas.overlay.casmgmt.contrib;
 
 import io.spring.initializr.generator.project.ProjectDescription;
-import io.spring.initializr.generator.project.contributor.SingleResourceProjectContributor;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

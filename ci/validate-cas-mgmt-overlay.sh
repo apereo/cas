@@ -12,7 +12,5 @@ kill -9 $pid
 echo "Building CAS Mgmt Overlay"
 ./gradlew clean build --no-daemon
 
-chmod +x *.sh
-
 echo "Build Container Image w/ Docker"
 ./docker-build.sh

@@ -82,6 +82,22 @@ jobs:
           name: binary-artifacts
       - name: Validate Overlay
         run: ./ci/validate-cas-configserver-overlay.sh
+  validate-cas-discoveryserver-overlay:
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
+      - name: Initialize
+        run: chmod -R 777 ./ci/*.sh
+      - uses: actions/download-artifact@v2
+        with:
+          name: binary-artifacts
+      - name: Validate Overlay
+        run: ./ci/validate-cas-discoveryserver-overlay.sh
   publish:
     needs: [build]
     runs-on: ubuntu-latest
