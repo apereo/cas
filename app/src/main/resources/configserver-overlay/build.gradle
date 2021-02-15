@@ -47,6 +47,16 @@ springBoot {
     mainClassName = "org.apereo.cas.CasConfigurationServerWebApplication"
 }
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(project.targetCompatibility)
+    }
+}
+
+bootBuildImage {
+    imageName = "apereo/cas-configserver:${project.'cas.version'}"
+}
+
 bootWar {
     if (project.hasProperty('executable')) {
         launchScript()

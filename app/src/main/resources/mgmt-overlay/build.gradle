@@ -44,6 +44,10 @@ war {
     entryCompression = ZipEntryCompression.STORED
 }
 
+bootBuildImage {
+    imageName = "apereo/cas-management:${project.'casmgmt.version'}"
+}
+
 springBoot {
     mainClassName = "org.apereo.cas.mgmt.web.CasManagementWebApplication"
 }
@@ -62,6 +66,12 @@ bootWar {
 bootRun {
     sourceResources sourceSets.main
     classpath = sourceSets.main.runtimeClasspath
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(project.targetCompatibility)
+    }
 }
 
 dependencies {

@@ -56,8 +56,6 @@ apply plugin: "io.spring.dependency-management"
 apply from: rootProject.file("gradle/tasks.gradle")
 
 apply plugin: "war"
-apply plugin: "eclipse"
-apply plugin: "idea"
 
 apply from: rootProject.file("gradle/springboot.gradle")
 apply from: rootProject.file("gradle/dockerjib.gradle")
@@ -112,19 +110,5 @@ configurations.all {
         if (failIfConflict) {
             failOnVersionConflict()
         }
-    }
-}
-
-eclipse {
-    classpath {
-       downloadSources = true
-       downloadJavadoc = true
-    }
-}
-
-idea {
-    module {
-        downloadJavadoc = true
-        downloadSources = true
     }
 }

@@ -39,6 +39,16 @@ configurations.all {
     }
 }
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(project.targetCompatibility)
+    }
+}
+
+bootBuildImage {
+    imageName = "apereo/cas-discoveryserver:${project.'cas.version'}"
+}
+
 war {
     entryCompression = ZipEntryCompression.STORED
 }

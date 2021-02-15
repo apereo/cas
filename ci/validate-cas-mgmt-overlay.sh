@@ -29,3 +29,6 @@ kill -9 $pid
 echo "Build Container Image w/ Docker"
 chmod +x *.sh
 ./docker-build.sh
+
+echo "Building Container Image via Spring Boot"
+./gradlew bootBuildImage
