@@ -6,7 +6,7 @@ sleep 15
 rm -Rf tmp &> /dev/null
 mkdir tmp
 cd tmp
-curl http://localhost:8080/starter.tgz -d type=cas-mgmt-overlay | tar -xzvf -
+curl http://localhost:8080/starter.tgz -d type=cas-configserver-overlay | tar -xzvf -
 kill -9 $pid
 
 echo "Building CAS Mgmt Overlay"
