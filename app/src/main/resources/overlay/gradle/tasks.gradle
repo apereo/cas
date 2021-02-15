@@ -253,10 +253,10 @@ task exportConfigMetadata(group: "CAS", description: "Export collection of CAS p
     doLast {
         def file = new File(project.rootDir, 'config-metadata.properties')
         file.withWriter('utf-8') { writer ->
-            def repository = new CasConfigurationMetadataRepository()
-            def props = repository.query(ConfigurationMetadataCatalogQuery.builder()
-                .casExclusive(true)
-                .build())
+            def props = CasConfigurationMetadataCatalog.query(
+                ConfigurationMetadataCatalogQuery.builder()
+                        .queryType(ConfigurationMetadataCatalogQuery.QueryTypes.CAS)
+                        .build())
                 .properties()
             props.each { property ->
                 writer.writeLine("# Type: ${property.type}");
