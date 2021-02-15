@@ -12,3 +12,15 @@ kill -9 $pid
 echo "Building CAS Config Server Overlay"
 ./gradlew clean build --no-daemon
 
+
+java -jar build/libs/casconfigserver.war --server.ssl.enabled=false 
+pid=$!
+
+echo "Launched CAS with pid ${pid}. Waiting for server to come online..."
+until curl -k -L --output /dev/null --silent --fail http://cas.server.name:8888/casconfigserver; do
+    echo -n '.'
+    sleep 5
+done
+echo -e "\n\nReady!"
+kill -9 $pid
+
