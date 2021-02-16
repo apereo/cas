@@ -89,7 +89,7 @@ public class TrustedAuthenticationConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "trustedPrincipalResolver")
     public PrincipalResolver trustedPrincipalResolver() {
-        val resolver = new ChainingPrincipalResolver(this.principalElectionStrategy.getObject());
+        val resolver = new ChainingPrincipalResolver(this.principalElectionStrategy.getObject(), casProperties);
         val personDirectory = casProperties.getPersonDirectory();
         val trusted = casProperties.getAuthn().getTrusted();
         val principalAttribute = StringUtils.defaultIfBlank(trusted.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());

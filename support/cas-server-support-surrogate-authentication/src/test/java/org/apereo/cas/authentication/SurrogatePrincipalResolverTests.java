@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolv
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
 import org.apereo.cas.authentication.surrogate.SimpleSurrogateAuthenticationService;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -17,6 +18,10 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import java.util.List;
 import java.util.Map;
@@ -37,7 +42,12 @@ import static org.mockito.Mockito.mock;
  */
 @ExtendWith(MockitoExtension.class)
 @Tag("Simple")
+@SpringBootTest(classes = RefreshAutoConfiguration.class)
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SurrogatePrincipalResolverTests {
+    @Autowired
+    private CasConfigurationProperties casProperties;
+
     @Test
     public void verifySupports() {
         val context = PrincipalResolutionContext.builder()
@@ -178,7 +188,7 @@ public class SurrogatePrincipalResolverTests {
         plan.registerPrincipalResolver(new PersonDirectoryPrincipalResolver(context));
         plan.registerPrincipalResolver(new SurrogatePrincipalResolver(context, surrogatePrincipalBuilder));
 
-        val resolver = new ChainingPrincipalResolver(new DefaultPrincipalElectionStrategy());
+        val resolver = new ChainingPrincipalResolver(new DefaultPrincipalElectionStrategy(), casProperties);
         resolver.setChain(plan.getRegisteredPrincipalResolvers());
 
         val upcPrincipal = resolver.resolve(upc, Optional.of(CoreAuthenticationTestUtils.getPrincipal("test")),

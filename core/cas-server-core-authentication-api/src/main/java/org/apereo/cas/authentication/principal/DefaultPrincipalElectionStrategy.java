@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.services.persondir.support.merger.IAttributeMerger;
+import org.apereo.services.persondir.support.merger.ReplacingAttributeAdder;
 import org.springframework.core.Ordered;
 
 import java.util.Collection;
@@ -32,6 +34,8 @@ public class DefaultPrincipalElectionStrategy implements PrincipalElectionStrate
 
     private static final long serialVersionUID = 6704726217030836315L;
 
+    private IAttributeMerger attributeMerger = new ReplacingAttributeAdder();
+    
     private final PrincipalFactory principalFactory;
 
     private int order = Ordered.LOWEST_PRECEDENCE;
