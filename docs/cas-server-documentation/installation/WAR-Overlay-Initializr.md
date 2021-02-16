@@ -53,7 +53,7 @@ to produce an overlay project for the CAS Management web application. This
 functionality will be worked out in future releases.</p></div>
 
 CAS Initializr is used internally by the CAS project itself in a 
-very *Eat What Your Kill* type of way to dynamically generate 
+very *Eat What You Kill* type of way to dynamically generate 
 overlay projects. These generated projects are used as CAS base 
 Docker images published to Docker Hub, and as a baseline for 
 browser/UI tests run by the CAS CI for each relevant feature. 

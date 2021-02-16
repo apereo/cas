@@ -135,7 +135,9 @@ public class CoreAuthenticationUtils {
             case "multi_valued":
             case "combine":
             case "merge":
-                return new MultivaluedAttributeMerger();
+                val merger = new MultivaluedAttributeMerger();
+                merger.setDistinctValues(true);
+                return merger;
             case "add":
                 return new NoncollidingAttributeAdder();
             case "replace":
@@ -175,12 +177,12 @@ public class CoreAuthenticationUtils {
      *
      * @param currentAttributes the current attributes
      * @param attributesToMerge the attributes to merge
+     * @param merger        the merger type
      * @return the map
      */
-    public static Map<String, List<Object>> mergeAttributes(final Map<String, List<Object>> currentAttributes, final Map<String, List<Object>> attributesToMerge) {
-        val merger = new MultivaluedAttributeMerger();
-        merger.setDistinctValues(true);
-
+    public static Map<String, List<Object>> mergeAttributes(final Map<String, List<Object>> currentAttributes,
+                                                            final Map<String, List<Object>> attributesToMerge,
+                                                            final IAttributeMerger merger) {
         val toModify = currentAttributes.entrySet()
             .stream()
             .map(entry -> Pair.of(entry.getKey(), CollectionUtils.toCollection(entry.getValue(), ArrayList.class)))

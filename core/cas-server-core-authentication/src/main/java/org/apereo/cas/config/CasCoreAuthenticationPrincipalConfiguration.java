@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.ChainingPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
@@ -51,6 +52,8 @@ public class CasCoreAuthenticationPrincipalConfiguration {
     public PrincipalElectionStrategy principalElectionStrategy(final List<PrincipalElectionStrategyConfigurer> configurers) {
         LOGGER.trace("Building principal election strategies from [{}]", configurers);
         val chain = new ChainingPrincipalElectionStrategy();
+        val merger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
+        chain.setAttributeMerger(merger);
         AnnotationAwareOrderComparator.sortIfNecessary(configurers);
 
         configurers.forEach(c -> {
@@ -62,8 +65,14 @@ public class CasCoreAuthenticationPrincipalConfiguration {
 
     @ConditionalOnMissingBean(name = "defaultPrincipalElectionStrategyConfigurer")
     @Bean
+    @RefreshScope
     public PrincipalElectionStrategyConfigurer defaultPrincipalElectionStrategyConfigurer() {
-        return chain -> chain.registerElectionStrategy(new DefaultPrincipalElectionStrategy(principalFactory()));
+        return chain -> {
+            val strategy = new DefaultPrincipalElectionStrategy(principalFactory());
+            val merger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
+            strategy.setAttributeMerger(merger);
+            chain.registerElectionStrategy(strategy);
+        };
     }
 
     @ConditionalOnMissingBean(name = "principalFactory")
@@ -104,7 +113,7 @@ public class CasCoreAuthenticationPrincipalConfiguration {
         plan.registerPrincipalResolver(new EchoingPrincipalResolver());
 
         val registeredPrincipalResolvers = plan.getRegisteredPrincipalResolvers();
-        val resolver = new ChainingPrincipalResolver(principalElectionStrategy);
+        val resolver = new ChainingPrincipalResolver(principalElectionStrategy, casProperties);
         resolver.setChain(registeredPrincipalResolvers);
         return resolver;
     }

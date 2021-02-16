@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
@@ -13,6 +14,10 @@ import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,12 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Test cases for {@link PersonDirectoryPrincipalResolver}.
@@ -36,9 +37,14 @@ import static org.mockito.Mockito.mock;
  * @since 4.2
  */
 @Tag("Attributes")
+@SpringBootTest(classes = RefreshAutoConfiguration.class)
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class PersonDirectoryPrincipalResolverTests {
 
     private static final String ATTR_1 = "attr1";
+
+    @Autowired
+    private CasConfigurationProperties casProperties;
 
     @Test
     public void verifyOp() {
@@ -184,7 +190,7 @@ public class PersonDirectoryPrincipalResolverTests {
 
         val resolver = new PersonDirectoryPrincipalResolver(context);
 
-        val chain = new ChainingPrincipalResolver(new DefaultPrincipalElectionStrategy());
+        val chain = new ChainingPrincipalResolver(new DefaultPrincipalElectionStrategy(), casProperties);
         chain.setChain(Arrays.asList(new EchoingPrincipalResolver(), resolver));
         val attributes = new HashMap<String, List<Object>>();
         attributes.put("cn", List.of("originalCN"));
@@ -212,7 +218,7 @@ public class PersonDirectoryPrincipalResolverTests {
             .build();
         val resolver = new PersonDirectoryPrincipalResolver(context);
 
-        val chain = new ChainingPrincipalResolver(new DefaultPrincipalElectionStrategy());
+        val chain = new ChainingPrincipalResolver(new DefaultPrincipalElectionStrategy(), casProperties);
         chain.setChain(Arrays.asList(new EchoingPrincipalResolver(), resolver));
         val p = chain.resolve(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
             Optional.of(CoreAuthenticationTestUtils.getPrincipal(CoreAuthenticationTestUtils.CONST_USERNAME,
@@ -249,7 +255,7 @@ public class PersonDirectoryPrincipalResolverTests {
             .build();
         val resolver2 = new PersonDirectoryPrincipalResolver(context2);
 
-        val chain = new ChainingPrincipalResolver(new DefaultPrincipalElectionStrategy());
+        val chain = new ChainingPrincipalResolver(new DefaultPrincipalElectionStrategy(), casProperties);
         chain.setChain(Arrays.asList(new EchoingPrincipalResolver(), resolver, resolver2));
 
         val p = chain.resolve(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
@@ -287,7 +293,7 @@ public class PersonDirectoryPrincipalResolverTests {
             .activeAttributeRepositoryIdentifiers(CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD))
             .build();
         val resolver2 = new PersonDirectoryPrincipalResolver(context2);
-        val chain = new ChainingPrincipalResolver(new DefaultPrincipalElectionStrategy());
+        val chain = new ChainingPrincipalResolver(new DefaultPrincipalElectionStrategy(), casProperties);
         chain.setChain(Arrays.asList(new EchoingPrincipalResolver(), resolver, resolver2));
 
         val p = chain.resolve(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
@@ -321,7 +327,7 @@ public class PersonDirectoryPrincipalResolverTests {
             .activeAttributeRepositoryIdentifiers(CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD))
             .build();
         val resolver2 = new PersonDirectoryPrincipalResolver(context2);
-        val chain = new ChainingPrincipalResolver(new DefaultPrincipalElectionStrategy());
+        val chain = new ChainingPrincipalResolver(new DefaultPrincipalElectionStrategy(), casProperties);
         chain.setChain(Arrays.asList(new EchoingPrincipalResolver(), resolver, resolver2));
 
         val p = chain.resolve(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),

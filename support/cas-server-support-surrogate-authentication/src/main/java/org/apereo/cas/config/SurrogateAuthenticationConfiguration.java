@@ -4,6 +4,7 @@ import org.apereo.cas.audit.AuditPrincipalIdProvider;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationPostProcessor;
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.SurrogateAuthenticationExpirationPolicyBuilder;
 import org.apereo.cas.authentication.SurrogateAuthenticationPostProcessor;
 import org.apereo.cas.authentication.SurrogatePrincipalBuilder;
@@ -134,7 +135,12 @@ public class SurrogateAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "surrogatePrincipalElectionStrategyConfigurer")
     @Bean
     public PrincipalElectionStrategyConfigurer surrogatePrincipalElectionStrategyConfigurer() {
-        return chain -> chain.registerElectionStrategy(new SurrogatePrincipalElectionStrategy());
+        return chain -> {
+            val strategy = new SurrogatePrincipalElectionStrategy();
+            val merger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
+            strategy.setAttributeMerger(merger);
+            chain.registerElectionStrategy(strategy);
+        };
     }
 
     @Bean
