@@ -112,7 +112,24 @@ initializr:
         format: project
       default: false
       action: /starter.tgz
-      
+
+    - name: CAS Spring Boot Admin Server Overlay Gradle Project Zip
+      id: cas-bootadmin-server-overlay
+      description: Generate a Gradle-based project as a zip file
+      tags:
+        build: cas-bootadmin-server-overlay
+        format: project
+      default: true
+      action: /starter.zip
+    - name: CAS Spring Boot Admin Server Overlay Gradle Project TGZ
+      id: cas-bootadmin-server-overlay
+      description: Generate a Gradle-based project as a tgz file
+      tags:
+        build: cas-bootadmin-server-overlay
+        format: project
+      default: false
+      action: /starter.tgz
+
   boot-versions:
     - id: @springBootVersion@
       default: true

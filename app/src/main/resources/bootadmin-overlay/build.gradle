@@ -1,0 +1,140 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${project.springBootVersion}"
+        classpath "io.freefair.gradle:maven-plugin:${project.gradleFreeFairPluginVersion}"
+        classpath "io.freefair.gradle:lombok-plugin:${project.gradleFreeFairPluginVersion}"
+        classpath "io.spring.gradle:dependency-management-plugin:${project.gradleDependencyManagementPluginVersion}"
+        classpath "gradle.plugin.com.google.cloud.tools:jib-gradle-plugin:${project.jibVersion}"
+    }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { url 'https://oss.sonatype.org/content/repositories/releases' }
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+    maven { url 'https://build.shibboleth.net/nexus/content/repositories/releases/' }
+}
+
+apply plugin: "io.spring.dependency-management"
+apply plugin: "io.freefair.war-overlay"
+apply plugin: "war"
+apply plugin: "org.springframework.boot"
+apply plugin: "com.google.cloud.tools.jib"
+
+dependencyManagement {
+    imports {
+        mavenBom "org.apereo.cas:cas-server-support-bom:${project.'cas.version'}"
+    }
+}
+
+configurations.all {
+    resolutionStrategy {
+        cacheChangingModulesFor 0, "seconds"
+        cacheDynamicVersionsFor 0, "seconds"
+        preferProjectModules()
+    }
+}
+
+war {
+    entryCompression = ZipEntryCompression.STORED
+}
+
+springBoot {
+    mainClassName = "org.apereo.cas.CasSpringBootAdminServerWebApplication"
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(project.targetCompatibility)
+    }
+}
+
+bootBuildImage {
+    imageName = "apereo/cas-bootadminserver:${project.'cas.version'}"
+}
+
+bootWar {
+    if (project.hasProperty('executable')) {
+        launchScript()
+    }
+
+    archiveName "casbootadminserver.war"
+    baseName "casbootadminserver"
+
+    excludeDevtools = false
+}
+
+bootRun {
+    sourceResources sourceSets.main
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+dependencies {
+    compileOnly "org.apereo.cas:cas-server-webapp-init-bootadmin-server"
+}
+
+bootWar {
+    entryCompression = ZipEntryCompression.STORED
+    overlays {
+        cas {
+            from "org.apereo.cas:cas-server-webapp-bootadmin-server:${project.'cas.version'}@war"
+            provided = false
+            excludes = []
+        }
+    }
+}
+
+jib {
+    from {
+        image = project.baseDockerImage
+    }
+    to {
+        image = "${project.imageorg}/${project.imagerepo}"
+        /**
+         ecr-login: Amazon Elastic Container Registry (ECR)
+         gcr: Google Container Registry (GCR)
+         osxkeychain: Docker Hub
+         */
+        credHelper = "osxkeychain"
+        /**
+         auth {
+            username = "*******"
+            password = "*******"
+         }
+         */
+        tags = ["v${project.'cas.version'}"]
+    }
+    def versionLabel = project.'cas.version'
+    container {
+        creationTime = "USE_CURRENT_TIMESTAMP"
+        entrypoint = ['/docker/entrypoint.sh']
+        ports = ['80', '443', '8080', '8443']
+        labels = [version: versionLabel, name:project.imagerepo, group:project.group, org:project.imageorg]
+        workingDirectory = '/docker/cas/war'
+    }
+    extraDirectories {
+        paths {
+            path {
+                from = file('src/main/jib')
+            }
+            path {
+                from = file('etc/cas')
+                into = '/etc/cas'
+            }
+            path {
+                from = file("build/libs")
+                into = "/docker/cas/war"
+            }
+        }
+        permissions = [
+                '/docker/entrypoint.sh': '755'
+        ]
+    }
+    allowInsecureRegistries = project.allowInsecureRegistries
+}
