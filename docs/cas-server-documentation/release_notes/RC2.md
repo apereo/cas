@@ -111,11 +111,14 @@ now be scripted using an external Groovy script.
   changed from `master` to `*` which means all branches will be cloned by default. The properties may contain a list of
   branches, but the list must include the branch specified in the `cas.service-registry.git.active-branch`
   or `cas.authn.saml-idp.metadata.git.active-branch` property. 
+- When resolving the final principal to build the authentication object and history, attributes from all collected authentication
+  objects are now merged back together using the merge strategy defined in CAS configuration instead of the hardcoded `MultivaluedAttributeMerger`.
 - References to [Bintray repositories](https://jfrog.com/blog/into-the-sunset-bintray-jcenter-gocenter-and-chartcenter/) 
   have been removed and updated with more maintainable replacements.
 - SAML2 IdP metadata generators now allow for dynamic customizations at runtime when generating metadata.
 - When using [delegated authentication](../integration/Delegate-Authentication-SAML.html) to SAML2 identity providers, the service provider metadata
 can now be signed using the `XMLSec` tool.
+- [SAML2 Attribute definitions](../integration/Attribute-Definitions.html) now present the ability to support `urn` values for each attribute.  
 - [SAML2 IdP metadata](../installation/Configuring-SAML2-DynamicMetadata.html) can now be signed.
 - Minor improvements to indexing operations for [MongoDb ticket registry](../ticketing/MongoDb-Ticket-Registry.html).
 
