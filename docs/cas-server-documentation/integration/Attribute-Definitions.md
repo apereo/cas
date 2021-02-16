@@ -92,35 +92,6 @@ as usual with the following definition:
 ...
 ```
 
-### SAML IdP Attribute Definition
-
-Attribute definitions that specifically apply to the release of attributes as part of SAML response can be defined using the `SamlIdPAtrributeDefinition` that inherits
-all the properties form `DefaultAttributeDefinition` and adds two optional properties specific to SAML attributes.  Defining an attribute with this definition does not 
-prevent it from being released by other protocols.
-
-```json
-{
-  "@class": "java.util.TreeMap",
-  "eduPersonPrincipalName": {
-    "@class": "org.apereo.cas.support.saml.web.idp.profile.builders.attr.SamlIdPAttributeDefinition",
-    "key": "eduPersonPrincipalName",
-    "name": "eduPersonPrincipalName",
-    "urn": "urn:oid:1.3.6.1.4.1.5923.1.1.1.6",
-    "scoped": true,
-    "encrypted": false,
-    "attribute": "uid",
-    "friendlyName": "eduPersonPrincipalName"
-  }
-}
-```
-
-The following additional settings can be specified for a Saml IdP attribute definition:
-
-| Name                    | Description
-|-------------------------|--------------------------------------------------------------------------------------------------------
-| `friendlyName`          | (Optional) Friendly name of the attribute shared with the target application during attribute release.
-| `urn`                   | (Oprional) Defined Universal Resource name for an attribute (i.e. urn:oid:1.3.6.1.4.1.5923.1.1.1.6).
-
 ### Encrypted Attribute
 
 Same use case as above, except the attribute value will be encrypted and encoded using the service definition's public key:

@@ -31,9 +31,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
-
 /**
  * This is {@link SamlProfileSamlAttributeStatementBuilder}.
  *
@@ -128,11 +125,11 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
             val friendlyName = friendlyNames.getOrDefault(e.getKey(), null);
 
             val name = urns.containsKey(e.getKey())
-                    ? urns.get(e.getKey())
-                    : attributeDefinitionStore.locateAttributeDefinition(e.getKey())
-                        .map(AttributeDefinition::getName)
-                        .filter(StringUtils::isNotBlank)
-                        .orElseGet(e::getKey);
+                ? urns.get(e.getKey())
+                : attributeDefinitionStore.locateAttributeDefinition(e.getKey())
+                    .map(AttributeDefinition::getName)
+                    .filter(StringUtils::isNotBlank)
+                    .orElseGet(e::getKey);
 
             LOGGER.trace("Creating SAML attribute [{}] with value [{}], friendlyName [{}]", name, e.getValue(), friendlyName);
             val attribute = newAttribute(friendlyName, name, e.getValue(),
