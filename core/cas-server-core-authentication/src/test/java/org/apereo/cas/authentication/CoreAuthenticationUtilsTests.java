@@ -101,11 +101,6 @@ public class CoreAuthenticationUtilsTests {
     }
 
     @Test
-    public void verifyBadMerger() {
-        assertThrows(IllegalArgumentException.class, () -> CoreAuthenticationUtils.getAttributeMerger("bad"));
-    }
-
-    @Test
     public void verifyNoAuthPolicy() {
         val props = new AuthenticationPolicyProperties();
         props.getAny().setEnabled(false);

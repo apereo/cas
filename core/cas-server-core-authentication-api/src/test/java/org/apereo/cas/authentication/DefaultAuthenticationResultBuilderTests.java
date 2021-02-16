@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
+import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
@@ -53,13 +54,21 @@ public class DefaultAuthenticationResultBuilderTests {
     @Test
     public void verifyAuthenticationResultMergesPrincipalAttributes() {
         val builder = new DefaultAuthenticationResultBuilder();
-        val p1 = CoreAuthenticationTestUtils.getPrincipal("casuser1", CollectionUtils.wrap("givenName", "CAS", "uid", "casuser1"));
-        val p2 = CoreAuthenticationTestUtils.getPrincipal("casuser2", CollectionUtils.wrap("email", "cas@example.org",
-            "givenName", "CAS SSO", "uid", "casuser2"));
+        val p1 = CoreAuthenticationTestUtils.getPrincipal("casuser1",
+            CollectionUtils.wrap("givenName", "CAS", "uid", "casuser1"));
+        val p2 = CoreAuthenticationTestUtils.getPrincipal("casuser2",
+            CollectionUtils.wrap("email", "cas@example.org",
+                "givenName", "CAS SSO", "uid", "casuser2"));
         val authn1 = CoreAuthenticationTestUtils.getAuthentication(p1, CollectionUtils.wrap("authn", "test1"));
         val authn2 = CoreAuthenticationTestUtils.getAuthentication(p2, CollectionUtils.wrap("authn", "test2"));
 
-        val result = builder.collect(authn1).collect(authn2).build(new DefaultPrincipalElectionStrategy());
+        val principalElectionStrategy = new DefaultPrincipalElectionStrategy();
+        var attributeMerger = CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED);
+        principalElectionStrategy.setAttributeMerger(attributeMerger);
+        val result = builder
+            .collect(authn1)
+            .collect(authn2)
+            .build(principalElectionStrategy);
 
         val authentication = result.getAuthentication();
         assertNotNull(authentication);

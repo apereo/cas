@@ -23,6 +23,7 @@ import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthentica
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
+import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.Assertion;
@@ -129,22 +130,15 @@ public class CoreAuthenticationUtils {
      * @param mergingPolicy the merging policy
      * @return the attribute merger
      */
-    public static IAttributeMerger getAttributeMerger(final String mergingPolicy) {
-        switch (mergingPolicy.toLowerCase()) {
-            case "multivalued":
-            case "multi_valued":
-            case "combine":
-            case "merge":
+    public static IAttributeMerger getAttributeMerger(final PrincipalAttributesCoreProperties.MergingStrategyTypes mergingPolicy) {
+        switch (mergingPolicy) {
+            case MULTIVALUED:
                 val merger = new MultivaluedAttributeMerger();
                 merger.setDistinctValues(true);
                 return merger;
-            case "add":
+            case ADD:
                 return new NoncollidingAttributeAdder();
-            case "replace":
-            case "overwrite":
-            case "override":
-                return new ReplacingAttributeAdder();
-            case "none":
+            case NONE:
                 return new BaseAdditiveAttributeMerger() {
                     @Override
                     protected Map<String, List<Object>> mergePersonAttributes(final Map<String, List<Object>> toModify,
@@ -152,8 +146,9 @@ public class CoreAuthenticationUtils {
                         return new LinkedHashMap<>(toModify);
                     }
                 };
+            case REPLACE:
             default:
-                throw new IllegalArgumentException("Unsupported merging policy [" + mergingPolicy + ']');
+                return new ReplacingAttributeAdder();
         }
     }
 

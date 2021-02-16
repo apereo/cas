@@ -48,31 +48,14 @@ public class PrincipalAttributesCoreProperties implements Serializable {
 
     /**
      * Merging strategies can be used to resolve conflicts when the same attribute are found from multiple sources.
-     * Accepted values are the following:
-     * <ul>
-     * <li>{@code REPLACE}: Overwrites existing attribute values, if any.</li>
-     * <li>{@code ADD}: Retains existing attribute values if any, and ignores
-     * values from subsequent sources in the resolution chain.</li>
-     * <li>{@code MULTIVALUED}: Combines all values into
-     * a single attribute, essentially creating a multi-valued attribute. </li>
-     * <li>{@code NONE}: Doesn't merge attributes, ignores attributes from non-authentication attribute repositories </li>
-     * </ul>
      */
-    private String merger = "REPLACE";
+    private MergingStrategyTypes merger = MergingStrategyTypes.REPLACE;
 
     /**
      * Indicates how the results of multiple attribute repositories should
-     * be aggregated together. Accepted values are {@code MERGE}, or {@code CASCADE}.
-     * <ul>
-     * <li>{@code MERGE}: Default. Designed to query multiple repositories
-     * in order and merge the results into a single result set.</li>
-     * <li>{@code CASCADE}: Query multiple repositories in order and merge the results into
-     * a single result set. As each repository is queried
-     * the attributes from the first query in the result set are
-     * used as the query for the next repository. </li>
-     * </ul>
+     * be aggregated together.
      */
-    private String aggregation = "MERGE";
+    private AggregationStrategyTypes aggregation = AggregationStrategyTypes.MERGE;
 
     /**
      * In the event that multiple attribute repositories are defined,
@@ -92,4 +75,47 @@ public class PrincipalAttributesCoreProperties implements Serializable {
      * per their attribute release policy.
      */
     private Set<String> defaultAttributesToRelease = new HashSet<>(0);
+
+    /**
+     * The aggregation strategy types.
+     */
+    public enum AggregationStrategyTypes {
+        /**
+         * Default. Designed to query multiple repositories
+         * in order and merge the results into a single result set.
+         */
+        MERGE,
+        /**
+         *  Query multiple repositories in order and merge the results into
+         *  a single result set. As each repository is queried
+         *  the attributes from the first query in the result set are
+         *  used as the query for the next repository.
+         */
+        CASCADE
+    }
+
+    /**
+     * The merging strategy.
+     */
+    public enum MergingStrategyTypes {
+        /**
+         * Replace attributes.  Overwrites existing attribute values, if any.
+         */
+        REPLACE,
+        /**
+         * Add attributes.
+         * Retains existing attribute values if any, and ignores values from subsequent sources in the resolution chain.
+         */
+        ADD,
+        /**
+         * No merging.
+         * Doesn't merge attributes, ignores attributes from non-authentication attribute repositories.
+         */
+        NONE,
+        /**
+         * Multivalued attributes.
+         * Combines all values into a single attribute, essentially creating a multi-valued attribute.
+         */
+        MULTIVALUED;
+    }
 }

@@ -1,10 +1,10 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.authentication.AttributeMergingStrategy;
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
 import org.apereo.cas.services.AllAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria;
 import org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider;
@@ -127,7 +127,7 @@ public class CasCoreServicesComponentSerializationConfiguration {
 
             plan.registerSerializableClass(CachingPrincipalAttributesRepository.class);
             plan.registerSerializableClass(DefaultPrincipalAttributesRepository.class);
-            plan.registerSerializableClass(AttributeMergingStrategy.class);
+            plan.registerSerializableClass(PrincipalAttributesCoreProperties.MergingStrategyTypes.class);
 
             plan.registerSerializableClass(DefaultRegisteredServiceConsentPolicy.class);
 

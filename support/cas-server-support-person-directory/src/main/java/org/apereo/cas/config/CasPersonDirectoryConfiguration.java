@@ -196,9 +196,9 @@ public class CasPersonDirectoryConfiguration {
         val aggregate = getAggregateAttributeRepository();
 
         val properties = casProperties.getAuthn().getAttributeRepository();
-        val merger = StringUtils.defaultIfBlank(properties.getCore().getMerger(), "replace").trim();
-        LOGGER.trace("Configured merging strategy for attribute sources is [{}]", merger);
-        aggregate.setMerger(CoreAuthenticationUtils.getAttributeMerger(merger));
+        val attributeMerger = CoreAuthenticationUtils.getAttributeMerger(properties.getCore().getMerger());
+        LOGGER.trace("Configured merging strategy for attribute sources is [{}]", attributeMerger);
+        aggregate.setMerger(attributeMerger);
 
         val list = personDirectoryAttributeRepositoryPlan().getAttributeRepositories();
         aggregate.setPersonAttributeDaos(list);
@@ -218,16 +218,13 @@ public class CasPersonDirectoryConfiguration {
 
     private AbstractAggregatingDefaultQueryPersonAttributeDao getAggregateAttributeRepository() {
         val properties = casProperties.getAuthn().getAttributeRepository();
-        val aggregation = StringUtils.defaultIfBlank(properties.getCore().getAggregation(), "merge").trim().toLowerCase();
-        switch (aggregation) {
-            case "cascade":
-            case "query":
+        switch (properties.getCore().getAggregation()) {
+            case CASCADE:
                 val dao = new CascadingPersonAttributeDao();
                 dao.setAddOriginalAttributesToQuery(true);
                 dao.setStopIfFirstDaoReturnsNull(true);
                 return dao;
-            case "merge":
-            case "combine":
+            case MERGE:
             default:
                 return new MergingPersonAttributeDaoImpl();
         }

@@ -51,8 +51,8 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attribute-repository.groovy[0].location=classpath:/GroovyAttributeDao.groovy",
     "cas.authn.attribute-repository.groovy[0].order=2",
 
-    "cas.authn.attribute-repository.core.aggregation=merge",
-    "cas.authn.attribute-repository.core.merger=multivalued"
+    "cas.authn.attribute-repository.core.aggregation=MERGE",
+    "cas.authn.attribute-repository.core.merger=MULTIVALUED"
 })
 @Tag("Attributes")
 public class PersonDirectoryPrincipalResolverConcurrencyTests {
