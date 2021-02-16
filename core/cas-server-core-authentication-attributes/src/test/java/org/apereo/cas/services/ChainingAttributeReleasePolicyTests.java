@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
@@ -53,7 +54,7 @@ public class ChainingAttributeReleasePolicyTests {
     @Test
     public void verifyOperationWithReplaceAndOrder() {
         configureChainingReleasePolicy(10, 1);
-        chain.setMergingPolicy("replace");
+        chain.setMergingPolicy(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE);
         val results = chain.getAttributes(CoreAuthenticationTestUtils.getPrincipal(),
             CoreAuthenticationTestUtils.getService(),
             CoreAuthenticationTestUtils.getRegisteredService());
@@ -65,7 +66,7 @@ public class ChainingAttributeReleasePolicyTests {
 
     @Test
     public void verifyOperationWithReplace() {
-        chain.setMergingPolicy("replace");
+        chain.setMergingPolicy(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE);
         val results = chain.getAttributes(CoreAuthenticationTestUtils.getPrincipal(),
             CoreAuthenticationTestUtils.getService(),
             CoreAuthenticationTestUtils.getRegisteredService());
@@ -77,7 +78,7 @@ public class ChainingAttributeReleasePolicyTests {
 
     @Test
     public void verifyOperationWithAdd() {
-        chain.setMergingPolicy("add");
+        chain.setMergingPolicy(PrincipalAttributesCoreProperties.MergingStrategyTypes.ADD);
         val results = chain.getAttributes(CoreAuthenticationTestUtils.getPrincipal(),
             CoreAuthenticationTestUtils.getService(),
             CoreAuthenticationTestUtils.getRegisteredService());
@@ -89,7 +90,7 @@ public class ChainingAttributeReleasePolicyTests {
 
     @Test
     public void verifyOperationWithMultivalued() {
-        chain.setMergingPolicy("multivalued");
+        chain.setMergingPolicy(PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED);
         val results = chain.getAttributes(CoreAuthenticationTestUtils.getPrincipal(),
             CoreAuthenticationTestUtils.getService(),
             CoreAuthenticationTestUtils.getRegisteredService());
@@ -102,7 +103,7 @@ public class ChainingAttributeReleasePolicyTests {
 
     @Test
     public void verifyConsentableAttrs() {
-        chain.setMergingPolicy("multivalued");
+        chain.setMergingPolicy(PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED);
         val results = chain.getConsentableAttributes(CoreAuthenticationTestUtils.getPrincipal(),
             CoreAuthenticationTestUtils.getService(),
             CoreAuthenticationTestUtils.getRegisteredService());

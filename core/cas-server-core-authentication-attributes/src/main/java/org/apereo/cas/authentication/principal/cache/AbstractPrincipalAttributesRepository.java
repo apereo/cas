@@ -1,9 +1,9 @@
 package org.apereo.cas.authentication.principal.cache;
 
-import org.apereo.cas.authentication.AttributeMergingStrategy;
 import org.apereo.cas.authentication.attribute.PrincipalAttributeRepositoryFetcher;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttributesRepository;
+import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
@@ -60,7 +60,8 @@ public abstract class AbstractPrincipalAttributesRepository implements Registere
      */
     @Getter
     @Setter
-    private AttributeMergingStrategy mergingStrategy = AttributeMergingStrategy.MULTIVALUED;
+    private PrincipalAttributesCoreProperties.MergingStrategyTypes mergingStrategy =
+        PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED;
 
     @Getter
     @Setter
@@ -151,8 +152,8 @@ public abstract class AbstractPrincipalAttributesRepository implements Registere
      *
      * @return the attribute merging strategy
      */
-    protected AttributeMergingStrategy determineMergingStrategy() {
-        return ObjectUtils.defaultIfNull(getMergingStrategy(), AttributeMergingStrategy.MULTIVALUED);
+    protected PrincipalAttributesCoreProperties.MergingStrategyTypes determineMergingStrategy() {
+        return ObjectUtils.defaultIfNull(getMergingStrategy(), PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED);
     }
 
     /**

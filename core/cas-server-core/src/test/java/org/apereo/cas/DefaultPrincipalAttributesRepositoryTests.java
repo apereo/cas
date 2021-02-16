@@ -1,9 +1,9 @@
 package org.apereo.cas;
 
-import org.apereo.cas.authentication.AttributeMergingStrategy;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
@@ -63,7 +63,7 @@ public class DefaultPrincipalAttributesRepositoryTests extends BaseCasCoreTests 
         val p = principalFactory.getObject().createPrincipal("uid",
             Collections.singletonMap("mail", List.of("final@example.com")));
         val rep = new DefaultPrincipalAttributesRepository();
-        rep.setMergingStrategy(AttributeMergingStrategy.NONE);
+        rep.setMergingStrategy(PrincipalAttributesCoreProperties.MergingStrategyTypes.NONE);
         rep.setAttributeRepositoryIds(Set.of("StubPersonAttributeDao"));
         
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();

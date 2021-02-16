@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal.cache;
 
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.LoggingUtils;
@@ -74,7 +75,8 @@ public class CachingPrincipalAttributesRepository extends AbstractPrincipalAttri
             LOGGER.debug("Found [{}] attributes for principal [{}] from the attribute repository.", personDirectoryAttributes.size(), principal.getId());
 
             LOGGER.debug("Merging current principal attributes with that of the repository via strategy [{}]", mergeStrategy);
-            val mergedAttributes = mergeStrategy.getAttributeMerger().mergeAttributes(principalAttributes, personDirectoryAttributes);
+            val mergedAttributes = CoreAuthenticationUtils.getAttributeMerger(mergeStrategy)
+                .mergeAttributes(principalAttributes, personDirectoryAttributes);
             return convertAttributesToPrincipalAttributesAndCache(principal, mergedAttributes, registeredService);
         }
         return convertAttributesToPrincipalAttributesAndCache(principal, principalAttributes, registeredService);
