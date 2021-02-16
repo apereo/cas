@@ -8,7 +8,39 @@ category: Attributes
 
 # SAML2 Attribute Release
 
-Attribute filtering and release policies are defined per SAML service. See [this guide](../integration/Attribute-Release-Policies.html) for more info.
+Attribute filtering and release policies are defined per 
+SAML service. See [this guide](../integration/Attribute-Release-Policies.html) for more info.
+
+## Attribute Definitions
+
+Attribute definitions that specifically apply to the release of attributes as part of SAML response can be 
+defined using the `SamlIdPAttributeDefinition`. Defining an attribute with this definition does not
+prevent it from being released by other protocols.
+
+```json
+{
+  "@class": "java.util.TreeMap",
+  "eduPersonPrincipalName": {
+    "@class": "org.apereo.cas.support.saml.web.idp.profile.builders.attr.SamlIdPAttributeDefinition",
+    "key": "eduPersonPrincipalName",
+    "name": "eduPersonPrincipalName",
+    "urn": "urn:oid:1.3.6.1.4.1.5923.1.1.1.6",
+    "scoped": true,
+    "encrypted": false,
+    "attribute": "uid",
+    "friendlyName": "eduPersonPrincipalName"
+  }
+}
+```
+
+The following additional settings can be specified for a Saml IdP attribute definition:
+
+| Name                    | Description
+|-------------------------|--------------------------------------------------------------------------------------------------------
+| `friendlyName`          | (Optional) Friendly name of the attribute shared with the target application during attribute release.
+| `urn`                   | (Optional) Defined Universal Resource name for an attribute (i.e. `urn:oid:1.3.6.1.4.1.5923.1.1.1.6`).
+              
+To learn more about attribute definitions, please [see this guide](../integration/Attribute-Definitions.html).
 
 ## Attribute Value Types
 
@@ -105,7 +137,6 @@ specially if the original attribute is *mapped* to a different name.
   }
 }
 ```
-
 
 ## InCommon Research and Scholarship
 
@@ -258,7 +289,8 @@ def Map<String, Object> run(final Object... args) {
 
 ## Pattern Matching Entity Ids
 
-In the event that an aggregate is defined containing multiple entity ids, the below attribute release policy may be used to release a collection of allowed attributes to entity ids grouped together by a regular expression pattern:
+In the event that an aggregate is defined containing multiple entity ids, the below attribute release 
+policy may be used to release a collection of allowed attributes to entity ids grouped together by a regular expression pattern:
 
 ```json
 {
@@ -322,7 +354,8 @@ The `useFriendlyName` allows the filter to compare the requested attribute's fri
 
 ## Authentication Request Requested Attributes Filter
 
-This attribute release policy authorizes the release of a subset of attributes requested as extensions of the SAML2 authentication request. The intersection of requested attributes and those allowed by the attribute release policy explicitly is evaluated for the final attribute release phase:
+This attribute release policy authorizes the release of a subset of attributes requested as extensions of 
+the SAML2 authentication request. The intersection of requested attributes and those allowed by the attribute release policy explicitly is evaluated for the final attribute release phase:
 
 ```json
 {

@@ -31,14 +31,11 @@ may match the following:
 ```json 
 {
     "@class" : "java.util.TreeMap",
-    "eduPersonPrincipalName" : {
+    "employeeId" : {
       "@class" : "org.apereo.cas.authentication.attribute.DefaultAttributeDefinition",
-      "key" : "eduPersonPrincipalName",
-      "name" : "urn:oid:1.3.6.1.4.1.5923.1.1.1.6",
-      "friendlyName" : "eduPersonPrincipalName",
+      "key" : "employeeId",
       "scoped" : true,
-      "encrypted" : false,
-      "attribute" : "uid"
+      "attribute" : "empl_identifier"
     }
 }
 ```         
@@ -52,7 +49,6 @@ The following settings can be specified by an attribute definition:
 |-------------------------|--------------------------------------------------------------------------------------------------------
 | `key`                   | Attribute name, as resolved by the CAS [attribute resolution engine](Attribute-Resolution.html)
 | `name`                  | Attribute name to be used and shared with the target application during attribute release.
-| `friendlyName`          | (Optional) Friendly name of the attribute shared with the target application during attribute release. 
 | `scoped`                | (Optional) If `true`, the attribute value be scoped to the scope of the CAS server deployment defined in settings.
 | `encrypted`             | (Optional) If `true`, the attribute value will be encrypted and encoded in base-64 using the service definition's defined public key.
 | `attribute`             | (Optional) The source attribute to provide values for the attribute definition itself, replacing that of the original source.
