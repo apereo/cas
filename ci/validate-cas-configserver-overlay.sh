@@ -14,6 +14,17 @@ kill -9 $pid
 echo "Building CAS Config Server Overlay"
 ./gradlew clean build --no-daemon
 
+sudo mkdir /etc/cas
+dname="${dname:-CN=cas.example.org,OU=Example,OU=Org,C=US}"
+subjectAltName="${subjectAltName:-dns:example.org,dns:localhost,ip:127.0.0.1}"
+keystore=/etc/cas/casconfigserver.jks
+echo -e "\nGenerating keystore ${keystore} for CAS with DN=${dname}, SAN=${subjectAltName} ..."
+[ -f "${keystore}" ] && sudo rm "${keystore}"
+sudo keytool -genkey -noprompt -alias cas -keyalg RSA -keypass changeit -storepass changeit \
+                  -keystore "${keystore}" -dname "${dname}" -ext SAN="${subjectAltName}"
+[ -f "${keystore}" ] && echo "Created ${keystore}"
+
+
 java -jar build/libs/casconfigserver.war --server.ssl.enabled=false --spring.security.user.password=password --spring.security.user.name=casuser &
 pid=$!
 sleep 5
