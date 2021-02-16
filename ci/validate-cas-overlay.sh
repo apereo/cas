@@ -17,7 +17,7 @@ mv build/libs/cas.war ${CATALINA_HOME}/webapps/cas.war
 ${CATALINA_HOME}/bin/startup.sh & >/dev/null 2>&1
 pid=$!
 sleep 30
-rc=`curl -L -k -u casuser:password --connect-timeout 60 -s  -I -w "%{http_code}" http://localhost:8080/cas/login`
+rc=`curl -L -k -u casuser:password -o /dev/null --connect-timeout 60 -s  -I -w "%{http_code}" http://localhost:8080/cas/login`
 ${CATALINA_HOME}/bin/shutdown.sh & >/dev/null 2>&1
 kill -9 $pid
 if [ "$rc" == 200 ]; then

@@ -35,7 +35,7 @@ export SPRING_SECURITY_USER_NAME=casuser
 ${CATALINA_HOME}/bin/startup.sh & >/dev/null 2>&1
 pid=$!
 sleep 30
-rc=`curl -k -L -u casuser:password --connect-timeout 60 -s  -I -w "%{http_code}" http://localhost:8080/casdiscoveryserver`
+rc=`curl -k -L -o /dev/null -u casuser:password --connect-timeout 60 -s -I -w "%{http_code}" http://localhost:8080/casdiscoveryserver/`
 ${CATALINA_HOME}/bin/shutdown.sh & >/dev/null 2>&1
 kill -9 $pid
 if [ "$rc" == 200 ]; then

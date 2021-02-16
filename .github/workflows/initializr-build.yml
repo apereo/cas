@@ -71,8 +71,8 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: binary-artifacts
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
+      # - name: Setup tmate session
+      #   uses: mxschmitt/action-tmate@v3
       - name: Validate Overlay
         run: ./ci/validate-cas-mgmt-overlay.sh
   validate-cas-configserver-overlay:

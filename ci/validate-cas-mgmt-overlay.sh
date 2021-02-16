@@ -40,7 +40,7 @@ export MGMT_USER-PROPERTIES-FILE=file:${PWD}/users.json
 ${CATALINA_HOME}/bin/startup.sh & >/dev/null 2>&1
 pid=$!
 sleep 30
-rc=`curl -L -k -u casuser:password --connect-timeout 60 -s  -I -w "%{http_code}" http://localhost:8080/cas-management`
+rc=`curl -L -k -u casuser:password -o /dev/null --connect-timeout 60 -s  -I -w "%{http_code}" http://localhost:8080/cas-management`
 ${CATALINA_HOME}/bin/shutdown.sh & >/dev/null 2>&1
 kill -9 $pid
 if [ "$rc" == 200 ]; then
