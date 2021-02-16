@@ -3,6 +3,7 @@
 # Declare variables to be passed into your templates.
 
 casServerName: cas.example.org
+casMgmtServerName: casmgmt.example.org
 
 replicaCount: 1
 
@@ -11,13 +12,19 @@ image:
   repository: "apereo/cas"
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+  tag: "latest"
 
 bootadminimage:
   registry: "docker.io"
   repository: "hdeadman/cas-bootadmin-server"
   pullPolicy: IfNotPresent
   tag: "latest"
+
+mgmtimage:
+  registry: "docker.io"
+  repository: "apereo/cas-management"
+  pullPolicy: IfNotPresent
+  tag: "v6.3.0"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -43,7 +50,7 @@ logdir:
 # CAS Server container properties
 casServerContainer:
   ## Roll on upgrade changes deployment when helm upgrade runs, forcing pod to restart
-  alwaysRoll: true
+  alwaysRoll: false
   ## JVM Settings
   ## JVM settings only used if command not set, use args to set app arguments
   jvm:
@@ -224,7 +231,7 @@ casServerContainer:
 # CAS Boot-Admin Server container properties
 bootAdminContainer:
   ## Roll on upgrade changes deployment when helm upgrade runs, forcing pod to restart
-  alwaysRoll: true
+  alwaysRoll: false
   ## JVM Settings
   ## JVM settings only used if command not set, use args to set app arguments
   jvm:
@@ -361,19 +368,168 @@ bootAdminContainer:
           </Loggers>
       </Configuration>
 
+# CAS Management Server container properties
+mgmtContainer:
+  ## Roll on upgrade changes deployment when helm upgrade runs, forcing pod to restart
+  alwaysRoll: false
+  ## JVM Settings
+  ## JVM settings only used if command not set, use args to set app arguments
+  jvm:
+    ## Extra JVM options
+    ##
+    extraOpts: '-Djavax.net.ssl.trustStore=/etc/cas/truststore -Djavax.net.ssl.trustStoreType=PKCS12 -Djavax.net.ssl.trustStorePassword=changeit'
+    ## Memory settings: If these aren't defined, java will calc values automatically, but requires setting limits on pod
+    ## so it doesn't base heap size on host memory
+    maxHeapOpt: -Xmx1G
+    newHeapOpt: -Xms250M
+    debugEnabled: true
+    debugSuspend: "n" # could be n or y, must quote or yaml changes to boolean
+  warPath: 'cas-management.war'
+  ## Override cmd
+  ##
+  command:
+  ## Override args
+  ##
+  args:
+    - '--spring.config.additional-location=file:/etc/cas/config/' # directories should end in / and have protocol
+    - '--logging.config=file:/etc/cas/config/log4j2.xml'
+
+  profiles: 'standalone'
+
+  ## extraVolumes and extraVolumeMounts allows you to mount other volumes
+  ## Examples:
+  ## extraVolumeMounts:
+  ##   - name: extras
+  ##     mountPath: /usr/share/extras
+  ##     readOnly: true
+  ## extraVolumes:
+  ##   - name: extras
+  ##     emptyDir: {}
+  ##
+  extraVolumeMounts:
+    - name: truststore
+      mountPath: /etc/cas/truststore
+      subPath: truststore
+
+  extraVolumes:
+    - name: truststore
+      configMap:
+        name: cas-truststore
+        defaultMode: 0444
+
+  ## Url to use for readiness, startupprobe, and liveliness check, change to health actuator if the module is available
+  ## Naming it "default" in case in future template supports individual urls for the different checks, with this as default if they aren't specified
+  defaultStatusUrl: '/cas-management/actuator/health'
+
+  # number of startup probe failures before it will be killed, set high if trying to debug startup issues
+  # liveness and readiness failure threshold might be 1 but startup failure threshold accounts for
+  # failures while server is starting up
+  startupFailureThreshold: 30
+  livenessFailureThreshold: 1
+  readinessFailureThreshold: 1
+  readinessInitialDelaySeconds: 45
+  livenessInitialDelaySeconds: 120
+
+  ## An array to add extra env vars
+  ## For example:
+  ## extraEnvVars:
+  ##  - name: MY_ENV_VAR
+  ##    value: env_var_value
+  ##
+  extraEnvVars: []
+
+  ## Name of a ConfigMap containing extra env vars
+  ##
+  extraEnvVarsConfigMap: ''
+
+  # name of secret containing mgmt server keystore
+  serverKeystoreExistingSecret: cas-server-keystore
+  # folder that should container the keystore
+  serverKeystoreMountPath: '/etc/cas/thekeystore'
+  # name of keystore file in container and in secret
+  serverKeystoreSubPath: 'thekeystore'
+
+  ## Name of a Secret containing extra env vars
+  ##
+  extraEnvVarsSecret: ''
+  ## Choose which config files from casConfig to mount
+  casConfigMounts:
+    - 'application-standalone.properties'
+    - 'application-standalone.yml'
+    - 'log4j2.xml'
+  ## Create various config files from casConfig that may or may not be mounted
+  casConfig:
+    application-standalone.properties: |-
+      server.ssl.enabled=true
+      server.ssl.key-store=file:/etc/cas/thekeystore
+      server.ssl.key-store-type=PKCS12
+      server.ssl.key-store-password=changeit
+      server.ssl.trust-store=file:/etc/cas/truststore
+      server.ssl.trust-store-type=PKCS12
+      server.ssl.trust-store-password=changeit
+
+    application-standalone.yml: |-
+      ---
+      cas:
+        server:
+          name: https://{{ .Values.casServerName }}
+      mgmt:
+        serverName: https://{{ .Values.casMgmtServerName }}
+        enableDiscoveryEndpointCall: false # turning off b/c external call to cas requires external DNS, need internal URL
+
+    log4j2.xml: |-
+      <?xml version="1.0" encoding="UTF-8" ?>
+      <Configuration monitorInterval="5">
+          <Properties>
+            <Property name="cas.log.dir">.</Property>
+            <Property name="cas.log.level">info</Property>
+          </Properties>
+          <Appenders>
+              <Console name="casConsole" target="SYSTEM_OUT">
+                  <PatternLayout pattern="%highlight{%d %p [%c] - &lt;%m&gt;%n}"/>
+              </Console>
+
+              <RollingFile name="casFile" fileName="cas-management.log" append="true"
+                           filePattern="cas-management-%d{yyyy-MM-dd-HH}-%i.log">
+                  <PatternLayout pattern="%highlight{%d %p [%c] - &lt;%m&gt;%n}" />
+                  <Policies>
+                      <OnStartupTriggeringPolicy />
+                      <SizeBasedTriggeringPolicy size="10 MB"/>
+                      <TimeBasedTriggeringPolicy />
+                  </Policies>
+              </RollingFile>
+          </Appenders>
+          <Loggers>
+              <Logger name="org.apereo" level="${sys:cas.log.level}" />
+              <Logger name="org.apache" level="info" />
+              <Logger name="org.pac4j" level="info" />
+              <Logger name="org.springframework" level="warn" />
+              <Logger name="org.springframework.boot" level="info" />
+              <Root level="info">
+                  <AppenderRef ref="casFile" />
+                  <AppenderRef ref="casConsole" />
+              </Root>
+          </Loggers>
+      </Configuration>
+
 
 podAnnotations: {}
 
-podSecurityContext: {}
-  # fsGroup: 2000
+## Pod security context
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
+##
+podSecurityContext:
+  enabled: true
+  fsGroup: 1000
 
-securityContext: {}
+containerSecurityContext:
+  enabled: false
   # capabilities:
   #   drop:
   #   - ALL
   # readOnlyRootFilesystem: true
   # runAsNonRoot: true
-  # runAsUser: 1000
+  runAsUser: 1000
 
 ## Override parts of this ingress in your own values file with appropriate host names
 ## This currently is only set up to work with Nginx Ingress Controller from Kubernetes project
@@ -410,6 +566,8 @@ cas:
 ## Override parts of this ingress in your own values file with appropriate host names
 ## This currently is only set up to work with Nginx Ingress Controller from Kubernetes project
 bootadmin:
+  enabled: true
+  replicaCount: 1
   service:
     type: ClusterIP
     port: 8443
@@ -448,10 +606,56 @@ bootadmin:
     tls:
       - secretName: cas-server-ingress-tls
         hosts:
-          - cas.example.org
+          - casadmin.example.org
           - kubernetes.docker.internal
 
-# Request some resources so kubernetes will schedule somewhere with enough resources
+## Override parts of this ingress in your own values file with appropriate host names
+## This currently is only set up to work with Nginx Ingress Controller from Kubernetes project
+mgmt:
+  enabled: true
+  replicaCount: 1
+  service:
+    type: ClusterIP
+    port: 8443
+  listenPortHttps: 8443
+  listenPortJvmDebug: 5005
+  # Request some resources so kubernetes will schedule somewhere with enough resources
+  # Limits can also be set if desired
+  resources:
+    requests:
+      cpu: 50m
+      memory: 384Mi
+  #  limits:
+  #    cpu: 100m
+  #    memory: 128Mi
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/session-cookie-samesite: "None"
+      nginx.ingress.kubernetes.io/session-cookie-conditional-samesite-none: "true"
+      nginx.ingress.kubernetes.io/affinity: "cookie"
+      nginx.ingress.kubernetes.io/session-cookie-name: "sticky-session-route"
+      nginx.ingress.kubernetes.io/session-cookie-hash: "sha1"
+      nginx.ingress.kubernetes.io/secure-backends: "true"
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    hosts:
+      - host: casmgmt.example.org
+        paths:
+          - "/cas-management"
+      - host: kubernetes.docker.internal
+        paths:
+          - "/cas-management"
+    tls:
+      - secretName: cas-server-ingress-tls
+        hosts:
+          - casmgmt.example.org
+          - kubernetes.docker.internal
+
+# Request some resources for main cas server so kubernetes will schedule somewhere with enough resources
 # Limits can also be set if desired
 resources: 
   requests:
@@ -490,3 +694,78 @@ serviceAccount:
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
   name: ""
+
+
+## CAS can use a persistent volume to store config such as services and saml IDP/SP metadata that it pulls from git
+## Enable persistence using Persistent Volume Claims
+## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
+##
+persistence:
+  ## If true, use a Persistent Volume Claim for data folder mounted where you specify using mountPath
+  ##
+  enabled: true
+  ## Persistent Volume Storage Class
+  ## If defined, storageClassName: <storageClass>
+  ## If set to "-", storageClassName: "", which disables dynamic provisioning
+  ## If undefined (the default) or set to null, no storageClassName spec is
+  ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+  ##   GKE, AWS & OpenStack)
+  ##
+  # storageClass: "-"
+  ## Persistent Volume Claim annotations
+  ##
+  annotations:
+  ## Persistent Volume Access Mode
+  ##
+  accessModes:
+    - ReadWriteOnce
+  ## Persistent Volume size
+  ##
+  size: 2Gi
+  ## The path the volume will be mounted at, will contain writable folder called "data" under mountPath,
+  ## if volumePermissions init container creates it
+  ##
+  mountPath: /var/cas
+
+## Init containers parameters:
+## volumePermissions: Change the owner and group of the persistent volume mountpoint to runAsUser:fsGroup values from
+## the securityContext section.
+##
+volumePermissions:
+  enabled: false
+  image:
+    registry: docker.io
+    repository: alpine
+    tag: latest
+    pullPolicy: Always
+    ## Optionally specify an array of imagePullSecrets.
+    ## Secrets must be manually created in the namespace.
+    ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+    ##
+    # pullSecrets:
+    #   - myRegistryKeySecretName
+  ## Init container' resource requests and limits
+  ## ref: http://kubernetes.io/docs/user-guide/compute-resources/
+  ##
+  resources:
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    limits: {}
+    #   cpu: 100m
+    #   memory: 128Mi
+    requests: {}
+    #   cpu: 100m
+    #   memory: 128Mi
+  ## Init container Security Context
+  ## Note: the chown of the data folder is done to securityContext.runAsUser
+  ## and not the below volumePermissions.securityContext.runAsUser
+  ## When runAsUser is set to special value "auto", init container will try to chown the
+  ## data folder to autodetermined user&group, using commands: `id -u`:`id -G | cut -d" " -f2`
+  ## "auto" is especially useful for OpenShift which has scc with dynamic userids (and 0 is not allowed).
+  ## You may want to use this volumePermissions.securityContext.runAsUser="auto" in combination with
+  ## pod securityContext.enabled=false and shmVolume.chmod.enabled=false
+  ##
+  securityContext:
+    runAsUser: 0

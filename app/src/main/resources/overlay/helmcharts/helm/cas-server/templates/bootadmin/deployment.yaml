@@ -1,10 +1,11 @@
+{{- if .Values.bootadmin.enabled -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "cas-server.bootadminname" . }}
   labels: {{- include "cas-server.labels" . | nindent 4 }}
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.bootadmin.replicaCount }}
   selector:
     matchLabels:
       {{- include "cas-bootadmin.selectorLabels" . | nindent 6 }}
@@ -28,8 +29,9 @@ spec:
       {{- toYaml . | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ include "cas-server.serviceAccountName" . }}
-      securityContext:
-      {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- if .Values.podSecurityContext.enabled }}
+      securityContext: {{- omit .Values.podSecurityContext "enabled" | toYaml | nindent 8 }}
+      {{- end }}
       volumes:
         {{- range $.Values.bootAdminContainer.casConfigMounts }}
           {{- $configMount := printf "%s-%s" "bootadmin-config" . | replace "." "-" | replace "_" "-" | lower }}
@@ -56,8 +58,9 @@ spec:
           {{- end }}
       containers:
         - name: cas-boot-admin
-          securityContext:
-          {{- toYaml .Values.securityContext | nindent 12 }}
+          {{- if .Values.containerSecurityContext.enabled }}
+          securityContext: {{- omit .Values.containerSecurityContext "enabled" | toYaml | nindent 12 }}
+          {{- end }}
           image: {{ include "cas-server.bootadminImageName" . }}
           imagePullPolicy: {{ .Values.bootadminimage.pullPolicy }}
           env:
@@ -137,6 +140,9 @@ spec:
               path: {{ .Values.bootAdminContainer.defaultStatusUrl }}
               port: https
               scheme: HTTPS
+              {{- if .Values.bootAdminContainer.defaultStatusHeaders }}
+              {{- include "cas-server.tplvalues.render" ( dict "value" .Values.bootAdminContainer.defaultStatusHeaders "context" $ ) | nindent 14 }}
+              {{- end }}
             failureThreshold: {{ .Values.bootAdminContainer.startupFailureThreshold }}
             periodSeconds: 20
           readinessProbe:
@@ -144,6 +150,9 @@ spec:
               path: {{ .Values.bootAdminContainer.defaultStatusUrl }}
               port: https
               scheme: HTTPS
+              {{- if .Values.bootAdminContainer.defaultStatusHeaders }}
+              {{- include "cas-server.tplvalues.render" ( dict "value" .Values.bootAdminContainer.defaultStatusHeaders "context" $ ) | nindent 14 }}
+              {{- end }}
             initialDelaySeconds: {{ .Values.bootAdminContainer.readinessInitialDelaySeconds }}
             periodSeconds: 5
             failureThreshold: {{ .Values.bootAdminContainer.readinessFailureThreshold }}
@@ -152,6 +161,9 @@ spec:
               path: {{ .Values.bootAdminContainer.defaultStatusUrl }}
               port: https
               scheme: HTTPS
+              {{- if .Values.bootAdminContainer.defaultStatusHeaders }}
+              {{- include "cas-server.tplvalues.render" ( dict "value" .Values.bootAdminContainer.defaultStatusHeaders "context" $ ) | nindent 14 }}
+              {{- end }}
             initialDelaySeconds: {{ .Values.bootAdminContainer.livenessInitialDelaySeconds }}
             periodSeconds: 15
             failureThreshold: {{ .Values.bootAdminContainer.livenessFailureThreshold }}
@@ -169,3 +181,4 @@ spec:
       tolerations:
       {{- toYaml . | nindent 8 }}
   {{- end }}
+{{- end }}

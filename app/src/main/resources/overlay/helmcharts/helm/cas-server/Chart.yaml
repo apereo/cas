@@ -1,6 +1,7 @@
 apiVersion: v2
 name: cas-server
 description: A Helm chart for CAS SSO Server
+icon: "https://apereo.github.io/cas/images/cas_logo.png"
 
 # A chart can be either an 'application' or a 'library' chart.
 #
