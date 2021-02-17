@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -124,23 +125,30 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
             }
             val friendlyName = friendlyNames.getOrDefault(e.getKey(), null);
 
-            val name = urns.containsKey(e.getKey())
-                ? urns.get(e.getKey())
-                : attributeDefinitionStore.locateAttributeDefinition(e.getKey())
-                    .map(AttributeDefinition::getName)
-                    .filter(StringUtils::isNotBlank)
-                    .orElseGet(e::getKey);
+            val attributeNames = urns.containsKey(e.getKey())
+                ? List.of(urns.get(e.getKey()))
+                : getMappedAttributeNamesFromAttributeDefinitionStore(e);
 
-            LOGGER.trace("Creating SAML attribute [{}] with value [{}], friendlyName [{}]", name, e.getValue(), friendlyName);
-            val attribute = newAttribute(friendlyName, name, e.getValue(),
-                nameFormats,
-                resp.getDefaultAttributeNameFormat(),
-                samlRegisteredService.getAttributeValueTypes());
+            attributeNames.forEach(name -> {
+                LOGGER.trace("Creating SAML attribute [{}] with value [{}], friendlyName [{}]", attributeNames, e.getValue(), friendlyName);
+                val attribute = newAttribute(friendlyName, name, e.getValue(),
+                    nameFormats,
+                    resp.getDefaultAttributeNameFormat(),
+                    samlRegisteredService.getAttributeValueTypes());
 
-            LOGGER.trace("Created SAML attribute [{}] with nameid-format [{}]", attribute.getName(), attribute.getNameFormat());
-            builder.build(attrStatement, attribute);
+                LOGGER.trace("Created SAML attribute [{}] with nameid-format [{}]", attribute.getName(), attribute.getNameFormat());
+                builder.build(attrStatement, attribute);
+            });
         }
 
         return attrStatement;
+    }
+
+    private Collection<String> getMappedAttributeNamesFromAttributeDefinitionStore(final Map.Entry<String, Object> e) {
+        return org.springframework.util.StringUtils.commaDelimitedListToSet(
+            attributeDefinitionStore.locateAttributeDefinition(e.getKey())
+                .map(AttributeDefinition::getName)
+                .filter(StringUtils::isNotBlank)
+                .orElseGet(e::getKey));
     }
 }

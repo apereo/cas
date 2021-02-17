@@ -93,6 +93,23 @@ public class DefaultAttributeDefinitionStoreTests {
     }
 
     @Test
+    public void verifyMappedToMultipleNames() {
+        val store = new DefaultAttributeDefinitionStore();
+        store.setScope("example.org");
+        val defn = DefaultAttributeDefinition.builder()
+            .key("cn")
+            .name("commonName,common-name,cname")
+            .build();
+        store.registerAttributeDefinition(defn);
+        val attrs = store.resolveAttributeValues(CoreAuthenticationTestUtils.getAttributes(), CoreAuthenticationTestUtils.getRegisteredService());
+        assertFalse(attrs.isEmpty());
+        assertFalse(attrs.containsKey("cn"));
+        assertTrue(attrs.containsKey("commonName"));
+        assertTrue(attrs.containsKey("common-name"));
+        assertTrue(attrs.containsKey("cname"));
+    }
+
+    @Test
     public void verifyEncryptedAttributeDefinitions() {
         val service = CoreAuthenticationTestUtils.getRegisteredService();
         val servicePublicKey = new RegisteredServicePublicKeyImpl("classpath:keys/RSA1024Public.key", "RSA");
