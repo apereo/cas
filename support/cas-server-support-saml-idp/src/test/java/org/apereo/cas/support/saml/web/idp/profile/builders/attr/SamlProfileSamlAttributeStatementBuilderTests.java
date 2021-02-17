@@ -41,7 +41,11 @@ public class SamlProfileSamlAttributeStatementBuilderTests extends BaseSamlIdPCo
             new MockHttpServletResponse(), getAssertion(), service, adaptor, SAMLConstants.SAML2_POST_BINDING_URI,
             new MessageContext());
 
-        assertFalse(statement.getAttributes().isEmpty());
+        val attributes = statement.getAttributes();
+        assertFalse(attributes.isEmpty());
+        assertTrue(attributes.stream().anyMatch(a -> a.getName().equals("urn:oid:0.9.2342.19200300.100.1.3")));
+        assertTrue(attributes.stream().anyMatch(a -> a.getName().equals("alias")));
+        assertTrue(attributes.stream().anyMatch(a -> a.getName().equals("common-name")));
+        assertTrue(attributes.stream().anyMatch(a -> a.getName().equals("nickname")));
     }
-
 }
