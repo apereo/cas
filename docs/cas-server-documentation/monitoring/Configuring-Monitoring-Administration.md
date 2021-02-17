@@ -14,9 +14,12 @@ Spring Boot Admin server over HTTP and reports back its status and health to the
 
 ## Administration Server
 
-To run the Spring Boot Admin server, please use [this WAR overlay](https://github.com/apereo/cas-bootadmin-overlay).
+The Spring Boot Admin web application server is not part of the CAS server and
+is a standalone web application which can be deployed using the [CAS Initializr](../installation/WAR-Overlay-Initializr.html).
 
-<div class="alert alert-warning"><strong>Secure Endpoints</strong><p>Note that the admin server's API endpoints MUST be secured. It is also best to run both the Admin server and the registering CAS server node under HTTPS, specially if credentials are used to authenticate into endpoints.</p></div>
+<div class="alert alert-warning"><strong>Secure Endpoints</strong><p>Note that the admin server's API 
+endpoints MUST be secured. It is also best to run both the Admin server and the registering CAS server 
+node under HTTPS, specially if credentials are used to authenticate into endpoints.</p></div>
 
 To learn more about options, please [see this guide][bootadmindocs].
 
@@ -30,7 +33,8 @@ Support is added by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-bootadmin-client" %}
 
-Note that CAS server's actuator endpoints are by default secured. In order to allow secure communication between the CAS server and the Spring Boot Admin server, [please see guide][bootadmindocs].
+Note that CAS server's actuator endpoints are by default secured. In order to allow secure 
+communication between the CAS server and the Spring Boot Admin server, [please see guide][bootadmindocs].
 
 ## Configuration
 

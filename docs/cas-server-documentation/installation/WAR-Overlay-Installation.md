@@ -75,16 +75,16 @@ To learn more about the initializr, please [review this guide](WAR-Overlay-Initi
 
 ### CAS Overlay Template
                  
-You can download or clone the repositories below to get started with a CAS overlay template.
+The CAS WAR overlay template project can be bootstrapped via the [CAS Initializr](WAR-Overlay-Initializr.html).
 
 <div class="alert alert-info"><strong>Review Branch!</strong><p>The below repositories point you towards their <code>master</code> branch.
 You should always make sure the branch you are on matches the version of CAS you wish to configure and deploy. The <code>master</code>
 branch typically points to the latest stable release of the CAS server. Check the build configuration and if inappropriate,
 use <code>git branch -a</code> to see available branches, and then <code>git checkout [branch-name]</code> to switch if necessary.</p></div>
 
-| Project                                                           | Build Directory                               | Source Directory
-|-------------------------------------------------------------------|-----------------------------------------------|-----------------------
-| [CAS WAR Overlay](https://github.com/apereo/cas-overlay-template) | `cas/build/cas-resources`     | `src/main/resources`
+| Project                                       | Build Directory                               | Source Directory
+|-----------------------------------------------|-----------------------------------------------|-----------------------
+| [CAS Initializr](WAR-Overlay-Initializr.html) | `cas/build/cas-resources`     | `src/main/resources`
 
 To construct the overlay project, you need to copy directories and 
 files *that you need to customize* in the build directory over to the source directory.
@@ -95,12 +95,6 @@ You may need to do that step manually yourself to learn what files/directories n
 Note: Do **NOT** ever make changes in the above-noted build directory. The changeset will be cleaned out and 
 set back to defaults every time you do a build. Put overlaid components inside the source directory
 and/or other instructed locations to avoid surprises.
-
-## CAS Configuration Server Overlay
-
-See this [Maven WAR overlay](https://github.com/apereo/cas-configserver-overlay) for more details.
-
-To learn more about the configuration server, please [review this guide](../configuration/Configuration-Server-Management.html).
 
 ## Dockerized Deployment
 

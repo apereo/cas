@@ -5,7 +5,6 @@ category: Installation
 ---
 {% include variables.html %}
 
-
 # WAR Overlay Initializr
 
 [Apereo CAS Initializr][initializr] is a relatively new addition to the Apereo CAS ecosystem that allows 
@@ -59,9 +58,30 @@ Docker images published to Docker Hub, and as a baseline for
 browser/UI tests run by the CAS CI for each relevant feature. 
 CAS Initializr uses itself to test itself!
 
+## Overlay Project Types
+
+The [CAS Initializr][initializr] can be invoked using curl to generate different types of overlay projects.
+The project selection is indicated using a `type` parameter. The following types are supported:
+
+| Type                                    | Description
+|-----------------------------------------|----------------------------------------------------------------------------------
+| `cas-overlay`                           | Default; generates a [CAS WAR overlay](../installation/WAR-Overlay-Installation.html).
+| `cas-bootadmin-server-overlay`          | Generates a WAR Overlay for the [Spring Boot Admin Server](../monitoring/Configuring-Monitoring-Administration.html).
+| `cas-config-server-overlay`             | Generates a WAR Overlay for the [Spring Cloud Configuration Server](../configuration/Configuration-Server-Management.html).
+| `cas-discovery-server-overlay`          | Generates a WAR Overlay for the [Service Discovery Server](../installation/Service-Discovery-Guide-Eureka.html).
+| `cas-mgmt-overlay`                      | Generates a WAR Overlay for the [CAS Management Web Application](../services/Installing-ServicesMgmt-Webapp.html).
+ 
+## Source Code
+
+[CAS Initializr][initializr] is available at:
+
+| Source Branch      | Location | Heroku
+|--------------------|---------------------------------------|---------------------------------------
+| `heroku-casinit`   | [Link](https://casinit.herokuapp.com) | ![](https://heroku-badge.herokuapp.com/?app=casinit)
+
 ## Project Generation
 
-The [CAS Initializr][initializr] can be invoked using curl to generate a CAS overlay project. To access 
+The [CAS Initializr][initializr] can be invoked using curl to generate an overlay project. To access 
 the CAS Initializr, the following strategies can be used.
 
 ### Heroku
@@ -71,12 +91,17 @@ started with this instance, a simple way might be to include the following funct
      
 ```bash
 function getcas(){
-    curl -k https://casinit.herokuapp.com/starter.tgz -d dependencies="$1" | tar -xzvf -
+    curl https://casinit.herokuapp.com/starter.tgz \
+      -d type=[project-type] -d baseDir=overlay -d dependencies="$1" | tar -xzvf -
     ls
 }
 ```
 
-This allows you to generate a CAS overlay project using:
+<div class="alert alert-info"><strong>Note</strong><p>
+If you prefer, you could invoke the <code>/starter.zip</code> endpoint to get back a ZIP file instead.
+</p></div>
+
+This allows you to generate a CAS overlay project in the `overlay` directory using:
 
 ```bash
 getcas duo,oidc

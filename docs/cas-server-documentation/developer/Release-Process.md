@@ -107,13 +107,10 @@ consistent and follow the same layout as previous releases.</p></div>
 
 - Mark the release tag as pre-release, when releasing RC versions of the project on GitHub. 
 
-## Update Overlays
+## Update CAS Initializr
 
-Update the following overlay projects to point to the newly released CAS version. You may need to move the current `master` branch
-over to a maintenance branch for each of the below overlay projects, specially if/when dealing with major/minor releases
-and if the release process here had you create a new branch. 
-
-- [CAS WAR Overlay](https://github.com/apereo/cas-overlay-template)
+Make sure to update the [CAS Initializr](../installation/WAR-Overlay-Initializr.html) to allow for generation of projects
+based on the newly-released version.
 
 ## Update Documentation
 
