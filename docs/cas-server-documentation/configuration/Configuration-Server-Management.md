@@ -62,8 +62,8 @@ If two configuration files with same base name and different extensions exist, t
 of `properties`, `yml` and then `yaml` and then `groovy` (last one processed wins where duplicate properties exist). These 
 external configuration files will override files located in the classpath (e.g. files from `src/main/resources` in 
 your CAS overlay that end up in `WEB-INF/classes`) but the internal files are loaded per 
-the [spring boot](https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html) rules 
-which differ from the CAS standalone configuration rules described here (e.g. <profile>.properties 
+the [Spring Boot](https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html) rules 
+which differ from the CAS standalone configuration rules described here (e.g. `<profile>.properties` 
 would not be loaded from classpath but `application-<profile>.properties` would).
 
 ## Handling Overrides
@@ -96,8 +96,7 @@ A full comprehensive guide is provided by the [Spring Cloud project](https://clo
 
 #### Overlay
 
-The configuration server itself, similar to CAS, can be deployed
-via the following module in it own [WAR overlay](https://github.com/apereo/cas-configserver-overlay):
+The configuration server itself, similar to CAS, can be deployed using the [CAS Initializr](../installation/WAR-Overlay-Initializr.html).
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-webapp-config-server" %}
 
