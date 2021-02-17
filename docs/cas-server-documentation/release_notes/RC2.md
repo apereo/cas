@@ -131,4 +131,8 @@ can now be signed using the `XMLSec` tool.
 - Couchbase Client
 - MariaDb Driver
 - Spring Cloud
+- Amazon SDK
+- Spring
+- JavaParser
 - Pac4j
+- Hibernate
