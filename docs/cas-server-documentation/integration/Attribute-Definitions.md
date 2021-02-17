@@ -48,7 +48,7 @@ The following settings can be specified by an attribute definition:
 | Name                    | Description
 |-------------------------|--------------------------------------------------------------------------------------------------------
 | `key`                   | Attribute name, as resolved by the CAS [attribute resolution engine](Attribute-Resolution.html)
-| `name`                  | Attribute name to be used and shared with the target application during attribute release.
+| `name`                  | Comma-separated list of attribute name(s) to virtually rename/remap and share with the target application during attribute release.
 | `scoped`                | (Optional) If `true`, the attribute value be scoped to the scope of the CAS server deployment defined in settings.
 | `encrypted`             | (Optional) If `true`, the attribute value will be encrypted and encoded in base-64 using the service definition's defined public key.
 | `attribute`             | (Optional) The source attribute to provide values for the attribute definition itself, replacing that of the original source.

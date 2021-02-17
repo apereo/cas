@@ -9,11 +9,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link AttributeDefinitionStore}.
@@ -109,31 +109,30 @@ public interface AttributeDefinitionStore {
      */
     default Map<String, List<Object>> resolveAttributeValues(final Map<String, List<Object>> attributes,
                                                              final RegisteredService registeredService) {
-        return attributes
+        val finalAttributes = new LinkedHashMap<String, List<Object>>(attributes.size());
+        attributes
             .entrySet()
-            .stream()
-            .map(entry -> {
-
-                val defnResult = locateAttributeDefinition(entry.getKey());
-                if (defnResult.isPresent()) {
-                    val definition = defnResult.get();
+            .forEach(entry -> {
+                locateAttributeDefinition(entry.getKey()).ifPresentOrElse(definition -> {
                     val attributeValues = determineValuesForAttributeDefinition(attributes, entry, definition);
                     LOGGER.trace("Resolving attribute [{}] from attribute definition store with values [{}]", entry.getKey(), attributeValues);
-
                     val result = resolveAttributeValues(entry.getKey(), attributeValues, registeredService);
                     if (result.isPresent()) {
                         val resolvedValues = result.get().getValue();
                         LOGGER.trace("Resolving attribute [{}] based on attribute definition [{}]", entry.getKey(), definition);
-                        val attributeKey = StringUtils.defaultIfBlank(definition.getName(), entry.getKey());
-                        LOGGER.trace("Determined attribute name to be [{}] with values [{}]", attributeKey, resolvedValues);
-                        return Pair.of(attributeKey, resolvedValues);
+                        val attributeKeys = org.springframework.util.StringUtils.commaDelimitedListToSet(StringUtils.defaultIfBlank(definition.getName(), entry.getKey()));
+                        attributeKeys.forEach(key -> {
+                            LOGGER.trace("Determined attribute name to be [{}] with values [{}]", key, resolvedValues);
+                            finalAttributes.put(key, resolvedValues);
+                        });
                     }
-                }
-
-                LOGGER.trace("Using already-resolved attribute name/value, as no attribute definition was found for [{}]", entry.getKey());
-                return Pair.of(entry.getKey(), entry.getValue());
-            })
-            .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+                }, () -> {
+                    LOGGER.trace("Using already-resolved attribute name/value, as no attribute definition was found for [{}]", entry.getKey());
+                    finalAttributes.put(entry.getKey(), entry.getValue());
+                });
+            });
+        LOGGER.trace("Final collection of attributes resolved from attribute definition store is [{}]", finalAttributes);
+        return finalAttributes;
     }
 
     /**
