@@ -303,3 +303,32 @@ This attribute release policy authorizes the release of defined attributes, base
 ```
 
 The `useFriendlyName` allows the filter to compare the requested attribute's friendly name with the resolved attribute.
+
+### SAML IdP Attribute Definition
+
+SAML attributes can be defined as part of the [Attribute Definition Store](../integration/Attribute-Definitions.md).
+The `SamlIdPAtrributeDefinition` inherits all the properties form `DefaultAttributeDefinition` and adds two optional properties specific to 
+SAML attributes.  Defining an attribute with this definition does not prevent it from being released by other protocols.
+
+```json
+{
+  "@class": "java.util.TreeMap",
+  "eduPersonPrincipalName": {
+    "@class": "org.apereo.cas.support.saml.web.idp.profile.builders.attr.SamlIdPAttributeDefinition",
+    "key": "eduPersonPrincipalName",
+    "name": "eduPersonPrincipalName",
+    "urn": "urn:oid:1.3.6.1.4.1.5923.1.1.1.6",
+    "scoped": true,
+    "encrypted": false,
+    "attribute": "uid",
+    "friendlyName": "eduPersonPrincipalName"
+  }
+}
+```
+
+The following additional settings can be specified for a Saml IdP attribute definition:
+
+| Name                    | Description
+|-------------------------|--------------------------------------------------------------------------------------------------------
+| `friendlyName`          | (Optional) Friendly name of the attribute shared with the target application during attribute release.
+| `urn`                   | (Optional) Defined Universal Resource name for an attribute (i.e. urn:oid:1.3.6.1.4.1.5923.1.1.1.6).
