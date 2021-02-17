@@ -1,6 +1,12 @@
 package org.apereo.cas.configuration.model.support.oauth;
 
 import org.apereo.cas.configuration.model.support.cookie.CookieProperties;
+import org.apereo.cas.configuration.support.RequiresModule;
+
+import com.fasterxml.jackson.annotation.JsonFilter;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
  * Properties for the Cross-Site Request Forgery (CSRF) cookie used in some Oauth flows.
@@ -8,6 +14,11 @@ import org.apereo.cas.configuration.model.support.cookie.CookieProperties;
  * @author Hal Deadman
  * @since 6.4.0
  */
+@RequiresModule(name = "cas-server-core-cookie", automated = true)
+@Getter
+@Setter
+@Accessors(chain = true)
+@JsonFilter("CsrfCookieProperties")
 public class CsrfCookieProperties extends CookieProperties {
 
     /**

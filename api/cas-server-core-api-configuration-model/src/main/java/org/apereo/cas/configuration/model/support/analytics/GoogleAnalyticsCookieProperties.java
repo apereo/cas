@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.support.analytics;
 
-import org.apereo.cas.configuration.model.support.cookie.PinnableCookieProperties;
+import org.apereo.cas.configuration.model.support.cookie.CookieProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
@@ -17,7 +17,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class GoogleAnalyticsCookieProperties extends PinnableCookieProperties {
+public class GoogleAnalyticsCookieProperties extends CookieProperties {
     private static final long serialVersionUID = -5432498833437602657L;
 
     /**
@@ -37,6 +37,5 @@ public class GoogleAnalyticsCookieProperties extends PinnableCookieProperties {
 
     public GoogleAnalyticsCookieProperties() {
         setName("CasGoogleAnalytics");
-        setPinToSession(false);
     }
 }
