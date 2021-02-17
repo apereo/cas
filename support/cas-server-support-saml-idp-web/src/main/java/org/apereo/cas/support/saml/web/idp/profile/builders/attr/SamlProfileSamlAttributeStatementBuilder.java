@@ -144,11 +144,17 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
         return attrStatement;
     }
 
-    private Collection<String> getMappedAttributeNamesFromAttributeDefinitionStore(final Map.Entry<String, Object> e) {
+    /**
+     * Gets mapped attribute names from attribute definition store.
+     *
+     * @param entry the entry
+     * @return the mapped attribute names from attribute definition store
+     */
+    protected Collection<String> getMappedAttributeNamesFromAttributeDefinitionStore(final Map.Entry<String, Object> entry) {
         return org.springframework.util.StringUtils.commaDelimitedListToSet(
-            attributeDefinitionStore.locateAttributeDefinition(e.getKey())
+            attributeDefinitionStore.locateAttributeDefinition(entry.getKey())
                 .map(AttributeDefinition::getName)
                 .filter(StringUtils::isNotBlank)
-                .orElseGet(e::getKey));
+                .orElseGet(entry::getKey));
     }
 }
