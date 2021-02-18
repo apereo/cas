@@ -18,7 +18,7 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("WarningCookieProperties")
-public class WarningCookieProperties extends CookieProperties {
+public class WarningCookieProperties extends PinnableCookieProperties {
     private static final long serialVersionUID = -266090748600049578L;
 
     /**

@@ -1,6 +1,6 @@
 package org.apereo.cas.web.support.mgmr;
 
-import org.apereo.cas.configuration.model.support.cookie.CookieProperties;
+import org.apereo.cas.configuration.model.support.cookie.PinnableCookieProperties;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.web.support.InvalidCookieException;
@@ -32,10 +32,10 @@ public class DefaultCasCookieValueManager extends EncryptedCookieValueManager {
     private static final int COOKIE_FIELDS_LENGTH = 3;
     private static final long serialVersionUID = -2696352696382374584L;
 
-    private final CookieProperties cookieProperties;
+    private final PinnableCookieProperties cookieProperties;
 
     public DefaultCasCookieValueManager(final CipherExecutor<Serializable, Serializable> cipherExecutor,
-                                        final CookieProperties cookieProperties) {
+                                        final PinnableCookieProperties cookieProperties) {
         super(cipherExecutor);
         this.cookieProperties = cookieProperties;
     }

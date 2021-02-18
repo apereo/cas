@@ -119,6 +119,8 @@ import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.credentials.extractor.BearerAuthExtractor;
 import org.pac4j.core.http.url.UrlResolver;
+import org.pac4j.core.matching.matcher.csrf.CsrfTokenGeneratorMatcher;
+import org.pac4j.core.matching.matcher.csrf.DefaultCsrfTokenGenerator;
 import org.pac4j.http.client.direct.DirectBasicAuthClient;
 import org.pac4j.http.client.direct.DirectFormClient;
 import org.pac4j.http.client.direct.HeaderClient;
@@ -242,6 +244,17 @@ public class CasOAuth20Configuration {
         val clientList = oauthSecConfigClients();
         val config = new Config(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()), clientList);
         config.setSessionStore(oauthDistributedSessionStore());
+        val csrfMatcher = new CsrfTokenGeneratorMatcher(new DefaultCsrfTokenGenerator());
+        val maxAge = casProperties.getAuthn().getOauth().getCsrfCookie().getMaxAge();
+        if (maxAge >= 0) {
+            csrfMatcher.setMaxAge(maxAge);
+        }
+        csrfMatcher.setSameSitePolicy(casProperties.getAuthn().getOauth().getCsrfCookie().getSameSitePolicy());
+        csrfMatcher.setDomain(casProperties.getAuthn().getOauth().getCsrfCookie().getDomain());
+        csrfMatcher.setPath(casProperties.getAuthn().getOauth().getCsrfCookie().getPath());
+        csrfMatcher.setHttpOnly(casProperties.getAuthn().getOauth().getCsrfCookie().isHttpOnly());
+        csrfMatcher.setSecure(casProperties.getAuthn().getOauth().getCsrfCookie().isSecure());
+        config.setMatcher(csrfMatcher);
         Config.setProfileManagerFactory("CASOAuthSecurityProfileManager", (webContext, sessionStore) ->
             new OAuth20ClientIdAwareProfileManager(webContext, config.getSessionStore(), servicesManager.getObject()));
         return config;

@@ -204,6 +204,10 @@ mechanism that handles the usual CAS server endpoints for authentication
 and ticket validation, etc is then activated for the OAuth 
 endpoints that are supported for throttling.
 
+## CSRF Cookie Configuration
+
+{% include casproperties.html properties="cas.authn.oauth.csrf-cookie" %}
+
 ## Server Configuration
 
 Remember that OAuth features of CAS require session affinity (and optionally session replication),

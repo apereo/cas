@@ -83,13 +83,6 @@ public class CookieProperties implements Serializable {
     private int maxAge = -1;
 
     /**
-     * When generating cookie values, determine whether the value
-     * should be compounded and signed with the properties of
-     * the current session, such as IP address, user-agent, etc.
-     */
-    private boolean pinToSession = true;
-
-    /**
      * If a cookie is only intended to be accessed in a first party context, the
      * developer has the option to apply one of settings
      * {@code SameSite=Lax} or {@code SameSite=Strict} or {@code SameSite=None} to prevent external access.

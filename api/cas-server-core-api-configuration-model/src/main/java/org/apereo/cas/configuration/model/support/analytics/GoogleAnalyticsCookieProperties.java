@@ -37,6 +37,5 @@ public class GoogleAnalyticsCookieProperties extends CookieProperties {
 
     public GoogleAnalyticsCookieProperties() {
         setName("CasGoogleAnalytics");
-        setPinToSession(false);
     }
 }

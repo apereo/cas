@@ -22,7 +22,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("TicketGrantingCookieProperties")
-public class TicketGrantingCookieProperties extends CookieProperties {
+public class TicketGrantingCookieProperties extends PinnableCookieProperties {
 
     private static final long serialVersionUID = 7392972818105536350L;
 

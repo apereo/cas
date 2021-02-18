@@ -1,7 +1,7 @@
 package org.apereo.cas.configuration.model.support.wsfed;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
-import org.apereo.cas.configuration.model.support.cookie.CookieProperties;
+import org.apereo.cas.configuration.model.support.cookie.PinnableCookieProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
@@ -22,7 +22,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @Accessors(chain = true)
 @Setter
 @JsonFilter("WsFederationDelegatedCookieProperties")
-public class WsFederationDelegatedCookieProperties extends CookieProperties {
+public class WsFederationDelegatedCookieProperties extends PinnableCookieProperties {
     private static final long serialVersionUID = 7392972818105536350L;
 
     /**
