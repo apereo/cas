@@ -37,6 +37,12 @@ public class OAuthProperties implements Serializable {
     private boolean replicateSessions;
 
     /**
+     * Control the CSRF cookie settings in OAUTH authentication flows.
+     */
+    @NestedConfigurationProperty
+    private CsrfCookieProperties csrfCookie = new CsrfCookieProperties();
+
+    /**
      * Crypto settings that sign/encrypt secrets.
      */
     @NestedConfigurationProperty
