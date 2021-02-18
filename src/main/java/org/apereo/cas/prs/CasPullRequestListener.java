@@ -51,7 +51,13 @@ public class CasPullRequestListener implements PullRequestListener {
                 if (!pr.isLabeledAs(CasLabels.LABEL_PENDING_NEEDS_TESTS)) {
                     repository.labelPullRequestAs(pr, CasLabels.LABEL_PENDING_NEEDS_TESTS);
                 }
-                repository.createStatusForFailure(pr, "Tests", "Please add tests to verify changes.");
+                repository.createStatusForFailure(pr, "Tests",
+                        "Make sure there are adequate unit tests that cover all changes/lines or "
+                        + "appropriate integration tests if you're change affects an external system, "
+                        + "or proper browser-tests if your changes affects UI interactions. "
+                        + "Make sure your tests do not affect test coverage in a negative way and make sure "
+                        + "all modified lines are correctly and sufficiently covered by your unit tests."
+                        + "Pull requests that lack sufficient tests will generally not be accepted.");
             } else {
                 if (pr.isLabeledAs(CasLabels.LABEL_PENDING_NEEDS_TESTS)) {
                     repository.removeLabelFrom(pr, CasLabels.LABEL_PENDING_NEEDS_TESTS);
@@ -76,6 +82,9 @@ public class CasPullRequestListener implements PullRequestListener {
                 && !file.getFilename().endsWith(".html")
                 && !file.getFilename().endsWith(".js")
                 && !file.getFilename().endsWith(".jpg")
+                && !file.getFilename().endsWith(".jpeg")
+                && !file.getFilename().endsWith(".sh")
+                && !file.getFilename().endsWith(".txt")
                 && !file.getFilename().endsWith(".md")
                 && !file.getFilename().endsWith(".gif")
                 && !file.getFilename().endsWith(".css"))
