@@ -10,6 +10,8 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.oauth.CsrfCookieProperties;
+import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
 import org.apereo.cas.pac4j.DistributedJEESessionStore;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
@@ -119,6 +121,7 @@ import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.credentials.extractor.BearerAuthExtractor;
 import org.pac4j.core.http.url.UrlResolver;
+import org.pac4j.core.matching.matcher.Matcher;
 import org.pac4j.core.matching.matcher.csrf.CsrfTokenGeneratorMatcher;
 import org.pac4j.core.matching.matcher.csrf.DefaultCsrfTokenGenerator;
 import org.pac4j.http.client.direct.DirectBasicAuthClient;
@@ -244,20 +247,29 @@ public class CasOAuth20Configuration {
         val clientList = oauthSecConfigClients();
         val config = new Config(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()), clientList);
         config.setSessionStore(oauthDistributedSessionStore());
-        val csrfMatcher = new CsrfTokenGeneratorMatcher(new DefaultCsrfTokenGenerator());
-        val maxAge = casProperties.getAuthn().getOauth().getCsrfCookie().getMaxAge();
-        if (maxAge >= 0) {
-            csrfMatcher.setMaxAge(maxAge);
-        }
-        csrfMatcher.setSameSitePolicy(casProperties.getAuthn().getOauth().getCsrfCookie().getSameSitePolicy());
-        csrfMatcher.setDomain(casProperties.getAuthn().getOauth().getCsrfCookie().getDomain());
-        csrfMatcher.setPath(casProperties.getAuthn().getOauth().getCsrfCookie().getPath());
-        csrfMatcher.setHttpOnly(casProperties.getAuthn().getOauth().getCsrfCookie().isHttpOnly());
-        csrfMatcher.setSecure(casProperties.getAuthn().getOauth().getCsrfCookie().isSecure());
-        config.setMatcher(csrfMatcher);
+        config.setMatcher(oauthSecCsrfTokenMatcher());
         Config.setProfileManagerFactory("CASOAuthSecurityProfileManager", (webContext, sessionStore) ->
             new OAuth20ClientIdAwareProfileManager(webContext, config.getSessionStore(), servicesManager.getObject()));
         return config;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "oauthSecCsrfTokenMatcher")
+    @RefreshScope
+    public Matcher oauthSecCsrfTokenMatcher() {
+        val csrfMatcher = new CsrfTokenGeneratorMatcher(new DefaultCsrfTokenGenerator());
+        val oauth = casProperties.getAuthn().getOauth();
+        val csrfCookie = oauth.getCsrfCookie();
+        val maxAge = csrfCookie.getMaxAge();
+        if (maxAge >= 0) {
+            csrfMatcher.setMaxAge(maxAge);
+        }
+        csrfMatcher.setSameSitePolicy(csrfCookie.getSameSitePolicy());
+        csrfMatcher.setDomain(csrfCookie.getDomain());
+        csrfMatcher.setPath(csrfCookie.getPath());
+        csrfMatcher.setHttpOnly(csrfCookie.isHttpOnly());
+        csrfMatcher.setSecure(csrfCookie.isSecure());
+        return csrfMatcher;
     }
 
     @Bean
