@@ -157,7 +157,7 @@ casServerContainer:
       # if nginx ingress controller is behind another proxy, it needs to be configured globally with the following settings in the ingress controller configmap
       #  use-forwarded-headers: "true"   # very important for CAS or any app that compares IP being used against IP that initiated sessions (session fixation)
       #  enable-underscores-in-headers: "true" # while you are at it, allow underscores in headers, can't recall if important for cas but no need to have nginx dropping your headers with underscores
-      cas.audit.alternateClientAddrHeaderName=X-Forwarded-For
+      cas.audit.engine.alternate-client-addr-header-name=X-Forwarded-For
       server.tomcat.remoteip.remote-ip-header=X-FORWARDED-FOR
 
       server.ssl.key-store=file:/etc/cas/thekeystore
