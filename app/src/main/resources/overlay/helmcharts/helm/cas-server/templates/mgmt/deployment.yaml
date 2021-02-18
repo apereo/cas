@@ -131,6 +131,10 @@ spec:
             - name: cas-server-keystore
               mountPath: {{ .Values.mgmtContainer.serverKeystoreMountPath }}
               subPath: {{ .Values.mgmtContainer.serverKeystoreSubPath }}
+            - name: 'POD_IP'
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
             {{- end }}
             {{- if .Values.mgmtContainer.extraVolumeMounts }}
             {{- include "cas-server.tplvalues.render" ( dict "value" .Values.mgmtContainer.extraVolumeMounts "context" $ ) | nindent 12 }}

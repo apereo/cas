@@ -88,6 +88,10 @@ spec:
               value: {{ .Values.bootAdminContainer.jvm.debugEnabled | quote }}
             - name: JAVA_DEBUG_SUSPEND
               value: {{ .Values.bootAdminContainer.jvm.debugSuspend | quote }}
+            - name: 'POD_IP'
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
             {{- if .Values.bootAdminContainer.extraEnvVars }}
             {{- include "cas-server.tplvalues.render" (dict "value" .Values.bootAdminContainer.extraEnvVars "context" $) | nindent 12 }}
             {{- end }}

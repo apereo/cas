@@ -207,6 +207,13 @@ casServerContainer:
       ---
       logging:
         config: 'file:/etc/cas/config/log4j2.xml'
+      cas:
+        server:
+          tomcat:
+            clustering:
+              enabled: true
+              clustering-type: 'CLOUD'
+              cloud-membership-provider: 'kubernetes'
       spring:
         security:
           user:
