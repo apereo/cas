@@ -29,6 +29,7 @@ import org.pac4j.core.exception.CredentialsException;
 import org.pac4j.core.profile.CommonProfile;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * Authenticator for client credentials authentication.
@@ -82,6 +83,9 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
             val profile = new CommonProfile();
             profile.setId(id);
             principal.getAttributes().forEach(profile::addAttribute);
+
+            val attributes = registeredService.getAttributeReleasePolicy().getAttributes(principal, service, registeredService);
+            profile.addAttributes((Map) attributes);
 
             credentials.setUserProfile(profile);
             LOGGER.debug("Authenticated user profile [{}]", profile);
