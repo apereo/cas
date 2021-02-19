@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.AuthenticationPolicyExecutionResultTests;
 import org.apereo.cas.authentication.AuthenticationPolicyTests;
 import org.apereo.cas.authentication.AuthenticationPostProcessorTests;
 import org.apereo.cas.authentication.AuthenticationPreProcessorTests;
-import org.apereo.cas.authentication.AuthenticationTransactionTests;
 import org.apereo.cas.authentication.PrincipalElectionStrategyTests;
 import org.apereo.cas.authentication.adaptive.UnauthorizedAuthenticationExceptionTests;
 import org.apereo.cas.authentication.principal.PersistentIdGeneratorTests;
@@ -34,8 +33,7 @@ import org.junit.runner.RunWith;
     PrincipalElectionStrategyTests.class,
     AuthenticationMetaDataPopulatorTests.class,
     AuthenticationPreProcessorTests.class,
-    AuthenticationPostProcessorTests.class,
-    AuthenticationTransactionTests.class
+    AuthenticationPostProcessorTests.class
 })
 @RunWith(JUnitPlatform.class)
 public class AllAuthenticationTestsSuite {

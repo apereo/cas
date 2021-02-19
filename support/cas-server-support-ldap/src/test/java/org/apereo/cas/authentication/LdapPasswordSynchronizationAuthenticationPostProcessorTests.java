@@ -49,6 +49,7 @@ public class LdapPasswordSynchronizationAuthenticationPostProcessorTests {
         };
         val credentials = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("admin", "password");
         assertTrue(sync.supports(credentials));
-        sync.process(CoreAuthenticationTestUtils.getAuthenticationBuilder(), DefaultAuthenticationTransaction.of(credentials));
+        sync.process(CoreAuthenticationTestUtils.getAuthenticationBuilder(), 
+            new DefaultAuthenticationTransactionFactory().newTransaction(credentials));
     }
 }

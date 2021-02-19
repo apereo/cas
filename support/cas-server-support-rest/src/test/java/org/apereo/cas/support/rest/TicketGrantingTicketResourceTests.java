@@ -6,7 +6,9 @@ import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.DefaultAuthenticationResultBuilderFactory;
 import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
+import org.apereo.cas.authentication.DefaultAuthenticationTransactionFactory;
 import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
 import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
@@ -74,7 +76,9 @@ public class TicketGrantingTicketResourceTests {
 
         this.ticketGrantingTicketResourceUnderTest = new TicketGrantingTicketResource(
             new DefaultAuthenticationSystemSupport(new DefaultAuthenticationTransactionManager(publisher, manager),
-                new DefaultPrincipalElectionStrategy()), new UsernamePasswordRestHttpRequestCredentialFactory(),
+                new DefaultPrincipalElectionStrategy(), new DefaultAuthenticationResultBuilderFactory(),
+                new DefaultAuthenticationTransactionFactory()),
+            new UsernamePasswordRestHttpRequestCredentialFactory(),
             casMock, new WebApplicationServiceFactory(), new DefaultTicketGrantingTicketResourceEntityResponseFactory(),
             new GenericWebApplicationContext());
 
