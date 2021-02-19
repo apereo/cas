@@ -5,7 +5,9 @@ import org.apereo.cas.authentication.DefaultAuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationManager;
 import org.apereo.cas.authentication.DefaultAuthenticationResult;
 import org.apereo.cas.authentication.DefaultAuthenticationResultBuilder;
+import org.apereo.cas.authentication.DefaultAuthenticationResultBuilderFactory;
 import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
+import org.apereo.cas.authentication.DefaultAuthenticationTransactionFactory;
 import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
 import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
@@ -86,7 +88,8 @@ public abstract class BaseActionTests {
         authenticationEventExecutionPlan.registerAuthenticationMetadataPopulator(new InweboAuthenticationDeviceMetadataPopulator());
         val authenticationManager = new DefaultAuthenticationManager(authenticationEventExecutionPlan, true, mock(ConfigurableApplicationContext.class));
         val authenticationTransactionManager = new DefaultAuthenticationTransactionManager(mock(ApplicationEventPublisher.class), authenticationManager);
-        val authenticationSystemSupport = new DefaultAuthenticationSystemSupport(authenticationTransactionManager, new DefaultPrincipalElectionStrategy());
+        val authenticationSystemSupport = new DefaultAuthenticationSystemSupport(authenticationTransactionManager, new DefaultPrincipalElectionStrategy(),
+            new DefaultAuthenticationResultBuilderFactory(), new DefaultAuthenticationTransactionFactory());
         val context = CasWebflowEventResolutionConfigurationContext.builder()
                 .authenticationSystemSupport(authenticationSystemSupport).build();
         resolver = new InweboMultifactorAuthenticationWebflowEventResolver(context);
