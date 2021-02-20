@@ -41,7 +41,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -70,7 +69,7 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
      */
     @SneakyThrows
     public UrlResourceMetadataResolver(final SamlIdPProperties samlIdPProperties,
-        final OpenSamlConfigBean configBean) {
+                                       final OpenSamlConfigBean configBean) {
         super(samlIdPProperties, configBean);
 
         val md = samlIdPProperties.getMetadata();
@@ -174,7 +173,7 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
      * @throws Exception the exception
      */
     protected AbstractMetadataResolver getMetadataResolverFromResponse(final HttpResponse response,
-        final File backupFile) throws Exception {
+                                                                       final File backupFile) throws Exception {
         val entity = response.getEntity();
         val result = IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8);
         val path = backupFile.toPath();
@@ -197,7 +196,7 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
      * @return the http response
      */
     protected HttpResponse fetchMetadata(final SamlRegisteredService service,
-        final String metadataLocation, final CriteriaSet criteriaSet, final File backupFile) {
+                                         final String metadataLocation, final CriteriaSet criteriaSet, final File backupFile) {
         LOGGER.debug("Fetching metadata from [{}]", metadataLocation);
         val exec = HttpUtils.HttpExecutionRequest.builder()
             .method(HttpMethod.GET)
@@ -227,7 +226,7 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
      * @throws IOException the io exception
      */
     protected File getMetadataBackupFile(final AbstractResource metadataResource,
-        final SamlRegisteredService service) throws IOException {
+                                         final SamlRegisteredService service) throws IOException {
 
         LOGGER.debug("Metadata backup directory is at [{}]", this.metadataBackupDirectory.getCanonicalPath());
         val metadataFileName = getBackupMetadataFilenamePrefix(metadataResource, service).concat(FILENAME_EXTENSION_XML);
@@ -253,10 +252,6 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
      */
     @SneakyThrows
     protected String getBackupMetadataFilenamePrefix(final AbstractResource metadataResource, final SamlRegisteredService service) {
-        val mdFileName = metadataResource.getFilename();
-        if (StringUtils.isBlank(mdFileName)) {
-            throw new FileNotFoundException("Unable to determine filename for " + metadataResource);
-        }
         val metadataLocation = SpringExpressionLanguageValueResolver.getInstance().resolve(service.getMetadataLocation());
         val fileName = SamlUtils.isDynamicMetadataQueryConfigured(metadataLocation)
             ? service.getServiceId()
