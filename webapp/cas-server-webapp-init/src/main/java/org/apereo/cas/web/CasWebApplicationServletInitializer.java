@@ -17,6 +17,7 @@ public class CasWebApplicationServletInitializer extends SpringBootServletInitia
     protected SpringApplicationBuilder configure(final SpringApplicationBuilder builder) {
         return builder
             .sources(CasWebApplication.class)
+            .applicationStartup(CasEmbeddedContainerUtils.getApplicationStartup())
             .banner(CasEmbeddedContainerUtils.getCasBannerInstance());
     }
 }

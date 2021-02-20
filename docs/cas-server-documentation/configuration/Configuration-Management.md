@@ -32,6 +32,18 @@ CAS may also be conditionally configured to report, as part of the
 banner, whether a newer CAS release is available for an upgrade.
 This check is off by default and may be enabled with a system property of `-DCAS_UPDATE_CHECK_ENABLED=true`.
 
+On startup, CAS will perform many tasks related to the application lifecycle, the beans lifecycle
+or even processing application events. Such events can be tracked at startup and collected
+for profiling purposes to have a better understanding of the application startup process.
+Startup event tracking can be controlled using a system property `-DCAS_APP_STARTUP`
+that can be assigned the following values:
+
+| Type                 | Description
+|----------------------|-------------------------------------------------------------------------------------------------------
+| `default`            | Default startup type which acts as a no-op.
+| `buffering`          | Record events into memory using a pre-defined capacity and expose them via the `startup` [actuator endpoint](../monitoring/Monitoring-Statistics.html).
+| `jfr`                | Add startup events to a Java Flight Recorder session for profiling applications and correlating their Spring context lifecycle.
+
 ## Overview
 
 CAS allows you to externalize your configuration so you can work with the same CAS instance in
