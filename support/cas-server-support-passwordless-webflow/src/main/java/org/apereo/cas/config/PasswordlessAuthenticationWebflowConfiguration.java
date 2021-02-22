@@ -38,11 +38,6 @@ import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.execution.RequestContext;
-
-import java.io.Serializable;
-import java.util.Set;
-import java.util.function.Function;
 
 /**
  * This is {@link PasswordlessAuthenticationWebflowConfiguration}.

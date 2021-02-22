@@ -28,6 +28,7 @@ import org.junit.runner.RunWith;
     DelegatedAuthenticationClientLogoutActionTests.class,
     DelegatedAuthenticationClientFinishLogoutActionTests.class,
     DelegatedClientWebflowManagerTests.class,
+    DelegatedAuthenticationClientRetryActionTests.class,
     DelegatedAuthenticationWebflowConfigurerTests.class,
     Saml2ClientMetadataControllerTests.class
 })
