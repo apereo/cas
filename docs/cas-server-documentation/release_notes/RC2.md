@@ -122,6 +122,8 @@ can now be signed using the `XMLSec` tool.
 - [SAML2 IdP metadata](../installation/Configuring-SAML2-DynamicMetadata.html) can now be signed.
 - Minor improvements to indexing operations for [MongoDb ticket registry](../ticketing/MongoDb-Ticket-Registry.html).
 - Additional support is built in to provide for Spring Boot's `startup` actuator endpoint.
+- In [delegated authentication](../integration/Delegate-Authentication.html) scenarios, CAS is now able to retry the authentication attempt
+using forceful authentication requests upon failed attempts.
 
 ## Library Upgrades
 
@@ -131,10 +133,16 @@ can now be signed using the `XMLSec` tool.
 - Google Maps
 - Couchbase Client
 - MariaDb Driver
+- PostgreSQL Driver
 - Spring Cloud
+- Spring Security
 - Amazon SDK
 - Spring
 - JavaParser
 - Pac4j
 - Hibernate
 - Spring Boot
+- Caffein
+- ByteBuddy
+- SnakeYAML
+- SpotBugs
