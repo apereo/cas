@@ -363,7 +363,6 @@ natively supported by CAS, the following module is required in the overlay to in
 such as Python, etc.
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-script-engines" %}
- 
 
 The service definition then may be designed as:
 
@@ -425,6 +424,12 @@ has access to the collection of resolved `attributes` as well as a `logger` obje
   }
 }
 ```
+    
+### Attribute Repository Filtering
+
+Attribute release policies can be assigned a `principalAttributesRepository` to consult attribute sources 
+defined and controlled by [Person Directory](Attribute-Resolution.html) attribute repositories
+to fetch, resolve, cache and release attributes. To learn more about this topic, please [see this guide](Attribute-Release-Caching.html).
 
 ### Chaining Policies
 
