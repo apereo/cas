@@ -1,7 +1,7 @@
 package org.apereo.cas.web;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.web.view.DynamicHtmlView;
 
 import lombok.AccessLevel;
@@ -17,6 +17,7 @@ import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.exception.http.WithContentAction;
 import org.pac4j.core.exception.http.WithLocationAction;
+import org.pac4j.core.redirect.RedirectionActionBuilder;
 import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.servlet.View;
@@ -78,13 +79,20 @@ public abstract class BaseDelegatedAuthenticationController {
      * @return the resulting view
      */
     @SneakyThrows
-    protected View getResultingView(final IndirectClient client, final JEEContext webContext, final Ticket ticket) {
+    protected View getResultingView(final IndirectClient client, final JEEContext webContext, final TransientSessionTicket ticket) {
         client.init();
+
+        val properties = ticket.getProperties();
+        if (properties.containsKey(RedirectionActionBuilder.ATTRIBUTE_FORCE_AUTHN)) {
+            webContext.setRequestAttribute(RedirectionActionBuilder.ATTRIBUTE_FORCE_AUTHN, true);
+        }
+        if (properties.containsKey(RedirectionActionBuilder.ATTRIBUTE_PASSIVE)) {
+            webContext.setRequestAttribute(RedirectionActionBuilder.ATTRIBUTE_PASSIVE, true);
+        }
         val actionResult = client.getRedirectionActionBuilder().getRedirectionAction(webContext, this.sessionStore);
         if (actionResult.isPresent()) {
             val action = actionResult.get();
             LOGGER.debug("Determined final redirect action for client [{}] as [{}]", client, action);
-
             if (action instanceof WithLocationAction) {
                 val foundAction = WithLocationAction.class.cast(action);
                 val builder = new URIBuilder(foundAction.getLocation());
