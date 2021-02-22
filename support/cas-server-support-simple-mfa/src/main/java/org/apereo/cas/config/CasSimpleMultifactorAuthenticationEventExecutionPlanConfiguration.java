@@ -67,6 +67,7 @@ public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "casSimpleMultifactorAuthenticationProvider")
     public MultifactorAuthenticationProvider casSimpleMultifactorAuthenticationProvider() {
         val simple = casProperties.getAuthn().getMfa().getSimple();
         val p = new CasSimpleMultifactorAuthenticationProvider();

@@ -77,7 +77,7 @@ public class DelegatedClientAuthenticationConfigurationContext {
 
     private final List<ArgumentExtractor> argumentExtractors;
 
-    private final Function<RequestContext, Set<DelegatedClientIdentityProviderConfiguration>> delegatedClientIdentityProvidersFunction;
+    private final DelegatedClientIdentityProviderConfigurationProducer delegatedClientIdentityProvidersProducer;
 
     private final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
 

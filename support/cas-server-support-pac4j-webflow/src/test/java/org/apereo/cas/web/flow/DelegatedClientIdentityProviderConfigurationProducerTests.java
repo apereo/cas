@@ -6,7 +6,6 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.MockServletContext;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
-import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -18,17 +17,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 import java.util.List;
-import java.util.Set;
-import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link DelegatedClientIdentityProviderConfigurationFunctionTests}.
+ * This is {@link DelegatedClientIdentityProviderConfigurationProducerTests}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
@@ -36,10 +32,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes =
     BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
 @Tag("Webflow")
-public class DelegatedClientIdentityProviderConfigurationFunctionTests {
+public class DelegatedClientIdentityProviderConfigurationProducerTests {
     @Autowired
-    @Qualifier("delegatedClientIdentityProviderConfigurationFunction")
-    private Function<RequestContext, Set<DelegatedClientIdentityProviderConfiguration>> function;
+    @Qualifier("delegatedClientIdentityProviderConfigurationProducer")
+    private DelegatedClientIdentityProviderConfigurationProducer producer;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -59,7 +55,7 @@ public class DelegatedClientIdentityProviderConfigurationFunctionTests {
         registeredService.setAccessStrategy(accessStrategy);
         servicesManager.save(registeredService);
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService("https://delegated2.example.org"));
-        assertNotNull(function.apply(context));
+        assertNotNull(producer.produce(context));
         assertNotNull(WebUtils.getDelegatedAuthenticationProviderConfigurations(context));
         assertNotNull(WebUtils.getDelegatedAuthenticationProviderPrimary(context));
     }
@@ -78,7 +74,7 @@ public class DelegatedClientIdentityProviderConfigurationFunctionTests {
         registeredService.setAccessStrategy(accessStrategy);
         servicesManager.save(registeredService);
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService("https://delegated.example.org"));
-        assertNotNull(function.apply(context));
+        assertNotNull(producer.produce(context));
         assertNotNull(WebUtils.getDelegatedAuthenticationProviderConfigurations(context));
         assertNotNull(WebUtils.getDelegatedAuthenticationProviderPrimary(context));
     }
