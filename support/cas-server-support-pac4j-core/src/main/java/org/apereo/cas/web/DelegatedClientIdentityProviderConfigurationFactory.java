@@ -11,9 +11,9 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.IndirectClient;
+import org.pac4j.core.context.WebContext;
 import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.web.util.UriComponentsBuilder;
-import org.springframework.webflow.execution.RequestContext;
 
 import java.util.HashMap;
 import java.util.Optional;
@@ -37,7 +37,7 @@ public class DelegatedClientIdentityProviderConfigurationFactory {
 
     private final IndirectClient client;
 
-    private final RequestContext requestContext;
+    private final WebContext webContext;
 
     private final WebApplicationService service;
 
@@ -57,7 +57,7 @@ public class DelegatedClientIdentityProviderConfigurationFactory {
             .queryParam(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, name);
         val queryParams = new HashMap<String, String>();
 
-        LOGGER.debug("Request parameters are [{}]", requestContext.getRequestParameters());
+        LOGGER.debug("Request parameters are [{}]", webContext.getRequestParameters());
         if (service != null) {
             val sourceParam = service.getSource();
             val serviceParam = service.getOriginalUrl();
@@ -68,30 +68,10 @@ public class DelegatedClientIdentityProviderConfigurationFactory {
             }
         }
 
-        val methodParam = requestContext.getRequestParameters().get(CasProtocolConstants.PARAMETER_METHOD);
-        if (StringUtils.isNotBlank(methodParam)) {
-            LOGGER.debug("Processing method parameter [{}] with value [{}]",
-                CasProtocolConstants.PARAMETER_METHOD, methodParam);
-            uriBuilder.queryParam(CasProtocolConstants.PARAMETER_METHOD, "{method}");
-            queryParams.put("method", methodParam);
-        }
+        checkForMethodParameter(uriBuilder, queryParams);
+        checkForLocalParameter(uriBuilder, queryParams);
+        checkForThemeParameter(uriBuilder, queryParams);
 
-        val localProps = casProperties.getLocale();
-        LOGGER.debug("Processing locale parameter [{}]", localProps.getParamName());
-        val localeParam = requestContext.getRequestParameters().get(localProps.getParamName());
-        if (StringUtils.isNotBlank(localeParam)) {
-            LOGGER.debug("Processing locale parameter [{}] with value [{}]",
-                localProps.getParamName(), localeParam);
-            uriBuilder.queryParam(localProps.getParamName(), "{locale}");
-            queryParams.put("locale", localeParam);
-        }
-        val themeParam = requestContext.getRequestParameters().get(casProperties.getTheme().getParamName());
-        if (StringUtils.isNotBlank(themeParam)) {
-            LOGGER.debug("Processing theme parameter [{}] with value [{}]",
-                casProperties.getTheme().getParamName(), themeParam);
-            uriBuilder.queryParam(casProperties.getTheme().getParamName(), "{theme}");
-            queryParams.put("theme", themeParam);
-        }
         val redirectUrl = uriBuilder.build(queryParams).toString();
         LOGGER.debug("Final redirect url is [{}]", redirectUrl);
 
@@ -99,6 +79,53 @@ public class DelegatedClientIdentityProviderConfigurationFactory {
             .getOrDefault(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT, Boolean.FALSE);
         val p = new DelegatedClientIdentityProviderConfiguration(name, redirectUrl, type, getCssClass(client), autoRedirect);
         return Optional.of(p);
+    }
+
+    /**
+     * Check for theme parameter.
+     *
+     * @param uriBuilder  the uri builder
+     * @param queryParams the query params
+     */
+    protected void checkForThemeParameter(final UriComponentsBuilder uriBuilder, final HashMap<String, String> queryParams) {
+        webContext.getRequestParameter(casProperties.getTheme().getParamName()).ifPresent(themeParam -> {
+            LOGGER.debug("Processing theme parameter [{}] with value [{}]",
+                casProperties.getTheme().getParamName(), themeParam);
+            uriBuilder.queryParam(casProperties.getTheme().getParamName(), "{theme}");
+            queryParams.put("theme", themeParam);
+        });
+    }
+
+    /**
+     * Check for local parameter.
+     *
+     * @param uriBuilder  the uri builder
+     * @param queryParams the query params
+     */
+    protected void checkForLocalParameter(final UriComponentsBuilder uriBuilder, final HashMap<String, String> queryParams) {
+        val localProps = casProperties.getLocale();
+        LOGGER.debug("Processing locale parameter [{}]", localProps.getParamName());
+        webContext.getRequestParameter(localProps.getParamName()).ifPresent(localeParam -> {
+            LOGGER.debug("Processing locale parameter [{}] with value [{}]",
+                localProps.getParamName(), localeParam);
+            uriBuilder.queryParam(localProps.getParamName(), "{locale}");
+            queryParams.put("locale", localeParam);
+        });
+    }
+
+    /**
+     * Check for method parameter.
+     *
+     * @param uriBuilder  the uri builder
+     * @param queryParams the query params
+     */
+    protected void checkForMethodParameter(final UriComponentsBuilder uriBuilder, final HashMap<String, String> queryParams) {
+        webContext.getRequestParameter(CasProtocolConstants.PARAMETER_METHOD).ifPresent(methodParam -> {
+            LOGGER.debug("Processing method parameter [{}] with value [{}]",
+                CasProtocolConstants.PARAMETER_METHOD, methodParam);
+            uriBuilder.queryParam(CasProtocolConstants.PARAMETER_METHOD, "{method}");
+            queryParams.put("method", methodParam);
+        });
     }
 
     /**

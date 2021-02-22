@@ -4,6 +4,7 @@ import org.apereo.cas.web.DefaultDelegatedAuthenticationNavigationControllerTest
 import org.apereo.cas.web.flow.DelegatedAuthenticationClientFinishLogoutActionTests;
 import org.apereo.cas.web.flow.DelegatedAuthenticationClientLogoutActionTests;
 import org.apereo.cas.web.flow.DelegatedAuthenticationErrorViewResolverTests;
+import org.apereo.cas.web.flow.DelegatedAuthenticationWebflowConfigurerTests;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationActionTests;
 import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationProducerTests;
 import org.apereo.cas.web.flow.DelegatedClientWebflowManagerTests;
@@ -27,6 +28,7 @@ import org.junit.runner.RunWith;
     DelegatedAuthenticationClientLogoutActionTests.class,
     DelegatedAuthenticationClientFinishLogoutActionTests.class,
     DelegatedClientWebflowManagerTests.class,
+    DelegatedAuthenticationWebflowConfigurerTests.class,
     Saml2ClientMetadataControllerTests.class
 })
 @RunWith(JUnitPlatform.class)

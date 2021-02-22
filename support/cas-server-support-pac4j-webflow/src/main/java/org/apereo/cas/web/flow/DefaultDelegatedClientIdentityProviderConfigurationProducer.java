@@ -119,13 +119,17 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
     @Override
     public Optional<DelegatedClientIdentityProviderConfiguration> produce(final RequestContext requestContext,
                                                                           final IndirectClient client) {
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
+        val webContext = new JEEContext(request, response);
+
         val currentService = WebUtils.getService(requestContext);
         val service = authenticationRequestServiceSelectionStrategies.resolveService(currentService, WebApplicationService.class);
         LOGGER.debug("Initializing client [{}] with request parameters [{}]", client, requestContext.getRequestParameters());
         client.init();
         return DelegatedClientIdentityProviderConfigurationFactory.builder()
             .client(client)
-            .requestContext(requestContext)
+            .webContext(webContext)
             .service(service)
             .casProperties(casProperties)
             .build()
