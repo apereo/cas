@@ -11,9 +11,9 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.IndirectClient;
-import org.pac4j.core.context.WebContext;
 import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.webflow.execution.RequestContext;
 
 import java.util.HashMap;
 import java.util.Optional;
@@ -37,7 +37,7 @@ public class DelegatedClientIdentityProviderConfigurationFactory {
 
     private final IndirectClient client;
 
-    private final WebContext webContext;
+    private final RequestContext requestContext;
 
     private final WebApplicationService service;
 
@@ -57,7 +57,7 @@ public class DelegatedClientIdentityProviderConfigurationFactory {
             .queryParam(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, name);
         val queryParams = new HashMap<String, String>();
 
-        LOGGER.debug("Request parameters are [{}]", webContext.getRequestParameters());
+        LOGGER.debug("Request parameters are [{}]", requestContext.getRequestParameters());
         if (service != null) {
             val sourceParam = service.getSource();
             val serviceParam = service.getOriginalUrl();
@@ -68,27 +68,24 @@ public class DelegatedClientIdentityProviderConfigurationFactory {
             }
         }
 
-        val methodParam = webContext.getRequestParameter(CasProtocolConstants.PARAMETER_METHOD)
-            .map(String::valueOf).orElse(StringUtils.EMPTY);
+        val methodParam = requestContext.getRequestParameters().get(CasProtocolConstants.PARAMETER_METHOD);
         if (StringUtils.isNotBlank(methodParam)) {
             LOGGER.debug("Processing method parameter [{}] with value [{}]",
                 CasProtocolConstants.PARAMETER_METHOD, methodParam);
             uriBuilder.queryParam(CasProtocolConstants.PARAMETER_METHOD, "{method}");
             queryParams.put("method", methodParam);
         }
-        
+
         val localProps = casProperties.getLocale();
         LOGGER.debug("Processing locale parameter [{}]", localProps.getParamName());
-        val localeParam = webContext.getRequestParameter(localProps.getParamName())
-            .map(String::valueOf).orElseGet(localProps::getDefaultValue);
+        val localeParam = requestContext.getRequestParameters().get(localProps.getParamName());
         if (StringUtils.isNotBlank(localeParam)) {
             LOGGER.debug("Processing locale parameter [{}] with value [{}]",
                 localProps.getParamName(), localeParam);
             uriBuilder.queryParam(localProps.getParamName(), "{locale}");
             queryParams.put("locale", localeParam);
         }
-        val themeParam = webContext.getRequestParameter(casProperties.getTheme().getParamName())
-            .map(String::valueOf).orElse(StringUtils.EMPTY);
+        val themeParam = requestContext.getRequestParameters().get(casProperties.getTheme().getParamName());
         if (StringUtils.isNotBlank(themeParam)) {
             LOGGER.debug("Processing theme parameter [{}] with value [{}]",
                 casProperties.getTheme().getParamName(), themeParam);
@@ -97,7 +94,7 @@ public class DelegatedClientIdentityProviderConfigurationFactory {
         }
         val redirectUrl = uriBuilder.build(queryParams).toString();
         LOGGER.debug("Final redirect url is [{}]", redirectUrl);
-        
+
         val autoRedirect = (Boolean) client.getCustomProperties()
             .getOrDefault(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT, Boolean.FALSE);
         val p = new DelegatedClientIdentityProviderConfiguration(name, redirectUrl, type, getCssClass(client), autoRedirect);

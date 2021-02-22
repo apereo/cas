@@ -82,6 +82,11 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_RESUME = "resume";
 
     /**
+     * Transition id `retry`.
+     */
+    String TRANSITION_ID_RETRY = "retry";
+
+    /**
      * The transition state 'gateway'.
      */
     String TRANSITION_ID_GATEWAY = "gateway";
@@ -624,6 +629,11 @@ public interface CasWebflowConstants {
      */
     String STATE_ID_PASSWORD_RESET_ERROR_VIEW = "passwordResetErrorView";
 
+    /**
+     * Action id `delegatedAuthenticationClientRetry`.
+     */
+    String STATE_ID_DELEGATED_AUTHENTICATION_CLIENT_RETRY = "delegatedAuthenticationClientRetry";
+
     /*
      ****************************************
      * Views.
@@ -953,6 +963,11 @@ public interface CasWebflowConstants {
      * Action id `delegatedAuthenticationClientFinishLogoutAction`.
      */
     String ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_FINISH_LOGOUT = "delegatedAuthenticationClientFinishLogoutAction";
+
+    /**
+     * Action id `delegatedAuthenticationClientFinishLogoutAction`.
+     */
+    String ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_RETRY = "delegatedAuthenticationClientRetryAction";
 
     /**
      * Action id `renewAuthenticationRequestCheckAction`.
