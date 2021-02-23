@@ -26,5 +26,15 @@ dependencies {
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":support:cas-server-support-person-directory")
+}
 
+configurations.all {
+    resolutionStrategy {
+        eachDependency { DependencyResolveDetails details ->
+            def requested = details.requested
+            if (requested.group == "com.github.ben-manes.caffeine")  {
+                details.useVersion("2.9.0")
+            }
+        }
+    }
 }
