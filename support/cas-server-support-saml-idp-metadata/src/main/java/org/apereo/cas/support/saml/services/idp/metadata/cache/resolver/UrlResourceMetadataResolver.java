@@ -196,7 +196,8 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
      * @return the http response
      */
     protected HttpResponse fetchMetadata(final SamlRegisteredService service,
-                                         final String metadataLocation, final CriteriaSet criteriaSet, final File backupFile) {
+                                         final String metadataLocation,
+                                         final CriteriaSet criteriaSet, final File backupFile) {
         LOGGER.debug("Fetching metadata from [{}]", metadataLocation);
         val exec = HttpUtils.HttpExecutionRequest.builder()
             .method(HttpMethod.GET)
