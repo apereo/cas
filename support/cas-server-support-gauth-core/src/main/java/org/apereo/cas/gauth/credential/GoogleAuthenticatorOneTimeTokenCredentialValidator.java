@@ -93,7 +93,11 @@ public class GoogleAuthenticatorOneTimeTokenCredentialValidator implements
                 credentialRepository.update(authzAccount);
             }
         }
-        return new GoogleAuthenticatorToken(otp, uid);
+        if (authzAccount != null) {
+            return new GoogleAuthenticatorToken(otp, uid);
+        } else {
+            return null;
+        }
     }
 
     @Override
