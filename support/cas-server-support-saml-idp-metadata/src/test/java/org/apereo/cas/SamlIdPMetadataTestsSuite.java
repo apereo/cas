@@ -1,6 +1,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.support.saml.services.SamlIdPEntityIdAuthenticationServiceSelectionStrategyTests;
+import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceDefaultCachingMetadataResolverTests;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceMetadataResolverCacheLoaderTests;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.ClasspathResourceMetadataResolverTests;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.FileSystemResourceMetadataResolverTests;
@@ -27,6 +28,7 @@ import org.junit.runner.RunWith;
     SamlRegisteredServiceMetadataExpirationPolicyTests.class,
     GroovyResourceMetadataResolverTests.class,
     UrlResourceMetadataResolverTests.class,
+    SamlRegisteredServiceDefaultCachingMetadataResolverTests.class,
     SamlRegisteredServiceMetadataResolverCacheLoaderTests.class,
     FileSystemResourceMetadataResolverTests.class,
     JsonResourceMetadataResolverTests.class
