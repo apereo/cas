@@ -15,6 +15,13 @@
     <!-- Login form template begins here -->
     <div th:fragment="loginform" class="d-flex flex-column justify-content-between m-auto">
         <div th:if="${delegatedAuthenticationProviderPrimary == null}">
+            <div th:if="${!#strings.isEmpty(#themes.code('cas.hero-banner.file'))}">
+                <p>
+                    <img id="heroimg"
+                         th:title="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS')}"
+                         th:src="@{${#themes.code('cas.hero-banner.file')}}" />
+                </p>
+            </div>
             <div class="service-ui" th:replace="fragments/serviceui :: serviceUI">
                 <a href="fragments/serviceui.html">service ui fragment</a>
             </div>
