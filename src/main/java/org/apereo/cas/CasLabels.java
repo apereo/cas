@@ -45,7 +45,7 @@ public enum CasLabels {
     LABEL_DELEGATED_AUTHENTICATION_WS_FED("Delegated Authentication WS-FED", "adfs"),
     LABEL_DEPENDENCIES_MODULES("Dependencies & Modules", "renovatebot\\(deps\\)|gradle|dependency|bom|maven|dependencies|\\bversion\\b|upgrade|update.+to\\sv.+"),
     LABEL_DIGEST_AUTHENTICATION("Digest Authentication"),
-    LABEL_DOCUMENTATION("Documentation", "\\bdoc\\b|readme\\.md|docs|markdown|gh-pages|doc\\s+|documentations|\\[doc\\]"),
+    LABEL_DOCUMENTATION("Documentation", "\\.md|\\bdoc\\b|readme\\.md|docs|markdown|gh-pages|doc\\s+|documentations|\\[doc\\]"),
     LABEL_EHCACHE("EhCache", "ehcache"),
     LABEL_ELECTROFENCE_RISK_BASED_AUTHN("Electrofence Risk-based AuthN", "adaptive"),
     LABEL_EMAIL_SMS_NOTIFICATIONS("Email & SMS Notifications", "nexmo|mail|twilio|email|sms"),
