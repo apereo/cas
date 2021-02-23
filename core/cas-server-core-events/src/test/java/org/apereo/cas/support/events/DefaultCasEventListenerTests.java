@@ -66,6 +66,16 @@ public class DefaultCasEventListenerTests {
     }
 
     @Test
+    public void verifyCasAuthenticationWithNoClientInfo() {
+        ClientInfoHolder.setClientInfo(null);
+        val event = new CasAuthenticationTransactionFailureEvent(this,
+            CollectionUtils.wrap("error", new FailedLoginException()),
+            CollectionUtils.wrap(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
+        applicationContext.publishEvent(event);
+        assertFalse(casEventRepository.load().isEmpty());
+    }
+
+    @Test
     public void verifyCasAuthenticationTransactionFailureEvent() {
         val event = new CasAuthenticationTransactionFailureEvent(this,
             CollectionUtils.wrap("error", new FailedLoginException()),
