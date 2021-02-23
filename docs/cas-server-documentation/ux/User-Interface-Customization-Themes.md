@@ -45,6 +45,9 @@ cas.standard.js.file=/themes/[theme_name]/js/cas.js
 # Theme name used in various titles/captions
 # cas.theme.name=Example Theme
 
+# Whether password management/reset links should be displayed
+# cas.pm-links.enabled=true
+
 # Path to theme favicon file.
 # cas.favicon.file=/themes/example/images/favicon.ico
 
