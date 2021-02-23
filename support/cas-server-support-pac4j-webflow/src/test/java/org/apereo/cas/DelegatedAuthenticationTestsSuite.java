@@ -3,6 +3,7 @@ package org.apereo.cas;
 import org.apereo.cas.web.DefaultDelegatedAuthenticationNavigationControllerTests;
 import org.apereo.cas.web.flow.DelegatedAuthenticationClientFinishLogoutActionTests;
 import org.apereo.cas.web.flow.DelegatedAuthenticationClientLogoutActionTests;
+import org.apereo.cas.web.flow.DelegatedAuthenticationClientRetryActionTests;
 import org.apereo.cas.web.flow.DelegatedAuthenticationErrorViewResolverTests;
 import org.apereo.cas.web.flow.DelegatedAuthenticationWebflowConfigurerTests;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationActionTests;
