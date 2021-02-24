@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication.handler;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.DefaultAuthenticationTransaction;
+import org.apereo.cas.authentication.DefaultAuthenticationTransactionFactory;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.util.CollectionUtils;
@@ -25,7 +25,7 @@ public class ByCredentialTypeAuthenticationHandlerResolverTests {
     public void verifySupports() {
         val resolver = new ByCredentialTypeAuthenticationHandlerResolver(UsernamePasswordCredential.class);
         assertTrue(resolver.supports(CollectionUtils.wrapSet(new SimpleTestUsernamePasswordAuthenticationHandler()),
-            DefaultAuthenticationTransaction.of(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword())));
+            new DefaultAuthenticationTransactionFactory().newTransaction(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword())));
     }
 
     @Test
@@ -34,7 +34,7 @@ public class ByCredentialTypeAuthenticationHandlerResolverTests {
         val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         c.setSource("TestHandler");
         val handler = new SimpleTestUsernamePasswordAuthenticationHandler("TESTHANDLER");
-        val results = resolver.resolve(CollectionUtils.wrapSet(handler), DefaultAuthenticationTransaction.of(c));
+        val results = resolver.resolve(CollectionUtils.wrapSet(handler), new DefaultAuthenticationTransactionFactory().newTransaction(c));
         assertFalse(results.isEmpty());
     }
 }

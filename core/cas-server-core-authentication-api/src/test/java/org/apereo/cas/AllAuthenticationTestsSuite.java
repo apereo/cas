@@ -3,9 +3,11 @@ package org.apereo.cas;
 import org.apereo.cas.authentication.AcceptAnyAuthenticationPolicyFactoryTests;
 import org.apereo.cas.authentication.AuthenticationCredentialTypeMetaDataPopulatorTests;
 import org.apereo.cas.authentication.AuthenticationDateAttributeMetaDataPopulatorTests;
+import org.apereo.cas.authentication.AuthenticationTransactionTests;
 import org.apereo.cas.authentication.CredentialCustomFieldsAttributeMetaDataPopulatorTests;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilderTests;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResultTests;
+import org.apereo.cas.authentication.DefaultAuthenticationResultBuilderFactoryTests;
 import org.apereo.cas.authentication.DefaultAuthenticationResultBuilderTests;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlanTests;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategyTests;
@@ -71,6 +73,8 @@ import org.junit.runner.RunWith;
     PasswordExpiringWarningMessageDescriptorTests.class,
     OneTimeTokenAccountTests.class,
     CredentialTests.class,
+    AuthenticationTransactionTests.class,
+    DefaultAuthenticationResultBuilderFactoryTests.class,
     ExcludedAuthenticationHandlerAuthenticationPolicyTests.class,
     NullPrincipalTests.class,
     EchoingPrincipalResolverTests.class,

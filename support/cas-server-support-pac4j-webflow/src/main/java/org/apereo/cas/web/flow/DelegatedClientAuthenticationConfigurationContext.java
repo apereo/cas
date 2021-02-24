@@ -8,7 +8,6 @@ import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.validation.DelegatedAuthenticationAccessStrategyHelper;
-import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 import org.apereo.cas.web.DelegatedClientWebflowManager;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
@@ -21,11 +20,8 @@ import lombok.Setter;
 import lombok.ToString;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.session.SessionStore;
-import org.springframework.webflow.execution.RequestContext;
 
 import java.util.List;
-import java.util.Set;
-import java.util.function.Function;
 
 /**
  * This is {@link DelegatedClientAuthenticationConfigurationContext}.
@@ -77,7 +73,7 @@ public class DelegatedClientAuthenticationConfigurationContext {
 
     private final List<ArgumentExtractor> argumentExtractors;
 
-    private final Function<RequestContext, Set<DelegatedClientIdentityProviderConfiguration>> delegatedClientIdentityProvidersFunction;
+    private final DelegatedClientIdentityProviderConfigurationProducer delegatedClientIdentityProvidersProducer;
 
     private final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
 

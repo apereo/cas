@@ -22,18 +22,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.LinkedHashSet;
+import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 
 /**
- * This is {@link DelegatedClientIdentityProviderConfigurationFunction}.
+ * This is {@link DefaultDelegatedClientIdentityProviderConfigurationProducer}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
  */
 @Slf4j
 @RequiredArgsConstructor
-public class DelegatedClientIdentityProviderConfigurationFunction implements Function<RequestContext, Set<DelegatedClientIdentityProviderConfiguration>> {
+public class DefaultDelegatedClientIdentityProviderConfigurationProducer implements DelegatedClientIdentityProviderConfigurationProducer {
     /**
      * The Services manager.
      */
@@ -80,10 +80,9 @@ public class DelegatedClientIdentityProviderConfigurationFunction implements Fun
     }
 
     @Override
-    public Set<DelegatedClientIdentityProviderConfiguration> apply(final RequestContext context) {
+    public Set<DelegatedClientIdentityProviderConfiguration> produce(final RequestContext context) {
         val currentService = WebUtils.getService(context);
         val service = authenticationRequestServiceSelectionStrategies.resolveService(currentService, WebApplicationService.class);
-
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         val webContext = new JEEContext(request, response);
@@ -97,16 +96,7 @@ public class DelegatedClientIdentityProviderConfigurationFunction implements Fun
             .map(IndirectClient.class::cast)
             .forEach(client -> {
                 try {
-                    LOGGER.debug("Initializing client [{}] with request parameters [{}]", client, webContext.getRequestParameters());
-                    client.init();
-                    val provider = DelegatedClientIdentityProviderConfigurationFactory.builder()
-                        .client(client)
-                        .webContext(webContext)
-                        .service(currentService)
-                        .casProperties(casProperties)
-                        .build()
-                        .resolve();
-
+                    val provider = produce(context, client);
                     provider.ifPresent(p -> {
                         urls.add(p);
                         determineAutoRedirectPolicyForProvider(context, service, p);
@@ -124,5 +114,25 @@ public class DelegatedClientIdentityProviderConfigurationFunction implements Fun
                 + "Either no clients are configured, or the current access strategy rules prohibit CAS from using authentication providers");
         }
         return urls;
+    }
+
+    @Override
+    public Optional<DelegatedClientIdentityProviderConfiguration> produce(final RequestContext requestContext,
+                                                                          final IndirectClient client) {
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
+        val webContext = new JEEContext(request, response);
+
+        val currentService = WebUtils.getService(requestContext);
+        val service = authenticationRequestServiceSelectionStrategies.resolveService(currentService, WebApplicationService.class);
+        LOGGER.debug("Initializing client [{}] with request parameters [{}]", client, requestContext.getRequestParameters());
+        client.init();
+        return DelegatedClientIdentityProviderConfigurationFactory.builder()
+            .client(client)
+            .webContext(webContext)
+            .service(service)
+            .casProperties(casProperties)
+            .build()
+            .resolve();
     }
 }

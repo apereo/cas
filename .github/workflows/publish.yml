@@ -6,8 +6,6 @@ env:
   TERM: xterm-256color
   SONATYPE_USER: ${{ secrets.SONATYPE_USER }}
   SONATYPE_PWD: ${{ secrets.SONATYPE_PWD }}
-  DOCKER_USER: ${{ secrets.DOCKER_USER }}
-  DOCKER_PWD: ${{ secrets.DOCKER_PWD }}
   GH_PAGES_TOKEN: ${{ secrets.GH_PAGES_TOKEN }}
   GRADLE_BUILDCACHE_USER: ${{ secrets.GRADLE_BUILDCACHE_USER }}
   GRADLE_BUILDCACHE_PSW: ${{ secrets.GRADLE_BUILDCACHE_PSW }}
@@ -97,31 +95,6 @@ jobs:
         if: ${{ env.SONATYPE_USER != null && env.SONATYPE_PWD != null }}
         run: ./gradlew -DpublishSnapshots=true --build-cache --configure-on-demand --no-daemon --parallel -Dorg.gradle.internal.http.socketTimeout=180000 -Dorg.gradle.internal.http.connectionTimeout=180000 build publish -x test -x javadoc -x check -DsonatypeUsername="${SONATYPE_USER}" -DsonatypePassword="${SONATYPE_PWD}"
 
-##########################################################################
-
-  publish-docker-image:
-    runs-on: ubuntu-latest
-    needs: [publish-snapshots]
-    continue-on-error: false
-    if: ${{ github.event_name == 'push' && !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
-    steps:
-      - name: Prepare
-        run: |
-          mkdir work
-          cd work
-          curl https://casinit.herokuapp.com/starter.tgz | tar -xzvf -
-          chmod -R 777 ./*.sh
-          ls
-      - name: Build Docker Image
-        run: |
-          cd work
-          ./docker-build.sh latest
-      - name: Publish Docker Image
-        if: ${{ env.DOCKER_USER != null && env.DOCKER_PWD != null }}
-        run: |
-          cd work
-          ls
-          ./docker-push.sh "${DOCKER_USER}" "${DOCKER_PWD}" latest
           
 ##########################################################################
 

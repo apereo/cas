@@ -13,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.TestPropertySource;
 
 import java.util.Arrays;
 
@@ -29,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
     JpaServiceRegistryConfiguration.class
 })
 @Tag("SAML")
+@TestPropertySource(properties = "cas.service-registry.jpa.ddl-auto=create-drop")
 public class SamlRegisteredServiceJpaTests extends BaseSamlIdPConfigurationTests {
 
     @BeforeEach

@@ -1,16 +1,23 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache;
 
+import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import lombok.SneakyThrows;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
+import org.springframework.retry.RetryCallback;
+import org.springframework.retry.backoff.FixedBackOffPolicy;
+import org.springframework.retry.policy.SimpleRetryPolicy;
+import org.springframework.retry.support.RetryTemplate;
 
 import java.time.Duration;
+import java.util.Objects;
 
 /**
  * An adaptation of metadata resolver which handles the resolution of metadata resources
@@ -44,11 +51,51 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
         LOGGER.debug("Resolving metadata for [{}] at [{}].", service.getName(), service.getMetadataLocation());
         val cacheKey = new SamlRegisteredServiceCacheKey(service, criteriaSet);
         LOGGER.trace("Locating cached metadata resolver using key [{}] for service [{}]", cacheKey.getId(), service.getName());
-        val resolver = cache.get(cacheKey);
-        if (resolver == null) {
-            throw new IllegalArgumentException("Unable to determine and load metadata resolver");
-        }
-        LOGGER.debug("Loaded and cached SAML metadata [{}] from [{}]", resolver.getId(), service.getMetadataLocation());
+
+        val retryTemplate = new RetryTemplate();
+        retryTemplate.setBackOffPolicy(new FixedBackOffPolicy());
+        retryTemplate.setRetryPolicy(new SimpleRetryPolicy());
+        return retryTemplate.execute((RetryCallback<MetadataResolver, SamlException>) retryContext -> {
+            val resolver = locateAndCacheMetadataResolver(service, cacheKey);
+            if (!isMetadataResolverAcceptable(resolver, criteriaSet)) {
+                invalidate(service, criteriaSet);
+                LOGGER.warn("SAML metadata resolver [{}] obtained from the cache is "
+                        + "unable to produce/resolve valid metadata. Metadata resolver cache entry with key [{}] "
+                        + "has been invalidated. Retry attempt: [{}]",
+                    resolver.getId(), cacheKey.getId(), retryContext.getRetryCount());
+                throw new SamlException("Unable to locate a valid SAML metadata resolver for "
+                    + service.getMetadataLocation());
+            }
+            return resolver;
+        });
+    }
+
+    /**
+     * Is metadata resolver resolvable.
+     *
+     * @param metadataResolver the metadata resolver
+     * @param criteriaSet      the criteria set
+     * @return true/false
+     */
+    @SneakyThrows
+    protected boolean isMetadataResolverAcceptable(final MetadataResolver metadataResolver,
+                                                   final CriteriaSet criteriaSet) {
+        val md = metadataResolver.resolveSingle(criteriaSet);
+        return md != null && md.isValid();
+    }
+
+    /**
+     * Locate and cache metadata resolver.
+     *
+     * @param service  the service
+     * @param cacheKey the cache key
+     * @return the metadata resolver
+     */
+    protected MetadataResolver locateAndCacheMetadataResolver(final SamlRegisteredService service,
+                                                              final SamlRegisteredServiceCacheKey cacheKey) {
+        val resolver = Objects.requireNonNull(cache.get(cacheKey));
+        LOGGER.debug("Loaded and cached SAML metadata [{}] from [{}]",
+            resolver.getId(), service.getMetadataLocation());
         return resolver;
     }
 

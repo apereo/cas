@@ -4,7 +4,7 @@ import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.DefaultAuthenticationTransaction;
+import org.apereo.cas.authentication.DefaultAuthenticationTransactionFactory;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -143,7 +143,8 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
         getThrottle().preHandle(request, response, null);
 
         try {
-            val transaction = DefaultAuthenticationTransaction.of(CoreAuthenticationTestUtils.getService(), badCredentials(username));
+            val transaction = new DefaultAuthenticationTransactionFactory()
+                .newTransaction(CoreAuthenticationTestUtils.getService(), badCredentials(username));
             authenticationManager.authenticate(transaction);
         } catch (final AuthenticationException e) {
             getThrottle().postHandle(request, response, null, null);

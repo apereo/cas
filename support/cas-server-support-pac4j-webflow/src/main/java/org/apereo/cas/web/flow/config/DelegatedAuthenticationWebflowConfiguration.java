@@ -12,19 +12,20 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.DelegatedAuthenticationAccessStrategyHelper;
 import org.apereo.cas.web.DefaultDelegatedAuthenticationNavigationController;
-import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 import org.apereo.cas.web.DelegatedClientWebflowManager;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.DefaultDelegatedClientIdentityProviderConfigurationProducer;
 import org.apereo.cas.web.flow.DelegatedAuthenticationClientFinishLogoutAction;
 import org.apereo.cas.web.flow.DelegatedAuthenticationClientLogoutAction;
+import org.apereo.cas.web.flow.DelegatedAuthenticationClientRetryAction;
 import org.apereo.cas.web.flow.DelegatedAuthenticationErrorViewResolver;
 import org.apereo.cas.web.flow.DelegatedAuthenticationWebflowConfigurer;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationAction;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
-import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationFunction;
+import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationProducer;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
@@ -49,11 +50,8 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.execution.RequestContext;
 
 import java.util.List;
-import java.util.Set;
-import java.util.function.Function;
 
 /**
  * This is {@link DelegatedAuthenticationWebflowConfiguration}.
@@ -169,6 +167,13 @@ public class DelegatedAuthenticationWebflowConfiguration {
             delegatedClientDistributedSessionStore.getObject());
     }
 
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_RETRY)
+    @Bean
+    @RefreshScope
+    public Action delegatedAuthenticationClientRetryAction() {
+        return new DelegatedAuthenticationClientRetryAction(builtClients.getObject(), delegatedClientIdentityProviderConfigurationProducer());
+    }
+
     @RefreshScope
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION)
     @Bean
@@ -188,7 +193,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
             .singleSignOnParticipationStrategy(webflowSingleSignOnParticipationStrategy.getObject())
             .sessionStore(delegatedClientDistributedSessionStore.getObject())
             .argumentExtractors(CollectionUtils.wrap(argumentExtractor.getObject()))
-            .delegatedClientIdentityProvidersFunction(delegatedClientIdentityProviderConfigurationFunction())
+            .delegatedClientIdentityProvidersProducer(delegatedClientIdentityProviderConfigurationProducer())
             .cookieGenerator(delegatedClientDistributedSessionCookieGenerator.getObject())
             .delegatedAuthenticationAccessStrategyHelper(
                 new DelegatedAuthenticationAccessStrategyHelper(servicesManager.getObject(),
@@ -250,10 +255,11 @@ public class DelegatedAuthenticationWebflowConfiguration {
 
     @Bean
     @RefreshScope
-    public Function<RequestContext, Set<DelegatedClientIdentityProviderConfiguration>> delegatedClientIdentityProviderConfigurationFunction() {
+    @ConditionalOnMissingBean(name = "delegatedClientIdentityProviderConfigurationProducer")
+    public DelegatedClientIdentityProviderConfigurationProducer delegatedClientIdentityProviderConfigurationProducer() {
         val helper = new DelegatedAuthenticationAccessStrategyHelper(servicesManager.getObject(),
             delegatedAuthenticationPolicyAuditableEnforcer.getObject());
-        return new DelegatedClientIdentityProviderConfigurationFunction(servicesManager.getObject(),
+        return new DefaultDelegatedClientIdentityProviderConfigurationProducer(servicesManager.getObject(),
             authenticationRequestServiceSelectionStrategies.getObject(),
             builtClients.getObject(),
             helper,

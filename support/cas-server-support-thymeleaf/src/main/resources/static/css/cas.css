@@ -226,7 +226,12 @@ button.close {
 }
 
 .cas-footer {
-    font-size: 0.75rem;
+    background-color: var(--mdc-theme-primary, #6200ee);
+    color: whitesmoke;
+}
+
+.cas-footer a {
+    color: deepskyblue;
 }
 
 .cas-footer>* {
@@ -575,8 +580,6 @@ button.close {
 text-align: justify;
 }
 
-/* legacy */
-
 #duo_iframe {
     width: 100%;
     min-width: 304px;
@@ -589,4 +592,10 @@ text-align: justify;
 #serviceui {
     background-color: #17a3b844;
     border-radius: 4px;
+}
+
+#heroimg {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }

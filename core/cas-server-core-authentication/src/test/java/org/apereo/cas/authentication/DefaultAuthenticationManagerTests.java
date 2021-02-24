@@ -45,7 +45,7 @@ public class DefaultAuthenticationManagerTests {
 
     private static final String HANDLER_B = "HandlerB";
 
-    private final AuthenticationTransaction transaction = DefaultAuthenticationTransaction.of(CoreAuthenticationTestUtils.getService(),
+    private final AuthenticationTransaction transaction = new DefaultAuthenticationTransactionFactory().newTransaction(CoreAuthenticationTestUtils.getService(),
         mock(Credential.class, withSettings().serializable()),
         mock(Credential.class, withSettings().serializable()));
 
@@ -168,7 +168,7 @@ public class DefaultAuthenticationManagerTests {
         val manager = new DefaultAuthenticationManager(authenticationExecutionPlan,
             false, mock(ConfigurableApplicationContext.class));
 
-        val testTransaction = DefaultAuthenticationTransaction.of(CoreAuthenticationTestUtils.getService(),
+        val testTransaction = new DefaultAuthenticationTransactionFactory().newTransaction(CoreAuthenticationTestUtils.getService(),
             mock(Credential.class, withSettings().serializable()));
 
         assertThrows(AuthenticationException.class, () -> manager.authenticate(testTransaction));
@@ -211,7 +211,7 @@ public class DefaultAuthenticationManagerTests {
         val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
         val manager = new DefaultAuthenticationManager(authenticationExecutionPlan,
             true, mock(ConfigurableApplicationContext.class));
-        assertThrows(AuthenticationException.class, () -> manager.authenticate(DefaultAuthenticationTransaction.of()));
+        assertThrows(AuthenticationException.class, () -> manager.authenticate(new DefaultAuthenticationTransactionFactory().newTransaction()));
     }
 
     @Test
