@@ -176,10 +176,9 @@ public class SamlObjectSignatureValidator {
         while (!foundValidCredential && it.hasNext()) {
             val handler = new SAML2HTTPRedirectDeflateSignatureSecurityHandler();
             try {
-                val c = it.next();
-
-                val resolver = new StaticCredentialResolver(c);
-                val keyResolver = new StaticKeyInfoCredentialResolver(c);
+                val credential = it.next();
+                val resolver = new StaticCredentialResolver(credential);
+                val keyResolver = new StaticKeyInfoCredentialResolver(credential);
                 val trustEngine = new ExplicitKeySignatureTrustEngine(resolver, keyResolver);
                 validationParams.setSignatureTrustEngine(trustEngine);
                 secCtx.setSignatureValidationParameters(validationParams);

@@ -102,7 +102,7 @@ public class CasCoreWebConfiguration {
     @RefreshScope
     public FactoryBean<UrlValidator> urlValidator() {
         val httpClient = this.casProperties.getHttpClient();
-        val allowLocalLogoutUrls = httpClient.isAllowLocalLogoutUrls();
+        val allowLocalLogoutUrls = httpClient.isAllowLocalUrls();
         val authorityValidationRegEx = httpClient.getAuthorityValidationRegex();
         val authorityValidationRegExCaseSensitive = httpClient.isAuthorityValidationRegExCaseSensitive();
         return new SimpleUrlValidatorFactoryBean(allowLocalLogoutUrls, authorityValidationRegEx, authorityValidationRegExCaseSensitive);
