@@ -22,11 +22,13 @@ The following endpoints are secured and available by
 | `beans`                   | Displays all CAS application context **internal** Spring beans.
 | `conditions`              | Shows the conditions that were evaluated on configuration and auto-configuration classes and the reasons why they did or did not match.
 | `configprops`             | List of **internal** configuration properties.
+| `startup`                 | Analyze application startup events, beans and load and optionally report events to Java Flight Recorder.
 | `threaddump`              | Produces a thread dump for the running CAS server.
 | `env`                     | Produces a collection of all application properties.
 | `health`                  | Reports back general health status of the system, produced by various monitors.
 | `info`                    | CAS version information and other system traits.
 | `metrics`                 | Runtime metrics and stats.
+| `loggers`                 | Logger configuration and levels.
 | `httptrace`               | Displays HTTP trace information (by default, the last 100 HTTP request-response exchanges).
 | `mappings`                | Describes how requests are mapped and handled by CAS.
 | `scheduledtasks`          | Displays the scheduled tasks in CAS.

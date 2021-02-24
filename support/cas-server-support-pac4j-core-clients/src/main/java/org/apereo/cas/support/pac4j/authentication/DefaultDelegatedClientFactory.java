@@ -405,13 +405,11 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
                 && StringUtils.isNotBlank(saml.getServiceProviderEntityId())
                 && StringUtils.isNotBlank(saml.getServiceProviderMetadataPath()))
             .forEach(saml -> {
-                val cfg = new SAML2Configuration(saml.getKeystorePath(),
-                    saml.getKeystorePassword(),
+                val cfg = new SAML2Configuration(saml.getKeystorePath(), saml.getKeystorePassword(),
                     saml.getPrivateKeyPassword(), saml.getIdentityProviderMetadataPath());
-
                 cfg.setForceKeystoreGeneration(saml.isForceKeystoreGeneration());
                 cfg.setCertificateNameToAppend(StringUtils.defaultIfBlank(saml.getCertificateNameToAppend(), saml.getClientName()));
-                cfg.setMaximumAuthenticationLifetime(saml.getMaximumAuthenticationLifetime());
+                cfg.setMaximumAuthenticationLifetime(Beans.newDuration(saml.getMaximumAuthenticationLifetime()).toSeconds());
                 cfg.setServiceProviderEntityId(saml.getServiceProviderEntityId());
                 cfg.setServiceProviderMetadataPath(saml.getServiceProviderMetadataPath());
                 cfg.setAuthnRequestBindingType(saml.getDestinationBinding());
@@ -421,7 +419,7 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
                 cfg.setMetadataSigner(new XMLSecSAML2MetadataSigner(cfg));
                 cfg.setAuthnRequestSigned(saml.isSignAuthnRequest());
                 cfg.setSpLogoutRequestSigned(saml.isSignServiceProviderLogoutRequest());
-                cfg.setAcceptedSkew(saml.getAcceptedSkew());
+                cfg.setAcceptedSkew(Beans.newDuration(saml.getAcceptedSkew()).toSeconds());
 
                 if (StringUtils.isNotBlank(saml.getPrincipalIdAttribute())) {
                     cfg.setAttributeAsId(saml.getPrincipalIdAttribute());

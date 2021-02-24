@@ -92,7 +92,7 @@ public class SurrogateAuthenticationPostProcessorTests {
         val c = new SurrogateUsernamePasswordCredential();
         c.setUsername("casuser");
         c.setPassword("Mellon");
-        val transaction = DefaultAuthenticationTransaction.of(RegisteredServiceTestUtils.getService("service"), c);
+        val transaction = new DefaultAuthenticationTransactionFactory().newTransaction(RegisteredServiceTestUtils.getService("service"), c);
         val builder = mock(AuthenticationBuilder.class);
         val principal = new SurrogatePrincipal(CoreAuthenticationTestUtils.getPrincipal("casuser"),
             CoreAuthenticationTestUtils.getPrincipal("something"));
@@ -106,7 +106,7 @@ public class SurrogateAuthenticationPostProcessorTests {
         c.setUsername("casuser");
         c.setPassword("Mellon");
         c.setSurrogateUsername("cassurrogate");
-        val transaction = DefaultAuthenticationTransaction.of(RegisteredServiceTestUtils.getService("https://localhost"), c);
+        val transaction = new DefaultAuthenticationTransactionFactory().newTransaction(RegisteredServiceTestUtils.getService("https://localhost"), c);
         val builder = mock(AuthenticationBuilder.class);
         when(builder.build()).thenReturn(CoreAuthenticationTestUtils.getAuthentication("casuser"));
         assertDoesNotThrow(new Executable() {
@@ -119,7 +119,8 @@ public class SurrogateAuthenticationPostProcessorTests {
 
     @Test
     public void verifyNoPrimaryCredential() {
-        val transaction = DefaultAuthenticationTransaction.of(RegisteredServiceTestUtils.getService("service"), new Credential[0]);
+        val transaction = new DefaultAuthenticationTransactionFactory().newTransaction(
+            RegisteredServiceTestUtils.getService("service"), new Credential[0]);
         val builder = mock(AuthenticationBuilder.class);
         val principal = new SurrogatePrincipal(CoreAuthenticationTestUtils.getPrincipal("casuser"),
             CoreAuthenticationTestUtils.getPrincipal("something"));
@@ -136,7 +137,7 @@ public class SurrogateAuthenticationPostProcessorTests {
         val service = RegisteredServiceTestUtils.getService("service");
         servicesManager.save(RegisteredServiceTestUtils.getRegisteredService(service.getId(), Map.of()));
 
-        val transaction = DefaultAuthenticationTransaction.of(service, c);
+        val transaction = new DefaultAuthenticationTransactionFactory().newTransaction(service, c);
         val builder = mock(AuthenticationBuilder.class);
         val principal = new SurrogatePrincipal(CoreAuthenticationTestUtils.getPrincipal("casuser"),
             CoreAuthenticationTestUtils.getPrincipal("something"));
@@ -158,7 +159,7 @@ public class SurrogateAuthenticationPostProcessorTests {
         val service = RegisteredServiceTestUtils.getService("service");
         servicesManager.save(RegisteredServiceTestUtils.getRegisteredService(service.getId(), Map.of()));
 
-        val transaction = DefaultAuthenticationTransaction.of(service, c);
+        val transaction = new DefaultAuthenticationTransactionFactory().newTransaction(service, c);
         val builder = mock(AuthenticationBuilder.class);
         val principal = new SurrogatePrincipal(CoreAuthenticationTestUtils.getPrincipal("casuser"),
             CoreAuthenticationTestUtils.getPrincipal("something"));

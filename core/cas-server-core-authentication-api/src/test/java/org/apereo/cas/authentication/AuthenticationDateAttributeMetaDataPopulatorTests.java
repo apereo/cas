@@ -24,7 +24,7 @@ public class AuthenticationDateAttributeMetaDataPopulatorTests {
     public void verifyPopulator() {
         val credentials = new UsernamePasswordCredential();
         val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
-        this.populator.populateAttributes(builder, DefaultAuthenticationTransaction.of(credentials));
+        this.populator.populateAttributes(builder, new DefaultAuthenticationTransactionFactory().newTransaction(credentials));
         val auth = builder.build();
         assertNotNull(auth.getAttributes().get(AuthenticationManager.AUTHENTICATION_DATE_ATTRIBUTE));
     }

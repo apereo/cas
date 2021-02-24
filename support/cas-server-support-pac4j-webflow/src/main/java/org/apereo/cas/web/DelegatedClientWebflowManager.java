@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
-import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
@@ -23,6 +22,7 @@ import org.pac4j.core.client.Client;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.core.redirect.RedirectionActionBuilder;
 import org.pac4j.core.util.generator.StaticValueGenerator;
 import org.pac4j.oauth.client.OAuth10Client;
 import org.pac4j.oauth.client.OAuth20Client;
@@ -75,14 +75,17 @@ public class DelegatedClientWebflowManager {
      * @param client     the client
      * @return the ticket
      */
-    public Ticket store(final JEEContext webContext, final Client client) {
+    public TransientSessionTicket store(final JEEContext webContext, final Client client) {
         val properties = buildTicketProperties(webContext);
 
         val originalService = argumentExtractor.extractService(webContext.getNativeRequest());
         val service = authenticationRequestServiceSelectionStrategies.resolveService(originalService);
         properties.put(CasProtocolConstants.PARAMETER_SERVICE, originalService);
         properties.put(CasProtocolConstants.PARAMETER_TARGET_SERVICE, service);
-
+        webContext.getRequestParameter(RedirectionActionBuilder.ATTRIBUTE_FORCE_AUTHN)
+            .ifPresent(attr -> properties.put(RedirectionActionBuilder.ATTRIBUTE_FORCE_AUTHN, true));
+        webContext.getRequestParameter(RedirectionActionBuilder.ATTRIBUTE_PASSIVE)
+            .ifPresent(attr -> properties.put(RedirectionActionBuilder.ATTRIBUTE_PASSIVE, true));
         val transientFactory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
         val ticket = transientFactory.create(originalService, properties);
         val ticketId = ticket.getId();

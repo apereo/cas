@@ -13,8 +13,10 @@
 <main role="main" class="container mt-3 mb-3">
     <div layout:fragment="content" class="row">
         <div class="w-100 m-auto mdc-card p-4 text-justify">
-            
-            <h2 th:utext="#{screen.success.header}">Log In Successful</h2>
+            <h2>
+                <i class="mdi mdi-door-open"></i>
+                <span th:utext="#{screen.success.header}">Log In Successful</span>
+            </h2>
             <p th:utext="#{screen.success.success(${authentication.principal.id})}">You, <strong>username</strong>, have successfully logged into the Central Authentication Service.
                 However, you are seeing this page because CAS does not know about your target destination and how
                 to get you there. Examine the authentication request again and make sure a target service/application that is authorized and registered with CAS is specified.</p>
@@ -125,7 +127,17 @@
                                     <img th:src="${service.logo}" width="26px" height="26px" th:if="${service.logo}" />
                                 </td>
                                 <td class="mdc-data-table__cell">
-                                    <a th:title="${service.name}" th:href="${service.serviceId}" th:utext="${service.name}" />
+                                    <a th:id="${'service' + service.id}" th:title="${service.name}" th:alt="${service.description}" th:utext="${service.name}" />
+
+                                    <script th:inline="javascript">
+                                        /*<![CDATA[*/
+                                        let serviceId = /*[[${service.serviceId}]]*/ ;
+                                        if (isValidURL(serviceId)) {
+                                            let id = /*[[${'service' + service.id}]]*/ ;
+                                            $("a#" + id).attr("href", serviceId);
+                                        }
+                                        /*]]>*/
+                                    </script>
                                 </td>
                                 <td class="mdc-data-table__cell">
                                     <span th:utext="${service.description}"/>
@@ -143,12 +155,10 @@
             let div = document.querySelector('#divPrincipalAttributes');
             new mdc.dataTable.MDCDataTable(div);
 
-           
-            $(document).ready(function () {
+            $(function() {
                 tabify(mdc);
             });
-
-
+            
             function tabify(material) {
                 var elm = document.getElementById('attribute-tabs');
                 var tabs = material.tabBar.MDCTabBar.attachTo(elm);
@@ -163,7 +173,7 @@
 
                 return tabs;
             }
-               
+
         </script>
     </div>
 </main>

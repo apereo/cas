@@ -680,6 +680,12 @@ ext.libraries = [
                 dependencies.create("net.bytebuddy:byte-buddy:$bytebuddyVersion") {
                 },
                 dependencies.create("de.cronn:reflection-util:$reflectionUtilVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "net.bytebuddy", module: "byte-buddy")
+                    exclude(group: "com.google.code.findbugs", module: "jsr305")
+                },
+                dependencies.create("org.objenesis:objenesis:$objenesisVersion") {
+                    exclude(group: "org.mockito", module: "mockito-all")
                 }
         ],
         hibernatevalidator      : [

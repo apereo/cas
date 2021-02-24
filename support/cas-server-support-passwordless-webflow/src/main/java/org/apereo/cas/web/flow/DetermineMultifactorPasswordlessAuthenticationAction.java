@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
-import org.apereo.cas.authentication.DefaultAuthenticationResultBuilder;
 import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionStrategy;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -40,6 +39,7 @@ public class DetermineMultifactorPasswordlessAuthenticationAction extends Abstra
     private final AuthenticationSystemSupport authenticationSystemSupport;
 
     private final CasConfigurationProperties casProperties;
+
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
@@ -89,7 +89,7 @@ public class DetermineMultifactorPasswordlessAuthenticationAction extends Abstra
      */
     protected void populateContextWithAuthenticationResult(final RequestContext requestContext, final Authentication auth,
                                                            final WebApplicationService service) {
-        val builder = new DefaultAuthenticationResultBuilder();
+        val builder = authenticationSystemSupport.getAuthenticationResultBuilderFactory().newBuilder();
         val authenticationResult = builder
             .collect(auth)
             .build(this.authenticationSystemSupport.getPrincipalElectionStrategy(), service);

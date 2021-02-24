@@ -88,8 +88,8 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
         createDecisionState(flow, DECISION_STATE_CHECK_DELEGATED_AUTHN_FAILURE, "flowScope.unauthorizedRedirectUrl != null",
             CasWebflowConstants.STATE_ID_SERVICE_UNAUTHZ_CHECK, CasWebflowConstants.STATE_ID_STOP_WEBFLOW);
 
-        val state = createViewState(flow, CasWebflowConstants.STATE_ID_STOP_WEBFLOW, CasWebflowConstants.STATE_ID_PAC4J_STOP_WEBFLOW);
-        state.getEntryActionList().add(new AbstractAction() {
+        val stopWebflowState = createViewState(flow, CasWebflowConstants.STATE_ID_STOP_WEBFLOW, CasWebflowConstants.STATE_ID_PAC4J_STOP_WEBFLOW);
+        stopWebflowState.getEntryActionList().add(new AbstractAction() {
             @Override
             protected Event doExecute(final RequestContext requestContext) {
                 val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
@@ -99,5 +99,8 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
                 return null;
             }
         });
+        createTransitionForState(stopWebflowState, CasWebflowConstants.TRANSITION_ID_RETRY, CasWebflowConstants.STATE_ID_DELEGATED_AUTHENTICATION_CLIENT_RETRY);
+        val retryState = createEndState(flow, CasWebflowConstants.STATE_ID_DELEGATED_AUTHENTICATION_CLIENT_RETRY);
+        retryState.setFinalResponseAction(createEvaluateAction(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_RETRY));
     }
 }

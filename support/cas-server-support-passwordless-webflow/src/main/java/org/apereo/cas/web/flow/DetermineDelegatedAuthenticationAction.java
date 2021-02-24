@@ -17,7 +17,6 @@ import org.springframework.webflow.execution.RequestContext;
 import java.io.Serializable;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 
 /**
  * This is {@link DetermineDelegatedAuthenticationAction}.
@@ -30,7 +29,7 @@ import java.util.function.Function;
 public class DetermineDelegatedAuthenticationAction extends AbstractAction implements DisposableBean {
     private final CasConfigurationProperties casProperties;
 
-    private final Function<RequestContext, Set<? extends Serializable>> providerConfigurationFunction;
+    private final DelegatedClientIdentityProviderConfigurationProducer providerConfigurationProducer;
 
     private final transient WatchableGroovyScriptResource watchableScript;
 
@@ -47,7 +46,7 @@ public class DetermineDelegatedAuthenticationAction extends AbstractAction imple
             return error();
         }
 
-        val clients = providerConfigurationFunction.apply(requestContext);
+        val clients = providerConfigurationProducer.produce(requestContext);
         if (clients.isEmpty()) {
             LOGGER.debug("No delegated authentication providers are available or defined");
             return success();
