@@ -306,7 +306,7 @@ The `useFriendlyName` allows the filter to compare the requested attribute's fri
 
 ### SAML IdP Attribute Definition
 
-SAML attributes can be defined as part of the [Attribute Definition Store](../integration/Attribute-Definitions.md).
+SAML attributes can be defined as part of the [Attribute Definition Store](../integration/Attribute-Definitions.html).
 The `SamlIdPAtrributeDefinition` inherits all the properties form `DefaultAttributeDefinition` and adds two optional properties specific to 
 SAML attributes.  Defining an attribute with this definition does not prevent it from being released by other protocols.
 
