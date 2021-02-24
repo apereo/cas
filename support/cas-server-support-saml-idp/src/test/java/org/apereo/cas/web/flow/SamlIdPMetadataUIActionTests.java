@@ -60,19 +60,20 @@ public class SamlIdPMetadataUIActionTests extends BaseSamlIdPWebflowTests {
 
     @Test
     public void verifyNoEntity() throws Exception {
+        
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         RequestContextHolder.setRequestContext(context);
         ExternalContextHolder.setExternalContext(context.getExternalContext());
-
+                     
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         registeredService.setServiceId("something-else");
         val service = RegisteredServiceTestUtils.getService(registeredService.getServiceId());
         WebUtils.putServiceIntoFlowScope(context, service);
         servicesManager.save(registeredService);
-
+                                          
         val result = samlIdPMetadataUIParserAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());
         assertNull(WebUtils.getServiceUserInterfaceMetadata(context, SamlMetadataUIInfo.class));
