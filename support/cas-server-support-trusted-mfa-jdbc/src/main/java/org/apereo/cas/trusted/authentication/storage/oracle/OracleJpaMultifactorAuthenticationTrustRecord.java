@@ -24,18 +24,9 @@ import javax.persistence.Id;
  */
 @NoArgsConstructor
 @AttributeOverrides({
-        @AttributeOverride(
-            name = "recordKey",
-            column = @Column(columnDefinition = "varchar2(4000)")
-        ),
-        @AttributeOverride(
-            name = "name",
-            column = @Column(columnDefinition = "varchar2(4000)")
-        ),
-        @AttributeOverride(
-            name = "principal",
-            column = @Column(columnDefinition = "varchar2(2048)")
-        )
+    @AttributeOverride(name = "recordKey", column = @Column(columnDefinition = "varchar2(4000)")),
+    @AttributeOverride(name = "name", column = @Column(columnDefinition = "varchar2(4000)")),
+    @AttributeOverride(name = "principal", column = @Column(columnDefinition = "varchar2(2048)"))
 })
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Entity(name = "JpaMultifactorAuthenticationTrustRecord")

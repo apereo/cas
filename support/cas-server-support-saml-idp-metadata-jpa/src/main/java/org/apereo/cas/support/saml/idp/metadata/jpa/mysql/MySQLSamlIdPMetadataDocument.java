@@ -23,26 +23,11 @@ import javax.persistence.Table;
  */
 @NoArgsConstructor
 @AttributeOverrides({
-        @AttributeOverride(
-                name = "metadata",
-                column = @Column(columnDefinition = "text")
-        ),
-        @AttributeOverride(
-            name = "signingCertificate",
-            column = @Column(columnDefinition = "text")
-        ),
-        @AttributeOverride(
-            name = "signingKey",
-            column = @Column(columnDefinition = "text")
-        ),
-        @AttributeOverride(
-            name = "encryptionCertificate",
-            column = @Column(columnDefinition = "text")
-        ),
-        @AttributeOverride(
-            name = "encryptionKey",
-            column = @Column(columnDefinition = "text")
-        )
+    @AttributeOverride(name = "metadata", column = @Column(columnDefinition = "text")),
+    @AttributeOverride(name = "signingCertificate", column = @Column(columnDefinition = "text")),
+    @AttributeOverride(name = "signingKey", column = @Column(columnDefinition = "text")),
+    @AttributeOverride(name = "encryptionCertificate", column = @Column(columnDefinition = "text")),
+    @AttributeOverride(name = "encryptionKey", column = @Column(columnDefinition = "text"))
 })
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Entity(name = "SamlIdPMetadataDocument")

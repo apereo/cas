@@ -57,31 +57,17 @@ The following endpoints are provided by CAS:
 | Endpoint                 | Description
 |--------------------------|------------------------------------------------
 | `events`                 | Provides a JSON representation of all CAS recorded events.
+  
+## Storage
 
-## Configuration
+The following options may be used to store events in CAS.
 
-The following storage backends are available for consumption of events.
-
-### MongoDb
-
-Please [see this guide](Configuring-Authentication-Events-MongoDb.html) for more info.
-
-### DynamoDb
-
-Please [see this guide](Configuring-Authentication-Events-DynamoDb.html) for more info.
-
-### CouchDb
-
-Please [see this guide](Configuring-Authentication-Events-CouchDb.html) for more info.
-
-### JPA
-
-Please [see this guide](Configuring-Authentication-Events-JPA.html) for more info.
-
-### InfluxDb
-
-Please [see this guide](Configuring-Authentication-Events-InfluxDb.html) for more info.
-
-### Memory
-
-Please [see this guide](Configuring-Authentication-Events-Memory.html) for more info.
+| Storage          | Description                                           
+|-------------------------------------------------------------------------
+| MongoDb           | [See this guide](Configuring-Authentication-Events-MongoDb.html).   
+| DynamoDb          | [See this guide](Configuring-Authentication-Events-DynamoDb.html).   
+| Redis             | [See this guide](Configuring-Authentication-Events-Redis.html).   
+| CouchDb           | [See this guide](Configuring-Authentication-Events-CouchDb.html).   
+| JPA               | [See this guide](Configuring-Authentication-Events-JPA.html).   
+| InfluxDb          | [See this guide](Configuring-Authentication-Events-InfluxDb.html).   
+| Memory            | [See this guide](Configuring-Authentication-Events-Memory.html).   
