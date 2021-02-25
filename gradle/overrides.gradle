@@ -5,8 +5,8 @@ configurations.all {
         }
         preferProjectModules()
 
-        cacheDynamicVersionsFor 5, 'days'
-        cacheChangingModulesFor 5, 'days'
+        cacheDynamicVersionsFor 0, 'days'
+        cacheChangingModulesFor 0, 'days'
 
         def dependencyUpdates = gradle.startParameter.taskNames.any {task -> task.equalsIgnoreCase('dependencyUpdates') }
         if (!dependencyUpdates) {
