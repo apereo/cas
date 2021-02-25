@@ -67,4 +67,14 @@ public interface SingleSignOnParticipationStrategy extends Ordered {
     static SingleSignOnParticipationStrategy neverParticipating() {
         return context -> false;
     }
+
+    /**
+     * Returns the friendly name of this strategy.
+     *
+     * @return the name.
+     * @since 6.4.0
+     */
+    default String getName() {
+        return this.getClass().getSimpleName();
+    }
 }
