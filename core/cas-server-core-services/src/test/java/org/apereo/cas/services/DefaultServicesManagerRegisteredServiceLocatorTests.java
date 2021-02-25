@@ -64,4 +64,17 @@ public class DefaultServicesManagerRegisteredServiceLocatorTests {
         assertNotNull(result);
     }
 
+    @Test
+    public void verifyExtensions() {
+        val service = new TestRegisteredService();
+        service.setServiceId("https://example.com.+");
+        val result = defaultServicesManagerRegisteredServiceLocator.locate(List.of(service),
+            webApplicationServiceFactory.createService("https://example.com/test"),
+            r -> r.matches("https://example.com/test"));
+        assertNotNull(result);
+    }
+
+    private static class TestRegisteredService extends RegexRegisteredService {
+        private static final long serialVersionUID = -1680743568361887633L;
+    }
 }
