@@ -10,6 +10,7 @@ import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -98,9 +99,6 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
         val principalAttributes = resolveAttributesFromPrincipalAttributeRepository(principal, registeredService);
         LOGGER.debug("Found principal attributes [{}] for [{}]", principalAttributes, principal.getId());
 
-        LOGGER.trace("Finding requested attribute definitions");
-        getRequestedDefinitions().forEach(a -> principalAttributes.putIfAbsent(a, List.of()));
-
         val attributesFromDefinitions = resolveAttributesFromAttributeDefinitionStore(principal, principalAttributes, registeredService, selectedService);
         LOGGER.trace("Resolved principal attributes [{}] for [{}] from attribute definition store", attributesFromDefinitions, principal.getId());
 
@@ -180,6 +178,11 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
             LOGGER.trace("No attribute definitions are defined in the attribute definition store");
             return principalAttributes;
         }
+        LOGGER.trace("Finding requested attribute definitions");
+        getRequestedDefinitions().stream()
+                .filter(a -> attributeDefinitionStore.locateAttributeDefinition(a).isPresent())
+                .forEach(a -> principalAttributes.putIfAbsent(a, List.of()));
+
         return attributeDefinitionStore.resolveAttributeValues(principalAttributes, registeredService);
     }
 
@@ -268,7 +271,8 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
      *
      * @return - List of requested definitions to be released.
      */
-    public List<String> getRequestedDefinitions() {
+    @JsonIgnore
+    protected List<String> getRequestedDefinitions() {
         return new ArrayList<>();
     }
 
