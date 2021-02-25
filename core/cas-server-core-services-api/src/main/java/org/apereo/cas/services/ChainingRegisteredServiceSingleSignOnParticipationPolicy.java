@@ -71,8 +71,8 @@ public class ChainingRegisteredServiceSingleSignOnParticipationPolicy implements
     }
 
     @Override
-    public boolean shouldParticipateInSso(final TicketState ticketState) {
+    public boolean shouldParticipateInSso(final RegisteredService registeredService, final TicketState ticketState) {
         AnnotationAwareOrderComparator.sortIfNecessary(this.policies);
-        return policies.stream().allMatch(p -> p.shouldParticipateInSso(ticketState));
+        return policies.stream().allMatch(p -> p.shouldParticipateInSso(registeredService, ticketState));
     }
 }

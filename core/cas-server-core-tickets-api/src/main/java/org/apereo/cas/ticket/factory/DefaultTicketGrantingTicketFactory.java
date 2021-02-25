@@ -10,7 +10,6 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
-import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.RequiredArgsConstructor;
@@ -96,8 +95,9 @@ public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketF
         val registeredService = servicesManager.findServiceBy(service);
         if (registeredService != null) {
             val policy = registeredService.getTicketGrantingTicketExpirationPolicy();
-            if (policy != null && policy.getMaxTimeToLiveInSeconds() > 0) {
-                return new HardTimeoutExpirationPolicy(policy.getMaxTimeToLiveInSeconds());
+            if (policy != null) {
+                return policy.toExpirationPolicy()
+                    .orElse(ticketGrantingTicketExpirationPolicy.buildTicketExpirationPolicy());
             }
         }
         return ticketGrantingTicketExpirationPolicy.buildTicketExpirationPolicy();

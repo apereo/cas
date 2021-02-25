@@ -64,14 +64,23 @@ public class DefaultSingleSignOnParticipationStrategy implements SingleSignOnPar
                 LOGGER.debug("Service [{}] is not authorized to participate in SSO", registeredService.getServiceId());
                 return false;
             }
+
             val ssoPolicy = registeredService.getSingleSignOnParticipationPolicy();
             if (ssoPolicy != null) {
                 val tgtId = WebUtils.getTicketGrantingTicketId(requestContext);
                 val ticketState = ticketRegistrySupport.getTicketState(tgtId);
                 if (ticketState != null) {
-                    return ssoPolicy.shouldParticipateInSso(ticketState);
+                    return ssoPolicy.shouldParticipateInSso(registeredService, ticketState);
                 }
             }
+
+            val tgtPolicy = registeredService.getTicketGrantingTicketExpirationPolicy();
+            if (tgtPolicy != null) {
+                val tgtId = WebUtils.getTicketGrantingTicketId(requestContext);
+                val ticketState = ticketRegistrySupport.getTicketState(tgtId);
+                return tgtPolicy.toExpirationPolicy().map(policy -> !policy.isExpired(ticketState)).orElse(Boolean.TRUE);
+            }
+            
         } finally {
             AuthenticationCredentialsThreadLocalBinder.bindCurrent(ca);
         }

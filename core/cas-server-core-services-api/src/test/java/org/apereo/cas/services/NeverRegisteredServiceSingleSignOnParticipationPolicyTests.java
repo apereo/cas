@@ -21,7 +21,7 @@ public class NeverRegisteredServiceSingleSignOnParticipationPolicyTests {
     @Test
     public void verifyOperation() {
         val input = new NeverRegisteredServiceSingleSignOnParticipationPolicy();
-        assertFalse(input.shouldParticipateInSso(mock(TicketState.class)));
+        assertFalse(input.shouldParticipateInSso(mock(RegisteredService.class), mock(TicketState.class)));
     }
 
 }

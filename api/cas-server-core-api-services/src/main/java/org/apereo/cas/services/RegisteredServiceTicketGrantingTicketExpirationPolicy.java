@@ -1,8 +1,12 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.ticket.ExpirationPolicy;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.io.Serializable;
+import java.util.Optional;
 
 /**
  * This is {@link RegisteredServiceTicketGrantingTicketExpirationPolicy}.
@@ -13,7 +17,6 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@FunctionalInterface
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface RegisteredServiceTicketGrantingTicketExpirationPolicy extends Serializable {
     /**
@@ -22,4 +25,12 @@ public interface RegisteredServiceTicketGrantingTicketExpirationPolicy extends S
      * @return the time to live
      */
     long getMaxTimeToLiveInSeconds();
+
+    /**
+     * To expiration policy.
+     *
+     * @return the expiration policy
+     */
+    @JsonIgnore
+    Optional<ExpirationPolicy> toExpirationPolicy();
 }

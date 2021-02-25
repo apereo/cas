@@ -44,7 +44,7 @@ public class ChainingRegisteredServiceSingleSignOnParticipationPolicyTests {
         val chain = new ChainingRegisteredServiceSingleSignOnParticipationPolicy();
         chain.addPolicy(new AuthenticationDateRegisteredServiceSingleSignOnParticipationPolicy(TimeUnit.SECONDS, 1, 0));
 
-        assertFalse(chain.shouldParticipateInSso(state));
+        assertFalse(chain.shouldParticipateInSso(RegisteredServiceTestUtils.getRegisteredService(), state));
     }
 
     @Test
@@ -57,7 +57,7 @@ public class ChainingRegisteredServiceSingleSignOnParticipationPolicyTests {
         val chain = new ChainingRegisteredServiceSingleSignOnParticipationPolicy();
         chain.addPolicy(new AuthenticationDateRegisteredServiceSingleSignOnParticipationPolicy(TimeUnit.SECONDS, 10, 0));
 
-        assertTrue(chain.shouldParticipateInSso(state));
+        assertTrue(chain.shouldParticipateInSso(RegisteredServiceTestUtils.getRegisteredService(), state));
     }
 
     @Test
@@ -67,7 +67,7 @@ public class ChainingRegisteredServiceSingleSignOnParticipationPolicyTests {
         val chain = new ChainingRegisteredServiceSingleSignOnParticipationPolicy();
         chain.addPolicy(new LastUsedTimeRegisteredServiceSingleSignOnParticipationPolicy(TimeUnit.SECONDS, 1, 0));
 
-        assertFalse(chain.shouldParticipateInSso(state));
+        assertFalse(chain.shouldParticipateInSso(RegisteredServiceTestUtils.getRegisteredService(), state));
     }
 
     @Test
@@ -77,7 +77,7 @@ public class ChainingRegisteredServiceSingleSignOnParticipationPolicyTests {
         val chain = new ChainingRegisteredServiceSingleSignOnParticipationPolicy();
         chain.addPolicy(new LastUsedTimeRegisteredServiceSingleSignOnParticipationPolicy(TimeUnit.SECONDS, 10, 0));
 
-        assertTrue(chain.shouldParticipateInSso(state));
+        assertTrue(chain.shouldParticipateInSso(RegisteredServiceTestUtils.getRegisteredService(), state));
     }
 
     @Test

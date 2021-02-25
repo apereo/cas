@@ -56,7 +56,8 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
 
     private final Authentication authentication;
 
-    private final ZonedDateTime created;
+    @Setter
+    private ZonedDateTime created;
 
     private final Map<String, Service> services = new HashMap<>();
 
