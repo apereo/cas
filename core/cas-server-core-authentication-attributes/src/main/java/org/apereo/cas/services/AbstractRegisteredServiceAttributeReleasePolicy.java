@@ -10,6 +10,7 @@ import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -23,6 +24,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.PostLoad;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -185,6 +187,11 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
             LOGGER.trace("No attribute definitions are defined in the attribute definition store");
             return principalAttributes;
         }
+        LOGGER.trace("Finding requested attribute definitions");
+        getRequestedDefinitions().stream()
+                .filter(a -> attributeDefinitionStore.locateAttributeDefinition(a).isPresent())
+                .forEach(a -> principalAttributes.putIfAbsent(a, List.of()));
+
         return attributeDefinitionStore.resolveAttributeValues(principalAttributes, registeredService);
     }
 
@@ -264,6 +271,18 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
             return defaultAttributesToRelease;
         }
         return new TreeMap<>();
+    }
+
+    /**
+     * This method should be overridden by release policies that are able to request definitions by listing them as being
+     * released in the policy.  This method should return the list of definitions keys that need to be resolved by the
+     * definition store so the can be resolved and released to the client.
+     *
+     * @return - List of requested definitions to be released.
+     */
+    @JsonIgnore
+    protected List<String> getRequestedDefinitions() {
+        return new ArrayList<>();
     }
 
     /**

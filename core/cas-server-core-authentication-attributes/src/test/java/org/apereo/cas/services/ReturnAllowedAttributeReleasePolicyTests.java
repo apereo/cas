@@ -75,6 +75,16 @@ public class ReturnAllowedAttributeReleasePolicyTests {
     }
 
     @Test
+    public void verifyRequestedDefinitions() {
+        val allowedAttributes = new ArrayList<String>();
+        allowedAttributes.add("uid");
+        allowedAttributes.add("cn");
+        allowedAttributes.add("givenName");
+        val policy = new ReturnAllowedAttributeReleasePolicy(allowedAttributes);
+        assertTrue(policy.getRequestedDefinitions().containsAll(policy.getAllowedAttributes()));
+    }
+
+    @Test
     public void verifyDefaultAttributes() {
         ApplicationContextProvider.holdApplicationContext(applicationContext);
 

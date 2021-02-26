@@ -83,6 +83,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
             CoreAttributesTestUtils.getRegisteredService());
         assertEquals(1, attr.size());
         assertTrue(attr.containsKey(NEW_ATTR_1_VALUE));
+        assertTrue(policy.getRequestedDefinitions().containsAll(policy.getAllowedAttributes().keySet()));
     }
 
     @Test
@@ -106,6 +107,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         assertEquals(2, attr.size());
         assertTrue(attr.containsKey(ATTR_1));
         assertTrue(attr.containsKey(ATTR_2));
+        assertTrue(policy.getRequestedDefinitions().containsAll(policy.getAllowedAttributes()));
     }
 
     @Test
