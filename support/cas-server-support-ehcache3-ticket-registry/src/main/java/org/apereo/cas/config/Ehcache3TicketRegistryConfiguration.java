@@ -179,7 +179,8 @@ public class Ehcache3TicketRegistryConfiguration {
             }
         });
 
-        return new EhCache3TicketRegistry(ticketCatalog, ehcacheManager, CoreTicketUtils.newTicketRegistryCipherExecutor(crypto, "ehcache3"));
+        return new EhCache3TicketRegistry(ticketCatalog, ehcacheManager,
+            CoreTicketUtils.newTicketRegistryCipherExecutor(crypto, "ehcache3"));
     }
 
     /**

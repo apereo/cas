@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
+import org.opensaml.core.criterion.SatisfyAnyCriterion;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
@@ -110,6 +111,7 @@ public class SamlSPUtils {
 
             val criteriaSet = new CriteriaSet();
             criteriaSet.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
+            criteriaSet.add(new SatisfyAnyCriterion());
             val metadataResolver = resolver.resolve(service, criteriaSet);
 
             val resolvers = new ArrayList<MetadataResolver>();
