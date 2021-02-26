@@ -46,6 +46,6 @@ public class OidcDefaultAttributeToScopeClaimMapperTests extends AbstractOidcTes
             CoreAuthenticationTestUtils.getService(),
             CoreAuthenticationTestUtils.getRegisteredService());
         assertTrue(policy.getAllowedAttributes().stream().allMatch(attrs::containsKey));
-        assertTrue(policy.getRequestedDefinitions().containsAll(policy.getAllowedAttributes()));
+        assertTrue(policy.determineRequestedAttributeDefinitions().containsAll(policy.getAllowedAttributes()));
     }
 }

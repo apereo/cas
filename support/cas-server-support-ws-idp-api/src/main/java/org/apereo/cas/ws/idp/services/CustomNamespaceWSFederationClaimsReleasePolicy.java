@@ -64,7 +64,7 @@ public class CustomNamespaceWSFederationClaimsReleasePolicy extends AbstractRegi
     }
 
     @Override
-    public List<String> getRequestedDefinitions() {
-        return new ArrayList<>(allowedAttributes.keySet());
+    public List<String> determineRequestedAttributeDefinitions() {
+        return new ArrayList<>(getAllowedAttributes().keySet());
     }
 }

@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.discovery.CasServerDiscoveryProfileEndpoint;
 import org.apereo.cas.discovery.CasServerProfileRegistrar;
@@ -39,7 +40,7 @@ public class CasDiscoveryProfileConfiguration {
     private ObjectProvider<Clients> builtClients;
 
     @Autowired
-    @Qualifier("attributeRepository")
+    @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
     private ObjectProvider<IPersonAttributeDao> attributeRepository;
 
     @Bean

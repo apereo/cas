@@ -137,7 +137,7 @@ public class SamlIdPConfiguration {
     private ObjectProvider<SamlIdPMetadataLocator> samlIdPMetadataLocator;
 
     @Autowired
-    @Qualifier("attributeDefinitionStore")
+    @Qualifier(AttributeDefinitionStore.BEAN_NAME)
     private ObjectProvider<AttributeDefinitionStore> attributeDefinitionStore;
 
     @ConditionalOnMissingBean(name = "samlSingleLogoutServiceLogoutUrlBuilderConfigurer")
