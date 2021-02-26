@@ -37,6 +37,7 @@ public class OidcEmailScopeAttributeReleasePolicyTests extends AbstractOidcTests
             CoreAuthenticationTestUtils.getService(),
             CoreAuthenticationTestUtils.getRegisteredService());
         assertTrue(policy.getAllowedAttributes().stream().allMatch(attrs::containsKey));
+        assertTrue(policy.getRequestedDefinitions().containsAll(policy.getAllowedAttributes()));
     }
 
     @Test
