@@ -50,7 +50,7 @@
                                     </span>
                                     <span class="mdc-tab__ripple"></span>
                                 </button>
-                                <button class="mdc-tab" role="tab" aria-selected="true">
+                                <button th:if="${authorizedServices}" class="mdc-tab" role="tab" aria-selected="true">
                                     <span class="mdc-tab__content">
                                         <span class="mdc-tab__text-label">Services</span>
                                     </span>
@@ -86,6 +86,7 @@
                         </table>
                     </div>
                 </section>
+
                 <section id="attribute-tab-1" class="d-none attribute-tab">
                     <div class="w-100 mdc-data-table mx-auto my-4" id="divPrincipalAttributes" role="tabpanel" aria-labelledby="attributes-tab">
                         <table id="attributesTable" class="mdc-data-table__table" style="white-space: unset">
@@ -108,7 +109,8 @@
                         </table>
                     </div>
                 </section>
-                <section id="attribute-tab-2" class="d-none attribute-tab">
+
+                <section id="attribute-tab-2" class="d-none attribute-tab" th:if="${authorizedServices}">
                     <div class="w-100 mdc-data-table mx-auto my-4" id="divPrincipalAttributes" role="tabpanel" aria-labelledby="attributes-tab">
                         <table id="attributesTable" class="mdc-data-table__table" style="white-space: unset">
                             <thead>

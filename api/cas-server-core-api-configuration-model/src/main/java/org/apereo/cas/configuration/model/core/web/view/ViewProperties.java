@@ -30,6 +30,14 @@ public class ViewProperties implements Serializable {
     private static final long serialVersionUID = 2719748442042197738L;
 
     /**
+     * When set to {@code true}, attempts to calculate
+     * and display the list of authorized services
+     * for the authenticated user on successful
+     * authentication attempts.
+     */
+    private boolean authorizedServicesOnSuccessfulLogin;
+
+    /**
      * The default redirect URL if none is specified
      * after a successful authentication event.
      */
