@@ -221,4 +221,9 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
         });
         return attributesToRelease;
     }
+
+    @Override
+    public List<String> getRequestedDefinitions() {
+        return new ArrayList<>(allowedAttributes.keySet());
+    }
 }
