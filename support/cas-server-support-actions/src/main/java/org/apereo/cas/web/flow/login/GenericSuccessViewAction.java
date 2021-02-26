@@ -4,6 +4,8 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.InvalidTicketException;
@@ -34,9 +36,9 @@ public class GenericSuccessViewAction extends AbstractAction {
 
     private final ServicesManager servicesManager;
 
-    private final ServiceFactory serviceFactory;
+    private final ServiceFactory<WebApplicationService> serviceFactory;
 
-    private final String redirectUrl;
+    private final CasConfigurationProperties casProperties;
 
     /**
      * Gets authentication principal.
@@ -58,8 +60,9 @@ public class GenericSuccessViewAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        if (StringUtils.isNotBlank(this.redirectUrl)) {
-            val service = this.serviceFactory.createService(this.redirectUrl);
+        val redirectUrl = casProperties.getView().getDefaultRedirectUrl();
+        if (StringUtils.isNotBlank(redirectUrl)) {
+            val service = this.serviceFactory.createService(redirectUrl);
             val registeredService = this.servicesManager.findServiceBy(service);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
             requestContext.getExternalContext().requestExternalRedirect(service.getId());
@@ -67,20 +70,21 @@ public class GenericSuccessViewAction extends AbstractAction {
             val tgt = WebUtils.getTicketGrantingTicketId(requestContext);
             getAuthentication(tgt).ifPresent(authn -> {
                 WebUtils.putAuthentication(authn, requestContext);
-
                 val service = WebUtils.getService(requestContext);
-                val authorizedServices = servicesManager.getAllServices()
-                    .stream()
-                    .filter(registeredService -> {
-                        try {
-                            return RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service, registeredService, authn);
-                        } catch (final Exception e) {
-                            LOGGER.error(e.getMessage(), e);
-                            return false;
-                        }
-                    })
-                    .collect(Collectors.toList());
-                requestContext.getFlowScope().put("authorizedServices", authorizedServices);
+                if (casProperties.getView().isAuthorizedServicesOnSuccessfulLogin()) {
+                    val authorizedServices = servicesManager.getAllServices()
+                        .stream()
+                        .filter(registeredService -> {
+                            try {
+                                return RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service, registeredService, authn);
+                            } catch (final Exception e) {
+                                LOGGER.error(e.getMessage(), e);
+                                return false;
+                            }
+                        })
+                        .collect(Collectors.toList());
+                    WebUtils.putAuthorizedServices(requestContext, authorizedServices);
+                }
             });
         }
         return success();

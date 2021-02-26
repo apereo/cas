@@ -282,7 +282,7 @@ public class CasSupportActionsConfiguration {
         return new GenericSuccessViewAction(centralAuthenticationService.getObject(),
             servicesManager.getObject(),
             webApplicationServiceFactory.getObject(),
-            casProperties.getView().getDefaultRedirectUrl());
+            casProperties);
     }
 
     @RefreshScope
