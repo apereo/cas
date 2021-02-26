@@ -10,6 +10,7 @@ import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import org.opensaml.core.criterion.SatisfyAnyCriterion;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.springframework.retry.RetryCallback;
 import org.springframework.retry.backoff.FixedBackOffPolicy;
@@ -80,6 +81,9 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
     @SneakyThrows
     protected boolean isMetadataResolverAcceptable(final MetadataResolver metadataResolver,
                                                    final CriteriaSet criteriaSet) {
+        if (criteriaSet.contains(SatisfyAnyCriterion.class)) {
+            return true;
+        }
         val md = metadataResolver.resolveSingle(criteriaSet);
         return md != null && md.isValid();
     }

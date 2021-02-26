@@ -10,7 +10,6 @@ import org.springframework.test.context.TestPropertySource;
  * @since 6.2.0
  */
 @Tag("SAML")
-
 @TestPropertySource(properties = {
     "cas.saml-sp.jira.metadata=classpath:/metadata/sp-metadata.xml",
     "cas.saml-sp.jira.name-id-attribute=cn",

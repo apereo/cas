@@ -40,7 +40,7 @@ public class SamlRegisteredServiceJpaTests extends BaseSamlIdPConfigurationTests
 
     @Test
     public void verifySavingSamlService() {
-        val service = new SamlRegisteredService();
+        var service = new SamlRegisteredService();
         service.setName("SAML");
         service.setServiceId("http://mmoayyed.example.net");
         service.setMetadataLocation("classpath:/metadata/idp-metadata.xml");
@@ -53,9 +53,9 @@ public class SamlRegisteredServiceJpaTests extends BaseSamlIdPConfigurationTests
         service.setAttributeFriendlyNames(CollectionUtils.wrap("friendly-name", "value"));
         service.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(true, true));
         servicesManager.save(service);
-        servicesManager.load();
-        val services = servicesManager.getAllServices();
-        assertEquals(1, services.size());
+        val services = servicesManager.load();
+        service = servicesManager.findServiceBy(service.getId(), SamlRegisteredService.class);
+        assertNotNull(service);
         services.forEach(s -> servicesManager.delete(s.getId()));
         assertEquals(0, servicesManager.count());
     }

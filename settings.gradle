@@ -47,7 +47,7 @@ dependencyResolutionManagement {
             url "https://repo.terracotta.org/maven2"
             mavenContent { releasesOnly() }
             content {
-                includeGroup "org.terracotta"
+                includeGroupByRegex "org.terracotta.*"
             }
         }
     }
