@@ -298,7 +298,7 @@ public class ReturnMappedAttributeReleasePolicyTests {
     public void verifyRequestedDefinitions() {
         val allowed1 = CollectionUtils.<String, Object>wrap("uid", "my-userid");
         val policy = new ReturnMappedAttributeReleasePolicy(allowed1);
-        assertTrue(policy.getRequestedDefinitions().containsAll(policy.getAllowedAttributes().keySet()));
+        assertTrue(policy.determineRequestedAttributeDefinitions().containsAll(policy.getAllowedAttributes().keySet()));
     }
 
 

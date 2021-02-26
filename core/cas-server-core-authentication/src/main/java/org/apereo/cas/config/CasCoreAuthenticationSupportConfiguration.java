@@ -16,7 +16,8 @@ import org.apereo.cas.authentication.handler.ByCredentialSourceAuthenticationHan
 import org.apereo.cas.authentication.handler.GroovyAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.handler.RegisteredServiceAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.policy.RegisteredServiceAuthenticationPolicyResolver;
-import org.apereo.cas.authentication.principal.cache.PrincipalAttributesRepositoryCache;
+import org.apereo.cas.authentication.principal.PrincipalAttributesRepositoryCache;
+import org.apereo.cas.authentication.principal.cache.DefaultPrincipalAttributesRepositoryCache;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 
@@ -148,6 +149,6 @@ public class CasCoreAuthenticationSupportConfiguration {
     @ConditionalOnMissingBean(name = PrincipalAttributesRepositoryCache.DEFAULT_BEAN_NAME)
     @Bean
     public PrincipalAttributesRepositoryCache principalAttributesRepositoryCache() {
-        return new PrincipalAttributesRepositoryCache();
+        return new DefaultPrincipalAttributesRepositoryCache();
     }
 }

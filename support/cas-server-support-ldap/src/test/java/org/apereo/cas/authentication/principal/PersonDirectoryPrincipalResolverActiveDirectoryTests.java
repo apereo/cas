@@ -52,7 +52,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Ldap")
 public class PersonDirectoryPrincipalResolverActiveDirectoryTests {
     @Autowired
-    @Qualifier("attributeRepository")
+    @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
     private IPersonAttributeDao attributeRepository;
 
     @Autowired

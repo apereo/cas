@@ -119,7 +119,7 @@ public class CasPersonDirectoryConfiguration {
         };
     }
 
-    @ConditionalOnMissingBean(name = "attributeDefinitionStore")
+    @ConditionalOnMissingBean(name = AttributeDefinitionStore.BEAN_NAME)
     @Bean
     @RefreshScope
     public AttributeDefinitionStore attributeDefinitionStore() throws Exception {
@@ -145,7 +145,7 @@ public class CasPersonDirectoryConfiguration {
     }
 
     @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    @ConditionalOnMissingBean(name = "attributeRepository")
+    @ConditionalOnMissingBean(name = PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
     @Bean
     @RefreshScope
     public IPersonAttributeDao attributeRepository() {

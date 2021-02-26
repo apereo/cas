@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attribute-repository.attribute-definition-store.json.location=classpath:/basic-definitions.json")
 public class SamlIdPConsentableAttributeBuilderTests extends BaseSamlIdPWebflowTests {
     @Autowired
-    @Qualifier("attributeDefinitionStore")
+    @Qualifier(AttributeDefinitionStore.BEAN_NAME)
     private AttributeDefinitionStore attributeDefinitionStore;
 
     @Autowired

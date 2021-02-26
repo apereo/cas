@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.attribute.DefaultAttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolutionExecutionPlanConfigurer;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
@@ -38,7 +39,7 @@ public class CasPersonDirectoryTestConfiguration {
         return CollectionUtils.wrap(attributeRepository());
     }
 
-    @ConditionalOnMissingBean(name = "attributeRepository")
+    @ConditionalOnMissingBean(name = PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
     @Bean
     public IPersonAttributeDao attributeRepository() {
         val attrs = CollectionUtils.wrap("uid", CollectionUtils.wrap("uid"),
@@ -47,7 +48,7 @@ public class CasPersonDirectoryTestConfiguration {
         return new StubPersonAttributeDao((Map) attrs);
     }
 
-    @ConditionalOnMissingBean(name = "attributeDefinitionStore")
+    @ConditionalOnMissingBean(name = AttributeDefinitionStore.BEAN_NAME)
     @Bean
     public AttributeDefinitionStore attributeDefinitionStore() throws Exception {
         val resource = casProperties.getAuthn().getAttributeRepository()

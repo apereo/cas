@@ -25,6 +25,16 @@ import java.util.Optional;
 public interface PrincipalResolver extends Ordered {
 
     /**
+     * Attribute repository implementation bean name.
+     */
+    String BEAN_NAME_ATTRIBUTE_REPOSITORY = "attributeRepository";
+
+    /**
+     * Global principal attribute repository implementation bean name.
+     */
+    String BEAN_NAME_GLOBAL_PRINCIPAL_ATTRIBUTE_REPOSITORY = "globalPrincipalAttributeRepository";
+
+    /**
      * Resolves a principal from the given credential using an arbitrary strategy.
      * Assumes no principal is already resolved by the authentication subsystem, etc.
      *

@@ -103,7 +103,7 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
     }
 
     @Override
-    public List<String> getRequestedDefinitions() {
-        return allowedAttributes;
+    public List<String> determineRequestedAttributeDefinitions() {
+        return getAllowedAttributes();
     }
 }

@@ -133,20 +133,10 @@ public abstract class AbstractPrincipalAttributesRepository implements Registere
                                                                                        final Map<String, List<Object>> sourceAttributes,
                                                                                        final RegisteredService registeredService) {
         val finalAttributes = convertPersonAttributesToPrincipalAttributes(sourceAttributes);
-        addPrincipalAttributes(principal.getId(), finalAttributes, registeredService);
+        update(principal.getId(), finalAttributes, registeredService);
         return finalAttributes;
     }
-
-    /**
-     * Add principal attributes into the underlying cache instance.
-     *
-     * @param id                identifier used by the cache as key.
-     * @param attributes        attributes to cache
-     * @param registeredService the registered service
-     * @since 4.2
-     */
-    protected abstract void addPrincipalAttributes(String id, Map<String, List<Object>> attributes, RegisteredService registeredService);
-
+    
     /**
      * Calculate merging strategy attribute merging strategy.
      *

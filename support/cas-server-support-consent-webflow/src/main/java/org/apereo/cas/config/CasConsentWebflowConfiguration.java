@@ -39,7 +39,7 @@ import org.springframework.webflow.execution.Action;
 @ConditionalOnProperty(prefix = "cas.consent", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class CasConsentWebflowConfiguration {
     @Autowired
-    @Qualifier("attributeDefinitionStore")
+    @Qualifier(AttributeDefinitionStore.BEAN_NAME)
     private ObjectProvider<AttributeDefinitionStore> attributeDefinitionStore;
 
     @Autowired

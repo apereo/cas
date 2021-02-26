@@ -59,7 +59,7 @@ import java.util.List;
 @Slf4j
 public class SurrogateAuthenticationConfiguration {
     @Autowired
-    @Qualifier("attributeRepository")
+    @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
     private ObjectProvider<IPersonAttributeDao> attributeRepository;
 
     @Autowired
