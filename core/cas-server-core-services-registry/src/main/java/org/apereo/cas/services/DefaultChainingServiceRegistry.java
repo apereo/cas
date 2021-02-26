@@ -41,8 +41,11 @@ public class DefaultChainingServiceRegistry extends AbstractServiceRegistry impl
 
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
-        serviceRegistries.forEach(registry -> registry.save(registeredService));
-        return registeredService;
+        var savedService = (RegisteredService) null;
+        for (var serviceRegistry : serviceRegistries) {
+            savedService = serviceRegistry.save(savedService == null ? registeredService : savedService);
+        }
+        return savedService;
     }
 
     @Override
