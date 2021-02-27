@@ -1,5 +1,8 @@
 package org.apereo.cas.pm.config;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditPrincipalResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditTrailConstants;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -45,6 +48,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class PasswordManagementConfiguration implements InitializingBean {
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -117,9 +121,9 @@ public class PasswordManagementConfiguration implements InitializingBean {
                     passwordHistoryService());
             }
 
-            LOGGER.warn("No storage service (LDAP, Database, etc) is configured to handle the account update and password service operations. "
+            LOGGER.warn("No storage service is configured to handle the account update and password service operations. "
                 + "Password management functionality will have no effect and will be disabled until a storage service is configured. "
-                + "To explicitly disable the password management functionality, add 'cas.authn.pm.core.enabled=false' to the CAS configuration");
+                + "To explicitly disable the password management, add 'cas.authn.pm.core.enabled=false' to the CAS configuration");
         } else {
             LOGGER.debug("Password management is disabled. To enable the password management functionality, "
                 + "add 'cas.authn.pm.core.enabled=true' to the CAS configuration and then configure storage options for account updates");
@@ -131,15 +135,19 @@ public class PasswordManagementConfiguration implements InitializingBean {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "passwordManagementAuditTrailRecordResolutionPlanConfigurer")
     public AuditTrailRecordResolutionPlanConfigurer passwordManagementAuditTrailRecordResolutionPlanConfigurer() {
         return plan -> {
-            plan.registerAuditActionResolver("CHANGE_PASSWORD_ACTION_RESOLVER",
+            plan.registerAuditActionResolver(AuditActionResolvers.CHANGE_PASSWORD_ACTION_RESOLVER,
                 new BooleanAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_SUCCESS,
                     AuditTrailConstants.AUDIT_ACTION_POSTFIX_FAILED));
-            plan.registerAuditResourceResolver("CHANGE_PASSWORD_RESOURCE_RESOLVER", new FirstParameterAuditResourceResolver());
-            plan.registerAuditActionResolver("REQUEST_CHANGE_PASSWORD_ACTION_RESOLVER", new DefaultAuditActionResolver());
-            plan.registerAuditResourceResolver("REQUEST_CHANGE_PASSWORD_RESOURCE_RESOLVER", returnValueResourceResolver.getObject());
-            plan.registerAuditPrincipalResolver("REQUEST_CHANGE_PASSWORD_PRINCIPAL_RESOLVER",
+            plan.registerAuditResourceResolver(AuditResourceResolvers.CHANGE_PASSWORD_RESOURCE_RESOLVER,
+                new FirstParameterAuditResourceResolver());
+            plan.registerAuditActionResolver(AuditActionResolvers.REQUEST_CHANGE_PASSWORD_ACTION_RESOLVER,
+                new DefaultAuditActionResolver());
+            plan.registerAuditResourceResolver(AuditResourceResolvers.REQUEST_CHANGE_PASSWORD_RESOURCE_RESOLVER,
+                returnValueResourceResolver.getObject());
+            plan.registerAuditPrincipalResolver(AuditPrincipalResolvers.REQUEST_CHANGE_PASSWORD_PRINCIPAL_RESOLVER,
                 new SpringWebflowActionExecutionAuditablePrincipalResolver("username"));
         };
     }

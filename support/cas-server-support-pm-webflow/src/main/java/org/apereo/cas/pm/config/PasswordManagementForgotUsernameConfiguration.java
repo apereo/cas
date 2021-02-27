@@ -1,5 +1,8 @@
 package org.apereo.cas.pm.config;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditPrincipalResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -45,6 +48,7 @@ import org.springframework.webflow.execution.RequestContext;
 @Configuration("PasswordManagementForgotUsernameConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class PasswordManagementForgotUsernameConfiguration {
+
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
@@ -93,11 +97,14 @@ public class PasswordManagementForgotUsernameConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "forgotUsernameAuditTrailRecordResolutionPlanConfigurer")
     public AuditTrailRecordResolutionPlanConfigurer forgotUsernameAuditTrailRecordResolutionPlanConfigurer() {
         return plan -> {
-            plan.registerAuditActionResolver("REQUEST_FORGOT_USERNAME_ACTION_RESOLVER", new DefaultAuditActionResolver());
-            plan.registerAuditResourceResolver("REQUEST_FORGOT_USERNAME_RESOURCE_RESOLVER", returnValueResourceResolver.getObject());
-            plan.registerAuditPrincipalResolver("REQUEST_FORGOT_USERNAME_PRINCIPAL_RESOLVER",
+            plan.registerAuditActionResolver(AuditActionResolvers.REQUEST_FORGOT_USERNAME_ACTION_RESOLVER,
+                new DefaultAuditActionResolver());
+            plan.registerAuditResourceResolver(AuditResourceResolvers.REQUEST_FORGOT_USERNAME_RESOURCE_RESOLVER,
+                returnValueResourceResolver.getObject());
+            plan.registerAuditPrincipalResolver(AuditPrincipalResolvers.REQUEST_FORGOT_USERNAME_PRINCIPAL_RESOLVER,
                 new SpringWebflowActionExecutionAuditablePrincipalResolver(SendForgotUsernameInstructionsAction.REQUEST_PARAMETER_EMAIL));
         };
     }

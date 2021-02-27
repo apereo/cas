@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.authentication.bypass.audit.MultifactorAuthenticationProviderBypassAuditResourceResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -19,14 +21,14 @@ import org.springframework.context.annotation.Configuration;
 @Configuration(value = "casCoreMultifactorAuthenticationAuditConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreMultifactorAuthenticationAuditConfiguration {
-
     @Bean
     @ConditionalOnMissingBean(name = "casCoreMfaAuditTrailRecordResolutionPlanConfigurer")
     public AuditTrailRecordResolutionPlanConfigurer casCoreMfaAuditTrailRecordResolutionPlanConfigurer() {
         return plan -> {
-            plan.registerAuditResourceResolver("MULTIFACTOR_AUTHENTICATION_BYPASS_RESOURCE_RESOLVER",
+            plan.registerAuditResourceResolver(AuditResourceResolvers.MULTIFACTOR_AUTHENTICATION_BYPASS_RESOURCE_RESOLVER,
                 new MultifactorAuthenticationProviderBypassAuditResourceResolver());
-            plan.registerAuditActionResolver("MULTIFACTOR_AUTHENTICATION_BYPASS_ACTION_RESOLVER", new DefaultAuditActionResolver());
+            plan.registerAuditActionResolver(AuditActionResolvers.MULTIFACTOR_AUTHENTICATION_BYPASS_ACTION_RESOLVER,
+                new DefaultAuditActionResolver());
         };
     }
 }
