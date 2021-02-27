@@ -6,9 +6,9 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo" level="error" additivity="false" />
-        <Logger name="com.mongodb" level="info" />
-        <Logger name="org.springframework.data" level="info" />
+        <Logger name="org.apereo" level="error" />
+        <Logger name="com.mongodb" level="warn" />
+        <Logger name="org.springframework.data" level="warn" />
         <Root level="off">
             <AppenderRef ref="console"/>
         </Root>
