@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesReposit
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
@@ -243,27 +242,25 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
      * Determines a default bundle of attributes that may be released to all services
      * without the explicit mapping for each service.
      *
-     * @param p          the principal
+     * @param principal          the principal
      * @param attributes the attributes
      * @return the released by default attributes
      */
-    protected Map<String, List<Object>> getReleasedByDefaultAttributes(final Principal p, final Map<String, List<Object>> attributes) {
-        val ctx = ApplicationContextProvider.getApplicationContext();
-        if (ctx != null) {
-            LOGGER.trace("Located application context. Retrieving default attributes for release, if any");
-            val props = ctx.getAutowireCapableBeanFactory().getBean(CasConfigurationProperties.class);
-            val defaultAttrs = props.getAuthn().getAttributeRepository().getCore().getDefaultAttributesToRelease();
-            LOGGER.debug("Default attributes for release are: [{}]", defaultAttrs);
-            val defaultAttributesToRelease = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
-            defaultAttrs.forEach(key -> {
-                if (attributes.containsKey(key)) {
-                    LOGGER.debug("Found and added default attribute for release: [{}]", key);
-                    defaultAttributesToRelease.put(key, attributes.get(key));
-                }
-            });
-            return defaultAttributesToRelease;
-        }
-        return new TreeMap<>();
+    protected Map<String, List<Object>> getReleasedByDefaultAttributes(final Principal principal, final Map<String, List<Object>> attributes) {
+        return ApplicationContextProvider.getCasConfigurationProperties()
+            .map(properties -> {
+                val defaultAttrs = properties.getAuthn().getAttributeRepository().getCore().getDefaultAttributesToRelease();
+                LOGGER.debug("Default attributes for release are: [{}]", defaultAttrs);
+                val defaultAttributesToRelease = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
+                defaultAttrs.forEach(key -> {
+                    if (attributes.containsKey(key)) {
+                        LOGGER.debug("Found and added default attribute for release: [{}]", key);
+                        defaultAttributesToRelease.put(key, attributes.get(key));
+                    }
+                });
+                return defaultAttributesToRelease;
+            })
+            .orElse(new TreeMap<>());
     }
 
     /**

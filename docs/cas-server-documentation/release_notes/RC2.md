@@ -118,12 +118,14 @@ now be scripted using an external Groovy script.
 - SAML2 IdP metadata generators now allow for dynamic customizations at runtime when generating metadata.
 - When using [delegated authentication](../integration/Delegate-Authentication-SAML.html) to SAML2 identity providers, the service provider metadata
 can now be signed using the `XMLSec` tool.
-- [SAML2 Attribute definitions](../integration/Attribute-Definitions.html) now present the ability to support `urn` values for each attribute.  
+- [SAML2 Attribute Definitions](../integration/Attribute-Definitions.html) now present the ability to support `urn` values for each attribute.  
 - [SAML2 IdP metadata](../installation/Configuring-SAML2-DynamicMetadata.html) can now be signed.
 - Minor improvements to indexing operations for [MongoDb ticket registry](../ticketing/MongoDb-Ticket-Registry.html).
 - Additional support is built in to provide for Spring Boot's `startup` actuator endpoint.
 - In [delegated authentication](../integration/Delegate-Authentication.html) scenarios, CAS is now able to retry the authentication attempt
 using forceful authentication requests upon failed attempts.
+- [Attribute release policies](../integration/Attribute-Release-Policies.html) that allow for a collection of pre-defined attributes for release
+can now request those attributes to be resolved via the [Attribute Definition Store](../integration/Attribute-Definitions.html).
 
 ## Library Upgrades
 
