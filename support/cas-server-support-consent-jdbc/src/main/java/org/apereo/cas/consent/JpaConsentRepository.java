@@ -96,4 +96,19 @@ public class JpaConsentRepository implements ConsentRepository {
         }
         return false;
     }
+
+    @Override
+    public boolean deleteConsentDecisions(final String principal) {
+        try {
+            val query = SELECT_QUERY.concat("WHERE r.principal = :principal");
+            val decision = entityManager.createQuery(query, JpaConsentDecision.class)
+                .setParameter("principal", principal)
+                .getSingleResult();
+            entityManager.remove(decision);
+            return true;
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        }
+        return false;
+    }
 }

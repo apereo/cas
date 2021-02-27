@@ -56,4 +56,11 @@ public class MongoDbConsentRepository implements ConsentRepository {
         val result = this.mongoTemplate.remove(query, ConsentDecision.class, this.collectionName);
         return result.getDeletedCount() > 0;
     }
+
+    @Override
+    public boolean deleteConsentDecisions(final String principal) {
+        val query = new Query(Criteria.where("principal").is(principal));
+        val result = this.mongoTemplate.remove(query, ConsentDecision.class, this.collectionName);
+        return result.getDeletedCount() > 0;
+    }
 }

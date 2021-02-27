@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -131,6 +132,17 @@ public class LdapConsentRepository implements ConsentRepository, DisposableBean 
     }
 
     @Override
+    public boolean deleteConsentDecisions(final String principal) {
+        LOGGER.debug("Deleting consent decisions for principal [{}]", principal);
+        val entry = readConsentEntry(principal);
+        if (entry != null) {
+            val newConsent = removeDecisions(entry.getAttribute(this.ldapProperties.getConsentAttributeName()), decision -> true);
+            return executeModifyOperation(newConsent, entry);
+        }
+        return false;
+    }
+
+    @Override
     public void destroy() {
         connectionFactory.close();
     }
@@ -186,12 +198,16 @@ public class LdapConsentRepository implements ConsentRepository, DisposableBean 
      * @return the new decision set
      */
     private static Set<String> removeDecision(final LdapAttribute ldapConsent, final long decisionId) {
+        return removeDecisions(ldapConsent, d -> d.getId() != decisionId);
+    }
+
+    private static Set<String> removeDecisions(final LdapAttribute ldapConsent, final Predicate<ConsentDecision> filter) {
         if (ldapConsent.size() != 0) {
             return ldapConsent.getStringValues()
                 .stream()
                 .map(LdapConsentRepository::mapFromJson)
                 .filter(Objects::nonNull)
-                .filter(d -> d.getId() != decisionId)
+                .filter(filter)
                 .map(LdapConsentRepository::mapToJson)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
