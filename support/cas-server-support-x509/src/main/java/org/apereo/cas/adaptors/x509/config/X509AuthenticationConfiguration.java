@@ -74,7 +74,7 @@ public class X509AuthenticationConfiguration {
     private ResourceLoader resourceLoader;
 
     @Autowired
-    @Qualifier("PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY")
+    @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
     private ObjectProvider<IPersonAttributeDao> attributeRepository;
 
     @Autowired

@@ -72,16 +72,20 @@ public class CouchDbConsentRepository implements ConsentRepository {
 
     @Override
     public boolean deleteConsentDecision(final long id, final String principal) {
-        try {
-            val consent = couchDb.findByPrincipalAndId(principal, id);
-            if (consent == null) {
-                LOGGER.debug("Decision to be deleted not found [{}] [{}]", principal, id);
-            } else {
-                couchDb.remove(consent);
-                return true;
-            }
-        } catch (final Exception e) {
-            LoggingUtils.warn(LOGGER, "Failure deleting consent decision", e);
+        val consent = couchDb.findByPrincipalAndId(principal, id);
+        if (consent != null) {
+            couchDb.remove(consent);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean deleteConsentDecisions(final String principal) {
+        val consent = couchDb.findByPrincipal(principal);
+        if (consent != null) {
+            consent.forEach(couchDb::remove);
+            return true;
         }
         return false;
     }

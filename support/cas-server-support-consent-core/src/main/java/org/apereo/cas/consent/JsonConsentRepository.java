@@ -48,6 +48,13 @@ public class JsonConsentRepository extends BaseConsentRepository {
         return result;
     }
 
+    @Override
+    public boolean deleteConsentDecisions(final String principal) {
+        val result = super.deleteConsentDecisions(principal);
+        writeAccountToJsonResource();
+        return result;
+    }
+
     @SneakyThrows
     private Set<ConsentDecision> readDecisionsFromJsonResource() {
         if (ResourceUtils.doesResourceExist(jsonResource)) {

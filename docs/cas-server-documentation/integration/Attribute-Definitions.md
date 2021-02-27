@@ -45,7 +45,7 @@ Generally-speaking, attribute definitions are specified using a `Map` whose key 
 attribute name, as resolved by the CAS [attribute resolution engine](Attribute-Resolution.html).
 The attribute name as the key to the `Map` must match the `key` attribute of the attribute definition itself.
 If the attribute in question is not already resolved as principal attribute with a valid set of values,
-it might be possible, depending on the [attribute release policy](Attribute-Release.md), to 
+it might be possible, depending on the [attribute release policy](Attribute-Release.html), to 
 resolve and create that attribute on the fly as an attribute definition that can produce values. 
 
 The following settings can be specified by an attribute definition:

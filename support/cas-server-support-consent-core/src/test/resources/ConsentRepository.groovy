@@ -1,7 +1,6 @@
 def read(Object[] args) {
     def currentConsentDecisions = args[0]
     def logger = args[1]
-
     currentConsentDecisions
 }
 
@@ -15,5 +14,11 @@ def delete(Object[] args) {
     def decisionId = args[0]
     def principalId = args[1]
     def logger = args[2]
+    return !principalId.contains("-")
+}
+
+def deletePrincipal(Object[] args) {
+    def principalId = args[0]
+    def logger = args[1]
     return !principalId.contains("-")
 }

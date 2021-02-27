@@ -159,8 +159,31 @@ public class RestConsentRepository implements ConsentRepository {
 
     @Override
     @SneakyThrows
-    public boolean deleteConsentDecision(final long decisionId, final String principal) {
+    public boolean deleteConsentDecisions(final String principal) {
+        HttpResponse response = null;
+        try {
+            val headers = new HashMap<String, Object>();
+            headers.put("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+            headers.put("Accept", MediaType.APPLICATION_JSON_VALUE);
+            headers.put("principal", principal);
+            headers.putAll(properties.getHeaders());
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(properties.getBasicAuthPassword())
+                .basicAuthUsername(properties.getBasicAuthUsername())
+                .method(HttpMethod.DELETE)
+                .url(properties.getUrl())
+                .headers(headers)
+                .build();
+            response = HttpUtils.execute(exec);
+            return HttpStatus.valueOf(response.getStatusLine().getStatusCode()).is2xxSuccessful();
+        } finally {
+            HttpUtils.close(response);
+        }
+    }
 
+    @Override
+    @SneakyThrows
+    public boolean deleteConsentDecision(final long decisionId, final String principal) {
         HttpResponse response = null;
         try {
             val headers = new HashMap<String, Object>();
