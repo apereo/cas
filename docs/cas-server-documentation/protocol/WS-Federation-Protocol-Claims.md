@@ -65,7 +65,7 @@ is identified by the value of the `givenName` attribute that is already retrieve
 
 Attributes authorized and allowed for release by this policy may not necessarily be available
 as resolved principal attributes and can be resolved on the fly dynamically
-using the [attribute definition store](../integration/Attribute-Definitions.md).
+using the [attribute definition store](../integration/Attribute-Definitions.html).
 
 ## Inline Groovy Claims
 
@@ -153,4 +153,4 @@ already retrieved for the authenticated principal.
 
 Attributes authorized and allowed for release by this policy may not necessarily be available
 as resolved principal attributes and can be resolved on the fly dynamically
-using the [attribute definition store](../integration/Attribute-Definitions.md).
+using the [attribute definition store](../integration/Attribute-Definitions.html).
