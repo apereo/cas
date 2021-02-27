@@ -34,6 +34,8 @@ import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.config.SAML2Configuration;
 import org.pac4j.saml.context.SAML2MessageContext;
 import org.pac4j.saml.sso.impl.SAML2AuthnRequestBuilder;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
 
 import java.io.File;
@@ -84,6 +86,7 @@ public class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends 
         saml2Client.init();
         
         saml2MessageContext = new SAML2MessageContext();
+        saml2MessageContext.setWebContext(new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse()));
         val peer = saml2MessageContext.getMessageContext().getSubcontext(SAMLPeerEntityContext.class, true);
         assertNotNull(peer);
         peer.setEntityId("https://cas.example.org/idp");

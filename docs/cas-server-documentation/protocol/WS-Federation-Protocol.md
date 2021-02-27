@@ -13,6 +13,11 @@ the [WS-Federation Passive Requestor Profile](http://docs.oasis-open.org/wsfed/f
 is built on top of [Apache Fediz](http://cxf.apache.org/fediz.html) 
 whose architecture is described [here](http://cxf.apache.org/fediz-architecture.html).
 
+<div class="alert alert-info"><strong>Remember</strong><p>The functionality described 
+here allows CAS to act as an identity provider to support the WS-Federation protocol. If you wish to do the 
+opposite and hand off authentication to an external identity provider that supports WS-Federation, you may take advantage of 
+<a href="../integration/ADFS-Integration.html">Delegation</a> as one integration option.</p></div>
+
 ## Security Token Service
 
 The WS-Trust OASIS standard specifies a runtime component called Security Token Service. A service 
