@@ -16,7 +16,7 @@ import java.util.Objects;
 public class OAuth20ServicesManagerRegisteredServiceLocator extends DefaultServicesManagerRegisteredServiceLocator {
     public OAuth20ServicesManagerRegisteredServiceLocator() {
         setOrder(Ordered.HIGHEST_PRECEDENCE);
-        setRegisteredServiceFilter((registeredService, service) -> registeredService instanceof OAuthRegisteredService
+        setRegisteredServiceFilter((registeredService, service) -> OAuthRegisteredService.class.isAssignableFrom(registeredService.getClass())
                 && service.getAttributes().containsKey(OAuth20Constants.CLIENT_ID)
                 && service.getAttributes().get(OAuth20Constants.CLIENT_ID)
                 .stream()

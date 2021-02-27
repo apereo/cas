@@ -63,7 +63,7 @@ public class SamlIdPServicesManagerRegisteredServiceLocator extends DefaultServi
      */
     protected Optional<Pair<SamlProtocolServiceAttribute, String>> getSamlParameterValue(final RegisteredService registeredService,
                                                                                          final Service service) {
-        if (registeredService instanceof SamlRegisteredService) {
+        if (SamlRegisteredService.class.isAssignableFrom(registeredService.getClass())) {
             val attributes = service.getAttributes();
             LOGGER.trace("Reviewing service attributes [{}] for service id [{}] to match registered service [{}]",
                 attributes, service.getId(), registeredService.getName());

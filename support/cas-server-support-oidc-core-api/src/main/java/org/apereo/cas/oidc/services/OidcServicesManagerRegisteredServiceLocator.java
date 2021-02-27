@@ -18,7 +18,7 @@ public class OidcServicesManagerRegisteredServiceLocator extends DefaultServices
     public OidcServicesManagerRegisteredServiceLocator() {
         setOrder(Ordered.HIGHEST_PRECEDENCE);
         setRegisteredServiceFilter(
-            (registeredService, service) -> registeredService instanceof OidcRegisteredService
+            (registeredService, service) -> OidcRegisteredService.class.isAssignableFrom(registeredService.getClass())
                 && service.getAttributes().containsKey(OAuth20Constants.CLIENT_ID)
                 && service.getAttributes().get(OAuth20Constants.CLIENT_ID)
                     .stream()
