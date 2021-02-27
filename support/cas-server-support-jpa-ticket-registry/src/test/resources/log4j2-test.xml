@@ -9,8 +9,8 @@
         <Logger name="org.apereo.cas" level="error" />
         <Logger name="org.springframework.jdbc" level="error" />
         <Logger name="org.springframework.transaction" level="error" />
-        <Logger name="org.hibernate.sql" level="info" />
-        <Logger name="org.hibernate.engine" level="info" />
+        <Logger name="org.hibernate.sql" level="warn" />
+        <Logger name="org.hibernate.engine" level="warn" />
         <Root level="off">
             <AppenderRef ref="console"/>
         </Root>

@@ -9,7 +9,7 @@
         <Logger name="org.apereo" level="error"  />
         <Logger name="com.yubico.webauthn" level="warn"  />
         <Logger name="org.hibernate" level="warn"  />
-        <Logger name="org.springframework.orm.jpa" level="info"  />
+        <Logger name="org.springframework.orm.jpa" level="warn"  />
 
         <Root level="off">
             <AppenderRef ref="console"/>
