@@ -1,5 +1,9 @@
 package org.apereo.cas.support.saml.web.idp.profile.sso.request;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -30,9 +34,9 @@ public class DefaultSSOSamlHttpRequestExtractor implements SSOSamlHttpRequestExt
      */
     private final ParserPool parserPool;
 
-    @Audit(action = "SAML2_REQUEST",
-        actionResolverName = "SAML2_REQUEST_ACTION_RESOLVER",
-        resourceResolverName = "SAML2_REQUEST_RESOURCE_RESOLVER")
+    @Audit(action = AuditableActions.SAML2_REQUEST,
+        actionResolverName = AuditActionResolvers.SAML2_REQUEST_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.SAML2_REQUEST_RESOURCE_RESOLVER)
     @Override
     @SneakyThrows
     public Optional<Pair<? extends SignableSAMLObject, MessageContext>> extract(final HttpServletRequest request,

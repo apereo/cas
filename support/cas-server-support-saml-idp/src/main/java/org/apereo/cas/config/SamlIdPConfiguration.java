@@ -370,11 +370,11 @@ public class SamlIdPConfiguration {
     public AuditTrailRecordResolutionPlanConfigurer casSamlIdPAuditTrailRecordResolutionPlanConfigurer() {
         return plan -> {
             plan.registerAuditResourceResolver(AuditResourceResolvers.SAML2_RESPONSE_RESOURCE_RESOLVER, new SamlResponseAuditResourceResolver());
-            plan.registerAuditActionResolver(AuditActionResolvers.SAML_2_RESPONSE_ACTION_RESOLVER,
+            plan.registerAuditActionResolver(AuditActionResolvers.SAML2_RESPONSE_ACTION_RESOLVER,
                 new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED, AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED));
 
             plan.registerAuditResourceResolver(AuditResourceResolvers.SAML2_REQUEST_RESOURCE_RESOLVER, new SamlRequestAuditResourceResolver());
-            plan.registerAuditActionResolver(AuditActionResolvers.SAML_2_REQUEST_ACTION_RESOLVER,
+            plan.registerAuditActionResolver(AuditActionResolvers.SAML2_REQUEST_ACTION_RESOLVER,
                 new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED, AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED));
         };
     }

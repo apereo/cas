@@ -1,5 +1,8 @@
 package org.apereo.cas.validation;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.audit.BaseAuditableExecution;
@@ -19,9 +22,9 @@ import org.pac4j.core.client.Client;
  */
 @Slf4j
 public class RegisteredServiceDelegatedAuthenticationPolicyAuditableEnforcer extends BaseAuditableExecution {
-    @Audit(action = "DELEGATED_CLIENT",
-        actionResolverName = "DELEGATED_CLIENT_ACTION_RESOLVER",
-        resourceResolverName = "DELEGATED_CLIENT_RESOURCE_RESOLVER")
+    @Audit(action = AuditableActions.DELEGATED_CLIENT,
+        actionResolverName = AuditActionResolvers.DELEGATED_CLIENT_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.DELEGATED_CLIENT_RESOURCE_RESOLVER)
     @Override
     public AuditableExecutionResult execute(final AuditableContext context) {
         val result = AuditableExecutionResult.of(context);

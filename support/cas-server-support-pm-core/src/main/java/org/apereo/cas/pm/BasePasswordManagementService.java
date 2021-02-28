@@ -1,5 +1,8 @@
 package org.apereo.cas.pm;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.util.LoggingUtils;
@@ -130,9 +133,9 @@ public class BasePasswordManagementService implements PasswordManagementService 
         return null;
     }
 
-    @Audit(action = "CHANGE_PASSWORD",
-        actionResolverName = "CHANGE_PASSWORD_ACTION_RESOLVER",
-        resourceResolverName = "CHANGE_PASSWORD_RESOURCE_RESOLVER")
+    @Audit(action = AuditableActions.CHANGE_PASSWORD,
+        actionResolverName = AuditActionResolvers.CHANGE_PASSWORD_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.CHANGE_PASSWORD_RESOURCE_RESOLVER)
     @Override
     public boolean change(final Credential c, final PasswordChangeRequest bean) throws InvalidPasswordException {
         if (passwordHistoryService != null && passwordHistoryService.exists(bean)) {

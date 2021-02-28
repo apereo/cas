@@ -1,5 +1,8 @@
 package org.apereo.cas.web.flow.action;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.authentication.SurrogatePrincipalBuilder;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
@@ -34,9 +37,9 @@ public class SurrogateSelectionAction extends AbstractAction {
 
     private final SurrogatePrincipalBuilder surrogatePrincipalBuilder;
 
-    @Audit(action = "SURROGATE_AUTHENTICATION_ELIGIBILITY_SELECTION",
-        actionResolverName = "SURROGATE_AUTHENTICATION_ELIGIBILITY_SELECTION_ACTION_RESOLVER",
-        resourceResolverName = "SURROGATE_AUTHENTICATION_ELIGIBILITY_SELECTION_RESOURCE_RESOLVER")
+    @Audit(action = AuditableActions.SURROGATE_AUTHENTICATION_ELIGIBILITY_SELECTION,
+        actionResolverName = AuditActionResolvers.SURROGATE_AUTHENTICATION_ELIGIBILITY_SELECTION_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.SURROGATE_AUTHENTICATION_ELIGIBILITY_SELECTION_RESOURCE_RESOLVER)
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         val resultMap = new HashMap<String, Object>();

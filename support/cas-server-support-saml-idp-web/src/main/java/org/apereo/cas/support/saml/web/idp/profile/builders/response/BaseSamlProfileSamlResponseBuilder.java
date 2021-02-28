@@ -1,5 +1,8 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
@@ -47,9 +50,9 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
     }
 
     @Audit(
-        action = "SAML2_RESPONSE",
-        actionResolverName = "SAML2_RESPONSE_ACTION_RESOLVER",
-        resourceResolverName = "SAML2_RESPONSE_RESOURCE_RESOLVER")
+        action = AuditableActions.SAML2_RESPONSE,
+        actionResolverName = AuditActionResolvers.SAML2_RESPONSE_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.SAML2_RESPONSE_RESOURCE_RESOLVER)
     @Override
     public T build(final RequestAbstractType authnRequest,
                    final HttpServletRequest request,

@@ -1,5 +1,8 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.principal.Service;
 
 import lombok.Getter;
@@ -37,18 +40,18 @@ public class ChainingServicesManager implements ServicesManager, DomainAwareServ
         AnnotationAwareOrderComparator.sortIfNecessary(serviceManagers);
     }
 
-    @Audit(action = "SAVE_SERVICE",
-        actionResolverName = "SAVE_SERVICE_ACTION_RESOLVER",
-        resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
+    @Audit(action = AuditableActions.SAVE_SERVICE,
+        actionResolverName = AuditActionResolvers.SAVE_SERVICE_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.SAVE_SERVICE_RESOURCE_RESOLVER)
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
         val manager = findServicesManager(registeredService);
         return manager.map(servicesManager -> servicesManager.save(registeredService)).orElse(null);
     }
 
-    @Audit(action = "SAVE_SERVICE",
-        actionResolverName = "SAVE_SERVICE_ACTION_RESOLVER",
-        resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
+    @Audit(action = AuditableActions.SAVE_SERVICE,
+        actionResolverName = AuditActionResolvers.SAVE_SERVICE_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.SAVE_SERVICE_RESOURCE_RESOLVER)
     @Override
     public RegisteredService save(final RegisteredService registeredService, final boolean publishEvent) {
         val manager = findServicesManager(registeredService);
@@ -60,9 +63,9 @@ public class ChainingServicesManager implements ServicesManager, DomainAwareServ
         serviceManagers.forEach(ServicesManager::deleteAll);
     }
 
-    @Audit(action = "DELETE_SERVICE",
-        actionResolverName = "DELETE_SERVICE_ACTION_RESOLVER",
-        resourceResolverName = "DELETE_SERVICE_RESOURCE_RESOLVER")
+    @Audit(action = AuditableActions.DELETE_SERVICE,
+        actionResolverName = AuditActionResolvers.DELETE_SERVICE_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.DELETE_SERVICE_RESOURCE_RESOLVER)
     @Override
     public RegisteredService delete(final long id) {
         return serviceManagers.stream()
@@ -72,9 +75,9 @@ public class ChainingServicesManager implements ServicesManager, DomainAwareServ
             .orElse(null);
     }
 
-    @Audit(action = "DELETE_SERVICE",
-        actionResolverName = "DELETE_SERVICE_ACTION_RESOLVER",
-        resourceResolverName = "DELETE_SERVICE_RESOURCE_RESOLVER")
+    @Audit(action = AuditableActions.DELETE_SERVICE,
+        actionResolverName = AuditActionResolvers.DELETE_SERVICE_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.DELETE_SERVICE_RESOURCE_RESOLVER)
     @Override
     public RegisteredService delete(final RegisteredService svc) {
         val manager = findServicesManager(svc);
