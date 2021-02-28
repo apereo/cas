@@ -1,5 +1,8 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.exceptions.UnresolvedPrincipalException;
 import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.principal.NullPrincipal;
@@ -52,9 +55,9 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
 
     @Override
     @Audit(
-        action = "AUTHENTICATION",
-        actionResolverName = "AUTHENTICATION_RESOLVER",
-        resourceResolverName = "AUTHENTICATION_RESOURCE_RESOLVER")
+        action = AuditableActions.AUTHENTICATION,
+        actionResolverName = AuditActionResolvers.AUTHENTICATION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.AUTHENTICATION_RESOURCE_RESOLVER)
     public Authentication authenticate(final AuthenticationTransaction transaction) throws AuthenticationException {
         val result = invokeAuthenticationPreProcessors(transaction);
         if (!result) {

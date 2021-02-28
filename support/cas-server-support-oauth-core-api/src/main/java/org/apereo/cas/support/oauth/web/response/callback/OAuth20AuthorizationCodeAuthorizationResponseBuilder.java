@@ -1,5 +1,8 @@
 package org.apereo.cas.support.oauth.web.response.callback;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -37,9 +40,9 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder implements OAu
 
     private final ServicesManager servicesManager;
 
-    @Audit(action = "OAUTH2_CODE_RESPONSE",
-        actionResolverName = "OAUTH2_CODE_RESPONSE_ACTION_RESOLVER",
-        resourceResolverName = "OAUTH2_CODE_RESPONSE_RESOURCE_RESOLVER")
+    @Audit(action = AuditableActions.OAUTH2_CODE_RESPONSE,
+        actionResolverName = AuditActionResolvers.OAUTH2_CODE_RESPONSE_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.OAUTH2_CODE_RESPONSE_RESOURCE_RESOLVER)
     @Override
     public ModelAndView build(final JEEContext context, final String clientId,
                               final AccessTokenRequestDataHolder holder) {

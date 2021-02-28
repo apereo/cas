@@ -1,5 +1,9 @@
 package org.apereo.cas.pm.web.flow.actions;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditPrincipalResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -60,10 +64,10 @@ public class SendForgotUsernameInstructionsAction extends AbstractAction {
      */
     protected final PrincipalResolver principalResolver;
 
-    @Audit(action = "REQUEST_FORGOT_USERNAME",
-        principalResolverName = "REQUEST_FORGOT_USERNAME_PRINCIPAL_RESOLVER",
-        actionResolverName = "REQUEST_FORGOT_USERNAME_ACTION_RESOLVER",
-        resourceResolverName = "REQUEST_FORGOT_USERNAME_RESOURCE_RESOLVER")
+    @Audit(action = AuditableActions.REQUEST_FORGOT_USERNAME,
+        principalResolverName = AuditPrincipalResolvers.REQUEST_FORGOT_USERNAME_PRINCIPAL_RESOLVER,
+        actionResolverName = AuditActionResolvers.REQUEST_FORGOT_USERNAME_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.REQUEST_FORGOT_USERNAME_RESOURCE_RESOLVER)
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         communicationsManager.validate();

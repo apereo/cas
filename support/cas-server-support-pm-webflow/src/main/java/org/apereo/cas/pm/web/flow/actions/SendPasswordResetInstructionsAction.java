@@ -1,6 +1,9 @@
 package org.apereo.cas.pm.web.flow.actions;
 
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -127,10 +130,10 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
         return null;
     }
 
-    @Audit(action = "REQUEST_CHANGE_PASSWORD",
+    @Audit(action = AuditableActions.REQUEST_CHANGE_PASSWORD,
         principalResolverName = "REQUEST_CHANGE_PASSWORD_PRINCIPAL_RESOLVER",
-        actionResolverName = "REQUEST_CHANGE_PASSWORD_ACTION_RESOLVER",
-        resourceResolverName = "REQUEST_CHANGE_PASSWORD_RESOURCE_RESOLVER")
+        actionResolverName = AuditActionResolvers.REQUEST_CHANGE_PASSWORD_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.REQUEST_CHANGE_PASSWORD_RESOURCE_RESOLVER)
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         communicationsManager.validate();

@@ -797,28 +797,28 @@ public class CasOAuth20Configuration {
     @ConditionalOnMissingBean(name = "oauthAuditTrailRecordResolutionPlanConfigurer")
     public AuditTrailRecordResolutionPlanConfigurer oauthAuditTrailRecordResolutionPlanConfigurer() {
         return plan -> {
-            plan.registerAuditActionResolver(AuditActionResolvers.OAUTH_2_USER_PROFILE_ACTION_RESOLVER,
+            plan.registerAuditActionResolver(AuditActionResolvers.OAUTH2_USER_PROFILE_ACTION_RESOLVER,
                 new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED,
                     AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED));
-            plan.registerAuditResourceResolver(AuditResourceResolvers.OAUTH_2_USER_PROFILE_RESOURCE_RESOLVER,
+            plan.registerAuditResourceResolver(AuditResourceResolvers.OAUTH2_USER_PROFILE_RESOURCE_RESOLVER,
                 new OAuth20UserProfileDataAuditResourceResolver());
 
-            plan.registerAuditActionResolver(AuditActionResolvers.OAUTH_2_ACCESS_TOKEN_REQUEST_ACTION_RESOLVER,
+            plan.registerAuditActionResolver(AuditActionResolvers.OAUTH2_ACCESS_TOKEN_REQUEST_ACTION_RESOLVER,
                 new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED,
                     AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED));
-            plan.registerAuditResourceResolver(AuditResourceResolvers.OAUTH_2_ACCESS_TOKEN_REQUEST_RESOURCE_RESOLVER,
+            plan.registerAuditResourceResolver(AuditResourceResolvers.OAUTH2_ACCESS_TOKEN_REQUEST_RESOURCE_RESOLVER,
                 new OAuth20AccessTokenGrantRequestAuditResourceResolver());
 
-            plan.registerAuditActionResolver(AuditActionResolvers.OAUTH_2_ACCESS_TOKEN_RESPONSE_ACTION_RESOLVER,
+            plan.registerAuditActionResolver(AuditActionResolvers.OAUTH2_ACCESS_TOKEN_RESPONSE_ACTION_RESOLVER,
                 new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED,
                     AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED));
-            plan.registerAuditResourceResolver(AuditResourceResolvers.OAUTH_2_ACCESS_TOKEN_RESPONSE_RESOURCE_RESOLVER,
+            plan.registerAuditResourceResolver(AuditResourceResolvers.OAUTH2_ACCESS_TOKEN_RESPONSE_RESOURCE_RESOLVER,
                 new OAuth20AccessTokenResponseAuditResourceResolver());
 
-            plan.registerAuditActionResolver(AuditActionResolvers.OAUTH_2_CODE_RESPONSE_ACTION_RESOLVER,
+            plan.registerAuditActionResolver(AuditActionResolvers.OAUTH2_CODE_RESPONSE_ACTION_RESOLVER,
                 new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED,
                     AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED));
-            plan.registerAuditResourceResolver(AuditResourceResolvers.OAUTH_2_CODE_RESPONSE_RESOURCE_RESOLVER,
+            plan.registerAuditResourceResolver(AuditResourceResolvers.OAUTH2_CODE_RESPONSE_RESOURCE_RESOLVER,
                 new OAuth20CodeResponseAuditResourceResolver());
         };
     }
