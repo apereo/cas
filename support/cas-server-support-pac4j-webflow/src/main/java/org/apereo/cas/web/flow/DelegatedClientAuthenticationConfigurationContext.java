@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.validation.DelegatedAuthenticationAccessStrategyHelper;
 import org.apereo.cas.web.DelegatedClientWebflowManager;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
@@ -20,8 +21,6 @@ import lombok.Setter;
 import lombok.ToString;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.session.SessionStore;
-
-import java.util.List;
 
 /**
  * This is {@link DelegatedClientAuthenticationConfigurationContext}.
@@ -71,7 +70,7 @@ public class DelegatedClientAuthenticationConfigurationContext {
 
     private final CasConfigurationProperties casProperties;
 
-    private final List<ArgumentExtractor> argumentExtractors;
+    private final ArgumentExtractor argumentExtractor;
 
     private final DelegatedClientIdentityProviderConfigurationProducer delegatedClientIdentityProvidersProducer;
 
@@ -82,4 +81,6 @@ public class DelegatedClientAuthenticationConfigurationContext {
     private final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy;
 
     private final CasCookieBuilder cookieGenerator;
+
+    private final TicketFactory ticketFactory;
 }

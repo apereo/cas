@@ -46,7 +46,7 @@ public class CasDiscoveryProfileConfiguration {
     @Bean
     public CasServerProfileRegistrar casServerProfileRegistrar() {
         return new CasServerProfileRegistrar(this.builtClients.getIfAvailable(),
-            availableAttributes());
+            discoveryProfileAvailableAttributes());
     }
 
     @Bean
@@ -56,7 +56,7 @@ public class CasDiscoveryProfileConfiguration {
     }
 
     @Bean
-    public Set<String> availableAttributes() {
+    public Set<String> discoveryProfileAvailableAttributes() {
         val attributes = new LinkedHashSet<String>(0);
         val possibleUserAttributeNames = attributeRepository.getObject().getPossibleUserAttributeNames(IPersonAttributeDaoFilter.alwaysChoose());
         if (possibleUserAttributeNames != null) {
