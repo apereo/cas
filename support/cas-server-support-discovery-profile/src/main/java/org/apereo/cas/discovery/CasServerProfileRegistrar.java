@@ -38,16 +38,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CasServerProfileRegistrar implements ApplicationContextAware {
     private final Clients clients;
-    private final Set<String> availableAttributes;
-    private ApplicationContext applicationContext;
 
-    private Map<String, String> locateMultifactorAuthenticationProviderTypesSupported() {
-        val providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);
-        return providers
-            .values()
-            .stream()
-            .collect(Collectors.toMap(MultifactorAuthenticationProvider::getId, MultifactorAuthenticationProvider::getFriendlyName));
-    }
+    private final Set<String> availableAttributes;
+
+    private ApplicationContext applicationContext;
 
     private static Map<String, Class> locateRegisteredServiceTypesSupported() {
         final Function<Class, Object> mapper = c -> {
@@ -73,6 +67,14 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
             .map(mapper)
             .filter(Objects::nonNull)
             .collect(collector);
+    }
+
+    private Map<String, String> locateMultifactorAuthenticationProviderTypesSupported() {
+        val providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);
+        return providers
+            .values()
+            .stream()
+            .collect(Collectors.toMap(MultifactorAuthenticationProvider::getId, MultifactorAuthenticationProvider::getFriendlyName));
     }
 
     private Set<String> locateDelegatedClientTypesSupported() {
