@@ -16,8 +16,8 @@ else
 fi
 
 echo "Waiting for Cassandra server to come online..."
-sleep 5
-cmd="curl --output /dev/null --silent -I http://localhost:9042"
+sleep 10
+cmd="curl -I http://localhost:9042"
 retVal=0
 while [ $retVal -ne 8 ]
 do
