@@ -21,17 +21,16 @@ import lombok.experimental.Accessors;
 @JsonFilter("CsrfCookieProperties")
 public class CsrfCookieProperties extends CookieProperties {
 
+    private static final long serialVersionUID = 5298598088218873282L;
+
     /**
      * Setting default values to the pac4j defaults.
-     * Pac4j uses an Integer for maxAge and the default is null.
-     * CAS avoids setting the maxAge unless it is set to greater than -1.
+     * Pac4j uses an Integer for {@code maxAge} and the default is null.
+     * CAS avoids setting the {@code maxAge} unless it is set to greater than -1.
      * The name of the cookie is not configurable.
      */
     public CsrfCookieProperties() {
         setSecure(false);
         setHttpOnly(false);
-        setSameSitePolicy(null);
-        setPath(null);
-        setDomain(null);
     }
 }

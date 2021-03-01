@@ -43,7 +43,7 @@ to be defined in the CAS configuration as well.
 
 ### Default
 
-{% assign providers = "DropBox,Facebook,FourSquare,Google,HiOrgServer,Orcid,PayPal,Twitter,WindowsLive,Wordpress,Yahoo,CAS,LinkedIn,GitHub,OAuth20,Google-OpenID-Connect,Keycloak,Azure-AD,Apple,Generic-OpenID-Connect" | split: "," %}
+{% assign providers = "DropBox,Facebook,FourSquare,Google,HiOrgServer,Orcid,PayPal,Twitter,WindowsLive,Wordpress,Yahoo,CAS,LinkedIn,GitHub,OAuth20,Google-OpenID-Connect,Keycloak,Azure-AD,Apple,Generic-OpenID-Connect" | split: "," | sort %}
 
 Identity providers for delegated authentication can be registered with CAS using settings. 
 
@@ -101,7 +101,6 @@ if only there is a single provider available and configured.
 After a successful delegated authentication, a user is created inside the CAS server with a specific identifier:
 this one can be created only from the technical identifier received from the external identity provider (like `1234`)
 or as a "typed identifier" (like `FacebookProfile#1234`), which is the default.
-
 
 ## Returned Payload
 
@@ -173,7 +172,6 @@ authenticated principal are not stored or tracked anywhere. CAS does provide add
 such profiles to be managed outside of CAS and/or provisioned into identity stores, allowing you optionally to link
 external/guest accounts with their equivalent found in the authentication source used by CAS, etc.
 
-
 ### Groovy Provisioner
    
 {% include casproperties.html properties="cas.authn.pac4j.provisioning.groovy" %}
@@ -220,13 +218,25 @@ To learn more about delegating authentication to SAML2 identity providers,
 please [review this guide](Delegate-Authentication-SAML.html).
  
 ## Session Replication
+                
+For the current active session, the selected identity provider, the relying party
+and all other relevant details for the given authentication request are tracked as 
+*session attributes* inside a dedicated session store capable of replication, which is specially
+more relevant for clustred deployments.
 
 {% include casproperties.html properties="cas.session-replication" %}
+ 
+## Identity Provider Selection
+
+The selected identity provider can be optionally tracked and stored using a dedicated cookie,
+which will then be used on subsequent attempts to auto-redirect to 
+the identity provider, skipping the selection menu.
+
+{% include casproperties.html properties="cas.authn.pac4j.cookie" %}
 
 ## Troubleshooting
 
-To enable additional logging, configure the log4j configuration file to add the following
-levels:
+To enable additional logging, configure the log4j configuration file to add the following levels:
 
 ```xml
 ...

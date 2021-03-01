@@ -11,6 +11,7 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.validation.DelegatedAuthenticationAccessStrategyHelper;
 import org.apereo.cas.web.DefaultDelegatedAuthenticationNavigationController;
+import org.apereo.cas.web.DelegatedAuthenticationCookieGenerator;
 import org.apereo.cas.web.DelegatedClientWebflowManager;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -31,6 +32,7 @@ import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.saml2.Saml2ClientMetadataController;
 import org.apereo.cas.web.support.ArgumentExtractor;
+import org.apereo.cas.web.support.CookieUtils;
 
 import lombok.val;
 import org.pac4j.core.client.Clients;
@@ -201,7 +203,8 @@ public class DelegatedAuthenticationWebflowConfiguration {
             .argumentExtractor(argumentExtractor.getObject())
             .ticketFactory(ticketFactory.getObject())
             .delegatedClientIdentityProvidersProducer(delegatedClientIdentityProviderConfigurationProducer())
-            .cookieGenerator(delegatedClientDistributedSessionCookieGenerator.getObject())
+            .delegatedClientCookieGenerator(delegatedAuthenticationCookieGenerator())
+            .delegatedClientDistributedSessionCookieGenerator(delegatedClientDistributedSessionCookieGenerator.getObject())
             .delegatedAuthenticationAccessStrategyHelper(
                 new DelegatedAuthenticationAccessStrategyHelper(servicesManager.getObject(),
                     delegatedAuthenticationPolicyAuditableEnforcer.getObject()))
@@ -263,6 +266,15 @@ public class DelegatedAuthenticationWebflowConfiguration {
             authenticationRequestServiceSelectionStrategies.getObject(),
             builtClients.getObject(),
             helper,
-            casProperties);
+            casProperties,
+            delegatedAuthenticationCookieGenerator());
+    }
+
+    @ConditionalOnMissingBean(name = "delegatedAuthenticationCookieGenerator")
+    @Bean
+    @RefreshScope
+    public CasCookieBuilder delegatedAuthenticationCookieGenerator() {
+        val props = casProperties.getAuthn().getPac4j().getCookie();
+        return new DelegatedAuthenticationCookieGenerator(CookieUtils.buildCookieGenerationContext(props));
     }
 }

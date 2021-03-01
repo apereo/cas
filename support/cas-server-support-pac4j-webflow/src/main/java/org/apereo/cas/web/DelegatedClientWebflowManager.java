@@ -79,6 +79,22 @@ public class DelegatedClientWebflowManager {
         configContext.getCentralAuthenticationService().addTicket(ticket);
         webContext.setRequestAttribute(PARAMETER_CLIENT_ID, ticketId);
 
+
+        val cookieProps = configContext.getCasProperties().getAuthn().getPac4j().getCookie();
+        if (cookieProps.isEnabled()) {
+            if (cookieProps.isAutoConfigureCookiePath()) {
+                val contextPath = webContext.getNativeRequest().getContextPath();
+                val cookiePath = StringUtils.isNotBlank(contextPath) ? contextPath + '/' : "/";
+                val path = configContext.getDelegatedClientCookieGenerator().getCookiePath();
+                if (StringUtils.isBlank(path)) {
+                    LOGGER.debug("Setting path for cookies for delegated authentication cookie generator to: [{}]", cookiePath);
+                    configContext.getDelegatedClientCookieGenerator().setCookiePath(cookiePath);
+                }
+            }
+            configContext.getDelegatedClientCookieGenerator().addCookie(webContext.getNativeRequest(),
+                webContext.getNativeResponse(), client.getName());
+        }
+
         if (client instanceof SAML2Client) {
             configContext.getSessionStore().set(webContext, SAML2StateGenerator.SAML_RELAY_STATE_ATTRIBUTE, ticketId);
         }

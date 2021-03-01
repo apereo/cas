@@ -32,6 +32,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -144,12 +145,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                 return super.doExecute(context);
             }
 
-            val providers = configContext.getDelegatedClientIdentityProvidersProducer().produce(context);
-            LOGGER.trace("Delegated authentication providers are finalized as [{}]", providers);
-            WebUtils.createCredential(context);
-            if (response.getStatus() == HttpStatus.UNAUTHORIZED.value()) {
-                throw new UnauthorizedAuthenticationException("Authentication is not authorized: " + response.getStatus());
-            }
+            produceDelegatedAuthenticationClientsForContext(context, response);
         } catch (final HttpAction e) {
             FunctionUtils.doIf(LOGGER.isDebugEnabled(),
                 o -> LOGGER.debug(e.getMessage(), e), o -> LOGGER.info(e.getMessage())).accept(e);
@@ -163,6 +159,21 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             return stopWebflow(e, context);
         }
         return error();
+    }
+
+    /**
+     * Produce delegated authentication clients for context.
+     *
+     * @param context  the context
+     * @param response the response
+     */
+    protected void produceDelegatedAuthenticationClientsForContext(final RequestContext context, final HttpServletResponse response) {
+        val providers = configContext.getDelegatedClientIdentityProvidersProducer().produce(context);
+        LOGGER.trace("Delegated authentication providers are finalized as [{}]", providers);
+        WebUtils.createCredential(context);
+        if (response.getStatus() == HttpStatus.UNAUTHORIZED.value()) {
+            throw new UnauthorizedAuthenticationException("Authentication is not authorized: " + response.getStatus());
+        }
     }
 
     private Service resolveServiceFromRequestContext(final RequestContext context) {
@@ -199,12 +210,12 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             val contextPath = context.getExternalContext().getContextPath();
             val cookiePath = StringUtils.isNotBlank(contextPath) ? contextPath + '/' : "/";
 
-            val path = configContext.getCookieGenerator().getCookiePath();
+            val path = configContext.getDelegatedClientDistributedSessionCookieGenerator().getCookiePath();
             if (StringUtils.isBlank(path)) {
                 LOGGER.debug("Setting path for cookies for distributed session cookie generator to: [{}]", cookiePath);
-                configContext.getCookieGenerator().setCookiePath(cookiePath);
+                configContext.getDelegatedClientDistributedSessionCookieGenerator().setCookiePath(cookiePath);
             } else {
-                LOGGER.trace("Delegated authentication cookie domain is [{}] with path [{}]", configContext.getCookieGenerator().getCookieDomain(), path);
+                LOGGER.trace("Delegated authentication cookie domain is [{}] with path [{}]", configContext.getDelegatedClientDistributedSessionCookieGenerator().getCookieDomain(), path);
             }
         }
         return super.doPreExecute(context);
