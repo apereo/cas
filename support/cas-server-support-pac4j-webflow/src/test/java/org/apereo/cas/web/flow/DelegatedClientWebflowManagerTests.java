@@ -46,8 +46,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@SpringBootTest(classes =
-    BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
+@SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class,
+    properties = "cas.authn.pac4j.cookie.enabled=true")
 @Tag("Webflow")
 public class DelegatedClientWebflowManagerTests {
     @Autowired

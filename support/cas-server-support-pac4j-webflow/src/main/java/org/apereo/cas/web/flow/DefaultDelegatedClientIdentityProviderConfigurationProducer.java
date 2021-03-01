@@ -9,11 +9,13 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.validation.DelegatedAuthenticationAccessStrategyHelper;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfigurationFactory;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.client.IndirectClient;
@@ -47,6 +49,8 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
 
     private final CasConfigurationProperties casProperties;
 
+    private final CasCookieBuilder delegatedAuthenticationCookieBuilder;
+    
     /**
      * Determine auto redirect policy for provider.
      *
@@ -72,6 +76,17 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
             LOGGER.trace("Provider [{}] is configured to auto-redirect", provider);
             WebUtils.putDelegatedAuthenticationProviderPrimary(context, provider);
         }
+
+        val cookieProps = casProperties.getAuthn().getPac4j().getCookie();
+        if (cookieProps.isEnabled()) {
+            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+            val cookieValue = delegatedAuthenticationCookieBuilder.retrieveCookieValue(request);
+            if (StringUtils.equalsIgnoreCase(cookieValue, provider.getName())) {
+                LOGGER.trace("Provider [{}] is chosen via cookie value preference as primary", provider);
+                provider.setAutoRedirect(true);
+                WebUtils.putDelegatedAuthenticationProviderPrimary(context, provider);
+            }
+        }
     }
 
     private boolean isDelegatedClientAuthorizedForService(final Client client,
@@ -89,7 +104,7 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
 
         LOGGER.debug("Initialized context with request parameters [{}]", webContext.getRequestParameters());
         val allClients = this.clients.findAllClients();
-        val urls = new LinkedHashSet<DelegatedClientIdentityProviderConfiguration>(allClients.size());
+        val providers = new LinkedHashSet<DelegatedClientIdentityProviderConfiguration>(allClients.size());
         allClients
             .stream()
             .filter(client -> client instanceof IndirectClient && isDelegatedClientAuthorizedForService(client, service))
@@ -98,7 +113,7 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
                 try {
                     val provider = produce(context, client);
                     provider.ifPresent(p -> {
-                        urls.add(p);
+                        providers.add(p);
                         determineAutoRedirectPolicyForProvider(context, service, p);
                     });
                 } catch (final Exception e) {
@@ -107,13 +122,13 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
                 }
             });
 
-        if (!urls.isEmpty()) {
-            WebUtils.putDelegatedAuthenticationProviderConfigurations(context, urls);
+        if (!providers.isEmpty()) {
+            WebUtils.putDelegatedAuthenticationProviderConfigurations(context, providers);
         } else if (response.getStatus() != HttpStatus.UNAUTHORIZED.value()) {
             LOGGER.warn("No delegated authentication providers could be determined based on the provided configuration. "
                 + "Either no clients are configured, or the current access strategy rules prohibit CAS from using authentication providers");
         }
-        return urls;
+        return providers;
     }
 
     @Override

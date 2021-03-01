@@ -73,7 +73,7 @@ public class CookieProperties implements Serializable {
     private boolean httpOnly = true;
 
     /**
-     * The maximum age of the cookie, specified in seconds. By default, -1 indicating
+     * The maximum age of the cookie, specified in seconds. By default, {@code -1} indicating
      * the cookie will persist until browser shutdown.
      * A positive value indicates that the cookie will expire after that many seconds have passed. Note that the value is
      * the maximum age when the cookie will expire, not the cookie's current age.

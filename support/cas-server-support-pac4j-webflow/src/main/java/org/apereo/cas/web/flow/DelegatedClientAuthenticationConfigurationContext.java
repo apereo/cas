@@ -33,29 +33,14 @@ import org.pac4j.core.context.session.SessionStore;
 @Setter
 @Builder
 public class DelegatedClientAuthenticationConfigurationContext {
-    /**
-     * The Clients.
-     */
     private final Clients clients;
 
-    /**
-     * The Services manager.
-     */
     private final ServicesManager servicesManager;
 
-    /**
-     * The Delegated authentication policy enforcer.
-     */
     private final AuditableExecution delegatedAuthenticationPolicyEnforcer;
 
-    /**
-     * The Delegated client webflow manager.
-     */
     private final DelegatedClientWebflowManager delegatedClientWebflowManager;
 
-    /**
-     * The Authentication system support.
-     */
     private final AuthenticationSystemSupport authenticationSystemSupport;
 
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
@@ -80,7 +65,9 @@ public class DelegatedClientAuthenticationConfigurationContext {
 
     private final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy;
 
-    private final CasCookieBuilder cookieGenerator;
+    private final CasCookieBuilder delegatedClientDistributedSessionCookieGenerator;
+
+    private final CasCookieBuilder delegatedClientCookieGenerator;
 
     private final TicketFactory ticketFactory;
 }

@@ -16,16 +16,16 @@ else
 fi
 
 echo "Waiting for Cassandra server to come online..."
-sleep 10
-cmd="curl -I http://localhost:9042"
-retVal=0
-while [ $retVal -ne 8 ]
-do
-  printf '.'
-  sleep 1
-  eval $cmd
-  retVal=$?
-done
+sleep 45
+#cmd="curl -I http://localhost:9042"
+#retVal=0
+#while [ $retVal -ne 8 ]
+#do
+#  printf '.'
+#  sleep 1
+#  eval $cmd
+#  retVal=$?
+#done
 
 echo "Creating Cassandra keyspace: cas"
 docker exec cassandra cqlsh -e "CREATE KEYSPACE cas WITH REPLICATION = {'class' : 'SimpleStrategy', 'replication_factor' : 1}"
