@@ -330,7 +330,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         try {
             val clientResult = configContext.getClients().findClient(clientName);
             if (clientResult.isPresent()) {
-                return configContext.getDelegatedClientWebflowManager()
+                return configContext.getDelegatedClientAuthenticationWebflowManager()
                     .retrieve(requestContext, webContext, BaseClient.class.cast(clientResult.get()));
             }
             LOGGER.warn("Unable to locate client [{}] in registered clients", clientName);

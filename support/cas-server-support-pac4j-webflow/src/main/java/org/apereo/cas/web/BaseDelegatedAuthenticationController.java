@@ -1,7 +1,7 @@
 package org.apereo.cas.web;
 
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
 import org.apereo.cas.web.view.DynamicHtmlView;
 
 import lombok.AccessLevel;
@@ -11,10 +11,8 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.http.client.utils.URIBuilder;
-import org.pac4j.core.client.Clients;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.JEEContext;
-import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.exception.http.WithContentAction;
 import org.pac4j.core.exception.http.WithLocationAction;
 import org.pac4j.core.redirect.RedirectionActionBuilder;
@@ -42,13 +40,7 @@ public abstract class BaseDelegatedAuthenticationController {
      */
     protected static final String ENDPOINT_RESPONSE = "login/{clientName}";
 
-    private final Clients clients;
-
-    private final DelegatedClientWebflowManager delegatedClientWebflowManager;
-
-    private final SessionStore sessionStore;
-
-    private final CasConfigurationProperties casProperties;
+    private final DelegatedClientAuthenticationConfigurationContext configurationContext;
 
     /**
      * Build redirect view back to flow view.
@@ -59,7 +51,7 @@ public abstract class BaseDelegatedAuthenticationController {
      */
     @SneakyThrows
     protected View buildRedirectViewBackToFlow(final String clientName, final HttpServletRequest request) {
-        val urlBuilder = new URIBuilder(casProperties.getServer().getLoginUrl());
+        val urlBuilder = new URIBuilder(configurationContext.getCasProperties().getServer().getLoginUrl());
         request.getParameterMap().forEach((k, v) -> {
             val value = request.getParameter(k);
             urlBuilder.addParameter(k, value);
@@ -79,7 +71,8 @@ public abstract class BaseDelegatedAuthenticationController {
      * @return the resulting view
      */
     @SneakyThrows
-    protected View getResultingView(final IndirectClient client, final JEEContext webContext, final TransientSessionTicket ticket) {
+    protected View getResultingView(final IndirectClient client, final JEEContext webContext,
+                                    final TransientSessionTicket ticket) {
         client.init();
 
         val properties = ticket.getProperties();
@@ -89,7 +82,8 @@ public abstract class BaseDelegatedAuthenticationController {
         if (properties.containsKey(RedirectionActionBuilder.ATTRIBUTE_PASSIVE)) {
             webContext.setRequestAttribute(RedirectionActionBuilder.ATTRIBUTE_PASSIVE, true);
         }
-        val actionResult = client.getRedirectionActionBuilder().getRedirectionAction(webContext, this.sessionStore);
+        val actionResult = client.getRedirectionActionBuilder()
+            .getRedirectionAction(webContext, configurationContext.getSessionStore());
         if (actionResult.isPresent()) {
             val action = actionResult.get();
             LOGGER.debug("Determined final redirect action for client [{}] as [{}]", client, action);

@@ -9,7 +9,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.validation.DelegatedAuthenticationAccessStrategyHelper;
-import org.apereo.cas.web.DelegatedClientWebflowManager;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -39,7 +38,7 @@ public class DelegatedClientAuthenticationConfigurationContext {
 
     private final AuditableExecution delegatedAuthenticationPolicyEnforcer;
 
-    private final DelegatedClientWebflowManager delegatedClientWebflowManager;
+    private final DelegatedClientAuthenticationWebflowManager delegatedClientAuthenticationWebflowManager;
 
     private final AuthenticationSystemSupport authenticationSystemSupport;
 
