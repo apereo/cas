@@ -14,8 +14,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
-import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.util.Objects;
@@ -83,14 +82,11 @@ public class SamlRegisteredServiceAttributeReleasePolicyTests {
         val resolver = mock(SamlRegisteredServiceCachingMetadataResolver.class);
         when(resolver.resolve(any(), any())).thenReturn(mock(MetadataResolver.class));
 
-        val ctx = mock(ConfigurableApplicationContext.class);
-        val beanFactory = mock(AutowireCapableBeanFactory.class);
-        when(beanFactory.getBean(CasConfigurationProperties.class)).thenReturn(new CasConfigurationProperties());
-        when(ctx.getAutowireCapableBeanFactory()).thenReturn(beanFactory);
-        when(ctx.getBean(SamlRegisteredServiceCachingMetadataResolver.DEFAULT_BEAN_NAME,
-            SamlRegisteredServiceCachingMetadataResolver.class)).thenReturn(resolver);
-
-        ApplicationContextProvider.holdApplicationContext(ctx);
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, new CasConfigurationProperties(), "CasConfigurationProperties");
+        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, resolver, SamlRegisteredServiceCachingMetadataResolver.DEFAULT_BEAN_NAME);
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         registeredService.setServiceId("https://sp.cas.org");
         val policy = new EduPersonTargetedIdAttributeReleasePolicy();

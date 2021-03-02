@@ -74,6 +74,10 @@ public class DelegatedAuthenticationWebflowConfiguration {
     private ObjectProvider<TicketFactory> ticketFactory;
 
     @Autowired
+    @Qualifier("registeredServiceAccessStrategyEnforcer")
+    private ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
+
+    @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
     private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies;
 
@@ -206,6 +210,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
             .delegatedClientIdentityProvidersProducer(delegatedClientIdentityProviderConfigurationProducer())
             .delegatedClientCookieGenerator(delegatedAuthenticationCookieGenerator())
             .delegatedClientDistributedSessionCookieGenerator(delegatedClientDistributedSessionCookieGenerator.getObject())
+            .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getObject())
             .delegatedAuthenticationAccessStrategyHelper(
                 new DelegatedAuthenticationAccessStrategyHelper(servicesManager.getObject(),
                     delegatedAuthenticationPolicyAuditableEnforcer.getObject()))

@@ -71,6 +71,7 @@ public class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationT
 
         samlContext = new MessageContext();
         saml2MessageContext = new SAML2MessageContext();
+        saml2MessageContext.setSaml2Configuration(saml2ClientConfiguration);
         saml2MessageContext.setWebContext(new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse()));
         val peer = saml2MessageContext.getMessageContext().getSubcontext(SAMLPeerEntityContext.class, true);
         assertNotNull(peer);
@@ -115,7 +116,7 @@ public class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationT
         val spMetadataPath = new File(FileUtils.getTempDirectory(), "sp-metadata.xml").getCanonicalPath();
         setupTestContextFor(spMetadataPath, "cas:example:sp");
         val request = new MockHttpServletRequest();
-        val builder = new SAML2AuthnRequestBuilder(saml2ClientConfiguration);
+        val builder = new SAML2AuthnRequestBuilder();
         val authnRequest = builder.build(saml2MessageContext);
         samlObjectSignatureValidator.verifySamlProfileRequestIfNeeded(authnRequest, adaptor, request, samlContext);
     }
@@ -126,7 +127,7 @@ public class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationT
         setupTestContextFor(spMetadataPath, "cas:example:sp");
 
         val request = new MockHttpServletRequest();
-        val builder = new SAML2AuthnRequestBuilder(saml2ClientConfiguration);
+        val builder = new SAML2AuthnRequestBuilder();
         val authnRequest = builder.build(saml2MessageContext);
 
         val messageContext = new MessageContext();
@@ -153,7 +154,7 @@ public class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationT
         setupTestContextFor("classpath:metadata/sp-metadata-multicerts.xml", "https://bard.zoom.us");
 
         val request = new MockHttpServletRequest();
-        val builder = new SAML2AuthnRequestBuilder(saml2ClientConfiguration);
+        val builder = new SAML2AuthnRequestBuilder();
         saml2ClientConfiguration.setAuthnRequestSigned(true);
         val authnRequest = builder.build(saml2MessageContext);
 
@@ -172,7 +173,7 @@ public class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationT
         setupTestContextFor(spMetadataPath, "cas:example:sp");
 
         val request = new MockHttpServletRequest();
-        val builder = new SAML2AuthnRequestBuilder(saml2ClientConfiguration);
+        val builder = new SAML2AuthnRequestBuilder();
         val authnRequest = builder.build(saml2MessageContext);
         val messageContext = new MessageContext();
         messageContext.setMessage(authnRequest);
