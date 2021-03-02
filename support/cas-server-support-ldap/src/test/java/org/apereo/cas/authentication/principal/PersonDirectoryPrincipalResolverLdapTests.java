@@ -52,7 +52,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfPortOpen(port = 10389)
 public class PersonDirectoryPrincipalResolverLdapTests {
     @Autowired
-    @Qualifier("attributeRepository")
+    @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
     private IPersonAttributeDao attributeRepository;
 
     @Autowired
@@ -74,7 +74,7 @@ public class PersonDirectoryPrincipalResolverLdapTests {
     public void verifyChainedResolver() {
         val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(PrincipalFactoryUtils.newPrincipalFactory(),
             this.attributeRepository, casProperties.getPersonDirectory());
-        val chain = new ChainingPrincipalResolver(new DefaultPrincipalElectionStrategy());
+        val chain = new ChainingPrincipalResolver(new DefaultPrincipalElectionStrategy(), casProperties);
         chain.setChain(Arrays.asList(new EchoingPrincipalResolver(), resolver));
         val attributes = new HashMap<String, List<Object>>(2);
         attributes.put("a1", List.of("v1"));

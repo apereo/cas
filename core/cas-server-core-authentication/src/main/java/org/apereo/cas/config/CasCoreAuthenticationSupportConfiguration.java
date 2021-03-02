@@ -3,8 +3,10 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandlerResolver;
 import org.apereo.cas.authentication.AuthenticationPolicyResolver;
+import org.apereo.cas.authentication.AuthenticationResultBuilderFactory;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.AuthenticationTransactionFactory;
 import org.apereo.cas.authentication.AuthenticationTransactionManager;
 import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.apereo.cas.authentication.GroovyAuthenticationPostProcessor;
@@ -14,7 +16,8 @@ import org.apereo.cas.authentication.handler.ByCredentialSourceAuthenticationHan
 import org.apereo.cas.authentication.handler.GroovyAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.handler.RegisteredServiceAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.policy.RegisteredServiceAuthenticationPolicyResolver;
-import org.apereo.cas.authentication.principal.cache.PrincipalAttributesRepositoryCache;
+import org.apereo.cas.authentication.principal.PrincipalAttributesRepositoryCache;
+import org.apereo.cas.authentication.principal.cache.DefaultPrincipalAttributesRepositoryCache;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 
@@ -55,13 +58,24 @@ public class CasCoreAuthenticationSupportConfiguration {
     private ObjectProvider<AuthenticationTransactionManager> authenticationTransactionManager;
 
     @Autowired
+    @Qualifier("authenticationResultBuilderFactory")
+    private ObjectProvider<AuthenticationResultBuilderFactory> authenticationResultBuilderFactory;
+
+    @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
     private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationServiceSelectionPlan;
 
+    @Autowired
+    @Qualifier("authenticationTransactionFactory")
+    private ObjectProvider<AuthenticationTransactionFactory> authenticationTransactionFactory;
+
+    @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "defaultAuthenticationSystemSupport")
     public AuthenticationSystemSupport defaultAuthenticationSystemSupport() {
         return new DefaultAuthenticationSystemSupport(authenticationTransactionManager.getObject(),
-            principalElectionStrategy.getObject());
+            principalElectionStrategy.getObject(), authenticationResultBuilderFactory.getObject(),
+            authenticationTransactionFactory.getObject());
     }
 
     @RefreshScope
@@ -93,12 +107,14 @@ public class CasCoreAuthenticationSupportConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "byCredentialSourceAuthenticationHandlerResolver")
+    @RefreshScope
     public AuthenticationHandlerResolver byCredentialSourceAuthenticationHandlerResolver() {
         return new ByCredentialSourceAuthenticationHandlerResolver();
     }
 
     @ConditionalOnMissingBean(name = "authenticationHandlerResolversExecutionPlanConfigurer")
     @Bean
+    @RefreshScope
     public AuthenticationEventExecutionPlanConfigurer authenticationHandlerResolversExecutionPlanConfigurer() {
         return plan -> {
             if (casProperties.getAuthn().getPolicy().isSourceSelectionEnabled()) {
@@ -130,9 +146,9 @@ public class CasCoreAuthenticationSupportConfiguration {
         };
     }
 
-    @ConditionalOnMissingBean(name = "principalAttributesRepositoryCache")
+    @ConditionalOnMissingBean(name = PrincipalAttributesRepositoryCache.DEFAULT_BEAN_NAME)
     @Bean
     public PrincipalAttributesRepositoryCache principalAttributesRepositoryCache() {
-        return new PrincipalAttributesRepositoryCache();
+        return new DefaultPrincipalAttributesRepositoryCache();
     }
 }

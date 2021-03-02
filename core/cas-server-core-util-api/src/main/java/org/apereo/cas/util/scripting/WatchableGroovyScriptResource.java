@@ -1,6 +1,5 @@
 package org.apereo.cas.util.scripting;
 
-import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.io.FileWatcherService;
 
@@ -9,6 +8,7 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.jooq.lambda.Unchecked;
 import org.springframework.core.io.Resource;
 
 /**
@@ -31,19 +31,15 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledGroovySc
     public WatchableGroovyScriptResource(final Resource script, final boolean enableWatcher) {
         this.resource = script;
 
-        if (ResourceUtils.doesResourceExist(script) && enableWatcher) {
-            if (ResourceUtils.isFile(script)) {
-                this.watcherService = new FileWatcherService(script.getFile(), file -> {
-                    try {
-                        LOGGER.debug("Reloading script at [{}]", file);
-                        compileScriptResource(script);
-                    } catch (final Exception e) {
-                        LoggingUtils.error(LOGGER, e);
-                    }
-                });
+        if (ResourceUtils.doesResourceExist(script)) {
+            if (ResourceUtils.isFile(script) && enableWatcher) {
+                this.watcherService = new FileWatcherService(script.getFile(), Unchecked.consumer(file -> {
+                    LOGGER.debug("Reloading script at [{}]", file);
+                    compileScriptResource(script);
+                }));
                 this.watcherService.start(script.getFilename());
-                compileScriptResource(script);
             }
+            compileScriptResource(script);
         }
     }
 
@@ -91,15 +87,7 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledGroovySc
         return null;
     }
 
-    /**
-     * Execute t.
-     *
-     * @param <T>        the type parameter
-     * @param methodName the method name
-     * @param clazz      the clazz
-     * @param args       the args
-     * @return the t
-     */
+    @Override
     public <T> T execute(final String methodName, final Class<T> clazz, final Object... args) {
         return execute(methodName, clazz, true, args);
     }

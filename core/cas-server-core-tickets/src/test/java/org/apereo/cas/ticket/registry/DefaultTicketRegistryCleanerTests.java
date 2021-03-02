@@ -29,10 +29,10 @@ public class DefaultTicketRegistryCleanerTests {
         val casuser = new MockTicketGrantingTicket("casuser");
         casuser.markTicketExpired();
         ticketRegistry.addTicket(casuser);
-        assertTrue(ticketRegistry.getTickets().size() == 1);
+        assertEquals(ticketRegistry.getTickets().size(), 1);
         val c = new DefaultTicketRegistryCleaner(new NoOpLockingStrategy(), logoutManager, ticketRegistry);
         c.clean();
-        assertTrue(ticketRegistry.sessionCount() == 0);
+        assertEquals(ticketRegistry.sessionCount(), 0);
     }
 
     @Test
@@ -42,7 +42,7 @@ public class DefaultTicketRegistryCleanerTests {
         val lock = mock(LockingStrategy.class);
         when(lock.acquire()).thenReturn(Boolean.FALSE);
         val c = new DefaultTicketRegistryCleaner(lock, logoutManager, ticketRegistry);
-        assertTrue(c.clean() == 0);
+        assertEquals(c.clean(), 0);
     }
 
     @Test
@@ -51,7 +51,7 @@ public class DefaultTicketRegistryCleanerTests {
         val ticketRegistry = mock(TicketRegistry.class);
         when(ticketRegistry.getTicketsStream()).thenThrow(IllegalArgumentException.class);
         val c = new DefaultTicketRegistryCleaner(new NoOpLockingStrategy(), logoutManager, ticketRegistry);
-        assertTrue(c.clean() == 0);
+        assertEquals(c.clean(), 0);
     }
 
     @Test
@@ -66,6 +66,6 @@ public class DefaultTicketRegistryCleanerTests {
                 return false;
             }
         };
-        assertTrue(c.clean() == 0);
+        assertEquals(c.clean(), 0);
     }
 }

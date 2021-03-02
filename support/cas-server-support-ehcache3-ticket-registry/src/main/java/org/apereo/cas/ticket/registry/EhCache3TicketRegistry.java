@@ -31,8 +31,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class EhCache3TicketRegistry extends AbstractTicketRegistry implements DisposableBean {
-
-
+    
     private final TicketCatalog ticketCatalog;
 
     private final CacheManager cacheManager;
@@ -60,7 +59,7 @@ public class EhCache3TicketRegistry extends AbstractTicketRegistry implements Di
         val ticket = encodeTicket(ticketToAdd);
 
         val cache = getTicketCacheFor(metadata);
-        LOGGER.debug("Adding ticket [{}] to the cache: {}",
+        LOGGER.debug("Adding ticket [{}] to the cache: [{}]",
             ticket.getId(), metadata.getProperties().getStorageName());
         cache.put(ticket.getId(), ticket);
     }

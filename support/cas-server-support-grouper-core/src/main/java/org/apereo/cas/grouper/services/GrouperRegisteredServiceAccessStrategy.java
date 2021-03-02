@@ -4,11 +4,12 @@ import org.apereo.cas.grouper.GrouperFacade;
 import org.apereo.cas.grouper.GrouperGroupField;
 import org.apereo.cas.services.TimeBasedRegisteredServiceAccessStrategy;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import edu.internet2.middleware.grouperClient.util.GrouperClientConfig;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGetGroupsResult;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -18,6 +19,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 /**
@@ -43,10 +45,12 @@ public class GrouperRegisteredServiceAccessStrategy extends TimeBasedRegisteredS
 
     private GrouperGroupField groupField = GrouperGroupField.NAME;
 
+    private Map<String, String> configProperties = new TreeMap<>();
+
     @Override
     public boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> principalAttributes) {
         val allAttributes = new HashMap<>(principalAttributes);
-        val results = getWsGetGroupsResults(principal);
+        val results = fetchWsGetGroupsResults(principal);
         if (results.isEmpty()) {
             LOGGER.warn("No groups could be found for [{}]", principal);
             return false;
@@ -63,9 +67,17 @@ public class GrouperRegisteredServiceAccessStrategy extends TimeBasedRegisteredS
         return super.doPrincipalAttributesAllowServiceAccess(principal, allAttributes);
     }
 
-    @JsonIgnore
-    protected Collection<WsGetGroupsResult> getWsGetGroupsResults(final String principal) {
-        val facade = new GrouperFacade();
-        return facade.getGroupsForSubjectId(principal);
+    /**
+     * Fetch ws get groups results.
+     *
+     * @param principal the principal
+     * @return the collection
+     */
+    @Synchronized
+    protected Collection<WsGetGroupsResult> fetchWsGetGroupsResults(final String principal) {
+        if (!this.configProperties.isEmpty()) {
+            GrouperClientConfig.retrieveConfig().propertiesThreadLocalOverrideMap().putAll(this.configProperties);
+        }
+        return new GrouperFacade().getGroupsForSubjectId(principal);
     }
 }

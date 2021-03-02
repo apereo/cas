@@ -27,7 +27,8 @@ public class DefaultCas30ProtocolAttributesRenderer implements CasProtocolAttrib
         attributes.forEach((k, v) -> {
             val values = CollectionUtils.toCollection(v);
             values.forEach(value -> {
-                val fmt = buildSingleAttributeDefinitionLine(k, value);
+                val name = CasProtocolAttributesRenderer.sanitizeAttributeName(k);
+                val fmt = buildSingleAttributeDefinitionLine(name, value);
                 LOGGER.trace("Formatted attribute for the response: [{}]", fmt);
                 formattedAttributes.add(fmt);
             });

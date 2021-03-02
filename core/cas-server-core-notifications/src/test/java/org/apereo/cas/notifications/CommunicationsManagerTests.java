@@ -3,6 +3,7 @@ package org.apereo.cas.notifications;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
+import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
@@ -21,6 +22,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -60,11 +62,12 @@ public class CommunicationsManagerTests {
         props.setBcc("bcc@example.org");
         props.setReplyTo("bcc1@example.org");
 
-        assertTrue(communicationsManager.email(props, "sample@example.org", props.getFormattedBody()));
+        val body = EmailMessageBodyBuilder.builder().properties(props).build().produce();
+        assertTrue(communicationsManager.email(props, "sample@example.org", body));
         val p = mock(Principal.class);
         when(p.getId()).thenReturn("casuser");
         when(p.getAttributes()).thenReturn(CollectionUtils.wrap("email", List.of("cas@example.org")));
-        assertTrue(communicationsManager.email(p, "email", props, props.getFormattedBody()));
+        assertTrue(communicationsManager.email(p, "email", props, body));
     }
 
     @Test
@@ -78,8 +81,8 @@ public class CommunicationsManagerTests {
         props.setText(tempFile.getCanonicalPath());
         props.setSubject("Subject");
         props.setFrom("cas@example.org");
-
-        val body = props.getFormattedBody("param1", "param2");
+        val body = EmailMessageBodyBuilder.builder().properties(props)
+            .parameters(Map.of("k1", "param1", "k2", "param2")).build().produce();
         assertTrue(communicationsManager.email(props, "sample@example.org", body));
     }
 

@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.core.services;
 
-import org.apereo.cas.configuration.model.BaseRestEndpointProperties;
 import org.apereo.cas.configuration.model.support.aws.AmazonS3ServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.cassandra.serviceregistry.CassandraServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.cosmosdb.CosmosDbServiceRegistryProperties;
@@ -20,6 +19,7 @@ import org.apereo.cas.configuration.model.support.services.yaml.YamlServiceRegis
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -37,6 +37,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("ServiceRegistryProperties")
 public class ServiceRegistryProperties implements Serializable {
 
     private static final long serialVersionUID = -368826011744304210L;
@@ -69,7 +70,7 @@ public class ServiceRegistryProperties implements Serializable {
      * Properties pertaining to REST service registry.
      */
     @NestedConfigurationProperty
-    private BaseRestEndpointProperties rest = new BaseRestEndpointProperties();
+    private RestfulServiceRegistryProperties rest = new RestfulServiceRegistryProperties();
 
     /**
      * Properties pertaining to redis service registry.
@@ -150,54 +151,14 @@ public class ServiceRegistryProperties implements Serializable {
     private SmsProperties sms = new SmsProperties();
 
     /**
-     * Flag that indicates whether to initialise active service registry implementation with a default set of service definition included
-     * with CAS in JSON format.
+     * Registry caching settings.
      */
-    private boolean initFromJson;
+    @NestedConfigurationProperty
+    private ServiceRegistryCacheProperties cache = new ServiceRegistryCacheProperties();
 
     /**
-     * Flag indicating whether a background watcher thread is enabled for the purposes of live reloading of service registry data changes
-     * from persistent data store.
+     * Registry core/common settings.
      */
-    private boolean watcherEnabled = true;
-
-    /**
-     * Determine how services are internally managed, queried, cached and reloaded by CAS.
-     * Accepted values are the following:
-     *
-     * <ul>
-     * <li>DEFAULT: Keep all services inside a concurrent map.</li>
-     * <li>DOMAIN: Group registered services by their domain having been explicitly defined.</li>
-     * </ul>
-     */
-    private ServiceManagementTypes managementType = ServiceManagementTypes.DEFAULT;
-    
-    /**
-     * Services cache duration specifies the fixed duration for an entry to be automatically removed from the cache after its creation or update.
-    */
-    private String cache = "PT5M";
-
-    /**
-     * Services cache size specifies the maximum number of entries the cache may contain.
-    */
-    private long cacheSize = 1000L;
-
-    /**
-     * Services cache capacity sets the minimum total size for the internal data structures.
-    */
-    private int cacheCapacity = 1000;
-    
-    /**
-     * Types of service managers that one can control.
-     */
-    public enum ServiceManagementTypes {
-        /**
-         * Group service definitions by their domain.
-         */
-        DOMAIN,
-        /**
-         * Default option to keep definitions in a map as they arrive.
-         */
-        DEFAULT
-    }
+    @NestedConfigurationProperty
+    private ServiceRegistryCoreProperties core = new ServiceRegistryCoreProperties();
 }

@@ -5,11 +5,11 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -23,6 +23,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.hjson.JsonValue;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
@@ -48,9 +50,8 @@ public class ReturnRestfulAttributeReleasePolicy extends AbstractRegisteredServi
 
     private static final long serialVersionUID = -6249488544306639050L;
 
-    private static final ObjectMapper MAPPER = new ObjectMapper()
-        .findAndRegisterModules()
-        .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .singleValueAsArray(true).build().toObjectMapper();
 
     private String endpoint;
 
@@ -60,8 +61,16 @@ public class ReturnRestfulAttributeReleasePolicy extends AbstractRegisteredServi
         HttpResponse response = null;
         try (val writer = new StringWriter()) {
             MAPPER.writer(new MinimalPrettyPrinter()).writeValue(writer, attributes);
-            response = HttpUtils.executePost(this.endpoint, writer.toString(),
-                CollectionUtils.wrap("principal", principal.getId(), "service", registeredService.getServiceId()));
+
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .method(HttpMethod.POST)
+                .url(this.endpoint)
+                .parameters(CollectionUtils.wrap("principal", principal.getId(),
+                    "service", registeredService.getServiceId()))
+                .entity(writer.toString())
+                .headers(CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE))
+                .build();
+            response = HttpUtils.execute(exec);
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
                 LOGGER.debug("Policy response received: [{}]", result);

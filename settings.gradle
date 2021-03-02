@@ -17,6 +17,43 @@ buildCache {
     }
 }
 
+dependencyResolutionManagement {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven {
+            url "https://build.shibboleth.net/nexus/content/repositories/releases"
+            content {
+                includeGroupByRegex "org\\.opensaml.*"
+                includeGroupByRegex "net\\.shibboleth.*"
+            }
+        }
+        maven {
+            url "https://oss.sonatype.org/content/repositories/snapshots"
+            mavenContent { snapshotsOnly() }
+        }
+        maven {
+            url "https://oss.sonatype.org/content/repositories/releases"
+            mavenContent { releasesOnly() }
+        }
+        maven {
+            url "https://splunk.jfrog.io/splunk/ext-releases-local"
+            content {
+                includeGroupByRegex ".*splunk.*"
+            }
+            mavenContent { releasesOnly() }
+        }
+        maven {
+            url "https://repo.terracotta.org/maven2"
+            mavenContent { releasesOnly() }
+            content {
+                includeGroupByRegex "org.terracotta.*"
+            }
+        }
+    }
+}
+
+
 rootProject.name = "cas-server"
 
 include "api:cas-server-core-api"
@@ -80,9 +117,11 @@ include "core:cas-server-core-webflow-api"
 include "core:cas-server-core-webflow-mfa"
 include "core:cas-server-core-webflow-mfa-api"
 
+include "docs:cas-server-documentation-processor"
 include "docs:cas-server-documentation"
 
 include "support:cas-server-support-acceptto-mfa"
+include "support:cas-server-support-acme"
 include "support:cas-server-support-actions"
 include "support:cas-server-support-audit-couchbase"
 include "support:cas-server-support-audit-couchdb"
@@ -167,6 +206,7 @@ include "support:cas-server-support-events-influxdb"
 include "support:cas-server-support-events-jpa"
 include "support:cas-server-support-events-memory"
 include "support:cas-server-support-events-mongo"
+include "support:cas-server-support-events-redis"
 include "support:cas-server-support-fortress"
 include "support:cas-server-support-gauth"
 include "support:cas-server-support-gauth-core"
@@ -202,6 +242,7 @@ include "support:cas-server-support-influxdb-core"
 include "support:cas-server-support-interrupt-api"
 include "support:cas-server-support-interrupt-core"
 include "support:cas-server-support-interrupt-webflow"
+include "support:cas-server-support-inwebo-mfa"
 include "support:cas-server-support-javamelody"
 include "support:cas-server-support-jdbc"
 include "support:cas-server-support-jdbc-authentication"
@@ -223,6 +264,7 @@ include "support:cas-server-support-ldap-service-registry"
 include "support:cas-server-support-logback"
 include "support:cas-server-support-logging-config-cloudwatch"
 include "support:cas-server-support-logging-config-splunk"
+include "support:cas-server-support-logging-config-sqs"
 include "support:cas-server-support-memcached-aws-elasticache"
 include "support:cas-server-support-memcached-core"
 include "support:cas-server-support-memcached-monitor"
@@ -271,6 +313,7 @@ include "support:cas-server-support-pm-jdbc"
 include "support:cas-server-support-pm-ldap"
 include "support:cas-server-support-pm-rest"
 include "support:cas-server-support-pm-webflow"
+include "support:cas-server-support-qr-authentication"
 include "support:cas-server-support-radius"
 include "support:cas-server-support-radius-core"
 include "support:cas-server-support-radius-core-mfa"
@@ -302,6 +345,7 @@ include "support:cas-server-support-saml-idp-metadata-couchdb"
 include "support:cas-server-support-saml-idp-metadata-jpa"
 include "support:cas-server-support-saml-idp-metadata-git"
 include "support:cas-server-support-saml-idp-metadata-mongo"
+include "support:cas-server-support-saml-idp-metadata-redis"
 include "support:cas-server-support-saml-idp-metadata-rest"
 include "support:cas-server-support-saml-idp-ticket"
 include "support:cas-server-support-saml-idp-web"
@@ -366,6 +410,7 @@ include "support:cas-server-support-trusted-mfa-core"
 include "support:cas-server-support-trusted-mfa-couchdb"
 include "support:cas-server-support-trusted-mfa-jdbc"
 include "support:cas-server-support-trusted-mfa-mongo"
+include "support:cas-server-support-trusted-mfa-redis"
 include "support:cas-server-support-trusted-mfa-rest"
 include "support:cas-server-support-trusted-mfa-dynamodb"
 include "support:cas-server-support-trusted-webflow"
@@ -381,10 +426,12 @@ include "support:cas-server-support-validation-core"
 include "support:cas-server-support-webauthn"
 include "support:cas-server-support-webauthn-core"
 include "support:cas-server-support-webauthn-core-webflow"
+include "support:cas-server-support-webauthn-dynamodb"
 include "support:cas-server-support-webauthn-jpa"
+include "support:cas-server-support-webauthn-ldap"
 include "support:cas-server-support-webauthn-mongo"
 include "support:cas-server-support-webauthn-redis"
-include "support:cas-server-support-webauthn-dynamodb"
+include "support:cas-server-support-webauthn-rest"
 include "support:cas-server-support-websockets"
 include "support:cas-server-support-ws-idp"
 include "support:cas-server-support-ws-idp-api"

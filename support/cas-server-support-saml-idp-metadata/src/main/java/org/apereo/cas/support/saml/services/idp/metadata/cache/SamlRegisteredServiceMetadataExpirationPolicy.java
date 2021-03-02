@@ -15,6 +15,7 @@ import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -28,8 +29,8 @@ import java.util.concurrent.TimeUnit;
 public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<SamlRegisteredServiceCacheKey, MetadataResolver> {
     private final long defaultExpiration;
 
-    public SamlRegisteredServiceMetadataExpirationPolicy(final long metadataCacheExpirationMinutes) {
-        this.defaultExpiration = TimeUnit.MINUTES.toNanos(metadataCacheExpirationMinutes);
+    public SamlRegisteredServiceMetadataExpirationPolicy(final Duration metadataCacheExpiration) {
+        this.defaultExpiration = metadataCacheExpiration.toNanos();
     }
 
     @Override
@@ -55,7 +56,7 @@ public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<Sam
     public long expireAfterUpdate(@NonNull final SamlRegisteredServiceCacheKey cacheKey,
                                   @NonNull final MetadataResolver chainingMetadataResolver,
                                   final long currentTime, final long currentDuration) {
-        LOGGER.trace("Cache expiration duration after updates is set to [{}]", currentDuration);
+        LOGGER.trace("Cache expiration duration after updates is set to [{}] nanoseconds", currentDuration);
         return currentDuration;
     }
 
@@ -63,7 +64,7 @@ public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<Sam
     public long expireAfterRead(@NonNull final SamlRegisteredServiceCacheKey cacheKey,
                                 @NonNull final MetadataResolver chainingMetadataResolver,
                                 final long currentTime, final long currentDuration) {
-        LOGGER.trace("Cache expiration duration after reads is set to [{}]", currentDuration);
+        LOGGER.trace("Cache expiration duration after reads is set to [{}] nanoseconds", currentDuration);
         return currentDuration;
     }
 
@@ -77,7 +78,7 @@ public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<Sam
     protected long getCacheDurationForServiceProvider(final SamlRegisteredService service, final MetadataResolver chainingMetadataResolver) {
         try {
             if (StringUtils.isBlank(service.getServiceId())) {
-                LOGGER.error("Unable to determine duration for SAML service [{}] with no entity id", service.getName());
+                LOGGER.warn("Unable to determine duration for SAML service [{}] with no entity id", service.getName());
                 return -1;
             }
             val set = new CriteriaSet();

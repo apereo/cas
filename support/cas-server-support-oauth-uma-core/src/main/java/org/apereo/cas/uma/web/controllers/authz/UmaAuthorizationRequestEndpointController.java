@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.hjson.JsonValue;
-import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.core.profile.UserProfile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -62,7 +62,7 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
         consumes = MediaType.APPLICATION_JSON_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity handleAuthorizationRequest(@RequestBody final String body,
-                                                     final HttpServletRequest request, final HttpServletResponse response) {
+        final HttpServletRequest request, final HttpServletResponse response) {
         try {
             val profileResult = getAuthenticatedProfile(request, response, OAuth20Constants.UMA_AUTHORIZATION_SCOPE);
             val umaRequest = MAPPER.readValue(JsonValue.readHjson(body).toString(), UmaAuthorizationRequest.class);
@@ -78,11 +78,8 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
             if (StringUtils.isBlank(umaRequest.getTicket())) {
                 return new ResponseEntity("Unable to accept authorization request; ticket parameter is missing", HttpStatus.BAD_REQUEST);
             }
-            val permissionTicket = getUmaConfigurationContext().getTicketRegistry()
+            val permissionTicket = getUmaConfigurationContext().getCentralAuthenticationService()
                 .getTicket(umaRequest.getTicket(), UmaPermissionTicket.class);
-            if (permissionTicket == null || permissionTicket.isExpired()) {
-                return new ResponseEntity("Permission ticket is invalid or has expired", HttpStatus.BAD_REQUEST);
-            }
             val resourceSet = permissionTicket.getResourceSet();
             if (resourceSet == null || resourceSet.getPolicies() == null || resourceSet.getPolicies().isEmpty()) {
                 return new ResponseEntity("resource-set or linked policies are undefined", HttpStatus.BAD_REQUEST);
@@ -94,7 +91,6 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
             }
 
             return handleMismatchedClaims(request, response, resourceSet, profileResult, results, permissionTicket);
-
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
@@ -114,11 +110,11 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
      */
     @SneakyThrows
     protected ResponseEntity handleMismatchedClaims(final HttpServletRequest request,
-                                                    final HttpServletResponse response,
-                                                    final ResourceSet resourceSet,
-                                                    final CommonProfile profileResult,
-                                                    final UmaResourceSetClaimPermissionResult analysisResult,
-                                                    final UmaPermissionTicket permissionTicket) {
+        final HttpServletResponse response,
+        final ResourceSet resourceSet,
+        final UserProfile profileResult,
+        final UmaResourceSetClaimPermissionResult analysisResult,
+        final UmaPermissionTicket permissionTicket) {
 
         val model = new LinkedHashMap<String, Object>();
         model.put(OAuth20Constants.ERROR, OAuth20Constants.NEED_INFO);
@@ -161,13 +157,13 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
      * @return the response entity
      */
     protected ResponseEntity generateRequestingPartyToken(final HttpServletRequest request, final HttpServletResponse response,
-                                                          final CommonProfile profileResult, final UmaAuthorizationRequest umaRequest,
+                                                          final UserProfile profileResult, final UmaAuthorizationRequest umaRequest,
                                                           final UmaPermissionTicket permissionTicket, final ResourceSet resourceSet) {
-        val currentAat = profileResult.getAttribute(OAuth20AccessToken.class.getName(), OAuth20AccessToken.class);
+        val currentAat = (OAuth20AccessToken) profileResult.getAttribute(OAuth20AccessToken.class.getName());
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(getUmaConfigurationContext().getServicesManager(),
             OAuth20Utils.getClientIdFromAuthenticatedProfile(profileResult));
 
-        val scopes = new LinkedHashSet<String>(permissionTicket.getScopes());
+        val scopes = new LinkedHashSet<>(permissionTicket.getScopes());
         scopes.add(OAuth20Constants.UMA_AUTHORIZATION_SCOPE);
         scopes.addAll(resourceSet.getScopes());
 
@@ -183,10 +179,6 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
             .build();
 
         val result = getUmaConfigurationContext().getAccessTokenGenerator().generate(holder);
-        if (result.getAccessToken().isEmpty()) {
-            return new ResponseEntity<>("Unable to generate access token", HttpStatus.BAD_REQUEST);
-        }
-
         val accessToken = result.getAccessToken().get();
 
         val encodedAccessToken = OAuth20JwtAccessTokenEncoder.builder()
@@ -199,16 +191,16 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
             .encode();
 
         val timeout = Beans.newDuration(getUmaConfigurationContext().getCasProperties()
-            .getAuthn().getUma().getRequestingPartyToken().getMaxTimeToLiveInSeconds()).getSeconds();
+            .getAuthn().getOauth().getUma().getRequestingPartyToken().getMaxTimeToLiveInSeconds()).getSeconds();
         request.setAttribute(UmaPermissionTicket.class.getName(), permissionTicket);
         request.setAttribute(ResourceSet.class.getName(), resourceSet);
         val idToken = getUmaConfigurationContext().getRequestingPartyTokenGenerator().generate(request, response,
             accessToken, timeout, OAuth20ResponseTypes.CODE, registeredService);
         accessToken.setIdToken(idToken);
-        getUmaConfigurationContext().getTicketRegistry().updateTicket(accessToken);
+        getUmaConfigurationContext().getCentralAuthenticationService().updateTicket(accessToken);
 
         if (StringUtils.isNotBlank(umaRequest.getRpt())) {
-            getUmaConfigurationContext().getTicketRegistry().deleteTicket(umaRequest.getRpt());
+            getUmaConfigurationContext().getCentralAuthenticationService().deleteTicket(umaRequest.getRpt());
         }
 
         val model = CollectionUtils.wrap("rpt", encodedAccessToken, "code", HttpStatus.CREATED);

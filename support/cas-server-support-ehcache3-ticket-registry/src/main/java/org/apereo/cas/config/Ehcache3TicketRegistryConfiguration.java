@@ -115,7 +115,7 @@ public class Ehcache3TicketRegistryConfiguration {
         val ehcacheProperties = casProperties.getTicket().getRegistry().getEhcache3();
         val terracottaClusterUri = ehcacheProperties.getTerracottaClusterUri();
 
-        CacheEventListenerConfigurationBuilder cacheEventListenerConfiguration = CacheEventListenerConfigurationBuilder
+        val cacheEventListenerConfiguration = CacheEventListenerConfigurationBuilder
             .newEventListenerConfiguration(new CasCacheEventListener(),
                 EventType.CREATED, EventType.UPDATED, EventType.EXPIRED, EventType.REMOVED, EventType.EVICTED)
             .ordered().asynchronous();
@@ -179,7 +179,8 @@ public class Ehcache3TicketRegistryConfiguration {
             }
         });
 
-        return new EhCache3TicketRegistry(ticketCatalog, ehcacheManager, CoreTicketUtils.newTicketRegistryCipherExecutor(crypto, "ehcache3"));
+        return new EhCache3TicketRegistry(ticketCatalog, ehcacheManager,
+            CoreTicketUtils.newTicketRegistryCipherExecutor(crypto, "ehcache3"));
     }
 
     /**
@@ -197,7 +198,7 @@ public class Ehcache3TicketRegistryConfiguration {
     private static class CasCacheEventListener implements CacheEventListener<String, Ticket> {
         @Override
         public void onEvent(final CacheEvent<? extends String, ? extends Ticket> event) {
-            LOGGER.trace("Event Type: {}, Ticket Id: {}", event.getType().name(), event.getKey());
+            LOGGER.trace("Event Type: [{}], Ticket Id: [{}]", event.getType().name(), event.getKey());
         }
     }
 }

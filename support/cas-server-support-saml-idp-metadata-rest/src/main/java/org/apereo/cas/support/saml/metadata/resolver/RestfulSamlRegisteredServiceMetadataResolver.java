@@ -9,6 +9,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.hjson.JsonValue;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 
 import java.nio.charset.StandardCharsets;
@@ -32,7 +34,8 @@ import java.util.Collection;
  */
 @Slf4j
 public class RestfulSamlRegisteredServiceMetadataResolver extends BaseSamlRegisteredServiceMetadataResolver {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     public RestfulSamlRegisteredServiceMetadataResolver(final SamlIdPProperties samlIdPProperties,
                                                      final OpenSamlConfigBean configBean) {
@@ -44,10 +47,18 @@ public class RestfulSamlRegisteredServiceMetadataResolver extends BaseSamlRegist
         HttpResponse response = null;
         try {
             val rest = samlIdPProperties.getMetadata().getRest();
-            response = HttpUtils.execute(rest.getUrl(), rest.getMethod(),
-                rest.getBasicAuthUsername(), rest.getBasicAuthPassword(),
-                CollectionUtils.wrap("entityId", service.getServiceId()),
-                CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_XML_VALUE));
+            val headers = CollectionUtils.<String, Object>wrap("Content-Type", MediaType.APPLICATION_XML_VALUE);
+            headers.putAll(rest.getHeaders());
+
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(rest.getBasicAuthPassword())
+                .basicAuthUsername(rest.getBasicAuthUsername())
+                .method(HttpMethod.valueOf(rest.getMethod().toUpperCase().trim()))
+                .url(rest.getUrl())
+                .parameters(CollectionUtils.wrap("entityId", service.getServiceId()))
+                .headers(headers)
+                .build();
+            response = HttpUtils.execute(exec);
             if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
                 val doc = MAPPER.readValue(JsonValue.readHjson(result).toString(), SamlMetadataDocument.class);

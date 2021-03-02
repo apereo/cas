@@ -1,10 +1,13 @@
 package org.apereo.cas.configuration.model.core.web.tomcat;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.File;
 import java.io.Serializable;
@@ -19,6 +22,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("CasEmbeddedApacheTomcatApachePortableRuntimeProperties")
 public class CasEmbeddedApacheTomcatApachePortableRuntimeProperties implements Serializable {
 
     private static final long serialVersionUID = 8229851352067677264L;
@@ -26,6 +30,7 @@ public class CasEmbeddedApacheTomcatApachePortableRuntimeProperties implements S
     /**
      * Enable APR mode.
      */
+    @RequiredProperty
     private boolean enabled;
 
     /**
@@ -88,4 +93,10 @@ public class CasEmbeddedApacheTomcatApachePortableRuntimeProperties implements S
      * SSL certificate file.
      */
     private File sslCertificateFile;
+
+    /**
+     * Configure the SSL host config for this connector.
+     */
+    @NestedConfigurationProperty
+    private CasEmbeddedApacheSslHostConfigProperties sslHostConfig = new CasEmbeddedApacheSslHostConfigProperties();
 }

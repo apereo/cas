@@ -134,16 +134,7 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
         val url = builder.toString();
 
         LOGGER.debug("Redirecting to URL [{}]", url);
-        val parameters = new LinkedHashMap<String, String>();
-        parameters.put(OAuth20Constants.ACCESS_TOKEN, encodedAccessToken);
-        if (refreshToken != null) {
-            parameters.put(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
-        }
-        parameters.put(OAuth20Constants.EXPIRES_IN, String.valueOf(expiresIn));
-        parameters.put(OAuth20Constants.STATE, state);
-        parameters.put(OAuth20Constants.NONCE, nonce);
-        parameters.put(OAuth20Constants.CLIENT_ID, accessToken.getClientId());
-        return buildResponseModelAndView(context, servicesManager, accessToken.getClientId(), url, parameters);
+        return buildResponseModelAndView(context, servicesManager, accessToken.getClientId(), url, new LinkedHashMap<>());
     }
 
     @Override

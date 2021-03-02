@@ -54,13 +54,15 @@ import org.pac4j.oidc.config.KeycloakOidcConfiguration;
 import org.pac4j.oidc.config.OidcConfiguration;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.config.SAML2Configuration;
-import org.pac4j.saml.metadata.SAML2ServiceProvicerRequestedAttribute;
+import org.pac4j.saml.metadata.SAML2ServiceProviderRequestedAttribute;
+import org.pac4j.saml.metadata.XMLSecSAML2MetadataSigner;
 import org.pac4j.saml.store.SAMLMessageStoreFactory;
 
 import java.security.interfaces.ECPrivateKey;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -73,6 +75,8 @@ import java.util.stream.Collectors;
 @Slf4j
 @Getter
 public class DefaultDelegatedClientFactory implements DelegatedClientFactory<IndirectClient> {
+    private static final Pattern PATTERN_LOGIN_URL = Pattern.compile("/login$");
+
     private final CasConfigurationProperties casProperties;
 
     private final Collection<DelegatedClientFactoryCustomizer> customizers;
@@ -369,7 +373,7 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
             .filter(cas -> cas.isEnabled() && StringUtils.isNotBlank(cas.getLoginUrl()))
             .forEach(cas -> {
                 val cfg = new CasConfiguration(cas.getLoginUrl(), CasProtocol.valueOf(cas.getProtocol()));
-                val prefix = cas.getLoginUrl().replaceFirst("/login$", "/");
+                val prefix = PATTERN_LOGIN_URL.matcher(cas.getLoginUrl()).replaceFirst("/");
                 cfg.setPrefixUrl(StringUtils.appendIfMissing(prefix, "/"));
                 val client = new CasClient(cfg);
 
@@ -401,22 +405,21 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
                 && StringUtils.isNotBlank(saml.getServiceProviderEntityId())
                 && StringUtils.isNotBlank(saml.getServiceProviderMetadataPath()))
             .forEach(saml -> {
-                val cfg = new SAML2Configuration(saml.getKeystorePath(),
-                    saml.getKeystorePassword(),
+                val cfg = new SAML2Configuration(saml.getKeystorePath(), saml.getKeystorePassword(),
                     saml.getPrivateKeyPassword(), saml.getIdentityProviderMetadataPath());
-
                 cfg.setForceKeystoreGeneration(saml.isForceKeystoreGeneration());
                 cfg.setCertificateNameToAppend(StringUtils.defaultIfBlank(saml.getCertificateNameToAppend(), saml.getClientName()));
-                cfg.setMaximumAuthenticationLifetime(saml.getMaximumAuthenticationLifetime());
+                cfg.setMaximumAuthenticationLifetime(Beans.newDuration(saml.getMaximumAuthenticationLifetime()).toSeconds());
                 cfg.setServiceProviderEntityId(saml.getServiceProviderEntityId());
                 cfg.setServiceProviderMetadataPath(saml.getServiceProviderMetadataPath());
                 cfg.setAuthnRequestBindingType(saml.getDestinationBinding());
                 cfg.setForceAuth(saml.isForceAuth());
                 cfg.setPassive(saml.isPassive());
                 cfg.setSignMetadata(saml.isSignServiceProviderMetadata());
+                cfg.setMetadataSigner(new XMLSecSAML2MetadataSigner(cfg));
                 cfg.setAuthnRequestSigned(saml.isSignAuthnRequest());
                 cfg.setSpLogoutRequestSigned(saml.isSignServiceProviderLogoutRequest());
-                cfg.setAcceptedSkew(saml.getAcceptedSkew());
+                cfg.setAcceptedSkew(Beans.newDuration(saml.getAcceptedSkew()).toSeconds());
 
                 if (StringUtils.isNotBlank(saml.getPrincipalIdAttribute())) {
                     cfg.setAttributeAsId(saml.getPrincipalIdAttribute());
@@ -428,10 +431,8 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
                 cfg.setAttributeConsumingServiceIndex(saml.getAttributeConsumingServiceIndex());
 
                 try {
-                    val clazz = ClassUtils.getClass(
-                        DefaultDelegatedClientFactory.class.getClassLoader(), saml.getMessageStoreFactory());
-                    cfg.setSamlMessageStoreFactory(
-                        SAMLMessageStoreFactory.class.cast(clazz.getDeclaredConstructor().newInstance()));
+                    val clazz = ClassUtils.getClass(DefaultDelegatedClientFactory.class.getClassLoader(), saml.getMessageStoreFactory());
+                    cfg.setSamlMessageStoreFactory(SAMLMessageStoreFactory.class.cast(clazz.getDeclaredConstructor().newInstance()));
                 } catch (final Exception e) {
                     LOGGER.error("Unable to instantiate message store factory class [{}]", saml.getMessageStoreFactory());
                     LoggingUtils.error(LOGGER, e);
@@ -453,7 +454,7 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
 
                 if (!saml.getRequestedAttributes().isEmpty()) {
                     saml.getRequestedAttributes().stream()
-                        .map(attribute -> new SAML2ServiceProvicerRequestedAttribute(attribute.getName(), attribute.getFriendlyName(),
+                        .map(attribute -> new SAML2ServiceProviderRequestedAttribute(attribute.getName(), attribute.getFriendlyName(),
                             attribute.getNameFormat(), attribute.isRequired()))
                         .forEach(attribute -> cfg.getRequestedServiceProviderAttributes().add(attribute));
                 }
@@ -483,7 +484,6 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
                 }
 
                 val client = new SAML2Client(cfg);
-
                 if (StringUtils.isBlank(saml.getClientName())) {
                     val count = index.intValue();
                     client.setName(client.getClass().getSimpleName() + count);
@@ -511,7 +511,7 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
                 && StringUtils.isNotBlank(oauth.getSecret()))
             .forEach(oauth -> {
                 val client = new GenericOAuth20Client();
-                client.setProfileId(StringUtils.defaultIfBlank(oauth.getPrincipalAttributeId(), pac4jProperties.getPrincipalAttributeId()));
+                client.setProfileId(StringUtils.defaultIfBlank(oauth.getPrincipalAttributeId(), pac4jProperties.getCore().getPrincipalAttributeId()));
                 client.setKey(oauth.getId());
                 client.setSecret(oauth.getSecret());
                 client.setProfileAttrs(oauth.getProfileAttrs());
@@ -578,7 +578,9 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
         if (StringUtils.isNotBlank(props.getCssClass())) {
             customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_CSS_CLASS, props.getCssClass());
         }
-        client.setCallbackUrl(casProperties.getServer().getLoginUrl());
+        val callbackUrl = StringUtils.defaultString(props.getCallbackUrl(), casProperties.getServer().getLoginUrl());
+        client.setCallbackUrl(callbackUrl);
+
         switch (props.getCallbackUrlType()) {
             case PATH_PARAMETER:
                 client.setCallbackUrlResolver(new PathParameterCallbackUrlResolver());
@@ -591,7 +593,7 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
                 client.setCallbackUrlResolver(new QueryParameterCallbackUrlResolver());
         }
         this.customizers.forEach(customizer -> customizer.customize(client));
-        if (!casProperties.getAuthn().getPac4j().isLazyInit()) {
+        if (!casProperties.getAuthn().getPac4j().getCore().isLazyInit()) {
             client.init();
         }
     }
@@ -645,7 +647,7 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
         if (oidc.getGeneric().isEnabled()) {
             LOGGER.debug("Building generic OpenID Connect client...");
             val generic = getOidcConfigurationForClient(oidc.getGeneric(), OidcConfiguration.class);
-            val oc = new OidcClient<>(generic);
+            val oc = new OidcClient(generic);
             configureClient(oc, oidc.getGeneric());
             return oc;
         }
@@ -653,7 +655,8 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
     }
 
     @SneakyThrows
-    private static <T extends OidcConfiguration> T getOidcConfigurationForClient(final BasePac4jOidcClientProperties oidc, final Class<T> clazz) {
+    private static <T extends OidcConfiguration> T getOidcConfigurationForClient(final BasePac4jOidcClientProperties oidc,
+                                                                                 final Class<T> clazz) {
         val cfg = clazz.getDeclaredConstructor().newInstance();
         if (StringUtils.isNotBlank(oidc.getScope())) {
             cfg.setScope(oidc.getScope());

@@ -1,17 +1,15 @@
 package org.apereo.cas.configuration.model.support.saml.idp;
 
 import org.apereo.cas.configuration.model.support.saml.idp.metadata.SamlIdPMetadataProperties;
-import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link SamlIdPProperties}.
@@ -23,47 +21,18 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("SamlIdPProperties")
 public class SamlIdPProperties implements Serializable {
 
     private static final long serialVersionUID = -5848075783676789852L;
 
     /**
-     * Indicates whether attribute query profile is enabled.
-     * Enabling this setting would allow CAS to record SAML
-     * responses and have them be made available later for attribute lookups.
+     * Core SAML2 settings that control key
+     * aspects of the saml2 authentication scenario.
      */
-    private boolean attributeQueryProfileEnabled;
-
-    /**
-     * Indicates whether saml requests, and other session data,
-     * collected as part of SAML flows and requests
-     * that are kept by the container session, should be replicated
-     * across the cluster.
-     */
-    private boolean replicateSessions;
-
-    /**
-     * The SAML entity id for the deployment.
-     */
-    @RequiredProperty
-    private String entityId = "https://cas.example.org/idp";
-
-    /**
-     * A mapping of authentication context class refs.
-     * This is where specific authentication context classes
-     * are references and mapped one ones that CAS may support
-     * mainly for MFA purposes.
-     * <p>
-     * Example might be {@code urn:oasis:names:tc:SAML:2.0:ac:classes:SomeClassName->mfa-duo}.
-     */
-    private List<String> authenticationContextClassMappings = new ArrayList<>(0);
-
-    /**
-     * A mapping of attribute names to their friendly names, defined globally.
-     * Example might be {@code urn:oid:1.3.6.1.4.1.5923.1.1.1.6->eduPersonPrincipalName}.
-     */
-    private List<String> attributeFriendlyNames = new ArrayList<>(0);
-
+    @NestedConfigurationProperty
+    private SamlIdPCoreProperties core = new SamlIdPCoreProperties();
+    
     /**
      * Settings related to SAML2 responses.
      */

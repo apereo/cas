@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.aup;
 
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -21,6 +22,7 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("AcceptableUsagePolicyProperties")
 public class AcceptableUsagePolicyProperties implements Serializable {
 
     private static final long serialVersionUID = -7703477581675908899L;
@@ -79,26 +81,10 @@ public class AcceptableUsagePolicyProperties implements Serializable {
     private InMemoryAcceptableUsagePolicyProperties inMemory = new InMemoryAcceptableUsagePolicyProperties();
 
     /**
-     * Allows AUP to be turned off on startup.
+     * Core configuration settings that control common AUP behavior
+     * are captured here.
      */
-    private boolean enabled = true;
-
-    /**
-     * AUP attribute to choose in order to determine whether policy
-     * has been accepted or not. The attribute is expected to contain
-     * a boolean value where {@code true} indicates policy has been
-     * accepted and {@code false} indicates otherwise.
-     * The attribute is fetched for the principal from configured sources
-     * and compared for the right match to determine policy status.
-     * If the attribute is not found, the policy status is considered as denied.
-     */
-    private String aupAttributeName = "aupAccepted";
-
-    /**
-     * AUP attribute to choose whose single value dictates
-     * how CAS should fetch the policy terms from
-     * the relevant message bundles.
-     */
-    private String aupPolicyTermsAttributeName;
+    @NestedConfigurationProperty
+    private AcceptableUsagePolicyCoreProperties core = new AcceptableUsagePolicyCoreProperties();
 
 }

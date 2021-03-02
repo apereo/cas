@@ -10,7 +10,6 @@ import org.apereo.cas.services.ServiceRegistryInitializerEventListener;
 import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.resource.AbstractResourceBasedServiceRegistry;
-import org.apereo.cas.services.util.CasAddonsRegisteredServicesJsonSerializer;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
@@ -58,7 +57,7 @@ import java.util.Collection;
     "org.apereo.cas.services.YamlServiceRegistry"
 })
 @ConditionalOnBean(ServicesManager.class)
-@ConditionalOnProperty(prefix = "cas.service-registry", name = "init-from-json", havingValue = "true")
+@ConditionalOnProperty(prefix = "cas.service-registry.core", name = "init-from-json", havingValue = "true")
 @Slf4j
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableAsync
@@ -150,9 +149,7 @@ public class CasServiceRegistryInitializationConfiguration {
         }
 
         static Collection<StringSerializer<RegisteredService>> getRegisteredServiceSerializers() {
-            return CollectionUtils.wrapList(
-                new CasAddonsRegisteredServicesJsonSerializer(),
-                new RegisteredServiceJsonSerializer());
+            return CollectionUtils.wrapList(new RegisteredServiceJsonSerializer());
         }
 
         @Override

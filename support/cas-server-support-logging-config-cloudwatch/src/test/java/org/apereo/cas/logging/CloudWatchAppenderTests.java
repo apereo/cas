@@ -36,5 +36,6 @@ public class CloudWatchAppenderTests {
                 IntStream.range(1, 20).forEach(idx -> logger.info("Testing CloudWatchAppender [{}]...", idx));
             }
         });
+        appender.stop();
     }
 }

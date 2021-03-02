@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.pm.PasswordChangeRequest;
+import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.config.PasswordManagementConfiguration;
 
@@ -28,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreNotificationsConfiguration.class,
     CasCoreUtilConfiguration.class
 }, properties = {
-    "cas.authn.pm.enabled=true",
+    "cas.authn.pm.core.enabled=true",
     "cas.authn.pm.groovy.location=classpath:/GroovyPasswordMgmt.groovy"
 })
 @Tag("Groovy")
@@ -40,12 +41,12 @@ public class GroovyResourcePasswordManagementServiceTests {
 
     @Test
     public void verifyFindEmail() {
-        assertNotNull(passwordChangeService.findEmail("casuser"));
+        assertNotNull(passwordChangeService.findEmail(PasswordManagementQuery.builder().username("casuser").build()));
     }
 
     @Test
     public void verifyFindUser() {
-        assertNotNull(passwordChangeService.findUsername("casuser@example.org"));
+        assertNotNull(passwordChangeService.findUsername(PasswordManagementQuery.builder().username("casuser@example.org").build()));
     }
 
     @Test

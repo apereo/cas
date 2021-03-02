@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.idp.metadata.generator;
 
+import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
@@ -12,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.opensaml.saml.saml2.metadata.EntityDescriptor;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
@@ -34,27 +37,34 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
     @SneakyThrows
     public SamlIdPMetadataDocument generate(final Optional<SamlRegisteredService> registeredService) {
         val idp = configurationContext.getCasProperties().getAuthn().getSamlIdp();
-        LOGGER.debug("Preparing to generate metadata for entityId [{}]", idp.getEntityId());
+        LOGGER.debug("Preparing to generate metadata for entityId [{}]", idp.getCore().getEntityId());
         val samlIdPMetadataLocator = configurationContext.getSamlIdPMetadataLocator();
         if (!samlIdPMetadataLocator.exists(registeredService)) {
-            LOGGER.trace("Metadata does not exist. Creating...");
+            val owner = SamlIdPMetadataGenerator.getAppliesToFor(registeredService);
+            LOGGER.trace("Metadata does not exist for [{}]", owner);
 
-            LOGGER.info("Creating self-signed certificate for signing...");
-            val signing = buildSelfSignedSigningCert(registeredService);
+            if (samlIdPMetadataLocator.shouldGenerateMetadataFor(registeredService)) {
+                LOGGER.trace("Creating metadata artifacts for [{}]...", owner);
 
-            LOGGER.info("Creating self-signed certificate for encryption...");
-            val encryption = buildSelfSignedEncryptionCert(registeredService);
+                LOGGER.info("Creating self-signed certificate for signing...");
+                val signing = buildSelfSignedSigningCert(registeredService);
 
-            LOGGER.info("Creating metadata...");
-            val metadata = buildMetadataGeneratorParameters(signing, encryption, registeredService);
+                LOGGER.info("Creating self-signed certificate for encryption...");
+                val encryption = buildSelfSignedEncryptionCert(registeredService);
 
-            val doc = newSamlIdPMetadataDocument();
-            doc.setEncryptionCertificate(encryption.getKey());
-            doc.setEncryptionKey(encryption.getValue());
-            doc.setSigningCertificate(signing.getKey());
-            doc.setSigningKey(signing.getValue());
-            doc.setMetadata(metadata);
-            return finalizeMetadataDocument(doc, registeredService);
+                LOGGER.info("Creating metadata...");
+                val metadata = buildMetadataGeneratorParameters(signing, encryption, registeredService);
+
+                val doc = newSamlIdPMetadataDocument();
+                doc.setEncryptionCertificate(encryption.getKey());
+                doc.setEncryptionKey(encryption.getValue());
+                doc.setSigningCertificate(signing.getKey());
+                doc.setSigningKey(signing.getValue());
+                doc.setMetadata(metadata);
+                return finalizeMetadataDocument(doc, registeredService);
+            } else {
+                LOGGER.debug("Skipping metadata generation process for [{}]", owner);
+            }
         }
 
         return samlIdPMetadataLocator.fetch(registeredService);
@@ -76,6 +86,11 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
      */
     public abstract Pair<String, String> buildSelfSignedSigningCert(Optional<SamlRegisteredService> registeredService);
 
+    /**
+     * New saml id p metadata document.
+     *
+     * @return the saml id p metadata document
+     */
     protected SamlIdPMetadataDocument newSamlIdPMetadataDocument() {
         return new SamlIdPMetadataDocument();
     }
@@ -88,7 +103,7 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
      * @return the saml id p metadata document
      */
     protected SamlIdPMetadataDocument finalizeMetadataDocument(final SamlIdPMetadataDocument doc,
-        final Optional<SamlRegisteredService> registeredService) {
+                                                               final Optional<SamlRegisteredService> registeredService) {
         return doc;
     }
 
@@ -133,9 +148,9 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
      */
     @SneakyThrows
     private String buildMetadataGeneratorParameters(final Pair<String, String> signing,
-        final Pair<String, String> encryption,
-        final Optional<SamlRegisteredService> registeredService) {
-        
+                                                    final Pair<String, String> encryption,
+                                                    final Optional<SamlRegisteredService> registeredService) {
+
         val template = configurationContext.getApplicationContext().getResource("classpath:/template-idp-metadata.xml");
         val signingCert = SamlIdPMetadataGenerator.cleanCertificate(signing.getKey());
         val encryptionCert = SamlIdPMetadataGenerator.cleanCertificate(encryption.getKey());
@@ -144,15 +159,24 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
         try (val writer = new StringWriter()) {
             IOUtils.copy(template.getInputStream(), writer, StandardCharsets.UTF_8);
             val resolver = SpringExpressionLanguageValueResolver.getInstance();
-            val entityId = resolver.resolve(idp.getEntityId());
+            val entityId = resolver.resolve(idp.getCore().getEntityId());
             val scope = resolver.resolve(configurationContext.getCasProperties().getServer().getScope());
-            val metadata = writer.toString()
+            var metadata = writer.toString()
                 .replace("${entityId}", entityId)
                 .replace("${scope}", scope)
                 .replace("${idpEndpointUrl}", getIdPEndpointUrl())
                 .replace("${encryptionKey}", encryptionCert)
                 .replace("${signingKey}", signingCert);
 
+            val customizers = configurationContext.getApplicationContext()
+                .getBeansOfType(SamlIdPMetadataCustomizer.class, false, true).values();
+            if (!customizers.isEmpty()) {
+                val entityDescriptor = SamlUtils.transformSamlObject(configurationContext.getOpenSamlConfigBean(), metadata, EntityDescriptor.class);
+                customizers.stream()
+                    .sorted(AnnotationAwareOrderComparator.INSTANCE)
+                    .forEach(customizer -> customizer.customize(entityDescriptor, registeredService));
+                metadata = SamlUtils.transformSamlObject(configurationContext.getOpenSamlConfigBean(), entityDescriptor).toString();
+            }
             writeMetadata(metadata, registeredService);
             return metadata;
         }

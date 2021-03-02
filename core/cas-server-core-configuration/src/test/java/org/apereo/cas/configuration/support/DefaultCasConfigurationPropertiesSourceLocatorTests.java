@@ -1,8 +1,11 @@
 package org.apereo.cas.configuration.support;
 
+import org.apereo.cas.configuration.CasConfigurationWatchService;
 import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
 import org.apereo.cas.configuration.config.CasCoreBootstrapStandaloneConfiguration;
 import org.apereo.cas.configuration.config.CasCoreBootstrapStandaloneLocatorConfiguration;
+import org.apereo.cas.configuration.config.CasCoreBootstrapStandaloneWatchConfiguration;
+import org.apereo.cas.configuration.loader.ConfigurationPropertiesLoaderFactory;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -14,6 +17,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
+import org.yaml.snakeyaml.error.YAMLException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,10 +29,16 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    CasCoreBootstrapStandaloneWatchConfiguration.class,
     CasCoreBootstrapStandaloneLocatorConfiguration.class,
     CasCoreBootstrapStandaloneConfiguration.class
 },
-    properties = {"spring.cloud.config.enabled=false", "spring.application.name=CAS"})
+    properties = {
+        "spring.cloud.config.enabled=false",
+        "spring.application.name=CAS",
+        "cas.events.core.track-configuration-modifications=true"
+    }
+)
 @Tag("CasConfiguration")
 public class DefaultCasConfigurationPropertiesSourceLocatorTests {
     static {
@@ -43,6 +53,13 @@ public class DefaultCasConfigurationPropertiesSourceLocatorTests {
     private CasConfigurationPropertiesSourceLocator casConfigurationPropertiesSourceLocator;
 
     @Autowired
+    @Qualifier("casConfigurationWatchService")
+    private CasConfigurationWatchService casConfigurationWatchService;
+
+    @Autowired
+    private ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory;
+
+    @Autowired
     private Environment environment;
 
     @Autowired
@@ -53,6 +70,8 @@ public class DefaultCasConfigurationPropertiesSourceLocatorTests {
         val source = casConfigurationPropertiesSourceLocator.locate(environment, resourceLoader);
         assertTrue(source instanceof CompositePropertySource);
 
+        assertNotNull(casConfigurationWatchService);
+        
         val composite = (CompositePropertySource) source;
         assertEquals("https://cas.example.org:9999", composite.getProperty("cas.server.name"));
         assertEquals("https://cas.example.org/something", composite.getProperty("cas.server.prefix"));
@@ -78,5 +97,12 @@ public class DefaultCasConfigurationPropertiesSourceLocatorTests {
         val composite = (CompositePropertySource) source;
         assertEquals("Static", composite.getProperty("cas.authn.accept.name"));
         assertEquals("test::dev", composite.getProperty("cas.authn.accept.users"));
+    }
+
+    @Test
+    public void verifyYamlLoaderThrows() {
+        val loader = configurationPropertiesLoaderFactory.getLoader(
+                resourceLoader.getResource("classpath:/badyaml.yml"), "test");
+        assertThrows(YAMLException.class, () ->loader.load());
     }
 }

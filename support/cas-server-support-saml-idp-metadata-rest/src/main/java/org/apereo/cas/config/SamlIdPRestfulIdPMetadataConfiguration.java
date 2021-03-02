@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.idp.metadata.RestfulSamlIdPMetadataCipherExecutor;
 import org.apereo.cas.support.saml.idp.metadata.RestfulSamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.RestfulSamlIdPMetadataLocator;
@@ -8,9 +9,11 @@ import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerat
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGeneratorConfigurationContext;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.writer.SamlIdPCertificateAndKeyWriter;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import com.github.benmanes.caffeine.cache.Cache;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -38,6 +41,10 @@ import org.springframework.context.annotation.Configuration;
 public class SamlIdPRestfulIdPMetadataConfiguration {
 
     @Autowired
+    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+    private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
+
+    @Autowired
     private ConfigurableApplicationContext applicationContext;
 
     @Autowired
@@ -46,6 +53,10 @@ public class SamlIdPRestfulIdPMetadataConfiguration {
     @Autowired
     @Qualifier("samlSelfSignedCertificateWriter")
     private ObjectProvider<SamlIdPCertificateAndKeyWriter> samlSelfSignedCertificateWriter;
+
+    @Autowired
+    @Qualifier("samlIdPMetadataCache")
+    private ObjectProvider<Cache<String, SamlIdPMetadataDocument>> samlIdPMetadataCache;
 
     @Bean
     @RefreshScope
@@ -73,6 +84,7 @@ public class SamlIdPRestfulIdPMetadataConfiguration {
             .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter.getObject())
             .applicationContext(applicationContext)
             .casProperties(casProperties)
+            .openSamlConfigBean(openSamlConfigBean.getObject())
             .metadataCipherExecutor(restfulSamlIdPMetadataCipherExecutor())
             .build();
         return new RestfulSamlIdPMetadataGenerator(context);
@@ -85,6 +97,7 @@ public class SamlIdPRestfulIdPMetadataConfiguration {
         val idp = casProperties.getAuthn().getSamlIdp();
         return new RestfulSamlIdPMetadataLocator(
             restfulSamlIdPMetadataCipherExecutor(),
+            samlIdPMetadataCache.getObject(),
             idp.getMetadata().getRest());
     }
 }

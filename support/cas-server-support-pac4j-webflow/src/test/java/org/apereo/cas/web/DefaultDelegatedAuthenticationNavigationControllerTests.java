@@ -6,6 +6,7 @@ import org.apereo.cas.web.view.DynamicHtmlView;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.pac4j.core.redirect.RedirectionActionBuilder;
 import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -47,6 +48,24 @@ public class DefaultDelegatedAuthenticationNavigationControllerTests {
     }
 
     @Test
+    public void verifyRedirectByAttrForceAuth() {
+        val request = new MockHttpServletRequest();
+        request.setAttribute(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "SAML2Client");
+        request.setParameter(RedirectionActionBuilder.ATTRIBUTE_FORCE_AUTHN, "true");
+        val response = new MockHttpServletResponse();
+        assertTrue(controller.redirectToProvider(request, response) instanceof DynamicHtmlView);
+    }
+
+    @Test
+    public void verifyRedirectByAttrPassiveAuth() {
+        val request = new MockHttpServletRequest();
+        request.setAttribute(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "SAML2Client");
+        request.setParameter(RedirectionActionBuilder.ATTRIBUTE_PASSIVE, "true");
+        val response = new MockHttpServletResponse();
+        assertTrue(controller.redirectToProvider(request, response) instanceof DynamicHtmlView);
+    }
+
+    @Test
     public void verifyRedirectUnknownClient() {
         val request = new MockHttpServletRequest();
         request.setAttribute(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "BadClient");
@@ -64,7 +83,7 @@ public class DefaultDelegatedAuthenticationNavigationControllerTests {
     @Test
     public void redirectResponseToFlow() {
         val request = new MockHttpServletRequest();
-        request.setRequestURI("https://sso.example.org");
+        request.setRequestURI("https://sso.example.org/cas/login/CasClient");
         request.addParameter("param1", "value1");
         val response = new MockHttpServletResponse();
         assertNotNull(controller.redirectResponseToFlow("CasClient", request, response));

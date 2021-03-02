@@ -6,6 +6,7 @@ import org.apereo.cas.config.pm.RestPasswordManagementConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordHistoryService;
+import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.config.PasswordManagementConfiguration;
 import org.apereo.cas.util.MockWebServer;
@@ -43,9 +44,9 @@ import static org.junit.jupiter.api.Assertions.*;
     properties = {
         "cas.authn.pm.rest.endpoint-url-change=http://localhost:9090",
         "cas.authn.pm.rest.endpoint-url-security-questions=http://localhost:9090",
-        "cas.authn.pm.rest.endpoint-url-email=http://localhost:9090",
+        "cas.authn.pm.rest.endpoint-url-email=http://localhost:9091",
         "cas.authn.pm.rest.endpoint-url-user=http://localhost:9090",
-        "cas.authn.pm.rest.endpoint-url-phone=http://localhost:9090",
+        "cas.authn.pm.rest.endpoint-url-phone=http://localhost:9092",
         "cas.authn.pm.rest.endpoint-username=username",
         "cas.authn.pm.rest.endpoint-password=password"
     })
@@ -66,11 +67,11 @@ public class RestPasswordManagementServiceTests {
     @Test
     public void verifyEmailFound() {
         val data = "casuser@example.org";
-        try (val webServer = new MockWebServer(9090,
+        try (val webServer = new MockWebServer(9091,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-            val email = this.passwordChangeService.findEmail("casuser");
+            val email = this.passwordChangeService.findEmail(PasswordManagementQuery.builder().username("casuser").build());
             webServer.stop();
             assertNotNull(email);
             assertEquals(data, email);
@@ -84,7 +85,7 @@ public class RestPasswordManagementServiceTests {
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-            val username = this.passwordChangeService.findUsername("casuser@example.org");
+            val username = this.passwordChangeService.findUsername(PasswordManagementQuery.builder().email("casuser@example.org").build());
             webServer.stop();
             assertNotNull(username);
             assertEquals(data, username);
@@ -94,11 +95,11 @@ public class RestPasswordManagementServiceTests {
     @Test
     public void verifyPhoneFound() {
         val data = "1234567890";
-        try (val webServer = new MockWebServer(9090,
+        try (val webServer = new MockWebServer(9092,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-            val ph = this.passwordChangeService.findPhone("casuser");
+            val ph = this.passwordChangeService.findPhone(PasswordManagementQuery.builder().username("casuser").build());
             webServer.stop();
             assertNotNull(ph);
             assertEquals(data, ph);
@@ -124,7 +125,7 @@ public class RestPasswordManagementServiceTests {
                 props.getAuthn().getPm(),
                 passwordHistoryService);
 
-            val questions = passwordService.getSecurityQuestions("casuser");
+            val questions = passwordService.getSecurityQuestions(PasswordManagementQuery.builder().username("casuser").build());
             assertFalse(questions.isEmpty());
             assertTrue(questions.containsKey("question1"));
             webServer.stop();

@@ -1,5 +1,9 @@
 package org.apereo.cas.util.spring;
 
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
+import org.apereo.cas.authentication.principal.PrincipalAttributesRepositoryCache;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttributesRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
@@ -13,17 +17,12 @@ import org.springframework.context.ConfigurableApplicationContext;
 import java.util.Optional;
 
 /**
- * @author Misagh Moayyed
  * An implementation of {@link ApplicationContextAware} that statically
- * holds the application context
+ * holds the application context.
+ * @author Misagh Moayyed
  * @since 3.0.0.
  */
 public class ApplicationContextProvider implements ApplicationContextAware {
-    /**
-     * Bean name for script resource cache manager.
-     */
-    public static final String BEAN_NAME_SCRIPT_RESOURCE_CACHE_MANAGER = "scriptResourceCacheManager";
-
     private static ApplicationContext CONTEXT;
 
     public static ApplicationContext getApplicationContext() {
@@ -31,8 +30,8 @@ public class ApplicationContextProvider implements ApplicationContextAware {
     }
 
     @Override
-    public void setApplicationContext(final ApplicationContext ctx) {
-        CONTEXT = ctx;
+    public void setApplicationContext(final ApplicationContext context) {
+        CONTEXT = context;
     }
 
     /**
@@ -103,7 +102,7 @@ public class ApplicationContextProvider implements ApplicationContextAware {
      */
     public static Optional<IPersonAttributeDao> getAttributeRepository() {
         if (CONTEXT != null) {
-            return Optional.of(CONTEXT.getBean("attributeRepository", IPersonAttributeDao.class));
+            return Optional.of(CONTEXT.getBean(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY, IPersonAttributeDao.class));
         }
         return Optional.empty();
     }
@@ -123,8 +122,46 @@ public class ApplicationContextProvider implements ApplicationContextAware {
      * @return the script resource cache manager
      */
     public static Optional<ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript>> getScriptResourceCacheManager() {
-        if (CONTEXT != null && CONTEXT.containsBean(BEAN_NAME_SCRIPT_RESOURCE_CACHE_MANAGER)) {
-            return Optional.of(CONTEXT.getBean(BEAN_NAME_SCRIPT_RESOURCE_CACHE_MANAGER, ScriptResourceCacheManager.class));
+        if (CONTEXT != null && CONTEXT.containsBean(ScriptResourceCacheManager.BEAN_NAME)) {
+            return Optional.of(CONTEXT.getBean(ScriptResourceCacheManager.BEAN_NAME, ScriptResourceCacheManager.class));
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Gets attribute definition store.
+     *
+     * @return the attribute definition store
+     */
+    public static Optional<AttributeDefinitionStore> getAttributeDefinitionStore() {
+        if (CONTEXT != null && CONTEXT.containsBean(AttributeDefinitionStore.BEAN_NAME)) {
+            return Optional.of(CONTEXT.getBean(AttributeDefinitionStore.BEAN_NAME, AttributeDefinitionStore.class));
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Gets principal attributes repository.
+     *
+     * @return the principal attributes repository
+     */
+    public static Optional<RegisteredServicePrincipalAttributesRepository> getPrincipalAttributesRepository() {
+        if (CONTEXT != null && CONTEXT.containsBean(PrincipalResolver.BEAN_NAME_GLOBAL_PRINCIPAL_ATTRIBUTE_REPOSITORY)) {
+            return Optional.of(CONTEXT.getBean(PrincipalResolver.BEAN_NAME_GLOBAL_PRINCIPAL_ATTRIBUTE_REPOSITORY,
+                    RegisteredServicePrincipalAttributesRepository.class));
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Gets principal attributes repository cache.
+     *
+     * @return the principal attributes repository cache
+     */
+    public static Optional<PrincipalAttributesRepositoryCache> getPrincipalAttributesRepositoryCache() {
+        if (CONTEXT != null && CONTEXT.containsBean(PrincipalAttributesRepositoryCache.DEFAULT_BEAN_NAME)) {
+            return Optional.of(CONTEXT.getBean(PrincipalAttributesRepositoryCache.DEFAULT_BEAN_NAME,
+                PrincipalAttributesRepositoryCache.class));
         }
         return Optional.empty();
     }

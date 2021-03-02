@@ -18,8 +18,10 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.WebContext;
+import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
+import org.pac4j.core.profile.UserProfile;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -89,14 +91,22 @@ public class OidcAuthorizationRequestSupport {
     /**
      * Is authentication profile available?.
      *
-     * @param context the context
+     * @param context      the context
+     * @param sessionStore the session store
      * @return the optional user profile
      */
-    public static Optional<CommonProfile> isAuthenticationProfileAvailable(final JEEContext context) {
-        val manager = new ProfileManager<CommonProfile>(context, context.getSessionStore());
-        return manager.get(true);
+    public static Optional<UserProfile> isAuthenticationProfileAvailable(final JEEContext context, final SessionStore sessionStore) {
+        val manager = new ProfileManager(context, sessionStore);
+        return manager.getProfile();
     }
 
+    /**
+     * Gets redirect url with error.
+     *
+     * @param originalRedirectUrl the original redirect url
+     * @param errorCode           the error code
+     * @return the redirect url with error
+     */
     @SneakyThrows
     public static String getRedirectUrlWithError(final String originalRedirectUrl, final String errorCode) {
         val uriBuilder = new URIBuilder(originalRedirectUrl)
@@ -104,6 +114,13 @@ public class OidcAuthorizationRequestSupport {
         return uriBuilder.build().toASCIIString();
     }
 
+    /**
+     * Remove oidc prompt from authorization request.
+     *
+     * @param url    the url
+     * @param prompt the prompt
+     * @return the string
+     */
     @SneakyThrows
     public static String removeOidcPromptFromAuthorizationRequest(final String url, final String prompt) {
         val uriBuilder = new URIBuilder(url);

@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.mfa;
 
+import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
@@ -18,10 +19,12 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.DefaultTransitionCriteria;
+import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -37,6 +40,20 @@ import static org.mockito.Mockito.*;
 
 @Tag("MFA")
 public class MultifactorAuthenticationUtilsTests {
+
+    @Test
+    public void verifyMissingTransition() {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        context.setCurrentEvent(new Event(this, "currentState"));
+        context.setCurrentTransition(new Transition());
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        RequestContextHolder.setRequestContext(context);
+        ExternalContextHolder.setExternalContext(context.getExternalContext());
+        assertThrows(AuthenticationException.class,
+            () -> MultifactorAuthenticationUtils.validateEventIdForMatchingTransitionInContext("unknown", Optional.of(context), Map.of()));
+    }
 
     @Test
     public void verifyMissingProviderEvent() {
@@ -167,12 +184,12 @@ public class MultifactorAuthenticationUtilsTests {
 
         val registeredService = MultifactorAuthenticationTestUtils.getRegisteredService();
         when(registeredService.getMultifactorPolicy().getMultifactorAuthenticationProviders()).thenReturn(Set.of("mfa-other"));
-        var result = MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderForService(registeredService);
+        var result = MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderForService(registeredService, applicationContext);
         assertNotNull(result);
         assertTrue(result.isEmpty());
 
         when(registeredService.getMultifactorPolicy().getMultifactorAuthenticationProviders()).thenReturn(Set.of(provider.getId()));
-        result = MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderForService(registeredService);
+        result = MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderForService(registeredService, applicationContext);
         assertNotNull(result);
         assertFalse(result.isEmpty());
     }

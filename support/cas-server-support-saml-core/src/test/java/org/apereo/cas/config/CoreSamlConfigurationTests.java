@@ -38,7 +38,7 @@ public class CoreSamlConfigurationTests {
     protected VelocityEngine velocityEngineFactoryBean;
 
     @Autowired
-    @Qualifier("shibboleth.OpenSAMLConfig")
+    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
     protected OpenSamlConfigBean openSamlConfigBean;
 
     @Autowired

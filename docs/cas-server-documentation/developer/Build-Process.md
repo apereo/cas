@@ -4,12 +4,16 @@ title: CAS - Build Process
 category: Developer
 ---
 
-# Build Process
+{% include variables.html %}
+
+# CAS Build Process
 
 This page documents the steps that a CAS developer/contributor should take for building a CAS server locally.
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>
-If you are about to deploy and configure CAS, you are in the <strong>WRONG PLACE</strong>! To deploy CAS locally, use the WAR Overlay method described in the project documentation for a specific CAS version. Cloning, downloading and building the CAS codebase from source is <strong>ONLY</strong> required if you wish to contribute to the development of the project.
+If you are about to deploy and configure CAS, you are in the <strong>WRONG PLACE</strong>! To deploy CAS locally, use the 
+WAR Overlay method described in the project documentation for a specific CAS version. Cloning, downloading and building the 
+CAS codebase from source is <strong>ONLY</strong> required if you wish to contribute to the development of the project.
 </p></div>
 
 ## Source Checkout
@@ -58,7 +62,6 @@ The following commandline boolean flags are supported by the build and can be pa
 |-----------------------------------+---------------------------------------------------------------------------+
 | `enableRemoteDebugging`           | Allows for remote debugging via a pre-defined port (i.e. `5000`).
 | `remoteDebuggingSuspend`          | Set to `true` to suspend JVM remote debugging until the debugger attaches to the running session.
-| `enableIncremental`               | Enable Gradle's incremental compilation feature.
 | `showStandardStreams`             | Let the build output logs that are sent to the standard streams. (i.e. console, etc)
 | `skipCheckstyle`                  | Skip running Checkstyle checks.
 | `skipSpotbugs`                    | Skip running Spotbugs checks.
@@ -70,7 +73,7 @@ The following commandline boolean flags are supported by the build and can be pa
 | `ignoreJavadocFailures`           | Ignore javadoc failures and let the build resume.
 | `ignoreFindbugsFailures`          | Ignore Findbugs failures and let the build resume.
 | `ignoreTestFailures`              | Ignore test failures and let the build resume.
-| `casModules`                      | Comma separated list of modules without the `cas-server-` prefix.
+| `casModules`                      | Comma separated list of modules without the `cas-server-[support|core]` prefix.
 
 - You can use `-x <task>` to entirely skip/ignore a phase in the build. (i.e. `-x test`, `-x check`).
 - If you have no need to let Gradle resolve/update dependencies and new module versions for you, you can take advantage of the `--offline` flag when you build which tends to make the build go a lot faster.
@@ -302,9 +305,31 @@ alias bc='clear; cas; cd webapp/cas-server-webapp-tomcat ; \
 
 # Install jars for use with a CAS overlay project
 alias bci='clear; cas; \
-    ./gradlew clean build install --configure-on-demand \
+    ./gradlew clean build publishToMavenLocal --configure-on-demand \
     --build-cache --parallel \
     -x test -x javadoc -x check --stacktrace \
     -DskipNestedConfigMetadataGen=true \
     -DskipBootifulArtifact=true'
 ```
+
+# CAS Initializr Build Process
+
+The code for the CAS Initializr is found in the CAS repository on the `heroku-casinit` branch.
+Clone CAS and checkout the `heroku-casinit` branch if you want to customize it or improve it.
+
+```bash
+git clone --single-branch --branch heroku-casinit https://github.com/apereo/cas.git casinit
+cd casinit
+gradlew bootRun
+```
+
+Then in another terminal, test the local running instance using:
+
+```bash
+mkdir cas-server
+cd cas-server
+curl -k http://localhost:8080/starter.tgz -d dependencies="ldap,aup,x509" | tar -xzvf 
+gradlew build
+```
+
+Make any desired changes to the CAS Initializr project and submit the changes as a PR if they are generally useful.

@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.WebContext;
-import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -96,12 +96,12 @@ public class OidcAuthorizationRequestSupportTests {
         when(context.getFullRequestURL()).thenReturn("https://tralala.whapi.com/something?" + OidcConstants.MAX_AGE + "=1000");
         val age = OidcAuthorizationRequestSupport.getOidcMaxAgeFromAuthorizationRequest(context);
         assertTrue(age.isPresent());
-        assertTrue(1000 == age.get());
+        assertEquals((long) age.get(), 1000);
 
         when(context.getFullRequestURL()).thenReturn("https://tralala.whapi.com/something?" + OidcConstants.MAX_AGE + "=NA");
         val age2 = OidcAuthorizationRequestSupport.getOidcMaxAgeFromAuthorizationRequest(context);
         assertTrue(age2.isPresent());
-        assertTrue(-1 == age2.get());
+        assertEquals((long) age2.get(), -1);
 
         when(context.getFullRequestURL()).thenReturn("https://tralala.whapi.com/something?");
         val age3 = OidcAuthorizationRequestSupport.getOidcMaxAgeFromAuthorizationRequest(context);
@@ -113,11 +113,11 @@ public class OidcAuthorizationRequestSupportTests {
         val request = new MockHttpServletRequest();
         request.setRequestURI("https://www.example.org");
         request.setQueryString("param=value");
-        val context = new JEEContext(request, new MockHttpServletResponse(), mock(SessionStore.class));
+        val context = new JEEContext(request, new MockHttpServletResponse());
         val profile = new CommonProfile();
         context.setRequestAttribute(Pac4jConstants.USER_PROFILES,
             CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
-        assertTrue(OidcAuthorizationRequestSupport.isAuthenticationProfileAvailable(context).isPresent());
+        assertTrue(OidcAuthorizationRequestSupport.isAuthenticationProfileAvailable(context, JEESessionStore.INSTANCE).isPresent());
     }
 
     @Test

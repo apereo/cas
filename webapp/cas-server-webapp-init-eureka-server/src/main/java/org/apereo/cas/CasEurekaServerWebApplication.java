@@ -46,7 +46,8 @@ import java.time.Instant;
     CassandraAutoConfiguration.class,
     MetricsAutoConfiguration.class,
     DataSourceTransactionManagerAutoConfiguration.class,
-    RedisRepositoriesAutoConfiguration.class},
+    RedisRepositoriesAutoConfiguration.class
+},
     proxyBeanMethods = false)
 @EnableEurekaServer
 @NoArgsConstructor

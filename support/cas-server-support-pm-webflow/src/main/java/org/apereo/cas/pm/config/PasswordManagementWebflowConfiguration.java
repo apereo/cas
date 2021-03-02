@@ -1,6 +1,7 @@
 package org.apereo.cas.pm.config;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.pm.PasswordManagementService;
@@ -12,14 +13,15 @@ import org.apereo.cas.pm.web.flow.actions.HandlePasswordExpirationWarningMessage
 import org.apereo.cas.pm.web.flow.actions.InitPasswordChangeAction;
 import org.apereo.cas.pm.web.flow.actions.InitPasswordResetAction;
 import org.apereo.cas.pm.web.flow.actions.PasswordChangeAction;
-import org.apereo.cas.pm.web.flow.actions.SendForgotUsernameInstructionsAction;
 import org.apereo.cas.pm.web.flow.actions.SendPasswordResetInstructionsAction;
 import org.apereo.cas.pm.web.flow.actions.ValidatePasswordResetTokenAction;
 import org.apereo.cas.pm.web.flow.actions.VerifyPasswordResetRequestAction;
 import org.apereo.cas.pm.web.flow.actions.VerifySecurityQuestionsAction;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.web.CaptchaValidator;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.InitializeCaptchaAction;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
@@ -44,6 +46,8 @@ import org.springframework.web.servlet.HandlerAdapter;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.mvc.servlet.FlowHandler;
 import org.springframework.webflow.mvc.servlet.FlowHandlerAdapter;
@@ -58,6 +62,10 @@ import org.springframework.webflow.mvc.servlet.FlowHandlerAdapter;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class PasswordManagementWebflowConfiguration {
+    @Autowired
+    @Qualifier("defaultPrincipalResolver")
+    private ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
+
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
@@ -154,14 +162,7 @@ public class PasswordManagementWebflowConfiguration {
     public Action sendPasswordResetInstructionsAction() {
         return new SendPasswordResetInstructionsAction(casProperties, communicationsManager.getObject(),
             passwordManagementService.getObject(), ticketRegistry.getObject(),
-            ticketFactory.getObject());
-    }
-
-    @ConditionalOnMissingBean(name = "sendForgotUsernameInstructionsAction")
-    @Bean
-    @RefreshScope
-    public Action sendForgotUsernameInstructionsAction() {
-        return new SendForgotUsernameInstructionsAction(casProperties, communicationsManager.getObject(), passwordManagementService.getObject());
+            ticketFactory.getObject(), defaultPrincipalResolver.getObject());
     }
 
     @ConditionalOnMissingBean(name = "verifyPasswordResetRequestAction")
@@ -214,7 +215,8 @@ public class PasswordManagementWebflowConfiguration {
         return plan -> plan.registerWebflowConfigurer(passwordManagementWebflowConfigurer());
     }
 
-    @ConditionalOnProperty(prefix = "cas.authn.pm", name = "captcha-enabled", havingValue = "true")
+
+    @ConditionalOnProperty(prefix = "cas.authn.pm.google-recaptcha", name = "enabled", havingValue = "true")
     @Configuration(value = "passwordManagementCaptchaConfiguration", proxyBeanMethods = false)
     @DependsOn("passwordManagementWebflowConfigurer")
     public class PasswordManagementCaptchaConfiguration {
@@ -234,22 +236,30 @@ public class PasswordManagementWebflowConfiguration {
         @RefreshScope
         @Bean
         public Action passwordResetValidateCaptchaAction() {
-            return new ValidateCaptchaAction(casProperties.getGoogleRecaptcha());
+            val recaptcha = casProperties.getAuthn().getPm().getGoogleRecaptcha();
+            return new ValidateCaptchaAction(CaptchaValidator.getInstance(recaptcha));
         }
 
         @RefreshScope
         @Bean
-        @ConditionalOnMissingBean(name = "passwordResetInitializeCaptchaAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_PASSWORD_RESET_INIT_CAPTCHA)
         public Action passwordResetInitializeCaptchaAction() {
-            return new InitializeCaptchaAction(casProperties);
+            val recaptcha = casProperties.getAuthn().getPm().getGoogleRecaptcha();
+            return new InitializeCaptchaAction(recaptcha) {
+                @Override
+                protected Event doExecute(final RequestContext requestContext) {
+                    requestContext.getFlowScope().put("recaptchaPasswordManagementEnabled", recaptcha.isEnabled());
+                    return super.doExecute(requestContext);
+                }
+            };
         }
 
         @Bean
         @Autowired
         @ConditionalOnMissingBean(name = "passwordManagementCaptchaWebflowExecutionPlanConfigurer")
         public CasWebflowExecutionPlanConfigurer passwordManagementCaptchaWebflowExecutionPlanConfigurer(
-            @Qualifier("passwordManagementCaptchaWebflowConfigurer") final CasWebflowConfigurer passwordManagementCaptchaWebflowConfigurer) {
-            return plan -> plan.registerWebflowConfigurer(passwordManagementCaptchaWebflowConfigurer);
+            @Qualifier("passwordManagementCaptchaWebflowConfigurer") final CasWebflowConfigurer cfg) {
+            return plan -> plan.registerWebflowConfigurer(cfg);
         }
     }
 }

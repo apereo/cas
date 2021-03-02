@@ -5,6 +5,8 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
+import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
@@ -17,13 +19,17 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
+import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
+import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.session.SessionStore;
 import org.springframework.context.ApplicationContext;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * This is {@link BaseSamlRegisteredServiceAttributeReleasePolicy}.
@@ -55,7 +61,7 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
                 LOGGER.warn("Could not locate the application context to process attributes");
                 return new HashMap<>(0);
             }
-            val resolver = applicationContext.getBean("defaultSamlRegisteredServiceCachingMetadataResolver",
+            val resolver = applicationContext.getBean(SamlRegisteredServiceCachingMetadataResolver.DEFAULT_BEAN_NAME,
                 SamlRegisteredServiceCachingMetadataResolver.class);
             val facade = SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, samlRegisteredService, entityId);
 
@@ -100,6 +106,26 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
             }
         }
         return null;
+    }
+
+    /**
+     * Gets saml authn request.
+     *
+     * @param applicationContext the application context
+     * @return the saml authn request
+     */
+    protected static Optional<AuthnRequest> getSamlAuthnRequest(final ApplicationContext applicationContext) {
+        try {
+            val openSamlConfigBean = applicationContext.getBean(OpenSamlConfigBean.DEFAULT_BEAN_NAME, OpenSamlConfigBean.class);
+            val sessionStore = applicationContext.getBean("samlIdPDistributedSessionStore", SessionStore.class);
+            val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
+            val response = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
+            val context = new JEEContext(request, response);
+            return Optional.of(SamlIdPUtils.retrieveSamlRequest(context, sessionStore, openSamlConfigBean, AuthnRequest.class));
+        } catch (final Exception e) {
+            LoggingUtils.warn(LOGGER, e);
+        }
+        return Optional.empty();
     }
 
     /**

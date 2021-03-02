@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.util.cipher.DefaultTicketCipherExecutor;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.val;
@@ -36,5 +38,14 @@ public class DefaultTicketRegistryTests extends BaseTicketRegistryTests {
         when(registry.serviceTicketCount()).thenCallRealMethod();
         assertEquals(Long.MIN_VALUE, registry.sessionCount());
         assertEquals(Long.MIN_VALUE, registry.serviceTicketCount());
+    }
+
+    @RepeatedTest(1)
+    public void verifyEncodeFails() {
+        val cipher = new DefaultTicketCipherExecutor(null, null,
+            "AES", 512, 16, "webflow");
+        val reg = new DefaultTicketRegistry(new ConcurrentHashMap<>(10, 10, 5), cipher);
+        assertNull(reg.encodeTicket(null));
+        assertNotNull(reg.decodeTicket(mock(Ticket.class)));
     }
 }

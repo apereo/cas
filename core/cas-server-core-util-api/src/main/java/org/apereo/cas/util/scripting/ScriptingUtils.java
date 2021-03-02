@@ -45,16 +45,22 @@ import java.util.regex.Pattern;
 @Slf4j
 @UtilityClass
 public class ScriptingUtils {
+    @SuppressWarnings("InlineFormatString")
+    private static final String INLINE_PATTERN = "%s\\s*\\{\\s*(.+)\\s*\\}";
+
+    @SuppressWarnings("InlineFormatString")
+    private static final String FILE_PATTERN = "(file|classpath):(.+\\.%s)";
+
     /**
      * Pattern indicating groovy script is inlined.
      */
-    private static final Pattern INLINE_GROOVY_PATTERN = RegexUtils.createPattern("groovy\\s*\\{\\s*(.+)\\s*\\}",
+    private static final Pattern INLINE_GROOVY_PATTERN = RegexUtils.createPattern(String.format(INLINE_PATTERN, "groovy"),
         Pattern.DOTALL | Pattern.MULTILINE);
 
     /**
      * Pattern indicating groovy script is a file/resource.
      */
-    private static final Pattern FILE_GROOVY_PATTERN = RegexUtils.createPattern("(file|classpath):(.+\\.groovy)");
+    private static final Pattern FILE_GROOVY_PATTERN = RegexUtils.createPattern(String.format(FILE_PATTERN, "groovy"));
 
     /**
      * Is inline groovy script ?.
@@ -379,11 +385,6 @@ public class ScriptingUtils {
                 return null;
             }
             val engine = new ScriptEngineManager().getEngineByName(engineName);
-            if (engine == null) {
-                LOGGER.warn("Script engine is not available for [{}]", engineName);
-                return null;
-            }
-
             val resourceFrom = ResourceUtils.getResourceFrom(scriptFile);
             val theScriptFile = resourceFrom.getFile();
             if (theScriptFile.exists()) {
@@ -419,10 +420,6 @@ public class ScriptingUtils {
                                                   final Class<T> clazz) {
         try {
             val engine = new ScriptEngineManager().getEngineByName("groovy");
-            if (engine == null) {
-                LOGGER.warn("Script engine is not available for Groovy");
-                return null;
-            }
             val binding = new SimpleBindings();
             if (variables != null && !variables.isEmpty()) {
                 binding.putAll(variables);
@@ -448,7 +445,8 @@ public class ScriptingUtils {
      */
     public static <T> T getObjectInstanceFromGroovyResource(final Resource resource,
                                                             final Class<T> expectedType) {
-        return getObjectInstanceFromGroovyResource(resource, ArrayUtils.EMPTY_CLASS_ARRAY, ArrayUtils.EMPTY_OBJECT_ARRAY, expectedType);
+        return getObjectInstanceFromGroovyResource(resource, ArrayUtils.EMPTY_CLASS_ARRAY,
+            ArrayUtils.EMPTY_OBJECT_ARRAY, expectedType);
     }
 
     /**

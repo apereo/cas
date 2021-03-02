@@ -35,18 +35,20 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
     private static void buildAuthenticationHistory(final Set<Authentication> authentications,
                                                    final Map<String, List<Object>> authenticationAttributes,
                                                    final Map<String, List<Object>> principalAttributes,
-                                                   final AuthenticationBuilder authenticationBuilder) {
-
+                                                   final AuthenticationBuilder authenticationBuilder,
+                                                   final PrincipalElectionStrategy principalElectionStrategy) {
+        
+        val merger = principalElectionStrategy.getAttributeMerger();
         LOGGER.trace("Collecting authentication history based on [{}] authentication events", authentications.size());
         authentications.forEach(authn -> {
             val authenticatedPrincipal = authn.getPrincipal();
             LOGGER.debug("Evaluating authentication principal [{}] for inclusion in result", authenticatedPrincipal);
 
-            principalAttributes.putAll(CoreAuthenticationUtils.mergeAttributes(principalAttributes, authenticatedPrincipal.getAttributes()));
+            principalAttributes.putAll(CoreAuthenticationUtils.mergeAttributes(principalAttributes, authenticatedPrincipal.getAttributes(), merger));
             LOGGER.debug("Collected principal attributes [{}] for inclusion in this result for principal [{}]",
                 principalAttributes, authenticatedPrincipal.getId());
 
-            authenticationAttributes.putAll(CoreAuthenticationUtils.mergeAttributes(authenticationAttributes, authn.getAttributes()));
+            authenticationAttributes.putAll(CoreAuthenticationUtils.mergeAttributes(authenticationAttributes, authn.getAttributes(), merger));
             LOGGER.debug("Finalized authentication attributes [{}] for inclusion in this authentication result", authenticationAttributes);
 
             authenticationBuilder
@@ -123,7 +125,8 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
         val principalAttributes = new HashMap<String, List<Object>>();
         val authenticationBuilder = DefaultAuthenticationBuilder.newInstance();
 
-        buildAuthenticationHistory(this.authentications, authenticationAttributes, principalAttributes, authenticationBuilder);
+        buildAuthenticationHistory(this.authentications, authenticationAttributes,
+            principalAttributes, authenticationBuilder, principalElectionStrategy);
 
         synchronized (this.authentications) {
             val primaryPrincipal = getPrimaryPrincipal(principalElectionStrategy, this.authentications, principalAttributes);
@@ -143,7 +146,7 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
 
     /**
      * Principal id is and must be enforced to be the same for all authentications.
-     * Based on that restriction, it's safe to simply grab the first principal id in the chain
+     * Based on that restriction, it's safe to grab the first principal id in the chain
      * when composing the authentication chain for the caller.
      */
     private static Principal getPrimaryPrincipal(final PrincipalElectionStrategy principalElectionStrategy,

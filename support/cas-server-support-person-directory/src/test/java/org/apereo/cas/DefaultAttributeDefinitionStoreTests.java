@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.attribute.AttributeDefinition;
 import org.apereo.cas.authentication.attribute.DefaultAttributeDefinition;
 import org.apereo.cas.authentication.attribute.DefaultAttributeDefinitionStore;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -11,6 +12,7 @@ import org.apereo.cas.services.RegisteredServicePublicKey;
 import org.apereo.cas.services.RegisteredServicePublicKeyImpl;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
@@ -57,7 +59,7 @@ import static org.mockito.Mockito.*;
         "cas.authn.attribute-repository.stub.attributes.eppn=casuser",
         "cas.authn.attribute-repository.stub.attributes.mismatchedAttributeKey=someValue",
         "cas.server.scope=cas.org",
-        "cas.person-directory.attribute-definition-store.json.location=classpath:/basic-attribute-definitions.json"
+        "cas.authn.attribute-repository.attribute-definition-store.json.location=classpath:/basic-attribute-definitions.json"
     })
 @Tag("Attributes")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -65,13 +67,14 @@ public class DefaultAttributeDefinitionStoreTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "DefaultAttributeDefinitionStoreTests.json");
 
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("attributeRepository")
+    @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
     private IPersonAttributeDao attributeRepository;
 
     @Test
@@ -88,6 +91,23 @@ public class DefaultAttributeDefinitionStoreTests {
         assertTrue(attributes.containsKey("givenName"));
         assertTrue(attributes.containsKey("urn:oid:1.3.6.1.4.1.5923.1.1.1.6"));
         assertTrue(List.class.cast(attributes.get("urn:oid:1.3.6.1.4.1.5923.1.1.1.6")).contains("cas-user-id@cas.org"));
+    }
+
+    @Test
+    public void verifyMappedToMultipleNames() {
+        val store = new DefaultAttributeDefinitionStore();
+        store.setScope("example.org");
+        val defn = DefaultAttributeDefinition.builder()
+            .key("cn")
+            .name("commonName,common-name,cname")
+            .build();
+        store.registerAttributeDefinition(defn);
+        val attrs = store.resolveAttributeValues(CoreAuthenticationTestUtils.getAttributes(), CoreAuthenticationTestUtils.getRegisteredService());
+        assertFalse(attrs.isEmpty());
+        assertFalse(attrs.containsKey("cn"));
+        assertTrue(attrs.containsKey("commonName"));
+        assertTrue(attrs.containsKey("common-name"));
+        assertTrue(attrs.containsKey("cname"));
     }
 
     @Test
@@ -322,7 +342,7 @@ public class DefaultAttributeDefinitionStoreTests {
 
     @Test
     public void verifyDefinitionsReload() {
-        val resource = casProperties.getPersonDirectory().getAttributeDefinitionStore().getJson().getLocation();
+        val resource = casProperties.getAuthn().getAttributeRepository().getAttributeDefinitionStore().getJson().getLocation();
         assertDoesNotThrow(new Executable() {
             @Override
             public void execute() throws Throwable {

@@ -5,8 +5,8 @@ import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyPrope
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
-import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -24,9 +24,8 @@ import java.util.Map;
 public class CouchbaseAcceptableUsagePolicyRepository extends BaseAcceptableUsagePolicyRepository {
     private static final long serialVersionUID = -1276731330180695089L;
 
-    private static final ObjectMapper MAPPER = new ObjectMapper()
-        .setDefaultPrettyPrinter(new MinimalPrettyPrinter())
-        .findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     private final CouchbaseClientFactory couchbase;
 
@@ -42,7 +41,7 @@ public class CouchbaseAcceptableUsagePolicyRepository extends BaseAcceptableUsag
         try {
             val content = MAPPER.writeValueAsString(Map.of(
                 "username", credential.getId(),
-                aupProperties.getAupAttributeName(), Boolean.TRUE));
+                aupProperties.getCore().getAupAttributeName(), Boolean.TRUE));
             couchbase.bucketUpsertDefaultCollection(content);
             return true;
         } catch (final Exception e) {

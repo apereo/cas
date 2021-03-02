@@ -1,6 +1,6 @@
 package org.apereo.cas.trusted.authentication.storage;
 
-import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbMultifactorTrustProperties;
+import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbTrustedDevicesMultifactorProperties;
 import org.apereo.cas.dynamodb.DynamoDbTableUtils;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.util.CollectionUtils;
@@ -48,9 +48,9 @@ import java.util.stream.Collectors;
 @Slf4j
 @Getter
 @RequiredArgsConstructor
-@SuppressWarnings("JdkObsolete")
+@SuppressWarnings("JavaUtilDate")
 public class DynamoDbMultifactorTrustEngineFacilitator {
-    private final DynamoDbMultifactorTrustProperties dynamoDbProperties;
+    private final DynamoDbTrustedDevicesMultifactorProperties dynamoDbProperties;
 
     private final DynamoDbClient amazonDynamoDBClient;
 

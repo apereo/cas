@@ -1,6 +1,9 @@
 package org.apereo.cas.trusted.authentication.storage;
 
-import org.apereo.cas.configuration.model.support.mfa.TrustedDevicesMultifactorProperties;
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
+import org.apereo.cas.configuration.model.support.mfa.trusteddevice.TrustedDevicesMultifactorProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecordKeyGenerator;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
@@ -40,9 +43,9 @@ public abstract class BaseMultifactorAuthenticationTrustStorage implements Multi
 
     private final MultifactorAuthenticationTrustRecordKeyGenerator keyGenerationStrategy;
 
-    @Audit(action = "TRUSTED_AUTHENTICATION",
-        actionResolverName = "TRUSTED_AUTHENTICATION_ACTION_RESOLVER",
-        resourceResolverName = "TRUSTED_AUTHENTICATION_RESOURCE_RESOLVER")
+    @Audit(action = AuditableActions.TRUSTED_AUTHENTICATION,
+        actionResolverName = AuditActionResolvers.TRUSTED_AUTHENTICATION_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.TRUSTED_AUTHENTICATION_RESOURCE_RESOLVER)
     @Override
     public MultifactorAuthenticationTrustRecord save(final MultifactorAuthenticationTrustRecord record) {
         if (StringUtils.isBlank(record.getRecordKey())) {

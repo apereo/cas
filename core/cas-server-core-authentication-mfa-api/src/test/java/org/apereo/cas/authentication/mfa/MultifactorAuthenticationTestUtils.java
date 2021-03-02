@@ -8,11 +8,12 @@ import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
 import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionStrategy;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
-import org.apereo.cas.services.RegisteredServiceMultifactorPolicyFailureModes;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -35,8 +36,8 @@ import static org.mockito.Mockito.*;
  */
 @UtilityClass
 public class MultifactorAuthenticationTestUtils {
-    public static Service getService(final String id) {
-        val svc = mock(Service.class);
+    public static WebApplicationService getService(final String id) {
+        val svc = mock(WebApplicationService.class);
         when(svc.getId()).thenReturn(id);
         return svc;
     }
@@ -86,7 +87,7 @@ public class MultifactorAuthenticationTestUtils {
         when(service.getAccessStrategy()).thenReturn(access);
         val mfaPolicy = mock(RegisteredServiceMultifactorPolicy.class);
         when(mfaPolicy.getFailureMode())
-            .thenReturn(RegisteredServiceMultifactorPolicyFailureModes.valueOf(failureMode));
+            .thenReturn(BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.valueOf(failureMode));
         when(service.getMultifactorPolicy()).thenReturn(mfaPolicy);
         return service;
     }

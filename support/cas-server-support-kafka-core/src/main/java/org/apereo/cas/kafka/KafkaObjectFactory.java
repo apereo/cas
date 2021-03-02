@@ -106,7 +106,7 @@ public class KafkaObjectFactory<K, V> {
      */
     public KafkaTemplate<K, V> getKafkaTemplate(final Serializer<K> keySerializer,
                                                 final Serializer<V> valueSerializer) {
-        val producerFactory = new DefaultKafkaProducerFactory<K, V>(getProducerConfiguration(), keySerializer, valueSerializer);
+        val producerFactory = new DefaultKafkaProducerFactory<>(getProducerConfiguration(), keySerializer, valueSerializer);
         return new KafkaTemplate<>(producerFactory);
     }
 }

@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.saml.SamlIdPMetadataCouchDbRepository;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.idp.metadata.CouchDbSamlIdPMetadataCipherExecutor;
 import org.apereo.cas.support.saml.idp.metadata.CouchDbSamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.CouchDbSamlIdPMetadataLocator;
@@ -10,9 +11,11 @@ import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerat
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGeneratorConfigurationContext;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.writer.SamlIdPCertificateAndKeyWriter;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import com.github.benmanes.caffeine.cache.Cache;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -50,7 +53,15 @@ public class CouchDbSamlIdPMetadataConfiguration {
     private ObjectProvider<SamlIdPCertificateAndKeyWriter> samlSelfSignedCertificateWriter;
 
     @Autowired
+    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+    private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
+
+    @Autowired
     private ConfigurableApplicationContext applicationContext;
+
+    @Autowired
+    @Qualifier("samlIdPMetadataCache")
+    private ObjectProvider<Cache<String, SamlIdPMetadataDocument>> samlIdPMetadataCache;
 
     @Autowired
     @Qualifier("samlMetadataCouchDbFactory")
@@ -110,6 +121,7 @@ public class CouchDbSamlIdPMetadataConfiguration {
             .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter.getObject())
             .applicationContext(applicationContext)
             .casProperties(casProperties)
+            .openSamlConfigBean(openSamlConfigBean.getObject())
             .metadataCipherExecutor(couchDbSamlIdPMetadataCipherExecutor())
             .build();
 
@@ -123,6 +135,7 @@ public class CouchDbSamlIdPMetadataConfiguration {
     @SneakyThrows
     @RefreshScope
     public SamlIdPMetadataLocator samlIdPMetadataLocator() {
-        return new CouchDbSamlIdPMetadataLocator(couchDbSamlIdPMetadataCipherExecutor(), samlIdPMetadataRepository.getObject());
+        return new CouchDbSamlIdPMetadataLocator(couchDbSamlIdPMetadataCipherExecutor(),
+            samlIdPMetadataCache.getObject(), samlIdPMetadataRepository.getObject());
     }
 }

@@ -82,8 +82,8 @@ public class AmazonCognitoAuthenticationAuthenticationHandler extends AbstractUs
             }
 
             val userResult = cognitoIdentityProvider.adminGetUser(AdminGetUserRequest.builder()
-                .userPoolId(credential.getUsername())
-                .userPoolId(properties.getUserPoolId()).build());
+                .userPoolId(properties.getUserPoolId())
+                .username(credential.getUsername()).build());
 
             val attributes = new LinkedHashMap<String, List<Object>>();
             attributes.put("userStatus", CollectionUtils.wrap(userResult.userStatusAsString()));

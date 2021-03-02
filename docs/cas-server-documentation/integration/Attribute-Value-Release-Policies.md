@@ -4,6 +4,8 @@ title: CAS - Attribute Value Release Policies
 category: Attributes
 ---
 
+{% include variables.html %}
+
 # Attribute Value Filters
 
 While each policy defines what principal attributes may be allowed for a given service,

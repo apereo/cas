@@ -66,6 +66,8 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
         createStateModelBinding(viewRegister, CasWebflowConstants.VAR_ID_MFA_TRUST_RECORD, MultifactorAuthenticationTrustBean.class);
         createTransitionForState(viewRegister, CasWebflowConstants.TRANSITION_ID_SUBMIT,
             CasWebflowConstants.STATE_ID_REGISTER_TRUSTED_DEVICE, Map.of("bind", Boolean.TRUE, "validate", Boolean.TRUE));
+        createTransitionForState(viewRegister, CasWebflowConstants.TRANSITION_ID_SKIP, CasWebflowConstants.STATE_ID_SUCCESS,
+            Map.of("bind", Boolean.FALSE, "validate", Boolean.FALSE));
     }
 
     private void validateFlowDefinitionConfiguration() {
@@ -99,6 +101,11 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
         this.multifactorAuthenticationFlowDefinitionRegistries.forEach(this::registerMultifactorTrustedAuthentication);
     }
 
+    /**
+     * Register multifactor trusted authentication.
+     *
+     * @param registry the registry
+     */
     protected void registerMultifactorTrustedAuthentication(final FlowDefinitionRegistry registry) {
         validateFlowDefinitionConfiguration();
 
@@ -119,7 +126,7 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
         transition.setTargetStateResolver(new DefaultTargetStateResolver(CasWebflowConstants.STATE_ID_VERIFY_TRUSTED_DEVICE));
         val verifyAction = createActionState(flow, CasWebflowConstants.STATE_ID_VERIFY_TRUSTED_DEVICE, ACTION_ID_MFA_VERIFY_TRUST_ACTION);
 
-        val enableDeviceRegistration = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
+        val enableDeviceRegistration = casProperties.getAuthn().getMfa().getTrusted().getCore().isDeviceRegistrationEnabled();
         if (enableDeviceRegistration) {
             LOGGER.trace("Device registration is turned on for multifactor flow [{}]", flowId);
             createTransitionForState(verifyAction, CasWebflowConstants.TRANSITION_ID_YES,

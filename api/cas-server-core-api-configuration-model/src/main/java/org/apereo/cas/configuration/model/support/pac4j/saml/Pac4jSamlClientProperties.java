@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.pac4j.saml;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jBaseClientProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.util.model.TriStateBoolean;
@@ -67,14 +68,16 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties impleme
      * will accept assertions based on a previous authentication for one hour.
      * You can adjust this behavior by modifying this setting. The unit of time here is seconds.
      */
-    private int maximumAuthenticationLifetime = 3600;
+    @DurationCapable
+    private String maximumAuthenticationLifetime = "PT3600S";
 
     /**
      * Maximum skew in seconds between SP and IDP clocks.
      * This skew is added onto the {@code NotOnOrAfter} field in seconds
      * for the SAML response validation.
      */
-    private int acceptedSkew = 300;
+    @DurationCapable
+    private String acceptedSkew = "PT300S";
 
     /**
      * Describes the map of attributes that are to be fetched from the credential (map keys)

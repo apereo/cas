@@ -31,21 +31,21 @@ import java.security.PublicKey;
 @RequiredArgsConstructor
 public class AccepttoMultifactorFetchChannelAction extends AbstractAction {
     private final CasConfigurationProperties casProperties;
-    private final SessionStore<JEEContext> sessionStore;
+    private final SessionStore sessionStore;
     private final PublicKey apiPublicKey;
 
     @Override
     public Event doExecute(final RequestContext requestContext) throws Exception {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-        val webContext = new JEEContext(request, response, this.sessionStore);
+        val webContext = new JEEContext(request, response);
 
         val channel = authenticateAndFetchChannel(requestContext);
         LOGGER.debug("Storing channel [{}] in session", channel);
-        AccepttoWebflowUtils.storeChannelInSessionStore(channel, webContext);
+        AccepttoWebflowUtils.storeChannelInSessionStore(channel, webContext, sessionStore);
 
         val authentication = WebUtils.getInProgressAuthentication();
-        AccepttoWebflowUtils.storeAuthenticationInSessionStore(authentication, webContext);
+        AccepttoWebflowUtils.storeAuthenticationInSessionStore(authentication, webContext, sessionStore);
 
         val accepttoRedirectUrl = buildAccepttoAuthenticationSelectionUrl(request, channel);
         LOGGER.debug("Redirecting to [{}]", accepttoRedirectUrl);

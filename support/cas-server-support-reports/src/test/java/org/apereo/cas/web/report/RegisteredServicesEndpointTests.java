@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.UUID;
@@ -32,13 +33,13 @@ public class RegisteredServicesEndpointTests extends AbstractCasEndpointTests {
         val service2 = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
         servicesManager.save(service1, service2);
         
-        assertFalse(endpoint.handle().isEmpty());
-        assertNotNull(endpoint.fetchService(service1.getServiceId()));
-        assertNotNull(endpoint.deleteService(service1.getServiceId()));
-        assertNull(endpoint.fetchService(String.valueOf(service1.getId())));
+        assertNotNull(endpoint.handle().getBody());
+        assertNotNull(endpoint.fetchService(service1.getServiceId()).getBody());
+        assertNotNull(endpoint.deleteService(service1.getServiceId()).getBody());
+        assertEquals(HttpStatus.NOT_FOUND, endpoint.fetchService(String.valueOf(service1.getId())).getStatusCode());
 
-        assertNotNull(endpoint.deleteService(String.valueOf(service2.getId())));
-        assertNull(endpoint.deleteService(String.valueOf(service2.getId())));
+        assertNotNull(endpoint.deleteService(String.valueOf(service2.getId())).getBody());
+        assertEquals(HttpStatus.NOT_FOUND, endpoint.deleteService(String.valueOf(service2.getId())).getStatusCode());
     }
 }
 

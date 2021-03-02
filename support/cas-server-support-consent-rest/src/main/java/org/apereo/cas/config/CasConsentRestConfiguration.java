@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.client.RestTemplate;
 
 /**
  * This is {@link CasConsentRestConfiguration}.
@@ -25,6 +24,6 @@ public class CasConsentRestConfiguration {
 
     @Bean
     public ConsentRepository consentRepository() {
-        return new RestConsentRepository(new RestTemplate(), casProperties.getConsent().getRest().getEndpoint());
+        return new RestConsentRepository(casProperties.getConsent().getRest());
     }
 }

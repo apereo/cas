@@ -98,7 +98,13 @@ public class TerminateSessionAction extends AbstractAction {
         return this.eventFactorySupport.event(this, CasWebflowConstants.STATE_ID_WARN);
     }
 
-    private String getTicketGrantingTicket(final RequestContext context) {
+    /**
+     * Retrieve the TGT identifier.
+     *
+     * @param context the action context
+     * @return the TGT identifier
+     */
+    protected String getTicketGrantingTicket(final RequestContext context) {
         val tgtId = WebUtils.getTicketGrantingTicketId(context);
         if (StringUtils.isBlank(tgtId)) {
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
@@ -108,7 +114,8 @@ public class TerminateSessionAction extends AbstractAction {
     }
 
     /**
-     * Terminates the CAS SSO session by destroying the TGT (if any) and removing cookies related to the SSO session.
+     * Terminates the CAS SSO session by destroying the TGT (if any)
+     * and removing cookies related to the SSO session.
      *
      * @param context Request context.
      * @return "success"
@@ -160,9 +167,9 @@ public class TerminateSessionAction extends AbstractAction {
     @SuppressWarnings("java:S2441")
     protected static void destroyApplicationSession(final HttpServletRequest request, final HttpServletResponse response) {
         LOGGER.trace("Destroying application session");
-        val context = new JEEContext(request, response, new JEESessionStore());
-        val manager = new ProfileManager<>(context, context.getSessionStore());
-        manager.logout();
+        val context = new JEEContext(request, response);
+        val manager = new ProfileManager(context, JEESessionStore.INSTANCE);
+        manager.removeProfiles();
 
         val session = request.getSession(false);
         if (session != null) {

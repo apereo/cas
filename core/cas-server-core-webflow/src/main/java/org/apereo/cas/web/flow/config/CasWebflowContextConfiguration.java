@@ -7,18 +7,18 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.web.flow.CasDefaultFlowUrlHandler;
 import org.apereo.cas.web.flow.CasFlowHandlerAdapter;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.LogoutConversionService;
 import org.apereo.cas.web.flow.configurer.DefaultLoginWebflowConfigurer;
 import org.apereo.cas.web.flow.configurer.DefaultLogoutWebflowConfigurer;
+import org.apereo.cas.web.flow.configurer.DynamicFlowModelBuilder;
 import org.apereo.cas.web.flow.configurer.GroovyWebflowConfigurer;
 import org.apereo.cas.web.flow.configurer.plan.DefaultCasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.executor.WebflowExecutorFactory;
+import org.apereo.cas.web.support.CasLocaleChangeInterceptor;
 
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -45,8 +45,11 @@ import org.springframework.webflow.config.FlowBuilderServicesBuilder;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.context.servlet.FlowUrlHandler;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import org.springframework.webflow.engine.builder.FlowBuilder;
 import org.springframework.webflow.engine.builder.ViewFactoryCreator;
+import org.springframework.webflow.engine.builder.model.FlowModelFlowBuilder;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
+import org.springframework.webflow.engine.model.builder.DefaultFlowModelHolder;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.expression.spel.WebFlowSpringELExpressionParser;
@@ -153,7 +156,6 @@ public class CasWebflowContextConfiguration {
         val builder = new FlowBuilderServicesBuilder();
         builder.setViewFactoryCreator(viewFactoryCreator());
         builder.setExpressionParser(expressionParser());
-        builder.setDevelopmentMode(casProperties.getWebflow().isRefresh());
         return builder.build();
     }
 
@@ -170,9 +172,7 @@ public class CasWebflowContextConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "localeChangeInterceptor")
     public LocaleChangeInterceptor localeChangeInterceptor() {
-        val bean = new LocaleChangeInterceptor();
-        bean.setParamName(this.casProperties.getLocale().getParamName());
-        return bean;
+        return new CasLocaleChangeInterceptor(casProperties.getLocale());
     }
 
     @Lazy(false)
@@ -189,7 +189,7 @@ public class CasWebflowContextConfiguration {
     @Lazy(false)
     @Bean
     public Object[] loginFlowHandlerMappingInterceptors() {
-        val interceptors = new ArrayList<Object>();
+        val interceptors = new ArrayList<>();
         interceptors.add(localeChangeInterceptor());
         themeChangeInterceptor.ifAvailable(interceptors::add);
         authenticationThrottlingExecutionPlan.ifAvailable(p -> interceptors.addAll(p.getAuthenticationThrottleInterceptors()));
@@ -208,21 +208,23 @@ public class CasWebflowContextConfiguration {
 
     @Lazy(false)
     @Bean
+    public FlowBuilder flowBuilder() {
+        return new FlowModelFlowBuilder(new DefaultFlowModelHolder(new DynamicFlowModelBuilder()));
+    }
+
+    @Lazy(false)
+    @Bean
     public FlowDefinitionRegistry logoutFlowRegistry() {
-        val basePath = StringUtils.defaultIfBlank(casProperties.getWebflow().getBasePath(), CasWebflowConstants.BASE_CLASSPATH_WEBFLOW);
         val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, builder());
-        builder.setBasePath(basePath);
-        builder.addFlowLocationPattern("/logout/*-webflow.xml");
+        builder.addFlowBuilder(flowBuilder(), CasWebflowConfigurer.FLOW_ID_LOGOUT);
         return builder.build();
     }
 
     @Lazy(false)
     @Bean
     public FlowDefinitionRegistry loginFlowRegistry() {
-        val basePath = StringUtils.defaultIfBlank(casProperties.getWebflow().getBasePath(), CasWebflowConstants.BASE_CLASSPATH_WEBFLOW);
         val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, builder());
-        builder.setBasePath(basePath);
-        builder.addFlowLocationPattern("/login/*-webflow.xml");
+        builder.addFlowBuilder(flowBuilder(), CasWebflowConfigurer.FLOW_ID_LOGIN);
         return builder.build();
     }
 

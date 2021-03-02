@@ -36,7 +36,7 @@ public class ScriptingUtilsTests {
 
     @Test
     public void verifyExternalGroovyScript() {
-        assertTrue(ScriptingUtils.isExternalGroovyScript("file:/tmp/sample.groovy"));
+        assertTrue(ScriptingUtils.isExternalGroovyScript("file:/somefolder/sample.groovy"));
     }
 
     @Test
@@ -52,6 +52,9 @@ public class ScriptingUtilsTests {
         assertNull(result);
 
         result = ScriptingUtils.executeGroovyScript(mock(Resource.class), "someMethod", String.class);
+        assertNull(result);
+
+        result = ScriptingUtils.executeGroovyScript(mock(Resource.class), null, String.class);
         assertNull(result);
 
         assertNull(ScriptingUtils.parseGroovyShellScript(null));
@@ -108,8 +111,11 @@ public class ScriptingUtilsTests {
     public void verifyGroovyResourceEngineExecution() {
         val result = ScriptingUtils.executeGroovyScriptEngine("return name", CollectionUtils.wrap("name", "casuser"), String.class);
         assertEquals("casuser", result);
-    }
 
+        val result2 = ScriptingUtils.executeGroovyScriptEngine("throw new RuntimeException()", Map.of(), String.class);
+        assertNull(result2);
+    }
+    
     @Test
     public void verifyResourceScriptEngineExecution() throws IOException {
         val file = File.createTempFile("test", ".groovy");

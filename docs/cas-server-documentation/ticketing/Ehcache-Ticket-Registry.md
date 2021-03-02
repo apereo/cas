@@ -4,17 +4,13 @@ title: CAS - Ehcache Ticket Registry
 category: Ticketing
 ---
 
+{% include variables.html %}
+
 # Ehcache v3 Ticket Registry
 
 Ehcache 3.x integration is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-ehcache3-ticket-registry</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-ehcache3-ticket-registry" %}
 
 This registry stores tickets using the [Ehcache 3.x](http://ehcache.org/) caching library 
 and [an optional Terracotta cluster](https://www.ehcache.org/documentation/3.3/clustered-cache.html).
@@ -44,8 +40,7 @@ Running a Terracotta cluster on Kubernetes can be done easily using the Terracot
 
 #### Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#ehcache-3-ticket-registry).
-CAS currently doesn't support or require an XML configuration to configure Ehcache. 
+{% include casproperties.html properties="cas.ticket.registry.ehcache3" %}
 
 ### Eviction Policy
 
@@ -65,13 +60,7 @@ the Ehcache v3 ticket registry functionality in CAS to handle this integration.<
 
 Ehcache integration is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-ehcache-ticket-registry</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-ehcache-ticket-registry" %}
 
 This registry stores tickets using [Ehcache](http://ehcache.org/) version 2.x library.
 
@@ -89,7 +78,7 @@ replication with Ehcache, [see this resource](https://www.ehcache.org/documentat
 
 #### Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#ehcache-ticket-registry).
+{% include casproperties.html properties="cas.ticket.registry.ehcache" %}
 
 The Ehcache configuration for `ehcache-replicated.xml` mentioned in the config follows. 
 Note that `${ehcache.otherServer}` would be replaced by a system property: `-Dehcache.otherserver=cas2`.

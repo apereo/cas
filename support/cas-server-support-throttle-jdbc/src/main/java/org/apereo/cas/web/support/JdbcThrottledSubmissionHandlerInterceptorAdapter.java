@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  * @since 3.3.5
  */
 @Slf4j
-@SuppressWarnings("JdkObsolete")
+@SuppressWarnings("JavaUtilDate")
 public class JdbcThrottledSubmissionHandlerInterceptorAdapter extends AbstractInspektrAuditHandlerInterceptorAdapter {
     private final String sqlQueryAudit;
     private final JdbcTemplate jdbcTemplate;

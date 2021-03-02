@@ -4,6 +4,8 @@ title: CAS - Delegate Authentication w/ SAML2 Identity Providers
 category: Authentication
 ---
 
+{% include variables.html %}
+
 # Delegated Authentication w/ SAML2
 
 In the event that CAS is configured to delegate authentication to an external identity provider, the service provider (CAS) 
@@ -31,15 +33,13 @@ be resolved, a status code of `406 - Not Acceptable` is returned.
 delegated authentication to be available as the feature cannot be used on its own
 as a standalone discovery service.</p></div>
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-saml-idp-discovery</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```    
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-saml-idp-discovery" %}
 
-Identity provider discovery allows CAS to [embed and present a discovery service](https://wiki.shibboleth.net/confluence/display/EDS10/Embedded+Discovery+Service) as part of delegated authentication. Configured SAML2 identity providers in the CAS configuration
+{% include casproperties.html properties="cas.authn.pac4j.saml" %}
+
+Identity provider discovery allows CAS 
+to [embed and present a discovery service](https://wiki.shibboleth.net/confluence/display/EDS10/Embedded+Discovery+Service) 
+as part of delegated authentication. Configured SAML2identity providers in the CAS configuration
 used for delegated authentication are presented as options for discovery. 
 
 CAS is also able to directly consume multiple JSON feeds
@@ -65,9 +65,6 @@ directly be consumed as a JSON file with the following structure:
   }]
 }]
 ```
-
-To see the relevant list of CAS properties, 
-please [review this guide](../configuration/Configuration-Properties.html#saml2-identity-provider-discovery).
 
 The following endpoints are available:
 

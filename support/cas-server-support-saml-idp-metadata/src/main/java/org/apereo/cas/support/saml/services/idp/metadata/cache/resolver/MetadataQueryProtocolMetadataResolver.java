@@ -20,6 +20,7 @@ import org.apache.http.util.EntityUtils;
 import org.jooq.lambda.Unchecked;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.metadata.resolver.impl.AbstractMetadataResolver;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 
 import java.io.File;
@@ -27,7 +28,6 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.attribute.UserDefinedFileAttributeView;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
@@ -62,7 +62,7 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
             if (Files.exists(backupFile.toPath())) {
                 return new InMemoryResourceMetadataResolver(backupFile, this.configBean);
             }
-            throw new Exception("Unable to get entity from MDQ server and a backup file does not exist.");
+            throw new SamlException("Unable to get entity from MDQ server and a backup file does not exist.");
         }
         val entity = response.getEntity();
         val result = IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8);
@@ -87,24 +87,28 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
     @Override
     protected HttpResponse fetchMetadata(final SamlRegisteredService service,
         final String metadataLocation, final CriteriaSet criteriaSet, final File backupFile) {
-        val metadata = samlIdPProperties.getMetadata();
+        val metadata = samlIdPProperties.getMetadata().getMdq();
         val headers = new LinkedHashMap<String, Object>();
         headers.put("Content-Type", metadata.getSupportedContentTypes());
         headers.put("Accept", "*/*");
         val path = backupFile.toPath();
         if (Files.exists(path)) {
-            try {
+            Unchecked.consumer(store -> {
                 val etag = new String((byte[]) Files.getAttribute(path, "user:ETag"), StandardCharsets.UTF_8).trim();
                 headers.put("If-None-Match", etag);
-            } catch (final Exception e) {
-                LOGGER.error("Failed to read ETag Attribute - " + e.getMessage(), e);
-            }
+            }).accept(path);
         }
 
-        LOGGER.trace("Fetching dynamic metadata via MDQ for [{}]", metadataLocation);
-        val response = HttpUtils.executeGet(metadataLocation, metadata.getBasicAuthnUsername(),
-            samlIdPProperties.getMetadata().getBasicAuthnPassword(), new HashMap<>(0), headers,
-            service.getMetadataProxyLocation());
+        LOGGER.trace("Fetching metadata via MDQ for [{}]", metadataLocation);
+        val exec = HttpUtils.HttpExecutionRequest.builder()
+            .basicAuthPassword(metadata.getBasicAuthnPassword())
+            .basicAuthUsername(metadata.getBasicAuthnUsername())
+            .method(HttpMethod.GET)
+            .url(metadataLocation)
+            .headers(headers)
+            .proxyUrl(service.getMetadataProxyLocation())
+            .build();
+        val response = HttpUtils.execute(exec);
         if (response == null) {
             LOGGER.error("Unable to fetch metadata from [{}]", metadataLocation);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
@@ -120,7 +124,7 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
             .map(EntityIdCriterion::getEntityId)
             .orElseGet(service::getServiceId);
         if (StringUtils.isBlank(entityId)) {
-            throw new SamlException("Unable to determine entity id to fetch metadata dynamically via MDQ for service " + service.getName());
+            throw new SamlException("Unable to determine entity id to fetch metadata via MDQ for " + service.getName());
         }
         val location = super.getMetadataLocationForService(service, criteriaSet);
         return location.replace("{0}", EncodingUtils.urlEncode(entityId));

@@ -46,7 +46,7 @@ public class CasCoreMonitorConfiguration {
     @Bean
     @ConditionalOnEnabledHealthIndicator("memoryHealthIndicator")
     public HealthIndicator memoryHealthIndicator() {
-        val freeMemThreshold = casProperties.getMonitor().getFreeMemThreshold();
+        val freeMemThreshold = casProperties.getMonitor().getMemory().getFreeMemThreshold();
         if (freeMemThreshold > 0) {
             LOGGER.debug("Configured memory monitor with free-memory threshold [{}]", freeMemThreshold);
             return new MemoryMonitorHealthIndicator(freeMemThreshold);

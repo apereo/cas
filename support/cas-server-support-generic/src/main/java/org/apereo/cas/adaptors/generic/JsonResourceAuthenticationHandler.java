@@ -7,17 +7,23 @@ import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
+import org.apereo.cas.authentication.exceptions.InvalidLoginLocationException;
+import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.RegexUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Splitter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.core.io.Resource;
 
 import javax.security.auth.login.AccountExpiredException;
@@ -26,8 +32,10 @@ import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.io.Serializable;
 import java.security.GeneralSecurityException;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Map;
@@ -40,26 +48,25 @@ import java.util.Map;
  */
 @Slf4j
 public class JsonResourceAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
-    private final ObjectMapper mapper;
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true)
+        .failOnUnknownProperties(true)
+        .singleValueAsArray(true)
+        .build()
+        .toObjectMapper();
+
     private final Resource resource;
 
     public JsonResourceAuthenticationHandler(final String name, final ServicesManager servicesManager,
-                                             final PrincipalFactory principalFactory,
-                                             final Integer order, final Resource resource) {
+        final PrincipalFactory principalFactory,
+        final Integer order, final Resource resource) {
         super(name, servicesManager, principalFactory, order);
         this.resource = resource;
-        this.mapper = new ObjectMapper()
-            .findAndRegisterModules()
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true)
-            .configure(DeserializationFeature.READ_ENUMS_USING_TO_STRING, false)
-            .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
-        this.mapper.activateDefaultTyping(mapper.getPolymorphicTypeValidator(),
-            ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
     }
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
-                                                                                        final String originalPassword)
+        final String originalPassword)
         throws GeneralSecurityException, PreventedException {
         val map = readAccountsFromResource();
         val username = credential.getUsername();
@@ -82,6 +89,22 @@ public class JsonResourceAuthenticationHandler extends AbstractUsernamePasswordA
                 case OK:
                 default:
                     LOGGER.debug("Account status is OK");
+            }
+
+            val clientInfo = ClientInfoHolder.getClientInfo();
+            if (clientInfo != null && StringUtils.isNotBlank(account.getLocation())
+                && !RegexUtils.find(account.getLocation(), clientInfo.getClientIpAddress())) {
+                throw new InvalidLoginLocationException("Unable to login from this location");
+            }
+
+            if (StringUtils.isNotBlank(account.getAvailability())) {
+                val range = Splitter.on("~").splitToList(account.getAvailability());
+                val startDate = DateTimeUtils.convertToZonedDateTime(range.get(0));
+                val endDate = DateTimeUtils.convertToZonedDateTime(range.get(1));
+                val now = ZonedDateTime.now(Clock.systemUTC());
+                if (now.isBefore(startDate) || now.isAfter(endDate)) {
+                    throw new InvalidLoginTimeException("Unable to login at this time");
+                }
             }
 
             val warnings = new ArrayList<MessageDescriptor>();
@@ -111,7 +134,7 @@ public class JsonResourceAuthenticationHandler extends AbstractUsernamePasswordA
 
     private Map<String, CasUserAccount> readAccountsFromResource() throws PreventedException {
         try {
-            return mapper.readValue(resource.getInputStream(),
+            return MAPPER.readValue(resource.getInputStream(),
                 new TypeReference<>() {
                 });
         } catch (final Exception e) {

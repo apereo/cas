@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.attribute;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.util.scripting.GroovyScriptResourceCacheManager;
+import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.val;
@@ -41,9 +42,24 @@ public class DefaultAttributeDefinitionTests {
     }
 
     @Test
+    public void verifyBadScript() {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
+
+        val defn = DefaultAttributeDefinition.builder()
+            .key("computedAttribute")
+            .script("badformat ()")
+            .build();
+        val values = defn.resolveAttributeValues(List.of("v1", "v2"), "example.org",
+            CoreAuthenticationTestUtils.getRegisteredService());
+        assertTrue(values.isEmpty());
+    }
+
+    @Test
     public void verifyCachedEmbeddedScriptOperation() {
         val applicationContext = new StaticApplicationContext();
-        applicationContext.registerSingleton(ApplicationContextProvider.BEAN_NAME_SCRIPT_RESOURCE_CACHE_MANAGER, GroovyScriptResourceCacheManager.class);
+        applicationContext.registerSingleton(ScriptResourceCacheManager.BEAN_NAME, GroovyScriptResourceCacheManager.class);
         applicationContext.refresh();
         ApplicationContextProvider.holdApplicationContext(applicationContext);
 
@@ -77,7 +93,7 @@ public class DefaultAttributeDefinitionTests {
     @Test
     public void verifyCachedExternalScriptOperation() {
         val applicationContext = new StaticApplicationContext();
-        applicationContext.registerSingleton(ApplicationContextProvider.BEAN_NAME_SCRIPT_RESOURCE_CACHE_MANAGER, GroovyScriptResourceCacheManager.class);
+        applicationContext.registerSingleton(ScriptResourceCacheManager.BEAN_NAME, GroovyScriptResourceCacheManager.class);
         applicationContext.refresh();
         ApplicationContextProvider.holdApplicationContext(applicationContext);
 
@@ -96,7 +112,7 @@ public class DefaultAttributeDefinitionTests {
     @Test
     public void verifyBadExternalScriptOperation() {
         val applicationContext = new StaticApplicationContext();
-        applicationContext.registerSingleton(ApplicationContextProvider.BEAN_NAME_SCRIPT_RESOURCE_CACHE_MANAGER, GroovyScriptResourceCacheManager.class);
+        applicationContext.registerSingleton(ScriptResourceCacheManager.BEAN_NAME, GroovyScriptResourceCacheManager.class);
         applicationContext.refresh();
         ApplicationContextProvider.holdApplicationContext(applicationContext);
 
@@ -112,7 +128,7 @@ public class DefaultAttributeDefinitionTests {
     @Test
     public void verifyBadEmbeddedScriptOperation() {
         val applicationContext = new StaticApplicationContext();
-        applicationContext.registerSingleton(ApplicationContextProvider.BEAN_NAME_SCRIPT_RESOURCE_CACHE_MANAGER, GroovyScriptResourceCacheManager.class);
+        applicationContext.registerSingleton(ScriptResourceCacheManager.BEAN_NAME, GroovyScriptResourceCacheManager.class);
         applicationContext.refresh();
         ApplicationContextProvider.holdApplicationContext(applicationContext);
 

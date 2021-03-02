@@ -5,9 +5,9 @@ import org.apereo.cas.dynamodb.DynamoDbQueryBuilder;
 import org.apereo.cas.dynamodb.DynamoDbTableUtils;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -51,9 +51,8 @@ import java.util.stream.Collectors;
 @Getter
 @RequiredArgsConstructor
 public class DynamoDbCasEventsFacilitator {
-    private static final ObjectMapper MAPPER = new ObjectMapper()
-        .setDefaultPrettyPrinter(new MinimalPrettyPrinter())
-        .findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     private final DynamoDbEventsProperties dynamoDbProperties;
 

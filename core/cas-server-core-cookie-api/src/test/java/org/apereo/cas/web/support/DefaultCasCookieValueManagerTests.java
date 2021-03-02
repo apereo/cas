@@ -39,7 +39,7 @@ public class DefaultCasCookieValueManagerTests {
 
     @BeforeEach
     public void initialize() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
 
         val request = new MockHttpServletRequest();
         request.setRemoteAddr(CLIENT_IP);
@@ -127,7 +127,7 @@ public class DefaultCasCookieValueManagerTests {
         val mgr = new DefaultCasCookieValueManager(CipherExecutor.noOp(), props);
         ClientInfoHolder.clear();
         assertThrows(InvalidCookieException.class, () -> mgr.obtainCookieValue("something@"
-                + CLIENT_IP + "@" + USER_AGENT, new MockHttpServletRequest()));
+                + CLIENT_IP + '@' + USER_AGENT, new MockHttpServletRequest()));
     }
 
 }

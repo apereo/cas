@@ -1,8 +1,8 @@
 package org.apereo.cas.configuration;
 
 import org.apereo.cas.configuration.model.core.CasJavaClientProperties;
+import org.apereo.cas.configuration.model.core.CasServerHostProperties;
 import org.apereo.cas.configuration.model.core.CasServerProperties;
-import org.apereo.cas.configuration.model.core.HostProperties;
 import org.apereo.cas.configuration.model.core.audit.AuditProperties;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationProperties;
 import org.apereo.cas.configuration.model.core.authentication.HttpClientProperties;
@@ -23,6 +23,7 @@ import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
 import org.apereo.cas.configuration.model.core.web.flow.WebflowProperties;
 import org.apereo.cas.configuration.model.core.web.security.HttpRequestProperties;
 import org.apereo.cas.configuration.model.core.web.view.ViewProperties;
+import org.apereo.cas.configuration.model.support.acme.AcmeProperties;
 import org.apereo.cas.configuration.model.support.analytics.GoogleAnalyticsProperties;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
@@ -100,6 +101,12 @@ public class CasConfigurationProperties implements Serializable {
     private ConsentProperties consent = new ConsentProperties();
 
     /**
+     * ACME functionality.
+     */
+    @NestedConfigurationProperty
+    private AcmeProperties acme = new AcmeProperties();
+
+    /**
      * SCIM functionality.
      */
     @NestedConfigurationProperty
@@ -145,7 +152,7 @@ public class CasConfigurationProperties implements Serializable {
      * Settings that define this CAS host.
      */
     @NestedConfigurationProperty
-    private HostProperties host = new HostProperties();
+    private CasServerHostProperties host = new CasServerHostProperties();
 
     /**
      * Logout functionality.

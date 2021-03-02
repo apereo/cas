@@ -195,7 +195,7 @@ public class CasCoreWebflowConfiguration {
     @ConditionalOnMissingBean(name = "checkWebAuthenticationRequestAction")
     @RefreshScope
     public Action checkWebAuthenticationRequestAction() {
-        return new CheckWebAuthenticationRequestAction(casProperties.getAuthn().getMfa().getContentType());
+        return new CheckWebAuthenticationRequestAction(casProperties.getAuthn().getMfa().getCore().getContentType());
     }
 
     @Bean
@@ -224,7 +224,7 @@ public class CasCoreWebflowConfiguration {
     @RefreshScope
     public SingleSignOnParticipationStrategy singleSignOnParticipationStrategy() {
         val resolvers = applicationContext.getBeansOfType(SingleSignOnParticipationStrategyConfigurer.class, false, true);
-        val providers = new ArrayList<SingleSignOnParticipationStrategyConfigurer>(resolvers.values());
+        val providers = new ArrayList<>(resolvers.values());
         AnnotationAwareOrderComparator.sort(providers);
         val chain = new ChainingSingleSignOnParticipationStrategy();
         providers.forEach(provider -> provider.configureStrategy(chain));

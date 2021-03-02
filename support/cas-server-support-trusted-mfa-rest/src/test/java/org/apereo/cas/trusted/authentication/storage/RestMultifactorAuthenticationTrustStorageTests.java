@@ -11,6 +11,7 @@ import org.apereo.cas.trusted.config.RestMultifactorAuthenticationTrustConfigura
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -61,7 +62,8 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.trusted.rest.url=http://localhost:9297"
     })
 public class RestMultifactorAuthenticationTrustStorageTests {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     @Autowired
     @Qualifier("mfaTrustEngine")

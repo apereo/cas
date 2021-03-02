@@ -13,6 +13,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -26,19 +27,20 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("samlIdPGitRegisteredServiceMetadataConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnProperty(prefix = "cas.authn.saml-idp.metadata.git", name = "repository-url")
 public class SamlIdPGitRegisteredServiceMetadataConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("shibboleth.OpenSAMLConfig")
+    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
     private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
 
     @Bean
     @RefreshScope
-    @ConditionalOnMissingBean(name = "gitRepositoryInstance")
-    public GitRepository gitRepositoryInstance() {
+    @ConditionalOnMissingBean(name = "gitSamlRegisteredServiceRepositoryInstance")
+    public GitRepository gitSamlRegisteredServiceRepositoryInstance() {
         val git = casProperties.getAuthn().getSamlIdp().getMetadata().getGit();
         return GitRepositoryBuilder.newInstance(git).build();
     }
@@ -47,7 +49,8 @@ public class SamlIdPGitRegisteredServiceMetadataConfiguration {
     @RefreshScope
     public SamlRegisteredServiceMetadataResolver gitSamlRegisteredServiceMetadataResolver() {
         val idp = casProperties.getAuthn().getSamlIdp();
-        return new GitSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean.getObject(), gitRepositoryInstance());
+        return new GitSamlRegisteredServiceMetadataResolver(idp,
+            openSamlConfigBean.getObject(), gitSamlRegisteredServiceRepositoryInstance());
     }
 
     @Bean

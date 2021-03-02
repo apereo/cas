@@ -27,7 +27,7 @@ import java.util.stream.IntStream;
  * @since 5.1.0
  */
 @NoArgsConstructor
-@SuppressWarnings("JdkObsolete")
+@SuppressWarnings("JavaUtilDate")
 public class MockTicketGrantingTicketCreatedEventProducer {
 
     private static final List<String> ALL_USER_AGENTS = CollectionUtils.wrapList(
@@ -74,18 +74,27 @@ public class MockTicketGrantingTicketCreatedEventProducer {
         return ALL_IP_ADDRS.get(index);
     }
 
-    private static void createEvent(final int i, final CasEventRepository casEventRepository) {
+    public static CasEvent createEvent(final String user, final CasEventRepository casEventRepository) {
+        return createEvent(user, RandomUtils.nextInt(), casEventRepository);
+    }
+
+    public static CasEvent createEvent(final String user, final int i, final CasEventRepository casEventRepository) {
         val dto = new CasEvent();
         dto.setType(CasTicketGrantingTicketCreatedEvent.class.getName());
         dto.putTimestamp(new Date().getTime());
         dto.setCreationTime(ZonedDateTime.now(ZoneOffset.UTC).minusDays(5).toString());
         dto.putEventId(TicketIdSanitizationUtils.sanitize("TGT-" + i + '-' + RandomUtils.randomAlphanumeric(16)));
-        dto.setPrincipalId("casuser");
+        dto.setPrincipalId(user);
         dto.putClientIpAddress(getMockClientIpAddress());
         dto.putServerIpAddress("127.0.0.1");
         dto.putAgent(getMockUserAgent());
         dto.putGeoLocation(getMockGeoLocation());
         casEventRepository.save(dto);
+        return dto;
+    }
+    
+    public static void createEvent(final int i, final CasEventRepository casEventRepository) {
+        createEvent("casuser", i, casEventRepository);
     }
 
     public static void createEvents(final CasEventRepository casEventRepository) {

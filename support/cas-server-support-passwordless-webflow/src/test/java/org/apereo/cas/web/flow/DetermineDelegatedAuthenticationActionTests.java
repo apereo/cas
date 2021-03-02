@@ -34,9 +34,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebflowActions")
 @TestPropertySource(properties = {
     "cas.authn.passwordless.accounts.simple.casuser=casuser@example.org",
-    "cas.authn.passwordless.delegated-authentication-activated=true",
+    "cas.authn.passwordless.core.delegated-authentication-activated=true",
 
-    "cas.authn.passwordless.delegated-authentication-selector-script.location=classpath:/DelegatedAuthenticationSelectorScript.groovy",
+    "cas.authn.passwordless.core.delegated-authentication-selector-script.location=classpath:/DelegatedAuthenticationSelectorScript.groovy",
 
     "cas.authn.pac4j.cas[0].login-url=https://casserver.herokuapp.com/cas/login",
     "cas.authn.pac4j.cas[0].protocol=CAS30"

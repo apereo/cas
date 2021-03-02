@@ -1,5 +1,8 @@
 package org.apereo.cas;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
@@ -7,6 +10,7 @@ import org.apereo.cas.authentication.ContextualAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceMatchingStrategy;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceContext;
 import org.apereo.cas.services.ServicesManager;
@@ -154,9 +158,9 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
 
 
     @Audit(
-        action = "TICKET_DESTROYED",
-        actionResolverName = "DESTROY_TICKET_RESOLVER",
-        resourceResolverName = "DESTROY_TICKET_RESOURCE_RESOLVER")
+        action = AuditableActions.TICKET_DESTROYED,
+        actionResolverName = AuditActionResolvers.DESTROY_TICKET_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.DESTROY_TICKET_RESOURCE_RESOLVER)
     @Transactional(transactionManager = "ticketTransactionManager")
     @Override
     public int deleteTicket(final String ticketId) {
@@ -249,8 +253,8 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * @param service the service
      * @return the service
      */
-    protected Service resolveServiceFromAuthenticationRequest(final Service service) {
-        return authenticationRequestServiceSelectionStrategies.resolveService(service);
+    protected WebApplicationService resolveServiceFromAuthenticationRequest(final Service service) {
+        return authenticationRequestServiceSelectionStrategies.resolveService(service, WebApplicationService.class);
     }
 
     /**

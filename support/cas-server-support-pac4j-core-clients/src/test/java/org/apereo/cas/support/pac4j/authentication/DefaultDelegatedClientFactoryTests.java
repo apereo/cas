@@ -1,6 +1,7 @@
 package org.apereo.cas.support.pac4j.authentication;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.pac4j.Pac4jBaseClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jIdentifiableClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.cas.Pac4jCasClientProperties;
@@ -73,6 +74,9 @@ public class DefaultDelegatedClientFactoryTests {
         val cas = new Pac4jCasClientProperties();
         cas.setLoginUrl("https://cas.example.org/login");
         cas.setProtocol(CasProtocol.SAML.name());
+        cas.setPrincipalAttributeId("uid");
+        cas.setCssClass("cssclass");
+        props.getCore().setLazyInit(false);
         props.getCas().add(cas);
 
         val casSettings = new CasConfigurationProperties();
@@ -102,29 +106,7 @@ public class DefaultDelegatedClientFactoryTests {
     @Test
     public void verifyFactoryForSamlClients() throws Exception {
         val props = new Pac4jDelegatedAuthenticationProperties();
-        val saml = new Pac4jSamlClientProperties();
-        saml.setKeystorePath(new File(FileUtils.getTempDirectoryPath(), "keystore.jks").getCanonicalPath());
-        saml.setKeystoreAlias("alias1");
-        saml.setKeystorePassword("1234567890");
-        saml.setPrivateKeyPassword("1234567890");
-        saml.setIdentityProviderMetadataPath("classpath:idp-metadata.xml");
-        saml.setServiceProviderMetadataPath(new File(FileUtils.getTempDirectoryPath(), "sp.xml").getCanonicalPath());
-        saml.setServiceProviderEntityId("test-entityid");
-        saml.setForceKeystoreGeneration(true);
-        saml.setMessageStoreFactory(HttpSessionStoreFactory.class.getName());
-        saml.setPrincipalIdAttribute("givenName");
-        saml.setAssertionConsumerServiceIndex(1);
-        saml.setAuthnContextClassRef(List.of("classRef1"));
-        saml.setNameIdPolicyFormat("transient");
-        saml.setBlockedSignatureSigningAlgorithms(List.of("sha-1"));
-        saml.setSignatureAlgorithms(List.of("sha-256"));
-        saml.setSignatureReferenceDigestMethods(List.of("sha-256"));
-        saml.getRequestedAttributes().add(
-            new Pac4jSamlClientProperties.ServiceProviderRequestedAttribute()
-                .setName("requestedAttribute")
-                .setFriendlyName("friendlyRequestedName"));
-        saml.getMappedAttributes().add(
-            new Pac4jSamlClientProperties.ServiceProviderMappedAttribute().setName("attr1").setMappedTo("givenName"));
+        val saml = getPac4jSamlClientProperties(HttpSessionStoreFactory.class.getName());
         props.getSaml().add(saml);
 
         val casSettings = new CasConfigurationProperties();
@@ -135,6 +117,19 @@ public class DefaultDelegatedClientFactoryTests {
 
         assertTrue(SAML2Client.class.cast(clients.iterator().next()).getConfiguration().
             getSamlMessageStoreFactory() instanceof HttpSessionStoreFactory);
+    }
+
+    @Test
+    public void verifyBadSessionStoreForSamlClients() throws Exception {
+        val props = new Pac4jDelegatedAuthenticationProperties();
+        val saml = getPac4jSamlClientProperties("BadClassName");
+        props.getSaml().add(saml);
+
+        val casSettings = new CasConfigurationProperties();
+        casSettings.getAuthn().setPac4j(props);
+        val factory = new DefaultDelegatedClientFactory(casSettings, List.of());
+        val clients = factory.build();
+        assertEquals(1, clients.size());
     }
 
     @Test
@@ -224,6 +219,34 @@ public class DefaultDelegatedClientFactoryTests {
         val factory = new DefaultDelegatedClientFactory(casSettings, List.of());
         val clients = factory.build();
         assertEquals(4, clients.size());
+    }
+
+    private static Pac4jSamlClientProperties getPac4jSamlClientProperties(final String sessionFactory) throws Exception {
+        val saml = new Pac4jSamlClientProperties();
+        saml.setKeystorePath(new File(FileUtils.getTempDirectoryPath(), "keystore.jks").getCanonicalPath());
+        saml.setKeystoreAlias("alias1");
+        saml.setCallbackUrlType(Pac4jBaseClientProperties.CallbackUrlTypes.NONE);
+        saml.setKeystorePassword("1234567890");
+        saml.setPrivateKeyPassword("1234567890");
+        saml.setIdentityProviderMetadataPath("classpath:idp-metadata.xml");
+        saml.setServiceProviderMetadataPath(new File(FileUtils.getTempDirectoryPath(), "sp.xml").getCanonicalPath());
+        saml.setServiceProviderEntityId("test-entityid");
+        saml.setForceKeystoreGeneration(true);
+        saml.setMessageStoreFactory(sessionFactory);
+        saml.setPrincipalIdAttribute("givenName");
+        saml.setAssertionConsumerServiceIndex(1);
+        saml.setAuthnContextClassRef(List.of("classRef1"));
+        saml.setNameIdPolicyFormat("transient");
+        saml.setBlockedSignatureSigningAlgorithms(List.of("sha-1"));
+        saml.setSignatureAlgorithms(List.of("sha-256"));
+        saml.setSignatureReferenceDigestMethods(List.of("sha-256"));
+        saml.getRequestedAttributes().add(
+            new Pac4jSamlClientProperties.ServiceProviderRequestedAttribute()
+                .setName("requestedAttribute")
+                .setFriendlyName("friendlyRequestedName"));
+        saml.getMappedAttributes().add(
+            new Pac4jSamlClientProperties.ServiceProviderMappedAttribute().setName("attr1").setMappedTo("givenName"));
+        return saml;
     }
 
     private static void configureIdentifiableClient(final Pac4jIdentifiableClientProperties props) {

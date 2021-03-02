@@ -65,7 +65,7 @@ public class U2FAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "u2fAuthenticationMetaDataPopulator")
     public AuthenticationMetaDataPopulator u2fAuthenticationMetaDataPopulator() {
-        val authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
+        val authenticationContextAttribute = casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute();
         return new AuthenticationContextAttributeMetaDataPopulator(
             authenticationContextAttribute,
             u2fAuthenticationHandler(),

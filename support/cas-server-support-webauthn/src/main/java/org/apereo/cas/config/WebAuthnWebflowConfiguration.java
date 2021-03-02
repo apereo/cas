@@ -13,7 +13,6 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
@@ -47,6 +46,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import org.springframework.webflow.engine.builder.FlowBuilder;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
@@ -130,11 +130,15 @@ public class WebAuthnWebflowConfiguration {
     @Qualifier("authenticationContextValidator")
     private ObjectProvider<MultifactorAuthenticationContextValidator> authenticationContextValidator;
 
+    @Autowired
+    @Qualifier("flowBuilder")
+    private ObjectProvider<FlowBuilder> flowBuilder;
+
     @Bean
+    @ConditionalOnMissingBean(name = "webAuthnFlowRegistry")
     public FlowDefinitionRegistry webAuthnFlowRegistry() {
         val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, flowBuilderServices.getObject());
-        builder.setBasePath(CasWebflowConstants.BASE_CLASSPATH_WEBFLOW);
-        builder.addFlowLocationPattern("/mfa-webauthn/*-webflow.xml");
+        builder.addFlowBuilder(flowBuilder.getObject(), WebAuthnMultifactorWebflowConfigurer.MFA_WEB_AUTHN_EVENT_ID);
         return builder.build();
     }
 
@@ -143,8 +147,7 @@ public class WebAuthnWebflowConfiguration {
     @RefreshScope
     @Autowired
     public Action webAuthnAuthenticationWebflowAction(
-        @Qualifier("webAuthnAuthenticationWebflowEventResolver")
-        final CasWebflowEventResolver webAuthnAuthenticationWebflowEventResolver) {
+        @Qualifier("webAuthnAuthenticationWebflowEventResolver") final CasWebflowEventResolver webAuthnAuthenticationWebflowEventResolver) {
         return new WebAuthnAuthenticationWebflowAction(webAuthnAuthenticationWebflowEventResolver);
     }
 
@@ -223,8 +226,7 @@ public class WebAuthnWebflowConfiguration {
     @Bean
     @Autowired
     public CasWebflowExecutionPlanConfigurer webAuthnCasWebflowExecutionPlanConfigurer(
-        @Qualifier("webAuthnMultifactorWebflowConfigurer")
-        final CasWebflowConfigurer webAuthnMultifactorWebflowConfigurer) {
+        @Qualifier("webAuthnMultifactorWebflowConfigurer") final CasWebflowConfigurer webAuthnMultifactorWebflowConfigurer) {
         return plan -> plan.registerWebflowConfigurer(webAuthnMultifactorWebflowConfigurer);
     }
 

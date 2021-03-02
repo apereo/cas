@@ -64,6 +64,14 @@ public class EncryptedTranscoder implements Transcoder {
         return encrypt(outBuffer);
     }
 
+    /**
+     * Write object to output stream.
+     *
+     * @param o   the o
+     * @param out the out
+     * @throws IOException the io exception
+     */
+    @SuppressWarnings("BanSerializableRead")
     protected void writeObjectToOutputStream(final Object o, final ObjectOutputStream out) throws IOException {
         var object = o;
         if (AopUtils.isAopProxy(o)) {
@@ -84,6 +92,13 @@ public class EncryptedTranscoder implements Transcoder {
         }
     }
 
+    /**
+     * Encrypt.
+     *
+     * @param outBuffer the out buffer
+     * @return the byte [ ]
+     * @throws IOException the io exception
+     */
     protected byte[] encrypt(final ByteArrayOutputStream outBuffer) throws IOException {
         try {
             return cipherBean.encrypt(outBuffer.toByteArray());
@@ -94,6 +109,7 @@ public class EncryptedTranscoder implements Transcoder {
     }
 
     @Override
+    @SuppressWarnings("BanSerializableRead")
     public Object decode(final byte[] encoded) throws IOException {
         val data = decrypt(encoded);
         try (val inBuffer = new ByteArrayInputStream(data);

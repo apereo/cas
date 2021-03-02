@@ -1,5 +1,6 @@
 package org.apereo.cas.redis;
 
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
@@ -83,7 +84,7 @@ public class RedisPersonAttributeDaoTests {
     private static final String USER_ID = UUID.randomUUID().toString();
 
     @Autowired
-    @Qualifier("attributeRepository")
+    @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
     private IPersonAttributeDao attributeRepository;
 
     @Autowired

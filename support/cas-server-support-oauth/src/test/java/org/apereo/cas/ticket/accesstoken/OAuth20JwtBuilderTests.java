@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("OAuth")
-@SuppressWarnings("JdkObsolete")
+@SuppressWarnings("JavaUtilDate")
 public class OAuth20JwtBuilderTests extends AbstractOAuth20Tests {
     @Test
     public void verifyJwt() {

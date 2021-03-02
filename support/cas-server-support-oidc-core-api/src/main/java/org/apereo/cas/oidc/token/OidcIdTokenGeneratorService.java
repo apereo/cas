@@ -58,7 +58,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
         }
 
         val oidcRegisteredService = (OidcRegisteredService) registeredService;
-        val context = new JEEContext(request, response, getConfigurationContext().getSessionStore());
+        val context = new JEEContext(request, response);
         LOGGER.trace("Attempting to produce claims for the id token [{}]", accessToken);
         val authenticatedProfile = getAuthenticatedProfile(request, response);
         val claims = buildJwtClaims(request, accessToken, timeoutInSeconds,
@@ -100,21 +100,21 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
         claims.setJwtId(jwtId);
         claims.setClaim(OidcConstants.CLAIM_SESSIOND_ID, DigestUtils.sha(jwtId));
 
-        claims.setIssuer(oidc.getIssuer());
+        claims.setIssuer(oidc.getCore().getIssuer());
         claims.setAudience(accessToken.getClientId());
 
         val expirationDate = NumericDate.now();
         expirationDate.addSeconds(timeoutInSeconds);
         claims.setExpirationTime(expirationDate);
         claims.setIssuedAtToNow();
-        claims.setNotBeforeMinutesInThePast(oidc.getSkew());
+        claims.setNotBeforeMinutesInThePast(oidc.getCore().getSkew());
         claims.setSubject(principal.getId());
 
         val mfa = getConfigurationContext().getCasProperties().getAuthn().getMfa();
         val attributes = authentication.getAttributes();
 
-        if (attributes.containsKey(mfa.getAuthenticationContextAttribute())) {
-            val val = CollectionUtils.toCollection(attributes.get(mfa.getAuthenticationContextAttribute()));
+        if (attributes.containsKey(mfa.getCore().getAuthenticationContextAttribute())) {
+            val val = CollectionUtils.toCollection(attributes.get(mfa.getCore().getAuthenticationContextAttribute()));
             claims.setStringClaim(OidcConstants.ACR, val.iterator().next().toString());
         }
         if (attributes.containsKey(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS)) {
@@ -132,17 +132,18 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
             claims.setClaim(OAuth20Constants.NONCE, attributes.get(OAuth20Constants.NONCE).get(0));
         }
         generateAccessTokenHash(accessToken, service, claims);
-        LOGGER.trace("Comparing principal attributes [{}] with supported claims [{}]", principal.getAttributes(), oidc.getClaims());
+        LOGGER.trace("Comparing principal attributes [{}] with supported claims [{}]",
+            principal.getAttributes(), oidc.getDiscovery().getClaims());
 
         principal.getAttributes().entrySet()
             .stream()
             .filter(entry -> {
-                if (oidc.getClaims().contains(entry.getKey())) {
+                if (oidc.getDiscovery().getClaims().contains(entry.getKey())) {
                     LOGGER.trace("Found supported claim [{}]", entry.getKey());
                     return true;
                 }
                 LOGGER.warn("Claim [{}] is not defined as a supported claim among [{}]. Skipping...",
-                    entry.getKey(), oidc.getClaims());
+                    entry.getKey(), oidc.getDiscovery().getClaims());
                 return false;
             })
             .forEach(entry -> {

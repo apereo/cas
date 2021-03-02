@@ -51,8 +51,8 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attribute-repository.groovy[0].location=classpath:/GroovyAttributeDao.groovy",
     "cas.authn.attribute-repository.groovy[0].order=2",
 
-    "cas.authn.attribute-repository.aggregation=merge",
-    "cas.authn.attribute-repository.merger=multivalued"
+    "cas.authn.attribute-repository.core.aggregation=MERGE",
+    "cas.authn.attribute-repository.core.merger=MULTIVALUED"
 })
 @Tag("Attributes")
 public class PersonDirectoryPrincipalResolverConcurrencyTests {
@@ -62,7 +62,7 @@ public class PersonDirectoryPrincipalResolverConcurrencyTests {
     private static final int EXECUTIONS_PER_USER = 1000;
 
     @Autowired
-    @Qualifier("attributeRepository")
+    @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
     private IPersonAttributeDao attributeRepository;
 
     @Autowired
@@ -104,11 +104,11 @@ public class PersonDirectoryPrincipalResolverConcurrencyTests {
             assertTrue(allExecutorThreadsReady.await(runnables.size() * 10, TimeUnit.MILLISECONDS),
                 "Timeout initializing threads! Perform long lasting initializations before passing runnables to assertConcurrent");
             afterInitBlocker.countDown();
-            assertTrue(allDone.await(maxTimeoutSeconds, TimeUnit.SECONDS), message + " timeout! More than " + maxTimeoutSeconds + " seconds");
+            assertTrue(allDone.await(maxTimeoutSeconds, TimeUnit.SECONDS), () -> message + " timeout! More than " + maxTimeoutSeconds + " seconds");
         } finally {
             threadPool.shutdownNow();
         }
-        assertTrue(exceptions.isEmpty(), message + " failed with exception(s)" + exceptions);
+        assertTrue(exceptions.isEmpty(), () -> message + " failed with exception(s)" + exceptions);
     }
 
     @BeforeEach
@@ -127,7 +127,7 @@ public class PersonDirectoryPrincipalResolverConcurrencyTests {
     @Test
     public void validatePersonDirConcurrency() throws Exception {
         val userList = new ArrayList<String>();
-        for (int i = 0; i < NUM_USERS; i++) {
+        for (var i = 0; i < NUM_USERS; i++) {
             userList.add("user_" + i);
         }
 
@@ -151,7 +151,7 @@ public class PersonDirectoryPrincipalResolverConcurrencyTests {
         @Override
         public void run() {
             val upc = new UsernamePasswordCredential(username, "password");
-            for (int i = 0; i < EXECUTIONS_PER_USER; i++) {
+            for (var i = 0; i < EXECUTIONS_PER_USER; i++) {
                 try {
                     val person = this.personDirectoryResolver.resolve(upc);
                     val attributes = person.getAttributes();
@@ -159,7 +159,7 @@ public class PersonDirectoryPrincipalResolverConcurrencyTests {
                     LOGGER.debug("Fetched person: [{}] [{}], last-name [{}]", attributes.get("uid"),
                         attributes.get("lastName"), attributes.get("nickname"));
                 } catch (final Exception e) {
-                    LOGGER.warn("Error getting person: {}", e.getMessage(), e);
+                    LOGGER.warn("Error getting person: [{}]", e.getMessage(), e);
                     throw e;
                 }
             }

@@ -41,7 +41,7 @@ public class EncodingUtilsTests {
         val signed = EncodingUtils.signJwsHMACSha512(key, value.getBytes(StandardCharsets.UTF_8), Map.of());
         val jwt = EncodingUtils.verifyJwsSignature(key, signed);
         val result = new String(jwt, StandardCharsets.UTF_8);
-        assertTrue(result.equals(value));
+        assertEquals(value, result);
     }
 
     @Test
@@ -50,7 +50,7 @@ public class EncodingUtilsTests {
         val signed = EncodingUtils.signJwsRSASha512(getPrivateKey(), value.getBytes(StandardCharsets.UTF_8), Map.of());
         val jwt = EncodingUtils.verifyJwsSignature(getPublicKey(), signed);
         val result = new String(jwt, StandardCharsets.UTF_8);
-        assertTrue(result.equals(value));
+        assertEquals(value, result);
     }
 
     @Test
@@ -61,7 +61,7 @@ public class EncodingUtilsTests {
         val found = EncodingUtils.encryptValueAsJwt(key, value, KeyManagementAlgorithmIdentifiers.DIRECT,
             CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM, "kidValue", new HashMap<>(0));
         val jwt = EncodingUtils.decryptJwtValue(key, found);
-        assertTrue(jwt.equals(value));
+        assertEquals(value, jwt);
         assertThrows(IllegalArgumentException.class, () ->
             EncodingUtils.encryptValueAsJwt(key, null, KeyManagementAlgorithmIdentifiers.DIRECT,
                 CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM, "kidValue", new HashMap<>(0)));
@@ -74,7 +74,7 @@ public class EncodingUtilsTests {
         val value = "ThisValue";
         val found = EncodingUtils.encryptValueAsJwtDirectAes128Sha256(key, value);
         val jwt = EncodingUtils.decryptJwtValue(key, found);
-        assertTrue(jwt.equals(value));
+        assertEquals(value, jwt);
 
         assertThrows(DecryptionException.class, () -> EncodingUtils.decryptJwtValue(key, null));
     }
@@ -84,7 +84,7 @@ public class EncodingUtilsTests {
         val value = "ThisValue";
         val found = EncodingUtils.encryptValueAsJwtRsaOeap256Aes256Sha512(getPublicKey(), value);
         val jwt = EncodingUtils.decryptJwtValue(getPrivateKey(), found);
-        assertTrue(jwt.equals(value));
+        assertEquals(value, jwt);
     }
 
     @Test
@@ -103,6 +103,7 @@ public class EncodingUtilsTests {
         assertFalse(EncodingUtils.encodeBase64("one".getBytes(StandardCharsets.UTF_8), true).isEmpty());
 
         assertFalse(EncodingUtils.encodeBase32("one".getBytes(StandardCharsets.UTF_8), true).isEmpty());
+        assertFalse(EncodingUtils.encodeBase32("one".getBytes(StandardCharsets.UTF_8), false).isEmpty());
         assertFalse(EncodingUtils.encodeBase64("one".getBytes(StandardCharsets.UTF_8), false).isEmpty());
     }
 

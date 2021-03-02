@@ -8,6 +8,7 @@ import org.apereo.cas.notifications.push.NotificationSender;
 
 import com.google.common.io.Files;
 import lombok.val;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -39,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
     GoogleFirebaseCloudMessagingConfiguration.class,
     CasCoreUtilConfiguration.class
 }, properties = {
-    "cas.google-firebase-messaging.service-account-key.location=file:/tmp/account-key.json",
+    "cas.google-firebase-messaging.service-account-key.location=file:${java.io.tmpdir}/account-key.json",
     "cas.google-firebase-messaging.database-url=https://cassso-2531381995058.firebaseio.com",
     "cas.google-firebase-messaging.registration-token-attribute-name=registrationToken"
 })
@@ -57,7 +58,8 @@ public class GoogleFirebaseCloudMessagingNotificationSenderTests {
     @BeforeAll
     public static void beforeAll() throws Exception {
         val key = IOUtils.toString(new ClassPathResource("account-key.json").getInputStream(), StandardCharsets.UTF_8);
-        try (val writer = Files.newWriter(new File("/tmp/account-key.json"), StandardCharsets.UTF_8)) {
+        try (val writer = Files.newWriter(
+                new File(FileUtils.getTempDirectory(), "account-key.json"), StandardCharsets.UTF_8)) {
             IOUtils.write(key, writer);
             writer.flush();
         }

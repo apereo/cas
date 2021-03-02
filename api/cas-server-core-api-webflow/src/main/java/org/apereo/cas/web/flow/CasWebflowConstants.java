@@ -44,6 +44,7 @@ public interface CasWebflowConstants {
      * The transition state 'finalize'.
      */
     String TRANSITION_ID_FINALIZE = "finalize";
+    
 
     /**
      * The transition state 'warn'.
@@ -79,6 +80,11 @@ public interface CasWebflowConstants {
      * The transition state 'resume'.
      */
     String TRANSITION_ID_RESUME = "resume";
+
+    /**
+     * Transition id `retry`.
+     */
+    String TRANSITION_ID_RETRY = "retry";
 
     /**
      * The transition state 'gateway'.
@@ -399,6 +405,11 @@ public interface CasWebflowConstants {
     String STATE_ID_DENY = "deny";
 
     /**
+     * The state 'finalizeWarning'.
+     */
+    String STATE_ID_FINALIZE_WARNING = "finalizeWarning";
+
+    /**
      * The state 'registerDevice'.
      */
     String STATE_ID_REGISTER_DEVICE = "registerDevice";
@@ -491,7 +502,7 @@ public interface CasWebflowConstants {
     /**
      * Delegated authentication state id.
      */
-    String STATE_ID_DELEGATED_AUTHENTICATION = "delegatedAuthenticationAction";
+    String STATE_ID_DELEGATED_AUTHENTICATION = "delegatedAuthentication";
 
     /**
      * State id 'frontLogout'.
@@ -606,7 +617,7 @@ public interface CasWebflowConstants {
     /**
      * The view state 'sendForgotUsernameInstructions'.
      */
-    String STATE_ID_FORGOT_USERNAME_INSTRUCTIONS = "sendForgotUsernameInstructions";
+    String STATE_ID_SEND_FORGOT_USERNAME_INSTRUCTIONS = "sendForgotUsernameInstructions";
 
     /**
      * The view state 'passwordChangeAction'.
@@ -617,6 +628,11 @@ public interface CasWebflowConstants {
      * The view state 'passwordResetErrorView'.
      */
     String STATE_ID_PASSWORD_RESET_ERROR_VIEW = "passwordResetErrorView";
+
+    /**
+     * Action id `delegatedAuthenticationClientRetry`.
+     */
+    String STATE_ID_DELEGATED_AUTHENTICATION_CLIENT_RETRY = "delegatedAuthenticationClientRetry";
 
     /*
      ****************************************
@@ -740,10 +756,6 @@ public interface CasWebflowConstants {
      * Decisions.
      ****************************************
      */
-    /**
-     * The decision state 'finishLogout'.
-     */
-    String DECISION_STATE_FINISH_LOGOUT = "finishLogout";
 
     /**
      * Action to check if login should redirect to password reset subflow.
@@ -823,14 +835,25 @@ public interface CasWebflowConstants {
     String ACTION_ID_INIT_CAPTCHA = "initializeCaptchaAction";
 
     /**
-     * Action id 'validateCaptchaAction'.
+     * Action id 'passwordResetValidateCaptchaAction'.
      */
     String ACTION_ID_PASSWORD_RESET_VALIDATE_CAPTCHA = "passwordResetValidateCaptchaAction";
-    
+
+    /**
+     * Action id 'forgotUsernameValidateCaptchaAction'.
+     */
+    String ACTION_ID_FORGOT_USERNAME_VALIDATE_CAPTCHA = "forgotUsernameValidateCaptchaAction";
+
     /**
      * Action id 'passwordResetInitializeCaptchaAction'.
      */
     String ACTION_ID_PASSWORD_RESET_INIT_CAPTCHA = "passwordResetInitializeCaptchaAction";
+
+    /**
+     * Action id 'forgotUsernameInitializeCaptchaAction'.
+     */
+    String ACTION_ID_FORGOT_USERNAME_INIT_CAPTCHA = "forgotUsernameInitializeCaptchaAction";
+
 
     /**
      * Action id 'renderLoginFormAction'.
@@ -898,6 +921,19 @@ public interface CasWebflowConstants {
     String ACTION_ID_LOGOUT_VIEW_SETUP = "logoutViewSetupAction";
 
     /**
+     * Action id 'serviceWarningAction'.
+     */
+    String ACTION_ID_SERVICE_WARNING = "serviceWarningAction";
+    /**
+     * Action id 'finishLogoutAction'.
+     */
+    String ACTION_ID_FINISH_LOGOUT = "finishLogoutAction";
+    /**
+     * Action id 'logoutAction'.
+     */
+    String ACTION_ID_LOGOUT = "logoutAction";
+    
+    /**
      * Action id 'authenticationExceptionHandler'.
      */
     String ACTION_ID_AUTHENTICATION_EXCEPTION_HANDLER = "authenticationExceptionHandler";
@@ -916,6 +952,22 @@ public interface CasWebflowConstants {
      * Action id `delegatedAuthenticationAction`.
      */
     String ACTION_ID_DELEGATED_AUTHENTICATION = "delegatedAuthenticationAction";
+
+    /**
+     * Action id `delegatedAuthenticationClientLogoutAction`.
+     */
+    String ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_LOGOUT = "delegatedAuthenticationClientLogoutAction";
+
+
+    /**
+     * Action id `delegatedAuthenticationClientFinishLogoutAction`.
+     */
+    String ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_FINISH_LOGOUT = "delegatedAuthenticationClientFinishLogoutAction";
+
+    /**
+     * Action id `delegatedAuthenticationClientFinishLogoutAction`.
+     */
+    String ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_RETRY = "delegatedAuthenticationClientRetryAction";
 
     /**
      * Action id `renewAuthenticationRequestCheckAction`.
@@ -949,4 +1001,12 @@ public interface CasWebflowConstants {
      * Action id 'acceptableUsagePolicyVerifyServiceAction .
      */
     String ACTION_ID_AUP_VERIFY_SERVICE = "acceptableUsagePolicyVerifyServiceAction";
+    /**
+     * Action id 'sendForgotUsernameInstructionsAction .
+     */
+    String ACTION_ID_SEND_FORGOT_USERNAME_INSTRUCTIONS_ACTION = "sendForgotUsernameInstructionsAction";
+    /**
+     * Action id 'oneTimeTokenAuthenticationWebflowAction .
+     */
+    String ACTION_ID_OTP_AUTHENTICATION_ACTION = "oneTimeTokenAuthenticationWebflowAction";
 }

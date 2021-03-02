@@ -9,5 +9,10 @@ package org.apereo.cas.ticket;
 @FunctionalInterface
 public interface TicketFactoryExecutionPlanConfigurer {
 
+    /**
+     * Configure ticket factory.
+     *
+     * @return the ticket factory
+     */
     TicketFactory configureTicketFactory();
 }

@@ -1,16 +1,17 @@
 package org.apereo.cas.notifications.sms;
 
-import org.apereo.cas.configuration.model.support.sms.SmsProvidersProperties;
+import org.apereo.cas.configuration.model.support.sms.RestfulSmsProperties;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
-import org.apereo.cas.util.LoggingUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.http.HttpResponse;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 
 import java.util.HashMap;
 
@@ -22,9 +23,8 @@ import java.util.HashMap;
  */
 @Getter
 @RequiredArgsConstructor
-@Slf4j
 public class RestfulSmsSender implements SmsSender {
-    private final SmsProvidersProperties.Rest restProperties;
+    private final RestfulSmsProperties restProperties;
 
     @Override
     public boolean send(final String from, final String to, final String message) {
@@ -38,18 +38,24 @@ public class RestfulSmsSender implements SmsSender {
             }
             parameters.put("from", from);
             parameters.put("to", to);
-            response = HttpUtils.executePost(restProperties.getUrl(),
-                restProperties.getBasicAuthUsername(),
-                restProperties.getBasicAuthPassword(),
-                message,
-                parameters);
 
+            val headers = CollectionUtils.<String, Object>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+            headers.putAll(restProperties.getHeaders());
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(restProperties.getBasicAuthPassword())
+                .basicAuthUsername(restProperties.getBasicAuthUsername())
+                .method(HttpMethod.POST)
+                .url(restProperties.getUrl())
+                .parameters(parameters)
+                .entity(message)
+                .headers(headers)
+                .build();
+            
+            response = HttpUtils.execute(exec);
             if (response != null) {
                 val status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
                 return status.is2xxSuccessful();
             }
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }

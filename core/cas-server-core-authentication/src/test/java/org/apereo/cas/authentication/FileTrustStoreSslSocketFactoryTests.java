@@ -13,7 +13,6 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
 import java.io.IOException;
-import java.security.KeyStore;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -29,48 +28,58 @@ public class FileTrustStoreSslSocketFactoryTests {
 
     private static final ClassPathResource RESOURCE = new ClassPathResource("truststore.jks");
 
+    private static final ClassPathResource RESOURCE_P12 = new ClassPathResource("truststore.p12");
+
+
     @Test
     public void verifyTrustStoreLoadingSuccessfullyWithCertAvailable() {
-        val client = getSimpleHttpClient();
+        val client = getSimpleHttpClient(sslFactory());
         assertTrue(client.isValidEndPoint("https://self-signed.badssl.com"));
     }
 
     @Test
     public void verifyTrustStoreNotFound() {
-        assertThrows(IOException.class, () -> sslFactory(new FileSystemResource("test.jks"), "changeit"));
+        assertThrows(IOException.class, () -> sslFactory(new FileSystemResource("test.jks"), "changeit", "JKS"));
     }
 
     @Test
     public void verifyTrustStoreBadPassword() {
-        assertThrows(IOException.class, () -> sslFactory(RESOURCE, "invalid"));
+        assertThrows(IOException.class, () -> sslFactory(RESOURCE, "invalid", "JKS"));
+    }
+
+    @Test
+    public void verifyTrustStoreType() {
+        val client = getSimpleHttpClient(sslFactory(RESOURCE_P12, "changeit", "PKCS12"));
+        assertTrue(client.isValidEndPoint("https://www.google.com"));
     }
 
     @Test
     public void verifyTrustStoreLoadingSuccessfullyForValidEndpointWithNoCert() {
-        val client = getSimpleHttpClient();
+        val client = getSimpleHttpClient(sslFactory());
         assertTrue(client.isValidEndPoint("https://www.google.com"));
     }
 
     @Test
     public void verifyTrustStoreLoadingSuccessfullyWihInsecureEndpoint() {
-        val client = getSimpleHttpClient();
+        val client = getSimpleHttpClient(sslFactory());
         assertTrue(client.isValidEndPoint("http://wikipedia.org"));
     }
 
     @SneakyThrows
-    private static SSLConnectionSocketFactory sslFactory(final Resource resource, final String password) {
-        return new SSLConnectionSocketFactory(new DefaultCasSslContext(resource,
-            password,
-            KeyStore.getDefaultType()).getSslContext());
+    private static SSLConnectionSocketFactory sslFactory(final Resource resource,
+                                                         final String password,
+                                                         final String trustStoreType) {
+        return new SSLConnectionSocketFactory(new DefaultCasSSLContext(resource, password, trustStoreType)
+                .getSslContext());
     }
 
     private static SSLConnectionSocketFactory sslFactory() {
-        return sslFactory(RESOURCE, "changeit");
+        return sslFactory(RESOURCE, "changeit", "JKS");
     }
 
-    private static SimpleHttpClient getSimpleHttpClient() {
+    private static SimpleHttpClient getSimpleHttpClient(final SSLConnectionSocketFactory sslConnectionSocketFactory) {
         val clientFactory = new SimpleHttpClientFactoryBean();
-        clientFactory.setSslSocketFactory(sslFactory());
+        clientFactory.setSslSocketFactory(sslConnectionSocketFactory);
         val client = clientFactory.getObject();
         assertNotNull(client);
         return client;

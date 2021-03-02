@@ -24,8 +24,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OIDC")
 @TestPropertySource(properties = {
-    "cas.authn.oidc.id-token-signing-alg-values-supported=RS256,RS384,RS512",
-    "cas.authn.oidc.id-token-encryption-encoding-values-supported=A128CBC-HS256,A192CBC-HS384,A256CBC-HS512,A128GCM,A192GCM,A256GCM"
+    "cas.authn.oidc.discovery.id-token-signing-alg-values-supported=RS256,RS384,RS512",
+    "cas.authn.oidc.discovery.id-token-encryption-encoding-values-supported=A128CBC-HS256,A192CBC-HS384,A256CBC-HS512,A128GCM,A192GCM,A256GCM"
 })
 public class OidcIdTokenSigningAndEncryptionServiceTests extends AbstractOidcTests {
 
@@ -34,6 +34,12 @@ public class OidcIdTokenSigningAndEncryptionServiceTests extends AbstractOidcTes
         val claims = getClaims();
         val result = oidcTokenSigningAndEncryptionService.encode(getOidcRegisteredService(), claims);
         assertNotNull(result);
+    }
+
+    @Test
+    public void verifyWrongType() {
+        assertFalse(oidcTokenSigningAndEncryptionService.shouldEncryptToken(getOAuthRegisteredService("1", "http://localhost/cas")));
+        assertFalse(oidcTokenSigningAndEncryptionService.shouldSignToken(getOAuthRegisteredService("1", "http://localhost/cas")));
     }
 
     @Test
@@ -102,12 +108,12 @@ public class OidcIdTokenSigningAndEncryptionServiceTests extends AbstractOidcTes
 
     @Test
     public void verifyNoneSupported() {
-        val discovery = new OidcServerDiscoverySettings(casProperties, casProperties.getAuthn().getOidc().getIssuer());
+        val discovery = new OidcServerDiscoverySettings(casProperties, casProperties.getAuthn().getOidc().getCore().getIssuer());
         discovery.setIdTokenSigningAlgValuesSupported(List.of(AlgorithmIdentifiers.NONE));
         discovery.setIdTokenEncryptionAlgValuesSupported(List.of(AlgorithmIdentifiers.NONE));
         val service = new OidcIdTokenSigningAndEncryptionService(oidcDefaultJsonWebKeystoreCache,
             oidcServiceJsonWebKeystoreCache,
-            casProperties.getAuthn().getOidc().getIssuer(),
+            casProperties.getAuthn().getOidc().getCore().getIssuer(),
             discovery);
 
         val claims = getClaims();

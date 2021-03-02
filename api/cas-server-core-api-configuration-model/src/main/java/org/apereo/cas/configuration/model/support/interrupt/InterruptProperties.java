@@ -1,12 +1,12 @@
 package org.apereo.cas.configuration.model.support.interrupt;
 
-import org.apereo.cas.configuration.model.RestEndpointProperties;
-import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 
@@ -20,6 +20,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("InterruptProperties")
 public class InterruptProperties implements Serializable {
     private static final long serialVersionUID = -4945287309473842615L;
 
@@ -38,42 +39,18 @@ public class InterruptProperties implements Serializable {
     /**
      * Inquire for interrupt using a JSON resource.
      */
-    private Json json = new Json();
+    @NestedConfigurationProperty
+    private JsonInterruptProperties json = new JsonInterruptProperties();
 
     /**
      * Inquire for interrupt using a Groovy resource.
      */
-    private Groovy groovy = new Groovy();
+    @NestedConfigurationProperty
+    private GroovyInterruptProperties groovy = new GroovyInterruptProperties();
 
     /**
      * Inquire for interrupt using a REST resource.
      */
-    private Rest rest = new Rest();
-
-    @RequiresModule(name = "cas-server-support-interrupt-webflow")
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class Json extends SpringResourceProperties {
-
-        private static final long serialVersionUID = 1079027840047126083L;
-    }
-
-    @RequiresModule(name = "cas-server-support-interrupt-webflow")
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class Groovy extends SpringResourceProperties {
-
-        private static final long serialVersionUID = 8079027843747126083L;
-    }
-
-    @RequiresModule(name = "cas-server-support-interrupt-webflow")
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class Rest extends RestEndpointProperties {
-
-        private static final long serialVersionUID = 1833594332973137011L;
-    }
+    @NestedConfigurationProperty
+    private RestfulInterruptProperties rest = new RestfulInterruptProperties();
 }

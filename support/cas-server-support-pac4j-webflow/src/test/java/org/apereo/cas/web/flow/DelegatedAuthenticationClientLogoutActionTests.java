@@ -3,9 +3,11 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.logout.SingleLogoutExecutionRequest;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockServletContext;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
+import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.apache.http.HttpStatus;
@@ -37,11 +39,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebflowActions")
 public class DelegatedAuthenticationClientLogoutActionTests {
     @Autowired
-    @Qualifier("delegatedAuthenticationClientLogoutAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_LOGOUT)
     private Action delegatedAuthenticationClientLogoutAction;
 
     @Autowired
-    @Qualifier("logoutManager")
+    @Qualifier(LogoutManager.DEFAULT_BEAN_NAME)
     private LogoutManager logoutManager;
 
     @Test
@@ -50,6 +52,8 @@ public class DelegatedAuthenticationClientLogoutActionTests {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
+
         val profile = new CommonProfile();
         profile.setId("casuser");
         profile.setClientName("CasClient");

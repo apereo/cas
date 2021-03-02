@@ -95,4 +95,14 @@ public class RedisConsentRepository implements ConsentRepository {
         }
         return true;
     }
+
+    @Override
+    public boolean deleteConsentDecisions(final String principal) {
+        val redisKey = this.redisTemplate.keys(CAS_CONSENT_DECISION_PREFIX + principal + ":*");
+        if (redisKey != null) {
+            val count = this.redisTemplate.delete(redisKey);
+            return count != null && count.intValue() > 0;
+        }
+        return true;
+    }
 }

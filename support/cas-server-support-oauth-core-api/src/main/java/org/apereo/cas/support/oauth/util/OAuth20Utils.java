@@ -12,10 +12,10 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
@@ -26,15 +26,16 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.hjson.JsonValue;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.WebContext;
+import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
-import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.core.profile.UserProfile;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,9 +59,8 @@ import java.util.stream.Stream;
 @Slf4j
 @UtilityClass
 public class OAuth20Utils {
-    private static final ObjectMapper MAPPER = new ObjectMapper()
-        .findAndRegisterModules()
-        .configure(SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, true);
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .singleArrayElementUnwrapped(true).build().toObjectMapper();
 
     /**
      * Write to the output this error.
@@ -131,8 +131,8 @@ public class OAuth20Utils {
             .filter(a -> StringUtils.isNotBlank(context.getParameter(a)))
             .map(m -> {
                 val values = context.getParameterValues(m);
-                val valuesSet = new LinkedHashSet<Object>(values.length);
-                if (values != null && values.length > 0) {
+                val valuesSet = new LinkedHashSet<>(values.length);
+                if (values.length > 0) {
                     Arrays.stream(values).forEach(v -> valuesSet.addAll(Arrays.stream(v.split(" ")).collect(Collectors.toSet())));
                 }
                 return Pair.of(m, valuesSet);
@@ -212,7 +212,8 @@ public class OAuth20Utils {
      * @return true/false
      */
     public static boolean isResponseModeTypeFormPost(final OAuthRegisteredService registeredService, final OAuth20ResponseModeTypes responseType) {
-        return responseType == OAuth20ResponseModeTypes.FORM_POST || StringUtils.equalsIgnoreCase("post", registeredService.getResponseType());
+        return responseType == OAuth20ResponseModeTypes.FORM_POST
+            || (registeredService != null && StringUtils.equalsIgnoreCase("post", registeredService.getResponseType()));
     }
 
     /**
@@ -294,11 +295,10 @@ public class OAuth20Utils {
             val responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE).map(String::valueOf).orElse(StringUtils.EMPTY);
             if (registeredService.getSupportedResponseTypes().stream().anyMatch(s -> s.equalsIgnoreCase(responseType))) {
                 return true;
-            } else {
-                LOGGER.warn("Response type not authorized for service: [{}] not listed in supported response types: [{}]",
-                        responseType, registeredService.getSupportedResponseTypes());
-                return false;
             }
+            LOGGER.warn("Response type not authorized for service: [{}] not listed in supported response types: [{}]",
+                responseType, registeredService.getSupportedResponseTypes());
+            return false;
         }
 
         LOGGER.warn("Registered service [{}] does not define any authorized/supported response types. "
@@ -416,7 +416,7 @@ public class OAuth20Utils {
             LOGGER.debug("The client secret is not defined for the registered service [{}]", registeredService.getName());
             return true;
         }
-        definedSecret = cipherExecutor.decode(definedSecret, new Object[] {registeredService});
+        definedSecret = cipherExecutor.decode(definedSecret, new Object[]{registeredService});
         if (!StringUtils.equals(definedSecret, clientSecret)) {
             LOGGER.error("Wrong client secret for service: [{}]", registeredService.getServiceId());
             return false;
@@ -446,10 +446,8 @@ public class OAuth20Utils {
      * @param profile the profile
      * @return the client id from authenticated profile
      */
-    public static String getClientIdFromAuthenticatedProfile(final CommonProfile profile) {
+    public static String getClientIdFromAuthenticatedProfile(final UserProfile profile) {
         val attrs = new HashMap<>(profile.getAttributes());
-        attrs.putAll(profile.getAuthenticationAttributes());
-
         if (attrs.containsKey(OAuth20Constants.CLIENT_ID)) {
             val attribute = attrs.get(OAuth20Constants.CLIENT_ID);
             return CollectionUtils.toCollection(attribute, ArrayList.class).get(0).toString();
@@ -497,20 +495,21 @@ public class OAuth20Utils {
     /**
      * Gets client id and client secret.
      *
-     * @param context the context
+     * @param webContext   the web context
+     * @param sessionStore the session store
      * @return the client id and client secret
      */
-    public static Pair<String, String> getClientIdAndClientSecret(final WebContext context) {
+    public static Pair<String, String> getClientIdAndClientSecret(final WebContext webContext, final SessionStore sessionStore) {
         val extractor = new BasicAuthExtractor();
-        val upcResult = extractor.extract(context);
+        val upcResult = extractor.extract(webContext, sessionStore);
         if (upcResult.isPresent()) {
-            val upc = upcResult.get();
+            val upc = (UsernamePasswordCredentials) upcResult.get();
             return Pair.of(upc.getUsername(), upc.getPassword());
         }
-        val clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID)
-                .map(String::valueOf).orElse(StringUtils.EMPTY);
-        val clientSecret = context.getRequestParameter(OAuth20Constants.CLIENT_SECRET)
-                .map(String::valueOf).orElse(StringUtils.EMPTY);
+        val clientId = webContext.getRequestParameter(OAuth20Constants.CLIENT_ID)
+            .map(String::valueOf).orElse(StringUtils.EMPTY);
+        val clientSecret = webContext.getRequestParameter(OAuth20Constants.CLIENT_SECRET)
+            .map(String::valueOf).orElse(StringUtils.EMPTY);
         return Pair.of(clientId, clientSecret);
     }
 

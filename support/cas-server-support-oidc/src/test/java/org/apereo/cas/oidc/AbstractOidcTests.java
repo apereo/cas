@@ -97,7 +97,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.webflow.execution.Action;
 
 import java.time.ZoneOffset;
@@ -116,7 +116,8 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = AbstractOidcTests.SharedTestConfiguration.class,
     properties = {
-        "cas.authn.oidc.issuer=https://sso.example.org/cas/oidc",
+        "spring.main.allow-bean-definition-overriding=true",
+        "cas.authn.oidc.core.issuer=https://sso.example.org/cas/oidc",
         "cas.authn.oidc.jwks.jwks-file=classpath:keystore.jwks"
     })
 @DirtiesContext
@@ -137,7 +138,7 @@ public abstract class AbstractOidcTests {
 
     @Autowired
     @Qualifier("oauthInterceptor")
-    protected HandlerInterceptorAdapter oauthInterceptor;
+    protected HandlerInterceptor oauthInterceptor;
 
     @Autowired
     @Qualifier("oidcWebFingerDiscoveryService")
@@ -366,7 +367,7 @@ public abstract class AbstractOidcTests {
     }
 
     protected JwtClaims getClaims(final String clientId) {
-        return getClaims("casuser", casProperties.getAuthn().getOidc().getIssuer(), clientId, clientId);
+        return getClaims("casuser", casProperties.getAuthn().getOidc().getCore().getIssuer(), clientId, clientId);
     }
 
     protected static JwtClaims getClaims(final String subject, final String issuer,

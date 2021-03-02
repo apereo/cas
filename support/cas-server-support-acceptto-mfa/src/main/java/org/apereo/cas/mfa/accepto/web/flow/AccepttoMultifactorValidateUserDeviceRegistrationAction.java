@@ -30,6 +30,23 @@ public class AccepttoMultifactorValidateUserDeviceRegistrationAction extends Abs
 
     private final CasConfigurationProperties casProperties;
 
+    /**
+     * Verify user device is paired.
+     *
+     * @return true/false
+     */
+    @Retryable(value = AccepttoUserDeviceRegistrationException.class,
+        maxAttempts = 2, backoff = @Backoff(delay = 1000, maxDelay = 3000))
+    public boolean verifyUserDeviceIsPaired() {
+        val acceptto = casProperties.getAuthn().getMfa().getAcceptto();
+        val authentication = WebUtils.getInProgressAuthentication();
+        if (!AccepttoApiUtils.isUserDevicePaired(authentication, acceptto)) {
+            val email = AccepttoApiUtils.getUserEmail(authentication, acceptto);
+            throw new AccepttoUserDeviceRegistrationException("Could not locate registered device for " + email);
+        }
+        return true;
+    }
+
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         val eventAttributes = new LocalAttributeMap<>();
@@ -50,28 +67,11 @@ public class AccepttoMultifactorValidateUserDeviceRegistrationAction extends Abs
         return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_DENY, eventAttributes);
     }
 
-    private static class AccepttoUserDeviceRegistrationException extends RuntimeException {
+    public static class AccepttoUserDeviceRegistrationException extends RuntimeException {
         private static final long serialVersionUID = -8225610355713310470L;
 
         AccepttoUserDeviceRegistrationException(final String message) {
             super(message);
         }
-    }
-
-    /**
-     * Verify user device is paired.
-     *
-     * @return true/false
-     */
-    @Retryable(value = AccepttoUserDeviceRegistrationException.class,
-        maxAttempts = 2, backoff = @Backoff(delay = 1000, maxDelay = 3000))
-    public boolean verifyUserDeviceIsPaired() {
-        val acceptto = casProperties.getAuthn().getMfa().getAcceptto();
-        val authentication = WebUtils.getInProgressAuthentication();
-        if (!AccepttoApiUtils.isUserDevicePaired(authentication, acceptto)) {
-            val email = AccepttoApiUtils.getUserEmail(authentication, acceptto);
-            throw new AccepttoUserDeviceRegistrationException("Could not locate registered device for " + email);
-        }
-        return true;
     }
 }

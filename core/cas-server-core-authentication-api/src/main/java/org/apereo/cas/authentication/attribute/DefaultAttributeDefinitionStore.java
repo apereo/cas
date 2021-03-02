@@ -4,11 +4,9 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.io.FileWatcherService;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -20,6 +18,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.hjson.JsonValue;
+import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -46,11 +45,8 @@ import java.util.function.Predicate;
 @EqualsAndHashCode(of = "attributeDefinitions")
 @ToString(of = "attributeDefinitions")
 public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore, DisposableBean, AutoCloseable {
-    private static final ObjectMapper MAPPER = new ObjectMapper()
-        .enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY)
-        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-        .setSerializationInclusion(JsonInclude.Include.NON_NULL)
-        .findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     private final Map<String, AttributeDefinition> attributeDefinitions = new TreeMap<>();
 
@@ -65,13 +61,8 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
             loadAttributeDefinitionsFromInputStream(resource);
 
             if (ResourceUtils.isFile(resource)) {
-                this.storeWatcherService = new FileWatcherService(resource.getFile(), file -> {
-                    try {
-                        loadAttributeDefinitionsFromInputStream(new FileSystemResource(file));
-                    } catch (final Exception e) {
-                        LoggingUtils.error(LOGGER, e);
-                    }
-                });
+                this.storeWatcherService = new FileWatcherService(resource.getFile(),
+                    Unchecked.consumer(file -> loadAttributeDefinitionsFromInputStream(new FileSystemResource(file))));
                 this.storeWatcherService.start(getClass().getSimpleName());
             }
         }
@@ -134,7 +125,7 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
     public <T extends AttributeDefinition> Optional<T> locateAttributeDefinition(final Predicate<AttributeDefinition> predicate) {
         return attributeDefinitions.values()
             .stream()
-            .filter(predicate::test)
+            .filter(predicate)
             .map(defn -> (T) defn)
             .findFirst();
     }
@@ -161,6 +152,12 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
         return attributeDefinitions.isEmpty();
     }
 
+    /**
+     * To.
+     *
+     * @param resource the resource
+     * @return the attribute definition store
+     */
     @SneakyThrows
     public AttributeDefinitionStore to(final File resource) {
         val json = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.attributeDefinitions);

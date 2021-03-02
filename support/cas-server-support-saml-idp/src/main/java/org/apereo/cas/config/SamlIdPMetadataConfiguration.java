@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.idp.metadata.generator.FileSystemSamlIdPMetadataGenerator;
@@ -15,6 +16,7 @@ import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataResolver;
 import org.apereo.cas.support.saml.idp.metadata.writer.DefaultSamlIdPCertificateAndKeyWriter;
 import org.apereo.cas.support.saml.idp.metadata.writer.SamlIdPCertificateAndKeyWriter;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataHealthIndicator;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceDefaultCachingMetadataResolver;
@@ -39,6 +41,8 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -90,7 +94,7 @@ public class SamlIdPMetadataConfiguration {
     private ConfigurableApplicationContext applicationContext;
 
     @Autowired
-    @Qualifier("shibboleth.OpenSAMLConfig")
+    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
     private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
 
     @Autowired
@@ -117,9 +121,9 @@ public class SamlIdPMetadataConfiguration {
         val idp = casProperties.getAuthn().getSamlIdp();
         val resolver = new SamlIdPMetadataResolver(samlIdPMetadataLocator(),
             samlIdPMetadataGenerator(), openSamlConfigBean.getObject());
-        resolver.setFailFastInitialization(idp.getMetadata().isFailFast());
-        resolver.setRequireValidMetadata(idp.getMetadata().isRequireValidMetadata());
-        resolver.setId(idp.getEntityId());
+        resolver.setFailFastInitialization(idp.getMetadata().getCore().isFailFast());
+        resolver.setRequireValidMetadata(idp.getMetadata().getCore().isRequireValidMetadata());
+        resolver.setId(idp.getCore().getEntityId());
         return resolver;
     }
 
@@ -142,6 +146,7 @@ public class SamlIdPMetadataConfiguration {
             .applicationContext(applicationContext)
             .metadataCipherExecutor(CipherExecutor.noOpOfStringToString())
             .casProperties(casProperties)
+            .openSamlConfigBean(openSamlConfigBean.getObject())
             .build();
         return new FileSystemSamlIdPMetadataGenerator(context);
     }
@@ -163,9 +168,21 @@ public class SamlIdPMetadataConfiguration {
     public SamlIdPMetadataLocator samlIdPMetadataLocator() {
         val idp = casProperties.getAuthn().getSamlIdp();
         val location = SpringExpressionLanguageValueResolver.getInstance()
-            .resolve(idp.getMetadata().getLocation());
+            .resolve(idp.getMetadata().getFileSystem().getLocation());
         val metadataLocation = ResourceUtils.getRawResourceFrom(location);
-        return new FileSystemSamlIdPMetadataLocator(metadataLocation);
+        return new FileSystemSamlIdPMetadataLocator(metadataLocation, samlIdPMetadataCache());
+    }
+
+    @ConditionalOnMissingBean(name = "samlIdPMetadataCache")
+    @Bean
+    @RefreshScope
+    public Cache<String, SamlIdPMetadataDocument> samlIdPMetadataCache() {
+        val idp = casProperties.getAuthn().getSamlIdp();
+        return Caffeine.newBuilder()
+            .initialCapacity(10)
+            .maximumSize(100)
+            .expireAfterAccess(Beans.newDuration(idp.getMetadata().getCore().getCacheExpiration()))
+            .build();
     }
 
     @ConditionalOnMissingBean(name = "chainingMetadataResolverCacheLoader")
@@ -201,12 +218,12 @@ public class SamlIdPMetadataConfiguration {
         return plan;
     }
 
-    @ConditionalOnMissingBean(name = "defaultSamlRegisteredServiceCachingMetadataResolver")
+    @ConditionalOnMissingBean(name = SamlRegisteredServiceCachingMetadataResolver.DEFAULT_BEAN_NAME)
     @Bean
     @RefreshScope
     public SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver() {
         return new SamlRegisteredServiceDefaultCachingMetadataResolver(
-            casProperties.getAuthn().getSamlIdp().getMetadata().getCacheExpirationMinutes(),
+            Beans.newDuration(casProperties.getAuthn().getSamlIdp().getMetadata().getCore().getCacheExpiration()),
             chainingMetadataResolverCacheLoader()
         );
     }

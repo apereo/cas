@@ -5,6 +5,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.EncodingUtils;
 
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
@@ -13,6 +14,7 @@ import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.opensaml.core.criterion.EntityIdCriterion;
+import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.messaging.context.SAMLEndpointContext;
@@ -33,7 +35,11 @@ import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.opensaml.saml.saml2.metadata.Endpoint;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.impl.AssertionConsumerServiceBuilder;
+import org.pac4j.core.context.WebContext;
+import org.pac4j.core.context.session.SessionStore;
 
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -46,6 +52,35 @@ import java.util.stream.Collectors;
 @Slf4j
 @UtilityClass
 public class SamlIdPUtils {
+
+    /**
+     * Retrieve authn request authn request.
+     *
+     * @param <T>                the type parameter
+     * @param context            the context
+     * @param sessionStore       the session store
+     * @param openSamlConfigBean the open saml config bean
+     * @param clazz              the clazz
+     * @return the request
+     * @throws Exception the exception
+     */
+    public static <T extends RequestAbstractType> T retrieveSamlRequest(final WebContext context,
+                                                                        final SessionStore sessionStore,
+                                                                        final OpenSamlConfigBean openSamlConfigBean,
+                                                                        final Class<T> clazz) throws Exception {
+        LOGGER.trace("Retrieving authentication request from scope");
+        val requestValue = sessionStore
+            .get(context, SamlProtocolConstants.PARAMETER_SAML_REQUEST)
+            .orElse(StringUtils.EMPTY)
+            .toString();
+        if (StringUtils.isBlank(requestValue)) {
+            throw new IllegalArgumentException("SAML request could not be determined from the authentication request");
+        }
+        val encodedRequest = EncodingUtils.decodeBase64(requestValue.getBytes(StandardCharsets.UTF_8));
+        return clazz.cast(XMLObjectSupport.unmarshallFromInputStream(
+            openSamlConfigBean.getParserPool(),
+            new ByteArrayInputStream(encodedRequest)));
+    }
 
     /**
      * Prepare peer entity saml endpoint.

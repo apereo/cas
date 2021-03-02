@@ -1,5 +1,8 @@
 package org.apereo.cas.authentication.bypass;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
@@ -76,9 +79,9 @@ public abstract class BaseMultifactorAuthenticationProviderBypassEvaluator imple
         return Optional.empty();
     }
 
-    @Audit(action = "MULTIFACTOR_AUTHENTICATION_BYPASS",
-        actionResolverName = "MULTIFACTOR_AUTHENTICATION_BYPASS_ACTION_RESOLVER",
-        resourceResolverName = "MULTIFACTOR_AUTHENTICATION_BYPASS_RESOURCE_RESOLVER")
+    @Audit(action = AuditableActions.MULTIFACTOR_AUTHENTICATION_BYPASS,
+        actionResolverName = AuditActionResolvers.MULTIFACTOR_AUTHENTICATION_BYPASS_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.MULTIFACTOR_AUTHENTICATION_BYPASS_RESOURCE_RESOLVER)
     @Override
     public boolean shouldMultifactorAuthenticationProviderExecute(final Authentication authentication, final RegisteredService registeredService,
                                                                   final MultifactorAuthenticationProvider provider, final HttpServletRequest request) {

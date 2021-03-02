@@ -215,6 +215,26 @@ public class WebUtils {
     }
 
     /**
+     * Put ticket granting ticket.
+     *
+     * @param context the context
+     * @param ticket  the ticket value
+     */
+    public static void putTicketGrantingTicket(final RequestContext context, final TicketGrantingTicket ticket) {
+        context.getFlowScope().put("ticketGrantingTicket", ticket);
+    }
+
+    /**
+     * Get ticket granting ticket.
+     *
+     * @param context the context
+     * @return the ticket granting ticket
+     */
+    public static TicketGrantingTicket getTicketGrantingTicket(final RequestContext context) {
+        return context.getFlowScope().get("ticketGrantingTicket", TicketGrantingTicket.class);
+    }
+
+    /**
      * Put ticket granting ticket in request and flow scopes.
      *
      * @param context the context
@@ -700,10 +720,12 @@ public class WebUtils {
      */
     public static void putRecaptchaPropertiesFlowScope(final RequestContext context, final GoogleRecaptchaProperties googleRecaptcha) {
         val flowScope = context.getFlowScope();
-        flowScope.put("recaptchaSiteKey", googleRecaptcha.getSiteKey());
-        flowScope.put("recaptchaInvisible", googleRecaptcha.isInvisible());
-        flowScope.put("recaptchaPosition", googleRecaptcha.getPosition());
-        flowScope.put("recaptchaVersion", googleRecaptcha.getVersion().name().toLowerCase());
+        if (googleRecaptcha.isEnabled()) {
+            flowScope.put("recaptchaSiteKey", googleRecaptcha.getSiteKey());
+            flowScope.put("recaptchaInvisible", googleRecaptcha.isInvisible());
+            flowScope.put("recaptchaPosition", googleRecaptcha.getPosition());
+            flowScope.put("recaptchaVersion", googleRecaptcha.getVersion().name().toLowerCase());
+        }
     }
 
     /**
@@ -790,6 +812,15 @@ public class WebUtils {
      */
     public static <T> T getLogoutRedirectUrl(final RequestContext context, final Class<T> clazz) {
         return context.getFlowScope().get("logoutRedirectUrl", clazz);
+    }
+
+    /**
+     * Remove logout redirect url.
+     *
+     * @param context the context
+     */
+    public static void removeLogoutRedirectUrl(final RequestContext context) {
+        context.getFlowScope().remove("logoutRedirectUrl");
     }
 
     /**
@@ -917,10 +948,12 @@ public class WebUtils {
     /**
      * Produce unauthorized error view model and view.
      *
+     * @param ex the ex
      * @return the model and view
      */
-    public static ModelAndView produceUnauthorizedErrorView() {
-        return produceErrorView(new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY));
+    public static ModelAndView produceUnauthorizedErrorView(final Exception ex) {
+        val error = new UnauthorizedServiceException(ex, UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
+        return produceErrorView(error);
     }
 
     /**
@@ -946,7 +979,7 @@ public class WebUtils {
         request.setAttribute("error", HttpStatus.BAD_REQUEST.name());
         request.setAttribute("message", "Unable to verify registration record");
     }
-    
+
     /**
      * Produce error view model and view.
      *
@@ -1497,5 +1530,45 @@ public class WebUtils {
      */
     public static String getSingleLogoutRequest(final HttpServletRequest request) {
         return (String) request.getAttribute("singleLogoutRequest");
+    }
+
+    /**
+     * Gets delegated authentication client name.
+     *
+     * @param requestContext the request context
+     * @return the delegated authentication client name
+     */
+    public static String getDelegatedAuthenticationClientName(final RequestContext requestContext) {
+        return requestContext.getFlowScope().get("delegatedAuthenticationClientName", String.class);
+    }
+
+    /**
+     * Put delegated authentication client name.
+     *
+     * @param requestContext the request context
+     * @param clientName     the client name
+     */
+    public static void putDelegatedAuthenticationClientName(final RequestContext requestContext, final String clientName) {
+        requestContext.getFlowScope().put("delegatedAuthenticationClientName", clientName);
+    }
+
+    /**
+     * Put authorized services.
+     *
+     * @param requestContext     the request context
+     * @param authorizedServices the authorized services
+     */
+    public static void putAuthorizedServices(final RequestContext requestContext, final List<RegisteredService> authorizedServices) {
+        requestContext.getFlowScope().put("authorizedServices", authorizedServices);
+    }
+
+    /**
+     * Gets authorized services.
+     *
+     * @param requestContext the request context
+     * @return the authorized services
+     */
+    public List<RegisteredService> getAuthorizedServices(final RequestContext requestContext) {
+        return requestContext.getFlowScope().get("authorizedServices", List.class);
     }
 }

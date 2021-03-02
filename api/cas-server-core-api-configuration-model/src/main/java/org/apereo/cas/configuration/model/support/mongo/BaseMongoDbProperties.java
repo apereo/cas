@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.mongo;
 
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -70,6 +71,7 @@ public abstract class BaseMongoDbProperties implements Serializable {
     /**
      * MongoDb database connection timeout.
      */
+    @DurationCapable
     private String timeout = "PT5S";
 
     /**

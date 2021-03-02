@@ -25,29 +25,6 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Groovy")
 public class GroovyScriptAuthenticationPolicyTests {
-    @Test
-    public void verifyActionInlinedScriptPasses() throws Exception {
-        val script = "groovy {"
-            + " logger.info(principal.id)\n"
-            + " return Optional.empty()\n"
-            + '}';
-        val p = new GroovyScriptAuthenticationPolicy(script);
-        assertTrue(p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication(),
-            new LinkedHashSet<>(), mock(ConfigurableApplicationContext.class), Optional.empty()));
-    }
-
-    @Test
-    public void verifyActionInlinedScriptFails() {
-        val script = "groovy {"
-            + " import org.apereo.cas.authentication.*\n"
-            + " logger.info(principal.id)\n"
-            + " return Optional.of(new AuthenticationException())\n"
-            + '}';
-        val p = new GroovyScriptAuthenticationPolicy(script);
-        assertThrows(GeneralSecurityException.class,
-            () -> p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication(),
-                new LinkedHashSet<>(), mock(ConfigurableApplicationContext.class), Optional.empty()));
-    }
 
     @Test
     public void verifyActionExternalScript() throws Exception {
@@ -64,5 +41,28 @@ public class GroovyScriptAuthenticationPolicyTests {
         assertThrows(GeneralSecurityException.class,
             () -> p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication(),
                 new LinkedHashSet<>(), mock(ConfigurableApplicationContext.class), Optional.empty()));
+    }
+
+    @Test
+    public void verifyResumeOnFailureExternal() throws Exception {
+        val script = "def shouldResumeOnFailure(Object[] args) {"
+            + " def failure = args[0] \n"
+            + " return failure != null \n"
+            + '}';
+
+        val scriptFile = new File(FileUtils.getTempDirectoryPath(), "script.groovy");
+        FileUtils.write(scriptFile, script, StandardCharsets.UTF_8);
+        val p = new GroovyScriptAuthenticationPolicy("file:" + scriptFile.getCanonicalPath());
+        assertTrue(p.shouldResumeOnFailure(new RuntimeException()));
+    }
+
+    @Test
+    public void verifyBadFile() throws Exception {
+        val script = "def shouldResumeOnFailure(Object[] args) {"
+            + " def failure = args[0] \n"
+            + " return failure != null \n"
+            + '}';
+        val p = new GroovyScriptAuthenticationPolicy(script);
+        assertThrows(IllegalArgumentException.class, () -> p.shouldResumeOnFailure(new RuntimeException()));
     }
 }

@@ -1,6 +1,8 @@
 package org.apereo.cas.web;
 
+import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
 import org.apereo.cas.util.MockWebServer;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
@@ -24,12 +26,14 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("RestfulApi")
 public class CaptchaValidatorTests {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
     public void verifyLowScore() throws Exception {
         val secret = UUID.randomUUID().toString();
-        val validator = new CaptchaValidator("http://localhost:8812", secret, 1);
+        val props = new GoogleRecaptchaProperties().setScore(1).setSecret(secret).setVerifyUrl("http://localhost:8812");
+        val validator = new GoogleCaptchaV2Validator(props);
 
         val entity = MAPPER.writeValueAsString(Map.of("score", .5));
         try (val webServer = new MockWebServer(8812,
@@ -42,8 +46,11 @@ public class CaptchaValidatorTests {
 
     @Test
     public void verifySuccess() throws Exception {
-        val secret = UUID.randomUUID().toString();
-        val validator = new CaptchaValidator("http://localhost:8812", secret, .1);
+        val props = new GoogleRecaptchaProperties()
+            .setScore(.1)
+            .setSecret(UUID.randomUUID().toString())
+            .setVerifyUrl("http://localhost:8812");
+        val validator = new GoogleCaptchaV2Validator(props);
 
         val entity = MAPPER.writeValueAsString(Map.of("score", .5, "success", true));
         try (val webServer = new MockWebServer(8812,
@@ -57,12 +64,28 @@ public class CaptchaValidatorTests {
     @Test
     public void verifyBadResponse() {
         val secret = UUID.randomUUID().toString();
-        val validator = new CaptchaValidator("http://localhost:8812", secret, .1);
+        val props = new GoogleRecaptchaProperties().setScore(1).setSecret(secret).setVerifyUrl("http://localhost:8812");
+        val validator = new GoogleCaptchaV2Validator(props);
         try (val webServer = new MockWebServer(8812,
             new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
             webServer.start();
             val response = UUID.randomUUID().toString();
             assertFalse(validator.validate(response, "Mozilla/5.0"));
         }
+    }
+
+    @Test
+    public void verifyInstance() {
+        assertNotNull(CaptchaValidator.getInstance(new GoogleRecaptchaProperties()
+            .setVersion(GoogleRecaptchaProperties.RecaptchaVersions.GOOGLE_RECAPTCHA_V2)
+            .setVerifyUrl("http://localhost:8812")));
+
+        assertNotNull(CaptchaValidator.getInstance(new GoogleRecaptchaProperties()
+            .setVersion(GoogleRecaptchaProperties.RecaptchaVersions.GOOGLE_RECAPTCHA_V3)
+            .setVerifyUrl("http://localhost:8812")));
+
+        assertNotNull(CaptchaValidator.getInstance(new GoogleRecaptchaProperties()
+            .setVersion(GoogleRecaptchaProperties.RecaptchaVersions.HCAPTCHA)
+            .setVerifyUrl("http://localhost:8812")));
     }
 }

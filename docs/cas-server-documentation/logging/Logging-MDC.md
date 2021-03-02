@@ -4,7 +4,9 @@ title: CAS - MDC Logging Configuration
 category: Logs & Audits
 ---
 
-#  Mapped Diagnostic Context
+{% include variables.html %}
+
+# Mapped Diagnostic Context
 
 To uniquely stamp each request, CAS puts contextual
 information into the `MDC`, the abbreviation of Mapped Diagnostic Context. This effectively
@@ -34,6 +36,9 @@ may convey additional information about the nature of the request or the authent
 | `principal`                         | CAS authenticated principal id.
 
 Additionally, all available request attributes, headers, and parameters are exposed as variables.
+<div class="alert alert-warning">
+  <strong>Pay Attention</strong><br /> These variables potentially include the password. If you set <code>includeMDC=true</code> in <a href="Logging-Syslog.html">SysLog Appender</a>, these informations, including clear password, will be sent to the log server.
+</div>
 
 The above variables may be used in logging patterns:
 

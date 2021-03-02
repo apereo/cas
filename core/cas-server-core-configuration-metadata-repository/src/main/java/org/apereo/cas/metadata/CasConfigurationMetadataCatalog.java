@@ -1,27 +1,30 @@
 package org.apereo.cas.metadata;
 
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.PropertyOwner;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import lombok.experimental.SuperBuilder;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.WordUtils;
 import org.jooq.lambda.Unchecked;
-import org.jsoup.Jsoup;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
+import org.springframework.boot.configurationmetadata.ConfigurationMetadataRepository;
 import org.springframework.boot.configurationmetadata.ValueHint;
 import org.springframework.util.ReflectionUtils;
 
+import java.io.File;
 import java.util.Comparator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
@@ -33,9 +36,24 @@ import java.util.stream.Collectors;
  */
 public class CasConfigurationMetadataCatalog {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
-    private static final int DESCRIPTION_WRAP_LENGTH = 120;
+    /**
+     * Export.
+     *
+     * @param destination the destination
+     * @param data        the data
+     */
+    @SneakyThrows
+    public static void export(final File destination, final Object data) {
+        val mapper = new ObjectMapper(new YAMLFactory())
+            .setSerializationInclusion(JsonInclude.Include.NON_DEFAULT)
+            .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
+            .configure(SerializationFeature.WRITE_ENUMS_USING_TO_STRING, true)
+            .configure(SerializationFeature.INDENT_OUTPUT, true);
+        mapper.writeValue(destination, data);
+    }
 
     /**
      * Catalog cas properties container.
@@ -43,28 +61,36 @@ public class CasConfigurationMetadataCatalog {
      * @param query the query
      * @return the cas properties container
      */
-    public static CasPropertiesContainer catalog(final ConfigurationMetadataCatalogQuery query) {
+    public static CasPropertiesContainer query(final ConfigurationMetadataCatalogQuery query) {
         val repo = new CasConfigurationMetadataRepository();
         val allProperties = repo.getRepository()
             .getAllProperties()
             .entrySet()
             .stream()
-            .filter(entry -> query.isCasExclusive() == CasConfigurationMetadataRepository.isCasProperty(entry.getValue()))
+            .filter(entry -> {
+                if (query.getQueryType() == ConfigurationMetadataCatalogQuery.QueryTypes.CAS) {
+                    return CasConfigurationMetadataRepository.isCasProperty(entry.getValue());
+                }
+                if (query.getQueryType() == ConfigurationMetadataCatalogQuery.QueryTypes.THIRD_PARTY) {
+                    return !CasConfigurationMetadataRepository.isCasProperty(entry.getValue());
+                }
+                return true;
+            })
             .collect(Collectors.toList());
 
         val properties = allProperties
             .stream()
             .filter(entry -> doesPropertyBelongToModule(entry.getValue(), query))
             .map(Map.Entry::getValue)
-            .map(CasConfigurationMetadataCatalog::collectReferenceProperty)
+            .map(property -> collectReferenceProperty(property, repo.getRepository()))
+            .filter(Objects::nonNull)
             .sorted(Comparator.comparing(CasReferenceProperty::getName))
             .collect(Collectors.toCollection(TreeSet::new));
         return new CasPropertiesContainer(properties);
     }
 
     private static boolean doesPropertyBelongToModule(final ConfigurationMetadataProperty property,
-        final ConfigurationMetadataCatalogQuery query) {
-
+                                                      final ConfigurationMetadataCatalogQuery query) {
         if (query.getModules().isEmpty()) {
             return true;
         }
@@ -87,9 +113,13 @@ public class CasConfigurationMetadataCatalog {
         return MAPPER.readValue(value, Map.class);
     }
 
-    private static CasReferenceProperty collectReferenceProperty(final ConfigurationMetadataProperty property) {
+    private static CasReferenceProperty collectReferenceProperty(final ConfigurationMetadataProperty property,
+                                                                 final ConfigurationMetadataRepository repository) {
+        if (repository.getAllGroups().containsKey(property.getId())) {
+            return null;
+        }
+        
         val builder = CasReferenceProperty.builder();
-
         builder.owner(determinePropertySourceType(property));
 
         property.getHints().getValueHints().forEach(Unchecked.consumer(hint -> {
@@ -106,14 +136,16 @@ public class CasConfigurationMetadataCatalog {
                     val results = MAPPER.readValue(hint.getValue().toString(), Map.class);
                     builder.owner(results.get("owner").toString());
                 }
+                if (description.equals(DurationCapable.class.getName())) {
+                    builder.duration(true);
+                }
             }
         }));
         builder.type(property.getType());
-        var description = StringUtils.defaultString(
+        val description = StringUtils.defaultString(
             StringUtils.defaultIfBlank(property.getDescription(), property.getShortDescription()));
-        description = WordUtils.wrap(Jsoup.parse(description).text(), DESCRIPTION_WRAP_LENGTH, "\n# ", false);
-
         builder.description(description);
+        builder.shortDescription(property.getShortDescription());
         builder.name(property.getId());
         builder.defaultValue(ObjectUtils.defaultIfNull(property.getDefaultValue(), StringUtils.EMPTY));
 
@@ -154,41 +186,6 @@ public class CasConfigurationMetadataCatalog {
          */
         public TreeSet<CasReferenceProperty> properties() {
             return this.properties;
-        }
-    }
-
-    /**
-     * The type Cas reference property.
-     */
-    @SuperBuilder
-    @Getter
-    @EqualsAndHashCode(of = "name")
-    public static class CasReferenceProperty implements Comparable<CasReferenceProperty> {
-        private final boolean required;
-
-        private final String module;
-
-        private final String owner;
-
-        private final String type;
-
-        private final String description;
-
-        private final String name;
-
-        private final Object defaultValue;
-
-        private final String deprecationLevel;
-
-        private final String deprecationReason;
-
-        private final String deprecationReplacement;
-
-        private final String sourceType;
-
-        @Override
-        public int compareTo(final CasReferenceProperty o) {
-            return this.name.compareTo(o.getName());
         }
     }
 }

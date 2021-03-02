@@ -1,6 +1,9 @@
 package org.apereo.cas.authentication.principal.cache;
 
+import org.apereo.cas.authentication.principal.PrincipalAttributesRepositoryCache;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,7 +43,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class CachingPrincipalAttributesRepositoryTests extends AbstractCachingPrincipalAttributesRepositoryTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "cachingPrincipalAttributesRepository.json");
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
@@ -48,12 +52,12 @@ public class CachingPrincipalAttributesRepositoryTests extends AbstractCachingPr
     @BeforeEach
     public void setup() {
         ApplicationContextProvider.holdApplicationContext(applicationContext);
-        CachingPrincipalAttributesRepository.getCacheInstanceFromApplicationContext().invalidateAll();
+        ApplicationContextProvider.getPrincipalAttributesRepositoryCache().ifPresent(PrincipalAttributesRepositoryCache::invalidate);
     }
 
     @Override
     protected AbstractPrincipalAttributesRepository getPrincipalAttributesRepository(final String unit, final long duration) {
-        ApplicationContextProvider.registerBeanIntoApplicationContext(this.applicationContext, this.dao, "attributeRepository");
+        ApplicationContextProvider.registerBeanIntoApplicationContext(this.applicationContext, this.dao, PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY);
         return new CachingPrincipalAttributesRepository(unit, duration);
     }
 
@@ -71,9 +75,9 @@ public class CachingPrincipalAttributesRepositoryTests extends AbstractCachingPr
     @Lazy(false)
     public static class CachingPrincipalAttributeRepositoryTestConfiguration {
         @Bean
-        @ConditionalOnMissingBean(name = "principalAttributesRepositoryCache")
+        @ConditionalOnMissingBean(name = PrincipalAttributesRepositoryCache.DEFAULT_BEAN_NAME)
         public PrincipalAttributesRepositoryCache principalAttributesRepositoryCache() {
-            return new PrincipalAttributesRepositoryCache();
+            return new DefaultPrincipalAttributesRepositoryCache();
         }
     }
 }

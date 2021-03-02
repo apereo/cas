@@ -17,7 +17,7 @@ import java.util.Map;
 
 /**
  * Renders and prepares CAS2 views. This view is responsible
- * to simply just prep the base model, and delegates to
+ * to just prep the base model, and delegates to
  * a the real view to render the final output.
  *
  * @author Misagh Moayyed
@@ -62,9 +62,9 @@ public abstract class AbstractDelegatingCasView extends AbstractCasView {
     /**
      * Prepare merged output model before final rendering.
      *
-     * @param model    the model
-     * @param request  the request
-     * @param response the response
+     * @param model                 the model
+     * @param request               the request
+     * @param response              the response
      * @throws Exception the exception
      */
     protected abstract void prepareMergedOutputModel(Map<String, Object> model, HttpServletRequest request,

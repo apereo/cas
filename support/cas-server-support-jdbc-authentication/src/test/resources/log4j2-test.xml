@@ -7,7 +7,7 @@
     </Appenders>
     <Loggers>
         <Logger name="org.apereo" level="off"  />
-        <Logger name="org.hibernate" level="warn" />
+        <Logger name="org.hibernate" level="info" />
         <Root level="off">
             <AppenderRef ref="console"/>
         </Root>

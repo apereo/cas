@@ -1,17 +1,14 @@
 package org.apereo.cas.configuration.model.support.saml.idp.metadata;
 
-import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link SamlIdPMetadataProperties}.
@@ -23,53 +20,43 @@ import java.util.concurrent.TimeUnit;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("SamlIdPMetadataProperties")
 public class SamlIdPMetadataProperties implements Serializable {
 
     private static final long serialVersionUID = -1020542741768471305L;
 
     /**
-     * Whether invalid metadata should eagerly fail quickly on startup
-     * once the resource is parsed.
+     * Core and common settings related to saml2 metadata management.
      */
-    private boolean failFast = true;
+    @NestedConfigurationProperty
+    private CoreSamlMetadataProperties core = new CoreSamlMetadataProperties();
 
     /**
-     * Whether valid metadata is required.
+     * Settings related to saml2 metadata management,
+     * when fetching or handling metadata over http endpoints
+     * from URL resources.
      */
-    private boolean requireValidMetadata = true;
+    @NestedConfigurationProperty
+    private HttpSamlMetadataProperties http = new HttpSamlMetadataProperties();
 
     /**
-     * Forcefully download and fetch metadata files
-     * form URL sources and disregard any cached copies
-     * of the metadata.
+     * Settings related to saml2 metadata management,
+     * when fetching or handling metadata using the file system.
      */
-    private boolean forceMetadataRefresh = true;
-
-    /**
-     * How long should metadata be cached in minutes.
-     */
-    private long cacheExpirationMinutes = TimeUnit.DAYS.toMinutes(1);
-
-    /**
-     * Directory location of SAML metadata and signing/encryption keys.
-     * This directory will be used to hold the configuration files.
-     */
-    @RequiredProperty
-    private String location = "file:/etc/cas/saml";
-
-    /**
-     * Directory location where downloaded SAML metadata is cached
-     * as backup files. If left undefined, the directory is calculated
-     * off of {@link #getLocation()}. The directory location
-     * should also support and be resolvable via Spring expression language.
-     */
-    private String metadataBackupLocation;
-
+    @NestedConfigurationProperty
+    private FileSystemSamlMetadataProperties fileSystem = new FileSystemSamlMetadataProperties();
+    
     /**
      * Properties pertaining to mongo db saml metadata resolvers.
      */
     @NestedConfigurationProperty
     private MongoDbSamlMetadataProperties mongo = new MongoDbSamlMetadataProperties();
+
+    /**
+     * Properties pertaining to redis saml metadata resolvers.
+     */
+    @NestedConfigurationProperty
+    private RedisSamlMetadataProperties redis = new RedisSamlMetadataProperties();
 
     /**
      * Properties pertaining to git saml metadata resolvers.
@@ -102,27 +89,8 @@ public class SamlIdPMetadataProperties implements Serializable {
     private CouchDbSamlMetadataProperties couchDb = new CouchDbSamlMetadataProperties();
 
     /**
-     * Algorithm name to use when generating private key.
+     * Metadata management settings via MDQ protocol.
      */
-    private String privateKeyAlgName = "RSA";
-
-    /**
-     * Basic auth username in case the metadata instance is connecting to an MDQ server.
-     */
-    private String basicAuthnUsername;
-
-    /**
-     * Basic auth password in case the metadata instance is connecting to an MDQ server.
-     */
-    private String basicAuthnPassword;
-
-    /**
-     * Supported content types in case the metadata instance is connecting to an MDQ server.
-     */
-    private List<String> supportedContentTypes = new ArrayList<>(0);
-
-    public SamlIdPMetadataProperties() {
-        supportedContentTypes.add("application/xml");
-        supportedContentTypes.add("text/xml");
-    }
+    @NestedConfigurationProperty
+    private MDQSamlMetadataProperties mdq = new MDQSamlMetadataProperties();
 }

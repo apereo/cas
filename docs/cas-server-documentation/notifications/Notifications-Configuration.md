@@ -4,6 +4,8 @@ title: CAS - Notifications
 category: Notifications
 ---
 
+{% include variables.html %}
+
 # Notifications
 
 CAS presents the ability to notify users and accounts on select actions via platform-specific notifications. Example actions include 
@@ -14,12 +16,6 @@ and platforms supported by CAS are listed below. Note that an active/professiona
 
 Support is enabled via the relevant modules using the following module:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-notifications-fcm</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-notifications-fcm" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#google-cloud-firebase-messaging).
+{% include casproperties.html properties="cas.google-firebase-messaging" %}

@@ -1,10 +1,11 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.authentication.AttributeMergingStrategy;
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
+import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
 import org.apereo.cas.services.AllAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria;
 import org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider;
 import org.apereo.cas.services.AnyAuthenticationHandlerRegisteredServiceAuthenticationPolicyCriteria;
@@ -37,7 +38,6 @@ import org.apereo.cas.services.RefuseRegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
-import org.apereo.cas.services.RegisteredServiceMultifactorPolicyFailureModes;
 import org.apereo.cas.services.RegisteredServicePublicKeyImpl;
 import org.apereo.cas.services.RemoteEndpointServiceAccessStrategy;
 import org.apereo.cas.services.RestfulRegisteredServiceAuthenticationPolicyCriteria;
@@ -123,11 +123,11 @@ public class CasCoreServicesComponentSerializationConfiguration {
 
             plan.registerSerializableClass(DefaultRegisteredServiceMultifactorPolicy.class);
             plan.registerSerializableClass(GroovyRegisteredServiceMultifactorPolicy.class);
-            plan.registerSerializableClass(RegisteredServiceMultifactorPolicyFailureModes.class);
+            plan.registerSerializableClass(BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.class);
 
             plan.registerSerializableClass(CachingPrincipalAttributesRepository.class);
             plan.registerSerializableClass(DefaultPrincipalAttributesRepository.class);
-            plan.registerSerializableClass(AttributeMergingStrategy.class);
+            plan.registerSerializableClass(PrincipalAttributesCoreProperties.MergingStrategyTypes.class);
 
             plan.registerSerializableClass(DefaultRegisteredServiceConsentPolicy.class);
 

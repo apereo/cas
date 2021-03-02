@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -52,7 +53,9 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
     private List<PrincipalResolver> chain;
 
     private final PrincipalElectionStrategy principalElectionStrategy;
-    
+
+    private final CasConfigurationProperties casProperties;
+
     @Override
     public Principal resolve(final Credential credential, final Optional<Principal> principal, final Optional<AuthenticationHandler> handler) {
         val principals = new ArrayList<Principal>(chain.size());
@@ -71,13 +74,14 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
             return NullPrincipal.getInstance();
         }
         val attributes = new HashMap<String, List<Object>>();
+        val merger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
         principals.forEach(p -> {
             if (p != null) {
                 LOGGER.debug("Resolved principal [{}]", p);
                 val principalAttributes = p.getAttributes();
                 if (principalAttributes != null && !principalAttributes.isEmpty()) {
                     LOGGER.debug("Adding attributes [{}] for the final principal", principalAttributes);
-                    attributes.putAll(CoreAuthenticationUtils.mergeAttributes(attributes, principalAttributes));
+                    attributes.putAll(CoreAuthenticationUtils.mergeAttributes(attributes, principalAttributes, merger));
                 }
             }
         });

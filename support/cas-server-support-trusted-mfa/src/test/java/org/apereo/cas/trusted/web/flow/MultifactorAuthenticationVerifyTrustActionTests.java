@@ -89,7 +89,7 @@ public class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMul
         mfaTrustEngine.save(record);
 
         assertNotNull(response.getCookies());
-        assertTrue(response.getCookies().length == 1);
+        assertEquals(response.getCookies().length, 1);
         request.setCookies(response.getCookies());
 
         val authn = RegisteredServiceTestUtils.getAuthentication(record.getPrincipal());
@@ -97,7 +97,7 @@ public class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMul
         assertEquals("yes", mfaVerifyTrustAction.execute(context).getId());
 
         assertTrue(MultifactorAuthenticationTrustUtils.isMultifactorAuthenticationTrustedInScope(context));
-        assertTrue(authn.getAttributes().containsKey(casProperties.getAuthn().getMfa().getTrusted().getAuthenticationContextAttribute()));
+        assertTrue(authn.getAttributes().containsKey(casProperties.getAuthn().getMfa().getTrusted().getCore().getAuthenticationContextAttribute()));
     }
 
     @Test

@@ -19,28 +19,28 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
     @Override
     public OidcServerDiscoverySettings getObject() {
         val oidc = casProperties.getAuthn().getOidc();
-        val discovery = new OidcServerDiscoverySettings(casProperties, oidc.getIssuer());
-        discovery.setClaimsSupported(oidc.getClaims());
-        discovery.setScopesSupported(oidc.getScopes());
-        discovery.setResponseTypesSupported(oidc.getResponseTypesSupported());
-        discovery.setSubjectTypesSupported(oidc.getSubjectTypes());
-        discovery.setClaimTypesSupported(oidc.getClaimTypesSupported());
-        discovery.setIntrospectionSupportedAuthenticationMethods(oidc.getIntrospectionSupportedAuthenticationMethods());
-        discovery.setGrantTypesSupported(oidc.getGrantTypesSupported());
-        discovery.setTokenEndpointAuthMethodsSupported(oidc.getTokenEndpointAuthMethodsSupported());
+        val discovery = new OidcServerDiscoverySettings(casProperties, oidc.getCore().getIssuer());
+        discovery.setClaimsSupported(oidc.getDiscovery().getClaims());
+        discovery.setScopesSupported(oidc.getDiscovery().getScopes());
+        discovery.setResponseTypesSupported(oidc.getDiscovery().getResponseTypesSupported());
+        discovery.setSubjectTypesSupported(oidc.getDiscovery().getSubjectTypes());
+        discovery.setClaimTypesSupported(oidc.getDiscovery().getClaimTypesSupported());
+        discovery.setIntrospectionSupportedAuthenticationMethods(oidc.getDiscovery().getIntrospectionSupportedAuthenticationMethods());
+        discovery.setGrantTypesSupported(oidc.getDiscovery().getGrantTypesSupported());
+        discovery.setTokenEndpointAuthMethodsSupported(oidc.getDiscovery().getTokenEndpointAuthMethodsSupported());
         discovery.setClaimsParameterSupported(true);
 
-        discovery.setIdTokenSigningAlgValuesSupported(oidc.getIdTokenSigningAlgValuesSupported());
-        discovery.setIdTokenEncryptionAlgValuesSupported(oidc.getIdTokenEncryptionAlgValuesSupported());
-        discovery.setIdTokenEncryptionEncodingValuesSupported(oidc.getIdTokenEncryptionEncodingValuesSupported());
+        discovery.setIdTokenSigningAlgValuesSupported(oidc.getDiscovery().getIdTokenSigningAlgValuesSupported());
+        discovery.setIdTokenEncryptionAlgValuesSupported(oidc.getDiscovery().getIdTokenEncryptionAlgValuesSupported());
+        discovery.setIdTokenEncryptionEncodingValuesSupported(oidc.getDiscovery().getIdTokenEncryptionEncodingValuesSupported());
 
         discovery.setBackchannelLogoutSupported(oidc.getLogout().isBackchannelLogoutSupported());
         discovery.setFrontchannelLogoutSupported(oidc.getLogout().isFrontchannelLogoutSupported());
 
-        discovery.setUserInfoSigningAlgValuesSupported(oidc.getUserInfoSigningAlgValuesSupported());
-        discovery.setUserInfoEncryptionAlgValuesSupported(oidc.getUserInfoEncryptionAlgValuesSupported());
-        discovery.setUserInfoEncryptionEncodingValuesSupported(oidc.getUserInfoEncryptionEncodingValuesSupported());
-        discovery.setCodeChallengeMethodsSupported(oidc.getCodeChallengeMethodsSupported());
+        discovery.setUserInfoSigningAlgValuesSupported(oidc.getDiscovery().getUserInfoSigningAlgValuesSupported());
+        discovery.setUserInfoEncryptionAlgValuesSupported(oidc.getDiscovery().getUserInfoEncryptionAlgValuesSupported());
+        discovery.setUserInfoEncryptionEncodingValuesSupported(oidc.getDiscovery().getUserInfoEncryptionEncodingValuesSupported());
+        discovery.setCodeChallengeMethodsSupported(oidc.getDiscovery().getCodeChallengeMethodsSupported());
 
         return discovery;
     }

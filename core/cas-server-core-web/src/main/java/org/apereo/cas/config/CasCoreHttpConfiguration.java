@@ -1,6 +1,6 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.authentication.DefaultCasSslContext;
+import org.apereo.cas.authentication.DefaultCasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.http.HttpClient;
@@ -10,10 +10,12 @@ import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.ssl.SSLContexts;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +28,7 @@ import org.springframework.core.annotation.Order;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
-import java.security.KeyStore;
+import java.util.ArrayList;
 
 /**
  * This is {@link CasCoreHttpConfiguration}.
@@ -48,14 +50,23 @@ public class CasCoreHttpConfiguration {
         return new SSLConnectionSocketFactory(sslContext(), hostnameVerifier());
     }
 
+    @ConditionalOnMissingBean(name = "casSslContext")
+    @Bean
+    public DefaultCasSSLContext casSslContext() {
+        val client = casProperties.getHttpClient().getTruststore();
+        if (client.getFile() != null && client.getFile().exists() && StringUtils.isNotBlank(client.getPsw())) {
+            return new DefaultCasSSLContext(client.getFile(), client.getPsw(), client.getType());
+        }
+        return null;
+    }
+
     @ConditionalOnMissingBean(name = "sslContext")
     @Bean
     @SneakyThrows
     public SSLContext sslContext() {
-        val client = casProperties.getHttpClient().getTruststore();
-        if (client.getFile() != null && client.getFile().exists() && StringUtils.isNotBlank(client.getPsw())) {
-            val ctx = new DefaultCasSslContext(client.getFile(), client.getPsw(), KeyStore.getDefaultType());
-            return ctx.getSslContext();
+        val casSslContext = casSslContext();
+        if (casSslContext != null) {
+            return casSslContext.getSslContext();
         }
         return SSLContexts.createSystemDefault();
 
@@ -109,6 +120,10 @@ public class CasCoreHttpConfiguration {
         c.setSslSocketFactory(trustStoreSslSocketFactory());
         c.setHostnameVerifier(hostnameVerifier());
         c.setSslContext(sslContext());
+
+        val defaultHeaders = new ArrayList<Header>();
+        httpClient.getDefaultHeaders().forEach((name, value) -> defaultHeaders.add(new BasicHeader(name, value)));
+        c.setDefaultHeaders(defaultHeaders);
 
         return c;
     }

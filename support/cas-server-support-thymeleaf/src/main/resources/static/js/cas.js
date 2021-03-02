@@ -15,8 +15,14 @@
                     field.foundation.adapter.registerInputInteractionHandler('keypress', cas.checkCaps);
                 }
             }
-
-            //MDCTextFieldIconAdapter
+            let selector = document.querySelector('.mdc-select.authn-source');
+            if (selector != null) {
+                const select = new material.select.MDCSelect(selector);
+                select.listen('MDCSelect:change', () => {
+                    $('#source').val(select.value);
+                });
+                $('#source').val(select.value);
+            }
         },
         checkCaps: function (ev) {
             var s = String.fromCharCode(ev.which);
@@ -55,6 +61,22 @@ function randomWord() {
     let n1 = things[Math.floor(Math.random() * things.length)];
     let n2 = names[Math.floor(Math.random() * names.length)];
     return n1 + "_" + n2
+}
+
+function copyClipboard(element) {
+    element.select();
+    element.setSelectionRange(0, 99999);
+    document.execCommand("copy");
+}
+
+function isValidURL(str) {
+    let pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+        '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+        '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+        '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+    return !!pattern.test(str);
 }
 
 function requestGeoPosition() {

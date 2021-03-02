@@ -302,7 +302,7 @@ public abstract class BaseTicketRegistryTests {
         val tickets = new ArrayList<Ticket>();
 
         for (var i = 0; i < TICKETS_IN_REGISTRY; i++) {
-            val ticketGrantingTicket = new TicketGrantingTicketImpl(ticketGrantingTicketId + "-" + i,
+            val ticketGrantingTicket = new TicketGrantingTicketImpl(ticketGrantingTicketId + '-' + i,
                 CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
             val st = ticketGrantingTicket.grantServiceTicket("ST-" + i,
                 RegisteredServiceTestUtils.getService(),
@@ -329,10 +329,10 @@ public abstract class BaseTicketRegistryTests {
         val tgts = new ArrayList<Ticket>();
         val sts = new ArrayList<Ticket>();
 
-        for (int i = 0; i < TICKETS_IN_REGISTRY; i++) {
+        for (var i = 0; i < TICKETS_IN_REGISTRY; i++) {
             val a = CoreAuthenticationTestUtils.getAuthentication();
             val s = RegisteredServiceTestUtils.getService();
-            val ticketGrantingTicket = new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX + "-" + i,
+            val ticketGrantingTicket = new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX + '-' + i,
                 a, NeverExpiresExpirationPolicy.INSTANCE);
             val st = ticketGrantingTicket.grantServiceTicket("ST-" + i,
                 s,

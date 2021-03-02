@@ -22,6 +22,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 
 /**
+ * X509 Rest configuration class.
+ * 
  * @author Dmytro Fedonin
  * @since 5.1.0
  */
@@ -39,16 +41,18 @@ public class X509RestConfiguration {
     private ObjectProvider<X509CertificateExtractor> x509CertificateExtractor;
 
     @Bean
+    @ConditionalOnMissingBean(name = "x509RestMultipartBody")
     public RestHttpRequestCredentialFactory x509RestMultipartBody() {
         return new X509RestMultipartBodyCredentialFactory();
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "x509RestRequestHeader")
     public RestHttpRequestCredentialFactory x509RestRequestHeader() {
         return new X509RestHttpRequestHeaderCredentialFactory(x509CertificateExtractor.getObject());
     }
 
-    @ConditionalOnProperty(prefix = "cas.rest", name = "tls-client-auth", havingValue = "true")
+    @ConditionalOnProperty(prefix = "cas.rest.x509", name = "tls-client-auth", havingValue = "true")
     @Bean
     @RefreshScope
     public RestHttpRequestCredentialFactory x509RestTlsClientCert() {
@@ -60,7 +64,7 @@ public class X509RestConfiguration {
     @ConditionalOnMissingBean(name = "x509RestHttpRequestCredentialFactoryConfigurer")
     public RestHttpRequestCredentialFactoryConfigurer x509RestHttpRequestCredentialFactoryConfigurer() {
         return factory -> {
-            val restProperties = casProperties.getRest();
+            val restProperties = casProperties.getRest().getX509();
             val extractor = x509CertificateExtractor.getObject();
             val headerAuth = restProperties.isHeaderAuth();
             val bodyAuth = restProperties.isBodyAuth();
@@ -77,7 +81,7 @@ public class X509RestConfiguration {
                     + "or \"bodyAuth\"");
             }
 
-            if (extractor != null && headerAuth) {
+            if (headerAuth) {
                 factory.registerCredentialFactory(x509RestRequestHeader());
             }
             if (bodyAuth) {

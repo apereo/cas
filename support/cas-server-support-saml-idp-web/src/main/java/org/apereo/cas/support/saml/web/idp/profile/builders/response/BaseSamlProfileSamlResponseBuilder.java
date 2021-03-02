@@ -1,5 +1,8 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
@@ -47,9 +50,9 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
     }
 
     @Audit(
-        action = "SAML2_RESPONSE",
-        actionResolverName = "SAML2_RESPONSE_ACTION_RESOLVER",
-        resourceResolverName = "SAML2_RESPONSE_RESOURCE_RESOLVER")
+        action = AuditableActions.SAML2_RESPONSE,
+        actionResolverName = AuditActionResolvers.SAML2_RESPONSE_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.SAML2_RESPONSE_RESOURCE_RESOLVER)
     @Override
     public T build(final RequestAbstractType authnRequest,
                    final HttpServletRequest request,
@@ -96,11 +99,14 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
         val encodeResponse = (Boolean) map.getOrDefault(SamlProtocolConstants.PARAMETER_ENCODE_RESPONSE, Boolean.TRUE);
 
         if (encodeResponse) {
+            val sessionStore = samlResponseBuilderConfigurationContext.getSessionStore();
             val context = new JEEContext(request, response);
-            val relayState = samlResponseBuilderConfigurationContext.getSessionStore()
-                .get(context, SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE).orElse(StringUtils.EMPTY).toString();
+            val relayState = sessionStore.get(context, SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE)
+                .orElse(StringUtils.EMPTY)
+                .toString();
             LOGGER.trace("RelayState is [{}]", relayState);
-            return encode(service, finalResponse, response, request, adaptor, relayState, binding, authnRequest, assertion);
+            return encode(service, finalResponse, response, request,
+                adaptor, relayState, binding, authnRequest, assertion);
         }
         return finalResponse;
     }

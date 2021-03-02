@@ -35,7 +35,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
 
     @Override
     public AccessTokenRequestDataHolder extract(final HttpServletRequest request, final HttpServletResponse response) {
-        val context = new JEEContext(request, response, getOAuthConfigurationContext().getSessionStore());
+        val context = new JEEContext(request, response);
         val grantType = request.getParameter(OAuth20Constants.GRANT_TYPE);
 
         LOGGER.debug("OAuth grant type is [{}]", grantType);
@@ -79,7 +79,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
      */
     protected Set<String> extractRequestedScopesByToken(final Set<String> requestedScopes,
                                                         final OAuth20Token token, final HttpServletRequest request) {
-        val scopes = new TreeSet<String>(requestedScopes);
+        val scopes = new TreeSet<>(requestedScopes);
         scopes.addAll(token.getScopes());
         return scopes;
     }
@@ -114,7 +114,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
      *
      * @return true/false
      */
-    protected boolean isAllowedToGenerateRefreshToken() {
+    protected static boolean isAllowedToGenerateRefreshToken() {
         return true;
     }
 
@@ -185,7 +185,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
         var registeredService = OAuth20Utils.getRegisteredOAuthServiceByRedirectUri(
             getOAuthConfigurationContext().getServicesManager(), redirectUri);
         if (registeredService == null) {
-            val clientId = OAuth20Utils.getClientIdAndClientSecret(context).getLeft();
+            val clientId = OAuth20Utils.getClientIdAndClientSecret(context, getOAuthConfigurationContext().getSessionStore()).getLeft();
             registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
                 getOAuthConfigurationContext().getServicesManager(), clientId);
         }

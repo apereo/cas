@@ -1,6 +1,7 @@
 package org.apereo.cas.pm.web.flow.actions;
 
 import org.apereo.cas.pm.BasePasswordManagementService;
+import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
@@ -30,7 +31,8 @@ public class VerifySecurityQuestionsAction extends AbstractAction {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val username = PasswordManagementWebflowUtils.getPasswordResetUsername(requestContext);
 
-        val questions = passwordManagementService.getSecurityQuestions(username);
+        val query = PasswordManagementQuery.builder().username(username).build();
+        val questions = passwordManagementService.getSecurityQuestions(query);
         val canonicalQuestions = BasePasswordManagementService.canonicalizeSecurityQuestions(questions);
         LOGGER.debug("Canonical security questions are [{}]", canonicalQuestions);
 
@@ -42,7 +44,7 @@ public class VerifySecurityQuestionsAction extends AbstractAction {
                 val answerOnRecord = questions.get(question);
                 LOGGER.trace("Validating security question [{}] with answer [{}] against provided answer [{}] by username [{}]",
                     question, answerOnRecord, answer, username);
-                return passwordManagementService.isValidSecurityQuestionAnswer(username, question, answerOnRecord, answer);
+                return passwordManagementService.isValidSecurityQuestionAnswer(query, question, answerOnRecord, answer);
             })
             .count();
         if (count == questions.size()) {

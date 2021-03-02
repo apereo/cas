@@ -1,9 +1,10 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditTrailConstants;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
-import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.PersistentIdGenerator;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -28,7 +29,6 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.authn.SamlProfileSam
 import org.apereo.cas.support.saml.web.idp.profile.builders.conditions.SamlProfileSamlConditionsBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.attribute.SamlAttributeEncoder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.nameid.SamlProfileSamlNameIdBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSaml2ResponseBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSamlResponseBuilderConfigurationContext;
@@ -63,7 +63,6 @@ import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.saml.saml2.ecp.Response;
-import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,13 +97,13 @@ public class SamlIdPConfiguration {
 
     @Autowired
     @Qualifier("samlIdPDistributedSessionStore")
-    private ObjectProvider<SessionStore<JEEContext>> samlIdPDistributedSessionStore;
+    private ObjectProvider<SessionStore> samlIdPDistributedSessionStore;
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
+    @Qualifier(SamlRegisteredServiceCachingMetadataResolver.DEFAULT_BEAN_NAME)
     private ObjectProvider<SamlRegisteredServiceCachingMetadataResolver> defaultSamlRegisteredServiceCachingMetadataResolver;
 
     @Autowired
@@ -124,7 +123,7 @@ public class SamlIdPConfiguration {
     private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
-    @Qualifier("shibboleth.OpenSAMLConfig")
+    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
     private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
 
     @Autowired
@@ -140,7 +139,7 @@ public class SamlIdPConfiguration {
     private ObjectProvider<SamlIdPMetadataLocator> samlIdPMetadataLocator;
 
     @Autowired
-    @Qualifier("attributeDefinitionStore")
+    @Qualifier(AttributeDefinitionStore.BEAN_NAME)
     private ObjectProvider<AttributeDefinitionStore> attributeDefinitionStore;
 
     @ConditionalOnMissingBean(name = "samlSingleLogoutServiceLogoutUrlBuilderConfigurer")
@@ -294,17 +293,10 @@ public class SamlIdPConfiguration {
     public SamlProfileObjectBuilder<AttributeStatement> samlProfileSamlAttributeStatementBuilder() {
         return new SamlProfileSamlAttributeStatementBuilder(
             openSamlConfigBean.getObject(),
-            samlAttributeEncoder(),
             casProperties.getAuthn().getSamlIdp(),
             samlObjectEncrypter(),
-            attributeDefinitionStore.getObject());
-    }
-
-    @ConditionalOnMissingBean(name = "samlAttributeEncoder")
-    @Bean
-    @RefreshScope
-    public ProtocolAttributeEncoder samlAttributeEncoder() {
-        return new SamlAttributeEncoder();
+            attributeDefinitionStore.getObject(),
+            samlIdPServiceFactory.getObject());
     }
 
     @ConditionalOnMissingBean(name = "samlObjectEncrypter")
@@ -377,12 +369,12 @@ public class SamlIdPConfiguration {
     @ConditionalOnMissingBean(name = "casSamlIdPAuditTrailRecordResolutionPlanConfigurer")
     public AuditTrailRecordResolutionPlanConfigurer casSamlIdPAuditTrailRecordResolutionPlanConfigurer() {
         return plan -> {
-            plan.registerAuditResourceResolver("SAML2_RESPONSE_RESOURCE_RESOLVER", new SamlResponseAuditResourceResolver());
-            plan.registerAuditActionResolver("SAML2_RESPONSE_ACTION_RESOLVER",
+            plan.registerAuditResourceResolver(AuditResourceResolvers.SAML2_RESPONSE_RESOURCE_RESOLVER, new SamlResponseAuditResourceResolver());
+            plan.registerAuditActionResolver(AuditActionResolvers.SAML2_RESPONSE_ACTION_RESOLVER,
                 new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED, AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED));
 
-            plan.registerAuditResourceResolver("SAML2_REQUEST_RESOURCE_RESOLVER", new SamlRequestAuditResourceResolver());
-            plan.registerAuditActionResolver("SAML2_REQUEST_ACTION_RESOLVER",
+            plan.registerAuditResourceResolver(AuditResourceResolvers.SAML2_REQUEST_RESOURCE_RESOLVER, new SamlRequestAuditResourceResolver());
+            plan.registerAuditActionResolver(AuditActionResolvers.SAML2_REQUEST_ACTION_RESOLVER,
                 new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED, AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED));
         };
     }

@@ -11,6 +11,7 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 
 import java.nio.charset.StandardCharsets;
@@ -30,9 +31,13 @@ public class OidcRestfulJsonWebKeystoreGeneratorService implements OidcJsonWebKe
     @Override
     public Resource generate() {
         val rest = oidcProperties.getJwks().getRest();
-        val response = HttpUtils.execute(rest.getUrl(), rest.getMethod(),
-            rest.getBasicAuthUsername(), rest.getBasicAuthPassword());
-
+        val exec = HttpUtils.HttpExecutionRequest.builder()
+            .basicAuthPassword(rest.getBasicAuthPassword())
+            .basicAuthUsername(rest.getBasicAuthUsername())
+            .method(HttpMethod.valueOf(rest.getMethod().toUpperCase().trim()))
+            .url(rest.getUrl())
+            .build();
+        val response = HttpUtils.execute(exec);
         if (response == null || !HttpStatus.valueOf(response.getStatusLine().getStatusCode()).is2xxSuccessful()) {
             LOGGER.warn("Unable to successfully fetch JWKS resource from [{}]", rest.getUrl());
             return null;

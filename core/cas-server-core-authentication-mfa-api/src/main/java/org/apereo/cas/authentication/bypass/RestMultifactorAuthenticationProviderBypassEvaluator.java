@@ -10,10 +10,10 @@ import org.apereo.cas.util.LoggingUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
 
 /**
  * This is {@link RestMultifactorAuthenticationProviderBypassEvaluator}.
@@ -35,9 +35,10 @@ public class RestMultifactorAuthenticationProviderBypassEvaluator extends BaseMu
     }
 
     @Override
-    public boolean shouldMultifactorAuthenticationProviderExecuteInternal(final Authentication authentication, final RegisteredService registeredService,
-                                                                  final MultifactorAuthenticationProvider provider,
-                                                                  final HttpServletRequest request) {
+    public boolean shouldMultifactorAuthenticationProviderExecuteInternal(final Authentication authentication,
+                                                                          final RegisteredService registeredService,
+                                                                          final MultifactorAuthenticationProvider provider,
+                                                                          final HttpServletRequest request) {
         try {
             val principal = authentication.getPrincipal();
             val rest = bypassProperties.getRest();
@@ -50,9 +51,15 @@ public class RestMultifactorAuthenticationProviderBypassEvaluator extends BaseMu
                 parameters.put("service", registeredService.getServiceId());
             }
 
-            val response = HttpUtils.execute(rest.getUrl(), rest.getMethod(),
-                rest.getBasicAuthUsername(), rest.getBasicAuthPassword(), parameters, new HashMap<>(0));
-            return response.getStatusLine().getStatusCode() == HttpStatus.ACCEPTED.value();
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(rest.getBasicAuthPassword())
+                .basicAuthUsername(rest.getBasicAuthUsername())
+                .method(HttpMethod.valueOf(rest.getMethod().toUpperCase().trim()))
+                .url(rest.getUrl())
+                .build();
+
+            val response = HttpUtils.execute(exec);
+            return response != null && response.getStatusLine().getStatusCode() == HttpStatus.ACCEPTED.value();
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
             return true;

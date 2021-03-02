@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("WebflowActions")
-@TestPropertySource(properties = " cas.authn.adaptive.reject-ip-addresses=1.2.3.4")
+@TestPropertySource(properties = "cas.authn.adaptive.policy.reject-ip-addresses=1.2.3.4")
 public class PrincipalFromRequestHeaderNonInteractiveCredentialsActionTests extends BaseNonInteractiveCredentialsActionTests {
     @Autowired
     @Qualifier("principalFromRemoteHeaderPrincipalAction")
@@ -63,7 +63,7 @@ public class PrincipalFromRequestHeaderNonInteractiveCredentialsActionTests exte
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         request.setRemoteUser("xyz");
-        request.addParameter(casProperties.getAuthn().getMfa().getRequestParameter(), "mfa-whatever");
+        request.addParameter(casProperties.getAuthn().getMfa().getTriggers().getHttp().getRequestParameter(), "mfa-whatever");
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
         assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, this.action.execute(context).getId());
     }
@@ -80,7 +80,7 @@ public class PrincipalFromRequestHeaderNonInteractiveCredentialsActionTests exte
         request.addParameter("geolocation", "1000,1000,1000,1000");
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
 
-        request.addParameter(casProperties.getAuthn().getMfa().getRequestParameter(), "mfa-whatever");
+        request.addParameter(casProperties.getAuthn().getMfa().getTriggers().getHttp().getRequestParameter(), "mfa-whatever");
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
         assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, this.action.execute(context).getId());
     }

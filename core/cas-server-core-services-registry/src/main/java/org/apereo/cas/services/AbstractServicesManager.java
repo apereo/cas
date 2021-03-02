@@ -47,8 +47,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
     }
 
     @Override
-    public synchronized RegisteredService save(final RegisteredService registeredService,
-        final boolean publishEvent) {
+    public synchronized RegisteredService save(final RegisteredService registeredService, final boolean publishEvent) {
         publishEvent(new CasRegisteredServicePreSaveEvent(this, registeredService));
         val r = configurationContext.getServiceRegistry().save(registeredService);
         configurationContext.getServicesCache().put(r.getId(), r);
@@ -136,7 +135,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
             return null;
         }
         val service = findServiceBy(requestedService);
-        if (service != null && service.getClass().equals(clazz)) {
+        if (service != null && clazz.isAssignableFrom(service.getClass())) {
             return (T) service;
         }
         return null;
@@ -151,7 +150,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
     @Override
     public <T extends RegisteredService> T findServiceBy(final long id, final Class<T> clazz) {
         var service = getService(registeredService -> registeredService.getId() == id);
-        if (service != null && service.getClass().equals(clazz)) {
+        if (service != null && clazz.isAssignableFrom(service.getClass())) {
             return (T) service;
         }
         LOGGER.trace("The service with id [{}] and type [{}] is not found in the cache; trying to find it from [{}]",
@@ -168,13 +167,12 @@ public abstract class AbstractServicesManager implements ServicesManager {
 
         var service = getService(registeredService -> registeredService.getName().equals(name));
         if (service == null) {
-            LOGGER.trace("The service with name [{}] is not found in the cache; trying to find it from [{}]",
-                name, configurationContext.getServiceRegistry().getName());
-            service = configurationContext.getServiceRegistry().findServiceByExactServiceName(name);
+            val registry = configurationContext.getServiceRegistry();
+            LOGGER.trace("The service with name [{}] is not found in the cache; trying to find it from [{}]", name, registry.getName());
+            service = registry.findServiceByExactServiceName(name);
             if (service != null) {
                 configurationContext.getServicesCache().put(service.getId(), service);
-                LOGGER.trace("The service is found in [{}] and populated to the cache [{}]",
-                    configurationContext.getServiceRegistry().getName(), service);
+                LOGGER.trace("The service is found in [{}] and populated to the cache [{}]", registry.getName(), service);
             }
         }
 
@@ -190,7 +188,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
             return null;
         }
         var service = getService(registeredService -> registeredService.getName().equals(name));
-        if (service != null && service.getClass().equals(clazz)) {
+        if (service != null && clazz.isAssignableFrom(service.getClass())) {
             return (T) service;
         }
         LOGGER.trace("The service with name [{}] and type [{}] is not found in the cache; trying to find it from [{}]",

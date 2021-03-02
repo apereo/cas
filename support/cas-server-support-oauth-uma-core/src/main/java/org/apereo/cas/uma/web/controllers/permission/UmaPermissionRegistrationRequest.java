@@ -1,5 +1,7 @@
 package org.apereo.cas.uma.web.controllers.permission;
 
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,8 +23,9 @@ import java.util.Map;
 @Data
 public class UmaPermissionRegistrationRequest implements Serializable {
     private static final int MAP_SIZE = 8;
-    private static final ObjectMapper MAPPER = new ObjectMapper()
-        .findAndRegisterModules();
+
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     private static final long serialVersionUID = 3614209506339611242L;
 

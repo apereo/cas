@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
+import org.aspectj.lang.JoinPoint;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.saml.saml2.core.Assertion;
@@ -39,10 +40,10 @@ public class SamlResponseAuditPrincipalIdProviderTests {
         when(subject.getNameID()).thenReturn(nameId);
         when(assertion.getSubject()).thenReturn(subject);
         when(response.getAssertions()).thenReturn(CollectionUtils.wrapList(assertion));
-        val result = r.getPrincipalIdFrom(CoreAuthenticationTestUtils.getAuthentication(), response, null);
+        val result = r.getPrincipalIdFrom(mock(JoinPoint.class), CoreAuthenticationTestUtils.getAuthentication(), response, null);
         assertNotNull(result);
         assertEquals("casuser", result);
-        assertTrue(r.supports(CoreAuthenticationTestUtils.getAuthentication(), response, null));
+        assertTrue(r.supports(mock(JoinPoint.class), CoreAuthenticationTestUtils.getAuthentication(), response, null));
     }
 
     @Test
@@ -50,7 +51,7 @@ public class SamlResponseAuditPrincipalIdProviderTests {
         val r = new SamlResponseAuditPrincipalIdProvider();
         val response = mock(Response.class);
         when(response.getAssertions()).thenReturn(CollectionUtils.wrapList());
-        val result = r.getPrincipalIdFrom(CoreAuthenticationTestUtils.getAuthentication("casuser"), response, null);
+        val result = r.getPrincipalIdFrom(mock(JoinPoint.class), CoreAuthenticationTestUtils.getAuthentication("casuser"), response, null);
         assertNotNull(result);
         assertTrue(r.getOrder() > 0);
         assertEquals("casuser", result);

@@ -110,6 +110,14 @@ public class SamlUtils {
         return newSamlObject(objectType, qName);
     }
 
+    /**
+     * New saml object and provide type.
+     *
+     * @param <T>        the type parameter
+     * @param objectType the object type
+     * @param qName      the q name
+     * @return the t
+     */
     public static <T extends SAMLObject> T newSamlObject(final Class<T> objectType, final QName qName) {
         LOGGER.trace("Attempting to create SAMLObject for type: [{}] and QName: [{}]", objectType, qName);
         val builder = (SAMLObjectBuilder<T>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(qName);
@@ -178,21 +186,25 @@ public class SamlUtils {
      * @param clazz      the clazz
      * @return the type
      */
-    public static <T extends XMLObject> T transformSamlObject(final OpenSamlConfigBean configBean, final byte[] data,
+    public static <T extends XMLObject> T transformSamlObject(final OpenSamlConfigBean configBean,
+                                                              final byte[] data,
                                                               final Class<T> clazz) {
-        try (InputStream in = new ByteArrayInputStream(data)) {
-            val document = configBean.getParserPool().parse(in);
-            val root = document.getDocumentElement();
-            val marshaller = configBean.getUnmarshallerFactory().getUnmarshaller(root);
-            if (marshaller != null) {
-                val result = marshaller.unmarshall(root);
-                if (!clazz.isAssignableFrom(result.getClass())) {
-                    throw new ClassCastException("Result [" + result + " is of type " + result.getClass() + " when we were expecting " + clazz);
+        if (data != null && data.length > 0) {
+            try (val in = new ByteArrayInputStream(data)) {
+                val document = configBean.getParserPool().parse(in);
+                val root = document.getDocumentElement();
+                val marshaller = configBean.getUnmarshallerFactory().getUnmarshaller(root);
+                if (marshaller != null) {
+                    val result = marshaller.unmarshall(root);
+                    if (!clazz.isAssignableFrom(result.getClass())) {
+                        throw new ClassCastException("Result [" + result + " is of type "
+                            + result.getClass() + " when we were expecting " + clazz);
+                    }
+                    return (T) result;
                 }
-                return (T) result;
+            } catch (final Exception e) {
+                throw new SamlException(e.getMessage(), e);
             }
-        } catch (final Exception e) {
-            throw new SamlException(e.getMessage(), e);
         }
         return null;
     }

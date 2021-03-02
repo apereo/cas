@@ -57,7 +57,7 @@ public class RequestParameterMultifactorAuthenticationPolicyEventResolverTests e
         context.getRootFlow().getGlobalTransitionSet().add(transition);
 
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
-        request.addParameter(casProperties.getAuthn().getMfa().getRequestParameter(), TestMultifactorAuthenticationProvider.ID);
+        request.addParameter(casProperties.getAuthn().getMfa().getTriggers().getHttp().getRequestParameter(), TestMultifactorAuthenticationProvider.ID);
         results = requestParameterAuthenticationPolicyWebflowEventResolver.resolve(context);
         assertNotNull(results);
         assertEquals(1, results.size());

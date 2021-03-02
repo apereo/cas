@@ -1,17 +1,23 @@
 package org.apereo.cas.adaptors.duo.config;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.duo.config.cond.ConditionalOnDuoSecurityConfigured;
 import org.apereo.cas.adaptors.duo.web.flow.DuoSecurityAuthenticationWebflowEventResolver;
 import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityDirectAuthenticationAction;
+import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityUniversalPromptPrepareLoginAction;
+import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityUniversalPromptValidateLoginAction;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
+import org.apereo.cas.authentication.MultifactorAuthenticationProviderBean;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
@@ -42,6 +48,16 @@ import org.springframework.webflow.execution.Action;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnDuoSecurityConfigured
 public class DuoSecurityConfiguration {
+    @Autowired
+    @Qualifier("duoProviderBean")
+    private ObjectProvider<MultifactorAuthenticationProviderBean<
+        DuoSecurityMultifactorAuthenticationProvider,
+        DuoSecurityMultifactorAuthenticationProperties>> duoProviderBean;
+
+    @Autowired
+    @Qualifier("defaultTicketFactory")
+    private ObjectProvider<TicketFactory> ticketFactory;
+
     @Autowired
     @Qualifier("authenticationEventExecutionPlan")
     private ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
@@ -107,6 +123,24 @@ public class DuoSecurityConfiguration {
     @RefreshScope
     public Action duoAuthenticationWebflowAction() {
         return new DuoSecurityAuthenticationWebflowAction(duoAuthenticationWebflowEventResolver());
+    }
+
+    @ConditionalOnMissingBean(name = "duoUniversalPromptPrepareLoginAction")
+    @Bean
+    @RefreshScope
+    public Action duoUniversalPromptPrepareLoginAction() {
+        return new DuoSecurityUniversalPromptPrepareLoginAction(ticketRegistry.getObject(),
+            duoProviderBean.getObject(), ticketFactory.getObject());
+    }
+
+    @ConditionalOnMissingBean(name = "duoUniversalPromptValidateLoginAction")
+    @Bean
+    @RefreshScope
+    public Action duoUniversalPromptValidateLoginAction() {
+        return new DuoSecurityUniversalPromptValidateLoginAction(
+            duoAuthenticationWebflowEventResolver(),
+            centralAuthenticationService.getObject(),
+            duoProviderBean.getObject());
     }
 
     @ConditionalOnMissingBean(name = "duoAuthenticationWebflowEventResolver")

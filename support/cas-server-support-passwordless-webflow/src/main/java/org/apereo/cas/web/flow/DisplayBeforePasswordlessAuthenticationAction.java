@@ -5,6 +5,7 @@ import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.configuration.model.support.passwordless.PasswordlessAuthenticationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
+import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -15,6 +16,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import java.util.Map;
 
 /**
  * This is {@link DisplayBeforePasswordlessAuthenticationAction}.
@@ -37,7 +40,7 @@ public class DisplayBeforePasswordlessAuthenticationAction extends AbstractActio
     protected Event doExecute(final RequestContext requestContext) {
         val attributes = requestContext.getCurrentEvent().getAttributes();
         if (attributes.contains(CasWebflowConstants.TRANSITION_ID_ERROR)) {
-            val e = attributes.get("error", Exception.class);
+            val e = attributes.get(CasWebflowConstants.TRANSITION_ID_ERROR, Exception.class);
             requestContext.getFlowScope().put(CasWebflowConstants.TRANSITION_ID_ERROR, e);
             val user = WebUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class);
             WebUtils.putPasswordlessAuthenticationAccount(requestContext, user);
@@ -59,12 +62,13 @@ public class DisplayBeforePasswordlessAuthenticationAction extends AbstractActio
         communicationsManager.validate();
         if (communicationsManager.isMailSenderDefined() && StringUtils.isNotBlank(user.getEmail())) {
             val mail = passwordlessProperties.getTokens().getMail();
-            communicationsManager.email(mail, user.getEmail(), mail.getFormattedBody(token));
+            val body = EmailMessageBodyBuilder.builder().properties(mail)
+                .parameters(Map.of("token", token)).build().produce();
+            communicationsManager.email(mail, user.getEmail(), body);
         }
         if (communicationsManager.isSmsSenderDefined() && StringUtils.isNotBlank(user.getPhone())) {
             communicationsManager.sms(passwordlessProperties.getTokens().getSms().getFrom(), user.getPhone(), token);
         }
-
         passwordlessTokenRepository.deleteTokens(user.getUsername());
         passwordlessTokenRepository.saveToken(user.getUsername(), token);
         return success();

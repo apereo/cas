@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.core.monitor;
 
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -19,11 +20,12 @@ import java.util.stream.Stream;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@RequiresModule(name = "cas-server-support-reports", automated = true)
+@RequiresModule(name = "cas-server-support-reports")
 @Getter
 @Setter
 @ToString
 @Accessors(chain = true)
+@JsonFilter("ActuatorEndpointProperties")
 public class ActuatorEndpointProperties implements Serializable {
     private static final long serialVersionUID = -2463521198550485506L;
     /**

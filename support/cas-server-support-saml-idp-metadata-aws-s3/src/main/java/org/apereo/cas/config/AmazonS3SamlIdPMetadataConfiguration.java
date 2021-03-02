@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.idp.metadata.AmazonS3SamlIdPMetadataCipherExecutor;
 import org.apereo.cas.support.saml.idp.metadata.AmazonS3SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.AmazonS3SamlIdPMetadataLocator;
@@ -8,9 +9,11 @@ import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerat
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGeneratorConfigurationContext;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.writer.SamlIdPCertificateAndKeyWriter;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import com.github.benmanes.caffeine.cache.Cache;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -46,12 +49,20 @@ public class AmazonS3SamlIdPMetadataConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
+    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+    private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
+    
+    @Autowired
     @Qualifier("samlSelfSignedCertificateWriter")
     private ObjectProvider<SamlIdPCertificateAndKeyWriter> samlSelfSignedCertificateWriter;
 
     @Autowired
     @Qualifier("amazonS3Client")
     private ObjectProvider<S3Client> amazonS3Client;
+
+    @Autowired
+    @Qualifier("samlIdPMetadataCache")
+    private ObjectProvider<Cache<String, SamlIdPMetadataDocument>> samlIdPMetadataCache;
 
     @Bean
     @RefreshScope
@@ -80,6 +91,7 @@ public class AmazonS3SamlIdPMetadataConfiguration {
             .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter.getObject())
             .applicationContext(applicationContext)
             .casProperties(casProperties)
+            .openSamlConfigBean(openSamlConfigBean.getObject())
             .metadataCipherExecutor(amazonS3SamlIdPMetadataCipherExecutor())
             .build();
         val generator = new AmazonS3SamlIdPMetadataGenerator(context,
@@ -95,6 +107,7 @@ public class AmazonS3SamlIdPMetadataConfiguration {
     public SamlIdPMetadataLocator samlIdPMetadataLocator() {
         val idp = casProperties.getAuthn().getSamlIdp();
         return new AmazonS3SamlIdPMetadataLocator(amazonS3SamlIdPMetadataCipherExecutor(),
+            samlIdPMetadataCache.getObject(),
             idp.getMetadata().getAmazonS3().getIdpMetadataBucketName(),
             amazonS3Client.getObject());
     }

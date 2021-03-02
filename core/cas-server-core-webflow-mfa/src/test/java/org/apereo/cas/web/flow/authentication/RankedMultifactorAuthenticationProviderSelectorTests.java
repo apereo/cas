@@ -3,7 +3,7 @@ package org.apereo.cas.web.flow.authentication;
 import org.apereo.cas.BaseCasWebflowMultifactorAuthenticationTests;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
-import org.apereo.cas.services.RegisteredServiceMultifactorPolicyFailureModes;
+import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -32,7 +32,7 @@ public class RankedMultifactorAuthenticationProviderSelectorTests extends BaseCa
     public void verifySelectionOfMfaProvider() {
         val dummy1 = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         dummy1.setOrder(10);
-        dummy1.setFailureMode(RegisteredServiceMultifactorPolicyFailureModes.PHANTOM.name());
+        dummy1.setFailureMode(BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.PHANTOM);
         val dummy2 = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         dummy2.setOrder(5);
 
@@ -43,7 +43,7 @@ public class RankedMultifactorAuthenticationProviderSelectorTests extends BaseCa
         assertNotNull(provider);
         assertEquals(dummy1.getId(), provider.getId());
         assertEquals(dummy1.getOrder(), provider.getOrder());
-        assertEquals(RegisteredServiceMultifactorPolicyFailureModes.PHANTOM, provider.getFailureMode());
+        assertEquals(BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.PHANTOM, provider.getFailureMode());
     }
 
 }

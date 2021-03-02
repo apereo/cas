@@ -6,6 +6,7 @@ import org.apereo.cas.uma.UmaConfigurationContext;
 import org.apereo.cas.uma.ticket.resource.InvalidResourceSetException;
 import org.apereo.cas.uma.ticket.resource.ResourceSet;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AccessLevel;
@@ -13,8 +14,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.pac4j.core.context.JEEContext;
-import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
+import org.pac4j.core.profile.UserProfile;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.MultiValueMap;
 
@@ -33,8 +34,8 @@ public abstract class BaseUmaEndpointController {
     /**
      * Json object mapper instance.
      */
-    protected static final ObjectMapper MAPPER = new ObjectMapper()
-        .findAndRegisterModules();
+    protected static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     private final UmaConfigurationContext umaConfigurationContext;
 
@@ -46,12 +47,12 @@ public abstract class BaseUmaEndpointController {
      * @param requiredPermission the required permission
      * @return the authenticated profile
      */
-    protected CommonProfile getAuthenticatedProfile(final HttpServletRequest request,
-                                                    final HttpServletResponse response,
-                                                    final String requiredPermission) {
-        val context = new JEEContext(request, response, getUmaConfigurationContext().getSessionStore());
-        val manager = new ProfileManager<CommonProfile>(context, context.getSessionStore());
-        val profileResult = manager.get(true);
+    protected UserProfile getAuthenticatedProfile(final HttpServletRequest request,
+                                                  final HttpServletResponse response,
+                                                  final String requiredPermission) {
+        val context = new JEEContext(request, response);
+        val manager = new ProfileManager(context, getUmaConfigurationContext().getSessionStore());
+        val profileResult = manager.getProfile();
         if (profileResult.isEmpty()) {
             throw new AuthenticationException("Unable to locate authenticated profile");
         }
@@ -94,7 +95,7 @@ public abstract class BaseUmaEndpointController {
      */
     protected String getResourceSetUriLocation(final ResourceSet saved) {
         return getUmaConfigurationContext().getCasProperties()
-            .getAuthn().getUma().getIssuer()
+            .getAuthn().getOauth().getUma().getCore().getIssuer()
             + OAuth20Constants.BASE_OAUTH20_URL + '/'
             + OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL + '/'
             + saved.getId();

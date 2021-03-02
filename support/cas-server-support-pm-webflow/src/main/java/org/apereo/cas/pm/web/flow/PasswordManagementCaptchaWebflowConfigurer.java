@@ -28,7 +28,7 @@ public class PasswordManagementCaptchaWebflowConfigurer extends AbstractCasWebfl
     protected void doInitialize() {
         val flow = getLoginFlow();
         val pm = casProperties.getAuthn().getPm();
-        if (flow != null && pm.isEnabled() && pm.isCaptchaEnabled()) {
+        if (flow != null && pm.getCore().isEnabled() && pm.getGoogleRecaptcha().isEnabled()) {
             flow.getStartActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_PASSWORD_RESET_INIT_CAPTCHA));
             
             prependActionsToActionStateExecutionList(flow,

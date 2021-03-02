@@ -3,25 +3,21 @@ layout: default
 title: CAS - JDBC Drivers
 category: Configuration
 ---
+{% include variables.html %}
 
 # JDBC Drivers
 
 While in most cases this is unnecessary and handled by CAS automatically,
 you may need to also include the following module to account for various database drivers:
 
-```xml
-<dependency>
-   <groupId>org.apereo.cas</groupId>
-   <artifactId>cas-server-support-jdbc-drivers</artifactId>
-   <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-jdbc-drivers" %}
 
 ## Database Support
 
 Automatic support for drivers includes the following databases.
 All other drivers need to be manually added to the build configuration.
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties-Common.html#hibernate--jdbc).
+
+{% include {{ version }}/hibernate-configuration.md %}
 
 ### H2
     

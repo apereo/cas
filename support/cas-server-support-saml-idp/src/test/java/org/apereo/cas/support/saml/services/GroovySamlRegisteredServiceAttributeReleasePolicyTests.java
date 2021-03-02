@@ -21,8 +21,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Groovy")
 @TestPropertySource(properties = {
-    "cas.authn.saml-idp.entity-id=https://cas.example.org/idp",
-    "cas.authn.saml-idp.metadata.location=${#systemProperties['java.io.tmpdir']}/idp-metadata4"
+    "cas.authn.saml-idp.core.entity-id=https://cas.example.org/idp",
+    "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata4"
 })
 public class GroovySamlRegisteredServiceAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests {
 

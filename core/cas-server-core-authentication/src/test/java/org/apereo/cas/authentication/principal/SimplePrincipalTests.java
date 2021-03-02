@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -21,13 +23,14 @@ public class SimplePrincipalTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "simplePrincipal.json");
 
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     @Test
     public void verifyEquality() {
         val p = new SimplePrincipal("id", new HashMap<>());
-        assertFalse(p.equals(null));
-        assertFalse(p.equals("HelloWorld"));
+        assertNotEquals(p, null);
+        assertNotEquals(p, "HelloWorld");
     }
 
     @Test

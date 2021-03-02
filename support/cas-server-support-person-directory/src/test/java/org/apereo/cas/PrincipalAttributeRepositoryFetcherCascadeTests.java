@@ -37,8 +37,8 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attribute-repository.groovy[0].location=classpath:/GroovyAttributeRepository.groovy",
     "cas.authn.attribute-repository.groovy[0].order=2",
 
-    "cas.authn.attribute-repository.aggregation=cascade",
-    "cas.authn.attribute-repository.merger=multivalued"
+    "cas.authn.attribute-repository.core.aggregation=CASCADE",
+    "cas.authn.attribute-repository.core.merger=MULTIVALUED"
 })
 @Tag("Attributes")
 public class PrincipalAttributeRepositoryFetcherCascadeTests {

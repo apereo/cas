@@ -1,6 +1,6 @@
 package org.apereo.cas.web.flow.actions;
 
-import org.apereo.cas.services.RegisteredServiceMultifactorPolicyFailureModes;
+import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -30,7 +30,7 @@ public class MultifactorAuthenticationFailureAction extends AbstractMultifactorA
 
         LOGGER.debug("Final failure mode has been determined to be [{}]", failureMode);
 
-        if (failureMode == RegisteredServiceMultifactorPolicyFailureModes.OPEN) {
+        if (failureMode == BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.OPEN) {
             return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_BYPASS);
         }
 

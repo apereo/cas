@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -82,6 +83,10 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
     private ConfigurableApplicationContext applicationContext;
 
     @Autowired
+    @Qualifier("centralAuthenticationService")
+    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
+
+    @Autowired
     @Qualifier("accessTokenJwtBuilder")
     private ObjectProvider<JwtBuilder> accessTokenJwtBuilder;
 
@@ -125,9 +130,9 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
     @RefreshScope
     @ConditionalOnMissingBean(name = "umaRequestingPartyTokenGenerator")
     public IdTokenGeneratorService umaRequestingPartyTokenGenerator() {
-        val uma = casProperties.getAuthn().getUma();
-        val jwks = uma.getRequestingPartyToken().getJwksFile();
-        val signingService = new UmaRequestingPartyTokenSigningService(jwks, uma.getIssuer());
+        val uma = casProperties.getAuthn().getOauth().getUma();
+        val jwks = uma.getRequestingPartyToken().getJwksFile().getLocation();
+        val signingService = new UmaRequestingPartyTokenSigningService(jwks, uma.getCore().getIssuer());
         val context = OAuth20ConfigurationContext.builder()
             .ticketRegistry(ticketRegistry.getObject())
             .servicesManager(servicesManager.getObject())
@@ -244,13 +249,13 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
 
     @Bean
     public SecurityInterceptor umaRequestingPartyTokenSecurityInterceptor() {
-        val authenticator = new UmaRequestingPartyTokenAuthenticator(ticketRegistry.getObject(), accessTokenJwtBuilder.getObject());
+        val authenticator = new UmaRequestingPartyTokenAuthenticator(centralAuthenticationService.getObject(), accessTokenJwtBuilder.getObject());
         return getSecurityInterceptor(authenticator, "CAS_UMA_CLIENT_RPT_AUTH");
     }
 
     @Bean
     public SecurityInterceptor umaAuthorizationApiTokenSecurityInterceptor() {
-        val authenticator = new UmaAuthorizationApiTokenAuthenticator(ticketRegistry.getObject(), accessTokenJwtBuilder.getObject());
+        val authenticator = new UmaAuthorizationApiTokenAuthenticator(centralAuthenticationService.getObject(), accessTokenJwtBuilder.getObject());
         return getSecurityInterceptor(authenticator, "CAS_UMA_CLIENT_AAT_AUTH");
     }
 
@@ -290,6 +295,7 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
             .servicesManager(servicesManager.getObject())
             .sessionStore(oauthDistributedSessionStore.getObject())
             .ticketRegistry(ticketRegistry.getObject())
+            .centralAuthenticationService(centralAuthenticationService.getObject())
             .umaPermissionTicketFactory(defaultUmaPermissionTicketFactory())
             .umaResourceSetRepository(umaResourceSetRepository());
     }

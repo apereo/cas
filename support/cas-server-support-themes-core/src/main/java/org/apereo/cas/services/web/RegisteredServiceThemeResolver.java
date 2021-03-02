@@ -24,6 +24,7 @@ import org.apache.http.HttpStatus;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.theme.AbstractThemeResolver;
 import org.springframework.webflow.execution.RequestContextHolder;
 
@@ -128,13 +129,17 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
             if (resource instanceof UrlResource) {
                 val url = resource.getURL().toExternalForm();
                 LOGGER.debug("Executing URL [{}] to determine theme for [{}]", url, service.getId());
-                response = HttpUtils.executeGet(url, CollectionUtils.wrap("service", service.getId()));
+                val exec = HttpUtils.HttpExecutionRequest.builder()
+                    .parameters(CollectionUtils.wrap("service", service.getId()))
+                    .url(url)
+                    .method(HttpMethod.GET)
+                    .build();
+                response = HttpUtils.execute(exec);
                 if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                     val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
                     return StringUtils.defaultIfBlank(result, getDefaultThemeName());
                 }
             }
-
             val messageSource = new CasThemeResourceBundleMessageSource();
             val theme = SpringExpressionLanguageValueResolver.getInstance().resolve(rService.getTheme());
             messageSource.setBasename(theme);
@@ -177,7 +182,7 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
     }
 
     /**
-     * An extension of the default where the exceptions are simply logged
+     * An extension of the default where the exceptions are logged
      * so CAS can fall back onto default themes.
      */
     private static class CasThemeResourceBundleMessageSource extends ResourceBundleMessageSource {

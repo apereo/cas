@@ -3,6 +3,7 @@ package org.apereo.cas.util;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
@@ -43,6 +44,10 @@ public class MockWebServer implements AutoCloseable {
         }
     }
 
+    public MockWebServer(final int port, final HttpStatus status) {
+        this(port, new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "REST Output"), status);
+    }
+    
     public MockWebServer(final int port, final Resource resource, final HttpStatus status) {
         try {
             this.worker = new Worker(new ServerSocket(port), resource, status);
@@ -182,9 +187,9 @@ public class MockWebServer implements AutoCloseable {
                         writeResponse(socket);
                     }
                     socket.shutdownOutput();
-                    Thread.sleep(100);
+                    Thread.sleep(200);
                 } catch (final SocketException e) {
-                    LOGGER.debug("Stopping on socket close.");
+                    LOGGER.debug("Stopping on socket close: [{}]", e.getMessage(), e);
                     this.running = false;
                 } catch (final Exception e) {
                     LoggingUtils.error(LOGGER, e);
@@ -206,7 +211,7 @@ public class MockWebServer implements AutoCloseable {
 
         private void writeResponse(final Socket socket) throws IOException {
             if (resource != null) {
-                LOGGER.debug("Socket response for resource [{}]", resource.getFilename());
+                LOGGER.debug("Socket response for resource [{}]", resource.getDescription());
                 val out = socket.getOutputStream();
 
                 val statusLine = String.format("HTTP/1.1 %s %s%s", status.value(), status.getReasonPhrase(), SEPARATOR);
@@ -216,13 +221,20 @@ public class MockWebServer implements AutoCloseable {
                 out.write(SEPARATOR.getBytes(StandardCharsets.UTF_8));
 
                 val buffer = new byte[BUFFER_SIZE];
-                try (val in = this.resource.getInputStream()) {
-                    var count = 0;
-                    while ((count = in.read(buffer)) > -1) {
-                        out.write(buffer, 0, count);
+                try {
+                    try (val in = this.resource.getInputStream()) {
+                        var count = 0;
+                        while ((count = in.read(buffer)) > -1) {
+                            out.write(buffer, 0, count);
+                        }
                     }
+                } catch (final SocketException e) {
+                    LOGGER.debug("Error while writing response, current response buffer [{}], response length [{}]",
+                            buffer, this.resource.contentLength());
+                    throw e;
                 }
-                LOGGER.debug("Wrote response for resource [{}] for [{}]", resource.getFilename(), resource.contentLength());
+                out.flush();
+                LOGGER.debug("Wrote response for resource [{}] for [{}]", resource.getDescription(), resource.contentLength());
             }
         }
     }

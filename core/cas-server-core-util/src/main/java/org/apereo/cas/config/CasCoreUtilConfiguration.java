@@ -6,10 +6,12 @@ import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.scripting.GroovyScriptResourceCacheManager;
 import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.Converters;
 import org.apereo.cas.util.spring.SpringAwareMessageMessageInterpolator;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.val;
 import org.springframework.beans.factory.InitializingBean;
@@ -83,9 +85,14 @@ public class CasCoreUtilConfiguration implements InitializingBean {
     }
 
     @Bean
-    @ConditionalOnMissingBean(name = ApplicationContextProvider.BEAN_NAME_SCRIPT_RESOURCE_CACHE_MANAGER)
+    @ConditionalOnMissingBean(name = ScriptResourceCacheManager.BEAN_NAME)
     public ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript> scriptResourceCacheManager() {
         return new GroovyScriptResourceCacheManager();
+    }
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        return JacksonObjectMapperFactory.builder().build().toObjectMapper();
     }
 
     /**

@@ -38,12 +38,12 @@ task pathingJar(type: Jar, description: "Produces a 'pathing' JAR whose manifest
 
 task testJar(type: Jar, dependsOn: testClasses, description: "archive the testClasses") {
     archiveBaseName = "${project.archivesBaseName}-tests"
-    classifier = "tests"
+    archiveClassifier = "tests"
     from sourceSets.test.output
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = "sources"
+    archiveClassifier = "sources"
     from sourceSets.main.allSource
 }
 
@@ -53,7 +53,7 @@ task resourcesJar(type: Jar) {
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = "javadoc"
+    archiveClassifier = "javadoc"
     from javadoc.destinationDir
 }
 

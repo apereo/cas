@@ -1,6 +1,7 @@
 package org.apereo.cas.web;
 
-import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
 import org.apereo.cas.web.view.DynamicHtmlView;
 
 import lombok.AccessLevel;
@@ -9,15 +10,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
-import org.pac4j.core.client.Clients;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.JEEContext;
-import org.pac4j.core.context.session.SessionStore;
-import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.exception.http.WithContentAction;
 import org.pac4j.core.exception.http.WithLocationAction;
+import org.pac4j.core.redirect.RedirectionActionBuilder;
 import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.servlet.View;
@@ -42,11 +40,7 @@ public abstract class BaseDelegatedAuthenticationController {
      */
     protected static final String ENDPOINT_RESPONSE = "login/{clientName}";
 
-    private final Clients clients;
-
-    private final DelegatedClientWebflowManager delegatedClientWebflowManager;
-
-    private final SessionStore<JEEContext> sessionStore;
+    private final DelegatedClientAuthenticationConfigurationContext configurationContext;
 
     /**
      * Build redirect view back to flow view.
@@ -57,18 +51,14 @@ public abstract class BaseDelegatedAuthenticationController {
      */
     @SneakyThrows
     protected View buildRedirectViewBackToFlow(final String clientName, final HttpServletRequest request) {
-
-        val urlBuilder = new URIBuilder(String.valueOf(request.getRequestURL()));
+        val urlBuilder = new URIBuilder(configurationContext.getCasProperties().getServer().getLoginUrl());
         request.getParameterMap().forEach((k, v) -> {
             val value = request.getParameter(k);
             urlBuilder.addParameter(k, value);
         });
-
-        urlBuilder.setPath(urlBuilder.getPath().replace('/' + clientName, StringUtils.EMPTY));
         urlBuilder.addParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, clientName);
-
         val url = urlBuilder.toString();
-        LOGGER.debug("Received a response for client [{}], redirecting the login flow [{}]", clientName, url);
+        LOGGER.debug("Received response from client [{}]; Redirecting to [{}]", clientName, url);
         return new RedirectView(url);
     }
 
@@ -81,13 +71,22 @@ public abstract class BaseDelegatedAuthenticationController {
      * @return the resulting view
      */
     @SneakyThrows
-    protected View getResultingView(final IndirectClient<Credentials> client, final JEEContext webContext, final Ticket ticket) {
+    protected View getResultingView(final IndirectClient client, final JEEContext webContext,
+                                    final TransientSessionTicket ticket) {
         client.init();
-        val actionResult = client.getRedirectionActionBuilder().getRedirectionAction(webContext);
+
+        val properties = ticket.getProperties();
+        if (properties.containsKey(RedirectionActionBuilder.ATTRIBUTE_FORCE_AUTHN)) {
+            webContext.setRequestAttribute(RedirectionActionBuilder.ATTRIBUTE_FORCE_AUTHN, true);
+        }
+        if (properties.containsKey(RedirectionActionBuilder.ATTRIBUTE_PASSIVE)) {
+            webContext.setRequestAttribute(RedirectionActionBuilder.ATTRIBUTE_PASSIVE, true);
+        }
+        val actionResult = client.getRedirectionActionBuilder()
+            .getRedirectionAction(webContext, configurationContext.getSessionStore());
         if (actionResult.isPresent()) {
             val action = actionResult.get();
             LOGGER.debug("Determined final redirect action for client [{}] as [{}]", client, action);
-
             if (action instanceof WithLocationAction) {
                 val foundAction = WithLocationAction.class.cast(action);
                 val builder = new URIBuilder(foundAction.getLocation());

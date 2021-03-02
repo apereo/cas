@@ -19,5 +19,23 @@ public class ConfigurationMetadataCatalogQuery {
     @Builder.Default
     private final List<String> modules = new ArrayList<>();
 
-    private final boolean casExclusive;
+    /**
+     * The query types.
+     */
+    public enum QueryTypes {
+        /**
+         * Fetch settings for CAS.
+         */
+        CAS,
+        /**
+         * Fetch settings for all third party libraries.
+         */
+        THIRD_PARTY,
+        /**
+         * Fetch settings for all.
+         */
+        ALL
+    }
+    
+    private final QueryTypes queryType;
 }

@@ -2,6 +2,7 @@ package org.apereo.cas.pm.impl;
 
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.pm.BasePasswordManagementService;
+import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import java.io.Serializable;
@@ -21,7 +22,7 @@ public class NoOpPasswordManagementService extends BasePasswordManagementService
     }
 
     @Override
-    public Map<String, String> getSecurityQuestions(final String username) {
+    public Map<String, String> getSecurityQuestions(final PasswordManagementQuery query) {
         return null;
     }
 }

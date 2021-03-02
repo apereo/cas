@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.core.credentials.TokenCredentials;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -28,6 +29,12 @@ public class OAuth20AccessTokenAuthenticatorTests extends BaseOAuth20Authenticat
         authenticator = new OAuth20AccessTokenAuthenticator(ticketRegistry, accessTokenJwtBuilder);
     }
 
+    @BeforeEach
+    public void initialize() {
+        super.initialize();
+        ticketRegistry.deleteAll();
+    }
+
     @Test
     public void verifyAuthenticationWithJwtAccessToken() {
         val accessToken = getAccessToken();
@@ -44,8 +51,25 @@ public class OAuth20AccessTokenAuthenticatorTests extends BaseOAuth20Authenticat
         val credentials = new TokenCredentials(encoder.encode());
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        authenticator.validate(credentials, ctx);
+        authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE);
         assertNotNull(credentials.getUserProfile());
+    }
+
+    @Test
+    public void verifyAuthenticationFailsWithNoToken() {
+        val accessToken = getAccessToken();
+        val encoder = OAuth20JwtAccessTokenEncoder.builder()
+            .accessToken(accessToken)
+            .registeredService(serviceJwtAccessToken)
+            .service(accessToken.getService())
+            .accessTokenJwtBuilder(accessTokenJwtBuilder)
+            .casProperties(casProperties)
+            .build();
+        val credentials = new TokenCredentials(encoder.encode());
+        val request = new MockHttpServletRequest();
+        val ctx = new JEEContext(request, new MockHttpServletResponse());
+        authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE);
+        assertNull(credentials.getUserProfile());
     }
 
     @Test
@@ -64,7 +88,7 @@ public class OAuth20AccessTokenAuthenticatorTests extends BaseOAuth20Authenticat
         val credentials = new TokenCredentials(encoder.encode());
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        authenticator.validate(credentials, ctx);
+        authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE);
         assertNotNull(credentials.getUserProfile());
     }
 }

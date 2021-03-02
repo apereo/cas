@@ -1,0 +1,6 @@
+{
+  "dependencies": "gua",
+  "properties": [
+    "--cas.authn.gua.simple.casuser=file:${PWD}/ci/tests/puppeteer/scenarios/gua-login/image.png"
+  ]
+}

@@ -21,6 +21,7 @@ import org.apereo.cas.config.SyncopeAuthenticationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.MockWebServer;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -75,14 +76,15 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Authentication")
 public class SyncopeAuthenticationHandlerTests {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Autowired
     @Qualifier("syncopeAuthenticationHandler")
     private AuthenticationHandler syncopeAuthenticationHandler;
 
     @Test
-    @SuppressWarnings("JdkObsolete")
+    @SuppressWarnings("JavaUtilDate")
     public void verifyHandlerPasses() {
         val user = MAPPER.createObjectNode();
         user.put("username", "casuser");

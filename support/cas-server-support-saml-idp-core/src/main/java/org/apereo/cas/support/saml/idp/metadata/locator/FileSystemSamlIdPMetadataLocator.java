@@ -1,9 +1,11 @@
 package org.apereo.cas.support.saml.idp.metadata.locator;
 
+import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import com.github.benmanes.caffeine.cache.Cache;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -27,21 +29,13 @@ import java.util.Optional;
 public class FileSystemSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocator {
     private final File metadataLocation;
 
-    public FileSystemSamlIdPMetadataLocator(final Resource resource) throws Exception {
-        this(resource.getFile());
+    public FileSystemSamlIdPMetadataLocator(final Resource resource, final Cache<String, SamlIdPMetadataDocument> metadataCache) throws Exception {
+        this(resource.getFile(), metadataCache);
     }
 
-    public FileSystemSamlIdPMetadataLocator(final File resource) {
-        super(CipherExecutor.noOpOfStringToString());
+    public FileSystemSamlIdPMetadataLocator(final File resource, final Cache<String, SamlIdPMetadataDocument> metadataCache) {
+        super(CipherExecutor.noOpOfStringToString(), metadataCache);
         this.metadataLocation = resource;
-    }
-
-    private static String getAppliesToFor(final Optional<SamlRegisteredService> result) {
-        if (result.isPresent()) {
-            val registeredService = result.get();
-            return registeredService.getName() + '-' + registeredService.getId();
-        }
-        return "CAS";
     }
 
     @Override
@@ -83,7 +77,7 @@ public class FileSystemSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLoc
         doc.setEncryptionKey(IOUtils.toString(resolveEncryptionKey(registeredService).getInputStream(), StandardCharsets.UTF_8));
         doc.setSigningCertificate(IOUtils.toString(resolveSigningCertificate(registeredService).getInputStream(), StandardCharsets.UTF_8));
         doc.setSigningKey(IOUtils.toString(resolveSigningKey(registeredService).getInputStream(), StandardCharsets.UTF_8));
-        doc.setAppliesTo(getAppliesToFor(registeredService));
+        doc.setAppliesTo(SamlIdPMetadataGenerator.getAppliesToFor(registeredService));
         return doc;
     }
 
@@ -111,7 +105,7 @@ public class FileSystemSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLoc
      */
     protected Resource getMetadataArtifact(final Optional<SamlRegisteredService> result, final String artifactName) {
         if (result.isPresent()) {
-            val serviceDirectory = new File(this.metadataLocation, getAppliesToFor(result));
+            val serviceDirectory = new File(this.metadataLocation, SamlIdPMetadataGenerator.getAppliesToFor(result));
             LOGGER.trace("Metadata directory location for [{}] is [{}]", result.get().getName(), serviceDirectory);
             if (serviceDirectory.exists()) {
                 val artifact = new File(serviceDirectory, artifactName);

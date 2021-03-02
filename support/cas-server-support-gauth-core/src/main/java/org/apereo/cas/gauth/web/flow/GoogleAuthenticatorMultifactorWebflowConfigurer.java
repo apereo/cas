@@ -47,7 +47,8 @@ public class GoogleAuthenticatorMultifactorWebflowConfigurer extends AbstractCas
             createFlowVariable(flow, CasWebflowConstants.VAR_ID_CREDENTIAL, GoogleAuthenticatorTokenCredential.class);
 
             flow.getStartActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_INITIAL_FLOW_SETUP));
-
+            createEndState(flow, CasWebflowConstants.STATE_ID_SUCCESS);
+            
             val initLoginFormState = createActionState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM,
                 createEvaluateAction("prepareGoogleAuthenticatorLoginAction"),
                 createEvaluateAction(CasWebflowConstants.ACTION_ID_INIT_LOGIN_ACTION));
@@ -67,7 +68,7 @@ public class GoogleAuthenticatorMultifactorWebflowConfigurer extends AbstractCas
 
             val realSubmitState = createActionState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT,
                 createEvaluateAction("validateSelectedRegistrationAction"),
-                createEvaluateAction("oneTimeTokenAuthenticationWebflowAction"));
+                createEvaluateAction(CasWebflowConstants.ACTION_ID_OTP_AUTHENTICATION_ACTION));
             createTransitionForState(realSubmitState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_SUCCESS);
             createTransitionForState(realSubmitState, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
 

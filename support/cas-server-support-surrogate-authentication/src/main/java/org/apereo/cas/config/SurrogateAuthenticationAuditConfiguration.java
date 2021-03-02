@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditTrailConstants;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.audit.AuditableExecution;
@@ -23,7 +25,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("surrogateAuthenticationAuditConfiguration")
 public class SurrogateAuthenticationAuditConfiguration {
-
+    
     @Bean
     @ConditionalOnMissingBean(name = "surrogateEligibilityAuditableExecution")
     public AuditableExecution surrogateEligibilityAuditableExecution() {
@@ -47,12 +49,12 @@ public class SurrogateAuthenticationAuditConfiguration {
     public AuditTrailRecordResolutionPlanConfigurer surrogateAuditTrailRecordResolutionPlanConfigurer() {
         return plan -> {
             val actionResolver = new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_TRIGGERED, StringUtils.EMPTY);
-            plan.registerAuditActionResolver("SURROGATE_AUTHENTICATION_ELIGIBILITY_VERIFICATION_ACTION_RESOLVER", actionResolver);
-            plan.registerAuditActionResolver("SURROGATE_AUTHENTICATION_ELIGIBILITY_SELECTION_ACTION_RESOLVER", actionResolver);
+            plan.registerAuditActionResolver(AuditActionResolvers.SURROGATE_AUTHENTICATION_ELIGIBILITY_VERIFICATION_ACTION_RESOLVER, actionResolver);
+            plan.registerAuditActionResolver(AuditActionResolvers.SURROGATE_AUTHENTICATION_ELIGIBILITY_SELECTION_ACTION_RESOLVER, actionResolver);
 
-            plan.registerAuditResourceResolver("SURROGATE_AUTHENTICATION_ELIGIBILITY_VERIFICATION_RESOURCE_RESOLVER",
+            plan.registerAuditResourceResolver(AuditResourceResolvers.SURROGATE_AUTHENTICATION_ELIGIBILITY_VERIFICATION_RESOURCE_RESOLVER,
                 surrogateEligibilityVerificationAuditResourceResolver());
-            plan.registerAuditResourceResolver("SURROGATE_AUTHENTICATION_ELIGIBILITY_SELECTION_RESOURCE_RESOLVER",
+            plan.registerAuditResourceResolver(AuditResourceResolvers.SURROGATE_AUTHENTICATION_ELIGIBILITY_SELECTION_RESOURCE_RESOLVER,
                 surrogateEligibilitySelectionAuditResourceResolver());
         };
     }

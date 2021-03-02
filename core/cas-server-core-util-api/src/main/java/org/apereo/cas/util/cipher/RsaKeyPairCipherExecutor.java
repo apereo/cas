@@ -23,9 +23,11 @@ import java.security.PublicKey;
 @NoArgsConstructor(force = true)
 public class RsaKeyPairCipherExecutor extends BaseStringCipherExecutor {
     private final PrivateKey privateKeySigning;
+
     private final PublicKey publicKeySigning;
 
     private final PrivateKey privateKeyEncryption;
+
     private final PublicKey publicKeyEncryption;
 
     public RsaKeyPairCipherExecutor(final KeyPair signing, final KeyPair encryption) {
@@ -37,7 +39,7 @@ public class RsaKeyPairCipherExecutor extends BaseStringCipherExecutor {
     }
 
     public RsaKeyPairCipherExecutor(final String privateKeySigning, final String publicKeySigning,
-                                    final String privateKeyEncryption, final String publicKeyEncryption) {
+        final String privateKeyEncryption, final String publicKeyEncryption) {
         this.privateKeySigning = extractPrivateKeyFromResource(privateKeySigning);
         this.publicKeySigning = extractPublicKeyFromResource(publicKeySigning);
 

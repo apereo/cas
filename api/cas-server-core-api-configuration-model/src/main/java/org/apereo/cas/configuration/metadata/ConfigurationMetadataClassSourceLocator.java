@@ -10,6 +10,7 @@ import org.reflections.util.ConfigurationBuilder;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -60,11 +61,11 @@ public class ConfigurationMetadataClassSourceLocator {
             return cachedPropertiesClasses.get(type.getNameAsString());
         }
 
-        val packageName = ConfigurationMetadataGenerator.class.getPackage().getName();
+        val urls = new ArrayList<>(ClasspathHelper.forPackage("org.apereo.cas"));
         val reflections =
             new Reflections(new ConfigurationBuilder()
                 .filterInputsBy(s -> s != null && s.contains(type.getNameAsString()))
-                .setUrls(ClasspathHelper.forPackage(packageName))
+                .setUrls(urls)
                 .setScanners(new TypeElementsScanner()
                         .includeFields(false)
                         .includeMethods(false)

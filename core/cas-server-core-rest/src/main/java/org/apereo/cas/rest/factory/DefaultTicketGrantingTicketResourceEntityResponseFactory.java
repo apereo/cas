@@ -1,5 +1,8 @@
 package org.apereo.cas.rest.factory;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import lombok.extern.slf4j.Slf4j;
@@ -54,9 +57,9 @@ public class DefaultTicketGrantingTicketResourceEntityResponseFactory implements
     }
 
     @Audit(
-        action = "REST_API_TICKET_GRANTING_TICKET",
-        actionResolverName = "REST_API_TICKET_GRANTING_TICKET_ACTION_RESOLVER",
-        resourceResolverName = "REST_API_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER")
+        action = AuditableActions.REST_API_TICKET_GRANTING_TICKET,
+        actionResolverName = AuditActionResolvers.REST_API_TICKET_GRANTING_TICKET_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.REST_API_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER)
     @Override
     @SuppressWarnings("JdkObsolete")
     public ResponseEntity<String> build(final TicketGrantingTicket ticketGrantingTicket, final HttpServletRequest request) throws Exception {
@@ -64,7 +67,7 @@ public class DefaultTicketGrantingTicketResourceEntityResponseFactory implements
         val headers = new HttpHeaders();
         headers.setLocation(ticketReference);
         val response = getResponse(ticketGrantingTicket, request, ticketReference, headers);
-        val entity = new ResponseEntity<String>(response, headers, HttpStatus.CREATED);
+        val entity = new ResponseEntity<>(response, headers, HttpStatus.CREATED);
         LOGGER.debug("Created response entity [{}]", entity);
         return entity;
     }

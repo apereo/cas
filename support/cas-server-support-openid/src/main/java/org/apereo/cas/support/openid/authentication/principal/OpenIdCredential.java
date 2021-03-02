@@ -25,6 +25,7 @@ public class OpenIdCredential implements Credential {
     private static final long serialVersionUID = -6535869729412406133L;
 
     private String ticketGrantingTicketId;
+
     private String username;
 
     @Override

@@ -9,6 +9,7 @@ import com.google.maps.model.LatLng;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -36,18 +37,23 @@ public class GoogleMapsGeoLocationServiceTests {
     private GeoLocationService geoLocationService;
 
     @Test
-    public void verifyOperation() throws Exception {
+    public void verifyOperation() {
         assertNotNull(geoLocationService);
         assertNull(geoLocationService.locate(null, 12.123));
         val resp = geoLocationService.locate(40.689060, -74.044636);
         assertEquals(40.689060, resp.getLatitude());
         assertEquals(-74.044636, resp.getLongitude());
         assertTrue(resp.getAddresses().isEmpty());
-        assertNotNull(geoLocationService.locate(InetAddress.getByName("www.github.com")));
+        assertDoesNotThrow(new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                geoLocationService.locate(InetAddress.getByName("www.github.com"));
+            }
+        });
     }
 
     @Test
-    public void verifyGeocode() throws Exception {
+    public void verifyGeocode() {
         val service = new GoogleMapsGeoLocationService(mock(GeoApiContext.class)) {
             @Override
             protected GeocodingResult[] reverseGeocode(final LatLng latlng) {

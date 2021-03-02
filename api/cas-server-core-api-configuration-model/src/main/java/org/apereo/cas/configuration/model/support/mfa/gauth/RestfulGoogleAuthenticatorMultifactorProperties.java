@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.BaseRestEndpointProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -14,10 +15,11 @@ import lombok.experimental.Accessors;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiresModule(name = "cas-server-support-gauth-rest")
+@RequiresModule(name = "cas-server-support-gauth")
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("RestfulGoogleAuthenticatorMultifactorProperties")
 public class RestfulGoogleAuthenticatorMultifactorProperties extends BaseRestEndpointProperties {
     private static final long serialVersionUID = 4518622579150572559L;
 

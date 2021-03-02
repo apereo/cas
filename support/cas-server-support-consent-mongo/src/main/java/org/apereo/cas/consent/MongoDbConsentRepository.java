@@ -29,7 +29,8 @@ public class MongoDbConsentRepository implements ConsentRepository {
     public ConsentDecision findConsentDecision(final Service service,
                                                final RegisteredService registeredService,
                                                final Authentication authentication) {
-        val query = new Query(Criteria.where("service").is(service.getId()).and("principal").is(authentication.getPrincipal().getId()));
+        val query = new Query(Criteria.where("service").is(service.getId())
+            .and("principal").is(authentication.getPrincipal().getId()));
         return this.mongoTemplate.findOne(query, ConsentDecision.class, this.collectionName);
     }
 
@@ -52,6 +53,13 @@ public class MongoDbConsentRepository implements ConsentRepository {
     @Override
     public boolean deleteConsentDecision(final long decisionId, final String principal) {
         val query = new Query(Criteria.where("id").is(decisionId).and("principal").is(principal));
+        val result = this.mongoTemplate.remove(query, ConsentDecision.class, this.collectionName);
+        return result.getDeletedCount() > 0;
+    }
+
+    @Override
+    public boolean deleteConsentDecisions(final String principal) {
+        val query = new Query(Criteria.where("principal").is(principal));
         val result = this.mongoTemplate.remove(query, ConsentDecision.class, this.collectionName);
         return result.getDeletedCount() > 0;
     }

@@ -24,7 +24,7 @@ public class ClasspathResourceMetadataResolverTests extends BaseSamlIdPServicesT
     @Test
     public void verifyResolverSupports() throws Exception {
         val props = new SamlIdPProperties();
-        props.getMetadata().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
+        props.getMetadata().getFileSystem().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
         val resolver = new ClasspathResourceMetadataResolver(props, openSamlConfigBean);
         val service = new SamlRegisteredService();
         service.setMetadataLocation("http://www.testshib.org/metadata/testshib-providers.xml");
@@ -36,7 +36,7 @@ public class ClasspathResourceMetadataResolverTests extends BaseSamlIdPServicesT
     @Test
     public void verifyResolverResolves() throws Exception {
         val props = new SamlIdPProperties();
-        props.getMetadata().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
+        props.getMetadata().getFileSystem().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
         val resolver = new ClasspathResourceMetadataResolver(props, openSamlConfigBean);
         val service = new SamlRegisteredService();
         service.setName("TestShib");

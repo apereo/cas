@@ -2,10 +2,11 @@ package org.apereo.cas.web.security;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.monitor.ActuatorEndpointProperties;
-import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
+import org.apereo.cas.configuration.model.core.monitor.JaasSecurityActuatorEndpointsMonitorProperties;
+import org.apereo.cas.configuration.model.core.monitor.LdapSecurityActuatorEndpointsMonitorProperties;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.web.ProtocolEndpointConfigurer;
-import org.apereo.cas.web.security.authentication.MonitorEndpointLdapAuthenticationProvider;
+import org.apereo.cas.web.security.authentication.EndpointLdapAuthenticationProvider;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -54,12 +55,12 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
 
     private final PathMappedEndpoints pathMappedEndpoints;
 
-    private MonitorEndpointLdapAuthenticationProvider monitorEndpointLdapAuthenticationProvider;
+    private EndpointLdapAuthenticationProvider endpointLdapAuthenticationProvider;
 
     @Override
     public void destroy() {
-        if (monitorEndpointLdapAuthenticationProvider != null) {
-            monitorEndpointLdapAuthenticationProvider.destroy();
+        if (endpointLdapAuthenticationProvider != null) {
+            endpointLdapAuthenticationProvider.destroy();
         }
     }
 
@@ -227,12 +228,13 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
      * @param auth the auth
      * @param ldap the ldap
      */
-    protected void configureLdapAuthenticationProvider(final AuthenticationManagerBuilder auth, final MonitorProperties.Endpoints.LdapSecurity ldap) {
+    protected void configureLdapAuthenticationProvider(final AuthenticationManagerBuilder auth,
+        final LdapSecurityActuatorEndpointsMonitorProperties ldap) {
         if (isLdapAuthorizationActive()) {
             val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
             val authenticator = LdapUtils.newLdaptiveAuthenticator(ldap);
-            monitorEndpointLdapAuthenticationProvider = new MonitorEndpointLdapAuthenticationProvider(ldap, securityProperties, connectionFactory, authenticator);
-            auth.authenticationProvider(monitorEndpointLdapAuthenticationProvider);
+            endpointLdapAuthenticationProvider = new EndpointLdapAuthenticationProvider(ldap, securityProperties, connectionFactory, authenticator);
+            auth.authenticationProvider(endpointLdapAuthenticationProvider);
         } else {
             LOGGER.trace("LDAP authorization is undefined, given no LDAP url, base-dn, search filter or role/group filter is configured");
         }
@@ -246,7 +248,7 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
      * @throws Exception the exception
      */
     protected void configureJaasAuthenticationProvider(final AuthenticationManagerBuilder auth,
-                                                       final MonitorProperties.Endpoints.JaasSecurity jaas) throws Exception {
+                                                       final JaasSecurityActuatorEndpointsMonitorProperties jaas) throws Exception {
         val p = new JaasAuthenticationProvider();
         p.setLoginConfig(jaas.getLoginConfig());
         p.setLoginContextName(jaas.getLoginContextName());

@@ -6,8 +6,8 @@ import org.apereo.cas.configuration.model.core.authentication.GroovyAuthenticati
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.RestAuthenticationPolicyProperties;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -40,9 +40,8 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Utility")
 public class CoreAuthenticationUtilsTests {
-    private static final ObjectMapper MAPPER = new ObjectMapper()
-        .enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY)
-        .findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
     public void verifyAttributeRepositories() {
@@ -99,11 +98,6 @@ public class CoreAuthenticationUtilsTests {
         props.getAll().setEnabled(true);
         val policy = CoreAuthenticationUtils.newAuthenticationPolicy(props);
         verifySerialization(policy);
-    }
-
-    @Test
-    public void verifyBadMerger() {
-        assertThrows(IllegalArgumentException.class, () -> CoreAuthenticationUtils.getAttributeMerger("bad"));
     }
 
     @Test
@@ -194,15 +188,18 @@ public class CoreAuthenticationUtilsTests {
 
     @Test
     public void verifyIpIntelligenceService() {
-        val properties = new AdaptiveAuthenticationProperties();
+        var properties = new AdaptiveAuthenticationProperties();
         assertNotNull(CoreAuthenticationUtils.newIpAddressIntelligenceService(properties));
 
+        properties = new AdaptiveAuthenticationProperties();
         properties.getIpIntel().getRest().setUrl("http://localhost:1234");
         assertNotNull(CoreAuthenticationUtils.newIpAddressIntelligenceService(properties));
 
+        properties = new AdaptiveAuthenticationProperties();
         properties.getIpIntel().getGroovy().setLocation(new ClassPathResource("GroovyIPService.groovy"));
         assertNotNull(CoreAuthenticationUtils.newIpAddressIntelligenceService(properties));
 
+        properties = new AdaptiveAuthenticationProperties();
         properties.getIpIntel().getBlackDot().setEmailAddress("cas@example.org");
         assertNotNull(CoreAuthenticationUtils.newIpAddressIntelligenceService(properties));
     }

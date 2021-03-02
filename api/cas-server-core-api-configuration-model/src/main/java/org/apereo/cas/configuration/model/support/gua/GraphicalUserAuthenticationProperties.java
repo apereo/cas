@@ -35,6 +35,8 @@ public class GraphicalUserAuthenticationProperties implements Serializable {
 
     /**
      * Locate GUA settings and images from a static image per user.
+     * This is treated as a {@link Map} where the key is the user id
+     * and the value should be the graphical resource.
      */
     private Map<String, String> simple = new LinkedHashMap<>();
 }

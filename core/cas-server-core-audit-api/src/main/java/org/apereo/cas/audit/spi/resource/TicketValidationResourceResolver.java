@@ -1,17 +1,14 @@
 package org.apereo.cas.audit.spi.resource;
 
 import org.apereo.cas.util.AopUtils;
-import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.validation.Assertion;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
+import lombok.Setter;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apereo.inspektr.audit.AuditTrailManager;
 import org.aspectj.lang.JoinPoint;
 
-import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
@@ -22,41 +19,31 @@ import java.util.LinkedHashMap;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Slf4j
+@Setter
 public class TicketValidationResourceResolver extends TicketAsFirstParameterResourceResolver {
-
-    private final ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
+    private AuditTrailManager.AuditFormats auditFormat = AuditTrailManager.AuditFormats.DEFAULT;
 
     @Override
     public String[] resolveFrom(final JoinPoint joinPoint, final Object object) {
-        val auditResourceResults = new ArrayList<String>(2);
+        val results = new LinkedHashMap<String, Object>();
 
         val args = AopUtils.unWrapJoinPoint(joinPoint).getArgs();
         if (args != null && args.length > 0) {
             val ticketId = args[0].toString();
-            auditResourceResults.add(ticketId);
+            results.put("ticket", ticketId);
         }
 
         if (object instanceof Assertion) {
             val assertion = Assertion.class.cast(object);
             val authn = assertion.getPrimaryAuthentication();
-
-            try (val writer = new StringWriter()) {
-                val objectWriter = mapper.writer();
-
-                val results = new LinkedHashMap<String, Object>();
-                results.put("principal", authn.getPrincipal().getId());
-
-                val attributes = new HashMap<String, Object>(authn.getAttributes());
-                attributes.putAll(authn.getPrincipal().getAttributes());
-                results.put("attributes", attributes);
-
-                objectWriter.writeValue(writer, results);
-                auditResourceResults.add(writer.toString());
-            } catch (final Exception e) {
-                LoggingUtils.error(LOGGER, e);
-            }
+            results.put("principal", authn.getPrincipal().getId());
+            val attributes = new HashMap<String, Object>(authn.getAttributes());
+            attributes.putAll(authn.getPrincipal().getAttributes());
+            results.put("attributes", attributes);
         }
-        return auditResourceResults.toArray(ArrayUtils.EMPTY_STRING_ARRAY);
+
+        return results.isEmpty()
+            ? ArrayUtils.EMPTY_STRING_ARRAY
+            : new String[]{auditFormat.serialize(results)};
     }
 }

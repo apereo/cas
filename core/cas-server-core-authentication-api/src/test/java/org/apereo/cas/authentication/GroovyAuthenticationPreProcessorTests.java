@@ -26,5 +26,6 @@ public class GroovyAuthenticationPreProcessorTests {
         when(transaction.getPrimaryCredential()).thenReturn(Optional.of(creds));
         assertTrue(g.process(transaction));
         assertTrue(g.supports(creds));
+        g.destroy();
     }
 }

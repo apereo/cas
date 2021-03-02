@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -21,7 +23,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DefaultRegisteredServiceAuthenticationPolicyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "ServiceAuthenticationPolicy.json");
 
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     private static void verify(final RegisteredServiceAuthenticationPolicyCriteria criteria) throws Exception {
         var svc = RegisteredServiceTestUtils.getRegisteredService("serviceidauth");

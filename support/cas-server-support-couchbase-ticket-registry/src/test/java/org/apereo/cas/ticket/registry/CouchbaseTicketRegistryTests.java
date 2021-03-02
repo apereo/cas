@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
     properties = {
         "cas.ticket.registry.couchbase.cluster-password=password",
         "cas.ticket.registry.couchbase.cluster-username=admin",
-        "cas.ticket.registry.couchbase.scanConsistency=REQUEST_PLUS",
+        "cas.ticket.registry.couchbase.scan-consistency=REQUEST_PLUS",
         "cas.ticket.registry.couchbase.bucket=testbucket"
     })
 @Getter

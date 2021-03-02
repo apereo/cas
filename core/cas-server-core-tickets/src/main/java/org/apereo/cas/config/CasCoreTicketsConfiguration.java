@@ -58,6 +58,7 @@ import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.jasig.cas.client.validation.Cas10TicketValidator;
 import org.jasig.cas.client.validation.Cas20ServiceTicketValidator;
 import org.jasig.cas.client.validation.Cas30ServiceTicketValidator;
+import org.jasig.cas.client.validation.json.Cas30JsonServiceTicketValidator;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -130,7 +131,8 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @ConditionalOnMissingBean(name = "casClientTicketValidator")
     @Bean
     public AbstractUrlBasedTicketValidator casClientTicketValidator() {
-        val prefix = StringUtils.defaultString(casProperties.getClient().getPrefix(), casProperties.getServer().getPrefix());
+        val prefix = StringUtils.defaultString(casProperties.getClient().getPrefix(),
+            casProperties.getServer().getPrefix());
         val validator = buildCasClientTicketValidator(prefix);
 
         val factory = new HttpURLConnectionFactory() {
@@ -173,7 +175,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @Bean
     @Lazy
     public ProxyTicketFactory defaultProxyTicketFactory() {
-        val onlyTrackMostRecentSession = casProperties.getTicket().getTgt().isOnlyTrackMostRecentSession();
+        val onlyTrackMostRecentSession = casProperties.getTicket().getTgt().getCore().isOnlyTrackMostRecentSession();
         return new DefaultProxyTicketFactory(proxyTicketExpirationPolicy(),
             uniqueIdGeneratorsMap.getObject(),
             protocolTicketCipherExecutor(),
@@ -193,7 +195,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @RefreshScope
     public UniqueTicketIdGenerator proxyGrantingTicketUniqueIdGenerator() {
         return new ProxyGrantingTicketIdGenerator(
-            casProperties.getTicket().getTgt().getMaxLength(),
+            casProperties.getTicket().getTgt().getCore().getMaxLength(),
             casProperties.getHost().getName());
     }
 
@@ -202,7 +204,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @RefreshScope
     public UniqueTicketIdGenerator ticketGrantingTicketUniqueIdGenerator() {
         return new TicketGrantingTicketIdGenerator(
-            casProperties.getTicket().getTgt().getMaxLength(),
+            casProperties.getTicket().getTgt().getCore().getMaxLength(),
             casProperties.getHost().getName());
     }
 
@@ -239,7 +241,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @Bean
     @RefreshScope
     public ServiceTicketFactory defaultServiceTicketFactory() {
-        val onlyTrackMostRecentSession = casProperties.getTicket().getTgt().isOnlyTrackMostRecentSession();
+        val onlyTrackMostRecentSession = casProperties.getTicket().getTgt().getCore().isOnlyTrackMostRecentSession();
         return new DefaultServiceTicketFactory(serviceTicketExpirationPolicy(),
             uniqueIdGeneratorsMap.getObject(),
             onlyTrackMostRecentSession,
@@ -309,7 +311,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
         val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(mem.getCrypto(), "in-memory");
 
         if (mem.isCache()) {
-            val logoutManager = applicationContext.getBean("logoutManager", LogoutManager.class);
+            val logoutManager = applicationContext.getBean(LogoutManager.DEFAULT_BEAN_NAME, LogoutManager.class);
             return new CachingTicketRegistry(cipher, logoutManager);
         }
         val storageMap = new ConcurrentHashMap<String, Ticket>(mem.getInitialCapacity(), mem.getLoadFactor(), mem.getConcurrency());
@@ -411,6 +413,9 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
         }
         if (validatorType == CasJavaClientProperties.ClientTicketValidatorTypes.CAS20) {
             return new Cas20ServiceTicketValidator(prefix);
+        }
+        if (validatorType == CasJavaClientProperties.ClientTicketValidatorTypes.JSON) {
+            return new Cas30JsonServiceTicketValidator(prefix);
         }
         return new Cas30ServiceTicketValidator(prefix);
     }

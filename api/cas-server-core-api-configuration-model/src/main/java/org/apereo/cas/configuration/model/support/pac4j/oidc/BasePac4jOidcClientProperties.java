@@ -1,9 +1,11 @@
 package org.apereo.cas.configuration.model.support.pac4j.oidc;
 
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jIdentifiableClientProperties;
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -21,6 +23,7 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("BasePac4jOidcClientProperties")
 public abstract class BasePac4jOidcClientProperties extends Pac4jIdentifiableClientProperties {
 
     private static final long serialVersionUID = 3359382317533639638L;
@@ -70,26 +73,29 @@ public abstract class BasePac4jOidcClientProperties extends Pac4jIdentifiableCli
 
     /**
      * The response mode specifies how the result of the authorization request is formatted.
-     * For backward compatibility the default value is empty, which means the default pac4j (empty) response mode is used. 
-     * Possible values includes "query", "fragment", "form_post", or "web_message" 
+     * For backward compatibility the default value is empty, which means the default pac4j (empty) response mode is used.
+     * Possible values includes "query", "fragment", "form_post", or "web_message"
      */
     private String responseMode;
 
     /**
      * The response type tells the authorization server which grant to execute.
      * For backward compatibility the default value is empty, which means the default pac4j ("code") response type is used.
-     * Possibles values includes "code", "token" or "id_token".     
+     * Possibles values includes "code", "token" or "id_token".
      */
     private String responseType;
 
     /**
      * Read timeout of the OIDC client.
      */
+    @DurationCapable
     private String connectTimeout = "PT5S";
+
     /**
      * Connect timeout of the OIDC client.
      */
-    private String readTimeout= "PT5S";
+    @DurationCapable
+    private String readTimeout = "PT5S";
 
     /**
      * Checks if sessions expire with token expiration.
@@ -99,6 +105,7 @@ public abstract class BasePac4jOidcClientProperties extends Pac4jIdentifiableCli
     /**
      * Default time period advance (in seconds) for considering an access token expired.
      */
+    @DurationCapable
     private String tokenExpirationAdvance;
 
 }

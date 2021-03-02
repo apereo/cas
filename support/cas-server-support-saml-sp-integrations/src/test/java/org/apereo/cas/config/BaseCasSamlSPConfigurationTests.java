@@ -30,8 +30,9 @@ import static org.junit.jupiter.api.Assertions.*;
     BaseSamlIdPConfigurationTests.SharedTestConfiguration.class,
     CasSamlServiceProvidersConfiguration.class
 }, properties = {
-    "cas.authn.saml-idp.entity-id=https://cas.example.org/idp",
-    "cas.authn.saml-idp.metadata.location=${#systemProperties['java.io.tmpdir']}/sp-idp-metadata"
+    "cas.authn.saml-idp.core.entity-id=https://cas.example.org/idp",
+    "cas.authn.saml-idp.metadata.core.require-valid-metadata=false",
+    "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/sp-idp-metadata"
 })
 @Slf4j
 @EnableConfigurationProperties(CasConfigurationProperties.class)

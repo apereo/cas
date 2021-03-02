@@ -1,0 +1,10 @@
+{
+  "dependencies": "yubikey",
+  "properties": [
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.authn.mfa.triggers.global.global-provider-id=mfa-yubikey",
+    "--cas.authn.mfa.yubikey.client-id=18420",
+    "--cas.authn.mfa.yubikey.secret-key=iBIehjui22aK8x82oe6qzGeb0As=",
+    "--cas.authn.mfa.yubikey.api-urls=https://unknown1234.com"
+  ]
+}

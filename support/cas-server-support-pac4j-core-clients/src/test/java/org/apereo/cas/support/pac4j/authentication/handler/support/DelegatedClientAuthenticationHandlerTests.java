@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.session.JEESessionStore;
+import org.pac4j.core.credentials.AnonymousCredentials;
 import org.pac4j.oauth.client.FacebookClient;
 import org.pac4j.oauth.credentials.OAuth20Credentials;
 import org.pac4j.oauth.profile.facebook.FacebookProfile;
@@ -38,10 +39,13 @@ import static org.mockito.Mockito.*;
 public class DelegatedClientAuthenticationHandlerTests {
 
     private static final String CALLBACK_URL = "http://localhost:8080/callback";
+
     private static final String ID = "123456789";
 
     private FacebookClient fbClient;
+
     private DelegatedClientAuthenticationHandler handler;
+
     private ClientCredential clientCredential;
 
     @BeforeEach
@@ -50,7 +54,7 @@ public class DelegatedClientAuthenticationHandlerTests {
         val clients = new Clients(CALLBACK_URL, fbClient);
         this.handler = new DelegatedClientAuthenticationHandler(StringUtils.EMPTY, 0,
             mock(ServicesManager.class), PrincipalFactoryUtils.newPrincipalFactory(), clients,
-            DelegatedClientUserProfileProvisioner.noOp(), new JEESessionStore());
+            DelegatedClientUserProfileProvisioner.noOp(), JEESessionStore.INSTANCE);
         this.handler.setTypedIdUsed(true);
 
         val credentials = new OAuth20Credentials(null);
@@ -64,10 +68,20 @@ public class DelegatedClientAuthenticationHandlerTests {
     public void verifyOk() throws GeneralSecurityException, PreventedException {
         val facebookProfile = new FacebookProfile();
         facebookProfile.setId(ID);
-        this.fbClient.setProfileCreator((oAuth20Credentials, webContext) -> Optional.of(facebookProfile));
+        this.fbClient.setProfileCreator((oAuth20Credentials, webContext, sessionStore) -> Optional.of(facebookProfile));
         val result = this.handler.authenticate(this.clientCredential);
         val principal = result.getPrincipal();
         assertEquals(FacebookProfile.class.getName() + '#' + ID, principal.getId());
+    }
+
+    @Test
+    public void verifyMissingClient() {
+        val facebookProfile = new FacebookProfile();
+        facebookProfile.setId(ID);
+        this.fbClient.setProfileCreator((oAuth20Credentials, webContext, sessionStore) -> Optional.of(facebookProfile));
+
+        val cc = new ClientCredential(new AnonymousCredentials(), "UnknownClient");
+        assertThrows(PreventedException.class, () -> this.handler.authenticate(cc));
     }
 
     @Test
@@ -76,7 +90,7 @@ public class DelegatedClientAuthenticationHandlerTests {
 
         val facebookProfile = new FacebookProfile();
         facebookProfile.setId(ID);
-        this.fbClient.setProfileCreator((oAuth20Credentials, webContext) -> Optional.of(facebookProfile));
+        this.fbClient.setProfileCreator((oAuth20Credentials, webContext, sessionStore) -> Optional.of(facebookProfile));
         val result = this.handler.authenticate(this.clientCredential);
         val principal = result.getPrincipal();
         assertEquals(ID, principal.getId());
@@ -85,7 +99,7 @@ public class DelegatedClientAuthenticationHandlerTests {
     @Test
     public void verifyNoProfile() {
         assertThrows(PreventedException.class, () -> {
-            this.fbClient.setProfileCreator((oAuth20Credentials, webContext) -> Optional.empty());
+            this.fbClient.setProfileCreator((oAuth20Credentials, webContext, sessionStore) -> Optional.empty());
             this.handler.authenticate(this.clientCredential);
         });
     }

@@ -2,6 +2,10 @@
 
 webAppServerType="$1"
 
+./gradlew :webapp:cas-server-webapp-eureka-server:build \
+  -DskipNestedConfigMetadataGen=true -x check -x javadoc \
+  --no-daemon --build-cache --configure-on-demand --parallel
+
 mv webapp/cas-server-webapp-eureka-server/build/libs/cas-server-webapp-eureka-server-*.war \
   webapp/cas-server-webapp-eureka-server/build/libs/caseurekaserver.war
 

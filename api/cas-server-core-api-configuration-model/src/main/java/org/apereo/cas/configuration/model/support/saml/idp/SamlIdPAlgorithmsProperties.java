@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.saml.idp;
 
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -20,6 +21,7 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("SamlIdPAlgorithmsProperties")
 public class SamlIdPAlgorithmsProperties implements Serializable {
 
     private static final long serialVersionUID = 6547093517788229284L;
@@ -68,4 +70,10 @@ public class SamlIdPAlgorithmsProperties implements Serializable {
      * The Override signature canonicalization algorithm.
      */
     private String overrideSignatureCanonicalizationAlgorithm;
+
+    /**
+     * Algorithm name to use when generating or locating private key
+     * for signing operations..
+     */
+    private String privateKeyAlgName = "RSA";
 }

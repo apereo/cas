@@ -4,9 +4,9 @@ import org.apereo.cas.support.saml.BaseRestfulSamlMetadataTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
 import org.apereo.cas.util.MockWebServer;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.AfterEach;
@@ -29,25 +29,23 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("RestfulApi")
 public class RestfulSamlRegisteredServiceMetadataResolverTests extends BaseRestfulSamlMetadataTests {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     private MockWebServer webServer;
 
     @BeforeEach
-    @SneakyThrows
-    public void initialize() {
+    public void initialize() throws Exception {
         val doc = new SamlMetadataDocument();
         doc.setId(1);
         doc.setName("SAML Document");
         doc.setSignature(null);
         doc.setValue(IOUtils.toString(new ClassPathResource("sp-metadata.xml").getInputStream(), StandardCharsets.UTF_8));
         val data = MAPPER.writeValueAsString(doc);
-
-        this.webServer = new MockWebServer(8078,
+        webServer = new MockWebServer(8078,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_XML_VALUE);
-
-        this.webServer.start();
+        webServer.start();
     }
 
     @AfterEach

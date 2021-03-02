@@ -81,6 +81,7 @@ public class X509AuthenticationWebflowConfiguration {
             applicationContext, casProperties);
     }
 
+    @ConditionalOnMissingBean(name = "x509Check")
     @Bean
     public Action x509Check() {
         val extractCertFromRequestHeader = casProperties.getAuthn().getX509().isExtractCert();
@@ -88,11 +89,11 @@ public class X509AuthenticationWebflowConfiguration {
             return new X509CertificateCredentialsRequestHeaderAction(initialAuthenticationAttemptWebflowEventResolver.getObject(),
                 serviceTicketRequestWebflowEventResolver.getObject(),
                 adaptiveAuthenticationPolicy.getObject(),
-                x509CertificateExtractor.getObject());
+                x509CertificateExtractor.getObject(), casProperties);
         }
         return new X509CertificateCredentialsNonInteractiveAction(initialAuthenticationAttemptWebflowEventResolver.getObject(),
             serviceTicketRequestWebflowEventResolver.getObject(),
-            adaptiveAuthenticationPolicy.getObject());
+            adaptiveAuthenticationPolicy.getObject(), casProperties);
     }
 
     @Bean

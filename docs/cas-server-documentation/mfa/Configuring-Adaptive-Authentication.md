@@ -4,6 +4,8 @@ title: CAS - Adaptive Authentication
 category: Multifactor Authentication
 ---
 
+{% include variables.html %}
+
 # Adaptive Authentication
 
 Adaptive authentication in CAS allows you to accept or reject authentication requests based on certain characteristics
@@ -11,14 +13,17 @@ of the client browser and/or device. When configured, you are provided with opti
 from certain locations submitted by certain browser agents. For instance, you may consider authentication requests submitted
 from `London, UK` to be considered suspicious, or you may want to block requests that are submitted from Internet Explorer, etc.
 
-Adaptive authentication can also be configured to trigger multifactor based on specific days and times. For example, you may wish to trigger multifactor on select days or if the current hour is after 11pm or before 6am. Each rule block may be assigned to an mfa provider where successful matching of rules allows for the multifactor trigger to execute.
+Adaptive authentication can also be configured to trigger multifactor based on specific 
+days and times. For example, you may wish to trigger multifactor on select days or 
+if the current hour is after 11pm or before 6am. Each rule block may be assigned 
+to an mfa provider where successful matching of rules allows for the multifactor trigger to execute.
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#adaptive-authentication).
+{% include casproperties.html properties="cas.authn.adaptive.policy" %}
 
 To enable adaptive authentication, you will need to allow CAS to geo-locate authentication requests.
-To learn more, please [see this guide](../installation/GeoTracking-Authentication-Requests.html)
+To learn more, please [see this guide](../authentication/GeoTracking-Authentication-Requests.html)
 
 ## IP Intelligence
 
@@ -33,13 +38,17 @@ Banned IP address can either be defined as patterns in the CAS settings, or they
 
 ### REST
 
-The client IP address is submitted to a REST endpoint as the header `clientIpAddress` under a `GET` request. The expected result status codes are the following:
+The client IP address is submitted to a REST endpoint as the 
+header `clientIpAddress` under a `GET` request. The expected result status codes are the following:
 
 | Code                  | Description
 |-----------------------|------------------------------------------------------------------------------------------------------------
 | `401`, `403`          | IP address is banned and the request will be rejected.
 | `200`, `202`          | IP address is allowed and the request may proceed.
 | All Others            | Response body is expected to contain a score between `1` and `0`, (`1=Banned` and `0=Allowed`), indicating IP address suspiciousness.
+
+{% include casproperties.html properties="cas.authn.adaptive.ip-intel.rest" %}
+
 
 ### Groovy
 
@@ -64,17 +73,23 @@ def run(Object[] args) {
 }
 ```
 
+{% include casproperties.html properties="cas.authn.adaptive.ip-intel.groovy" %}
+
 ### BlackDot IP Intel
 
 Please [see this link](https://getipintel.net/) for more info. A valid subscription is required for large query counts.
 
-<div class="alert alert-warning"><strong>Usage Warning!</strong><p>This is a free service, primarily useful for development, testing and demos. Production deployments 
+<div class="alert alert-warning"><strong>Usage Warning!</strong><p>This is a free service, 
+primarily useful for development, testing and demos. Production deployments 
 of this service require a subscription that can handle the expected query count and load.</p></div>
 
-Note that a valid email that is checked frequently must be used in the contact field or else the service might be disabled without notice. Furthermore, **DO NOT** exceed more 
+Note that a valid email that is checked frequently must be used in the contact 
+field or else the service might be disabled without notice. Furthermore, **DO NOT** exceed more 
 than 500 queries per day & 15 queries per minute. See [FAQ](https://getipintel.net/#FAQ) for further information.
+
+{% include casproperties.html properties="cas.authn.adaptive.ip-intel.black-dot" %}
 
 # Risk-based Authentication
 
 CAS is able to track and examine authentication requests for suspicious behavior.
-To learn more, please [see this guide](../installation/Configuring-RiskBased-Authentication.html).
+To learn more, please [see this guide](../authentication/Configuring-RiskBased-Authentication.html).

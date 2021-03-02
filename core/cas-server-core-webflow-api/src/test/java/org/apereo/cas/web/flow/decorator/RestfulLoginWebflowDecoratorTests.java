@@ -1,6 +1,6 @@
 package org.apereo.cas.web.flow.decorator;
 
-import org.apereo.cas.configuration.model.core.web.flow.WebflowLoginDecoratorProperties;
+import org.apereo.cas.configuration.model.core.web.flow.RestfulWebflowLoginDecoratorProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
 
@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
 public class RestfulLoginWebflowDecoratorTests {
     @Test
     public void verifyOperation() {
-        val props = new WebflowLoginDecoratorProperties.Rest();
+        val props = new RestfulWebflowLoginDecoratorProperties();
         props.setUrl("http://localhost:9465");
 
         val rest = new RestfulLoginWebflowDecorator(props);

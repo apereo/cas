@@ -85,7 +85,7 @@ public class MultifactorAuthenticationSetTrustActionTests extends AbstractMultif
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, mfaSetTrustAction.execute(context).getId());
         val authn = WebUtils.getAuthentication(context);
         assertTrue(authn.getAttributes().containsKey(
-            casProperties.getAuthn().getMfa().getTrusted().getAuthenticationContextAttribute()));
+            casProperties.getAuthn().getMfa().getTrusted().getCore().getAuthenticationContextAttribute()));
     }
 
     @Test
@@ -98,7 +98,7 @@ public class MultifactorAuthenticationSetTrustActionTests extends AbstractMultif
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, mfaSetTrustAction.execute(context).getId());
         val authn = WebUtils.getAuthentication(context);
         assertTrue(authn.getAttributes().containsKey(
-            casProperties.getAuthn().getMfa().getTrusted().getAuthenticationContextAttribute()));
+            casProperties.getAuthn().getMfa().getTrusted().getCore().getAuthenticationContextAttribute()));
     }
 
 
@@ -137,6 +137,6 @@ public class MultifactorAuthenticationSetTrustActionTests extends AbstractMultif
         assertTrue(record.isEmpty());
         val authn = WebUtils.getAuthentication(context);
         assertTrue(authn.getAttributes().containsKey(
-            casProperties.getAuthn().getMfa().getTrusted().getAuthenticationContextAttribute()));
+            casProperties.getAuthn().getMfa().getTrusted().getCore().getAuthenticationContextAttribute()));
     }
 }

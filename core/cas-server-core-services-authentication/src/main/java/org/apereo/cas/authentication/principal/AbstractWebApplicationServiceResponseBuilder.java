@@ -47,6 +47,12 @@ public abstract class AbstractWebApplicationServiceResponseBuilder implements Re
         return DefaultResponse.getRedirectResponse(determineServiceResponseUrl(service), parameters);
     }
 
+    /**
+     * Determine service response url and provide url.
+     *
+     * @param service the service
+     * @return the string
+     */
     protected String determineServiceResponseUrl(final WebApplicationService service) {
         val registeredService = this.servicesManager.findServiceBy(service);
         if (registeredService != null && StringUtils.isNotBlank(registeredService.getRedirectUrl())) {

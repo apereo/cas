@@ -28,11 +28,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
+ * Base ticket registry class that implements common ticket-related ops.
+ * 
  * @author Scott Battaglia
  * @since 3.0.0
- * <p>
- * This is a published and supported CAS Server API.
- * </p>
  */
 @Slf4j
 @Setter
@@ -147,7 +146,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     public abstract boolean deleteSingleTicket(String ticketId);
 
     private void deleteLinkedProxyGrantingTickets(final AtomicInteger count, final TicketGrantingTicket tgt) {
-        val pgts = new LinkedHashSet<String>(tgt.getProxyGrantingTickets().keySet());
+        val pgts = new LinkedHashSet<>(tgt.getProxyGrantingTickets().keySet());
         val hasPgts = !pgts.isEmpty();
         count.getAndAdd(deleteTickets(pgts));
         if (hasPgts) {

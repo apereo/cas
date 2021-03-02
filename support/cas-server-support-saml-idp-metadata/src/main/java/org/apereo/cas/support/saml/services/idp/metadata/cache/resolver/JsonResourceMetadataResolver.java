@@ -8,6 +8,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.io.FileWatcherService;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -43,7 +44,8 @@ import java.util.Map;
  */
 @Slf4j
 public class JsonResourceMetadataResolver extends BaseSamlRegisteredServiceMetadataResolver implements DisposableBean {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     private final String metadataTemplate;
 
@@ -60,7 +62,7 @@ public class JsonResourceMetadataResolver extends BaseSamlRegisteredServiceMetad
             val inputStream = new ClassPathResource("metadata/sp-metadata-template.xml").getInputStream();
             this.metadataTemplate = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
             val md = samlIdPProperties.getMetadata();
-            val location = SpringExpressionLanguageValueResolver.getInstance().resolve(md.getLocation());
+            val location = SpringExpressionLanguageValueResolver.getInstance().resolve(md.getFileSystem().getLocation());
             val metadataDir = ResourceUtils.getRawResourceFrom(location).getFile();
             this.jsonResource = new FileSystemResource(new File(metadataDir, "saml-sp-metadata.json"));
             if (this.jsonResource.exists()) {

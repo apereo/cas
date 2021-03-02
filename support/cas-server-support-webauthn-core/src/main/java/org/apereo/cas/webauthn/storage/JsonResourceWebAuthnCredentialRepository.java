@@ -2,6 +2,7 @@ package org.apereo.cas.webauthn.storage;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.webauthn.WebAuthnUtils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.yubico.data.CredentialRegistration;
@@ -11,12 +12,15 @@ import lombok.val;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 
+import java.time.Clock;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -44,8 +48,8 @@ public class JsonResourceWebAuthnCredentialRepository extends BaseWebAuthnCreden
     @Override
     public Collection<CredentialRegistration> getRegistrationsByUsername(final String username) {
         val storage = readFromJsonRepository();
-        return storage.containsKey(username)
-            ? storage.get(username)
+        return storage.containsKey(username.trim().toLowerCase())
+            ? storage.get(username.trim().toLowerCase())
             : new HashSet<>(0);
     }
 
@@ -58,7 +62,7 @@ public class JsonResourceWebAuthnCredentialRepository extends BaseWebAuthnCreden
         }
         if (location.getFile().length() > 0) {
             LOGGER.trace("Reading JSON repository file at [{}]", location.getFile());
-            return new ConcurrentHashMap<>(getObjectMapper().readValue(location.getFile(), new TypeReference<>() {
+            return new ConcurrentHashMap<>(WebAuthnUtils.getObjectMapper().readValue(location.getFile(), new TypeReference<>() {
             }));
         }
         return new ConcurrentHashMap<>(0);
@@ -71,9 +75,17 @@ public class JsonResourceWebAuthnCredentialRepository extends BaseWebAuthnCreden
 
     @Override
     @SneakyThrows
-    protected void update(final String username, final Collection<CredentialRegistration> records) {
+    protected void update(final String username, final Collection<CredentialRegistration> givenRecords) {
         val storage = readFromJsonRepository();
-        storage.put(username, new LinkedHashSet<>(records));
-        getObjectMapper().writerWithDefaultPrettyPrinter().writeValue(location.getFile(), storage);
+        val records = givenRecords.stream()
+            .map(record -> {
+                if (record.getRegistrationTime() == null) {
+                    return record.withRegistrationTime(Instant.now(Clock.systemUTC()));
+                }
+                return record;
+            })
+            .collect(Collectors.toList());
+        storage.put(username.trim().toLowerCase(), new LinkedHashSet<>(records));
+        WebAuthnUtils.getObjectMapper().writerWithDefaultPrettyPrinter().writeValue(location.getFile(), storage);
     }
 }

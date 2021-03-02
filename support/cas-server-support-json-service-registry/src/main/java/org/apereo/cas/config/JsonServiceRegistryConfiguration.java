@@ -66,7 +66,7 @@ public class JsonServiceRegistryConfiguration {
             registeredServiceReplicationStrategy.getObject(),
             resourceNamingStrategy.getObject(),
             serviceRegistryListeners.getObject());
-        if (registry.isWatcherEnabled()) {
+        if (registry.getJson().isWatcherEnabled()) {
             json.enableDefaultWatcherService();
         }
         return json;

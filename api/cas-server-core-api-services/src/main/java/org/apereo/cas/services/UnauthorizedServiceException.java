@@ -42,15 +42,13 @@ public class UnauthorizedServiceException extends RuntimeException {
         this(null, message);
     }
 
-    /**
-     * Constructs an UnauthorizedServiceException with a custom message and the
-     * root cause of this exception.
-     *
-     * @param message an explanatory message. Maybe null or blank.
-     * @param code    the error code mapped to the messaged bundle.
-     */
     public UnauthorizedServiceException(final String code, final String message) {
         super(message);
+        this.code = code;
+    }
+
+    public UnauthorizedServiceException(final Throwable cause, final String code, final String message) {
+        super(message, cause);
         this.code = code;
     }
 

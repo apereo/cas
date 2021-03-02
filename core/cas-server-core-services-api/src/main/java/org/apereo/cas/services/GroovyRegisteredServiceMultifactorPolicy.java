@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
 import org.apereo.cas.util.AsciiArtUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.scripting.ScriptingUtils;
@@ -54,7 +55,7 @@ public class GroovyRegisteredServiceMultifactorPolicy implements RegisteredServi
 
     @JsonIgnore
     @Override
-    public RegisteredServiceMultifactorPolicyFailureModes getFailureMode() {
+    public BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes getFailureMode() {
         buildGroovyMultifactorPolicyInstanceIfNeeded();
         return this.groovyPolicyInstance.getFailureMode();
     }

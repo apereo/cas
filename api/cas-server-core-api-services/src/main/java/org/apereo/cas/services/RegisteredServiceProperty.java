@@ -183,7 +183,52 @@ public interface RegisteredServiceProperty extends Serializable {
         /**
          * Whether CAS should inject xss protection headers into the response when this service is in process.
          */
-        HTTP_HEADER_ENABLE_XSS_PROTECTION("httpHeaderEnableXSSProtection", "true");
+        HTTP_HEADER_ENABLE_XSS_PROTECTION("httpHeaderEnableXSSProtection", "true"),
+        /**
+         * Whether CAS should allow credentials in CORS requests.
+         */
+        CORS_ALLOW_CREDENTIALS("corsAllowCredentials", "false"),
+        /**
+         * Define the max-age property for CORS requests.
+         */
+        CORS_MAX_AGE("corsMaxAge", StringUtils.EMPTY),
+        /**
+         * Define allowed origins for CORS requests. Cannot use * when credentials are allowed.
+         */
+        CORS_ALLOWED_ORIGINS("corsAllowedOrigins", StringUtils.EMPTY),
+        /**
+         * Define patterns of allowed origins for CORS requests. (e.g.
+         * 'https://*.example.com') Patterns can be used when credentials are allowed.
+         */
+        CORS_ALLOWED_ORIGIN_PATTERNS("corsAllowedOriginPatterns", StringUtils.EMPTY),
+        /**
+         * Define allowed methods for CORS requests.
+         */
+        CORS_ALLOWED_METHODS("corsAllowedMethods", StringUtils.EMPTY),
+        /**
+         * Define allowed headers for CORS requests.
+         */
+        CORS_ALLOWED_HEADERS("corsAllowedHeaders", StringUtils.EMPTY),
+        /**
+         * Define exposed headers in the response for CORS requests.
+         */
+        CORS_EXPOSED_HEADERS("corsExposedHeaders", StringUtils.EMPTY),
+        /**
+         * Define SCIM oauth token.
+         */
+        SCIM_OAUTH_TOKEN("scimOAuthToken", StringUtils.EMPTY),
+        /**
+         * Define SCIM username.
+         */
+        SCIM_USERNAME("scimUsername", StringUtils.EMPTY),
+        /**
+         * Define SCIM password.
+         */
+        SCIM_PASSWORD("scimPassword", StringUtils.EMPTY),
+        /**
+         * Define SCIM target.
+         */
+        SCIM_TARGET("scimTarget", StringUtils.EMPTY);
 
         private final String propertyName;
 
@@ -223,6 +268,25 @@ public interface RegisteredServiceProperty extends Serializable {
                 val prop = getPropertyValue(service);
                 if (prop != null) {
                     return clazz.cast(prop.getValue());
+                }
+            }
+            return null;
+        }
+
+        /**
+         * Gets property values.
+         *
+         * @param <T>     the type parameter
+         * @param service the service
+         * @param clazz   the clazz
+         * @return the property value
+         */
+        @JsonIgnore
+        public <T> T getPropertyValues(final RegisteredService service, final Class<T> clazz) {
+            if (isAssignedTo(service)) {
+                val prop = getPropertyValue(service);
+                if (prop != null) {
+                    return clazz.cast(prop.getValues());
                 }
             }
             return null;
@@ -316,7 +380,7 @@ public interface RegisteredServiceProperty extends Serializable {
          */
         @JsonIgnore
         public boolean isAssignedTo(final RegisteredService service, final Predicate<String> valueFilter) {
-            return service.getProperties().entrySet()
+            return service != null && service.getProperties().entrySet()
                 .stream()
                 .anyMatch(entry -> entry.getKey().equalsIgnoreCase(getPropertyName())
                     && StringUtils.isNotBlank(entry.getValue().getValue())

@@ -13,7 +13,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.JEEContext;
-import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.saml.client.SAML2Client;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -54,8 +53,6 @@ public class SamlIdentityProviderDiscoveryFeedController {
 
     private final ArgumentExtractor argumentExtractor;
 
-    private final SessionStore<JEEContext> sessionStore;
-
     @GetMapping(path = "/feed", produces = MediaType.APPLICATION_JSON_VALUE)
     public Collection<SamlIdentityProviderEntity> getDiscoveryFeed() {
         return parsers
@@ -65,6 +62,11 @@ public class SamlIdentityProviderDiscoveryFeedController {
             .collect(Collectors.toSet());
     }
 
+    /**
+     * Home.
+     *
+     * @return the model and view
+     */
     @GetMapping
     public ModelAndView home() {
         val model = new HashMap<String, Object>();
@@ -83,6 +85,14 @@ public class SamlIdentityProviderDiscoveryFeedController {
         return new ModelAndView("casSamlIdPDiscoveryView", model);
     }
 
+    /**
+     * Redirect.
+     *
+     * @param entityID            the entity id
+     * @param httpServletRequest  the http servlet request
+     * @param httpServletResponse the http servlet response
+     * @return the view
+     */
     @GetMapping(path = "redirect")
     public View redirect(@RequestParam("entityID") final String entityID,
                          final HttpServletRequest httpServletRequest,
@@ -99,7 +109,7 @@ public class SamlIdentityProviderDiscoveryFeedController {
             .findFirst()
             .orElseThrow();
 
-        val webContext = new JEEContext(httpServletRequest, httpServletResponse, this.sessionStore);
+        val webContext = new JEEContext(httpServletRequest, httpServletResponse);
         val service = this.argumentExtractor.extractService(httpServletRequest);
         if (delegatedAuthenticationAccessStrategyHelper.isDelegatedClientAuthorizedForService(samlClient, service)) {
             val provider = DelegatedClientIdentityProviderConfigurationFactory.builder()

@@ -4,6 +4,8 @@ title: CAS - Release Process
 category: Developer
 ---
 
+{% include variables.html %}
+
 # CAS Release Process
 
 This page documents the steps that a release engineer should take for cutting a CAS server release. 
@@ -104,15 +106,11 @@ You should also switch back to the main development branch (i.e. `master`) and f
 consistent and follow the same layout as previous releases.</p></div>
 
 - Mark the release tag as pre-release, when releasing RC versions of the project on GitHub. 
-- Send an announcement message to [@cas-announce, @cas-user and @cas-dev](/cas/Mailing-Lists.html) mailing lists, linking to the new release page.
 
-## Update Overlays
+## Update CAS Initializr
 
-Update the following overlay projects to point to the newly released CAS version. You may need to move the current `master` branch
-over to a maintenance branch for each of the below overlay projects, specially if/when dealing with major/minor releases
-and if the release process here had you create a new branch. 
-
-- [CAS WAR Overlay](https://github.com/apereo/cas-overlay-template)
+Make sure to update the [CAS Initializr](../installation/WAR-Overlay-Initializr.html) to allow for generation of projects
+based on the newly-released version.
 
 ## Update Documentation
 

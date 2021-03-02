@@ -31,13 +31,21 @@ if [ $retVal == 0 ]; then
     echo "Launching CAS web application ${webAppServerType} server..."
     casOutput="/tmp/cas.log"
     cmd="java -jar webapp/cas-server-webapp-${webAppServerType}/build/libs/cas.war \\
-      --server.ssl.key-store=${keystore} --cas.service-registry.init-from-json=true --logging.level.org.apereo.cas=info"
+      --server.ssl.key-store=${keystore} --cas.service-registry.core.init-from-json=true \\
+      --spring.profiles.active=none --logging.level.org.apereo.cas=info"
     exec $cmd > ${casOutput} 2>&1 &
     pid=$!
     echo "Launched CAS with pid ${pid}. Waiting for CAS server to come online..."
-    sleep 60
+    until curl -k -L --output /dev/null --silent --fail https://localhost:8443/cas/login; do
+        echo -n '.'
+        sleep 2
+    done
+    echo -e "\n\nReady!"
+
+    echo -e "***************************************************************************************"
     echo "CAS server output before tests have started:"
     cat ${casOutput}
+    echo -e "***************************************************************************************"
 
     sudo mkdir -p /etc/cas/config/loadtests/jmeter/
     sudo cp etc/loadtests/jmeter/cas-users.csv /etc/cas/config/loadtests/jmeter/
@@ -49,12 +57,14 @@ if [ $retVal == 0 ]; then
     echo Unzipped apache-jmeter-${jmeterVersion}.zip rc=$?
     chmod +x apache-jmeter-${jmeterVersion}/bin/jmeter
 
+    echo -e "***************************************************************************************"
     echo "Running JMeter tests..."
     apache-jmeter-${jmeterVersion}/bin/jmeter -n -t etc/loadtests/jmeter/CAS_CAS.jmx > results.log
-#    ~/Workspace/Portal/apache-jmeter/bin/jmeter -n -t etc/loadtests/jmeter/CAS_CAS.jmx > results.log
-    echo CAS server warnings and errors:
+    echo -e "***************************************************************************************"
+    echo "CAS server warnings and errors:"
     grep -E WARN\|ERROR\|FATAL ${casOutput}
-
+    echo -e "***************************************************************************************"
+    
     java ci/tests/perf/EvalJMeterTestResults.java ./results.log
 
     retVal=$?

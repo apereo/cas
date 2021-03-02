@@ -49,11 +49,15 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
 
     private static final long serialVersionUID = 6546995681334670659L;
 
+    @Setter
+    private Service proxiedBy;
+
     private final String id;
 
     private final Authentication authentication;
 
-    private final ZonedDateTime created;
+    @Setter
+    private ZonedDateTime created;
 
     private final Map<String, Service> services = new HashMap<>();
 
@@ -146,11 +150,6 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
     @Override
     public List<Authentication> getChainedAuthentications() {
         return new ArrayList<>(0);
-    }
-
-    @Override
-    public Service getProxiedBy() {
-        return null;
     }
 
     @Override

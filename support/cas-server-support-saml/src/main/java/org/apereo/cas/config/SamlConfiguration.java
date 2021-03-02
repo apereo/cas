@@ -87,7 +87,7 @@ public class SamlConfiguration {
     private ObjectProvider<ProxyHandler> proxy20Handler;
 
     @Autowired
-    @Qualifier("shibboleth.OpenSAMLConfig")
+    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
     private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
 
     @Autowired
@@ -186,7 +186,7 @@ public class SamlConfiguration {
             .argumentExtractor(argumentExtractor.getObject())
             .proxyHandler(proxy20Handler.getObject())
             .requestedContextValidator(requestedContextValidator.getObject())
-            .authnContextAttribute(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute())
+            .authnContextAttribute(casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute())
             .validationAuthorizers(validationAuthorizers.getObject())
             .renewEnabled(casProperties.getSso().isRenewAuthnEnabled())
             .validationViewFactory(serviceValidationViewFactory.getObject())

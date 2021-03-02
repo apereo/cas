@@ -66,6 +66,11 @@ public class GroovyShellScript implements ExecutableCompiledGroovyScript {
     }
 
     @Override
+    public <T> T execute(final String methodName, final Class<T> clazz, final Object... args) {
+        return execute(args, clazz);
+    }
+
+    @Override
     public void setBinding(final Map<String, Object> variables) {
         if (variables != null && !variables.isEmpty()) {
             val binding = this.groovyScript.getBinding();

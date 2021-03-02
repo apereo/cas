@@ -18,14 +18,14 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @RequiredArgsConstructor
 public class SessionStoreTicketGrantingTicketAction extends AbstractAction {
-    private final SessionStore<JEEContext> sessionStore;
+    private final SessionStore sessionStore;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         val ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(requestContext);
-        val webContext = new JEEContext(request, response, sessionStore);
+        val webContext = new JEEContext(request, response);
         sessionStore.set(webContext, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, ticketGrantingTicketId);
         return null;
     }

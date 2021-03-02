@@ -45,7 +45,8 @@ public class UmaRequestingPartyTokenJwksEndpointController extends BaseUmaEndpoi
         produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> getKeys(final HttpServletRequest request, final HttpServletResponse response) {
         try {
-            val jwks = getUmaConfigurationContext().getCasProperties().getAuthn().getUma().getRequestingPartyToken().getJwksFile();
+            val jwks = getUmaConfigurationContext().getCasProperties().getAuthn()
+                .getOauth().getUma().getRequestingPartyToken().getJwksFile().getLocation();
             if (ResourceUtils.doesResourceExist(jwks)) {
                 val jsonJwks = IOUtils.toString(jwks.getInputStream(), StandardCharsets.UTF_8);
                 val jsonWebKeySet = new JsonWebKeySet(jsonJwks);

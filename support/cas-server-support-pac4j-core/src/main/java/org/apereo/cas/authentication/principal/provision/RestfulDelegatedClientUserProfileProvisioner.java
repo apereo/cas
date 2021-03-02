@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.http.HttpResponse;
 import org.pac4j.core.client.BaseClient;
-import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.core.profile.UserProfile;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 
@@ -28,7 +28,7 @@ public class RestfulDelegatedClientUserProfileProvisioner extends BaseDelegatedC
     private final RestEndpointProperties restProperties;
 
     @Override
-    public void execute(final Principal principal, final CommonProfile profile, final BaseClient client) {
+    public void execute(final Principal principal, final UserProfile profile, final BaseClient client) {
         HttpResponse response = null;
         try {
             val headers = new HashMap<String, Object>();
@@ -37,12 +37,18 @@ public class RestfulDelegatedClientUserProfileProvisioner extends BaseDelegatedC
             headers.put("profileId", profile.getId());
             headers.put("profileTypedId", profile.getTypedId());
             headers.put("profileAttributes", profile.getAttributes());
-            headers.put("authenticationAttributes", profile.getAuthenticationAttributes());
             headers.put("clientName", client.getName());
-
-            response = HttpUtils.execute(restProperties.getUrl(), HttpMethod.GET.name(),
-                restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(), headers);
-
+            headers.putAll(restProperties.getHeaders());
+            
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(restProperties.getBasicAuthPassword())
+                .basicAuthUsername(restProperties.getBasicAuthUsername())
+                .method(HttpMethod.valueOf(restProperties.getMethod().toUpperCase().trim()))
+                .url(restProperties.getUrl())
+                .headers(headers)
+                .build();
+            
+            response = HttpUtils.execute(exec);
             if (response != null) {
                 val status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
                 if (status.is2xxSuccessful()) {

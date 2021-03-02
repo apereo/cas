@@ -4,6 +4,8 @@ title: CAS - Authy Authentication
 category: Multifactor Authentication
 ---
 
+{% include variables.html %}
+
 # Authy Authentication
 
 CAS provides support for Authy's [TOTP API](http://docs.authy.com/totp.html). This is done
@@ -13,17 +15,11 @@ Start by visiting the [Authy documentation](https://www.authy.com/developers/).
 
 Support is enabled by including the following module in the overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-authy</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-authy" %}
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#authy).
+{% include casproperties.html properties="cas.authn.mfa.authy" %}
 
 ## Registration
 

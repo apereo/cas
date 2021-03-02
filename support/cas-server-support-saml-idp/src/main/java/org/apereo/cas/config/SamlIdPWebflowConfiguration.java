@@ -15,7 +15,6 @@ import org.apereo.cas.web.flow.login.SessionStoreTicketGrantingTicketAction;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,14 +64,14 @@ public class SamlIdPWebflowConfiguration {
 
     @Autowired
     @Qualifier("samlIdPDistributedSessionStore")
-    private ObjectProvider<SessionStore<JEEContext>> samlIdPDistributedSessionStore;
+    private ObjectProvider<SessionStore> samlIdPDistributedSessionStore;
 
     @Autowired
-    @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
+    @Qualifier(SamlRegisteredServiceCachingMetadataResolver.DEFAULT_BEAN_NAME)
     private ObjectProvider<SamlRegisteredServiceCachingMetadataResolver> defaultSamlRegisteredServiceCachingMetadataResolver;
 
     @Autowired
-    @Qualifier("attributeDefinitionStore")
+    @Qualifier(AttributeDefinitionStore.BEAN_NAME)
     private ObjectProvider<AttributeDefinitionStore> attributeDefinitionStore;
 
     @ConditionalOnMissingBean(name = "samlIdPWebConfigurer")

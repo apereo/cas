@@ -19,7 +19,6 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
-
 import java.util.Set;
 
 /**
@@ -37,8 +36,8 @@ public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebf
 
 
     public RiskAwareAuthenticationWebflowEventResolver(final CasWebflowEventResolutionConfigurationContext context,
-                                                       final AuthenticationRiskEvaluator authenticationRiskEvaluator,
-                                                       final AuthenticationRiskMitigator authenticationRiskMitigator) {
+        final AuthenticationRiskEvaluator authenticationRiskEvaluator,
+        final AuthenticationRiskMitigator authenticationRiskMitigator) {
         super(context);
         this.authenticationRiskEvaluator = authenticationRiskEvaluator;
         this.authenticationRiskMitigator = authenticationRiskMitigator;
@@ -67,7 +66,7 @@ public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebf
      * @return the set
      */
     protected Set<Event> handlePossibleSuspiciousAttempt(final HttpServletRequest request, final Authentication authentication,
-                                                         final RegisteredService service) {
+        final RegisteredService service) {
 
         val applicationContext = getWebflowEventResolutionConfigurationContext().getApplicationContext();
         applicationContext
@@ -83,9 +82,7 @@ public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebf
                 .publishEvent(new CasRiskyAuthenticationDetectedEvent(this, authentication, service, score));
 
             LOGGER.debug("Calculated risk score [{}] for authentication request by [{}] is above the risk threshold [{}].",
-                score.getScore(),
-                authentication.getPrincipal(),
-                threshold);
+                score.getScore(), authentication.getPrincipal(), threshold);
 
             applicationContext
                 .publishEvent(new CasRiskBasedAuthenticationMitigationStartedEvent(this, authentication, service, score));

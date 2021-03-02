@@ -44,7 +44,7 @@ public class CasSamlArtifactMapTests extends BaseSamlIdPConfigurationTests {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
         samlIdPDistributedSessionStore.set(
-            new JEEContext(request, response, samlIdPDistributedSessionStore),
+            new JEEContext(request, response),
             WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, tgt);
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, response));
         samlArtifactMap.put("artifact", "relying-party", "issuer", getAuthnRequestFor("example"));

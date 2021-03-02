@@ -32,9 +32,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.8
  */
 @TestPropertySource(properties = {
+    "cas.acceptable-usage-policy.core.aup-attribute-name=aupAccepted",
+    "cas.acceptable-usage-policy.core.aup-policy-terms-attribute-name=cn",
     "cas.acceptable-usage-policy.jdbc.table-name=users_table",
-    "cas.acceptable-usage-policy.aup-attribute-name=aupAccepted",
-    "cas.acceptable-usage-policy.aup-policy-terms-attribute-name=cn",
     "cas.acceptable-usage-policy.jdbc.aup-column=aup",
     "cas.acceptable-usage-policy.jdbc.principal-id-column=mail",
     "cas.acceptable-usage-policy.jdbc.principal-id-attribute=email",

@@ -24,19 +24,18 @@
                                 <div class="banner banner-danger alert-dismissible mb-4"
                                     th:if="${flowRequestContext.messageContext.hasErrorMessages()}">
                                     <p th:each="message : ${flowRequestContext.messageContext.allMessages}"
-                                        th:utext="#{${message.text}}">
-                                        Message Text
+                                        th:utext="${message.text}">Message Text
                                     </p>
                                 </div>
-
+                                
                                 <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
                                 <input type="hidden" name="_eventId" value="findUsername" />
                                 <div class="d-flex">
-                                    <label for="username" class="mdc-text-field mdc-text-field--outlined">
+                                    <label for="email" class="mdc-text-field mdc-text-field--outlined">
                                         <input class="mdc-text-field__input"
                                                type="text"
-                                               name="username"
-                                               id="username"
+                                               name="email"
+                                               id="email"
                                                size="45"
                                                autocomplete="off" required />
 
@@ -51,6 +50,11 @@
 
                                 </div>
                             </section>
+
+                            <span class="mdc-card__actions p-4" th:if="${recaptchaForgotUsernameEnabled}">
+                                <div th:replace="fragments/recaptcha :: recaptchaToken" />
+                            </span>
+
                             <div class="mdc-card__actions p-4">
                                 <button
                                     class="mdc-button mdc-button--raised mdc-card__action mdc-card__action--button mr-2"

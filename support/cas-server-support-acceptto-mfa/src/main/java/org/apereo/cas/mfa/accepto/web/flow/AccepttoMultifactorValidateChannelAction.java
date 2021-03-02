@@ -27,7 +27,7 @@ import org.springframework.webflow.execution.RequestContext;
 @Slf4j
 @RequiredArgsConstructor
 public class AccepttoMultifactorValidateChannelAction extends AbstractAction {
-    private final SessionStore<JEEContext> sessionStore;
+    private final SessionStore sessionStore;
     private final AuthenticationSystemSupport authenticationSystemSupport;
 
     @Override
@@ -36,14 +36,14 @@ public class AccepttoMultifactorValidateChannelAction extends AbstractAction {
         try {
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-            val webContext = new JEEContext(request, response, this.sessionStore);
+            val webContext = new JEEContext(request, response);
 
-            val channel = AccepttoWebflowUtils.getChannel(webContext);
+            val channel = AccepttoWebflowUtils.getChannel(webContext, sessionStore);
             if (channel == null) {
                 LOGGER.debug("Unable to determine channel from session store; not a validation attempt");
                 return null;
             }
-            val authentication = AccepttoWebflowUtils.getAuthentication(webContext);
+            val authentication = AccepttoWebflowUtils.getAuthentication(webContext, sessionStore);
             if (authentication == null) {
                 LOGGER.debug("Unable to determine the original authentication attempt the session store");
                 throw new AuthenticationException("Unable to determine authentication from session store");
@@ -54,7 +54,7 @@ public class AccepttoMultifactorValidateChannelAction extends AbstractAction {
             val service = WebUtils.getService(requestContext);
 
             LOGGER.debug("Cleaning up session store to remove [{}]", credential);
-            AccepttoWebflowUtils.resetChannelAndAuthentication(webContext);
+            AccepttoWebflowUtils.resetChannelAndAuthentication(webContext, sessionStore);
             AccepttoWebflowUtils.setChannel(requestContext, null);
 
             LOGGER.debug("Attempting to authenticate channel [{}] with authentication [{}] and service [{}]",

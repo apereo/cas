@@ -82,7 +82,7 @@ public class TokenAuthenticationActionTests extends AbstractCentralAuthenticatio
 
     @Test
     public void verifyAction() throws Exception {
-        val g = new JwtGenerator<CommonProfile>();
+        val g = new JwtGenerator();
 
         g.setSignatureConfiguration(new SecretSignatureConfiguration(SIGNING_SECRET, JWSAlgorithm.HS256));
         g.setEncryptionConfiguration(new SecretEncryptionConfiguration(ENCRYPTION_SECRET, JWEAlgorithm.DIR, EncryptionMethod.A192CBC_HS384));

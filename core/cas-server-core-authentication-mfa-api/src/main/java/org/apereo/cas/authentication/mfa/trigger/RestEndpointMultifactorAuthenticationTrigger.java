@@ -11,13 +11,14 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
-import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -26,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
@@ -44,7 +46,8 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 public class RestEndpointMultifactorAuthenticationTrigger implements MultifactorAuthenticationTrigger {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     private final CasConfigurationProperties casProperties;
 
@@ -59,7 +62,7 @@ public class RestEndpointMultifactorAuthenticationTrigger implements Multifactor
                                                                    final RegisteredService registeredService,
                                                                    final HttpServletRequest httpServletRequest,
                                                                    final Service service) {
-        val restEndpoint = casProperties.getAuthn().getMfa().getRest();
+        val restEndpoint = casProperties.getAuthn().getMfa().getTriggers().getRest();
         if (service == null || authentication == null) {
             LOGGER.trace("No service or authentication is available to determine event for principal");
             return Optional.empty();
@@ -104,22 +107,30 @@ public class RestEndpointMultifactorAuthenticationTrigger implements Multifactor
      * @param resolvedService the resolved service
      * @return return the rest response, typically the mfa id.
      */
+    @SneakyThrows
     protected String callRestEndpointForMultifactor(final Principal principal, final Service resolvedService) {
         HttpResponse response = null;
         try {
-            val rest = casProperties.getAuthn().getMfa().getRest();
+            val rest = casProperties.getAuthn().getMfa().getTriggers().getRest();
             val entity = new RestEndpointEntity(principal.getId(), resolvedService.getId());
-            response = HttpUtils.execute(rest.getUrl(), rest.getMethod(),
-                rest.getBasicAuthUsername(), rest.getBasicAuthPassword(),
-                CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE),
-                MAPPER.writeValueAsString(entity));
+
+            val headers = CollectionUtils.<String, Object>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+            headers.putAll(rest.getHeaders());
+
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(rest.getBasicAuthPassword())
+                .basicAuthUsername(rest.getBasicAuthUsername())
+                .method(HttpMethod.valueOf(rest.getMethod().toUpperCase().trim()))
+                .url(rest.getUrl())
+                .headers(headers)
+                .entity(MAPPER.writeValueAsString(entity))
+                .build();
+            response = HttpUtils.execute(exec);
             val status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
             if (status.is2xxSuccessful()) {
                 val content = response.getEntity().getContent();
                 return IOUtils.toString(content, StandardCharsets.UTF_8);
             }
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }

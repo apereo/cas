@@ -18,7 +18,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("U2FRedisMultifactorProperties")
+@JsonFilter("WebAuthnRedisMultifactorProperties")
 public class WebAuthnRedisMultifactorProperties extends BaseRedisProperties {
     private static final long serialVersionUID = -2261683393319585262L;
 }

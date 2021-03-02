@@ -14,15 +14,15 @@ const assert = require('assert');
     await page.waitForNavigation();
 
     const tgc = (await page.cookies()).filter(value => value.name === "TGC")
-    assert(tgc != null);
+    assert(tgc.length !== 0);
     
     const title = await page.title();
     console.log(title)
-    assert(title == "CAS - Central Authentication Service")
+    assert(title === "CAS - Central Authentication Service")
 
     const header = await page.$eval('#content div h2', el => el.innerText)
     console.log(header)
-    assert(header == "Log In Successful")
+    assert(header === "Log In Successful")
 
     await browser.close();
 })();

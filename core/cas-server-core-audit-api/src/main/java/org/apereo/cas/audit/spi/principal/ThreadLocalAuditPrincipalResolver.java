@@ -26,13 +26,13 @@ public class ThreadLocalAuditPrincipalResolver implements PrincipalResolver {
     @Override
     public String resolveFrom(final JoinPoint auditTarget, final Object returnValue) {
         LOGGER.trace("Resolving principal at audit point [{}]", auditTarget);
-        return getCurrentPrincipal(returnValue, null);
+        return getCurrentPrincipal(auditTarget, returnValue, null);
     }
 
     @Override
     public String resolveFrom(final JoinPoint auditTarget, final Exception exception) {
         LOGGER.trace("Resolving principal at audit point [{}] with thrown exception [{}]", auditTarget, exception);
-        return getCurrentPrincipal(null, exception);
+        return getCurrentPrincipal(auditTarget, null, exception);
     }
 
     @Override
@@ -40,9 +40,9 @@ public class ThreadLocalAuditPrincipalResolver implements PrincipalResolver {
         return UNKNOWN_USER;
     }
 
-    private String getCurrentPrincipal(final Object returnValue, final Exception exception) {
+    private String getCurrentPrincipal(final JoinPoint auditTarget, final Object returnValue, final Exception exception) {
         val authn = AuthenticationCredentialsThreadLocalBinder.getCurrentAuthentication();
-        val principal = this.auditPrincipalIdProvider.getPrincipalIdFrom(authn, returnValue, exception);
+        val principal = this.auditPrincipalIdProvider.getPrincipalIdFrom(auditTarget, authn, returnValue, exception);
         val id = FunctionUtils.doIfNull(principal,
             AuthenticationCredentialsThreadLocalBinder::getCurrentCredentialIdsAsString,
             () -> principal)

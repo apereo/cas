@@ -30,7 +30,8 @@ import static org.springframework.webflow.execution.RequestContextHolder.setRequ
         "cas.google-recaptcha.verify-url=http://localhost:9294",
         "cas.google-recaptcha.site-key=6LauELajSYtaX8",
         "cas.google-recaptcha.secret=6L9LlZyI10_X4LV",
-        "cas.google-recaptcha.version=V3"
+        "cas.google-recaptcha.version=GOOGLE_RECAPTCHA_V3",
+        "cas.google-recaptcha.enabled=true"
     }
 )
 @Tag("WebflowActions")
@@ -49,5 +50,6 @@ public class InitializeCaptchaActionTests {
         setExternalContext(context.getExternalContext());
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, initializeCaptchaAction.execute(context).getId());
         assertNotNull(WebUtils.getRecaptchaSiteKey(context));
+        assertTrue(context.getFlowScope().contains("recaptchaLoginEnabled"));
     }
 }

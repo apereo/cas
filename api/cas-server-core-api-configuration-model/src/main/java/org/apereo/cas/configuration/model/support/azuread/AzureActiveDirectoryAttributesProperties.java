@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.azuread;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -15,10 +16,11 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiresModule(name = "cas-server-support-azuread-authentication", automated = true)
+@RequiresModule(name = "cas-server-support-azuread-authentication")
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("AzureActiveDirectoryAttributesProperties")
 public class AzureActiveDirectoryAttributesProperties implements Serializable {
 
     private static final long serialVersionUID = -12055975558426360L;

@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
+@FunctionalInterface
 public interface GitRepositoryRegisteredServiceLocator {
     /**
      * The File extensions.

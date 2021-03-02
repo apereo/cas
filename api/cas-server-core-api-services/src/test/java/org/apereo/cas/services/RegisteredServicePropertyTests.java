@@ -33,7 +33,7 @@ public class RegisteredServicePropertyTests {
         assertTrue(p1.getBooleanValue());
     }
 
-    @Getter
+    @Getter(onMethod = @__({@Override}))
     @RequiredArgsConstructor
     private static class DefaultRegisteredServiceProperty implements RegisteredServiceProperty {
         private static final long serialVersionUID = -4878764188998002053L;

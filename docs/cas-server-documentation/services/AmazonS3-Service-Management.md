@@ -4,24 +4,21 @@ title: CAS - Amazon S3 Service Registry
 category: Services
 ---
 
+{% include variables.html %}
+
 # Amazon S3 Service Registry
 
-Stores registered service data in a [Amazon S3](https://aws.amazon.com/s3/) buckets. Each service definition is managed inside its own separate bucket
-and the body of the service definition is managed as a JSON blob, similar to that of [JSON service registry](JSON-Service-Management.html).
+Stores registered service data in a [Amazon S3](https://aws.amazon.com/s3/) buckets. Each service 
+definition is managed inside its own separate bucket and the body of the service definition is managed 
+as a JSON blob, similar to that of [JSON service registry](JSON-Service-Management.html).
 
 Support is enabled by adding the following module into the overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-aws-s3-service-registry</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-aws-s3-service-registry" %}
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#amazon-s3-service-registry).
+{% include casproperties.html properties="cas.service-registry.amazon-s3" %}
 
 ## Troubleshooting
 

@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.credentials.TokenCredentials;
+import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.jwt.config.encryption.SecretEncryptionConfiguration;
 import org.pac4j.jwt.config.signature.SecretSignatureConfiguration;
@@ -44,9 +44,11 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticationHandler {
 
 
-    public TokenAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
-                                      final PrincipalNameTransformer principalNameTransformer) {
-        super(name, servicesManager, principalFactory, null, principalNameTransformer);
+    public TokenAuthenticationHandler(final String name, final ServicesManager servicesManager,
+                                      final PrincipalFactory principalFactory,
+                                      final PrincipalNameTransformer principalNameTransformer,
+                                      final SessionStore sessionStore) {
+        super(name, servicesManager, principalFactory, null, principalNameTransformer, sessionStore);
     }
 
     private static <T extends Algorithm> T findAlgorithmFamily(final Set<Algorithm> family,
@@ -75,7 +77,7 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
     }
 
     @Override
-    protected Authenticator<TokenCredentials> getAuthenticator(final Credential credential) {
+    protected Authenticator getAuthenticator(final Credential credential) {
         val tokenCredential = (TokenCredential) credential;
         LOGGER.debug("Locating token secret for service [{}]", tokenCredential.getService());
 

@@ -62,7 +62,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@SpringBootTest(classes = AbstractOpenSamlTests.SharedTestConfiguration.class)
+@SpringBootTest(classes = AbstractOpenSamlTests.SharedTestConfiguration.class,
+    properties = "spring.main.allow-bean-definition-overriding=true")
 public abstract class AbstractOpenSamlTests {
     protected static final String SAML_REQUEST = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
         + "<samlp:AuthnRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" "
@@ -75,7 +76,7 @@ public abstract class AbstractOpenSamlTests {
     protected ConfigurableApplicationContext applicationContext;
 
     @Autowired
-    @Qualifier("shibboleth.OpenSAMLConfig")
+    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
     protected OpenSamlConfigBean configBean;
 
     @Autowired

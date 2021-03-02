@@ -69,20 +69,19 @@ public class SamlIdPObjectEncrypter {
      * @param adaptor    the adaptor
      * @return the t
      */
-    @SneakyThrows
     public EncryptedAssertion encode(final Assertion samlObject,
         final SamlRegisteredService service,
         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
-        val encrypter = buildEncrypterForSamlObject(samlObject, service, adaptor);
-        if (encrypter != null) {
-            return encrypter.encrypt(samlObject);
+
+        try {
+            val encrypter = buildEncrypterForSamlObject(samlObject, service, adaptor);
+            if (encrypter != null) {
+                return encrypter.encrypt(samlObject);
+            }
+        } catch (final Exception e) {
+            handleEncryptionFailure(service, adaptor);
         }
-        val entityId = adaptor.getEntityId();
-        if (service.isEncryptionOptional()) {
-            LOGGER.debug("Skipping to encrypt assertion; No encrypter can be determined and encryption is optional for [{}]", entityId);
-            return null;
-        }
-        throw new SamlException("Unable to encrypt assertion for " + entityId);
+        return null;
     }
 
     /**
@@ -93,20 +92,19 @@ public class SamlIdPObjectEncrypter {
      * @param adaptor    the adaptor
      * @return the encrypted id
      */
-    @SneakyThrows
     public EncryptedID encode(final NameID samlObject,
         final SamlRegisteredService service,
         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
-        val encrypter = buildEncrypterForSamlObject(samlObject, service, adaptor);
-        if (encrypter != null) {
-            return encrypter.encrypt(samlObject);
+
+        try {
+            val encrypter = buildEncrypterForSamlObject(samlObject, service, adaptor);
+            if (encrypter != null) {
+                return encrypter.encrypt(samlObject);
+            }
+        } catch (final Exception e) {
+            handleEncryptionFailure(service, adaptor);
         }
-        val entityId = adaptor.getEntityId();
-        if (service.isEncryptionOptional()) {
-            LOGGER.debug("Skipping to encrypt Name ID; No encrypter can be determined and encryption is optional for [{}]", entityId);
-            return null;
-        }
-        throw new SamlException("Unable to encrypt Name ID for " + entityId);
+        return null;
     }
 
     /**
@@ -121,16 +119,16 @@ public class SamlIdPObjectEncrypter {
     public EncryptedAttribute encode(final Attribute samlObject,
         final SamlRegisteredService service,
         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
-        val encrypter = buildEncrypterForSamlObject(samlObject, service, adaptor);
-        if (encrypter != null) {
-            return encrypter.encrypt(samlObject);
+        
+        try {
+            val encrypter = buildEncrypterForSamlObject(samlObject, service, adaptor);
+            if (encrypter != null) {
+                return encrypter.encrypt(samlObject);
+            }
+        } catch (final Exception e) {
+            handleEncryptionFailure(service, adaptor);
         }
-        val entityId = adaptor.getEntityId();
-        if (service.isEncryptionOptional()) {
-            LOGGER.debug("Skipping to encrypt attribute; No encrypter can be determined and encryption is optional for [{}]", entityId);
-            return null;
-        }
-        throw new SamlException("Unable to encrypt attribute for " + entityId);
+        return null;
     }
 
     /**
@@ -215,10 +213,9 @@ public class SamlIdPObjectEncrypter {
             LOGGER.debug("No data encryption parameters could be determined");
             return null;
         } catch (final Exception e) {
-            throw new IllegalArgumentException(e);
+            throw new SamlException(e.getMessage(), e);
         }
     }
-
 
     /**
      * Gets key encryption parameters.
@@ -272,7 +269,7 @@ public class SamlIdPObjectEncrypter {
         mdCredentialResolver.setKeyInfoCredentialResolver(keyInfoResolver);
 
         val roleDescriptorResolver = SamlIdPUtils.getRoleDescriptorResolver(adaptor,
-            samlIdPProperties.getMetadata().isRequireValidMetadata());
+            samlIdPProperties.getMetadata().getCore().isRequireValidMetadata());
 
         mdCredentialResolver.setRoleDescriptorResolver(roleDescriptorResolver);
         mdCredentialResolver.initialize();
@@ -288,7 +285,11 @@ public class SamlIdPObjectEncrypter {
         val credential = mdCredentialResolver.resolveSingle(criteriaSet);
 
         if (credential == null || credential.getPublicKey() == null) {
-            throw new IllegalArgumentException("Unable to resolve the encryption [public] key for entity id " + peerEntityId);
+            if (service.isEncryptionOptional()) {
+                LOGGER.warn("Unable to resolve the encryption [public] key for entity id [{}]", peerEntityId);
+                return null;
+            }
+            throw new SamlException("Unable to resolve the encryption [public] key for entity id " + peerEntityId);
         }
 
         val encodedKey = EncodingUtils.encodeBase64(credential.getPublicKey().getEncoded());
@@ -366,5 +367,14 @@ public class SamlIdPObjectEncrypter {
             config.setWhitelistBlacklistPrecedence(precedence);
         }
         return config;
+    }
+
+    private static void handleEncryptionFailure(final SamlRegisteredService service,
+        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
+        val entityId = adaptor.getEntityId();
+        if (!service.isEncryptionOptional()) {
+            throw new SamlException("Unable to encrypt assertion for " + entityId);
+        }
+        LOGGER.debug("Skipping to encrypt; No encrypter can be determined and encryption is optional for [{}]", entityId);
     }
 }

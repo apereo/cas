@@ -3,10 +3,44 @@ layout: default
 title: CAS - SAML2 Attribute Release
 category: Attributes
 ---
+{% include variables.html %}
+
 
 # SAML2 Attribute Release
 
-Attribute filtering and release policies are defined per SAML service. See [this guide](../integration/Attribute-Release-Policies.html) for more info.
+Attribute filtering and release policies are defined per 
+SAML service. See [this guide](../integration/Attribute-Release-Policies.html) for more info.
+
+## Attribute Definitions
+
+Attribute definitions that specifically apply to the release of attributes as part of SAML response can be 
+defined using the `SamlIdPAttributeDefinition`. Defining an attribute with this definition does not
+prevent it from being released by other protocols.
+
+```json
+{
+  "@class": "java.util.TreeMap",
+  "eduPersonPrincipalName": {
+    "@class": "org.apereo.cas.support.saml.web.idp.profile.builders.attr.SamlIdPAttributeDefinition",
+    "key": "eduPersonPrincipalName",
+    "name": "eduPersonPrincipalName",
+    "urn": "urn:oid:1.3.6.1.4.1.5923.1.1.1.6",
+    "scoped": true,
+    "encrypted": false,
+    "attribute": "uid",
+    "friendlyName": "eduPersonPrincipalName"
+  }
+}
+```
+
+The following additional settings can be specified for a Saml IdP attribute definition:
+
+| Name                    | Description
+|-------------------------|--------------------------------------------------------------------------------------------------------
+| `friendlyName`          | (Optional) Friendly name of the attribute shared with the target application during attribute release.
+| `urn`                   | (Optional) Defined Universal Resource name for an attribute (i.e. `urn:oid:1.3.6.1.4.1.5923.1.1.1.6`).
+              
+To learn more about attribute definitions, please [see this guide](../integration/Attribute-Definitions.html).
 
 ## Attribute Value Types
 
@@ -66,8 +100,22 @@ Attribute name formats can be specified per relying party in the service registr
 }
 ```
 
+Name formats for an individual attribute can be mapped to a
+number of pre-defined formats, or a custom format of your own choosing.
+A given attribute that is to be encoded in the final SAML response
+may contain any of the following name formats:
+
+| Type                 | Description
+|----------------------|----------------------------------------------------------------------------
+| `basic`              | Map the attribute to `urn:oasis:names:tc:SAML:2.0:attrname-format:basic`.
+| `uri`                | Map the attribute to `urn:oasis:names:tc:SAML:2.0:attrname-format:uri`.
+| `unspecified`        | Map the attribute to `urn:oasis:names:tc:SAML:2.0:attrname-format:basic`.
+| `urn:my:own:format`  | Map the attribute to `urn:my:own:format`.
+
 You may also have the option to define attributes and their relevant name format globally
-via CAS properties. To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#saml-idp).
+via CAS properties. 
+
+{% include casproperties.html properties="cas.authn.saml-idp.core" %}
 
 ## Attribute Friendly Names
 
@@ -89,7 +137,6 @@ specially if the original attribute is *mapped* to a different name.
   }
 }
 ```
-
 
 ## InCommon Research and Scholarship
 
@@ -242,7 +289,8 @@ def Map<String, Object> run(final Object... args) {
 
 ## Pattern Matching Entity Ids
 
-In the event that an aggregate is defined containing multiple entity ids, the below attribute release policy may be used to release a collection of allowed attributes to entity ids grouped together by a regular expression pattern:
+In the event that an aggregate is defined containing multiple entity ids, the below attribute release 
+policy may be used to release a collection of allowed attributes to entity ids grouped together by a regular expression pattern:
 
 ```json
 {
@@ -284,9 +332,30 @@ This attribute release policy authorizes the release of defined attributes, prov
 
 The specification of `entityAttributeFormat` is optional.
 
-## Requested Attributes Filter
+## Metadata Requested Attributes Filter
 
 This attribute release policy authorizes the release of defined attributes, based on the accompanying metadata for the service provider having requested attributes as part of its `AttributeConsumingService` element.
+
+```json
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "entity-ids-allowed-via-regex",
+  "name": "SAML",
+  "id": 10,
+  "metadataLocation": "path/to/metadata.xml",
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.support.saml.services.MetadataRequestedAttributesAttributeReleasePolicy",
+    "useFriendlyName" : false
+  }
+}
+```
+
+The `useFriendlyName` allows the filter to compare the requested attribute's friendly name with the resolved attribute.
+
+## Authentication Request Requested Attributes Filter
+
+This attribute release policy authorizes the release of a subset of attributes requested as extensions of 
+the SAML2 authentication request. The intersection of requested attributes and those allowed by the attribute release policy explicitly is evaluated for the final attribute release phase:
 
 ```json
 {

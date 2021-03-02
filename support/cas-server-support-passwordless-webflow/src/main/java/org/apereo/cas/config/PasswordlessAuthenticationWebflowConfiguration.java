@@ -13,6 +13,7 @@ import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.web.flow.AcceptPasswordlessAuthenticationAction;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationProducer;
 import org.apereo.cas.web.flow.DetermineDelegatedAuthenticationAction;
 import org.apereo.cas.web.flow.DetermineMultifactorPasswordlessAuthenticationAction;
 import org.apereo.cas.web.flow.DisplayBeforePasswordlessAuthenticationAction;
@@ -37,11 +38,6 @@ import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.execution.RequestContext;
-
-import java.io.Serializable;
-import java.util.Set;
-import java.util.function.Function;
 
 /**
  * This is {@link PasswordlessAuthenticationWebflowConfiguration}.
@@ -106,8 +102,8 @@ public class PasswordlessAuthenticationWebflowConfiguration {
     private ObjectProvider<MultifactorAuthenticationTriggerSelectionStrategy> multifactorTriggerSelectionStrategy;
 
     @Autowired
-    @Qualifier("delegatedClientIdentityProviderConfigurationFunction")
-    private ObjectProvider<Function<RequestContext, Set<? extends Serializable>>> delegatedClientProviderFunction;
+    @Qualifier("delegatedClientIdentityProviderConfigurationProducer")
+    private ObjectProvider<DelegatedClientIdentityProviderConfigurationProducer> delegatedClientIdentityProviderConfigurationProducer;
 
     @Bean
     @ConditionalOnMissingBean(name = "verifyPasswordlessAccountAuthenticationAction")
@@ -131,9 +127,11 @@ public class PasswordlessAuthenticationWebflowConfiguration {
     @ConditionalOnMissingBean(name = "determineDelegatedAuthenticationAction")
     @RefreshScope
     public Action determineDelegatedAuthenticationAction() {
-        if (delegatedClientProviderFunction.getIfAvailable() != null) {
-            val selectorScriptResource = casProperties.getAuthn().getPasswordless().getDelegatedAuthenticationSelectorScript().getLocation();
-            return new DetermineDelegatedAuthenticationAction(casProperties, delegatedClientProviderFunction.getObject(),
+        if (delegatedClientIdentityProviderConfigurationProducer.getIfAvailable() != null) {
+            val selectorScriptResource = casProperties.getAuthn().getPasswordless()
+                .getCore().getDelegatedAuthenticationSelectorScript().getLocation();
+            return new DetermineDelegatedAuthenticationAction(casProperties,
+                delegatedClientIdentityProviderConfigurationProducer.getObject(),
                 new WatchableGroovyScriptResource(selectorScriptResource));
         }
         return requestContext -> new EventFactorySupport().success(this);

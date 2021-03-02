@@ -22,10 +22,11 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * Date/Time utility methods.
  * @author Timur Duehr timur.duehr@nccgroup.trust
  * @since 5.0.0
  */
-@SuppressWarnings("JdkObsolete")
+@SuppressWarnings("JavaUtilDate")
 @UtilityClass
 public class DateTimeUtils {
 
@@ -307,12 +308,12 @@ public class DateTimeUtils {
      * @return the zoned date time
      */
     public static ZonedDateTime convertToZonedDateTime(final String value) {
-        val dt = DateTimeUtils.zonedDateTimeOf(value);
+        val dt = zonedDateTimeOf(value);
         if (dt != null) {
             return dt;
         }
-        val lt = DateTimeUtils.localDateTimeOf(value);
-        return DateTimeUtils.zonedDateTimeOf(lt.atZone(ZoneOffset.UTC));
+        val lt = localDateTimeOf(value);
+        return zonedDateTimeOf(lt.atZone(ZoneOffset.UTC));
     }
 
     /**

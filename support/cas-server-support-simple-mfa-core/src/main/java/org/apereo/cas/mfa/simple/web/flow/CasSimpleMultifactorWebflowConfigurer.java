@@ -50,7 +50,8 @@ public class CasSimpleMultifactorWebflowConfigurer extends AbstractCasMultifacto
                 createEvaluateAction(CasWebflowConstants.ACTION_ID_INIT_LOGIN_ACTION));
             createTransitionForState(initLoginFormState, CasWebflowConstants.TRANSITION_ID_SUCCESS, "sendSimpleToken");
             setStartState(flow, initLoginFormState);
-
+            createEndState(flow, CasWebflowConstants.STATE_ID_SUCCESS);
+            createEndState(flow, CasWebflowConstants.STATE_ID_UNAVAILABLE);
 
             val sendSimpleToken = createActionState(flow, "sendSimpleToken",
                 createEvaluateAction("mfaSimpleMultifactorSendTokenAction"));
@@ -72,7 +73,7 @@ public class CasSimpleMultifactorWebflowConfigurer extends AbstractCasMultifacto
                 Map.of("bind", Boolean.FALSE, "validate", Boolean.FALSE));
 
             val realSubmitState = createActionState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT,
-                createEvaluateAction("oneTimeTokenAuthenticationWebflowAction"));
+                createEvaluateAction(CasWebflowConstants.ACTION_ID_OTP_AUTHENTICATION_ACTION));
             createTransitionForState(realSubmitState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_SUCCESS);
             createTransitionForState(realSubmitState, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
 

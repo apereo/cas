@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.CoreAttributesTestUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
@@ -17,6 +18,7 @@ import org.apereo.services.persondir.support.MergingPersonAttributeDaoImpl;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -82,6 +84,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
             CoreAttributesTestUtils.getRegisteredService());
         assertEquals(1, attr.size());
         assertTrue(attr.containsKey(NEW_ATTR_1_VALUE));
+        assertTrue(policy.determineRequestedAttributeDefinitions().containsAll(policy.getAllowedAttributes().keySet()));
     }
 
     @Test
@@ -105,6 +108,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         assertEquals(2, attr.size());
         assertTrue(attr.containsKey(ATTR_1));
         assertTrue(attr.containsKey(ATTR_2));
+        assertTrue(policy.determineRequestedAttributeDefinitions().containsAll(policy.getAllowedAttributes()));
     }
 
     @Test
@@ -193,9 +197,10 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         val registeredService = CoreAttributesTestUtils.getRegisteredService();
         when(registeredService.getUsernameAttributeProvider()).thenReturn(new RegisteredServiceUsernameAttributeProvider() {
             private static final long serialVersionUID = 771643288929352964L;
+
             @Override
             public String resolveUsername(final Principal principal, final Service service, final RegisteredService registeredService) {
-                    return principal.getId();
+                return principal.getId();
             }
         });
         val attr = policy.getAttributes(p, CoreAttributesTestUtils.getService(), registeredService);
@@ -226,7 +231,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         val dao = new MergingPersonAttributeDaoImpl();
         dao.setPersonAttributeDaos(List.of(stub));
 
-        ApplicationContextProvider.registerBeanIntoApplicationContext(this.applicationContext, dao, "attributeRepository");
+        ApplicationContextProvider.registerBeanIntoApplicationContext(this.applicationContext, dao, PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY);
 
         val repository = new CachingPrincipalAttributesRepository(TimeUnit.MILLISECONDS.name(), 100);
         repository.setAttributeRepositoryIds(Set.of(stub.getId()));
@@ -259,7 +264,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         val dao = new MergingPersonAttributeDaoImpl();
         dao.setPersonAttributeDaos(List.of(stub));
 
-        ApplicationContextProvider.registerBeanIntoApplicationContext(this.applicationContext, dao, "attributeRepository");
+        ApplicationContextProvider.registerBeanIntoApplicationContext(this.applicationContext, dao, PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY);
         val repository = new CachingPrincipalAttributesRepository(TimeUnit.MILLISECONDS.name(), 0);
         val p = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("uid",
             Collections.singletonMap("mail", List.of("final@example.com")));
@@ -290,11 +295,19 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         assertTrue(policy.isAuthorizedToReleaseAuthenticationAttributes());
         assertFalse(policy.isAuthorizedToReleaseCredentialPassword());
         assertFalse(policy.isAuthorizedToReleaseProxyGrantingTicket());
+        assertEquals(0, policy.getOrder());
 
         val p = PrincipalFactoryUtils.newPrincipalFactory()
             .createPrincipal("uid", Collections.singletonMap("mail", List.of("final@example.com")));
         val attrs = policy.getConsentableAttributes(p, CoreAttributesTestUtils.getService(), CoreAttributesTestUtils.getRegisteredService());
         assertEquals(p.getAttributes(), attrs);
+
+        assertDoesNotThrow(new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                policy.setAttributeFilter(null);
+            }
+        });
 
     }
 }

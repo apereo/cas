@@ -17,10 +17,8 @@ import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
-import org.pac4j.core.exception.http.HttpAction;
-import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.core.profile.UserProfile;
 
-import java.security.GeneralSecurityException;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -36,7 +34,6 @@ public class DelegatedClientAuthenticationHandler extends AbstractPac4jAuthentic
 
     private final Clients clients;
     private final DelegatedClientUserProfileProvisioner profileProvisioner;
-    private final SessionStore<JEEContext> sessionStore;
 
     public DelegatedClientAuthenticationHandler(final String name,
                                                 final Integer order,
@@ -44,11 +41,10 @@ public class DelegatedClientAuthenticationHandler extends AbstractPac4jAuthentic
                                                 final PrincipalFactory principalFactory,
                                                 final Clients clients,
                                                 final DelegatedClientUserProfileProvisioner profileProvisioner,
-                                                final SessionStore<JEEContext> sessionStore) {
-        super(name, servicesManager, principalFactory, order);
+                                                final SessionStore sessionStore) {
+        super(name, servicesManager, principalFactory, order, sessionStore);
         this.clients = clients;
         this.profileProvisioner = profileProvisioner;
-        this.sessionStore = sessionStore;
     }
 
     @Override
@@ -57,7 +53,7 @@ public class DelegatedClientAuthenticationHandler extends AbstractPac4jAuthentic
     }
 
     @Override
-    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws PreventedException {
         try {
             val clientCredentials = (ClientCredential) credential;
             LOGGER.debug("Located client credentials as [{}]", clientCredentials);
@@ -74,12 +70,12 @@ public class DelegatedClientAuthenticationHandler extends AbstractPac4jAuthentic
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext();
             val webContext = new JEEContext(Objects.requireNonNull(request),
-                Objects.requireNonNull(response), this.sessionStore);
+                Objects.requireNonNull(response));
 
             var userProfileResult = Optional.ofNullable(clientCredentials.getUserProfile());
             if (userProfileResult.isEmpty()) {
                 val credentials = clientCredentials.getCredentials();
-                userProfileResult = client.getUserProfile(credentials, webContext);
+                userProfileResult = client.getUserProfile(credentials, webContext, this.sessionStore);
             }
             if (userProfileResult.isEmpty()) {
                 throw new PreventedException("Unable to fetch user profile from client " + client.getName());
@@ -88,14 +84,14 @@ public class DelegatedClientAuthenticationHandler extends AbstractPac4jAuthentic
             LOGGER.debug("Final user profile is: [{}]", userProfile);
             storeUserProfile(webContext, userProfile);
             return createResult(clientCredentials, userProfile, client);
-        } catch (final HttpAction e) {
+        } catch (final Exception e) {
             throw new PreventedException(e);
         }
     }
 
     @Override
     protected void preFinalizeAuthenticationHandlerResult(final ClientCredential credentials, final Principal principal,
-                                                          final CommonProfile profile, final BaseClient client) {
+                                                          final UserProfile profile, final BaseClient client) {
         profileProvisioner.execute(principal, profile, client);
     }
 }

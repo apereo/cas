@@ -9,8 +9,11 @@ test-output/
 bin/
 *.ignore
 *.ipr
+*.war
+**/gh-pages/
 *.iml
 *.iws
+**/ignite/work/marshaller/
 **/.history
 *.orig
 .idea/
@@ -53,3 +56,4 @@ webapp/resources/static/js/*-bundle.js
 **/dist/
 **/.sts4-cache/*
 ci/tests/puppeteer/overlay
+ci/tests/puppeteer/package*.json

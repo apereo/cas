@@ -47,7 +47,7 @@ public class CasWebflowConfigurerTests {
     @Test
     public void verifyNoAutoConfig() {
         val props = new CasConfigurationProperties();
-        props.getWebflow().setAutoconfigure(false);
+        props.getWebflow().getAutoConfiguration().setEnabled(false);
         val cfg = new AbstractCasWebflowConfigurer(mock(FlowBuilderServices.class),
             mock(FlowDefinitionRegistry.class), new StaticApplicationContext(), props) {
         };
@@ -161,7 +161,7 @@ public class CasWebflowConfigurerTests {
         when(flow.containsState("SubflowState")).thenReturn(Boolean.FALSE);
         val subState = cfg.createSubflowState(flow, "SubflowState", "SubflowState", mock(Action.class));
         assertNotNull(subState);
-        assertFalse(subState.getEntryActionList().size() == 0);
+        assertNotEquals(subState.getEntryActionList().size(), 0);
     }
 
     @Test

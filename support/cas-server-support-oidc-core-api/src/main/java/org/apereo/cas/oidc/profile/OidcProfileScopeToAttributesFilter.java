@@ -186,7 +186,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
         subTypes.forEach(Unchecked.consumer(t -> {
             if (ClassUtils.hasConstructor(t)) {
                 val ex = t.getDeclaredConstructor().newInstance();
-                if (oidc.getScopes().contains(ex.getScopeType())) {
+                if (oidc.getDiscovery().getScopes().contains(ex.getScopeType())) {
                     LOGGER.trace("Found standard OpenID Connect scope [{}] to filter attributes", ex.getScopeType());
                     this.attributeReleasePolicies.put(ex.getScopeType(), ex);
                 } else {

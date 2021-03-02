@@ -16,9 +16,10 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.context.WebContext;
-import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
+import org.pac4j.core.util.Pac4jConstants;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -34,12 +35,20 @@ import java.util.HashMap;
 @Slf4j
 @Setter
 public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
+    /**
+     * The session store.
+     */
+    protected final SessionStore sessionStore;
+
     private String principalAttributeId;
+
     private boolean isTypedIdUsed;
 
     protected AbstractPac4jAuthenticationHandler(final String name, final ServicesManager servicesManager,
-                                              final PrincipalFactory principalFactory, final Integer order) {
+                                                 final PrincipalFactory principalFactory, final Integer order,
+                                                 final SessionStore sessionStore) {
         super(name, servicesManager, principalFactory, order);
+        this.sessionStore = sessionStore;
     }
 
     /**
@@ -52,7 +61,7 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
      * @throws GeneralSecurityException On authentication failure.
      */
     protected AuthenticationHandlerExecutionResult createResult(final ClientCredential credentials,
-                                                                final CommonProfile profile,
+                                                                final UserProfile profile,
                                                                 final BaseClient client) throws GeneralSecurityException {
         if (profile == null) {
             throw new FailedLoginException("Authentication did not produce a user profile for: " + credentials);
@@ -81,7 +90,7 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
      */
     protected AuthenticationHandlerExecutionResult finalizeAuthenticationHandlerResult(final ClientCredential credentials,
                                                                                        final Principal principal,
-                                                                                       final CommonProfile profile,
+                                                                                       final UserProfile profile,
                                                                                        final BaseClient client) {
         preFinalizeAuthenticationHandlerResult(credentials, principal, profile, client);
         return createHandlerResult(credentials, principal, new ArrayList<>(0));
@@ -96,7 +105,7 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
      * @param client      the client
      */
     protected void preFinalizeAuthenticationHandlerResult(final ClientCredential credentials, final Principal principal,
-                                                          final CommonProfile profile, final BaseClient client) {
+                                                          final UserProfile profile, final BaseClient client) {
     }
 
     /**
@@ -106,7 +115,7 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
      * @param client  the client
      * @return the id
      */
-    protected String determinePrincipalIdFrom(final CommonProfile profile, final BaseClient client) {
+    protected String determinePrincipalIdFrom(final UserProfile profile, final BaseClient client) {
         var id = profile.getId();
         val properties = client != null ? client.getCustomProperties() : new HashMap<>(0);
         if (client != null && properties.containsKey(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_PRINCIPAL_ATTRIBUTE_ID)) {
@@ -149,7 +158,7 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
 
     private String typePrincipalId(final String id, final UserProfile profile) {
         return isTypedIdUsed
-            ? profile.getClass().getName() + CommonProfile.SEPARATOR + id
+            ? profile.getClass().getName() + Pac4jConstants.TYPED_ID_SEPARATOR + id
             : id;
     }
 
@@ -159,8 +168,8 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
      * @param webContext the web context
      * @param profile    the profile
      */
-    protected void storeUserProfile(final WebContext webContext, final CommonProfile profile) {
-        val manager = new ProfileManager<CommonProfile>(webContext, webContext.getSessionStore());
+    protected void storeUserProfile(final WebContext webContext, final UserProfile profile) {
+        val manager = new ProfileManager(webContext, this.sessionStore);
         manager.save(true, profile, false);
     }
 }

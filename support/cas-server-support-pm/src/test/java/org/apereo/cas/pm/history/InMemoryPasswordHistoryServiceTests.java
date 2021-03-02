@@ -28,8 +28,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreNotificationsConfiguration.class,
     CasCoreUtilConfiguration.class
 }, properties = {
-    "cas.authn.pm.enabled=true",
-    "cas.authn.pm.history.enabled=true"
+    "cas.authn.pm.core.enabled=true",
+    "cas.authn.pm.history.core.enabled=true"
 })
 @Tag("PasswordOps")
 public class InMemoryPasswordHistoryServiceTests {
@@ -39,11 +39,17 @@ public class InMemoryPasswordHistoryServiceTests {
 
     @Test
     public void verifyValidity() {
+        passwordHistoryService.removeAll();
+        assertTrue(passwordHistoryService.fetchAll().isEmpty());
+
         val request = new PasswordChangeRequest("casuser", "password", "password");
         assertFalse(passwordHistoryService.exists(request));
         assertTrue(passwordHistoryService.store(request));
         assertTrue(passwordHistoryService.exists(request));
         assertFalse(passwordHistoryService.fetchAll().isEmpty());
         assertFalse(passwordHistoryService.fetch("casuser").isEmpty());
+
+        passwordHistoryService.remove("casuser");
+        assertTrue(passwordHistoryService.fetch("casuser").isEmpty());
     }
 }

@@ -16,6 +16,7 @@ import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
+import org.apereo.cas.support.oauth.web.response.callback.OAuth20InvalidAuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
@@ -38,7 +39,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.pac4j.core.config.Config;
-import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -93,6 +93,8 @@ public class OAuth20ConfigurationContext {
 
     private final Set<OAuth20AuthorizationResponseBuilder> oauthAuthorizationResponseBuilders;
 
+    private final OAuth20InvalidAuthorizationResponseBuilder oauthInvalidAuthorizationResponseBuilder;
+
     private final Set<OAuth20AuthorizationRequestValidator> oauthRequestValidators;
 
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
@@ -119,7 +121,7 @@ public class OAuth20ConfigurationContext {
 
     private final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder;
 
-    private final SessionStore<JEEContext> sessionStore;
+    private final SessionStore sessionStore;
 
     private final CipherExecutor<Serializable, String> registeredServiceCipherExecutor;
 

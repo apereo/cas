@@ -21,35 +21,49 @@ Set -Dlog4j2.contextSelector=org.apache.logging.log4j.core.selector.BasicContext
     </Appenders>
     
     <Loggers>
-        <Logger name="org.apereo.cas" level="info" includeLocation="true">
+        <Logger name="org.apereo.cas" level="info" includeLocation="true" additivity="false">
             <AppenderRef ref="casFile"/>
+            <AppenderRef ref="casConsole"/>
         </Logger>
-        <Logger name="org.apache" level="info">
+        <Logger name="org.apache" level="info" additivity="false">
             <AppenderRef ref="casFile"/>
+            <AppenderRef ref="casConsole"/>
         </Logger>
-        <Logger name="org.springframework.cloud.server" level="debug">
+        <Logger name="org.springframework.cloud.server" level="debug" additivity="false">
             <AppenderRef ref="casFile"/>
+            <AppenderRef ref="casConsole"/>
         </Logger>
-        <Logger name="org.springframework.cloud.bus" level="info">
+        <Logger name="org.springframework.cloud.config" level="debug" additivity="false">
             <AppenderRef ref="casFile"/>
+            <AppenderRef ref="casConsole"/>
         </Logger>
-        <Logger name="org.springframework.cloud.vault" level="warn">
+        <Logger name="org.springframework.cloud.bus" level="info" additivity="false">
             <AppenderRef ref="casFile"/>
+            <AppenderRef ref="casConsole"/>
         </Logger>
-        <Logger name="org.springframework.security" level="debug">
+        <Logger name="org.springframework.cloud.vault" level="warn" additivity="false">
             <AppenderRef ref="casFile"/>
+            <AppenderRef ref="casConsole"/>
         </Logger>
-        <Logger name="org.springframework.boot" level="info">
+        <Logger name="org.springframework.security" level="debug" additivity="false">
             <AppenderRef ref="casFile"/>
+            <AppenderRef ref="casConsole"/>
         </Logger>
-        <Logger name="org.springframework.boot.autoconfigure.security" level="debug">
+        <Logger name="org.springframework.boot" level="info" additivity="false">
             <AppenderRef ref="casFile"/>
+            <AppenderRef ref="casConsole"/>
         </Logger>
-        <Logger name="org.springframework.amqp" level="off">
+        <Logger name="org.springframework.boot.autoconfigure.security" level="debug" additivity="false">
             <AppenderRef ref="casFile"/>
+            <AppenderRef ref="casConsole"/>
         </Logger>
-        <Logger name="org.springframework.web" level="warn">
+        <Logger name="org.springframework.amqp" level="off" additivity="false">
             <AppenderRef ref="casFile"/>
+            <AppenderRef ref="casConsole"/>
+        </Logger>
+        <Logger name="org.springframework.web" level="warn" additivity="false">
+            <AppenderRef ref="casFile"/>
+            <AppenderRef ref="casConsole"/>
         </Logger>
         <Root level="error">
             <AppenderRef ref="casConsole"/>

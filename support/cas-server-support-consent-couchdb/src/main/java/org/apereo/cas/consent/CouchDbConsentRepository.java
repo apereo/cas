@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.ektorp.DbAccessException;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -65,7 +64,7 @@ public class CouchDbConsentRepository implements ConsentRepository {
                 couchDb.update(updated);
             }
             return updated;
-        } catch (final DbAccessException e) {
+        } catch (final Exception e) {
             LoggingUtils.warn(LOGGER, "Failure storing consent decision", e);
             return null;
         }
@@ -75,14 +74,22 @@ public class CouchDbConsentRepository implements ConsentRepository {
     public boolean deleteConsentDecision(final long id, final String principal) {
         try {
             val consent = couchDb.findByPrincipalAndId(principal, id);
-            if (consent == null) {
-                LOGGER.debug("Decision to be deleted not found [{}] [{}]", principal, id);
-            } else {
+            if (consent != null) {
                 couchDb.remove(consent);
                 return true;
             }
-        } catch (final DbAccessException e) {
+        } catch (final Exception e) {
             LoggingUtils.warn(LOGGER, "Failure deleting consent decision", e);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean deleteConsentDecisions(final String principal) {
+        val consent = couchDb.findByPrincipal(principal);
+        if (consent != null) {
+            consent.forEach(couchDb::remove);
+            return true;
         }
         return false;
     }

@@ -1,12 +1,13 @@
 package org.apereo.cas.metadata;
 
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
-import org.apereo.cas.configuration.model.support.mfa.gauth.GoogleAuthenticatorMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.gauth.GoogleAuthenticatorMultifactorAuthenticationProperties;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.util.List;
 import java.util.Set;
 
@@ -26,23 +27,34 @@ public class CasConfigurationMetadataRepositoryTests {
         val repository = new CasConfigurationMetadataRepository();
         var properties = repository.getPropertiesWithType(LdapAuthenticationProperties.class);
         assertTrue(properties.isEmpty());
-        properties = repository.getPropertiesWithType(GoogleAuthenticatorMultifactorProperties.class);
+        properties = repository.getPropertiesWithType(GoogleAuthenticatorMultifactorAuthenticationProperties.class);
         assertTrue(properties.isEmpty());
         properties = repository.getPropertiesWithType(Set.class);
         assertFalse(properties.isEmpty());
     }
 
     @Test
-    public void verifyQueryOperation() {
-        val repository = new CasConfigurationMetadataRepository();
-        var properties = repository.query(ConfigurationMetadataCatalogQuery.builder().build());
+    public void verifyQueryOperation() throws Exception {
+        var properties = CasConfigurationMetadataCatalog.query(ConfigurationMetadataCatalogQuery
+            .builder()
+            .build());
         assertFalse(properties.properties().isEmpty());
-        properties = repository.query(ConfigurationMetadataCatalogQuery.builder().casExclusive(true).build());
+
+        val file = File.createTempFile("config", ".yml");
+        CasConfigurationMetadataCatalog.export(file, properties);
+        assertTrue(file.exists());
+
+        properties = CasConfigurationMetadataCatalog.query(ConfigurationMetadataCatalogQuery
+            .builder()
+            .queryType(ConfigurationMetadataCatalogQuery.QueryTypes.CAS)
+            .build());
         assertTrue(properties.properties().isEmpty());
-        properties = repository.query(ConfigurationMetadataCatalogQuery.builder()
+
+        properties = CasConfigurationMetadataCatalog.query(ConfigurationMetadataCatalogQuery
+            .builder()
             .modules(List.of("some-module-name"))
-            .casExclusive(true).build());
+            .queryType(ConfigurationMetadataCatalogQuery.QueryTypes.THIRD_PARTY)
+            .build());
         assertTrue(properties.properties().isEmpty());
     }
-
 }

@@ -38,7 +38,7 @@ public class DefaultAdaptiveAuthenticationPolicyTests {
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
 
         val props = new AdaptiveAuthenticationProperties();
-        props.setRejectIpAddresses("185\\.86.+");
+        props.getPolicy().setRejectIpAddresses("185\\.86.+");
         val service = mock(GeoLocationService.class);
         var policy = new DefaultAdaptiveAuthenticationPolicy(service, IPAddressIntelligenceService.banned(), props);
         val location = new GeoLocationRequest(51.5, -0.118);
@@ -60,7 +60,7 @@ public class DefaultAdaptiveAuthenticationPolicyTests {
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
 
         val props = new AdaptiveAuthenticationProperties();
-        props.setRejectBrowsers("Mozilla/5.0.+");
+        props.getPolicy().setRejectBrowsers("Mozilla/5.0.+");
         val service = mock(GeoLocationService.class);
         val p = new DefaultAdaptiveAuthenticationPolicy(service, IPAddressIntelligenceService.allowed(), props);
         assertFalse(p.apply(new MockRequestContext(), USER_AGENT, new GeoLocationRequest(51.5, -0.118)));
@@ -76,7 +76,7 @@ public class DefaultAdaptiveAuthenticationPolicyTests {
 
         val geoRequest = new GeoLocationRequest(51.5, -0.118);
         val props = new AdaptiveAuthenticationProperties();
-        props.setRejectCountries("UK");
+        props.getPolicy().setRejectCountries("UK");
         val service = mock(GeoLocationService.class);
         val response = new GeoLocationResponse();
         response.addAddress("UK");

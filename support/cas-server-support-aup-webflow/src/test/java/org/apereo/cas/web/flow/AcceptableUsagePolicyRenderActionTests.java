@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
  */
 @DirtiesContext
 @Tag("WebflowActions")
-@TestPropertySource(properties = "cas.acceptable-usage-policy.aup-policy-terms-attribute-name=cn")
+@TestPropertySource(properties = "cas.acceptable-usage-policy.core.aup-policy-terms-attribute-name=cn")
 public class AcceptableUsagePolicyRenderActionTests extends BaseAcceptableUsagePolicyActionTests {
     @Autowired
     @Qualifier("acceptableUsagePolicyRenderAction")

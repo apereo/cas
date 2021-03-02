@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.web.idp.profile.sso;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.support.saml.SamlIdPConstants;
+import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlIdPProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurationContext;
@@ -31,8 +32,8 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPProfileHandlerController {
 
-    public SSOSamlIdPProfileCallbackHandlerController(final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext) {
-        super(samlProfileHandlerConfigurationContext);
+    public SSOSamlIdPProfileCallbackHandlerController(final SamlProfileHandlerConfigurationContext config) {
+        super(config);
     }
 
     private MessageContext bindRelayStateParameter(final HttpServletRequest request,
@@ -49,12 +50,11 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
     private Assertion validateRequestAndBuildCasAssertion(final HttpServletResponse response,
                                                           final HttpServletRequest request,
                                                           final Pair<AuthnRequest, MessageContext> pair) throws Exception {
-        val authnRequest = pair.getKey();
         val ticket = request.getParameter(CasProtocolConstants.PARAMETER_TICKET);
-        getSamlProfileHandlerConfigurationContext().getTicketValidator().setRenew(authnRequest.isForceAuthn());
+        val validator = getSamlProfileHandlerConfigurationContext().getTicketValidator();
         val serviceUrl = constructServiceUrl(request, response, pair);
         LOGGER.trace("Created service url for validation: [{}]", serviceUrl);
-        val assertion = getSamlProfileHandlerConfigurationContext().getTicketValidator().validate(ticket, serviceUrl);
+        val assertion = validator.validate(ticket, serviceUrl);
         logCasValidationAssertion(assertion);
         return assertion;
     }
@@ -84,8 +84,14 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
     @GetMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK)
     protected void handleCallbackProfileRequest(final HttpServletResponse response,
                                                 final HttpServletRequest request) throws Exception {
+        autoConfigureCookiePath(request);
+
         LOGGER.info("Received SAML callback profile request [{}]", request.getRequestURI());
-        val authnRequest = retrieveSamlAuthenticationRequestFromHttpRequest(request, response);
+        val authnRequest = SamlIdPUtils.retrieveSamlRequest(new JEEContext(request, response),
+                samlProfileHandlerConfigurationContext.getSessionStore(),
+            samlProfileHandlerConfigurationContext.getOpenSamlConfigBean(),
+            AuthnRequest.class);
+        
         if (authnRequest == null) {
             LOGGER.error("Can not validate the request because the original Authn request can not be found.");
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);

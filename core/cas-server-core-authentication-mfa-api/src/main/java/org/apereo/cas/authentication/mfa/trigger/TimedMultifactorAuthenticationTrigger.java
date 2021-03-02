@@ -50,7 +50,7 @@ public class TimedMultifactorAuthenticationTrigger implements MultifactorAuthent
                                                                    final HttpServletRequest httpServletRequest,
                                                                    final Service service) {
 
-        val timedMultifactor = casProperties.getAuthn().getAdaptive().getRequireTimedMultifactor();
+        val timedMultifactor = casProperties.getAuthn().getAdaptive().getPolicy().getRequireTimedMultifactor();
         if (service == null || authentication == null) {
             LOGGER.trace("No service or authentication is available to determine event for principal");
             return Optional.empty();
@@ -77,8 +77,7 @@ public class TimedMultifactorAuthenticationTrigger implements MultifactorAuthent
      * @return the provider
      */
     protected Optional<MultifactorAuthenticationProvider> checkTimedMultifactorProvidersForRequest(final RegisteredService service) {
-
-        val timedMultifactor = casProperties.getAuthn().getAdaptive().getRequireTimedMultifactor();
+        val timedMultifactor = casProperties.getAuthn().getAdaptive().getPolicy().getRequireTimedMultifactor();
         val now = LocalDateTime.now(ZoneId.systemDefault());
         val dow = DayOfWeek.from(now);
         val dayNamesForToday = Arrays.stream(TextStyle.values())

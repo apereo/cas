@@ -1,9 +1,12 @@
 package org.apereo.cas.trusted.config;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.authentication.PseudoPlatformTransactionManager;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.mfa.trusteddevice.TrustedDevicesMultifactorCoreProperties;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustCipherExecutor;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecordKeyGenerator;
@@ -56,6 +59,7 @@ import java.time.temporal.ChronoUnit;
 @AutoConfigureAfter(CasCoreUtilConfiguration.class)
 @Slf4j
 public class MultifactorAuthnTrustConfiguration {
+
     private static final int INITIAL_CACHE_SIZE = 50;
 
     private static final long MAX_CACHE_SIZE = 1_000_000;
@@ -108,8 +112,8 @@ public class MultifactorAuthnTrustConfiguration {
     @Bean
     @RefreshScope
     public MultifactorAuthenticationTrustRecordKeyGenerator mfaTrustRecordKeyGenerator() {
-        val type = casProperties.getAuthn().getMfa().getTrusted().getKeyGeneratorType();
-        if (type.equalsIgnoreCase("default")) {
+        val type = casProperties.getAuthn().getMfa().getTrusted().getCore().getKeyGeneratorType();
+        if (type == TrustedDevicesMultifactorCoreProperties.TrustedDevicesKeyGeneratorTypes.DEFAULT) {
             return new DefaultMultifactorAuthenticationTrustRecordKeyGenerator();
         }
         return new LegacyMultifactorAuthenticationTrustRecordKeyGenerator();
@@ -142,8 +146,10 @@ public class MultifactorAuthnTrustConfiguration {
     @Bean
     public AuditTrailRecordResolutionPlanConfigurer casMfaTrustAuditTrailRecordResolutionPlanConfigurer() {
         return plan -> {
-            plan.registerAuditResourceResolver("TRUSTED_AUTHENTICATION_RESOURCE_RESOLVER", returnValueResourceResolver.getObject());
-            plan.registerAuditActionResolver("TRUSTED_AUTHENTICATION_ACTION_RESOLVER", ticketCreationActionResolver.getObject());
+            plan.registerAuditResourceResolver(AuditResourceResolvers.TRUSTED_AUTHENTICATION_RESOURCE_RESOLVER,
+                returnValueResourceResolver.getObject());
+            plan.registerAuditActionResolver(AuditActionResolvers.TRUSTED_AUTHENTICATION_ACTION_RESOLVER,
+                ticketCreationActionResolver.getObject());
         };
     }
 

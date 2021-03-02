@@ -4,6 +4,8 @@ title: CAS - Architecture
 category: Planning
 ---
 
+{% include variables.html %}
+
 # Architecture
 
 ![CAS Architecture Diagram](../images/cas_architecture.png "CAS Architecture Diagram")
@@ -76,24 +78,28 @@ It is helpful to describe the CAS server in terms of three layered subsystems:
 
 * Web (Spring MVC/Spring Webflow)
 * [Ticketing](../ticketing/Configuring-Ticketing-Components.html)
-* [Authentication](../installation/Configuring-Authentication-Components.html)
+* [Authentication](../authentication/Configuring-Authentication-Components.html)
 
 Almost all deployment considerations and component configuration involve those three subsystems. The Web tier is the endpoint for communication with all external systems including CAS clients. The Web tier delegates to the ticketing subsystem to generate tickets for CAS client access. The SSO session begins with the issuance of a ticket-granting ticket on successful authentication, thus the ticketing subsystem frequently delegates to the authentication subsystem.
 
-The authentication system is typically only processing requests at the start of the SSO session, though there are other cases when it can be invoked (e.g. forced authentication).
+The authentication system is typically only processing requests at the 
+start of the SSO session, though there are other cases when it can be invoked (e.g. forced authentication).
 
 ### Spring Framework
 
 CAS uses the many aspects of the Spring Framework; most notably,
 [Spring MVC](http://docs.spring.io/spring/docs/current/spring-framework-reference/html/mvc.html) and
-[Spring Webflow](http://www.springsource.org/spring-web-flow). Spring provides a complete and extensible framework for
+[Spring Webflow](https://projects.spring.io/spring-webflow/). Spring provides a complete and extensible framework for
 the core CAS codebase as well as for deployers; it's straightforward to customize or extend CAS behavior by hooking
 CAS and Spring API extension points. General knowledge of Spring is beneficial to understanding the interplay among
 some framework components, but it's not strictly required. 
 
 ### Spring Boot
 
-CAS is also heavily based on [Spring Boot](http://projects.spring.io/spring-boot/), which allows it to take an opinionated view of 
-the Spring platform and third-party libraries to create a stand-alone web application without the hassle of XML configuration as much as possible.
-Spring Boot allows CAS to hide much of the internal complexity of its components and their configuration and instead provides auto-configuration modules that  
+CAS is also heavily based on [Spring Boot](http://projects.spring.io/spring-boot/), which 
+allows it to take an opinionated view of 
+the Spring platform and third-party libraries to create a stand-alone web 
+application without the hassle of XML configuration as much as possible.
+Spring Boot allows CAS to hide much of the internal complexity of its 
+components and their configuration and instead provides auto-configuration modules that  
 and automatically configure the running application context without much manual interference. 

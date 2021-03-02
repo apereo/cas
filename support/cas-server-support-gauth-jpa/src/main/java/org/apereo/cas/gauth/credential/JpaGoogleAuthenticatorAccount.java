@@ -47,7 +47,7 @@ public class JpaGoogleAuthenticatorAccount extends GoogleAuthenticatorAccount {
     public static JpaGoogleAuthenticatorAccount from(final OneTimeTokenAccount acct) {
         return JpaGoogleAuthenticatorAccount.builder()
             .id(acct.getId())
-            .username(acct.getUsername())
+            .username(acct.getUsername().trim().toLowerCase())
             .secretKey(acct.getSecretKey())
             .validationCode(acct.getValidationCode())
             .scratchCodes(acct.getScratchCodes())

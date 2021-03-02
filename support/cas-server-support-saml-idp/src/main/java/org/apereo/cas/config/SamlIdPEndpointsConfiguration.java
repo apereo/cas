@@ -47,6 +47,7 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.InternalTicketValidator;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.ProtocolEndpointConfigurer;
@@ -57,12 +58,11 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.velocity.app.VelocityEngine;
-import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
+import org.jasig.cas.client.validation.TicketValidator;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostDecoder;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostSimpleSignDecoder;
 import org.opensaml.saml.saml2.core.Response;
-import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.ObjectProvider;
@@ -92,7 +92,7 @@ import java.util.List;
 public class SamlIdPEndpointsConfiguration {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
-    
+
     @Autowired
     @Qualifier("singleLogoutServiceLogoutUrlBuilder")
     private ObjectProvider<SingleLogoutServiceLogoutUrlBuilder> singleLogoutServiceLogoutUrlBuilder;
@@ -110,10 +110,6 @@ public class SamlIdPEndpointsConfiguration {
     private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationServiceSelectionPlan;
 
     @Autowired
-    @Qualifier("casClientTicketValidator")
-    private ObjectProvider<AbstractUrlBasedTicketValidator> casClientTicketValidator;
-
-    @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
@@ -121,7 +117,7 @@ public class SamlIdPEndpointsConfiguration {
     private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
-    @Qualifier("shibboleth.OpenSAMLConfig")
+    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
     private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
 
     @Autowired
@@ -137,7 +133,7 @@ public class SamlIdPEndpointsConfiguration {
     private ObjectProvider<SamlProfileObjectBuilder<Response>> samlProfileSamlResponseBuilder;
 
     @Autowired
-    @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
+    @Qualifier(SamlRegisteredServiceCachingMetadataResolver.DEFAULT_BEAN_NAME)
     private ObjectProvider<SamlRegisteredServiceCachingMetadataResolver> defaultSamlRegisteredServiceCachingMetadataResolver;
     
     @Autowired
@@ -341,7 +337,7 @@ public class SamlIdPEndpointsConfiguration {
         return new SamlIdPSaml1ArtifactResolutionProfileHandlerController(context);
     }
 
-    @ConditionalOnProperty(prefix = "cas.authn.saml-idp", name = "attribute-query-profile-enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = "cas.authn.saml-idp.core", name = "attribute-query-profile-enabled", havingValue = "true")
     @Bean
     @RefreshScope
     public SamlIdPSaml2AttributeQueryProfileHandlerController saml2AttributeQueryProfileHandlerController() {
@@ -380,17 +376,24 @@ public class SamlIdPEndpointsConfiguration {
         return new SamlIdPServicesManagerRegisteredServiceLocator(defaultSamlRegisteredServiceCachingMetadataResolver.getObject());
     }
 
+    @ConditionalOnMissingBean(name = "samlIdPDistributedSessionCookieGenerator")
+    @Bean
+    @RefreshScope
+    public CasCookieBuilder samlIdPDistributedSessionCookieGenerator() {
+        val cookie = casProperties.getSessionReplication().getCookie();
+        return CookieUtils.buildCookieRetrievingGenerator(cookie);
+    }
+
     @ConditionalOnMissingBean(name = "samlIdPDistributedSessionStore")
     @Bean
-    public SessionStore<JEEContext> samlIdPDistributedSessionStore() {
-        val replicate = casProperties.getAuthn().getSamlIdp().isReplicateSessions();
+    @RefreshScope
+    public SessionStore samlIdPDistributedSessionStore() {
+        val replicate = casProperties.getAuthn().getSamlIdp().getCore().isReplicateSessions();
         if (replicate) {
-            val cookie = casProperties.getSessionReplication().getCookie();
-            val cookieGenerator = CookieUtils.buildCookieRetrievingGenerator(cookie);
             return new DistributedJEESessionStore(centralAuthenticationService.getObject(),
-                ticketFactory.getObject(), cookieGenerator);
+                ticketFactory.getObject(), samlIdPDistributedSessionCookieGenerator());
         }
-        return new JEESessionStore();
+        return JEESessionStore.INSTANCE;
     }
 
     @ConditionalOnMissingBean(name = "samlIdPSingleLogoutRedirectionStrategy")
@@ -398,6 +401,12 @@ public class SamlIdPEndpointsConfiguration {
     @RefreshScope
     public LogoutRedirectionStrategy samlIdPSingleLogoutRedirectionStrategy() {
         return new SamlIdPSingleLogoutRedirectionStrategy(getSamlProfileHandlerConfigurationContextBuilder().build());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "samlIdPTicketValidator")
+    public TicketValidator samlIdPTicketValidator() {
+        return new InternalTicketValidator(centralAuthenticationService.getObject(), samlIdPServiceFactory.getObject());
     }
 
     @ConditionalOnMissingBean(name = "samlLogoutBuilder")
@@ -456,11 +465,12 @@ public class SamlIdPEndpointsConfiguration {
             .samlObjectSignatureValidator(samlObjectSignatureValidator())
             .samlHttpRequestExtractor(ssoSamlHttpRequestExtractor())
             .responseBuilder(samlProfileSamlResponseBuilder.getObject())
-            .ticketValidator(casClientTicketValidator.getObject())
+            .ticketValidator(samlIdPTicketValidator())
             .ticketRegistry(ticketRegistry.getObject())
             .sessionStore(samlIdPDistributedSessionStore())
             .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator.getObject())
             .samlAttributeQueryTicketFactory(samlAttributeQueryTicketFactory.getObject())
+            .samlDistributedSessionCookieGenerator(samlIdPDistributedSessionCookieGenerator())
             .callbackService(samlIdPCallbackService());
     }
 

@@ -1,11 +1,12 @@
 package org.apereo.cas.mfa.simple.web.flow;
 
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.configuration.model.support.mfa.CasSimpleMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.CasSimpleMultifactorAuthenticationProperties;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationConstants;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCommunicationStrategy;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicketFactory;
 import org.apereo.cas.notifications.CommunicationsManager;
+import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
@@ -22,6 +23,8 @@ import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import java.util.Map;
 
 /**
  * This is {@link CasSimpleMultifactorSendTokenAction}.
@@ -40,7 +43,7 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractAction {
 
     private final CasSimpleMultifactorAuthenticationTicketFactory ticketFactory;
 
-    private final CasSimpleMultifactorProperties properties;
+    private final CasSimpleMultifactorAuthenticationProperties properties;
 
     private final CasSimpleMultifactorTokenCommunicationStrategy tokenCommunicationStrategy;
 
@@ -83,7 +86,7 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractAction {
     }
 
     private static boolean isSmsSent(final CommunicationsManager communicationsManager,
-        final CasSimpleMultifactorProperties properties,
+        final CasSimpleMultifactorAuthenticationProperties properties,
         final Principal principal,
         final Ticket token) {
         if (communicationsManager.isSmsSenderDefined()) {
@@ -97,13 +100,14 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractAction {
     }
 
     private static boolean isMailSent(final CommunicationsManager communicationsManager,
-        final CasSimpleMultifactorProperties properties,
+        final CasSimpleMultifactorAuthenticationProperties properties,
         final Principal principal,
         final Ticket token) {
         if (communicationsManager.isMailSenderDefined()) {
             val mailProperties = properties.getMail();
-            return communicationsManager.email(principal, mailProperties.getAttributeName(),
-                mailProperties, mailProperties.getFormattedBody(token.getId()));
+            val body = EmailMessageBodyBuilder.builder().properties(mailProperties)
+                .parameters(Map.of("token", token.getId())).build().produce();
+            return communicationsManager.email(principal, mailProperties.getAttributeName(), mailProperties, body);
         }
         return false;
     }

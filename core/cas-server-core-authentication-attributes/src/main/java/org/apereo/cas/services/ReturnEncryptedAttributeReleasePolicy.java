@@ -103,4 +103,8 @@ public class ReturnEncryptedAttributeReleasePolicy extends AbstractRegisteredSer
         return attributesToRelease;
     }
 
+    @Override
+    public List<String> determineRequestedAttributeDefinitions() {
+        return getAllowedAttributes();
+    }
 }

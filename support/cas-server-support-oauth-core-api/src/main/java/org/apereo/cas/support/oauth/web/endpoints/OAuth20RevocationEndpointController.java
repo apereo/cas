@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.JEEContext;
-import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -46,30 +45,28 @@ public class OAuth20RevocationEndpointController extends BaseOAuth20Controller {
         produces = MediaType.APPLICATION_JSON_VALUE)
     public ModelAndView handleRequest(final HttpServletRequest request,
                                       final HttpServletResponse response) {
-        val context = new JEEContext(request, response, getOAuthConfigurationContext().getSessionStore());
+        val context = new JEEContext(request, response);
 
         if (!verifyRevocationRequest(context)) {
             LOGGER.error("Revocation request verification failed. Request is missing required parameters");
             return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_REQUEST);
         }
 
-        val manager = new ProfileManager<CommonProfile>(context, context.getSessionStore());
-        val clientId = OAuth20Utils.getClientIdAndClientSecret(context).getLeft();
+        val manager = new ProfileManager(context, getOAuthConfigurationContext().getSessionStore());
+        val clientId = OAuth20Utils.getClientIdAndClientSecret(context, getOAuthConfigurationContext().getSessionStore()).getLeft();
         val registeredService = getRegisteredServiceByClientId(clientId);
 
         if (OAuth20Utils.doesServiceNeedAuthentication(registeredService)) {
-            if (manager.get(true).isEmpty()) {
+            if (manager.getProfile().isEmpty()) {
                 LOGGER.warn("Service [{}] requests authentication", clientId);
                 return OAuth20Utils.writeError(response, OAuth20Constants.ACCESS_DENIED);
             }
         } else {
             val service = getOAuthConfigurationContext().getWebApplicationServiceServiceFactory().createService(registeredService.getServiceId());
-
             val audit = AuditableContext.builder()
                 .service(service)
                 .registeredService(registeredService)
                 .build();
-
             val accessResult = getOAuthConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
             if (accessResult.isExecutionFailure()) {
                 return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_REQUEST);

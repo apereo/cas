@@ -2,7 +2,7 @@ package org.apereo.cas.support.wsfederation.authentication.principal;
 
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.DefaultAuthenticationTransaction;
+import org.apereo.cas.authentication.DefaultAuthenticationTransactionFactory;
 import org.apereo.cas.support.wsfederation.AbstractWsFederationTests;
 
 import lombok.val;
@@ -31,7 +31,7 @@ public class WsFederationCredentialsToPrincipalResolverTests extends AbstractWsF
     @Test
     public void verifyAuth() {
         val creds = getCredential();
-        val auth = authenticationManager.authenticate(DefaultAuthenticationTransaction.of(creds));
+        val auth = authenticationManager.authenticate(new DefaultAuthenticationTransactionFactory().newTransaction(creds));
         assertNotNull(auth);
     }
 
@@ -40,7 +40,7 @@ public class WsFederationCredentialsToPrincipalResolverTests extends AbstractWsF
         val attributes = new HashMap<>(CoreAuthenticationTestUtils.getAttributeRepository().getBackingMap());
         attributes.put("upn", List.of("cas1", "cas2"));
         val creds = getCredential(attributes);
-        val auth = authenticationManager.authenticate(DefaultAuthenticationTransaction.of(creds));
+        val auth = authenticationManager.authenticate(new DefaultAuthenticationTransactionFactory().newTransaction(creds));
         assertNotNull(auth);
     }
 

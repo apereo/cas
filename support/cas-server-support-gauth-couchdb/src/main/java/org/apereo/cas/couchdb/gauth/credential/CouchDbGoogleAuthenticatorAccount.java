@@ -34,11 +34,17 @@ public class CouchDbGoogleAuthenticatorAccount extends GoogleAuthenticatorAccoun
     @JsonProperty("_rev")
     private String rev;
 
+    /**
+     * From.
+     *
+     * @param acct the acct
+     * @return the couch db google authenticator account
+     */
     public static CouchDbGoogleAuthenticatorAccount from(final OneTimeTokenAccount acct) {
         val account = CouchDbGoogleAuthenticatorAccount.builder()
             .id(acct.getId())
             .name(acct.getName())
-            .username(acct.getUsername())
+            .username(acct.getUsername().trim().toLowerCase())
             .secretKey(acct.getSecretKey())
             .validationCode(acct.getValidationCode())
             .scratchCodes(acct.getScratchCodes())

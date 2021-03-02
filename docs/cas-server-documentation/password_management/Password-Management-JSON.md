@@ -4,6 +4,8 @@ title: CAS - Password Management
 category: Password Management
 ---
 
+{% include variables.html %}
+
 # Password Management - JSON
 
 Accounts and password may be stored inside a static modest JSON resource, whose location is taught to CAS via settings.
@@ -25,4 +27,4 @@ The outline of the JSON file may match the following:
 }
 ```
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#json-password-management).
+{% include casproperties.html properties="cas.authn.pm.json" %}

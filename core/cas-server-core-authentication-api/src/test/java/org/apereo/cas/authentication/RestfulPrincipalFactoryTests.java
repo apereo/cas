@@ -1,8 +1,10 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.configuration.model.RestEndpointProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
@@ -24,7 +26,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("RestfulApi")
 public class RestfulPrincipalFactoryTests {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     @Test
     public void verifyAction() throws Exception {
@@ -33,7 +36,9 @@ public class RestfulPrincipalFactoryTests {
             new ByteArrayResource(entity.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
             webServer.start();
 
-            val factory = PrincipalFactoryUtils.newRestfulPrincipalFactory("http://localhost:9155", null, null);
+            val props = new RestEndpointProperties();
+            props.setUrl("http://localhost:9155");
+            val factory = PrincipalFactoryUtils.newRestfulPrincipalFactory(props);
             val p = factory.createPrincipal("casuser", CollectionUtils.wrap("name", List.of("CAS")));
             assertEquals("casuser", p.getId());
             assertEquals(5, p.getAttributes().size());
@@ -47,19 +52,23 @@ public class RestfulPrincipalFactoryTests {
             new ByteArrayResource(entity.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.EXPECTATION_FAILED)) {
             webServer.start();
 
-            val factory = PrincipalFactoryUtils.newRestfulPrincipalFactory("http://localhost:9156", null, null);
+            val props = new RestEndpointProperties();
+            props.setUrl("http://localhost:9156");
+            val factory = PrincipalFactoryUtils.newRestfulPrincipalFactory(props);
             val p = factory.createPrincipal("casuser", CollectionUtils.wrap("name", List.of("CAS")));
             assertNull(p);
         }
     }
 
     @Test
-    public void verifyBadResponse() throws Exception {
+    public void verifyBadResponse() {
         try (val webServer = new MockWebServer(9157,
             new ByteArrayResource("abcde123456".getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
             webServer.start();
 
-            val factory = PrincipalFactoryUtils.newRestfulPrincipalFactory("http://localhost:9157", null, null);
+            val props = new RestEndpointProperties();
+            props.setUrl("http://localhost:9157");
+            val factory = PrincipalFactoryUtils.newRestfulPrincipalFactory(props);
             assertThrows(IllegalArgumentException.class,
                 () -> factory.createPrincipal("casuser", CollectionUtils.wrap("name", List.of("CAS"))));
         }

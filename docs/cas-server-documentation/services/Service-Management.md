@@ -4,6 +4,8 @@ title: CAS - Service Management
 category: Services
 ---
 
+{% include variables.html %}
+
 # Service Management
 
 The CAS service management facility allows CAS server administrators to declare and configure which services
@@ -15,8 +17,9 @@ service registry that stores one or more registered services containing metadata
 * [Attribute release](../integration/Attribute-Release.html) - Provide user details to services for authorization and personalization.
 * [Proxy control](Configuring-Service-Proxy-Policy.html) - Further restrict authorized services by granting/denying proxy authentication capability.
 * [Theme control](../ux/User-Interface-Customization.html) - Define alternate CAS themes to be used for particular services.
+    
+{% include casproperties.html properties="cas.service-registry.core,cas.service-registry.schedule,cas.service-registry.cache" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#service-registry).
 
 ## Administrative Endpoints
 
@@ -26,7 +29,7 @@ The following endpoints are provided by CAS:
 |--------------------------|------------------------------------------------
 | `registeredServices`     | Provides a JSON representation of the [CAS service registry](Service-Management.html). The endpoint can also accept a mime-type of `application/vnd.cas.services+yaml` to produce YAML output. A `GET` operation with a parameter selector of `/{id}` will fetch a specific service definition. A `DELETE` operation with a parameter selector of `/{id}` will delete the specific service definition by its id.
 | `exportRegisteredServices`    | Provides a ZIP-file representation of the [CAS service registry](Service-Management.html).
-| `importRegisteredServices`    | Import service definitions into the [CAS service registry](Service-Management.html).
+| `importRegisteredServices`    | Import service definitions into the [CAS service registry](Service-Management.html). The request body is expected to be the service definition itself.
 
 ## Service Management Web Application
 
@@ -58,7 +61,7 @@ Registered services present the following metadata:
 | `responseType`                      | Defines how CAS should respond to requests for this service. See [this guide](Configuring-Service-Response-Type.html) for more details.
 | `usernameAttributeProvider`       | The provider configuration which dictates what value as the "username" should be sent back to the application. See [this guide](../integration/Attribute-Release.html) for more details on attribute release and filters.
 | `accessStrategy`                  | The strategy configuration that outlines and access rules for this service. It describes whether the service is allowed, authorized to participate in SSO, or can be granted access from the CAS perspective based on a particular attribute-defined role, aka RBAC. See [this guide](../integration/Attribute-Release.html) for more details on attribute release and filters.
-| `publicKey`                          | The public key associated with this service that is used to authorize the request by encrypting certain elements and attributes in the CAS validation protocol response, such as [the PGT](../installation/Configuring-Proxy-Authentication.html) or [the credential](../integration/ClearPass.html). See [this guide](../integration/Attribute-Release.html) for more details on attribute release and filters.
+| `publicKey`                          | The public key associated with this service that is used to authorize the request by encrypting certain elements and attributes in the CAS validation protocol response, such as [the PGT](../authentication/Configuring-Proxy-Authentication.html) or [the credential](../integration/ClearPass.html). See [this guide](../integration/Attribute-Release.html) for more details on attribute release and filters.
 | `logoutUrl`                          | URL endpoint for this service to receive logout requests. See [this guide](../installation/Logout-Single-Signout.html) for more details
 | `properties`                      | Extra metadata associated with this service in form of key/value pairs. This is used to inject custom fields into the service definition, to be used later by extension modules to define additional behavior on a per-service basis. [See this guide](Configuring-Service-Custom-Properties.html) for more info please.
 | `multifactorPolicy`               | The policy that describes the configuration required for this service authentication, typically for [multifactor authentication](../mfa/Configuring-Multifactor-Authentication.html).

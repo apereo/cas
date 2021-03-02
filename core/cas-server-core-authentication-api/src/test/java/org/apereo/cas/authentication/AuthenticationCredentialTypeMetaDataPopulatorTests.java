@@ -24,7 +24,7 @@ public class AuthenticationCredentialTypeMetaDataPopulatorTests {
     public void verifyPopulator() {
         val credentials = new UsernamePasswordCredential();
         val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
-        this.populator.populateAttributes(builder, DefaultAuthenticationTransaction.of(credentials));
+        this.populator.populateAttributes(builder, new DefaultAuthenticationTransactionFactory().newTransaction(credentials));
         val auth = builder.build();
         assertEquals(
             credentials.getClass().getSimpleName(),

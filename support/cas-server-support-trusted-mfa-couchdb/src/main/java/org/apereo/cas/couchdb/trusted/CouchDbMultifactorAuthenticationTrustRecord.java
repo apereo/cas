@@ -23,6 +23,8 @@ import java.util.Date;
 @TypeDiscriminator("doc.principal && doc.deviceFingerprint && doc.recordDate")
 public class CouchDbMultifactorAuthenticationTrustRecord extends MultifactorAuthenticationTrustRecord {
 
+    private static final long serialVersionUID = 3362756698370049408L;
+
     @JsonProperty("_id")
     private String cid;
 

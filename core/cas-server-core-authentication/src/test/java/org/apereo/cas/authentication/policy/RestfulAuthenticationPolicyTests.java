@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.policy;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
+import org.apereo.cas.configuration.model.core.authentication.RestAuthenticationPolicyProperties;
 import org.apereo.cas.util.MockWebServer;
 
 import lombok.val;
@@ -41,9 +42,11 @@ public class RestfulAuthenticationPolicyTests {
         try (val webServer = new MockWebServer(9200,
             new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
             webServer.start();
-            val policy = new RestfulAuthenticationPolicy("http://localhost:9200");
+            val props = new RestAuthenticationPolicyProperties();
+            props.setUrl("http://localhost:9200");
+            val policy = new RestfulAuthenticationPolicy(props);
             assertTrue(policy.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser"),
-                new LinkedHashSet<>(), applicationContext, Optional.empty()));
+                new LinkedHashSet<>(), applicationContext, Optional.empty()).isSuccess());
         } 
     }
 
@@ -67,7 +70,9 @@ public class RestfulAuthenticationPolicyTests {
         try (val webServer = new MockWebServer(port,
             new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "Output"), status)) {
             webServer.start();
-            val policy = new RestfulAuthenticationPolicy("http://localhost:" + port);
+            val props = new RestAuthenticationPolicyProperties();
+            props.setUrl("http://localhost:" + port);
+            val policy = new RestfulAuthenticationPolicy(props);
             assertThrowsWithRootCause(GeneralSecurityException.class, exceptionClass,
                 () -> policy.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser"),
                     new LinkedHashSet<>(), applicationContext, Optional.empty()));

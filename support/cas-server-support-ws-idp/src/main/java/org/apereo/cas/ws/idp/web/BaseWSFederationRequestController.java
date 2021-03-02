@@ -40,7 +40,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-@SuppressWarnings("JdkObsolete")
+@SuppressWarnings("JavaUtilDate")
 public abstract class BaseWSFederationRequestController {
     private final WSFederationRequestConfigurationContext configContext;
 
@@ -197,6 +197,6 @@ public abstract class BaseWSFederationRequestController {
      */
     @ExceptionHandler(Exception.class)
     public ModelAndView handleUnauthorizedServiceException(final HttpServletRequest req, final Exception ex) {
-        return WebUtils.produceUnauthorizedErrorView();
+        return WebUtils.produceUnauthorizedErrorView(ex);
     }
 }

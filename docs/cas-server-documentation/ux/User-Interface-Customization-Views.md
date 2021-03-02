@@ -4,6 +4,8 @@ title: Views - User Interface Customization - CAS
 category: User Interface
 ---
 
+{% include variables.html %}
+
 # Views
 
 The views are found inside the CAS web application in the `WEB-INF\lib\cas-server-support-thymeleaf-<cas.version>.jar` in the 
@@ -11,9 +13,28 @@ templates folder. Add any views that require customization to the `src/main/reso
 Any files found in that module can be overridden by putting them in the same location under
 `src/main/resources` in the CAS overlay project. The Gradle build script for the overlay has tasks that help get resources 
 from the CAS web application to the correct location in the CAS overlay. 
- 
+  
+## Configuration
+
+{% include casproperties.html properties="cas.view.template-" %}
+
+### CAS v1
+
+{% include casproperties.html properties="cas.view.cas1" %}
+
+### CAS v2
+
+{% include casproperties.html properties="cas.view.cas2" %}
+
+### CAS v3
+
+{% include casproperties.html properties="cas.view.cas3" %}
+
+## Externalized Views
+
 Views also may be externalized outside the web application conditionally and individually, provided the external path 
-via CAS settings. If a view template file is not found at the externalized path, the default one that ships with CAS will be used as the fallback.
+via CAS settings. If a view template file is not found at the externalized path, the 
+default one that ships with CAS will be used as the fallback.
 
 Views may also be found using an external URL in CAS settings that is responsible to produce the full view body in 
 the response. This URL endpoint will receive the available request headers as well as the following headers in its request:
@@ -27,14 +48,19 @@ the response. This URL endpoint will receive the available request headers as we
 | `locale`, if available
 
 Upon a successful `200` status result, the response body is expected to contain the view that will be rendered by CAS.
- 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#views).
+
+{% include casproperties.html properties="cas.view.rest" %}
 
 ## Thymeleaf
 
-CAS uses [Thymeleaf](https://www.thymeleaf.org) for its markup rendering engine. Each template is decorated by `layout.html` template file, which provides a layout structure for the template's content. Individual components optimized for re-use among multiple templates are stored in the `src/main/resources/templates/fragments` folder, and referenced by the templates in `src/main/resources/templates`.
+CAS uses [Thymeleaf](https://www.thymeleaf.org) for its markup rendering engine. Each template is 
+decorated by `layout.html` template file, which provides a layout structure for the template's content. Individual 
+components optimized for re-use among multiple templates are stored in the `src/main/resources/templates/fragments` 
+folder, and referenced by the templates in `src/main/resources/templates`.
 
 Refer to the [Thymeleaf documentation](https://www.thymeleaf.org/) for more information on its use and syntax.
+
+{% include casproperties.html properties="spring.thymeleaf" %}
 
 ## Warning Before Accessing Application
 
@@ -60,4 +86,4 @@ CAS allows on the ability to dynamically extend the login form by including addi
 Such fields are taught to CAS using settings and are then bound to the authentication flow and made available to all
 authentication handlers that wish to impose additional processes and rules using said fields.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#views).
+{% include casproperties.html properties="cas.view.custom-login-form-fields" %}

@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.web.support.RegisteredServiceCorsConfigurationSource;
 import org.apereo.cas.services.web.support.RegisteredServiceResponseHeadersEnforcementFilter;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.ArgumentExtractor;
@@ -17,14 +18,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.filter.CorsFilter;
 
@@ -37,7 +38,7 @@ import java.util.HashMap;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "casFiltersConfiguration", proxyBeanMethods = false)
+@Configuration(value = "casFiltersConfiguration", proxyBeanMethods = true)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasFiltersConfiguration {
 
@@ -81,21 +82,20 @@ public class CasFiltersConfiguration {
         return bean;
     }
 
+    @Bean
+    @ConditionalOnProperty(prefix = "cas.http-web-request.cors", name = "enabled", havingValue = "true")
+    @ConditionalOnMissingBean(name = "corsConfigurationSource")
+    @RefreshScope
+    public CorsConfigurationSource corsConfigurationSource() {
+        return new RegisteredServiceCorsConfigurationSource(casProperties,
+            servicesManager.getObject(), argumentExtractor.getObject());
+    }
+
     @ConditionalOnProperty(prefix = "cas.http-web-request.cors", name = "enabled", havingValue = "true")
     @Bean
     @RefreshScope
-    public FilterRegistrationBean casCorsFilter() {
-        val cors = casProperties.getHttpWebRequest().getCors();
-        val source = new UrlBasedCorsConfigurationSource();
-        val config = new CorsConfiguration();
-        config.setAllowCredentials(cors.isAllowCredentials());
-        config.setAllowedOrigins(cors.getAllowOrigins());
-        config.setAllowedMethods(cors.getAllowMethods());
-        config.setAllowedHeaders(cors.getAllowHeaders());
-        config.setMaxAge(cors.getMaxAge());
-        config.setExposedHeaders(cors.getExposedHeaders());
-        source.registerCorsConfiguration("/**", config);
-        val bean = new FilterRegistrationBean<CorsFilter>(new CorsFilter(source));
+    public FilterRegistrationBean<CorsFilter> casCorsFilter() {
+        val bean = new FilterRegistrationBean<>(new CorsFilter(corsConfigurationSource()));
         bean.setName("casCorsFilter");
         bean.setAsyncSupported(true);
         bean.setOrder(0);

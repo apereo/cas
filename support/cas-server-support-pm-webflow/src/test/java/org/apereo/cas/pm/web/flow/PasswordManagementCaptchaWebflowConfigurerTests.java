@@ -1,6 +1,7 @@
 package org.apereo.cas.pm.web.flow;
 
 import org.apereo.cas.pm.config.PasswordManagementConfiguration;
+import org.apereo.cas.pm.config.PasswordManagementForgotUsernameConfiguration;
 import org.apereo.cas.pm.config.PasswordManagementWebflowConfiguration;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -25,11 +26,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @Import({
     PasswordManagementConfiguration.class,
     PasswordManagementWebflowConfiguration.class,
+    PasswordManagementForgotUsernameConfiguration.class,
     BaseWebflowConfigurerTests.SharedTestConfiguration.class
 })
 @TestPropertySource(properties = {
-    "cas.authn.pm.captcha-enabled=true",
-    "cas.authn.pm.enabled=true",
+    "cas.authn.pm.google-recaptcha.enabled=true",
+    "cas.authn.pm.core.enabled=true",
     "cas.authn.pm.reset.crypto.encryption.key=qLhvLuaobvfzMmbo9U_bYA",
     "cas.authn.pm.reset.crypto.signing.key=oZeAR5pEXsolruu4OQYsQKxf-FCvFzSsKlsVaKmfIl6pNzoPm6zPW94NRS1af7vT-0bb3DpPBeksvBXjloEsiA"
 })

@@ -5,6 +5,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeFilter;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.serialization.SerializationUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.core.Ordered;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,7 +39,8 @@ public class RegisteredServiceRegexAttributeFilterTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "registeredServiceRegexAttributeFilter.json");
 
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     private static final String PHONE = "phone";
 
@@ -69,7 +72,7 @@ public class RegisteredServiceRegexAttributeFilterTests {
 
     @BeforeEach
     public void initialize() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
 
         when(this.registeredService.getName()).thenReturn("sample test service");
         when(this.registeredService.getServiceId()).thenReturn("https://www.jasig.org");
@@ -126,6 +129,13 @@ public class RegisteredServiceRegexAttributeFilterTests {
         val data = SerializationUtils.serialize(this.filter);
         val secondFilter = SerializationUtils.deserializeAndCheckObject(data, RegisteredServiceAttributeFilter.class);
         assertEquals(secondFilter, this.filter);
+    }
+
+    @Test
+    public void verifyDefault() {
+        val data = mock(RegisteredServiceAttributeFilter.class);
+        when(data.getOrder()).thenCallRealMethod();
+        assertEquals(Ordered.HIGHEST_PRECEDENCE, data.getOrder());
     }
 
     @Test

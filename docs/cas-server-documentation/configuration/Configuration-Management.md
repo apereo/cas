@@ -4,6 +4,8 @@ title: CAS - Configuration Management
 category: Configuration
 ---
 
+{% include variables.html %}
+
 # Configuration Management
 
 The core foundations of CAS that deal with configuration management, settings and replication of changes
@@ -18,8 +20,29 @@ The following strategies may be used to fully extend the CAS configuration model
 <div class="alert alert-info"><strong>YAML or Properties?</strong><p>CAS configuration allows for both
 YAML and Properties syntax in any of the below strategies used. It generally does not matter which syntax 
 is used, but when working with Unicode strings as properties values it does matter. Spring loads properties
-files using the ISO-8859-1 encoding. YAML files are loaded with UTF-8 encoding. If you are setting Unicode
+files using the `ISO-8859-1` encoding. YAML files are loaded with UTF-8 encoding. If you are setting Unicode
 values try using a YAML configuration file.</p></div>
+
+{% include casproperties.html properties="cas.server.name,cas.server.prefix,cas.server.scope,cas.host." %}
+
+On startup, CAS will display a banner along with some diagnostics info.
+In order to skip this step and summarize, set the system property `-DCAS_BANNER_SKIP=true`.
+
+CAS may also be conditionally configured to report, as part of the
+banner, whether a newer CAS release is available for an upgrade.
+This check is off by default and may be enabled with a system property of `-DCAS_UPDATE_CHECK_ENABLED=true`.
+
+On startup, CAS will perform many tasks related to the application lifecycle, the beans lifecycle
+or even processing application events. Such events can be tracked at startup and collected
+for profiling purposes to have a better understanding of the application startup process.
+Startup event tracking can be controlled using a system property `-DCAS_APP_STARTUP`
+that can be assigned the following values:
+
+| Type                 | Description
+|----------------------|-------------------------------------------------------------------------------------------------------
+| `default`            | Default startup type which acts as a no-op.
+| `buffering`          | Record events into memory using a pre-defined capacity and expose them via the `startup` [actuator endpoint](../monitoring/Monitoring-Statistics.html).
+| `jfr`                | Add startup events to a Java Flight Recorder session for profiling applications and correlating their Spring context lifecycle.
 
 ## Overview
 
@@ -27,7 +50,8 @@ CAS allows you to externalize your configuration so you can work with the same C
 different environments. You can use properties files, YAML files, environment variables and
 command-line arguments to externalize configuration.
 
-CAS uses a very particular order that is designed to allow sensible overriding of values. Properties passed to the CAS web application 
+CAS uses a very particular order that is designed to allow 
+sensible overriding of values. Properties passed to the CAS web application 
 are considered in the following order:
 
 1. Command line arguments, starting with `--` (e.g. `--server.port=9000`)
@@ -51,9 +75,14 @@ place to manage external properties for CAS nodes across all environments. To le
 
 To learn more about how to extend and customize the CAS configuration, please [review this guide](Configuration-Management-Extensions.html).
 
+## Custom CAS Settings
+
+{% include casproperties.html properties="cas.custom.properties" %}
+
 ## Auto Configuration Strategy
 
-To see a complete list of CAS properties, please [review this guide](Configuration-Properties.html#configuration-storage).
+To see the relevant list of CAS properties for this
+feature, please [review this guide](Configuration-Storage.html).
 
 Note that CAS in most if not all cases will attempt to auto-configure the context based on the declaration
 and presence of feature-specific dedicated modules. This generally SHOULD relieve the deployer

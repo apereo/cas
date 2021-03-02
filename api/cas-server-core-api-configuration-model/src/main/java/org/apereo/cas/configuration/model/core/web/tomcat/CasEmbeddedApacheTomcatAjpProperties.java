@@ -1,7 +1,10 @@
 package org.apereo.cas.configuration.model.core.web.tomcat;
 
+import org.apereo.cas.configuration.support.DurationCapable;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -20,6 +23,7 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("CasEmbeddedApacheTomcatAjpProperties")
 public class CasEmbeddedApacheTomcatAjpProperties implements Serializable {
 
     private static final long serialVersionUID = -32143821503580896L;
@@ -56,24 +60,30 @@ public class CasEmbeddedApacheTomcatAjpProperties implements Serializable {
     private boolean allowTrace;
 
     /**
-     * Set this attribute to the name of the protocol you wish to have returned by calls to request.getScheme(). For example,
-     * you would set this attribute to "https" for an SSL Connector.
+     * Set this attribute to the name of the protocol you wish to have
+     * returned by calls to {@code request.getScheme()}. For example,
+     * you would set this attribute to {@code https} for an SSL Connector.
      */
     private String scheme = "http";
 
     /**
      * Enable AJP support in CAS for the embedded Apache Tomcat container.
      */
+    @RequiredProperty
     private boolean enabled;
 
     /**
-     * The default timeout for asynchronous requests in milliseconds. If not specified, this attribute is set to 10000 (10 seconds).
+     * The default timeout for asynchronous requests in milliseconds. If
+     * not specified, this attribute is set to 10000 (10 seconds).
      */
+    @DurationCapable
     private String asyncTimeout = "PT5S";
 
     /**
-     * Set to true if you want calls to request.getRemoteHost() to perform DNS lookups in order to return the actual host name of the remote client.
-     * Set to false to skip the DNS lookup and return the IP address in String form instead (thereby improving performance).
+     * Set to true if you want calls to {@code request.getRemoteHost()} to perform
+     * DNS lookups in order to return the actual host name of the remote client.
+     * Set to false to skip the DNS lookup and return the IP address in
+     * String form instead (thereby improving performance).
      * By default, DNS lookups are disabled.
      */
     private boolean enableLookups;
@@ -93,7 +103,7 @@ public class CasEmbeddedApacheTomcatAjpProperties implements Serializable {
 
     /**
      * If this Connector is supporting non-SSL requests, and a request is received
-     * for which a matching &lt;security-constraint&gt; requires SSL transport,
+     * for which a matching {@code security-constraint} requires SSL transport,
      * Catalina will automatically redirect the request to the port number specified here.
      */
     private int redirectPort = -1;

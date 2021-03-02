@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.core.events;
 
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -19,28 +20,16 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("EventsProperties")
 public class EventsProperties implements Serializable {
 
     private static final long serialVersionUID = 1734523424737956370L;
 
     /**
-     * Whether event tracking and recording functionality should be enabled.
+     * Core and common events settings.
      */
-    private boolean enabled = true;
-
-    /**
-     * Whether geolocation should be tracked as part of collected authentication events.
-     * This of course require's consent from the user's browser to collect stats on location.
-     */
-    private boolean trackGeolocation;
-
-    /**
-     * Whether CAS should track the underlying configuration store for changes.
-     * This depends on whether the store provides that sort of functionality.
-     * When running in standalone mode, this typically translates to CAS monitoring
-     * configuration files and reloading context conditionally if there are any changes.
-     */
-    private boolean trackConfigurationModifications = true;
+    @NestedConfigurationProperty
+    private CoreEventsProperties core = new CoreEventsProperties();
 
     /**
      * Track authentication events inside a database.
@@ -71,5 +60,11 @@ public class EventsProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private DynamoDbEventsProperties dynamoDb = new DynamoDbEventsProperties();
+
+    /**
+     * Track authentication events inside a Redis instance.
+     */
+    @NestedConfigurationProperty
+    private RedisEventsProperties redis = new RedisEventsProperties();
     
 }

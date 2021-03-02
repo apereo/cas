@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.BasicCredentialMetaDataTests;
 import org.apereo.cas.authentication.CacheCredentialsMetaDataPopulatorTests;
 import org.apereo.cas.authentication.CoreAuthenticationUtilsTests;
 import org.apereo.cas.authentication.DefaultAuthenticationEventExecutionPlanTests;
+import org.apereo.cas.authentication.DefaultAuthenticationManagerTests;
 import org.apereo.cas.authentication.DefaultAuthenticationTests;
 import org.apereo.cas.authentication.DefaultPasswordEncoderTests;
 import org.apereo.cas.authentication.FileTrustStoreSslSocketFactoryTests;
@@ -13,6 +14,7 @@ import org.apereo.cas.authentication.RememberMePasswordCredentialTests;
 import org.apereo.cas.authentication.UsernamePasswordCredentialTests;
 import org.apereo.cas.authentication.attribute.DefaultAttributeDefinitionTests;
 import org.apereo.cas.authentication.exceptions.UnresolvedPrincipalExceptionTests;
+import org.apereo.cas.authentication.handler.BlockingPrincipalNameTransformerTests;
 import org.apereo.cas.authentication.handler.ConvertCasePrincipalNameTransformerTests;
 import org.apereo.cas.authentication.handler.support.JaasAuthenticationHandlerSystemConfigurationTests;
 import org.apereo.cas.authentication.handler.support.JaasAuthenticationHandlerTests;
@@ -68,6 +70,7 @@ import org.junit.runner.RunWith;
     NotPreventedAuthenticationPolicyTests.class,
     AllAuthenticationHandlersSucceededAuthenticationPolicyTests.class,
     BasicCredentialMetaDataTests.class,
+    DefaultAuthenticationManagerTests.class,
     CasCoreAuthenticationSupportConfigurationTests.class,
     ChainingPrincipalElectionStrategyTests.class,
     UsernamePasswordCredentialTests.class,
@@ -76,6 +79,7 @@ import org.junit.runner.RunWith;
     AcceptUsersAuthenticationHandlerTests.class,
     CacheCredentialsMetaDataPopulatorTests.class,
     OneTimePasswordCredentialTests.class,
+    BlockingPrincipalNameTransformerTests.class,
     UniquePrincipalAuthenticationPolicyTests.class,
     RestfulAuthenticationPolicyTests.class,
     FileTrustStoreSslSocketFactoryTests.class

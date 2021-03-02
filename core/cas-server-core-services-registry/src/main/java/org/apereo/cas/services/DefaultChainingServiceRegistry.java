@@ -41,17 +41,16 @@ public class DefaultChainingServiceRegistry extends AbstractServiceRegistry impl
 
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
-        serviceRegistries.forEach(registry -> registry.save(registeredService));
-        return registeredService;
+        var savedService = (RegisteredService) null;
+        for (var serviceRegistry : serviceRegistries) {
+            savedService = serviceRegistry.save(savedService == null ? registeredService : savedService);
+        }
+        return savedService;
     }
 
     @Override
     public boolean delete(final RegisteredService registeredService) {
-        return serviceRegistries.stream()
-            .map(registry -> registry.delete(registeredService))
-            .filter(Boolean::booleanValue)
-            .findAny()
-            .orElse(Boolean.FALSE);
+        return serviceRegistries.stream().allMatch(registry -> registry.delete(registeredService));
     }
 
     @Override
@@ -138,4 +137,14 @@ public class DefaultChainingServiceRegistry extends AbstractServiceRegistry impl
             })
             .forEach(serviceRegistry -> serviceRegistry.save(service));
     }
+
+    @Override
+    public RegisteredService findServiceBy(final String id) {
+        return serviceRegistries.stream()
+                .map(registry -> registry.findServiceBy(id))
+                .filter(Objects::nonNull)
+                .findFirst()
+                 .orElse(null);
+    }
+
 }

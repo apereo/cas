@@ -4,6 +4,8 @@ title: CAS - Attribute Release Policies
 category: Attributes
 ---
 
+{% include variables.html %}
+
 # Attribute Release Policies
 
 The attribute release policy decides how attributes are selected and provided to a given application in the final CAS response. Additionally, each policy has the ability to apply an optional filter to weed out their attributes based on their values.
@@ -13,7 +15,7 @@ The following settings are shared by all attribute release policies:
 | Name                                     | Value
 |------------------------------------------|----------------------------------------------------------------
 | `authorizedToReleaseCredentialPassword`  | Boolean to define whether the service is authorized to [release the credential as an attribute](ClearPass.html).
-| `authorizedToReleaseProxyGrantingTicket` | Boolean to define whether the service is authorized to [release the proxy-granting ticket id as an attribute](../installation/Configuring-Proxy-Authentication.html).
+| `authorizedToReleaseProxyGrantingTicket` | Boolean to define whether the service is authorized to [release the proxy-granting ticket id as an attribute](../authentication/Configuring-Proxy-Authentication.html).
 | `excludeDefaultAttributes`               | Boolean to define whether this policy should exclude the default global bundle of attributes for release.
 | `authorizedToReleaseAuthenticationAttributes`   | Boolean to define whether this policy should exclude the authentication/protocol attributes for release. Authentication attributes are considered those that are not tied to a specific principal and define extra supplementary metadata about the authentication event itself, such as the commencement date.
 | `principalIdAttribute`                   | An attribute name of your own choosing that will be stuffed into the final bundle of attributes, carrying the CAS authenticated principal identifier. By default, the principal id is *NOT* released as an attribute.
@@ -59,8 +61,11 @@ or attributes that are specific to CAS which may describe the type of credential
 authentication handlers, date/time of the authentication, etc.
 
 Releasing authentication attributes to service providers and applications can be
-controlled to some extent. To learn more and see the relevant list of CAS properties,
-please [review this guide](../configuration/Configuration-Properties.html#authentication-attributes).
+controlled to some extent.
+
+{% include casproperties.html properties="cas.authn.authentication-attribute-release" %}
+
+Protocol/authentication attributes may also be released conditionally on a per-service basis.
 
 ## Principal Attributes
 
@@ -74,9 +79,13 @@ authentication protocol at hand. Remember to verify attribute release capabiliti
 
 ### Default
 
-CAS provides the ability to release a bundle of principal attributes to all services by default. This bundle is not defined on a per-service basis and is always combined with attributes produced by the specific release policy of the service, such that for instance, you can devise rules to always release `givenName` and `cn` to every application, and additionally allow other specific principal attributes for only some applications per their attribute release policy.
+CAS provides the ability to release a bundle of principal attributes to all services by default. This bundle 
+is not defined on a per-service basis and is always combined with attributes produced by the specific 
+release policy of the service, such that for instance, you can devise rules to always release `givenName` 
+and `cn` to every application, and additionally allow other specific principal attributes for 
+only some applications per their attribute release policy.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#default-bundle).
+{% include casproperties.html properties="cas.authn.attribute-repository.core.default-attributes-to-release" %}
 
 ### Return All
 
@@ -128,6 +137,10 @@ Only return the principal attributes that are explicitly allowed by the service 
   }
 }
 ```
+     
+Attributes authorized and allowed for release by this policy may not necessarily be available
+as resolved principal attributes and can be resolved on the fly dynamically 
+using the [attribute definition store](Attribute-Definitions.html).
 
 ### Return Encrypted
 
@@ -159,9 +172,15 @@ openssl rsa -pubout -in private.key -out public.key -inform PEM -outform DER
 openssl pkcs8 -topk8 -inform PER -outform DER -nocrypt -in private.key -out private.p8
 ```
 
+Attributes authorized and allowed for release by this policy may not necessarily be available
+as resolved principal attributes and can be resolved on the fly dynamically
+using the [attribute definition store](Attribute-Definitions.html).
+
 ### REST
 
-Only return the principal attributes that are explicitly allowed by contacting a REST endpoint. Endpoints must be designed to accept/process `application/json`. The expected response status code is `200` where the body of the response includes a `Map` of attributes linked to their values.
+Only return the principal attributes that are explicitly allowed by contacting a REST endpoint. Endpoints must be designed to 
+accept/process `application/json`. The expected response status code is `200` where the body of 
+the response includes a `Map` of attributes linked to their values.
 
 ```json
 {
@@ -212,12 +231,19 @@ release `affiliation` and `group` to the web application configured.
 }
 ```
 
+Attributes authorized and allowed for release by this policy may not necessarily be available
+as resolved principal attributes and can be resolved on the fly dynamically
+using the [attribute definition store](Attribute-Definitions.html).
+
 ### Return MultiMapped
 
 The same policy may allow attribute definitions to be renamed and remapped to multiple attribute names, 
 with duplicate attributes values mapped to different names.
 
-For example, the following configuration will recognize the resolved attribute `eduPersonAffiliation` and will then release `affiliation` and `personAffiliation` whose values stem from the original `eduPersonAffiliation` attribute while `groupMembership` is released as `group`. In other words, the `eduPersonAffiliation` attribute is released twice under two different names each sharing the same value.
+For example, the following configuration will recognize the resolved attribute `eduPersonAffiliation` and will then 
+release `affiliation` and `personAffiliation` whose values stem from the original `eduPersonAffiliation` attribute 
+while `groupMembership` is released as `group`. In other words, the `eduPersonAffiliation` attribute is 
+released twice under two different names each sharing the same value.
 
 ```json
 {
@@ -235,6 +261,10 @@ For example, the following configuration will recognize the resolved attribute `
   }
 }
 ```
+
+Attributes authorized and allowed for release by this policy may not necessarily be available
+as resolved principal attributes and can be resolved on the fly dynamically
+using the [attribute definition store](Attribute-Definitions.html).
 
 ### Inline Groovy Attributes
 
@@ -353,13 +383,7 @@ takes advantage of scripting functionality built into the Java platform via addi
 natively supported by CAS, the following module is required in the overlay to include support for additional languages
 such as Python, etc.
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-script-engines</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```  
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-script-engines" %}
 
 The service definition then may be designed as:
 
@@ -421,6 +445,12 @@ has access to the collection of resolved `attributes` as well as a `logger` obje
   }
 }
 ```
+    
+### Attribute Repository Filtering
+
+Attribute release policies can be assigned a `principalAttributesRepository` to consult attribute sources 
+defined and controlled by [Person Directory](Attribute-Resolution.html) attribute repositories
+to fetch, resolve, cache and release attributes. To learn more about this topic, please [see this guide](Attribute-Release-Caching.html).
 
 ### Chaining Policies
 

@@ -103,6 +103,11 @@ public class OktaAuthenticationStateHandlerAdapter extends AuthenticationStateHa
         failureException = new AccountLockedException(lockedOut.getStatusString());
     }
 
+    /**
+     * Throw exception if necessary.
+     *
+     * @throws Exception the exception
+     */
     public void throwExceptionIfNecessary() throws Exception {
         if (failureException != null) {
             throw this.failureException;

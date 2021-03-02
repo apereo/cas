@@ -51,7 +51,7 @@ public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProp
      * and as such lend themselves to be tried and tested during the authentication handler selection phase.
      * The credential criteria may be one of the following options:<ul>
      * <li>1) A regular expression pattern that is tested against the credential identifier.</li>
-     * <li>2) A fully qualified class name of your own design that implements {@code Predicate<Credential>}.</li>
+     * <li>2) A fully qualified class name of your own design that implements {@code Predicate}.</li>
      * <li>3) Path to an external Groovy script that implements the same interface.</li>
      * </ul>
      */
@@ -70,7 +70,10 @@ public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProp
     /**
      * List of attributes to retrieve from LDAP.
      * Attributes can be virtually remapped to multiple names.
-     * Example {@code cn:commonName,givenName,eduPersonTargettedId:SOME_IDENTIFIER}
+     * Example {@code cn:commonName,givenName,eduPersonTargettedId:SOME_IDENTIFIER}.
+     *
+     * To fetch and resolve attributes that carry tags/options,
+     * consider tagging the mapped attribute as such: {@code homePostalAddress:homePostalAddress;}.
      */
     private List principalAttributeList = new ArrayList<>(0);
 

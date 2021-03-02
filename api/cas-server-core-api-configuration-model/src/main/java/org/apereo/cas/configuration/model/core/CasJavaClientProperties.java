@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.core;
 
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -18,6 +19,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("CasJavaClientProperties")
 public class CasJavaClientProperties implements Serializable {
     private static final long serialVersionUID = -3646242105668747303L;
     /**
@@ -46,6 +48,10 @@ public class CasJavaClientProperties implements Serializable {
         /**
          * CAS30 ticket validator.
          */
-        CAS30
+        CAS30,
+        /**
+         * JSON ticket validator.
+         */
+        JSON
     }
 }

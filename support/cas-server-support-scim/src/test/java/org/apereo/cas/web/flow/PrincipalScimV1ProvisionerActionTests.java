@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.scim.password=Mellon"
 })
 @Tag("WebflowActions")
-@SuppressWarnings("JdkObsolete")
+@SuppressWarnings("JavaUtilDate")
 public class PrincipalScimV1ProvisionerActionTests extends BaseScimProvisionerActionTests {
     @Test
     public void verifyAction() throws Exception {
@@ -65,7 +65,6 @@ public class PrincipalScimV1ProvisionerActionTests extends BaseScimProvisionerAc
         meta.setCreated(new Date());
         user.setMeta(meta);
 
-
         val resources = new Resources(CollectionUtils.wrapList(user));
         val stream = new ByteArrayOutputStream();
         resources.marshal(new JsonMarshaller(), stream);
@@ -75,5 +74,16 @@ public class PrincipalScimV1ProvisionerActionTests extends BaseScimProvisionerAc
             webServer.start();
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, principalScimProvisionerAction.execute(context).getId());
         }
+    }
+
+    @Test
+    public void verifyFailsAction() throws Exception {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(),
+            request, new MockHttpServletResponse()));
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, principalScimProvisionerAction.execute(context).getId());
+        WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, principalScimProvisionerAction.execute(context).getId());
     }
 }

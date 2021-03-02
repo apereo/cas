@@ -1,12 +1,11 @@
 package org.apereo.cas.authentication.principal.cache;
 
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -19,7 +18,6 @@ import lombok.val;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Wrapper around an attribute repository where attributes cached for a configurable period
@@ -47,7 +45,6 @@ public class CachingPrincipalAttributesRepository extends AbstractPrincipalAttri
      */
     protected String timeUnit;
 
-
     @JsonCreator
     public CachingPrincipalAttributesRepository(@JsonProperty("timeUnit") final String timeUnit,
                                                 @JsonProperty("expiration") final long expiryDuration) {
@@ -60,7 +57,7 @@ public class CachingPrincipalAttributesRepository extends AbstractPrincipalAttri
         val mergeStrategy = determineMergingStrategy();
         LOGGER.trace("Determined merging strategy as [{}]", mergeStrategy);
 
-        val cachedAttributes = getCachedPrincipalAttributes(principal, registeredService);
+        val cachedAttributes = fetchCachedPrincipalAttributes(principal, registeredService);
         if (cachedAttributes != null && !cachedAttributes.isEmpty()) {
             LOGGER.debug("Found [{}] cached attributes for principal [{}] that are [{}]", cachedAttributes.size(), principal.getId(), cachedAttributes);
             return cachedAttributes;
@@ -74,22 +71,21 @@ public class CachingPrincipalAttributesRepository extends AbstractPrincipalAttri
             LOGGER.debug("Found [{}] attributes for principal [{}] from the attribute repository.", personDirectoryAttributes.size(), principal.getId());
 
             LOGGER.debug("Merging current principal attributes with that of the repository via strategy [{}]", mergeStrategy);
-            val mergedAttributes = mergeStrategy.getAttributeMerger().mergeAttributes(principalAttributes, personDirectoryAttributes);
+            val mergedAttributes = CoreAuthenticationUtils.getAttributeMerger(mergeStrategy)
+                .mergeAttributes(principalAttributes, personDirectoryAttributes);
             return convertAttributesToPrincipalAttributesAndCache(principal, mergedAttributes, registeredService);
         }
         return convertAttributesToPrincipalAttributesAndCache(principal, principalAttributes, registeredService);
     }
 
     @Override
-    protected void addPrincipalAttributes(final String id, final Map<String, List<Object>> attributes,
-                                          final RegisteredService registeredService) {
-        try {
-            val cache = getCacheInstanceFromApplicationContext();
-            cache.putCachedAttributesFor(registeredService, this, id, attributes);
-            LOGGER.trace("Cached attributes for [{}]", id);
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
+    public void update(final String id, final Map<String, List<Object>> attributes,
+                       final RegisteredService registeredService) {
+        ApplicationContextProvider.getPrincipalAttributesRepositoryCache()
+            .ifPresent(cache -> {
+                cache.putAttributes(registeredService, this, id, attributes);
+                LOGGER.trace("Cached attributes for [{}] and [{}]", id, registeredService.getName());
+            });
     }
 
     /**
@@ -99,27 +95,9 @@ public class CachingPrincipalAttributesRepository extends AbstractPrincipalAttri
      * @param registeredService the registered service
      * @return the cached principal attributes
      */
-    @JsonIgnore
-    protected Map<String, List<Object>> getCachedPrincipalAttributes(final Principal principal, final RegisteredService registeredService) {
-        try {
-            val cache = getCacheInstanceFromApplicationContext();
-            return cache.getCachedAttributesFor(registeredService, this, principal);
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return new HashMap<>(0);
+    protected Map<String, List<Object>> fetchCachedPrincipalAttributes(final Principal principal, final RegisteredService registeredService) {
+        return ApplicationContextProvider.getPrincipalAttributesRepositoryCache()
+            .map(cache -> cache.fetchAttributes(registeredService, this, principal))
+            .orElse(new HashMap<>(0));
     }
-
-    /**
-     * Gets cache instance from application context.
-     *
-     * @return the cache instance from application context
-     */
-    @JsonIgnore
-    public static PrincipalAttributesRepositoryCache getCacheInstanceFromApplicationContext() {
-        val ctx = ApplicationContextProvider.getApplicationContext();
-        return Objects.requireNonNull(ctx)
-            .getBean("principalAttributesRepositoryCache", PrincipalAttributesRepositoryCache.class);
-    }
-
 }

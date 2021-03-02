@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 
@@ -14,7 +15,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RequiresModule(name = "cas-server-support-rest", automated = true)
+@RequiresModule(name = "cas-server-support-rest")
 @Getter
 @Setter
 @Accessors(chain = true)
@@ -36,19 +37,8 @@ public class RestProperties implements Serializable {
     private String attributeValue;
 
     /**
-     * Flag that enables {@link java.security.cert.X509Certificate} extraction from the request headers
-     * for authentication.
+     * X509 settings related to the rest protocol and authentication.
      */
-    private boolean headerAuth = true;
-    
-    /**
-     * Flag that enables {@link java.security.cert.X509Certificate} extraction from the request body for authentication.
-     */
-    private boolean bodyAuth;
-
-    /**
-     * Flag that enables TLS client {@link java.security.cert.X509Certificate} extraction from the servlet container
-     * for authentication.
-     */
-    private boolean tlsClientAuth;
+    @NestedConfigurationProperty
+    private RestX509Properties x509 = new RestX509Properties();
 }

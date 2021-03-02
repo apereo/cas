@@ -30,9 +30,9 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreNotificationsConfiguration.class,
     CasCoreUtilConfiguration.class
 }, properties = {
-    "cas.authn.pm.enabled=true",
-    "cas.authn.pm.history.enabled=true",
-    "cas.authn.pm.policy-pattern=^Th!.+{8,10}"
+    "cas.authn.pm.core.enabled=true",
+    "cas.authn.pm.history.core.enabled=true",
+    "cas.authn.pm.core.policy-pattern=^Th!.+{8,10}"
 })
 @Tag("PasswordOps")
 public class DefaultPasswordValidationServiceTests {

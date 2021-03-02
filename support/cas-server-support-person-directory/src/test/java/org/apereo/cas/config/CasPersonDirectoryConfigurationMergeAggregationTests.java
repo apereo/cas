@@ -36,10 +36,10 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attribute-repository.script[0].location=classpath:/GroovyAttributeRepository.groovy",
     "cas.authn.attribute-repository.script[0].order=2",
 
-    "cas.authn.attribute-repository.aggregation=merge",
-    "cas.authn.attribute-repository.merger=multivalued",
+    "cas.authn.attribute-repository.core.aggregation=MERGE",
+    "cas.authn.attribute-repository.core.merger=MULTIVALUED",
     
-    "cas.authn.attribute-repository.expiration-time=0"
+    "cas.authn.attribute-repository.core.expiration-time=0"
 })
 @Tag("Attributes")
 public class CasPersonDirectoryConfigurationMergeAggregationTests {

@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -22,8 +23,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class LiteralRegisteredServiceMatchingStrategyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "ExactLiteralRegisteredServiceMatchingStrategyTests.json");
 
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules()
-        .enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
     public void verifySerialization() throws Exception {

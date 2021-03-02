@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 
@@ -34,11 +35,13 @@ public class EncryptionRandomizedSigningJwtCryptographyProperties implements Ser
     /**
      * Settings that deal with encryption of values.
      */
+    @NestedConfigurationProperty
     private EncryptionRandomizedCryptoProperties encryption = new EncryptionRandomizedCryptoProperties();
 
     /**
      * Settings that deal with signing of values.
      */
+    @NestedConfigurationProperty
     private SigningJwtCryptoProperties signing = new SigningJwtCryptoProperties();
 
     /**

@@ -47,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("SAML")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@TestPropertySource(properties = "cas.authn.saml-idp.attribute-query-profile-enabled=true")
+@TestPropertySource(properties = "cas.authn.saml-idp.core.attribute-query-profile-enabled=true")
 public class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("saml2AttributeQueryProfileHandlerController")

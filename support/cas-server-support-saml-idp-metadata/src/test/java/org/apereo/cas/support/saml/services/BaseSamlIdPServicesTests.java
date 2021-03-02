@@ -26,7 +26,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class BaseSamlIdPServicesTests {
     @Autowired
-    @Qualifier("shibboleth.OpenSAMLConfig")
+    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
     protected OpenSamlConfigBean openSamlConfigBean;
 
     @Autowired

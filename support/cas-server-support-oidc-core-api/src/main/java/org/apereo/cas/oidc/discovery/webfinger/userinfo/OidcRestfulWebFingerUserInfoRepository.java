@@ -5,8 +5,8 @@ import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerUserInfoRepository;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +15,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.hjson.JsonValue;
+import org.springframework.http.HttpMethod;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -29,10 +30,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Slf4j
 public class OidcRestfulWebFingerUserInfoRepository implements OidcWebFingerUserInfoRepository {
-    private static final ObjectMapper MAPPER = new ObjectMapper()
-        .findAndRegisterModules()
-        .configure(DeserializationFeature.READ_ENUMS_USING_TO_STRING, false)
-        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .failOnUnknownProperties(false).build().toObjectMapper();
 
     private final RestEndpointProperties properties;
 
@@ -55,9 +54,15 @@ public class OidcRestfulWebFingerUserInfoRepository implements OidcWebFingerUser
     protected Map<String, Object> findAccountViaRestApi(final Map<String, Object> headers) {
         HttpResponse response = null;
         try {
-            response = HttpUtils.execute(properties.getUrl(), properties.getMethod(),
-                properties.getBasicAuthUsername(), properties.getBasicAuthPassword(),
-                new HashMap<>(0), headers);
+            headers.putAll(properties.getHeaders());
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(properties.getBasicAuthPassword())
+                .basicAuthUsername(properties.getBasicAuthUsername())
+                .method(HttpMethod.valueOf(properties.getMethod().toUpperCase().trim()))
+                .url(properties.getUrl())
+                .headers(headers)
+                .build();
+            response = HttpUtils.execute(exec);
             if (response != null && response.getEntity() != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
                 return MAPPER.readValue(JsonValue.readHjson(result).toString(), Map.class);

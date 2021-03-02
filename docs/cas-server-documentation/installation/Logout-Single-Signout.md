@@ -3,6 +3,8 @@ layout: default
 title: CAS - Logout & Single Logout
 category: SSO & SLO
 ---
+{% include variables.html %}
+
 
 # Logout and Single Logout (SLO)
 
@@ -26,7 +28,7 @@ CAS during the SSO session. While this is a best-effort process, in many cases i
 user experience by creating symmetry between login and logout.
 
 <div class="alert alert-info"><strong>SSO Sessions</strong><p>It is possible to review the current collection of active SSO sessions,
-and determine if CAS itself maintains an active SSO session via the <a href="../monitoring/Monitoring-Statistics.html">CAS administration panels.</a></p></div>
+and determine if CAS itself maintains an active SSO session. See <a href="../monitoring/Monitoring-Statistics.html">this page</a>.</p></div>
 
 ## CAS Logout
 
@@ -35,11 +37,13 @@ Upon logout, it may also be desirable to redirect back to a service. This is con
 link via the `service` parameter. The specified `service` must be registered in the service registry of CAS and enabled and
 CAS must be allowed to follow service redirects.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#logout).
+{% include casproperties.html properties="cas.logout" %}
+
 
 ## Single Logout (SLO)
 
-CAS is designed to support single sign out: it means that it will be able to invalidate client application sessions in addition to its own SSO session.  
+CAS is designed to support single sign out: it means that it will be able to 
+invalidate client application sessions in addition to its own SSO session.  
 Whenever a ticket-granting ticket is explicitly expired, the logout protocol will be initiated. Clients that do not support the
 logout protocol may notice extra requests in their access logs that appear not to do anything.
 
@@ -55,7 +59,7 @@ contacted, and this may disrupt user experience negatively if those applications
 As an example, if user has logged into a portal application and an email application, logging out of one through SLO will
 also destroy the user session in the other which could mean data loss if the application is not carefully managing its session and user activity.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#single-logout).
+{% include casproperties.html properties="cas.slo" %}
 
 ### Back Channel
 
@@ -97,10 +101,6 @@ delivered or the redirection is sent to the URL presented in the _service_ param
 The session identifier is the CAS service ticket ID that was provided to the service when it originally authenticated
 to CAS. The session identifier is used to correlate a CAS session with an application session; for example, the SLO
 session identifier maps to a servlet session that can subsequently be destroyed to terminate the application session.
-
-### Turning Off Single Logout
-
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#single-logout).
 
 ### Redirecting Logout to Service
 
@@ -150,7 +150,7 @@ To configure a service specific endpoint, try the following example:
 ### Asynchronous SLO Messages
 
 By default, backchannel logout messages are sent to endpoint in an asynchronous fashion.
-This behavior can be modified via CAS settings. To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#logout).
+This behavior can be modified via CAS settings. 
 
 ## SSO Session vs. Application Session
 

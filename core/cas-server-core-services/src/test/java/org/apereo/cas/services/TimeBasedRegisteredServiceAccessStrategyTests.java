@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -25,7 +27,9 @@ import static org.junit.jupiter.api.Assertions.*;
 public class TimeBasedRegisteredServiceAccessStrategyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "timeBasedRegisteredServiceAccessStrategy.json");
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
     public void checkAuthorizationByRangePass() {
@@ -72,9 +76,17 @@ public class TimeBasedRegisteredServiceAccessStrategyTests {
     }
 
     @Test
+    public void checkExpressionLanguage() {
+        val authz = new TimeBasedRegisteredServiceAccessStrategy(true, true);
+        authz.setStartingDateTime("${#localStartDay}");
+        authz.setEndingDateTime("${#localEndDay}");
+        authz.setZoneId("${#zoneId}");
+        assertTrue(authz.isServiceAccessAllowed());
+    }
+
+    @Test
     public void checkAuthorizationByRangePassEndTime() {
-        val authz =
-            new TimeBasedRegisteredServiceAccessStrategy(true, true);
+        val authz = new TimeBasedRegisteredServiceAccessStrategy(true, true);
         authz.setStartingDateTime(ZonedDateTime.now(ZoneOffset.UTC).toString());
         authz.setEndingDateTime(ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(30).toString());
         assertTrue(authz.isServiceAccessAllowed());

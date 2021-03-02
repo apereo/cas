@@ -6,6 +6,7 @@ import org.apereo.cas.support.saml.authentication.SamlIdPServiceFactoryTests;
 import org.apereo.cas.support.saml.idp.metadata.generator.FileSystemSamlIdPMetadataGeneratorTests;
 import org.apereo.cas.support.saml.idp.metadata.locator.FileSystemSamlIdPMetadataLocatorTests;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataResolverTests;
+import org.apereo.cas.support.saml.services.AuthnRequestRequestedAttributesAttributeReleasePolicyTests;
 import org.apereo.cas.support.saml.services.EduPersonTargetedIdAttributeReleasePolicyTests;
 import org.apereo.cas.support.saml.services.GroovySamlRegisteredServiceAttributeReleasePolicyTests;
 import org.apereo.cas.support.saml.services.InCommonRSAttributeReleasePolicyTests;
@@ -28,9 +29,11 @@ import org.apereo.cas.support.saml.web.idp.metadata.SamlRegisteredServiceCachedM
 import org.apereo.cas.support.saml.web.idp.profile.SamlIdPInitiatedProfileHandlerControllerTests;
 import org.apereo.cas.support.saml.web.idp.profile.artifact.CasSamlArtifactMapTests;
 import org.apereo.cas.support.saml.web.idp.profile.artifact.SamlIdPSaml1ArtifactResolutionProfileHandlerControllerTests;
+import org.apereo.cas.support.saml.web.idp.profile.builders.attr.SamlProfileSamlAttributeStatementBuilderTests;
 import org.apereo.cas.support.saml.web.idp.profile.builders.attr.SamlProfileSamlRegisteredServiceAttributeBuilderTests;
 import org.apereo.cas.support.saml.web.idp.profile.builders.authn.DefaultAuthnContextClassRefBuilderTests;
 import org.apereo.cas.support.saml.web.idp.profile.builders.conditions.SamlProfileSamlConditionsBuilderTests;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypterTests;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSignerTests;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidatorTests;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.encoder.sso.SamlResponseArtifactEncoderTests;
@@ -113,6 +116,9 @@ import org.junit.runner.RunWith;
     SamlIdPSingleLogoutRedirectionStrategyTests.class,
     SamlIdPMetadataUIActionTests.class,
     SamlIdPObjectSignerTests.class,
+    AuthnRequestRequestedAttributesAttributeReleasePolicyTests.class,
+    SamlIdPObjectEncrypterTests.class,
+    SamlProfileSamlAttributeStatementBuilderTests.class,
     SamlProfileSamlConditionsBuilderTests.class,
     SamlProfileSamlSubjectBuilderTests.class,
     DefaultSamlArtifactTicketFactoryTests.class,

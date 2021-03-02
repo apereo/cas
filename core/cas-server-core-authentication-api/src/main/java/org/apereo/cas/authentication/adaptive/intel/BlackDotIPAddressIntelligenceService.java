@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.adaptive.intel;
 import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +28,8 @@ import java.util.Map;
  */
 @Slf4j
 public class BlackDotIPAddressIntelligenceService extends BaseIPAddressIntelligenceService {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     public BlackDotIPAddressIntelligenceService(final AdaptiveAuthenticationProperties adaptiveAuthenticationProperties) {
         super(adaptiveAuthenticationProperties);
@@ -61,11 +63,12 @@ public class BlackDotIPAddressIntelligenceService extends BaseIPAddressIntellige
             }
             val url = builder.toString();
             LOGGER.debug("Sending IP check request to [{}]", url);
-            response = HttpUtils.execute(url, HttpMethod.GET.name());
-            if (response == null) {
-                return bannedResponse;
-            }
 
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .method(HttpMethod.GET)
+                .url(url)
+                .build();
+            response = HttpUtils.execute(exec);
             if (response.getStatusLine().getStatusCode() == HttpStatus.TOO_MANY_REQUESTS.value()) {
                 LOGGER.error("Exceeded the number of allowed queries");
                 return bannedResponse;

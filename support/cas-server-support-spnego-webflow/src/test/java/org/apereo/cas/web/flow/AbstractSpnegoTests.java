@@ -71,6 +71,9 @@ import org.springframework.webflow.execution.Action;
     CasCoreHttpConfiguration.class,
     CasCoreNotificationsConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class
+}, properties = {
+    "cas.authn.spnego.system.kerberos-conf=classpath:kerb5.conf",
+    "cas.authn.spnego.system.login-conf=classpath:jaas.conf"
 })
 public abstract class AbstractSpnegoTests {
     @Autowired

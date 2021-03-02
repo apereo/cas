@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("JDBC")
-@TestPropertySource(properties = "cas.authn.pm.history.enabled=true")
+@TestPropertySource(properties = "cas.authn.pm.history.core.enabled=true")
 public class JdbcPasswordHistoryServiceTests extends BaseJdbcPasswordManagementServiceTests {
     @Test
     public void verifyOperation() {

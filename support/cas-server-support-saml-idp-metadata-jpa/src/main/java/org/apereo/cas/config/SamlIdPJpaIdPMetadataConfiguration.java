@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.jpa.JpaBeanFactory;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.idp.metadata.JpaSamlIdPMetadataCipherExecutor;
 import org.apereo.cas.support.saml.idp.metadata.JpaSamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.JpaSamlIdPMetadataLocator;
@@ -12,11 +13,12 @@ import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerat
 import org.apereo.cas.support.saml.idp.metadata.jpa.JpaSamlIdPMetadataDocumentFactory;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.writer.SamlIdPCertificateAndKeyWriter;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
-import lombok.SneakyThrows;
+import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -69,8 +71,17 @@ public class SamlIdPJpaIdPMetadataConfiguration {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
+    @Autowired
+    @Qualifier("samlIdPMetadataCache")
+    private ObjectProvider<Cache<String, SamlIdPMetadataDocument>> samlIdPMetadataCache;
+
+    @Autowired
+    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+    private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
+    
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "jpaSamlMetadataIdPVendorAdapter")
     public JpaVendorAdapter jpaSamlMetadataIdPVendorAdapter() {
         return jpaBeanFactory.getObject().newJpaVendorAdapter(casProperties.getJdbc());
     }
@@ -141,6 +152,7 @@ public class SamlIdPJpaIdPMetadataConfiguration {
             .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter.getObject())
             .applicationContext(applicationContext)
             .casProperties(casProperties)
+            .openSamlConfigBean(openSamlConfigBean.getObject())
             .metadataCipherExecutor(jpaSamlIdPMetadataCipherExecutor())
             .build();
 
@@ -151,8 +163,7 @@ public class SamlIdPJpaIdPMetadataConfiguration {
 
     @RefreshScope
     @Bean
-    @SneakyThrows
     public SamlIdPMetadataLocator samlIdPMetadataLocator() {
-        return new JpaSamlIdPMetadataLocator(jpaSamlIdPMetadataCipherExecutor());
+        return new JpaSamlIdPMetadataLocator(jpaSamlIdPMetadataCipherExecutor(), samlIdPMetadataCache.getObject());
     }
 }

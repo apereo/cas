@@ -37,7 +37,7 @@ public class PredicatedPrincipalAttributeMultifactorAuthenticationTriggerTests e
         val props = new CasConfigurationProperties();
         val file = File.createTempFile("example", ".txt");
         FileUtils.writeStringToFile(file, "script", StandardCharsets.UTF_8);
-        props.getAuthn().getMfa().setGlobalPrincipalAttributePredicate(new FileSystemResource(file));
+        props.getAuthn().getMfa().getTriggers().getPrincipal().getGlobalPrincipalAttributePredicate().setLocation(new FileSystemResource(file));
         val trigger = new PredicatedPrincipalAttributeMultifactorAuthenticationTrigger(props, this.applicationContext);
         val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
         assertTrue(result.isEmpty());
@@ -47,7 +47,7 @@ public class PredicatedPrincipalAttributeMultifactorAuthenticationTriggerTests e
     @Order(1)
     public void verifyOperationByHeader() {
         val props = new CasConfigurationProperties();
-        props.getAuthn().getMfa().setGlobalPrincipalAttributePredicate(new ClassPathResource("GroovyPredicate.groovy"));
+        props.getAuthn().getMfa().getTriggers().getPrincipal().getGlobalPrincipalAttributePredicate().setLocation(new ClassPathResource("GroovyPredicate.groovy"));
         val trigger = new PredicatedPrincipalAttributeMultifactorAuthenticationTrigger(props, this.applicationContext);
         val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
         assertTrue(result.isPresent());
@@ -60,7 +60,7 @@ public class PredicatedPrincipalAttributeMultifactorAuthenticationTriggerTests e
         val props = new CasConfigurationProperties();
         val file = File.createTempFile("predicate", ".txt");
         FileUtils.writeStringToFile(file, "script", StandardCharsets.UTF_8);
-        props.getAuthn().getMfa().setGlobalPrincipalAttributePredicate(new FileSystemResource(file));
+        props.getAuthn().getMfa().getTriggers().getPrincipal().getGlobalPrincipalAttributePredicate().setLocation(new FileSystemResource(file));
         val trigger = new PredicatedPrincipalAttributeMultifactorAuthenticationTrigger(props, this.applicationContext);
         val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
         assertTrue(result.isEmpty());

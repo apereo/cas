@@ -1,7 +1,9 @@
 package org.apereo.cas;
 
 import org.apereo.cas.web.flow.AuthenticationViaFormActionTests;
+import org.apereo.cas.web.flow.ConfirmLogoutActionTests;
 import org.apereo.cas.web.flow.CreateTicketGrantingTicketActionTests;
+import org.apereo.cas.web.flow.FinishLogoutActionTests;
 import org.apereo.cas.web.flow.FlowExecutionExceptionResolverTests;
 import org.apereo.cas.web.flow.FrontChannelLogoutActionTests;
 import org.apereo.cas.web.flow.GatewayServicesManagementCheckActionTests;
@@ -42,6 +44,7 @@ import org.junit.runner.RunWith;
     GenericSuccessViewActionTests.class,
     InitialFlowSetupActionTests.class,
     LogoutActionTests.class,
+    FinishLogoutActionTests.class,
     SessionStoreTicketGrantingTicketActionTests.class,
     RedirectUnauthorizedServiceUrlActionTests.class,
     RenderLoginActionTests.class,
@@ -54,6 +57,7 @@ import org.junit.runner.RunWith;
     CreateTicketGrantingTicketActionTests.class,
     TicketGrantingTicketCheckActionTests.class,
     ServiceWarningActionTests.class,
+    ConfirmLogoutActionTests.class,
     TerminateSessionActionTests.class,
     VerifyRequiredServiceActionTests.class,
     SetServiceUnauthorizedRedirectUrlActionTests.class,

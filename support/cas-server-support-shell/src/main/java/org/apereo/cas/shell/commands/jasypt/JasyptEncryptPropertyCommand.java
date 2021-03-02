@@ -35,6 +35,7 @@ public class JasyptEncryptPropertyCommand {
      * @param alg        the alg
      * @param provider   the provider
      * @param password   the password
+     * @param initVector whether to use initialization vector
      * @param iterations the iterations - defaults to {@value StandardPBEByteEncryptor#DEFAULT_KEY_OBTENTION_ITERATIONS}
      */
     @ShellMethod(key = "encrypt-value", value = "Encrypt a CAS property value/setting via Jasypt")
@@ -47,6 +48,8 @@ public class JasyptEncryptPropertyCommand {
             help = "Security provider to use to encrypt") final String provider,
         @ShellOption(value = { "password", "--password" },
             help = "Password (encryption key) to encrypt") final String password,
+        @ShellOption(value = { "initvector", "--initvector", "iv", "--iv" },
+            help = "Use initialization vector to encrypt") final Boolean initVector,
         @ShellOption(value = { "iterations", "--iterations" },
             defaultValue = ShellOption.NULL,
             help = "Key obtention iterations to encrypt, default 1000") final String iterations) {
@@ -59,7 +62,10 @@ public class JasyptEncryptPropertyCommand {
         }
         cipher.setProviderName(provider);
         cipher.setKeyObtentionIterations(iterations);
+        if (initVector || cipher.isVectorInitializationRequiredFor(alg)) {
+            cipher.configureInitializationVector();
+        }
         val encrypted = cipher.encryptValue(value);
-        LOGGER.info("==== Encrypted Value ====\n{}", encrypted);
+        LOGGER.info("==== Encrypted Value ====\n[{}]", encrypted);
     }
 }

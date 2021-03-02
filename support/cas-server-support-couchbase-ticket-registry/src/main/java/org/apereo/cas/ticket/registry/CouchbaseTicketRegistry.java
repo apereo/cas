@@ -5,6 +5,7 @@ import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.couchbase.client.java.codec.JacksonJsonSerializer;
 import com.couchbase.client.java.codec.JsonTranscoder;
@@ -12,7 +13,6 @@ import com.couchbase.client.java.kv.GetOptions;
 import com.couchbase.client.java.kv.UpsertOptions;
 import com.couchbase.client.java.query.QueryOptions;
 import com.couchbase.client.java.query.QueryResult;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,11 +38,25 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements DisposableBean {
-    private static final ObjectMapper MAPPER = new ObjectMapper()
-        .enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY)
-        .findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     private final CouchbaseClientFactory couchbase;
+
+    /**
+     * Get the expiration policy value of the ticket in seconds.
+     *
+     * @param ticket the ticket
+     * @return the exp value
+     */
+    private static Duration getTimeToLive(final Ticket ticket) {
+        val ttl = ticket.getExpirationPolicy().getTimeToLive();
+        if (ttl >= Integer.MAX_VALUE) {
+            return Duration.ofSeconds(0);
+        }
+        val expTime = ttl.intValue();
+        return Duration.ofSeconds(expTime);
+    }
 
     @Override
     public void addTicket(final Ticket ticketToAdd) {
@@ -155,17 +169,6 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
         val query = getQueryForAllTickets();
         return couchbase.select(query,
             QueryOptions.queryOptions().serializer(JacksonJsonSerializer.create(MAPPER)), false);
-    }
-
-    /**
-     * Get the expiration policy value of the ticket in seconds.
-     *
-     * @param ticket the ticket
-     * @return the exp value
-     */
-    private static Duration getTimeToLive(final Ticket ticket) {
-        val expTime = ticket.getExpirationPolicy().getTimeToLive().intValue();
-        return Duration.ofSeconds(expTime);
     }
 }
 

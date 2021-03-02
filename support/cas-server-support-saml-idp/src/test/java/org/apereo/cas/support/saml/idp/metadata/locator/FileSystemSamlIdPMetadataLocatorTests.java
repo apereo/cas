@@ -20,8 +20,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("SAML")
 @TestPropertySource(properties = {
-    "cas.authn.saml-idp.entity-id=https://cas.example.org/idp",
-    "cas.authn.saml-idp.metadata.location=${#systemProperties['java.io.tmpdir']}/idp-metadata"
+    "cas.authn.saml-idp.core.entity-id=https://cas.example.org/idp",
+    "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata"
 })
 public class FileSystemSamlIdPMetadataLocatorTests extends BaseSamlIdPConfigurationTests {
 

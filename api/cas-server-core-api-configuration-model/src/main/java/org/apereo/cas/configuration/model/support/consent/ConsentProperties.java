@@ -3,14 +3,10 @@ package org.apereo.cas.configuration.model.support.consent;
 import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.core.web.flow.WebflowAutoConfigurationProperties;
-import org.apereo.cas.configuration.model.support.couchdb.BaseCouchDbProperties;
-import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
-import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
-import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
-import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -29,6 +25,7 @@ import java.time.temporal.ChronoUnit;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("ConsentProperties")
 public class ConsentProperties implements Serializable {
 
     private static final long serialVersionUID = 5201308051524438384L;
@@ -66,42 +63,50 @@ public class ConsentProperties implements Serializable {
     /**
      * Keep consent decisions stored via REST.
      */
-    private Rest rest = new Rest();
+    @NestedConfigurationProperty
+    private RestfulConsentProperties rest = new RestfulConsentProperties();
 
     /**
      * Keep consent decisions stored via LDAP user records.
      */
-    private Ldap ldap = new Ldap();
+    @NestedConfigurationProperty
+    private LdapConsentProperties ldap = new LdapConsentProperties();
 
     /**
      * Keep consent decisions stored via JDBC resources.
      */
-    private Jpa jpa = new Jpa();
+    @NestedConfigurationProperty
+    private JpaConsentProperties jpa = new JpaConsentProperties();
 
     /**
      * Keep consent decisions stored via a static JSON resource.
      */
-    private Json json = new Json();
+    @NestedConfigurationProperty
+    private JsonConsentProperties json = new JsonConsentProperties();
 
     /**
      *  Keep consent decisions stored via Redis.
      */
-    private Redis redis = new Redis();
+    @NestedConfigurationProperty
+    private RedisConsentProperties redis = new RedisConsentProperties();
 
     /**
      * Keep consent decisions stored via a Groovy resource.
      */
-    private Groovy groovy = new Groovy();
+    @NestedConfigurationProperty
+    private GroovyConsentProperties groovy = new GroovyConsentProperties();
 
     /**
      * Keep consent decisions stored via a MongoDb database resource.
      */
-    private MongoDb mongo = new MongoDb();
+    @NestedConfigurationProperty
+    private MongoDbConsentProperties mongo = new MongoDbConsentProperties();
 
     /**
      * Keep consent decisions stored via a CouchDb database resource.
      */
-    private CouchDb couchDb = new CouchDb();
+    @NestedConfigurationProperty
+    private CouchDbConsentProperties couchDb = new CouchDbConsentProperties();
 
     /**
      * Signing/encryption settings.
@@ -113,103 +118,10 @@ public class ConsentProperties implements Serializable {
      * The webflow configuration.
      */
     @NestedConfigurationProperty
-    private WebflowAutoConfigurationProperties webflow = new WebflowAutoConfigurationProperties(100);
+    private WebflowAutoConfigurationProperties webflow = new WebflowAutoConfigurationProperties().setOrder(100);
     
     public ConsentProperties() {
         crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
         crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
-    }
-
-    @RequiresModule(name = "cas-server-support-consent-couchdb")
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class CouchDb extends BaseCouchDbProperties {
-        private static final long serialVersionUID = 8184753250455916462L;
-
-        public CouchDb() {
-            this.setDbName("consent");
-        }
-    }
-
-    @RequiresModule(name = "cas-server-consent-webflow")
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class Json extends SpringResourceProperties {
-
-        private static final long serialVersionUID = 7079027843747126083L;
-    }
-
-    @RequiresModule(name = "cas-server-consent-webflow")
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class Groovy extends SpringResourceProperties {
-
-        private static final long serialVersionUID = 7079027843747126083L;
-    }
-
-    @RequiresModule(name = "cas-server-consent-jdbc")
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class Jpa extends AbstractJpaProperties {
-
-        private static final long serialVersionUID = 1646689616653363554L;
-    }
-
-    @RequiresModule(name = "cas-server-consent-ldap")
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class Ldap extends AbstractLdapSearchProperties {
-
-        private static final long serialVersionUID = 1L;
-
-        /**
-         * Type of LDAP directory.
-         */
-        private LdapType type;
-
-        /**
-         * Name of LDAP attribute that holds consent decisions as JSON.
-         */
-        private String consentAttributeName = "casConsentDecision";
-    }
-
-    @RequiresModule(name = "cas-server-consent-mongo")
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class MongoDb extends SingleCollectionMongoDbProperties {
-
-        private static final long serialVersionUID = -1918436901491275547L;
-
-        public MongoDb() {
-            setCollection("MongoDbCasConsentRepository");
-        }
-    }
-
-    @RequiresModule(name = "cas-server-consent-rest")
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class Rest implements Serializable {
-
-        private static final long serialVersionUID = -6909617495470495341L;
-
-        /**
-         * REST endpoint to use to which consent decision records will be submitted.
-         */
-        private String endpoint;
-    }
-
-    @RequiresModule(name = "cas-server-support-consent-redis")
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class Redis extends BaseRedisProperties {
-        private static final long serialVersionUID = -1347683393318585262L;
     }
 }

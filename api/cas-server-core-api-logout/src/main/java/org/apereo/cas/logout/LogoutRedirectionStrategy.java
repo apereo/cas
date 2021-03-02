@@ -10,9 +10,14 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 6.3.0
  */
 public interface LogoutRedirectionStrategy extends Ordered {
+    /**
+     * Default order value of th redirection strategy.
+     */
+    int DEFAULT_ORDER = 1_000;
+
     @Override
     default int getOrder() {
-        return Ordered.LOWEST_PRECEDENCE;
+        return DEFAULT_ORDER;
     }
 
     /**

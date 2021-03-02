@@ -39,7 +39,6 @@ import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrat
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
-import org.apereo.cas.services.util.RegisteredServiceYamlHttpMessageConverter;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -62,7 +61,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.env.Environment;
-import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 
@@ -108,7 +106,7 @@ public class CasCoreServicesConfiguration {
     @Bean
     public ResponseBuilderLocator webApplicationResponseBuilderLocator() {
         val beans = applicationContext.getBeansOfType(ResponseBuilder.class, false, true);
-        val builders = new ArrayList<ResponseBuilder>(beans.values());
+        val builders = new ArrayList<>(beans.values());
         AnnotationAwareOrderComparator.sortIfNecessary(builders);
         return new DefaultWebApplicationResponseBuilderLocator(builders);
     }
@@ -119,7 +117,7 @@ public class CasCoreServicesConfiguration {
         return new WebApplicationServiceResponseBuilder(servicesManager());
     }
 
-    @ConditionalOnMissingBean(name = "registeredServiceCipherExecutor")
+    @ConditionalOnMissingBean(name = RegisteredServiceCipherExecutor.DEFAULT_BEAN_NAME)
     @Bean
     @RefreshScope
     public RegisteredServiceCipherExecutor registeredServiceCipherExecutor() {
@@ -141,11 +139,6 @@ public class CasCoreServicesConfiguration {
         val chain = new ChainingServicesManager();
         configurers.values().forEach(c -> chain.registerServiceManager(c.configureServicesManager()));
         return chain;
-    }
-
-    @Bean
-    public HttpMessageConverter yamlHttpMessageConverter() {
-        return new RegisteredServiceYamlHttpMessageConverter();
     }
 
     @Bean
@@ -242,10 +235,10 @@ public class CasCoreServicesConfiguration {
     @ConditionalOnMissingBean(name = "servicesManagerCache")
     public Cache<Long, RegisteredService> servicesManagerCache() {
         val serviceRegistry = casProperties.getServiceRegistry();
-        val duration = Beans.newDuration(serviceRegistry.getCache());
+        val duration = Beans.newDuration(serviceRegistry.getCache().getDuration());
         return Caffeine.newBuilder()
-            .initialCapacity(serviceRegistry.getCacheCapacity())
-            .maximumSize(serviceRegistry.getCacheSize())
+            .initialCapacity(serviceRegistry.getCache().getCacheCapacity())
+            .maximumSize(serviceRegistry.getCache().getCacheSize())
             .expireAfterWrite(duration)
             .recordStats()
             .build();
@@ -253,7 +246,7 @@ public class CasCoreServicesConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "defaultServicesManagerExecutionPlanConfigurer")
-    @ConditionalOnProperty(prefix = "cas.service-registry", name = "management-type", havingValue = "DEFAULT", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "cas.service-registry.core", name = "management-type", havingValue = "DEFAULT", matchIfMissing = true)
     public ServicesManagerExecutionPlanConfigurer defaultServicesManagerExecutionPlanConfigurer() {
         return () -> {
             val activeProfiles = Arrays.stream(environment.getActiveProfiles()).collect(Collectors.toSet());
@@ -285,7 +278,7 @@ public class CasCoreServicesConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "domainServicesManagerExecutionPlanConfigurer")
-    @ConditionalOnProperty(prefix = "cas.service-registry", name = "management-type", havingValue = "DOMAIN")
+    @ConditionalOnProperty(prefix = "cas.service-registry.core", name = "management-type", havingValue = "DOMAIN")
     public ServicesManagerExecutionPlanConfigurer domainServicesManagerExecutionPlanConfigurer() {
         return () -> {
             val activeProfiles = Arrays.stream(environment.getActiveProfiles()).collect(Collectors.toSet());

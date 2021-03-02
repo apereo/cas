@@ -1,6 +1,7 @@
 package org.apereo.cas.pm.web.flow;
 
 import org.apereo.cas.pm.config.PasswordManagementConfiguration;
+import org.apereo.cas.pm.config.PasswordManagementForgotUsernameConfiguration;
 import org.apereo.cas.pm.config.PasswordManagementWebflowConfiguration;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -38,11 +39,12 @@ import static org.mockito.Mockito.*;
 @Import({
     PasswordManagementConfiguration.class,
     PasswordManagementWebflowConfiguration.class,
+    PasswordManagementForgotUsernameConfiguration.class,
     BaseWebflowConfigurerTests.SharedTestConfiguration.class
 })
 @TestPropertySource(properties = {
     "cas.authn.pm.reset.security-questions-enabled=false",
-    "cas.authn.pm.enabled=false"
+    "cas.authn.pm.core.enabled=false"
 })
 @Tag("WebflowConfig")
 public class PasswordManagementWebflowConfigurerDisabledTests extends BaseWebflowConfigurerTests {

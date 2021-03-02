@@ -1,7 +1,7 @@
 package org.apereo.cas.interrupt;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.configuration.model.support.interrupt.InterruptProperties;
+import org.apereo.cas.configuration.model.support.interrupt.RestfulInterruptProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
 
@@ -63,7 +63,7 @@ public class RestEndpointInterruptInquirerTests {
 
     @Test
     public void verifyResponseCanBeFoundFromRest() {
-        val restProps = new InterruptProperties.Rest();
+        val restProps = new RestfulInterruptProperties();
         restProps.setUrl("http://localhost:8888");
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
@@ -87,7 +87,7 @@ public class RestEndpointInterruptInquirerTests {
 
     @Test
     public void verifyBadAttempt() {
-        val restProps = new InterruptProperties.Rest();
+        val restProps = new RestfulInterruptProperties();
         restProps.setUrl("http://localhost:8888");
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(

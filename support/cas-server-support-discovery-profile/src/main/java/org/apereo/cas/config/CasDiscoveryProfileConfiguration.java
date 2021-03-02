@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.discovery.CasServerDiscoveryProfileEndpoint;
 import org.apereo.cas.discovery.CasServerProfileRegistrar;
@@ -39,13 +40,13 @@ public class CasDiscoveryProfileConfiguration {
     private ObjectProvider<Clients> builtClients;
 
     @Autowired
-    @Qualifier("attributeRepository")
+    @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
     private ObjectProvider<IPersonAttributeDao> attributeRepository;
 
     @Bean
     public CasServerProfileRegistrar casServerProfileRegistrar() {
         return new CasServerProfileRegistrar(this.builtClients.getIfAvailable(),
-            availableAttributes());
+            discoveryProfileAvailableAttributes());
     }
 
     @Bean
@@ -55,7 +56,7 @@ public class CasDiscoveryProfileConfiguration {
     }
 
     @Bean
-    public Set<String> availableAttributes() {
+    public Set<String> discoveryProfileAvailableAttributes() {
         val attributes = new LinkedHashSet<String>(0);
         val possibleUserAttributeNames = attributeRepository.getObject().getPossibleUserAttributeNames(IPersonAttributeDaoFilter.alwaysChoose());
         if (possibleUserAttributeNames != null) {

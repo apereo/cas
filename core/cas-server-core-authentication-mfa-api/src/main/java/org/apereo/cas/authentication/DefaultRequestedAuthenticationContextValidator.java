@@ -1,6 +1,6 @@
 package org.apereo.cas.authentication;
 
-import org.apereo.cas.services.RegisteredServiceMultifactorPolicyFailureModes;
+import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
@@ -64,7 +64,7 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
                 }
             } else {
                 val failure = provider.getFailureModeEvaluator().evaluate(registeredService, provider);
-                if (failure != RegisteredServiceMultifactorPolicyFailureModes.CLOSED) {
+                if (failure != BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.CLOSED) {
                     return Pair.of(Boolean.TRUE, Optional.empty());
                 }
             }

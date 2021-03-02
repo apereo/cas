@@ -1,10 +1,12 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
 import org.apereo.cas.git.GitRepository;
+import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.locator.FileSystemSamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 
+import com.github.benmanes.caffeine.cache.Cache;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -28,8 +30,8 @@ import java.util.Optional;
 public class GitSamlIdPMetadataLocator extends FileSystemSamlIdPMetadataLocator {
     private final GitRepository gitRepository;
 
-    public GitSamlIdPMetadataLocator(final GitRepository gitRepository) {
-        super(gitRepository.getRepositoryDirectory());
+    public GitSamlIdPMetadataLocator(final GitRepository gitRepository, final Cache<String, SamlIdPMetadataDocument> metadataCache) {
+        super(gitRepository.getRepositoryDirectory(), metadataCache);
         this.gitRepository = gitRepository;
     }
 
@@ -42,16 +44,23 @@ public class GitSamlIdPMetadataLocator extends FileSystemSamlIdPMetadataLocator 
             LOGGER.warn("Unable to pull changes from the remote repository. Metadata files may be stale.");
         }
 
-        val directory = getMetadataDirectory(registeredService);
+        val metadataFile = getMetadataArtifactFile(registeredService, "idp-metadata.xml");
+        LOGGER.trace("IdP metadata file to use is [{}]", metadataFile);
 
-        val metadataFile = new File(directory, "idp-metadata.xml");
-        val signingKey = new File(directory, "idp-signing.key");
-        val signingCert = new File(directory, "idp-signing.crt");
-        val encryptionKey = new File(directory, "idp-encryption.key");
-        val encryptionCert = new File(directory, "idp-encryption.crt");
+        val signingKey = getMetadataArtifactFile(registeredService, "idp-signing.key");
+        LOGGER.trace("IdP metadata signing key file to use is [{}]", metadataFile);
+
+        val signingCert = getMetadataArtifactFile(registeredService, "idp-signing.crt");
+        LOGGER.trace("IdP metadata signing certificate file to use is [{}]", metadataFile);
+
+        val encryptionKey = getMetadataArtifactFile(registeredService, "idp-encryption.key");
+        LOGGER.trace("IdP metadata encryption key file to use is [{}]", metadataFile);
+
+        val encryptionCert = getMetadataArtifactFile(registeredService, "idp-encryption.crt");
+        LOGGER.trace("IdP metadata encryption certificate file to use is [{}]", metadataFile);
 
         return SamlIdPMetadataDocument.builder()
-            .appliesTo(getAppliesToFor(registeredService))
+            .appliesTo(SamlIdPMetadataGenerator.getAppliesToFor(registeredService))
             .encryptionCertificate(readFromFile(encryptionCert))
             .encryptionKey(readFromFile(encryptionKey))
             .signingCertificate(readFromFile(signingCert))
@@ -60,32 +69,35 @@ public class GitSamlIdPMetadataLocator extends FileSystemSamlIdPMetadataLocator 
             .build();
     }
 
+    @Override
+    protected Resource getMetadataArtifact(final Optional<SamlRegisteredService> registeredService, final String artifactName) {
+        val file = getMetadataArtifactFile(registeredService, artifactName);
+        return new FileSystemResource(file);
+    }
+
     private File getMetadataDirectory(final Optional<SamlRegisteredService> registeredService) {
-        val path = getAppliesToFor(registeredService);
+        val path = SamlIdPMetadataGenerator.getAppliesToFor(registeredService);
         val directory = new File(gitRepository.getRepositoryDirectory(), path);
-        if (!directory.exists() && !directory.mkdir()) {
+        if (!directory.exists() && registeredService.isEmpty() && !directory.mkdir()) {
             throw new IllegalArgumentException("Metadata directory location " + directory + " cannot be located/created");
         }
         return directory;
+    }
+
+    private File getMetadataArtifactFile(final Optional<SamlRegisteredService> registeredService,
+                                         final String fileName) {
+        val defaultMetadataDirectory = getMetadataDirectory(Optional.empty());
+        val directory = getMetadataDirectory(registeredService);
+        val file = new File(directory, fileName);
+        if (file.exists() && file.canRead() && file.length() > 0) {
+            return file;
+        }
+        return new File(defaultMetadataDirectory, fileName);
     }
 
     private static String readFromFile(final File file) throws IOException {
         return file.exists() && file.canRead() && file.length() > 0
             ? FileUtils.readFileToString(file, StandardCharsets.UTF_8)
             : StringUtils.EMPTY;
-    }
-
-    private static String getAppliesToFor(final Optional<SamlRegisteredService> result) {
-        if (result.isPresent()) {
-            val registeredService = result.get();
-            return registeredService.getName() + '-' + registeredService.getId();
-        }
-        return "CAS";
-    }
-
-    @Override
-    protected Resource getMetadataArtifact(final Optional<SamlRegisteredService> registeredService, final String artifactName) {
-        val directory = getMetadataDirectory(registeredService);
-        return new FileSystemResource(new File(directory, artifactName));
     }
 }

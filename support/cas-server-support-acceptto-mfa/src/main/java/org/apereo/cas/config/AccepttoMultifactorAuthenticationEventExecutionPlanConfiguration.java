@@ -17,8 +17,6 @@ import org.apereo.cas.mfa.accepto.AccepttoMultifactorTokenCredential;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -58,7 +56,6 @@ public class AccepttoMultifactorAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     public AuthenticationHandler casAccepttoMultifactorAuthenticationHandler() {
         val props = casProperties.getAuthn().getMfa().getAcceptto();
-        validateConfigurationProperties();
         return new AccepttoMultifactorAuthenticationHandler(
             servicesManager.getObject(),
             casAccepttoMultifactorPrincipalFactory(),
@@ -84,7 +81,7 @@ public class AccepttoMultifactorAuthenticationEventExecutionPlanConfiguration {
     @ConditionalOnMissingBean(name = "casAccepttoMultifactorAuthenticationMetaDataPopulator")
     public AuthenticationMetaDataPopulator casAccepttoMultifactorAuthenticationMetaDataPopulator() {
         return new AuthenticationContextAttributeMetaDataPopulator(
-            casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
+            casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute(),
             casAccepttoMultifactorAuthenticationHandler(),
             casAccepttoMultifactorAuthenticationProvider().getId()
         );
@@ -107,22 +104,4 @@ public class AccepttoMultifactorAuthenticationEventExecutionPlanConfiguration {
         };
     }
 
-    private void validateConfigurationProperties() {
-        val props = casProperties.getAuthn().getMfa().getAcceptto();
-        if (StringUtils.isBlank(props.getApiUrl()) || StringUtils.isBlank(props.getRegistrationApiUrl())) {
-            throw new BeanCreationException("No API urls are defined for the Acceptto integration.");
-        }
-        if (StringUtils.isBlank(props.getOrganizationId()) || StringUtils.isBlank(props.getApplicationId())) {
-            throw new BeanCreationException("No application or organization id is defined for the Acceptto integration.");
-        }
-        if (StringUtils.isBlank(props.getSecret()) || StringUtils.isBlank(props.getOrganizationSecret())) {
-            throw new BeanCreationException("No application or organization secret is defined for the Acceptto integration.");
-        }
-        if (StringUtils.isBlank(props.getEmailAttribute())) {
-            throw new BeanCreationException("No email attribute is defined for the Acceptto integration.");
-        }
-        if (props.getRegistrationApiPublicKey().getLocation() == null) {
-            throw new BeanCreationException("No registration API public key is defined for the Acceptto integration.");
-        }
-    }
 }

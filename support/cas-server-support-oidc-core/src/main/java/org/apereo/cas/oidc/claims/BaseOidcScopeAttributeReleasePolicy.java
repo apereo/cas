@@ -67,9 +67,9 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
         LOGGER.debug("Attempting to map and filter claims based on resolved attributes [{}]", resolvedAttributes);
 
         val properties = applicationContext.getBean(CasConfigurationProperties.class);
-        val supportedClaims = properties.getAuthn().getOidc().getClaims();
+        val supportedClaims = properties.getAuthn().getOidc().getDiscovery().getClaims();
         
-        val allowedClaims = new LinkedHashSet<String>(getAllowedAttributes());
+        val allowedClaims = new LinkedHashSet<>(getAllowedAttributes());
         allowedClaims.retainAll(supportedClaims);
         LOGGER.debug("[{}] is designed to allow claims [{}] for scope [{}]. After cross-checking with "
                 + "supported claims [{}], the final collection of allowed attributes is [{}]", getClass().getSimpleName(),
@@ -100,5 +100,10 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
         val value = resolvedAttributes.get(claim);
         LOGGER.debug("No mapped attribute is defined for claim [{}]; Used [{}] to locate value [{}]", claim, claim, value);
         return Pair.of(claim, value);
+    }
+
+    @Override
+    public List<String> determineRequestedAttributeDefinitions() {
+        return getAllowedAttributes();
     }
 }
