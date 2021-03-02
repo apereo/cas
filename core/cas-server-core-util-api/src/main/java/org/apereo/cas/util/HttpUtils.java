@@ -209,6 +209,7 @@ public class HttpUtils {
     private HttpClientBuilder getHttpClientBuilder() {
         return HttpClientBuilder
             .create()
+            .useSystemProperties()
             .setMaxConnTotal(MAX_CONNECTIONS)
             .setMaxConnPerRoute(MAX_CONNECTIONS_PER_ROUTE);
     }
