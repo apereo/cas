@@ -47,6 +47,17 @@ cas.version=6.4.0-RC2
 ## New & Noteworthy
 
 The following items are new improvements and enhancements presented in this release. 
+  
+### CAS Initializr 
+
+[CAS Initializr](../installation/WAR-Overlay-Initializr.html) is now given the ability to produce
+different overlay projects using a dedicated `type` parameter.
+
+<div class="alert alert-info">
+<strong>Note</strong><br/>It is expected that at some point in the not-too-distant future, previous/existing 
+WAR overlay projects would be deprecated and ultimately archived, allowing the CAS Initializr 
+to be the one true way to generate a starting template project for CAS deployments.
+</div>
 
 ### CAS Documentation
 
@@ -81,17 +92,30 @@ the above changes.
 
 ## Pac4j v5
 
-The Pac4j library, mainly responsible for delegated authentication, is now upgraded to `v5`. This is a major upgrade
+The Pac4j library, mainly responsible for delegated authentication, is now upgraded to its `v5` release line. This is a major upgrade
 with many API changes that affect the internal workings of CAS when it comes to dealing with an external identity provider
 or managing the internal implementation of OpenID Connect and SAML2 protocols when CAS is acting as a standalone identity provider.
 Pac4j `v5` is not quite final yet, and we are taking advantage of the early release candidate here to do as much work upfront
 as possible to handle the final upgrade better in the future. As a result, some things may not be immediately functional
 and, as always, you are encouraged to try and test the upgrade as much as possible to avoid surprises.
 
+## Delegated Authentication Tracking
+
+Certain configuration elements for an external identity provider, in the context of
+[delegated authentication](../integration/Delegate-Authentication.html) can now be controlled
+and overridden on a per-application basis. For example, you may choose to send a specific SAML2
+authentication context class to an external SAML2 identity provider depending on the original
+service provider, while leaving the global configuration in place and unmodified.
+
 ## Scriptable Email Messages
 
 The construction of the [email message body](../notifications/Sending-Email-Configuration.html) can 
 now be scripted using an external Groovy script.
+
+## Delegated Authentication Tracking
+
+Identity provider choices and selections made via [delegated authentication](../integration/Delegate-Authentication.html) 
+can now be remembered via a dedicated cookie to be used for subsequent attempts and auto-redirects.
 
 ## Other Stuff
 
@@ -124,6 +148,7 @@ can now be signed using the `XMLSec` tool.
 - Additional support is built in to provide for Spring Boot's `startup` actuator endpoint.
 - In [delegated authentication](../integration/Delegate-Authentication.html) scenarios, CAS is now able to retry the authentication attempt
 using forceful authentication requests upon failed attempts.
+- [Attribute consent](../integration/Attribute-Release-Consent.html) implementations are given the ability to delete consent decisions by user.  
 - [Attribute release policies](../integration/Attribute-Release-Policies.html) that allow for a collection of pre-defined attributes for release
 can now request those attributes to be resolved via the [Attribute Definition Store](../integration/Attribute-Definitions.html).
 

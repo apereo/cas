@@ -1,5 +1,6 @@
 package org.apereo.cas.web;
 
+import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
 import org.apereo.cas.web.view.DynamicHtmlView;
@@ -13,6 +14,7 @@ import lombok.val;
 import org.apache.http.client.utils.URIBuilder;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.exception.http.RedirectionAction;
 import org.pac4j.core.exception.http.WithContentAction;
 import org.pac4j.core.exception.http.WithLocationAction;
 import org.pac4j.core.redirect.RedirectionActionBuilder;
@@ -22,6 +24,7 @@ import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
 /**
  * This is {@link BaseDelegatedAuthenticationController}.
@@ -74,16 +77,7 @@ public abstract class BaseDelegatedAuthenticationController {
     protected View getResultingView(final IndirectClient client, final JEEContext webContext,
                                     final TransientSessionTicket ticket) {
         client.init();
-
-        val properties = ticket.getProperties();
-        if (properties.containsKey(RedirectionActionBuilder.ATTRIBUTE_FORCE_AUTHN)) {
-            webContext.setRequestAttribute(RedirectionActionBuilder.ATTRIBUTE_FORCE_AUTHN, true);
-        }
-        if (properties.containsKey(RedirectionActionBuilder.ATTRIBUTE_PASSIVE)) {
-            webContext.setRequestAttribute(RedirectionActionBuilder.ATTRIBUTE_PASSIVE, true);
-        }
-        val actionResult = client.getRedirectionActionBuilder()
-            .getRedirectionAction(webContext, configurationContext.getSessionStore());
+        val actionResult = getRedirectionAction(client, webContext, ticket);
         if (actionResult.isPresent()) {
             val action = actionResult.get();
             LOGGER.debug("Determined final redirect action for client [{}] as [{}]", client, action);
@@ -101,5 +95,37 @@ public abstract class BaseDelegatedAuthenticationController {
         }
         LOGGER.warn("Unable to determine redirect action for client [{}]", client);
         return null;
+    }
+
+    /**
+     * Gets redirection action.
+     *
+     * @param client     the client
+     * @param webContext the web context
+     * @param ticket     the ticket
+     * @return the redirection action
+     */
+    protected Optional<RedirectionAction> getRedirectionAction(final IndirectClient client, final JEEContext webContext,
+                                                               final TransientSessionTicket ticket) {
+        val properties = ticket.getProperties();
+        if (properties.containsKey(RedirectionActionBuilder.ATTRIBUTE_FORCE_AUTHN)) {
+            webContext.setRequestAttribute(RedirectionActionBuilder.ATTRIBUTE_FORCE_AUTHN, true);
+        }
+        if (properties.containsKey(RedirectionActionBuilder.ATTRIBUTE_PASSIVE)) {
+            webContext.setRequestAttribute(RedirectionActionBuilder.ATTRIBUTE_PASSIVE, true);
+        }
+
+        if (ticket.getService() != null) {
+            val registeredService = configurationContext.getServicesManager().findServiceBy(ticket.getService());
+            val audit = AuditableContext.builder()
+                .service(ticket.getService())
+                .registeredService(registeredService)
+                .build();
+            val result = configurationContext.getRegisteredServiceAccessStrategyEnforcer().execute(audit);
+            result.throwExceptionIfNeeded();
+        }
+
+        return client.getRedirectionActionBuilder()
+            .getRedirectionAction(webContext, configurationContext.getSessionStore());
     }
 }

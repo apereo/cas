@@ -54,7 +54,7 @@ public class DelegatedAuthenticationClientFinishLogoutAction extends AbstractAct
                     .ifPresent(client -> {
                         try {
                             LOGGER.debug("Located client from relay-state: [{}]", client);
-                            val samlContext = client.getContextProvider().buildContext(context, this.sessionStore);
+                            val samlContext = client.getContextProvider().buildContext(client, context, this.sessionStore);
                             client.getLogoutProfileHandler().receive(samlContext);
                         } catch (final HttpAction action) {
                             LOGGER.debug("Adapting logout response via [{}]", action.toString());

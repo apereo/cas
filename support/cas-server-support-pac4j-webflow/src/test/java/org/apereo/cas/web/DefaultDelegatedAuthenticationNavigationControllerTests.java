@@ -1,5 +1,7 @@
 package org.apereo.cas.web;
 
+import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.web.view.DynamicHtmlView;
 
@@ -61,6 +63,16 @@ public class DefaultDelegatedAuthenticationNavigationControllerTests {
         val request = new MockHttpServletRequest();
         request.setAttribute(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "SAML2Client");
         request.setParameter(RedirectionActionBuilder.ATTRIBUTE_PASSIVE, "true");
+        val response = new MockHttpServletResponse();
+        assertTrue(controller.redirectToProvider(request, response) instanceof DynamicHtmlView);
+    }
+
+    @Test
+    public void verifyRedirectWithService() {
+        val request = new MockHttpServletRequest();
+        request.setAttribute(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "SAML2Client");
+        val service = RegisteredServiceTestUtils.getService("https://github.com/apereo/cas");
+        request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
         val response = new MockHttpServletResponse();
         assertTrue(controller.redirectToProvider(request, response) instanceof DynamicHtmlView);
     }
