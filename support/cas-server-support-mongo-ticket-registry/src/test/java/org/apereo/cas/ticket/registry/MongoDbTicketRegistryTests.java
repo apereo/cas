@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -27,6 +28,8 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.ticket.DefaultTicketDefinition;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
+import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
@@ -106,6 +109,14 @@ public class MongoDbTicketRegistryTests extends BaseTicketRegistryTests {
     @BeforeEach
     public void before() {
         newTicketRegistry.deleteAll();
+    }
+
+    @RepeatedTest(2)
+    public void verifyUpdateFirstAndClean() {
+        val originalAuthn = CoreAuthenticationTestUtils.getAuthentication();
+        val result = newTicketRegistry.updateTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId,
+            originalAuthn, NeverExpiresExpirationPolicy.INSTANCE));
+        assertNull(result);
     }
 
     @RepeatedTest(1)
