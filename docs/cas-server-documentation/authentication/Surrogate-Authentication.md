@@ -25,7 +25,7 @@ Surrogate authentication is enabled by including the following dependencies in t
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-surrogate-webflow" %}
 
-{% include casproperties.html properties="cas.authn.surrogate.separator,cas.authn.surrogate.tgt,cas.authn.surrogate.principal" %}
+{% include casproperties.html properties="cas.authn.surrogate.separator,cas.authn.surrogate.tgt" %}
 
 ## Account Storage
 
@@ -37,7 +37,6 @@ Surrogate accounts may be defined statically in the CAS configuration.
 
 {% include casproperties.html properties="cas.authn.surrogate.simple.surrogates" %}
 
-
 ### JSON
    
 Please [see this guide](Surrogate-Authentication-Storage-JSON.html).
@@ -46,7 +45,6 @@ Please [see this guide](Surrogate-Authentication-Storage-JSON.html).
 
 Please [see this guide](Surrogate-Authentication-Storage-LDAP.html).
 
-
 ### CouchDb
 
 Please [see this guide](Surrogate-Authentication-Storage-CouchDb.html).
@@ -54,7 +52,6 @@ Please [see this guide](Surrogate-Authentication-Storage-CouchDb.html).
 ### JDBC
 
 Please [see this guide](Surrogate-Authentication-Storage-JDBC.html).
-
 
 ### REST
 
@@ -70,7 +67,9 @@ Please see [this guide](Surrogate-Authentication-AccountSelection.html).
 
 ## Session Expiration
 
-An impersonation session can be assigned a specific expiration policy that would control how long a surrogate session may last. This means that the SSO session established as part of impersonation will rightly vanish, once the expiration policy dictates as such. It is recommended that you keep the expiration length short (i.e. 30 minutes) to avoid possible security issues.
+An impersonation session can be assigned a specific expiration policy that would control how long a surrogate session 
+may last. This means that the SSO session established as part of impersonation will rightly vanish, once the 
+expiration policy dictates as such. It is recommended that you keep the expiration length short (i.e. 30 minutes) to avoid possible security issues.
 
 <div class="alert alert-info"><strong>Remember</strong><p>
 The expiration policy assigned to impersonation sessions is expected to be <i>shorter</i> than the <i>normal</i> expiration policy
@@ -115,6 +114,10 @@ Additionally, failure and success events may also communicated via SMS and/or em
 
 To learn more about available options, please [see this guide](../notifications/SMS-Messaging-Configuration.html) 
 or [this guide](../notifications/Sending-Email-Configuration.html).
+ 
+## Surrogate Principal Resolution
+
+{% include casproperties.html properties="cas.authn.surrogate.principal" %}
 
 ## REST Protocol
 

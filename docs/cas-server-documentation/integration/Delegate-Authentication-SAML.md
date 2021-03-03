@@ -29,7 +29,7 @@ be resolved, a status code of `406 - Not Acceptable` is returned.
 
 {% include casproperties.html properties="cas.authn.pac4j.saml" %}
  
-## Request Customizations
+## Per Service Customizations
 
 Th configuration for the external SAML2 identity provider is typically done at build time
 via CAS configuration settings and applies to all applications and relying parties. You may override
