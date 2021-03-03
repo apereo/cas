@@ -44,6 +44,8 @@ import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.oauth.client.FacebookClient;
 import org.pac4j.oauth.credentials.OAuth20Credentials;
+import org.pac4j.oidc.client.OidcClient;
+import org.pac4j.oidc.config.OidcConfiguration;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.config.SAML2Configuration;
 import org.springframework.boot.SpringBootConfiguration;
@@ -143,6 +145,14 @@ public abstract class BaseDelegatedAuthenticationTests {
             casClient.setCallbackUrl("http://callback.example.org");
             casClient.init();
 
+            val oidcCfg = new OidcConfiguration();
+            oidcCfg.setClientId("client_id");
+            oidcCfg.setSecret("client_secret");
+            oidcCfg.setDiscoveryURI("https://dev-425954.oktapreview.com/.well-known/openid-configuration");
+            val oidcClient = new OidcClient(oidcCfg);
+            oidcClient.setCallbackUrl("http://callback.example.org");
+            oidcClient.init();
+
             val facebookClient = new FacebookClient() {
                 @Override
                 public Optional<Credentials> retrieveCredentials(final WebContext context, final SessionStore sessionStore) {
@@ -160,7 +170,7 @@ public abstract class BaseDelegatedAuthenticationTests {
             });
             facebookClient.setName(FacebookClient.class.getSimpleName());
 
-            return new Clients("https://cas.login.com", List.of(saml2Client, casClient, facebookClient));
+            return new Clients("https://cas.login.com", List.of(saml2Client, casClient, facebookClient, oidcClient));
         }
     }
 }
