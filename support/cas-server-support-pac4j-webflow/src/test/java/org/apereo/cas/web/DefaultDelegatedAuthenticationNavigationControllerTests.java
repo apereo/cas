@@ -1,7 +1,10 @@
 package org.apereo.cas.web;
 
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.services.DefaultRegisteredServiceProperty;
+import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.web.view.DynamicHtmlView;
 
@@ -32,6 +35,10 @@ public class DefaultDelegatedAuthenticationNavigationControllerTests {
     @Autowired
     @Qualifier("delegatedClientNavigationController")
     private DefaultDelegatedAuthenticationNavigationController controller;
+
+    @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
 
     @Test
     public void verifyRedirectByParam() {
@@ -100,6 +107,29 @@ public class DefaultDelegatedAuthenticationNavigationControllerTests {
         val response = new MockHttpServletResponse();
         assertNotNull(controller.redirectResponseToFlow("CasClient", request, response));
         assertNotNull(controller.postResponseToFlow("CasClient", request, response));
+    }
+
+    @Test
+    public void verifyRedirectWithServiceProperties() {
+        val request = new MockHttpServletRequest();
+        request.setAttribute(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "SAML2Client");
+        val service = RegisteredServiceTestUtils.getService("https://github.com/apereo/cas");
+
+        val registeredService = servicesManager.findServiceBy(service);
+
+        val property1 = new DefaultRegisteredServiceProperty("class1", "class2");
+        registeredService.getProperties()
+            .put(RegisteredServiceProperties.DELEGATED_AUTHN_SAML2_AUTHN_CONTEXT_CLASS_REFS.getPropertyName(), property1);
+
+        val property2 = new DefaultRegisteredServiceProperty("true");
+        registeredService.getProperties()
+            .put(RegisteredServiceProperties.DELEGATED_AUTHN_SAML2_WANTS_RESPONSES_SIGNED.getPropertyName(), property2);
+
+        servicesManager.save(registeredService);
+        
+        request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
+        val response = new MockHttpServletResponse();
+        assertTrue(controller.redirectToProvider(request, response) instanceof DynamicHtmlView);
     }
 
 }

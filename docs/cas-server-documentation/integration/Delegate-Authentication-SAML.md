@@ -27,6 +27,54 @@ endpoints or view the CAS login screen. This is required because today, generati
 access to the HTTP request/response. In the event that metadata cannot 
 be resolved, a status code of `406 - Not Acceptable` is returned.
 
+{% include casproperties.html properties="cas.authn.pac4j.saml" %}
+ 
+## Request Customizations
+
+Th configuration for the external SAML2 identity provider is typically done at build time
+via CAS configuration settings and applies to all applications and relying parties. You may override
+certain aspects this configuration on a per application basis by assigning 
+dedicated [properties to the service definition](../services/Configuring-Service-Custom-Properties.html).
+                                                  
+The following properties are available as overrides:
+
+| Property                              | Value(s)                
+|---------------------------------------|---------------------------------
+| `AuthnRequestBindingType`             | `String`                  
+| `AssertionConsumerServiceIndex`       | `Integer`         
+| `AttributeConsumingServiceIndex`      | `Integer`
+| `MaximumAuthenticationLifetime`       | `Integer`
+| `NameIdPolicyFormat`                  | `String`
+| `NameIdPolicyAllowCreate`             | `Boolean`
+| `ComparisonType`                      | `String`
+| `ProviderName`                        | `String`
+| `IssuerFormat`                        | `String`
+| `UseNameQualifier`                    | `Boolean`
+| `AuthnContextClassRefs`               | `Set<String>`
+| `NameIdAttribute`                     | `String`
+| `WantsAssertionsSigned`               | `Boolean`
+| `WantsResponsesSigned`                | `Boolean`
+
+A sample JSON file follows:
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "^https://app.example.org",
+  "name" : "Example",
+  "id" : 1,
+  "properties" : {
+    "@class" : "java.util.HashMap",
+    "AuthnContextClassRefs" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values" : [ "java.util.HashSet", [ "https://refeds.org/profile/mfa" ] ]
+    }
+  }
+}
+```
+       
+See [registered service properties](../services/Configuring-Service-Custom-Properties.html) for more details.
+
 ## Identity Provider Discovery Service
 
 <div class="alert alert-info"><strong>Note</strong><p>Using identity provider discovery requires 
@@ -34,8 +82,6 @@ delegated authentication to be available as the feature cannot be used on its ow
 as a standalone discovery service.</p></div>
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-saml-idp-discovery" %}
-
-{% include casproperties.html properties="cas.authn.pac4j.saml" %}
 
 Identity provider discovery allows CAS 
 to [embed and present a discovery service](https://wiki.shibboleth.net/confluence/display/EDS10/Embedded+Discovery+Service) 

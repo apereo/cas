@@ -1,6 +1,9 @@
 package org.apereo.cas.web;
 
 import org.apereo.cas.audit.AuditableContext;
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
+import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServicePropertyGroups;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
 import org.apereo.cas.web.view.DynamicHtmlView;
@@ -24,7 +27,12 @@ import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link BaseDelegatedAuthenticationController}.
@@ -44,6 +52,23 @@ public abstract class BaseDelegatedAuthenticationController {
     protected static final String ENDPOINT_RESPONSE = "login/{clientName}";
 
     private final DelegatedClientAuthenticationConfigurationContext configurationContext;
+
+    /**
+     * Configure web context for service overrides.
+     *
+     * @param registeredService     the registered service
+     * @param webContext            the web context
+     * @param propertyValueSupplier the property value supplier
+     * @param properties            the properties
+     */
+    protected void configureWebContextForRegisteredServiceProperties(final RegisteredService registeredService,
+                                                                     final JEEContext webContext,
+                                                                     final Function<RegisteredServiceProperties, Object> propertyValueSupplier,
+                                                                     final List<RegisteredServiceProperties> properties) {
+        properties.stream()
+            .filter(prop -> prop.isAssignedTo(registeredService))
+            .forEach(prop -> webContext.setRequestAttribute(prop.getPropertyName(), propertyValueSupplier.apply(prop)));
+    }
 
     /**
      * Build redirect view back to flow view.
@@ -116,16 +141,36 @@ public abstract class BaseDelegatedAuthenticationController {
         }
 
         if (ticket.getService() != null) {
-            val registeredService = configurationContext.getServicesManager().findServiceBy(ticket.getService());
-            val audit = AuditableContext.builder()
-                .service(ticket.getService())
-                .registeredService(registeredService)
-                .build();
-            val result = configurationContext.getRegisteredServiceAccessStrategyEnforcer().execute(audit);
-            result.throwExceptionIfNeeded();
+            configureWebContextForRegisteredService(webContext, ticket);
         }
-
         return client.getRedirectionActionBuilder()
             .getRedirectionAction(webContext, configurationContext.getSessionStore());
+    }
+
+    /**
+     * Configure web context for registered service.
+     *
+     * @param webContext the web context
+     * @param ticket     the ticket
+     */
+    protected void configureWebContextForRegisteredService(final JEEContext webContext, final TransientSessionTicket ticket) {
+        val registeredService = configurationContext.getServicesManager().findServiceBy(ticket.getService());
+        val audit = AuditableContext.builder()
+            .service(ticket.getService())
+            .registeredService(registeredService)
+            .build();
+        val result = configurationContext.getRegisteredServiceAccessStrategyEnforcer().execute(audit);
+        result.throwExceptionIfNeeded();
+
+        if (!registeredService.getProperties().isEmpty()) {
+            val saml2ServiceProperties = Arrays.stream(RegisteredServiceProperties.values())
+                .filter(prop -> prop.isMemberOf(RegisteredServicePropertyGroups.DELEGATED_AUTHN_SAML2))
+                .collect(Collectors.toList());
+            configureWebContextForRegisteredServiceProperties(registeredService, webContext,
+                prop -> prop == RegisteredServiceProperties.DELEGATED_AUTHN_SAML2_AUTHN_CONTEXT_CLASS_REFS
+                    ? prop.getPropertyValues(registeredService, Set.class)
+                    : prop.getPropertyValue(registeredService),
+                saml2ServiceProperties);
+        }
     }
 }
