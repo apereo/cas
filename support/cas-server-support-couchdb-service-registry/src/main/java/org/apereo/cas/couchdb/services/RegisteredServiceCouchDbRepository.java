@@ -84,4 +84,11 @@ public class RegisteredServiceCouchDbRepository extends CouchDbRepositorySupport
     public void deleteRecord(final RegisteredServiceDocument record) {
         db.callUpdateHandler(stdDesignDocumentId, "delete_record", record.getId(), null);
     }
+
+    /**
+     * Delete records.
+     */
+    public void deleteRecords() {
+        getAll().forEach(this::deleteRecord);
+    }
 }

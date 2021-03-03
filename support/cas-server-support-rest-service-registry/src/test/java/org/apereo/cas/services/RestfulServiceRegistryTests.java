@@ -107,6 +107,12 @@ public class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
                 return ResponseEntity.ok().build();
             }
 
+            @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+            public ResponseEntity delete() {
+                serviceRegistry.deleteAll();
+                return ResponseEntity.ok().build();
+            }
+
             @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
             @SneakyThrows
             public ResponseEntity save(@RequestBody final String service) {

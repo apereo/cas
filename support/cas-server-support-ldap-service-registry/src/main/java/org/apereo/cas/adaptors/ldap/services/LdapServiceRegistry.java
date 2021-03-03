@@ -76,6 +76,15 @@ public class LdapServiceRegistry extends AbstractServiceRegistry implements Disp
     }
 
     @Override
+    public void deleteAll() {
+        val response = getSearchResultResponse();
+        if (LdapUtils.containsResultEntry(response)) {
+            response.getEntries()
+                .forEach(entry -> LdapUtils.executeDeleteOperation(this.connectionFactory, entry));
+        }
+    }
+
+    @Override
     public Collection<RegisteredService> load() {
         val list = new ArrayList<RegisteredService>();
         val response = getSearchResultResponse();

@@ -72,6 +72,12 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
     }
 
     @Override
+    public void deleteAll() {
+        getRegisteredServiceKeys().forEach(this.template::delete);
+
+    }
+
+    @Override
     public long size() {
         try {
             return getRegisteredServiceKeys().size();

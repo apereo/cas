@@ -41,6 +41,11 @@ public class InMemoryServiceRegistry extends AbstractServiceRegistry {
     }
 
     @Override
+    public void deleteAll() {
+        this.registeredServices.clear();
+    }
+
+    @Override
     public RegisteredService findServiceById(final long id) {
         return this.registeredServices.stream().filter(r -> r.getId() == id).findFirst().orElse(null);
     }
@@ -73,15 +78,6 @@ public class InMemoryServiceRegistry extends AbstractServiceRegistry {
         return registeredService;
     }
 
-    /**
-     * This isn't super-fast but we don't expect thousands of services.
-     *
-     * @return the highest service id in the list of registered services
-     */
-    private long findHighestId() {
-        return this.registeredServices.stream().map(RegisteredService::getId).max(Comparator.naturalOrder()).orElse(0L);
-    }
-
     @Override
     public long size() {
         return registeredServices.size();
@@ -90,5 +86,14 @@ public class InMemoryServiceRegistry extends AbstractServiceRegistry {
     @Override
     public Stream<? extends RegisteredService> getServicesStream() {
         return this.registeredServices.stream();
+    }
+
+    /**
+     * This isn't super-fast but we don't expect thousands of services.
+     *
+     * @return the highest service id in the list of registered services
+     */
+    private long findHighestId() {
+        return this.registeredServices.stream().map(RegisteredService::getId).max(Comparator.naturalOrder()).orElse(0L);
     }
 }

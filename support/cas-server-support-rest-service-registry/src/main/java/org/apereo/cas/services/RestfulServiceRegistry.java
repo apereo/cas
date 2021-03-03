@@ -106,6 +106,23 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
     }
 
     @Override
+    public void deleteAll() {
+        HttpResponse response = null;
+        try {
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(properties.getBasicAuthPassword())
+                .basicAuthUsername(properties.getBasicAuthUsername())
+                .method(HttpMethod.DELETE)
+                .url(properties.getUrl())
+                .headers(getRequestHeaders(properties))
+                .build();
+            response = HttpUtils.execute(exec);
+        } finally {
+            HttpUtils.close(response);
+        }
+    }
+
+    @Override
     public Collection<RegisteredService> load() {
         HttpResponse response = null;
         try {

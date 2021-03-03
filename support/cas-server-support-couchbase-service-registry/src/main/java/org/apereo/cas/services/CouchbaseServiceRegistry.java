@@ -72,6 +72,11 @@ public class CouchbaseServiceRegistry extends AbstractServiceRegistry implements
     }
 
     @Override
+    public void deleteAll() {
+        this.couchbase.removeAll();
+    }
+
+    @Override
     public Collection<RegisteredService> load() {
         val allServices = queryForAllServices().rowsAsObject();
         val spliterator = Spliterators.spliteratorUnknownSize(allServices.iterator(), Spliterator.ORDERED);

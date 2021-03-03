@@ -59,6 +59,11 @@ public class CouchDbServiceRegistry extends AbstractServiceRegistry {
     }
 
     @Override
+    public void deleteAll() {
+        dbClient.deleteRecords();
+    }
+
+    @Override
     public Collection<RegisteredService> load() {
         return dbClient.getAll()
             .stream()
