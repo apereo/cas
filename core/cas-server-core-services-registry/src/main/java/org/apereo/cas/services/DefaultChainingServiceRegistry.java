@@ -54,6 +54,11 @@ public class DefaultChainingServiceRegistry extends AbstractServiceRegistry impl
     }
 
     @Override
+    public void deleteAll() {
+        this.serviceRegistries.forEach(ServiceRegistry::deleteAll);
+    }
+
+    @Override
     public Collection<RegisteredService> load() {
         return serviceRegistries.stream()
             .map(ServiceRegistry::load)

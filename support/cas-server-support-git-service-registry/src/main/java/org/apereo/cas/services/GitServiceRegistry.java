@@ -45,11 +45,11 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
     private Collection<RegisteredService> registeredServices = new ArrayList<>(0);
 
     public GitServiceRegistry(final ConfigurableApplicationContext applicationContext,
-        final GitRepository gitRepository,
-        final Collection<StringSerializer<RegisteredService>> registeredServiceSerializers,
-        final boolean pushChanges,
-        final Collection<ServiceRegistryListener> serviceRegistryListeners,
-        final List<GitRepositoryRegisteredServiceLocator> registeredServiceLocators) {
+                              final GitRepository gitRepository,
+                              final Collection<StringSerializer<RegisteredService>> registeredServiceSerializers,
+                              final boolean pushChanges,
+                              final Collection<ServiceRegistryListener> serviceRegistryListeners,
+                              final List<GitRepositoryRegisteredServiceLocator> registeredServiceLocators) {
         super(applicationContext, serviceRegistryListeners);
         this.gitRepository = gitRepository;
         this.registeredServiceSerializers = registeredServiceSerializers;
@@ -91,6 +91,18 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void deleteAll() {
+        val currentServices = load();
+        currentServices.stream()
+            .map(this::locateExistingRegisteredServiceFile)
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .forEach(Unchecked.consumer(FileUtils::forceDelete));
+        val message = "Deleted registered services from repository";
+        commitAndPush(message);
     }
 
     @Synchronized
@@ -173,7 +185,6 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
             .flatMap(Collection::stream)
             .collect(Collectors.toList());
     }
-
 
     private boolean writeRegisteredServiceToFile(final RegisteredService registeredService, final File file) {
         try (val out = Files.newOutputStream(file.toPath())) {

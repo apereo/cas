@@ -197,7 +197,6 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
     @Override
     @SneakyThrows
     public synchronized boolean delete(final RegisteredService service) {
-
         val f = getRegisteredServiceFileName(service);
         publishEvent(new CasRegisteredServicePreDeleteEvent(this, service));
         val result = !f.exists() || f.delete();
@@ -209,6 +208,12 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
         }
         publishEvent(new CasRegisteredServiceDeletedEvent(this, service));
         return result;
+    }
+
+    @Override
+    public void deleteAll() {
+        val files = FileUtils.listFiles(this.serviceRegistryDirectory.toFile(), getExtensions(), true);
+        files.forEach(File::delete);
     }
 
     @Override
