@@ -1,6 +1,24 @@
 {
   "properties": [
     {
+      "name": "cas.rest.attribute-name",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.rest.services.attribute-name",
+        "reason": "Setting is now moved into the services namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.rest.attribute-value",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.rest.services.attribute-value",
+        "reason": "Setting is now moved into the services namespace.",
+        "level": "error"
+      }
+    },
+    {
       "name": "cas.authn.mfa.provider-selection-enabled",
       "type": "java.lang.Boolean",
       "deprecation": {
