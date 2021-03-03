@@ -9,7 +9,6 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.web.view.DynamicHtmlView;
 
 import lombok.val;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Tag;

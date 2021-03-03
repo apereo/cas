@@ -20,7 +20,6 @@ import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
-import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CoreSamlConfiguration;
 import org.apereo.cas.config.Pac4jAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.Pac4jDelegatedAuthenticationConfiguration;
@@ -110,7 +109,6 @@ public abstract class BaseDelegatedAuthenticationTests {
         CasPersonDirectoryTestConfiguration.class,
         CasCookieConfiguration.class,
         CasCoreConfiguration.class,
-        CasRegisteredServicesTestConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
         DelegatedAuthenticationWebflowTestConfiguration.class,
         Pac4jDelegatedAuthenticationConfiguration.class,
