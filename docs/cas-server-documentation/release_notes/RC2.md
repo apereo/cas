@@ -99,7 +99,7 @@ Pac4j `v5` is not quite final yet, and we are taking advantage of the early rele
 as possible to handle the final upgrade better in the future. As a result, some things may not be immediately functional
 and, as always, you are encouraged to try and test the upgrade as much as possible to avoid surprises.
 
-## Delegated Authentication Tracking
+## Delegated Authentication Per Application
 
 Certain configuration elements for an external identity provider, in the context of
 [delegated authentication](../integration/Delegate-Authentication.html) can now be controlled
@@ -168,8 +168,11 @@ can now request those attributes to be resolved via the [Attribute Definition St
 - JavaParser
 - Pac4j
 - Hibernate
+- Hibernate Validator
+- Commons Lang  
 - Spring Boot
 - Caffein
+- JQuery
 - ByteBuddy
 - SnakeYAML
 - SpotBugs

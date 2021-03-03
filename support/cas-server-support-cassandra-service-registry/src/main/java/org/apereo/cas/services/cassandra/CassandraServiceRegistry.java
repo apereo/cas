@@ -100,7 +100,8 @@ public class CassandraServiceRegistry extends AbstractServiceRegistry implements
 
     @Override
     public RegisteredService findServiceById(final long id) {
-        val holder = cassandraSessionFactory.getCassandraTemplate().selectOneById(id, CassandraRegisteredServiceHolder.class);
+        val holder = cassandraSessionFactory.getCassandraTemplate()
+            .selectOneById(id, CassandraRegisteredServiceHolder.class);
         if (holder != null) {
             return SERIALIZER.from(holder.getData());
         }
