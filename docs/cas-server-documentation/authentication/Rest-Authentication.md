@@ -48,7 +48,8 @@ If the authentication is successful, these warnings will be shown to the user di
 
 ### `X-CAS-Warning`
 
-For each `X-CAS-Warning` header present in the response, a corresponding message will be shown to the user. The header value can either be the key for a [localized message](../ux/User-Interface-Customization-Localization.html) or the message itself.
+For each `X-CAS-Warning` header present in the response, a corresponding message will be shown to the user. The 
+header value can either be the key for a [localized message](../ux/User-Interface-Customization-Localization.html) or the message itself.
 
 ### `X-CAS-PasswordExpirationDate`
 

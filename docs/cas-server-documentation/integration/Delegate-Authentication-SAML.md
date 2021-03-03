@@ -45,15 +45,15 @@ The following properties are available as overrides:
 | `AttributeConsumingServiceIndex`      | `Integer`
 | `MaximumAuthenticationLifetime`       | `Integer`
 | `NameIdPolicyFormat`                  | `String`
-| `NameIdPolicyAllowCreate`             | `Boolean`
-| `ComparisonType`                      | `String`
+| `NameIdPolicyAllowCreate`             | `true` or `false`
+| `ComparisonType`                      | `String`. One of `exact`, `better`, `minimum`, `maximum`.
 | `ProviderName`                        | `String`
 | `IssuerFormat`                        | `String`
-| `UseNameQualifier`                    | `Boolean`
+| `UseNameQualifier`                    | `true` or `false`
 | `AuthnContextClassRefs`               | `Set<String>`
 | `NameIdAttribute`                     | `String`
-| `WantsAssertionsSigned`               | `Boolean`
-| `WantsResponsesSigned`                | `Boolean`
+| `WantsAssertionsSigned`               | `true` or `false`
+| `WantsResponsesSigned`                | `true` or `false`
 
 A sample JSON file follows:
 
@@ -68,6 +68,10 @@ A sample JSON file follows:
     "AuthnContextClassRefs" : {
       "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
       "values" : [ "java.util.HashSet", [ "https://refeds.org/profile/mfa" ] ]
+    },
+    "WantsAssertionsSigned" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values" : [ "java.util.HashSet", [ "false" ] ]
     }
   }
 }

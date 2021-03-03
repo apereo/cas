@@ -24,17 +24,10 @@ public class RestProperties implements Serializable {
     private static final long serialVersionUID = -1833107478273171342L;
 
     /**
-     * Authorization attribute name required by the REST endpoint in order to allow for the requested operation.
-     * Attribute must be resolvable by the authenticated principal, or must have been already.
+     * Settings related to the REST APIs dealing with registered services.
      */
-    private String attributeName;
-
-    /**
-     * Matching authorization attribute value, pulled from the attribute
-     * required by the REST endpoint in order to allow for the requested operation.
-     * The attribute value may also be constructed as a regex pattern.
-     */
-    private String attributeValue;
+    @NestedConfigurationProperty
+    private RestRegisteredServicesProperties services = new RestRegisteredServicesProperties();
 
     /**
      * X509 settings related to the rest protocol and authentication.
