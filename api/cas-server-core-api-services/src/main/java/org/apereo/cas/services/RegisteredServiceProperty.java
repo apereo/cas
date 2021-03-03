@@ -77,6 +77,26 @@ public interface RegisteredServiceProperty extends Serializable {
     }
 
     /**
+     * Indicates the group for each property.
+     */
+    @JsonFormat(shape = JsonFormat.Shape.OBJECT)
+    @Getter
+    @RequiredArgsConstructor
+    enum RegisteredServicePropertyGroups {
+        SCIM,
+        DELEGATED_AUTHN_SAML2,
+        CORS,
+        JWT_AUTHENTICATION,
+        INTERRUPTS,
+        REGISTERED_SERVICES,
+        JWT_ACCESS_TOKENS,
+        JWT_TOKENS,
+        JWT_SERVICE_TICKETS,
+        DELEGATED_AUTHN_WSFED,
+        HTTP_HEADERS;
+    }
+
+    /**
      * Collection of supported properties that
      * control various functionality in CAS.
      */
@@ -87,152 +107,273 @@ public interface RegisteredServiceProperty extends Serializable {
         /**
          * used when delegating authentication to ADFS to indicate the relying party identifier.
          */
-        WSFED_RELYING_PARTY_ID("wsfed.relyingPartyIdentifier", StringUtils.EMPTY),
+        WSFED_RELYING_PARTY_ID("wsfed.relyingPartyIdentifier", StringUtils.EMPTY,
+            RegisteredServicePropertyGroups.DELEGATED_AUTHN_WSFED),
         /**
          * Produce a JWT as a response when generating service tickets.
          **/
-        TOKEN_AS_SERVICE_TICKET("jwtAsServiceTicket", "false"),
+        TOKEN_AS_SERVICE_TICKET("jwtAsServiceTicket", "false",
+            RegisteredServicePropertyGroups.JWT_SERVICE_TICKETS),
         /**
          * Indicate the cipher strategy for JWT service tickets to determine order of signing/encryption operations.
          **/
-        TOKEN_AS_SERVICE_TICKET_CIPHER_STRATEGY_TYPE("jwtAsServiceTicketCipherStrategyType", "ENCRYPT_AND_SIGN"),
+        TOKEN_AS_SERVICE_TICKET_CIPHER_STRATEGY_TYPE("jwtAsServiceTicketCipherStrategyType", "ENCRYPT_AND_SIGN",
+            RegisteredServicePropertyGroups.JWT_SERVICE_TICKETS),
         /**
          * Produce a signed JWT as a response when generating service tickets using the provided signing key.
          **/
-        TOKEN_AS_SERVICE_TICKET_SIGNING_KEY("jwtAsServiceTicketSigningKey", StringUtils.EMPTY),
+        TOKEN_AS_SERVICE_TICKET_SIGNING_KEY("jwtAsServiceTicketSigningKey", StringUtils.EMPTY,
+            RegisteredServicePropertyGroups.JWT_SERVICE_TICKETS),
         /**
          * Produce an encrypted JWT as a response when generating service tickets using the provided encryption key.
          **/
-        TOKEN_AS_SERVICE_TICKET_ENCRYPTION_KEY("jwtAsServiceTicketEncryptionKey", StringUtils.EMPTY),
+        TOKEN_AS_SERVICE_TICKET_ENCRYPTION_KEY("jwtAsServiceTicketEncryptionKey", StringUtils.EMPTY,
+            RegisteredServicePropertyGroups.JWT_SERVICE_TICKETS),
         /**
          * Produce a signed JWT as a response when generating access tokens using the provided signing key.
          **/
-        ACCESS_TOKEN_AS_JWT_SIGNING_KEY("accessTokenAsJwtSigningKey", StringUtils.EMPTY),
+        ACCESS_TOKEN_AS_JWT_SIGNING_KEY("accessTokenAsJwtSigningKey", StringUtils.EMPTY,
+            RegisteredServicePropertyGroups.JWT_ACCESS_TOKENS),
         /**
          * Indicate the cipher strategy for JWTs as access tokens, to determine order of signing/encryption operations.
          */
-        ACCESS_TOKEN_AS_JWT_CIPHER_STRATEGY_TYPE("accessTokenAsJwtCipherStrategyType", "ENCRYPT_AND_SIGN"),
+        ACCESS_TOKEN_AS_JWT_CIPHER_STRATEGY_TYPE("accessTokenAsJwtCipherStrategyType", "ENCRYPT_AND_SIGN",
+            RegisteredServicePropertyGroups.JWT_ACCESS_TOKENS),
         /**
          * Enable signing JWTs as a response when generating access tokens using the provided signing key.
          **/
-        ACCESS_TOKEN_AS_JWT_SIGNING_ENABLED("accessTokenAsJwtSigningEnabled", "true"),
+        ACCESS_TOKEN_AS_JWT_SIGNING_ENABLED("accessTokenAsJwtSigningEnabled", "true",
+            RegisteredServicePropertyGroups.JWT_ACCESS_TOKENS),
         /**
          * Enable encryption of JWTs as a response when generating access tokens using the provided encryption key.
          **/
-        ACCESS_TOKEN_AS_JWT_ENCRYPTION_ENABLED("accessTokenAsJwtEncryptionEnabled", "false"),
+        ACCESS_TOKEN_AS_JWT_ENCRYPTION_ENABLED("accessTokenAsJwtEncryptionEnabled", "false",
+            RegisteredServicePropertyGroups.JWT_ACCESS_TOKENS),
         /**
          * Produce an encrypted JWT as a response when generating access tokens using the provided encryption key.
          **/
-        ACCESS_TOKEN_AS_JWT_ENCRYPTION_KEY("accessTokenAsJwtEncryptionKey", StringUtils.EMPTY),
+        ACCESS_TOKEN_AS_JWT_ENCRYPTION_KEY("accessTokenAsJwtEncryptionKey", StringUtils.EMPTY,
+            RegisteredServicePropertyGroups.JWT_ACCESS_TOKENS),
         /**
          * Jwt signing secret defined for a given service.
          **/
-        TOKEN_SECRET_SIGNING("jwtSigningSecret", StringUtils.EMPTY),
+        TOKEN_SECRET_SIGNING("jwtSigningSecret", StringUtils.EMPTY,
+            RegisteredServicePropertyGroups.JWT_AUTHENTICATION),
         /**
          * Jwt signing secret alg defined for a given service.
          **/
-        TOKEN_SECRET_SIGNING_ALG("jwtSigningSecretAlg", "HS256"),
+        TOKEN_SECRET_SIGNING_ALG("jwtSigningSecretAlg", "HS256",
+            RegisteredServicePropertyGroups.JWT_AUTHENTICATION),
         /**
          * Jwt encryption secret defined for a given service.
          **/
-        TOKEN_SECRET_ENCRYPTION("jwtEncryptionSecret", StringUtils.EMPTY),
+        TOKEN_SECRET_ENCRYPTION("jwtEncryptionSecret", StringUtils.EMPTY,
+            RegisteredServicePropertyGroups.JWT_AUTHENTICATION),
         /**
          * Jwt encryption secret alg defined for a given service.
          **/
-        TOKEN_SECRET_ENCRYPTION_ALG("jwtEncryptionSecretAlg", StringUtils.EMPTY),
+        TOKEN_SECRET_ENCRYPTION_ALG("jwtEncryptionSecretAlg", StringUtils.EMPTY,
+            RegisteredServicePropertyGroups.JWT_AUTHENTICATION),
         /**
          * Jwt encryption secret method defined for a given service.
          **/
-        TOKEN_SECRET_ENCRYPTION_METHOD("jwtEncryptionSecretMethod", "A192CBC-HS384"),
+        TOKEN_SECRET_ENCRYPTION_METHOD("jwtEncryptionSecretMethod", "A192CBC-HS384",
+            RegisteredServicePropertyGroups.JWT_AUTHENTICATION),
         /**
          * Secrets are Base64 encoded.
          **/
-        TOKEN_SECRETS_ARE_BASE64_ENCODED("jwtSecretsAreBase64Encoded", "false"),
+        TOKEN_SECRETS_ARE_BASE64_ENCODED("jwtSecretsAreBase64Encoded", "false",
+            RegisteredServicePropertyGroups.JWT_AUTHENTICATION),
         /**
          * Whether interrupt notifications should be skipped.
          **/
-        SKIP_INTERRUPT_NOTIFICATIONS("skipInterrupt", "false"),
+        SKIP_INTERRUPT_NOTIFICATIONS("skipInterrupt", "false",
+            RegisteredServicePropertyGroups.INTERRUPTS),
         /**
          * Whether this service should skip qualification for required-service pattern checks.
          **/
-        SKIP_REQUIRED_SERVICE_CHECK("skipRequiredServiceCheck", "false"),
+        SKIP_REQUIRED_SERVICE_CHECK("skipRequiredServiceCheck", "false",
+            RegisteredServicePropertyGroups.REGISTERED_SERVICES),
         /**
          * Whether CAS should inject cache control headers into the response when this service is in process.
          */
-        HTTP_HEADER_ENABLE_CACHE_CONTROL("httpHeaderEnableCacheControl", "true"),
+        HTTP_HEADER_ENABLE_CACHE_CONTROL("httpHeaderEnableCacheControl", "true",
+            RegisteredServicePropertyGroups.HTTP_HEADERS),
         /**
          * Whether CAS should inject xcontent options headers into the response when this service is in process.
          */
-        HTTP_HEADER_ENABLE_XCONTENT_OPTIONS("httpHeaderEnableXContentOptions", "true"),
+        HTTP_HEADER_ENABLE_XCONTENT_OPTIONS("httpHeaderEnableXContentOptions", "true",
+            RegisteredServicePropertyGroups.HTTP_HEADERS),
         /**
          * Whether CAS should inject strict transport security headers into the response when this service is in process.
          */
-        HTTP_HEADER_ENABLE_STRICT_TRANSPORT_SECURITY("httpHeaderEnableStrictTransportSecurity", "true"),
+        HTTP_HEADER_ENABLE_STRICT_TRANSPORT_SECURITY("httpHeaderEnableStrictTransportSecurity", "true",
+            RegisteredServicePropertyGroups.HTTP_HEADERS),
         /**
          * Whether CAS should inject xframe options headers into the response when this service is in process.
          */
-        HTTP_HEADER_ENABLE_XFRAME_OPTIONS("httpHeaderEnableXFrameOptions", "true"),
+        HTTP_HEADER_ENABLE_XFRAME_OPTIONS("httpHeaderEnableXFrameOptions", "true",
+            RegisteredServicePropertyGroups.HTTP_HEADERS),
         /**
          * Whether CAS should override xframe options headers into the response when this service is in process.
          */
-        HTTP_HEADER_XFRAME_OPTIONS("httpHeaderXFrameOptions", "DENY"),
+        HTTP_HEADER_XFRAME_OPTIONS("httpHeaderXFrameOptions", "DENY",
+            RegisteredServicePropertyGroups.HTTP_HEADERS),
         /**
          * Whether CAS should inject content security policy headers into the response when this service is in process.
          */
-        HTTP_HEADER_ENABLE_CONTENT_SECURITY_POLICY("httpHeaderEnableContentSecurityPolicy", "true"),
+        HTTP_HEADER_ENABLE_CONTENT_SECURITY_POLICY("httpHeaderEnableContentSecurityPolicy", "true",
+            RegisteredServicePropertyGroups.HTTP_HEADERS),
         /**
          * Whether CAS should inject xss protection headers into the response when this service is in process.
          */
-        HTTP_HEADER_ENABLE_XSS_PROTECTION("httpHeaderEnableXSSProtection", "true"),
+        HTTP_HEADER_ENABLE_XSS_PROTECTION("httpHeaderEnableXSSProtection", "true",
+            RegisteredServicePropertyGroups.HTTP_HEADERS),
         /**
          * Whether CAS should allow credentials in CORS requests.
          */
-        CORS_ALLOW_CREDENTIALS("corsAllowCredentials", "false"),
+        CORS_ALLOW_CREDENTIALS("corsAllowCredentials", "false",
+            RegisteredServicePropertyGroups.CORS),
         /**
          * Define the max-age property for CORS requests.
          */
-        CORS_MAX_AGE("corsMaxAge", StringUtils.EMPTY),
+        CORS_MAX_AGE("corsMaxAge", StringUtils.EMPTY,
+            RegisteredServicePropertyGroups.CORS),
         /**
          * Define allowed origins for CORS requests. Cannot use * when credentials are allowed.
          */
-        CORS_ALLOWED_ORIGINS("corsAllowedOrigins", StringUtils.EMPTY),
+        CORS_ALLOWED_ORIGINS("corsAllowedOrigins", StringUtils.EMPTY,
+            RegisteredServicePropertyGroups.CORS),
         /**
          * Define patterns of allowed origins for CORS requests. (e.g.
          * 'https://*.example.com') Patterns can be used when credentials are allowed.
          */
-        CORS_ALLOWED_ORIGIN_PATTERNS("corsAllowedOriginPatterns", StringUtils.EMPTY),
+        CORS_ALLOWED_ORIGIN_PATTERNS("corsAllowedOriginPatterns", StringUtils.EMPTY,
+            RegisteredServicePropertyGroups.CORS),
         /**
          * Define allowed methods for CORS requests.
          */
-        CORS_ALLOWED_METHODS("corsAllowedMethods", StringUtils.EMPTY),
+        CORS_ALLOWED_METHODS("corsAllowedMethods", StringUtils.EMPTY,
+            RegisteredServicePropertyGroups.CORS),
         /**
          * Define allowed headers for CORS requests.
          */
-        CORS_ALLOWED_HEADERS("corsAllowedHeaders", StringUtils.EMPTY),
+        CORS_ALLOWED_HEADERS("corsAllowedHeaders", StringUtils.EMPTY,
+            RegisteredServicePropertyGroups.CORS),
         /**
          * Define exposed headers in the response for CORS requests.
          */
-        CORS_EXPOSED_HEADERS("corsExposedHeaders", StringUtils.EMPTY),
+        CORS_EXPOSED_HEADERS("corsExposedHeaders", StringUtils.EMPTY,
+            RegisteredServicePropertyGroups.CORS),
+        
+        /**
+         * Indicate binding type, when using delegated authentication to saml2 identity providers.
+         */
+        DELEGATED_AUTHN_SAML2_AUTHN_REQUEST_BINDING_TYPE("AuthnRequestBindingType", StringUtils.EMPTY,
+            RegisteredServicePropertyGroups.DELEGATED_AUTHN_SAML2),
+        /**
+         * Indicate assertion consumer service index, when using delegated authentication to saml2 identity providers.
+         */
+        DELEGATED_AUTHN_SAML2_ASSERTION_CONSUMER_SERVICE_INDEX("AssertionConsumerServiceIndex", StringUtils.EMPTY,
+            RegisteredServicePropertyGroups.DELEGATED_AUTHN_SAML2),
+        /**
+         * Indicate attribute consuming service index, when using delegated authentication to saml2 identity providers.
+         */
+        DELEGATED_AUTHN_SAML2_ATTRIBUTE_CONSUMING_SERVICE_INDEX("AttributeConsumingServiceIndex", StringUtils.EMPTY,
+            RegisteredServicePropertyGroups.DELEGATED_AUTHN_SAML2),
+        /**
+         * Indicate comparison type when using delegated authentication to saml2 identity providers.
+         */
+        DELEGATED_AUTHN_SAML2_COMPARISON_TYPE("ComparisonType", StringUtils.EMPTY,
+            RegisteredServicePropertyGroups.DELEGATED_AUTHN_SAML2),
+        /**
+         * Indicate name id policy format, when using delegated authentication to saml2 identity providers.
+         */
+        DELEGATED_AUTHN_SAML2_NAME_ID_POLICY_FORMAT("NameIdPolicyFormat", StringUtils.EMPTY,
+            RegisteredServicePropertyGroups.DELEGATED_AUTHN_SAML2),
+        /**
+         * Indicate name id policy allow create, when using delegated authentication to saml2 identity providers.
+         */
+        DELEGATED_AUTHN_SAML2_NAME_ID_POLICY_ALLOW_CREATE("NameIdPolicyAllowCreate", StringUtils.EMPTY,
+            RegisteredServicePropertyGroups.DELEGATED_AUTHN_SAML2),
+        /**
+         * Indicate provider name, when using delegated authentication to saml2 identity providers.
+         */
+        DELEGATED_AUTHN_SAML2_PROVIDER_NAME("ProviderName", StringUtils.EMPTY,
+            RegisteredServicePropertyGroups.DELEGATED_AUTHN_SAML2),
+        /**
+         * Indicate issuer format, when using delegated authentication to saml2 identity providers.
+         */
+        DELEGATED_AUTHN_SAML2_ISSUER_FORMAT("IssuerFormat", StringUtils.EMPTY,
+            RegisteredServicePropertyGroups.DELEGATED_AUTHN_SAML2),
+        /**
+         * Indicate whether name qualifier should be used, when using delegated authentication to saml2 identity providers.
+         */
+        DELEGATED_AUTHN_SAML2_USE_NAME_QUALIFIER("UseNameQualifier", StringUtils.EMPTY,
+            RegisteredServicePropertyGroups.DELEGATED_AUTHN_SAML2),
+        /**
+         * Indicate authn context class refs, when using delegated authentication to saml2 identity providers.
+         */
+        DELEGATED_AUTHN_SAML2_AUTHN_CONTEXT_CLASS_REFS("AuthnContextClassRefs", StringUtils.EMPTY,
+            RegisteredServicePropertyGroups.DELEGATED_AUTHN_SAML2),
+        /**
+         * Indicate the name id attribute when using delegated authentication to saml2 identity providers.
+         */
+        DELEGATED_AUTHN_SAML2_NAME_ID_ATTRIBUTE("NameIdAttribute", StringUtils.EMPTY,
+            RegisteredServicePropertyGroups.DELEGATED_AUTHN_SAML2),
+        /**
+         * Indicate whether assertions should be signed, when using delegated authentication to saml2 identity providers.
+         */
+        DELEGATED_AUTHN_SAML2_WANTS_ASSERTIONS_SIGNED("WantsAssertionsSigned", StringUtils.EMPTY,
+            RegisteredServicePropertyGroups.DELEGATED_AUTHN_SAML2),
+        /**
+         * Indicate whether responses should be signed, when using delegated authentication to saml2 identity providers.
+         */
+        DELEGATED_AUTHN_SAML2_WANTS_RESPONSES_SIGNED("WantsResponsesSigned", StringUtils.EMPTY,
+            RegisteredServicePropertyGroups.DELEGATED_AUTHN_SAML2),
+        /**
+         * Indicate the maximum authentication lifetime to use, when using delegated authentication to saml2 identity providers.
+         */
+        DELEGATED_AUTHN_SAML2_MAXIMUM_AUTHN_LIFETIME("MaximumAuthenticationLifetime", StringUtils.EMPTY,
+            RegisteredServicePropertyGroups.DELEGATED_AUTHN_SAML2),
+
         /**
          * Define SCIM oauth token.
          */
-        SCIM_OAUTH_TOKEN("scimOAuthToken", StringUtils.EMPTY),
+        SCIM_OAUTH_TOKEN("scimOAuthToken", StringUtils.EMPTY, RegisteredServicePropertyGroups.SCIM),
+
         /**
          * Define SCIM username.
          */
-        SCIM_USERNAME("scimUsername", StringUtils.EMPTY),
+        SCIM_USERNAME("scimUsername", StringUtils.EMPTY, RegisteredServicePropertyGroups.SCIM),
+
         /**
          * Define SCIM password.
          */
-        SCIM_PASSWORD("scimPassword", StringUtils.EMPTY),
+        SCIM_PASSWORD("scimPassword", StringUtils.EMPTY, RegisteredServicePropertyGroups.SCIM),
+        
         /**
          * Define SCIM target.
          */
-        SCIM_TARGET("scimTarget", StringUtils.EMPTY);
+        SCIM_TARGET("scimTarget", StringUtils.EMPTY, RegisteredServicePropertyGroups.SCIM);
+
 
         private final String propertyName;
 
         private final String defaultValue;
+
+        private final RegisteredServicePropertyGroups group;
+
+        /**
+         * Does property belong to the requested group?
+         *
+         * @param group the group
+         * @return the boolean
+         */
+        @JsonIgnore
+        public boolean isMemberOf(final RegisteredServicePropertyGroups group) {
+            return this.group == group;
+        }
 
         /**
          * Gets property value.
