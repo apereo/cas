@@ -9,8 +9,12 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.web.view.DynamicHtmlView;
 
 import lombok.val;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.pac4j.core.redirect.RedirectionActionBuilder;
 import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +22,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.web.servlet.view.RedirectView;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -30,6 +35,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
 @Tag("Simple")
+@DirtiesContext
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class DefaultDelegatedAuthenticationNavigationControllerTests {
 
     @Autowired
@@ -39,6 +46,12 @@ public class DefaultDelegatedAuthenticationNavigationControllerTests {
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
+
+
+    @BeforeEach
+    public void beforeEach() {
+        servicesManager.deleteAll();
+    }
 
     @Test
     public void verifyRedirectByParam() {
@@ -79,6 +92,7 @@ public class DefaultDelegatedAuthenticationNavigationControllerTests {
         val request = new MockHttpServletRequest();
         request.setAttribute(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "SAML2Client");
         val service = RegisteredServiceTestUtils.getService("https://github.com/apereo/cas");
+        servicesManager.save(RegisteredServiceTestUtils.getRegisteredService("https://github.com/apereo/cas"));
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
         val response = new MockHttpServletResponse();
         assertTrue(controller.redirectToProvider(request, response) instanceof DynamicHtmlView);
@@ -110,11 +124,11 @@ public class DefaultDelegatedAuthenticationNavigationControllerTests {
     }
 
     @Test
-    public void verifyRedirectWithServiceProperties() {
+    public void verifyRedirectWithServiceSaml2Properties() {
         val request = new MockHttpServletRequest();
         request.setAttribute(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "SAML2Client");
         val service = RegisteredServiceTestUtils.getService("https://github.com/apereo/cas");
-
+        servicesManager.save(RegisteredServiceTestUtils.getRegisteredService("https://github.com/apereo/cas"));
         val registeredService = servicesManager.findServiceBy(service);
 
         val property1 = new DefaultRegisteredServiceProperty("class1", "class2");
@@ -130,6 +144,30 @@ public class DefaultDelegatedAuthenticationNavigationControllerTests {
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
         val response = new MockHttpServletResponse();
         assertTrue(controller.redirectToProvider(request, response) instanceof DynamicHtmlView);
+    }
+
+    @Test
+    public void verifyRedirectWithServiceOidcProperties() {
+        val request = new MockHttpServletRequest();
+        request.setAttribute(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "OidcClient");
+        val service = RegisteredServiceTestUtils.getService("https://github.com/apereo/cas2");
+        servicesManager.save(RegisteredServiceTestUtils.getRegisteredService("https://github.com/apereo/cas2"));
+
+        val registeredService = servicesManager.findServiceBy(service);
+
+        val property1 = new DefaultRegisteredServiceProperty("1000");
+        registeredService.getProperties()
+            .put(RegisteredServiceProperties.DELEGATED_AUTHN_OIDC_MAX_AGE.getPropertyName(), property1);
+
+        val property2 = new DefaultRegisteredServiceProperty("openid one two three");
+        registeredService.getProperties()
+            .put(RegisteredServiceProperties.DELEGATED_AUTHN_OIDC_SCOPE.getPropertyName(), property2);
+
+        servicesManager.save(registeredService);
+
+        request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
+        val response = new MockHttpServletResponse();
+        assertTrue(controller.redirectToProvider(request, response) instanceof RedirectView);
     }
 
 }

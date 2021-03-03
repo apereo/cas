@@ -30,8 +30,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -58,16 +56,14 @@ public abstract class BaseDelegatedAuthenticationController {
      *
      * @param registeredService     the registered service
      * @param webContext            the web context
-     * @param propertyValueSupplier the property value supplier
      * @param properties            the properties
      */
     protected void configureWebContextForRegisteredServiceProperties(final RegisteredService registeredService,
                                                                      final JEEContext webContext,
-                                                                     final Function<RegisteredServiceProperties, Object> propertyValueSupplier,
                                                                      final List<RegisteredServiceProperties> properties) {
         properties.stream()
             .filter(prop -> prop.isAssignedTo(registeredService))
-            .forEach(prop -> webContext.setRequestAttribute(prop.getPropertyName(), propertyValueSupplier.apply(prop)));
+            .forEach(prop -> webContext.setRequestAttribute(prop.getPropertyName(), prop.getTypedPropertyValue(registeredService)));
     }
 
     /**
@@ -167,10 +163,13 @@ public abstract class BaseDelegatedAuthenticationController {
                 .filter(prop -> prop.isMemberOf(RegisteredServicePropertyGroups.DELEGATED_AUTHN_SAML2))
                 .collect(Collectors.toList());
             configureWebContextForRegisteredServiceProperties(registeredService, webContext,
-                prop -> prop == RegisteredServiceProperties.DELEGATED_AUTHN_SAML2_AUTHN_CONTEXT_CLASS_REFS
-                    ? prop.getPropertyValues(registeredService, Set.class)
-                    : prop.getPropertyValue(registeredService),
                 saml2ServiceProperties);
+
+            val oidcProperties = Arrays.stream(RegisteredServiceProperties.values())
+                .filter(prop -> prop.isMemberOf(RegisteredServicePropertyGroups.DELEGATED_AUTHN_OIDC))
+                .collect(Collectors.toList());
+            configureWebContextForRegisteredServiceProperties(registeredService, webContext,
+                oidcProperties);
         }
     }
 }
