@@ -24,6 +24,11 @@ import java.util.function.Predicate;
  */
 public interface AttributeDefinitionStore {
     /**
+     * Default bean name for the implementation class.
+     */
+    String BEAN_NAME = "attributeDefinitionStore";
+
+    /**
      * The constant LOGGER.
      */
     Logger LOGGER = LoggerFactory.getLogger(AttributeDefinitionStore.class);
@@ -119,12 +124,18 @@ public interface AttributeDefinitionStore {
                     val result = resolveAttributeValues(entry.getKey(), attributeValues, registeredService);
                     if (result.isPresent()) {
                         val resolvedValues = result.get().getValue();
-                        LOGGER.trace("Resolving attribute [{}] based on attribute definition [{}]", entry.getKey(), definition);
-                        val attributeKeys = org.springframework.util.StringUtils.commaDelimitedListToSet(StringUtils.defaultIfBlank(definition.getName(), entry.getKey()));
-                        attributeKeys.forEach(key -> {
-                            LOGGER.trace("Determined attribute name to be [{}] with values [{}]", key, resolvedValues);
-                            finalAttributes.put(key, resolvedValues);
-                        });
+                        if (!resolvedValues.isEmpty()) {
+                            LOGGER.trace("Resolving attribute [{}] based on attribute definition [{}]", entry.getKey(), definition);
+                            val attributeKeys = org.springframework.util.StringUtils.commaDelimitedListToSet(
+                                StringUtils.defaultIfBlank(definition.getName(), entry.getKey()));
+                            
+                            attributeKeys.forEach(key -> {
+                                LOGGER.trace("Determined attribute name to be [{}] with values [{}]", key, resolvedValues);
+                                finalAttributes.put(key, resolvedValues);
+                            });
+                        } else {
+                            LOGGER.warn("Unable to produce or determine attributes values for attribute definition [{}]", definition);
+                        }
                     }
                 }, () -> {
                     LOGGER.trace("Using already-resolved attribute name/value, as no attribute definition was found for [{}]", entry.getKey());

@@ -1,5 +1,8 @@
 package org.apereo.cas;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
@@ -155,9 +158,9 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
 
 
     @Audit(
-        action = "TICKET_DESTROYED",
-        actionResolverName = "DESTROY_TICKET_RESOLVER",
-        resourceResolverName = "DESTROY_TICKET_RESOURCE_RESOLVER")
+        action = AuditableActions.TICKET_DESTROYED,
+        actionResolverName = AuditActionResolvers.DESTROY_TICKET_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.DESTROY_TICKET_RESOURCE_RESOLVER)
     @Transactional(transactionManager = "ticketTransactionManager")
     @Override
     public int deleteTicket(final String ticketId) {

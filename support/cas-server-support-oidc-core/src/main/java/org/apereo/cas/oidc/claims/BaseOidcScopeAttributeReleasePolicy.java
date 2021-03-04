@@ -101,4 +101,9 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
         LOGGER.debug("No mapped attribute is defined for claim [{}]; Used [{}] to locate value [{}]", claim, claim, value);
         return Pair.of(claim, value);
     }
+
+    @Override
+    public List<String> determineRequestedAttributeDefinitions() {
+        return getAllowedAttributes();
+    }
 }

@@ -88,6 +88,21 @@ public class AmazonS3ServiceRegistry extends AbstractServiceRegistry {
     }
 
     @Override
+    public void deleteAll() {
+        val buckets = s3Client.listBuckets(ListBucketsRequest.builder().build()).buckets();
+        buckets.stream()
+            .filter(AmazonS3ServiceRegistry::getRegisteredServiceBucketPredicate)
+            .forEach(bucket -> {
+                val objects = s3Client.listObjectsV2(ListObjectsV2Request.builder().bucket(bucket.name()).build());
+                objects.contents().forEach(object -> s3Client.deleteObject(DeleteObjectRequest.builder()
+                    .bucket(bucket.name())
+                    .key(object.key())
+                    .build()));
+                s3Client.deleteBucket(DeleteBucketRequest.builder().bucket(bucket.name()).build());
+            });
+    }
+
+    @Override
     public boolean delete(final RegisteredService registeredService) {
         try {
             LOGGER.trace("Deleting registered service [{}]", registeredService);
@@ -99,7 +114,9 @@ public class AmazonS3ServiceRegistry extends AbstractServiceRegistry {
             if (result.isPresent()) {
                 val bucket = result.get();
                 val objects = s3Client.listObjectsV2(ListObjectsV2Request.builder().bucket(bucket.name()).build());
-                objects.contents().forEach(object -> s3Client.deleteObject(DeleteObjectRequest.builder().bucket(bucket.name()).key(object.key())
+                objects.contents().forEach(object -> s3Client.deleteObject(DeleteObjectRequest.builder()
+                    .bucket(bucket.name())
+                    .key(object.key())
                     .build()));
                 val bucketName = determineBucketName(registeredService);
                 s3Client.deleteBucket(DeleteBucketRequest.builder().bucket(bucketName).build());

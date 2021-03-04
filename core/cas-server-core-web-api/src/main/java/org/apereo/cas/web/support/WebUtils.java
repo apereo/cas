@@ -1551,4 +1551,24 @@ public class WebUtils {
     public static void putDelegatedAuthenticationClientName(final RequestContext requestContext, final String clientName) {
         requestContext.getFlowScope().put("delegatedAuthenticationClientName", clientName);
     }
+
+    /**
+     * Put authorized services.
+     *
+     * @param requestContext     the request context
+     * @param authorizedServices the authorized services
+     */
+    public static void putAuthorizedServices(final RequestContext requestContext, final List<RegisteredService> authorizedServices) {
+        requestContext.getFlowScope().put("authorizedServices", authorizedServices);
+    }
+
+    /**
+     * Gets authorized services.
+     *
+     * @param requestContext the request context
+     * @return the authorized services
+     */
+    public List<RegisteredService> getAuthorizedServices(final RequestContext requestContext) {
+        return requestContext.getFlowScope().get("authorizedServices", List.class);
+    }
 }

@@ -37,22 +37,17 @@ public class LdapServiceRegistry extends AbstractServiceRegistry implements Disp
 
     private final LdapRegisteredServiceMapper ldapServiceMapper;
 
-    private final String baseDn;
-
     private final LdapServiceRegistryProperties ldapProperties;
 
     public LdapServiceRegistry(final ConnectionFactory connectionFactory,
-        final String baseDn,
         final LdapRegisteredServiceMapper ldapServiceMapper,
         final LdapServiceRegistryProperties ldapProperties,
         final ConfigurableApplicationContext applicationContext,
         final Collection<ServiceRegistryListener> serviceRegistryListeners) {
         super(applicationContext, serviceRegistryListeners);
         this.connectionFactory = connectionFactory;
-        this.baseDn = baseDn;
         this.ldapProperties = ldapProperties;
         this.ldapServiceMapper = Objects.requireNonNullElseGet(ldapServiceMapper, () -> new DefaultLdapRegisteredServiceMapper(ldapProperties));
-        LOGGER.debug("Configured search filter to [{}] and load filter to [{}]", ldapProperties.getSearchFilter(), ldapProperties.getLoadFilter());
     }
 
     @Override
@@ -72,7 +67,17 @@ public class LdapServiceRegistry extends AbstractServiceRegistry implements Disp
             val entry = response.getEntry();
             return LdapUtils.executeDeleteOperation(this.connectionFactory, entry);
         }
+        LOGGER.debug("Could not locate registered service by id [{}] to delete", registeredService.getId());
         return false;
+    }
+
+    @Override
+    public void deleteAll() {
+        val response = getSearchResultResponse();
+        if (LdapUtils.containsResultEntry(response)) {
+            response.getEntries()
+                .forEach(entry -> LdapUtils.executeDeleteOperation(this.connectionFactory, entry));
+        }
     }
 
     @Override
@@ -132,7 +137,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry implements Disp
     }
 
     private RegisteredService insert(final RegisteredService rs) {
-        val entry = this.ldapServiceMapper.mapFromRegisteredService(this.baseDn, rs);
+        val entry = this.ldapServiceMapper.mapFromRegisteredService(ldapProperties.getBaseDn(), rs);
         LdapUtils.executeAddOperation(this.connectionFactory, entry);
         return rs;
     }
@@ -148,10 +153,10 @@ public class LdapServiceRegistry extends AbstractServiceRegistry implements Disp
 
         if (StringUtils.isNotBlank(currentDn)) {
             LOGGER.debug("Updating registered service at [{}]", currentDn);
-            val entry = this.ldapServiceMapper.mapFromRegisteredService(this.baseDn, rs);
+            val entry = this.ldapServiceMapper.mapFromRegisteredService(ldapProperties.getBaseDn(), rs);
             LdapUtils.executeModifyOperation(currentDn, this.connectionFactory, entry);
         } else {
-            LOGGER.debug("Failed to locate DN for registered service by id [{}]. Attempting to save the service anew", rs.getId());
+            LOGGER.debug("Cannot locate DN for registered service with id [{}]. Attempting to save the service", rs.getId());
             insert(rs);
         }
         return rs;
@@ -160,7 +165,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry implements Disp
     @SneakyThrows
     private SearchResponse getSearchResultResponse() {
         val filter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getLoadFilter());
-        return LdapUtils.executeSearchOperation(this.connectionFactory, this.baseDn, filter, ldapProperties.getPageSize());
+        return LdapUtils.executeSearchOperation(this.connectionFactory, ldapProperties.getBaseDn(), filter, ldapProperties.getPageSize());
     }
 
     /**
@@ -173,7 +178,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry implements Disp
     private SearchResponse searchForServiceById(final Long id) {
         val filter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getSearchFilter(),
             LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, CollectionUtils.wrap(id.toString()));
-        return LdapUtils.executeSearchOperation(this.connectionFactory, this.baseDn,
+        return LdapUtils.executeSearchOperation(this.connectionFactory, ldapProperties.getBaseDn(),
             filter, ldapProperties.getPageSize());
     }
 

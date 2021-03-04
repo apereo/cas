@@ -11,8 +11,10 @@ import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.Getter;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -44,6 +46,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 @Tag("Cassandra")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @EnabledIfPortOpen(port = 9042)
 @Getter
 public class CassandraServiceRegistryTests extends AbstractServiceRegistryTests {

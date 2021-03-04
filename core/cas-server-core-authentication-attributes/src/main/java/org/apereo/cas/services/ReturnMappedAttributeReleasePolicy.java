@@ -143,7 +143,7 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
                                                       final Map<String, List<Object>> attributesToRelease) {
         val args = CollectionUtils.wrap("attributes", resolvedAttributes, "logger", LOGGER);
         script.setBinding(args);
-        val result = script.execute(args.values().toArray(), Object.class);
+        val result = script.execute(args.values().toArray(), Object.class, false);
         if (result != null) {
             LOGGER.debug("Mapped attribute [{}] to [{}] from script", attributeName, result);
             attributesToRelease.put(attributeName, CollectionUtils.wrapList(result));
@@ -184,5 +184,10 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
             });
         });
         return attributesToRelease;
+    }
+
+    @Override
+    public List<String> determineRequestedAttributeDefinitions() {
+        return new ArrayList<>(getAllowedAttributes().keySet());
     }
 }

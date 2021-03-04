@@ -44,9 +44,4 @@ public class DefaultPrincipalAttributesRepository extends AbstractPrincipalAttri
         return convertAttributesToPrincipalAttributesAndCache(principal, principalAttributes, registeredService);
     }
 
-    @Override
-    protected void addPrincipalAttributes(final String id, final Map<String, List<Object>> attributes,
-                                          final RegisteredService registeredService) {
-        LOGGER.debug("Using [{}], no caching takes place for [{}] to add attributes.", id, this.getClass().getSimpleName());
-    }
 }

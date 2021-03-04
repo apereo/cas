@@ -56,7 +56,7 @@ public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<Sam
     public long expireAfterUpdate(@NonNull final SamlRegisteredServiceCacheKey cacheKey,
                                   @NonNull final MetadataResolver chainingMetadataResolver,
                                   final long currentTime, final long currentDuration) {
-        LOGGER.trace("Cache expiration duration after updates is set to [{}]", currentDuration);
+        LOGGER.trace("Cache expiration duration after updates is set to [{}] nanoseconds", currentDuration);
         return currentDuration;
     }
 
@@ -64,7 +64,7 @@ public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<Sam
     public long expireAfterRead(@NonNull final SamlRegisteredServiceCacheKey cacheKey,
                                 @NonNull final MetadataResolver chainingMetadataResolver,
                                 final long currentTime, final long currentDuration) {
-        LOGGER.trace("Cache expiration duration after reads is set to [{}]", currentDuration);
+        LOGGER.trace("Cache expiration duration after reads is set to [{}] nanoseconds", currentDuration);
         return currentDuration;
     }
 
@@ -78,7 +78,7 @@ public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<Sam
     protected long getCacheDurationForServiceProvider(final SamlRegisteredService service, final MetadataResolver chainingMetadataResolver) {
         try {
             if (StringUtils.isBlank(service.getServiceId())) {
-                LOGGER.error("Unable to determine duration for SAML service [{}] with no entity id", service.getName());
+                LOGGER.warn("Unable to determine duration for SAML service [{}] with no entity id", service.getName());
                 return -1;
             }
             val set = new CriteriaSet();

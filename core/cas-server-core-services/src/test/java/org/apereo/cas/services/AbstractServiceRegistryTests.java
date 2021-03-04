@@ -21,9 +21,13 @@ import org.joda.time.DateTimeUtils;
 import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.net.URI;
 import java.time.LocalDate;
@@ -50,6 +54,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@DirtiesContext
 public abstract class AbstractServiceRegistryTests {
     public static final int LOAD_SIZE = 1;
 
@@ -81,6 +87,7 @@ public abstract class AbstractServiceRegistryTests {
     }
 
     @Test
+    @Order(1000)
     public void verifyEmptyRegistry() {
         assertEquals(0, serviceRegistry.load().size(), "Loaded too many");
         assertEquals(0, serviceRegistry.size(), "Counted too many");
@@ -96,14 +103,21 @@ public abstract class AbstractServiceRegistryTests {
     @ParameterizedTest
     @MethodSource(GET_PARAMETERS)
     public void verifySaveAndLoad(final Class<? extends RegisteredService> registeredServiceClass) {
+        this.serviceRegistry.deleteAll();
         for (var i = 0; i < getLoadSize(); i++) {
             val svc = buildRegisteredServiceInstance(i, registeredServiceClass);
             this.serviceRegistry.save(svc);
+
             val svc2 = this.serviceRegistry.findServiceByExactServiceName(svc.getName());
             assertNotNull(svc2, registeredServiceClass::getName);
+
+            val svc3 = this.serviceRegistry.findServiceById(svc2.getId());
+            assertEquals(svc2, svc3);
+
             this.serviceRegistry.delete(svc2);
         }
-        assertTrue(this.serviceRegistry.load().isEmpty());
+        val results = this.serviceRegistry.load();
+        assertTrue(results.isEmpty());
         assertEquals(0, this.serviceRegistry.getServicesStream().count());
         assertEquals(0, this.serviceRegistry.size());
     }
@@ -605,7 +619,7 @@ public abstract class AbstractServiceRegistryTests {
     }
 
     protected void clearServiceRegistry() {
-        val results = this.getServiceRegistry().load();
-        results.forEach(service -> this.getServiceRegistry().delete(service));
+        getServiceRegistry().deleteAll();
+        assertTrue(getServiceRegistry().load().isEmpty());
     }
 }

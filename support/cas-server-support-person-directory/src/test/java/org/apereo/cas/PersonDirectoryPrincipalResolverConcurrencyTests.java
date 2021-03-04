@@ -62,7 +62,7 @@ public class PersonDirectoryPrincipalResolverConcurrencyTests {
     private static final int EXECUTIONS_PER_USER = 1000;
 
     @Autowired
-    @Qualifier("attributeRepository")
+    @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
     private IPersonAttributeDao attributeRepository;
 
     @Autowired

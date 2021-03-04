@@ -138,7 +138,7 @@ public class CasSamlServiceProvidersConfiguration implements InitializingBean {
         val service = SamlSPUtils.newSamlServiceProviderService(provider,
             samlRegisteredServiceCachingMetadataResolver.getObject());
         if (service != null) {
-            LOGGER.debug("Constructed service definition [{}]", service);
+            LOGGER.trace("Constructed service definition [{}]", service);
             beforeSave.apply(service);
             SamlSPUtils.saveService(service, servicesManager.getObject());
             afterSave.apply(service);

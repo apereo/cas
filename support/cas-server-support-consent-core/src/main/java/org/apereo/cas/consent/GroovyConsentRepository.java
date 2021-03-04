@@ -39,6 +39,12 @@ public class GroovyConsentRepository extends BaseConsentRepository implements Di
         return watchableScript.execute("delete", Boolean.class, decisionId, principal, LOGGER);
     }
 
+    @Override
+    public boolean deleteConsentDecisions(final String principal) {
+        super.deleteConsentDecisions(principal);
+        return watchableScript.execute("deletePrincipal", Boolean.class, principal, LOGGER);
+    }
+
     private void writeAccountToGroovyResource(final ConsentDecision decision) {
         watchableScript.execute("write", Boolean.class, decision, LOGGER);
     }

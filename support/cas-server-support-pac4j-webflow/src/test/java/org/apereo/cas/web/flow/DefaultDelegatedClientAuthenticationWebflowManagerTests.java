@@ -5,7 +5,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
-import org.apereo.cas.web.DelegatedClientWebflowManager;
+import org.apereo.cas.web.DefaultDelegatedClientAuthenticationWebflowManager;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,22 +41,22 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link DelegatedClientWebflowManagerTests}.
+ * This is {@link DefaultDelegatedClientAuthenticationWebflowManagerTests}.
  *
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@SpringBootTest(classes =
-    BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
+@SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class,
+    properties = "cas.authn.pac4j.cookie.enabled=true")
 @Tag("Webflow")
-public class DelegatedClientWebflowManagerTests {
+public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
 
     @Autowired
     @Qualifier("delegatedClientWebflowManager")
-    private DelegatedClientWebflowManager delegatedClientWebflowManager;
+    private DelegatedClientAuthenticationWebflowManager delegatedClientAuthenticationWebflowManager;
 
     @Autowired
     @Qualifier("delegatedClientDistributedSessionStore")
@@ -88,13 +88,13 @@ public class DelegatedClientWebflowManagerTests {
         config.setClientId(UUID.randomUUID().toString());
         config.setSecret(UUID.randomUUID().toString());
         val client = new OidcClient(config);
-        val ticket = delegatedClientWebflowManager.store(context, client);
+        val ticket = delegatedClientAuthenticationWebflowManager.store(context, client);
         assertNotNull(ticketRegistry.getTicket(ticket.getId()));
         assertTrue(config.isWithState());
         assertEquals(ticket.getId(), config.getStateGenerator().generateValue(context, JEESessionStore.INSTANCE));
 
         httpServletRequest.addParameter(OAuth20Configuration.STATE_REQUEST_PARAMETER, ticket.getId());
-        val service = delegatedClientWebflowManager.retrieve(requestContext, context, client);
+        val service = delegatedClientAuthenticationWebflowManager.retrieve(requestContext, context, client);
         assertNotNull(service);
         assertNull(ticketRegistry.getTicket(ticket.getId()));
     }
@@ -106,16 +106,16 @@ public class DelegatedClientWebflowManagerTests {
         config.setSecret(UUID.randomUUID().toString());
         val client = new OAuth20Client();
         client.setConfiguration(config);
-        val ticket = delegatedClientWebflowManager.store(context, client);
+        val ticket = delegatedClientAuthenticationWebflowManager.store(context, client);
         assertNotNull(ticketRegistry.getTicket(ticket.getId()));
         assertTrue(config.isWithState());
         assertEquals(ticket.getId(), config.getStateGenerator().generateValue(context, JEESessionStore.INSTANCE));
 
         assertThrows(UnauthorizedServiceException.class,
-            () -> delegatedClientWebflowManager.retrieve(requestContext, context, client));
+            () -> delegatedClientAuthenticationWebflowManager.retrieve(requestContext, context, client));
 
         httpServletRequest.addParameter(OAuth20Configuration.STATE_REQUEST_PARAMETER, ticket.getId());
-        val service = delegatedClientWebflowManager.retrieve(requestContext, context, client);
+        val service = delegatedClientAuthenticationWebflowManager.retrieve(requestContext, context, client);
 
         assertNotNull(service);
         assertNull(ticketRegistry.getTicket(ticket.getId()));
@@ -128,9 +128,9 @@ public class DelegatedClientWebflowManagerTests {
         config.setSecret(UUID.randomUUID().toString());
         val client = new OAuth10Client();
         client.setConfiguration(config);
-        val ticket = delegatedClientWebflowManager.store(context, client);
+        val ticket = delegatedClientAuthenticationWebflowManager.store(context, client);
         assertNotNull(ticketRegistry.getTicket(ticket.getId()));
-        val service = delegatedClientWebflowManager.retrieve(requestContext, context, client);
+        val service = delegatedClientAuthenticationWebflowManager.retrieve(requestContext, context, client);
         assertNotNull(service);
         assertNull(ticketRegistry.getTicket(ticket.getId()));
     }
@@ -141,10 +141,10 @@ public class DelegatedClientWebflowManagerTests {
         config.setLoginUrl("https://example.org/login");
         val client = new CasClient();
         client.setConfiguration(config);
-        val ticket = delegatedClientWebflowManager.store(context, client);
+        val ticket = delegatedClientAuthenticationWebflowManager.store(context, client);
         assertNotNull(ticketRegistry.getTicket(ticket.getId()));
-        assertEquals(ticket.getId(), config.getCustomParams().get(DelegatedClientWebflowManager.PARAMETER_CLIENT_ID));
-        val service = delegatedClientWebflowManager.retrieve(requestContext, context, client);
+        assertEquals(ticket.getId(), config.getCustomParams().get(DefaultDelegatedClientAuthenticationWebflowManager.PARAMETER_CLIENT_ID));
+        val service = delegatedClientAuthenticationWebflowManager.retrieve(requestContext, context, client);
         assertNotNull(service);
         assertNull(ticketRegistry.getTicket(ticket.getId()));
     }
@@ -153,12 +153,12 @@ public class DelegatedClientWebflowManagerTests {
     public void verifySamlStoreOperation() {
         val config = new SAML2Configuration();
         val client = new SAML2Client(config);
-        val ticket = delegatedClientWebflowManager.store(context, client);
+        val ticket = delegatedClientAuthenticationWebflowManager.store(context, client);
         assertNotNull(ticketRegistry.getTicket(ticket.getId()));
         assertEquals(ticket.getId(), delegatedClientDistributedSessionStore.get(context, SAML2StateGenerator.SAML_RELAY_STATE_ATTRIBUTE).get());
 
         httpServletRequest.addParameter("RelayState", ticket.getId());
-        val service = delegatedClientWebflowManager.retrieve(requestContext, context, client);
+        val service = delegatedClientAuthenticationWebflowManager.retrieve(requestContext, context, client);
         assertNotNull(service);
         assertNull(ticketRegistry.getTicket(ticket.getId()));
     }
@@ -167,14 +167,14 @@ public class DelegatedClientWebflowManagerTests {
     public void verifyExpiredTicketOperation() {
         val config = new SAML2Configuration();
         val client = new SAML2Client(config);
-        val ticket = delegatedClientWebflowManager.store(context, client);
+        val ticket = delegatedClientAuthenticationWebflowManager.store(context, client);
         assertNotNull(ticketRegistry.getTicket(ticket.getId()));
         assertEquals(ticket.getId(), delegatedClientDistributedSessionStore.get(context,
             SAML2StateGenerator.SAML_RELAY_STATE_ATTRIBUTE).get());
         httpServletRequest.addParameter("RelayState", ticket.getId());
         ticket.markTicketExpired();
         assertThrows(UnauthorizedServiceException.class,
-            () -> delegatedClientWebflowManager.retrieve(requestContext, context, client));
+            () -> delegatedClientAuthenticationWebflowManager.retrieve(requestContext, context, client));
     }
 
 }

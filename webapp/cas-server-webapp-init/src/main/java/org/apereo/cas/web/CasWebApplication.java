@@ -59,7 +59,7 @@ import java.time.Instant;
     CassandraAutoConfiguration.class,
     DataSourceTransactionManagerAutoConfiguration.class,
     RedisRepositoriesAutoConfiguration.class
-    }, proxyBeanMethods = false)
+}, proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAsync
 @EnableAspectJAutoProxy(proxyTargetClass = true)
@@ -68,7 +68,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @Slf4j
 public class CasWebApplication {
-
+    
     /**
      * Main entry point of the CAS web application.
      *
@@ -77,11 +77,13 @@ public class CasWebApplication {
     public static void main(final String[] args) {
         val banner = CasEmbeddedContainerUtils.getCasBannerInstance();
         new SpringApplicationBuilder(CasWebApplication.class)
-                .banner(banner)
-                .web(WebApplicationType.SERVLET)
-                .logStartupInfo(true)
-                .contextClass(CasWebApplicationContext.class)
-                .run(args);
+            .banner(banner)
+            .web(WebApplicationType.SERVLET)
+            .logStartupInfo(true)
+            .contextClass(CasWebApplicationContext.class)
+            .contextFactory(webApplicationType -> new CasWebApplicationContext())
+            .applicationStartup(CasEmbeddedContainerUtils.getApplicationStartup())
+            .run(args);
     }
 
     /**

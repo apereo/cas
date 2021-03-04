@@ -47,7 +47,7 @@ dependencyResolutionManagement {
             url "https://repo.terracotta.org/maven2"
             mavenContent { releasesOnly() }
             content {
-                includeGroup "org.terracotta"
+                includeGroupByRegex "org.terracotta.*"
             }
         }
     }
@@ -206,6 +206,7 @@ include "support:cas-server-support-events-influxdb"
 include "support:cas-server-support-events-jpa"
 include "support:cas-server-support-events-memory"
 include "support:cas-server-support-events-mongo"
+include "support:cas-server-support-events-redis"
 include "support:cas-server-support-fortress"
 include "support:cas-server-support-gauth"
 include "support:cas-server-support-gauth-core"

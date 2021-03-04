@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditTrailConstants;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.audit.AuditableExecution;
@@ -130,14 +132,14 @@ public class CasAcceptableUsagePolicyWebflowConfiguration {
     @Bean
     public AuditTrailRecordResolutionPlanConfigurer casAcceptableUsagePolicyAuditTrailRecordResolutionPlanConfigurer() {
         return plan -> {
-            plan.registerAuditResourceResolver("AUP_VERIFY_RESOURCE_RESOLVER",
+            plan.registerAuditResourceResolver(AuditResourceResolvers.AUP_VERIFY_RESOURCE_RESOLVER,
                 nullableReturnValueResourceResolver.getObject());
-            plan.registerAuditActionResolver("AUP_VERIFY_ACTION_RESOLVER",
+            plan.registerAuditActionResolver(AuditActionResolvers.AUP_VERIFY_ACTION_RESOLVER,
                 new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_TRIGGERED, StringUtils.EMPTY));
 
-            plan.registerAuditResourceResolver("AUP_SUBMIT_RESOURCE_RESOLVER",
+            plan.registerAuditResourceResolver(AuditResourceResolvers.AUP_SUBMIT_RESOURCE_RESOLVER,
                 nullableReturnValueResourceResolver.getObject());
-            plan.registerAuditActionResolver("AUP_SUBMIT_ACTION_RESOLVER",
+            plan.registerAuditActionResolver(AuditActionResolvers.AUP_SUBMIT_ACTION_RESOLVER,
                 new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_TRIGGERED, StringUtils.EMPTY));
         };
     }

@@ -31,8 +31,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class EhCache3TicketRegistry extends AbstractTicketRegistry implements DisposableBean {
-
-
+    
     private final TicketCatalog ticketCatalog;
 
     private final CacheManager cacheManager;

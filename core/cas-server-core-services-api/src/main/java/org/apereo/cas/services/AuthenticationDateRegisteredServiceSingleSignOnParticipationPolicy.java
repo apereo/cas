@@ -34,7 +34,7 @@ public class AuthenticationDateRegisteredServiceSingleSignOnParticipationPolicy 
     }
 
     @Override
-    protected ZonedDateTime determineInitialDateTime(final TicketState ticketState) {
+    protected ZonedDateTime determineInitialDateTime(final RegisteredService registeredService, final TicketState ticketState) {
         return ticketState.getAuthentication().getAuthenticationDate();
     }
 }

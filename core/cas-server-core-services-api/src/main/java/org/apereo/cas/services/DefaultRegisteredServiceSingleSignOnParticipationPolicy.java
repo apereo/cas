@@ -32,7 +32,7 @@ public class DefaultRegisteredServiceSingleSignOnParticipationPolicy implements 
     private TriStateBoolean createCookieOnRenewedAuthentication;
 
     @Override
-    public boolean shouldParticipateInSso(final TicketState ticketState) {
+    public boolean shouldParticipateInSso(final RegisteredService registeredService, final TicketState ticketState) {
         return true;
     }
 }

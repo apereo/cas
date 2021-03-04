@@ -7,7 +7,7 @@
     </Appenders>
     <Loggers>
         <Logger name="org.apereo.cas" level="warn"  />
-        <Logger name="org.opensaml" level="off" />
+        <Logger name="org.opensaml" level="warn" />
         <Logger name="org.apache.http" level="warn" />
         <Root level="off">
             <AppenderRef ref="console"/>

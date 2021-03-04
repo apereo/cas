@@ -21,7 +21,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-pac4j-webflow" %}
 
-{% include casproperties.html properties="cas.authn.pac4j.core,cas.session-replication" %}
+{% include casproperties.html properties="cas.authn.pac4j.core" %}
 
 <div class="alert alert-info"><strong>Note</strong><p>The client issuing the authentication request 
 can be of any type (SAML, OAuth2, OpenID Connect, etc) and is allowed to submit the 
@@ -43,7 +43,7 @@ to be defined in the CAS configuration as well.
 
 ### Default
 
-{% assign providers = "DropBox,Facebook,FourSquare,Google,HiOrgServer,Orcid,PayPal,Twitter,WindowsLive,Wordpress,Yahoo,CAS,LinkedIn,GitHub,OAuth20,Google-OpenID-Connect,Keycloak,Azure-AD,Apple,Generic-OpenID-Connect" | split: "," %}
+{% assign providers = "DropBox,Facebook,FourSquare,Google,HiOrgServer,Orcid,PayPal,Twitter,WindowsLive,Wordpress,Yahoo,CAS,LinkedIn,GitHub,OAuth20,Google-OpenID-Connect,Keycloak,Azure-AD,Apple,Generic-OpenID-Connect" | split: "," | sort %}
 
 Identity providers for delegated authentication can be registered with CAS using settings. 
 
@@ -89,30 +89,6 @@ payload is controlled by [Pac4j]((https://pac4j.org/docs/index.html).
 The response that is returned must be accompanied by a 200 status code.
 
 {% include casproperties.html properties="cas.authn.pac4j.rest" %}
-
-## User Interface
-
-All available clients are automatically displayed on the login page as clickable buttons.
-CAS does allow options for auto-redirection of the authentication flow to a provider,
-if only there is a single provider available and configured.
-
-## Authenticated User Id
-
-After a successful delegated authentication, a user is created inside the CAS server with a specific identifier:
-this one can be created only from the technical identifier received from the external identity provider (like `1234`)
-or as a "typed identifier" (like `FacebookProfile#1234`), which is the default.
-
-
-## Returned Payload
-
-Once you have configured (see information above) your CAS server to act as an OAuth,
-CAS, OpenID (Connect) or SAML client, users will be able to authenticate at a OAuth/CAS/OpenID/SAML
-provider (like Facebook) instead of authenticating directly inside the CAS server.
-
-In the CAS server, after this kind of delegated authentication, users have specific authentication data. These include:
-
-* An identifier which is the profile type + `#` + the identifier of the user for this provider (i.e `FacebookProfile#0000000001`)
-* Attributes populated by the data retrieved from the provider (first name, last name, birthdate...)
 
 ## Profile Attributes
 
@@ -168,51 +144,7 @@ Note that:
 
 ## Provisioning
 
-By default, user profiles that are extracted from external identity providers and merged into a CAS
-authenticated principal are not stored or tracked anywhere. CAS does provide additional options to allow
-such profiles to be managed outside of CAS and/or provisioned into identity stores, allowing you optionally to link
-external/guest accounts with their equivalent found in the authentication source used by CAS, etc.
-
-
-### Groovy Provisioner
-   
-{% include casproperties.html properties="cas.authn.pac4j.provisioning.groovy" %}
-
-Provisioning tasks can be carried out using an external Groovy script with the following structure:
-
-```groovy
-def run(Object[] args) {
-    def principal = args[0]
-    def userProfile = args[1]
-    def client = args[2]
-    def logger = args[3]
-    ...
-}
-```
-
-It is not expected for the script to return a value. The following parameters are passed to the script:
-
-| Parameter             | Description
-|-----------------------|----------------------------------------------------------------------------------------------
-| `principal`           | CAS authenticated `Principal` that contains all attributes and claims.
-| `userProfile`         | The original `UserProfile` extracted from the external identity provider. 
-| `client`              | The `Client` configuration responsible for the exchange between CAS and the identity provider. 
-| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
-
-### REST Provisioner
-
-{% include casproperties.html properties="cas.authn.pac4j.provisioning.rest" %}
-
-Provisioning tasks can be carried out using an external REST endpoint expected to receive the following:
-     
-| Header                  | Description
-|-------------------------|----------------------------------------------------------------------------------------------
-| `principalId`           | CAS authenticated principal identifier.
-| `principalAttributes`   | CAS authenticated principal attributes.
-| `profileId`             | The identifier of the user profile extracted from the identity provider. 
-| `profileTypedId`        | The *typed* identifier of the user profile extracted from the identity provider. 
-| `profileAttributes`     | Collection of attributes extracted from the identity provider's response.
-| `clientName`            | The client name responsible for the exchange between CAS and the identity provider.
+Please [see this guide](Delegate-Authentication-Provisioning.html).
 
 ## SAML2 Identity Providers
 
@@ -220,13 +152,25 @@ To learn more about delegating authentication to SAML2 identity providers,
 please [review this guide](Delegate-Authentication-SAML.html).
  
 ## Session Replication
+                
+For the current active session, the selected identity provider, the relying party
+and all other relevant details for the given authentication request are tracked as 
+*session attributes* inside a dedicated session store capable of replication, which is specially
+more relevant for clustred deployments.
 
 {% include casproperties.html properties="cas.session-replication" %}
+ 
+## Identity Provider Selection
+
+The selected identity provider can be optionally tracked and stored using a dedicated cookie,
+which will then be used on subsequent attempts to auto-redirect to 
+the identity provider, skipping the selection menu.
+
+{% include casproperties.html properties="cas.authn.pac4j.cookie" %}
 
 ## Troubleshooting
 
-To enable additional logging, configure the log4j configuration file to add the following
-levels:
+To enable additional logging, configure the log4j configuration file to add the following levels:
 
 ```xml
 ...

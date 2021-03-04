@@ -5,12 +5,12 @@ import org.apereo.cas.authentication.principal.Service;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.util.Collection;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * @since 5.3.0
@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
 public class AuthenticationTransactionTests {
     @Test
     public void verifyHasCredentialOfTypeSingle() {
-        val transaction = DefaultAuthenticationTransaction.of(new TestCredentialType1());
+        val transaction = new DefaultAuthenticationTransactionFactory().newTransaction(new TestCredentialType1());
         assertTrue(transaction.hasCredentialOfType(BaseTestCredential.class));
         assertTrue(transaction.hasCredentialOfType(TestCredentialType1.class));
         assertFalse(transaction.hasCredentialOfType(TestCredentialType2.class));
@@ -27,7 +27,7 @@ public class AuthenticationTransactionTests {
 
     @Test
     public void verifyHasCredentialOfTypeMultiple() {
-        val transaction = DefaultAuthenticationTransaction.of(new TestCredentialType2(), new TestCredentialType1());
+        val transaction = new DefaultAuthenticationTransactionFactory().newTransaction(new TestCredentialType2(), new TestCredentialType1());
         assertTrue(transaction.hasCredentialOfType(BaseTestCredential.class));
         assertTrue(transaction.hasCredentialOfType(TestCredentialType1.class));
         assertTrue(transaction.hasCredentialOfType(TestCredentialType2.class));
@@ -40,7 +40,7 @@ public class AuthenticationTransactionTests {
 
             @Override
             public Service getService() {
-                return mock(Service.class);
+                return Mockito.mock(Service.class);
             }
 
             @Override

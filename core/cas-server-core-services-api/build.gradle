@@ -10,6 +10,8 @@ dependencies {
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-notifications")
+    implementation project(":core:cas-server-core-tickets-api")
+
     implementation libraries.bouncycastle
 
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")

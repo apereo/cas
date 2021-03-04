@@ -9,11 +9,13 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.validation.DelegatedAuthenticationAccessStrategyHelper;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfigurationFactory;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.client.IndirectClient;
@@ -22,18 +24,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.LinkedHashSet;
+import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 
 /**
- * This is {@link DelegatedClientIdentityProviderConfigurationFunction}.
+ * This is {@link DefaultDelegatedClientIdentityProviderConfigurationProducer}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
  */
 @Slf4j
 @RequiredArgsConstructor
-public class DelegatedClientIdentityProviderConfigurationFunction implements Function<RequestContext, Set<DelegatedClientIdentityProviderConfiguration>> {
+public class DefaultDelegatedClientIdentityProviderConfigurationProducer implements DelegatedClientIdentityProviderConfigurationProducer {
     /**
      * The Services manager.
      */
@@ -47,6 +49,8 @@ public class DelegatedClientIdentityProviderConfigurationFunction implements Fun
 
     private final CasConfigurationProperties casProperties;
 
+    private final CasCookieBuilder delegatedAuthenticationCookieBuilder;
+    
     /**
      * Determine auto redirect policy for provider.
      *
@@ -72,6 +76,17 @@ public class DelegatedClientIdentityProviderConfigurationFunction implements Fun
             LOGGER.trace("Provider [{}] is configured to auto-redirect", provider);
             WebUtils.putDelegatedAuthenticationProviderPrimary(context, provider);
         }
+
+        val cookieProps = casProperties.getAuthn().getPac4j().getCookie();
+        if (cookieProps.isEnabled()) {
+            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+            val cookieValue = delegatedAuthenticationCookieBuilder.retrieveCookieValue(request);
+            if (StringUtils.equalsIgnoreCase(cookieValue, provider.getName())) {
+                LOGGER.trace("Provider [{}] is chosen via cookie value preference as primary", provider);
+                provider.setAutoRedirect(true);
+                WebUtils.putDelegatedAuthenticationProviderPrimary(context, provider);
+            }
+        }
     }
 
     private boolean isDelegatedClientAuthorizedForService(final Client client,
@@ -80,35 +95,25 @@ public class DelegatedClientIdentityProviderConfigurationFunction implements Fun
     }
 
     @Override
-    public Set<DelegatedClientIdentityProviderConfiguration> apply(final RequestContext context) {
+    public Set<DelegatedClientIdentityProviderConfiguration> produce(final RequestContext context) {
         val currentService = WebUtils.getService(context);
         val service = authenticationRequestServiceSelectionStrategies.resolveService(currentService, WebApplicationService.class);
-
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         val webContext = new JEEContext(request, response);
 
         LOGGER.debug("Initialized context with request parameters [{}]", webContext.getRequestParameters());
         val allClients = this.clients.findAllClients();
-        val urls = new LinkedHashSet<DelegatedClientIdentityProviderConfiguration>(allClients.size());
+        val providers = new LinkedHashSet<DelegatedClientIdentityProviderConfiguration>(allClients.size());
         allClients
             .stream()
             .filter(client -> client instanceof IndirectClient && isDelegatedClientAuthorizedForService(client, service))
             .map(IndirectClient.class::cast)
             .forEach(client -> {
                 try {
-                    LOGGER.debug("Initializing client [{}] with request parameters [{}]", client, webContext.getRequestParameters());
-                    client.init();
-                    val provider = DelegatedClientIdentityProviderConfigurationFactory.builder()
-                        .client(client)
-                        .webContext(webContext)
-                        .service(currentService)
-                        .casProperties(casProperties)
-                        .build()
-                        .resolve();
-
+                    val provider = produce(context, client);
                     provider.ifPresent(p -> {
-                        urls.add(p);
+                        providers.add(p);
                         determineAutoRedirectPolicyForProvider(context, service, p);
                     });
                 } catch (final Exception e) {
@@ -117,12 +122,32 @@ public class DelegatedClientIdentityProviderConfigurationFunction implements Fun
                 }
             });
 
-        if (!urls.isEmpty()) {
-            WebUtils.putDelegatedAuthenticationProviderConfigurations(context, urls);
+        if (!providers.isEmpty()) {
+            WebUtils.putDelegatedAuthenticationProviderConfigurations(context, providers);
         } else if (response.getStatus() != HttpStatus.UNAUTHORIZED.value()) {
             LOGGER.warn("No delegated authentication providers could be determined based on the provided configuration. "
                 + "Either no clients are configured, or the current access strategy rules prohibit CAS from using authentication providers");
         }
-        return urls;
+        return providers;
+    }
+
+    @Override
+    public Optional<DelegatedClientIdentityProviderConfiguration> produce(final RequestContext requestContext,
+                                                                          final IndirectClient client) {
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
+        val webContext = new JEEContext(request, response);
+
+        val currentService = WebUtils.getService(requestContext);
+        val service = authenticationRequestServiceSelectionStrategies.resolveService(currentService, WebApplicationService.class);
+        LOGGER.debug("Initializing client [{}] with request parameters [{}]", client, requestContext.getRequestParameters());
+        client.init();
+        return DelegatedClientIdentityProviderConfigurationFactory.builder()
+            .client(client)
+            .webContext(webContext)
+            .service(service)
+            .casProperties(casProperties)
+            .build()
+            .resolve();
     }
 }

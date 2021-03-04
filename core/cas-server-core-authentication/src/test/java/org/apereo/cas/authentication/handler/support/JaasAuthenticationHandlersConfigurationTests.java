@@ -101,7 +101,7 @@ public class JaasAuthenticationHandlersConfigurationTests {
     public static class JaasAuthenticationHandlersConfigurationTestConfiguration {
 
         @Bean
-        @ConditionalOnMissingBean(name = "attributeRepository")
+        @ConditionalOnMissingBean(name = PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
         public IPersonAttributeDao attributeRepository() {
             return new StubPersonAttributeDao();
         }

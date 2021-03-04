@@ -15,10 +15,18 @@
     <!-- Login form template begins here -->
     <div th:fragment="loginform" class="d-flex flex-column justify-content-between m-auto">
         <div th:if="${delegatedAuthenticationProviderPrimary == null}">
+            <div th:if="${!#strings.isEmpty(#themes.code('cas.hero-banner.file'))}">
+                <p>
+                    <img id="heroimg"
+                         th:title="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS')}"
+                         th:src="@{${#themes.code('cas.hero-banner.file')}}" />
+                </p>
+            </div>
             <div class="service-ui" th:replace="fragments/serviceui :: serviceUI">
                 <a href="fragments/serviceui.html">service ui fragment</a>
             </div>
         </div>
+
         <div class="form-wrapper">
             <form method="post" id="fm1" th:object="${credential}" action="login">
 
@@ -268,7 +276,7 @@
                 </span>
             </div>
 
-            <hr class="my-4"/>
+            <hr th:if="${@casThymeleafLoginFormDirector.isLoginFormViewable(#vars)}" class="my-4"/>
 
             <span id="webauthnLoginPanel" th:if="${webAuthnPrimaryAuthenticationEnabled}">
                     <script type="text/javascript">
@@ -287,7 +295,8 @@
                 </span>
 
             <span th:if="${@casThymeleafLoginFormDirector.isLoginFormViewable(#vars)}">
-                <div th:replace="fragments/pmlinks :: pmlinks"/>
+                <div th:if="${'true' == #strings.defaultString(#themes.code('cas.pm-links.enabled'), 'true')}"
+                     th:replace="fragments/pmlinks :: pmlinks"/>
             </span>
 
             <script type="text/javascript" th:inline="javascript">
@@ -309,8 +318,11 @@
             </script>
 
         </div>
-        <div th:replace="fragments/loginsidebar :: loginsidebar"/>
-    </div>
+        <span th:if="${@casThymeleafLoginFormDirector.isLoginFormViewable(#vars)}">
+            <div th:replace="fragments/loginsidebar :: loginsidebar"/>
+        </span>
+        </div>
+
     </div>
 </main>
 </body>

@@ -167,7 +167,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
     public class JaasAuthenticationConfiguration {
 
         @Autowired
-        @Qualifier("attributeRepository")
+        @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
         private ObjectProvider<IPersonAttributeDao> attributeRepository;
 
         @ConditionalOnMissingBean(name = "jaasPrincipalFactory")

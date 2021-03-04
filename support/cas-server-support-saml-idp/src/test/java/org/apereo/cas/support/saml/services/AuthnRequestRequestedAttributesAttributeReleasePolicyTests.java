@@ -34,6 +34,8 @@ import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.config.SAML2Configuration;
 import org.pac4j.saml.context.SAML2MessageContext;
 import org.pac4j.saml.sso.impl.SAML2AuthnRequestBuilder;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
 
 import java.io.File;
@@ -84,6 +86,8 @@ public class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends 
         saml2Client.init();
         
         saml2MessageContext = new SAML2MessageContext();
+        saml2MessageContext.setSaml2Configuration(saml2Configuration);
+        saml2MessageContext.setWebContext(new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse()));
         val peer = saml2MessageContext.getMessageContext().getSubcontext(SAMLPeerEntityContext.class, true);
         assertNotNull(peer);
         peer.setEntityId("https://cas.example.org/idp");
@@ -144,7 +148,7 @@ public class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends 
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         registeredService.setAttributeReleasePolicy(filter);
 
-        val builder = new SAML2AuthnRequestBuilder(saml2Configuration);
+        val builder = new SAML2AuthnRequestBuilder();
         val authnRequest = builder.build(saml2MessageContext);
 
         try (val writer = SamlUtils.transformSamlObject(openSamlConfigBean, authnRequest)) {
@@ -171,7 +175,7 @@ public class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends 
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         registeredService.setAttributeReleasePolicy(filter);
 
-        val builder = new SAML2AuthnRequestBuilder(saml2Configuration);
+        val builder = new SAML2AuthnRequestBuilder();
         val authnRequest = builder.build(saml2MessageContext);
         val extensions = ((SAMLObjectBuilder<Extensions>) openSamlConfigBean.getBuilderFactory()
             .getBuilder(Extensions.DEFAULT_ELEMENT_NAME)).buildObject();
@@ -209,7 +213,7 @@ public class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends 
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         registeredService.setAttributeReleasePolicy(filter);
 
-        val builder = new SAML2AuthnRequestBuilder(saml2Configuration);
+        val builder = new SAML2AuthnRequestBuilder();
         val authnRequest = builder.build(saml2MessageContext);
         val extensions = ((SAMLObjectBuilder<Extensions>) openSamlConfigBean.getBuilderFactory()
             .getBuilder(Extensions.DEFAULT_ELEMENT_NAME)).buildObject();

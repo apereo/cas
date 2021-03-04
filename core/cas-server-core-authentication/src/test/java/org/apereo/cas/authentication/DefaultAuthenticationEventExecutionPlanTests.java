@@ -48,7 +48,7 @@ public class DefaultAuthenticationEventExecutionPlanTests {
         plan.registerAuthenticationPolicy(new AllCredentialsValidatedAuthenticationPolicy());
         plan.registerAuthenticationPolicyResolver(transaction -> Set.of(new AllCredentialsValidatedAuthenticationPolicy()));
         assertFalse(plan.getAuthenticationPolicies(
-            DefaultAuthenticationTransaction.of(
+            new DefaultAuthenticationTransactionFactory().newTransaction(
                 CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword())).isEmpty());
     }
 

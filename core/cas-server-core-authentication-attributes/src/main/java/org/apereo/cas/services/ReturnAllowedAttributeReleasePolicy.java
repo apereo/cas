@@ -72,4 +72,8 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
         return attributesToRelease;
     }
 
+    @Override
+    protected List<String> determineRequestedAttributeDefinitions() {
+        return getAllowedAttributes();
+    }
 }

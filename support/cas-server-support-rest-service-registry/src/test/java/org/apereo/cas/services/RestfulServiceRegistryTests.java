@@ -24,7 +24,9 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -80,6 +82,7 @@ import org.springframework.web.bind.annotation.RestController;
 @EnableAutoConfiguration
 @Tag("RestfulApi")
 @Getter
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
@@ -104,6 +107,12 @@ public class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
             public ResponseEntity delete(@PathVariable(name = "id") final Long id) {
                 val service = serviceRegistry.findServiceById(id);
                 serviceRegistry.delete(service);
+                return ResponseEntity.ok().build();
+            }
+
+            @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+            public ResponseEntity delete() {
+                serviceRegistry.deleteAll();
                 return ResponseEntity.ok().build();
             }
 
