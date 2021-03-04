@@ -3,7 +3,6 @@ package org.apereo.cas.adaptors.ldap.services;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
 import org.apache.commons.lang3.RandomUtils;
@@ -24,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@EnabledIfPortOpen(port = 10389)
 @Tag("Ldap")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest(classes = RefreshAutoConfiguration.class)

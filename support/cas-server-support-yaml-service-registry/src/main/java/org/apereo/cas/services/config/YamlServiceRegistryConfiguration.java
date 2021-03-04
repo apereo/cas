@@ -54,6 +54,7 @@ public class YamlServiceRegistryConfiguration {
     @Bean
     @RefreshScope
     @SneakyThrows
+    @ConditionalOnMissingBean(name = "yamlServiceRegistry")
     public ServiceRegistry yamlServiceRegistry() {
         val registry = casProperties.getServiceRegistry();
         val yaml = new YamlServiceRegistry(registry.getYaml().getLocation(),

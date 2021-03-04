@@ -68,6 +68,7 @@ public class MongoDbServiceRegistryConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "mongoDbServiceRegistry")
     public ServiceRegistry mongoDbServiceRegistry() {
         val mongo = casProperties.getServiceRegistry().getMongo();
         return new MongoDbServiceRegistry(

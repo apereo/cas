@@ -58,6 +58,7 @@ public class JsonServiceRegistryConfiguration {
     @Bean
     @SneakyThrows
     @RefreshScope
+    @ConditionalOnMissingBean(name = "jsonServiceRegistry")
     public ServiceRegistry jsonServiceRegistry() {
         val registry = casProperties.getServiceRegistry();
         val json = new JsonServiceRegistry(registry.getJson().getLocation(),
