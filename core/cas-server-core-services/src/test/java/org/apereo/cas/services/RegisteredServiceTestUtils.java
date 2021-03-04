@@ -148,7 +148,7 @@ public class RegisteredServiceTestUtils {
         }
         s.setDescription("Registered service description");
         s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https?://.+"));
-        s.setId(RandomUtils.nextLong());
+        s.setId(RandomUtils.nextInt());
         s.setTheme("exampleTheme");
         s.setUsernameAttributeProvider(new PrincipalAttributeRegisteredServiceUsernameProvider("uid"));
         val accessStrategy = new DefaultRegisteredServiceAccessStrategy(true, true);

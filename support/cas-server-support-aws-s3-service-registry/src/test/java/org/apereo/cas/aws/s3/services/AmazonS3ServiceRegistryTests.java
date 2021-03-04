@@ -11,8 +11,10 @@ import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.Getter;
 import lombok.val;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -42,6 +44,7 @@ import static org.mockito.Mockito.*;
 @EnabledIfPortOpen(port = 4566)
 @Tag("AmazonWebServices")
 @Getter
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AmazonS3ServiceRegistryTests extends AbstractServiceRegistryTests {
     @Autowired
     @Qualifier("serviceRegistry")

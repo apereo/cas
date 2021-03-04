@@ -11,7 +11,9 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 
 import lombok.Getter;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -42,6 +44,7 @@ import java.util.List;
 @Tag("JDBC")
 @DirtiesContext
 @Getter
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class JpaServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Autowired

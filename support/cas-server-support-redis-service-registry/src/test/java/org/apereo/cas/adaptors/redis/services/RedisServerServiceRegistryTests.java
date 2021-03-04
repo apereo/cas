@@ -2,7 +2,9 @@ package org.apereo.cas.adaptors.redis.services;
 
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -17,5 +19,6 @@ import org.springframework.test.context.TestPropertySource;
 })
 @EnabledIfPortOpen(port = 6379)
 @Tag("Redis")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class RedisServerServiceRegistryTests extends BaseRedisSentinelServiceRegistryTests {
 }

@@ -4,8 +4,10 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.services.OidcServiceRegistryListener;
 import org.apereo.cas.util.CollectionUtils;
 
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
@@ -25,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @DirtiesContext
 @Tag("JDBC")
 @Import(OidcJpaServiceRegistryTests.OidcJpaServiceRegistryTestConfiguration.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class OidcJpaServiceRegistryTests extends JpaServiceRegistryTests {
 
     @Test

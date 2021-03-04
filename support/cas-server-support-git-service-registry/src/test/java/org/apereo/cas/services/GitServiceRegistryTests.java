@@ -23,8 +23,10 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.JGitInternalException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
@@ -61,6 +63,7 @@ import static org.mockito.Mockito.*;
 @Slf4j
 @Tag("FileSystem")
 @Getter
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Autowired
