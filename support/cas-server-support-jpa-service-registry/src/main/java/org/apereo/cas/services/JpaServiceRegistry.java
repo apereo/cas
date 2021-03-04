@@ -49,7 +49,7 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
     @Override
     public void deleteAll() {
         val query = String.format("DELETE FROM %s r", ENTITY_NAME);
-        entityManager.createQuery(query, RegisteredService.class).executeUpdate();
+        entityManager.createQuery(query).executeUpdate();
     }
 
     @Override
