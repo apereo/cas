@@ -124,6 +124,7 @@ public class JpaServiceRegistryConfiguration {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "jpaServiceRegistry")
     public ServiceRegistry jpaServiceRegistry() {
         return new JpaServiceRegistry(applicationContext, serviceRegistryListeners.getObject());
     }

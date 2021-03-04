@@ -6,6 +6,7 @@ import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
 
+import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +33,7 @@ public class DefaultLdapRegisteredServiceMapper implements LdapRegisteredService
 
     private final LdapServiceRegistryProperties ldap;
 
-    private final StringSerializer<RegisteredService> jsonSerializer = new RegisteredServiceJsonSerializer();
+    private final StringSerializer<RegisteredService> jsonSerializer = new RegisteredServiceJsonSerializer(new MinimalPrettyPrinter());
 
     @Override
     @SneakyThrows

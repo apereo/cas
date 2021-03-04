@@ -59,6 +59,7 @@ public class RedisServiceRegistryConfiguration {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "redisServiceRegistry")
     public ServiceRegistry redisServiceRegistry() {
         return new RedisServiceRegistry(applicationContext, registeredServiceRedisTemplate(), serviceRegistryListeners.getObject());
     }

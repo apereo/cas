@@ -9,6 +9,7 @@ import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.util.LdapUtils;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,7 @@ import java.util.Collection;
 @Configuration("ldapServiceRegistryConfiguration")
 @ConditionalOnProperty(prefix = "cas.service-registry.ldap", name = "ldap-url")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class LdapServiceRegistryConfiguration {
 
     @Autowired
@@ -53,10 +55,13 @@ public class LdapServiceRegistryConfiguration {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "ldapServiceRegistry")
     public ServiceRegistry ldapServiceRegistry() {
         val ldap = casProperties.getServiceRegistry().getLdap();
         val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
-        return new LdapServiceRegistry(connectionFactory, ldap.getBaseDn(), ldapServiceRegistryMapper(),
+        LOGGER.debug("Configured LDAP service registry search filter to [{}] and load filter to [{}]",
+            ldap.getSearchFilter(), ldap.getLoadFilter());
+        return new LdapServiceRegistry(connectionFactory, ldapServiceRegistryMapper(),
             ldap, applicationContext, serviceRegistryListeners.getObject());
     }
 
