@@ -332,7 +332,7 @@ public class DelegatedClientAuthenticationActionTests {
             WebUtils.getDelegatedAuthenticationProviderConfigurations(requestContext);
 
         assertFalse(urls.isEmpty());
-        assertSame(3, urls.size());
+        assertSame(4, urls.size());
         urls.stream()
             .map(url -> {
                 LOGGER.debug("Redirect URL [{}]", url.getRedirectUrl());

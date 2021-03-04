@@ -28,12 +28,17 @@ import java.util.stream.Collectors;
  * @since 4.2
  */
 @Embeddable
-@Table(name = "RegexRegisteredServiceProperty")
+@Table(name = DefaultRegisteredServiceProperty.TABLE_NAME)
 @EqualsAndHashCode
 @ToString
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class DefaultRegisteredServiceProperty implements RegisteredServiceProperty {
+    /**
+     * JPA table name.
+     */
+    public static final String TABLE_NAME = "RegexRegisteredServiceProperty";
+
     private static final long serialVersionUID = 1349556364689133211L;
 
     @Lob
