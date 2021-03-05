@@ -66,4 +66,13 @@ public class PersonDirectoryPrincipalResolverProperties implements Serializable 
      */
     private String activeAttributeRepositoryIds;
 
+    /**
+     * In the event that the principal resolution engine resolves
+     * more than one principal, (specially if such principals in the chain
+     * have different identifiers), this setting determines strategy by which
+     * the principal id would be chosen from the chain.
+     * Accepted values are: {@code last}, {@code first}.
+     */
+    private String principalResolutionConflictStrategy = "last";
+
 }
