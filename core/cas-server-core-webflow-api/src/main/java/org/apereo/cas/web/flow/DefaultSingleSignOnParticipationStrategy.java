@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.configuration.model.core.sso.SingleSignOnProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.web.support.WebUtils;
@@ -71,6 +72,14 @@ public class DefaultSingleSignOnParticipationStrategy implements SingleSignOnPar
                 if (ticketState != null) {
                     return ssoPolicy.shouldParticipateInSso(ticketState);
                 }
+            }
+
+            val tgtPolicy = registeredService.getTicketGrantingTicketExpirationPolicy();
+            if (tgtPolicy != null && tgtPolicy.getMaxTimeToLiveInSeconds() > 0) {
+                val tgtId = WebUtils.getTicketGrantingTicketId(requestContext);
+                val ticketState = ticketRegistrySupport.getTicketState(tgtId);
+                val expPolicy = new HardTimeoutExpirationPolicy(tgtPolicy.getMaxTimeToLiveInSeconds());
+                return !expPolicy.isExpired(ticketState);
             }
         } finally {
             AuthenticationCredentialsThreadLocalBinder.bindCurrent(ca);
