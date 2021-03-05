@@ -68,6 +68,7 @@ public class Beans {
                 .collect(Collectors.toList()));
         });
         dao.setBackingMap(pdirMap);
+        dao.setOrder(stub.getOrder());
         if (StringUtils.hasText(stub.getId())) {
             dao.setId(stub.getId());
         }

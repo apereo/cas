@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.core.authentication;
 
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -20,6 +21,7 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("StubPrincipalAttributesProperties")
 public class StubPrincipalAttributesProperties implements Serializable {
 
     private static final long serialVersionUID = 7017508256487553063L;
@@ -37,9 +39,15 @@ public class StubPrincipalAttributesProperties implements Serializable {
      */
     private Map<String, String> attributes = new HashMap<>(0);
 
-
     /**
      * A value can be assigned to this field to uniquely identify this resolver.
      */
     private String id;
+
+    /**
+     * The order of this attribute repository in the chain of repositories.
+     * Can be used to explicitly position this source in chain and affects
+     * merging strategies.
+     */
+    private int order;
 }
