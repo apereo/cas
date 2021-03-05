@@ -1,7 +1,6 @@
 package org.apereo.cas;
 
 import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.util.MockWebServer;
 
 import lombok.val;
@@ -14,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 
@@ -28,15 +26,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@SpringBootTest(classes = {
-    CasPersonDirectoryConfiguration.class,
-    RefreshAutoConfiguration.class
-}, properties = {
-    "cas.authn.attribute-repository.rest[0].method=GET",
-    "cas.authn.attribute-repository.rest[0].url=http://localhost:8085",
-    "cas.authn.attribute-repository.rest[0].basic-auth-password=psw",
-    "cas.authn.attribute-repository.rest[0].basic-auth-username=username"
-})
+@SpringBootTest(classes = BasePrincipalAttributeRepositoryTests.SharedTestConfiguration.class,
+    properties = {
+        "cas.authn.attribute-repository.rest[0].method=GET",
+        "cas.authn.attribute-repository.rest[0].url=http://localhost:8085",
+        "cas.authn.attribute-repository.rest[0].basic-auth-password=psw",
+        "cas.authn.attribute-repository.rest[0].basic-auth-username=username"
+    })
 @Tag("RestfulApi")
 public class RestfulPersonAttributeDaoTests {
     @Autowired

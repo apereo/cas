@@ -49,4 +49,5 @@ public class BaseRestEndpointProperties implements Serializable {
      * and the value in the map should be the header value.
      */
     private Map<String, String> headers = new HashMap<>();
+
 }
