@@ -66,6 +66,7 @@ public class DefaultDelegatedClientFactoryTests {
         val factory = new DefaultDelegatedClientFactory(casSettings, List.of());
         val clients = factory.build();
         assertEquals(14, clients.size());
+        factory.destroy();
     }
 
     @Test
