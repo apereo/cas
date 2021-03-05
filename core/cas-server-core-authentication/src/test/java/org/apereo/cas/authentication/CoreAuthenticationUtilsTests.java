@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthentica
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.GroovyAuthenticationPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
+import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.configuration.model.core.authentication.RestAuthenticationPolicyProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -220,6 +221,21 @@ public class CoreAuthenticationUtilsTests {
         assertTrue(a2.contains("newA2"));
         assertTrue(a1.contains("a1"));
         assertTrue(a1.contains("newA1"));
+    }
+
+    @Test
+    public void verifyPrincipalConflictResolution() {
+        val r1 = CoreAuthenticationUtils.newPrincipalElectionStrategyConflictResolver(
+            new PersonDirectoryPrincipalResolverProperties().setPrincipalResolutionConflictStrategy("LAST"));
+        assertNotNull(r1);
+
+        val r2 = CoreAuthenticationUtils.newPrincipalElectionStrategyConflictResolver(
+            new PersonDirectoryPrincipalResolverProperties().setPrincipalResolutionConflictStrategy("FIRST"));
+        assertNotNull(r2);
+
+        val r3 = CoreAuthenticationUtils.newPrincipalElectionStrategyConflictResolver(
+            new PersonDirectoryPrincipalResolverProperties().setPrincipalResolutionConflictStrategy("INVALID"));
+        assertEquals(r3, r1);
     }
 
     private static void verifySerialization(final Collection<AuthenticationPolicy> policy) throws IOException {
