@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.policy.AllCredentialsValidatedAuthenticatio
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
+import org.apereo.cas.configuration.model.core.ticket.RememberMeAuthenticationProperties;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
@@ -42,7 +43,7 @@ public class DefaultAuthenticationEventExecutionPlanTests {
         val plan = new DefaultAuthenticationEventExecutionPlan();
         plan.registerAuthenticationPreProcessor(transaction -> false);
         plan.registerAuthenticationMetadataPopulators(
-            Set.of(new RememberMeAuthenticationMetaDataPopulator()));
+            Set.of(new RememberMeAuthenticationMetaDataPopulator(new RememberMeAuthenticationProperties())));
         plan.registerAuthenticationHandlerWithPrincipalResolvers(
             Set.of(new SimpleTestUsernamePasswordAuthenticationHandler()), new PersonDirectoryPrincipalResolver(context));
         plan.registerAuthenticationPolicy(new AllCredentialsValidatedAuthenticationPolicy());

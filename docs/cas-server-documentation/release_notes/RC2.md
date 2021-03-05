@@ -105,7 +105,8 @@ Certain configuration elements for an external identity provider, in the context
 [delegated authentication](../integration/Delegate-Authentication.html) can now be controlled
 and overridden on a per-application basis. For example, you may choose to send a specific SAML2
 authentication context class to an external SAML2 identity provider depending on the original
-service provider, while leaving the global configuration in place and unmodified.
+service provider, while leaving the global configuration in place and unmodified. 
+Support for service-level overrides applies to SAML2 and OIDC identity providers.
 
 ## Scriptable Email Messages
 
@@ -148,6 +149,9 @@ can now be signed using the `XMLSec` tool.
 - Additional support is built in to provide for Spring Boot's `startup` actuator endpoint.
 - In [delegated authentication](../integration/Delegate-Authentication.html) scenarios, CAS is now able to retry the authentication attempt
 using forceful authentication requests upon failed attempts.
+- Principal election strategy can now be directed to choose the correct principal from the chain, when multiple conflicting principals are resolved.
+- [Remember-Me Authentication](../authentication/Configuring-LongTerm-Authentication.html) can now be 
+  conditionally activated based on certain user-agents or IP addresses.  
 - [Attribute consent](../integration/Attribute-Release-Consent.html) implementations are given the ability to delete consent decisions by user.  
 - [Attribute release policies](../integration/Attribute-Release-Policies.html) that allow for a collection of pre-defined attributes for release
 can now request those attributes to be resolved via the [Attribute Definition Store](../integration/Attribute-Definitions.html).

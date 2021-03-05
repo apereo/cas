@@ -24,6 +24,7 @@ public class RememberMeDelegatingExpirationPolicy extends BaseDelegatingExpirati
      * Remember-Me policy name.
      */
     public static final String POLICY_NAME_REMEMBER_ME = "REMEMBER_ME";
+
     private static final long serialVersionUID = -2735975347698196127L;
 
 
