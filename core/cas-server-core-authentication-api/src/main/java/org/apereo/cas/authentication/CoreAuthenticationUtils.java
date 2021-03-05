@@ -119,7 +119,6 @@ public class CoreAuthenticationUtils {
             return new HashMap<>(0);
         }
         return attrs.getAttributes();
-
     }
 
     /**
@@ -397,5 +396,18 @@ public class CoreAuthenticationUtils {
             return new RestfulIPAddressIntelligenceService(adaptive);
         }
         return new DefaultIPAddressIntelligenceService(adaptive);
+    }
+
+    /**
+     * New principal election strategy conflict resolver.
+     *
+     * @param properties the properties
+     * @return the principal election strategy conflict resolver
+     */
+    public static PrincipalElectionStrategyConflictResolver newPrincipalElectionStrategyConflictResolver(final PersonDirectoryPrincipalResolverProperties properties) {
+        if (StringUtils.equalsIgnoreCase(properties.getPrincipalResolutionConflictStrategy(), "first")) {
+            return PrincipalElectionStrategyConflictResolver.first();
+        }
+        return PrincipalElectionStrategyConflictResolver.last();
     }
 }

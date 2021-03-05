@@ -63,7 +63,8 @@ public class CasCoreAuthenticationPrincipalConfiguration {
     @ConditionalOnMissingBean(name = "defaultPrincipalElectionStrategyConfigurer")
     @Bean
     public PrincipalElectionStrategyConfigurer defaultPrincipalElectionStrategyConfigurer() {
-        return chain -> chain.registerElectionStrategy(new DefaultPrincipalElectionStrategy(principalFactory()));
+        return chain -> chain.registerElectionStrategy(new DefaultPrincipalElectionStrategy(principalFactory(),
+            CoreAuthenticationUtils.newPrincipalElectionStrategyConflictResolver(casProperties.getPersonDirectory())));
     }
 
     @ConditionalOnMissingBean(name = "principalFactory")
@@ -85,8 +86,7 @@ public class CasCoreAuthenticationPrincipalConfiguration {
         }
         return new CachingPrincipalAttributesRepository(props.getExpirationTimeUnit().toUpperCase(), cacheTime);
     }
-
-
+    
     @Bean
     @ConditionalOnMissingBean(name = "defaultPrincipalResolver")
     @RefreshScope
