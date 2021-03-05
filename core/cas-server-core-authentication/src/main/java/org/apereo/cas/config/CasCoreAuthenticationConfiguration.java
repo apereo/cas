@@ -56,6 +56,7 @@ public class CasCoreAuthenticationConfiguration {
     @Bean
     @RefreshScope
     @Autowired
+    @ConditionalOnMissingBean(name = "authenticationTransactionManager")
     public AuthenticationTransactionManager authenticationTransactionManager(@Qualifier("casAuthenticationManager")
                                                                              final AuthenticationManager casAuthenticationManager) {
         return new DefaultAuthenticationTransactionManager(applicationContext, casAuthenticationManager);
