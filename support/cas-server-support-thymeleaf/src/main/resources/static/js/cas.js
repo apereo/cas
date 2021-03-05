@@ -18,7 +18,7 @@
             let selector = document.querySelector('.mdc-select.authn-source');
             if (selector != null) {
                 const select = new material.select.MDCSelect(selector);
-                select.listen('MDCSelect:change', () => {
+                select.listen('MDCSelect:change', function () {
                     $('#source').val(select.value);
                 });
                 $('#source').val(select.value);
@@ -83,7 +83,7 @@ function requestGeoPosition() {
     // console.log('Requesting GeoLocation data from the browser...');
     if (navigator.geolocation) {
         navigator.geolocation.watchPosition(showGeoPosition, logGeoLocationError,
-            {maximumAge: 600000, timeout: 8000, enableHighAccuracy: true});
+            { maximumAge: 600000, timeout: 8000, enableHighAccuracy: true });
     } else {
         console.log('Browser does not support Geo Location');
     }
