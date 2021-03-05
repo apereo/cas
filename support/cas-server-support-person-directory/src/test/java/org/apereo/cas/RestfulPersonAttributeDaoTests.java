@@ -17,6 +17,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -29,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = BasePrincipalAttributeRepositoryTests.SharedTestConfiguration.class,
     properties = {
         "cas.authn.attribute-repository.rest[0].method=GET",
+        "cas.authn.attribute-repository.rest[0].username-attribute=cn",
         "cas.authn.attribute-repository.rest[0].url=http://localhost:8085",
         "cas.authn.attribute-repository.rest[0].basic-auth-password=psw",
         "cas.authn.attribute-repository.rest[0].basic-auth-username=username"
@@ -60,7 +62,7 @@ public class RestfulPersonAttributeDaoTests {
     }
 
     @Test
-    public void verifyRestAttributeRepository() {
+    public void verifyGetPerson() {
         assertNotNull(attributeRepository);
         val person = attributeRepository.getPerson("casuser", IPersonAttributeDaoFilter.alwaysChoose());
         assertNotNull(person);
@@ -70,4 +72,18 @@ public class RestfulPersonAttributeDaoTests {
         assertEquals(29, person.getAttributeValue("age"));
         assertEquals(3, person.getAttributeValues("messages").size());
     }
+
+    @Test
+    public void verifyGetPeople() {
+        val person = attributeRepository.getPeople(Map.of("cn", "casuser"), IPersonAttributeDaoFilter.alwaysChoose())
+            .iterator().next();
+        assertNotNull(person);
+        assertNotNull(person.getAttributes());
+        assertFalse(person.getAttributes().isEmpty());
+        assertEquals("casuser", person.getAttributeValue("name"));
+        assertEquals(29, person.getAttributeValue("age"));
+        assertEquals(3, person.getAttributeValues("messages").size());
+    }
+
+
 }
