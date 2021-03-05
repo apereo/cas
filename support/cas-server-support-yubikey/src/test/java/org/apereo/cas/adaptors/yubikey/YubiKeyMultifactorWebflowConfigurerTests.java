@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.yubikey;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyMultifactorWebflowConfigurer;
 import org.apereo.cas.web.flow.configurer.BaseMultifactorWebflowConfigurerTests;
 
+import lombok.Getter;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -17,23 +18,20 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
  */
 @SpringBootTest(classes = BaseYubiKeyTests.SharedTestConfiguration.class,
     properties = {
-        "cas.authn.mfa.yubikey.clientId=18423",
-        "cas.authn.mfa.yubikey.secretKey=zAIqhjui12mK8x82oe9qzBEb0As=",
-        "cas.authn.mfa.yubikey.jsonFile=file:/tmp/yubikey.json",
-        "cas.authn.mfa.yubikey.trustedDeviceEnabled=true",
-        "cas.authn.mfa.trusted.deviceRegistrationEnabled=true"
+        "cas.authn.mfa.yubikey.client-id=18423",
+        "cas.authn.mfa.yubikey.secret-key=zAIqhjui12mK8x82oe9qzBEb0As=",
+        "cas.authn.mfa.yubikey.json-file=file:${java.io.tmpdir}/yubikey.json",
+        "cas.authn.mfa.yubikey.trusted-device-enabled=true",
+        "cas.authn.mfa.yubikey.multiple-device-registration-enabled=true",
+        "cas.authn.mfa.trusted.core.device-registration-enabled=true"
     })
-@Tag("Webflow")
+@Tag("WebflowConfig")
+@Getter
 public class YubiKeyMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowConfigurerTests {
     @Autowired
     @Qualifier("yubikeyFlowRegistry")
-    private FlowDefinitionRegistry yubikeyFlowRegistry;
-
-    @Override
-    protected FlowDefinitionRegistry getMultifactorFlowDefinitionRegistry() {
-        return this.yubikeyFlowRegistry;
-    }
-
+    private FlowDefinitionRegistry multifactorFlowDefinitionRegistry;
+    
     @Override
     protected String getMultifactorEventId() {
         return YubiKeyMultifactorWebflowConfigurer.MFA_YUBIKEY_EVENT_ID;

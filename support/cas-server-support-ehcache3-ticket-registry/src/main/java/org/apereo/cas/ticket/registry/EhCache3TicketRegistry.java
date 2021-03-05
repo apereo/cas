@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.registry;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -30,8 +31,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class EhCache3TicketRegistry extends AbstractTicketRegistry implements DisposableBean {
-
-
+    
     private final TicketCatalog ticketCatalog;
 
     private final CacheManager cacheManager;
@@ -59,7 +59,7 @@ public class EhCache3TicketRegistry extends AbstractTicketRegistry implements Di
         val ticket = encodeTicket(ticketToAdd);
 
         val cache = getTicketCacheFor(metadata);
-        LOGGER.debug("Adding ticket [{}] to the cache: {}",
+        LOGGER.debug("Adding ticket [{}] to the cache: [{}]",
             ticket.getId(), metadata.getProperties().getStorageName());
         cache.put(ticket.getId(), ticket);
     }
@@ -151,7 +151,7 @@ public class EhCache3TicketRegistry extends AbstractTicketRegistry implements Di
             map.iterator().forEachRemaining(entry -> returnMap.put(entry.getKey(), entry.getValue()));
             return returnMap;
         } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
+            LoggingUtils.warn(LOGGER, e);
             return new HashMap<>(0);
         }
     }

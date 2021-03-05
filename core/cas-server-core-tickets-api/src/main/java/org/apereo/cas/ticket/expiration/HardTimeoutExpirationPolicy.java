@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.val;
 
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 
@@ -56,11 +55,8 @@ public class HardTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
             return true;
         }
         val expiringTime = ticketState.getCreationTime().plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
-        val expired = expiringTime.isBefore(ZonedDateTime.now(ZoneOffset.UTC));
-        if (!expired) {
-            return super.isExpired(ticketState);
-        }
-        return expired;
+        val expired = expiringTime.isBefore(ZonedDateTime.now(getClock()));
+        return expired || super.isExpired(ticketState);
     }
 
     @Override

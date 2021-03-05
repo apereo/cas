@@ -2,6 +2,7 @@ package org.apereo.cas.util.crypto;
 
 import org.apereo.cas.util.DateTimeUtils;
 
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -10,9 +11,7 @@ import org.cryptacular.util.CertUtil;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.InputStreamSource;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
@@ -65,7 +64,7 @@ public class CertUtils {
     public static X509Certificate readCertificate(final InputStreamSource resource) {
         try (val in = resource.getInputStream()) {
             return CertUtil.readCertificate(in);
-        } catch (final IOException e) {
+        } catch (final Exception e) {
             throw new IllegalArgumentException("Error reading certificate " + resource, e);
         }
     }
@@ -98,11 +97,8 @@ public class CertUtils {
      *
      * @return X509 certificate factory.
      */
+    @SneakyThrows
     public static CertificateFactory getCertificateFactory() {
-        try {
-            return CertificateFactory.getInstance(X509_CERTIFICATE_TYPE);
-        } catch (final CertificateException e) {
-            throw new IllegalStateException("X509 certificate type not supported by default provider.", e);
-        }
+        return CertificateFactory.getInstance(X509_CERTIFICATE_TYPE);
     }
 }

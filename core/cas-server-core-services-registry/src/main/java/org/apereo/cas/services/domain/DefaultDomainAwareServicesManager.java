@@ -3,18 +3,16 @@ package org.apereo.cas.services.domain;
 import org.apereo.cas.services.AbstractServicesManager;
 import org.apereo.cas.services.DomainAwareServicesManager;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.ServicesManagerConfigurationContext;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
@@ -32,51 +30,10 @@ public class DefaultDomainAwareServicesManager extends AbstractServicesManager i
 
     private final RegisteredServiceDomainExtractor registeredServiceDomainExtractor;
 
-    public DefaultDomainAwareServicesManager(final ServiceRegistry serviceRegistry,
-                                             final ApplicationEventPublisher eventPublisher,
-                                             final RegisteredServiceDomainExtractor registeredServiceDomainExtractor,
-                                             final Set<String> environments) {
-        super(serviceRegistry, eventPublisher, environments);
+    public DefaultDomainAwareServicesManager(final ServicesManagerConfigurationContext context,
+                                             final RegisteredServiceDomainExtractor registeredServiceDomainExtractor) {
+        super(context);
         this.registeredServiceDomainExtractor = registeredServiceDomainExtractor;
-    }
-
-    @Override
-    protected void deleteInternal(final RegisteredService service) {
-        val domain = registeredServiceDomainExtractor.extract(service.getServiceId());
-        val entries = this.domains.get(domain);
-        entries.remove(service);
-        if (entries.isEmpty()) {
-            this.domains.remove(domain);
-        }
-    }
-
-    @Override
-    protected Stream<RegisteredService> getCandidateServicesToMatch(final String serviceId) {
-        val mappedDomain = StringUtils.isNotBlank(serviceId) ? registeredServiceDomainExtractor.extract(serviceId) : StringUtils.EMPTY;
-        LOGGER.trace("Domain mapped to the service identifier is [{}]", mappedDomain);
-
-        val domain = domains.containsKey(mappedDomain) ? mappedDomain : RegisteredServiceDomainExtractor.DOMAIN_DEFAULT;
-        LOGGER.trace("Looking up services under domain [{}] for service identifier [{}]", domain, serviceId);
-
-        val registeredServices = getServicesForDomain(domain);
-        if (registeredServices == null || registeredServices.isEmpty()) {
-            LOGGER.debug("No services could be located for domain [{}]", domain);
-            return Stream.empty();
-        }
-        return registeredServices.stream();
-    }
-
-    @Override
-    protected void saveInternal(final RegisteredService service) {
-        addToDomain(service, this.domains);
-    }
-
-    @Override
-    protected void loadInternal() {
-        val localDomains = new ConcurrentHashMap<String, TreeSet<RegisteredService>>();
-        getAllServices().forEach(r -> addToDomain(r, localDomains));
-        this.domains.clear();
-        this.domains.putAll(localDomains);
     }
 
     @Override
@@ -97,5 +54,44 @@ public class DefaultDomainAwareServicesManager extends AbstractServicesManager i
         LOGGER.debug("Added service [{}] mapped to domain definition [{}]", r, domain);
         services.add(r);
         map.put(domain, services);
+    }
+
+    @Override
+    protected void deleteInternal(final RegisteredService service) {
+        val domain = registeredServiceDomainExtractor.extract(service.getServiceId());
+        val entries = this.domains.get(domain);
+        entries.remove(service);
+        if (entries.isEmpty()) {
+            this.domains.remove(domain);
+        }
+    }
+
+    @Override
+    protected Collection<RegisteredService> getCandidateServicesToMatch(final String serviceId) {
+        val mappedDomain = StringUtils.isNotBlank(serviceId) ? registeredServiceDomainExtractor.extract(serviceId) : StringUtils.EMPTY;
+        LOGGER.trace("Domain mapped to the service identifier is [{}]", mappedDomain);
+
+        val domain = domains.containsKey(mappedDomain) ? mappedDomain : RegisteredServiceDomainExtractor.DOMAIN_DEFAULT;
+        LOGGER.trace("Looking up services under domain [{}] for service identifier [{}]", domain, serviceId);
+
+        val registeredServices = getServicesForDomain(domain);
+        if (registeredServices == null || registeredServices.isEmpty()) {
+            LOGGER.debug("No services could be located for domain [{}]", domain);
+            return new ArrayList<>(0);
+        }
+        return registeredServices;
+    }
+
+    @Override
+    protected void saveInternal(final RegisteredService service) {
+        addToDomain(service, this.domains);
+    }
+
+    @Override
+    protected void loadInternal() {
+        val localDomains = new ConcurrentHashMap<String, TreeSet<RegisteredService>>();
+        getAllServices().forEach(r -> addToDomain(r, localDomains));
+        this.domains.clear();
+        this.domains.putAll(localDomains);
     }
 }

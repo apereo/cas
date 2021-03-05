@@ -1,9 +1,9 @@
 package org.apereo.cas.configuration.model.support.throttle;
 
-import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.quartz.SchedulingProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -17,10 +17,11 @@ import java.io.Serializable;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@RequiresModule(name = "cas-server-support-throttle", automated = true)
+@RequiresModule(name = "cas-server-support-throttle")
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("ThrottleProperties")
 public class ThrottleProperties implements Serializable {
 
     /**
@@ -43,7 +44,8 @@ public class ThrottleProperties implements Serializable {
     /**
      * Record authentication throttling events in a JDBC resource.
      */
-    private Jdbc jdbc = new Jdbc();
+    @NestedConfigurationProperty
+    private JdbcThrottleProperties jdbc = new JdbcThrottleProperties();
 
     /**
      * Settings related to throttling requests using bucket4j.
@@ -82,7 +84,7 @@ public class ThrottleProperties implements Serializable {
     /**
      * Failure.
      */
-    @RequiresModule(name = "cas-server-support-throttle", automated = true)
+    @RequiresModule(name = "cas-server-support-throttle")
     @Getter
     @Setter
     @Accessors(chain = true)
@@ -109,25 +111,4 @@ public class ThrottleProperties implements Serializable {
         private int rangeSeconds = -1;
     }
 
-    @RequiresModule(name = "cas-server-support-throttle-jdbc")
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class Jdbc extends AbstractJpaProperties {
-
-        /**
-         * SQL throttling query.
-         */
-        private static final String SQL_AUDIT_QUERY = "SELECT AUD_DATE FROM COM_AUDIT_TRAIL WHERE AUD_CLIENT_IP = ? AND AUD_USER = ? "
-            + "AND AUD_ACTION = ? AND APPLIC_CD = ? AND AUD_DATE >= ? ORDER BY AUD_DATE DESC";
-
-        private static final long serialVersionUID = -9199878384425691919L;
-
-        /**
-         * Audit query to execute against the database
-         * to locate audit records based on IP, user, date and
-         * an application code along with the relevant audit action.
-         */
-        private String auditQuery = SQL_AUDIT_QUERY;
-    }
 }

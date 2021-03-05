@@ -1,6 +1,7 @@
 package org.apereo.cas.support.geo.maxmind;
 
 import com.maxmind.geoip2.DatabaseReader;
+import com.maxmind.geoip2.exception.AddressNotFoundException;
 import com.maxmind.geoip2.model.CityResponse;
 import com.maxmind.geoip2.model.CountryResponse;
 import com.maxmind.geoip2.record.City;
@@ -12,6 +13,7 @@ import com.maxmind.geoip2.record.Postal;
 import com.maxmind.geoip2.record.RepresentedCountry;
 import com.maxmind.geoip2.record.Traits;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.net.InetAddress;
@@ -26,7 +28,43 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Tag("Simple")
 public class MaxmindDatabaseGeoLocationServiceTests {
+
+    @Test
+    public void verifyCity() throws Exception {
+        val cityReader = mock(DatabaseReader.class);
+        val cityResponse = new CityResponse(new City(), new Continent(), new Country(),
+            new Location(10, 100, 40D, 70D, 1, 1, "UTC"), new MaxMind(), new Postal(),
+            new Country(), new RepresentedCountry(), new ArrayList<>(), new Traits());
+        when(cityReader.city(any())).thenReturn(cityResponse);
+        val service = new MaxmindDatabaseGeoLocationService(cityReader, null);
+        val response = service.locate("127.0.0.1");
+        assertNotNull(response);
+    }
+
+    @Test
+    public void verifyCityUnknown() throws Exception {
+        val cityReader = mock(DatabaseReader.class);
+        when(cityReader.city(any())).thenThrow(new AddressNotFoundException("Unknown"));
+        val service = new MaxmindDatabaseGeoLocationService(cityReader, null);
+        val response = service.locate("127.0.0.1");
+        assertNull(response);
+    }
+
+    @Test
+    public void verifyNoReader() {
+        val service = new MaxmindDatabaseGeoLocationService(null, null);
+        val response = service.locate("127.0.0.1");
+        assertNull(response);
+    }
+
+    @Test
+    public void verifyLocate() {
+        val service = new MaxmindDatabaseGeoLocationService(null, null);
+        val response = service.locate("abcedf");
+        assertNull(response);
+    }
 
     @Test
     public void verifyOperation() throws Exception {

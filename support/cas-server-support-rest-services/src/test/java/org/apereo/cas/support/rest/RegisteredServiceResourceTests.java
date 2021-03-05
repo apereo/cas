@@ -4,7 +4,9 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.DefaultAuthenticationResultBuilderFactory;
 import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
+import org.apereo.cas.authentication.DefaultAuthenticationTransactionFactory;
 import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
 import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
@@ -15,6 +17,8 @@ import org.apereo.cas.util.EncodingUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatcher;
@@ -40,10 +44,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 4.0.0
  */
 @ExtendWith(MockitoExtension.class)
+@Tag("RegisteredService")
 public class RegisteredServiceResourceTests {
 
     @Mock
     private ServicesManager servicesManager;
+
+    @Test
+    public void checkNoCredentials() throws Exception {
+        runTest("memberOf", "something", StringUtils.EMPTY, status().isBadRequest());
+        runTest("memberOf", "something", ":", status().isBadRequest());
+    }
 
     @Test
     public void checkRegisteredServiceNotAuthorized() throws Exception {
@@ -83,18 +94,22 @@ public class RegisteredServiceResourceTests {
 
     private RegisteredServiceResource getRegisteredServiceResource(final String attrName, final String attrValue) {
         val mgmr = mock(AuthenticationManager.class);
-        lenient().when(mgmr.authenticate(argThat(new AuthenticationCredentialMatcher("test")))).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
-        lenient().when(mgmr.authenticate(argThat(new AuthenticationCredentialMatcher("testfail")))).thenThrow(AuthenticationException.class);
+        lenient().when(mgmr.authenticate(argThat(new AuthenticationCredentialMatcher("test"))))
+            .thenReturn(CoreAuthenticationTestUtils.getAuthentication());
+        lenient().when(mgmr.authenticate(argThat(new AuthenticationCredentialMatcher("testfail"))))
+            .thenThrow(AuthenticationException.class);
 
         val publisher = mock(ApplicationEventPublisher.class);
         return new RegisteredServiceResource(new DefaultAuthenticationSystemSupport(
             new DefaultAuthenticationTransactionManager(publisher, mgmr),
-            new DefaultPrincipalElectionStrategy()),
+            new DefaultPrincipalElectionStrategy(), new DefaultAuthenticationResultBuilderFactory(),
+            new DefaultAuthenticationTransactionFactory()),
             new WebApplicationServiceFactory(), servicesManager,
             attrName, attrValue);
     }
 
-    private void runTest(final String attrName, final String attrValue, final String credentials, final ResultMatcher result) throws Exception {
+    private void runTest(final String attrName, final String attrValue, final String credentials,
+                         final ResultMatcher result) throws Exception {
         val registeredServiceResource = getRegisteredServiceResource(attrName, attrValue);
         val service = RegisteredServiceTestUtils.getRegisteredService();
         val sz = new RegisteredServiceJsonSerializer();

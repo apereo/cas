@@ -15,7 +15,6 @@ import org.apereo.cas.authentication.principal.DefaultServiceMatchingStrategy;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
-import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider;
@@ -31,6 +30,7 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.ServiceTicket;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TransientSessionTicket;
@@ -47,6 +47,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatcher;
 import org.springframework.context.ApplicationEventPublisher;
@@ -70,6 +71,7 @@ import static org.mockito.Mockito.*;
  * @author Dmitriy Kopylenko
  * @since 3.0.0
  */
+@Tag("CAS")
 public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCoreTests {
     private static final String TGT_ID = "tgt-id";
     private static final String TGT2_ID = "tgt2-id";
@@ -169,14 +171,14 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
         val smMock = getServicesManager(service1, service2);
         val factory = getTicketFactory();
 
-        val authenticationRequestServiceSelectionStrategies = new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy());
+        val authenticationRequestServiceSelectionStrategies =
+            new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy());
         val enforcer = mock(AuditableExecution.class);
         when(enforcer.execute(any())).thenReturn(new AuditableExecutionResult());
         this.cas = new DefaultCentralAuthenticationService(
             mock(ApplicationEventPublisher.class),
             ticketRegMock,
             smMock,
-            mock(LogoutManager.class),
             factory,
             authenticationRequestServiceSelectionStrategies,
             new AcceptAnyAuthenticationPolicyFactory(),
@@ -193,7 +195,7 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
                 null, CipherExecutor.noOpOfStringToString(), mock(ServicesManager.class)));
         factory.addTicketFactory(TicketGrantingTicket.class,
             new DefaultTicketGrantingTicketFactory(null,
-                null, CipherExecutor.noOpOfSerializableToString()));
+                null, CipherExecutor.noOpOfSerializableToString(), mock(ServicesManager.class)));
         factory.addTicketFactory(ServiceTicket.class,
             new DefaultServiceTicketFactory(neverExpiresExpirationPolicyBuilder(),
                 new HashMap<>(0), false,
@@ -203,6 +205,7 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
                 CipherExecutor.noOpOfStringToString(), true, mock(ServicesManager.class)));
         factory.addTicketFactory(TransientSessionTicket.class,
             new DefaultTransientSessionTicketFactory(neverExpiresExpirationPolicyBuilder()));
+        assertEquals(Ticket.class, factory.getTicketType());
         return factory;
     }
 

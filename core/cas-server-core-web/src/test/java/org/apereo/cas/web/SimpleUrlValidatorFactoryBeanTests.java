@@ -1,6 +1,7 @@
 package org.apereo.cas.web;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -9,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author swoeste
  * @since 5.1.0
  */
+@Tag("Web")
 public class SimpleUrlValidatorFactoryBeanTests {
 
     @Test

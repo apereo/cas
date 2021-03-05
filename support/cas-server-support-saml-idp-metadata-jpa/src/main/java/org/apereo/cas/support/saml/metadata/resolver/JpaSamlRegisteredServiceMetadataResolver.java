@@ -6,6 +6,7 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.BaseSamlRegisteredServiceMetadataResolver;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +17,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.util.Collection;
 import java.util.Objects;
@@ -46,15 +46,11 @@ public class JpaSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
 
     @Override
     public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
-        try {
-            val documents = this.entityManager.createQuery(SELECT_QUERY, SamlMetadataDocument.class).getResultList();
-            return documents.stream().map(doc -> buildMetadataResolverFrom(service, doc)).filter(Objects::nonNull).collect(Collectors.toList());
-        } catch (final NoResultException e) {
-            LOGGER.debug(e.getMessage());
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage());
-        }
-        return null;
+        val documents = this.entityManager.createQuery(SELECT_QUERY, SamlMetadataDocument.class).getResultList();
+        return documents.stream()
+            .map(doc -> buildMetadataResolverFrom(service, doc))
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -63,18 +59,14 @@ public class JpaSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
             val metadataLocation = service.getMetadataLocation();
             return metadataLocation.trim().startsWith("jdbc://");
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }
 
     @Override
     public void saveOrUpdate(final SamlMetadataDocument document) {
-        try {
-            this.entityManager.merge(document);
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
+        this.entityManager.merge(document);
     }
 
     @Override
@@ -84,7 +76,7 @@ public class JpaSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
             try (val con = ds.getConnection()) {
                 return con.isValid(DATA_SOURCE_VALIDITY_TIMEOUT_SECONDS);
             } catch (final Exception e) {
-                LOGGER.error(e.getMessage(), e);
+                LoggingUtils.error(LOGGER, e);
             }
         }
         return false;

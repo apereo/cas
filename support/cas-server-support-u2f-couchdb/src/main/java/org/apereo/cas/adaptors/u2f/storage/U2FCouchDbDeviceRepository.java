@@ -3,15 +3,16 @@ package org.apereo.cas.adaptors.u2f.storage;
 import org.apereo.cas.couchdb.u2f.CouchDbU2FDeviceRegistration;
 import org.apereo.cas.couchdb.u2f.U2FDeviceRegistrationCouchDbRepository;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
-import com.yubico.u2f.data.DeviceRegistration;
-import com.yubico.u2f.exceptions.U2fBadInputException;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.DisposableBean;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Collection;
@@ -30,17 +31,25 @@ import java.util.stream.Collectors;
 @Slf4j
 @Getter
 @Setter
-public class U2FCouchDbDeviceRepository extends BaseU2FDeviceRepository {
+public class U2FCouchDbDeviceRepository extends BaseU2FDeviceRepository implements DisposableBean {
 
     private final U2FDeviceRegistrationCouchDbRepository couchDb;
-    private final long expirationTime;
-    private final TimeUnit expirationTimeUnit;
-    private boolean asynchronous;
-    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-    public U2FCouchDbDeviceRepository(final LoadingCache<String, String> requestStorage, final U2FDeviceRegistrationCouchDbRepository couchDb,
-                                      final long expirationTime, final TimeUnit expirationTimeUnit, final boolean asynchronous) {
-        super(requestStorage);
+    private final long expirationTime;
+
+    private final TimeUnit expirationTimeUnit;
+
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor(
+        r -> new Thread(r, "U2FCouchDbDeviceRepositoryThread"));
+
+    private boolean asynchronous;
+
+    public U2FCouchDbDeviceRepository(final LoadingCache<String, String> requestStorage,
+                                      final U2FDeviceRegistrationCouchDbRepository couchDb,
+                                      final long expirationTime, final TimeUnit expirationTimeUnit,
+                                      final boolean asynchronous,
+                                      final CipherExecutor<Serializable, String> cipherExecutor) {
+        super(requestStorage, cipherExecutor);
         this.couchDb = couchDb;
         this.expirationTime = expirationTime;
         this.expirationTimeUnit = expirationTimeUnit;
@@ -48,36 +57,28 @@ public class U2FCouchDbDeviceRepository extends BaseU2FDeviceRepository {
     }
 
     @Override
-    public Collection<DeviceRegistration> getRegisteredDevices(final String username) {
-        return couchDb.findByUsername(username).stream()
-            .map(r -> {
-                try {
-                    return DeviceRegistration.fromJson(getCipherExecutor().decode(r.getRecord()));
-                } catch (final U2fBadInputException e) {
-                    LOGGER.error(e.getMessage(), e);
-                }
-                return null;
-            })
+    public Collection<? extends U2FDeviceRegistration> getRegisteredDevices() {
+        return couchDb.getAll().stream()
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
     }
 
     @Override
-    public void registerDevice(final String username, final DeviceRegistration registration) {
-        authenticateDevice(username, registration);
+    public Collection<U2FDeviceRegistration> getRegisteredDevices(final String username) {
+        return couchDb.findByUsername(username).stream()
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
     }
 
     @Override
-    public void authenticateDevice(final String username, final DeviceRegistration registration) {
-        val record = new U2FDeviceRegistration();
-        record.setUsername(username);
-        record.setRecord(getCipherExecutor().encode(registration.toJson()));
-        record.setCreatedDate(LocalDate.now(ZoneId.systemDefault()));
+    public U2FDeviceRegistration registerDevice(final U2FDeviceRegistration registration) {
+        val couchDbDevice = new CouchDbU2FDeviceRegistration(registration);
         if (asynchronous) {
-            this.executorService.execute(() -> couchDb.add(new CouchDbU2FDeviceRegistration(record)));
+            this.executorService.execute(() -> couchDb.add(couchDbDevice));
         } else {
-            couchDb.add(new CouchDbU2FDeviceRegistration(record));
+            couchDb.add(couchDbDevice);
         }
+        return couchDbDevice;
     }
 
     @Override
@@ -87,10 +88,11 @@ public class U2FCouchDbDeviceRepository extends BaseU2FDeviceRepository {
 
     @Override
     public void clean() {
-        val expirationDate = LocalDate.now(ZoneId.systemDefault()).minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
+        val expirationDate = LocalDate.now(ZoneId.systemDefault())
+            .minus(expirationTime, DateTimeUtils.toChronoUnit(expirationTimeUnit));
         LOGGER.debug("Cleaning up expired U2F device registrations based on expiration date [{}]", expirationDate);
         if (asynchronous) {
-            this.executorService.execute(() -> couchDb.findByDateBefore(expirationDate).forEach(couchDb::deleteRecord));
+            executorService.execute(() -> couchDb.findByDateBefore(expirationDate).forEach(couchDb::deleteRecord));
         } else {
             couchDb.findByDateBefore(expirationDate).forEach(couchDb::deleteRecord);
         }
@@ -103,5 +105,20 @@ public class U2FCouchDbDeviceRepository extends BaseU2FDeviceRepository {
         } else {
             couchDb.deleteAll();
         }
+    }
+
+    @Override
+    public void deleteRegisteredDevice(final U2FDeviceRegistration registration) {
+        val couchDbDevice = CouchDbU2FDeviceRegistration.class.cast(registration);
+        if (asynchronous) {
+            this.executorService.execute(() -> couchDb.deleteRecord(couchDbDevice));
+        } else {
+            couchDb.deleteRecord(couchDbDevice);
+        }
+    }
+
+    @Override
+    public void destroy() {
+        this.executorService.shutdown();
     }
 }

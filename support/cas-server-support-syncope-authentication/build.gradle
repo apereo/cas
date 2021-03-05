@@ -1,8 +1,5 @@
 description = "Apereo CAS Apache Syncope Authentication Support"
 dependencies {
-    implementation libraries.apachesyncope
-
-    
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-services-api")
@@ -24,6 +21,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-logout-api")
+    testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-cookie-api")

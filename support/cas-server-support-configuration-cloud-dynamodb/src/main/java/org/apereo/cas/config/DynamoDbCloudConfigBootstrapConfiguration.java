@@ -1,22 +1,11 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.aws.AmazonEnvironmentAwareClientBuilder;
+import org.apereo.cas.dynamodb.DynamoDbTableUtils;
+import org.apereo.cas.util.LoggingUtils;
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
-import com.amazonaws.services.dynamodbv2.model.AttributeDefinition;
-import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
-import com.amazonaws.services.dynamodbv2.model.DeleteTableRequest;
-import com.amazonaws.services.dynamodbv2.model.DescribeTableRequest;
-import com.amazonaws.services.dynamodbv2.model.KeySchemaElement;
-import com.amazonaws.services.dynamodbv2.model.KeyType;
-import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
-import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
-import com.amazonaws.services.dynamodbv2.model.ScanRequest;
-import com.amazonaws.services.dynamodbv2.util.TableUtils;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -26,6 +15,17 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.env.PropertySource;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
+import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
+import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
+import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
+import software.amazon.awssdk.services.dynamodb.model.KeyType;
+import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughput;
+import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
+import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
 
 import java.util.Map;
 import java.util.Properties;
@@ -45,45 +45,30 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
      * Configuration table name.
      */
     public static final String TABLE_NAME = "DynamoDbCasProperties";
+
     /**
      * Configuration prefix.
      */
     public static final String CAS_CONFIGURATION_PREFIX = "cas.spring.cloud.dynamoDb";
 
     private static final long PROVISIONED_THROUGHPUT = 10;
-    
-    private static Pair<String, Object> retrieveSetting(final Map<String, AttributeValue> entry) {
-        val name = entry.get(ColumnNames.NAME.getColumnName()).getS();
-        val value = entry.get(ColumnNames.VALUE.getColumnName()).getS();
-        return Pair.of(name, value);
-    }
 
     @SneakyThrows
-    public static void createSettingsTable(final AmazonDynamoDB amazonDynamoDBClient, final boolean deleteTables) {
+    public static void createSettingsTable(final DynamoDbClient amazonDynamoDBClient, final boolean deleteTables) {
         val request = createCreateTableRequest();
         if (deleteTables) {
-            val delete = new DeleteTableRequest(request.getTableName());
-            LOGGER.debug("Sending delete request [{}] to remove table if necessary", delete);
-            TableUtils.deleteTableIfExists(amazonDynamoDBClient, delete);
+            val delete = DeleteTableRequest.builder().tableName(request.tableName()).build();
+            LOGGER.debug("delete create request [{}] to remove table if necessary", delete);
+            DynamoDbTableUtils.deleteTableIfExists(amazonDynamoDBClient, delete);
         }
-        LOGGER.debug("Sending delete request [{}] to create table", request);
-        TableUtils.createTableIfNotExists(amazonDynamoDBClient, request);
-        LOGGER.debug("Waiting until table [{}] becomes active...", request.getTableName());
-        TableUtils.waitUntilActive(amazonDynamoDBClient, request.getTableName());
-        val describeTableRequest = new DescribeTableRequest().withTableName(request.getTableName());
+        LOGGER.debug("Sending create request [{}] to create table", request);
+        DynamoDbTableUtils.createTableIfNotExists(amazonDynamoDBClient, request);
+        LOGGER.debug("Waiting until table [{}] becomes active...", request.tableName());
+        DynamoDbTableUtils.waitUntilActive(amazonDynamoDBClient, request.tableName());
+        val describeTableRequest = DescribeTableRequest.builder().tableName(request.tableName()).build();
         LOGGER.debug("Sending request [{}] to obtain table description...", describeTableRequest);
-        val tableDescription = amazonDynamoDBClient.describeTable(describeTableRequest).getTable();
+        val tableDescription = amazonDynamoDBClient.describeTable(describeTableRequest).table();
         LOGGER.debug("Located newly created table with description: [{}]", tableDescription);
-    }
-
-    @SuppressFBWarnings("PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS")
-    private static CreateTableRequest createCreateTableRequest() {
-        val name = ColumnNames.ID.getColumnName();
-        return new CreateTableRequest()
-            .withAttributeDefinitions(new AttributeDefinition(name, ScalarAttributeType.S))
-            .withKeySchema(new KeySchemaElement(name, KeyType.HASH))
-            .withProvisionedThroughput(new ProvisionedThroughput(PROVISIONED_THROUGHPUT, PROVISIONED_THROUGHPUT))
-            .withTableName(TABLE_NAME);
     }
 
     @Override
@@ -92,28 +77,47 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
 
         try {
             val builder = new AmazonEnvironmentAwareClientBuilder(CAS_CONFIGURATION_PREFIX, environment);
-            val amazonDynamoDBClient = builder.build(AmazonDynamoDBClient.builder(), AmazonDynamoDB.class);
-            val preventTableCreationOnStartup = builder.getSetting("preventTableCreationOnStartup", Boolean.class);
+            val amazonDynamoDBClient = builder.build(DynamoDbClient.builder(), DynamoDbClient.class);
+            val preventTableCreationOnStartup = builder.getSetting("prevent-table-creation-on-startup", Boolean.class);
             if (!preventTableCreationOnStartup) {
                 createSettingsTable(amazonDynamoDBClient, false);
             }
-            val scan = new ScanRequest(TABLE_NAME);
+            val scan = ScanRequest.builder().tableName(TABLE_NAME).build();
             LOGGER.debug("Scanning table with request [{}]", scan);
             val result = amazonDynamoDBClient.scan(scan);
             LOGGER.debug("Scanned table with result [{}]", scan);
 
-            result.getItems()
+            result.items()
                 .stream()
                 .map(DynamoDbCloudConfigBootstrapConfiguration::retrieveSetting)
                 .forEach(p -> props.put(p.getKey(), p.getValue()));
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
 
         return new PropertiesPropertySource(getClass().getSimpleName(), props);
     }
 
+    private static Pair<String, Object> retrieveSetting(final Map<String, AttributeValue> entry) {
+        val name = entry.get(ColumnNames.NAME.getColumnName()).s();
+        val value = entry.get(ColumnNames.VALUE.getColumnName()).s();
+        return Pair.of(name, value);
+    }
+
+    private static CreateTableRequest createCreateTableRequest() {
+        val name = ColumnNames.ID.getColumnName();
+        return CreateTableRequest.builder()
+            .attributeDefinitions(AttributeDefinition.builder().attributeName(name).attributeType(ScalarAttributeType.S).build())
+            .keySchema(KeySchemaElement.builder().attributeName(name).keyType(KeyType.HASH).build())
+            .provisionedThroughput(ProvisionedThroughput.builder()
+                .readCapacityUnits(PROVISIONED_THROUGHPUT)
+                .writeCapacityUnits(PROVISIONED_THROUGHPUT).build())
+            .tableName(TABLE_NAME)
+            .build();
+    }
+
     @Getter
+    @RequiredArgsConstructor
     public enum ColumnNames {
 
         /**
@@ -130,9 +134,5 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
         VALUE("value");
 
         private final String columnName;
-
-        ColumnNames(final String columnName) {
-            this.columnName = columnName;
-        }
     }
 }

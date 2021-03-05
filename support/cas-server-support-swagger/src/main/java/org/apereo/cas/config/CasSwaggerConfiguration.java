@@ -1,13 +1,14 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.util.CasVersion;
+
+import io.swagger.v3.oas.models.ExternalDocumentation;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.info.License;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import springfox.documentation.builders.ApiInfoBuilder;
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
  * This is {@link CasSwaggerConfiguration}.
@@ -16,22 +17,20 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  * @since 5.2.0
  */
 @Configuration(value = "casSwaggerConfiguration", proxyBeanMethods = false)
-@EnableSwagger2
 public class CasSwaggerConfiguration {
 
     @Bean
-    public Docket api() {
-        return new Docket(DocumentationType.SWAGGER_2)
-            .select()
-            .apis(RequestHandlerSelectors.any())
-            .paths(PathSelectors.any())
-            .build()
-            .apiInfo(new ApiInfoBuilder()
-                .title("CAS Swagger API Documentation")
-                .license("Apache v2")
-                .licenseUrl("https://github.com/apereo/cas/blob/master/LICENSE")
-                .description("CAS Swagger API Documentation")
-                .version("1.0.0")
-                .build());
+    @ConditionalOnMissingBean(name = "casSwaggerOpenApi")
+    public OpenAPI casSwaggerOpenApi() {
+        return new OpenAPI()
+            .info(new Info()
+                .title("Apereo CAS Swagger API Documentation")
+                .description("Apereo CAS Swagger API Documentation")
+                .version(CasVersion.asString())
+                .license(new License().name("Apache 2.0")
+                    .url("https://github.com/apereo/cas/blob/master/LICENSE")))
+            .externalDocs(new ExternalDocumentation()
+                .description("Apereo CAS Documentation")
+                .url("https://apereo.github.com/cas"));
     }
 }

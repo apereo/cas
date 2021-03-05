@@ -1,3 +1,4 @@
+.vscode
 argfile*
 .classpath
 !/.project
@@ -8,16 +9,22 @@ test-output/
 bin/
 *.ignore
 *.ipr
+*.war
+**/gh-pages/
 *.iml
 *.iws
+**/ignite/work/marshaller/
 **/.history
 *.orig
 .idea/
+*.class
 .DS_Store
+production/
 .idea
 overlays/
 pom.xml.versionsBackup
 build.xml
+mylocustenv/
 *.log
 rebel.xml
 **/.checkstyle
@@ -32,7 +39,7 @@ MANIFEST.MF
 classes/
 *.bin
 **/gpg-*.txt
-
+**/__pycache__/
 out
 ajcore.*
 reports
@@ -40,6 +47,7 @@ reports
 *.asc
 /.nb-gradle/
 **/.sts4-cache/**
+**/work/**
 etc/loadtests/loadtests/**
 etc/loadtests/locustfiles/**
 etc/loadtests/__pycache__/**
@@ -47,3 +55,5 @@ webapp/resources/static/js/*-bundle.js
 **/k/
 **/dist/
 **/.sts4-cache/*
+ci/tests/puppeteer/overlay
+ci/tests/puppeteer/package*.json

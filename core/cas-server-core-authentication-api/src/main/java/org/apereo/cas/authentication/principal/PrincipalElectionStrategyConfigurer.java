@@ -10,6 +10,11 @@ import org.springframework.core.Ordered;
  */
 @FunctionalInterface
 public interface PrincipalElectionStrategyConfigurer extends Ordered {
+    /**
+     * Configure principal election strategy.
+     *
+     * @param chain the chain
+     */
     void configurePrincipalElectionStrategy(ChainingPrincipalElectionStrategy chain);
 
     @Override

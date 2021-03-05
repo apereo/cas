@@ -8,15 +8,11 @@ import org.opensaml.security.credential.UsageType;
 import org.opensaml.security.crypto.KeySupport;
 import org.opensaml.security.x509.BasicX509Credential;
 import org.opensaml.security.x509.X509Support;
-import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.core.io.Resource;
 
-import java.io.IOException;
-import java.security.KeyException;
 import java.security.PrivateKey;
-import java.security.cert.CRLException;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -129,12 +125,12 @@ public class BasicX509CredentialFactoryBean implements FactoryBean<BasicX509Cred
         try {
             val certs = X509Support.decodeCertificates(entityResource.getInputStream());
             if (certs.size() > 1) {
-                throw new FatalBeanException("Configuration element indicated an entityCertificate,"
+                throw new BeanCreationException("Configuration element indicated an entityCertificate,"
                     + " but multiple certificates were decoded");
             }
             return certs.iterator().next();
         } catch (final Exception e) {
-            throw new FatalBeanException("Could not decode provided Entity Certificate file "
+            throw new BeanCreationException("Could not decode provided Entity Certificate file "
                 + entityResource.getDescription(), e);
         }
     }
@@ -149,7 +145,7 @@ public class BasicX509CredentialFactoryBean implements FactoryBean<BasicX509Cred
             try (val is = r.getInputStream()) {
                 certificates.addAll(X509Support.decodeCertificates(is));
             } catch (final Exception e) {
-                throw new FatalBeanException("Could not decode provided CertificateFile: " + r.getDescription(), e);
+                throw new BeanCreationException("Could not decode provided CertificateFile: " + r.getDescription(), e);
             }
         }
         return certificates;
@@ -161,8 +157,8 @@ public class BasicX509CredentialFactoryBean implements FactoryBean<BasicX509Cred
         }
         try (val is = privateKeyResource.getInputStream()) {
             return KeySupport.decodePrivateKey(is, getPrivateKeyPassword());
-        } catch (final KeyException | IOException e) {
-            throw new FatalBeanException("Could not decode provided KeyFile " + privateKeyResource.getDescription(), e);
+        } catch (final Exception e) {
+            throw new BeanCreationException("Could not decode provided KeyFile " + privateKeyResource.getDescription(), e);
         }
     }
 
@@ -179,8 +175,8 @@ public class BasicX509CredentialFactoryBean implements FactoryBean<BasicX509Cred
         for (val crl : crlResources) {
             try (val is = crl.getInputStream()) {
                 crls.addAll(X509Support.decodeCRLs(is));
-            } catch (final CRLException | IOException e) {
-                throw new FatalBeanException("Could not decode provided CRL file " + crl.getDescription(), e);
+            } catch (final Exception e) {
+                throw new BeanCreationException("Could not decode provided CRL file " + crl.getDescription(), e);
             }
         }
         return crls;

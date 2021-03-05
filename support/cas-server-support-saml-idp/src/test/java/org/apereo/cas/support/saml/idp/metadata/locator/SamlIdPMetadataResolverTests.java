@@ -5,17 +5,11 @@ import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import com.google.common.collect.Iterables;
 import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
-import net.shibboleth.utilities.java.support.resolver.ResolverException;
-import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.core.criterion.EntityIdCriterion;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.test.context.TestPropertySource;
-
-import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -27,20 +21,16 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("SAML")
-@TestPropertySource(properties = "cas.authn.samlIdp.entityId=https://cas.example.org/idp")
+@TestPropertySource(properties = {
+    "cas.authn.saml-idp.core.entity-id=https://cas.example.org/idp",
+    "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata"
+})
 @EnableRetry
 public class SamlIdPMetadataResolverTests extends BaseSamlIdPConfigurationTests {
-    @BeforeAll
-    public static void beforeThisClass() throws Exception {
-        METADATA_DIRECTORY = new FileSystemResource(new File(FileUtils.getTempDirectory(), "idp-metadata"));
-        if (METADATA_DIRECTORY.exists()) {
-            FileUtils.deleteDirectory(METADATA_DIRECTORY.getFile());
-        }
-    }
 
     @Test
     public void verifyOperation() throws Exception {
-        val criteria = new CriteriaSet(new EntityIdCriterion(casProperties.getAuthn().getSamlIdp().getEntityId()));
+        val criteria = new CriteriaSet(new EntityIdCriterion(casProperties.getAuthn().getSamlIdp().getCore().getEntityId()));
 
         val result1 = casSamlIdPMetadataResolver.resolve(criteria);
         assertFalse(Iterables.isEmpty(result1));
@@ -62,6 +52,6 @@ public class SamlIdPMetadataResolverTests extends BaseSamlIdPConfigurationTests 
     public void verifyOperationFail() {
         val criteria = mock(CriteriaSet.class);
         when(criteria.get(any())).thenThrow(IllegalArgumentException.class);
-        assertThrows(ResolverException.class, () -> casSamlIdPMetadataResolver.resolve(criteria));
+        assertThrows(IllegalArgumentException.class, () -> casSamlIdPMetadataResolver.resolve(criteria));
     }
 }

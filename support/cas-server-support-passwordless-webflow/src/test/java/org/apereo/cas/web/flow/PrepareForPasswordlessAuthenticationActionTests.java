@@ -26,10 +26,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("Webflow")
+@Tag("WebflowActions")
 public class PrepareForPasswordlessAuthenticationActionTests extends BasePasswordlessAuthenticationActionTests {
     @Autowired
-    @Qualifier("initializeLoginAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_INIT_LOGIN_ACTION)
     private Action initializeLoginAction;
 
     @Test
@@ -48,6 +48,6 @@ public class PrepareForPasswordlessAuthenticationActionTests extends BasePasswor
             .build();
         WebUtils.putPasswordlessAuthenticationAccount(context, account);
 
-        assertEquals("success", initializeLoginAction.execute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, initializeLoginAction.execute(context).getId());
     }
 }

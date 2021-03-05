@@ -2,18 +2,13 @@ package org.apereo.cas.authentication.bypass;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.util.List;
@@ -28,19 +23,39 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@SpringBootTest(classes = RefreshAutoConfiguration.class)
-@EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("MFA")
 public class PrincipalMultifactorAuthenticationProviderBypassEvaluatorTests {
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
 
     @Test
-    public void verifyOperation() {
+    public void verifyNoMatchOperation() {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
 
         val eval = new DefaultChainingMultifactorAuthenticationBypassProvider();
-        eval.addMultifactorAuthenticationProviderBypassEvaluator(new PrincipalMultifactorAuthenticationProviderBypassEvaluator("cn", "exam.+", TestMultifactorAuthenticationProvider.ID));
+        eval.addMultifactorAuthenticationProviderBypassEvaluator(
+            new PrincipalMultifactorAuthenticationProviderBypassEvaluator("cn", "exam.+", TestMultifactorAuthenticationProvider.ID));
+
+        val principal = CoreAuthenticationTestUtils.getPrincipal(Map.of("cn", List.of("unknown")));
+        val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
+        val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
+        val policy = new DefaultRegisteredServiceMultifactorPolicy();
+        policy.setBypassEnabled(true);
+        when(registeredService.getMultifactorPolicy()).thenReturn(policy);
+        assertTrue(eval.shouldMultifactorAuthenticationProviderExecute(authentication,
+            registeredService, provider, new MockHttpServletRequest()));
+    }
+
+
+    @Test
+    public void verifyOperation() {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+        val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
+
+        val eval = new DefaultChainingMultifactorAuthenticationBypassProvider();
+        eval.addMultifactorAuthenticationProviderBypassEvaluator(
+            new PrincipalMultifactorAuthenticationProviderBypassEvaluator("cn", "exam.+", TestMultifactorAuthenticationProvider.ID));
 
         val principal = CoreAuthenticationTestUtils.getPrincipal(Map.of("cn", List.of("example")));
         val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
@@ -53,6 +68,9 @@ public class PrincipalMultifactorAuthenticationProviderBypassEvaluatorTests {
 
     @Test
     public void verifyOperationByProperty() {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
 
         val eval = new DefaultChainingMultifactorAuthenticationBypassProvider();

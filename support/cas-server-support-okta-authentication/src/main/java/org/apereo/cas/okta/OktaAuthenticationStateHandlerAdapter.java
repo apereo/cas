@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.okta.authn.sdk.AuthenticationStateHandlerAdapter;
 import com.okta.authn.sdk.resource.AuthenticationResponse;
@@ -82,7 +83,7 @@ public class OktaAuthenticationStateHandlerAdapter extends AuthenticationStateHa
                 warnings = passwordPolicyHandlingStrategy.handle(passwordWarning, passwordPolicyConfiguration);
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         handleUnknown(passwordWarning);
     }
@@ -102,6 +103,11 @@ public class OktaAuthenticationStateHandlerAdapter extends AuthenticationStateHa
         failureException = new AccountLockedException(lockedOut.getStatusString());
     }
 
+    /**
+     * Throw exception if necessary.
+     *
+     * @throws Exception the exception
+     */
     public void throwExceptionIfNecessary() throws Exception {
         if (failureException != null) {
             throw this.failureException;

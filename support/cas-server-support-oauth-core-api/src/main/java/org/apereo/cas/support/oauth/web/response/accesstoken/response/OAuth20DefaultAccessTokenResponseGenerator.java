@@ -1,10 +1,14 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.response;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.token.JwtBuilder;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +20,6 @@ import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -28,7 +31,8 @@ import java.util.Map;
  */
 @RequiredArgsConstructor
 public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20AccessTokenResponseGenerator {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     /**
      * JWT builder.
@@ -37,17 +41,9 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
 
     private final CasConfigurationProperties casProperties;
 
-    private static boolean shouldGenerateDeviceFlowResponse(final OAuth20AccessTokenResponseResult result) {
-        val generatedToken = result.getGeneratedToken();
-        return OAuth20ResponseTypes.DEVICE_CODE == result.getResponseType()
-            && generatedToken.getDeviceCode().isPresent()
-            && generatedToken.getUserCode().isPresent()
-            && generatedToken.getAccessToken().isEmpty();
-    }
-
-    @Audit(action = "OAUTH2_ACCESS_TOKEN_RESPONSE",
-        actionResolverName = "OAUTH2_ACCESS_TOKEN_RESPONSE_ACTION_RESOLVER",
-        resourceResolverName = "OAUTH2_ACCESS_TOKEN_RESPONSE_RESOURCE_RESOLVER")
+    @Audit(action = AuditableActions.OAUTH2_ACCESS_TOKEN_RESPONSE,
+        actionResolverName = AuditActionResolvers.OAUTH2_ACCESS_TOKEN_RESPONSE_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.OAUTH2_ACCESS_TOKEN_RESPONSE_RESOURCE_RESOLVER)
     @Override
     @SneakyThrows
     public ModelAndView generate(final HttpServletRequest request, final HttpServletResponse response,
@@ -57,6 +53,14 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
         }
 
         return generateResponseForAccessToken(request, response, result);
+    }
+
+    private static boolean shouldGenerateDeviceFlowResponse(final OAuth20AccessTokenResponseResult result) {
+        val generatedToken = result.getGeneratedToken();
+        return OAuth20ResponseTypes.DEVICE_CODE == result.getResponseType()
+            && generatedToken.getDeviceCode().isPresent()
+            && generatedToken.getUserCode().isPresent()
+            && generatedToken.getAccessToken().isEmpty();
     }
 
     /**
@@ -127,10 +131,10 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
         generatedToken.getAccessToken().ifPresent(t -> {
             model.put(OAuth20Constants.ACCESS_TOKEN, encodeAccessToken(t, result));
             model.put(OAuth20Constants.SCOPE, String.join(" ", t.getScopes()));
+            model.put(OAuth20Constants.EXPIRES_IN, t.getExpiresIn());
         });
         generatedToken.getRefreshToken().ifPresent(t -> model.put(OAuth20Constants.REFRESH_TOKEN, t.getId()));
         model.put(OAuth20Constants.TOKEN_TYPE, OAuth20Constants.TOKEN_TYPE_BEARER);
-        model.put(OAuth20Constants.EXPIRES_IN, result.getAccessTokenTimeout());
         return model;
     }
 

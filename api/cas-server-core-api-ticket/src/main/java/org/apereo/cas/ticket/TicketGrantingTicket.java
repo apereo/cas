@@ -90,7 +90,6 @@ public interface TicketGrantingTicket extends Ticket {
      */
     List<Authentication> getChainedAuthentications();
 
-
     /**
      * Gets the service that produced a proxy-granting ticket.
      *

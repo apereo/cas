@@ -4,6 +4,7 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
+@Tag("ExpirationPolicy")
 public class SurrogateSessionExpirationPolicyJsonSerializerTests {
     @Test
     public void verifyOperation() {

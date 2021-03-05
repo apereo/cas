@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.1.1 r1855137">
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.3">
   <hashTree>
     <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="CAS SSO Tests" enabled="true">
       <stringProp name="TestPlan.comments"></stringProp>
@@ -15,7 +15,7 @@
         <collectionProp name="Arguments.arguments">
           <elementProp name="ThreadCount" elementType="Argument">
             <stringProp name="Argument.name">ThreadCount</stringProp>
-            <stringProp name="Argument.value">50</stringProp>
+            <stringProp name="Argument.value">15</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
             <stringProp name="Argument.desc">Number of Threads</stringProp>
           </elementProp>
@@ -39,23 +39,13 @@
           </elementProp>
           <elementProp name="IdPHost" elementType="Argument">
             <stringProp name="Argument.name">IdPHost</stringProp>
-            <stringProp name="Argument.value">https://example.net:8443</stringProp>
+            <stringProp name="Argument.value">https://localhost:8443</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
             <stringProp name="Argument.desc">The main URL of your CAS Instance</stringProp>
           </elementProp>
-          <elementProp name="IdPPort" elementType="Argument">
-            <stringProp name="Argument.name">IdPPort</stringProp>
-            <stringProp name="Argument.value">8443</stringProp>
-            <stringProp name="Argument.metadata">=</stringProp>
-          </elementProp>
-          <elementProp name="IdPContext" elementType="Argument">
-            <stringProp name="Argument.name">IdPContext</stringProp>
-            <stringProp name="Argument.value">idp</stringProp>
-            <stringProp name="Argument.metadata">=</stringProp>
-          </elementProp>
           <elementProp name="CasSP" elementType="Argument">
             <stringProp name="Argument.name">CasSP</stringProp>
-            <stringProp name="Argument.value">https://yahoo.com</stringProp>
+            <stringProp name="Argument.value">https://httpbin.org/get</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
             <stringProp name="Argument.desc">Service Provider url</stringProp>
           </elementProp>
@@ -63,7 +53,7 @@
       </Arguments>
       <hashTree/>
       <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Get Users/Passwords" enabled="true">
-        <stringProp name="filename">/etc/loadtests/jmeter/cas-users.csv</stringProp>
+        <stringProp name="filename">/etc/cas/config/loadtests/jmeter/cas-users.csv</stringProp>
         <stringProp name="fileEncoding"></stringProp>
         <stringProp name="variableNames">User,Password</stringProp>
         <stringProp name="delimiter">,</stringProp>
@@ -77,6 +67,7 @@
       <CookieManager guiclass="CookiePanel" testclass="CookieManager" testname="HTTP Cookie Manager" enabled="true">
         <collectionProp name="CookieManager.cookies"/>
         <boolProp name="CookieManager.clearEachIteration">true</boolProp>
+        <boolProp name="CookieManager.controlledByThreadGroup">false</boolProp>
       </CookieManager>
       <hashTree/>
       <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="HTTP Request Defaults" enabled="true">
@@ -173,6 +164,7 @@
         <boolProp name="ThreadGroup.scheduler">true</boolProp>
         <stringProp name="ThreadGroup.duration">${Duration}</stringProp>
         <stringProp name="ThreadGroup.delay">${StartupDelay}</stringProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
       </ThreadGroup>
       <hashTree>
         <ModuleController guiclass="ModuleControllerGui" testclass="ModuleController" testname="GET - CAS Login Page" enabled="true">
@@ -362,24 +354,46 @@
       </hashTree>
       <TestFragmentController guiclass="TestFragmentControllerGui" testclass="TestFragmentController" testname="GET - User Info with Service Ticket" enabled="true"/>
       <hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="CAS GET Ticket Info" enabled="true">
-          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
-            <collectionProp name="Arguments.arguments"/>
-          </elementProp>
-          <stringProp name="HTTPSampler.domain"></stringProp>
-          <stringProp name="HTTPSampler.port"></stringProp>
-          <stringProp name="HTTPSampler.protocol"></stringProp>
-          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-          <stringProp name="HTTPSampler.path">${IdPHost}/cas/serviceValidate?ticket=${st}&amp;service=${__urlencode(${CasSP})}</stringProp>
-          <stringProp name="HTTPSampler.method">GET</stringProp>
-          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
-          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
-          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
-          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
-          <stringProp name="HTTPSampler.response_timeout"></stringProp>
-        </HTTPSamplerProxy>
+        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="Out-of-band Validate Service Ticket" enabled="true">
+          <stringProp name="cacheKey">true</stringProp>
+          <stringProp name="filename"></stringProp>
+          <stringProp name="parameters"></stringProp>
+          <stringProp name="script">/**
+ * If running this test against a cluster it is important not to send cookies
+ * when validating the service ticket which is done server-side by an application
+ * (not the browser). The load balancer in front of the CAS cluster
+ * may use sticky session cookies which the application (service) won&apos;t have access to.
+ * If the CAS ticket registry involves replication, handling validation requests
+ * on a different server than the server that created the service ticket
+ * may expose problems.
+ */
+
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.net.HttpURLConnection
+import java.net.URL
+import java.net.URLEncoder
+
+String host = vars.get(&quot;IdPHost&quot;)
+String st = vars.get(&quot;st&quot;)
+String service = vars.get(&quot;CasSP&quot;)
+
+String urlString = host + &quot;/cas/serviceValidate?ticket=&quot; + st + &quot;&amp;service=&quot; + URLEncoder.encode(service, &quot;UTF-8&quot;)
+URL url = new URL(urlString)
+HttpURLConnection request = (HttpURLConnection) url.openConnection()
+request.connect()
+BufferedReader reader = new BufferedReader(new InputStreamReader(request.getInputStream()))
+StringBuilder output = new StringBuilder()
+while ((inputLine = reader.readLine()) != null) {
+	output.append(inputLine)
+	output.append(&quot;\n&quot;)
+}
+reader.close()
+request.disconnect()
+return output.toString()</stringProp>
+          <stringProp name="scriptLanguage">groovy</stringProp>
+          <stringProp name="TestPlan.comments">Groovy script to validate the service ticket without sending cookies (in particular, sticky session cookies)</stringProp>
+        </JSR223Sampler>
         <hashTree/>
         <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Verify User Info Returned" enabled="true">
           <collectionProp name="Asserion.test_strings">

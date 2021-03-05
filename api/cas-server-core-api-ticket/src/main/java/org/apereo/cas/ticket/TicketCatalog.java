@@ -28,7 +28,7 @@ public interface TicketCatalog {
      * Contains ticket definition.
      *
      * @param ticketId the ticket id
-     * @return the boolean
+     * @return true/false
      */
     boolean contains(String ticketId);
 

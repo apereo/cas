@@ -4,11 +4,11 @@ title: Overview - User Interface Customization - CAS
 category: User Interface
 ---
 
+{% include variables.html %}
 
 # Overview
 
-Branding the CAS User Interface (UI) involves simply editing the CSS stylesheet and also a small collection of relatively simple HTML include files, also known as views. Optionally, you may also wish to modify the text displayed and/or add additional Javascript effects
-on these views.
+Branding the CAS User Interface (UI) involves editing the CSS stylesheet and also a small collection of relatively simple HTML include files, also known as views. Optionally, you may also wish to modify the text displayed and/or add additional Javascript effects on these views.
 
 # Browser Support
 
@@ -17,9 +17,12 @@ CAS user interface should properly and comfortably lend itself to all major brow
 * Google Chrome
 * Mozilla Firefox
 * Apple Safari
-* Microsoft Internet Explorer
+* Microsoft Edge
+* Internet Explorer (v11 only)
 
-Note that certain older version of IE, particularly IE 9 and below may impose additional difficulty in getting the right UI configuration in place.
+Note that certain older version of IE, particularly IE 9 and below may impose additional difficulty in getting the right UI configuration in place. The libraries used for the user interface (Bootstrap and Material.io) do not support Internet Explorer 9 or below.
+
+<div class="alert alert-info"><strong>Supported Browsers</strong><p>The supported browsers listed here are in reference to the default CAS user interface. Customizations can be implemented to support other browsers using the overlay, themes, etc.</p></div>
 
 ## Internet Explorer
 

@@ -8,8 +8,10 @@ import org.apereo.cas.support.oauth.web.flow.OAuth20WebflowConfigurer;
 import org.apereo.cas.validation.CasProtocolViewFactory;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.login.SessionStoreTicketGrantingTicketAction;
 
 import lombok.val;
+import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -62,13 +64,18 @@ public class CasOAuth20WebflowConfiguration {
     @Autowired
     private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
+    @Autowired
+    @Qualifier("oauthDistributedSessionStore")
+    private ObjectProvider<SessionStore> oauthDistributedSessionStore;
+
+
     @ConditionalOnMissingBean(name = "oauth20LogoutWebflowConfigurer")
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer oauth20LogoutWebflowConfigurer() {
         val c = new OAuth20WebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getObject(),
-            oauth20RegisteredServiceUIAction(), applicationContext, casProperties);
+            applicationContext, casProperties);
         c.setLogoutFlowDefinitionRegistry(logoutFlowDefinitionRegistry.getObject());
         return c;
     }
@@ -80,6 +87,12 @@ public class CasOAuth20WebflowConfiguration {
             oauth20AuthenticationServiceSelectionStrategy.getObject());
     }
 
+    @Bean
+    @ConditionalOnMissingBean(name = "oauth20SessionStoreTicketGrantingTicketAction")
+    public Action oauth20SessionStoreTicketGrantingTicketAction() {
+        return new SessionStoreTicketGrantingTicketAction(oauthDistributedSessionStore.getObject());
+    }
+    
     @Bean
     public View oauthConfirmView() {
         return casProtocolViewFactory.getObject().create(applicationContext, "protocol/oauth/confirm");

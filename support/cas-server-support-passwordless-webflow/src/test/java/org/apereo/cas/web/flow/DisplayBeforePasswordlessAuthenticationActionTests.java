@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.api.PasswordlessUserAccountStore;
+import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -26,12 +27,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@TestPropertySource(properties = {
-    "cas.authn.passwordless.accounts.groovy.location=classpath:PasswordlessAccount.groovy",
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
-})
-@Tag("Webflow")
+@TestPropertySource(properties = "cas.authn.passwordless.accounts.groovy.location=classpath:PasswordlessAccount.groovy")
+@Tag("WebflowActions")
 public class DisplayBeforePasswordlessAuthenticationActionTests extends BasePasswordlessAuthenticationActionTests {
     @Autowired
     @Qualifier("displayBeforePasswordlessAuthenticationAction")
@@ -48,7 +45,27 @@ public class DisplayBeforePasswordlessAuthenticationActionTests extends BasePass
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         request.addParameter("username", "casuser");
-        assertEquals("success", displayBeforePasswordlessAuthenticationAction.execute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS,
+            displayBeforePasswordlessAuthenticationAction.execute(context).getId());
+    }
+
+    @Test
+    public void verifyNoUser() throws Exception {
+        val context = new MockRequestContext();
+        context.setCurrentEvent(new Event(this, "processing"));
+        val request = new MockHttpServletRequest();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        assertThrows(UnauthorizedServiceException.class, () -> displayBeforePasswordlessAuthenticationAction.execute(context));
+    }
+
+    @Test
+    public void verifyUnknownUser() throws Exception {
+        val context = new MockRequestContext();
+        context.setCurrentEvent(new Event(this, "processing"));
+        val request = new MockHttpServletRequest();
+        request.addParameter("username", "unknown");
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        assertThrows(UnauthorizedServiceException.class, () -> displayBeforePasswordlessAuthenticationAction.execute(context));
     }
 
     @Test
@@ -59,6 +76,7 @@ public class DisplayBeforePasswordlessAuthenticationActionTests extends BasePass
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         WebUtils.putPasswordlessAuthenticationAccount(context, passwordlessUserAccountStore.findUser("casuser").get());
-        assertEquals("success", displayBeforePasswordlessAuthenticationAction.execute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS,
+            displayBeforePasswordlessAuthenticationAction.execute(context).getId());
     }
 }

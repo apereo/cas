@@ -72,4 +72,10 @@ public class WSFederationRegisteredService extends RegexRegisteredService {
     public String getFriendlyName() {
         return "WS Federation Relying Party";
     }
+
+    @JsonIgnore
+    @Override
+    public int getEvaluationPriority() {
+        return 3;
+    }
 }

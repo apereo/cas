@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.adaptive.intel;
 import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
@@ -26,7 +27,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("RestfulApi")
 public class BlackDotIPAddressIntelligenceServiceTests {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
     public void verifyBannedOperation() {
@@ -101,6 +103,21 @@ public class BlackDotIPAddressIntelligenceServiceTests {
             val response = service.examine(new MockRequestContext(), "37.58.59.181");
             assertFalse(response.isBanned());
             assertEquals(0.4351, response.getScore());
+        }
+    }
+
+    @Test
+    public void verifyBadResponse() {
+        try (val webServer = new MockWebServer(9319,
+            new ByteArrayResource("${bad-json$".getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
+            webServer.start();
+            val props = new AdaptiveAuthenticationProperties();
+            props.getIpIntel().getBlackDot().setUrl("http://localhost:9319?ip=%s");
+            props.getIpIntel().getBlackDot().setMode("DYNA_CHECK");
+            props.getIpIntel().getBlackDot().setEmailAddress("cas@apereo.org");
+            val service = new BlackDotIPAddressIntelligenceService(props);
+            val response = service.examine(new MockRequestContext(), "37.58.59.181");
+            assertTrue(response.isBanned());
         }
     }
 

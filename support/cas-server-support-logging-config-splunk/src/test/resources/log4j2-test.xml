@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Configuration shutdownHook="disable">
+    <Appenders>
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%highlight{%d %p [%c] - &lt;%m&gt;%n}" />
+        </Console>
+        <SplunkAppender name="casSplunk">
+            <AppenderRef ref="console" />
+        </SplunkAppender>
+    </Appenders>
+    <Loggers>
+        <Logger name="org.apereo.cas" level="info" additivity="false">
+            <AppenderRef ref="casSplunk"/>
+        </Logger>
+        <Root level="error">
+            <AppenderRef ref="casSplunk"/>
+        </Root>
+    </Loggers>
+</Configuration>

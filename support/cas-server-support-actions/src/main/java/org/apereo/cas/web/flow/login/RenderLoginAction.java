@@ -6,6 +6,7 @@ import org.apereo.cas.web.flow.decorator.GroovyLoginWebflowDecorator;
 import org.apereo.cas.web.flow.decorator.RestfulLoginWebflowDecorator;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
@@ -20,6 +21,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 6.0.0
  */
 @RequiredArgsConstructor
+@Slf4j
 public class RenderLoginAction extends AbstractAction {
     /**
      * The services manager with access to the registry.
@@ -42,12 +44,15 @@ public class RenderLoginAction extends AbstractAction {
 
         val groovyScript = decorator.getGroovy().getLocation();
         if (groovyScript != null) {
+            LOGGER.trace("Decorating login webflow using [{}]", groovyScript);
             val groovy = new GroovyLoginWebflowDecorator(groovyScript);
             groovy.decorate(requestContext, applicationContext);
             return null;
         }
 
-        if (StringUtils.isNotBlank(decorator.getRest().getUrl())) {
+        val url = decorator.getRest().getUrl();
+        if (StringUtils.isNotBlank(url)) {
+            LOGGER.trace("Decorating login webflow REST endpoint [{}]", url);
             val rest = new RestfulLoginWebflowDecorator(decorator.getRest());
             rest.decorate(requestContext, applicationContext);
             return null;

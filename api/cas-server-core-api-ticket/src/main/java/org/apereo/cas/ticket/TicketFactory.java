@@ -11,10 +11,28 @@ package org.apereo.cas.ticket;
 public interface TicketFactory {
 
     /**
+     * Gets name.
+     *
+     * @return the name
+     */
+    default String getName() {
+        return getClass().getSimpleName();
+    }
+
+    /**
      * Get ticket factory.
      *
      * @param clazz the clazz
      * @return ticket factory object
      */
-    TicketFactory get(Class<? extends Ticket> clazz);
+    default TicketFactory get(Class<? extends Ticket> clazz) {
+        return this;
+    }
+
+    /**
+     * Gets ticket type.
+     *
+     * @return the ticket type
+     */
+    Class<? extends Ticket> getTicketType();
 }

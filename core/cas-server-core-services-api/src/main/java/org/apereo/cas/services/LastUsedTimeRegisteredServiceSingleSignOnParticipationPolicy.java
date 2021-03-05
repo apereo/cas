@@ -32,7 +32,7 @@ public class LastUsedTimeRegisteredServiceSingleSignOnParticipationPolicy extend
     }
 
     @Override
-    protected ZonedDateTime determineInitialDateTime(final TicketState ticketState) {
+    protected ZonedDateTime determineInitialDateTime(final RegisteredService registeredService, final TicketState ticketState) {
         return ticketState.getLastTimeUsed();
     }
 }

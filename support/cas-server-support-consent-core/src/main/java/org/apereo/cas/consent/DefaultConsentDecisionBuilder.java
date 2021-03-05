@@ -6,6 +6,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,6 +22,7 @@ import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -32,7 +34,9 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class DefaultConsentDecisionBuilder implements ConsentDecisionBuilder {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
+
     private static final long serialVersionUID = 8220243983483982326L;
 
     private final transient CipherExecutor<Serializable, String> consentCipherExecutor;
@@ -116,8 +120,9 @@ public class DefaultConsentDecisionBuilder implements ConsentDecisionBuilder {
      */
     protected String buildAndEncodeConsentAttributes(final Map<String, List<Object>> attributes) {
         try {
-            val json = MAPPER.writer(new MinimalPrettyPrinter()).writeValueAsString(attributes);
-            val base64 = EncodingUtils.encodeBase64(json);
+            val json = MAPPER.writer(new MinimalPrettyPrinter()).writeValueAsString(Objects.requireNonNull(attributes));
+            LOGGER.trace("Consentable attributes are [{}]", json);
+            val base64 = EncodingUtils.encodeBase64(Objects.requireNonNull(json));
             return this.consentCipherExecutor.encode(base64);
         } catch (final Exception e) {
             throw new IllegalArgumentException("Could not serialize attributes for consent decision");

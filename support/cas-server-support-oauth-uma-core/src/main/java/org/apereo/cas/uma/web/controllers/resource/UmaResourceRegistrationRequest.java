@@ -2,6 +2,7 @@ package org.apereo.cas.uma.web.controllers.resource;
 
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.uma.ticket.resource.ResourceSet;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -9,7 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import lombok.SneakyThrows;
 import lombok.val;
-import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.core.profile.UserProfile;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -24,8 +25,8 @@ import java.util.LinkedHashSet;
  */
 @Data
 public class UmaResourceRegistrationRequest implements Serializable {
-    private static final ObjectMapper MAPPER = new ObjectMapper()
-        .findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     private static final long serialVersionUID = 3614209506339611242L;
 
@@ -54,7 +55,7 @@ public class UmaResourceRegistrationRequest implements Serializable {
      * @return the resource set
      */
     @JsonIgnore
-    public ResourceSet asResourceSet(final CommonProfile profileResult) {
+    public ResourceSet asResourceSet(final UserProfile profileResult) {
         val resourceSet = new ResourceSet();
         resourceSet.setIconUri(getIconUri());
         resourceSet.setId(getId());

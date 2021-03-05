@@ -4,6 +4,8 @@ title: CAS - Releasing Principal Id
 category: Attributes
 ---
 
+{% include variables.html %}
+
 # Principal-Id Attribute
 
 Registered CAS applications are given the ability to allow for configuration of a
@@ -19,7 +21,7 @@ into uppercase/lowercase. This is noted by the `canonicalizationMode` whose allo
 
 ## Default
 
-The default configuration which need not explicitly be defined, simply returns the resolved
+The default configuration which need not explicitly be defined, returns the resolved
 principal id as the username for this service.
 
 ```json
@@ -72,7 +74,7 @@ The public key is then configured for a service definition in CAS:
 }
 ``` 
 
-The configuration of the public key component qualifies to use the [Spring Expression Language](../installation/Configuring-Spring-Expressions.html) syntax.
+The configuration of the public key component qualifies to use the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.
 
 The application can then proceed to decrypt the username using its own private key.
 The following sample code demonstrates how that might be done in Java:
@@ -170,7 +172,6 @@ Groovy scripts whether inlined or external will receive and have access to the f
 - `service`: The service object that is matched by the registered service definition.
 - `logger`: A logger object, able to provide `logger.info(...)` operations, etc.
 
-
 ### Inline
 
 Embed the groovy script directly inside the service configuration.
@@ -184,11 +185,14 @@ Embed the groovy script directly inside the service configuration.
   "description" : "sample",
   "usernameAttributeProvider" : {
     "@class" : "org.apereo.cas.services.GroovyRegisteredServiceUsernameProvider",
-    "groovyScript" : "groovy { return attributes['uid'] + '123456789' }",
+    "groovyScript" : "groovy { return attributes['uid'][0] + '123456789' }",
     "canonicalizationMode" : "UPPER"
   }
 }
 ```
+
+Note that the `uid` attribute in the above example is resolved internally as a multivalued attribute, as should all attributes when fetched by CAS. So 
+the above example uses the `[0]` syntax to fetch the first value of the attribute.
 
 ### External
 
@@ -217,7 +221,7 @@ logger.info("Choosing username attribute out of attributes $attributes")
 return "newPrincipalId"
 ```
 
-The configuration of this component qualifies to use the [Spring Expression Language](../installation/Configuring-Spring-Expressions.html) syntax.
+The configuration of this component qualifies to use the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.
 
 ## Anonymous / Transient
 
@@ -239,7 +243,7 @@ Provides an opaque identifier for the username.
 ## Anonymous / Persistent
 
 Provides an opaque identifier for the username. The opaque identifier by default conforms to the requirements
-of the [eduPersonTargetedID](http://www.incommon.org/federation/attributesummary.html#eduPersonTargetedID) attribute.
+of the [eduPersonTargetedID](https://spaces.at.internet2.edu/display/federation/Persistent+Identifier+Support) attribute.
 The generated id may be based off of an existing principal attribute. If left unspecified or attribute not found, the authenticated principal id is used.
 
 ```json

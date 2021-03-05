@@ -30,4 +30,6 @@ public class InMemoryResourceMetadataResolver extends DOMMetadataResolver {
         super(SamlUtils.getRootElementFrom(Files.newInputStream(metadataResource.toPath()), configBean));
         setParserPool(configBean.getParserPool());
     }
+
+
 }

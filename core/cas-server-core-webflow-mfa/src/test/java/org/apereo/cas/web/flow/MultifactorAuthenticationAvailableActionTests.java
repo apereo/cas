@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Webflow")
+@Tag("WebflowMfaActions")
 public class MultifactorAuthenticationAvailableActionTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier("mfaAvailableAction")
@@ -37,7 +37,11 @@ public class MultifactorAuthenticationAvailableActionTests extends BaseCasWebflo
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService());
+
+        val service = RegisteredServiceTestUtils.getRegisteredService();
+        servicesManager.save(service);
+        WebUtils.putRegisteredService(context, service);
+
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);
 
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);

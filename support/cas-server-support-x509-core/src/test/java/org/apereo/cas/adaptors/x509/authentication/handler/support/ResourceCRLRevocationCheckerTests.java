@@ -6,6 +6,7 @@ import org.apereo.cas.adaptors.x509.authentication.revocation.checker.ResourceCR
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.ThresholdExpiredCRLRevocationPolicy;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -26,6 +27,7 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
  * @author Marvin S. Addison
  * @since 3.4.6
  */
+@Tag("X509")
 public class ResourceCRLRevocationCheckerTests extends BaseCRLRevocationCheckerTests {
 
     @ParameterizedTest
@@ -33,6 +35,7 @@ public class ResourceCRLRevocationCheckerTests extends BaseCRLRevocationCheckerT
     public void checkCertificate(final ResourceCRLRevocationChecker checker, final String[] certFiles, final GeneralSecurityException expected) {
         checker.init();
         BaseCRLRevocationCheckerTests.checkCertificate(checker, certFiles, expected);
+        checker.destroy();
     }
 
     /**

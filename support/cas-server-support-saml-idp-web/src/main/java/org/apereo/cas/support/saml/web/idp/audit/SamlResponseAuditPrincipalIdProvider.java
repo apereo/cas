@@ -4,6 +4,7 @@ import org.apereo.cas.audit.spi.principal.DefaultAuditPrincipalIdProvider;
 import org.apereo.cas.authentication.Authentication;
 
 import lombok.val;
+import org.aspectj.lang.JoinPoint;
 import org.opensaml.saml.saml2.core.Response;
 
 /**
@@ -19,7 +20,8 @@ public class SamlResponseAuditPrincipalIdProvider extends DefaultAuditPrincipalI
     }
 
     @Override
-    public String getPrincipalIdFrom(final Authentication authentication, final Object returnValue, final Exception exception) {
+    public String getPrincipalIdFrom(final JoinPoint auditTarget, final Authentication authentication,
+                                     final Object returnValue, final Exception exception) {
         val response = (Response) returnValue;
         if (!response.getAssertions().isEmpty()) {
             val assertion = response.getAssertions().get(0);
@@ -28,11 +30,12 @@ public class SamlResponseAuditPrincipalIdProvider extends DefaultAuditPrincipalI
                 return subject.getNameID().getValue();
             }
         }
-        return super.getPrincipalIdFrom(authentication, returnValue, exception);
+        return super.getPrincipalIdFrom(auditTarget, authentication, returnValue, exception);
     }
 
     @Override
-    public boolean supports(final Authentication authentication, final Object resultValue, final Exception exception) {
-        return resultValue != null && resultValue instanceof Response;
+    public boolean supports(final JoinPoint auditTarget, final Authentication authentication,
+                            final Object resultValue, final Exception exception) {
+        return resultValue instanceof Response;
     }
 }

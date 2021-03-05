@@ -1,15 +1,16 @@
 package org.apereo.cas.support.sms;
 
 import org.apereo.cas.configuration.model.support.sms.AmazonSnsProperties;
-import org.apereo.cas.util.io.SmsSender;
+import org.apereo.cas.notifications.sms.SmsSender;
+import org.apereo.cas.util.LoggingUtils;
 
-import com.amazonaws.services.sns.AmazonSNS;
-import com.amazonaws.services.sns.model.MessageAttributeValue;
-import com.amazonaws.services.sns.model.PublishRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import software.amazon.awssdk.services.sns.SnsClient;
+import software.amazon.awssdk.services.sns.model.MessageAttributeValue;
+import software.amazon.awssdk.services.sns.model.PublishRequest;
 
 import java.util.HashMap;
 
@@ -22,7 +23,8 @@ import java.util.HashMap;
 @Slf4j
 @RequiredArgsConstructor
 public class AmazonSimpleNotificationServiceSmsSender implements SmsSender {
-    private final AmazonSNS snsClient;
+    private final SnsClient snsClient;
+
     private final AmazonSnsProperties snsProperties;
 
     @Override
@@ -30,22 +32,23 @@ public class AmazonSimpleNotificationServiceSmsSender implements SmsSender {
         try {
             val smsAttributes = new HashMap<String, MessageAttributeValue>();
             if (StringUtils.isNotBlank(snsProperties.getSenderId())) {
-                smsAttributes.put("AWS.SNS.SMS.SenderID", new MessageAttributeValue().withStringValue("mySenderID").withDataType("String"));
+                smsAttributes.put("AWS.SNS.SMS.SenderID", MessageAttributeValue.builder().stringValue(snsProperties.getSenderId()).dataType("String").build());
             }
             if (StringUtils.isNotBlank(snsProperties.getMaxPrice())) {
-                smsAttributes.put("AWS.SNS.SMS.MaxPrice", new MessageAttributeValue().withStringValue("0.50").withDataType("Number"));
+                smsAttributes.put("AWS.SNS.SMS.MaxPrice", MessageAttributeValue.builder().stringValue(snsProperties.getMaxPrice()).dataType("Number").build());
             }
             if (StringUtils.isNotBlank(snsProperties.getSmsType())) {
-                smsAttributes.put("AWS.SNS.SMS.SMSType", new MessageAttributeValue().withStringValue("Promotional").withDataType("String"));
+                smsAttributes.put("AWS.SNS.SMS.SMSType", MessageAttributeValue.builder().stringValue(snsProperties.getSmsType()).dataType("String").build());
             }
-            val result = snsClient.publish(new PublishRequest()
-                .withMessage(message)
-                .withPhoneNumber(to)
-                .withMessageAttributes(smsAttributes));
-            LOGGER.debug("Submitted SMS publish request with resulting message id [{}]", result.getMessageId());
-            return StringUtils.isNotBlank(result.getMessageId());
+            val result = snsClient.publish(PublishRequest.builder()
+                .message(message)
+                .phoneNumber(to)
+                .messageAttributes(smsAttributes)
+                .build());
+            LOGGER.debug("Submitted SMS publish request with resulting message id [{}]", result.messageId());
+            return StringUtils.isNotBlank(result.messageId());
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }

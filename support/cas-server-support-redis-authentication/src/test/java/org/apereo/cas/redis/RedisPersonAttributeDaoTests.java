@@ -1,5 +1,6 @@
 package org.apereo.cas.redis;
 
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
@@ -7,6 +8,7 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
@@ -27,8 +29,6 @@ import org.apereo.cas.util.junit.EnabledIfPortOpen;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributeDaoFilter;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -37,9 +37,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import redis.embedded.RedisServer;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -50,13 +51,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("Redis")
-@EnabledIfPortOpen(port = 6329)
+@EnabledIfPortOpen(port = 6379)
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     RedisAuthenticationConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreLogoutConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
@@ -74,30 +76,19 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationPrincipalConfiguration.class
 },
     properties = {
-        "cas.authn.attributeRepository.redis[0].host=localhost",
-        "cas.authn.attributeRepository.redis[0].port=6329"
+        "cas.authn.attribute-repository.redis[0].host=localhost",
+        "cas.authn.attribute-repository.redis[0].port=6379"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class RedisPersonAttributeDaoTests {
-    private static RedisServer REDIS_SERVER;
+    private static final String USER_ID = UUID.randomUUID().toString();
 
     @Autowired
-    @Qualifier("attributeRepository")
+    @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
     private IPersonAttributeDao attributeRepository;
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @BeforeAll
-    public static void startRedis() throws Exception {
-        REDIS_SERVER = new RedisServer(6329);
-        REDIS_SERVER.start();
-    }
-
-    @AfterAll
-    public static void stopRedis() {
-        REDIS_SERVER.stop();
-    }
 
     @BeforeEach
     public void initialize() {
@@ -105,18 +96,18 @@ public class RedisPersonAttributeDaoTests {
         val conn = RedisObjectFactory.newRedisConnectionFactory(redis, true);
         val template = RedisObjectFactory.newRedisTemplate(conn);
         template.afterPropertiesSet();
-        val attr = new HashMap<>();
+        val attr = new HashMap<String, List<Object>>();
         attr.put("name", CollectionUtils.wrapList("John", "Jon"));
         attr.put("age", CollectionUtils.wrapList("42"));
-        template.opsForHash().putAll("casuser", attr);
+        template.opsForHash().putAll(USER_ID, attr);
     }
 
     @Test
     public void verifyAttributes() {
-        val person = attributeRepository.getPerson("casuser", IPersonAttributeDaoFilter.alwaysChoose());
+        val person = attributeRepository.getPerson(USER_ID, IPersonAttributeDaoFilter.alwaysChoose());
         assertNotNull(person);
         val attributes = person.getAttributes();
-        assertEquals("casuser", person.getName());
+        assertEquals(USER_ID, person.getName());
         assertTrue(attributes.containsKey("name"));
         assertTrue(attributes.containsKey("age"));
     }

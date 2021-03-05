@@ -58,6 +58,8 @@ public class JpaPasswordlessAuthenticationConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "passwordlessDataSource")
+    @RefreshScope
     public DataSource passwordlessDataSource() {
         return JpaBeans.newDataSource(casProperties.getAuthn().getPasswordless().getTokens().getJpa());
     }
@@ -65,11 +67,12 @@ public class JpaPasswordlessAuthenticationConfiguration {
     @Bean
     public LocalContainerEntityManagerFactoryBean passwordlessEntityManagerFactory() {
         val factory = jpaBeanFactory.getObject();
-        val ctx = new JpaConfigurationContext(
-            jpaPasswordlessVendorAdapter(),
-            "jpaPasswordlessAuthNContext",
-            jpaPasswordlessPackagesToScan(),
-            passwordlessDataSource());
+        val ctx = JpaConfigurationContext.builder()
+            .jpaVendorAdapter(jpaPasswordlessVendorAdapter())
+            .persistenceUnitName("jpaPasswordlessAuthNContext")
+            .dataSource(passwordlessDataSource())
+            .packagesToScan(jpaPasswordlessPackagesToScan())
+            .build();
         return factory.newEntityManagerFactoryBean(ctx, casProperties.getAuthn().getPasswordless().getTokens().getJpa());
     }
 
@@ -102,8 +105,8 @@ public class JpaPasswordlessAuthenticationConfiguration {
         private final PasswordlessTokenRepository repository;
 
         @Synchronized
-        @Scheduled(initialDelayString = "${cas.authn.passwordless.tokens.jpa.cleaner.schedule.startDelay:PT30S}",
-            fixedDelayString = "${cas.authn.passwordless.tokens.jpa.cleaner.schedule.repeatInterval:PT35S}")
+        @Scheduled(initialDelayString = "${cas.authn.passwordless.tokens.jpa.cleaner.schedule.start-delay:PT30S}",
+            fixedDelayString = "${cas.authn.passwordless.tokens.jpa.cleaner.schedule.repeat-interval:PT35S}")
         public void clean() {
             repository.clean();
         }

@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
@@ -17,6 +18,7 @@ import javax.persistence.Column;
 import javax.persistence.Lob;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
+import java.io.Serializable;
 
 /**
  * This is {@link SamlIdPMetadataDocument}.
@@ -29,8 +31,10 @@ import javax.persistence.Transient;
 @Setter
 @AllArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-public class SamlIdPMetadataDocument {
+@Builder
+public class SamlIdPMetadataDocument implements Serializable {
 
+    private static final long serialVersionUID = -705737727407407083L;
     /**
      * The Id.
      */
@@ -38,10 +42,12 @@ public class SamlIdPMetadataDocument {
     @Column(name = "id", columnDefinition = "BIGINT")
     @JsonProperty
     @Transient
+    @Builder.Default
     private long id = -1;
 
     @Column(name = "appliesTo", unique = true, length = 512)
     @JsonProperty
+    @Builder.Default
     private String appliesTo = "CAS";
 
     /**

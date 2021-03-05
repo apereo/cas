@@ -18,6 +18,13 @@ public interface CasWebflowConstants {
      * Transitions.
      ****************************************
      */
+
+
+    /**
+     * The transition state 'captchaError'.
+     */
+    String TRANSITION_ID_CAPTCHA_ERROR = "captchaError";
+
     /**
      * The transition state 'authenticationFailure'.
      */
@@ -37,6 +44,7 @@ public interface CasWebflowConstants {
      * The transition state 'finalize'.
      */
     String TRANSITION_ID_FINALIZE = "finalize";
+    
 
     /**
      * The transition state 'warn'.
@@ -54,14 +62,29 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_SUBMIT = "submit";
 
     /**
+     * The transition state 'resend'.
+     */
+    String TRANSITION_ID_RESEND = "resend";
+
+    /**
      * The transition state 'error'.
      */
     String TRANSITION_ID_ERROR = "error";
 
     /**
+     * The transition state 'validate'.
+     */
+    String TRANSITION_ID_VALIDATE = "validate";
+
+    /**
      * The transition state 'resume'.
      */
     String TRANSITION_ID_RESUME = "resume";
+
+    /**
+     * Transition id `retry`.
+     */
+    String TRANSITION_ID_RETRY = "retry";
 
     /**
      * The transition state 'gateway'.
@@ -122,6 +145,11 @@ public interface CasWebflowConstants {
      * Transition id 'register'.
      */
     String TRANSITION_ID_REGISTER = "register";
+
+    /**
+     * Transition id 'select'.
+     */
+    String TRANSITION_ID_SELECT = "select";
 
     /**
      * The transition state 'success'.
@@ -189,9 +217,18 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_SUCCESS_WITH_WARNINGS = "successWithWarnings";
 
     /**
+     * Transition id 'passwordUpdateSuccess'.
+     */
+    String TRANSITION_ID_PASSWORD_UPDATE_SUCCESS = "passwordUpdateSuccess";
+
+    /**
      * Transition id 'resetPassword'.
      */
     String TRANSITION_ID_RESET_PASSWORD = "resetPassword";
+    /**
+     * Transition id 'invalidPasswordResetToken'.
+     */
+    String TRANSITION_ID_INVALID_PASSWORD_RESET_TOKEN = "invalidPasswordResetToken";
 
     /**
      * Transition id 'forgotUsername'.
@@ -268,6 +305,11 @@ public interface CasWebflowConstants {
     String STATE_ID_TICKET_GRANTING_TICKET_CHECK = "ticketGrantingTicketCheck";
 
     /**
+     * The state id 'startX509Authenticate'.
+     */
+    String STATE_ID_X509_START = "startX509Authenticate";
+
+    /**
      * The state id 'createTicketGrantingTicket'.
      */
     String STATE_ID_CREATE_TICKET_GRANTING_TICKET = "createTicketGrantingTicket";
@@ -278,9 +320,24 @@ public interface CasWebflowConstants {
     String STATE_ID_INIT_LOGIN_FORM = "initializeLoginForm";
 
     /**
+     * The state 'afterInitializeLoginForm'.
+     */
+    String STATE_ID_AFTER_INIT_LOGIN_FORM = "afterInitializeLoginForm";
+
+    /**
+     * The state 'cancel'.
+     */
+    String STATE_ID_CANCEL= "cancel";
+
+    /**
      * The state 'viewLoginForm'.
      */
     String STATE_ID_VIEW_LOGIN_FORM = "viewLoginForm";
+
+    /**
+     * The state 'unavailable'.
+     */
+    String STATE_ID_UNAVAILABLE = "unavailable";
 
     /**
      * The state 'serviceAuthorizationCheck'.
@@ -298,7 +355,7 @@ public interface CasWebflowConstants {
     String STATE_ID_GATEWAY_REQUEST_CHECK = "gatewayRequestCheck";
 
     /**
-     * The state 'gatewayRequestCheck'.
+     * The state 'generateServiceTicket'.
      */
     String STATE_ID_GENERATE_SERVICE_TICKET = "generateServiceTicket";
 
@@ -343,6 +400,21 @@ public interface CasWebflowConstants {
     String STATE_ID_MFA_FAILURE = "mfaFailure";
 
     /**
+     * The state 'deny'.
+     */
+    String STATE_ID_DENY = "deny";
+
+    /**
+     * The state 'finalizeWarning'.
+     */
+    String STATE_ID_FINALIZE_WARNING = "finalizeWarning";
+
+    /**
+     * The state 'registerDevice'.
+     */
+    String STATE_ID_REGISTER_DEVICE = "registerDevice";
+
+    /**
      * The state 'serviceUnauthorizedCheck'.
      */
     String STATE_ID_SERVICE_UNAUTHZ_CHECK = "serviceUnauthorizedCheck";
@@ -381,10 +453,12 @@ public interface CasWebflowConstants {
      * State id 'acceptableUsagePolicyView.
      */
     String STATE_ID_ACCEPTABLE_USAGE_POLICY_VIEW = "acceptableUsagePolicyView";
+
     /**
      * State id 'aupAcceptedAction.
      */
     String STATE_ID_AUP_ACCEPTED = "aupAcceptedAction";
+
     /**
      * State id 'acceptableUsagePolicyCheck.
      */
@@ -428,7 +502,7 @@ public interface CasWebflowConstants {
     /**
      * Delegated authentication state id.
      */
-    String STATE_ID_DELEGATED_AUTHENTICATION = "delegatedAuthenticationAction";
+    String STATE_ID_DELEGATED_AUTHENTICATION = "delegatedAuthentication";
 
     /**
      * State id 'frontLogout'.
@@ -508,16 +582,18 @@ public interface CasWebflowConstants {
     /**
      * The state id 'registerDeviceView'.
      */
-    String STATE_ID_REGISTER_DEVICE = "registerDeviceView";
+    String STATE_ID_REGISTER_DEVICE_VIEW = "registerDeviceView";
 
     /**
      * The state id 'spnego'.
      */
     String STATE_ID_SPNEGO = "spnego";
+
     /**
      * The state id 'startSpnegoAuthenticate'.
      */
     String STATE_ID_START_SPNEGO_AUTHENTICATE = "startSpnegoAuthenticate";
+
     /**
      * The state id 'evaluateClientRequest'.
      */
@@ -532,6 +608,31 @@ public interface CasWebflowConstants {
      * The view state 'casWsFedStopWebflow'.
      */
     String STATE_ID_WSFED_STOP_WEBFLOW = "casWsFedStopWebflow";
+
+    /**
+     * The view state 'sendPasswordResetInstructions'.
+     */
+    String STATE_ID_SEND_PASSWORD_RESET_INSTRUCTIONS = "sendPasswordResetInstructions";
+
+    /**
+     * The view state 'sendForgotUsernameInstructions'.
+     */
+    String STATE_ID_SEND_FORGOT_USERNAME_INSTRUCTIONS = "sendForgotUsernameInstructions";
+
+    /**
+     * The view state 'passwordChangeAction'.
+     */
+    String STATE_ID_PASSWORD_CHANGE_ACTION = "passwordChangeAction";
+
+    /**
+     * The view state 'passwordResetErrorView'.
+     */
+    String STATE_ID_PASSWORD_RESET_ERROR_VIEW = "passwordResetErrorView";
+
+    /**
+     * Action id `delegatedAuthenticationClientRetry`.
+     */
+    String STATE_ID_DELEGATED_AUTHENTICATION_CLIENT_RETRY = "delegatedAuthenticationClientRetry";
 
     /*
      ****************************************
@@ -655,10 +756,6 @@ public interface CasWebflowConstants {
      * Decisions.
      ****************************************
      */
-    /**
-     * The decision state 'finishLogout'.
-     */
-    String DECISION_STATE_FINISH_LOGOUT = "finishLogout";
 
     /**
      * Action to check if login should redirect to password reset subflow.
@@ -701,6 +798,63 @@ public interface CasWebflowConstants {
      * Actions.
      ****************************************
      */
+
+    /**
+     * Action id 'injectResponseHeadersAction'.
+     */
+    String ACTION_ID_INJECT_RESPONSE_HEADERS = "injectResponseHeadersAction";
+
+    /**
+     * Action id 'serviceAuthorizationCheck'.
+     */
+    String ACTION_ID_SERVICE_AUTHZ_CHECK = "serviceAuthorizationCheck";
+
+    /**
+     * Action id 'gatewayServicesManagementCheck'.
+     */
+    String ACTION_ID_GATEWAY_CHECK = "gatewayServicesManagementCheck";
+
+    /**
+     * Action id 'validateCaptchaAction'.
+     */
+    String ACTION_ID_VALIDATE_CAPTCHA = "validateCaptchaAction";
+
+    /**
+     * Action id 'x509Check'.
+     */
+    String ACTION_ID_X509_CHECK = "x509Check";
+
+    /**
+     * Action id 'initializeLoginAction'.
+     */
+    String ACTION_ID_INIT_LOGIN_ACTION = "initializeLoginAction";
+
+    /**
+     * Action id 'initializeCaptchaAction'.
+     */
+    String ACTION_ID_INIT_CAPTCHA = "initializeCaptchaAction";
+
+    /**
+     * Action id 'passwordResetValidateCaptchaAction'.
+     */
+    String ACTION_ID_PASSWORD_RESET_VALIDATE_CAPTCHA = "passwordResetValidateCaptchaAction";
+
+    /**
+     * Action id 'forgotUsernameValidateCaptchaAction'.
+     */
+    String ACTION_ID_FORGOT_USERNAME_VALIDATE_CAPTCHA = "forgotUsernameValidateCaptchaAction";
+
+    /**
+     * Action id 'passwordResetInitializeCaptchaAction'.
+     */
+    String ACTION_ID_PASSWORD_RESET_INIT_CAPTCHA = "passwordResetInitializeCaptchaAction";
+
+    /**
+     * Action id 'forgotUsernameInitializeCaptchaAction'.
+     */
+    String ACTION_ID_FORGOT_USERNAME_INIT_CAPTCHA = "forgotUsernameInitializeCaptchaAction";
+
+
     /**
      * Action id 'renderLoginFormAction'.
      */
@@ -767,6 +921,19 @@ public interface CasWebflowConstants {
     String ACTION_ID_LOGOUT_VIEW_SETUP = "logoutViewSetupAction";
 
     /**
+     * Action id 'serviceWarningAction'.
+     */
+    String ACTION_ID_SERVICE_WARNING = "serviceWarningAction";
+    /**
+     * Action id 'finishLogoutAction'.
+     */
+    String ACTION_ID_FINISH_LOGOUT = "finishLogoutAction";
+    /**
+     * Action id 'logoutAction'.
+     */
+    String ACTION_ID_LOGOUT = "logoutAction";
+    
+    /**
      * Action id 'authenticationExceptionHandler'.
      */
     String ACTION_ID_AUTHENTICATION_EXCEPTION_HANDLER = "authenticationExceptionHandler";
@@ -785,6 +952,22 @@ public interface CasWebflowConstants {
      * Action id `delegatedAuthenticationAction`.
      */
     String ACTION_ID_DELEGATED_AUTHENTICATION = "delegatedAuthenticationAction";
+
+    /**
+     * Action id `delegatedAuthenticationClientLogoutAction`.
+     */
+    String ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_LOGOUT = "delegatedAuthenticationClientLogoutAction";
+
+
+    /**
+     * Action id `delegatedAuthenticationClientFinishLogoutAction`.
+     */
+    String ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_FINISH_LOGOUT = "delegatedAuthenticationClientFinishLogoutAction";
+
+    /**
+     * Action id `delegatedAuthenticationClientFinishLogoutAction`.
+     */
+    String ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_RETRY = "delegatedAuthenticationClientRetryAction";
 
     /**
      * Action id `renewAuthenticationRequestCheckAction`.
@@ -818,4 +1001,12 @@ public interface CasWebflowConstants {
      * Action id 'acceptableUsagePolicyVerifyServiceAction .
      */
     String ACTION_ID_AUP_VERIFY_SERVICE = "acceptableUsagePolicyVerifyServiceAction";
+    /**
+     * Action id 'sendForgotUsernameInstructionsAction .
+     */
+    String ACTION_ID_SEND_FORGOT_USERNAME_INSTRUCTIONS_ACTION = "sendForgotUsernameInstructionsAction";
+    /**
+     * Action id 'oneTimeTokenAuthenticationWebflowAction .
+     */
+    String ACTION_ID_OTP_AUTHENTICATION_ACTION = "oneTimeTokenAuthenticationWebflowAction";
 }

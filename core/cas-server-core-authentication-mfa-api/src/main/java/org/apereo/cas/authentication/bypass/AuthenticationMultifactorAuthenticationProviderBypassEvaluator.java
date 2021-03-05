@@ -69,7 +69,7 @@ public class AuthenticationMultifactorAuthenticationProviderBypassEvaluator exte
      *
      * @param bypass the bypass settings for the provider.
      * @param authn  the authn
-     * @return the boolean
+     * @return true/false
      */
     protected static boolean locateMatchingAttributeBasedOnAuthenticationAttributes(
         final MultifactorAuthenticationProviderBypassProperties bypass, final Authentication authn) {

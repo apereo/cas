@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import com.okta.authn.sdk.resource.AuthenticationResponse;
 import com.okta.authn.sdk.resource.User;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import javax.security.auth.login.AccountExpiredException;
@@ -25,6 +26,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
+@Tag("Authentication")
 public class OktaAuthenticationStateHandlerAdapterTests {
     @Test
     public void handleSuccessWithoutToken() {

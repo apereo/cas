@@ -9,6 +9,7 @@ import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlIdPProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurationContext;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -20,6 +21,7 @@ import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.soap.messaging.context.SOAP11Context;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.JEESessionStore;
+import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,15 +48,15 @@ public class ECPSamlIdPProfileHandlerController extends AbstractSamlIdPProfileHa
                                                                    final HttpServletResponse response) {
         try {
             val extractor = new BasicAuthExtractor();
-            val webContext = new JEEContext(request, response, new JEESessionStore());
-            val credentialsResult = extractor.extract(webContext);
+            val webContext = new JEEContext(request, response);
+            val credentialsResult = extractor.extract(webContext, JEESessionStore.INSTANCE);
             if (credentialsResult.isPresent()) {
-                val credentials = credentialsResult.get();
+                val credentials = (UsernamePasswordCredentials) credentialsResult.get();
                 LOGGER.debug("Received basic authentication ECP request from credentials [{}]", credentials);
                 return new UsernamePasswordCredential(credentials.getUsername(), credentials.getPassword());
             }
         } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
+            LoggingUtils.warn(LOGGER, e);
         }
         return null;
     }
@@ -121,7 +123,7 @@ public class ECPSamlIdPProfileHandlerController extends AbstractSamlIdPProfileHa
             LOGGER.trace("CAS assertion to use for building ECP SAML response is [{}]", casAssertion);
             buildSamlResponse(response, request, authenticationContext, casAssertion, binding);
         } catch (final AuthenticationException e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             val error = e.getHandlerErrors().values()
                 .stream()
                 .map(Throwable::getMessage)
@@ -129,7 +131,7 @@ public class ECPSamlIdPProfileHandlerController extends AbstractSamlIdPProfileHa
                 .collect(Collectors.joining(","));
             buildEcpFaultResponse(response, request, Pair.of(authnRequest, error), soapContext);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             buildEcpFaultResponse(response, request, Pair.of(authnRequest, e.getMessage()), soapContext);
         }
     }

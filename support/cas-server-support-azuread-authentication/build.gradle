@@ -5,16 +5,18 @@ dependencies {
     implementation libraries.nimbus
     implementation libraries.jose4j
     implementation libraries.azuread
+    implementation libraries.squareup
 
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-webflow-api")
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration-api")
-    
+
     implementation project(":support:cas-server-support-person-directory")
-    
+
     testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":core:cas-server-core-logout")
@@ -28,6 +30,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-authentication-attributes")
 
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-notifications", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")

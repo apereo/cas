@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -49,32 +48,29 @@ public class HazelcastTicketRegistryConfiguration {
     private ObjectProvider<TicketCatalog> ticketCatalog;
 
     @Bean
-    @RefreshScope
     public TicketRegistry ticketRegistry() {
         val hz = casProperties.getTicket().getRegistry().getHazelcast();
         val hazelcastInstance = casTicketRegistryHazelcastInstance();
-        var catalog = ticketCatalog.getObject();
+        val r = new HazelcastTicketRegistry(hazelcastInstance, ticketCatalog.getObject(), hz.getPageSize());
+        r.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(hz.getCrypto(), "hazelcast"));
+        return r;
+    }
+
+    @ConditionalOnMissingBean(name = "casTicketRegistryHazelcastInstance")
+    @Bean(destroyMethod = "shutdown")
+    public HazelcastInstance casTicketRegistryHazelcastInstance() {
+        val hz = casProperties.getTicket().getRegistry().getHazelcast();
+        LOGGER.debug("Creating Hazelcast instance for members [{}]", hz.getCluster().getNetwork().getMembers());
+        val hazelcastInstance = Hazelcast.newHazelcastInstance(HazelcastConfigurationFactory.build(hz));
+        val catalog = ticketCatalog.getObject();
         catalog.findAll()
             .stream()
             .map(TicketDefinition::getProperties)
             .peek(p -> LOGGER.debug("Created Hazelcast map configuration for [{}]", p))
             .map(p -> HazelcastConfigurationFactory.buildMapConfig(hz, p.getStorageName(), p.getStorageTimeout()))
             .forEach(m -> hazelcastInstance.getConfig().addMapConfig(m));
-        val r = new HazelcastTicketRegistry(hazelcastInstance,
-            catalog,
-            hz.getPageSize());
-        r.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(hz.getCrypto(), "hazelcast"));
-        return r;
+        return hazelcastInstance;
     }
-
-    @ConditionalOnMissingBean(name = "casTicketRegistryHazelcastInstance")
-    @Bean
-    public HazelcastInstance casTicketRegistryHazelcastInstance() {
-        val hz = casProperties.getTicket().getRegistry().getHazelcast();
-        LOGGER.debug("Creating Hazelcast instance for members [{}]", hz.getCluster().getMembers());
-        return Hazelcast.newHazelcastInstance(HazelcastConfigurationFactory.build(hz));
-    }
-
 
     @Bean
     public TicketRegistryCleaner ticketRegistryCleaner() {

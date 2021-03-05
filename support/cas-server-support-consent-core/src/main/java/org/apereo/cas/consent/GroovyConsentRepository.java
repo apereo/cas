@@ -27,7 +27,7 @@ public class GroovyConsentRepository extends BaseConsentRepository implements Di
     }
 
     @Override
-    public boolean storeConsentDecision(final ConsentDecision decision) {
+    public ConsentDecision storeConsentDecision(final ConsentDecision decision) {
         val result = super.storeConsentDecision(decision);
         writeAccountToGroovyResource(decision);
         return result;
@@ -37,6 +37,12 @@ public class GroovyConsentRepository extends BaseConsentRepository implements Di
     public boolean deleteConsentDecision(final long decisionId, final String principal) {
         super.deleteConsentDecision(decisionId, principal);
         return watchableScript.execute("delete", Boolean.class, decisionId, principal, LOGGER);
+    }
+
+    @Override
+    public boolean deleteConsentDecisions(final String principal) {
+        super.deleteConsentDecisions(principal);
+        return watchableScript.execute("deletePrincipal", Boolean.class, principal, LOGGER);
     }
 
     private void writeAccountToGroovyResource(final ConsentDecision decision) {

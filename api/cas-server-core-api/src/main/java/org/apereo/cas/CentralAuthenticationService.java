@@ -3,7 +3,6 @@ package org.apereo.cas;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.logout.slo.SingleLogoutRequest;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.ServiceTicket;
@@ -14,7 +13,6 @@ import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.validation.Assertion;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.function.Predicate;
 
 /**
@@ -69,6 +67,15 @@ public interface CentralAuthenticationService {
     Ticket updateTicket(Ticket ticket);
 
     /**
+     * Add the ticket instance in the underlying storage mechanism.
+     *
+     * @param ticket the ticket
+     * @return the updated ticket
+     * @since 6.2.0
+     */
+    Ticket addTicket(Ticket ticket);
+
+    /**
      * Obtains the given ticket by its id
      * and returns the CAS-representative object. Implementations
      * need to check for the validity of the ticket by making sure
@@ -104,11 +111,24 @@ public interface CentralAuthenticationService {
      * and removal op before invoking it. The ticket id can be associated
      * with any ticket type that is valid and understood by CAS and the underlying
      * ticket store; however some special cases require that you invoke the appropriate
-     * operation when destroying tickets, such {@link #destroyTicketGrantingTicket(String)}.
+     * operation when destroying tickets.
      *
      * @param ticketId the ticket id
+     * @return count of deleted tickets
      */
-    default void deleteTicket(final String ticketId) {
+    int deleteTicket(String ticketId);
+
+    /**
+     * Attempts to delete a ticket from the underlying store
+     * and is allowed to run any number of processing on the ticket
+     * and removal op before invoking it. The ticket id can be associated
+     * with any ticket type that is valid and understood by CAS and the underlying
+     * ticket store.
+     *
+     * @param ticket the ticket id
+     */
+    default void deleteTicket(final Ticket ticket) {
+        deleteTicket(ticket.getId());
     }
 
     /**
@@ -165,7 +185,7 @@ public interface CentralAuthenticationService {
     ProxyTicket grantProxyTicket(String proxyGrantingTicket, Service service) throws AbstractTicketException;
 
     /**
-     * Validate a ServiceTicket for a particular Service.
+     * Validate a {@link ServiceTicket} for a particular Service.
      *
      * @param serviceTicketId Proof of prior authentication.
      * @param service         Service wishing to validate a prior authentication.
@@ -175,17 +195,7 @@ public interface CentralAuthenticationService {
     Assertion validateServiceTicket(String serviceTicketId, Service service) throws AbstractTicketException;
 
     /**
-     * Destroy a TicketGrantingTicket and perform back channel logout. This has the effect of invalidating any
-     * Ticket that was derived from the TicketGrantingTicket being destroyed. May throw an
-     * {@link IllegalArgumentException} if the TicketGrantingTicket ID is null.
-     *
-     * @param ticketGrantingTicketId the id of the ticket we want to destroy
-     * @return the logout requests.
-     */
-    List<SingleLogoutRequest> destroyTicketGrantingTicket(String ticketGrantingTicketId);
-
-    /**
-     * Delegate a TicketGrantingTicket to a Service for proxying authentication
+     * Delegate a {@link TicketGrantingTicket}  to a Service for proxying authentication
      * to other Services.
      *
      * @param serviceTicketId      The service ticket identifier that will delegate to a {@link TicketGrantingTicket}.

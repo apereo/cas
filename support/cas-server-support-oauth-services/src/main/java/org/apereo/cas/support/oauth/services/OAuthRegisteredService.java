@@ -95,4 +95,10 @@ public class OAuthRegisteredService extends RegexRegisteredService {
         return "OAuth2 Client";
     }
 
+
+    @JsonIgnore
+    @Override
+    public int getEvaluationPriority() {
+        return 2;
+    }
 }

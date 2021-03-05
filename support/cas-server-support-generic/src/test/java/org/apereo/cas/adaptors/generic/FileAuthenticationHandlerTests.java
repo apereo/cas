@@ -80,9 +80,7 @@ public class FileAuthenticationHandlerTests {
         c.setUsername("fds");
         c.setPassword("rutgers");
 
-        assertThrows(AccountNotFoundException.class, () -> {
-            this.authenticationHandler.authenticate(c);
-        });
+        assertThrows(AccountNotFoundException.class, () -> this.authenticationHandler.authenticate(c));
     }
 
     @Test
@@ -90,9 +88,7 @@ public class FileAuthenticationHandlerTests {
         val c = new UsernamePasswordCredential();
         c.setUsername(null);
         c.setPassword("user");
-        assertThrows(AccountNotFoundException.class, () -> {
-            this.authenticationHandler.authenticate(c);
-        });
+        assertThrows(AccountNotFoundException.class, () -> this.authenticationHandler.authenticate(c));
     }
 
     @Test
@@ -100,9 +96,7 @@ public class FileAuthenticationHandlerTests {
         val c = new UsernamePasswordCredential();
         c.setUsername(null);
         c.setPassword(null);
-        assertThrows(AccountNotFoundException.class, () -> {
-            this.authenticationHandler.authenticate(c);
-        });
+        assertThrows(AccountNotFoundException.class, () -> this.authenticationHandler.authenticate(c));
     }
 
     @Test
@@ -110,9 +104,7 @@ public class FileAuthenticationHandlerTests {
         val c = new UsernamePasswordCredential();
         c.setUsername("scott");
         c.setPassword(null);
-        assertThrows(FailedLoginException.class, () -> {
-            this.authenticationHandler.authenticate(c);
-        });
+        assertThrows(FailedLoginException.class, () -> this.authenticationHandler.authenticate(c));
     }
 
     @Test
@@ -132,9 +124,7 @@ public class FileAuthenticationHandlerTests {
             new ClassPathResource("authentication2.txt"), ",");
         c.setUsername("fds");
         c.setPassword("rutgers");
-        assertThrows(AccountNotFoundException.class, () -> {
-            this.authenticationHandler.authenticate(c);
-        });
+        assertThrows(AccountNotFoundException.class, () -> this.authenticationHandler.authenticate(c));
     }
 
     @Test

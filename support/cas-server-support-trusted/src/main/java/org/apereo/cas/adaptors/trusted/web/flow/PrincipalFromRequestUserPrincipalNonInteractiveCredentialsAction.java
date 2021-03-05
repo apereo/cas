@@ -39,7 +39,7 @@ public class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAction ex
     }
 
     @Override
-    protected String getRemotePrincipalId(final HttpServletRequest request) {
+    public String getRemotePrincipalId(final HttpServletRequest request) {
         val principal = request.getUserPrincipal();
 
         if (principal != null) {

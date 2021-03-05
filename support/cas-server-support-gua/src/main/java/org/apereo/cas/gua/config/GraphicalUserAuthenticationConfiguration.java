@@ -5,6 +5,8 @@ import org.apereo.cas.gua.api.UserGraphicalAuthenticationRepository;
 import org.apereo.cas.gua.impl.LdapUserGraphicalAuthenticationRepository;
 import org.apereo.cas.gua.impl.StaticUserGraphicalAuthenticationRepository;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.LdapUtils;
+import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.web.flow.AcceptUserGraphicsForAuthenticationAction;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -14,6 +16,8 @@ import org.apereo.cas.web.flow.PrepareForGraphicalAuthenticationAction;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +29,12 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.core.io.Resource;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
+
+import java.util.stream.Collectors;
 
 /**
  * This is {@link GraphicalUserAuthenticationConfiguration}.
@@ -69,8 +76,15 @@ public class GraphicalUserAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "userGraphicalAuthenticationRepository")
     public UserGraphicalAuthenticationRepository userGraphicalAuthenticationRepository() {
         val gua = casProperties.getAuthn().getGua();
-        if (gua.getResource().getLocation() != null) {
-            return new StaticUserGraphicalAuthenticationRepository(gua.getResource().getLocation());
+        if (!gua.getSimple().isEmpty()) {
+            val accounts = gua.getSimple().entrySet()
+                .stream()
+                .map(Unchecked.function(entry -> {
+                    val res = ResourceUtils.getResourceFrom(entry.getValue());
+                    return Pair.of(entry.getKey(), (Resource) res);
+                }))
+                .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+            return new StaticUserGraphicalAuthenticationRepository(accounts);
         }
 
         val ldap = gua.getLdap();
@@ -78,7 +92,8 @@ public class GraphicalUserAuthenticationConfiguration {
             && StringUtils.isNotBlank(ldap.getSearchFilter())
             && StringUtils.isNotBlank(ldap.getBaseDn())
             && StringUtils.isNotBlank(ldap.getImageAttribute())) {
-            return new LdapUserGraphicalAuthenticationRepository(casProperties);
+            val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(gua.getLdap());
+            return new LdapUserGraphicalAuthenticationRepository(casProperties, connectionFactory);
         }
         throw new BeanCreationException("A repository instance must be configured to locate user-defined graphics");
     }
@@ -100,7 +115,7 @@ public class GraphicalUserAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public Action initializeLoginAction() {
-        return new PrepareForGraphicalAuthenticationAction(servicesManager.getObject());
+        return new PrepareForGraphicalAuthenticationAction(servicesManager.getObject(), casProperties);
     }
 
     @Bean

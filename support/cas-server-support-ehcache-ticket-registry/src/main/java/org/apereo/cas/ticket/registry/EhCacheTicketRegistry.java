@@ -3,9 +3,9 @@ package org.apereo.cas.ticket.registry;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
-import com.google.common.base.Predicates;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.sf.ehcache.CacheManager;
@@ -58,7 +58,7 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
         try {
             return map.getAll(map.getKeysWithExpiryCheck());
         } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
+            LoggingUtils.warn(LOGGER, e);
             return new HashMap<>(0);
         }
     }
@@ -157,7 +157,7 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
-        val ticket = getTicket(ticketId, Predicates.alwaysTrue());
+        val ticket = getTicket(ticketId, ticket1 -> true);
         if (ticket == null) {
             LOGGER.debug("Ticket [{}] cannot be retrieved from the cache", ticketId);
             return true;

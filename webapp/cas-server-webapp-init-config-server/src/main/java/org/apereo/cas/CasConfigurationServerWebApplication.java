@@ -3,7 +3,6 @@ package org.apereo.cas;
 import org.apereo.cas.util.AsciiArtUtils;
 import org.apereo.cas.util.DateTimeUtils;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -54,11 +53,10 @@ import java.time.Instant;
     MetricsAutoConfiguration.class,
     DataSourceTransactionManagerAutoConfiguration.class,
     RedisRepositoriesAutoConfiguration.class
-})
+    }, proxyBeanMethods = false)
 @EnableConfigServer
 @NoArgsConstructor
 @Slf4j
-@SuppressFBWarnings(value = "PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS", justification = "Non-idempotent method chain")
 public class CasConfigurationServerWebApplication {
 
     /**

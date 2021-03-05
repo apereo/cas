@@ -4,16 +4,23 @@ title: CAS - Splunk Logging Configuration
 category: Logs & Audits
 ---
 
+{% include variables.html %}
+
 # Splunk Logging
 
 Log data can be automatically routed to [Splunk](https://splunk.com/). Support is enabled by including the following module in the overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-logging-config-splunk</artifactId>
-     <version>${cas.version}</version>
-</dependency>
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-logging-config-splunk" %}
+
+You may also need to declare the following repository in your CAS overlay to be able to resolve dependencies:
+
+```groovy       
+repositories {
+    maven { 
+        mavenContent { releasesOnly() }
+        url "https://splunk.jfrog.io/splunk/ext-releases-local" 
+    }
+}
 ```
 
 With the above module, you may then declare a specific appender to communicate with Splunk. 
@@ -33,9 +40,9 @@ Splunk Enterprise management port.
 </Appenders>
 ...
 <Loggers>
-   <AsyncLogger name="org.apereo" level="debug">
+   <Logger name="org.apereo" level="debug">
       <AppenderRef ref="SplunkAppender"/>
-   </AsyncLogger>
+   </Logger>
 </Loggers>
 ```
 

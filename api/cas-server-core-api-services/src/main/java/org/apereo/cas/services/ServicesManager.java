@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.authentication.principal.Service;
 
 import lombok.val;
+import org.springframework.core.Ordered;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -16,22 +17,22 @@ import java.util.stream.Stream;
  * @author Scott Battaglia
  * @since 3.1
  */
-public interface ServicesManager {
+public interface ServicesManager extends Ordered {
 
     /**
      * Register a service with CAS, or update an existing an entry.
      *
-     * @param registeredService the RegisteredService to update or add.
-     * @return newly persisted RegisteredService instance
+     * @param registeredService the {@link RegisteredService} to update or add.
+     * @return newly persisted {@link RegisteredService} instance
      */
     RegisteredService save(RegisteredService registeredService);
 
     /**
      * Register a service with CAS, or update an existing an entry.
      *
-     * @param registeredService the RegisteredService to update or add.
+     * @param registeredService the {@link RegisteredService} to update or add.
      * @param publishEvent      whether events should be published to indicate the save operation.
-     * @return newly persisted RegisteredService instance
+     * @return newly persisted {@link RegisteredService} instance
      */
     RegisteredService save(RegisteredService registeredService, boolean publishEvent);
 
@@ -50,7 +51,7 @@ public interface ServicesManager {
     void deleteAll();
 
     /**
-     * Delete the entry for this RegisteredService.
+     * Delete the entry for this {@link RegisteredService}.
      *
      * @param id the id of the registeredService to delete.
      * @return the registered service that was deleted, null if there was none.
@@ -58,7 +59,7 @@ public interface ServicesManager {
     RegisteredService delete(long id);
 
     /**
-     * Delete the entry for this RegisteredService.
+     * Delete the entry for this {@link RegisteredService}.
      *
      * @param svc the registered service to delete.
      * @return the registered service that was deleted, null if there was none.
@@ -66,21 +67,13 @@ public interface ServicesManager {
     RegisteredService delete(RegisteredService svc);
 
     /**
-     * Find a RegisteredService by matching with the supplied service.
-     *
-     * @param serviceId the service to match with.
-     * @return the RegisteredService that matches the supplied service.
-     */
-    RegisteredService findServiceBy(String serviceId);
-
-    /**
-     * Find a RegisteredService by matching with the supplied service.
+     * Find a {@link RegisteredService} by matching with the supplied service.
      *
      * @param service the service to match with.
-     * @return the RegisteredService that matches the supplied service.
+     * @return the {@link RegisteredService} that matches the supplied service.
      */
     RegisteredService findServiceBy(Service service);
-
+    
     /**
      * Find a collection of services by type.
      *
@@ -98,35 +91,49 @@ public interface ServicesManager {
      * @return the t
      */
     <T extends RegisteredService> T findServiceBy(Service serviceId, Class<T> clazz);
-
+    
     /**
-     * Find service by type.
-     *
-     * @param <T>       the type parameter
-     * @param serviceId the service id
-     * @param clazz     the clazz
-     * @return the t
-     */
-    <T extends RegisteredService> T findServiceBy(String serviceId, Class<T> clazz);
-
-    /**
-     * Find a RegisteredService by matching with the supplied id.
+     * Find a {@link RegisteredService} by matching with the supplied id.
      *
      * @param id the id to match with.
-     * @return the RegisteredService that matches the supplied service.
+     * @return the {@link RegisteredService} that matches the supplied service.
      */
     RegisteredService findServiceBy(long id);
-
+    
     /**
-     * Find a RegisteredService by matching with the supplied id.
+     * Find a {@link RegisteredService} by matching with the supplied id.
      *
      * @param <T>   the type parameter
      * @param id    the id to match with.
      * @param clazz the clazz
-     * @return the RegisteredService that matches the supplied service.
+     * @return the {@link RegisteredService} that matches the supplied service.
      */
     default <T extends RegisteredService> T findServiceBy(final long id, final Class<T> clazz) {
         val service = findServiceBy(id);
+        if (service != null && clazz.isAssignableFrom(service.getClass())) {
+            return (T) service;
+        }
+        return null;
+    }
+    
+    /**
+     * Find a {@link RegisteredService} by matching with the supplied name.
+     *
+     * @param name the name to match with.
+     * @return the {@link RegisteredService}  that matches the supplied service.
+     */
+    RegisteredService findServiceByName(String name);
+
+    /**
+     * Find a {@link RegisteredService} by matching with the supplied name.
+     *
+     * @param <T>   the type parameter
+     * @param name    the name to match with.
+     * @param clazz the clazz
+     * @return the {@link RegisteredService} that matches the supplied service.
+     */
+    default <T extends RegisteredService> T findServiceByName(final String name, final Class<T> clazz) {
+        val service = findServiceByName(name);
         if (service != null && clazz.isAssignableFrom(service.getClass())) {
             return (T) service;
         }
@@ -169,7 +176,7 @@ public interface ServicesManager {
      *
      * @return the count/size of registry.
      */
-    default int count() {
+    default long count() {
         return 0;
     }
 
@@ -210,5 +217,10 @@ public interface ServicesManager {
      */
     default boolean supports(final Class clazz) {
         return true;
+    }
+
+    @Override
+    default int getOrder() {
+        return Ordered.LOWEST_PRECEDENCE;
     }
 }

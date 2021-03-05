@@ -7,12 +7,11 @@ import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -30,7 +29,7 @@ import javax.sql.DataSource;
 @Configuration("casAcceptableUsagePolicyJdbcConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureAfter(CasCoreTicketsConfiguration.class)
-@ConditionalOnProperty(prefix = "cas.acceptableUsagePolicy", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "cas.acceptable-usage-policy.core", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class CasAcceptableUsagePolicyJdbcConfiguration {
 
     @Autowired
@@ -41,6 +40,8 @@ public class CasAcceptableUsagePolicyJdbcConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "acceptableUsagePolicyDataSource")
     public DataSource acceptableUsagePolicyDataSource() {
         val jdbc = casProperties.getAcceptableUsagePolicy().getJdbc();
         return JpaBeans.newDataSource(jdbc);
@@ -49,16 +50,6 @@ public class CasAcceptableUsagePolicyJdbcConfiguration {
     @RefreshScope
     @Bean
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository() {
-        val properties = casProperties.getAcceptableUsagePolicy();
-
-        if (StringUtils.isBlank(properties.getJdbc().getTableName())) {
-            throw new BeanCreationException("Database table for acceptable usage policy must be specified.");
-        }
-
-        if (StringUtils.isBlank(properties.getJdbc().getSqlUpdateAUP())) {
-            throw new BeanCreationException("SQL to update acceptable usage policy must be specified.");
-        }
-
         return new JdbcAcceptableUsagePolicyRepository(ticketRegistrySupport.getObject(),
             casProperties.getAcceptableUsagePolicy(),
             acceptableUsagePolicyDataSource());

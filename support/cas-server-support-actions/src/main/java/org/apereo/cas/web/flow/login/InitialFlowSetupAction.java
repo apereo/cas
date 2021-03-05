@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
@@ -23,7 +22,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -63,13 +61,6 @@ public class InitialFlowSetupAction extends AbstractAction {
 
     private final TicketRegistrySupport ticketRegistrySupport;
 
-    private static void configureWebflowForPostParameters(final RequestContext context) {
-        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        if (request.getMethod().equalsIgnoreCase(HttpMethod.POST.name())) {
-            WebUtils.putInitialHttpRequestPostParameters(context);
-        }
-    }
-
     @Override
     public Event doExecute(final RequestContext context) {
         configureCookieGenerators(context);
@@ -83,6 +74,13 @@ public class InitialFlowSetupAction extends AbstractAction {
         configureWebflowForSsoParticipation(context, ticketGrantingTicketId);
 
         return success();
+    }
+
+    private static void configureWebflowForPostParameters(final RequestContext context) {
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        if (request.getMethod().equalsIgnoreCase(HttpMethod.POST.name())) {
+            WebUtils.putInitialHttpRequestPostParameters(context);
+        }
     }
 
     private String configureWebflowForTicketGrantingTicket(final RequestContext context) {
@@ -108,8 +106,8 @@ public class InitialFlowSetupAction extends AbstractAction {
         if (service != null) {
             LOGGER.debug("Placing service in context scope: [{}]", service.getId());
             val selectedService = authenticationRequestServiceSelectionStrategies.resolveService(service);
-            val registeredService = this.servicesManager.findServiceBy(selectedService);
-            RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
+            val registeredService = servicesManager.findServiceBy(selectedService);
+            RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service.getId(), registeredService);
             if (registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed()) {
                 LOGGER.debug("Placing registered service [{}] with id [{}] in context scope",
                     registeredService.getServiceId(),
@@ -124,18 +122,11 @@ public class InitialFlowSetupAction extends AbstractAction {
                     WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(context, accessStrategy.getUnauthorizedRedirectUrl());
                 }
             }
-        } else if (!casProperties.getSso().isAllowMissingServiceParameter()) {
-            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-            LOGGER.warn("No service authentication request is available at [{}]. CAS is configured to disable the flow.",
-                request.getRequestURL());
-            throw new NoSuchFlowExecutionException(context.getFlowExecutionContext().getKey(),
-                new UnauthorizedServiceException("screen.service.required.message", "Service is required"));
         }
         WebUtils.putServiceIntoFlowScope(context, service);
     }
 
     private void configureWebflowForSsoParticipation(final RequestContext context, final String ticketGrantingTicketId) {
-
         val ssoParticipation = this.renewalStrategy.supports(context) && this.renewalStrategy.isParticipating(context);
         if (!ssoParticipation && StringUtils.isNotBlank(ticketGrantingTicketId)) {
             val auth = this.ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicketId);
@@ -153,11 +144,13 @@ public class InitialFlowSetupAction extends AbstractAction {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         WebUtils.putWarningCookie(context, Boolean.valueOf(this.warnCookieGenerator.retrieveCookieValue(request)));
 
-        WebUtils.putGeoLocationTrackingIntoFlowScope(context, casProperties.getEvents().isTrackGeolocation());
+        WebUtils.putGeoLocationTrackingIntoFlowScope(context, casProperties.getEvents().getCore().isTrackGeolocation());
         WebUtils.putRememberMeAuthenticationEnabled(context, casProperties.getTicket().getTgt().getRememberMe().isEnabled());
-        WebUtils.putStaticAuthenticationIntoFlowScope(context,
-            StringUtils.isNotBlank(casProperties.getAuthn().getAccept().getUsers())
-                || StringUtils.isNotBlank(casProperties.getAuthn().getReject().getUsers()));
+
+        val staticAuthEnabled = (casProperties.getAuthn().getAccept().isEnabled()
+            && StringUtils.isNotBlank(casProperties.getAuthn().getAccept().getUsers()))
+            || StringUtils.isNotBlank(casProperties.getAuthn().getReject().getUsers());
+        WebUtils.putStaticAuthenticationIntoFlowScope(context, staticAuthEnabled);
 
         if (casProperties.getAuthn().getPolicy().isSourceSelectionEnabled()) {
             val availableHandlers = authenticationEventExecutionPlan.getAuthenticationHandlers()

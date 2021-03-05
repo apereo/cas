@@ -4,6 +4,8 @@ title: CAS - Configuration Management Clustered Deployment
 category: Configuration
 ---
 
+{% include variables.html %}
+
 # Clustered Deployments
 
 CAS uses the [Spring Cloud Bus](http://cloud.spring.io/spring-cloud-static/spring-cloud.html)
@@ -20,9 +22,10 @@ synced across all nodes so they are persisted on disk. The broadcast mechanism n
 applies changes to the runtime and the running CAS instance. Ideally, you should be keeping track
 of CAS settings in a shared (git) repository (or better yet, inside a private Github repository perhaps)
 where you make a change in one place and it's broadcasted to all nodes. This model removes the need for
-synchronizing changes across disks and CAS nodes.  
+synchronizing changes across disks and CAS nodes.CAS uses the Spring Cloud Bus to manage configuration 
+in a distributed deployment. Spring Cloud Bus links nodes of a distributed system with a lightweight message broker.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#configuration-storage).
+{% include casproperties.html thirdPartyStartsWith="spring.cloud.bus" %}
 
 The following endpoints are secured and exposed by the Spring Cloud Config Bus:
 
@@ -38,10 +41,10 @@ The transport mechanism for the bus to broadcast events is handled via one of th
 To enable additional logging, modify the logging configuration file to add the following:
 
 ```xml
-<AsyncLogger name="org.springframework.amqp" level="debug" additivity="false">
+<Logger name="org.springframework.amqp" level="debug" additivity="false">
     <AppenderRef ref="console"/>
     <AppenderRef ref="file"/>
-</AsyncLogger>
+</Logger>
 ```
 
 ## RabbitMQ
@@ -53,15 +56,9 @@ the Advanced Message Queuing Protocol (AMQP).
 
 Support is enabled by including the following dependency in the final overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-configuration-cloud-amqp</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-configuration-cloud-amqp" %}
 
-To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html#rabbitmq).
+{% include casproperties.html thirdPartyStartsWith="spring.rabbitmq." %}
 
 ## Kafka
 
@@ -72,12 +69,9 @@ making it highly valuable for enterprise infrastructures to process streaming da
 
 Support is enabled by including the following dependency in the final overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-configuration-cloud-kafka</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-configuration-cloud-kafka" %}
 
-To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html#kafka).
+Broadcast CAS configuration updates to other nodes in the cluster
+via [Kafka](http://docs.spring.io/spring-cloud-stream/docs/current/reference/htmlsingle/#_apache_kafka_binder).
+  
+{% include casproperties.html thirdPartyStartsWith="spring.cloud.stream.kafka,spring.cloud.stream.bindings.output" %}

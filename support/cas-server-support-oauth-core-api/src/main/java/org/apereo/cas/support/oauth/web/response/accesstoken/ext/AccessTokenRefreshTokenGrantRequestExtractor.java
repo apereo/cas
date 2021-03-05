@@ -41,7 +41,7 @@ public class AccessTokenRefreshTokenGrantRequestExtractor extends AccessTokenAut
                                                            final HttpServletResponse response,
                                                            final AccessTokenRequestDataHolder.AccessTokenRequestDataHolderBuilder builder) {
 
-        val context = new JEEContext(request, response, getOAuthConfigurationContext().getSessionStore());
+        val context = new JEEContext(request, response);
         val registeredService = getOAuthRegisteredServiceBy(context);
         if (registeredService == null) {
             throw new UnauthorizedServiceException("Unable to locate service in registry ");
@@ -75,7 +75,7 @@ public class AccessTokenRefreshTokenGrantRequestExtractor extends AccessTokenAut
 
     @Override
     protected String getRegisteredServiceIdentifierFromRequest(final JEEContext context) {
-        return OAuth20Utils.getClientIdAndClientSecret(context).getLeft();
+        return OAuth20Utils.getClientIdAndClientSecret(context, getOAuthConfigurationContext().getSessionStore()).getLeft();
     }
 
     /**
@@ -91,9 +91,11 @@ public class AccessTokenRefreshTokenGrantRequestExtractor extends AccessTokenAut
      * @return scopes
      */
     @Override
-    protected Set<String> extractRequestedScopesByToken(final Set<String> requestedScopes, final OAuth20Token token, final HttpServletRequest request) {
+    protected Set<String> extractRequestedScopesByToken(final Set<String> requestedScopes, final OAuth20Token token,
+        final HttpServletRequest request) {
         if (!requestedScopes.isEmpty() && !requestedScopes.equals(token.getScopes())) {
-            LOGGER.error("Requested scopes [{}} exceed the granted scopes [{}} for token [{}}", requestedScopes, token.getScopes(), token.getId());
+            LOGGER.error("Requested scopes [{}] exceed the granted scopes [{}] for token [{}]",
+                requestedScopes, token.getScopes(), token.getId());
             throw new OAuth20UnauthorizedScopeRequestException(token.getId());
         }
         return new TreeSet<>(token.getScopes());

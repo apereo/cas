@@ -15,6 +15,7 @@ import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -64,6 +65,8 @@ public class JpaYubiKeyConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "dataSourceYubiKey")
+    @RefreshScope
     public DataSource dataSourceYubiKey() {
         return JpaBeans.newDataSource(casProperties.getAuthn().getMfa().getYubikey().getJpa());
     }
@@ -85,11 +88,12 @@ public class JpaYubiKeyConfiguration {
     @Bean
     public LocalContainerEntityManagerFactoryBean yubiKeyEntityManagerFactory() {
         val factory = jpaBeanFactory.getObject();
-        val ctx = new JpaConfigurationContext(
-            jpaYubiKeyVendorAdapter(),
-            "jpaYubiKeyRegistryContext",
-            jpaYubiKeyPackagesToScan(),
-            dataSourceYubiKey());
+        val ctx = JpaConfigurationContext.builder()
+            .dataSource(dataSourceYubiKey())
+            .packagesToScan(jpaYubiKeyPackagesToScan())
+            .persistenceUnitName("jpaYubiKeyRegistryContext")
+            .jpaVendorAdapter(jpaYubiKeyVendorAdapter())
+            .build();
         return factory.newEntityManagerFactoryBean(ctx, casProperties.getAuthn().getMfa().getYubikey().getJpa());
     }
 

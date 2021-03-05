@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.radius;
 
+import org.apereo.cas.util.LoggingUtils;
+
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -57,7 +59,7 @@ public class RadiusUtils {
                 if (!failoverOnException) {
                     throw e;
                 }
-                LOGGER.warn("failoverOnException enabled -- trying next server.", e);
+                LoggingUtils.warn(LOGGER, "failoverOnException enabled -- trying next server.", e);
             }
         }
         return Pair.of(Boolean.FALSE, Optional.empty());

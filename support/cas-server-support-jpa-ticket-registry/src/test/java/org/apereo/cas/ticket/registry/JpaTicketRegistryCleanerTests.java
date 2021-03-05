@@ -9,6 +9,7 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
@@ -30,6 +31,8 @@ import org.apereo.cas.ticket.ServiceTicketFactory;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketFactory;
+import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.ticket.TransientSessionTicketFactory;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -71,6 +74,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationSupportConfiguration.class,
     CasCoreAuthenticationHandlersConfiguration.class,
     CasCoreHttpConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     CasCoreLogoutConfiguration.class,
@@ -105,7 +109,8 @@ public class JpaTicketRegistryCleanerTests {
     @Test
     public void verifyOperation() {
         val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
-        val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(), TicketGrantingTicket.class);
+        val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
+            RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);
         ticketRegistry.addTicket(tgt);
 
         val stFactory = (ServiceTicketFactory) ticketFactory.get(ServiceTicket.class);
@@ -127,5 +132,29 @@ public class JpaTicketRegistryCleanerTests {
 
         assertEquals(0, ticketRegistry.sessionCount());
         assertEquals(0, ticketRegistry.serviceTicketCount());
+    }
+
+    @Test
+    public void verifyTransientTicketCleaning() {
+        val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
+        val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
+            RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);
+        ticketRegistry.addTicket(tgt);
+        
+        val transientFactory = (TransientSessionTicketFactory) ticketFactory.get(TransientSessionTicket.class);
+        val transientTicket = transientFactory.create(RegisteredServiceTestUtils.getService());
+        ticketRegistry.addTicket(transientTicket);
+
+        ticketRegistry.updateTicket(tgt);
+
+        transientTicket.markTicketExpired();
+        tgt.markTicketExpired();
+
+        ticketRegistry.updateTicket(transientTicket);
+        ticketRegistry.updateTicket(tgt);
+
+        assertEquals(2, ticketRegistry.getTickets().size());
+        assertEquals(2, ticketRegistryCleaner.clean());
+        assertTrue(ticketRegistry.getTickets().isEmpty());
     }
 }

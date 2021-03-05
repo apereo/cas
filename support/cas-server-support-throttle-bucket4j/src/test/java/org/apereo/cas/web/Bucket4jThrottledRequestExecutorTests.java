@@ -4,6 +4,7 @@ import org.apereo.cas.config.CasBucket4jThrottlingConfiguration;
 import org.apereo.cas.throttle.ThrottledRequestExecutor;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -24,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     CasBucket4jThrottlingConfiguration.class
 })
+@Tag("Simple")
 public class Bucket4jThrottledRequestExecutorTests {
     @Autowired
     @Qualifier("throttledRequestExecutor")
@@ -35,6 +37,6 @@ public class Bucket4jThrottledRequestExecutorTests {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         assertFalse(this.throttledRequestExecutor.throttle(request, response));
-        assertTrue(response.containsHeader("X-Rate-Limit-Remaining"));
+        assertTrue(response.containsHeader(Bucket4jThrottledRequestExecutor.HEADER_NAME_X_RATE_LIMIT_REMAINING));
     }
 }

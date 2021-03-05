@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -19,11 +20,14 @@ import java.util.Set;
 @Getter
 @EqualsAndHashCode
 @Setter
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@Accessors(chain = true)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class DefaultRegisteredServiceAuthenticationPolicy implements RegisteredServiceAuthenticationPolicy {
     private static final long serialVersionUID = -6777133646772207331L;
 
     private Set<String> requiredAuthenticationHandlers = new HashSet<>();
+    
+    private Set<String> excludedAuthenticationHandlers = new HashSet<>();
 
-    private RegisteredServiceAuthenticationPolicyCriteria criteria;
+    private RegisteredServiceAuthenticationPolicyCriteria criteria = new AnyAuthenticationHandlerRegisteredServiceAuthenticationPolicyCriteria();
 }

@@ -7,8 +7,6 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
-import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
-import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenExpirationPolicyBuilder;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -42,6 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class OAuth20TokenAuthorizationResponseBuilderTests extends AbstractOAuth20Tests {
 
     private static final String STATE = "%123=";
+
     private static final String NONCE = "%123=";
 
     @Test
@@ -65,34 +64,16 @@ public class OAuth20TokenAuthorizationResponseBuilderTests extends AbstractOAuth
             .grantType(OAuth20GrantTypes.NONE)
             .responseType(OAuth20ResponseTypes.TOKEN)
             .ticketGrantingTicket(new MockTicketGrantingTicket(ID))
+            .generateRefreshToken(true)
             .build();
-        val generatedToken = oauthTokenGenerator.generate(holder);
-
-        if (generatedToken
-            .getAccessToken()
-            .isEmpty()) {
-            fail("Expected access token");
-        }
-
-        final OAuth20AccessToken oAuth20AccessToken = generatedToken
-            .getAccessToken()
-            .get();
-
-        val tokenExpirationPolicyBuilder = new OAuth20AccessTokenExpirationPolicyBuilder(casProperties);
         val tokenAuthorizationResponseBuilder = new OAuth20TokenAuthorizationResponseBuilder(oauthTokenGenerator,
-            tokenExpirationPolicyBuilder,
-            servicesManager,
-            accessTokenJwtBuilder,
-            casProperties);
-
-        val modelAndView = tokenAuthorizationResponseBuilder.buildCallbackUrlResponseType(holder,
-            REDIRECT_URI,
-            oAuth20AccessToken,
-            Collections.emptyList(),
-            null,
-            new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse()));
-
+            servicesManager, accessTokenJwtBuilder, casProperties);
+        val modelAndView = tokenAuthorizationResponseBuilder.build(
+            new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse()),
+            CLIENT_ID,
+            holder);
         assertTrue(modelAndView.getView() instanceof RedirectView, "Expected RedirectView");
+        assertTrue(modelAndView.getModel().isEmpty());
 
         val redirectUrl = ((RedirectView) modelAndView.getView()).getUrl();
         val params = splitQuery(new URIBuilder(redirectUrl).getFragment());
@@ -102,31 +83,32 @@ public class OAuth20TokenAuthorizationResponseBuilderTests extends AbstractOAuth
     }
 
     private static void verifyParam(final Map<String, List<String>> params, final String paramName, final String expectedParamValue) {
-        assertTrue(params.containsKey(paramName), "Expected " + paramName + "  param in redirect URL");
+        assertTrue(params.containsKey(paramName), () -> "Expected " + paramName + "  param in redirect URL");
         assertEquals(1,
             params
                 .get(paramName)
                 .size(),
-            "Expected one value for " + paramName + " param");
+            () -> "Expected one value for " + paramName + " param");
         assertEquals(expectedParamValue,
             params
                 .get(paramName)
                 .get(0),
-            "Expected unchanged " + paramName + "  param");
+            () -> "Expected unchanged " + paramName + "  param");
     }
 
-    private Map<String, List<String>> splitQuery(final String fragment) {
+    private static Map<String, List<String>> splitQuery(final String fragment) {
         if (StringUtils.isBlank(fragment)) {
             return new HashMap<>(0);
         }
         return Arrays
             .stream(fragment.split("&"))
             .map(OAuth20TokenAuthorizationResponseBuilderTests::splitQueryParameter)
-            .collect(Collectors.groupingBy(AbstractMap.SimpleImmutableEntry::getKey, LinkedHashMap::new, Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
+            .collect(Collectors.groupingBy(AbstractMap.SimpleImmutableEntry::getKey,
+                LinkedHashMap::new, Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
     }
 
     private static AbstractMap.SimpleImmutableEntry<String, String> splitQueryParameter(final String it) {
-        val idx = it.indexOf("=");
+        val idx = it.indexOf('=');
         val key = idx > 0 ? it.substring(0, idx) : it;
         val value = idx > 0 && it.length() > idx + 1 ? it.substring(idx + 1) : null;
         return new AbstractMap.SimpleImmutableEntry<>(key, value);

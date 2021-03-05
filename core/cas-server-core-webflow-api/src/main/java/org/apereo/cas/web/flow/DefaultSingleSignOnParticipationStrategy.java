@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
+import org.apereo.cas.configuration.model.core.sso.SingleSignOnProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -30,9 +31,7 @@ import org.springframework.webflow.execution.RequestContext;
 public class DefaultSingleSignOnParticipationStrategy implements SingleSignOnParticipationStrategy {
     private final ServicesManager servicesManager;
 
-    private final boolean createCookieOnRenewedAuthentication;
-
-    private final boolean renewEnabled;
+    private final SingleSignOnProperties properties;
 
     private final TicketRegistrySupport ticketRegistrySupport;
 
@@ -42,7 +41,7 @@ public class DefaultSingleSignOnParticipationStrategy implements SingleSignOnPar
 
     @Override
     public boolean isParticipating(final RequestContext requestContext) {
-        if (renewEnabled && requestContext.getRequestParameters().contains(CasProtocolConstants.PARAMETER_RENEW)) {
+        if (properties.isRenewAuthnEnabled() && requestContext.getRequestParameters().contains(CasProtocolConstants.PARAMETER_RENEW)) {
             LOGGER.debug("[{}] is specified for the request. The authentication session will be considered renewed.",
                 CasProtocolConstants.PARAMETER_RENEW);
             return false;
@@ -50,7 +49,7 @@ public class DefaultSingleSignOnParticipationStrategy implements SingleSignOnPar
 
         val registeredService = determineRegisteredService(requestContext);
         if (registeredService == null) {
-            return true;
+            return properties.isSsoEnabled();
         }
 
         val authentication = WebUtils.getAuthentication(requestContext);
@@ -65,14 +64,23 @@ public class DefaultSingleSignOnParticipationStrategy implements SingleSignOnPar
                 LOGGER.debug("Service [{}] is not authorized to participate in SSO", registeredService.getServiceId());
                 return false;
             }
+
             val ssoPolicy = registeredService.getSingleSignOnParticipationPolicy();
             if (ssoPolicy != null) {
                 val tgtId = WebUtils.getTicketGrantingTicketId(requestContext);
                 val ticketState = ticketRegistrySupport.getTicketState(tgtId);
                 if (ticketState != null) {
-                    return ssoPolicy.shouldParticipateInSso(ticketState);
+                    return ssoPolicy.shouldParticipateInSso(registeredService, ticketState);
                 }
             }
+
+            val tgtPolicy = registeredService.getTicketGrantingTicketExpirationPolicy();
+            if (tgtPolicy != null) {
+                val tgtId = WebUtils.getTicketGrantingTicketId(requestContext);
+                val ticketState = ticketRegistrySupport.getTicketState(tgtId);
+                return tgtPolicy.toExpirationPolicy().map(policy -> !policy.isExpired(ticketState)).orElse(Boolean.TRUE);
+            }
+            
         } finally {
             AuthenticationCredentialsThreadLocalBinder.bindCurrent(ca);
         }
@@ -88,7 +96,7 @@ public class DefaultSingleSignOnParticipationStrategy implements SingleSignOnPar
                 return ssoPolicy.isCreateCookieOnRenewedAuthentication();
             }
         }
-        return TriStateBoolean.fromBoolean(this.createCookieOnRenewedAuthentication);
+        return TriStateBoolean.fromBoolean(properties.isCreateSsoCookieOnRenewAuthn());
     }
 
     private RegisteredService determineRegisteredService(final RequestContext requestContext) {

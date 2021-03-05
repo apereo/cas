@@ -7,6 +7,8 @@ import org.apereo.cas.mfa.accepto.AccepttoEmailCredential;
 import org.apereo.cas.mfa.accepto.web.flow.AccepttoWebflowUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -22,6 +24,7 @@ import org.apache.http.HttpStatus;
 import org.hjson.JsonValue;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
+import org.springframework.http.HttpMethod;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
@@ -29,7 +32,6 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -41,17 +43,18 @@ import java.util.Map;
 @Slf4j
 @RequiredArgsConstructor
 public class AccepttoQRCodeValidateWebSocketChannelAction extends AbstractAction {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     private final CasConfigurationProperties casProperties;
 
-    private final SessionStore<JEEContext> sessionStore;
+    private final SessionStore sessionStore;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-        val webContext = new JEEContext(request, response, this.sessionStore);
+        val webContext = new JEEContext(request, response);
 
         val channel = request.getParameter("channel");
         if (channel == null) {
@@ -69,7 +72,12 @@ public class AccepttoQRCodeValidateWebSocketChannelAction extends AbstractAction
 
         HttpResponse apiResponse = null;
         try {
-            apiResponse = HttpUtils.executePost(url, parameters, new HashMap<>(0));
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .method(HttpMethod.POST)
+                .url(url)
+                .parameters(parameters)
+                .build();
+            apiResponse = HttpUtils.execute(exec);
             if (apiResponse != null) {
                 val status = apiResponse.getStatusLine().getStatusCode();
                 LOGGER.debug("Response API status code is [{}]", status);
@@ -78,12 +86,14 @@ public class AccepttoQRCodeValidateWebSocketChannelAction extends AbstractAction
                     val result = IOUtils.toString(apiResponse.getEntity().getContent(), StandardCharsets.UTF_8);
                     val results = MAPPER.readValue(JsonValue.readHjson(result).toString(), Map.class);
                     LOGGER.debug("Received API results for channel [{}] as [{}]", channel, results);
-
+                    if (results.isEmpty()) {
+                        throw new AuthenticationException("No API results were returned for channel " + channel);
+                    }
                     val success = BooleanUtils.toBoolean(results.get("success").toString());
                     if (success) {
                         val email = results.get("user_email").toString();
                         LOGGER.trace("Storing channel [{}] in http session", channel);
-                        AccepttoWebflowUtils.storeChannelInSessionStore(channel, webContext);
+                        AccepttoWebflowUtils.storeChannelInSessionStore(channel, webContext, sessionStore);
                         WebUtils.putCredential(requestContext, new AccepttoEmailCredential(email));
                         return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_FINALIZE);
                     }
@@ -99,8 +109,7 @@ public class AccepttoQRCodeValidateWebSocketChannelAction extends AbstractAction
                 }
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-            return returnError(e.getMessage());
+            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(apiResponse);
         }

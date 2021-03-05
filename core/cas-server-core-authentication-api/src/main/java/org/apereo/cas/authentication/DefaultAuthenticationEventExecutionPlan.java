@@ -159,7 +159,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
 
     @Override
     public Collection<AuthenticationMetaDataPopulator> getAuthenticationMetadataPopulators(final AuthenticationTransaction transaction) {
-        val list = new ArrayList<AuthenticationMetaDataPopulator>(this.authenticationMetaDataPopulatorList);
+        val list = new ArrayList<>(this.authenticationMetaDataPopulatorList);
         AnnotationAwareOrderComparator.sort(list);
         LOGGER.debug("Sorted and registered metadata populators for this transaction are [{}]", list);
         return list;
@@ -167,7 +167,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
 
     @Override
     public Collection<AuthenticationPostProcessor> getAuthenticationPostProcessors(final AuthenticationTransaction transaction) {
-        val list = new ArrayList<AuthenticationPostProcessor>(this.authenticationPostProcessors);
+        val list = new ArrayList<>(this.authenticationPostProcessors);
         AnnotationAwareOrderComparator.sort(list);
         LOGGER.trace("Sorted and registered authentication post processors for this transaction are [{}]", list);
         return list;
@@ -175,7 +175,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
 
     @Override
     public Collection<AuthenticationPreProcessor> getAuthenticationPreProcessors(final AuthenticationTransaction transaction) {
-        val list = new ArrayList<AuthenticationPreProcessor>(this.authenticationPreProcessors);
+        val list = new ArrayList<>(this.authenticationPreProcessors);
         AnnotationAwareOrderComparator.sort(list);
         LOGGER.trace("Sorted and registered authentication pre processors for this transaction are [{}]", list);
         return list;
@@ -188,14 +188,19 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
     }
 
     @Override
+    public Collection<AuthenticationPolicy> getAuthenticationPolicies() {
+        val list = new ArrayList<>(this.authenticationPolicies);
+        AnnotationAwareOrderComparator.sort(list);
+        LOGGER.trace("Candidate authentication policies for this transaction are [{}]", list);
+        return list;
+    }
+
+    @Override
     public Collection<AuthenticationPolicy> getAuthenticationPolicies(final AuthenticationTransaction transaction) {
         val handlerResolvers = getAuthenticationPolicyResolvers(transaction);
         LOGGER.debug("Authentication policy resolvers for this transaction are [{}]", handlerResolvers);
-
-        val list = new ArrayList<AuthenticationPolicy>(this.authenticationPolicies);
-        AnnotationAwareOrderComparator.sort(list);
-        LOGGER.trace("Candidate authentication policies for this transaction are [{}]", list);
-
+        
+        val list = getAuthenticationPolicies();
         val resolvedPolicies = handlerResolvers.stream()
             .filter(r -> r.supports(transaction))
             .map(r -> r.resolve(transaction))
@@ -212,7 +217,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
 
     @Override
     public Collection<AuthenticationPolicy> getAuthenticationPolicies(final Authentication authentication) {
-        val list = new ArrayList<AuthenticationPolicy>(this.authenticationPolicies);
+        val list = new ArrayList<>(this.authenticationPolicies);
         AnnotationAwareOrderComparator.sort(list);
         LOGGER.trace("Sorted and registered authentication policies for this assertion are [{}]", list);
         return list;
@@ -220,7 +225,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
 
     @Override
     public Collection<AuthenticationHandlerResolver> getAuthenticationHandlerResolvers(final AuthenticationTransaction transaction) {
-        val list = new ArrayList<AuthenticationHandlerResolver>(this.authenticationHandlerResolvers);
+        val list = new ArrayList<>(this.authenticationHandlerResolvers);
         AnnotationAwareOrderComparator.sort(list);
         LOGGER.trace("Sorted and registered authentication handler resolvers for this transaction are [{}]", list);
         return list;
@@ -228,7 +233,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
 
     @Override
     public Collection<AuthenticationPolicyResolver> getAuthenticationPolicyResolvers(final AuthenticationTransaction transaction) {
-        val list = new ArrayList<AuthenticationPolicyResolver>(this.authenticationPolicyResolvers);
+        val list = new ArrayList<>(this.authenticationPolicyResolvers);
         AnnotationAwareOrderComparator.sort(list);
         LOGGER.trace("Sorted and registered authentication policy resolvers for this transaction are [{}]", list);
         return list;

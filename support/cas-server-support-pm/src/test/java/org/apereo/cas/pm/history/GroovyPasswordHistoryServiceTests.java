@@ -1,5 +1,6 @@
 package org.apereo.cas.pm.history;
 
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordHistoryService;
@@ -8,6 +9,7 @@ import org.apereo.cas.pm.config.PasswordManagementConfiguration;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,11 +26,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     PasswordManagementConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreUtilConfiguration.class
 },
     properties = {
-        "cas.authn.pm.enabled=true",
-        "cas.authn.pm.history.enabled=true",
+        "cas.authn.pm.core.enabled=true",
+        "cas.authn.pm.history.core.enabled=true",
         "cas.authn.pm.history.groovy.location=classpath:PasswordHistoryService.groovy"
     })
 @Tag("Groovy")
@@ -44,5 +47,13 @@ public class GroovyPasswordHistoryServiceTests {
         assertTrue(passwordHistoryService.store(request));
         assertTrue(passwordHistoryService.fetchAll().isEmpty());
         assertTrue(passwordHistoryService.fetch("casuser").isEmpty());
+
+        assertDoesNotThrow(new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                passwordHistoryService.remove("casuser");
+                passwordHistoryService.removeAll();
+            }
+        });
     }
 }

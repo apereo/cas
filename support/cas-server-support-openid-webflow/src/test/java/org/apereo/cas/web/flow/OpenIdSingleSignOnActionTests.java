@@ -31,16 +31,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.1
  * @deprecated 6.2
  */
-@Tag("Webflow")
+@Tag("WebflowActions")
 @Deprecated(since = "6.2.0")
 @SpringBootTest(classes = {
     AbstractOpenIdTests.SharedTestConfiguration.class,
     OpenIdWebflowConfiguration.class
-},
-    properties = {
-        "spring.mail.host=localhost",
-        "spring.mail.port=25000"
-    })
+})
 public class OpenIdSingleSignOnActionTests {
 
     @Autowired
@@ -57,7 +53,7 @@ public class OpenIdSingleSignOnActionTests {
         context.setExternalContext(new ServletExternalContext(
             new MockServletContext(), new MockHttpServletRequest(),
             new MockHttpServletResponse()));
-        assertEquals("error", this.action.execute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, this.action.execute(context).getId());
     }
 
     @Test
@@ -71,7 +67,7 @@ public class OpenIdSingleSignOnActionTests {
 
         assertNotNull(event);
 
-        assertEquals("error", this.action.execute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, this.action.execute(context).getId());
     }
 
     @Test
@@ -89,7 +85,7 @@ public class OpenIdSingleSignOnActionTests {
         context.setExternalContext(new ServletExternalContext(
             new MockServletContext(), request,
             new MockHttpServletResponse()));
-        assertEquals("error", this.action.execute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, this.action.execute(context).getId());
     }
 
     @Test
@@ -108,6 +104,6 @@ public class OpenIdSingleSignOnActionTests {
         WebUtils.putServiceIntoFlowScope(context, service);
         context.getFlowScope().put(WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, t.getId());
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        assertEquals("success", this.action.execute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_GENERATE_SERVICE_TICKET, this.action.execute(context).getId());
     }
 }

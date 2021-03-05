@@ -1,14 +1,14 @@
 package org.apereo.cas.web;
 
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.client.Clients;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.JEEContext;
-import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.exception.http.HttpAction;
 import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.http.HttpStatus;
@@ -29,10 +29,8 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 public class DefaultDelegatedAuthenticationNavigationController extends BaseDelegatedAuthenticationController {
 
-    public DefaultDelegatedAuthenticationNavigationController(final Clients clients,
-                                                              final DelegatedClientWebflowManager delegatedClientWebflowManager,
-                                                              final SessionStore<JEEContext> sessionStore) {
-        super(clients, delegatedClientWebflowManager, sessionStore);
+    public DefaultDelegatedAuthenticationNavigationController(final DelegatedClientAuthenticationConfigurationContext context) {
+        super(context);
     }
 
     /**
@@ -55,21 +53,21 @@ public class DefaultDelegatedAuthenticationNavigationController extends BaseDele
             if (StringUtils.isBlank(clientName)) {
                 throw new UnauthorizedServiceException("No client name parameter is provided in the incoming request");
             }
-            val clientResult = getClients().findClient(clientName);
+            val clientResult = getConfigurationContext().getClients().findClient(clientName);
             if (clientResult.isEmpty()) {
                 throw new UnauthorizedServiceException("Unable to locate client " + clientName);
             }
             val client = IndirectClient.class.cast(clientResult.get());
             client.init();
-            val webContext = new JEEContext(request, response, getSessionStore());
-            val ticket = getDelegatedClientWebflowManager().store(webContext, client);
+            val webContext = new JEEContext(request, response);
+            val ticket = getConfigurationContext().getDelegatedClientAuthenticationWebflowManager().store(webContext, client);
 
             return getResultingView(client, webContext, ticket);
         } catch (final HttpAction e) {
             if (e.getCode() == HttpStatus.UNAUTHORIZED.value()) {
                 LOGGER.debug("Authentication request was denied from the provider [{}]", clientName, e);
             } else {
-                LOGGER.warn(e.getMessage(), e);
+                LoggingUtils.warn(LOGGER, e);
             }
             throw new UnauthorizedServiceException(e.getMessage(), e);
         }

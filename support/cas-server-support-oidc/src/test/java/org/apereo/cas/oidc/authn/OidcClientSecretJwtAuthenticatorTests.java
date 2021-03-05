@@ -13,6 +13,7 @@ import org.jose4j.keys.AesKey;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -33,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OIDC")
 @TestPropertySource(properties =
-    "cas.authn.oauth.code.timeToKillInSeconds=60"
+    "cas.authn.oauth.code.time-to-kill-in-seconds=60"
 )
 public class OidcClientSecretJwtAuthenticatorTests extends AbstractOidcTests {
 
@@ -56,18 +57,57 @@ public class OidcClientSecretJwtAuthenticatorTests extends AbstractOidcTests {
         val key = EncodingUtils.generateJsonWebKey(512);
         val jwt = EncodingUtils.signJwsHMACSha512(new AesKey(key.getBytes(StandardCharsets.UTF_8)),
             claims.toJson().getBytes(StandardCharsets.UTF_8), Map.of());
-        val credentials = new UsernamePasswordCredentials(OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER,
-            new String(jwt, StandardCharsets.UTF_8));
 
+        val credentials = getCredentials(request, OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER,
+            new String(jwt, StandardCharsets.UTF_8), registeredService.getClientId());
+        auth.validate(credentials, context, JEESessionStore.INSTANCE);
+        assertNotNull(credentials.getUserProfile());
+    }
+
+    @Test
+    public void verifyNoUserAction() {
+        val auth = new OidcClientSecretJwtAuthenticator(servicesManager,
+            registeredServiceAccessStrategyEnforcer, ticketRegistry,
+            webApplicationServiceFactory, casProperties, applicationContext);
+
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        val context = new JEEContext(request, response);
+
+        val registeredService = getOidcRegisteredService();
+        val credentials = getCredentials(request, "unknown", "----", registeredService.getClientId());
+        auth.validate(credentials, context, JEESessionStore.INSTANCE);
+        assertNull(credentials.getUserProfile());
+    }
+
+    @Test
+    public void verifyBadJwt() {
+        val auth = new OidcClientSecretJwtAuthenticator(servicesManager,
+            registeredServiceAccessStrategyEnforcer, ticketRegistry,
+            webApplicationServiceFactory, casProperties, applicationContext);
+
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        val context = new JEEContext(request, response);
+
+        val registeredService = getOidcRegisteredService();
+        val credentials = getCredentials(request, OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER,
+            "----", registeredService.getClientId());
+        auth.validate(credentials, context, JEESessionStore.INSTANCE);
+        assertNull(credentials.getUserProfile());
+    }
+
+    private UsernamePasswordCredentials getCredentials(final MockHttpServletRequest request,
+        final String uid, final String password, final String clientId) {
+        val credentials = new UsernamePasswordCredentials(uid, password);
         val code = defaultOAuthCodeFactory.create(RegisteredServiceTestUtils.getService(),
             RegisteredServiceTestUtils.getAuthentication(),
             new MockTicketGrantingTicket("casuser"),
             new ArrayList<>(),
             StringUtils.EMPTY, StringUtils.EMPTY,
-            registeredService.getClientId(), new HashMap<>());
+            clientId, new HashMap<>());
         ticketRegistry.addTicket(code);
         request.addParameter(OAuth20Constants.CODE, code.getId());
-        auth.validate(credentials, context);
-        assertNotNull(credentials.getUserProfile());
+        return credentials;
     }
 }

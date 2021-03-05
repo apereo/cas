@@ -8,14 +8,18 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.binding.expression.support.LiteralExpression;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.engine.Transition;
@@ -31,20 +35,26 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("Webflow")
+@Tag("WebflowEvents")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@DirtiesContext
 public class SelectiveMultifactorAuthenticationProviderWebflowEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier("selectiveAuthenticationProviderWebflowEventResolver")
     private CasWebflowEventResolver selectiveAuthenticationProviderWebflowEventResolver;
 
     @Test
+    @Order(100)
     public void verifyOperation() {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
-        WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService());
+        val service = RegisteredServiceTestUtils.getRegisteredService();
+        servicesManager.save(service);
+        WebUtils.putRegisteredService(context, service);
+
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
 
@@ -60,6 +70,59 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventResolverTests
         assertNotNull(result);
         assertNotNull(WebUtils.getResolvedMultifactorAuthenticationProviders(context));
         assertEquals(provider.getId(), result.iterator().next().getId());
+    }
+
+    @Test
+    @Order(100)
+    public void verifyEmptyOperation() {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+
+        val service = RegisteredServiceTestUtils.getRegisteredService();
+        servicesManager.save(service);
+        WebUtils.putRegisteredService(context, service);
+        WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);
+        WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
+
+        val targetResolver = new DefaultTargetStateResolver(TestMultifactorAuthenticationProvider.ID);
+        val transition = new Transition(new DefaultTransitionCriteria(
+            new LiteralExpression(TestMultifactorAuthenticationProvider.ID)), targetResolver);
+        context.getRootFlow().getGlobalTransitionSet().add(transition);
+
+        val resolvedEvents = CollectionUtils.wrapHashSet(new EventFactorySupport().event(this, "mfa-something"));
+        WebUtils.putResolvedEventsAsAttribute(context, resolvedEvents);
+        val result = selectiveAuthenticationProviderWebflowEventResolver.resolve(context);
+        assertNotNull(result);
+        assertTrue(WebUtils.getResolvedMultifactorAuthenticationProviders(context).isEmpty());
+    }
+
+    @Test
+    @Order(1)
+    public void verifyNoProvider() {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+
+        val service = RegisteredServiceTestUtils.getRegisteredService();
+        servicesManager.save(service);
+        WebUtils.putRegisteredService(context, service);
+
+        WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);
+        WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
+
+        val targetResolver = new DefaultTargetStateResolver(TestMultifactorAuthenticationProvider.ID);
+        val transition = new Transition(new DefaultTransitionCriteria(
+            new LiteralExpression(TestMultifactorAuthenticationProvider.ID)), targetResolver);
+        context.getRootFlow().getGlobalTransitionSet().add(transition);
+
+        val resolvedEvents = CollectionUtils.wrapHashSet(new EventFactorySupport().event(this, "mfa-something"));
+        WebUtils.putResolvedEventsAsAttribute(context, resolvedEvents);
+        val result = selectiveAuthenticationProviderWebflowEventResolver.resolve(context);
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
     }
 
 }

@@ -145,12 +145,17 @@ public enum WSFederationClaims {
      * Contains uri boolean.
      *
      * @param claimUri the claim uri
-     * @return the boolean
+     * @return true/false
      */
     public static boolean containsUri(final String claimUri) {
         return Arrays.stream(WSFederationClaims.values()).anyMatch(c -> c.getUri().equalsIgnoreCase(claimUri));
     }
 
+    /**
+     * Gets claim.
+     *
+     * @return the claim
+     */
     public String getClaim() {
         val idx = StringUtils.lastIndexOf(this.uri, '/');
         return this.uri.substring(idx + 1);

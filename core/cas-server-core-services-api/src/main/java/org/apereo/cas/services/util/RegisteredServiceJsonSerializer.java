@@ -5,13 +5,14 @@ import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.PrettyPrinter;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.NoArgsConstructor;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.springframework.http.MediaType;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 /**
  * Serializes registered services to JSON based on the Jackson JSON library.
@@ -26,14 +27,6 @@ public class RegisteredServiceJsonSerializer extends AbstractJacksonBackedString
 
     public RegisteredServiceJsonSerializer(final PrettyPrinter prettyPrinter) {
         super(prettyPrinter);
-    }
-
-    @Override
-    protected ObjectMapper initializeObjectMapper() {
-        val mapper = super.initializeObjectMapper();
-        mapper.addHandler(new JasigRegisteredServiceDeserializationProblemHandler());
-        mapper.addHandler(new RegisteredServiceMultifactorPolicyDeserializationProblemHandler());
-        return mapper;
     }
 
     @Override
@@ -54,5 +47,10 @@ public class RegisteredServiceJsonSerializer extends AbstractJacksonBackedString
     @Override
     public Class<RegisteredService> getTypeToSerialize() {
         return RegisteredService.class;
+    }
+
+    @Override
+    public List<MediaType> getContentTypes() {
+        return List.of(MediaType.APPLICATION_JSON);
     }
 }

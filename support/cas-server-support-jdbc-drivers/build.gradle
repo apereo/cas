@@ -1,17 +1,21 @@
 description = "Apereo CAS JDBC Driver Support"
 dependencies {
-    runtime ("org.hsqldb:hsqldb:$hsqlVersion") {
+    api project(":api:cas-server-core-api")
+    
+    runtimeOnly ("org.hsqldb:hsqldb:$hsqlVersion") {
     }
-    runtime ("org.postgresql:postgresql:$postgresqlVersion") {
+    runtimeOnly ("org.postgresql:postgresql:$postgresqlVersion") {
     }
-    runtime ("mysql:mysql-connector-java:$mysqlVersion") {
+    runtimeOnly ("mysql:mysql-connector-java:$mysqlVersion") {
     }
-    runtime ("org.mariadb.jdbc:mariadb-java-client:$mariaDbVersion") {
+    runtimeOnly ("org.mariadb.jdbc:mariadb-java-client:$mariaDbVersion") {
     }
-    runtime ("net.sourceforge.jtds:jtds:$jtdsVersion") {
+    runtimeOnly ("net.sourceforge.jtds:jtds:$jtdsVersion") {
     }
-    runtime ("com.microsoft.sqlserver:mssql-jdbc:$mssqlServerVersion") {
+    runtimeOnly ("com.microsoft.sqlserver:mssql-jdbc:$mssqlServerVersion") {
     }
-    runtime ("com.oracle.ojdbc:ojdbc10:$oracleJdbcVersion") {
+    runtimeOnly ("com.oracle.ojdbc:ojdbc10:$oracleJdbcVersion") {
+    }
+    runtimeOnly ("com.h2database:h2:$h2Version") {
     }
 }

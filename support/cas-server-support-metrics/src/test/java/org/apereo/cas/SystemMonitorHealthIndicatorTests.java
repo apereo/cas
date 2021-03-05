@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.monitor.SystemMonitorHealthIndicator;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -38,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "management.endpoint.health.enabled=true"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Tag("Metrics")
 public class SystemMonitorHealthIndicatorTests {
 
     @Autowired

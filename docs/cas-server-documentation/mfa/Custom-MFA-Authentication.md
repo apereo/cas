@@ -4,55 +4,21 @@ title: CAS - Custom Multifactor Authentication
 category: Multifactor Authentication
 ---
 
+{% include variables.html %}
+
 # Custom Multifactor Authentication
 
-To create your own custom multifactor authentication provider, you will need to design components that primarily register a customized authentication flow into the CAS webflow engine under a unique identifier. Later on, you will also need to consider strategies by which your custom multifactor authentication provider [can be triggered](Configuring-Multifactor-Authentication-Triggers.html).
+To create your own custom multifactor authentication provider, you will need to design components that primarily register a customized 
+authentication flow into the CAS webflow engine under a unique identifier. Later on, you will also need to consider strategies by which 
+your custom multifactor authentication provider [can be triggered](Configuring-Multifactor-Authentication-Triggers.html).
 
 ## Provider ID
 
-Each multifactor provider is assigned a unique identifier that is typically mapped or made equal to the underlying webflow. The unique identifier can be any arbitrary string of your choosing, provided it's kept distinct and sensible as it, depending on use case, may be used in other systems and by other applications to act as a trigger.
+Each multifactor provider is assigned a unique identifier that is typically mapped or made equal to the underlying webflow. The unique 
+identifier can be any arbitrary string of your choosing, provided it's kept distinct and sensible as it, depending on 
+use case, may be used in other systems and by other applications to act as a trigger.
 
 For the purposes of this guide, let's choose `mfa-custom` as our provider id.
-
-## Webflow XML Configuration
-
-The flow configuration file needs to be placed inside a `src/main/resources/webflow/mfa-custom` directory, named as `mfa-custom.xml` whose outline is sampled below:
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<flow xmlns="http://www.springframework.org/schema/webflow"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd">
-
-    <var name="credential" class="org.example.CustomCredential" />
-    <on-start>
-        <evaluate expression="initialFlowSetupAction" />
-    </on-start>
-
-    <action-state id="initializeLoginForm">
-        <evaluate expression="initializeLoginAction" />
-        <transition on="success" to="viewLoginForm"/>
-    </action-state>
-
-    <view-state id="viewLoginForm" view="..." model="credential">
-        <binder>
-            ...
-        </binder>
-        <on-entry>
-            <set name="viewScope.principal" value="conversationScope.authentication.principal" />
-        </on-entry>
-        <transition on="submit" bind="true" validate="true" to="realSubmit"/>
-    </view-state>
-
-    <action-state id="realSubmit">
-        <evaluate expression="finalAuthenticationWebflowAction" />
-        <transition on="success" to="success" />
-        <transition on="error" to="initializeLoginForm" />
-    </action-state>
-
-    <end-state id="success" />
-</flow>
-```
 
 ## Register Webflow Configuration
 
@@ -61,22 +27,23 @@ The custom provider itself is its own standalone webflow that is then registered
 ```java
 public class CustomAuthenticatorWebflowConfigurer extends AbstractCasMultifactorWebflowConfigurer {
     public static final String MFA_EVENT_ID = "mfa-custom";
-    private final FlowDefinitionRegistry flowDefinitionRegistry;
-
-    public CustomAuthenticatorWebflowConfigurer(FlowBuilderServices flowBuilderServices,
-                                                FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                                FlowDefinitionRegistry flowDefinitionRegistry) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry, flowDefinitionRegistry);
-        this.flowDefinitionRegistry = flowDefinitionRegistry;
-    }
+      
+    /*
+        Define the appropriate constructor based on the parent class
+        public CustomAuthenticatorWebflowConfigurer(...) {
+        }
+    */  
 
     @Override
     protected void doInitialize() throws Exception {
         registerMultifactorProviderAuthenticationWebflow(getLoginFlow(),
-                MFA_EVENT_ID, this.flowDefinitionRegistry);
+                MFA_EVENT_ID, yourCustomMfaFlowDefinitionRegistry);
     }
 }
 ```
+   
+The `CustomAuthenticatorWebflowConfigurer` must be able to construct the webflow definition dynamically
+using CAS-provided APIs. See the CAS codebase to review and learn from other implementations
 
 ## Design Provider
 
@@ -91,7 +58,8 @@ public class CustomMultifactorAuthenticationProvider extends AbstractMultifactor
 
 ## Register Provider
 
-The custom webflow configuration needs to be registered with CAS. The outline of the configuration registration is sampled and summarized below:
+The custom webflow configuration needs to be registered with CAS. The outline of 
+the configuration registration is sampled and summarized below:
 
 ```java
 package org.example.cas;
@@ -101,25 +69,29 @@ public class CustomAuthenticatorSubsystemConfiguration {
     ...
     @Bean
     public FlowDefinitionRegistry customFlowRegistry() {
-        final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(applicationContext, flowBuilderServices);
-        builder.setBasePath("classpath*:/webflow");
-        builder.addFlowLocationPattern("/mfa-custom/*-webflow.xml");
+        var builder = new FlowDefinitionRegistryBuilder(applicationContext, flowBuilderServices);
+        builder.addFlowBuilder(new FlowModelFlowBuilder(
+            new DefaultFlowModelHolder(new DynamicFlowModelBuilder())),
+            "mfa-custom");
         return builder.build();
     }
 
     @Bean
     public MultifactorAuthenticationProvider customAuthenticationProvider() {
-        final CustomMultifactorAuthenticationProvider p = new CustomMultifactorAuthenticationProvider();
+        var p = new CustomMultifactorAuthenticationProvider();
         p.setId("mfa-custom");
         return p;
     }
 
     @Bean
+    @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer customWebflowConfigurer() {
-        return new CustomAuthenticatorWebflowConfigurer(
-                flowBuilderServices,
-                loginFlowDefinitionRegistry,
-                customFlowRegistry());
+        return new CustomAuthenticatorWebflowConfigurer(...);
+    } 
+
+    @Bean
+    public CasWebflowExecutionPlanConfigurer customWebflowExecutionPlanConfigurer() {
+        return plan -> plan.registerWebflowConfigurer(customWebflowConfigurer());
     }
     ...
 }
@@ -129,4 +101,4 @@ Do not forget to register the configuration class with CAS. [See this guide](../
 
 ## Triggers
 
-The custom authentication webflow can be triggered using any of the [supported options](Configuring-Multifactor-Authentication-Triggers.html)
+The custom authentication webflow can be triggered using any of the [supported options](Configuring-Multifactor-Authentication-Triggers.html).

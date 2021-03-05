@@ -1,10 +1,8 @@
 package org.apereo.cas.services;
 
-import org.springframework.context.ApplicationEventPublisher;
-
+import java.util.Collection;
 import java.util.Comparator;
-import java.util.Set;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 /**
  * Default implementation of the {@link ServicesManager} interface.
@@ -14,15 +12,18 @@ import java.util.stream.Stream;
  */
 public class DefaultServicesManager extends AbstractServicesManager {
 
-    public DefaultServicesManager(final ServiceRegistry serviceRegistry,
-                                  final ApplicationEventPublisher eventPublisher,
-                                  final Set<String> environments) {
-        super(serviceRegistry, eventPublisher, environments);
+    public DefaultServicesManager(final ServicesManagerConfigurationContext context) {
+        super(context);
     }
 
     @Override
-    protected Stream<RegisteredService> getCandidateServicesToMatch(final String serviceId) {
-        return getServices().values().stream().sorted(Comparator.naturalOrder());
+    protected Collection<RegisteredService> getCandidateServicesToMatch(final String serviceId) {
+        return getConfigurationContext().getServicesCache()
+            .asMap()
+            .values()
+            .stream()
+            .sorted(Comparator.naturalOrder())
+            .collect(Collectors.toList());
     }
 
 }

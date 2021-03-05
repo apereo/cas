@@ -7,6 +7,7 @@ import org.apereo.cas.util.HttpRequestUtils;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
@@ -20,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.1.0
  */
 @TestPropertySource(properties = "cas.authn.adaptive.risk.agent.enabled=true")
+@Tag("Authentication")
 public class UserAgentAuthenticationRequestRiskCalculatorTests extends BaseAuthenticationRequestRiskCalculatorTests {
 
     @Test

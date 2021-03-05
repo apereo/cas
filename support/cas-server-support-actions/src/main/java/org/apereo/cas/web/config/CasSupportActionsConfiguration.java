@@ -5,11 +5,13 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.LogoutExecutionPlan;
+import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -34,6 +36,8 @@ import org.apereo.cas.web.flow.login.ServiceWarningAction;
 import org.apereo.cas.web.flow.login.SetServiceUnauthorizedRedirectUrlAction;
 import org.apereo.cas.web.flow.login.TicketGrantingTicketCheckAction;
 import org.apereo.cas.web.flow.login.VerifyRequiredServiceAction;
+import org.apereo.cas.web.flow.logout.ConfirmLogoutAction;
+import org.apereo.cas.web.flow.logout.FinishLogoutAction;
 import org.apereo.cas.web.flow.logout.FrontChannelLogoutAction;
 import org.apereo.cas.web.flow.logout.LogoutAction;
 import org.apereo.cas.web.flow.logout.LogoutViewSetupAction;
@@ -53,7 +57,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.webflow.execution.Action;
@@ -72,8 +75,9 @@ public class CasSupportActionsConfiguration {
     private ConfigurableApplicationContext applicationContext;
 
     @Autowired
-    private ResourceLoader resourceLoader;
-
+    @Qualifier(LogoutManager.DEFAULT_BEAN_NAME)
+    private ObjectProvider<LogoutManager> logoutManager;
+    
     @Autowired
     @Qualifier("authenticationEventExecutionPlan")
     private ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
@@ -126,6 +130,10 @@ public class CasSupportActionsConfiguration {
     private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
 
     @Autowired
+    @Qualifier("authenticationContextValidator")
+    private ObjectProvider<MultifactorAuthenticationContextValidator> authenticationContextValidator;
+
+    @Autowired
     @Qualifier("ticketRegistry")
     private ObjectProvider<TicketRegistry> ticketRegistry;
 
@@ -155,7 +163,7 @@ public class CasSupportActionsConfiguration {
         return new FlowExecutionExceptionResolver();
     }
 
-    @ConditionalOnMissingBean(name = "authenticationViaFormAction")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_AUTHENTICATION_VIA_FORM_ACTION)
     @Bean
     @RefreshScope
     public Action authenticationViaFormAction() {
@@ -166,7 +174,7 @@ public class CasSupportActionsConfiguration {
     }
 
     @RefreshScope
-    @ConditionalOnMissingBean(name = "serviceAuthorizationCheck")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SERVICE_AUTHZ_CHECK)
     @Bean
     public Action serviceAuthorizationCheck() {
         return new ServiceAuthorizationCheckAction(this.servicesManager.getObject(),
@@ -174,7 +182,7 @@ public class CasSupportActionsConfiguration {
     }
 
     @RefreshScope
-    @ConditionalOnMissingBean(name = "sendTicketGrantingTicketAction")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SEND_TICKET_GRANTING_TICKET)
     @Bean
     public Action sendTicketGrantingTicketAction() {
         return new SendTicketGrantingTicketAction(centralAuthenticationService.getObject(),
@@ -183,10 +191,12 @@ public class CasSupportActionsConfiguration {
     }
 
     @RefreshScope
-    @ConditionalOnMissingBean(name = "createTicketGrantingTicketAction")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_CREATE_TICKET_GRANTING_TICKET)
     @Bean
     public Action createTicketGrantingTicketAction() {
         val context = CasWebflowEventResolutionConfigurationContext.builder()
+            .casDelegatingWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver.getObject())
+            .authenticationContextValidator(authenticationContextValidator.getObject())
             .authenticationSystemSupport(authenticationSystemSupport.getObject())
             .centralAuthenticationService(centralAuthenticationService.getObject())
             .servicesManager(servicesManager.getObject())
@@ -196,26 +206,34 @@ public class CasSupportActionsConfiguration {
             .authenticationRequestServiceSelectionStrategies(authenticationServiceSelectionPlan.getObject())
             .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getObject())
             .casProperties(casProperties)
+            .singleSignOnParticipationStrategy(webflowSingleSignOnParticipationStrategy.getObject())
             .ticketRegistry(ticketRegistry.getObject())
+            .authenticationEventExecutionPlan(authenticationEventExecutionPlan.getObject())
             .applicationContext(applicationContext)
             .build();
         return new CreateTicketGrantingTicketAction(context);
     }
 
-    @RefreshScope
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_FINISH_LOGOUT)
     @Bean
-    @ConditionalOnMissingBean(name = "logoutAction")
-    public Action logoutAction() {
-        return new LogoutAction(webApplicationServiceFactory.getObject(),
-            servicesManager.getObject(),
-            casProperties.getLogout());
+    @RefreshScope
+    public Action finishLogoutAction() {
+        return new FinishLogoutAction();
     }
 
-    @ConditionalOnMissingBean(name = "initializeLoginAction")
+    @Autowired
+    @RefreshScope
+    @Bean
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_LOGOUT)
+    public Action logoutAction(@Qualifier("logoutExecutionPlan") final LogoutExecutionPlan logoutExecutionPlan) {
+        return new LogoutAction(logoutExecutionPlan);
+    }
+
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_INIT_LOGIN_ACTION)
     @Bean
     @RefreshScope
     public Action initializeLoginAction() {
-        return new InitializeLoginAction(servicesManager.getObject());
+        return new InitializeLoginAction(servicesManager.getObject(), casProperties);
     }
 
     @RefreshScope
@@ -250,7 +268,7 @@ public class CasSupportActionsConfiguration {
 
     @RefreshScope
     @Bean
-    @ConditionalOnMissingBean(name = "verifyRequiredServiceAction")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_VERIFY_REQUIRED_SERVICE)
     public Action verifyRequiredServiceAction() {
         return new VerifyRequiredServiceAction(
             servicesManager.getObject(),
@@ -261,7 +279,7 @@ public class CasSupportActionsConfiguration {
 
     @RefreshScope
     @Bean
-    @ConditionalOnMissingBean(name = "initialAuthenticationRequestValidationAction")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_INITIAL_AUTHN_REQUEST_VALIDATION)
     public Action initialAuthenticationRequestValidationAction() {
         return new InitialAuthenticationRequestValidationAction(rankedAuthenticationProviderWebflowEventResolver.getObject());
     }
@@ -273,19 +291,19 @@ public class CasSupportActionsConfiguration {
         return new GenericSuccessViewAction(centralAuthenticationService.getObject(),
             servicesManager.getObject(),
             webApplicationServiceFactory.getObject(),
-            casProperties.getView().getDefaultRedirectUrl());
+            casProperties);
     }
 
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "redirectUnauthorizedServiceUrlAction")
     public Action redirectUnauthorizedServiceUrlAction() {
-        return new RedirectUnauthorizedServiceUrlAction(servicesManager.getObject(), resourceLoader, applicationContext);
+        return new RedirectUnauthorizedServiceUrlAction(servicesManager.getObject(), applicationContext);
     }
 
     @Bean
     @RefreshScope
-    @ConditionalOnMissingBean(name = "generateServiceTicketAction")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_GENERATE_SERVICE_TICKET)
     public Action generateServiceTicketAction() {
         return new GenerateServiceTicketAction(authenticationSystemSupport.getObject(),
             centralAuthenticationService.getObject(),
@@ -311,29 +329,40 @@ public class CasSupportActionsConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(name = "ticketGrantingTicketCheckAction")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_TICKET_GRANTING_TICKET_CHECK)
     public Action ticketGrantingTicketCheckAction() {
         return new TicketGrantingTicketCheckAction(this.centralAuthenticationService.getObject());
     }
 
     @Bean
-    @ConditionalOnMissingBean(name = "terminateSessionAction")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_TERMINATE_SESSION)
     @RefreshScope
     public Action terminateSessionAction() {
         return new TerminateSessionAction(centralAuthenticationService.getObject(),
             ticketGrantingTicketCookieGenerator.getObject(),
             warnCookieGenerator.getObject(),
-            casProperties.getLogout());
+            casProperties.getLogout(),
+            logoutManager.getObject(),
+            applicationContext);
     }
 
     @Bean
-    @ConditionalOnMissingBean(name = "logoutViewSetupAction")
+    @ConditionalOnMissingBean(name = "confirmLogoutAction")
+    @RefreshScope
+    public Action confirmLogoutAction() {
+        return new ConfirmLogoutAction(centralAuthenticationService.getObject(),
+            ticketGrantingTicketCookieGenerator.getObject());
+    }
+
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_LOGOUT_VIEW_SETUP)
     public Action logoutViewSetupAction() {
         return new LogoutViewSetupAction(casProperties);
     }
 
     @Bean
-    @ConditionalOnMissingBean(name = "serviceWarningAction")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SERVICE_WARNING)
     @RefreshScope
     public Action serviceWarningAction() {
         return new ServiceWarningAction(centralAuthenticationService.getObject(),

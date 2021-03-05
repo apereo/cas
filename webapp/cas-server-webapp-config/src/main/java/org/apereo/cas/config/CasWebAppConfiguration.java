@@ -27,7 +27,6 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Optional;
@@ -57,8 +56,9 @@ public class CasWebAppConfiguration implements WebMvcConfigurer {
         return bean;
     }
 
-    @ConditionalOnMissingBean(name = "localeResolver")
+    @ConditionalOnMissingBean(name = "casLocaleResolver")
     @Bean
+    @RefreshScope
     public LocaleResolver localeResolver() {
         val localeProps = casProperties.getLocale();
         val localeCookie = localeProps.getCookie();
@@ -86,12 +86,30 @@ public class CasWebAppConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    protected UrlFilenameViewController passThroughController() {
-        return new UrlFilenameViewController();
+    @Autowired
+    public SimpleUrlHandlerMapping handlerMapping(@Qualifier("rootController")
+                                                  final Controller rootController) {
+        val mapping = new SimpleUrlHandlerMapping();
+
+        mapping.setOrder(1);
+        mapping.setAlwaysUseFullPath(true);
+        mapping.setRootHandler(rootController);
+        val urls = new HashMap<String, Object>();
+        urls.put("/", rootController);
+
+        mapping.setUrlMap(urls);
+        return mapping;
+    }
+
+    @Override
+    public void addInterceptors(final InterceptorRegistry registry) {
+        registry.addInterceptor(localeChangeInterceptor.getObject())
+            .addPathPatterns("/**");
     }
 
     @Bean
-    protected Controller rootController() {
+    @ConditionalOnMissingBean(name = "rootController")
+    public Controller rootController() {
         return new ParameterizableViewController() {
             @Override
             protected ModelAndView handleRequestInternal(final HttpServletRequest request,
@@ -106,23 +124,7 @@ public class CasWebAppConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    public SimpleUrlHandlerMapping handlerMapping() {
-        val mapping = new SimpleUrlHandlerMapping();
-
-        val root = rootController();
-        mapping.setOrder(1);
-        mapping.setAlwaysUseFullPath(true);
-        mapping.setRootHandler(root);
-        val urls = new HashMap<String, Object>();
-        urls.put("/", root);
-
-        mapping.setUrlMap(urls);
-        return mapping;
-    }
-
-    @Override
-    public void addInterceptors(final InterceptorRegistry registry) {
-        registry.addInterceptor(localeChangeInterceptor.getObject())
-            .addPathPatterns("/**");
+    protected UrlFilenameViewController passThroughController() {
+        return new UrlFilenameViewController();
     }
 }

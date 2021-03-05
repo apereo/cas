@@ -4,17 +4,26 @@ import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.services.AbstractRegisteredService;
+import org.apereo.cas.services.DefaultServicesManager;
+import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegexRegisteredService;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.SimpleUrlValidatorFactoryBean;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.SneakyThrows;
 import lombok.val;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.net.URL;
+import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,23 +33,39 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Tag("Logout")
 public class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
+    private ServicesManager servicesManager;
+
+    public static AbstractWebApplicationService getService(final String url) {
+        val request = new MockHttpServletRequest();
+        request.addParameter("service", url);
+        return (AbstractWebApplicationService) new WebApplicationServiceFactory().createService(request);
+    }
 
     @SneakyThrows
-    public static AbstractRegisteredService getRegisteredService(final String id) {
+    public AbstractRegisteredService getRegisteredService(final String id) {
         val s = new RegexRegisteredService();
         s.setServiceId(id);
         s.setName("Test service " + id);
         s.setDescription("Registered service description");
         s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https?://.+"));
         s.setId(RandomUtils.getNativeInstance().nextInt());
+        servicesManager.save(s);
         return s;
     }
 
-    public static AbstractWebApplicationService getService(final String url) {
-        val request = new MockHttpServletRequest();
-        request.addParameter("service", url);
-        return (AbstractWebApplicationService) new WebApplicationServiceFactory().createService(request);
+    @BeforeEach
+    public void beforeEach() {
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+        val context = ServicesManagerConfigurationContext.builder()
+            .serviceRegistry(new InMemoryServiceRegistry(appCtx))
+            .applicationContext(appCtx)
+            .environments(new HashSet<>(0))
+            .servicesCache(Caffeine.newBuilder().build())
+            .build();
+        this.servicesManager = new DefaultServicesManager(context);
     }
 
     @Test
@@ -115,15 +140,15 @@ public class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
         assertTrue(url.isEmpty());
     }
 
-    private static DefaultSingleLogoutServiceLogoutUrlBuilder createDefaultSingleLogoutServiceLogoutUrlBuilder(final boolean allowLocalLogoutUrls) {
+    private DefaultSingleLogoutServiceLogoutUrlBuilder createDefaultSingleLogoutServiceLogoutUrlBuilder(final boolean allowLocalLogoutUrls) {
         return createDefaultSingleLogoutServiceLogoutUrlBuilder(allowLocalLogoutUrls, null, true);
     }
 
-    private static DefaultSingleLogoutServiceLogoutUrlBuilder createDefaultSingleLogoutServiceLogoutUrlBuilder(final boolean allowLocalLogoutUrls,
-                                                                                                               final String authorityValidationRegEx,
-                                                                                                               final boolean authorityValidationRegExCaseSensitive) {
+    private DefaultSingleLogoutServiceLogoutUrlBuilder createDefaultSingleLogoutServiceLogoutUrlBuilder(final boolean allowLocalLogoutUrls,
+                                                                                                        final String authorityValidationRegEx,
+                                                                                                        final boolean authorityValidationRegExCaseSensitive) {
         val validator = new SimpleUrlValidatorFactoryBean(allowLocalLogoutUrls, authorityValidationRegEx,
             authorityValidationRegExCaseSensitive).getObject();
-        return new DefaultSingleLogoutServiceLogoutUrlBuilder(validator);
+        return new DefaultSingleLogoutServiceLogoutUrlBuilder(servicesManager, validator);
     }
 }

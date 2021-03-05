@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.jwks.generator;
 
+import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtils;
 import org.apereo.cas.util.MockWebServer;
@@ -27,8 +28,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("RestfulApi")
 @TestPropertySource(properties = {
     "cas.authn.oidc.jwks.rest.url=http://localhost:9521",
-    "cas.authn.oidc.jwks.rest.basicAuthUsername=casuser",
-    "cas.authn.oidc.jwks.rest.basicAuthPassword=123456"
+    "cas.authn.oidc.jwks.rest.basic-auth-username=casuser",
+    "cas.authn.oidc.jwks.rest.basic-auth-password=123456"
 })
 public class OidcRestfulJsonWebKeystoreGeneratorServiceTests extends AbstractOidcTests {
     private static MockWebServer SERVER;
@@ -37,7 +38,6 @@ public class OidcRestfulJsonWebKeystoreGeneratorServiceTests extends AbstractOid
     public static void setup() {
         val webkey = OidcJsonWebKeyStoreUtils.generateJsonWebKey("rsa", 2048);
         val data = webkey.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
-
         SERVER = new MockWebServer(9521,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_JSON_VALUE);
@@ -53,5 +53,14 @@ public class OidcRestfulJsonWebKeystoreGeneratorServiceTests extends AbstractOid
     public void verifyOperation() {
         val resource = oidcJsonWebKeystoreGeneratorService.generate();
         assertTrue(resource.exists());
+    }
+
+    @Test
+    public void verifyFailsOperation() {
+        var oidcProperties = new OidcProperties();
+        oidcProperties.getJwks().getRest().setUrl("https://localhost:1234");
+        oidcProperties.getJwks().getRest().setMethod("get");
+        val resource = new OidcRestfulJsonWebKeystoreGeneratorService(oidcProperties).generate();
+        assertNull(resource);
     }
 }

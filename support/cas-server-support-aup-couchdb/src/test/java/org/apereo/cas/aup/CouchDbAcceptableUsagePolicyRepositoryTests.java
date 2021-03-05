@@ -4,10 +4,14 @@ import org.apereo.cas.config.CasAcceptableUsagePolicyCouchDbConfiguration;
 import org.apereo.cas.config.CasCouchDbCoreConfiguration;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.core.ProfileCouchDbRepository;
+import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.web.support.WebUtils;
 
 import lombok.Getter;
+import lombok.val;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -18,6 +22,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -33,9 +38,9 @@ import static org.junit.jupiter.api.Assertions.*;
     BaseAcceptableUsagePolicyRepositoryTests.SharedTestConfiguration.class
 })
 @TestPropertySource(properties = {
-    "cas.acceptableUsagePolicy.couchDb.asynchronous=false",
-    "cas.acceptableUsagePolicy.couchDb.username=cas",
-    "cas.acceptableUsagePolicy.couchdb.password=password"
+    "cas.acceptable-usage-policy.couch-db.asynchronous=false",
+    "cas.acceptable-usage-policy.couch-db.username=cas",
+    "cas.acceptable-usage-policy.couch-db.password=password"
 })
 @Tag("CouchDb")
 @Getter
@@ -65,10 +70,31 @@ public class CouchDbAcceptableUsagePolicyRepositoryTests extends BaseAcceptableU
         aupCouchDbFactory.getCouchDbInstance().deleteDatabase(aupCouchDbFactory.getCouchDbConnector().getDatabaseName());
     }
 
+    @Override
+    public boolean hasLiveUpdates() {
+        return true;
+    }
+
     @Test
     public void verifyOperation() {
         assertNotNull(acceptableUsagePolicyRepository);
-        verifyRepositoryAction("casuser",
-            CollectionUtils.wrap("aupAccepted", List.of("false"), "email", List.of("CASuser@example.org")));
+        val attributes = CollectionUtils.<String, List<Object>>wrap("aupAccepted", List.of("false"),
+            "email", List.of("CASuser@example.org"));
+        verifyRepositoryAction("casuser", attributes);
+
+        val c = getCredential("casuser");
+        val context = getRequestContext("casuser", attributes, c);
+        acceptableUsagePolicyRepository.submit(context, c);
+        assertTrue(getAcceptableUsagePolicyRepository().verify(context, c).isAccepted());
+
+        val principal = RegisteredServiceTestUtils.getPrincipal("casuser", Map.of("aupAccepted", List.of("true")));
+        val authentication = RegisteredServiceTestUtils.getAuthentication(principal);
+        WebUtils.putAuthentication(authentication, context);
+
+        val tgt = new MockTicketGrantingTicket(authentication);
+        WebUtils.putTicketGrantingTicketInScopes(context, tgt);
+        ticketRegistry.addTicket(tgt);
+        
+        assertTrue(getAcceptableUsagePolicyRepository().verify(context, c).isAccepted());
     }
 }

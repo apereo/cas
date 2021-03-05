@@ -1,7 +1,7 @@
 package org.apereo.cas.mfa.simple;
 
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
-import org.apereo.cas.configuration.model.support.mfa.CasSimpleMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.CasSimpleMultifactorAuthenticationProperties;
 import org.apereo.cas.services.RegisteredService;
 
 import lombok.NoArgsConstructor;
@@ -21,7 +21,7 @@ public class CasSimpleMultifactorAuthenticationProvider extends AbstractMultifac
 
     @Override
     public String getId() {
-        return StringUtils.defaultIfBlank(super.getId(), CasSimpleMultifactorProperties.DEFAULT_IDENTIFIER);
+        return StringUtils.defaultIfBlank(super.getId(), CasSimpleMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
     }
 
     @Override

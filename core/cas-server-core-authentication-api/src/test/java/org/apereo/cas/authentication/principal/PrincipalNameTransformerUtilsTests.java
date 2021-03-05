@@ -1,8 +1,10 @@
 package org.apereo.cas.authentication.principal;
 
+import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 
@@ -14,7 +16,16 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Tag("Utility")
 public class PrincipalNameTransformerUtilsTests {
+    @Test
+    public void verifyBlockingAction() {
+        val properties = new PrincipalTransformationProperties();
+        properties.setBlockingPattern(".+@.+\\.com");
+        val t = PrincipalNameTransformerUtils.newPrincipalNameTransformer(properties);
+        assertThrows(PreventedException.class, () -> t.transform("hello@cas.com"));
+    }
+
     @Test
     public void verifyAction() {
         val properties = new PrincipalTransformationProperties();

@@ -1,5 +1,7 @@
 package org.apereo.cas.token;
 
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
@@ -28,14 +30,19 @@ import java.security.spec.RSAPublicKeySpec;
 @Endpoint(id = "jwtTicketSigningPublicKey", enableByDefault = false)
 public class JwtTokenCipherSigningPublicKeyEndpoint extends BaseCasActuatorEndpoint {
     private final CipherExecutor tokenCipherExecutor;
+
     private final ServicesManager servicesManager;
 
+    private final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
+
     public JwtTokenCipherSigningPublicKeyEndpoint(final CasConfigurationProperties casProperties,
-                                                  final CipherExecutor tokenCipherExecutor,
-                                                  final ServicesManager servicesManager) {
+        final CipherExecutor tokenCipherExecutor,
+        final ServicesManager servicesManager,
+        final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {
         super(casProperties);
         this.tokenCipherExecutor = tokenCipherExecutor;
         this.servicesManager = servicesManager;
+        this.webApplicationServiceFactory = webApplicationServiceFactory;
     }
 
     /**
@@ -46,11 +53,13 @@ public class JwtTokenCipherSigningPublicKeyEndpoint extends BaseCasActuatorEndpo
      * @throws Exception the exception
      */
     @ReadOperation(produces = MediaType.TEXT_PLAIN_VALUE)
-    public String fetchPublicKey(@Nullable final String service) throws Exception {
+    public String fetchPublicKey(
+        @Nullable
+        final String service) throws Exception {
         var signingKey = tokenCipherExecutor.getSigningKey();
 
         if (StringUtils.isNotBlank(service)) {
-            val registeredService = this.servicesManager.findServiceBy(service);
+            val registeredService = servicesManager.findServiceBy(webApplicationServiceFactory.createService(service));
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
             val serviceCipher = new RegisteredServiceJwtTicketCipherExecutor();
             if (serviceCipher.supports(registeredService)) {

@@ -1,9 +1,11 @@
 package org.apereo.cas.web.flow.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.web.CaptchaValidator;
 import org.apereo.cas.web.flow.CasCaptchaWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.InitializeCaptchaAction;
 import org.apereo.cas.web.flow.ValidateCaptchaAction;
 
 import org.springframework.beans.factory.ObjectProvider;
@@ -20,6 +22,8 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * This is {@link CasCaptchaConfiguration}.
@@ -29,7 +33,7 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("casCaptchaConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnProperty(prefix = "cas.googleRecaptcha", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "cas.google-recaptcha", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class CasCaptchaConfiguration {
 
     @Autowired
@@ -56,9 +60,29 @@ public class CasCaptchaConfiguration {
 
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "captchaValidator")
+    public CaptchaValidator captchaValidator() {
+        return CaptchaValidator.getInstance(casProperties.getGoogleRecaptcha());
+    }
+
+    @RefreshScope
+    @Bean
     @ConditionalOnMissingBean(name = "validateCaptchaAction")
     public Action validateCaptchaAction() {
-        return new ValidateCaptchaAction(casProperties.getGoogleRecaptcha());
+        return new ValidateCaptchaAction(captchaValidator());
+    }
+
+    @RefreshScope
+    @Bean
+    @ConditionalOnMissingBean(name = "initializeCaptchaAction")
+    public Action initializeCaptchaAction() {
+        return new InitializeCaptchaAction(casProperties.getGoogleRecaptcha()) {
+            @Override
+            protected Event doExecute(final RequestContext requestContext) {
+                requestContext.getFlowScope().put("recaptchaLoginEnabled", googleRecaptchaProperties.isEnabled());
+                return super.doExecute(requestContext);
+            }
+        };
     }
 
     @Bean

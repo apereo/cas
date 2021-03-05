@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 
-import com.google.common.base.Predicates;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.val;
@@ -39,16 +38,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CasServerProfileRegistrar implements ApplicationContextAware {
     private final Clients clients;
-    private final Set<String> availableAttributes;
-    private ApplicationContext applicationContext;
 
-    private Map<String, String> locateMultifactorAuthenticationProviderTypesSupported() {
-        val providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);
-        return providers
-            .values()
-            .stream()
-            .collect(Collectors.toMap(MultifactorAuthenticationProvider::getId, MultifactorAuthenticationProvider::getFriendlyName));
-    }
+    private final Set<String> availableAttributes;
+
+    private ApplicationContext applicationContext;
 
     private static Map<String, Class> locateRegisteredServiceTypesSupported() {
         final Function<Class, Object> mapper = c -> {
@@ -60,7 +53,7 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
         };
         val collector = Collectors.toMap(RegisteredService::getFriendlyName, RegisteredService::getClass);
         return (Map) locateSubtypesByReflection(mapper, collector,
-            AbstractRegisteredService.class, Predicates.alwaysTrue(), CentralAuthenticationService.NAMESPACE);
+            AbstractRegisteredService.class, o -> true, CentralAuthenticationService.NAMESPACE);
     }
 
     private static Object locateSubtypesByReflection(final Function<Class, Object> mapper, final Collector collector,
@@ -74,6 +67,14 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
             .map(mapper)
             .filter(Objects::nonNull)
             .collect(collector);
+    }
+
+    private Map<String, String> locateMultifactorAuthenticationProviderTypesSupported() {
+        val providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);
+        return providers
+            .values()
+            .stream()
+            .collect(Collectors.toMap(MultifactorAuthenticationProvider::getId, MultifactorAuthenticationProvider::getFriendlyName));
     }
 
     private Set<String> locateDelegatedClientTypesSupported() {

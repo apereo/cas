@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = AbstractMultifactorAuthenticationTrustStorageTests.SharedTestConfiguration.class)
 @Getter
-@Tag("Webflow")
+@Tag("WebflowMfaActions")
 public class MultifactorAuthenticationPrepareTrustDeviceViewActionTests extends AbstractMultifactorAuthenticationTrustStorageTests {
 
     @Autowired
@@ -68,7 +68,7 @@ public class MultifactorAuthenticationPrepareTrustDeviceViewActionTests extends 
         mfaTrustEngine.save(record);
 
         assertNotNull(response.getCookies());
-        assertTrue(response.getCookies().length == 1);
+        assertEquals(response.getCookies().length, 1);
         request.setCookies(response.getCookies());
 
         val authn = RegisteredServiceTestUtils.getAuthentication(record.getPrincipal());

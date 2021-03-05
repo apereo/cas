@@ -38,7 +38,7 @@ public class AccessTokenDeviceCodeResponseRequestExtractor extends BaseAccessTok
 
         val deviceCode = request.getParameter(OAuth20Constants.CODE);
 
-        val context = new JEEContext(request, response, getOAuthConfigurationContext().getSessionStore());
+        val context = new JEEContext(request, response);
         val service = getOAuthConfigurationContext().getAuthenticationBuilder().buildService(registeredService, context, false);
 
         LOGGER.debug("Authenticating the OAuth request indicated by [{}]", service);

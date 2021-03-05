@@ -3,11 +3,11 @@ package org.apereo.cas.rest.audit;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
 import org.aspectj.lang.JoinPoint;
 import org.springframework.http.ResponseEntity;
+
+import java.util.HashMap;
 
 /**
  * This is {@link RestResponseEntityAuditResourceResolver}.
@@ -29,16 +29,15 @@ public class RestResponseEntityAuditResourceResolver extends ReturnValueAsString
 
     private String[] getAuditResourceFromResponseEntity(final ResponseEntity entity) {
         val headers = entity.getHeaders();
-        val result =
-            new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE);
-        result.append("status", entity.getStatusCodeValue() + "-" + entity.getStatusCode().name());
+        val values = new HashMap<>();
+        values.put("status", entity.getStatusCodeValue() + "-" + entity.getStatusCode().name());
         val location = headers.getLocation();
         if (location != null) {
-            result.append("location", location);
+            values.put("location", location);
         }
         if (this.includeEntityBody && entity.getBody() != null) {
-            result.append("body", entity.getBody().toString());
+            values.put("body", entity.getBody().toString());
         }
-        return new String[]{result.toString()};
+        return new String[]{auditFormat.serialize(values)};
     }
 }

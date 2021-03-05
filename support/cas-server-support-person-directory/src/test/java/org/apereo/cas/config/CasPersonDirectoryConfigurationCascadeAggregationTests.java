@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributeDaoFilter;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -22,19 +23,20 @@ import static org.junit.jupiter.api.Assertions.*;
     CasPersonDirectoryConfiguration.class,
     CasCoreUtilConfiguration.class
 }, properties = {
-    "cas.authn.attributeRepository.stub.attributes.uid=cas",
-    "cas.authn.attributeRepository.stub.attributes.givenName=apereo-cas",
-    "cas.authn.attributeRepository.stub.attributes.eppn=casuser",
+    "cas.authn.attribute-repository.stub.attributes.uid=cas",
+    "cas.authn.attribute-repository.stub.attributes.givenName=apereo-cas",
+    "cas.authn.attribute-repository.stub.attributes.eppn=casuser",
     
-    "cas.authn.attributeRepository.json[0].location=classpath:/json-attribute-repository.json",
-    "cas.authn.attributeRepository.json[0].order=1",
+    "cas.authn.attribute-repository.json[0].location=classpath:/json-attribute-repository.json",
+    "cas.authn.attribute-repository.json[0].order=1",
 
-    "cas.authn.attributeRepository.groovy[0].location=classpath:/GroovyAttributeRepository.groovy",
-    "cas.authn.attributeRepository.groovy[0].order=2",
+    "cas.authn.attribute-repository.groovy[0].location=classpath:/GroovyAttributeRepository.groovy",
+    "cas.authn.attribute-repository.groovy[0].order=2",
 
-    "cas.authn.attributeRepository.aggregation=cascade",
-    "cas.authn.attributeRepository.merger=multivalued"
+    "cas.authn.attribute-repository.core.aggregation=CASCADE",
+    "cas.authn.attribute-repository.core.merger=MULTIVALUED"
 })
+@Tag("Attributes")
 public class CasPersonDirectoryConfigurationCascadeAggregationTests {
     @Autowired
     @Qualifier("aggregatingAttributeRepository")

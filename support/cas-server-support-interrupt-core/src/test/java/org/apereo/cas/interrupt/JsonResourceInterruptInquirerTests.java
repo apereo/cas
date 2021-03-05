@@ -2,9 +2,11 @@ package org.apereo.cas.interrupt;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.webflow.test.MockRequestContext;
@@ -21,11 +23,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Tag("FileSystem")
 public class JsonResourceInterruptInquirerTests {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     @Test
-    public void verifyResponseCanSerializeIntoJson() throws Exception {
+    public void verifyResponse() throws Exception {
         val map = new LinkedHashMap<String, InterruptResponse>();
         var response = new InterruptResponse("Message",
             CollectionUtils.wrap("text", "link", "text2", "link2"), false, true);
@@ -37,8 +41,15 @@ public class JsonResourceInterruptInquirerTests {
         MAPPER.writer().withDefaultPrettyPrinter().writeValue(f, map);
         assertTrue(f.exists());
 
-        val q = new JsonResourceInterruptInquirer(new FileSystemResource(f));
-        response = q.inquire(CoreAuthenticationTestUtils.getAuthentication("casuser"),
+        val inquirer = new JsonResourceInterruptInquirer(new FileSystemResource(f));
+        response = inquirer.inquire(CoreAuthenticationTestUtils.getAuthentication("unknown"),
+            CoreAuthenticationTestUtils.getRegisteredService(),
+            CoreAuthenticationTestUtils.getService(),
+            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
+            new MockRequestContext());
+        assertFalse(response.isInterrupt());
+
+        response = inquirer.inquire(CoreAuthenticationTestUtils.getAuthentication("casuser"),
             CoreAuthenticationTestUtils.getRegisteredService(),
             CoreAuthenticationTestUtils.getService(),
             CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
@@ -49,5 +60,7 @@ public class JsonResourceInterruptInquirerTests {
         assertEquals(2, response.getLinks().size());
         assertTrue(response.getData().containsKey("field1"));
         assertTrue(response.getData().containsKey("field2"));
+
+        inquirer.destroy();
     }
 }

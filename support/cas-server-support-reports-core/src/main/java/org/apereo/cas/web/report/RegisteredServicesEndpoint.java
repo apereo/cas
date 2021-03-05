@@ -1,10 +1,14 @@
 package org.apereo.cas.web.report;
 
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -14,8 +18,7 @@ import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
 import org.springframework.boot.actuate.endpoint.http.ActuatorMediaType;
 import org.springframework.http.MediaType;
-
-import java.util.Collection;
+import org.springframework.http.ResponseEntity;
 
 /**
  * This is {@link RegisteredServicesEndpoint}.
@@ -26,28 +29,28 @@ import java.util.Collection;
 @Endpoint(id = "registeredServices", enableByDefault = false)
 @Slf4j
 public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
-    private final ServicesManager servicesManager;
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
-    /**
-     * Instantiates a new mvc endpoint.
-     * Endpoints are by default sensitive.
-     *
-     * @param casProperties   the cas properties
-     * @param servicesManager the services manager
-     */
-    public RegisteredServicesEndpoint(final CasConfigurationProperties casProperties, final ServicesManager servicesManager) {
+    private final ServicesManager servicesManager;
+    private final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
+
+    public RegisteredServicesEndpoint(final CasConfigurationProperties casProperties, final ServicesManager servicesManager,
+        final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {
         super(casProperties);
         this.servicesManager = servicesManager;
+        this.webApplicationServiceFactory = webApplicationServiceFactory;
     }
 
     /**
      * Handle and produce a list of services from registry.
      *
-     * @return the web async task
+     * @return collection of services
      */
+    @SneakyThrows
     @ReadOperation(produces = {ActuatorMediaType.V2_JSON, "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})
-    public Collection<RegisteredService> handle() {
-        return this.servicesManager.load();
+    public ResponseEntity<String> handle() {
+        return ResponseEntity.ok(MAPPER.writeValueAsString(servicesManager.load()));
     }
 
     /**
@@ -56,12 +59,16 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
      * @param id the id
      * @return the registered service
      */
+    @SneakyThrows
     @ReadOperation(produces = {ActuatorMediaType.V2_JSON, "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})
-    public RegisteredService fetchService(@Selector final String id) {
-        if (NumberUtils.isDigits(id)) {
-            return this.servicesManager.findServiceBy(Long.parseLong(id));
+    public ResponseEntity<String> fetchService(@Selector final String id) {
+        val service = NumberUtils.isDigits(id)
+            ? servicesManager.findServiceBy(Long.parseLong(id))
+            : servicesManager.findServiceBy(webApplicationServiceFactory.createService(id));
+        if (service == null) {
+            return ResponseEntity.notFound().build();
         }
-        return this.servicesManager.findServiceBy(id);
+        return ResponseEntity.ok(MAPPER.writeValueAsString(service));
     }
 
     /**
@@ -70,20 +77,21 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
      * @param id the id
      * @return the registered service
      */
+    @SneakyThrows
     @DeleteOperation(produces = {ActuatorMediaType.V2_JSON, "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})
-    public RegisteredService deleteService(@Selector final String id) {
+    public ResponseEntity<String> deleteService(@Selector final String id) {
         if (NumberUtils.isDigits(id)) {
-            val svc = this.servicesManager.findServiceBy(Long.parseLong(id));
+            val svc = servicesManager.findServiceBy(Long.parseLong(id));
             if (svc != null) {
-                return this.servicesManager.delete(svc);
+                return ResponseEntity.ok(MAPPER.writeValueAsString(servicesManager.delete(svc)));
             }
         } else {
-            val svc = this.servicesManager.findServiceBy(id);
+            val svc = servicesManager.findServiceBy(webApplicationServiceFactory.createService(id));
             if (svc != null) {
-                return this.servicesManager.delete(svc);
+                return ResponseEntity.ok(MAPPER.writeValueAsString(servicesManager.delete(svc)));
             }
         }
         LOGGER.warn("Could not locate service definition by id [{}]", id);
-        return null;
+        return ResponseEntity.notFound().build();
     }
 }

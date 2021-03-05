@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
@@ -23,6 +24,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Tag("Ldap")
 public class OptionalWarningLdapAccountStateHandlerTests {
     @Test
     public void verifyWarningOnMatch() {
@@ -42,6 +44,26 @@ public class OptionalWarningLdapAccountStateHandlerTests {
         assertEquals(2, messages.size());
     }
 
+    @Test
+    public void verifyWarningNoAttr() {
+        val h = new OptionalWarningLdapAccountStateHandler();
+        h.setDisplayWarningOnMatch(true);
+        val response = mock(AuthenticationResponse.class);
+        val config = new PasswordPolicyContext();
+        config.setPasswordWarningNumberOfDays(5);
+        val list = new ArrayList<MessageDescriptor>();
+        h.handleWarning(
+            new AccountState.DefaultWarning(ZonedDateTime.now(ZoneId.systemDefault()), 1),
+            response, config, list);
+        assertTrue(list.isEmpty());
+        h.setWarnAttributeName("attribute");
+        h.handleWarning(
+            new AccountState.DefaultWarning(ZonedDateTime.now(ZoneId.systemDefault()), 1),
+            response, config, list);
+        assertTrue(list.isEmpty());
+    }
+
+    
     @Test
     public void verifyAlwaysWarningOnMatch() {
         val h = new OptionalWarningLdapAccountStateHandler();

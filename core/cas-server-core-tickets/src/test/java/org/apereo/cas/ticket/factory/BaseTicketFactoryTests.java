@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.factory;
 
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketComponentSerializationConfiguration;
@@ -10,24 +11,14 @@ import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.DefaultRegisteredServiceProxyTicketExpirationPolicy;
-import org.apereo.cas.services.DefaultRegisteredServiceServiceTicketExpirationPolicy;
-import org.apereo.cas.services.RegexRegisteredService;
-import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
-import org.apereo.cas.util.CollectionUtils;
 
-import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.annotation.Bean;
-
-import java.util.List;
 
 /**
  * This is {@link BaseTicketFactoryTests}.
@@ -36,7 +27,6 @@ import java.util.List;
  * @since 6.1.0
  */
 @SpringBootTest(classes = {
-    BaseTicketFactoryTests.TicketFactoryTestConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
@@ -45,9 +35,9 @@ import java.util.List;
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasCoreTicketComponentSerializationConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     RefreshAutoConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    MailSenderAutoConfiguration.class
+    CasCoreUtilConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class BaseTicketFactoryTests {
@@ -56,18 +46,10 @@ public abstract class BaseTicketFactoryTests {
     @Qualifier("defaultTicketFactory")
     protected TicketFactory ticketFactory;
 
-    @TestConfiguration("TicketFactoryTestConfiguration")
-    public static class TicketFactoryTestConfiguration {
-        @Bean
-        public List inMemoryRegisteredServices() {
-            val svc = RegisteredServiceTestUtils.getRegisteredService("customExpirationPolicy", RegexRegisteredService.class);
-            svc.setServiceTicketExpirationPolicy(
-                new DefaultRegisteredServiceServiceTicketExpirationPolicy(10, "666"));
-            svc.setProxyTicketExpirationPolicy(
-                new DefaultRegisteredServiceProxyTicketExpirationPolicy(50, "1984"));
+    @Autowired
+    @Qualifier("servicesManager")
+    protected ServicesManager servicesManager;
 
-            val defaultSvc = RegisteredServiceTestUtils.getRegisteredService("defaultExpirationPolicy", RegexRegisteredService.class);
-            return CollectionUtils.wrapList(svc, defaultSvc);
-        }
-    }
+    @Autowired
+    protected CasConfigurationProperties casProperties;
 }

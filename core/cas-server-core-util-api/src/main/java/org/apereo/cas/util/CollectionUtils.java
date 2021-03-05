@@ -78,8 +78,9 @@ public class CollectionUtils {
      * @param obj the object to convert into a collection
      * @return The collection instance containing the object provided
      */
+    @SuppressWarnings("JdkObsolete")
     public static Set<Object> toCollection(final Object obj) {
-        val c = new LinkedHashSet<Object>(MAP_SIZE);
+        val c = new LinkedHashSet<>(MAP_SIZE);
         if (obj == null) {
             LOGGER.trace("Converting null obj to empty collection");
         } else if (obj instanceof Collection) {
@@ -124,7 +125,7 @@ public class CollectionUtils {
     public static <K, V> Map<K, V> wrap(final Multimap<K, V> source) {
         if (source != null && !source.isEmpty()) {
             val inner = source.asMap();
-            val map = new HashMap<Object, Object>();
+            val map = new HashMap<>();
             inner.forEach((k, v) -> map.put(k, wrap(v)));
             return (Map) map;
         }
@@ -531,6 +532,20 @@ public class CollectionUtils {
     }
 
     /**
+     * Wrap linked hash map.
+     *
+     * @param <T>    the type parameter
+     * @param key    the key
+     * @param source the source
+     * @return the array list
+     */
+    public static <T> Map<String, T> wrapLinkedHashMap(final String key, final T source) {
+        val list = new LinkedHashMap<String, T>(MAP_SIZE);
+        list.put(key, source);
+        return list;
+    }
+
+    /**
      * As multi value map.
      *
      * @param innerMap the inner map
@@ -571,13 +586,13 @@ public class CollectionUtils {
      * @param inputList the input list
      * @return the map
      */
-    public static Map<String, String> convertDirectedListToMap(final List<String> inputList) {
+    public static Map<String, String> convertDirectedListToMap(final Collection<String> inputList) {
         val mappings = new TreeMap<String, String>();
         inputList
             .stream()
             .map(s -> {
                 val bits = Splitter.on("->").splitToList(s);
-                return Pair.of(bits.get(0), bits.get(1));
+                return Pair.of(bits.get(0), bits.size() > 1 ? bits.get(1) : StringUtils.EMPTY);
             })
             .forEach(p -> mappings.put(p.getKey(), p.getValue()));
         return mappings;

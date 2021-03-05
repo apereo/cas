@@ -1,28 +1,36 @@
 package org.apereo.cas.web;
 
-import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.audit.AuditableContext;
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
+import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServicePropertyGroups;
+import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
 import org.apereo.cas.web.view.DynamicHtmlView;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
-import org.pac4j.core.client.Clients;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.JEEContext;
-import org.pac4j.core.context.session.SessionStore;
-import org.pac4j.core.credentials.Credentials;
+import org.pac4j.core.exception.http.RedirectionAction;
 import org.pac4j.core.exception.http.WithContentAction;
 import org.pac4j.core.exception.http.WithLocationAction;
+import org.pac4j.core.redirect.RedirectionActionBuilder;
 import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link BaseDelegatedAuthenticationController}.
@@ -32,7 +40,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Controller
 @Slf4j
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public abstract class BaseDelegatedAuthenticationController {
 
@@ -41,11 +49,22 @@ public abstract class BaseDelegatedAuthenticationController {
      */
     protected static final String ENDPOINT_RESPONSE = "login/{clientName}";
 
-    private final Clients clients;
+    private final DelegatedClientAuthenticationConfigurationContext configurationContext;
 
-    private final DelegatedClientWebflowManager delegatedClientWebflowManager;
-
-    private final SessionStore<JEEContext> sessionStore;
+    /**
+     * Configure web context for service overrides.
+     *
+     * @param registeredService     the registered service
+     * @param webContext            the web context
+     * @param properties            the properties
+     */
+    protected void configureWebContextForRegisteredServiceProperties(final RegisteredService registeredService,
+                                                                     final JEEContext webContext,
+                                                                     final List<RegisteredServiceProperties> properties) {
+        properties.stream()
+            .filter(prop -> prop.isAssignedTo(registeredService))
+            .forEach(prop -> webContext.setRequestAttribute(prop.getPropertyName(), prop.getTypedPropertyValue(registeredService)));
+    }
 
     /**
      * Build redirect view back to flow view.
@@ -56,18 +75,14 @@ public abstract class BaseDelegatedAuthenticationController {
      */
     @SneakyThrows
     protected View buildRedirectViewBackToFlow(final String clientName, final HttpServletRequest request) {
-
-        val urlBuilder = new URIBuilder(String.valueOf(request.getRequestURL()));
+        val urlBuilder = new URIBuilder(configurationContext.getCasProperties().getServer().getLoginUrl());
         request.getParameterMap().forEach((k, v) -> {
             val value = request.getParameter(k);
             urlBuilder.addParameter(k, value);
         });
-
-        urlBuilder.setPath(urlBuilder.getPath().replace('/' + clientName, StringUtils.EMPTY));
         urlBuilder.addParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, clientName);
-
         val url = urlBuilder.toString();
-        LOGGER.debug("Received a response for client [{}], redirecting the login flow [{}]", clientName, url);
+        LOGGER.debug("Received response from client [{}]; Redirecting to [{}]", clientName, url);
         return new RedirectView(url);
     }
 
@@ -80,13 +95,13 @@ public abstract class BaseDelegatedAuthenticationController {
      * @return the resulting view
      */
     @SneakyThrows
-    protected View getResultingView(final IndirectClient<Credentials> client, final JEEContext webContext, final Ticket ticket) {
+    protected View getResultingView(final IndirectClient client, final JEEContext webContext,
+                                    final TransientSessionTicket ticket) {
         client.init();
-        val actionResult = client.getRedirectionActionBuilder().getRedirectionAction(webContext);
+        val actionResult = getRedirectionAction(client, webContext, ticket);
         if (actionResult.isPresent()) {
             val action = actionResult.get();
             LOGGER.debug("Determined final redirect action for client [{}] as [{}]", client, action);
-
             if (action instanceof WithLocationAction) {
                 val foundAction = WithLocationAction.class.cast(action);
                 val builder = new URIBuilder(foundAction.getLocation());
@@ -101,5 +116,60 @@ public abstract class BaseDelegatedAuthenticationController {
         }
         LOGGER.warn("Unable to determine redirect action for client [{}]", client);
         return null;
+    }
+
+    /**
+     * Gets redirection action.
+     *
+     * @param client     the client
+     * @param webContext the web context
+     * @param ticket     the ticket
+     * @return the redirection action
+     */
+    protected Optional<RedirectionAction> getRedirectionAction(final IndirectClient client, final JEEContext webContext,
+                                                               final TransientSessionTicket ticket) {
+        val properties = ticket.getProperties();
+        if (properties.containsKey(RedirectionActionBuilder.ATTRIBUTE_FORCE_AUTHN)) {
+            webContext.setRequestAttribute(RedirectionActionBuilder.ATTRIBUTE_FORCE_AUTHN, true);
+        }
+        if (properties.containsKey(RedirectionActionBuilder.ATTRIBUTE_PASSIVE)) {
+            webContext.setRequestAttribute(RedirectionActionBuilder.ATTRIBUTE_PASSIVE, true);
+        }
+
+        if (ticket.getService() != null) {
+            configureWebContextForRegisteredService(webContext, ticket);
+        }
+        return client.getRedirectionActionBuilder()
+            .getRedirectionAction(webContext, configurationContext.getSessionStore());
+    }
+
+    /**
+     * Configure web context for registered service.
+     *
+     * @param webContext the web context
+     * @param ticket     the ticket
+     */
+    protected void configureWebContextForRegisteredService(final JEEContext webContext, final TransientSessionTicket ticket) {
+        val registeredService = configurationContext.getServicesManager().findServiceBy(ticket.getService());
+        val audit = AuditableContext.builder()
+            .service(ticket.getService())
+            .registeredService(registeredService)
+            .build();
+        val result = configurationContext.getRegisteredServiceAccessStrategyEnforcer().execute(audit);
+        result.throwExceptionIfNeeded();
+
+        if (!registeredService.getProperties().isEmpty()) {
+            val saml2ServiceProperties = Arrays.stream(RegisteredServiceProperties.values())
+                .filter(prop -> prop.isMemberOf(RegisteredServicePropertyGroups.DELEGATED_AUTHN_SAML2))
+                .collect(Collectors.toList());
+            configureWebContextForRegisteredServiceProperties(registeredService, webContext,
+                saml2ServiceProperties);
+
+            val oidcProperties = Arrays.stream(RegisteredServiceProperties.values())
+                .filter(prop -> prop.isMemberOf(RegisteredServicePropertyGroups.DELEGATED_AUTHN_OIDC))
+                .collect(Collectors.toList());
+            configureWebContextForRegisteredServiceProperties(registeredService, webContext,
+                oidcProperties);
+        }
     }
 }

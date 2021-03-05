@@ -9,6 +9,7 @@ import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -28,10 +29,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = BaseCasGoogleAnalyticsTests.SharedTestConfiguration.class,
     properties = {
         "cas.google-analytics.cookie.name=CasGoogleCookie",
-        "cas.google-analytics.cookie.sameSitePolicy=strict",
-        "cas.tgc.cookie.sameSitePolicy=lax"
+        "cas.google-analytics.cookie.same-site-policy=strict",
+        "cas.tgc.cookie.same-site-policy=lax"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Tag("Simple")
 public class CasGoogleAnalyticsCookieGeneratorTests {
 
     @Autowired

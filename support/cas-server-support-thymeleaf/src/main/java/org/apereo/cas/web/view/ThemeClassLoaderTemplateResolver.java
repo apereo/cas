@@ -1,7 +1,6 @@
 package org.apereo.cas.web.view;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,16 +30,17 @@ public class ThemeClassLoaderTemplateResolver extends ClassLoaderTemplateResolve
 
     @Override
     protected ITemplateResource computeTemplateResource(final IEngineConfiguration configuration,
-                                                        final String ownerTemplate, final String template,
-                                                        final String resourceName, final String characterEncoding,
-                                                        final Map<String, Object> templateResolutionAttributes) {
+        final String ownerTemplate, final String template,
+        final String resourceName, final String characterEncoding,
+        final Map<String, Object> templateResolutionAttributes) {
         val themeName = getCurrentTheme();
         if (StringUtils.isNotBlank(themeName)) {
             val themeTemplate = String.format(resourceName, themeName);
             val resource = new ClassLoaderTemplateResource(themeTemplate, StandardCharsets.UTF_8.name());
             if (resource.exists()) {
                 LOGGER.trace("Computing template resource [{}]...", themeTemplate);
-                return super.computeTemplateResource(configuration, ownerTemplate, template, themeTemplate, characterEncoding, templateResolutionAttributes);
+                return super.computeTemplateResource(configuration, ownerTemplate, template, themeTemplate, characterEncoding,
+                    templateResolutionAttributes);
             }
         }
         return super.computeTemplateResource(configuration, ownerTemplate, template, resourceName, characterEncoding, templateResolutionAttributes);
@@ -52,16 +52,7 @@ public class ThemeClassLoaderTemplateResolver extends ClassLoaderTemplateResolve
      * @return the current theme
      */
     protected String getCurrentTheme() {
-        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
-        if (request != null) {
-            val session = request.getSession(false);
-            val paramName = casProperties.getTheme().getParamName();
-            if (session != null) {
-                return (String) session.getAttribute(paramName);
-            }
-            return (String) request.getAttribute(paramName);
-        }
-        return null;
+        return ThemeUtils.getCurrentTheme(casProperties);
     }
 }
 

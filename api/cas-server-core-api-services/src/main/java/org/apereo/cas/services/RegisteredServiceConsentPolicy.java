@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.util.model.TriStateBoolean;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.springframework.core.Ordered;
@@ -21,10 +23,10 @@ public interface RegisteredServiceConsentPolicy extends Serializable, Ordered {
     /**
      * Indicate whether consent is enabled.
      *
-     * @return the boolean
+     * @return true/false/undefined
      */
-    default boolean isEnabled() {
-        return true;
+    default TriStateBoolean getStatus() {
+        return TriStateBoolean.UNDEFINED;
     }
 
     /**
@@ -61,7 +63,7 @@ public interface RegisteredServiceConsentPolicy extends Serializable, Ordered {
      */
     @JsonIgnore
     default int size() {
-        return 1;
+        return 0;
     }
 
     @JsonIgnore

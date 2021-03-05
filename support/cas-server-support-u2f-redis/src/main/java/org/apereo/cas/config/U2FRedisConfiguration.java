@@ -14,6 +14,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -29,6 +30,7 @@ import org.springframework.data.redis.core.RedisTemplate;
  */
 @Configuration("u2fRedisConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnProperty(prefix = "cas.authn.mfa.u2f.redis", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class U2FRedisConfiguration {
 
     @Autowired
@@ -47,20 +49,20 @@ public class U2FRedisConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "u2fRedisConnectionFactory")
+    @RefreshScope
     public RedisConnectionFactory u2fRedisConnectionFactory() {
         val redis = casProperties.getAuthn().getMfa().getU2f().getRedis();
         return RedisObjectFactory.newRedisConnectionFactory(redis);
     }
 
     @Bean
+    @RefreshScope
     public U2FDeviceRepository u2fDeviceRepository() {
         val u2f = casProperties.getAuthn().getMfa().getU2f();
         final LoadingCache<String, String> requestStorage = Caffeine.newBuilder()
             .expireAfterWrite(u2f.getExpireRegistrations(), u2f.getExpireRegistrationsTimeUnit())
             .build(key -> StringUtils.EMPTY);
-        val repo = new U2FRedisDeviceRepository(requestStorage, u2fRedisTemplate(), u2f.getExpireRegistrations(),
-            u2f.getExpireDevicesTimeUnit());
-        repo.setCipherExecutor(u2fRegistrationRecordCipherExecutor.getObject());
-        return repo;
+        return new U2FRedisDeviceRepository(requestStorage, u2fRedisTemplate(), u2f.getExpireDevices(),
+            u2f.getExpireDevicesTimeUnit(), u2fRegistrationRecordCipherExecutor.getObject());
     }
 }

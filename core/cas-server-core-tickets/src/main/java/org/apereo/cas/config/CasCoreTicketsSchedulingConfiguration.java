@@ -7,9 +7,12 @@ import org.apereo.cas.ticket.registry.NoOpTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.support.LockingStrategy;
+import org.apereo.cas.util.LoggingUtils;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -39,33 +42,44 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Slf4j
 public class CasCoreTicketsSchedulingConfiguration {
 
+    @Autowired
+    @Qualifier("lockingStrategy")
+    private ObjectProvider<LockingStrategy> lockingStrategy;
+
+    @Autowired
+    @Qualifier(LogoutManager.DEFAULT_BEAN_NAME)
+    private ObjectProvider<LogoutManager> logoutManager;
+
+    @Autowired
+    @Qualifier("ticketRegistry")
+    private ObjectProvider<TicketRegistry> ticketRegistry;
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @ConditionalOnMissingBean(name = "ticketRegistryCleaner")
     @Bean
-    @Autowired
-    public TicketRegistryCleaner ticketRegistryCleaner(@Qualifier("lockingStrategy") final LockingStrategy lockingStrategy,
-                                                       @Qualifier("logoutManager") final LogoutManager logoutManager,
-                                                       @Qualifier("ticketRegistry") final TicketRegistry ticketRegistry) {
+    @RefreshScope
+    public TicketRegistryCleaner ticketRegistryCleaner() {
         val isCleanerEnabled = casProperties.getTicket().getRegistry().getCleaner().getSchedule().isEnabled();
         if (isCleanerEnabled) {
             LOGGER.debug("Ticket registry cleaner is enabled.");
-            return new DefaultTicketRegistryCleaner(lockingStrategy, logoutManager, ticketRegistry);
+            return new DefaultTicketRegistryCleaner(lockingStrategy.getObject(),
+                logoutManager.getObject(), ticketRegistry.getObject());
         }
         LOGGER.debug("Ticket registry cleaner is not enabled. "
-            + "Expired tickets are not forcefully collected and cleaned by CAS. It is up to the ticket registry itself to "
-            + "clean up tickets based on expiration and eviction policies.");
+            + "Expired tickets are not forcefully cleaned by CAS. It is up to the ticket registry itself to "
+            + "clean up tickets based on its own expiration and eviction policies.");
         return NoOpTicketRegistryCleaner.getInstance();
     }
 
     @ConditionalOnMissingBean(name = "ticketRegistryCleanerScheduler")
     @ConditionalOnProperty(prefix = "cas.ticket.registry.cleaner.schedule", name = "enabled", havingValue = "true", matchIfMissing = true)
     @Bean
-    @Autowired
     @RefreshScope
-    public TicketRegistryCleanerScheduler ticketRegistryCleanerScheduler(@Qualifier("ticketRegistryCleaner") final TicketRegistryCleaner ticketRegistryCleaner) {
+    @Autowired
+    public TicketRegistryCleanerScheduler ticketRegistryCleanerScheduler(@Qualifier("ticketRegistryCleaner")
+                                                                         final TicketRegistryCleaner ticketRegistryCleaner) {
         return new TicketRegistryCleanerScheduler(ticketRegistryCleaner);
     }
 
@@ -73,24 +87,21 @@ public class CasCoreTicketsSchedulingConfiguration {
     /**
      * The Ticket registry cleaner scheduler. Because the cleaner itself is marked
      * with {@link org.springframework.transaction.annotation.Transactional},
-     * we need to create a separate scheduler component that simply invokes it
+     * we need to create a separate scheduler component that invokes it
      * so that {@link Scheduled} annotations can be processed and not interfere
      * with transaction semantics of the cleaner.
      */
+    @RequiredArgsConstructor
     public static class TicketRegistryCleanerScheduler {
         private final TicketRegistryCleaner ticketRegistryCleaner;
 
-        public TicketRegistryCleanerScheduler(final TicketRegistryCleaner ticketRegistryCleaner) {
-            this.ticketRegistryCleaner = ticketRegistryCleaner;
-        }
-
-        @Scheduled(initialDelayString = "${cas.ticket.registry.cleaner.schedule.startDelay:PT30S}",
-            fixedDelayString = "${cas.ticket.registry.cleaner.schedule.repeatInterval:PT120S}")
+        @Scheduled(initialDelayString = "${cas.ticket.registry.cleaner.schedule.start-delay:PT30S}",
+            fixedDelayString = "${cas.ticket.registry.cleaner.schedule.repeat-interval:PT120S}")
         public void run() {
             try {
                 this.ticketRegistryCleaner.clean();
             } catch (final Exception e) {
-                LOGGER.error(e.getMessage(), e);
+                LoggingUtils.error(LOGGER, e);
             }
         }
     }

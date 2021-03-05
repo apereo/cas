@@ -4,22 +4,22 @@ title: CAS - Attribute Release Consent
 category: Attributes
 ---
 
+{% include variables.html %}
+
 # Attribute Consent
 
-CAS provides the ability to enforce user-informed consent upon attribute release. Practically, this means that prior to accessing the target application, the
- user will be presented with a collection of attributes allowed to be released to the application with options to either proceed or deny the release of said attributes. There are also additional options to indicate how should underlying changes in the attribute release policy be considered by the consent engine. Users are also provided the ability to set up reminders in the event that no change is detected in the attribute release policy.
+CAS provides the ability to enforce user-informed consent upon attribute release. Practically, this 
+means that prior to accessing the target application, the
+ user will be presented with a collection of attributes allowed to be released to the application with 
+options to either proceed or deny the release of said attributes. There are also additional options to 
+indicate how should underlying changes in the attribute release policy be considered by the consent 
+engine. Users are also provided the ability to set up reminders in the event that no change is detected in the attribute release policy.
 
 Consent attribute records stored in the configured repository are signed and encrypted.
 
-Support is enabled by including the following module in the Overlay:
+Support is enabled by including the following module in the WAR Overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-consent-webflow</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-consent-webflow" %}
 
 ## Administrative Endpoints
 
@@ -32,7 +32,8 @@ The following endpoints are provided by CAS:
 
 ## Attribute Selection
 
-By default, all attributes that are marked for release do qualify for consent. To control this process, you may define a consent policy that indicates a criteria by which attribute selection for consent is carried out.
+By default, all attributes that are marked for release do qualify for consent. To control this process, you 
+may define a consent policy that indicates a criteria by which attribute selection for consent is carried out.
 
 The policy assigned to each service includes the following features:
 
@@ -40,7 +41,7 @@ The policy assigned to each service includes the following features:
 |----------------------------|---------------------------------------------------------------------------------------
 | `excludedAttributes`       | Exclude the indicated attributes from consent.
 | `includeOnlyAttributes`    | Force-include the indicated attributes in consent, provided attributes are resolved.
-| `enabled`                  | Control whether consent is active/inactive for this service. Default is `true`.
+| `status`                   | Controls whether consent for this service should be activated. See below for activation rules.
 
 A sample definition follows:
 
@@ -57,11 +58,103 @@ A sample definition follows:
       "@class": "org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy",
       "excludedAttributes": ["java.util.LinkedHashSet", ["test"]],
       "includeOnlyAttributes": ["java.util.LinkedHashSet", ["test"]],
-      "enabled": true
+      "status": "FALSE"
     }
   }
 }
 ```
+
+## Activation
+
+Attribute consent activation can be controlled both at a global and per-service level. By default, global activation rules for 
+attribute consent are turned on and the consent policy rules for the service definition are disabled. The consent policy for
+the service definition may override the global rules using the `status` field which accepts the following values:
+
+| Value       | Description
+|-------------|---------------------------------------------------------------------------------------
+| `FALSE`     | Consent policy is disabled, overriding the global configuration.
+| `TRUE`      | Consent policy is enabled, overriding the global configuration.
+| `UNDEFINED` | Consent policy is undefined, delegating the decision to the global configuration.
+
+Note that attribute consent policies may also be chained together to compose multiple policies. Each policy 
+can be individually disabled or enabled and the overall aggregate status
+of the entire attribute consent policy will be used to determine attribute consent activation and 
+selection. A sample chain of attribute consent polices follows:
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "sample",
+  "name" : "sample",
+  "id" : 100,
+  "description" : "sample",
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
+    "policies": [ "java.util.ArrayList",
+      [
+        {
+          "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+          "allowedAttributes" : [ "java.util.ArrayList", [ "cn", "mail", "sn" ] ],
+          "consentPolicy": {
+            "@class": "org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy",
+            "includeOnlyAttributes": ["java.util.LinkedHashSet", ["cn"]],
+            "status": "TRUE"
+          }
+        },
+        {
+          "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+          "allowedAttributes" : [ "java.util.ArrayList", [ "displayName" ] ],
+          "consentPolicy": {
+            "@class": "org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy",
+            "includeOnlyAttributes": ["java.util.LinkedHashSet", ["displayName"]],
+            "status": "FALSE"
+          }
+        }
+      ]
+    ]
+  }
+}
+```          
+
+### Activation via Groovy
+
+The default consent activation strategy can be replaced with an external Groovy script to determine whether the request 
+qualifies for consent. Path to the script is defined via CAS configuration properties.
+
+{% include casproperties.html properties="cas.consent.activation-strategy-groovy-script" %}
+
+The script itself may be designed as such:
+
+```groovy
+import org.apereo.cas.util.model.TriStateBoolean
+
+def run(Object[] args) {
+    def consentEngine = args[0]
+    def casProperties = args[1]
+    def service = args[2]
+    def registeredService = args[3]
+    def authentication = args[4]
+    def requestContext = args[5]
+    def logger = args[6]
+
+    logger.debug("Activating consent for ${registeredService.name}")
+    return true;
+}
+```
+
+The following parameters are passed to the script:
+
+| Parameter             | Description
+|-----------------------------------------------------------------------------------------------------------------
+| `consentEngine`       | A reference to the `ConsentEngine` object.
+| `casProperties`       | A reference to the CAS configuration properties loaded from property sources.
+| `service`             | The `Service` object representing the requesting application.
+| `registeredService`   | The `RegisteredService` object representing the service definition in the registry.
+| `authentication`      | The `Authentication` object representing the active authentication transaction.
+| `requestContext`      | The object representing the Spring Webflow `RequestContext`.
+| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
+
+The script is expected to return either `true` or `false` to determine whether or not consent is required.
 
 ## Storage
 
@@ -108,7 +201,7 @@ Valid values for `options` include:
 | `ATTRIBUTE_VALUE`         | Same as above, except that attributes values are also accounted for and trigger consent, if changed.
 | `ALWAYS`                  | Always ask for consent, regardless of change or context.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#json-attribute-consent).
+{% include casproperties.html properties="cas.consent.json" %}
 
 ### Groovy
 
@@ -120,141 +213,104 @@ The script may be designed as:
 import java.util.*
 import org.apereo.cas.consent.*
 
-def Set<ConsentDecision> read(final Object... args) {
-    def consentDecisions = args[0]
+def read(Object[] args) {
+    def currentConsentDecisions = args[0]
     def logger = args[1]
-    ...
-    return null;
+    currentConsentDecisions
 }
 
-def Boolean write(final Object... args) {
+def write(Object[] args) {
     def consentDecision = args[0]
     def logger = args[1]
-    ...
-    return true;
+    true
 }
 
-def Boolean delete(final Object... args) {
+def delete(Object[] args) {
     def decisionId = args[0]
-    def logger = args[1]
-    ...
-    return true;
+    def principalId = args[1]
+    def logger = args[2]
+    !principalId.contains("-")
 }
 
-def Boolean deleteAll(final Object... args) {
-    def principal = args[0]
+def deletePrincipal(Object[] args) {
+    def principalId = args[0]
     def logger = args[1]
-    ...
-    return true;
+    !principalId.contains("-")
 }
 ```
 
+{% include casproperties.html properties="cas.consent.groovy" %}
 
 ### JDBC
 
-Support is enabled by including the following module in the Overlay:
+Support is enabled by including the following module in the WAR Overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-consent-jdbc</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-consent-jdbc" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#jpa-attribute-consent).
+{% include casproperties.html properties="cas.consent.jdbc" %}
 
 ### MongoDb
 
-Support is enabled by including the following module in the Overlay:
+Support is enabled by including the following module in the WAR Overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-consent-mongo</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-consent-mongo" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#mongodb-attribute-consent).
+{% include casproperties.html properties="cas.consent.mongo" %}
 
 ### Redis
 
-Support is enabled by including the following module in the Overlay:
+Support is enabled by including the following module in the WAR Overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-consent-redis</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-consent-redis" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#redis-attribute-consent).
+{% include casproperties.html properties="cas.consent.redis" %}
 
 ### CouchDb
 
-Support is enabled by including the following module in the Overlay:
+Support is enabled by including the following module in the WAR Overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-consent-couchdb</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-consent-couchdb" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#couchdb-attribute-consent).
-
+{% include casproperties.html properties="cas.consent.couch-db" %}
 
 ### REST
 
-Support is enabled by including the following module in the Overlay:
+Support is enabled by including the following module in the WAR Overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-consent-rest</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-consent-rest" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#rest-attribute-consent).
+{% include casproperties.html properties="cas.consent.rest" %}
 
 Endpoints must be designed to accept/process `application/json`.
 
 | Operation                 | Method    | Data                                 | Expected Response
 |---------------------------|-----------|--------------------------------------------------------------------------------------
-| Locate consent decision   | `GET`     | `service`, `principal` as headers    | `200`. The consent decision object in the body.
-| Locate consent decision for user   | `GET`     | `principal` as headers    | `200`. The consent decisions object in the body.
+| Locate consent decision   | `GET`     | `service`, `principal` as headers.    | `200`. The consent decision object in the body.
+| Locate consent decision for user   | `GET`     | `principal` as header.    | `200`. The consent decisions object in the body.
 | Locate all consent decisions  | `GET`     | N/A    | `200`. The consent decisions object in the body.
-| Store consent decision    | `POST`    |  Consent decision object in the body | `200`.
-| Delete consent decision   | `DELETE`  | `/<decisionId>` appended to URL      | `200`.
-| Delete consent decisions   | `DELETE`  | `principal` as header      | `200`.
+| Store consent decision    | `POST`    |  Consent decision object in the body. | `200`.
+| Delete consent decision   | `DELETE`  | `/<decisionId>` appended to URL. `principal` as header      | `200`.
+| Delete consent decisions   | `DELETE`  | `principal` as header.      | `200`.
 
 The consent decision object in transit will and must match the JSON structure above.
 
-
 ### LDAP
 
-Consent decisions can be stored on LDAP user objects. The decisions are serialized into JSON and stored one-by-one in a multi-valued string attribute.
+Consent decisions can be stored on LDAP user objects. The decisions 
+are serialized into JSON and stored one-by-one in a multi-valued string attribute.
 
-Support is enabled by including the following module in the Overlay:
+Support is enabled by including the following module in the WAR Overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-consent-ldap</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-consent-ldap" %}
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#ldap-attribute-consent).
+{% include casproperties.html properties="cas.consent.ldap" %}
 
 
 ### Custom
 
-You may also inject your own implementation for attribute consent management into CAS that would itself handle storing consent decisions, etc. In order to do this, you will need to design a configuration class that roughly matches the following: 
+You may also inject your own implementation for attribute consent management 
+into CAS that would itself handle storing consent decisions, etc. In order 
+to do this, you will need to design a configuration class that roughly matches the following: 
 
 ```java
 package org.apereo.cas.consent;
@@ -270,4 +326,5 @@ public class MyConfiguration {
 }
 ```
 
-[See this guide](../configuration/Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.
+[See this guide](../configuration/Configuration-Management-Extensions.html) to 
+learn more about how to register configurations into the CAS runtime.

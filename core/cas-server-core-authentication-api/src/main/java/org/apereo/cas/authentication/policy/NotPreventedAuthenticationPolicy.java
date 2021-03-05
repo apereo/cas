@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.policy;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationPolicyExecutionResult;
 import org.apereo.cas.authentication.PreventedException;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -12,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import java.io.Serializable;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -36,15 +39,17 @@ public class NotPreventedAuthenticationPolicy extends AtLeastOneCredentialValida
     }
 
     @Override
-    public boolean isSatisfiedBy(final Authentication authentication, final Set<AuthenticationHandler> authenticationHandlers,
-                                 final ConfigurableApplicationContext applicationContext) throws Exception {
+    public AuthenticationPolicyExecutionResult isSatisfiedBy(final Authentication authentication,
+                                                             final Set<AuthenticationHandler> authenticationHandlers,
+                                                             final ConfigurableApplicationContext applicationContext,
+                                                             final Optional<Serializable> assertion) throws Exception {
         val fail = authentication.getFailures().values()
             .stream()
             .anyMatch(failure -> failure.getClass().isAssignableFrom(PreventedException.class));
         if (fail) {
             LOGGER.warn("Authentication policy has failed given at least one authentication failure is found to prevent authentication");
-            return false;
+            return AuthenticationPolicyExecutionResult.failure();
         }
-        return super.isSatisfiedBy(authentication, authenticationHandlers, applicationContext);
+        return super.isSatisfiedBy(authentication, authenticationHandlers, applicationContext, assertion);
     }
 }

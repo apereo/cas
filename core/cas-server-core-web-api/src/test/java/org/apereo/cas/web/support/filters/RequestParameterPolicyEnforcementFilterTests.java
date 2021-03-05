@@ -2,6 +2,7 @@ package org.apereo.cas.web.support.filters;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockFilterConfig;
@@ -10,11 +11,13 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
-
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -34,6 +37,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.1
  */
+@Tag("Web")
 public class RequestParameterPolicyEnforcementFilterTests {
 
     private static void internalTestOnlyPostParameter(final String method) {
@@ -53,13 +57,26 @@ public class RequestParameterPolicyEnforcementFilterTests {
     }
 
     @Test
-    public void verifyUnrecognizedInitParamFailsFilterInit() {
+    public void verifyParseFails() {
+        RequestParameterPolicyEnforcementFilter.enforceParameterContentCharacterRestrictions(Set.of(), Set.of(), Map.of());
+        assertThrows(RuntimeException.class, () -> RequestParameterPolicyEnforcementFilter.parseParametersList(" ", false));
+        assertThrows(RuntimeException.class, () -> RequestParameterPolicyEnforcementFilter.parseParametersList("one *", false));
+        assertThrows(RuntimeException.class, () -> RequestParameterPolicyEnforcementFilter.parseCharactersToForbid("  "));
+        assertThrows(RuntimeException.class, () -> RequestParameterPolicyEnforcementFilter.parseCharactersToForbid("one"));
+        assertThrows(RuntimeException.class,
+            () -> RequestParameterPolicyEnforcementFilter.throwIfUnrecognizedParamName(Collections.enumeration(List.of("unknown"))));
+        assertThrows(RuntimeException.class,
+            () -> RequestParameterPolicyEnforcementFilter.checkOnlyPostParameters("get", Map.of("k", "v"), Set.of("k")));
+    }
 
+    @Test
+    public void verifyUnrecognizedInitParamFailsFilterInit() {
         val filterConfig = new MockFilterConfig();
         filterConfig.addInitParameter("unrecognizedInitParameterName", "whatever");
 
         val filter = new RequestParameterPolicyEnforcementFilter();
         assertThrows(RuntimeException.class, () -> filter.init(filterConfig));
+        filter.destroy();
     }
 
     @Test

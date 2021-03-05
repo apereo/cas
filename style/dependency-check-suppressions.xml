@@ -4,6 +4,9 @@
         <cve>CVE-2020-11619</cve>
     </suppress>
     <suppress>
+        <cve>CVE-2020-1757</cve>
+    </suppress>
+    <suppress>
         <cve>CVE-2020-11620</cve>
     </suppress>
     <suppress>

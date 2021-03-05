@@ -4,6 +4,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.uma.UmaConfigurationContext;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointController;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -47,7 +48,7 @@ public class UmaPermissionRegistrationEndpointController extends BaseUmaEndpoint
             val profileResult = getAuthenticatedProfile(request, response, OAuth20Constants.UMA_PROTECTION_SCOPE);
 
             val umaRequest = MAPPER.readValue(JsonValue.readHjson(body).toString(), UmaPermissionRegistrationRequest.class);
-            if (umaRequest == null) {
+            if (umaRequest == null || umaRequest.getResourceId() <= 0) {
                 val model = buildResponseEntityErrorModel(HttpStatus.NOT_FOUND, "UMA request cannot be found or parsed");
                 return new ResponseEntity(model, model, HttpStatus.BAD_REQUEST);
             }
@@ -66,18 +67,11 @@ public class UmaPermissionRegistrationEndpointController extends BaseUmaEndpoint
 
             val permission = getUmaConfigurationContext().getUmaPermissionTicketFactory()
                 .create(resourceSet, umaRequest.getScopes(), umaRequest.getClaims());
-
-            if (permission != null) {
-                getUmaConfigurationContext().getTicketRegistry().addTicket(permission);
-
-                val model = CollectionUtils.wrap("ticket", permission.getId(), "code", HttpStatus.CREATED);
-                return new ResponseEntity(model, HttpStatus.OK);
-            }
-
-            val model = buildResponseEntityErrorModel(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to generate permission ticket");
-            return new ResponseEntity(model, model, HttpStatus.BAD_REQUEST);
+            getUmaConfigurationContext().getTicketRegistry().addTicket(permission);
+            val model = CollectionUtils.wrap("ticket", permission.getId(), "code", HttpStatus.CREATED);
+            return new ResponseEntity(model, HttpStatus.OK);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return new ResponseEntity("Unable to complete the permission registration request.", HttpStatus.BAD_REQUEST);
     }

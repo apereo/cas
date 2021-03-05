@@ -163,7 +163,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
             }
             throw new FailedLoginException("Multiple records found for " + username);
         } catch (final DataAccessException e) {
-            throw new PreventedException("SQL exception while executing query for " + username, e);
+            throw new PreventedException(e);
         }
     }
 

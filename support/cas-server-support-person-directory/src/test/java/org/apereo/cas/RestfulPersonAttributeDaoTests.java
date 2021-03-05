@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.util.MockWebServer;
 
@@ -31,13 +32,15 @@ import static org.junit.jupiter.api.Assertions.*;
     CasPersonDirectoryConfiguration.class,
     RefreshAutoConfiguration.class
 }, properties = {
-    "cas.authn.attributeRepository.rest[0].method=GET",
-    "cas.authn.attributeRepository.rest[0].url=http://localhost:8085"
+    "cas.authn.attribute-repository.rest[0].method=GET",
+    "cas.authn.attribute-repository.rest[0].url=http://localhost:8085",
+    "cas.authn.attribute-repository.rest[0].basic-auth-password=psw",
+    "cas.authn.attribute-repository.rest[0].basic-auth-username=username"
 })
 @Tag("RestfulApi")
 public class RestfulPersonAttributeDaoTests {
     @Autowired
-    @Qualifier("attributeRepository")
+    @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
     protected IPersonAttributeDao attributeRepository;
 
     private MockWebServer webServer;

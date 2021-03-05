@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Predicate;
+import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -45,8 +45,8 @@ public class MultifactorAuthenticationUtils {
      * @return the map
      */
     public static Map<String, Object> buildEventAttributeMap(final Principal principal,
-                                                             final Optional<RegisteredService> service,
-                                                             final MultifactorAuthenticationProvider provider) {
+        final Optional<RegisteredService> service,
+        final MultifactorAuthenticationProvider provider) {
         val map = new HashMap<String, Object>();
         map.put(Principal.class.getName(), principal);
         service.ifPresent(svc -> map.put(RegisteredService.class.getName(), svc));
@@ -63,15 +63,20 @@ public class MultifactorAuthenticationUtils {
      * @return the event
      */
     public static Event validateEventIdForMatchingTransitionInContext(final String eventId,
-                                                                      final Optional<RequestContext> context,
-                                                                      final Map<String, Object> attributes) {
-        val attributesMap = new LocalAttributeMap<Object>(attributes);
+        final Optional<RequestContext> context,
+        final Map<String, Object> attributes) {
+        val attributesMap = new LocalAttributeMap<>(attributes);
         val event = new Event(eventId, eventId, attributesMap);
         LOGGER.trace("Attempting to find a matching transition for event id [{}]", event.getId());
         return context.map(ctx -> {
+            LOGGER.trace("Reviewing current state [{}], event [{}] and transition [{}]",
+                ctx.getCurrentState(), ctx.getCurrentEvent(), ctx.getCurrentTransition());
             val def = ctx.getMatchingTransition(event.getId());
             if (def == null) {
-                throw new AuthenticationException("Transition definition cannot be found for event " + event.getId());
+                val msg = String.format("State [%s:%s:%s] does not have a matching transition for %s",
+                    ctx.getCurrentState().getId(), ctx.getCurrentEvent().getId(),
+                    ctx.getCurrentTransition().getId(), event.getId());
+                throw new AuthenticationException(msg);
             }
             return event;
         }).orElse(event);
@@ -90,11 +95,11 @@ public class MultifactorAuthenticationUtils {
      * @return the set
      */
     public static Set<Event> resolveEventViaMultivaluedAttribute(final Principal principal,
-                                                                 final Object attributeValue,
-                                                                 final RegisteredService service,
-                                                                 final Optional<RequestContext> context,
-                                                                 final MultifactorAuthenticationProvider provider,
-                                                                 final Predicate<String> predicate) {
+        final Object attributeValue,
+        final RegisteredService service,
+        final Optional<RequestContext> context,
+        final MultifactorAuthenticationProvider provider,
+        final BiPredicate<String, MultifactorAuthenticationProvider> predicate) {
 
         if (attributeValue instanceof Collection) {
             LOGGER.debug("Attribute value [{}] is a multi-valued attribute", attributeValue);
@@ -103,14 +108,14 @@ public class MultifactorAuthenticationUtils {
             values.forEach(value -> {
                 val id = provider.getId();
                 try {
-                    if (predicate.test(value)) {
+                    if (predicate.test(value, provider)) {
                         val attributeMap = buildEventAttributeMap(principal, Optional.ofNullable(service), provider);
                         LOGGER.trace("Event attribute map for provider [{}] transition is [{}]", provider, attributeMap);
                         val event = validateEventIdForMatchingTransitionInContext(id, context, attributeMap);
                         events.add(event);
                     }
                 } catch (final Exception e) {
-                    LOGGER.debug("Ignoring [{}] since no matching transition could be found for provider [{}}", value, id);
+                    LOGGER.debug("Ignoring [{}] since no matching transition could be found for provider [{}]", value, id);
                 }
             });
             return events;
@@ -127,7 +132,7 @@ public class MultifactorAuthenticationUtils {
      * @return the optional
      */
     public static Optional<MultifactorAuthenticationProvider> resolveProvider(final Map<String, MultifactorAuthenticationProvider> providers,
-                                                                              final Collection<String> requestMfaMethod) {
+        final Collection<String> requestMfaMethod) {
         return providers.values()
             .stream()
             .filter(p -> requestMfaMethod.stream().filter(Objects::nonNull).anyMatch(p::matches))
@@ -142,7 +147,7 @@ public class MultifactorAuthenticationUtils {
      * @return the optional
      */
     public static Optional<MultifactorAuthenticationProvider> resolveProvider(final Map<String, MultifactorAuthenticationProvider> providers,
-                                                                              final String requestMfaMethod) {
+        final String requestMfaMethod) {
         return resolveProvider(providers, Stream.of(requestMfaMethod).collect(Collectors.toList()));
     }
 
@@ -160,21 +165,20 @@ public class MultifactorAuthenticationUtils {
      */
     @SneakyThrows
     public static Set<Event> resolveEventViaSingleAttribute(final Principal principal,
-                                                            final Object providedAttributeValue,
-                                                            final RegisteredService service,
-                                                            final Optional<RequestContext> context,
-                                                            final MultifactorAuthenticationProvider provider,
-                                                            final Predicate<String> predicate) {
+        final Object providedAttributeValue,
+        final RegisteredService service,
+        final Optional<RequestContext> context,
+        final MultifactorAuthenticationProvider provider,
+        final BiPredicate<String, MultifactorAuthenticationProvider> predicate) {
         val processSingleValue = !(providedAttributeValue instanceof Collection) || CollectionUtils.toCollection(providedAttributeValue).size() == 1;
         if (processSingleValue) {
             val attributeValue = CollectionUtils.firstElement(providedAttributeValue).map(Object::toString).orElse(StringUtils.EMPTY);
             LOGGER.debug("Attribute value [{}] is a single-valued attribute", attributeValue);
-            if (predicate.test(attributeValue)) {
+            if (predicate.test(attributeValue, provider)) {
                 LOGGER.debug("Attribute value predicate [{}] has matched the [{}]", predicate, attributeValue);
                 return evaluateEventForProviderInContext(principal, service, context, provider);
             }
             LOGGER.debug("Attribute value predicate [{}] could not match the [{}]", predicate, attributeValue);
-
         }
         LOGGER.debug("Attribute value [{}] is not a single-valued attribute", providedAttributeValue);
         return null;
@@ -184,14 +188,17 @@ public class MultifactorAuthenticationUtils {
     /**
      * Gets authentication provider for service.
      *
-     * @param service the service
+     * @param service            the service
+     * @param applicationContext the application context
      * @return the authentication provider for service
      */
-    public Collection<MultifactorAuthenticationProvider> getMultifactorAuthenticationProviderForService(final RegisteredService service) {
+    public Collection<MultifactorAuthenticationProvider> getMultifactorAuthenticationProviderForService(final RegisteredService service,
+        final ApplicationContext applicationContext) {
         val policy = service.getMultifactorPolicy();
         if (policy != null) {
             return policy.getMultifactorAuthenticationProviders().stream()
-                .map(MultifactorAuthenticationUtils::getMultifactorAuthenticationProviderFromApplicationContext)
+                .map(provider ->
+                    MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderFromApplicationContext(provider, applicationContext))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toSet());
@@ -206,15 +213,22 @@ public class MultifactorAuthenticationUtils {
      * @return the registered service multifactor authentication provider
      */
     public static Optional<MultifactorAuthenticationProvider> getMultifactorAuthenticationProviderFromApplicationContext(final String providerId) {
-        try {
-            LOGGER.trace("Locating bean definition for [{}]", providerId);
-            return MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(ApplicationContextProvider.getApplicationContext()).values().stream()
-                .filter(p -> p.matches(providerId))
-                .findFirst();
-        } catch (final Exception e) {
-            LOGGER.trace("Could not locate [{}] bean id in the application context as an authentication provider.", providerId);
-        }
-        return Optional.empty();
+        return getMultifactorAuthenticationProviderFromApplicationContext(providerId, ApplicationContextProvider.getApplicationContext());
+    }
+
+    /**
+     * Gets multifactor authentication provider from application context.
+     *
+     * @param providerId         the provider id
+     * @param applicationContext the application context
+     * @return the multifactor authentication provider from application context
+     */
+    public static Optional<MultifactorAuthenticationProvider> getMultifactorAuthenticationProviderFromApplicationContext(final String providerId,
+        final ApplicationContext applicationContext) {
+        LOGGER.trace("Locating bean definition for [{}]", providerId);
+        return getAvailableMultifactorAuthenticationProviders(applicationContext).values().stream()
+            .filter(p -> p.matches(providerId))
+            .findFirst();
     }
 
     /**
@@ -227,9 +241,9 @@ public class MultifactorAuthenticationUtils {
      * @return the set
      */
     public static Set<Event> evaluateEventForProviderInContext(final Principal principal,
-                                                               final RegisteredService service,
-                                                               final Optional<RequestContext> context,
-                                                               final MultifactorAuthenticationProvider provider) {
+        final RegisteredService service,
+        final Optional<RequestContext> context,
+        final MultifactorAuthenticationProvider provider) {
         LOGGER.debug("Attempting check for availability of multifactor authentication provider [{}] for [{}]", provider, service);
         if (provider != null) {
             LOGGER.debug("Provider [{}] is successfully verified", provider);
@@ -269,7 +283,7 @@ public class MultifactorAuthenticationUtils {
      * @return - Optional
      */
     public static Optional<MultifactorAuthenticationProvider> getMultifactorAuthenticationProviderById(final String providerId,
-                                                                                                       final ApplicationContext context) {
+        final ApplicationContext context) {
         return getAvailableMultifactorAuthenticationProviders(context)
             .values()
             .stream()

@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCaptchaConfiguration.class,
     BaseWebflowConfigurerTests.SharedTestConfiguration.class
 })
-@Tag("Webflow")
+@Tag("WebflowConfig")
 public class CasCaptchaWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     public void verifyOperation() {
@@ -35,6 +35,6 @@ public class CasCaptchaWebflowConfigurerTests extends BaseWebflowConfigurerTests
         assertTrue(Arrays.stream(state.getActionList().toArray())
             .filter(r -> r instanceof EvaluateAction)
             .map(EvaluateAction.class::cast)
-            .anyMatch(r -> r.toString().contains(CasCaptchaWebflowConfigurer.ACTION_ID_VALIDATE_CAPTCHA)));
+            .anyMatch(r -> r.toString().contains(CasWebflowConstants.ACTION_ID_VALIDATE_CAPTCHA)));
     }
 }

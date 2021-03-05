@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
@@ -37,6 +38,7 @@ import static org.mockito.Mockito.*;
     ThymeleafAutoConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Tag("Web")
 public class ThemeFileTemplateResolverTests {
 
     @Autowired
@@ -62,10 +64,16 @@ public class ThemeFileTemplateResolverTests {
         verifyThemeFile();
     }
 
+    @Test
+    public void verifyOperationByDefaultValue() throws Exception {
+        casProperties.getTheme().setDefaultThemeName("test");
+        verifyThemeFile();
+    }
+
     private void verifyThemeFile() throws IOException {
         val themeDir = new File(FileUtils.getTempDirectory(), "test");
         if (!themeDir.exists() && !themeDir.mkdir()) {
-            fail("Unable to create directory " + themeDir);
+            fail(() -> "Unable to create directory " + themeDir);
         }
         val path = new File(themeDir, "casLoginView.html");
         FileUtils.write(path, "<html><html>", StandardCharsets.UTF_8);

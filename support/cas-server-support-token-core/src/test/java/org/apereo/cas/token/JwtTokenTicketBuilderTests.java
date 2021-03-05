@@ -6,8 +6,10 @@ import org.apereo.cas.token.cipher.RegisteredServiceJwtTicketCipherExecutor;
 
 import com.nimbusds.jwt.JWTClaimsSet;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -18,11 +20,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Tag("Tickets")
 public class JwtTokenTicketBuilderTests extends BaseJwtTokenTicketBuilderTests {
 
     @Test
     public void verifyJwtForServiceTicket() throws Exception {
-        val jwt = tokenTicketBuilder.build("ST-123455", CoreAuthenticationTestUtils.getService());
+        var jwt = tokenTicketBuilder.build("ST-123455", CoreAuthenticationTestUtils.getWebApplicationService());
         assertNotNull(jwt);
         val result = tokenCipherExecutor.decode(jwt);
         val claims = JWTClaimsSet.parse(result.toString());
@@ -31,7 +34,7 @@ public class JwtTokenTicketBuilderTests extends BaseJwtTokenTicketBuilderTests {
 
     @Test
     public void verifyJwtForServiceTicketWithOwnKeys() throws Exception {
-        val service = CoreAuthenticationTestUtils.getService("https://jwt.example.org/cas");
+        val service = CoreAuthenticationTestUtils.getWebApplicationService("https://jwt.example.org/cas");
         val jwt = tokenTicketBuilder.build("ST-123455", service);
         assertNotNull(jwt);
         val result = tokenCipherExecutor.decode(jwt);
@@ -48,7 +51,7 @@ public class JwtTokenTicketBuilderTests extends BaseJwtTokenTicketBuilderTests {
     @Test
     public void verifyJwtForTicketGrantingTicket() throws Exception {
         val tgt = new MockTicketGrantingTicket("casuser");
-        val jwt = tokenTicketBuilder.build(tgt);
+        val jwt = tokenTicketBuilder.build(tgt, Map.of());
         assertNotNull(jwt);
         val result = tokenCipherExecutor.decode(jwt);
         val claims = JWTClaimsSet.parse(result.toString());

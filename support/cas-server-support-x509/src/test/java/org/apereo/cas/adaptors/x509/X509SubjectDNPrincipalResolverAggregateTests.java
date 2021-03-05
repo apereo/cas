@@ -3,9 +3,10 @@ package org.apereo.cas.adaptors.x509;
 import org.apereo.cas.adaptors.x509.authentication.CasX509Certificate;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.apereo.cas.authentication.AuthenticationManager;
-import org.apereo.cas.authentication.DefaultAuthenticationTransaction;
+import org.apereo.cas.authentication.DefaultAuthenticationTransactionFactory;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -24,10 +25,11 @@ import static org.junit.jupiter.api.Assertions.*;
     classes = BaseX509Tests.SharedTestConfiguration.class,
     properties = {
         "cas.authn.x509.principal-type=SUBJECT_DN",
-        "cas.authn.attributeRepository.groovy[0].location=classpath:/GroovyAttributeDao.groovy",
-        "cas.authn.attributeRepository.groovy[0].order=1",
-        "cas.authn.attributeRepository.merger=multivalued"
+        "cas.authn.attribute-repository.groovy[0].location=classpath:/GroovyAttributeDao.groovy",
+        "cas.authn.attribute-repository.groovy[0].order=1",
+        "cas.authn.attribute-repository.core.merger=MULTIVALUED"
     })
+@Tag("X509")
 public class X509SubjectDNPrincipalResolverAggregateTests {
     private static final CasX509Certificate VALID_CERTIFICATE = new CasX509Certificate(true);
 
@@ -39,7 +41,8 @@ public class X509SubjectDNPrincipalResolverAggregateTests {
     public void verifyResolverAsAggregate() {
         val c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
         c.setCertificate(VALID_CERTIFICATE);
-        val result = authenticationManager.authenticate(DefaultAuthenticationTransaction.of(c));
+        val result = authenticationManager.authenticate(
+            new DefaultAuthenticationTransactionFactory().newTransaction(c));
         assertNotNull(result);
         val attributes = result.getPrincipal().getAttributes();
         assertTrue(attributes.containsKey("subjectX500Principal"));

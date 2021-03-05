@@ -1,6 +1,8 @@
 package org.apereo.cas.trusted;
 
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
+import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
@@ -15,7 +17,6 @@ import org.apereo.cas.util.DateTimeUtils;
 
 import lombok.Getter;
 import lombok.val;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -43,7 +44,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @SpringBootTest(classes = AbstractMultifactorAuthenticationTrustStorageTests.SharedTestConfiguration.class)
-@Tag("MFA")
 @Getter
 public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
     @Autowired
@@ -77,15 +77,15 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
         record.setPrincipal(UUID.randomUUID().toString());
         record.setId(1000);
         record.setRecordDate(ZonedDateTime.now(ZoneOffset.UTC).minusDays(1));
-        record.setRecordKey(UUID.randomUUID().toString());
         record.setExpirationDate(DateTimeUtils.dateOf(ZonedDateTime.now(ZoneOffset.UTC).plusDays(1)));
         return record;
     }
 
     @Test
     public void verifyTrustEngine() {
-        val record = getMultifactorAuthenticationTrustRecord();
-        getMfaTrustEngine().save(record);
+        var record = getMultifactorAuthenticationTrustRecord();
+        record = getMfaTrustEngine().save(record);
+        assertNotNull(getMfaTrustEngine().get(record.getId()));
         assertFalse(getMfaTrustEngine().getAll().isEmpty());
         assertFalse(getMfaTrustEngine().get(record.getPrincipal()).isEmpty());
         val now = ZonedDateTime.now(ZoneOffset.UTC).minusDays(2);
@@ -93,6 +93,7 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
         assertFalse(getMfaTrustEngine().get(record.getPrincipal(), now).isEmpty());
 
         getMfaTrustEngine().remove(DateTimeUtils.zonedDateTimeOf(record.getExpirationDate()).plusDays(1));
+        getMfaTrustEngine().remove(record.getRecordKey());
         assertTrue(getMfaTrustEngine().getAll().isEmpty());
     }
 
@@ -104,9 +105,11 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
     @SpringBootConfiguration
     @Import({
         CasCoreUtilConfiguration.class,
+        CasCoreNotificationsConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasRegisteredServicesTestConfiguration.class,
         CasCoreAuditConfiguration.class,
+        CasCoreHttpConfiguration.class,
         MultifactorAuthnTrustWebflowConfiguration.class,
         MultifactorAuthnTrustConfiguration.class,
         MultifactorAuthnTrustedDeviceFingerprintConfiguration.class

@@ -2,18 +2,13 @@ package org.apereo.cas.util.serialization;
 
 import org.apereo.cas.util.DigestUtils;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.PrettyPrinter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -43,7 +38,7 @@ import java.nio.file.Files;
  */
 @Slf4j
 @Getter
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractJacksonBackedStringSerializer<T> implements StringSerializer<T> {
     /**
      * Minimal pretty printer instance.
@@ -53,13 +48,14 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     private static final long serialVersionUID = -8415599777321259365L;
 
     private final ObjectMapper objectMapper;
+    
     private final transient PrettyPrinter prettyPrinter;
 
     /**
      * Instantiates a new Registered service json serializer.
      * Uses the {@link com.fasterxml.jackson.core.util.DefaultPrettyPrinter} for formatting.
      */
-    public AbstractJacksonBackedStringSerializer() {
+    protected AbstractJacksonBackedStringSerializer() {
         this(new DefaultPrettyPrinter());
     }
 
@@ -68,7 +64,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
      *
      * @param prettyPrinter the pretty printer
      */
-    public AbstractJacksonBackedStringSerializer(final PrettyPrinter prettyPrinter) {
+    protected AbstractJacksonBackedStringSerializer(final PrettyPrinter prettyPrinter) {
         this.objectMapper = initializeObjectMapper();
         this.prettyPrinter = prettyPrinter;
     }
@@ -187,7 +183,12 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
      * @return the object mapper
      */
     protected ObjectMapper initializeObjectMapper() {
-        val mapper = new ObjectMapper(getJsonFactory());
+        val mapper = JacksonObjectMapperFactory
+            .builder()
+            .defaultTypingEnabled(isDefaultTypingEnabled())
+            .jsonFactory(getJsonFactory())
+            .build()
+            .toObjectMapper();
         configureObjectMapper(mapper);
         return mapper;
     }
@@ -198,24 +199,17 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
      * @param mapper the mapper
      */
     protected void configureObjectMapper(final ObjectMapper mapper) {
-        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
-        mapper.setVisibility(PropertyAccessor.SETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC);
-        mapper.setVisibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC);
-        mapper.setVisibility(PropertyAccessor.IS_GETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC);
-
-        if (isDefaultTypingEnabled()) {
-            mapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
-        }
-        mapper.findAndRegisterModules();
     }
 
     protected boolean isDefaultTypingEnabled() {
         return true;
     }
 
+    /**
+     * Gets json factory.
+     *
+     * @return the json factory
+     */
     protected JsonFactory getJsonFactory() {
         return null;
     }

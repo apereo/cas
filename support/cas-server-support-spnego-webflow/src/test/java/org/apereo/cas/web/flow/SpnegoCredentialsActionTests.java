@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -29,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Import(SpnegoCredentialsActionTests.SpnegoAuthenticationTestConfiguration.class)
-@Tag("Webflow")
+@Tag("Spnego")
 public class SpnegoCredentialsActionTests extends AbstractSpnegoTests {
     @Test
     public void verifyOperation() throws Exception {
@@ -42,7 +43,28 @@ public class SpnegoCredentialsActionTests extends AbstractSpnegoTests {
         assertNotNull(response.getHeader(SpnegoConstants.HEADER_AUTHENTICATE));
     }
 
+    @Test
+    public void verifyNoAuthzHeader() throws Exception {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, spnegoAction.execute(context).getId());
+    }
+
+    @Test
+    public void verifyBadAuthzHeader() throws Exception {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        request.addHeader(SpnegoConstants.HEADER_AUTHORIZATION, "XYZ");
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, spnegoAction.execute(context).getId());
+    }
+
+
     @TestConfiguration("SpnegoAuthenticationTestConfiguration")
+    @Lazy(false)
     public static class SpnegoAuthenticationTestConfiguration {
         @Bean
         public List<Authentication> spnegoAuthentications() {

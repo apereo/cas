@@ -4,8 +4,8 @@ import org.apereo.cas.adaptors.trusted.authentication.handler.support.PrincipalB
 import org.apereo.cas.adaptors.trusted.authentication.principal.PrincipalBearingPrincipalResolver;
 import org.apereo.cas.adaptors.trusted.authentication.principal.RemoteRequestPrincipalAttributesExtractor;
 import org.apereo.cas.adaptors.trusted.authentication.principal.ShibbolethServiceProviderRequestPrincipalAttributesExtractor;
-import org.apereo.cas.adaptors.trusted.web.flow.BasePrincipalFromNonInteractiveCredentialsAction;
 import org.apereo.cas.adaptors.trusted.web.flow.ChainingPrincipalFromRequestNonInteractiveCredentialsAction;
+import org.apereo.cas.adaptors.trusted.web.flow.PrincipalFromRequestExtractorAction;
 import org.apereo.cas.adaptors.trusted.web.flow.PrincipalFromRequestHeaderNonInteractiveCredentialsAction;
 import org.apereo.cas.adaptors.trusted.web.flow.PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction;
 import org.apereo.cas.adaptors.trusted.web.flow.PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAction;
@@ -18,6 +18,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolver;
+import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
@@ -35,7 +36,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.webflow.execution.Action;
 
 /**
  * This is {@link TrustedAuthenticationConfiguration}.
@@ -72,11 +72,12 @@ public class TrustedAuthenticationConfiguration {
     private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
-    @Qualifier("attributeRepository")
+    @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
     private ObjectProvider<IPersonAttributeDao> attributeRepository;
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "principalBearingCredentialsAuthenticationHandler")
     public AuthenticationHandler principalBearingCredentialsAuthenticationHandler() {
         val trusted = casProperties.getAuthn().getTrusted();
         return new PrincipalBearingCredentialsAuthenticationHandler(trusted.getName(),
@@ -86,18 +87,25 @@ public class TrustedAuthenticationConfiguration {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "trustedPrincipalResolver")
     public PrincipalResolver trustedPrincipalResolver() {
-        val resolver = new ChainingPrincipalResolver(this.principalElectionStrategy.getObject());
+        val resolver = new ChainingPrincipalResolver(this.principalElectionStrategy.getObject(), casProperties);
         val personDirectory = casProperties.getPersonDirectory();
         val trusted = casProperties.getAuthn().getTrusted();
         val principalAttribute = StringUtils.defaultIfBlank(trusted.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
-        val bearingPrincipalResolver = new PrincipalBearingPrincipalResolver(attributeRepository.getObject(),
-            trustedPrincipalFactory(),
-            trusted.isReturnNull() || personDirectory.isReturnNull(),
-            principalAttribute,
-            trusted.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId(),
-            trusted.isAttributeResolutionEnabled(),
-            org.springframework.util.StringUtils.commaDelimitedListToSet(trusted.getActiveAttributeRepositoryIds()));
+
+        val context = PrincipalResolutionContext.builder()
+            .attributeRepository(attributeRepository.getObject())
+            .principalFactory(trustedPrincipalFactory())
+            .returnNullIfNoAttributes(trusted.isReturnNull() || personDirectory.isReturnNull())
+            .principalNameTransformer(String::trim)
+            .principalAttributeNames(principalAttribute)
+            .useCurrentPrincipalId(trusted.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId())
+            .resolveAttributes(trusted.isAttributeResolutionEnabled())
+            .activeAttributeRepositoryIdentifiers(org.springframework.util.StringUtils
+                .commaDelimitedListToSet(trusted.getActiveAttributeRepositoryIds()))
+            .build();
+        val bearingPrincipalResolver = new PrincipalBearingPrincipalResolver(context);
         resolver.setChain(CollectionUtils.wrapList(new EchoingPrincipalResolver(), bearingPrincipalResolver));
         return resolver;
     }
@@ -110,12 +118,15 @@ public class TrustedAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "remoteRequestPrincipalAttributesExtractor")
     @Bean
+    @RefreshScope
     public RemoteRequestPrincipalAttributesExtractor remoteRequestPrincipalAttributesExtractor() {
         return new ShibbolethServiceProviderRequestPrincipalAttributesExtractor();
     }
 
     @Bean
-    public BasePrincipalFromNonInteractiveCredentialsAction principalFromRemoteUserAction() {
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "principalFromRemoteUserAction")
+    public PrincipalFromRequestExtractorAction principalFromRemoteUserAction() {
         return new PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction(
             initialAuthenticationAttemptWebflowEventResolver.getObject(),
             serviceTicketRequestWebflowEventResolver.getObject(),
@@ -125,7 +136,9 @@ public class TrustedAuthenticationConfiguration {
     }
 
     @Bean
-    public BasePrincipalFromNonInteractiveCredentialsAction principalFromRemoteUserPrincipalAction() {
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "principalFromRemoteUserPrincipalAction")
+    public PrincipalFromRequestExtractorAction principalFromRemoteUserPrincipalAction() {
         return new PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAction(
             initialAuthenticationAttemptWebflowEventResolver.getObject(),
             serviceTicketRequestWebflowEventResolver.getObject(),
@@ -135,7 +148,9 @@ public class TrustedAuthenticationConfiguration {
     }
 
     @Bean
-    public BasePrincipalFromNonInteractiveCredentialsAction principalFromRemoteHeaderPrincipalAction() {
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "principalFromRemoteHeaderPrincipalAction")
+    public PrincipalFromRequestExtractorAction principalFromRemoteHeaderPrincipalAction() {
         val trusted = casProperties.getAuthn().getTrusted();
         return new PrincipalFromRequestHeaderNonInteractiveCredentialsAction(
             initialAuthenticationAttemptWebflowEventResolver.getObject(),
@@ -148,14 +163,14 @@ public class TrustedAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "remoteUserAuthenticationAction")
     @Bean
-    public Action remoteUserAuthenticationAction() {
-        val chain =
-            new ChainingPrincipalFromRequestNonInteractiveCredentialsAction(
-                initialAuthenticationAttemptWebflowEventResolver.getObject(),
-                serviceTicketRequestWebflowEventResolver.getObject(),
-                adaptiveAuthenticationPolicy.getObject(),
-                trustedPrincipalFactory(),
-                remoteRequestPrincipalAttributesExtractor());
+    @RefreshScope
+    public PrincipalFromRequestExtractorAction remoteUserAuthenticationAction() {
+        val chain = new ChainingPrincipalFromRequestNonInteractiveCredentialsAction(
+            initialAuthenticationAttemptWebflowEventResolver.getObject(),
+            serviceTicketRequestWebflowEventResolver.getObject(),
+            adaptiveAuthenticationPolicy.getObject(),
+            trustedPrincipalFactory(),
+            remoteRequestPrincipalAttributesExtractor());
         chain.addAction(principalFromRemoteUserAction());
         chain.addAction(principalFromRemoteUserPrincipalAction());
         chain.addAction(principalFromRemoteHeaderPrincipalAction());
@@ -164,6 +179,7 @@ public class TrustedAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "trustedAuthenticationEventExecutionPlanConfigurer")
     @Bean
+    @RefreshScope
     public AuthenticationEventExecutionPlanConfigurer trustedAuthenticationEventExecutionPlanConfigurer() {
         return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(principalBearingCredentialsAuthenticationHandler(), trustedPrincipalResolver());
     }

@@ -2,6 +2,7 @@ package org.apereo.cas.audit;
 
 import org.apereo.cas.authentication.Authentication;
 
+import org.aspectj.lang.JoinPoint;
 import org.springframework.core.Ordered;
 
 /**
@@ -19,20 +20,22 @@ public interface AuditPrincipalIdProvider extends Ordered {
     /**
      * Return principal id from a given authentication event.
      *
+     * @param auditTarget    the audit target
      * @param authentication authentication event containing the data to computed the final principal id from
      * @param resultValue    the result value that is currently processed by the executing op. May be null.
      * @param exception      the exception that may have occurred as part of the current executing op. May be null.
      * @return computed principal id
      */
-    String getPrincipalIdFrom(Authentication authentication, Object resultValue, Exception exception);
+    String getPrincipalIdFrom(JoinPoint auditTarget, Authentication authentication, Object resultValue, Exception exception);
 
     /**
      * Whether this provider can support the authentication transaction to provide a principal id.
      *
+     * @param auditTarget    the audit target
      * @param authentication the authentication transaction.
      * @param resultValue    the result value that is currently processed by the executing op. May be null.
      * @param exception      the exception that may have occurred as part of the current executing op. May be null.
      * @return true /false
      */
-    boolean supports(Authentication authentication, Object resultValue, Exception exception);
+    boolean supports(JoinPoint auditTarget, Authentication authentication, Object resultValue, Exception exception);
 }

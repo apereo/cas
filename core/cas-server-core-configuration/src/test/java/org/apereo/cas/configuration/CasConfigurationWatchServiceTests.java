@@ -2,6 +2,7 @@ package org.apereo.cas.configuration;
 
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -25,6 +26,7 @@ import static org.mockito.Mockito.*;
     RefreshAutoConfiguration.class,
     AopAutoConfiguration.class
 })
+@Tag("CasConfiguration")
 public class CasConfigurationWatchServiceTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
@@ -46,6 +48,12 @@ public class CasConfigurationWatchServiceTests {
         when(manager.getStandaloneProfileConfigurationFile()).thenReturn(cas);
         val service = new CasConfigurationWatchService(manager, applicationContext);
         service.runPathWatchServices(mock(ApplicationReadyEvent.class));
+
+        val newFile = new File(cas.getParentFile(), "something");
+        FileUtils.writeStringToFile(newFile, "helloworld", StandardCharsets.UTF_8);
+        FileUtils.writeStringToFile(newFile, "helloworld-update", StandardCharsets.UTF_8, true);
+        FileUtils.deleteQuietly(newFile);
+        
         service.close();
     }
 }

@@ -4,14 +4,19 @@ title: CAS - Multifactor Authentication Bypass
 category: Multifactor Authentication
 ---
 
+{% include variables.html %}
+
 # Multifactor Authentication Bypass
 
-Each [multifactor provider](Configuring-Multifactor-Authentication.html) is equipped with options to allow for bypass. Once the provider
-is chosen to honor the authentication request, bypass rules are then consulted to calculate whether the provider should ignore the request and skip MFA conditionally.
+Each [multifactor provider](Configuring-Multifactor-Authentication.html) is equipped with 
+options to allow for bypass. Once the provider
+is chosen to honor the authentication request, bypass rules are then consulted
+to calculate whether the provider should ignore the request and skip MFA conditionally.
 
 ## Default Bypass
 
-CAS provides a default bypass policy for each [multifactor provider](Configuring-Multifactor-Authentication.html) that can be configured through CAS properties.  
+CAS provides a default bypass policy for 
+each [multifactor provider](Configuring-Multifactor-Authentication.html) that can be configured through CAS properties.  
 All providers will consult this policy for bypass events before consulting any other configured bypass providers.
 
 Bypass rules allow for the following options for each provider:
@@ -23,7 +28,7 @@ Bypass rules allow for the following options for each provider:
 - Skip multifactor authentication depending on method/form of primary authentication execution.
 - Skip multifactor authentication depending on the properties of the http request such as remote addr/host and/or header names.
 
-A few simple examples follow:
+A few examples follow:
 
 - Trigger MFA except when the principal carries an `affiliation` attribute whose value is either `alum` or `member`.
 - Trigger MFA except when the principal carries a `superAdmin` attribute.
@@ -36,7 +41,8 @@ for multifactor authentication. See the documentation for each specific provider
 
 ### Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#multifactor-authentication).
+Multifactor authentication bypass configuration is defined for each provider id. To learn more about the available settings,
+examine the configuration for your choice of multifactor authentication provider.
 
 Note that ticket validation requests shall successfully go through if multifactor authentication is
 bypassed for the given provider. In such cases, no authentication context is passed back to the application and

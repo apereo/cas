@@ -8,17 +8,18 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.SchedulingUtils;
+import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -26,16 +27,20 @@ import org.springframework.test.context.TestPropertySource;
  * @since 3.0.0
  */
 @TestPropertySource(properties = {
-    "cas.authn.policy.any.tryAll=true",
+    "cas.authn.policy.any.try-all=true",
     "spring.aop.proxy-target-class=true",
-    "cas.ticket.st.timeToKillInSeconds=30"
+    "cas.ticket.st.time-to-kill-in-seconds=30"
 })
 @Setter
 @Getter
 public abstract class AbstractCentralAuthenticationServiceTests extends BaseCasCoreTests {
     @Autowired
+    @Qualifier("serviceValidationAuthorizers")
+    private ServiceTicketValidationAuthorizersExecutionPlan serviceValidationAuthorizers;
+
+    @Autowired
     @Qualifier("centralAuthenticationService")
-    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
+    private CentralAuthenticationService centralAuthenticationService;
 
     @Autowired
     @Qualifier("ticketGrantingTicketCookieGenerator")
@@ -70,7 +75,9 @@ public abstract class AbstractCentralAuthenticationServiceTests extends BaseCasC
     private AuthenticationSystemSupport authenticationSystemSupport;
 
     @TestConfiguration("CasTestConfiguration")
+    @Lazy(false)
     public static class CasTestConfiguration implements InitializingBean {
+
 
         @Autowired
         protected ApplicationContext applicationContext;

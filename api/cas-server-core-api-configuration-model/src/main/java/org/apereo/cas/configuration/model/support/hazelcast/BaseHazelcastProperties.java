@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.hazelcast;
 
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -19,6 +20,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("BaseHazelcastProperties")
 public class BaseHazelcastProperties implements Serializable {
 
     /**
@@ -66,18 +68,14 @@ public class BaseHazelcastProperties implements Serializable {
     private static final long serialVersionUID = 4204884717547468480L;
 
     /**
-     * Hazelcast enterprise license key.
-     */
-    private String licenseKey;
-
-    /**
-     * Enables compression when default java serialization is used.
-     */
-    private boolean enableCompression;
-
-    /**
      * Hazelcast cluster settings if CAS is able to auto-create caches.
      */
     @NestedConfigurationProperty
     private HazelcastClusterProperties cluster = new HazelcastClusterProperties();
+
+    /**
+     * Core configuration settings for hazelcast.
+     */
+    @NestedConfigurationProperty
+    private HazelcastCoreProperties core = new HazelcastCoreProperties();
 }

@@ -8,7 +8,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.io.WatcherService;
 
 import lombok.Getter;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.Resource;
 
 import java.util.Collection;
@@ -19,7 +19,7 @@ import java.util.Collection;
  * expected to be found inside a directory location and this registry will recursively look through
  * the directory structure to find relevant YAML files. Files are expected to have the
  * {@link #getExtensions()} extension. An example of the YAML file is included here:
- * <pre>
+ * &lt;pre&gt;
  * --- !&lt;org.apereo.cas.services.RegexRegisteredService&gt;
  * serviceId: "testId"
  * name: "YAML"
@@ -29,7 +29,7 @@ import java.util.Collection;
  * accessStrategy: !&lt;org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy&gt;
  * enabled: true
  * ssoEnabled: true
- * </pre>
+ * &lt;/pre&gt;
  *
  * @author Dmitriy Kopylenko
  * @author Misagh Moayyed
@@ -45,13 +45,13 @@ public class YamlServiceRegistry extends AbstractResourceBasedServiceRegistry {
 
     public YamlServiceRegistry(final Resource configDirectory,
                                final WatcherService serviceRegistryConfigWatcher,
-                               final ApplicationEventPublisher eventPublisher,
+                               final ConfigurableApplicationContext applicationContext,
                                final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
                                final RegisteredServiceResourceNamingStrategy resourceNamingStrategy,
                                final Collection<ServiceRegistryListener> serviceRegistryListeners) throws Exception {
         super(configDirectory,
             CollectionUtils.wrapList(new RegisteredServiceYamlSerializer()),
-            eventPublisher, registeredServiceReplicationStrategy,
+            applicationContext, registeredServiceReplicationStrategy,
             resourceNamingStrategy, serviceRegistryListeners, serviceRegistryConfigWatcher);
     }
 

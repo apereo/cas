@@ -2,11 +2,11 @@ package org.apereo.cas.authentication.event;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.notifications.CommunicationsManager;
+import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
 import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.support.events.authentication.surrogate.CasSurrogateAuthenticationFailureEvent;
 import org.apereo.cas.support.events.authentication.surrogate.CasSurrogateAuthenticationSuccessfulEvent;
-import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.io.CommunicationsManager;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,11 +15,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 
+import java.util.Map;
+
 /**
  * This is {@link SurrogateAuthenticationEventListener}.
  *
  * @author Misagh Moayyed
- * @since 5.2.0
+ * @since 6.2.0
  */
 @Slf4j
 @RequiredArgsConstructor
@@ -73,10 +75,11 @@ public class SurrogateAuthenticationEventListener {
         if (communicationsManager.isMailSenderDefined()) {
             val mail = casProperties.getAuthn().getSurrogate().getMail();
             val emailAttribute = mail.getAttributeName();
-            val to = CollectionUtils.firstElement(emailAttribute);
-            if (to.isPresent()) {
-                val text = mail.getFormattedBody(eventDetails);
-                this.communicationsManager.email(mail, to.get().toString(), text);
+            val to = principal.getAttributes().get(emailAttribute);
+            if (to != null) {
+                val body = EmailMessageBodyBuilder.builder().properties(mail)
+                    .parameters(Map.of("event", eventDetails)).build().produce();
+                this.communicationsManager.email(mail, to.toString(), body);
             } else {
                 LOGGER.trace("The principal has no [{}] attribute, cannot send email notification", emailAttribute);
             }

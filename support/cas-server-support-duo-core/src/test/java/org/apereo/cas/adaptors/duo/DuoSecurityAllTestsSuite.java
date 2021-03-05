@@ -1,6 +1,8 @@
 package org.apereo.cas.adaptors.duo;
 
+import org.apereo.cas.adaptors.duo.authn.BasicDuoSecurityAuthenticationServiceTests;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationHandlerTests;
+import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationServiceTests;
 import org.apereo.cas.adaptors.duo.web.DuoSecurityPingEndpointTests;
 import org.apereo.cas.adaptors.duo.web.DuoSecurityUserAccountStatusEndpointTests;
 
@@ -16,6 +18,8 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     DuoSecurityPingEndpointTests.class,
+    DuoSecurityAuthenticationServiceTests.class,
+    BasicDuoSecurityAuthenticationServiceTests.class,
     DuoSecurityAuthenticationHandlerTests.class,
     DuoSecurityUserAccountStatusEndpointTests.class
 })

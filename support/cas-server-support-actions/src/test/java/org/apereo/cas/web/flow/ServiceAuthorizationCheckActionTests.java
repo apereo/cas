@@ -7,7 +7,6 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -25,11 +24,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("Webflow")
+@Tag("WebflowActions")
 public class ServiceAuthorizationCheckActionTests extends AbstractWebflowActionsTests {
     @Autowired
     @Qualifier("serviceAuthorizationCheck")
-    private ObjectProvider<Action> action;
+    private Action action;
 
     @Test
     public void verifyNoServiceFound() {
@@ -37,7 +36,7 @@ public class ServiceAuthorizationCheckActionTests extends AbstractWebflowActions
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService("invalid-service-123"));
-        assertThrows(UnauthorizedServiceException.class, () -> this.action.getObject().execute(context));
+        assertThrows(UnauthorizedServiceException.class, () -> this.action.execute(context));
     }
 
     @Test
@@ -46,7 +45,7 @@ public class ServiceAuthorizationCheckActionTests extends AbstractWebflowActions
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService("cas-access-disabled"));
-        assertThrows(UnauthorizedServiceException.class, () -> this.action.getObject().execute(context));
+        assertThrows(UnauthorizedServiceException.class, () -> this.action.execute(context));
         assertNotNull(WebUtils.getUnauthorizedRedirectUrlFromFlowScope(context));
     }
 
@@ -56,7 +55,7 @@ public class ServiceAuthorizationCheckActionTests extends AbstractWebflowActions
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService("cas-access-delegation"));
-        assertDoesNotThrow(() -> this.action.getObject().execute(context));
+        assertDoesNotThrow(() -> this.action.execute(context));
         assertFalse(WebUtils.isCasLoginFormViewable(context));
     }
 }

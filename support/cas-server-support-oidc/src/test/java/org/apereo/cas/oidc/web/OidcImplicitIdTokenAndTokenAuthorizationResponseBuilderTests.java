@@ -41,7 +41,7 @@ public class OidcImplicitIdTokenAndTokenAuthorizationResponseBuilderTests extend
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.IDTOKEN_TOKEN.getType());
         val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response, new JEESessionStore());
+        val context = new JEEContext(request, response);
         assertTrue(oidcImplicitIdTokenAndTokenCallbackUrlBuilder.supports(context));
     }
 
@@ -64,9 +64,8 @@ public class OidcImplicitIdTokenAndTokenAuthorizationResponseBuilderTests extend
             .build();
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.IDTOKEN_TOKEN.getType());
-        val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response, new JEESessionStore());
-        val manager = new ProfileManager<>(context, context.getSessionStore());
+        val context = new JEEContext(request, new MockHttpServletResponse());
+        val manager = new ProfileManager(context, JEESessionStore.INSTANCE);
 
         val profile = new CommonProfile();
         profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);

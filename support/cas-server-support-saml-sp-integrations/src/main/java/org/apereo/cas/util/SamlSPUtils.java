@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
+import org.opensaml.core.criterion.SatisfyAnyCriterion;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
@@ -52,7 +53,7 @@ public class SamlSPUtils {
     public static SamlRegisteredService newSamlServiceProviderService(final AbstractSamlSPProperties sp,
                                                                       final SamlRegisteredServiceCachingMetadataResolver resolver) {
         if (StringUtils.isBlank(sp.getMetadata())) {
-            LOGGER.debug("Skipped registration of [{}] since no metadata location is found", sp.getName());
+            LOGGER.debug("Skipped registration of [{}] since no metadata location is defined", sp.getName());
             return null;
         }
 
@@ -61,7 +62,7 @@ public class SamlSPUtils {
         service.setDescription(sp.getDescription());
         service.setEvaluationOrder(Ordered.LOWEST_PRECEDENCE);
         service.setMetadataLocation(sp.getMetadata());
-        val attributesToRelease = new ArrayList<String>(sp.getAttributes());
+        val attributesToRelease = new ArrayList<>(sp.getAttributes());
         if (StringUtils.isNotBlank(sp.getNameIdAttribute())) {
             attributesToRelease.add(sp.getNameIdAttribute());
             service.setUsernameAttributeProvider(new PrincipalAttributeRegisteredServiceUsernameProvider(sp.getNameIdAttribute()));
@@ -110,6 +111,7 @@ public class SamlSPUtils {
 
             val criteriaSet = new CriteriaSet();
             criteriaSet.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
+            criteriaSet.add(new SatisfyAnyCriterion());
             val metadataResolver = resolver.resolve(service, criteriaSet);
 
             val resolvers = new ArrayList<MetadataResolver>();
@@ -144,6 +146,7 @@ public class SamlSPUtils {
      * @param servicesManager the services manager
      */
     public static void saveService(final RegisteredService service, final ServicesManager servicesManager) {
+        LOGGER.debug("Attempting to save service definition [{}]", service);
         servicesManager.load();
 
         if (servicesManager.findServiceBy(registeredService -> registeredService instanceof SamlRegisteredService

@@ -11,6 +11,7 @@ import org.apache.directory.fortress.core.PasswordException;
 import org.apache.directory.fortress.core.model.Session;
 import org.apache.directory.fortress.core.model.User;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
@@ -32,6 +33,7 @@ import static org.mockito.Mockito.*;
  * @author yudhi.k.surtan
  * @since 5.2.0
  */
+@Tag("Authentication")
 public class FortressAuthenticationHandlerTests {
     @Mock
     private AccessMgr accessManager;
@@ -40,8 +42,8 @@ public class FortressAuthenticationHandlerTests {
     private FortressAuthenticationHandler fortressAuthenticationHandler;
 
     @BeforeEach
-    public void initializeTest() {
-        MockitoAnnotations.initMocks(this);
+    public void initializeTest() throws Exception {
+        MockitoAnnotations.openMocks(this).close();
         fortressAuthenticationHandler.setAccessManager(accessManager);
     }
 

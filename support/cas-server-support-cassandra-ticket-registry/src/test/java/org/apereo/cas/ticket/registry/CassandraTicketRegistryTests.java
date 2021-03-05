@@ -5,11 +5,16 @@ import org.apereo.cas.config.CassandraTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
+import lombok.Getter;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link CassandraTicketRegistryTests}.
@@ -24,17 +29,25 @@ import org.springframework.boot.test.context.SpringBootTest;
     BaseTicketRegistryTests.SharedTestConfiguration.class
 }, properties = {
     "cas.ticket.registry.cassandra.keyspace=cas",
+    "cas.ticket.registry.cassandra.local-dc=datacenter1",
     "cas.ticket.registry.cassandra.drop-tables-on-startup=true"
 })
 @Tag("Cassandra")
 @EnabledIfPortOpen(port = 9042)
+@Getter
 public class CassandraTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier("ticketRegistry")
-    private TicketRegistry ticketRegistry;
+    private TicketRegistry newTicketRegistry;
 
-    @Override
-    public TicketRegistry getNewTicketRegistry() {
-        return this.ticketRegistry;
+    @RepeatedTest(1)
+    public void verifyFails() {
+        assertDoesNotThrow(new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                newTicketRegistry.addTicket(null);
+            }
+        });
     }
+
 }

@@ -5,12 +5,11 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
-import org.apereo.cas.authentication.DefaultAuthenticationResultBuilder;
-import org.apereo.cas.authentication.MultifactorAuthenticationProviderAbsentException;
 import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionStrategy;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -40,6 +39,7 @@ public class DetermineMultifactorPasswordlessAuthenticationAction extends Abstra
     private final AuthenticationSystemSupport authenticationSystemSupport;
 
     private final CasConfigurationProperties casProperties;
+
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
@@ -89,7 +89,7 @@ public class DetermineMultifactorPasswordlessAuthenticationAction extends Abstra
      */
     protected void populateContextWithAuthenticationResult(final RequestContext requestContext, final Authentication auth,
                                                            final WebApplicationService service) {
-        val builder = new DefaultAuthenticationResultBuilder();
+        val builder = authenticationSystemSupport.getAuthenticationResultBuilderFactory().newBuilder();
         val authenticationResult = builder
             .collect(auth)
             .build(this.authenticationSystemSupport.getPrincipalElectionStrategy(), service);
@@ -99,14 +99,22 @@ public class DetermineMultifactorPasswordlessAuthenticationAction extends Abstra
         WebUtils.putAuthentication(auth, requestContext);
     }
 
+    /**
+     * Resolve multifactor authentication provider.
+     *
+     * @param requestContext the request context
+     * @param auth           the auth
+     * @param service        the service
+     * @return the optional
+     */
     protected Optional<String> resolveMultifactorAuthenticationProvider(final RequestContext requestContext, final Authentication auth,
                                                                         final WebApplicationService service) {
-        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        val registeredService = WebUtils.getRegisteredService(requestContext);
         try {
+            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+            val registeredService = WebUtils.getRegisteredService(requestContext);
             return multifactorTriggerSelectionStrategy.resolve(request, registeredService, auth, service);
-        } catch (final MultifactorAuthenticationProviderAbsentException e) {
-            LOGGER.error(e.getMessage());
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
         }
         return Optional.empty();
     }
@@ -116,11 +124,20 @@ public class DetermineMultifactorPasswordlessAuthenticationAction extends Abstra
      *
      * @param requestContext the request context
      * @param user           the user
-     * @return the boolean
+     * @return true/false
      */
     protected boolean shouldActivateMultifactorAuthenticationFor(final RequestContext requestContext,
                                                                  final PasswordlessUserAccount user) {
-        return casProperties.getAuthn().getPasswordless().isMultifactorAuthenticationActivated()
-            || user.isMultifactorAuthenticationEligible();
+        val status = user.getMultifactorAuthenticationEligible();
+        if (status.isTrue()) {
+            LOGGER.trace("Passwordless account [{}] is eligible for multifactor authentication", user);
+            return true;
+        }
+        if (status.isFalse()) {
+            LOGGER.trace("Passwordless account [{}] is not eligible for multifactor authentication", user);
+            return false;
+        }
+        return casProperties.getAuthn().getPasswordless().getCore().isMultifactorAuthenticationActivated();
+
     }
 }

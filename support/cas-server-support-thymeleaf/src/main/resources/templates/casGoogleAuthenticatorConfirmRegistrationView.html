@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+    <title th:text="#{cas.mfa.googleauth.pagetitle}">Google Authentication Registration Review View</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
+</head>
+
+<body id="cas">
+    <main role="main" class="container mt-3 mb-3">
+        <div layout:fragment="content" id="login" class="mdc-card p-4 m-auto w-lg-66">
+            <p>The following devices are registered for <code th:text="${principal.id}"></code>:</p>
+            
+            <div class="card-text">
+                <div th:each="device: ${registeredDevices}" class="border-bottom py-4">
+                    <form th:name="${'form-' + device.id}" th:id="${'form-' + device.id}" method="post">
+                        <h4 class="d-flex align-items-center">
+                            <ul style="list-style: none">
+                                <code>
+                                <li><i class="mdi mdi-laptop mr-2"></i>
+                                    <span th:id="${'name-' + device.name}" th:utext="${device.name}">Device Name</span>
+                                </li>
+                                <li><i class="mdi mdi-account-clock mr-2"></i>
+                                    <span th:utext="${device.registrationDate}">Device Date</span>
+                                </li>
+                                <li><i class="mdi mdi-account-details mr-2"></i>
+                                    <span th:id="${'id-' + device.id}" th:utext="${device.id}">Device Id</span>
+                                </li>
+                                </code>
+                            </ul>
+                        </h4>
+                        <button id="useButton" class="mdc-button mdc-button--raised" th:value="#{screen.authentication.gauth.selectdevice}">
+                            <span class="mdc-button__label" th:text="#{screen.authentication.gauth.selectdevice}">Use</span>
+                        </button>
+                        <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
+                        <input type="hidden" name="accountId" th:value="${device.id}" />
+                        <input type="hidden" name="_eventId" value="select" />
+                    </form>
+                </div>
+            </div>
+
+            <form method="post" id="fm2" th:if="${gauthMultipleDeviceRegistrationEnabled}">
+                <p>
+                <p th:utext="#{screen.authentication.gauth.reganotherdevice}"></p>
+                <input type="hidden" name="_eventId_register" value="Register"/>
+                <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                <button id="register" class="mdc-button mdc-button--raised mr-2" name="register" accesskey="r" value="Register">
+                    <span class="mdc-button__label" th:text="#{screen.welcome.button.register}">Register</span>
+                </button>
+            </form>
+            </p>
+            
+        </div>
+    </main>
+</body>
+
+</html>

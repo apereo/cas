@@ -49,7 +49,7 @@ public class GenerateServiceTicketAction extends AbstractAction {
      * <p>
      * In subsequent authentication flows where a TGT is available and only an ST needs to be
      * created, there are no cached copies of the credential, since we do have a TGT available.
-     * So we will simply grab the available authentication and produce the final result based on that.
+     * So we will grab the available authentication and produce the final result based on that.
      */
     @Override
     protected Event doExecute(final RequestContext context) {
@@ -97,7 +97,7 @@ public class GenerateServiceTicketAction extends AbstractAction {
         } catch (final AbstractTicketException e) {
             if (e instanceof InvalidTicketException) {
                 LOGGER.debug("CAS has determined ticket-granting ticket [{}] is invalid and must be destroyed", ticketGrantingTicket);
-                this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
+                this.centralAuthenticationService.deleteTicket(ticketGrantingTicket);
             }
             if (isGatewayPresent(context)) {
                 LOGGER.debug("Request indicates that it is gateway. Routing result to [{}] state", CasWebflowConstants.TRANSITION_ID_GATEWAY);

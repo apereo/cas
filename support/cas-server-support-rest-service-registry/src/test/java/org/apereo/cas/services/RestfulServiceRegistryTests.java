@@ -14,13 +14,19 @@ import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.RestServiceRegistryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Getter;
+import lombok.SneakyThrows;
+import lombok.val;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.http.HttpStatus;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -28,7 +34,10 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,8 +46,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static org.mockito.Mockito.*;
-
 /**
  * This is {@link RestfulServiceRegistryTests}.
  *
@@ -46,7 +53,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @SpringBootTest(classes = {
-    RestfulServiceRegistryTests.RestServicesTestConfiguration.class,
+    RestfulServiceRegistryTests.RestfulServiceRegistryTestConfiguration.class,
     CasCoreServicesConfiguration.class,
     RestServiceRegistryConfiguration.class,
     CasCoreUtilConfiguration.class,
@@ -67,55 +74,69 @@ import static org.mockito.Mockito.*;
 },
     properties = {
         "server.port=9303",
-        "cas.serviceRegistry.rest.url=http://localhost:9303",
-        "cas.serviceRegistry.initFromJson=false"
+        "cas.service-registry.rest.url=http://localhost:9303",
+        "cas.service-registry.core.init-from-json=false"
     },
     webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAutoConfiguration
 @Tag("RestfulApi")
+@Getter
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Autowired
     @Qualifier("restfulServiceRegistry")
-    private ServiceRegistry dao;
-
-    @Override
-    public ServiceRegistry getNewServiceRegistry() {
-        return dao;
-    }
+    private ServiceRegistry newServiceRegistry;
 
     @TestConfiguration
-    public static class RestServicesTestConfiguration {
+    @Lazy(false)
+    public static class RestfulServiceRegistryTestConfiguration {
+
+        @Autowired
+        private ConfigurableApplicationContext applicationContext;
 
         @RestController("servicesController")
         @RequestMapping("/")
-        public static class ServicesController {
-            private final InMemoryServiceRegistry serviceRegistry = new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class));
+        public class ServicesController {
+            private final InMemoryServiceRegistry serviceRegistry = new InMemoryServiceRegistry(applicationContext);
 
-            @DeleteMapping
-            public Integer findByServiceId(@RequestBody final RegisteredService service) {
+            @DeleteMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+            public ResponseEntity delete(@PathVariable(name = "id") final Long id) {
+                val service = serviceRegistry.findServiceById(id);
                 serviceRegistry.delete(service);
-                return HttpStatus.SC_OK;
+                return ResponseEntity.ok().build();
             }
 
-            @PostMapping
-            public RegisteredService save(@RequestBody final RegisteredService service) {
-                serviceRegistry.save(service);
-                return service;
+            @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+            public ResponseEntity delete() {
+                serviceRegistry.deleteAll();
+                return ResponseEntity.ok().build();
             }
 
-            @GetMapping("/{id}")
-            public RegisteredService findServiceById(@PathVariable(name = "id") final String id) {
+            @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+            @SneakyThrows
+            public ResponseEntity save(@RequestBody final String service) {
+                val registeredService = MAPPER.readValue(service, RegisteredService.class);
+                serviceRegistry.save(registeredService);
+                return ResponseEntity.ok(MAPPER.writeValueAsString(registeredService));
+            }
+
+            @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+            @SneakyThrows
+            public ResponseEntity findServiceById(@PathVariable(name = "id") final String id) {
                 if (NumberUtils.isParsable(id)) {
-                    return serviceRegistry.findServiceById(Long.valueOf(id));
+                    return ResponseEntity.ok(MAPPER.writeValueAsString(serviceRegistry.findServiceById(Long.parseLong(id))));
                 }
-                return serviceRegistry.findServiceByExactServiceId(id);
+                return ResponseEntity.ok(MAPPER.writeValueAsString(serviceRegistry.findServiceByExactServiceId(id)));
             }
 
-            @GetMapping
-            public RegisteredService[] load() {
-                return serviceRegistry.load().toArray(RegisteredService[]::new);
+            @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+            @SneakyThrows
+            public ResponseEntity load() {
+                return ResponseEntity.ok(MAPPER.writeValueAsString(serviceRegistry.load()));
             }
         }
     }

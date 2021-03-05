@@ -10,6 +10,7 @@ import org.apereo.cas.web.view.json.Cas30JsonResponseView;
 import org.apereo.cas.web.view.json.CasJsonServiceResponse;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.web.servlet.View;
@@ -25,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.0.0
  */
 @DirtiesContext
+@Tag("CAS")
 public class Cas30JsonResponseViewTests extends Cas30ResponseViewTests {
     @Override
     protected AbstractCasView getCasViewToRender(final ProtocolAttributeEncoder encoder, final View viewDelegated) {

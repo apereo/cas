@@ -72,7 +72,7 @@ public class PasswordManagementWebflowUtils {
      * Is password reset security questions enabled boolean.
      *
      * @param requestContext the request context
-     * @return the boolean
+     * @return true /false
      */
     public static boolean isPasswordResetSecurityQuestionsEnabled(final RequestContext requestContext) {
         val flowScope = requestContext.getFlowScope();
@@ -121,5 +121,16 @@ public class PasswordManagementWebflowUtils {
     public static void putPasswordResetPasswordPolicyPattern(final RequestContext requestContext, final String policyPattern) {
         val flowScope = requestContext.getFlowScope();
         flowScope.put("policyPattern", policyPattern);
+    }
+
+    /**
+     * Gets password reset password policy pattern.
+     *
+     * @param requestContext the request context
+     * @return the password reset password policy pattern
+     */
+    public static String getPasswordResetPasswordPolicyPattern(final RequestContext requestContext) {
+        val flowScope = requestContext.getFlowScope();
+        return flowScope.get("policyPattern", String.class);
     }
 }

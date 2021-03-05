@@ -4,6 +4,7 @@ import org.apereo.cas.adaptors.x509.authentication.X509CertificateExtractor;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
@@ -25,11 +26,12 @@ public class X509CertificateCredentialsRequestHeaderAction extends X509Certifica
 
     private final X509CertificateExtractor x509CertificateExtractor;
 
-    public X509CertificateCredentialsRequestHeaderAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
+    public X509CertificateCredentialsRequestHeaderAction(final CasDelegatingWebflowEventResolver eventResolver,
                                                          final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
                                                          final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
-                                                         final X509CertificateExtractor x509CertificateExtractor) {
-        super(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy);
+                                                         final X509CertificateExtractor x509CertificateExtractor,
+                                                         final CasConfigurationProperties casProperties) {
+        super(eventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy, casProperties);
         this.x509CertificateExtractor = x509CertificateExtractor;
     }
 
@@ -48,7 +50,7 @@ public class X509CertificateCredentialsRequestHeaderAction extends X509Certifica
             }
             LOGGER.debug("Certificates not found in request header.");
         } else {
-            LOGGER.debug("No X509CertificateExtractor was configured");
+            LOGGER.trace("No certificate extractor was configured");
         }
         return null;
     }

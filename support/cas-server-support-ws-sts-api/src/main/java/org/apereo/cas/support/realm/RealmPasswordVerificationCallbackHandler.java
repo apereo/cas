@@ -1,6 +1,6 @@
 package org.apereo.cas.support.realm;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -18,11 +18,11 @@ import java.util.Arrays;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Getter
 public class RealmPasswordVerificationCallbackHandler implements CallbackHandler {
 
-    private final String psw;
+    private final String password;
 
-    @SuppressFBWarnings("PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS")
     @Override
     public void handle(final Callback[] callbacks) {
         Arrays.stream(callbacks)
@@ -30,8 +30,8 @@ public class RealmPasswordVerificationCallbackHandler implements CallbackHandler
             .map(WSPasswordCallback.class::cast)
             .forEach(c -> {
                 val identifier = c.getIdentifier();
-                LOGGER.debug("Evaluating [{}]", identifier);
-                c.setPassword(this.psw);
+                LOGGER.trace("Evaluating [{}]", identifier);
+                c.setPassword(this.password);
                 LOGGER.debug("Authenticated [{}] successfully.", identifier);
             });
     }

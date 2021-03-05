@@ -1,7 +1,7 @@
 package org.apereo.cas.trusted.web.flow;
 
 import org.apereo.cas.audit.AuditableExecution;
-import org.apereo.cas.configuration.model.support.mfa.TrustedDevicesMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.trusteddevice.TrustedDevicesMultifactorProperties;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustedDeviceBypassEvaluator;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
@@ -69,7 +69,7 @@ public class MultifactorAuthenticationVerifyTrustAction extends AbstractAction {
         MultifactorAuthenticationTrustUtils.setMultifactorAuthenticationTrustedInScope(requestContext);
         MultifactorAuthenticationTrustUtils.trackTrustedMultifactorAuthenticationAttribute(
             authn,
-            trustedProperties.getAuthenticationContextAttribute());
+            trustedProperties.getCore().getAuthenticationContextAttribute());
         return yes();
     }
 }

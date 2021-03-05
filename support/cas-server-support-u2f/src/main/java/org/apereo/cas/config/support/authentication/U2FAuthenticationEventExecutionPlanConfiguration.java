@@ -17,6 +17,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 
+import com.yubico.u2f.U2F;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,10 @@ public class U2FAuthenticationEventExecutionPlanConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
+    @Qualifier("u2fService")
+    private ObjectProvider<U2F> u2fService;
+
+    @Autowired
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
 
@@ -60,7 +65,7 @@ public class U2FAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "u2fAuthenticationMetaDataPopulator")
     public AuthenticationMetaDataPopulator u2fAuthenticationMetaDataPopulator() {
-        val authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
+        val authenticationContextAttribute = casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute();
         return new AuthenticationContextAttributeMetaDataPopulator(
             authenticationContextAttribute,
             u2fAuthenticationHandler(),
@@ -80,7 +85,8 @@ public class U2FAuthenticationEventExecutionPlanConfiguration {
     public AuthenticationHandler u2fAuthenticationHandler() {
         val u2f = this.casProperties.getAuthn().getMfa().getU2f();
         return new U2FAuthenticationHandler(u2f.getName(), servicesManager.getObject(),
-            u2fPrincipalFactory(), u2fDeviceRepository.getObject(), u2f.getOrder());
+            u2fPrincipalFactory(), u2fDeviceRepository.getObject(), u2fService.getObject(),
+            u2f.getOrder());
     }
 
     @ConditionalOnMissingBean(name = "u2fMultifactorAuthenticationProvider")
@@ -99,6 +105,7 @@ public class U2FAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "u2fAuthenticationEventExecutionPlanConfigurer")
     @Bean
+    @RefreshScope
     public AuthenticationEventExecutionPlanConfigurer u2fAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
             plan.registerAuthenticationHandler(u2fAuthenticationHandler());

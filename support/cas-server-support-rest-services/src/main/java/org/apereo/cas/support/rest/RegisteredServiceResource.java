@@ -10,6 +10,7 @@ import org.apereo.cas.rest.BadRestRequestException;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RegexUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.session.JEESessionStore;
+import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.http.HttpStatus;
@@ -68,7 +71,7 @@ public class RegisteredServiceResource {
         } catch (final AuthenticationException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
@@ -91,15 +94,15 @@ public class RegisteredServiceResource {
     private Authentication authenticateRequest(final HttpServletRequest request, final HttpServletResponse response) {
         val extractor = new BasicAuthExtractor();
         val webContext = new JEEContext(request, response);
-        val credentialsResult = extractor.extract(webContext);
-        if (credentialsResult.isPresent()) {
-            val credentials = credentialsResult.get();
-            LOGGER.debug("Received basic authentication request from credentials [{}]", credentials);
-            val c = new UsernamePasswordCredential(credentials.getUsername(), credentials.getPassword());
-            val serviceRequest = this.serviceFactory.createService(request);
-            val result = authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(serviceRequest, c);
-            return result.getAuthentication();
+        val credentialsResult = extractor.extract(webContext, JEESessionStore.INSTANCE);
+        val credentials = (UsernamePasswordCredentials) credentialsResult.get();
+        LOGGER.debug("Received basic authentication request from credentials [{}]", credentials);
+        val c = new UsernamePasswordCredential(credentials.getUsername(), credentials.getPassword());
+        val serviceRequest = this.serviceFactory.createService(request);
+        val result = authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(serviceRequest, c);
+        if (result == null) {
+            throw new BadRestRequestException("Unable to establish authentication using provided credentials for " + c.getUsername());
         }
-        throw new BadRestRequestException("Could not authenticate request");
+        return result.getAuthentication();
     }
 }

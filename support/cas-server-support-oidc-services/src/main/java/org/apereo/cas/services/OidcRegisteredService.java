@@ -15,7 +15,6 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.Transient;
-
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
@@ -160,6 +159,12 @@ public class OidcRegisteredService extends OAuthRegisteredService {
         return new OidcRegisteredService();
     }
 
+    @JsonIgnore
+    @Override
+    public int getEvaluationPriority() {
+        return 1;
+    }
+    
     @JsonIgnore
     @Override
     public String getFriendlyName() {

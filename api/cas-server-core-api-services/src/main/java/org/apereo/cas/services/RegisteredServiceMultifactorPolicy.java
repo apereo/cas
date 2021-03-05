@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
+
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.io.Serializable;
@@ -26,7 +28,7 @@ public interface RegisteredServiceMultifactorPolicy extends Serializable {
      *
      * @return the failure mode
      */
-    RegisteredServiceMultifactorPolicyFailureModes getFailureMode();
+    BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes getFailureMode();
 
     /**
      * Gets principal attribute name trigger.

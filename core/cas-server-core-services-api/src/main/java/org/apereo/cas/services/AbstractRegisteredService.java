@@ -54,7 +54,7 @@ import java.util.Set;
 @Getter
 @Setter
 @EqualsAndHashCode(exclude = "id")
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @Slf4j
 public abstract class AbstractRegisteredService implements RegisteredService {
 
@@ -110,6 +110,10 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     private RegisteredServiceProxyGrantingTicketExpirationPolicy proxyGrantingTicketExpirationPolicy;
 
     @Lob
+    @Column(name = "ticket_granting_ticket_expiration_policy", length = Integer.MAX_VALUE)
+    private RegisteredServiceTicketGrantingTicketExpirationPolicy ticketGrantingTicketExpirationPolicy;
+
+    @Lob
     @Column(name = "service_ticket_expiration_policy", length = Integer.MAX_VALUE)
     private RegisteredServiceServiceTicketExpirationPolicy serviceTicketExpirationPolicy;
 
@@ -138,6 +142,10 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     @Lob
     @Column(name = "mfa_policy", length = Integer.MAX_VALUE)
     private RegisteredServiceMultifactorPolicy multifactorPolicy = new DefaultRegisteredServiceMultifactorPolicy();
+
+    @Lob
+    @Column(name = "matching_strategy", length = Integer.MAX_VALUE)
+    private RegisteredServiceMatchingStrategy matchingStrategy = new FullRegexRegisteredServiceMatchingStrategy();
 
     @Column
     private String logo;
@@ -181,6 +189,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     @Override
     public int compareTo(final RegisteredService other) {
         return new CompareToBuilder()
+            .append(getEvaluationPriority(), other.getEvaluationPriority())
             .append(getEvaluationOrder(), other.getEvaluationOrder())
             .append(StringUtils.defaultIfBlank(getName(), StringUtils.EMPTY).toLowerCase(),
                 StringUtils.defaultIfBlank(other.getName(), StringUtils.EMPTY).toLowerCase())
@@ -199,19 +208,26 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     @Override
     @Deprecated(since = "6.2.0")
     public Set<String> getRequiredHandlers() {
-        LOGGER.warn("Assigning a collection of required authentication handlers to a registered service is deprecated. "
+        LOGGER.debug("Assigning a collection of required authentication handlers to a registered service is deprecated. "
             + "This field is scheduled to be removed in the future. If you need to, consider defining an authentication policy "
             + "for the registered service instead to specify required authentication handlers");
         return getAuthenticationPolicy().getRequiredAuthenticationHandlers();
     }
 
+    /**
+     * Sets required handlers.
+     * @deprecated Since 6.2
+     * @param requiredHandlers the required handlers
+     */
     @Deprecated(since = "6.2.0")
     public void setRequiredHandlers(final Set<String> requiredHandlers) {
-        LOGGER.warn("Assigning a collection of required authentication handlers to a registered service is deprecated. "
-            + "This field is scheduled to be removed in the future. If you need to, consider defining an authentication policy "
-            + "for the registered service instead to specify required authentication handlers [{}]", requiredHandlers);
-        initialize();
-        getAuthenticationPolicy().getRequiredAuthenticationHandlers().addAll(requiredHandlers);
+        if (requiredHandlers != null) {
+            LOGGER.debug("Assigning a collection of required authentication handlers to a registered service is deprecated. "
+                    + "This field is scheduled to be removed in the future. If you need to, consider defining an authentication policy "
+                    + "for the registered service instead to specify required authentication handlers [{}]", requiredHandlers);
+            initialize();
+            getAuthenticationPolicy().getRequiredAuthenticationHandlers().addAll(requiredHandlers);
+        }
     }
     
     @Override
@@ -241,6 +257,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
         this.expirationPolicy = ObjectUtils.defaultIfNull(this.expirationPolicy, new DefaultRegisteredServiceExpirationPolicy());
         this.acceptableUsagePolicy = ObjectUtils.defaultIfNull(this.acceptableUsagePolicy, new DefaultRegisteredServiceAcceptableUsagePolicy());
         this.authenticationPolicy = ObjectUtils.defaultIfNull(this.authenticationPolicy, new DefaultRegisteredServiceAuthenticationPolicy());
+        this.matchingStrategy = ObjectUtils.defaultIfNull(this.matchingStrategy, new FullRegexRegisteredServiceMatchingStrategy());
     }
 
     public void setContacts(final List<RegisteredServiceContact> contacts) {

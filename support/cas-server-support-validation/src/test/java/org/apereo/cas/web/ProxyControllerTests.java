@@ -13,6 +13,7 @@ import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.web.v2.ProxyController;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.thymeleaf.spring5.SpringTemplateEngine;
@@ -36,10 +38,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasThemesConfiguration.class,
     CasThymeleafConfiguration.class,
     CasValidationConfiguration.class
-}, properties = {
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
 })
+@Tag("CAS")
 public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTests {
 
     @Autowired
@@ -92,7 +92,8 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
         assertFalse(map.containsKey(CasProtocolConstants.PARAMETER_TICKET));
     }
 
-    @TestConfiguration
+    @TestConfiguration("ProxyTestConfiguration")
+    @Lazy(false)
     public static class ProxyTestConfiguration {
         @Bean
         public SpringTemplateEngine springTemplateEngine() {

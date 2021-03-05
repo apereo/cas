@@ -5,8 +5,11 @@ import org.apereo.cas.support.saml.InMemoryResourceMetadataResolver;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.io.FileWatcherService;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,7 +44,8 @@ import java.util.Map;
  */
 @Slf4j
 public class JsonResourceMetadataResolver extends BaseSamlRegisteredServiceMetadataResolver implements DisposableBean {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     private final String metadataTemplate;
 
@@ -54,12 +58,13 @@ public class JsonResourceMetadataResolver extends BaseSamlRegisteredServiceMetad
     public JsonResourceMetadataResolver(final SamlIdPProperties samlIdPProperties,
                                         final OpenSamlConfigBean configBean) {
         super(samlIdPProperties, configBean);
-
         try {
-            this.metadataTemplate = IOUtils.toString(new ClassPathResource("metadata/sp-metadata-template.xml")
-                .getInputStream(), StandardCharsets.UTF_8);
+            val inputStream = new ClassPathResource("metadata/sp-metadata-template.xml").getInputStream();
+            this.metadataTemplate = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
             val md = samlIdPProperties.getMetadata();
-            this.jsonResource = new FileSystemResource(new File(md.getLocation().getFile(), "saml-sp-metadata.json"));
+            val location = SpringExpressionLanguageValueResolver.getInstance().resolve(md.getFileSystem().getLocation());
+            val metadataDir = ResourceUtils.getRawResourceFrom(location).getFile();
+            this.jsonResource = new FileSystemResource(new File(metadataDir, "saml-sp-metadata.json"));
             if (this.jsonResource.exists()) {
                 this.metadataMap = readDecisionsFromJsonResource();
                 this.watcherService = new FileWatcherService(jsonResource.getFile(), file -> this.metadataMap = readDecisionsFromJsonResource());
@@ -85,25 +90,27 @@ public class JsonResourceMetadataResolver extends BaseSamlRegisteredServiceMetad
                 return CollectionUtils.wrap(resolver);
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return new ArrayList<>(0);
     }
 
     @Override
     public boolean supports(final SamlRegisteredService service) {
-        try {
-            val metadataLocation = service.getMetadataLocation();
-            return metadataLocation.trim().startsWith("json://");
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return false;
+        val metadataLocation = service.getMetadataLocation();
+        return metadataLocation.trim().startsWith("json://");
     }
 
     @Override
     public boolean isAvailable(final SamlRegisteredService service) {
         return ResourceUtils.doesResourceExist(this.jsonResource);
+    }
+
+    @Override
+    public void destroy() {
+        if (this.watcherService != null) {
+            this.watcherService.close();
+        }
     }
 
     @SneakyThrows
@@ -115,13 +122,6 @@ public class JsonResourceMetadataResolver extends BaseSamlRegisteredServiceMetad
         }
     }
 
-    @Override
-    public void destroy() {
-        if (this.watcherService != null) {
-            this.watcherService.close();
-        }
-    }
-    
     /**
      * The Saml service provider metadata.
      */

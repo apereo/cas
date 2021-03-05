@@ -50,7 +50,7 @@ public class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Te
     private OAuth20AccessTokenFactory accessTokenFactory;
 
     @Autowired
-    @Qualifier("profileController")
+    @Qualifier("oauthProfileController")
     private OAuth20UserProfileEndpointController oAuth20ProfileController;
 
     protected static Authentication getAuthentication(final Principal principal) {
@@ -72,7 +72,7 @@ public class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Te
             CONTEXT + OAuth20Constants.PROFILE_URL);
         val mockResponse = new MockHttpServletResponse();
 
-        val entity = oAuth20ProfileController.handleGetRequest(mockRequest, mockResponse);
+        val entity = oAuth20ProfileController.handlePostRequest(mockRequest, mockResponse);
 
         assertEquals(HttpStatus.UNAUTHORIZED, entity.getStatusCode());
         assertEquals(MediaType.APPLICATION_JSON_VALUE, mockResponse.getContentType());

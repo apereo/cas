@@ -29,7 +29,7 @@ public interface SingleSignOnParticipationStrategy extends Ordered {
      * Does strategy support this request or not?
      *
      * @param context the context
-     * @return the boolean
+     * @return true/false
      */
     default boolean supports(final RequestContext context) {
         return context != null;
@@ -44,7 +44,7 @@ public interface SingleSignOnParticipationStrategy extends Ordered {
      * Is creating single sign on session cookie on renewed authentication?
      *
      * @param context the context
-     * @return the boolean
+     * @return true/false
      */
     default TriStateBoolean isCreateCookieOnRenewedAuthentication(final RequestContext context) {
         return TriStateBoolean.UNDEFINED;
@@ -66,5 +66,15 @@ public interface SingleSignOnParticipationStrategy extends Ordered {
      */
     static SingleSignOnParticipationStrategy neverParticipating() {
         return context -> false;
+    }
+
+    /**
+     * Returns the friendly name of this strategy.
+     *
+     * @return the name.
+     * @since 6.4.0
+     */
+    default String getName() {
+        return this.getClass().getSimpleName();
     }
 }

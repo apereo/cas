@@ -8,7 +8,6 @@ import org.apereo.cas.ticket.registry.IgniteTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CoreTicketUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.ignite.cache.CacheAtomicityMode;
 import org.apache.ignite.cache.CacheMode;
@@ -42,31 +41,10 @@ import java.util.stream.Collectors;
  */
 @Configuration("igniteTicketRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class IgniteTicketRegistryConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    private static Collection<CacheConfiguration> buildIgniteTicketCaches(final IgniteProperties ignite,
-                                                                          final TicketCatalog ticketCatalog) {
-        val definitions = ticketCatalog.findAll();
-        return definitions
-            .stream()
-            .map(t -> {
-                val ticketsCache = new CacheConfiguration();
-                ticketsCache.setName(t.getProperties().getStorageName());
-                ticketsCache.setCacheMode(CacheMode.valueOf(ignite.getTicketsCache().getCacheMode()));
-                ticketsCache.setAtomicityMode(CacheAtomicityMode.valueOf(ignite.getTicketsCache().getAtomicityMode()));
-                val writeSync =
-                    CacheWriteSynchronizationMode.valueOf(ignite.getTicketsCache().getWriteSynchronizationMode());
-                ticketsCache.setWriteSynchronizationMode(writeSync);
-                val duration = new Duration(TimeUnit.SECONDS, t.getProperties().getStorageTimeout());
-                ticketsCache.setExpiryPolicyFactory(CreatedExpiryPolicy.factoryOf(duration));
-                return ticketsCache;
-            })
-            .collect(Collectors.toSet());
-    }
 
     /**
      * Ignite configuration ignite configuration.
@@ -118,13 +96,6 @@ public class IgniteTicketRegistryConfiguration {
 
         dataStorageConfiguration.setSystemRegionMaxSize(ignite.getDefaultRegionMaxSize());
         config.setDataStorageConfiguration(dataStorageConfiguration);
-
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("igniteConfiguration.cacheConfiguration=[{}]", (Object[]) config.getCacheConfiguration());
-            LOGGER.debug("igniteConfiguration.getDiscoverySpi=[{}]", config.getDiscoverySpi());
-            LOGGER.debug("igniteConfiguration.getSslContextFactory=[{}]", config.getSslContextFactory());
-        }
-
         return config;
     }
 
@@ -140,6 +111,26 @@ public class IgniteTicketRegistryConfiguration {
         return r;
     }
 
+    private static Collection<CacheConfiguration> buildIgniteTicketCaches(final IgniteProperties ignite,
+                                                                          final TicketCatalog ticketCatalog) {
+        val definitions = ticketCatalog.findAll();
+        return definitions
+            .stream()
+            .map(t -> {
+                val ticketsCache = new CacheConfiguration();
+                ticketsCache.setName(t.getProperties().getStorageName());
+                ticketsCache.setCacheMode(CacheMode.valueOf(ignite.getTicketsCache().getCacheMode()));
+                ticketsCache.setAtomicityMode(CacheAtomicityMode.valueOf(ignite.getTicketsCache().getAtomicityMode()));
+                val writeSync =
+                    CacheWriteSynchronizationMode.valueOf(ignite.getTicketsCache().getWriteSynchronizationMode());
+                ticketsCache.setWriteSynchronizationMode(writeSync);
+                val duration = new Duration(TimeUnit.SECONDS, t.getProperties().getStorageTimeout());
+                ticketsCache.setExpiryPolicyFactory(CreatedExpiryPolicy.factoryOf(duration));
+                return ticketsCache;
+            })
+            .collect(Collectors.toSet());
+    }
+
     private SslContextFactory buildSecureTransportForIgniteConfiguration() {
         val properties = casProperties.getTicket().getRegistry().getIgnite();
         val nullKey = "NULL";
@@ -152,7 +143,7 @@ public class IgniteTicketRegistryConfiguration {
                 sslContextFactory.setTrustManagers(SslContextFactory.getDisabledTrustManager());
             } else {
                 sslContextFactory.setTrustStoreFilePath(properties.getTrustStoreFilePath());
-                sslContextFactory.setTrustStorePassword(properties.getKeyStorePassword().toCharArray());
+                sslContextFactory.setTrustStorePassword(properties.getTrustStorePassword().toCharArray());
             }
             if (org.apache.commons.lang3.StringUtils.isNotBlank(properties.getKeyAlgorithm())) {
                 sslContextFactory.setKeyAlgorithm(properties.getKeyAlgorithm());

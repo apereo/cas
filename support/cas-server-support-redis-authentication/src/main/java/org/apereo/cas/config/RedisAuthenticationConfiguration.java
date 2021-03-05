@@ -22,7 +22,9 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,6 +42,7 @@ import java.util.stream.Collectors;
  */
 @Configuration("redisAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnProperty(prefix = "cas.authn.redis", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class RedisAuthenticationConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -56,12 +59,15 @@ public class RedisAuthenticationConfiguration {
     private ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
 
     @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "redisPrincipalFactory")
     public PrincipalFactory redisPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "redisAuthenticationConnectionFactory")
+    @RefreshScope
     public RedisConnectionFactory redisAuthenticationConnectionFactory() {
         val redis = casProperties.getAuthn().getRedis();
         return RedisObjectFactory.newRedisConnectionFactory(redis);
@@ -69,11 +75,14 @@ public class RedisAuthenticationConfiguration {
 
     @Bean(name = {"authenticationRedisTemplate", "redisTemplate"})
     @ConditionalOnMissingBean(name = "authenticationRedisTemplate")
+    @RefreshScope
     public RedisTemplate authenticationRedisTemplate() {
         return RedisObjectFactory.newRedisTemplate(redisAuthenticationConnectionFactory());
     }
 
     @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "redisAuthenticationHandler")
     public AuthenticationHandler redisAuthenticationHandler() {
         val redis = casProperties.getAuthn().getRedis();
         val handler = new RedisAuthenticationHandler(redis.getName(),
@@ -88,6 +97,7 @@ public class RedisAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "redisAuthenticationEventExecutionPlanConfigurer")
     @Bean
+    @RefreshScope
     public AuthenticationEventExecutionPlanConfigurer redisAuthenticationEventExecutionPlanConfigurer() {
         return plan ->
             plan.registerAuthenticationHandlerWithPrincipalResolver(redisAuthenticationHandler(), defaultPrincipalResolver.getObject());
@@ -95,6 +105,7 @@ public class RedisAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "redisPersonAttributeDaos")
     @Bean
+    @RefreshScope
     public List<IPersonAttributeDao> redisPersonAttributeDaos() {
         val redis = casProperties.getAuthn().getAttributeRepository().getRedis();
         return redis
@@ -114,6 +125,7 @@ public class RedisAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "redisAttributeRepositoryPlanConfigurer")
     @Bean
+    @RefreshScope
     public PersonDirectoryAttributeRepositoryPlanConfigurer redisAttributeRepositoryPlanConfigurer() {
         return plan -> {
             val daos = redisPersonAttributeDaos();

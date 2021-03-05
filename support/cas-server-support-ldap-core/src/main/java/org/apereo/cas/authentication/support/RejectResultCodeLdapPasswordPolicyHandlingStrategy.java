@@ -10,7 +10,7 @@ import java.util.Collection;
 
 /**
  * This is {@link RejectResultCodeLdapPasswordPolicyHandlingStrategy}.
- * Handles password policy only if the authentication response result code is not blacklisted.
+ * Handles password policy only if the authentication response result code is not blocked.
  *
  * @author Misagh Moayyed
  * @since 5.2.0

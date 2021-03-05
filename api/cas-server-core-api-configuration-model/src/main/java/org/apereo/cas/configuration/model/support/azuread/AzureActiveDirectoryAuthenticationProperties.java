@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.model.core.authentication.PrincipalTransform
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -18,10 +19,11 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@RequiresModule(name = "cas-server-support-azuread-authentication", automated = true)
+@RequiresModule(name = "cas-server-support-azuread-authentication")
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("AzureActiveDirectoryAuthenticationProperties")
 public class AzureActiveDirectoryAuthenticationProperties implements Serializable {
     private static final long serialVersionUID = -21355975558426360L;
 
@@ -68,7 +70,7 @@ public class AzureActiveDirectoryAuthenticationProperties implements Serializabl
      * and as such lend themselves to be tried and tested during the authentication handler selection phase.
      * The credential criteria may be one of the following options:<ul>
      * <li>1) A regular expression pattern that is tested against the credential identifier.</li>
-     * <li>2) A fully qualified class name of your own design that implements {@code Predicate<Credential>}.</li>
+     * <li>2) A fully qualified class name of your own design that implements {@code Predicate}.</li>
      * <li>3) Path to an external Groovy script that implements the same interface.</li>
      * </ul>
      */

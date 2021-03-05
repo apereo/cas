@@ -1,0 +1,4 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.support.inwebo.config.InweboServiceConfiguration,\
+  org.apereo.cas.support.inwebo.config.InweboAuthenticationConfiguration,\
+  org.apereo.cas.support.inwebo.config.InweboWebflowConfiguration,\
+  org.apereo.cas.support.inwebo.config.InweboAuthenticationMultifactorProviderBypassConfiguration

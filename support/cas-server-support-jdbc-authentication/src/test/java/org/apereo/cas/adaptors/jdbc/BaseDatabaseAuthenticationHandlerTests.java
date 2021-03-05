@@ -3,7 +3,6 @@ package org.apereo.cas.adaptors.jdbc;
 import org.apereo.cas.config.CasHibernateJpaConfiguration;
 import org.apereo.cas.config.DatabaseAuthenticationTestConfiguration;
 
-import org.junit.jupiter.api.Tag;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.annotation.DirtiesContext;
@@ -20,6 +19,5 @@ import org.springframework.test.annotation.DirtiesContext;
     DatabaseAuthenticationTestConfiguration.class
 })
 @DirtiesContext
-@Tag("JDBC")
 public abstract class BaseDatabaseAuthenticationHandlerTests {
 }

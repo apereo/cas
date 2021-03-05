@@ -1,0 +1,9 @@
+{
+  "@class" : "java.util.LinkedHashMap",
+  "invalidlocation" : {
+    "@class" : "org.apereo.cas.adaptors.generic.CasUserAccount",
+    "password" : "invalidlocation",
+    "status" : "OK",
+    "location": "nowhere"
+  }
+}

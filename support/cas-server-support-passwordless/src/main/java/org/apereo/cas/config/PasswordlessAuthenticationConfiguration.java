@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.impl.account.GroovyPasswordlessUserAccountStore;
+import org.apereo.cas.impl.account.JsonPasswordlessUserAccountStore;
 import org.apereo.cas.impl.account.RestfulPasswordlessUserAccountStore;
 import org.apereo.cas.impl.account.SimplePasswordlessUserAccountStore;
 import org.apereo.cas.impl.token.InMemoryPasswordlessTokenRepository;
@@ -75,6 +76,9 @@ public class PasswordlessAuthenticationConfiguration {
     public PasswordlessUserAccountStore passwordlessUserAccountStore() {
         val accounts = casProperties.getAuthn().getPasswordless().getAccounts();
 
+        if (accounts.getJson().getLocation() != null) {
+            return new JsonPasswordlessUserAccountStore(accounts.getJson().getLocation());
+        }
         if (accounts.getGroovy().getLocation() != null) {
             return new GroovyPasswordlessUserAccountStore(accounts.getGroovy().getLocation());
         }
@@ -105,7 +109,7 @@ public class PasswordlessAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "passwordlessCipherExecutor")
     public CipherExecutor passwordlessCipherExecutor() {
         val tokens = casProperties.getAuthn().getPasswordless().getTokens();
-        val crypto = tokens.getRest().getCrypto();
+        val crypto = tokens.getCrypto();
         if (crypto.isEnabled()) {
             return CipherExecutorUtils.newStringCipherExecutor(crypto, PasswordlessTokenCipherExecutor.class);
         }

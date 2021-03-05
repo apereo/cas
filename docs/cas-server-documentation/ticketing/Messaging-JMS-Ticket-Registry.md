@@ -4,6 +4,8 @@ title: CAS - Messaging (JMS) Ticket Registry
 category: Ticketing
 ---
 
+{% include variables.html %}
+
 # JMS Ticket Registry
 
 CAS can be enabled with a variety of messaging systems in order to distribute and share ticket data: 
@@ -13,13 +15,7 @@ top of [Spring Boot](https://docs.spring.io/spring-boot/docs/current/reference/h
 
 Support is enabled by including the following dependency in the overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-jms-ticket-registry</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-jms-ticket-registry" %}
 
 This registry is very much an extension of the [default ticket registry](Default-Ticket-Registry.html). 
 The difference is that ticket operations applied to the registry are broadcasted using a messaging queue 
@@ -30,21 +26,23 @@ identifier in order to avoid endless looping behavior and recursive needless inb
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#jms-ticket-registry).
+{% include casproperties.html properties="cas.ticket.registry.jms" %}
 
 ## ActiveMQ
 
 CAS can configure the ticket registry when it detects that ActiveMQ 
 is available on the classpath. If the broker is present, an embedded broker is started and 
 configured automatically, as long as no broker URL is specified through configuration. 
-By default, ActiveMQ creates a destination if it does not exist yet, so destinations are resolved against their provided names.
+By default, ActiveMQ creates a destination if it does not exist yet, so 
+destinations are resolved against their provided names.
 
-ActiveMQ configuration is controlled by external configuration properties in [CAS settings](../configuration/Configuration-Properties.html#jms-ticket-registry).
+{% include casproperties.html properties="spring.activemq" %}
 
 The default setting for ActiveMQ is that all persistent messages outside of a transaction 
 are sent to a broker are synchronous. This means that the send method is blocked until the 
 message is received by the broker, its then written to disk - then a response is returned 
-to the client and the `send()` unblocks with success or throws an error if the send could not complete (e.g. due to a security exception).
+to the client and the `send()` unblocks with success or throws an error if 
+the send could not complete (e.g. due to a security exception).
 
 ## Artemis
 
@@ -57,23 +55,17 @@ When the latter is configured, CAS configures the registry connecting to a broke
 
 Support is enabled by including the following dependency in the overlay:
 
-```xml
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-artemis</artifactId>
-    <version>${springboot.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="spring-boot-starter-artemis" %}
 
-Artemis configuration is controlled by external configuration properties in [CAS settings](../configuration/Configuration-Properties.html#jms-ticket-registry).
+{% include casproperties.html properties="spring.artemis" %}
 
 ## JNDI
 
 If you are [running CAS in an application server](../installation/Configuring-Servlet-Container.html), 
 CAS will attempt to locate a JMS connection using JNDI. By default, the locations 
-`java:/JmsXA` and `java:/XAConnectionFactory` will be checked. Of course, alternative locations may be 
-specified using [CAS settings](../configuration/Configuration-Properties.html#jms-ticket-registry).
+`java:/JmsXA` and `java:/XAConnectionFactory` will be checked. 
 
+{% include casproperties.html properties="spring.jms" %}
 
 ## Troubleshooting
 
@@ -81,9 +73,9 @@ To enable additional logging, configure the log4j configuration file to add the 
 
 ```xml
 ...
-<AsyncLogger name="org.springframework.jms" level="debug" additivity="false">
+<Logger name="org.springframework.jms" level="debug" additivity="false">
     <AppenderRef ref="console"/>
     <AppenderRef ref="file"/>
-</AsyncLogger>
+</Logger>
 ...
 ```

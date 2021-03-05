@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Configuration shutdownHook="disable">
+    <Appenders>
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%highlight{%d %p [%c] - &lt;%m&gt;%n}" />
+        </Console>
+    </Appenders>
+    <Loggers>
+        <Logger name="org.apereo.cas.adaptors.x509.authentication.principal.X509UPNExtractorUtils" level="warn" />
+        <Logger name="org.apereo" level="error"  />
+        <Root level="error">
+            <AppenderRef ref="console"/>
+        </Root>
+    </Loggers>
+</Configuration>

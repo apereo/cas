@@ -51,10 +51,11 @@ public class SamlIdPJpaRegisteredServiceMetadataConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("shibboleth.OpenSAMLConfig")
+    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
     private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
     
     @Bean
+    @ConditionalOnMissingBean(name = "jpaSamlRegisteredServiceMetadataResolver")
     public SamlRegisteredServiceMetadataResolver jpaSamlRegisteredServiceMetadataResolver() {
         val idp = casProperties.getAuthn().getSamlIdp();
         return new JpaSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean.getObject());
@@ -67,12 +68,15 @@ public class SamlIdPJpaRegisteredServiceMetadataConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "dataSourceSamlMetadata")
+    @RefreshScope
     public DataSource dataSourceSamlMetadata() {
         val idp = casProperties.getAuthn().getSamlIdp().getMetadata();
         return JpaBeans.newDataSource(idp.getJpa());
     }
 
     @Bean
+    @RefreshScope
     public List<String> jpaSamlMetadataPackagesToScan() {
         return CollectionUtils.wrapList(SamlMetadataDocument.class.getPackage().getName());
     }
@@ -83,11 +87,12 @@ public class SamlIdPJpaRegisteredServiceMetadataConfiguration {
         val idp = casProperties.getAuthn().getSamlIdp().getMetadata();
 
         val factory = jpaBeanFactory.getObject();
-        val ctx = new JpaConfigurationContext(
-            jpaSamlMetadataVendorAdapter(),
-            "jpaSamlMetadataContext",
-            jpaSamlMetadataPackagesToScan(),
-            dataSourceSamlMetadata());
+        val ctx = JpaConfigurationContext.builder()
+            .jpaVendorAdapter(jpaSamlMetadataVendorAdapter())
+            .persistenceUnitName("jpaSamlMetadataContext")
+            .dataSource(dataSourceSamlMetadata())
+            .packagesToScan(jpaSamlMetadataPackagesToScan())
+            .build();
         return factory.newEntityManagerFactoryBean(ctx, idp.getJpa());
     }
 
@@ -101,6 +106,7 @@ public class SamlIdPJpaRegisteredServiceMetadataConfiguration {
     }
 
     @Bean
+    @RefreshScope
     @ConditionalOnMissingBean(name = "jpaSamlRegisteredServiceMetadataResolutionPlanConfigurer")
     public SamlRegisteredServiceMetadataResolutionPlanConfigurer jpaSamlRegisteredServiceMetadataResolutionPlanConfigurer() {
         return plan -> plan.registerMetadataResolver(jpaSamlRegisteredServiceMetadataResolver());

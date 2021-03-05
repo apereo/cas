@@ -4,7 +4,7 @@ import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 
 import lombok.ToString;
 import lombok.val;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,20 +24,25 @@ public class InMemoryServiceRegistry extends AbstractServiceRegistry {
 
     private final List<RegisteredService> registeredServices;
 
-    public InMemoryServiceRegistry(final ApplicationEventPublisher eventPublisher) {
-        this(eventPublisher, new ArrayList<>(0), new ArrayList<>(0));
+    public InMemoryServiceRegistry(final ConfigurableApplicationContext applicationContext) {
+        this(applicationContext, new ArrayList<>(0), new ArrayList<>(0));
     }
 
-    public InMemoryServiceRegistry(final ApplicationEventPublisher eventPublisher,
+    public InMemoryServiceRegistry(final ConfigurableApplicationContext applicationContext,
                                    final List<RegisteredService> registeredServices,
                                    final Collection<ServiceRegistryListener> serviceRegistryListeners) {
-        super(eventPublisher, serviceRegistryListeners);
+        super(applicationContext, serviceRegistryListeners);
         this.registeredServices = registeredServices;
     }
 
     @Override
     public boolean delete(final RegisteredService registeredService) {
         return this.registeredServices.remove(registeredService);
+    }
+
+    @Override
+    public void deleteAll() {
+        this.registeredServices.clear();
     }
 
     @Override
@@ -73,15 +78,6 @@ public class InMemoryServiceRegistry extends AbstractServiceRegistry {
         return registeredService;
     }
 
-    /**
-     * This isn't super-fast but we don't expect thousands of services.
-     *
-     * @return the highest service id in the list of registered services
-     */
-    private long findHighestId() {
-        return this.registeredServices.stream().map(RegisteredService::getId).max(Comparator.naturalOrder()).orElse(0L);
-    }
-
     @Override
     public long size() {
         return registeredServices.size();
@@ -90,5 +86,14 @@ public class InMemoryServiceRegistry extends AbstractServiceRegistry {
     @Override
     public Stream<? extends RegisteredService> getServicesStream() {
         return this.registeredServices.stream();
+    }
+
+    /**
+     * This isn't super-fast but we don't expect thousands of services.
+     *
+     * @return the highest service id in the list of registered services
+     */
+    private long findHighestId() {
+        return this.registeredServices.stream().map(RegisteredService::getId).max(Comparator.naturalOrder()).orElse(0L);
     }
 }

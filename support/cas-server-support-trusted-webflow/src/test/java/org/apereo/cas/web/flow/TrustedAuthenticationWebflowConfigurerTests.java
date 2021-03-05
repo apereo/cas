@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
+import org.apereo.cas.web.flow.config.TrustedAuthenticationComponentSerializationConfiguration;
 import org.apereo.cas.web.flow.config.TrustedAuthenticationWebflowConfiguration;
 
 import lombok.val;
@@ -21,11 +22,12 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Import({
     TrustedAuthenticationWebflowConfiguration.class,
+    TrustedAuthenticationComponentSerializationConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
     CasMultifactorAuthenticationWebflowConfiguration.class,
     BaseWebflowConfigurerTests.SharedTestConfiguration.class
 })
-@Tag("Webflow")
+@Tag("WebflowConfig")
 public class TrustedAuthenticationWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     public void verifyOperation() {

@@ -3,6 +3,7 @@ package org.apereo.cas.util.cipher;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.crypto.DecryptionException;
 import org.apereo.cas.util.gen.Base64RandomStringGenerator;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -13,9 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.OctJwkGenerator;
 
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
@@ -35,33 +34,32 @@ import java.nio.charset.StandardCharsets;
 @Setter
 public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<byte[], byte[]> {
     private static final String CIPHER_ALGORITHM = "AES/GCM/NoPadding";
+
     private static final int IV_SPEC_LENGTH = 16;
+
     private static final IvParameterSpec IV_SPEC = new IvParameterSpec(new byte[IV_SPEC_LENGTH]);
 
     /**
      * Name of the cipher/component whose keys are generated here.
      */
     protected final String cipherName;
+
     private final SecretKeySpec encryptionKey;
+
     /**
      * Secret key IV algorithm. Default is {@code AES}.
      */
     private String secretKeyAlgorithm = "AES";
+
     private byte[] encryptionSecretKey;
 
-    public BaseBinaryCipherExecutor(final String encryptionSecretKey, final String signingSecretKey,
-                                    final int signingKeySize, final int encryptionKeySize,
-                                    final String cipherName) {
+    protected BaseBinaryCipherExecutor(final String encryptionSecretKey, final String signingSecretKey,
+                                       final int signingKeySize, final int encryptionKeySize,
+                                       final String cipherName) {
         this.cipherName = cipherName;
         ensureSigningKeyExists(signingSecretKey, signingKeySize);
         ensureEncryptionKeyExists(encryptionSecretKey, encryptionKeySize);
         this.encryptionKey = new SecretKeySpec(this.encryptionSecretKey, this.secretKeyAlgorithm);
-    }
-
-    private static String generateOctetJsonWebKeyOfSize(final int size) {
-        val octetKey = OctJwkGenerator.generateJwk(size);
-        val params = octetKey.toParams(JsonWebKey.OutputControlLevel.INCLUDE_SYMMETRIC);
-        return params.get("k").toString();
     }
 
     @Override
@@ -74,14 +72,13 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
     }
 
     @Override
-    @SneakyThrows
     public byte[] decode(final byte[] value, final Object[] parameters) {
-        val verifiedValue = verifySignature(value);
-        val aesCipher = Cipher.getInstance(CIPHER_ALGORITHM);
-        aesCipher.init(Cipher.DECRYPT_MODE, this.encryptionKey, IV_SPEC);
         try {
+            val verifiedValue = verifySignature(value);
+            val aesCipher = Cipher.getInstance(CIPHER_ALGORITHM);
+            aesCipher.init(Cipher.DECRYPT_MODE, this.encryptionKey, IV_SPEC);
             return aesCipher.doFinal(verifiedValue);
-        } catch (final IllegalBlockSizeException | BadPaddingException e) {
+        } catch (final Exception e) {
             if (LOGGER.isTraceEnabled()) {
                 throw new DecryptionException(e);
             }
@@ -89,19 +86,11 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
         }
     }
 
-    /**
-     * Gets encryption key setting.
-     *
-     * @return the encryption key setting
-     */
-    protected abstract String getEncryptionKeySetting();
-
-    /**
-     * Gets signing key setting.
-     *
-     * @return the signing key setting
-     */
-    protected abstract String getSigningKeySetting();
+    private static String generateOctetJsonWebKeyOfSize(final int size) {
+        val octetKey = OctJwkGenerator.generateJwk(size);
+        val params = octetKey.toParams(JsonWebKey.OutputControlLevel.INCLUDE_SYMMETRIC);
+        return params.get("k").toString();
+    }
 
     private void ensureEncryptionKeyExists(final String encryptionSecretKey, final int encryptionKeySize) {
         final byte[] genEncryptionKey;
@@ -142,4 +131,18 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
         }
         configureSigningKey(signingKeyToUse);
     }
+
+    /**
+     * Gets encryption key setting.
+     *
+     * @return the encryption key setting
+     */
+    protected abstract String getEncryptionKeySetting();
+
+    /**
+     * Gets signing key setting.
+     *
+     * @return the signing key setting
+     */
+    protected abstract String getSigningKeySetting();
 }

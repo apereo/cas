@@ -4,6 +4,7 @@ import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCred
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CertUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -54,7 +55,7 @@ public class X509RestMultipartBodyCredentialFactory implements RestHttpRequestCr
             credential.setCertificate(certificate);
             return CollectionUtils.wrap(credential);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return new ArrayList<>(0);
     }

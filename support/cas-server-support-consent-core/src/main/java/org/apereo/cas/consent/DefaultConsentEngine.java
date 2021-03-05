@@ -1,5 +1,8 @@
 package org.apereo.cas.consent;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
@@ -36,9 +39,9 @@ public class DefaultConsentEngine implements ConsentEngine {
 
     private final ConsentDecisionBuilder consentDecisionBuilder;
 
-    @Audit(action = "SAVE_CONSENT",
-        actionResolverName = "SAVE_CONSENT_ACTION_RESOLVER",
-        resourceResolverName = "SAVE_CONSENT_RESOURCE_RESOLVER")
+    @Audit(action = AuditableActions.SAVE_CONSENT,
+        actionResolverName = AuditActionResolvers.SAVE_CONSENT_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.SAVE_CONSENT_RESOURCE_RESOLVER)
     @Override
     public ConsentDecision storeConsentDecision(final Service service,
                                                 final RegisteredService registeredService,
@@ -50,7 +53,6 @@ public class DefaultConsentEngine implements ConsentEngine {
         val principalId = authentication.getPrincipal().getId();
 
         val decisionFound = findConsentDecision(service, registeredService, authentication);
-
         val supplier = FunctionUtils.doIfNull(decisionFound,
             () -> consentDecisionBuilder.build(service, registeredService, principalId, attributes),
             () -> consentDecisionBuilder.update(decisionFound, attributes));
@@ -59,11 +61,7 @@ public class DefaultConsentEngine implements ConsentEngine {
         decision.setOptions(options);
         decision.setReminder(reminder);
         decision.setReminderTimeUnit(reminderTimeUnit);
-
-        if (consentRepository.storeConsentDecision(decision)) {
-            return decision;
-        }
-        throw new IllegalArgumentException("Could not store consent decision");
+        return consentRepository.storeConsentDecision(decision);
     }
 
     @Override

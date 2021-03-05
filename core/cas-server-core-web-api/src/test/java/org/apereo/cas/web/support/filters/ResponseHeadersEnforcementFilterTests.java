@@ -2,6 +2,7 @@ package org.apereo.cas.web.support.filters;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockFilterConfig;
@@ -17,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
+@Tag("Web")
 public class ResponseHeadersEnforcementFilterTests {
     private ResponseHeadersEnforcementFilter filter;
 
@@ -45,9 +47,11 @@ public class ResponseHeadersEnforcementFilterTests {
     @Test
     public void verifyParam() {
         filter.init(filterConfig);
+
         val servletRequest = new MockHttpServletRequest();
         servletRequest.setSecure(true);
         val servletResponse = new MockHttpServletResponse();
+        assertThrows(RuntimeException.class, () -> filter.doFilter(servletRequest, servletResponse, null));
         assertDoesNotThrow(() -> {
             filter.doFilter(servletRequest, servletResponse, new MockFilterChain());
         });

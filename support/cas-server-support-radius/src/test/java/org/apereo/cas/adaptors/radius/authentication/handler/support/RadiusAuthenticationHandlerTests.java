@@ -8,6 +8,7 @@ import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
@@ -53,6 +54,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasWebflowContextConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreLogoutConfiguration.class,
@@ -62,8 +64,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreConfiguration.class
 }, properties = {
     "cas.authn.radius.server.protocol=PAP",
-    "cas.authn.radius.client.sharedSecret=testing123",
-    "cas.authn.radius.client.inetAddress=localhost"
+    "cas.authn.radius.client.shared-secret=testing123",
+    "cas.authn.radius.client.inet-address=localhost"
 })
 @Tag("Radius")
 @EnabledIfPortOpen(port = 1812)

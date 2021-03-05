@@ -4,11 +4,14 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.services.OidcServiceRegistryListener;
 import org.apereo.cas.util.CollectionUtils;
 
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.ArrayList;
@@ -24,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @DirtiesContext
 @Tag("JDBC")
 @Import(OidcJpaServiceRegistryTests.OidcJpaServiceRegistryTestConfiguration.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class OidcJpaServiceRegistryTests extends JpaServiceRegistryTests {
 
     @Test
@@ -39,21 +43,22 @@ public class OidcJpaServiceRegistryTests extends JpaServiceRegistryTests {
             OidcConstants.StandardScopes.ADDRESS.getScope(),
             OidcConstants.StandardScopes.OPENID.getScope()));
 
-        this.serviceRegistry.save(svc);
-        this.serviceRegistry.load();
-        svc = this.serviceRegistry.findServiceByExactServiceName(svc.getName(), OidcRegisteredService.class);
+        getNewServiceRegistry().save(svc);
+        getNewServiceRegistry().load();
+        svc = getNewServiceRegistry().findServiceByExactServiceName(svc.getName(), OidcRegisteredService.class);
 
         var consentPolicy = svc.getAttributeReleasePolicy().getConsentPolicy();
         assertEquals(1, consentPolicy.size());
 
-        this.serviceRegistry.load();
-        svc = this.serviceRegistry.findServiceById(svc.getId(), OidcRegisteredService.class);
+        getNewServiceRegistry().load();
+        svc = getNewServiceRegistry().findServiceById(svc.getId(), OidcRegisteredService.class);
 
         consentPolicy = svc.getAttributeReleasePolicy().getConsentPolicy();
         assertEquals(1, consentPolicy.size());
     }
 
     @TestConfiguration("OidcJpaServiceRegistryTestConfiguration")
+    @Lazy(false)
     public static class OidcJpaServiceRegistryTestConfiguration {
         @Bean
         public ServiceRegistryListener oidcServiceRegistryListener() {

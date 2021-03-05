@@ -6,10 +6,11 @@ import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAut
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.support.okta.OktaAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.okta.authn.sdk.client.AuthenticationClient;
 import com.okta.authn.sdk.client.AuthenticationClients;
-import com.okta.sdk.client.Proxy;
+import com.okta.commons.http.config.Proxy;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -58,7 +59,7 @@ public class OktaAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             val principal = this.principalFactory.createPrincipal(adapter.getUsername(), adapter.getUserAttributes());
             return createHandlerResult(credential, principal, adapter.getWarnings());
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             throw new FailedLoginException("Invalid credentials: " + e.getMessage());
         }
     }

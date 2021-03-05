@@ -22,12 +22,13 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * Date/Time utility methods.
  * @author Timur Duehr timur.duehr@nccgroup.trust
  * @since 5.0.0
  */
+@SuppressWarnings("JavaUtilDate")
 @UtilityClass
 public class DateTimeUtils {
-
 
     /**
      * Parse the given value as a local datetime.
@@ -125,6 +126,16 @@ public class DateTimeUtils {
     }
 
     /**
+     * Local date time local date.
+     *
+     * @param time the time
+     * @return the local date
+     */
+    public static LocalDate localDateTime(final long time) {
+        return LocalDate.ofInstant(Instant.ofEpochMilli(time), ZoneOffset.UTC);
+    }
+
+    /**
      * Parse the given value as a zoned datetime.
      *
      * @param value the value
@@ -155,7 +166,7 @@ public class DateTimeUtils {
      * @return the zoned date time
      */
     public static ZonedDateTime zonedDateTimeOf(final Instant time) {
-        return time != null ? ZonedDateTime.from(time.atZone(ZoneOffset.UTC)) : null;
+        return time != null ? time.atZone(ZoneOffset.UTC) : null;
     }
 
     /**
@@ -265,6 +276,7 @@ public class DateTimeUtils {
      * @param time Time object to be converted.
      * @return Date representing time
      */
+
     public static Date dateOf(final Instant time) {
         return Date.from(time);
     }
@@ -296,12 +308,12 @@ public class DateTimeUtils {
      * @return the zoned date time
      */
     public static ZonedDateTime convertToZonedDateTime(final String value) {
-        val dt = DateTimeUtils.zonedDateTimeOf(value);
+        val dt = zonedDateTimeOf(value);
         if (dt != null) {
             return dt;
         }
-        val lt = DateTimeUtils.localDateTimeOf(value);
-        return DateTimeUtils.zonedDateTimeOf(lt.atZone(ZoneOffset.UTC));
+        val lt = localDateTimeOf(value);
+        return zonedDateTimeOf(lt.atZone(ZoneOffset.UTC));
     }
 
     /**
@@ -351,16 +363,15 @@ public class DateTimeUtils {
                 return ChronoUnit.HOURS;
             case MINUTES:
                 return ChronoUnit.MINUTES;
-            case SECONDS:
-                return ChronoUnit.SECONDS;
             case MICROSECONDS:
                 return ChronoUnit.MICROS;
             case MILLISECONDS:
                 return ChronoUnit.MILLIS;
             case NANOSECONDS:
                 return ChronoUnit.NANOS;
+            case SECONDS:
             default:
-                return null;
+                return ChronoUnit.SECONDS;
         }
     }
 }

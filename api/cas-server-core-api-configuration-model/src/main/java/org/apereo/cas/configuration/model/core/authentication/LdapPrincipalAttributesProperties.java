@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.core.authentication;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -20,6 +21,7 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("LdapPrincipalAttributesProperties")
 public class LdapPrincipalAttributesProperties extends AbstractLdapSearchProperties {
 
     private static final long serialVersionUID = 5760065368731012063L;
@@ -38,8 +40,15 @@ public class LdapPrincipalAttributesProperties extends AbstractLdapSearchPropert
      * to a different attribute. The key is the attribute fetched
      * from the data source and the value is the attribute name CAS should
      * use for virtual renames.
+     * 
+     * Attributes may be allowed to be virtually renamed and remapped. The key in the
+     * attribute map is the original attribute,
+     * and the value should be the virtually-renamed attribute.
+     *
+     * To fetch and resolve attributes that carry tags/options,
+     * consider tagging the mapped attribute as such: {@code affiliation=affiliation}.
      */
-    private Map attributes = new LinkedHashMap<String, String>();
+    private Map<String, String> attributes = new LinkedHashMap<>();
 
     /**
      * A value can be assigned to this field to uniquely identify this resolver.

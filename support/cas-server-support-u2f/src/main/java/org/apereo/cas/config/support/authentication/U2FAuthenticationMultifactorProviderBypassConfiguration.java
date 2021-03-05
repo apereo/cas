@@ -121,6 +121,7 @@ public class U2FAuthenticationMultifactorProviderBypassConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "u2fPrincipalMultifactorAuthenticationProviderBypass")
+    @RefreshScope
     public MultifactorAuthenticationProviderBypassEvaluator u2fPrincipalMultifactorAuthenticationProviderBypass() {
         val u2f = casProperties.getAuthn().getMfa().getU2f();
         val props = u2f.getBypass();

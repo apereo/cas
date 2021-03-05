@@ -3,11 +3,14 @@ package org.apereo.cas;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,9 +30,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Tag("Attributes")
 public class DefaultPrincipalAttributesRepositoryTests extends BaseCasCoreTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "defaultPrincipalAttributesRepository.json");
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Autowired
     @Qualifier("principalFactory")
@@ -51,6 +58,19 @@ public class DefaultPrincipalAttributesRepositoryTests extends BaseCasCoreTests 
         assertTrue(rep.getAttributes(p, registeredService).containsKey("mail"));
     }
 
+    @Test
+    public void checkAttributesWithRepository() {
+        val p = principalFactory.getObject().createPrincipal("uid",
+            Collections.singletonMap("mail", List.of("final@example.com")));
+        val rep = new DefaultPrincipalAttributesRepository();
+        rep.setMergingStrategy(PrincipalAttributesCoreProperties.MergingStrategyTypes.NONE);
+        rep.setAttributeRepositoryIds(Set.of("StubPersonAttributeDao"));
+        
+        val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
+        assertEquals(1, rep.getAttributes(p, registeredService).size());
+        assertTrue(rep.getAttributes(p, registeredService).containsKey("mail"));
+    }
+    
     @Test
     public void verifySerializeADefaultPrincipalAttributesRepositoryToJson() throws IOException {
         val repositoryWritten = new DefaultPrincipalAttributesRepository();

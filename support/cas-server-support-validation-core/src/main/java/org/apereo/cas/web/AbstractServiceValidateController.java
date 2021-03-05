@@ -18,10 +18,13 @@ import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationContextTicketValidationException;
+import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.validation.UnauthorizedServiceTicketValidationException;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,7 +56,7 @@ import java.util.Optional;
  */
 @Slf4j
 @Getter
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractServiceValidateController extends AbstractDelegateController {
     private final ServiceValidateConfigurationContext serviceValidateConfigurationContext;
 
@@ -95,7 +98,8 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
                 verifyRegisteredServiceProperties(registeredService, service);
                 return new HttpBasedServiceCredential(new URL(pgtUrl), registeredService);
             } catch (final Exception e) {
-                LOGGER.error("Error constructing [{}]", CasProtocolConstants.PARAMETER_PROXY_CALLBACK_URL, e);
+                LOGGER.error("Error constructing [{}]", CasProtocolConstants.PARAMETER_PROXY_CALLBACK_URL);
+                LoggingUtils.error(LOGGER, e);
             }
         }
         return null;
@@ -122,7 +126,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * @throws AuthenticationException the authentication exception
      * @throws AbstractTicketException the abstract ticket exception
      */
-    public TicketGrantingTicket handleProxyGrantingTicketDelivery(final String serviceTicketId, final Credential credential)
+    public ProxyGrantingTicket handleProxyGrantingTicketDelivery(final String serviceTicketId, final Credential credential)
         throws AuthenticationException, AbstractTicketException {
         val serviceTicket = serviceValidateConfigurationContext.getCentralAuthenticationService().getTicket(serviceTicketId, ServiceTicket.class);
         val authenticationResult = serviceValidateConfigurationContext.getAuthenticationSystemSupport()
@@ -160,7 +164,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         } catch (final UnauthorizedServiceException | PrincipalException e) {
             return generateErrorView(CasProtocolConstants.ERROR_CODE_UNAUTHORIZED_SERVICE, null, request, service);
         } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
+            LoggingUtils.warn(LOGGER, e);
             return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_REQUEST, StringUtils.EMPTY, request, service);
         }
     }
@@ -184,7 +188,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * @return the model and view
      */
     protected ModelAndView handleTicketValidation(final HttpServletRequest request, final WebApplicationService service, final String serviceTicketId) {
-        var proxyGrantingTicketId = (TicketGrantingTicket) null;
+        var proxyGrantingTicketId = (ProxyGrantingTicket) null;
         val serviceCredential = getServiceCredentialsFromRequest(service, request);
         if (serviceCredential != null) {
             try {
@@ -195,11 +199,13 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
                     new Object[]{serviceCredential.getId()}, request);
                 return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK, description, request, service);
             } catch (final InvalidTicketException e) {
-                LOGGER.error("Failed to create proxy granting ticket due to an invalid ticket for [{}]", serviceCredential, e);
+                LOGGER.error("Failed to create proxy granting ticket due to an invalid ticket for [{}]", serviceCredential);
+                LoggingUtils.error(LOGGER, e);
                 val description = getTicketValidationErrorDescription(e.getCode(), new Object[]{serviceTicketId}, request);
                 return generateErrorView(e.getCode(), description, request, service);
             } catch (final AbstractTicketException e) {
-                LOGGER.error("Failed to create proxy granting ticket for [{}]", serviceCredential, e);
+                LOGGER.error("Failed to create proxy granting ticket for [{}]", serviceCredential);
+                LoggingUtils.error(LOGGER, e);
                 val description = getTicketValidationErrorDescription(e.getCode(), new Object[]{serviceCredential.getId()}, request);
                 return generateErrorView(e.getCode(), description, request, service);
             }
@@ -221,7 +227,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
             val registeredService = ((HttpBasedServiceCredential) serviceCredential).getService();
             val authorizedToReleaseProxyGrantingTicket = registeredService.getAttributeReleasePolicy().isAuthorizedToReleaseProxyGrantingTicket();
             if (!authorizedToReleaseProxyGrantingTicket) {
-                LOGGER.debug("The service: {} is not authorized to release the PGT directly, make a proxy callback", registeredService);
+                LOGGER.debug("Service [{}] is not authorized to release the PGT directly, make a proxy callback", registeredService);
                 proxyIou = handleProxyIouDelivery(serviceCredential, proxyGrantingTicketId);
                 if (StringUtils.isEmpty(proxyIou)) {
                     val description = getTicketValidationErrorDescription(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
@@ -229,7 +235,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
                     return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK, description, request, service);
                 }
             } else {
-                LOGGER.debug("The service: {} is authorized to release the PGT directly, skip the proxy callback", registeredService);
+                LOGGER.debug("Service [{}] is authorized to release the PGT directly, skip the proxy callback", registeredService);
             }
         } else {
             LOGGER.debug("No service credentials specified, and/or the proxy handler [{}] cannot handle credentials", proxyHandler);
@@ -369,7 +375,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * @param assertion the assertion
      * @return map of objects each keyed to a name
      */
-    protected static Map<String, ?> augmentSuccessViewModelObjects(final Assertion assertion) {
+    protected Map<String, ?> augmentSuccessViewModelObjects(final Assertion assertion) {
         return new HashMap<>(0);
     }
 

@@ -17,7 +17,7 @@ import com.microsoft.azure.spring.data.documentdb.DocumentDbFactory;
 import com.microsoft.azure.spring.data.documentdb.core.DocumentDbTemplate;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,9 +40,9 @@ public class CosmosDbServiceRegistry extends AbstractServiceRegistry {
 
     public CosmosDbServiceRegistry(final DocumentDbTemplate db, final DocumentDbFactory dbFactory,
                                    final String collectionName, final String databaseName,
-                                   final ApplicationEventPublisher eventPublisher,
+                                   final ConfigurableApplicationContext applicationContext,
                                    final Collection<ServiceRegistryListener> serviceRegistryListeners) {
-        super(eventPublisher, serviceRegistryListeners);
+        super(applicationContext, serviceRegistryListeners);
 
         this.documentDbTemplate = db;
         this.collectionName = collectionName;
@@ -89,6 +89,11 @@ public class CosmosDbServiceRegistry extends AbstractServiceRegistry {
         val id = String.valueOf(registeredService.getId());
         this.documentDbTemplate.deleteById(this.collectionName, id, Document.class, new PartitionKey(PARTITION_KEY_FIELD_VALUE));
         return true;
+    }
+
+    @Override
+    public void deleteAll() {
+        this.documentDbTemplate.deleteAll(this.collectionName);
     }
 
     @Override

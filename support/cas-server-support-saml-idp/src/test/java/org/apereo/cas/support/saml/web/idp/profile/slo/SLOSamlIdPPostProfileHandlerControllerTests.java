@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -32,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("SAML")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@TestPropertySource(properties = "cas.authn.saml-idp.metadata.file-system.location=file:src/test/resources/metadata")
 public class SLOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests {
 
     @Autowired
@@ -65,6 +67,6 @@ public class SLOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConf
         val xml = SamlUtils.transformSamlObject(openSamlConfigBean, logoutRequest).toString();
         request.addParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST, EncodingUtils.encodeBase64(xml));
         controller.handleSaml2ProfileSLOPostRequest(response, request);
-        assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, response.getStatus());
+        assertEquals(HttpStatus.SC_OK, response.getStatus());
     }
 }

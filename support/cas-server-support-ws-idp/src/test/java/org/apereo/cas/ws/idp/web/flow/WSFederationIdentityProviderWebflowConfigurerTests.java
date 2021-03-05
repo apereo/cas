@@ -1,6 +1,7 @@
 package org.apereo.cas.ws.idp.web.flow;
 
 import org.apereo.cas.config.CasWsSecurityTokenTicketCatalogConfiguration;
+import org.apereo.cas.config.CasWsSecurityTokenTicketComponentSerializationConfiguration;
 import org.apereo.cas.config.CoreWsSecurityIdentityProviderConfiguration;
 import org.apereo.cas.config.CoreWsSecurityIdentityProviderWebflowConfiguration;
 import org.apereo.cas.config.CoreWsSecuritySecurityTokenServiceConfiguration;
@@ -24,35 +25,32 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Import({
     CasWsSecurityTokenTicketCatalogConfiguration.class,
+    CasWsSecurityTokenTicketComponentSerializationConfiguration.class,
     CoreWsSecuritySecurityTokenServiceConfiguration.class,
     CoreWsSecurityIdentityProviderConfiguration.class,
     CoreWsSecurityIdentityProviderWebflowConfiguration.class,
     BaseWebflowConfigurerTests.SharedTestConfiguration.class
 })
 @TestPropertySource(properties = {
-    "cas.authn.wsfedIdp.idp.realm=urn:org:apereo:cas:ws:idp:realm-CAS",
-    "cas.authn.wsfedIdp.idp.realmName=CAS",
+    "cas.authn.wsfed-idp.idp.realm=urn:org:apereo:cas:ws:idp:realm-CAS",
+    "cas.authn.wsfed-idp.idp.realm-name=CAS",
+    
+    "cas.authn.wsfed-idp.sts.signing-keystore-file=classpath:ststrust.jks",
+    "cas.authn.wsfed-idp.sts.signing-keystore-password=storepass",
 
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000",
+    "cas.authn.wsfed-idp.sts.encryption-keystore-file=classpath:stsencrypt.jks",
+    "cas.authn.wsfed-idp.sts.encryption-keystore-password=storepass",
 
+    "cas.authn.wsfed-idp.sts.subject-name-id-format=unspecified",
+    "cas.authn.wsfed-idp.sts.encrypt-tokens=true",
 
-    "cas.authn.wsfedIdp.sts.signingKeystoreFile=classpath:ststrust.jks",
-    "cas.authn.wsfedIdp.sts.signingKeystorePassword=storepass",
-
-    "cas.authn.wsfedIdp.sts.encryptionKeystoreFile=classpath:stsencrypt.jks",
-    "cas.authn.wsfedIdp.sts.encryptionKeystorePassword=storepass",
-
-    "cas.authn.wsfedIdp.sts.subjectNameIdFormat=unspecified",
-    "cas.authn.wsfedIdp.sts.encryptTokens=true",
-
-    "cas.authn.wsfedIdp.sts.realm.keystoreFile=classpath:stsrealm_a.jks",
-    "cas.authn.wsfedIdp.sts.realm.keystorePassword=storepass",
-    "cas.authn.wsfedIdp.sts.realm.keystoreAlias=realma",
-    "cas.authn.wsfedIdp.sts.realm.keyPassword=realma",
-    "cas.authn.wsfedIdp.sts.realm.issuer=CAS"
+    "cas.authn.wsfed-idp.sts.realm.keystore-file=classpath:stsrealm_a.jks",
+    "cas.authn.wsfed-idp.sts.realm.keystore-password=storepass",
+    "cas.authn.wsfed-idp.sts.realm.keystore-alias=realma",
+    "cas.authn.wsfed-idp.sts.realm.key-password=realma",
+    "cas.authn.wsfed-idp.sts.realm.issuer=CAS"
 })
-@Tag("Webflow")
+@Tag("WebflowConfig")
 public class WSFederationIdentityProviderWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     public void verifyOperation() {

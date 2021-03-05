@@ -4,6 +4,7 @@ import org.apereo.cas.support.spnego.util.SpnegoConstants;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.web.support.WebUtils;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.util.StringUtils;
@@ -32,7 +33,17 @@ import java.util.List;
  * @since 3.1
  */
 @Slf4j
+@RequiredArgsConstructor
 public class SpnegoNegotiateCredentialsAction extends AbstractAction {
+    /**
+     * Sets supported browsers by their user agent. The user agent
+     * header defined will be compared against this list. The user agents configured
+     * here need not be an exact match. So longer is the user agent identifier
+     * configured in this list is "found" in the user agent header retrieved,
+     * the check will pass.
+     */
+    private final List<String> supportedBrowser;
+
     /**
      * Whether this is using the NTLM protocol or not.
      */
@@ -50,40 +61,6 @@ public class SpnegoNegotiateCredentialsAction extends AbstractAction {
      * want to use Windows Integrated Auth/SPNEGO and not forms auth.
      */
     private final boolean mixedModeAuthentication;
-
-    /**
-     * Sets supported browsers by their user agent. The user agent
-     * header defined will be compared against this list. The user agents configured
-     * here need not be an exact match. So longer is the user agent identifier
-     * configured in this list is "found" in the user agent header retrieved,
-     * the check will pass.
-     */
-    private final List<String> supportedBrowser;
-
-    private final String messageBeginPrefix;
-
-    /**
-     * Instantiates a new Spnego negociate credentials action.
-     * Also add to the list of supported browser user agents the following:
-     * <ul>
-     * <li>{@code MSIE}</li>
-     * <li>{@code Trident}</li>
-     * <li>{@code Firefox}</li>
-     * <li>{@code AppleWebKit}</li>
-     * </ul>
-     *
-     * @param supportedBrowser               the supported browsers list
-     * @param ntlm                           Sets the ntlm. Generates the message prefix as well.
-     * @param mixedModeAuthenticationEnabled should mixed mode authentication be allowed. Default is false.
-     * @since 4.1
-     */
-    public SpnegoNegotiateCredentialsAction(final List<String> supportedBrowser, final boolean ntlm, final boolean mixedModeAuthenticationEnabled) {
-        this.ntlm = ntlm;
-        this.messageBeginPrefix = constructMessagePrefix();
-        this.mixedModeAuthentication = mixedModeAuthenticationEnabled;
-
-        this.supportedBrowser = supportedBrowser;
-    }
 
     @Override
     protected Event doExecute(final RequestContext context) {
@@ -105,13 +82,14 @@ public class SpnegoNegotiateCredentialsAction extends AbstractAction {
             return error();
         }
 
+        val prefix = constructMessagePrefix();
         if (!StringUtils.hasText(authorizationHeader)
-            || !authorizationHeader.startsWith(this.messageBeginPrefix)
-            || authorizationHeader.length() <= this.messageBeginPrefix.length()) {
+            || !authorizationHeader.startsWith(prefix)
+            || authorizationHeader.length() <= prefix.length()) {
 
             val wwwHeader = this.ntlm ? SpnegoConstants.NTLM : SpnegoConstants.NEGOTIATE;
             LOGGER.debug("Authorization header not found or does not match the message prefix [{}]. Sending [{}] header [{}]",
-                this.messageBeginPrefix, SpnegoConstants.HEADER_AUTHENTICATE, wwwHeader);
+                prefix, SpnegoConstants.HEADER_AUTHENTICATE, wwwHeader);
             response.setHeader(SpnegoConstants.HEADER_AUTHENTICATE, wwwHeader);
 
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

@@ -2,8 +2,8 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
+import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.web.OAuth20HandlerInterceptorAdapter;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
 import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
@@ -30,6 +30,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.apereo.cas.support.oauth.OAuth20Constants.BASE_OAUTH20_URL;
@@ -56,9 +57,13 @@ public class CasOAuth20ThrottleConfiguration {
     @Qualifier("accessTokenGrantRequestExtractors")
     private Collection<AccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors;
 
+    @Autowired
+    @Qualifier("oauthAuthorizationRequestValidators")
+    private Set<OAuth20AuthorizationRequestValidator> oauthAuthorizationRequestValidators;
+
     @ConditionalOnMissingBean(name = "requiresAuthenticationAuthorizeInterceptor")
     @Bean
-    public SecurityInterceptor requiresAuthenticationAuthorizeInterceptor() {
+    public HandlerInterceptor requiresAuthenticationAuthorizeInterceptor() {
         val interceptor = new SecurityInterceptor(oauthSecConfig.getObject(),
             Authenticators.CAS_OAUTH_CLIENT, JEEHttpActionAdapter.INSTANCE);
         interceptor.setAuthorizers(DefaultAuthorizers.IS_FULLY_AUTHENTICATED);
@@ -67,7 +72,7 @@ public class CasOAuth20ThrottleConfiguration {
 
     @ConditionalOnMissingBean(name = "requiresAuthenticationAccessTokenInterceptor")
     @Bean
-    public SecurityInterceptor requiresAuthenticationAccessTokenInterceptor() {
+    public HandlerInterceptor requiresAuthenticationAccessTokenInterceptor() {
         val secConfig = oauthSecConfig.getObject();
         val clients = Objects.requireNonNull(secConfig).getClients()
             .findAllClients()
@@ -89,7 +94,8 @@ public class CasOAuth20ThrottleConfiguration {
             requiresAuthenticationAuthorizeInterceptor(),
             accessTokenGrantRequestExtractors,
             servicesManager.getObject(),
-            oauthSecConfig.getObject().getSessionStore());
+            oauthSecConfig.getObject().getSessionStore(),
+            oauthAuthorizationRequestValidators);
     }
 
     @Bean
@@ -107,26 +113,8 @@ public class CasOAuth20ThrottleConfiguration {
         @Override
         public void addInterceptors(final InterceptorRegistry registry) {
             Objects.requireNonNull(authenticationThrottlingExecutionPlan.getObject()).getAuthenticationThrottleInterceptors()
-                .forEach(handler -> {
-                    val baseUrl = BASE_OAUTH20_URL.concat("/");
-                    registry.addInterceptor(handler)
-                        .addPathPatterns(baseUrl.concat(OAuth20Constants.UMA_AUTHORIZATION_REQUEST_URL).concat("*"))
-                        .addPathPatterns(baseUrl.concat(OAuth20Constants.UMA_CLAIMS_COLLECTION_URL).concat("*"))
-                        .addPathPatterns(baseUrl.concat(OAuth20Constants.UMA_JWKS_URL).concat("*"))
-                        .addPathPatterns(baseUrl.concat(OAuth20Constants.UMA_PERMISSION_URL).concat("*"))
-                        .addPathPatterns(baseUrl.concat(OAuth20Constants.UMA_POLICY_URL).concat("*"))
-                        .addPathPatterns(baseUrl.concat(OAuth20Constants.UMA_REGISTRATION_URL).concat("*"))
-                        .addPathPatterns(baseUrl.concat(OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL).concat("*"))
-
-                        .addPathPatterns(baseUrl.concat(OAuth20Constants.AUTHORIZE_URL).concat("*"))
-                        .addPathPatterns(baseUrl.concat(OAuth20Constants.ACCESS_TOKEN_URL).concat("*"))
-                        .addPathPatterns(baseUrl.concat(OAuth20Constants.TOKEN_URL).concat("*"))
-                        .addPathPatterns(baseUrl.concat(OAuth20Constants.INTROSPECTION_URL).concat("*"))
-                        .addPathPatterns(baseUrl.concat(OAuth20Constants.CALLBACK_AUTHORIZE_URL).concat("*"))
-                        .addPathPatterns(baseUrl.concat(OAuth20Constants.DEVICE_AUTHZ_URL).concat("*"))
-                        .addPathPatterns(baseUrl.concat(OAuth20Constants.PROFILE_URL).concat("*"))
-                        .addPathPatterns(baseUrl.concat(OAuth20Constants.REVOCATION_URL).concat("*"));
-                });
+                .forEach(handler -> registry.addInterceptor(handler)
+                    .addPathPatterns(BASE_OAUTH20_URL.concat("/*")));
         }
     }
 

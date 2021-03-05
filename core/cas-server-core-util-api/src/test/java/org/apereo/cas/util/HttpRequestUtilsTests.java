@@ -1,7 +1,9 @@
 package org.apereo.cas.util;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -12,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
+@Tag("Utility")
 public class HttpRequestUtilsTests {
 
     @Test
@@ -36,5 +39,6 @@ public class HttpRequestUtilsTests {
     @Test
     public void verifyPing() {
         assertNotNull(HttpRequestUtils.pingUrl("https://github.com"));
+        assertEquals(HttpStatus.SERVICE_UNAVAILABLE, HttpRequestUtils.pingUrl("bad-endpoint"));
     }
 }

@@ -4,6 +4,7 @@ import org.apereo.cas.adaptors.x509.authentication.CRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.ResourceCRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.RevocationPolicy;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CertUtils;
 
 import lombok.SneakyThrows;
@@ -48,43 +49,14 @@ import java.util.stream.IntStream;
 public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocationChecker implements DisposableBean, AutoCloseable {
 
     private final UserManagedCache<URI, byte[]> crlCache;
+
     private final CRLFetcher fetcher;
+
     private final boolean throwOnFetchFailure;
 
-    /**
-     * Creates a new instance that uses the given cache instance for CRL caching.
-     *
-     * @param crlCache Cache for CRL data.
-     */
-    public CRLDistributionPointRevocationChecker(final UserManagedCache<URI, byte[]> crlCache) {
-        this(crlCache, new ResourceCRLFetcher(), false);
-    }
-
-    /**
-     * Creates a new instance that uses the given cache instance for CRL caching.
-     *
-     * @param crlCache            Cache for CRL data.
-     * @param throwOnFetchFailure the throw on fetch failure
-     */
-    public CRLDistributionPointRevocationChecker(final UserManagedCache<URI, byte[]> crlCache, final boolean throwOnFetchFailure) {
-        this(crlCache, new ResourceCRLFetcher(), throwOnFetchFailure);
-    }
-
-    /**
-     * Instantiates a new CRL distribution point revocation checker.
-     *
-     * @param crlCache            the crl cache
-     * @param fetcher             the fetcher
-     * @param throwOnFetchFailure the throw on fetch failure
-     */
     public CRLDistributionPointRevocationChecker(
         final UserManagedCache<URI, byte[]> crlCache, final CRLFetcher fetcher, final boolean throwOnFetchFailure) {
         this(false, null, null, crlCache, fetcher, throwOnFetchFailure);
-    }
-
-    public CRLDistributionPointRevocationChecker(final UserManagedCache<URI, byte[]> crlCache,
-                                                 final RevocationPolicy<Void> unavailableCRLPolicy) {
-        this(crlCache, null, unavailableCRLPolicy);
     }
 
     public CRLDistributionPointRevocationChecker(final UserManagedCache<URI, byte[]> crlCache,
@@ -101,7 +73,8 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
     }
 
     public CRLDistributionPointRevocationChecker(final boolean checkAll, final RevocationPolicy<Void> unavailableCRLPolicy,
-                                                 final RevocationPolicy<X509CRL> expiredCRLPolicy, final UserManagedCache<URI, byte[]> crlCache,
+                                                 final RevocationPolicy<X509CRL> expiredCRLPolicy,
+                                                 final UserManagedCache<URI, byte[]> crlCache,
                                                  final CRLFetcher fetcher, final boolean throwOnFetchFailure) {
         super(checkAll, unavailableCRLPolicy, expiredCRLPolicy);
         this.crlCache = crlCache;
@@ -110,6 +83,20 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
         }
         this.fetcher = fetcher;
         this.throwOnFetchFailure = throwOnFetchFailure;
+    }
+    
+    @Override
+    public void destroy() {
+        try {
+            this.crlCache.close();
+        } catch (final StateTransitionException e) {
+            LOGGER.warn("Error closing CRL cache [{}]", e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void close() {
+        destroy();
     }
 
     /**
@@ -130,14 +117,15 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
                         try {
                             addURL(urls, DERIA5String.getInstance(name.getName()).getString());
                         } catch (final Exception e) {
-                            LOGGER.warn("[{}] not supported. String or GeneralNameList expected.", pointName);
+                            LOGGER.warn("[{}] not supported: [{}].", pointName, e.getMessage());
                         }
                     });
                 });
             }
             return urls.toArray(URI[]::new);
         } catch (final Exception e) {
-            LOGGER.error("Error reading CRLDistributionPoints extension field on [{}]", CertUtils.toString(cert), e);
+            LOGGER.debug("Error reading CRLDistributionPoints extension field on [{}]", CertUtils.toString(cert));
+            LoggingUtils.error(LOGGER, e);
             return new URI[0];
         }
     }
@@ -164,6 +152,10 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
         } catch (final Exception e) {
             LOGGER.warn("[{}] is not a valid distribution point URI.", uriString);
         }
+    }
+
+    private boolean addCRLbyURI(final URI uri, final X509CRL crl) {
+        return addCRL(uri, crl);
     }
 
     @Override
@@ -197,7 +189,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
                         listOfLocations.add(crl);
                     }
                 } catch (final Exception e) {
-                    LOGGER.error("Error fetching CRL at [{}]", url, e);
+                    LoggingUtils.error(LOGGER, e);
                     if (this.throwOnFetchFailure) {
                         throw new RuntimeException(e.getMessage(), e);
                     }
@@ -215,10 +207,6 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
         return listOfLocations;
     }
 
-    private boolean addCRLbyURI(final URI uri, final X509CRL crl) {
-        return addCRL(uri, crl);
-    }
-
     @Override
     @SneakyThrows
     protected boolean addCRL(final Object id, final X509CRL crl) {
@@ -231,22 +219,5 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
 
         this.crlCache.put(uri, crl.getEncoded());
         return this.crlCache.containsKey(uri);
-    }
-
-    /**
-     * UserManagedCache should be closed by user since no CacheManager available to close it.
-     */
-    @Override
-    public void destroy() {
-        try {
-            this.crlCache.close();
-        } catch (final StateTransitionException e) {
-            LOGGER.warn("Error closing CRL cache {}", e.getMessage(), e);
-        }
-    }
-
-    @Override
-    public void close() {
-        destroy();
     }
 }

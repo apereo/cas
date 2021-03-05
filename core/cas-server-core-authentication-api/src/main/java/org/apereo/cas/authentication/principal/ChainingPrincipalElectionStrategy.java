@@ -3,9 +3,13 @@ package org.apereo.cas.authentication.principal;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.services.persondir.support.merger.IAttributeMerger;
+import org.apereo.services.persondir.support.merger.ReplacingAttributeAdder;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import java.util.Collection;
@@ -24,10 +28,14 @@ import java.util.stream.Stream;
  */
 @RequiredArgsConstructor
 @Slf4j
+@Getter
+@Setter
 public class ChainingPrincipalElectionStrategy implements PrincipalElectionStrategy {
     private static final long serialVersionUID = 3686895489996430873L;
 
     private final List<PrincipalElectionStrategy> chain;
+
+    private IAttributeMerger attributeMerger = new ReplacingAttributeAdder();
 
     public ChainingPrincipalElectionStrategy(final PrincipalElectionStrategy... chain) {
         this.chain = Stream.of(chain).collect(Collectors.toList());

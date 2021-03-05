@@ -1,23 +1,29 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.adaptive.intel.DefaultIPAddressIntelligenceService;
+import org.apereo.cas.authentication.adaptive.intel.GroovyIPAddressIntelligenceService;
+import org.apereo.cas.authentication.adaptive.intel.IPAddressIntelligenceService;
+import org.apereo.cas.authentication.adaptive.intel.RestfulIPAddressIntelligenceService;
 import org.apereo.cas.authentication.policy.AllAuthenticationHandlersSucceededAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.AllCredentialsValidatedAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.AtLeastOneCredentialValidatedAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.GroovyScriptAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.NotPreventedAuthenticationPolicy;
-import org.apereo.cas.authentication.policy.RequiredHandlerAuthenticationPolicy;
+import org.apereo.cas.authentication.policy.RequiredAuthenticationHandlerAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.RestfulAuthenticationPolicy;
-import org.apereo.cas.authentication.policy.UniquePrincipalAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
+import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
 import org.apereo.cas.authentication.support.password.DefaultPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.support.password.GroovyPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.support.password.RejectResultCodePasswordPolicyHandlingStrategy;
+import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
+import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.Assertion;
@@ -115,7 +121,6 @@ public class CoreAuthenticationUtils {
             return new HashMap<>(0);
         }
         return attrs.getAttributes();
-
     }
 
     /**
@@ -124,20 +129,15 @@ public class CoreAuthenticationUtils {
      * @param mergingPolicy the merging policy
      * @return the attribute merger
      */
-    public static IAttributeMerger getAttributeMerger(final String mergingPolicy) {
-        switch (mergingPolicy.toLowerCase()) {
-            case "multivalued":
-            case "multi_valued":
-            case "combine":
-            case "merge":
-                return new MultivaluedAttributeMerger();
-            case "add":
+    public static IAttributeMerger getAttributeMerger(final PrincipalAttributesCoreProperties.MergingStrategyTypes mergingPolicy) {
+        switch (mergingPolicy) {
+            case MULTIVALUED:
+                val merger = new MultivaluedAttributeMerger();
+                merger.setDistinctValues(true);
+                return merger;
+            case ADD:
                 return new NoncollidingAttributeAdder();
-            case "replace":
-            case "overwrite":
-            case "override":
-                return new ReplacingAttributeAdder();
-            case "none":
+            case NONE:
                 return new BaseAdditiveAttributeMerger() {
                     @Override
                     protected Map<String, List<Object>> mergePersonAttributes(final Map<String, List<Object>> toModify,
@@ -145,8 +145,9 @@ public class CoreAuthenticationUtils {
                         return new LinkedHashMap<>(toModify);
                     }
                 };
+            case REPLACE:
             default:
-                throw new IllegalArgumentException("Unsupported merging policy [" + mergingPolicy + ']');
+                return new ReplacingAttributeAdder();
         }
     }
 
@@ -170,12 +171,12 @@ public class CoreAuthenticationUtils {
      *
      * @param currentAttributes the current attributes
      * @param attributesToMerge the attributes to merge
+     * @param merger        the merger type
      * @return the map
      */
-    public static Map<String, List<Object>> mergeAttributes(final Map<String, List<Object>> currentAttributes, final Map<String, List<Object>> attributesToMerge) {
-        val merger = new MultivaluedAttributeMerger();
-        merger.setDistinctValues(true);
-
+    public static Map<String, List<Object>> mergeAttributes(final Map<String, List<Object>> currentAttributes,
+                                                            final Map<String, List<Object>> attributesToMerge,
+                                                            final IAttributeMerger merger) {
         val toModify = currentAttributes.entrySet()
             .stream()
             .map(entry -> Pair.of(entry.getKey(), CollectionUtils.toCollection(entry.getValue(), ArrayList.class)))
@@ -277,7 +278,7 @@ public class CoreAuthenticationUtils {
     public static AuthenticationPasswordPolicyHandlingStrategy newPasswordPolicyHandlingStrategy(final PasswordPolicyProperties properties,
                                                                                                  final ApplicationContext applicationContext) {
         if (properties.getStrategy() == PasswordPolicyProperties.PasswordPolicyHandlingOptions.REJECT_RESULT_CODE) {
-            LOGGER.debug("Created password policy handling strategy based on blacklisted authentication result codes");
+            LOGGER.debug("Created password policy handling strategy based on blocked authentication result codes");
             return new RejectResultCodePasswordPolicyHandlingStrategy<>();
         }
 
@@ -303,23 +304,26 @@ public class CoreAuthenticationUtils {
         final PrincipalFactory principalFactory, final IPersonAttributeDao attributeRepository,
         final PersonDirectoryPrincipalResolverProperties... personDirectory) {
 
-        return new PersonDirectoryPrincipalResolver(
-            attributeRepository,
-            principalFactory,
-            Arrays.stream(personDirectory).anyMatch(PersonDirectoryPrincipalResolverProperties::isReturnNull),
-            Arrays.stream(personDirectory)
+        val context = PrincipalResolutionContext.builder()
+            .attributeRepository(attributeRepository)
+            .principalFactory(principalFactory)
+            .returnNullIfNoAttributes(Arrays.stream(personDirectory).anyMatch(PersonDirectoryPrincipalResolverProperties::isReturnNull))
+            .principalAttributeNames(Arrays.stream(personDirectory)
                 .filter(p -> StringUtils.isNotBlank(p.getPrincipalAttribute()))
                 .map(PersonDirectoryPrincipalResolverProperties::getPrincipalAttribute)
                 .findFirst()
-                .orElse(StringUtils.EMPTY),
-            Arrays.stream(personDirectory).anyMatch(PersonDirectoryPrincipalResolverProperties::isUseExistingPrincipalId),
-            Arrays.stream(personDirectory).anyMatch(PersonDirectoryPrincipalResolverProperties::isAttributeResolutionEnabled),
-            Arrays.stream(personDirectory)
+                .orElse(StringUtils.EMPTY))
+            .principalNameTransformer(formUserId -> formUserId)
+            .useCurrentPrincipalId(Arrays.stream(personDirectory).anyMatch(PersonDirectoryPrincipalResolverProperties::isUseExistingPrincipalId))
+            .resolveAttributes(Arrays.stream(personDirectory).anyMatch(PersonDirectoryPrincipalResolverProperties::isAttributeResolutionEnabled))
+            .activeAttributeRepositoryIdentifiers(Arrays.stream(personDirectory)
                 .filter(p -> StringUtils.isNotBlank(p.getActiveAttributeRepositoryIds()))
                 .map(p -> org.springframework.util.StringUtils.commaDelimitedListToSet(p.getActiveAttributeRepositoryIds()))
                 .flatMap(Set::stream)
-                .collect(Collectors.toSet())
-        );
+                .collect(Collectors.toSet()))
+            .build();
+
+        return new PersonDirectoryPrincipalResolver(context);
     }
 
     /**
@@ -330,8 +334,10 @@ public class CoreAuthenticationUtils {
      */
     public static Collection<AuthenticationPolicy> newAuthenticationPolicy(final AuthenticationPolicyProperties policyProps) {
         if (policyProps.getReq().isEnabled()) {
-            LOGGER.trace("Activating authentication policy [{}]", RequiredHandlerAuthenticationPolicy.class.getSimpleName());
-            return CollectionUtils.wrapList(new RequiredHandlerAuthenticationPolicy(policyProps.getReq().getHandlerName(), policyProps.getReq().isTryAll()));
+            LOGGER.trace("Activating authentication policy [{}]", RequiredAuthenticationHandlerAuthenticationPolicy.class.getSimpleName());
+            val requiredHandlerNames = org.springframework.util.StringUtils.commaDelimitedListToSet(policyProps.getReq().getHandlerName());
+            var policy = new RequiredAuthenticationHandlerAuthenticationPolicy(requiredHandlerNames, policyProps.getReq().isTryAll());
+            return CollectionUtils.wrapList(policy);
         }
 
         if (policyProps.getAllHandlers().isEnabled()) {
@@ -349,11 +355,6 @@ public class CoreAuthenticationUtils {
             return CollectionUtils.wrapList(new NotPreventedAuthenticationPolicy());
         }
 
-        if (policyProps.getUniquePrincipal().isEnabled()) {
-            LOGGER.trace("Activating authentication policy [{}]", UniquePrincipalAuthenticationPolicy.class.getSimpleName());
-            return CollectionUtils.wrapList(new UniquePrincipalAuthenticationPolicy());
-        }
-
         if (!policyProps.getGroovy().isEmpty()) {
             LOGGER.trace("Activating authentication policy [{}]", GroovyScriptAuthenticationPolicy.class.getSimpleName());
             return policyProps.getGroovy()
@@ -366,7 +367,7 @@ public class CoreAuthenticationUtils {
             LOGGER.trace("Activating authentication policy [{}]", RestfulAuthenticationPolicy.class.getSimpleName());
             return policyProps.getRest()
                 .stream()
-                .map(r -> new RestfulAuthenticationPolicy(r.getUrl(), r.getBasicAuthUsername(), r.getBasicAuthPassword()))
+                .map(RestfulAuthenticationPolicy::new)
                 .collect(Collectors.toList());
         }
 
@@ -375,5 +376,39 @@ public class CoreAuthenticationUtils {
             return CollectionUtils.wrapList(new AtLeastOneCredentialValidatedAuthenticationPolicy(policyProps.getAny().isTryAll()));
         }
         return new ArrayList<>();
+    }
+
+    /**
+     * New ip address intelligence service.
+     *
+     * @param adaptive the adaptive
+     * @return the ip address intelligence service
+     */
+    public static IPAddressIntelligenceService newIpAddressIntelligenceService(final AdaptiveAuthenticationProperties adaptive) {
+        val intel = adaptive.getIpIntel();
+
+        if (StringUtils.isNotBlank(intel.getRest().getUrl())) {
+            return new RestfulIPAddressIntelligenceService(adaptive);
+        }
+        if (intel.getGroovy().getLocation() != null) {
+            return new GroovyIPAddressIntelligenceService(adaptive);
+        }
+        if (StringUtils.isNotBlank(intel.getBlackDot().getEmailAddress())) {
+            return new RestfulIPAddressIntelligenceService(adaptive);
+        }
+        return new DefaultIPAddressIntelligenceService(adaptive);
+    }
+
+    /**
+     * New principal election strategy conflict resolver.
+     *
+     * @param properties the properties
+     * @return the principal election strategy conflict resolver
+     */
+    public static PrincipalElectionStrategyConflictResolver newPrincipalElectionStrategyConflictResolver(final PersonDirectoryPrincipalResolverProperties properties) {
+        if (StringUtils.equalsIgnoreCase(properties.getPrincipalResolutionConflictStrategy(), "first")) {
+            return PrincipalElectionStrategyConflictResolver.first();
+        }
+        return PrincipalElectionStrategyConflictResolver.last();
     }
 }

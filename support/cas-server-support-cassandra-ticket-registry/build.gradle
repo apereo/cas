@@ -1,8 +1,10 @@
 description = "Apereo CAS Cassandra Ticket Registry"
-
+ext {
+    terminateCompilerOnWarning=false
+}
 dependencies {
     implementation libraries.cassandra
-
+    
     api project(":api:cas-server-core-api-util")
 
     implementation project(":core:cas-server-core-logging")
@@ -10,6 +12,7 @@ dependencies {
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-tickets")
     implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-util-api")
     implementation project(":support:cas-server-support-cassandra-core")
 
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
@@ -26,6 +29,5 @@ dependencies {
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-authentication")
-    
     testImplementation project(":core:cas-server-core-authentication-attributes")
 }

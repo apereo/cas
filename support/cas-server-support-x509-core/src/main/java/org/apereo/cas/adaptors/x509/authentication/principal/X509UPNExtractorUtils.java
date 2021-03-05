@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import com.google.common.base.Predicates;
@@ -86,7 +87,6 @@ public class X509UPNExtractorUtils {
      * X509Certificate#getSubjectAlternativeNames</a>
      */
     private ASN1Sequence getOtherNameTypeSAN(final List<?> sanItem) {
-        //Should not be the case, but still, a extra "safety" check
         if (sanItem.size() < 2) {
             LOGGER.error("Subject Alternative Name List does not contain at least two required elements. Returning null principal id...");
             return null;
@@ -112,7 +112,7 @@ public class X509UPNExtractorUtils {
              val input = new ASN1InputStream(bInput)) {
             return ASN1Sequence.getInstance(input.readObject());
         } catch (final IOException e) {
-            LOGGER.error("An error has occurred while reading the subject alternative name value: {}", e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }

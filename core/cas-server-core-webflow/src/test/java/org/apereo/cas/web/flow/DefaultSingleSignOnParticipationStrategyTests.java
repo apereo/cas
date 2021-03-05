@@ -6,6 +6,10 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.model.core.sso.SingleSignOnProperties;
+import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.services.DefaultRegisteredServiceSingleSignOnParticipationPolicy;
+import org.apereo.cas.services.DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.model.TriStateBoolean;
@@ -20,6 +24,9 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -32,13 +39,28 @@ import static org.mockito.Mockito.*;
 @Tag("Webflow")
 public class DefaultSingleSignOnParticipationStrategyTests {
     @Test
+    public void verifyParticipationDisabled() {
+        val mgr = mock(ServicesManager.class);
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+
+        val sso = new SingleSignOnProperties().setSsoEnabled(false);
+        val strategy = new DefaultSingleSignOnParticipationStrategy(mgr, sso,
+            mock(TicketRegistrySupport.class), mock(AuthenticationServiceSelectionPlan.class));
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        assertFalse(strategy.isParticipating(context));
+    }
+
+    @Test
     public void verifyParticipatesForRenew() {
         val mgr = mock(ServicesManager.class);
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
-        val strategy = new DefaultSingleSignOnParticipationStrategy(mgr, true, true,
+        val sso = new SingleSignOnProperties().setCreateSsoCookieOnRenewAuthn(true).setRenewAuthnEnabled(true);
+        val strategy = new DefaultSingleSignOnParticipationStrategy(mgr, sso,
             mock(TicketRegistrySupport.class), mock(AuthenticationServiceSelectionPlan.class));
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         request.addParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
@@ -52,7 +74,8 @@ public class DefaultSingleSignOnParticipationStrategyTests {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
-        val strategy = new DefaultSingleSignOnParticipationStrategy(mgr, false, true,
+        val sso = new SingleSignOnProperties().setCreateSsoCookieOnRenewAuthn(false).setRenewAuthnEnabled(true);
+        val strategy = new DefaultSingleSignOnParticipationStrategy(mgr, sso,
             mock(TicketRegistrySupport.class), mock(AuthenticationServiceSelectionPlan.class));
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         request.addParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
@@ -72,7 +95,8 @@ public class DefaultSingleSignOnParticipationStrategyTests {
 
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
         val plan = new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy());
-        val strategy = new DefaultSingleSignOnParticipationStrategy(mgr, false, true,
+        val sso = new SingleSignOnProperties().setCreateSsoCookieOnRenewAuthn(false).setRenewAuthnEnabled(true);
+        val strategy = new DefaultSingleSignOnParticipationStrategy(mgr, sso,
             mock(TicketRegistrySupport.class), plan);
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication("casuser"), context);
@@ -95,7 +119,8 @@ public class DefaultSingleSignOnParticipationStrategyTests {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
-        val strategy = new DefaultSingleSignOnParticipationStrategy(mgr, false, true,
+        val sso = new SingleSignOnProperties().setCreateSsoCookieOnRenewAuthn(false).setRenewAuthnEnabled(true);
+        val strategy = new DefaultSingleSignOnParticipationStrategy(mgr, sso,
             mock(TicketRegistrySupport.class), mock(AuthenticationServiceSelectionPlan.class));
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
@@ -103,6 +128,64 @@ public class DefaultSingleSignOnParticipationStrategyTests {
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication("casuser"), context);
 
+        assertFalse(strategy.isParticipating(context));
+
+    }
+
+    @Test
+    public void verifyRegisteredServiceWithValidSso() {
+        val mgr = mock(ServicesManager.class);
+        val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
+        when(registeredService.getAccessStrategy().isServiceAccessAllowedForSso()).thenReturn(true);
+        when(registeredService.getSingleSignOnParticipationPolicy()).thenReturn(new DefaultRegisteredServiceSingleSignOnParticipationPolicy());
+        when(mgr.findServiceBy(any(Service.class))).thenReturn(registeredService);
+
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+
+        val tgt = new MockTicketGrantingTicket("casuser");
+        val sso = new SingleSignOnProperties();
+        val ticketRegistrySupport = mock(TicketRegistrySupport.class);
+        when(ticketRegistrySupport.getTicketState(anyString())).thenReturn(tgt);
+        val strategy = new DefaultSingleSignOnParticipationStrategy(mgr, sso,
+            ticketRegistrySupport, mock(AuthenticationServiceSelectionPlan.class));
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+
+        WebUtils.putRegisteredService(context, registeredService);
+        WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
+        WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication("casuser"), context);
+        WebUtils.putTicketGrantingTicketInScopes(context, tgt);
+        assertTrue(strategy.isParticipating(context));
+
+    }
+
+    @Test
+    public void verifyRegisteredServiceWithValidSsoAndServiceExpPolicy() {
+        val mgr = mock(ServicesManager.class);
+        val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
+        when(registeredService.getAccessStrategy().isServiceAccessAllowedForSso()).thenReturn(true);
+        when(registeredService.getTicketGrantingTicketExpirationPolicy())
+            .thenReturn(new DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy(1));
+        when(mgr.findServiceBy(any(Service.class))).thenReturn(registeredService);
+
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+
+        val tgt = new MockTicketGrantingTicket("casuser");
+        tgt.setCreated(ZonedDateTime.now(ZoneOffset.UTC).minusHours(1));
+        val sso = new SingleSignOnProperties();
+        val ticketRegistrySupport = mock(TicketRegistrySupport.class);
+        when(ticketRegistrySupport.getTicketState(anyString())).thenReturn(tgt);
+        val strategy = new DefaultSingleSignOnParticipationStrategy(mgr, sso,
+            ticketRegistrySupport, mock(AuthenticationServiceSelectionPlan.class));
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+
+        WebUtils.putRegisteredService(context, registeredService);
+        WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
+        WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication("casuser"), context);
+        WebUtils.putTicketGrantingTicketInScopes(context, tgt);
         assertFalse(strategy.isParticipating(context));
 
     }

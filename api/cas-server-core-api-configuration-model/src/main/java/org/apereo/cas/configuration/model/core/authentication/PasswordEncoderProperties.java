@@ -1,7 +1,9 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -18,9 +20,11 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("PasswordEncoderProperties")
 public class PasswordEncoderProperties implements Serializable {
 
     private static final long serialVersionUID = -2396781005262069816L;
+
     /**
      * Define the password encoder type to use.
      * Type may be specified as blank or 'NONE' to disable password encoding.
@@ -28,24 +32,45 @@ public class PasswordEncoderProperties implements Serializable {
      * the Spring Security's {@code PasswordEncoder} interface
      * if you wish you define your own encoder.
      *
-     * @see PasswordEncoderTypes
+     * The following types may be used:
+     * <ul>
+     *     <li>{@code NONE}: No password encoding (i.e. plain-text) takes place.</li>
+     *     <li>{@code DEFAULT}: Use the {@code DefaultPasswordEncoder} of CAS. For message-digest
+     *     algorithms via {@code character-encoding} and {@code encoding-algorithm}.</li>
+     *     <li>{@code BCRYPT}: Use the {@code BCryptPasswordEncoder} based on the strength provided and an optional secret.</li>
+     *     <li>{@code SCRYPT}: Use the {@code SCryptPasswordEncoder}.</li>
+     *     <li>{@code PBKDF2}: Use the {@code Pbkdf2PasswordEncoder} based on the strength provided and an optional secret.</li>
+     *     <li>{@code STANDARD}: Use the {@code StandardPasswordEncoder} based on the secret provided.</li>
+     *     <li>{@code SSHA}: Use the {@code LdapShaPasswordEncoder} supports Ldap SHA and SSHA (salted-SHA). The values
+     *     are base-64 encoded and have the label {SHA} or {SSHA} prepended to the encoded hash.</li>
+     *     <li>{@code GLIBC_CRYPT}: Use the {@code GlibcCryptPasswordEncoder} based on the
+     *     {@code encoding-algorithm}, strength provided and an optional secret.</li>
+     *     <li>{@code org.example.MyEncoder}: An implementation of {@code PasswordEncoder} of your own choosing.</li>
+     *     <li>{@code file:///path/to/script.groovy}: Path to a Groovy script charged with handling password encoding operations.</li>
+     * </ul>
      */
+    @RequiredProperty
     private String type = "NONE";
+
     /**
      * The encoding algorithm to use such as 'MD5'.
      * Relevant when the type used is 'DEFAULT' or 'GLIBC_CRYPT'.
      */
+    @RequiredProperty
     private String encodingAlgorithm;
+
     /**
      * The encoding algorithm to use such as 'UTF-8'.
      * Relevant when the type used is 'DEFAULT'.
      */
-    private String characterEncoding;
+    private String characterEncoding = "UTF-8";
+
     /**
      * Secret to use with STANDARD, PBKDF2, BCRYPT, GLIBC_CRYPT password encoders.
      * Secret usually is an optional setting.
      */
     private String secret;
+
     /**
      * Strength or number of iterations to use for password hashing.
      * Usually relevant when dealing with PBKDF2 or BCRYPT encoders.

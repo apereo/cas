@@ -3,13 +3,12 @@ package org.apereo.cas.services;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.AbstractResourceBasedServiceRegistry;
 import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
-import org.apereo.cas.services.util.CasAddonsRegisteredServicesJsonSerializer;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.io.WatcherService;
 
 import lombok.Getter;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.Resource;
 
 import java.util.Collection;
@@ -35,13 +34,13 @@ public class JsonServiceRegistry extends AbstractResourceBasedServiceRegistry {
     private static final String FILE_EXTENSION = "json";
 
     public JsonServiceRegistry(final Resource configDirectory, final WatcherService serviceRegistryConfigWatcher,
-                               final ApplicationEventPublisher eventPublisher,
+                               final ConfigurableApplicationContext applicationContext,
                                final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
                                final RegisteredServiceResourceNamingStrategy resourceNamingStrategy,
                                final Collection<ServiceRegistryListener> serviceRegistryListeners) throws Exception {
         super(configDirectory,
-            CollectionUtils.wrapList(new CasAddonsRegisteredServicesJsonSerializer(), new RegisteredServiceJsonSerializer()),
-            eventPublisher, registeredServiceReplicationStrategy, resourceNamingStrategy,
+            CollectionUtils.wrapList(new RegisteredServiceJsonSerializer()),
+            applicationContext, registeredServiceReplicationStrategy, resourceNamingStrategy,
             serviceRegistryListeners, serviceRegistryConfigWatcher);
     }
 
@@ -49,4 +48,6 @@ public class JsonServiceRegistry extends AbstractResourceBasedServiceRegistry {
     protected String[] getExtensions() {
         return new String[]{FILE_EXTENSION};
     }
+
+    
 }

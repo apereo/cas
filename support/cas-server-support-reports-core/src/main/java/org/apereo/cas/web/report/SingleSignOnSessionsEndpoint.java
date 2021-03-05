@@ -2,13 +2,14 @@ package org.apereo.cas.web.report;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.ISOStandardDateFormat;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -109,7 +110,6 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
      * @return the sso sessions
      */
     @ReadOperation
-    @SuppressFBWarnings("PSC_SUBOPTIMAL_COLLECTION_SIZING")
     public Map<String, Object> getSsoSessions(final String type) {
         val sessionsMap = new HashMap<String, Object>();
         val option = SsoSessionReportOptions.valueOf(type);
@@ -118,7 +118,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
         val totalTicketGrantingTickets = new AtomicLong();
         val totalProxyGrantingTickets = new AtomicLong();
         val totalUsageCount = new AtomicLong();
-        val uniquePrincipals = new HashSet<Object>(activeSsoSessions.size());
+        val uniquePrincipals = new HashSet<>(activeSsoSessions.size());
         for (val activeSsoSession : activeSsoSessions) {
             if (activeSsoSession.containsKey(SsoSessionAttributeKeys.IS_PROXIED.getAttributeKey())) {
                 val isProxied = Boolean.valueOf(activeSsoSession.get(SsoSessionAttributeKeys.IS_PROXIED.getAttributeKey()).toString());
@@ -156,11 +156,13 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
 
         val sessionsMap = new HashMap<String, Object>(1);
         try {
-            this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
+            if (centralAuthenticationService.deleteTicket(ticketGrantingTicket) == 0) {
+                throw new InvalidTicketException(ticketGrantingTicket);
+            }
             sessionsMap.put(STATUS, HttpServletResponse.SC_OK);
             sessionsMap.put(TICKET_GRANTING_TICKET, ticketGrantingTicket);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             sessionsMap.put(STATUS, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             sessionsMap.put(TICKET_GRANTING_TICKET, ticketGrantingTicket);
             sessionsMap.put("message", e.getMessage());
@@ -177,7 +179,6 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
      */
     @DeleteOperation
     public Map<String, Object> destroySsoSessions(@Nullable final String type, @Nullable final String username) {
-
         if (StringUtils.isBlank(username) && StringUtils.isBlank(type)) {
             return Map.of(STATUS, HttpServletResponse.SC_BAD_REQUEST);
         }
@@ -196,12 +197,12 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
         val collection = getActiveSsoSessions(option);
         collection
             .stream()
-            .map(sso -> sso.get(SsoSessionAttributeKeys.TICKET_GRANTING_TICKET.toString()).toString())
+            .map(sso -> sso.get(SsoSessionAttributeKeys.TICKET_GRANTING_TICKET.getAttributeKey()).toString())
             .forEach(ticketGrantingTicket -> {
                 try {
-                    this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
+                    centralAuthenticationService.deleteTicket(ticketGrantingTicket);
                 } catch (final Exception e) {
-                    LOGGER.error(e.getMessage(), e);
+                    LoggingUtils.error(LOGGER, e);
                     failedTickets.put(ticketGrantingTicket, e.getMessage());
                 }
             });

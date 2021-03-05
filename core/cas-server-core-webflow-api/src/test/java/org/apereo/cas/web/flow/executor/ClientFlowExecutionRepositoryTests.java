@@ -15,6 +15,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.webflow.config.FlowBuilderServicesBuilder;
@@ -86,6 +87,7 @@ public class ClientFlowExecutionRepositoryTests {
     }
 
     @TestConfiguration("WebflowTestConfiguration")
+    @Lazy(false)
     public static class WebflowTestConfiguration {
         @Autowired
         private ConfigurableApplicationContext applicationContext;

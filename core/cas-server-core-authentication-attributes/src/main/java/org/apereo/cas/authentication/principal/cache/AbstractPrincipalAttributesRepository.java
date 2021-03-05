@@ -1,14 +1,16 @@
 package org.apereo.cas.authentication.principal.cache;
 
-import org.apereo.cas.authentication.AttributeMergingStrategy;
 import org.apereo.cas.authentication.attribute.PrincipalAttributeRepositoryFetcher;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
+import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttributesRepository;
+import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,7 +22,6 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 
 import javax.persistence.Transient;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -41,9 +42,10 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @ToString(exclude = "lock")
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = {"mergingStrategy", "attributeRepositoryIds"})
-public abstract class AbstractPrincipalAttributesRepository implements PrincipalAttributesRepository, AutoCloseable {
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
+public abstract class AbstractPrincipalAttributesRepository implements RegisteredServicePrincipalAttributesRepository, AutoCloseable {
     private static final long serialVersionUID = 6350245643948535906L;
 
     @JsonIgnore
@@ -58,7 +60,8 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
      */
     @Getter
     @Setter
-    private AttributeMergingStrategy mergingStrategy = AttributeMergingStrategy.MULTIVALUED;
+    private PrincipalAttributesCoreProperties.MergingStrategyTypes mergingStrategy =
+        PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED;
 
     @Getter
     @Setter
@@ -67,6 +70,13 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
     @Getter
     @Setter
     private boolean ignoreResolvedAttributes;
+
+    @Override
+    public abstract Map<String, List<Object>> getAttributes(Principal principal, RegisteredService registeredService);
+
+    @Override
+    public void close() {
+    }
 
     /**
      * Gets attribute repository.
@@ -111,9 +121,6 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    @Override
-    public abstract Map<String, List<Object>> getAttributes(Principal principal, RegisteredService registeredService);
-
     /**
      * Convert attributes to principal attributes and cache.
      *
@@ -126,33 +133,23 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
                                                                                        final Map<String, List<Object>> sourceAttributes,
                                                                                        final RegisteredService registeredService) {
         val finalAttributes = convertPersonAttributesToPrincipalAttributes(sourceAttributes);
-        addPrincipalAttributes(principal.getId(), finalAttributes, registeredService);
+        update(principal.getId(), finalAttributes, registeredService);
         return finalAttributes;
     }
-
-    /**
-     * Add principal attributes into the underlying cache instance.
-     *
-     * @param id                identifier used by the cache as key.
-     * @param attributes        attributes to cache
-     * @param registeredService the registered service
-     * @since 4.2
-     */
-    protected abstract void addPrincipalAttributes(String id, Map<String, List<Object>> attributes, RegisteredService registeredService);
-
+    
     /**
      * Calculate merging strategy attribute merging strategy.
      *
      * @return the attribute merging strategy
      */
-    protected AttributeMergingStrategy determineMergingStrategy() {
-        return ObjectUtils.defaultIfNull(getMergingStrategy(), AttributeMergingStrategy.MULTIVALUED);
+    protected PrincipalAttributesCoreProperties.MergingStrategyTypes determineMergingStrategy() {
+        return ObjectUtils.defaultIfNull(getMergingStrategy(), PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED);
     }
 
     /**
      * Are attribute repository ids defined boolean.
      *
-     * @return the boolean
+     * @return true/false
      */
     @JsonIgnore
     protected boolean areAttributeRepositoryIdsDefined() {
@@ -196,9 +193,5 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
             return new HashMap<>(0);
         }
         return convertPrincipalAttributesToPersonAttributes(principal.getAttributes());
-    }
-
-    @Override
-    public void close() {
     }
 }

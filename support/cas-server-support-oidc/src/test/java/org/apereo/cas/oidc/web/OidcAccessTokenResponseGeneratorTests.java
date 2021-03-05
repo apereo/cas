@@ -47,8 +47,8 @@ public class OidcAccessTokenResponseGeneratorTests extends AbstractOidcTests {
 
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response, new JEESessionStore());
-        val manager = new ProfileManager<>(context, context.getSessionStore());
+        val context = new JEEContext(request, response);
+        val manager = new ProfileManager(context, JEESessionStore.INSTANCE);
 
         val profile = new CommonProfile();
         profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
@@ -72,7 +72,7 @@ public class OidcAccessTokenResponseGeneratorTests extends AbstractOidcTests {
             .registeredService(getOidcRegisteredService())
             .responseType(OAuth20ResponseTypes.DEVICE_CODE)
             .deviceCode(devCode.getId())
-            .userCode(deviceTokenFactory.createDeviceUserCode(devCode).getId())
+            .userCode(deviceUserCodeFactory.createDeviceUserCode(devCode).getId())
             .build();
 
         val result = OAuth20AccessTokenResponseResult.builder()
@@ -86,8 +86,8 @@ public class OidcAccessTokenResponseGeneratorTests extends AbstractOidcTests {
 
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response, new JEESessionStore());
-        val manager = new ProfileManager<>(context, context.getSessionStore());
+        val context = new JEEContext(request, response);
+        val manager = new ProfileManager(context, JEESessionStore.INSTANCE);
 
         val profile = new CommonProfile();
         profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);

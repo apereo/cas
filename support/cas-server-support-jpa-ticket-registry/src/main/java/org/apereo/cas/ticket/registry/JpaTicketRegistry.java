@@ -5,6 +5,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,13 +16,11 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityNotFoundException;
 import javax.persistence.LockModeType;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
@@ -49,10 +48,6 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
 
     @PersistenceContext(unitName = "ticketEntityManagerFactory")
     private transient EntityManager entityManager;
-
-    private static long countToLong(final Object result) {
-        return ((Number) result).longValue();
-    }
 
     @Override
     public void addTicket(final Ticket ticket) {
@@ -83,7 +78,8 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         } catch (final NoResultException e) {
             LOGGER.debug("No record could be found for ticket [{}]", ticketId);
         } catch (final Exception e) {
-            LOGGER.error("Error getting ticket [{}] from registry.", ticketId, e);
+            LOGGER.error("Error getting ticket [{}] from registry.", ticketId);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -101,7 +97,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     @Override
     public Collection<? extends Ticket> getTickets() {
         if (isCipherExecutorEnabled()) {
-            val sql = String.format("SELECT t FROM %s t", EncodedTicket.class.getSimpleName());
+            val sql = String.format("SELECT t FROM %s t", DefaultEncodedTicket.class.getSimpleName());
             val query = (org.hibernate.query.Query<Ticket>) entityManager.createQuery(sql, Ticket.class);
             query.setLockMode(this.lockType);
             return query
@@ -144,7 +140,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     @Override
     public Stream<? extends Ticket> getTicketsStream() {
         if (isCipherExecutorEnabled()) {
-            val sql = String.format("SELECT t FROM %s t", EncodedTicket.class.getSimpleName());
+            val sql = String.format("SELECT t FROM %s t", DefaultEncodedTicket.class.getSimpleName());
             val query = (org.hibernate.query.Query<Ticket>) entityManager.createQuery(sql, Ticket.class);
             query.setFetchSize(STREAM_BATCH_SIZE);
             query.setLockOptions(LockOptions.NONE);
@@ -215,17 +211,16 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
             totalCount = deleteTicketGrantingTickets(encTicketId);
         } else {
             val ticketEntityName = getTicketEntityName(md);
-            try {
-                val sql = String.format("DELETE FROM %s o WHERE o.id = :id", ticketEntityName);
-                val query = entityManager.createQuery(sql);
-                query.setParameter("id", encTicketId);
-                totalCount = query.executeUpdate();
-            } catch (final EntityNotFoundException e) {
-                LOGGER.debug("Entity [{}] for ticket id [{}] is not found and may have already been deleted", ticketEntityName, encTicketId);
-                LOGGER.trace(e.getMessage(), e);
-            }
+            val sql = String.format("DELETE FROM %s o WHERE o.id = :id", ticketEntityName);
+            val query = entityManager.createQuery(sql);
+            query.setParameter("id", encTicketId);
+            totalCount = query.executeUpdate();
         }
         return totalCount != 0;
+    }
+
+    private static long countToLong(final Object result) {
+        return ((Number) result).longValue();
     }
 
     /**
@@ -241,7 +236,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
             .mapToInt(defn -> {
                 try {
                     val sql = String.format("DELETE FROM %s s WHERE s.ticketGrantingTicket.id = :id", getTicketEntityName(defn));
-                    LOGGER.trace("Creating query [{}]", sql);
+                    LOGGER.trace("Creating delete query [{}] for ticket id [{}]", sql, ticketId);
                     val query = entityManager.createQuery(sql);
                     query.setParameter("id", ticketId);
                     return query.executeUpdate();
@@ -256,13 +251,14 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         val sql = String.format("DELETE FROM %s t WHERE t.id = :id", getTicketEntityName(tgt));
         val query = entityManager.createQuery(sql);
         query.setParameter("id", ticketId);
+        LOGGER.trace("Creating delete query [{}] for ticket id [{}]", sql, ticketId);
         totalCount += query.executeUpdate();
         return totalCount;
     }
 
     private Class<? extends Ticket> getTicketImplementationClass(final TicketDefinition tk) {
         if (isCipherExecutorEnabled()) {
-            return EncodedTicket.class;
+            return DefaultEncodedTicket.class;
         }
         return tk.getImplementationClass();
     }

@@ -5,20 +5,24 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.BaseSamlRegisteredServiceMetadataResolver;
+import org.apereo.cas.util.LoggingUtils;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.util.IOUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
-import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -30,12 +34,13 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class AmazonS3SamlRegisteredServiceMetadataResolver extends BaseSamlRegisteredServiceMetadataResolver {
-    private final transient AmazonS3 s3Client;
+    private final transient S3Client s3Client;
+
     private final String bucketName;
 
     public AmazonS3SamlRegisteredServiceMetadataResolver(final SamlIdPProperties samlIdPProperties,
                                                          final OpenSamlConfigBean configBean,
-                                                         final AmazonS3 s3Client) {
+                                                         final S3Client s3Client) {
         super(samlIdPProperties, configBean);
         this.bucketName = samlIdPProperties.getMetadata().getAmazonS3().getBucketName();
         this.s3Client = s3Client;
@@ -44,37 +49,37 @@ public class AmazonS3SamlRegisteredServiceMetadataResolver extends BaseSamlRegis
     @Override
     public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
         try {
-            val result = s3Client.listObjectsV2(bucketName);
-            val objects = result.getObjectSummaries();
+            val result = s3Client.listObjectsV2(ListObjectsV2Request.builder().bucket(bucketName).build());
+            val objects = result.contents();
             LOGGER.debug("Located [{}] S3 object(s) from bucket [{}]", objects.size(), bucketName);
 
             return objects.stream()
                 .map(obj -> {
-                    val objectKey = obj.getKey();
+                    val objectKey = obj.key();
                     LOGGER.debug("Fetching object [{}] from bucket [{}]", objectKey, bucketName);
-                    val object = s3Client.getObject(obj.getBucketName(), objectKey);
-                    try (val is = object.getObjectContent()) {
+                    
+                    try (val is = s3Client.getObject(GetObjectRequest.builder().key(objectKey).bucket(bucketName).build())) {
                         val document = new SamlMetadataDocument();
                         document.setId(System.nanoTime());
                         document.setName(objectKey);
-                        val objectMetadata = object.getObjectMetadata();
+                        val objectMetadata = is.response().metadata();
                         if (objectMetadata != null) {
-                            document.setSignature(objectMetadata.getUserMetaDataOf("signature"));
+                            document.setSignature(objectMetadata.get("signature"));
                             if (StringUtils.isNotBlank(document.getSignature())) {
                                 LOGGER.debug("Found metadata signature as part of object metadata for [{}] from bucket [{}]", objectKey, bucketName);
                             }
                         }
-                        document.setValue(IOUtils.toString(is));
+                        document.setValue(IOUtils.toString(is, StandardCharsets.UTF_8));
                         return buildMetadataResolverFrom(service, document);
                     } catch (final Exception e) {
-                        LOGGER.error(e.getMessage(), e);
+                        LoggingUtils.error(LOGGER, e);
                     }
                     return null;
                 })
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -85,7 +90,7 @@ public class AmazonS3SamlRegisteredServiceMetadataResolver extends BaseSamlRegis
             val metadataLocation = service.getMetadataLocation();
             return metadataLocation.trim().startsWith("awss3://");
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }
@@ -93,14 +98,15 @@ public class AmazonS3SamlRegisteredServiceMetadataResolver extends BaseSamlRegis
     @Override
     @SneakyThrows
     public void saveOrUpdate(final SamlMetadataDocument document) {
-        val is = new ByteArrayInputStream(document.getValue().getBytes(StandardCharsets.UTF_8));
-        val metadata = new ObjectMetadata();
-        metadata.getUserMetadata().put("signature", document.getSignature());
-        this.s3Client.putObject(bucketName, document.getName(), is, metadata);
+        val request = PutObjectRequest.builder().bucket(bucketName)
+            .key(document.getName())
+            .metadata(Map.of("signature", document.getSignature()))
+            .build();
+        s3Client.putObject(request, RequestBody.fromString(document.getValue()));
     }
 
     @Override
     public boolean isAvailable(final SamlRegisteredService service) {
-        return supports(service) && !s3Client.listBuckets().isEmpty();
+        return supports(service) && s3Client.listBuckets().hasBuckets();
     }
 }

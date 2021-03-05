@@ -7,6 +7,7 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.WebUtils;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -22,7 +23,7 @@ import java.util.Optional;
  * @since 4.2.0
  */
 @Slf4j
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseAcceptableUsagePolicyRepository implements AcceptableUsagePolicyRepository {
     private static final long serialVersionUID = 1883808902502739L;
 
@@ -93,19 +94,19 @@ public abstract class BaseAcceptableUsagePolicyRepository implements AcceptableU
             return registeredService.getAcceptableUsagePolicy().getMessageCode();
         }
 
-        if (StringUtils.isBlank(aupProperties.getAupPolicyTermsAttributeName())) {
+        if (StringUtils.isBlank(aupProperties.getCore().getAupPolicyTermsAttributeName())) {
             return null;
         }
 
         val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
         val attributes = principal.getAttributes();
 
-        if (!attributes.containsKey(aupProperties.getAupPolicyTermsAttributeName())) {
+        if (!attributes.containsKey(aupProperties.getCore().getAupPolicyTermsAttributeName())) {
             LOGGER.trace("No attribute for policy terms is defined");
             return null;
         }
 
-        val value = CollectionUtils.firstElement(attributes.get(aupProperties.getAupPolicyTermsAttributeName()));
+        val value = CollectionUtils.firstElement(attributes.get(aupProperties.getCore().getAupPolicyTermsAttributeName()));
         return value.map(v -> String.format("%s.%s", AcceptableUsagePolicyTerms.CODE, value.get())).orElse(null);
     }
 
@@ -121,11 +122,21 @@ public abstract class BaseAcceptableUsagePolicyRepository implements AcceptableU
         val attributes = principal.getAttributes();
         LOGGER.debug("Principal attributes found for [{}] are [{}]", principal.getId(), attributes);
 
-        if (attributes != null && attributes.containsKey(aupProperties.getAupAttributeName())) {
-            val value = CollectionUtils.toCollection(attributes.get(aupProperties.getAupAttributeName()));
-            LOGGER.debug("Evaluating attribute value [{}] found for [{}]", value, aupProperties.getAupAttributeName());
-            return value.stream().anyMatch(v -> v.toString().equalsIgnoreCase(Boolean.TRUE.toString()));
+        val core = aupProperties.getCore();
+        if (attributes != null && attributes.containsKey(core.getAupAttributeName())) {
+            val value = CollectionUtils.toCollection(attributes.get(core.getAupAttributeName()));
+            LOGGER.debug("Evaluating attribute value [{}] found for [{}]", value, core.getAupAttributeName());
+            return value.stream().anyMatch(v -> v.toString().equalsIgnoreCase(getAcceptedAttributeValue()));
         }
         return false;
+    }
+
+    /**
+     * Gets accepted attribute value.
+     *
+     * @return the accepted attribute value
+     */
+    protected String getAcceptedAttributeValue() {
+        return Boolean.TRUE.toString();
     }
 }

@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 
@@ -42,7 +43,7 @@ public class GroovyScriptMultifactorAuthenticationTrigger implements Multifactor
     public GroovyScriptMultifactorAuthenticationTrigger(final CasConfigurationProperties casProperties,
                                                         final ApplicationContext applicationContext) {
         this.casProperties = casProperties;
-        val groovyScript = casProperties.getAuthn().getMfa().getGroovyScript();
+        val groovyScript = casProperties.getAuthn().getMfa().getGroovyScript().getLocation();
         this.watchableScript = new WatchableGroovyScriptResource(groovyScript);
         this.applicationContext = applicationContext;
     }
@@ -51,7 +52,7 @@ public class GroovyScriptMultifactorAuthenticationTrigger implements Multifactor
     public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
                                                                    final RegisteredService registeredService,
                                                                    final HttpServletRequest httpServletRequest, final Service service) {
-        val groovyScript = casProperties.getAuthn().getMfa().getGroovyScript();
+        val groovyScript = casProperties.getAuthn().getMfa().getGroovyScript().getLocation();
         if (groovyScript == null) {
             LOGGER.trace("No groovy script is configured for multifactor authentication");
             return Optional.empty();
@@ -92,7 +93,7 @@ public class GroovyScriptMultifactorAuthenticationTrigger implements Multifactor
             }
             return MultifactorAuthenticationUtils.resolveProvider(providerMap, provider);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return Optional.empty();
     }

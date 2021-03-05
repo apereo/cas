@@ -5,9 +5,9 @@ import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.services.SurrogateRegisteredServiceAccessStrategy;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("Webflow")
+@Tag("WebflowActions")
 public class SurrogateAuthorizationActionTests extends BaseSurrogateInitialAuthenticationActionTests {
     @Autowired
     @Qualifier("surrogateAuthorizationCheck")
@@ -50,14 +50,13 @@ public class SurrogateAuthorizationActionTests extends BaseSurrogateInitialAuthe
             WebUtils.putRegisteredService(context, registeredService);
             val request = new MockHttpServletRequest();
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-            assertEquals("success", surrogateAuthorizationCheck.execute(context).getId());
+            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, surrogateAuthorizationCheck.execute(context).getId());
         } catch (final Exception e) {
             throw new AssertionError(e);
         }
     }
 
     @Test
-    @SneakyThrows
     public void verifyNotAuthorized() {
         val context = new MockRequestContext();
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());

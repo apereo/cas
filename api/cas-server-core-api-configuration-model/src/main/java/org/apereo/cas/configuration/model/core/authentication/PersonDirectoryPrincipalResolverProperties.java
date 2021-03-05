@@ -1,12 +1,10 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
 import org.apereo.cas.configuration.support.RequiresModule;
-import org.apereo.cas.configuration.support.SpringResourceProperties;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 
@@ -41,7 +39,7 @@ public class PersonDirectoryPrincipalResolverProperties implements Serializable 
     /**
      * When true, throws an error back indicating that principal resolution
      * has failed and no principal can be found based on the authentication requirements.
-     * Otherwise, simply logs the condition as an error without raising a catastrophic error.
+     * Otherwise, logs the condition as an error without raising a catastrophic error.
      */
     private boolean principalResolutionFailureFatal;
 
@@ -69,22 +67,12 @@ public class PersonDirectoryPrincipalResolverProperties implements Serializable 
     private String activeAttributeRepositoryIds;
 
     /**
-     * Reference to the attribute definition store
-     * that contains metadata about attributes and their encoding specifics.
+     * In the event that the principal resolution engine resolves
+     * more than one principal, (specially if such principals in the chain
+     * have different identifiers), this setting determines strategy by which
+     * the principal id would be chosen from the chain.
+     * Accepted values are: {@code last}, {@code first}.
      */
-    private AttributeDefinitionStoreProperties attributeDefinitionStore = new AttributeDefinitionStoreProperties();
+    private String principalResolutionConflictStrategy = "last";
 
-    @RequiresModule(name = "cas-server-core-authentication", automated = true)
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class AttributeDefinitionStoreProperties implements Serializable {
-        private static final long serialVersionUID = 1248812041234879300L;
-
-        /**
-         * Load attribute definitions from a JSON resource.
-         */
-        @NestedConfigurationProperty
-        private SpringResourceProperties json = new SpringResourceProperties();
-    }
 }

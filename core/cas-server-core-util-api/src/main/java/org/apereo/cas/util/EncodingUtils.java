@@ -23,13 +23,11 @@ import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
 
-import javax.crypto.Cipher;
 import java.io.Serializable;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -309,7 +307,7 @@ public class EncodingUtils {
      * Is json web key boolean.
      *
      * @param key the key
-     * @return the boolean
+     * @return true/false
      */
     public boolean isJsonWebKey(final String key) {
         try {
@@ -564,31 +562,17 @@ public class EncodingUtils {
      */
     @SneakyThrows
     public static String decryptJwtValue(final Key secretKeyEncryptionKey, final String value) {
-        val jwe = new JsonWebEncryption();
-        jwe.setKey(secretKeyEncryptionKey);
-        jwe.setCompactSerialization(value);
-        LOGGER.trace("Decrypting value...");
         try {
+            val jwe = new JsonWebEncryption();
+            jwe.setKey(secretKeyEncryptionKey);
+            jwe.setCompactSerialization(value);
+            LOGGER.trace("Decrypting value...");
             return jwe.getPayload();
         } catch (final Exception e) {
             if (LOGGER.isTraceEnabled()) {
                 throw new DecryptionException(e);
             }
             throw new DecryptionException();
-        }
-    }
-
-    /**
-     * Is jce installed ?
-     *
-     * @return the boolean
-     */
-    public static boolean isJceInstalled() {
-        try {
-            val maxKeyLen = Cipher.getMaxAllowedKeyLength("AES");
-            return maxKeyLen == Integer.MAX_VALUE;
-        } catch (final NoSuchAlgorithmException e) {
-            return false;
         }
     }
 }

@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.web.tomcat;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
@@ -27,6 +28,7 @@ public class CasEmbeddedApacheTomcatHttpProxyProperties implements Serializable 
     /**
      * Enable the container running in proxy mode.
      */
+    @RequiredProperty
     private boolean enabled;
 
     /**
@@ -62,5 +64,5 @@ public class CasEmbeddedApacheTomcatHttpProxyProperties implements Serializable 
     /**
      * Custom attributes to set on the proxy connector.
      */
-    private Map<String, Object> attributes = new LinkedHashMap<>();
+    private Map<String, String> attributes = new LinkedHashMap<>();
 }

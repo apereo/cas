@@ -13,12 +13,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.index.TextIndexDefinition;
 
+import javax.net.ssl.SSLContext;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * This is {@link MongoDbServiceRegistryConfiguration}.
@@ -39,18 +43,32 @@ public class MongoDbServiceRegistryConfiguration {
     @Qualifier("serviceRegistryListeners")
     private ObjectProvider<Collection<ServiceRegistryListener>> serviceRegistryListeners;
 
+    @Autowired
+    @Qualifier("sslContext")
+    private ObjectProvider<SSLContext> sslContext;
+
     @ConditionalOnMissingBean(name = "mongoDbServiceRegistryTemplate")
     @Bean
     public MongoTemplate mongoDbServiceRegistryTemplate() {
         val mongo = casProperties.getServiceRegistry().getMongo();
-        val factory = new MongoDbConnectionFactory();
+        val factory = new MongoDbConnectionFactory(sslContext.getObject());
 
         val mongoTemplate = factory.buildMongoTemplate(mongo);
         factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
+
+        val collection = mongoTemplate.getCollection(mongo.getCollection());
+        val columnsIndex = new TextIndexDefinition.TextIndexDefinitionBuilder()
+            .onField("id")
+            .onField("serviceId")
+            .onField("name")
+            .build();
+        MongoDbConnectionFactory.createOrUpdateIndexes(mongoTemplate, collection, List.of(columnsIndex));
+
         return mongoTemplate;
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "mongoDbServiceRegistry")
     public ServiceRegistry mongoDbServiceRegistry() {
         val mongo = casProperties.getServiceRegistry().getMongo();
         return new MongoDbServiceRegistry(
@@ -62,6 +80,7 @@ public class MongoDbServiceRegistryConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "mongoDbServiceRegistryExecutionPlanConfigurer")
+    @RefreshScope
     public ServiceRegistryExecutionPlanConfigurer mongoDbServiceRegistryExecutionPlanConfigurer() {
         return plan -> plan.registerServiceRegistry(mongoDbServiceRegistry());
     }

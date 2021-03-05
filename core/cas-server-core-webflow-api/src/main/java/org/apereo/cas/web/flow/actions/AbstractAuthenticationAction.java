@@ -9,6 +9,7 @@ import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -26,7 +27,7 @@ import java.util.HashMap;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Slf4j
 public abstract class AbstractAuthenticationAction extends AbstractAction {
 
@@ -65,8 +66,15 @@ public abstract class AbstractAuthenticationAction extends AbstractAction {
         return finalEvent;
     }
 
-    private void fireEventHooks(final Event e, final RequestContext ctx) {
-        val id = e.getId();
+    /**
+     * Fire event hooks.
+     *
+     * @param event the event
+     * @param ctx   the ctx
+     * @return the event
+     */
+    protected Event fireEventHooks(final Event event, final RequestContext ctx) {
+        val id = event.getId();
         if (id.equals(CasWebflowConstants.TRANSITION_ID_ERROR) || id.equals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE)) {
             onError(ctx);
         }
@@ -76,6 +84,7 @@ public abstract class AbstractAuthenticationAction extends AbstractAction {
         if (id.equals(CasWebflowConstants.TRANSITION_ID_SUCCESS)) {
             onSuccess(ctx);
         }
+        return event;
     }
 
     /**

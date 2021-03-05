@@ -1,5 +1,8 @@
 package org.apereo.cas.support.oauth.web.response.callback;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -13,8 +16,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.inspektr.audit.annotation.Audit;
 import org.pac4j.core.context.JEEContext;
-import org.pac4j.core.util.CommonHelper;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.LinkedHashMap;
@@ -37,6 +40,9 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder implements OAu
 
     private final ServicesManager servicesManager;
 
+    @Audit(action = AuditableActions.OAUTH2_CODE_RESPONSE,
+        actionResolverName = AuditActionResolvers.OAUTH2_CODE_RESPONSE_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.OAUTH2_CODE_RESPONSE_RESOURCE_RESOLVER)
     @Override
     public ModelAndView build(final JEEContext context, final String clientId,
                               final AccessTokenRequestDataHolder holder) {
@@ -47,7 +53,6 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder implements OAu
             holder.getClientId(), holder.getClaims());
         LOGGER.debug("Generated OAuth code: [{}]", code);
         this.ticketRegistry.addTicket(code);
-
         return buildCallbackViewViaRedirectUri(context, clientId, authentication, code);
     }
 
@@ -80,20 +85,15 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder implements OAu
             .orElse(StringUtils.EMPTY);
         LOGGER.debug("Authorize request successful for client [{}] with redirect uri [{}]", clientId, redirectUri);
 
-        var callbackUrl = redirectUri;
-        callbackUrl = CommonHelper.addParameter(callbackUrl, OAuth20Constants.CODE, code.getId());
-        if (StringUtils.isNotBlank(state)) {
-            callbackUrl = CommonHelper.addParameter(callbackUrl, OAuth20Constants.STATE, state);
-        }
-        if (StringUtils.isNotBlank(nonce)) {
-            callbackUrl = CommonHelper.addParameter(callbackUrl, OAuth20Constants.NONCE, nonce);
-        }
-        LOGGER.debug("Redirecting to URL [{}]", callbackUrl);
         val params = new LinkedHashMap<String, String>();
         params.put(OAuth20Constants.CODE, code.getId());
-        params.put(OAuth20Constants.STATE, state);
-        params.put(OAuth20Constants.NONCE, nonce);
-        params.put(OAuth20Constants.CLIENT_ID, clientId);
-        return buildResponseModelAndView(context, servicesManager, clientId, callbackUrl, params);
+        if (StringUtils.isNotBlank(state)) {
+            params.put(OAuth20Constants.STATE, state);
+        }
+        if (StringUtils.isNotBlank(nonce)) {
+            params.put(OAuth20Constants.NONCE, nonce);
+        }
+        LOGGER.debug("Redirecting to URL [{}] with params [{}] for clientId [{}]", redirectUri, params.keySet(), clientId);
+        return buildResponseModelAndView(context, servicesManager, clientId, redirectUri, params);
     }
 }

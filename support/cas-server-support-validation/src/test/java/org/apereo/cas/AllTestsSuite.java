@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.web.LegacyValidateControllerTests;
 import org.apereo.cas.web.ProxyControllerTests;
 import org.apereo.cas.web.view.Cas10ResponseViewTests;
 import org.apereo.cas.web.view.Cas20ResponseViewTests;
@@ -25,6 +26,7 @@ import org.junit.runner.RunWith;
     Cas20ResponseViewTests.class,
     Cas30ResponseViewTests.class,
     ProxyControllerTests.class,
+    LegacyValidateControllerTests.class,
     Cas30JsonResponseViewTests.class,
     DefaultCas30ProtocolAttributesRendererTests.class,
     InlinedCas30ProtocolAttributesRendererTests.class,

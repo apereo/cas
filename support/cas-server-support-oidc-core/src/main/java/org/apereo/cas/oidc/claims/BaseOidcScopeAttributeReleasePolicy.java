@@ -38,7 +38,7 @@ import java.util.TreeMap;
 @Getter
 @EqualsAndHashCode(callSuper = true)
 @Setter
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
 
     private static final long serialVersionUID = -7302163334687300920L;
@@ -48,7 +48,7 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
     @JsonIgnore
     private String scopeType;
 
-    public BaseOidcScopeAttributeReleasePolicy(final String scopeType) {
+    protected BaseOidcScopeAttributeReleasePolicy(final String scopeType) {
         this.scopeType = scopeType;
     }
 
@@ -67,9 +67,9 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
         LOGGER.debug("Attempting to map and filter claims based on resolved attributes [{}]", resolvedAttributes);
 
         val properties = applicationContext.getBean(CasConfigurationProperties.class);
-        val supportedClaims = properties.getAuthn().getOidc().getClaims();
+        val supportedClaims = properties.getAuthn().getOidc().getDiscovery().getClaims();
         
-        val allowedClaims = new LinkedHashSet<String>(getAllowedAttributes());
+        val allowedClaims = new LinkedHashSet<>(getAllowedAttributes());
         allowedClaims.retainAll(supportedClaims);
         LOGGER.debug("[{}] is designed to allow claims [{}] for scope [{}]. After cross-checking with "
                 + "supported claims [{}], the final collection of allowed attributes is [{}]", getClass().getSimpleName(),
@@ -100,5 +100,10 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
         val value = resolvedAttributes.get(claim);
         LOGGER.debug("No mapped attribute is defined for claim [{}]; Used [{}] to locate value [{}]", claim, claim, value);
         return Pair.of(claim, value);
+    }
+
+    @Override
+    public List<String> determineRequestedAttributeDefinitions() {
+        return getAllowedAttributes();
     }
 }

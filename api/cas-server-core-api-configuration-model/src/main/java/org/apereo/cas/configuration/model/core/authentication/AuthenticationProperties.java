@@ -21,7 +21,7 @@ import org.apereo.cas.configuration.model.support.jaas.JaasAuthenticationPropert
 import org.apereo.cas.configuration.model.support.jdbc.JdbcAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
-import org.apereo.cas.configuration.model.support.mongo.MongoAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mongo.MongoDbAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.ntlm.NtlmProperties;
 import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
@@ -30,6 +30,7 @@ import org.apereo.cas.configuration.model.support.openid.OpenIdProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.passwordless.PasswordlessAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
+import org.apereo.cas.configuration.model.support.qr.QRAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.radius.RadiusProperties;
 import org.apereo.cas.configuration.model.support.redis.RedisAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.rest.RestAuthenticationProperties;
@@ -42,12 +43,12 @@ import org.apereo.cas.configuration.model.support.syncope.SyncopeAuthenticationP
 import org.apereo.cas.configuration.model.support.throttle.ThrottleProperties;
 import org.apereo.cas.configuration.model.support.token.TokenAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.trusted.TrustedAuthenticationProperties;
-import org.apereo.cas.configuration.model.support.uma.UmaProperties;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationDelegationProperties;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
 import org.apereo.cas.configuration.model.support.x509.X509Properties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -67,6 +68,7 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("AuthenticationProperties")
 public class AuthenticationProperties implements Serializable {
 
     private static final long serialVersionUID = -1233126985007049516L;
@@ -82,6 +84,12 @@ public class AuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private PasswordlessAuthenticationProperties passwordless = new PasswordlessAuthenticationProperties();
+
+    /**
+     * QR authentication settings.
+     */
+    @NestedConfigurationProperty
+    private QRAuthenticationProperties qr = new QRAuthenticationProperties();
 
     /**
      * Passwordless sync settings.
@@ -221,7 +229,6 @@ public class AuthenticationProperties implements Serializable {
     @NestedConfigurationProperty
     private AuthenticationExceptionsProperties errors = new AuthenticationExceptionsProperties();
 
-
     /**
      * Authentication policy settings.
      */
@@ -241,7 +248,7 @@ public class AuthenticationProperties implements Serializable {
     private FileAuthenticationProperties file = new FileAuthenticationProperties();
 
     /**
-     * Blacklist-based authentication.
+     * Blocked authentication.
      */
     @NestedConfigurationProperty
     private RejectAuthenticationProperties reject = new RejectAuthenticationProperties();
@@ -292,7 +299,7 @@ public class AuthenticationProperties implements Serializable {
      * MongoDb authentication settings.
      */
     @NestedConfigurationProperty
-    private MongoAuthenticationProperties mongo = new MongoAuthenticationProperties();
+    private MongoDbAuthenticationProperties mongo = new MongoDbAuthenticationProperties();
 
     /**
      * CouchDb authentication settings.
@@ -311,12 +318,6 @@ public class AuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private OAuthProperties oauth = new OAuthProperties();
-
-    /**
-     * OAuth UMA authentication settings.
-     */
-    @NestedConfigurationProperty
-    private UmaProperties uma = new UmaProperties();
 
     /**
      * OpenID Connect authentication settings.

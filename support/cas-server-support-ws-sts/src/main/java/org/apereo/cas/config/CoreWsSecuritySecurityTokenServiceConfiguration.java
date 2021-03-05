@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
+import org.apereo.cas.authentication.DefaultSecurityTokenServiceTokenFetcher;
 import org.apereo.cas.authentication.SecurityTokenServiceClientBuilder;
 import org.apereo.cas.authentication.SecurityTokenServiceTokenFetcher;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -18,6 +19,7 @@ import org.apereo.cas.support.x509.X509TokenDelegationHandler;
 import org.apereo.cas.ticket.DefaultSecurityTokenTicketFactory;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.SecurityTokenTicketFactory;
+import org.apereo.cas.ticket.TicketFactoryExecutionPlanConfigurer;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
@@ -111,7 +113,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         bean.setEnabled(true);
         bean.setName("cxfServletSecurityTokenService");
         bean.setServlet(new CXFServlet());
-        bean.setUrlMappings(CollectionUtils.wrap(WSFederationConstants.ENDPOINT_STS.concat("*")));
+        bean.setUrlMappings(CollectionUtils.wrap(WSFederationConstants.BASE_ENDPOINT_STS.concat("*")));
         bean.setAsyncSupported(true);
         return bean;
     }
@@ -221,7 +223,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @RefreshScope
     @Bean
     public List transportTokenValidators() {
-        val list = new ArrayList<Object>(4);
+        val list = new ArrayList<>(4);
         list.add(transportSamlTokenValidator());
         list.add(transportJwtTokenValidator());
         list.add(transportSecureContextTokenValidator());
@@ -233,7 +235,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @RefreshScope
     @Bean
     public List transportTokenProviders() {
-        val list = new ArrayList<Object>(3);
+        val list = new ArrayList<>(3);
         list.add(transportSamlTokenProvider());
         list.add(transportJwtTokenProvider());
         list.add(transportSecureContextTokenProvider());
@@ -404,7 +406,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @Bean
     @RefreshScope
     public SecurityTokenServiceTokenFetcher securityTokenServiceTokenFetcher() {
-        return new SecurityTokenServiceTokenFetcher(servicesManager.getObject(),
+        return new DefaultSecurityTokenServiceTokenFetcher(servicesManager.getObject(),
             wsFederationAuthenticationServiceSelectionStrategy.getObject(),
             securityTokenServiceCredentialCipherExecutor(),
             securityTokenServiceClientBuilder());
@@ -414,8 +416,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @RefreshScope
     @Bean
     public CipherExecutor securityTokenServiceCredentialCipherExecutor() {
-        val wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
-        val crypto = wsfed.getCrypto();
+        val crypto = casProperties.getAuthn().getWsfedIdp().getSts().getCrypto();
         return CipherExecutorUtils.newStringCipherExecutor(crypto, SecurityTokenServiceCredentialCipherExecutor.class);
     }
 
@@ -424,6 +425,13 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @RefreshScope
     public SecurityTokenTicketFactory securityTokenTicketFactory() {
         return new DefaultSecurityTokenTicketFactory(securityTokenTicketIdGenerator(), grantingTicketExpirationPolicy.getObject());
+    }
+
+    @ConditionalOnMissingBean(name = "securityTokenTicketFactoryConfigurer")
+    @Bean
+    @RefreshScope
+    public TicketFactoryExecutionPlanConfigurer securityTokenTicketFactoryConfigurer() {
+        return this::securityTokenTicketFactory;
     }
 
     @ConditionalOnMissingBean(name = "securityTokenTicketIdGenerator")

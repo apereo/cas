@@ -50,6 +50,8 @@ public class JdbcPasswordManagementConfiguration {
     private ObjectProvider<PasswordHistoryService> passwordHistoryService;
 
     @Bean
+    @ConditionalOnMissingBean(name = "jdbcPasswordManagementDataSource")
+    @RefreshScope
     public DataSource jdbcPasswordManagementDataSource() {
         return JpaBeans.newDataSource(casProperties.getAuthn().getPm().getJdbc());
     }
@@ -70,6 +72,7 @@ public class JdbcPasswordManagementConfiguration {
     
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "jdbcPasswordChangeService")
     public PasswordManagementService passwordChangeService() {
         val encoder = PasswordEncoderUtils.newPasswordEncoder(casProperties.getAuthn().getPm().getJdbc().getPasswordEncoder(), applicationContext);
         return new JdbcPasswordManagementService(passwordManagementCipherExecutor.getObject(),

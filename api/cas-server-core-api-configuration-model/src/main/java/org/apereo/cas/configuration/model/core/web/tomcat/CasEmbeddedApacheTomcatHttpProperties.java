@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.web.tomcat;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
@@ -27,6 +28,7 @@ public class CasEmbeddedApacheTomcatHttpProperties implements Serializable {
     /**
      * Enable a separate port for the embedded container for HTTP access.
      */
+    @RequiredProperty
     private boolean enabled;
 
     /**
@@ -42,5 +44,5 @@ public class CasEmbeddedApacheTomcatHttpProperties implements Serializable {
     /**
      * Additional attributes to be set on the connector.
      */
-    private Map<String, Object> attributes = new LinkedHashMap<>(0);
+    private Map<String, String> attributes = new LinkedHashMap<>(0);
 }

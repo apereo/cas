@@ -1,5 +1,8 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
@@ -20,11 +23,12 @@ import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
+import org.pac4j.core.context.JEEContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * The {@link BaseSamlProfileSamlResponseBuilder} is responsible for
@@ -40,15 +44,15 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
 
     private final transient SamlProfileSamlResponseBuilderConfigurationContext samlResponseBuilderConfigurationContext;
 
-    public BaseSamlProfileSamlResponseBuilder(final SamlProfileSamlResponseBuilderConfigurationContext samlResponseBuilderConfigurationContext) {
+    protected BaseSamlProfileSamlResponseBuilder(final SamlProfileSamlResponseBuilderConfigurationContext samlResponseBuilderConfigurationContext) {
         super(samlResponseBuilderConfigurationContext.getOpenSamlConfigBean());
         this.samlResponseBuilderConfigurationContext = samlResponseBuilderConfigurationContext;
     }
 
     @Audit(
-        action = "SAML2_RESPONSE",
-        actionResolverName = "SAML2_RESPONSE_ACTION_RESOLVER",
-        resourceResolverName = "SAML2_RESPONSE_RESOURCE_RESOLVER")
+        action = AuditableActions.SAML2_RESPONSE,
+        actionResolverName = AuditActionResolvers.SAML2_RESPONSE_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.SAML2_RESPONSE_RESOURCE_RESOLVER)
     @Override
     public T build(final RequestAbstractType authnRequest,
                    final HttpServletRequest request,
@@ -91,13 +95,18 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
                                     final MessageContext messageContext) {
 
         val scratch = messageContext.getSubcontext(ScratchContext.class, true);
-        val map = (Map) scratch.getMap();
+        val map = (Map) Objects.requireNonNull(scratch).getMap();
         val encodeResponse = (Boolean) map.getOrDefault(SamlProtocolConstants.PARAMETER_ENCODE_RESPONSE, Boolean.TRUE);
 
         if (encodeResponse) {
-            val relayState = request != null ? request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE) : StringUtils.EMPTY;
+            val sessionStore = samlResponseBuilderConfigurationContext.getSessionStore();
+            val context = new JEEContext(request, response);
+            val relayState = sessionStore.get(context, SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE)
+                .orElse(StringUtils.EMPTY)
+                .toString();
             LOGGER.trace("RelayState is [{}]", relayState);
-            return encode(service, finalResponse, response, request, adaptor, relayState, binding, authnRequest, assertion);
+            return encode(service, finalResponse, response, request,
+                adaptor, relayState, binding, authnRequest, assertion);
         }
         return finalResponse;
     }

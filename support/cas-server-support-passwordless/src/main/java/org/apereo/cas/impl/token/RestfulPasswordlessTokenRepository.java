@@ -1,7 +1,8 @@
 package org.apereo.cas.impl.token;
 
-import org.apereo.cas.configuration.model.support.passwordless.PasswordlessAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.passwordless.token.PasswordlessAuthenticationRestTokensProperties;
 import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -23,12 +24,12 @@ import java.util.Optional;
  */
 @Slf4j
 public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRepository {
-    private final PasswordlessAuthenticationProperties.RestTokens restProperties;
+    private final PasswordlessAuthenticationRestTokensProperties restProperties;
 
     private final CipherExecutor cipherExecutor;
 
     public RestfulPasswordlessTokenRepository(final int tokenExpirationInSeconds,
-                                              final PasswordlessAuthenticationProperties.RestTokens restProperties,
+                                              final PasswordlessAuthenticationRestTokensProperties restProperties,
                                               final CipherExecutor<Serializable, String> cipherExecutor) {
         super(tokenExpirationInSeconds);
         this.restProperties = restProperties;
@@ -41,16 +42,22 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
         try {
             val parameters = new HashMap<String, Object>();
             parameters.put("username", username);
-            response = HttpUtils.execute(restProperties.getUrl(), HttpMethod.GET.name(),
-                restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
-                parameters, new HashMap<>(0));
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(restProperties.getBasicAuthPassword())
+                .basicAuthUsername(restProperties.getBasicAuthUsername())
+                .method(HttpMethod.GET)
+                .url(restProperties.getUrl())
+                .parameters(parameters)
+                .build();
+
+            response = HttpUtils.execute(exec);
             if (response != null && response.getEntity() != null) {
                 val token = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
                 val result = cipherExecutor.decode(token).toString();
                 return Optional.of(result);
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }
@@ -63,11 +70,14 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
         try {
             val parameters = new HashMap<String, Object>();
             parameters.put("username", username);
-            response = HttpUtils.execute(restProperties.getUrl(), HttpMethod.DELETE.name(),
-                restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
-                parameters, new HashMap<>(0));
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(restProperties.getBasicAuthPassword())
+                .basicAuthUsername(restProperties.getBasicAuthUsername())
+                .method(HttpMethod.DELETE)
+                .url(restProperties.getUrl())
+                .parameters(parameters)
+                .build();
+            response = HttpUtils.execute(exec);
         } finally {
             HttpUtils.close(response);
         }
@@ -80,11 +90,14 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
             val parameters = new HashMap<String, Object>();
             parameters.put("username", username);
             parameters.put("token", cipherExecutor.encode(token).toString());
-            response = HttpUtils.execute(restProperties.getUrl(), HttpMethod.DELETE.name(),
-                restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
-                parameters, new HashMap<>(0));
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(restProperties.getBasicAuthPassword())
+                .basicAuthUsername(restProperties.getBasicAuthUsername())
+                .method(HttpMethod.DELETE)
+                .url(restProperties.getUrl())
+                .parameters(parameters)
+                .build();
+            response = HttpUtils.execute(exec);
         } finally {
             HttpUtils.close(response);
         }
@@ -97,11 +110,14 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
             val parameters = new HashMap<String, Object>();
             parameters.put("username", username);
             parameters.put("token", cipherExecutor.encode(token).toString());
-            response = HttpUtils.execute(restProperties.getUrl(), HttpMethod.POST.name(),
-                restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
-                parameters, new HashMap<>(0));
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(restProperties.getBasicAuthPassword())
+                .basicAuthUsername(restProperties.getBasicAuthUsername())
+                .method(HttpMethod.POST)
+                .url(restProperties.getUrl())
+                .parameters(parameters)
+                .build();
+            response = HttpUtils.execute(exec);
         } finally {
             HttpUtils.close(response);
         }
@@ -111,11 +127,13 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
     public void clean() {
         HttpResponse response = null;
         try {
-            response = HttpUtils.execute(restProperties.getUrl(), HttpMethod.DELETE.name(),
-                restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
-                new HashMap<>(0), new HashMap<>(0));
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(restProperties.getBasicAuthPassword())
+                .basicAuthUsername(restProperties.getBasicAuthUsername())
+                .method(HttpMethod.DELETE)
+                .url(restProperties.getUrl())
+                .build();
+            response = HttpUtils.execute(exec);
         } finally {
             HttpUtils.close(response);
         }

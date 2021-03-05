@@ -5,6 +5,7 @@ import org.apereo.cas.util.EncodingUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
@@ -15,6 +16,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Lob;
 import javax.persistence.Table;
+import java.io.Serializable;
 
 /**
  * This is {@link SamlMetadataDocument}.
@@ -27,11 +29,15 @@ import javax.persistence.Table;
 @Getter
 @Setter
 @AllArgsConstructor
-public class SamlMetadataDocument {
+@Builder
+public class SamlMetadataDocument implements Serializable {
 
+    private static final long serialVersionUID = -721955605616455236L;
+    
     @JsonProperty("id")
     @javax.persistence.Id
     @Id
+    @Builder.Default
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     private long id = -1;
 

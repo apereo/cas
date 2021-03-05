@@ -49,14 +49,17 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      * Map of handler names to authentication successes.
      */
     private final Map<String, AuthenticationHandlerExecutionResult> successes = new LinkedHashMap<>(MAP_SIZE);
+
     /**
      * Map of handler names to authentication failures.
      */
     private final Map<String, Throwable> failures = new LinkedHashMap<>(MAP_SIZE);
+
     /**
      * Authenticated principal.
      */
     private Principal principal;
+
     /**
      * Authentication date.
      */
@@ -106,18 +109,44 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
         return new DefaultAuthenticationBuilder();
     }
 
+    /**
+     * Factory method.
+     *
+     * @param principal           principal.
+     * @param principalFactory    principalFactory.
+     * @param principalAttributes principalAttributes.
+     * @param service             service.
+     * @param registeredService   registeredService.
+     * @param authentication      authentication.
+     * @return AuthenticationBuilder new AuthenticationBuilder instance.
+     */
+    public static AuthenticationBuilder of(final Principal principal,
+        final PrincipalFactory principalFactory,
+        final Map<String, List<Object>> principalAttributes,
+        final Service service,
+        final RegisteredService registeredService,
+        final Authentication authentication) {
+
+        val principalId = registeredService.getUsernameAttributeProvider().resolveUsername(principal, service, registeredService);
+        val newPrincipal = principalFactory.createPrincipal(principalId, principalAttributes);
+        return DefaultAuthenticationBuilder.newInstance(authentication).setPrincipal(newPrincipal);
+    }
+
     @Override
-    public AuthenticationBuilder setWarnings(final List<MessageDescriptor> warning) {
-        this.warnings.clear();
-        this.warnings.addAll(warning);
+    public AuthenticationBuilder setPrincipal(final Principal p) {
+        this.principal = p;
         return this;
     }
 
     @Override
-    public AuthenticationBuilder setAuthenticationDate(final ZonedDateTime d) {
-        if (d != null) {
-            this.authenticationDate = d;
-        }
+    public AuthenticationBuilder addCredentials(final List<CredentialMetaData> credentials) {
+        this.credentials.addAll(credentials);
+        return this;
+    }
+
+    @Override
+    public AuthenticationBuilder addCredential(final CredentialMetaData credential) {
+        this.credentials.add(credential);
         return this;
     }
 
@@ -134,32 +163,87 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     }
 
     @Override
-    public AuthenticationBuilder addCredentials(final List<CredentialMetaData> credentials) {
-        this.credentials.addAll(credentials);
+    public AuthenticationBuilder setWarnings(final List<MessageDescriptor> warning) {
+        this.warnings.clear();
+        this.warnings.addAll(warning);
         return this;
     }
 
     @Override
-    public AuthenticationBuilder setPrincipal(final Principal p) {
-        this.principal = p;
-        return this;
-    }
-
-    /**
-     * Sets the list of metadata about credentials presented for authentication.
-     *
-     * @param credentials Non-null list of credential metadata.
-     * @return This builder instance.
-     */
-    public AuthenticationBuilder setCredentials(final @NonNull List<CredentialMetaData> credentials) {
-        this.credentials.clear();
-        this.credentials.addAll(credentials);
+    public AuthenticationBuilder addAttribute(final String key, final List<Object> value) {
+        this.attributes.put(key, value);
         return this;
     }
 
     @Override
-    public AuthenticationBuilder addCredential(final CredentialMetaData credential) {
-        this.credentials.add(credential);
+    public AuthenticationBuilder addAttribute(final String key, final Object value) {
+        return addAttribute(key, CollectionUtils.toCollection(value, ArrayList.class));
+    }
+
+    @Override
+    public AuthenticationBuilder setSuccesses(final @NonNull Map<String, AuthenticationHandlerExecutionResult> successes) {
+        this.successes.clear();
+        return addSuccesses(successes);
+    }
+
+    @Override
+    public AuthenticationBuilder addSuccesses(final @NonNull Map<String, AuthenticationHandlerExecutionResult> successes) {
+        if (successes != null) {
+            successes.forEach(this::addSuccess);
+        }
+        return this;
+    }
+
+    @Override
+    public AuthenticationBuilder addFailures(final @NonNull Map<String, Throwable> failures) {
+        if (failures != null) {
+            failures.forEach(this::addFailure);
+        }
+        return this;
+    }
+
+    @Override
+    public AuthenticationBuilder addSuccess(final String key, final AuthenticationHandlerExecutionResult value) {
+        LOGGER.trace("Recording authentication handler result success under key [{}]", key);
+        if (this.successes.containsKey(key)) {
+            LOGGER.trace("Key mapped to authentication handler result [{}] is already recorded in the list of successful attempts. Overriding...",
+                key);
+        }
+        this.successes.put(key, value);
+        return this;
+    }
+
+    @Override
+    public AuthenticationBuilder setAuthenticationDate(final ZonedDateTime d) {
+        if (d != null) {
+            this.authenticationDate = d;
+        }
+        return this;
+    }
+
+    @Override
+    public Authentication build() {
+        return new DefaultAuthentication(this.authenticationDate, this.credentials, this.principal,
+            this.attributes, this.successes, this.failures, this.warnings);
+    }
+
+    @Override
+    public AuthenticationBuilder setFailures(final @NonNull Map<String, Throwable> failures) {
+        this.failures.clear();
+        return addFailures(failures);
+    }
+
+    @Override
+    public AuthenticationBuilder addFailure(final String key, final Throwable value) {
+        LOGGER.trace("Recording authentication handler failure under key [{}]", key);
+        if (this.successes.containsKey(key)) {
+            val newKey = key + System.currentTimeMillis();
+            LOGGER.trace("Key mapped to authentication handler failure [{}] is recorded in the list of failed attempts. Overriding with [{}]", key,
+                newKey);
+            this.failures.put(newKey, value);
+        } else {
+            this.failures.put(key, value);
+        }
         return this;
     }
 
@@ -196,95 +280,15 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
         return false;
     }
 
-    @Override
-    public AuthenticationBuilder addAttribute(final String key, final List<Object> value) {
-        this.attributes.put(key, value);
-        return this;
-    }
-
-    @Override
-    public AuthenticationBuilder addAttribute(final String key, final Object value) {
-        return addAttribute(key, CollectionUtils.toCollection(value, ArrayList.class));
-    }
-
-    @Override
-    public AuthenticationBuilder setSuccesses(final @NonNull Map<String, AuthenticationHandlerExecutionResult> successes) {
-        this.successes.clear();
-        return addSuccesses(successes);
-    }
-
-    @Override
-    public AuthenticationBuilder addSuccesses(final @NonNull Map<String, AuthenticationHandlerExecutionResult> successes) {
-        if (successes != null) {
-            successes.forEach(this::addSuccess);
-        }
-        return this;
-    }
-
-    @Override
-    public AuthenticationBuilder addSuccess(final String key, final AuthenticationHandlerExecutionResult value) {
-        LOGGER.trace("Recording authentication handler result success under key [{}]", key);
-        if (this.successes.containsKey(key)) {
-            LOGGER.trace("Key mapped to authentication handler result [{}] is already recorded in the list of successful attempts. Overriding...", key);
-        }
-        this.successes.put(key, value);
-        return this;
-    }
-
-
-    @Override
-    public AuthenticationBuilder setFailures(final @NonNull Map<String, Throwable> failures) {
-        this.failures.clear();
-        return addFailures(failures);
-    }
-
-    @Override
-    public AuthenticationBuilder addFailures(final @NonNull Map<String, Throwable> failures) {
-        if (failures != null) {
-            failures.forEach(this::addFailure);
-        }
-        return this;
-    }
-
-    @Override
-    public AuthenticationBuilder addFailure(final String key, final Throwable value) {
-        LOGGER.trace("Recording authentication handler failure under key [{}]", key);
-        if (this.successes.containsKey(key)) {
-            val newKey = key + System.currentTimeMillis();
-            LOGGER.trace("Key mapped to authentication handler failure [{}] is recorded in the list of failed attempts. Overriding with [{}]", key, newKey);
-            this.failures.put(newKey, value);
-        } else {
-            this.failures.put(key, value);
-        }
-        return this;
-    }
-
-    @Override
-    public Authentication build() {
-        return new DefaultAuthentication(this.authenticationDate, this.credentials, this.principal,
-            this.attributes, this.successes, this.failures, this.warnings);
-    }
-
     /**
-     * Factory method.
+     * Sets the list of metadata about credentials presented for authentication.
      *
-     * @param principal           principal.
-     * @param principalFactory    principalFactory.
-     * @param principalAttributes principalAttributes.
-     * @param service             service.
-     * @param registeredService   registeredService.
-     * @param authentication      authentication.
-     * @return AuthenticationBuilder new AuthenticationBuilder instance.
+     * @param credentials Non-null list of credential metadata.
+     * @return This builder instance.
      */
-    public static AuthenticationBuilder of(final Principal principal,
-                                           final PrincipalFactory principalFactory,
-                                           final Map<String, List<Object>> principalAttributes,
-                                           final Service service,
-                                           final RegisteredService registeredService,
-                                           final Authentication authentication) {
-
-        val principalId = registeredService.getUsernameAttributeProvider().resolveUsername(principal, service, registeredService);
-        val newPrincipal = principalFactory.createPrincipal(principalId, principalAttributes);
-        return DefaultAuthenticationBuilder.newInstance(authentication).setPrincipal(newPrincipal);
+    public AuthenticationBuilder setCredentials(final @NonNull List<CredentialMetaData> credentials) {
+        this.credentials.clear();
+        this.credentials.addAll(credentials);
+        return this;
     }
 }

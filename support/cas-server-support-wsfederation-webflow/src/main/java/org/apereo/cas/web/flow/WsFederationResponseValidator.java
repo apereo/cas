@@ -1,11 +1,11 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.support.wsfederation.WsFederationHelper;
 import org.apereo.cas.support.wsfederation.web.WsFederationCookieManager;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -27,11 +27,17 @@ import java.util.Collection;
 @Slf4j
 @RequiredArgsConstructor
 public class WsFederationResponseValidator {
-    private static final String WRESULT = "wresult";
+    /**
+     * {@code wresult} parameter.
+     */
+    public static final String WRESULT = "wresult";
 
     private final WsFederationHelper wsFederationHelper;
+
     private final Collection<WsFederationConfiguration> configurations;
+
     private final AuthenticationSystemSupport authenticationSystemSupport;
+
     private final WsFederationCookieManager wsFederationCookieManager;
 
     /**
@@ -52,7 +58,7 @@ public class WsFederationResponseValidator {
         }
         LOGGER.debug("Attempting to create an assertion from the token parameter");
         val rsToken = wsFederationHelper.getRequestSecurityTokenFromResult(wResult);
-        val assertion = wsFederationHelper.buildAndVerifyAssertion(rsToken, configurations);
+        val assertion = wsFederationHelper.buildAndVerifyAssertion(rsToken, configurations, service);
         if (assertion == null) {
             LOGGER.error("Could not validate assertion via parsing the token from [{}]", WRESULT);
             throw new IllegalArgumentException("Could not validate assertion via the provided token");
@@ -81,7 +87,7 @@ public class WsFederationResponseValidator {
                 throw new IllegalArgumentException("Could not extract and identify credentials");
             }
 
-            if (credential != null && credential.isValid(rpId, configuration.getIdentityProviderIdentifier(), configuration.getTolerance())) {
+            if (credential.isValid(rpId, configuration.getIdentityProviderIdentifier(), configuration.getTolerance())) {
                 val currentAttributes = credential.getAttributes();
                 LOGGER.debug("Validated assertion for the created credential successfully and located attributes [{}]", currentAttributes);
                 if (configuration.getAttributeMutator() != null) {
@@ -95,7 +101,7 @@ public class WsFederationResponseValidator {
                     rpId, configuration.getIdentityProviderIdentifier());
                 throw new IllegalArgumentException("Could not validate the provided assertion");
             }
-            context.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, service);
+            WebUtils.putServiceIntoFlowScope(context, service);
             LOGGER.debug("Creating final authentication result based on the given credential");
             val authenticationResult = this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
             WebUtils.putAuthenticationResult(authenticationResult, context);
@@ -105,7 +111,7 @@ public class WsFederationResponseValidator {
 
             LOGGER.info("Token validated and new [{}] created: [{}]", credential.getClass().getName(), credential);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             throw e;
         }
     }

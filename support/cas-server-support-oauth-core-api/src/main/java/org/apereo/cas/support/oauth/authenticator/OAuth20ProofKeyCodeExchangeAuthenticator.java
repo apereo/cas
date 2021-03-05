@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.WebContext;
+import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.exception.CredentialsException;
 
@@ -48,11 +49,13 @@ public class OAuth20ProofKeyCodeExchangeAuthenticator extends OAuth20ClientIdCli
 
     @Override
     protected void validateCredentials(final UsernamePasswordCredentials credentials,
-                                       final OAuthRegisteredService registeredService, final WebContext context) {
-        val clientSecret = OAuth20Utils.getClientIdAndClientSecret(context).getRight();
+                                       final OAuthRegisteredService registeredService,
+                                       final WebContext context,
+                                       final SessionStore sessionStore) {
+        val clientSecret = OAuth20Utils.getClientIdAndClientSecret(context, sessionStore).getRight();
 
         if (!OAuth20Utils.checkClientSecret(registeredService, clientSecret, getRegisteredServiceCipherExecutor())) {
-            throw new CredentialsException("Client Credentials provided is not valid for registered service: " + registeredService.getName());
+            throw new CredentialsException("Client Credentials provided is not valid for service: " + registeredService.getName());
         }
 
         val codeVerifier = context.getRequestParameter(OAuth20Constants.CODE_VERIFIER)

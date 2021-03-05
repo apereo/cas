@@ -52,7 +52,7 @@ public class MultifactorAuthenticationTrustUtils {
      * Is multifactor authentication trusted in scope boolean.
      *
      * @param requestContext the request context
-     * @return the boolean
+     * @return true/false
      */
     public static boolean isMultifactorAuthenticationTrustedInScope(final RequestContext requestContext) {
         return requestContext.getFlashScope().contains(

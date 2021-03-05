@@ -3,7 +3,7 @@ layout: default
 title: CAS - CAS Protocol
 category: Protocols
 ---
-
+{% include variables.html %}
 
 # CAS Protocol
 
@@ -11,7 +11,7 @@ The CAS protocol is a simple and powerful ticket-based protocol. The complete pr
 
 It involves one or many clients and one server. Clients are embedded in *CASified* applications (called "CAS services") whereas the CAS server is a standalone component:
 
-- The [CAS server](../installation/Configuring-Authentication-Components.html) is responsible for authenticating users and granting accesses to applications
+- The [CAS server](../authentication/Configuring-Authentication-Components.html) is responsible for authenticating users and granting accesses to applications
 - The [CAS clients](../integration/CAS-Clients.html) protect the CAS applications and retrieve the identity of the granted users from the CAS server.
 
 The key concepts are:

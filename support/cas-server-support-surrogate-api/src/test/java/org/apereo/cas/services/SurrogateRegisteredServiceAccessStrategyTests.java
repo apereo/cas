@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Tag("RegisteredService")
 public class SurrogateRegisteredServiceAccessStrategyTests {
     @Test
     public void verifySurrogateDisabled() {
@@ -29,6 +31,17 @@ public class SurrogateRegisteredServiceAccessStrategyTests {
         val a = new SurrogateRegisteredServiceAccessStrategy();
         a.setSurrogateEnabled(true);
         a.setSurrogateRequiredAttributes(CollectionUtils.wrap("surrogateA", "surrogateV"));
+        val result = a.doPrincipalAttributesAllowServiceAccess("casuser",
+            CollectionUtils.wrap(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED, true));
+        assertFalse(result);
+    }
+
+    @Test
+    public void verifySurrogateAttributesNotAvail() {
+        val a = new SurrogateRegisteredServiceAccessStrategy();
+        a.setSurrogateEnabled(true);
+        a.setSurrogateRequiredAttributes(CollectionUtils.wrap("surrogateA", "surrogateV",
+            "surrogateB", "surrogateZ"));
         val result = a.doPrincipalAttributesAllowServiceAccess("casuser",
             CollectionUtils.wrap(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED, true));
         assertFalse(result);

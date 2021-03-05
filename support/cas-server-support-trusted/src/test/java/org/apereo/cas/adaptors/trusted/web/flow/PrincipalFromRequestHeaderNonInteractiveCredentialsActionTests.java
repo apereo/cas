@@ -17,7 +17,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
 
 import java.security.Principal;
@@ -31,12 +30,12 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("Webflow")
-@TestPropertySource(properties = " cas.authn.adaptive.rejectIpAddresses=1.2.3.4")
+@Tag("WebflowActions")
+@TestPropertySource(properties = "cas.authn.adaptive.policy.reject-ip-addresses=1.2.3.4")
 public class PrincipalFromRequestHeaderNonInteractiveCredentialsActionTests extends BaseNonInteractiveCredentialsActionTests {
     @Autowired
     @Qualifier("principalFromRemoteHeaderPrincipalAction")
-    private Action action;
+    private PrincipalFromRequestExtractorAction action;
 
     @Test
     public void verifyRemoteUserExists() throws Exception {
@@ -64,7 +63,7 @@ public class PrincipalFromRequestHeaderNonInteractiveCredentialsActionTests exte
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         request.setRemoteUser("xyz");
-        request.addParameter(casProperties.getAuthn().getMfa().getRequestParameter(), "mfa-whatever");
+        request.addParameter(casProperties.getAuthn().getMfa().getTriggers().getHttp().getRequestParameter(), "mfa-whatever");
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
         assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, this.action.execute(context).getId());
     }
@@ -81,7 +80,7 @@ public class PrincipalFromRequestHeaderNonInteractiveCredentialsActionTests exte
         request.addParameter("geolocation", "1000,1000,1000,1000");
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
 
-        request.addParameter(casProperties.getAuthn().getMfa().getRequestParameter(), "mfa-whatever");
+        request.addParameter(casProperties.getAuthn().getMfa().getTriggers().getHttp().getRequestParameter(), "mfa-whatever");
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
         assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, this.action.execute(context).getId());
     }

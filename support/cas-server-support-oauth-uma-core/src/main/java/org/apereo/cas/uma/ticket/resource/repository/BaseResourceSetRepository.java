@@ -76,7 +76,7 @@ public abstract class BaseResourceSetRepository implements ResourceSetRepository
      * Validate resource set scopes.
      *
      * @param rs the rs
-     * @return the boolean
+     * @return true/false
      */
     protected boolean validateResourceSetScopes(final ResourceSet rs) {
         if (rs.getPolicies() == null || rs.getPolicies().isEmpty()) {

@@ -1,7 +1,9 @@
 package org.apereo.cas.monitor;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.Status;
 
@@ -16,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Marvin S. Addison
  * @since 3.5.0
  */
+@Tag("Metrics")
 public class PoolHealthIndicatorTests {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
@@ -36,9 +39,12 @@ public class PoolHealthIndicatorTests {
             protected int getActiveCount() {
                 return 2;
             }
+
         };
         val health = monitor.health();
         assertEquals(health.getStatus(), Status.UP);
+
+        assertAll(((DisposableBean) monitor)::destroy);
     }
 
     @Test
@@ -62,6 +68,8 @@ public class PoolHealthIndicatorTests {
         };
         val health = monitor.health();
         assertEquals(Status.DOWN, health.getStatus());
+
+        assertAll(((DisposableBean) monitor)::destroy);
     }
 
     @Test
@@ -84,5 +92,6 @@ public class PoolHealthIndicatorTests {
         };
         val health = monitor.health();
         assertEquals(health.getStatus(), Status.OUT_OF_SERVICE);
+        assertAll(((DisposableBean) monitor)::destroy);
     }
 }

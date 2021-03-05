@@ -1,11 +1,13 @@
 package org.apereo.cas.pm;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.pm.config.PasswordManagementConfiguration;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -25,14 +27,14 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     PasswordManagementConfiguration.class,
     MailSenderAutoConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasCoreUtilConfiguration.class
 }, properties = {
-    "cas.authn.pm.enabled=true",
-    "cas.authn.pm.history.enabled=true",
-    "cas.authn.pm.policyPattern=^Th!.+{8,10}",
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
+    "cas.authn.pm.core.enabled=true",
+    "cas.authn.pm.history.core.enabled=true",
+    "cas.authn.pm.core.policy-pattern=^Th!.+{8,10}"
 })
+@Tag("PasswordOps")
 public class DefaultPasswordValidationServiceTests {
     @Autowired
     @Qualifier("passwordValidationService")

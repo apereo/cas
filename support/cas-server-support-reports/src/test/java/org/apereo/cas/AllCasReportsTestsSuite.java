@@ -1,13 +1,16 @@
 package org.apereo.cas;
 
 import org.apereo.cas.web.report.AuditLogEndpointTests;
-import org.apereo.cas.web.report.CasApplicationContextReloadEndpointTests;
 import org.apereo.cas.web.report.CasInfoEndpointContributorTests;
 import org.apereo.cas.web.report.CasReleaseAttributesReportEndpointTests;
 import org.apereo.cas.web.report.CasResolveAttributesReportEndpointTests;
 import org.apereo.cas.web.report.ExportRegisteredServicesEndpointTests;
+import org.apereo.cas.web.report.ImportRegisteredServicesEndpointTests;
 import org.apereo.cas.web.report.LoggingConfigurationEndpointTests;
+import org.apereo.cas.web.report.RegisteredAuthenticationHandlersEndpointTests;
+import org.apereo.cas.web.report.RegisteredAuthenticationPoliciesEndpointTests;
 import org.apereo.cas.web.report.RegisteredServicesEndpointTests;
+import org.apereo.cas.web.report.SingleSignOnSessionStatusEndpointTests;
 import org.apereo.cas.web.report.SingleSignOnSessionsEndpointTests;
 import org.apereo.cas.web.report.SpringWebflowEndpointTests;
 import org.apereo.cas.web.report.StatisticsEndpointTests;
@@ -26,15 +29,18 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     AuditLogEndpointTests.class,
+    SingleSignOnSessionStatusEndpointTests.class,
     RegisteredServicesEndpointTests.class,
+    RegisteredAuthenticationHandlersEndpointTests.class,
     StatusEndpointTests.class,
+    ImportRegisteredServicesEndpointTests.class,
     StatusEndpointWithHealthTests.class,
     StatisticsEndpointTests.class,
-    CasApplicationContextReloadEndpointTests.class,
     SingleSignOnSessionsEndpointTests.class,
     SpringWebflowEndpointTests.class,
     LoggingConfigurationEndpointTests.class,
     CasInfoEndpointContributorTests.class,
+    RegisteredAuthenticationPoliciesEndpointTests.class,
     CasResolveAttributesReportEndpointTests.class,
     CasReleaseAttributesReportEndpointTests.class,
     ExportRegisteredServicesEndpointTests.class

@@ -4,12 +4,15 @@ title: CAS - Webflow Customization
 category: Webflow Management
 ---
 
+{% include variables.html %}
+
 # Webflow Customization
 
 CAS uses [Spring Webflow](http://projects.spring.io/spring-webflow) to do *script* processing of login and logout protocols.
 Spring Web Flow builds on Spring MVC and allows implementing the "flows" of a web application. A flow encapsulates a sequence
 of steps that guide a user through the execution of some business task. It spans multiple HTTP requests, has state, deals with
- transactional data, is reusable, and may be dynamic and long-running in nature. Each flow may contain among many other settings the following major elements:
+ transactional data, is reusable, and may be dynamic and long-running in nature. Each 
+flow may contain among many other settings the following major elements:
 
 - Actions: components that describe an executable task and return back a result
 - Transitions: Routing the flow from one state to another; Transitions may be global to the entire flow.
@@ -17,7 +20,11 @@ of steps that guide a user through the execution of some business task. It spans
 - Decisions: Components that conditionally route to other areas of flow and can make logical decisions
 
 Spring Web Flow presents CAS with a pluggable architecture where custom actions, views and decisions may be injected into the
-flow to account for additional use cases and processes. Note that <strong>to customize the webflow, one must possess a reasonable level of understanding of the webflow's internals and injection policies</strong>. The intention of this document is NOT to describe Spring Web Flow, but merely to demonstrate how the framework is used by CAS to carry out various aspects of the protocol and business logic execution.
+flow to account for additional use cases and processes. Note that <strong>to customize the 
+webflow, one must possess a reasonable level of understanding of the webflow's internals 
+and injection policies</strong>. The intention of this document is NOT to describe 
+Spring Web Flow, but merely to demonstrate how the framework is used by CAS to 
+carry out various aspects of the protocol and business logic execution.
 
 ## Webflow Session
 
@@ -31,9 +38,10 @@ and the module automatically takes care of all required changes. While this is t
 you may want to manually handle all such changes. For doing so, you will need to disable the CAS auto-configuration
 of the webflow.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#spring-webflow).
+{% include casproperties.html properties="cas.webflow.auto-configuration." %}
 
-<div class="alert alert-warning"><strong>Achtung, liebe Leser!</strong><p>Only attempt to 
+
+<div class="alert alert-warning"><strong>Note</strong><p>Only attempt to 
 modify the Spring webflow configuration files by hand when/if absolutely necessary and the
 change is rather minimal or decorative. Extensive modifications of the webflow, if not done carefully
 may severely complicate your deployment and future upgrades. If reasonable, consider contributing or
@@ -68,7 +76,7 @@ sake of establishing an SSO session without logging in to any CAS-reliant servic
 As such, CAS optionally allows adopters to not bother to prompt for credentials when no target application is presented
 and instead presents a message when users visit CAS directly without specifying a service.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#global-sso-behavior).
+{% include casproperties.html properties="cas.sso." %}
 
 ## Acceptable Usage Policy
 
@@ -81,18 +89,22 @@ See [this guide](Webflow-Customization-Exceptions.html) for more info.
 
 ## Custom Settings
 
-All webflow components and CAS views have access to the entire bundle of CAS settings defined from a variety of configuration sources. This allows one to extend and modify any CAS view or webflow component using the variable `casProperties` to gain access to a specific setting. Remember that this syntax only allowed access to settings that are *owned* by CAS, noted by its very own prefix.
+All webflow components and CAS views have access to the entire bundle of CAS settings 
+defined from a variety of configuration sources. This allows one to extend and modify 
+any CAS view or webflow component using the variable `casProperties` to gain access to 
+a specific setting. Remember that this syntax only allowed access to settings 
+that are *owned* by CAS, noted by its very own prefix.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#custom-settings).
+{% include casproperties.html properties="cas.custom.properties" %}
 
 ## Troubleshooting
 
 To enable additional logging, modify the logging configuration file to add the following:
 
 ```xml
-<AsyncLogger name="org.springframework.webflow" level="debug" additivity="false">
+<Logger name="org.springframework.webflow" level="debug" additivity="false">
     <AppenderRef ref="casConsole"/>
     <AppenderRef ref="casFile"/>
-</AsyncLogger>
+</Logger>
 ```
 

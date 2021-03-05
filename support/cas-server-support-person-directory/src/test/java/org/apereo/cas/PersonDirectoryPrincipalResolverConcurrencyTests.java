@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -40,19 +41,20 @@ import static org.junit.jupiter.api.Assertions.*;
     CasPersonDirectoryConfiguration.class,
     CasCoreUtilConfiguration.class
 }, properties = {
-    "cas.authn.attributeRepository.stub.attributes.uid=cas",
-    "cas.authn.attributeRepository.stub.attributes.givenName=apereo-cas",
-    "cas.authn.attributeRepository.stub.attributes.phone=123456789",
+    "cas.authn.attribute-repository.stub.attributes.uid=cas",
+    "cas.authn.attribute-repository.stub.attributes.givenName=apereo-cas",
+    "cas.authn.attribute-repository.stub.attributes.phone=123456789",
 
-    "cas.authn.attributeRepository.json[0].location=classpath:/json-attribute-repository.json",
-    "cas.authn.attributeRepository.json[0].order=1",
+    "cas.authn.attribute-repository.json[0].location=classpath:/json-attribute-repository.json",
+    "cas.authn.attribute-repository.json[0].order=1",
 
-    "cas.authn.attributeRepository.groovy[0].location=classpath:/GroovyAttributeDao.groovy",
-    "cas.authn.attributeRepository.groovy[0].order=2",
+    "cas.authn.attribute-repository.groovy[0].location=classpath:/GroovyAttributeDao.groovy",
+    "cas.authn.attribute-repository.groovy[0].order=2",
 
-    "cas.authn.attributeRepository.aggregation=merge",
-    "cas.authn.attributeRepository.merger=multivalued"
+    "cas.authn.attribute-repository.core.aggregation=MERGE",
+    "cas.authn.attribute-repository.core.merger=MULTIVALUED"
 })
+@Tag("Attributes")
 public class PersonDirectoryPrincipalResolverConcurrencyTests {
 
     private static final int NUM_USERS = 100;
@@ -60,7 +62,7 @@ public class PersonDirectoryPrincipalResolverConcurrencyTests {
     private static final int EXECUTIONS_PER_USER = 1000;
 
     @Autowired
-    @Qualifier("attributeRepository")
+    @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
     private IPersonAttributeDao attributeRepository;
 
     @Autowired
@@ -102,11 +104,11 @@ public class PersonDirectoryPrincipalResolverConcurrencyTests {
             assertTrue(allExecutorThreadsReady.await(runnables.size() * 10, TimeUnit.MILLISECONDS),
                 "Timeout initializing threads! Perform long lasting initializations before passing runnables to assertConcurrent");
             afterInitBlocker.countDown();
-            assertTrue(allDone.await(maxTimeoutSeconds, TimeUnit.SECONDS), message + " timeout! More than " + maxTimeoutSeconds + " seconds");
+            assertTrue(allDone.await(maxTimeoutSeconds, TimeUnit.SECONDS), () -> message + " timeout! More than " + maxTimeoutSeconds + " seconds");
         } finally {
             threadPool.shutdownNow();
         }
-        assertTrue(exceptions.isEmpty(), message + " failed with exception(s)" + exceptions);
+        assertTrue(exceptions.isEmpty(), () -> message + " failed with exception(s)" + exceptions);
     }
 
     @BeforeEach
@@ -125,7 +127,7 @@ public class PersonDirectoryPrincipalResolverConcurrencyTests {
     @Test
     public void validatePersonDirConcurrency() throws Exception {
         val userList = new ArrayList<String>();
-        for (int i = 0; i < NUM_USERS; i++) {
+        for (var i = 0; i < NUM_USERS; i++) {
             userList.add("user_" + i);
         }
 
@@ -149,7 +151,7 @@ public class PersonDirectoryPrincipalResolverConcurrencyTests {
         @Override
         public void run() {
             val upc = new UsernamePasswordCredential(username, "password");
-            for (int i = 0; i < EXECUTIONS_PER_USER; i++) {
+            for (var i = 0; i < EXECUTIONS_PER_USER; i++) {
                 try {
                     val person = this.personDirectoryResolver.resolve(upc);
                     val attributes = person.getAttributes();
@@ -157,7 +159,7 @@ public class PersonDirectoryPrincipalResolverConcurrencyTests {
                     LOGGER.debug("Fetched person: [{}] [{}], last-name [{}]", attributes.get("uid"),
                         attributes.get("lastName"), attributes.get("nickname"));
                 } catch (final Exception e) {
-                    LOGGER.warn("Error getting person: {}", e.getMessage(), e);
+                    LOGGER.warn("Error getting person: [{}]", e.getMessage(), e);
                     throw e;
                 }
             }

@@ -1,10 +1,12 @@
 package org.apereo.cas.token;
 
+import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.nimbusds.jose.JOSEObjectType;
@@ -16,8 +18,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
 
@@ -40,7 +44,7 @@ import java.util.Optional;
 public class JwtBuilder {
     private static final int MAP_SIZE = 8;
 
-    private final String casSeverPrefix;
+    private final String issuer;
 
     private final CipherExecutor<Serializable, String> defaultTokenCipherExecutor;
 
@@ -62,7 +66,7 @@ public class JwtBuilder {
             try {
                 return JWTClaimsSet.parse(jwt);
             } catch (final Exception ex) {
-                LOGGER.error(e.getMessage(), ex);
+                LoggingUtils.error(LOGGER, ex);
                 throw new IllegalArgumentException("Unable to parse JWT");
             }
         }
@@ -76,7 +80,7 @@ public class JwtBuilder {
      * @return the jwt
      */
     public static String buildPlain(final JWTClaimsSet claimsSet,
-                                    final Optional<RegisteredService> registeredService) {
+        final Optional<RegisteredService> registeredService) {
         val header = new PlainHeader.Builder().type(JOSEObjectType.JWT);
         registeredService.ifPresent(svc ->
             header.customParam(RegisteredServiceCipherExecutor.CUSTOM_HEADER_REGISTERED_SERVICE_ID, svc.getId()));
@@ -124,7 +128,7 @@ public class JwtBuilder {
         val serviceAudience = payload.getServiceAudience();
         val claims = new JWTClaimsSet.Builder()
             .audience(serviceAudience)
-            .issuer(casSeverPrefix)
+            .issuer(StringUtils.defaultString(payload.getIssuer(), this.issuer))
             .jwtID(payload.getJwtId())
             .issueTime(payload.getIssueDate())
             .subject(payload.getSubject());
@@ -139,8 +143,7 @@ public class JwtBuilder {
         claims.expirationTime(payload.getValidUntilDate());
 
         val claimsSet = claims.build();
-        val object = claimsSet.toJSONObject();
-        val jwtJson = object.toJSONString();
+        val jwtJson = claimsSet.toString();
 
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Generated JWT [{}]", JsonValue.readJSON(jwtJson).toString(Stringify.FORMATTED));
@@ -173,7 +176,7 @@ public class JwtBuilder {
      * @return the registered service
      */
     protected RegisteredService locateRegisteredService(final String serviceAudience) {
-        return this.servicesManager.findServiceBy(serviceAudience);
+        return servicesManager.findServiceBy(new WebApplicationServiceFactory().createService(serviceAudience));
     }
 
     /**
@@ -181,6 +184,7 @@ public class JwtBuilder {
      */
     @Builder
     @Getter
+    @ToString
     public static class JwtRequest {
         private final String jwtId;
 
@@ -191,6 +195,8 @@ public class JwtBuilder {
         private final String subject;
 
         private final Date validUntilDate;
+
+        private final String issuer;
 
         @Builder.Default
         private final Map<String, List<Object>> attributes = new LinkedHashMap<>(MAP_SIZE);

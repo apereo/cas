@@ -9,12 +9,14 @@ import org.apereo.cas.util.MockWebServer;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.ehcache.UserManagedCache;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
 import org.ehcache.config.builders.UserManagedCacheBuilder;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -42,6 +44,7 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
  * @since 3.4.76
  */
 @Slf4j
+@Tag("X509")
 public class CRLDistributionPointRevocationCheckerTests extends BaseCRLRevocationCheckerTests {
 
     /**
@@ -57,7 +60,7 @@ public class CRLDistributionPointRevocationCheckerTests extends BaseCRLRevocatio
         final String crlFile,
         final GeneralSecurityException expected) throws IOException, InterruptedException {
 
-        val file = new File(System.getProperty("java.io.tmpdir"), "ca.crl");
+        val file = new File(FileUtils.getTempDirectory(), "ca.crl");
         val out = new FileOutputStream(file);
         IOUtils.copy(new ClassPathResource(crlFile).getInputStream(), out);
 
@@ -68,6 +71,7 @@ public class CRLDistributionPointRevocationCheckerTests extends BaseCRLRevocatio
         Thread.sleep(500);
 
         BaseCRLRevocationCheckerTests.checkCertificate(checker, certFiles, expected);
+        checker.close();
     }
 
     private static UserManagedCache<URI, byte[]> getCache(final int entries) {

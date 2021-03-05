@@ -30,11 +30,11 @@ public class AuthenticationAttributeMultifactorAuthenticationTriggerTests extend
     @Order(1)
     public void verifyOperationByProvider() {
         val props = new CasConfigurationProperties();
-        val mfa = props.getAuthn().getMfa();
+        val mfa = props.getAuthn().getMfa().getTriggers().getAuthentication();
         mfa.setGlobalAuthenticationAttributeNameTriggers("category");
         mfa.setGlobalAuthenticationAttributeValueRegex(".+object.*");
         val trigger = new AuthenticationAttributeMultifactorAuthenticationTrigger(props,
-            new DefaultMultifactorAuthenticationProviderResolver((providers, service, principal) -> providers.iterator().next()),
+            new DefaultMultifactorAuthenticationProviderResolver(),
             applicationContext);
         val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
         assertTrue(result.isPresent());
@@ -48,11 +48,11 @@ public class AuthenticationAttributeMultifactorAuthenticationTriggerTests extend
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext, otherProvider);
 
         val props = new CasConfigurationProperties();
-        val mfa = props.getAuthn().getMfa();
+        val mfa = props.getAuthn().getMfa().getTriggers().getAuthentication();
         mfa.setGlobalAuthenticationAttributeNameTriggers("mfa-mode");
         mfa.setGlobalAuthenticationAttributeValueRegex(otherProvider.getId());
         val trigger = new AuthenticationAttributeMultifactorAuthenticationTrigger(props,
-            new DefaultMultifactorAuthenticationProviderResolver((providers, service, principal) -> providers.iterator().next()),
+            new DefaultMultifactorAuthenticationProviderResolver(),
             applicationContext);
         val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
         assertTrue(result.isPresent());

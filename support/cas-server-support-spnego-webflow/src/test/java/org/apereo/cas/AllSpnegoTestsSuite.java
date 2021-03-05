@@ -1,9 +1,10 @@
 package org.apereo.cas;
 
+import org.apereo.cas.config.SpnegoConfigurationNtlmTests;
 import org.apereo.cas.web.flow.SpengoWebflowConfigurerTests;
 import org.apereo.cas.web.flow.SpnegoCredentialsActionTests;
 import org.apereo.cas.web.flow.SpnegoNegotiateCredentialsActionTests;
-import org.apereo.cas.web.flow.client.LdapContinuousIntegrationSpnegoKnownClientSystemsFilterActionTests;
+import org.apereo.cas.web.flow.client.LdapSpnegoKnownClientSystemsFilterActionTests;
 import org.apereo.cas.web.flow.client.SpnegoKnownClientSystemsFilterActionTests;
 
 import org.junit.platform.runner.JUnitPlatform;
@@ -18,9 +19,10 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     SpnegoKnownClientSystemsFilterActionTests.class,
-    LdapContinuousIntegrationSpnegoKnownClientSystemsFilterActionTests.class,
+    LdapSpnegoKnownClientSystemsFilterActionTests.class,
     SpnegoNegotiateCredentialsActionTests.class,
     SpengoWebflowConfigurerTests.class,
+    SpnegoConfigurationNtlmTests.class,
     SpnegoCredentialsActionTests.class
 })
 @RunWith(JUnitPlatform.class)

@@ -1,9 +1,11 @@
 package org.apereo.cas.aup;
 
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +32,13 @@ public class JdbcAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
 
     private final transient JdbcTemplate jdbcTemplate;
 
+    /**
+     * Instantiates a new Jdbc acceptable usage policy repository.
+     *
+     * @param ticketRegistrySupport the ticket registry support
+     * @param aupProperties         the aup properties
+     * @param dataSource            the data source
+     */
     public JdbcAcceptableUsagePolicyRepository(final TicketRegistrySupport ticketRegistrySupport,
                                                final AcceptableUsagePolicyProperties aupProperties,
                                                final DataSource dataSource) {
@@ -41,16 +50,17 @@ public class JdbcAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
     public boolean submit(final RequestContext requestContext, final Credential credential) {
         try {
             val jdbc = aupProperties.getJdbc();
-            var aupColumnName = aupProperties.getAupAttributeName();
+            var aupColumnName = aupProperties.getCore().getAupAttributeName();
             if (StringUtils.isNotBlank(jdbc.getAupColumn())) {
                 aupColumnName = jdbc.getAupColumn();
             }
-            val sql = String.format(jdbc.getSqlUpdateAUP(), jdbc.getTableName(), aupColumnName, jdbc.getPrincipalIdColumn());
-            val principalId = determinePrincipalId(requestContext, credential);
+            val sql = String.format(jdbc.getSqlUpdate(), jdbc.getTableName(), aupColumnName, jdbc.getPrincipalIdColumn());
+            val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
+            val principalId = determinePrincipalId(principal);
             LOGGER.debug("Executing update query [{}] for principal [{}]", sql, principalId);
             return this.jdbcTemplate.update(sql, principalId) > 0;
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }
@@ -58,15 +68,13 @@ public class JdbcAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
     /**
      * Extracts principal ID from a principal attribute or the provided credentials.
      *
-     * @param requestContext the context
-     * @param credential     the credential
+     * @param principal the principal
      * @return the principal ID to update the AUP setting in the database for
      */
-    protected String determinePrincipalId(final RequestContext requestContext, final Credential credential) {
+    protected String determinePrincipalId(final Principal principal) {
         if (StringUtils.isBlank(aupProperties.getJdbc().getPrincipalIdAttribute())) {
-            return credential.getId();
+            return principal.getId();
         }
-        val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
         val pIdAttribName = aupProperties.getJdbc().getPrincipalIdAttribute();
         if (!principal.getAttributes().containsKey(pIdAttribName)) {
             throw new IllegalStateException("Principal attribute [" + pIdAttribName + "] cannot be found");

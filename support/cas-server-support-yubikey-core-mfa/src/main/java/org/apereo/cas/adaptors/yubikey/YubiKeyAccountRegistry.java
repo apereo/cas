@@ -19,30 +19,29 @@ import java.util.Optional;
 public interface YubiKeyAccountRegistry {
     /**
      * Determines whether the registered
-     * YubiKey public id is allowed for the {@code uid} received.
+     * YubiKey public id is allowed for the {@code username} received.
      *
-     * @param uid             user id
+     * @param username        user id
      * @param yubikeyPublicId public id of the yubi id
-     * @return true if the public id is allowed and registered for the uid.
+     * @return true if the public id is allowed and registered for the username.
      */
-    boolean isYubiKeyRegisteredFor(String uid, String yubikeyPublicId);
+    boolean isYubiKeyRegisteredFor(String username, String yubikeyPublicId);
 
     /**
      * Is yubi key registered for boolean.
      *
-     * @param uid the uid
-     * @return the boolean
+     * @param username the username
+     * @return true/false
      */
-    boolean isYubiKeyRegisteredFor(String uid);
+    boolean isYubiKeyRegisteredFor(String username);
 
     /**
      * Register account/device.
      *
-     * @param uid   the uid
-     * @param token the yubikey token
-     * @return the boolean
+     * @param request the request
+     * @return true /false
      */
-    boolean registerAccountFor(String uid, String token);
+    boolean registerAccountFor(YubiKeyDeviceRegistrationRequest request);
 
     /**
      * Gets accounts for all users.
@@ -54,10 +53,10 @@ public interface YubiKeyAccountRegistry {
     /**
      * Gets account.
      *
-     * @param uid the uid
+     * @param username the username
      * @return the account
      */
-    Optional<? extends YubiKeyAccount> getAccount(String uid);
+    Optional<? extends YubiKeyAccount> getAccount(String username);
 
     /**
      * Gets account validator.
@@ -76,14 +75,29 @@ public interface YubiKeyAccountRegistry {
     /**
      * Delete.
      *
-     * @param uid the uid
+     * @param username the username
+     * @param deviceId the device id
      */
-    default void delete(final String uid) {
-    }
+    void delete(String username, long deviceId);
+
+    /**
+     * Delete.
+     *
+     * @param username the username
+     */
+    void delete(String username);
 
     /**
      * Delete all.
      */
-    default void deleteAll() {
+    void deleteAll();
+
+    /**
+     * Gets name.
+     *
+     * @return the name
+     */
+    default String getName() {
+        return getClass().getSimpleName();
     }
 }

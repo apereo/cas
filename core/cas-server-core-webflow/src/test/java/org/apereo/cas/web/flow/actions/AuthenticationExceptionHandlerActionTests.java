@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.authentication.CasWebflowExceptionHandler;
 import org.apereo.cas.web.flow.authentication.DefaultCasWebflowAbstractTicketExceptionHandler;
 import org.apereo.cas.web.flow.authentication.DefaultCasWebflowAuthenticationExceptionHandler;
@@ -18,6 +19,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.binding.message.DefaultMessageResolver;
 import org.springframework.binding.message.MessageContext;
+import org.springframework.webflow.core.collection.LocalAttributeMap;
+import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.security.auth.login.AccountLockedException;
@@ -36,7 +39,7 @@ import static org.mockito.Mockito.*;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@Tag("Webflow")
+@Tag("WebflowActions")
 public class AuthenticationExceptionHandlerActionTests {
 
     @Test
@@ -53,7 +56,7 @@ public class AuthenticationExceptionHandlerActionTests {
 
     @Test
     public void handleUnknownExceptionByDefault() {
-        val handler = new AuthenticationExceptionHandlerAction(getExceptionHandlers(new LinkedHashSet()));
+        val handler = new AuthenticationExceptionHandlerAction(getExceptionHandlers(new LinkedHashSet<>()));
         val req = getMockRequestContext();
         val map = new HashMap<String, Throwable>();
         map.put("unknown", new GeneralSecurityException());
@@ -62,8 +65,19 @@ public class AuthenticationExceptionHandlerActionTests {
     }
 
     @Test
+    public void handleExceptions() throws Exception {
+        val handler = new AuthenticationExceptionHandlerAction(getExceptionHandlers(new LinkedHashSet<>()));
+        val req = getMockRequestContext();
+        val event = new Event(this, CasWebflowConstants.TRANSITION_ID_ERROR,
+            new LocalAttributeMap<>(CasWebflowConstants.TRANSITION_ID_ERROR, new GeneralSecurityException()));
+        when(req.getCurrentEvent()).thenReturn(event);
+        val id = handler.execute(req);
+        assertEquals(CasWebflowExceptionHandler.UNKNOWN, id.getId());
+    }
+
+    @Test
     public void handleUnknownTicketExceptionByDefault() {
-        val handler = new AuthenticationExceptionHandlerAction(getExceptionHandlers(new LinkedHashSet()));
+        val handler = new AuthenticationExceptionHandlerAction(getExceptionHandlers(new LinkedHashSet<>()));
         val req = getMockRequestContext();
         val id = handler.handle(new InvalidTicketException("TGT"), req);
         assertEquals(CasWebflowExceptionHandler.UNKNOWN, id);

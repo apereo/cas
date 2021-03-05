@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("Webflow")
+@Tag("WebflowMfaActions")
 public class YubiKeyAccountCheckRegistrationActionTests {
     @Test
     public void verifyActionSuccess() throws Exception {
@@ -33,8 +33,7 @@ public class YubiKeyAccountCheckRegistrationActionTests {
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
-        val action =
-            new YubiKeyAccountCheckRegistrationAction(new OpenYubiKeyAccountRegistry(new AcceptAllYubiKeyAccountValidator()));
+        val action = new YubiKeyAccountCheckRegistrationAction(new OpenYubiKeyAccountRegistry(new AcceptAllYubiKeyAccountValidator()));
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
     }
 
@@ -48,7 +47,7 @@ public class YubiKeyAccountCheckRegistrationActionTests {
         WebUtils.putAuthentication(authentication, context);
         val registry = new ClosedYubiKeyAccountRegistry(new DenyAllYubiKeyAccountValidator());
         val action = new YubiKeyAccountCheckRegistrationAction(registry);
-        assertEquals("register", action.execute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_REGISTER, action.execute(context).getId());
 
     }
 }

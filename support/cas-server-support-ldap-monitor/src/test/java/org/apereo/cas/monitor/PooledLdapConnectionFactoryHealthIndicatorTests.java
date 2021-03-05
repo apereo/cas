@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.config.ListFactoryBean;
 import org.springframework.boot.actuate.health.CompositeHealthContributor;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.actuate.health.Status;
@@ -31,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class
 },
     properties = {
-        "cas.monitor.ldap[0].ldapUrl=ldap://localhost:10389",
+        "cas.monitor.ldap[0].ldap-url=ldap://localhost:10389",
         "cas.monitor.ldap[0].name=LDAP"
     })
 @Tag("Ldap")
@@ -41,13 +42,18 @@ public class PooledLdapConnectionFactoryHealthIndicatorTests {
     @Qualifier("pooledLdapConnectionFactoryHealthIndicator")
     private CompositeHealthContributor monitor;
 
+    @Autowired
+    @Qualifier("pooledLdapConnectionFactoryHealthIndicatorListFactoryBean")
+    private ListFactoryBean pooledLdapConnectionFactoryHealthIndicatorListFactoryBean;
+
     @Test
-    public void verifyObserve() {
+    public void verifyObserve() throws Exception {
         val results = monitor.stream()
             .map(it -> HealthIndicator.class.cast(it.getContributor()))
             .map(it -> it.health().getStatus())
             .collect(Collectors.toList());
         assertFalse(results.isEmpty());
         assertEquals(Status.UP, results.get(0));
+        pooledLdapConnectionFactoryHealthIndicatorListFactoryBean.destroy();
     }
 }

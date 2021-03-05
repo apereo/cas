@@ -1,10 +1,11 @@
 package org.apereo.cas.support.pac4j.authentication;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.DefaultAuthenticationTransaction;
+import org.apereo.cas.authentication.DefaultAuthenticationTransactionFactory;
 import org.apereo.cas.authentication.principal.ClientCredential;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 
@@ -16,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
+@Tag("Authentication")
 public class ClientAuthenticationMetaDataPopulatorTests {
     @Test
     public void verifySupports() {
@@ -31,7 +33,7 @@ public class ClientAuthenticationMetaDataPopulatorTests {
         val credentials = new ClientCredential(
             new UsernamePasswordCredentials("casuser", "pa$$"), "FacebookClient");
         val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
-        populator.populateAttributes(builder, DefaultAuthenticationTransaction.of(credentials));
+        populator.populateAttributes(builder, new DefaultAuthenticationTransactionFactory().newTransaction(credentials));
         val auth = builder.build();
         assertNotNull(auth.getAttributes().get(ClientCredential.AUTHENTICATION_ATTRIBUTE_CLIENT_NAME));
 

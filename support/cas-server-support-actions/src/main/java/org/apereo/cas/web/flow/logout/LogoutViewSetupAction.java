@@ -23,7 +23,8 @@ public class LogoutViewSetupAction extends AbstractLogoutAction {
     @Override
     protected Event doInternalExecute(final HttpServletRequest request, final HttpServletResponse response,
                                       final RequestContext context) {
-        WebUtils.putGeoLocationTrackingIntoFlowScope(context, casProperties.getEvents().isTrackGeolocation());
+        WebUtils.putGeoLocationTrackingIntoFlowScope(context,
+            casProperties.getEvents().getCore().isTrackGeolocation());
         return null;
     }
 }

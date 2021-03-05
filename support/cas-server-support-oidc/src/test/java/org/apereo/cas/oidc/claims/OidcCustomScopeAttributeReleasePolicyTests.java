@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 
 @TestPropertySource(
-    properties = "cas.authn.oidc.claims=sub,name,given_name,family_name,middle_name,preferred_username,email,mail,groups")
+    properties = "cas.authn.oidc.discovery.claims=sub,name,given_name,family_name,middle_name,preferred_username,email,mail,groups")
 @Tag("OIDC")
 public class OidcCustomScopeAttributeReleasePolicyTests extends AbstractOidcTests {
     @Test
@@ -42,6 +42,7 @@ public class OidcCustomScopeAttributeReleasePolicyTests extends AbstractOidcTest
             CoreAuthenticationTestUtils.getService(),
             CoreAuthenticationTestUtils.getRegisteredService());
         assertTrue(policy.getAllowedAttributes().stream().allMatch(releaseAttrs::containsKey));
+        assertTrue(policy.getAllowedAttributes().containsAll(policy.determineRequestedAttributeDefinitions()));
         assertEquals(releaseAttrs.get("groups"), List.of("admin", "user"));
     }
 }

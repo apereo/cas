@@ -41,9 +41,9 @@ public class X509TokenDelegationHandler implements TokenDelegationHandler {
 
         if (delegateTarget.getState() == ReceivedToken.STATE.VALID && delegateTarget.getPrincipal() != null) {
             response.setDelegationAllowed(true);
-            LOGGER.debug("Delegation is allowed for: [{}]", delegateTarget.getPrincipal());
+            LOGGER.debug("Delegation is allowed for [{}]", delegateTarget.getPrincipal());
         } else {
-            LOGGER.debug("Delegation is not allowed, as the token is invalid or the principal is null");
+            LOGGER.debug("Delegation is not allowed; token is invalid or the principal is undefined");
         }
         return response;
     }

@@ -4,16 +4,13 @@ title: CAS - Ignite Ticket Registry
 category: Ticketing
 ---
 
+{% include variables.html %}
+
 # Ignite Ticket Registry
+
 Ignite integration is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-ignite-ticket-registry</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-ignite-ticket-registry" %}
 
 This registry stores tickets in an [Ignite](http://ignite.apache.org/) instance.
 
@@ -25,13 +22,14 @@ Distributed caches are recommended for HA architectures since they offer fault t
 
 ## TLS Replication
 
-Ignite supports replication over TLS for distributed caches composed of two or more nodes. To learn more about TLS replication with Ignite,
+Ignite supports replication over TLS for distributed caches 
+composed of two or more nodes. To learn more about TLS replication with Ignite,
 [see this resource](https://apacheignite.readme.io/docs/ssltls).
 
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#ignite-ticket-registry).
+{% include casproperties.html properties="cas.ticket.registry.ignite" %}
 
 ## Troubleshooting
 

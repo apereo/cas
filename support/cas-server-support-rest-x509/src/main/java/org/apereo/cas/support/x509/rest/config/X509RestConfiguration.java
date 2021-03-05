@@ -13,13 +13,17 @@ import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 
 /**
+ * X509 Rest configuration class.
+ * 
  * @author Dmytro Fedonin
  * @since 5.1.0
  */
@@ -37,25 +41,30 @@ public class X509RestConfiguration {
     private ObjectProvider<X509CertificateExtractor> x509CertificateExtractor;
 
     @Bean
+    @ConditionalOnMissingBean(name = "x509RestMultipartBody")
     public RestHttpRequestCredentialFactory x509RestMultipartBody() {
         return new X509RestMultipartBodyCredentialFactory();
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "x509RestRequestHeader")
     public RestHttpRequestCredentialFactory x509RestRequestHeader() {
         return new X509RestHttpRequestHeaderCredentialFactory(x509CertificateExtractor.getObject());
     }
 
-    @ConditionalOnProperty(prefix = "cas.rest", name = "tlsClientAuth", havingValue = "true")
+    @ConditionalOnProperty(prefix = "cas.rest.x509", name = "tls-client-auth", havingValue = "true")
     @Bean
+    @RefreshScope
     public RestHttpRequestCredentialFactory x509RestTlsClientCert() {
         return new X509RestTlsClientCertCredentialFactory();
     }
 
     @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "x509RestHttpRequestCredentialFactoryConfigurer")
     public RestHttpRequestCredentialFactoryConfigurer x509RestHttpRequestCredentialFactoryConfigurer() {
         return factory -> {
-            val restProperties = casProperties.getRest();
+            val restProperties = casProperties.getRest().getX509();
             val extractor = x509CertificateExtractor.getObject();
             val headerAuth = restProperties.isHeaderAuth();
             val bodyAuth = restProperties.isBodyAuth();
@@ -72,7 +81,7 @@ public class X509RestConfiguration {
                     + "or \"bodyAuth\"");
             }
 
-            if (extractor != null && headerAuth) {
+            if (headerAuth) {
                 factory.registerCredentialFactory(x509RestRequestHeader());
             }
             if (bodyAuth) {

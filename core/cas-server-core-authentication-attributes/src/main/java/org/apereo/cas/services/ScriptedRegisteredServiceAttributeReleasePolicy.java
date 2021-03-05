@@ -14,7 +14,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -34,7 +33,7 @@ import java.util.regex.Matcher;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @Deprecated(since = "6.2.0")
 public class ScriptedRegisteredServiceAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
 
@@ -42,34 +41,27 @@ public class ScriptedRegisteredServiceAttributeReleasePolicy extends AbstractReg
 
     private String scriptFile;
 
-    private static Map<String, List<Object>> getAttributesFromInlineGroovyScript(final Map<String, List<Object>> attributes, final Matcher matcherInline) {
-        val script = matcherInline.group(1).trim();
-        val args = CollectionUtils.wrap("attributes", attributes, "logger", LOGGER);
-        val map = ScriptingUtils.executeGroovyScriptEngine(script, args, Map.class);
-        return ObjectUtils.defaultIfNull(map, new HashMap<>(0));
-    }
-
     @Override
     public Map<String, List<Object>> getAttributesInternal(final Principal principal, final Map<String, List<Object>> attributes,
-                                                     final RegisteredService service, final Service selectedService) {
-        try {
-            if (StringUtils.isBlank(this.scriptFile)) {
-                return new HashMap<>(0);
-            }
-            val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(this.scriptFile);
-            if (matcherInline.find()) {
-                return getAttributesFromInlineGroovyScript(attributes, matcherInline);
-            }
-            return getScriptedAttributesFromFile(attributes);
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+        final RegisteredService service, final Service selectedService) {
+        val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(this.scriptFile);
+        if (matcherInline.find()) {
+            return getAttributesFromInlineGroovyScript(attributes, matcherInline);
         }
-        return new HashMap<>(0);
+        return getScriptedAttributesFromFile(attributes);
     }
 
     private Map<String, List<Object>> getScriptedAttributesFromFile(final Map<String, List<Object>> attributes) {
         val args = new Object[]{attributes, LOGGER};
         val map = ScriptingUtils.executeScriptEngine(this.scriptFile, args, Map.class);
+        return ObjectUtils.defaultIfNull(map, new HashMap<>(0));
+    }
+
+    private static Map<String, List<Object>> getAttributesFromInlineGroovyScript(final Map<String, List<Object>> attributes,
+        final Matcher matcherInline) {
+        val script = matcherInline.group(1).trim();
+        val args = CollectionUtils.wrap("attributes", attributes, "logger", LOGGER);
+        val map = ScriptingUtils.executeGroovyScriptEngine(script, args, Map.class);
         return ObjectUtils.defaultIfNull(map, new HashMap<>(0));
     }
 }

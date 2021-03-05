@@ -3,6 +3,7 @@ layout: default
 title: CAS - OS Service Deployment
 category: Installation
 ---
+{% include variables.html %}
 
 # OS Service Deployment
 
@@ -13,7 +14,7 @@ servlet container whose configuration is [explained here](Configuring-Servlet-Co
 ## `init.d` Service
 
 If CAS is built and run as [a fully executable web application](Configuring-Servlet-Container.html), 
-then it can be used as an `init.d` service. Simply `symlink` the web application file to `init.d` 
+then it can be used as an `init.d` service. `symlink` the web application file to `init.d` 
 to support the standard `start`, `stop`, `restart` and `status` commands.
 
 The configuration built into CAS allows it to interact with the OS system configuration as such:
@@ -22,7 +23,7 @@ The configuration built into CAS allows it to interact with the OS system config
 - Track CAS web applications' PID using `/var/run/cas/cas.pid`
 - Write console logs to `/var/log/cas.log`
 
-To install CAS as an `init.d` service simply create a symlink:
+To install CAS as an `init.d` service create a symlink:
 
 ```bash
 sudo ln -s /path/to/cas.war /etc/init.d/cas

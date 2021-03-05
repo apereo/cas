@@ -26,7 +26,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-
 import java.util.List;
 
 /**
@@ -38,11 +37,11 @@ import java.util.List;
 @Configuration("jdbcPasswordHistoryManagementConfiguration")
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnProperty(prefix = "cas.authn.pm.history", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(prefix = "cas.authn.pm.history.core", name = "enabled", havingValue = "true")
 public class JdbcPasswordHistoryManagementConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Autowired
     @Qualifier("jdbcPasswordManagementDataSource")
     private ObjectProvider<DataSource> jdbcPasswordManagementDataSource;
@@ -66,11 +65,12 @@ public class JdbcPasswordHistoryManagementConfiguration {
     @Bean
     public LocalContainerEntityManagerFactoryBean passwordHistoryEntityManagerFactory() {
         val factory = jpaBeanFactory.getObject();
-        val ctx = new JpaConfigurationContext(
-            jpaPasswordHistoryVendorAdapter(),
-            "jpaPasswordHistoryContext",
-            jpaPasswordHistoryPackagesToScan(),
-            jdbcPasswordManagementDataSource.getObject());
+        val ctx = JpaConfigurationContext.builder()
+            .jpaVendorAdapter(jpaPasswordHistoryVendorAdapter())
+            .persistenceUnitName("jpaPasswordHistoryContext")
+            .dataSource(jdbcPasswordManagementDataSource.getObject())
+            .packagesToScan(jpaPasswordHistoryPackagesToScan())
+            .build();
         return factory.newEntityManagerFactoryBean(ctx, casProperties.getAuthn().getPm().getJdbc());
     }
 

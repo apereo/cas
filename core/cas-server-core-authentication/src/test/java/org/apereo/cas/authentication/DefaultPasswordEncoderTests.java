@@ -2,8 +2,10 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
+import org.apereo.cas.util.crypto.DefaultPasswordEncoder;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
@@ -17,6 +19,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Tag("PasswordOps")
 public class DefaultPasswordEncoderTests {
 
     @Test
@@ -58,4 +61,16 @@ public class DefaultPasswordEncoderTests {
         assertTrue(e.matches("asd123", "54d5cb2d332dbdb4850293caae4559ce88b65163f1ea5d4e4b3ac49d772ded14"));
     }
 
+    @Test
+    public void verifyBadInput() {
+        val encoder = new DefaultPasswordEncoder(null, null);
+        assertNull(encoder.encode(null));
+        assertNull(encoder.encode("password"));
+    }
+
+    @Test
+    public void verifyBadAlg() {
+        val encoder = new DefaultPasswordEncoder("BadAlgorithm", null);
+        assertNull(encoder.encode("password"));
+    }
 }

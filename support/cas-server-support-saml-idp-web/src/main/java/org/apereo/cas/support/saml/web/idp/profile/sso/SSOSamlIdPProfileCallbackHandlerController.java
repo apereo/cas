@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.web.idp.profile.sso;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.support.saml.SamlIdPConstants;
+import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlIdPProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurationContext;
@@ -15,6 +16,7 @@ import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.pac4j.core.context.JEEContext;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,29 +32,46 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPProfileHandlerController {
 
-    public SSOSamlIdPProfileCallbackHandlerController(final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext) {
-        super(samlProfileHandlerConfigurationContext);
+    public SSOSamlIdPProfileCallbackHandlerController(final SamlProfileHandlerConfigurationContext config) {
+        super(config);
+    }
+
+    private MessageContext bindRelayStateParameter(final HttpServletRequest request,
+                                                   final HttpServletResponse response) {
+        val messageContext = new MessageContext();
+        val context = new JEEContext(request, response);
+        val relayState = samlProfileHandlerConfigurationContext.getSessionStore()
+            .get(context, SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE).orElse(StringUtils.EMPTY).toString();
+        LOGGER.trace("Relay state is [{}]", relayState);
+        SAMLBindingSupport.setRelayState(messageContext, relayState);
+        return messageContext;
+    }
+
+    private Assertion validateRequestAndBuildCasAssertion(final HttpServletResponse response,
+                                                          final HttpServletRequest request,
+                                                          final Pair<AuthnRequest, MessageContext> pair) throws Exception {
+        val ticket = request.getParameter(CasProtocolConstants.PARAMETER_TICKET);
+        val validator = getSamlProfileHandlerConfigurationContext().getTicketValidator();
+        val serviceUrl = constructServiceUrl(request, response, pair);
+        LOGGER.trace("Created service url for validation: [{}]", serviceUrl);
+        val assertion = validator.validate(ticket, serviceUrl);
+        logCasValidationAssertion(assertion);
+        return assertion;
     }
 
     /**
      * Build authentication context pair pair.
      *
      * @param request      the request
+     * @param response     the response
      * @param authnRequest the authn request
      * @return the pair
      */
-    protected static Pair<AuthnRequest, MessageContext> buildAuthenticationContextPair(final HttpServletRequest request,
-                                                                                       final AuthnRequest authnRequest) {
-        val messageContext = bindRelayStateParameter(request);
+    protected Pair<AuthnRequest, MessageContext> buildAuthenticationContextPair(final HttpServletRequest request,
+                                                                                final HttpServletResponse response,
+                                                                                final AuthnRequest authnRequest) {
+        val messageContext = bindRelayStateParameter(request, response);
         return Pair.of(authnRequest, messageContext);
-    }
-
-    private static MessageContext bindRelayStateParameter(final HttpServletRequest request) {
-        val messageContext = new MessageContext();
-        val relayState = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE);
-        LOGGER.trace("Relay state is [{}]", relayState);
-        SAMLBindingSupport.setRelayState(messageContext, relayState);
-        return messageContext;
     }
 
     /**
@@ -65,8 +84,14 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
     @GetMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK)
     protected void handleCallbackProfileRequest(final HttpServletResponse response,
                                                 final HttpServletRequest request) throws Exception {
+        autoConfigureCookiePath(request);
+
         LOGGER.info("Received SAML callback profile request [{}]", request.getRequestURI());
-        val authnRequest = retrieveSamlAuthenticationRequestFromHttpRequest(request);
+        val authnRequest = SamlIdPUtils.retrieveSamlRequest(new JEEContext(request, response),
+                samlProfileHandlerConfigurationContext.getSessionStore(),
+            samlProfileHandlerConfigurationContext.getOpenSamlConfigBean(),
+            AuthnRequest.class);
+        
         if (authnRequest == null) {
             LOGGER.error("Can not validate the request because the original Authn request can not be found.");
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -75,29 +100,19 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
 
         val ticket = request.getParameter(CasProtocolConstants.PARAMETER_TICKET);
         if (StringUtils.isBlank(ticket)) {
-            LOGGER.error("Can not validate the request because no [{}] is provided via the request",
-                CasProtocolConstants.PARAMETER_TICKET);
+            LOGGER.error("Can not validate the request because no [{}] is provided via the request", CasProtocolConstants.PARAMETER_TICKET);
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return;
         }
 
-        val authenticationContext = buildAuthenticationContextPair(request, authnRequest);
+        val authenticationContext = buildAuthenticationContextPair(request, response, authnRequest);
         val assertion = validateRequestAndBuildCasAssertion(response, request, authenticationContext);
         val binding = determineProfileBinding(authenticationContext, assertion);
-        buildSamlResponse(response, request, authenticationContext, assertion, binding);
-    }
-
-    private Assertion validateRequestAndBuildCasAssertion(final HttpServletResponse response,
-                                                          final HttpServletRequest request,
-                                                          final Pair<AuthnRequest, MessageContext> pair) throws Exception {
-        val authnRequest = pair.getKey();
-        val ticket = request.getParameter(CasProtocolConstants.PARAMETER_TICKET);
-        getSamlProfileHandlerConfigurationContext().getTicketValidator().setRenew(authnRequest.isForceAuthn());
-        val serviceUrl = constructServiceUrl(request, response, pair);
-        LOGGER.trace("Created service url for validation: [{}]", serviceUrl);
-        val assertion = getSamlProfileHandlerConfigurationContext().getTicketValidator().validate(ticket, serviceUrl);
-        logCasValidationAssertion(assertion);
-        return assertion;
+        if (StringUtils.isBlank(binding)) {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        } else {
+            buildSamlResponse(response, request, authenticationContext, assertion, binding);
+        }
     }
 
     /**
@@ -121,7 +136,11 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
         val entityId = facade.getEntityId();
         LOGGER.debug("Checking metadata for [{}] to see if binding [{}] is supported", entityId, binding);
         val svc = facade.getAssertionConsumerService(binding);
-        LOGGER.debug("Binding [{}] is supported by [{}]", svc.getBinding(), entityId);
-        return binding;
+        if (svc != null) {
+            LOGGER.debug("Binding [{}] is supported by [{}]", svc.getBinding(), entityId);
+            return binding;
+        }
+        LOGGER.warn("Checking determine profile binding for [{}]", entityId);
+        return null;
     }
 }

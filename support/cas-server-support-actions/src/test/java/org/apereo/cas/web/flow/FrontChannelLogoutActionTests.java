@@ -2,10 +2,18 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.logout.DefaultLogoutExecutionPlan;
 import org.apereo.cas.logout.DefaultSingleLogoutMessageCreator;
+import org.apereo.cas.logout.DefaultSingleLogoutRequestContext;
+import org.apereo.cas.logout.LogoutExecutionPlan;
+import org.apereo.cas.logout.LogoutRequestStatus;
+import org.apereo.cas.logout.SingleLogoutExecutionRequest;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceMessageHandler;
+import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.services.RegisteredServiceLogoutType;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 import org.apereo.cas.web.SimpleUrlValidatorFactoryBean;
@@ -16,17 +24,18 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockServletContext;
+import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.core.collection.LocalAttributeMap;
-import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.test.MockFlowExecutionContext;
-import org.springframework.webflow.test.MockFlowExecutionKey;
+import org.springframework.webflow.execution.RequestContextHolder;
+import org.springframework.webflow.test.MockRequestContext;
 
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -35,53 +44,95 @@ import static org.mockito.Mockito.*;
  * @author Jerome Leleu
  * @since 4.0.0
  */
-@Tag("Webflow")
+@Tag("WebflowActions")
 public class FrontChannelLogoutActionTests {
 
-    private static final String FLOW_EXECUTION_KEY = "12234";
-
-    private FrontChannelLogoutAction frontChannelLogoutAction;
-
-    private RequestContext requestContext;
-
-    @Mock
-    private ServicesManager servicesManager;
-
-    public FrontChannelLogoutActionTests() {
-        MockitoAnnotations.initMocks(this);
-    }
+    private LogoutExecutionPlan logoutExecutionPlan;
 
     @BeforeEach
     public void onSetUp() {
         val validator = new SimpleUrlValidatorFactoryBean(false).getObject();
 
+        val servicesManager = mock(ServicesManager.class);
+        when(servicesManager.findServiceBy(any(Service.class))).thenReturn(RegisteredServiceTestUtils.getRegisteredService());
+
         val handler = new DefaultSingleLogoutServiceMessageHandler(new SimpleHttpClientFactoryBean().getObject(),
-            new DefaultSingleLogoutMessageCreator(), servicesManager, new DefaultSingleLogoutServiceLogoutUrlBuilder(validator), false,
+            new DefaultSingleLogoutMessageCreator(), servicesManager,
+            new DefaultSingleLogoutServiceLogoutUrlBuilder(servicesManager, validator), false,
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
 
-        val plan = new DefaultLogoutExecutionPlan();
-        plan.registerSingleLogoutServiceMessageHandler(handler);
-        this.frontChannelLogoutAction = new FrontChannelLogoutAction(plan, false);
-
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        this.requestContext = mock(RequestContext.class);
-        val servletExternalContext = mock(ServletExternalContext.class);
-        when(this.requestContext.getExternalContext()).thenReturn(servletExternalContext);
-        when(servletExternalContext.getNativeRequest()).thenReturn(request);
-        when(servletExternalContext.getNativeResponse()).thenReturn(response);
-        val flowScope = new LocalAttributeMap<>();
-        when(this.requestContext.getFlowScope()).thenReturn(flowScope);
-        val mockFlowExecutionKey = new MockFlowExecutionKey(FLOW_EXECUTION_KEY);
-        val mockFlowExecutionContext = new MockFlowExecutionContext();
-        mockFlowExecutionContext.setKey(mockFlowExecutionKey);
-        when(this.requestContext.getFlowExecutionContext()).thenReturn(mockFlowExecutionContext);
+        this.logoutExecutionPlan = new DefaultLogoutExecutionPlan();
+        logoutExecutionPlan.registerSingleLogoutServiceMessageHandler(handler);
     }
 
     @Test
-    public void verifyLogoutNoIndex() {
-        WebUtils.putLogoutRequests(this.requestContext, new ArrayList<>(0));
-        val event = this.frontChannelLogoutAction.doExecute(this.requestContext);
+    public void verifyNoRequests() {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        RequestContextHolder.setRequestContext(context);
+        ExternalContextHolder.setExternalContext(context.getExternalContext());
+
+        WebUtils.putLogoutRequests(context, new ArrayList<>(0));
+        val frontChannelLogoutAction = new FrontChannelLogoutAction(logoutExecutionPlan, false);
+        val event = frontChannelLogoutAction.doExecute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_FINISH, event.getId());
+    }
+
+    @Test
+    public void verifyNoSlo() throws Exception {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        RequestContextHolder.setRequestContext(context);
+        ExternalContextHolder.setExternalContext(context.getExternalContext());
+
+        val id = UUID.randomUUID().toString();
+        val sloReq = DefaultSingleLogoutRequestContext.builder()
+            .registeredService(RegisteredServiceTestUtils.getRegisteredService())
+            .service(RegisteredServiceTestUtils.getService())
+            .executionRequest(SingleLogoutExecutionRequest.builder()
+                .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
+                .build())
+            .logoutType(RegisteredServiceLogoutType.BACK_CHANNEL)
+            .ticketId(id)
+            .status(LogoutRequestStatus.NOT_ATTEMPTED)
+            .logoutUrl(new URL("https://apereo.org/cas"))
+            .build();
+        
+        WebUtils.putLogoutRequests(context, List.of(sloReq));
+        val frontChannelLogoutAction = new FrontChannelLogoutAction(logoutExecutionPlan, true);
+        val event = frontChannelLogoutAction.doExecute(context);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_FINISH, event.getId());
+    }
+
+    @Test
+    public void verifyLogout() throws Exception {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        RequestContextHolder.setRequestContext(context);
+        ExternalContextHolder.setExternalContext(context.getExternalContext());
+
+        val id = UUID.randomUUID().toString();
+        val sloReq = DefaultSingleLogoutRequestContext.builder()
+            .registeredService(RegisteredServiceTestUtils.getRegisteredService())
+            .service(RegisteredServiceTestUtils.getService())
+            .executionRequest(SingleLogoutExecutionRequest.builder()
+                .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
+                .build())
+            .logoutType(RegisteredServiceLogoutType.BACK_CHANNEL)
+            .ticketId(id)
+            .logoutUrl(new URL("https://apereo.org/cas"))
+            .status(LogoutRequestStatus.NOT_ATTEMPTED)
+            .build();
+
+        WebUtils.putLogoutRequests(context, List.of(sloReq));
+        val frontChannelLogoutAction = new FrontChannelLogoutAction(logoutExecutionPlan, false);
+        val event = frontChannelLogoutAction.doExecute(context);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_PROPAGATE, event.getId());
     }
 }

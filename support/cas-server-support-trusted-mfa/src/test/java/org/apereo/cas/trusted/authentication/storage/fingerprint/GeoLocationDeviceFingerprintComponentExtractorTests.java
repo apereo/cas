@@ -7,6 +7,7 @@ import org.apereo.cas.trusted.web.flow.fingerprint.GeoLocationDeviceFingerprintC
 import org.apereo.cas.util.HttpRequestUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -23,6 +24,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
+@Tag("Simple")
 public class GeoLocationDeviceFingerprintComponentExtractorTests {
     @Test
     public void verifyGeoLocationDevice() {
@@ -41,6 +43,20 @@ public class GeoLocationDeviceFingerprintComponentExtractorTests {
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         val result = ex.extractComponent("casuser", context, true);
         assertTrue(result.isPresent());
+    }
+
+    @Test
+    public void verifyNoGeoLocationDevice() {
+        val request = new MockHttpServletRequest();
+        val geoResp = new GeoLocationResponse();
+        val geoLocationService = mock(GeoLocationService.class);
+        when(geoLocationService.locate(anyDouble(), anyDouble())).thenReturn(geoResp);
+        when(geoLocationService.locate(any(GeoLocationRequest.class))).thenReturn(geoResp);
+        val ex = new GeoLocationDeviceFingerprintComponentExtractor(geoLocationService);
+        val context = new MockRequestContext();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        val result = ex.extractComponent("casuser", context, true);
+        assertFalse(result.isPresent());
     }
 
 }

@@ -1,8 +1,12 @@
 package org.apereo.cas.util.function;
 
+import org.apereo.cas.util.LoggingUtils;
+
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.jooq.lambda.Unchecked;
+import org.jooq.lambda.fi.util.function.CheckedConsumer;
 import org.jooq.lambda.fi.util.function.CheckedFunction;
 
 import java.util.function.Consumer;
@@ -32,7 +36,7 @@ public class FunctionUtils {
      */
     @SneakyThrows
     public static <T, R> Function<T, R> doIf(final Predicate<Object> condition, final Supplier<R> trueFunction,
-                                             final Supplier<R> falseFunction) {
+        final Supplier<R> falseFunction) {
         return t -> {
             try {
                 if (condition.test(t)) {
@@ -40,8 +44,29 @@ public class FunctionUtils {
                 }
                 return falseFunction.get();
             } catch (final Throwable e) {
-                LOGGER.warn(e.getMessage(), e);
+                LoggingUtils.warn(LOGGER, e);
                 return falseFunction.get();
+            }
+        };
+    }
+
+    /**
+     * Do if consumer.
+     *
+     * @param <T>           the type parameter
+     * @param condition     the condition
+     * @param trueFunction  the true function
+     * @param falseFunction the false function
+     * @return the consumer
+     */
+    @SneakyThrows
+    public static <T> Consumer<T> doIf(final boolean condition, final Consumer<T> trueFunction,
+        final Consumer<T> falseFunction) {
+        return account -> {
+            if (condition) {
+                trueFunction.accept(account);
+            } else {
+                falseFunction.accept(account);
             }
         };
     }
@@ -57,7 +82,7 @@ public class FunctionUtils {
      */
     @SneakyThrows
     public static <R> Supplier<R> doIf(final boolean condition, final Supplier<R> trueFunction,
-                                       final Supplier<R> falseFunction) {
+        final Supplier<R> falseFunction) {
         return () -> {
             try {
                 if (condition) {
@@ -65,7 +90,7 @@ public class FunctionUtils {
                 }
                 return falseFunction.get();
             } catch (final Throwable e) {
-                LOGGER.warn(e.getMessage(), e);
+                LoggingUtils.warn(LOGGER, e);
                 return falseFunction.get();
             }
         };
@@ -82,7 +107,7 @@ public class FunctionUtils {
      * @return the function
      */
     public static <T, R> Function<T, R> doIf(final Predicate<T> condition, final CheckedFunction<T, R> trueFunction,
-                                             final CheckedFunction<T, R> falseFunction) {
+        final CheckedFunction<T, R> falseFunction) {
         return t -> {
             try {
                 if (condition.test(t)) {
@@ -90,7 +115,7 @@ public class FunctionUtils {
                 }
                 return falseFunction.apply(t);
             } catch (final Throwable e) {
-                LOGGER.warn(e.getMessage(), e);
+                LoggingUtils.warn(LOGGER, e);
                 try {
                     return falseFunction.apply(t);
                 } catch (final Throwable ex) {
@@ -111,8 +136,8 @@ public class FunctionUtils {
      */
     @SneakyThrows
     public static <R> Supplier<R> doIfNotNull(final Object input,
-                                              final Supplier<R> trueFunction,
-                                              final Supplier<R> falseFunction) {
+        final Supplier<R> trueFunction,
+        final Supplier<R> falseFunction) {
         return () -> {
             try {
                 if (input != null) {
@@ -120,7 +145,7 @@ public class FunctionUtils {
                 }
                 return falseFunction.get();
             } catch (final Throwable e) {
-                LOGGER.warn(e.getMessage(), e);
+                LoggingUtils.warn(LOGGER, e);
                 return falseFunction.get();
             }
         };
@@ -135,13 +160,13 @@ public class FunctionUtils {
      */
     @SneakyThrows
     public static <T> void doIfNotNull(final T input,
-                                       final Consumer<T> trueFunction) {
+        final Consumer<T> trueFunction) {
         try {
             if (input != null) {
                 trueFunction.accept(input);
             }
         } catch (final Throwable e) {
-            LOGGER.warn(e.getMessage(), e);
+            LoggingUtils.warn(LOGGER, e);
         }
     }
 
@@ -156,8 +181,8 @@ public class FunctionUtils {
      */
     @SneakyThrows
     public static <R> Supplier<R> doIfNull(final Object input,
-                                           final Supplier<R> trueFunction,
-                                           final Supplier<R> falseFunction) {
+        final Supplier<R> trueFunction,
+        final Supplier<R> falseFunction) {
         return () -> {
             try {
                 if (input == null) {
@@ -165,7 +190,7 @@ public class FunctionUtils {
                 }
                 return falseFunction.get();
             } catch (final Throwable e) {
-                LOGGER.warn(e.getMessage(), e);
+                LoggingUtils.warn(LOGGER, e);
                 return falseFunction.get();
             }
         };
@@ -186,7 +211,7 @@ public class FunctionUtils {
             try {
                 return function.apply(t);
             } catch (final Throwable e) {
-                LOGGER.warn(e.getMessage(), e);
+                LoggingUtils.warn(LOGGER, e);
                 try {
                     return errorHandler.apply(e);
                 } catch (final Throwable ex) {
@@ -210,7 +235,7 @@ public class FunctionUtils {
             try {
                 return function.get();
             } catch (final Throwable e) {
-                LOGGER.warn(e.getMessage(), e);
+                LoggingUtils.warn(LOGGER, e);
                 try {
                     return errorHandler.apply(e);
                 } catch (final Throwable ex) {
@@ -225,15 +250,25 @@ public class FunctionUtils {
      *
      * @param func   the func
      * @param params the params
-     * @return the boolean
+     * @return true /false
      */
     public static boolean doWithoutThrows(final Consumer<Object> func, final Object... params) {
         try {
             func.accept(params);
             return true;
         } catch (final Throwable e) {
-            LOGGER.warn(e.getMessage(), e);
+            LoggingUtils.warn(LOGGER, e);
             return false;
         }
+    }
+
+    /**
+     * Do and ignore.
+     *
+     * @param consumer the consumer
+     * @param params   the params
+     */
+    public static void doAndIgnore(final CheckedConsumer<Object> consumer, final Object... params) {
+        Unchecked.consumer(s -> consumer.accept(params)).accept(null);
     }
 }

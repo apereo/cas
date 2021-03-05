@@ -5,6 +5,7 @@ import org.apereo.cas.uma.UmaConfigurationContext;
 import org.apereo.cas.uma.ticket.resource.ResourceSetPolicy;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointController;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -64,11 +65,6 @@ public class UmaUpdatePolicyForResourceSetEndpointController extends BaseUmaEndp
             resourceSet.validate(profileResult);
 
             val umaRequest = MAPPER.readValue(JsonValue.readHjson(body).toString(), ResourceSetPolicy.class);
-            if (umaRequest == null) {
-                val model = buildResponseEntityErrorModel(HttpStatus.NOT_FOUND, "UMA policy request cannot be found or parsed");
-                return new ResponseEntity(model, model, HttpStatus.BAD_REQUEST);
-            }
-
             val policyResult = resourceSet.getPolicies().stream().filter(p -> p.getId() == policyId).findFirst();
             if (policyResult.isPresent()) {
                 val policy = policyResult.get();
@@ -86,7 +82,7 @@ public class UmaUpdatePolicyForResourceSetEndpointController extends BaseUmaEndp
             val model = CollectionUtils.wrap("code", HttpStatus.NOT_FOUND);
             return new ResponseEntity(model, HttpStatus.OK);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return new ResponseEntity("Unable to locate resource-set.", HttpStatus.BAD_REQUEST);
     }

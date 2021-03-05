@@ -76,11 +76,6 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
                                                                                         final String originalPassword)
         throws GeneralSecurityException, PreventedException {
-        if (StringUtils.isBlank(this.sql) || getJdbcTemplate() == null) {
-            throw new GeneralSecurityException("Authentication handler is not configured correctly. "
-                + "No SQL statement or JDBC template is found.");
-        }
-
         val attributes = Maps.<String, List<Object>>newHashMapWithExpectedSize(this.principalAttributeMap.size());
         val username = credential.getUsername();
         val password = credential.getPassword();
@@ -130,7 +125,7 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
             }
             throw new FailedLoginException("Multiple records found for " + username);
         } catch (final DataAccessException e) {
-            throw new PreventedException("SQL exception while executing query for " + username, e);
+            throw new PreventedException(e);
         }
         val principal = this.principalFactory.createPrincipal(username, attributes);
         return createHandlerResult(credential, principal, new ArrayList<>(0));
@@ -143,7 +138,7 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
         val parameters = new LinkedHashMap<String, Object>();
         parameters.put("username", credential.getUsername());
         parameters.put("password", credential.getPassword());
-        return getNamedJdbcTemplate().queryForMap(this.sql, parameters);
+        return getNamedParameterJdbcTemplate().queryForMap(this.sql, parameters);
     }
 
     private void collectPrincipalAttributes(final Map<String, List<Object>> attributes, final Map<String, Object> dbFields) {

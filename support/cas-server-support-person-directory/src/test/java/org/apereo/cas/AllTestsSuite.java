@@ -1,6 +1,7 @@
 
 package org.apereo.cas;
 
+import org.apereo.cas.config.CasPersonDirectoryConfigurationCachingAttributeRepositoryTests;
 import org.apereo.cas.config.CasPersonDirectoryConfigurationCascadeAggregationTests;
 import org.apereo.cas.config.CasPersonDirectoryConfigurationMergeAggregationTests;
 
@@ -18,9 +19,14 @@ import org.junit.runner.RunWith;
     JdbcMultiRowAttributeRepositoryTests.class,
     JdbcSingleRowAttributeRepositoryTests.class,
     RestfulPersonAttributeDaoTests.class,
+    PersonDirectoryAttributeRepositoryPlanTests.class,
+    DefaultPersonDirectoryAttributeRepositoryPlanLdapTests.class,
     PersonDirectoryPrincipalResolverConcurrencyTests.class,
     PrincipalAttributeRepositoryFetcherCascadeTests.class,
     CachingAttributeRepositoryTests.class,
+    PrincipalAttributeRepositoryFetcherLdapTests.class,
+    PrincipalAttributeRepositoryFetcherTests.class,
+    CasPersonDirectoryConfigurationCachingAttributeRepositoryTests.class,
     CasPersonDirectoryConfigurationMergeAggregationTests.class,
     CasPersonDirectoryConfigurationCascadeAggregationTests.class,
     DefaultAttributeDefinitionStoreTests.class,

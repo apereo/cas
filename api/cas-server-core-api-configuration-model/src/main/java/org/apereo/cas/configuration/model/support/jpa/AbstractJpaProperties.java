@@ -1,9 +1,11 @@
 package org.apereo.cas.configuration.model.support.jpa;
 
 import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -24,6 +26,8 @@ import java.util.Map;
 @Setter
 @RequiresModule(name = "cas-server-support-jdbc-drivers")
 @Accessors(chain = true)
+@JsonFilter("AbstractJpaProperties")
+@SuppressWarnings("UnescapedEntity")
 public abstract class AbstractJpaProperties implements Serializable {
 
     private static final long serialVersionUID = 761486823496930920L;
@@ -36,7 +40,24 @@ public abstract class AbstractJpaProperties implements Serializable {
 
     /**
      * Hibernate feature to automatically validate and exports DDL to the schema.
-     * By default, creates and drops the schema automatically when a session is starts and ends
+     * By default, creates and drops the schema automatically when a session is starts and ends.
+     * Setting the value to {@code validate} or {@code none} may be more desirable for production,
+     * but any of the following options can be used:
+     * <ul>
+     *     <li>{@code validate}: Validate the schema, but make no changes to the database.</li>
+     *     <li>{@code update}: Update the schema.</li>
+     *     <li>{@code create}: Create the schema, destroying previous data.</li>
+     *     <li>{@code create-drop}: Drop the schema at the end of the session.</li>
+     *     <li>{@code none}: Do nothing.</li>
+     * </ul>
+     * <p>
+     * Note that during a version migration where any schema has changed {@code create-drop} will result
+     * in the loss of all data as soon as CAS is started. For transient data like tickets this is probably
+     * not an issue, but in cases like the audit table important data could be lost. Using `update`, while safe
+     * for data, is confirmed to result in invalid database state. {@code validate} or {@code none} settings
+     * are likely the only safe options for production use.
+     * </p>
+     * For more info, <a href="http://docs.spring.io/spring-framework/docs/current/javadoc-api">see this</a>.
      */
     private String ddlAuto = "update";
 
@@ -85,6 +106,7 @@ public abstract class AbstractJpaProperties implements Serializable {
     /**
      * Controls the maximum amount of time that a connection is allowed to sit idle in the pool.
      */
+    @DurationCapable
     private String idleTimeout = "PT10M";
 
     /**
@@ -159,10 +181,91 @@ public abstract class AbstractJpaProperties implements Serializable {
      */
     private boolean autocommit;
 
+    //CHECKSTYLE:OFF
     /**
      * Indicates whether JNDI data sources retrieved should be proxied
      * or returned back verbatim.
+     * When using a container configured data source, many of the pool related parameters will not be used.
+     * If this setting is specified but the JNDI lookup fails, a data source will be created with the configured
+     * (or default) CAS pool parameters.
+     *
+     * If you experience classloading errors while trying to use a container datasource, you can try
+     * setting this setting to {@code true} which will wrap the container datasource in
+     * a way that may resolve the error. This property can be either a JNDI name for the datasource or a resource name prefixed with
+     * {@code java:/comp/env/}. If it is a resource name then you need an entry in a {@code web.xml}.
+     * It should contain an entry like this:
+     *
+     * <pre>
+     * {@code
+     * <resource-ref>
+     *    <res-ref-name>jdbc/casDataSource</res-ref-name>
+     *    <res-type>javax.sql.DataSource</res-type>
+     *    <res-auth>Container</res-auth>
+     * </resource-ref>
+     * }
+     * </pre>
+     *
+     * In Apache Tomcat, a container datasource can be defined like this in the {@code context.xml}:
+     *
+     * <pre>
+     * {@code
+     * <Resource name="jdbc/casDataSource"
+     *           auth="Container"
+     *           type="javax.sql.DataSource"
+     *           driverClassName="org.postgresql.Driver"
+     *           url="jdbc:postgresql://casdb.example.com:5432/xyz_db"
+     *           username="cas"
+     *           password="xyz"
+     *           testWhileIdle="true"
+     *           testOnBorrow="true"
+     *           testOnReturn="false"
+     *           validationQuery="select 1"
+     *           validationInterval="30000"
+     *           timeBetweenEvictionRunsMillis="30000"
+     *           factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
+     *           minIdle="0"
+     *           maxIdle="5"
+     *           initialSize="0"
+     *           maxActive="20"
+     *           maxWait="10000" />
+     * }
+     * </pre>
+     *
+     * In Jetty, a pool can be put in JNDI with a {@code jetty.xml} or {@code jetty-env.xml} file like this:
+     * 
+     * <pre>
+     * {@code
+     * <?xml version="1.0"?>
+     * <!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure_9_4.dtd">
+     *
+     * <Configure class="org.eclipse.jetty.webapp.WebAppContext">
+     *     <New id="datasource.cas" class="org.eclipse.jetty.plus.jndi.Resource">
+     *         <Arg></Arg> <!-- empty scope arg is JVM scope -->
+     *         <Arg>jdbc/casDataSource</Arg> <!-- name that matches resource in web.xml-->
+     *         <Arg>
+     *             <New class="org.apache.commons.dbcp.BasicDataSource">
+     *                 <Set name="driverClassName">oracle.jdbc.OracleDriver</Set>
+     *                 <Set name="url">jdbc:oracle:thin:@//casdb.example.com:1521/ntrs"</Set>
+     *                 <Set name="username">cas</Set>
+     *                 <Set name="password">xyz</Set>
+     *                 <Set name="validationQuery">select dummy from dual</Set>
+     *                 <Set name="testOnBorrow">true</Set>
+     *                 <Set name="testOnReturn">false</Set>
+     *                 <Set name="testWhileIdle">false</Set>
+     *                 <Set name="defaultAutoCommit">false</Set>
+     *                 <Set name="initialSize">0</Set>
+     *                 <Set name="maxActive">15</Set>
+     *                 <Set name="minIdle">0</Set>
+     *                 <Set name="maxIdle">5</Set>
+     *                 <Set name="maxWait">2000</Set>
+     *             </New>
+     *         </Arg>
+     *     </New>
+     * </Configure>
+     * }
+     * </pre>
      */
+    //CHECKSTYLE:ON
     private boolean dataSourceProxy;
 
     /**

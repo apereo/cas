@@ -2,7 +2,6 @@ package org.apereo.cas.token.authentication.principal;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.Response;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceResponseBuilder;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
@@ -10,11 +9,10 @@ import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.token.TokenTicketBuilder;
-
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
+import org.apache.commons.lang3.StringUtils;
 import java.util.Map;
 
 /**
@@ -40,11 +38,15 @@ public class TokenWebApplicationServiceResponseBuilder extends WebApplicationSer
         val registeredService = this.servicesManager.findServiceBy(service);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
         val tokenAsResponse = RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET.isAssignedTo(registeredService);
+        val ticketIdAvailable = isTicketIdAvailable(parameters);
 
-        if (!tokenAsResponse) {
-            LOGGER.debug("Registered service [{}] is not configured to issue JWTs for service tickets. "
-                    + "Make sure the service property [{}] is defined and is set to true", registeredService,
-                RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET.getPropertyName());
+        if (!tokenAsResponse || !ticketIdAvailable) {
+            if (ticketIdAvailable) {
+                LOGGER.debug("Registered service [{}] is not configured to issue JWTs for service tickets. "
+                             +"Make sure the service property [{}] is defined and set to true", 
+                             registeredService,
+                             RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET.getPropertyName()); 
+            }
             return super.buildInternal(service, parameters);
         }
 
@@ -58,6 +60,10 @@ public class TokenWebApplicationServiceResponseBuilder extends WebApplicationSer
 
         return jwtService;
     }
+    
+    private static boolean isTicketIdAvailable(final Map<String, String> parameters){
+        return StringUtils.isNotBlank(parameters.get(CasProtocolConstants.PARAMETER_TICKET));
+    }
 
     /**
      * Generate token string.
@@ -67,7 +73,7 @@ public class TokenWebApplicationServiceResponseBuilder extends WebApplicationSer
      * @return the jwt
      */
     @SneakyThrows
-    protected String generateToken(final Service service, final Map<String, String> parameters) {
+    protected String generateToken(final WebApplicationService service, final Map<String, String> parameters) {
         val ticketId = parameters.get(CasProtocolConstants.PARAMETER_TICKET);
         return this.tokenTicketBuilder.build(ticketId, service);
     }

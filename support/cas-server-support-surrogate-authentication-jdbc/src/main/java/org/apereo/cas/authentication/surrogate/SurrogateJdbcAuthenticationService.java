@@ -14,11 +14,9 @@ import lombok.val;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import javax.persistence.NoResultException;
-import javax.sql.DataSource;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -38,41 +36,26 @@ public class SurrogateJdbcAuthenticationService extends BaseSurrogateAuthenticat
 
     private final String surrogateAccountQuery;
 
-    public SurrogateJdbcAuthenticationService(final String surrogateSearchQuery, final DataSource dataSource,
-                                              final String surrogateAccountQuery, final ServicesManager servicesManager) {
+    public SurrogateJdbcAuthenticationService(final String surrogateSearchQuery, final JdbcTemplate jdbcTemplate,
+        final String surrogateAccountQuery, final ServicesManager servicesManager) {
         super(servicesManager);
         this.surrogateSearchQuery = surrogateSearchQuery;
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
+        this.jdbcTemplate = jdbcTemplate;
         this.surrogateAccountQuery = surrogateAccountQuery;
     }
 
     @Override
     public boolean canAuthenticateAsInternal(final String username, final Principal surrogate, final Optional<Service> service) {
-        try {
-            if (username.equalsIgnoreCase(surrogate.getId())) {
-                return true;
-            }
-            LOGGER.debug("Executing SQL query [{}]", surrogateSearchQuery);
-            val count = this.jdbcTemplate.queryForObject(surrogateSearchQuery, Integer.class, surrogate.getId(), username);
-            return count > 0;
-        } catch (final NoResultException e) {
-            LOGGER.debug(e.getMessage());
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return false;
+        LOGGER.debug("Executing SQL query [{}]", surrogateSearchQuery);
+        val count = this.jdbcTemplate.queryForObject(surrogateSearchQuery, Integer.class, surrogate.getId(), username);
+        return Objects.requireNonNull(count) > 0;
     }
 
     @Override
     public Collection<String> getEligibleAccountsForSurrogateToProxy(final String username) {
-        try {
-            val results = this.jdbcTemplate.query(this.surrogateAccountQuery,
-                new BeanPropertyRowMapper<>(SurrogateAccount.class), username);
-            return results.stream().map(SurrogateAccount::getSurrogateAccount).collect(Collectors.toList());
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return new ArrayList<>(0);
+        val results = this.jdbcTemplate.query(this.surrogateAccountQuery,
+            new BeanPropertyRowMapper<>(SurrogateAccount.class), username);
+        return results.stream().map(SurrogateAccount::getSurrogateAccount).collect(Collectors.toList());
     }
 
     /**
@@ -85,6 +68,7 @@ public class SurrogateJdbcAuthenticationService extends BaseSurrogateAuthenticat
     @NoArgsConstructor
     public static class SurrogateAccount implements Serializable {
         private static final long serialVersionUID = 7734857552147825153L;
+
         private String surrogateAccount;
     }
 }

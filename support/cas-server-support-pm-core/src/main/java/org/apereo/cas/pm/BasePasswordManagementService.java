@@ -1,7 +1,11 @@
 package org.apereo.cas.pm;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.Getter;
@@ -49,7 +53,7 @@ public class BasePasswordManagementService implements PasswordManagementService 
      * @return A list of questions in a consistent order
      */
     public static List<String> canonicalizeSecurityQuestions(final Map<String, String> questionMap) {
-        val keys = new ArrayList<String>(questionMap.keySet());
+        val keys = new ArrayList<>(questionMap.keySet());
         keys.sort(String.CASE_INSENSITIVE_ORDER);
         return keys;
     }
@@ -89,17 +93,15 @@ public class BasePasswordManagementService implements PasswordManagementService 
                 LOGGER.error("Token has expired.");
                 return null;
             }
-
-
             return claims.getSubject();
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
 
     @Override
-    public String createToken(final String to) {
+    public String createToken(final PasswordManagementQuery query) {
         try {
             val token = UUID.randomUUID().toString();
             val claims = new JwtClaims();
@@ -107,7 +109,7 @@ public class BasePasswordManagementService implements PasswordManagementService 
             claims.setJwtId(token);
             claims.setIssuer(issuer);
             claims.setAudience(issuer);
-            claims.setExpirationTimeMinutesInTheFuture(resetProperties.getExpirationMinutes());
+            claims.setExpirationTimeMinutesInTheFuture((float) resetProperties.getExpirationMinutes());
             claims.setIssuedAtToNow();
 
             val holder = ClientInfoHolder.getClientInfo();
@@ -119,21 +121,21 @@ public class BasePasswordManagementService implements PasswordManagementService 
                     claims.setStringClaim("client", holder.getClientIpAddress());
                 }
             }
-            claims.setSubject(to);
-            LOGGER.debug("Creating password management token for [{}]", to);
+            claims.setSubject(query.getUsername());
+            LOGGER.debug("Creating password management token for [{}]", query.getUsername());
             val json = claims.toJson();
 
             LOGGER.debug("Encoding the generated JSON token...");
             return this.cipherExecutor.encode(json);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
 
-    @Audit(action = "CHANGE_PASSWORD",
-        actionResolverName = "CHANGE_PASSWORD_ACTION_RESOLVER",
-        resourceResolverName = "CHANGE_PASSWORD_RESOURCE_RESOLVER")
+    @Audit(action = AuditableActions.CHANGE_PASSWORD,
+        actionResolverName = AuditActionResolvers.CHANGE_PASSWORD_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.CHANGE_PASSWORD_RESOURCE_RESOLVER)
     @Override
     public boolean change(final Credential c, final PasswordChangeRequest bean) throws InvalidPasswordException {
         if (passwordHistoryService != null && passwordHistoryService.exists(bean)) {
@@ -155,7 +157,7 @@ public class BasePasswordManagementService implements PasswordManagementService 
      *
      * @param c    the credential
      * @param bean the bean
-     * @return the boolean
+     * @return true/false
      * @throws InvalidPasswordException if new password fails downstream validation
      */
     public boolean changeInternal(final Credential c, final PasswordChangeRequest bean) throws InvalidPasswordException {

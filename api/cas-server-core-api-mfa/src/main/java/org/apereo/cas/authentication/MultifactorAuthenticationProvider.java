@@ -1,8 +1,8 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
+import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.RegisteredServiceMultifactorPolicyFailureModes;
 import org.springframework.core.Ordered;
 
 import java.io.Serializable;
@@ -61,7 +61,7 @@ public interface MultifactorAuthenticationProvider extends Serializable, Ordered
      * The identifier passed may be formed as a regular expression.
      *
      * @param identifier the identifier
-     * @return the boolean
+     * @return true/false
      */
     boolean matches(String identifier);
 
@@ -70,7 +70,7 @@ public interface MultifactorAuthenticationProvider extends Serializable, Ordered
      *
      * @return the FailureMode
      */
-    RegisteredServiceMultifactorPolicyFailureModes getFailureMode();
+    BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes getFailureMode();
 
     /**
      * Creates a unique mark that identifies this provider instance.

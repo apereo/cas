@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@EnabledIfPortOpen(port = 4586)
+@EnabledIfPortOpen(port = 4566)
 @Tag("AmazonWebServices")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CloudWatchAppenderTests {
@@ -36,5 +36,6 @@ public class CloudWatchAppenderTests {
                 IntStream.range(1, 20).forEach(idx -> logger.info("Testing CloudWatchAppender [{}]...", idx));
             }
         });
+        appender.stop();
     }
 }

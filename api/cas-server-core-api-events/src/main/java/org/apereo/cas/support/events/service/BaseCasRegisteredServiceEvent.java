@@ -12,7 +12,7 @@ import org.apereo.cas.support.events.AbstractCasEvent;
 public abstract class BaseCasRegisteredServiceEvent extends AbstractCasEvent {
     private static final long serialVersionUID = 7828374109804253319L;
 
-    public BaseCasRegisteredServiceEvent(final Object source) {
+    protected BaseCasRegisteredServiceEvent(final Object source) {
         super(source);
     }
 }

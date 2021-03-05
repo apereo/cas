@@ -3,11 +3,15 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationManager;
+import org.apereo.cas.authentication.AuthenticationResultBuilderFactory;
+import org.apereo.cas.authentication.AuthenticationTransactionFactory;
 import org.apereo.cas.authentication.AuthenticationTransactionManager;
 import org.apereo.cas.authentication.DefaultAuthenticationAttributeReleasePolicy;
 import org.apereo.cas.authentication.DefaultAuthenticationEventExecutionPlan;
+import org.apereo.cas.authentication.DefaultAuthenticationManager;
+import org.apereo.cas.authentication.DefaultAuthenticationResultBuilderFactory;
+import org.apereo.cas.authentication.DefaultAuthenticationTransactionFactory;
 import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
-import org.apereo.cas.authentication.PolicyBasedAuthenticationManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 
@@ -34,7 +38,7 @@ import java.util.List;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@Configuration(value = "casCoreAuthenticationConfiguration")
+@Configuration(value = "casCoreAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasCoreAuthenticationConfiguration {
@@ -51,27 +55,45 @@ public class CasCoreAuthenticationConfiguration {
 
     @Bean
     @RefreshScope
-    public AuthenticationTransactionManager authenticationTransactionManager() {
-        return new DefaultAuthenticationTransactionManager(applicationContext, casAuthenticationManager());
+    @Autowired
+    @ConditionalOnMissingBean(name = "authenticationTransactionManager")
+    public AuthenticationTransactionManager authenticationTransactionManager(@Qualifier("casAuthenticationManager")
+                                                                             final AuthenticationManager casAuthenticationManager) {
+        return new DefaultAuthenticationTransactionManager(applicationContext, casAuthenticationManager);
     }
 
     @ConditionalOnMissingBean(name = "casAuthenticationManager")
     @Bean
     @RefreshScope
     public AuthenticationManager casAuthenticationManager() {
-        return new PolicyBasedAuthenticationManager(
+        return new DefaultAuthenticationManager(
             authenticationEventExecutionPlan.getObject(),
             casProperties.getPersonDirectory().isPrincipalResolutionFailureFatal(),
             applicationContext
         );
     }
 
+    @ConditionalOnMissingBean(name = "authenticationResultBuilderFactory")
+    @Bean
+    @RefreshScope
+    public AuthenticationResultBuilderFactory authenticationResultBuilderFactory() {
+        return new DefaultAuthenticationResultBuilderFactory();
+    }
+
+    @ConditionalOnMissingBean(name = "authenticationTransactionFactory")
+    @Bean
+    @RefreshScope
+    public AuthenticationTransactionFactory authenticationTransactionFactory() {
+        return new DefaultAuthenticationTransactionFactory();
+    }
+    
     @ConditionalOnMissingBean(name = "authenticationEventExecutionPlan")
     @Autowired
     @Bean
+    @RefreshScope
     public AuthenticationEventExecutionPlan authenticationEventExecutionPlan(final List<AuthenticationEventExecutionPlanConfigurer> configurers) {
         val plan = new DefaultAuthenticationEventExecutionPlan();
-        val sortedConfigurers = new ArrayList<AuthenticationEventExecutionPlanConfigurer>(configurers);
+        val sortedConfigurers = new ArrayList<>(configurers);
         AnnotationAwareOrderComparator.sortIfNecessary(sortedConfigurers);
 
         sortedConfigurers.forEach(c -> {
@@ -92,6 +114,6 @@ public class CasCoreAuthenticationConfiguration {
         }
         return new DefaultAuthenticationAttributeReleasePolicy(release.getOnlyRelease(),
             release.getNeverRelease(),
-            casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
+            casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute());
     }
 }

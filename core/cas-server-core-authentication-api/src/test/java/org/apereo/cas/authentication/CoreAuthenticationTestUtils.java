@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.credential.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
@@ -20,8 +21,6 @@ import org.apereo.services.persondir.support.StubPersonAttributeDao;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -94,6 +93,7 @@ public class CoreAuthenticationTestUtils {
         val svc = mock(WebApplicationService.class);
         when(svc.getId()).thenReturn(id);
         when(svc.getOriginalUrl()).thenReturn(id);
+        when(svc.getSource()).thenReturn(CasProtocolConstants.PARAMETER_SERVICE);
         return svc;
     }
 
@@ -121,7 +121,7 @@ public class CoreAuthenticationTestUtils {
 
     public static Principal getPrincipal(final String name) {
         val backingMap = getAttributeRepository().getBackingMap();
-        return getPrincipal(name, (Map) backingMap);
+        return getPrincipal(name, backingMap);
     }
 
     public static Principal getPrincipal(final String name, final Map<String, List<Object>> attributes) {
@@ -150,6 +150,10 @@ public class CoreAuthenticationTestUtils {
 
     public static Authentication getAuthentication(final Principal principal, final Map<String, List<Object>> attributes) {
         return getAuthentication(principal, attributes, null);
+    }
+
+    public static Authentication getAuthentication(final Map<String, List<Object>> authnAttributes) {
+        return getAuthentication(getPrincipal(CONST_USERNAME), authnAttributes, null);
     }
 
     public static Authentication getAuthentication(final Principal principal, final Map<String, List<Object>> attributes, final ZonedDateTime authnDate) {
@@ -190,12 +194,12 @@ public class CoreAuthenticationTestUtils {
     }
 
     public static AuthenticationResult getAuthenticationResult(final AuthenticationSystemSupport support) throws AuthenticationException {
-        return getAuthenticationResult(support, getService(), getCredentialsWithSameUsernameAndPassword());
+        return getAuthenticationResult(support, getWebApplicationService(), getCredentialsWithSameUsernameAndPassword());
     }
 
     public static AuthenticationResult getAuthenticationResult(final AuthenticationSystemSupport support, final Credential... credentials)
         throws AuthenticationException {
-        return getAuthenticationResult(support, getService(), credentials);
+        return getAuthenticationResult(support, getWebApplicationService(), credentials);
     }
 
     public static AuthenticationResult getAuthenticationResult(final AuthenticationSystemSupport support, final Service service,
@@ -205,7 +209,7 @@ public class CoreAuthenticationTestUtils {
     }
 
     public static AuthenticationResult getAuthenticationResult() throws AuthenticationException {
-        return getAuthenticationResult(getService(), getAuthentication());
+        return getAuthenticationResult(getWebApplicationService(), getAuthentication());
     }
 
     public static AuthenticationResult getAuthenticationResult(final Service service) {
@@ -213,7 +217,7 @@ public class CoreAuthenticationTestUtils {
     }
 
     public static AuthenticationResult getAuthenticationResult(final Authentication authentication) throws AuthenticationException {
-        return getAuthenticationResult(getService(), authentication);
+        return getAuthenticationResult(getWebApplicationService(), authentication);
     }
 
     public static AuthenticationResult getAuthenticationResult(final Service service, final Authentication authentication) throws AuthenticationException {
@@ -221,11 +225,6 @@ public class CoreAuthenticationTestUtils {
         when(result.getAuthentication()).thenReturn(authentication);
         when(result.getService()).thenReturn(service);
         return result;
-    }
-
-    public static Principal mockPrincipal(final String attrName, final String... attrValues) {
-        val attributes = (Map) Collections.singletonMap(attrName, CollectionUtils.toCollection(attrValues, ArrayList.class));
-        return PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("user", attributes);
     }
 
     public static AuthenticationBuilder getAuthenticationBuilder() {

@@ -2,17 +2,16 @@ package org.apereo.cas.adaptors.x509.authentication.principal;
 
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
+import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.services.persondir.IPersonAttributeDao;
 
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
@@ -21,7 +20,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 
 /**
@@ -31,7 +29,6 @@ import java.util.Set;
  * @since 3.0.0
  */
 @ToString(callSuper = true)
-@NoArgsConstructor
 @Slf4j
 @Setter
 public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrincipalResolver {
@@ -40,30 +37,14 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
 
     private String alternatePrincipalAttribute;
 
-    public AbstractX509PrincipalResolver(final IPersonAttributeDao attributeRepository,
-                                         final PrincipalFactory principalFactory,
-                                         final boolean returnNullIfNoAttributes,
-                                         final String principalAttributeName,
-                                         final String alternatePrincipalAttribute,
-                                         final boolean useCurrentPrincipalId,
-                                         final boolean resolveAttributes,
-                                         final Set<String> activeAttributeRepositoryIdentifiers) {
-        super(attributeRepository, principalFactory, returnNullIfNoAttributes,
-            principalAttributeName, useCurrentPrincipalId, resolveAttributes,
-            activeAttributeRepositoryIdentifiers);
+    protected AbstractX509PrincipalResolver(final PrincipalResolutionContext context,
+                                            final String alternatePrincipalAttribute) {
+        super(context);
         this.alternatePrincipalAttribute = alternatePrincipalAttribute;
     }
 
-    public AbstractX509PrincipalResolver(final IPersonAttributeDao attributeRepository,
-                                         final PrincipalFactory principalFactory,
-                                         final boolean returnNullIfNoAttributes,
-                                         final String principalAttributeName,
-                                         final boolean useCurrentPrincipalId,
-                                         final boolean resolveAttributes,
-                                         final Set<String> activeAttributeRepositoryIdentifiers) {
-        super(attributeRepository, principalFactory, returnNullIfNoAttributes,
-            principalAttributeName, useCurrentPrincipalId, resolveAttributes,
-            activeAttributeRepositoryIdentifiers);
+    protected AbstractX509PrincipalResolver(final PrincipalResolutionContext context) {
+        this(context, null);
     }
 
     @Override
@@ -78,7 +59,7 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
         val certificate = ((X509CertificateCredential) credential).getCertificate();
         val certificateAttributes = extractPersonAttributes(certificate);
         queryAttributes.putAll(certificateAttributes);
-        val attributes = new LinkedHashMap<String, List<Object>>(
+        val attributes = new LinkedHashMap<>(
             super.retrievePersonAttributes(principalId, credential, currentPrincipal, queryAttributes));
         attributes.putAll(certificateAttributes);
         return attributes;
@@ -104,7 +85,7 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
      * @return principal using alternate attribute or null if none configured
      */
     protected String getAlternatePrincipal(final X509Certificate certificate) {
-        if (alternatePrincipalAttribute == null) {
+        if (StringUtils.isBlank(alternatePrincipalAttribute)) {
             return null;
         }
         val attributes = extractPersonAttributes(certificate);
@@ -123,7 +104,7 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
             LOGGER.debug("Using alternate principal attribute [{}]", alternatePrincipal);
             return alternatePrincipal;
         }
-        LOGGER.debug("Returning null principal id...");
+        LOGGER.trace("Returning null principal id...");
         return null;
     }
 
@@ -163,7 +144,7 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
                 }
             } catch (final CertificateParsingException e) {
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.warn("Error parsing subject alternative names to get rfc822 email", e);
+                    LoggingUtils.warn(LOGGER, "Error parsing subject alternative names to get rfc822 email", e);
                 }
                 LOGGER.warn("Error parsing subject alternative names to get rfc822 email [{}]", e.getMessage());
             }
@@ -173,11 +154,7 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
                     attributes.put("x509subjectUPN", CollectionUtils.wrapList(x509subjectUPN));
                 }
             } catch (final CertificateParsingException e) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.warn("Error parsing subject alternative names to get User Principal Name as an attribute", e);
-                } else {
-                    LOGGER.warn("Error parsing subject alternative names to get User Principal Name as an attribute [{}]", e.getMessage());
-                }
+                LoggingUtils.warn(LOGGER, e);
             }
         }
         return attributes;
@@ -196,7 +173,7 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
         if (subjectAltNames == null) {
             return null;
         }
-        Optional<List<?>> email = subjectAltNames
+        val email = subjectAltNames
             .stream()
             .filter(s -> s.size() == 2 && (Integer) s.get(0) == SAN_RFC822_EMAIL_TYPE)
             .findFirst();

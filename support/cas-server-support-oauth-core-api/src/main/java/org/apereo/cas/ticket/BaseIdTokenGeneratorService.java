@@ -4,6 +4,7 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Slf4j
 @Getter
 public abstract class BaseIdTokenGeneratorService implements IdTokenGeneratorService {
@@ -36,9 +37,9 @@ public abstract class BaseIdTokenGeneratorService implements IdTokenGeneratorSer
      * @return the authenticated profile
      */
     protected UserProfile getAuthenticatedProfile(final HttpServletRequest request, final HttpServletResponse response) {
-        val context = new JEEContext(request, response, getConfigurationContext().getSessionStore());
-        val manager = new ProfileManager<>(context, context.getSessionStore());
-        val profile = manager.get(true);
+        val context = new JEEContext(request, response);
+        val manager = new ProfileManager(context, getConfigurationContext().getSessionStore());
+        val profile = manager.getProfile();
 
         if (profile.isEmpty()) {
             throw new IllegalArgumentException("Unable to determine the user profile from the context");

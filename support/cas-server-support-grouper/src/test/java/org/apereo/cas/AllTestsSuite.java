@@ -1,6 +1,7 @@
 
 package org.apereo.cas;
 
+import org.apereo.cas.config.CasPersonDirectoryGrouperConfigurationTests;
 import org.apereo.cas.grouper.services.GrouperRegisteredServiceAccessStrategyTests;
 import org.apereo.cas.web.flow.GrouperMultifactorAuthenticationPolicyEventResolverTests;
 
@@ -16,6 +17,7 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     GrouperMultifactorAuthenticationPolicyEventResolverTests.class,
+    CasPersonDirectoryGrouperConfigurationTests.class,
     GrouperRegisteredServiceAccessStrategyTests.class
 })
 @RunWith(JUnitPlatform.class)

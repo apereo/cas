@@ -4,8 +4,10 @@ title: CAS - JPA Ticket Registry
 category: Ticketing
 ---
 
+{% include variables.html %}
 
 # JPA Ticket Registry
+
 The JPA Ticket Registry allows CAS to store client authenticated state
 data (tickets) in a database back-end such as MySQL.
 
@@ -16,19 +18,16 @@ the complexity is likely not worth the trouble.</p></div>
 
 Support is enabled by adding the following module into the overlay:
 
-```xml
-<dependency>
-    <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-jpa-ticket-registry</artifactId>
-    <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-jpa-ticket-registry" %}
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#jpa-ticket-registry).
+{% include casproperties.html properties="cas.ticket.registry.jpa" %}
 
-A background *cleaner* process is also automatically scheduled to scan the chosen database periodically and remove expired records based on configured threshold parameters.
+A background *cleaner* process is also automatically scheduled to scan the chosen 
+database periodically and remove expired records based on configured threshold parameters.
+
+{% include casproperties.html properties="cas.ticket.registry.cleaner" %}
 
 <div class="alert alert-warning"><strong>Cleaner Usage</strong><p>In a clustered CAS deployment, it is best to keep the cleaner running on one designated CAS node only and turn it off on all others via CAS settings. Keeping the cleaner running on all nodes may likely lead to severe performance and locking issues.</p></div>
 
@@ -43,4 +42,3 @@ This reduces performance of the JPA Ticket Registry and may not be desirable or 
 the database in use, its configured transaction isolation level, and expected concurrency of a single
 TGT.
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#jpa-ticket-registry).

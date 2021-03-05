@@ -15,6 +15,11 @@ public interface RegisteredServiceCipherExecutor {
     String CUSTOM_HEADER_REGISTERED_SERVICE_ID = RegisteredService.class.getName();
 
     /**
+     * Default bean name.
+     */
+    String DEFAULT_BEAN_NAME = "registeredServiceCipherExecutor";
+
+    /**
      * Encode string.
      *
      * @param data    the data
@@ -45,7 +50,7 @@ public interface RegisteredServiceCipherExecutor {
     /**
      * Is enabled?.
      *
-     * @return the boolean
+     * @return true/false
      */
     default boolean isEnabled() {
         return true;
@@ -55,7 +60,7 @@ public interface RegisteredServiceCipherExecutor {
      * Supports boolean.
      *
      * @param registeredService the registered service
-     * @return the boolean
+     * @return true/false
      */
     default boolean supports(final RegisteredService registeredService) {
         return true;

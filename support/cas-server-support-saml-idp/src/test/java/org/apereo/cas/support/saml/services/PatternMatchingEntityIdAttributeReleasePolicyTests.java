@@ -6,11 +6,12 @@ import org.apereo.cas.support.saml.SamlIdPTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
-import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.core.io.FileSystemResource;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,14 +22,17 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("SAML")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class PatternMatchingEntityIdAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests {
-
-    @BeforeAll
-    public static void beforeClass() {
-        METADATA_DIRECTORY = new FileSystemResource(FileUtils.getTempDirectory());
+    
+    @BeforeEach
+    public void setup() {
+        servicesManager.deleteAll();
+        defaultSamlRegisteredServiceCachingMetadataResolver.invalidate();
     }
-
+    
     @Test
+    @Order(1)
     public void verifyPatternDoesNotMatch() {
         val filter = new PatternMatchingEntityIdAttributeReleasePolicy();
         filter.setAllowedAttributes(CollectionUtils.wrapList("uid"));
@@ -40,6 +44,7 @@ public class PatternMatchingEntityIdAttributeReleasePolicyTests extends BaseSaml
     }
 
     @Test
+    @Order(2)
     public void verifyPatternDoesNotMatchAndReversed() {
         val filter = new PatternMatchingEntityIdAttributeReleasePolicy();
         filter.setAllowedAttributes(CollectionUtils.wrapList("cn"));
@@ -53,6 +58,7 @@ public class PatternMatchingEntityIdAttributeReleasePolicyTests extends BaseSaml
     }
 
     @Test
+    @Order(3)
     public void verifyPatternDoesMatch() {
         val filter = new PatternMatchingEntityIdAttributeReleasePolicy();
         filter.setEntityIds("https://sp.+");

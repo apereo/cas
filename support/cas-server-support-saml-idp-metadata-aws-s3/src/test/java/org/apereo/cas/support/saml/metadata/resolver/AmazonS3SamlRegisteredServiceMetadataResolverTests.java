@@ -5,20 +5,19 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.ListObjectsV2Result;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
-import com.amazonaws.services.s3.model.S3ObjectSummary;
 import lombok.val;
 import net.shibboleth.utilities.java.support.xml.BasicParserPool;
-import org.apache.http.client.methods.HttpGet;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ClassPathResource;
+import software.amazon.awssdk.core.ResponseInputStream;
+import software.amazon.awssdk.http.AbortableInputStream;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
+import software.amazon.awssdk.services.s3.model.S3Object;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -29,27 +28,18 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@SpringBootTest(classes = RefreshAutoConfiguration.class)
 @Tag("AmazonWebServices")
 public class AmazonS3SamlRegisteredServiceMetadataResolverTests {
     @Test
     public void verifyAction() throws Exception {
-        val client = mock(AmazonS3Client.class);
-        val result = new ListObjectsV2Result();
-        val summary = new S3ObjectSummary();
-        summary.setBucketName("CAS");
-        summary.setSize(1000);
-        summary.setKey("SAML-Document.xml");
-        result.getObjectSummaries().add(summary);
-        result.setBucketName("CAS");
-        when(client.listObjectsV2(anyString())).thenReturn(result);
+        val client = mock(S3Client.class);
 
-        val object = new S3Object();
-        object.setBucketName("CAS");
-        object.setKey("SAML-Document.xml");
+        val object = S3Object.builder().key("SAML-Document.xml").size(1000L).build();
+        val result = ListObjectsV2Response.builder().keyCount(1)
+            .contents(object).build();
+        when(client.listObjectsV2(any(ListObjectsV2Request.class))).thenReturn(result);
 
-        val metadata = new ObjectMetadata();
-        metadata.setUserMetadata(CollectionUtils.wrap("signature",
+        val response = GetObjectResponse.builder().metadata(CollectionUtils.wrap("signature",
             "MIICNTCCAZ6gAwIBAgIES343gjANBgkqhkiG9w0BAQUFADBVMQswCQYDVQQGEwJVUzELMAkGA1UE"
                 + "CAwCQ0ExFjAUBgNVBAcMDU1vdW50YWluIFZpZXcxDTALBgNVBAoMBFdTTzIxEjAQBgNVBAMMCWxv"
                 + "Y2FsaG9zdDAeFw0xMDAyMTkwNzAyMjZaFw0zNTAyMTMwNzAyMjZaMFUxCzAJBgNVBAYTAlVTMQsw"
@@ -59,11 +49,10 @@ public class AmazonS3SamlRegisteredServiceMetadataResolverTests {
                 + "HpwvnH/DW8ZccGvk53I6Orq7hLCv1ZHtuOCokghz/ATrhyPq+QktMfXnRS4HrKGJTzxaCcU7OQID"
                 + "AQABoxIwEDAOBgNVHQ8BAf8EBAMCBPAwDQYJKoZIhvcNAQEFBQADgYEAW5wPR7cr1LAdq+IrR44i"
                 + "QlRG5ITCZXY9hI0PygLP2rHANh+PYfTmxbuOnykNGyhM6FjFLbW2uZHQTY1jMrPprjOrmyK5sjJR"
-                + "O4d1DeGHT/YnIjs9JogRKv4XHECwLtIVdAbIdWHEtVZJyMSktcyysFcvuhPQK8Qc/E/Wq8uHSCo="));
-        object.setObjectMetadata(metadata);
-
-        object.setObjectContent(new S3ObjectInputStream(new ClassPathResource("sp-metadata.xml").getInputStream(), new HttpGet()));
-        when(client.getObject(anyString(), anyString())).thenReturn(object);
+                + "O4d1DeGHT/YnIjs9JogRKv4XHECwLtIVdAbIdWHEtVZJyMSktcyysFcvuhPQK8Qc/E/Wq8uHSCo="))
+            .build();
+        val is = new ResponseInputStream<>(response, AbortableInputStream.create(new ClassPathResource("sp-metadata.xml").getInputStream()));
+        when(client.getObject(any(GetObjectRequest.class))).thenReturn(is);
 
         val properties = new SamlIdPProperties();
         properties.getMetadata().getAmazonS3().setBucketName("CAS");

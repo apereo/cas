@@ -3,6 +3,7 @@ package org.apereo.cas.authorization;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +14,7 @@ import org.ldaptive.LdapException;
 import org.ldaptive.SearchOperation;
 import org.pac4j.core.authorization.generator.AuthorizationGenerator;
 import org.pac4j.core.context.WebContext;
+import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.exception.AccountNotFoundException;
 import org.pac4j.core.profile.UserProfile;
 
@@ -30,7 +32,7 @@ import java.util.Optional;
  * @since 5.1.0
  */
 @Slf4j
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public abstract class BaseUseAttributesAuthorizationGenerator implements AuthorizationGenerator {
 
@@ -64,7 +66,7 @@ public abstract class BaseUseAttributesAuthorizationGenerator implements Authori
     }
 
     @Override
-    public Optional<UserProfile> generate(final WebContext context, final UserProfile profile) {
+    public Optional<UserProfile> generate(final WebContext context, final SessionStore sessionStore, final UserProfile profile) {
         val username = profile.getId();
 
         try {

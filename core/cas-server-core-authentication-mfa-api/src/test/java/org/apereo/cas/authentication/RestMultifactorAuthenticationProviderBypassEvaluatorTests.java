@@ -39,8 +39,23 @@ public class RestMultifactorAuthenticationProviderBypassEvaluatorTests {
                 MultifactorAuthenticationTestUtils.getRegisteredService(), provider,
                 new MockHttpServletRequest());
             assertTrue(res);
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
+        }
+    }
+
+    @Test
+    public void verifyOperationFailsWithNoProvider() {
+        try (val webServer = new MockWebServer(9316,
+            new ByteArrayResource("Y".getBytes(StandardCharsets.UTF_8), "REST Output"), HttpStatus.ACCEPTED)) {
+            webServer.start();
+
+            val props = new MultifactorAuthenticationProviderBypassProperties();
+            props.getRest().setUrl("http://localhost:9316");
+            val provider = new TestMultifactorAuthenticationProvider();
+            val r = new RestMultifactorAuthenticationProviderBypassEvaluator(props, provider.getId());
+            val res = r.shouldMultifactorAuthenticationProviderExecute(MultifactorAuthenticationTestUtils.getAuthentication("casuser"),
+                MultifactorAuthenticationTestUtils.getRegisteredService(), null,
+                new MockHttpServletRequest());
+            assertTrue(res);
         }
     }
 }

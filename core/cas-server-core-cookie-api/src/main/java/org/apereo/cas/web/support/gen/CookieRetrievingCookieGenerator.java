@@ -1,12 +1,15 @@
 package org.apereo.cas.web.support.gen;
 
 import org.apereo.cas.authentication.RememberMeCredential;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.cookie.CookieGenerationContext;
 import org.apereo.cas.web.cookie.CookieValueManager;
+import org.apereo.cas.web.support.InvalidCookieException;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.web.support.mgmr.NoOpCookieValueManager;
 
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -17,7 +20,6 @@ import org.springframework.webflow.execution.RequestContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
@@ -65,7 +67,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
      * Is remember me authentication ?
      *
      * @param requestContext the request context
-     * @return the boolean
+     * @return true/false
      */
     public static Boolean isRememberMeAuthentication(final RequestContext requestContext) {
         if (isRememberMeProvidedInRequest(requestContext)) {
@@ -80,7 +82,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
     }
 
     private static Boolean isRememberMeRecordedInAuthentication(final RequestContext requestContext) {
-        LOGGER.debug("Request does not indicate a remember-me authentication event. Locating authentication object from the request context...");
+        LOGGER.debug("Request does not indicate a remember-me authentication. Locating authentication from the request context...");
         val auth = WebUtils.getAuthentication(requestContext);
         if (auth == null) {
             return Boolean.FALSE;
@@ -109,15 +111,15 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
     }
 
     @Override
-    protected Cookie createCookie(final String cookieValue) {
+    protected Cookie createCookie(@NonNull final String cookieValue) {
         val c = super.createCookie(cookieValue);
         c.setComment(cookieGenerationContext.getComment());
         return c;
     }
 
     @Override
-    public void addCookie(final HttpServletRequest request, final HttpServletResponse response,
-                          final boolean rememberMe, final String cookieValue) {
+    public Cookie addCookie(final HttpServletRequest request, final HttpServletResponse response,
+                            final boolean rememberMe, final String cookieValue) {
         val theCookieValue = this.casCookieValueManager.buildCookieValue(cookieValue, request);
         val cookie = createCookie(theCookieValue);
 
@@ -134,17 +136,20 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         cookie.setSecure(isCookieSecure());
         cookie.setHttpOnly(isCookieHttpOnly());
 
-        addCookieHeaderToResponse(cookie, response);
+        return addCookieHeaderToResponse(cookie, response);
     }
 
     @Override
-    public void addCookie(final HttpServletRequest request, final HttpServletResponse response, final String cookieValue) {
-        addCookie(request, response, false, cookieValue);
+    public Cookie addCookie(final HttpServletRequest request, final HttpServletResponse response, final String cookieValue) {
+        return addCookie(request, response, false, cookieValue);
     }
 
     @Override
     public String retrieveCookieValue(final HttpServletRequest request) {
         try {
+            if (StringUtils.isBlank(getCookieName())) {
+                throw new InvalidCookieException("Cookie name is undefined");
+            }
             var cookie = org.springframework.web.util.WebUtils.getCookie(request, Objects.requireNonNull(getCookieName()));
             if (cookie == null) {
                 val cookieValue = request.getHeader(getCookieName());
@@ -164,12 +169,12 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
                 .map(ck -> this.casCookieValueManager.obtainCookieValue(ck, request))
                 .orElse(null);
         } catch (final Exception e) {
-            LOGGER.debug(e.getMessage(), e);
+            LoggingUtils.warn(LOGGER, e);
         }
         return null;
     }
 
-    private void addCookieHeaderToResponse(final Cookie cookie, final HttpServletResponse response) {
+    private Cookie addCookieHeaderToResponse(final Cookie cookie, final HttpServletResponse response) {
         val builder = new StringBuilder();
         builder.append(String.format("%s=%s;", cookie.getName(), cookie.getValue()));
 
@@ -196,6 +201,8 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         }
         if (cookie.getSecure() || StringUtils.equalsIgnoreCase(sameSitePolicy, "none")) {
             builder.append(" Secure;");
+            LOGGER.trace("Marked cookie [{}] as secure as indicated by cookie configuration or "
+                + "the configured same-site policy set to [{}]", cookie.getName(), sameSitePolicy);
         }
         if (cookie.isHttpOnly()) {
             builder.append(" HttpOnly;");
@@ -203,5 +210,6 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         val value = StringUtils.removeEndIgnoreCase(builder.toString(), ";");
         LOGGER.trace("Adding cookie header as [{}]", value);
         response.addHeader("Set-Cookie", value);
+        return cookie;
     }
 }

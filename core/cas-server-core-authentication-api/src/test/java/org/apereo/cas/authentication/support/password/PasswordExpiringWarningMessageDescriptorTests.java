@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.support.password;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -11,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
+@Tag("PasswordOps")
 public class PasswordExpiringWarningMessageDescriptorTests {
     @Test
     public void verifyOperation() {

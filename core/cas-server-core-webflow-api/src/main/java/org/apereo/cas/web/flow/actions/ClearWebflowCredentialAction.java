@@ -3,7 +3,6 @@ package org.apereo.cas.web.flow.actions;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.webflow.action.AbstractAction;
@@ -26,7 +25,6 @@ import org.springframework.webflow.execution.RequestContext;
 public class ClearWebflowCredentialAction extends AbstractAction {
 
     @Override
-    @SneakyThrows
     protected Event doExecute(final RequestContext requestContext) {
         val currentEvent = requestContext.getCurrentEvent();
         if (currentEvent == null) {

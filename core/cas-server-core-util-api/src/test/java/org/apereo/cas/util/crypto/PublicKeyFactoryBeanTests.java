@@ -1,6 +1,8 @@
 package org.apereo.cas.util.crypto;
 
 import lombok.val;
+import org.jose4j.keys.RsaKeyUtil;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 
@@ -12,15 +14,21 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
+@Tag("X509")
 public class PublicKeyFactoryBeanTests {
 
     @Test
     public void verifyOperation() throws Exception {
-        val factory = new PublicKeyFactoryBean();
-        factory.setResource(new ClassPathResource("publickey.pem"));
+        val factory = new PublicKeyFactoryBean(new ClassPathResource("publickey.pem"), RsaKeyUtil.RSA);
         factory.setSingleton(false);
-        factory.setAlgorithm("RSA");
         val object = factory.getObject();
         assertNotNull(object);
+    }
+
+    @Test
+    public void verifyFails() {
+        val factory = new PublicKeyFactoryBean(new ClassPathResource("badkey.pem"), RsaKeyUtil.RSA);
+        factory.setSingleton(false);
+        assertNull(factory.toCipher());
     }
 }

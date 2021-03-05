@@ -27,7 +27,7 @@ public class MongoDbTicketRegistryTicketCatalogConfiguration extends BaseTicketD
     }
 
     @Configuration("mongoDbTicketCatalogConfigValuesProviderConfiguration")
-    static class Config {
+    static class MongoDbTicketCatalogConfigValuesProviderConfiguration {
 
         @ConditionalOnMissingBean
         @Bean

@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 public class SingleSignOnSessionStatusEndpoint {
 
     private final CasCookieBuilder ticketGrantingTicketCookieGenerator;
+
     private final TicketRegistrySupport ticketRegistrySupport;
 
     /**
@@ -35,7 +36,7 @@ public class SingleSignOnSessionStatusEndpoint {
      */
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity ssoStatus(final HttpServletRequest request) {
-        var tgtId = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
+        val tgtId = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
         if (StringUtils.isBlank(tgtId)) {
             return ResponseEntity.badRequest().build();
         }

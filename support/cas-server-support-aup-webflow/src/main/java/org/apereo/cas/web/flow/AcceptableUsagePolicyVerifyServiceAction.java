@@ -1,5 +1,8 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
@@ -34,13 +37,12 @@ public class AcceptableUsagePolicyVerifyServiceAction extends AbstractAction {
      * @return success if policy is accepted. {@link CasWebflowConstants#TRANSITION_ID_AUP_MUST_ACCEPT} otherwise.
      */
     private Event verify(final RequestContext context, final Credential credential) {
-
         val registeredService = WebUtils.getRegisteredService(context);
-        val authentication = WebUtils.getAuthentication(context);
-        val service = WebUtils.getService(context);
-        val eventFactorySupport = new EventFactorySupport();
 
         if (registeredService != null) {
+            val authentication = WebUtils.getAuthentication(context);
+            val service = WebUtils.getService(context);
+            val eventFactorySupport = new EventFactorySupport();
             val audit = AuditableContext.builder()
                 .service(service)
                 .authentication(authentication)
@@ -59,9 +61,9 @@ public class AcceptableUsagePolicyVerifyServiceAction extends AbstractAction {
         return null;
     }
 
-    @Audit(action = "AUP_VERIFY",
-        actionResolverName = "AUP_VERIFY_ACTION_RESOLVER",
-        resourceResolverName = "AUP_VERIFY_RESOURCE_RESOLVER")
+    @Audit(action = AuditableActions.AUP_VERIFY,
+        actionResolverName = AuditActionResolvers.AUP_VERIFY_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.AUP_VERIFY_RESOURCE_RESOLVER)
     @Override
     public Event doExecute(final RequestContext requestContext) {
         return verify(requestContext, WebUtils.getCredential(requestContext));

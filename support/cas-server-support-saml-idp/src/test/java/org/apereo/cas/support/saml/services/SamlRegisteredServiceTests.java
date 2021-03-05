@@ -6,17 +6,22 @@ import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.JsonServiceRegistry;
+import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.util.io.WatcherService;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.file.PathUtils;
+import org.apache.commons.io.file.StandardDeleteOption;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 
@@ -28,7 +33,6 @@ import java.util.HashSet;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * The {@link SamlRegisteredServiceTests} handles test cases for {@link SamlRegisteredService}.
@@ -40,26 +44,42 @@ import static org.mockito.Mockito.*;
 public class SamlRegisteredServiceTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "samlRegisteredService.json");
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     private static final ClassPathResource RESOURCE = new ClassPathResource("services");
+
     private static final String SAML_SERVICE = "SAMLService";
+
     private static final String METADATA_LOCATION = "classpath:/metadata/idp-metadata.xml";
+
+    private static final String JSON_SERVICE_REGISTRY_FOLDER = "json-service-registry";
 
     @BeforeAll
     public static void prepTests() throws Exception {
+        val jsonFolder = new File(FileUtils.getTempDirectory(), JSON_SERVICE_REGISTRY_FOLDER);
+        if (jsonFolder.isDirectory()) {
+            PathUtils.cleanDirectory(jsonFolder.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
+        }
+        if (!jsonFolder.mkdir()) {
+            throw new IOException("Unable to make json folder: " + jsonFolder.getName());
+        }
         FileUtils.cleanDirectory(RESOURCE.getFile());
     }
 
     @Test
     public void verifySavingSamlService() throws Exception {
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+
         val service = new SamlRegisteredService();
         service.setName(SAML_SERVICE);
         service.setServiceId("http://mmoayyed.unicon.net");
         service.setMetadataLocation(METADATA_LOCATION);
 
         val dao = new JsonServiceRegistry(RESOURCE, WatcherService.noOp(),
-            mock(ApplicationEventPublisher.class), new NoOpRegisteredServiceReplicationStrategy(),
+            appCtx, new NoOpRegisteredServiceReplicationStrategy(),
             new DefaultRegisteredServiceResourceNamingStrategy(),
             new ArrayList<>());
         dao.save(service);
@@ -68,6 +88,9 @@ public class SamlRegisteredServiceTests {
 
     @Test
     public void verifySavingInCommonSamlService() throws Exception {
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+
         val service = new SamlRegisteredService();
         service.setName(SAML_SERVICE);
         service.setServiceId("http://mmoayyed.unicon.net");
@@ -76,9 +99,9 @@ public class SamlRegisteredServiceTests {
         val chain = new ChainingAttributeReleasePolicy();
         chain.setPolicies(Arrays.asList(policy, new DenyAllAttributeReleasePolicy()));
         service.setAttributeReleasePolicy(chain);
-
-        val dao = new JsonServiceRegistry(new FileSystemResource(FileUtils.getTempDirectory()), WatcherService.noOp(),
-            mock(ApplicationEventPublisher.class), new NoOpRegisteredServiceReplicationStrategy(),
+        
+        val dao = new JsonServiceRegistry(new FileSystemResource(FileUtils.getTempDirectoryPath() + File.separator + "json-service-registry"), WatcherService.noOp(),
+            appCtx, new NoOpRegisteredServiceReplicationStrategy(),
             new DefaultRegisteredServiceResourceNamingStrategy(),
             new ArrayList<>());
         dao.save(service);
@@ -87,12 +110,20 @@ public class SamlRegisteredServiceTests {
 
     @Test
     public void checkPattern() {
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
         val service = new SamlRegisteredService();
         service.setName(SAML_SERVICE);
         service.setServiceId("^http://.+");
         service.setMetadataLocation(METADATA_LOCATION);
-        val dao = new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class), List.of(service), new ArrayList<>());
-        val impl = new DefaultServicesManager(dao, mock(ApplicationEventPublisher.class), new HashSet<>());
+        val dao = new InMemoryServiceRegistry(appCtx, List.of(service), new ArrayList<>());
+        val context = ServicesManagerConfigurationContext.builder()
+            .serviceRegistry(dao)
+            .applicationContext(appCtx)
+            .environments(new HashSet<>(0))
+            .servicesCache(Caffeine.newBuilder().build())
+            .build();
+        val impl = new DefaultServicesManager(context);
         impl.load();
 
         val s = impl.findServiceBy(new WebApplicationServiceFactory()

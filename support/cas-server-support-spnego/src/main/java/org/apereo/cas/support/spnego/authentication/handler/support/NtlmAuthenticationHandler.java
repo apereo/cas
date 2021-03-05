@@ -33,11 +33,13 @@ import java.util.Arrays;
  * Implementation of an AuthenticationHandler for NTLM supports.
  *
  * @author <a href="mailto:julien.henry@capgemini.com">Julien Henry</a>
+ * @deprecated Since 6.3.0
  * @author Scott Battaglia
  * @author Arnaud Lesueur
  * @since 3.1
  */
 @Slf4j
+@Deprecated(since = "6.3.0")
 public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
     private static final int NBT_ADDRESS_TYPE = 0x1C;

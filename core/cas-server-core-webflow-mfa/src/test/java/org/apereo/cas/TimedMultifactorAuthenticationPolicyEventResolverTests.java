@@ -34,12 +34,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @TestPropertySource(properties = {
-    "cas.authn.adaptive.requireTimedMultifactor[0].providerId=mfa-dummy",
-    "cas.authn.adaptive.requireTimedMultifactor[0].onOrBeforeHour=-1",
-    "cas.authn.adaptive.requireTimedMultifactor[0].onOrAfterHour=-1",
-    "cas.authn.adaptive.requireTimedMultifactor[0].onDays=Saturday,Sunday,Monday,Tuesday,Wednesday,Thursday,Friday"
+    "cas.authn.adaptive.policy.require-timed-multifactor[0].provider-id=mfa-dummy",
+    "cas.authn.adaptive.policy.require-timed-multifactor[0].on-or-before-hour=-1",
+    "cas.authn.adaptive.policy.require-timed-multifactor[0].on-or-after-hour=-1",
+    "cas.authn.adaptive.policy.require-timed-multifactor[0].on-days=Saturday,Sunday,Monday,Tuesday,Wednesday,Thursday,Friday"
 })
-@Tag("Webflow")
+@Tag("WebflowEvents")
 public class TimedMultifactorAuthenticationPolicyEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
 
     @Autowired

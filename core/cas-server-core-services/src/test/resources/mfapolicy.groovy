@@ -1,3 +1,4 @@
+import org.apereo.cas.configuration.model.support.mfa.*
 import org.apereo.cas.services.*
 
 @Deprecated(since = "6.2.0")
@@ -8,8 +9,8 @@ class GroovyMultifactorPolicy extends DefaultRegisteredServiceMultifactorPolicy 
     }
 
     @Override
-    RegisteredServiceMultifactorPolicyFailureModes getFailureMode() {
-        RegisteredServiceMultifactorPolicyFailureModes.OPEN
+    BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes getFailureMode() {
+        BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.OPEN
     }
 
     @Override

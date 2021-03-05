@@ -4,6 +4,7 @@ import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthCodeExpirationPolicy;
+import org.apereo.cas.ticket.expiration.AlwaysExpiresExpirationPolicy;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -35,7 +36,11 @@ public class OAuth20DefaultOAuthCodeFactoryTests extends AbstractOAuth20Tests {
             Set.of("Scope1", "Scope2"), "code-challenge", "plain",
             "clientid-code", Map.of());
         assertNotNull(token);
-        assertNotNull(defaultAccessTokenFactory.get(OAuth20Code.class));
+        assertTrue(token.isFromNewLogin());
+        assertThrows(UnsupportedOperationException.class,
+            () -> token.grantProxyGrantingTicket("123456",
+                RegisteredServiceTestUtils.getAuthentication(),
+                AlwaysExpiresExpirationPolicy.INSTANCE));
     }
 
     @Test
@@ -50,4 +55,5 @@ public class OAuth20DefaultOAuthCodeFactoryTests extends AbstractOAuth20Tests {
         assertNotNull(token);
         assertNotNull(defaultAccessTokenFactory.get(OAuth20Code.class));
     }
+
 }

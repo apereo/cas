@@ -53,18 +53,8 @@ public class CasSupportJdbcAuditConfiguration {
     @Qualifier("jpaBeanFactory")
     private ObjectProvider<JpaBeanFactory> jpaBeanFactory;
 
-    private static String getAuditTableNameFrom(final AuditJdbcProperties jdbc) {
-        var tableName = AuditTrailEntity.AUDIT_TRAIL_TABLE_NAME;
-        if (StringUtils.isNotBlank(jdbc.getDefaultSchema())) {
-            tableName = jdbc.getDefaultSchema().concat(".").concat(tableName);
-        }
-        if (StringUtils.isNotBlank(jdbc.getDefaultCatalog())) {
-            tableName = jdbc.getDefaultCatalog().concat(".").concat(tableName);
-        }
-        return tableName;
-    }
-
     @Bean
+    @RefreshScope
     public AuditTrailManager jdbcAuditTrailManager() {
         val jdbc = casProperties.getAudit().getJdbc();
         val t = new JdbcAuditTrailManager(inspektrAuditTransactionTemplate());
@@ -73,11 +63,18 @@ public class CasSupportJdbcAuditConfiguration {
         t.setAsynchronous(jdbc.isAsynchronous());
         t.setColumnLength(jdbc.getColumnLength());
         t.setTableName(getAuditTableNameFrom(jdbc));
+        if (StringUtils.isNotBlank(jdbc.getSelectSqlQueryTemplate())) {
+            t.setSelectByDateSqlTemplate(jdbc.getSelectSqlQueryTemplate());
+        }
+        if (StringUtils.isNotBlank(jdbc.getDateFormatterPattern())) {
+            t.setDateFormatterPattern(jdbc.getDateFormatterPattern());
+        }
         return t;
     }
 
     @ConditionalOnMissingBean(name = "jdbcAuditTrailExecutionPlanConfigurer")
     @Bean
+    @RefreshScope
     public AuditTrailExecutionPlanConfigurer jdbcAuditTrailExecutionPlanConfigurer() {
         return plan -> plan.registerAuditTrailManager(jdbcAuditTrailManager());
     }
@@ -85,11 +82,12 @@ public class CasSupportJdbcAuditConfiguration {
     @Bean
     public LocalContainerEntityManagerFactoryBean inspektrAuditEntityManagerFactory() {
         val factory = jpaBeanFactory.getObject();
-        val ctx = new JpaConfigurationContext(
-            factory.newJpaVendorAdapter(casProperties.getJdbc()),
-            "jpaInspektrAuditContext",
-            CollectionUtils.wrap(AuditTrailEntity.class.getPackage().getName()),
-            inspektrAuditTrailDataSource());
+        val ctx = JpaConfigurationContext.builder()
+            .jpaVendorAdapter(factory.newJpaVendorAdapter(casProperties.getJdbc()))
+            .persistenceUnitName("jpaInspektrAuditContext")
+            .dataSource(inspektrAuditTrailDataSource())
+            .packagesToScan(CollectionUtils.wrap(AuditTrailEntity.class.getPackage().getName()))
+            .build();
         return factory.newEntityManagerFactoryBean(ctx, casProperties.getAudit().getJdbc());
     }
 
@@ -101,6 +99,7 @@ public class CasSupportJdbcAuditConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "inspektrAuditTransactionManager")
     public PlatformTransactionManager inspektrAuditTransactionManager() {
         return new DataSourceTransactionManager(inspektrAuditTrailDataSource());
     }
@@ -128,14 +127,24 @@ public class CasSupportJdbcAuditConfiguration {
     public Cleanable inspektrAuditTrailCleaner() {
         return new Cleanable() {
             @Scheduled(
-                initialDelayString = "${cas.audit.jdbc.schedule.startDelay:10000}",
-                fixedDelayString = "${cas.audit.jdbc.schedule.repeatInterval:30000}"
+                initialDelayString = "${cas.audit.jdbc.schedule.start-delay:10000}",
+                fixedDelayString = "${cas.audit.jdbc.schedule.repeat-interval:30000}"
             )
             @Override
             public void clean() {
-                val cleaner = Cleanable.class.cast(jdbcAuditTrailManager());
-                cleaner.clean();
+                jdbcAuditTrailManager().clean();
             }
         };
+    }
+
+    private static String getAuditTableNameFrom(final AuditJdbcProperties jdbc) {
+        var tableName = AuditTrailEntity.AUDIT_TRAIL_TABLE_NAME;
+        if (StringUtils.isNotBlank(jdbc.getDefaultSchema())) {
+            tableName = jdbc.getDefaultSchema().concat(".").concat(tableName);
+        }
+        if (StringUtils.isNotBlank(jdbc.getDefaultCatalog())) {
+            tableName = jdbc.getDefaultCatalog().concat(".").concat(tableName);
+        }
+        return tableName;
     }
 }

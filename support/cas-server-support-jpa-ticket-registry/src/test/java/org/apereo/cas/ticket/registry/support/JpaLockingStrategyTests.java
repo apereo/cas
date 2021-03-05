@@ -9,6 +9,7 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
@@ -39,20 +40,26 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.jpa.SharedEntityManagerCreator;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.LockModeType;
 import javax.sql.DataSource;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.time.Clock;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -61,6 +68,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit test for {@link JpaLockingStrategy}.
@@ -92,6 +100,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreTicketCatalogConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     CasCoreWebConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class
 })
 @DirtiesContext
@@ -229,6 +238,26 @@ public class JpaLockingStrategyTests {
         }
     }
 
+    @Test
+    public void verifyAcquireFails() {
+        val strategy = new JpaLockingStrategy("CAS", UUID.randomUUID().toString(), 0);
+        val mgr = mock(EntityManager.class);
+        doThrow(new RuntimeException()).when(mgr).persist(any());
+        when(mgr.merge(any())).thenThrow(new RuntimeException());
+        strategy.setEntityManager(mgr);
+        val lock = mock(JpaLockingStrategy.Lock.class);
+        assertFalse(strategy.acquire(lock));
+
+        when(mgr.find(any(), anyString(), any(LockModeType.class)))
+            .thenThrow(new RuntimeException());
+        assertFalse(strategy.acquire());
+
+        when(lock.getExpirationDate()).thenReturn(ZonedDateTime.now(Clock.systemUTC()).minusDays(1));
+        when(lock.getUniqueId()).thenReturn(UUID.randomUUID().toString());
+        when(mgr.find(any(), anyString(), any(LockModeType.class))).thenReturn(lock);
+        assertFalse(strategy.acquire());
+    }
+
     private LockingStrategy[] getConcurrentLocks(final String appId) {
         val locks = new LockingStrategy[CONCURRENT_SIZE];
         IntStream.rangeClosed(1, locks.length)
@@ -255,7 +284,8 @@ public class JpaLockingStrategyTests {
         return (String) results.get(0).get("unique_id");
     }
 
-    @TestConfiguration
+    @TestConfiguration("JpaTestLockingConfiguration")
+    @Lazy(false)
     public static class JpaTestConfiguration implements InitializingBean {
         @Autowired
         protected ApplicationContext applicationContext;

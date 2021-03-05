@@ -82,9 +82,11 @@ public class SSOSamlIdPPostProfileHandlerController extends AbstractSamlIdPProfi
     protected void handleSsoPostProfileRequest(final HttpServletResponse response,
                                                final HttpServletRequest request,
                                                final BaseHttpServletRequestXMLMessageDecoder decoder) throws Exception {
-        val authnRequest = getSamlProfileHandlerConfigurationContext().getSamlHttpRequestExtractor()
+        val result = getSamlProfileHandlerConfigurationContext().getSamlHttpRequestExtractor()
             .extract(request, decoder, AuthnRequest.class);
-        initiateAuthenticationRequest(authnRequest, response, request);
+        if (result.isPresent()) {
+            initiateAuthenticationRequest(result.get(), response, request);
+        }
     }
 
 }

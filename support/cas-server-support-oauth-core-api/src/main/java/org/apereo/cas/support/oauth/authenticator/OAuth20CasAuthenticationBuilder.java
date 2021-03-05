@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.JEEContext;
-import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.core.profile.UserProfile;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -89,13 +89,12 @@ public class OAuth20CasAuthenticationBuilder {
      * @param service           the service
      * @return the built authentication
      */
-    public Authentication build(final CommonProfile profile,
+    public Authentication build(final UserProfile profile,
                                 final OAuthRegisteredService registeredService,
                                 final JEEContext context,
                                 final Service service) {
 
         val attrs = new HashMap<>(profile.getAttributes());
-        attrs.putAll(profile.getAuthenticationAttributes());
 
         val profileAttributes = CoreAuthenticationUtils.convertAttributeValuesToMultiValuedObjects(attrs);
         val newPrincipal = this.principalFactory.createPrincipal(profile.getId(), profileAttributes);

@@ -4,7 +4,7 @@ import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 
 import lombok.ToString;
 import lombok.val;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,9 +31,9 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
     @PersistenceContext(unitName = "serviceEntityManagerFactory")
     private transient EntityManager entityManager;
 
-    public JpaServiceRegistry(final ApplicationEventPublisher eventPublisher,
+    public JpaServiceRegistry(final ConfigurableApplicationContext applicationContext,
                               final Collection<ServiceRegistryListener> serviceRegistryListeners) {
-        super(eventPublisher, serviceRegistryListeners);
+        super(applicationContext, serviceRegistryListeners);
     }
 
     @Override
@@ -47,8 +47,18 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
     }
 
     @Override
+    public void deleteAll() {
+        val query = String.format("SELECT r FROM %s r", ENTITY_NAME);
+        entityManager.createQuery(query, RegisteredService.class).getResultList()
+            .forEach(entity -> entityManager.remove(entity));
+        
+        entityManager.flush();
+        entityManager.clear();
+    }
+
+    @Override
     public Collection<RegisteredService> load() {
-        val query = String.format("SELECT r from %s r", ENTITY_NAME);
+        val query = String.format("SELECT r FROM %s r", ENTITY_NAME);
         val list = this.entityManager.createQuery(query, RegisteredService.class).getResultList();
         return list
             .stream()
@@ -76,7 +86,7 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public long size() {
-        val query = String.format("SELECT count(r) from %s r", ENTITY_NAME);
+        val query = String.format("SELECT COUNT(r) FROM %s r", ENTITY_NAME);
         return this.entityManager.createQuery(query, Long.class).getSingleResult();
     }
 }

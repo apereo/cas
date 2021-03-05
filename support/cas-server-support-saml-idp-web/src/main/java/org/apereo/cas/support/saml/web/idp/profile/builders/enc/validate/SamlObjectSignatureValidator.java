@@ -64,12 +64,12 @@ public class SamlObjectSignatureValidator {
     /**
      * The Override black listed signature algorithms.
      */
-    protected final List overrideBlackListedSignatureAlgorithms;
+    protected final List overrideBlockedSignatureAlgorithms;
 
     /**
-     * The Override white listed signature signing algorithms.
+     * The Override allowed signature signing algorithms.
      */
-    protected final List overrideWhiteListedAlgorithms;
+    protected final List overrideAllowedAlgorithms;
 
     /**
      * CAS settings.
@@ -91,7 +91,6 @@ public class SamlObjectSignatureValidator {
                                                  final MessageContext context) throws Exception {
 
         val roleDescriptorResolver = getRoleDescriptorResolver(resolver, context, profileRequest);
-
         LOGGER.debug("Validating signature for [{}]", profileRequest.getClass().getName());
 
         val signature = profileRequest.getSignature();
@@ -132,18 +131,18 @@ public class SamlObjectSignatureValidator {
                                                                final MessageContext context,
                                                                final RequestAbstractType profileRequest) throws Exception {
         val idp = casProperties.getAuthn().getSamlIdp();
-        return SamlIdPUtils.getRoleDescriptorResolver(resolver, idp.getMetadata().isRequireValidMetadata());
+        return SamlIdPUtils.getRoleDescriptorResolver(resolver, idp.getMetadata().getCore().isRequireValidMetadata());
     }
 
-    private void validateSignatureOnAuthenticationRequest(final RequestAbstractType profileRequest, final HttpServletRequest request,
+    private void validateSignatureOnAuthenticationRequest(final RequestAbstractType profileRequest,
+                                                          final HttpServletRequest request,
                                                           final MessageContext context,
                                                           final RoleDescriptorResolver roleDescriptorResolver) throws Exception {
-        val handler = new SAML2HTTPRedirectDeflateSignatureSecurityHandler();
         val peer = context.getSubcontext(SAMLPeerEntityContext.class, true);
         peer.setEntityId(SamlIdPUtils.getIssuerFromSamlObject(profileRequest));
 
         val peerEntityId = peer.getEntityId();
-        LOGGER.debug("Validating request signature for [{}] via [{}]...", peerEntityId, handler.getClass().getSimpleName());
+        LOGGER.debug("Validating request signature for [{}]...", peerEntityId);
 
         val roleDescriptor = roleDescriptorResolver.resolveSingle(
             new CriteriaSet(new EntityIdCriterion(peerEntityId),
@@ -156,30 +155,30 @@ public class SamlObjectSignatureValidator {
         val secCtx = context.getSubcontext(SecurityParametersContext.class, true);
         val validationParams = new SignatureValidationParameters();
 
-        if (overrideBlackListedSignatureAlgorithms != null && !overrideBlackListedSignatureAlgorithms.isEmpty()) {
-            validationParams.setBlacklistedAlgorithms(this.overrideBlackListedSignatureAlgorithms);
-            LOGGER.debug("Validation override blacklisted algorithms are [{}]", this.overrideWhiteListedAlgorithms);
+        if (overrideBlockedSignatureAlgorithms != null && !overrideBlockedSignatureAlgorithms.isEmpty()) {
+            validationParams.setBlacklistedAlgorithms(this.overrideBlockedSignatureAlgorithms);
+            LOGGER.debug("Validation override blocked algorithms are [{}]", this.overrideAllowedAlgorithms);
         }
 
-        if (overrideWhiteListedAlgorithms != null && !overrideWhiteListedAlgorithms.isEmpty()) {
-            validationParams.setWhitelistedAlgorithms(this.overrideWhiteListedAlgorithms);
-            LOGGER.debug("Validation override whitelisted algorithms are [{}]", this.overrideWhiteListedAlgorithms);
+        if (overrideAllowedAlgorithms != null && !overrideAllowedAlgorithms.isEmpty()) {
+            validationParams.setWhitelistedAlgorithms(this.overrideAllowedAlgorithms);
+            LOGGER.debug("Validation override allowed algorithms are [{}]", this.overrideAllowedAlgorithms);
         }
 
         LOGGER.debug("Resolving signing credentials for [{}]", peerEntityId);
         val credentials = getSigningCredential(roleDescriptorResolver, profileRequest);
-        if (credentials == null || credentials.isEmpty()) {
+        if (credentials.isEmpty()) {
             throw new SamlException("Signing credentials for validation could not be resolved");
         }
 
         var foundValidCredential = false;
         val it = credentials.iterator();
         while (!foundValidCredential && it.hasNext()) {
+            val handler = new SAML2HTTPRedirectDeflateSignatureSecurityHandler();
             try {
-                val c = it.next();
-
-                val resolver = new StaticCredentialResolver(c);
-                val keyResolver = new StaticKeyInfoCredentialResolver(c);
+                val credential = it.next();
+                val resolver = new StaticCredentialResolver(credential);
+                val keyResolver = new StaticKeyInfoCredentialResolver(credential);
                 val trustEngine = new ExplicitKeySignatureTrustEngine(resolver, keyResolver);
                 validationParams.setSignatureTrustEngine(trustEngine);
                 secCtx.setSignatureValidationParameters(validationParams);
@@ -275,23 +274,22 @@ public class SamlObjectSignatureValidator {
      * @return the signature validation configuration
      */
     protected SignatureValidationConfiguration getSignatureValidationConfiguration() {
-        val config =
-            DefaultSecurityConfigurationBootstrap.buildDefaultSignatureValidationConfiguration();
+        val config = DefaultSecurityConfigurationBootstrap.buildDefaultSignatureValidationConfiguration();
         val samlIdp = casProperties.getAuthn().getSamlIdp();
 
-        if (this.overrideBlackListedSignatureAlgorithms != null
-            && !samlIdp.getAlgs().getOverrideBlackListedSignatureSigningAlgorithms().isEmpty()) {
-            config.setBlacklistedAlgorithms(this.overrideBlackListedSignatureAlgorithms);
+        if (this.overrideBlockedSignatureAlgorithms != null
+            && !samlIdp.getAlgs().getOverrideBlockedSignatureSigningAlgorithms().isEmpty()) {
+            config.setBlacklistedAlgorithms(this.overrideBlockedSignatureAlgorithms);
             config.setWhitelistMerge(true);
         }
 
-        if (this.overrideWhiteListedAlgorithms != null && !this.overrideWhiteListedAlgorithms.isEmpty()) {
-            config.setWhitelistedAlgorithms(this.overrideWhiteListedAlgorithms);
+        if (this.overrideAllowedAlgorithms != null && !this.overrideAllowedAlgorithms.isEmpty()) {
+            config.setWhitelistedAlgorithms(this.overrideAllowedAlgorithms);
             config.setBlacklistMerge(true);
         }
 
-        LOGGER.debug("Signature validation blacklisted algorithms: [{}]", config.getBlacklistedAlgorithms());
-        LOGGER.debug("Signature validation whitelisted algorithms: [{}]", config.getWhitelistedAlgorithms());
+        LOGGER.debug("Signature validation blocked algorithms: [{}]", config.getBlacklistedAlgorithms());
+        LOGGER.debug("Signature validation allowed algorithms: [{}]", config.getWhitelistedAlgorithms());
 
         return config;
     }

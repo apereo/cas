@@ -39,8 +39,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(
     properties = {
         "cas.authn.mfa.trusted.cleaner.schedule.enabled=false",
-        "cas.authn.mfa.trusted.couchDb.username=cas",
-        "cas.authn.mfa.trusted.couchdb.password=password"
+        "cas.authn.mfa.trusted.couch-db.username=cas",
+        "cas.authn.mfa.trusted.couch-db.password=password"
     })
 @Getter
 @EnabledIfPortOpen(port = 5984)
@@ -78,5 +78,26 @@ public class CouchDbMultifactorAuthenticationTrustStorageTests extends AbstractM
         val now = DateTimeUtils.zonedDateTimeOf(record.getExpirationDate()).truncatedTo(ChronoUnit.SECONDS).plusDays(1);
         getMfaTrustEngine().remove(now);
         assertTrue(getMfaTrustEngine().getAll().isEmpty());
+    }
+
+    @Test
+    public void verifyMerging() {
+        val record = getMultifactorAuthenticationTrustRecord();
+        record.setRecordDate(ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS));
+        record.setExpirationDate(DateTimeUtils.dateOf(record.getRecordDate().plusDays(2)));
+        getMfaTrustEngine().save(record);
+
+        var newRecord = getMfaTrustEngine().get(record.getId());
+        assertNotNull(newRecord);
+        assertEquals(newRecord.getRecordKey(), record.getRecordKey());
+        newRecord.setName("NewDeviceName");
+        getMfaTrustEngine().save(newRecord);
+
+        newRecord = getMfaTrustEngine().get(newRecord.getId());
+        assertEquals("NewDeviceName", newRecord.getName());
+
+        getMfaTrustEngine().remove(newRecord.getRecordKey());
+        newRecord = getMfaTrustEngine().get(newRecord.getId());
+        assertNull(newRecord);
     }
 }

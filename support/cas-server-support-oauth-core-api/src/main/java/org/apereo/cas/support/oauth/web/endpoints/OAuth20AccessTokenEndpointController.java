@@ -1,6 +1,8 @@
 package org.apereo.cas.support.oauth.web.endpoints;
 
 import org.apereo.cas.audit.AuditableContext;
+import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
@@ -12,6 +14,8 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerat
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseResult;
 import org.apereo.cas.ticket.OAuth20UnauthorizedScopeRequestException;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.google.common.base.Supplier;
 import lombok.SneakyThrows;
@@ -38,8 +42,12 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Slf4j
 public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller {
-    public OAuth20AccessTokenEndpointController(final OAuth20ConfigurationContext oauthConfigurationContext) {
+    private final AuditableExecution accessTokenGrantAuditableRequestExtractor;
+
+    public OAuth20AccessTokenEndpointController(final OAuth20ConfigurationContext oauthConfigurationContext,
+        final AuditableExecution accessTokenGrantAuditableRequestExtractor) {
         super(oauthConfigurationContext);
+        this.accessTokenGrantAuditableRequestExtractor = accessTokenGrantAuditableRequestExtractor;
     }
 
     /**
@@ -60,18 +68,16 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
             if (!verifyAccessTokenRequest(request, response)) {
                 throw new IllegalArgumentException("Access token validation failed");
             }
-        } catch (final OAuth20UnauthorizedScopeRequestException e) {
-            LOGGER.error(e.getMessage(), e);
-            return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_SCOPE);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_REQUEST);
         }
 
         try {
             val requestHolder = examineAndExtractAccessTokenGrantRequest(request, response);
             LOGGER.debug("Creating access token for [{}]", requestHolder);
-            val context = new JEEContext(request, response, getOAuthConfigurationContext().getSessionStore());
+            AuthenticationCredentialsThreadLocalBinder.bindCurrent(requestHolder.getAuthentication());
+            val context = new JEEContext(request, response);
             val tokenResult = getOAuthConfigurationContext().getAccessTokenGenerator().generate(requestHolder);
             LOGGER.debug("Access token generated result is: [{}]", tokenResult);
             return generateAccessTokenResponse(request, response, requestHolder, context, tokenResult);
@@ -85,10 +91,10 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
             LOGGER.error("Check for device user code approval is too quick and is throttled. Requests must slow down");
             return OAuth20Utils.writeError(response, OAuth20Constants.SLOW_DOWN);
         } catch (final OAuth20UnauthorizedScopeRequestException e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
             return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_SCOPE);
         } catch (final Exception e) {
-            LOGGER.error("Could not identify and extract access token request", e);
+            LoggingUtils.error(LOGGER, "Could not identify and extract access token request", e);
             return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_GRANT);
         }
     }
@@ -118,20 +124,18 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
      * @return the model and view
      */
     protected ModelAndView generateAccessTokenResponse(final HttpServletRequest request,
-                                                       final HttpServletResponse response,
-                                                       final AccessTokenRequestDataHolder requestHolder,
-                                                       final JEEContext context,
-                                                       final OAuth20TokenGeneratedResult result) {
+        final HttpServletResponse response,
+        final AccessTokenRequestDataHolder requestHolder,
+        final JEEContext context,
+        final OAuth20TokenGeneratedResult result) {
         LOGGER.debug("Generating access token response for [{}]", result);
-
         val deviceRefreshInterval = Beans.newDuration(getOAuthConfigurationContext().getCasProperties()
             .getAuthn().getOauth().getDeviceToken().getRefreshInterval()).getSeconds();
-        val atPolicy = getOAuthConfigurationContext().getAccessTokenExpirationPolicy();
         val dtPolicy = getOAuthConfigurationContext().getDeviceTokenExpirationPolicy();
         val tokenResult = OAuth20AccessTokenResponseResult.builder()
             .registeredService(requestHolder.getRegisteredService())
             .service(requestHolder.getService())
-            .accessTokenTimeout(atPolicy.buildTicketExpirationPolicy().getTimeToLive())
+            .accessTokenTimeout(result.getAccessToken().map(OAuth20AccessToken::getExpiresIn).orElse(0L))
             .deviceRefreshInterval(deviceRefreshInterval)
             .deviceTokenTimeout(dtPolicy.buildTicketExpirationPolicy().getTimeToLive())
             .responseType(result.getResponseType().orElse(OAuth20ResponseTypes.NONE))
@@ -142,12 +146,12 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
     }
 
     private AccessTokenRequestDataHolder examineAndExtractAccessTokenGrantRequest(final HttpServletRequest request,
-                                                                                  final HttpServletResponse response) {
+        final HttpServletResponse response) {
         val audit = AuditableContext.builder()
             .httpRequest(request)
             .httpResponse(response)
             .build();
-        val accessResult = getOAuthConfigurationContext().getAccessTokenGrantAuditableRequestExtractor().execute(audit);
+        val accessResult = accessTokenGrantAuditableRequestExtractor.execute(audit);
         val execResult = accessResult.getExecutionResult();
         if (execResult.isPresent()) {
             return (AccessTokenRequestDataHolder) execResult.get();
@@ -164,10 +168,6 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
      */
     private boolean verifyAccessTokenRequest(final HttpServletRequest request, final HttpServletResponse response) {
         val validators = getOAuthConfigurationContext().getAccessTokenGrantRequestValidators();
-        if (validators.isEmpty()) {
-            LOGGER.warn("No validators are defined to examine the access token request for eligibility");
-            return false;
-        }
         val context = new JEEContext(request, response);
         return validators.stream()
             .filter(ext -> ext.supports(context))

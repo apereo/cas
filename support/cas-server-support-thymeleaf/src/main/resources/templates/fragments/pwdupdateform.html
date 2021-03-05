@@ -3,46 +3,62 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
 
     <title>Password Update Form</title>
-    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
 </head>
 
 <body>
-    <main role="main" class="container mt-3 mb-3">
-        <div th:fragment="pwdupdateform" class="">
-            <script th:inline="javascript">
-                /*<![CDATA[*/
+<main role="main" class="container mt-3 mb-3">
+    <div id="pwdmain" th:fragment="pwdupdateform">
+        <script th:inline="javascript">
+            /*<![CDATA[*/
 
-                var policyPattern = /*[[${policyPattern}]]*/;
-                var passwordStrengthI18n = {
-                    0: /*[[#{screen.pm.password.strength.0}]]*/,
-                    1: /*[[#{screen.pm.password.strength.1}]]*/,
-                    2: /*[[#{screen.pm.password.strength.2}]]*/,
-                    3: /*[[#{screen.pm.password.strength.3}]]*/,
-                    4: /*[[#{screen.pm.password.strength.4}]]*/
-              };
+            var policyPattern = /*[[${policyPattern}]]*/;
+            var passwordStrengthI18n = {
+                0: /*[[#{screen.pm.password.strength.0}]]*/,
+                1: /*[[#{screen.pm.password.strength.1}]]*/,
+                2: /*[[#{screen.pm.password.strength.2}]]*/,
+                3: /*[[#{screen.pm.password.strength.3}]]*/,
+                4: /*[[#{screen.pm.password.strength.4}]]*/
+            };
 
-                /*]]>*/
-            </script>
-            <h3 th:utext="${expiredPass} ? #{screen.expiredpass.heading} : #{screen.mustchangepass.heading}">Change
-                Password Heading</h3>
-            <form id="passwordManagementForm" th:if="${passwordManagementEnabled}" method="post"
-                th:object="${password}">
-                <div class="banner banner-danger banner-dismissible my-4" th:if="${#fields.hasErrors('*')}">
-                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            /*]]>*/
+        </script>
+        <h3 th:utext="${expiredPass} ? #{screen.expiredpass.heading} : #{screen.mustchangepass.heading}">Change
+            Password Heading</h3>
+        <form id="passwordManagementForm" th:if="${passwordManagementEnabled}" method="post"
+              th:object="${password}">
+            <div class="banner banner-danger banner-dismissible my-4" th:if="${#fields.hasErrors('*')}">
+
                 <span th:each="err : ${#fields.errors('*')}" th:utext="${err}">Error text</span>
             </div>
 
             <div class="cas-field my-3 mdc-input-group">
                 <div class="mdc-input-group-field mdc-input-group-field-append">
-                    <div class="mdc-text-field  mdc-text-field--with-trailing-icon d-flex caps-check">
-                        <input class="mdc-text-field__input pwd" type="password" id="password" th:field="*{password}" required />
-                        <label for="username" class="mdc-floating-label" th:utext="#{screen.pm.enterpsw}">Enter Password:</label>
+                    <div class="d-flex caps-check">
+
+                        <label for="password" class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">
+                            <input class="mdc-text-field__input pwd"
+                                   type="password"
+                                   name="password"
+                                   id="password"
+                                   th:field="*{password}"
+                                   autocomplete="off" required/>
+
+                            <span class="mdc-notched-outline">
+                                    <span class="mdc-notched-outline__leading"></span>
+                                    <span class="mdc-notched-outline__notch">
+                                      <span class="mdc-floating-label" th:utext="#{screen.pm.enterpsw}">Enter Password:</span>
+                                    </span>
+                                    <span class="mdc-notched-outline__trailing"></span>
+                                </span>
+                        </label>
+
                         <i class="mdi mdi-alert mdc-text-field__icon text-danger caps-warn"></i>
-                        
+
                     </div>
                 </div>
                 <button class="reveal-password mdc-button mdc-button--raised mdc-input-group-append mdc-icon-button" type="button">
@@ -52,9 +68,25 @@
             </div>
 
             <div class="cas-field my-3">
-                <div class="mdc-text-field  mdc-text-field--with-trailing-icon d-flex caps-check">
-                    <input class="mdc-text-field__input" type="password" id="confirmedPassword" th:field="*{confirmedPassword}" required />
-                    <label for="confirmedPassword" class="mdc-floating-label" th:utext="#{screen.pm.confirmpsw}">Confirm Password:</label>
+                <div class="d-flex caps-check">
+
+                    <label for="confirmedPassword" class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">
+                        <input class="mdc-text-field__input pwd"
+                               type="password"
+                               name="confirmedPassword"
+                               id="confirmedPassword"
+                               th:field="*{confirmedPassword}"
+                               autocomplete="off" required/>
+
+                        <span class="mdc-notched-outline">
+                            <span class="mdc-notched-outline__leading"></span>
+                            <span class="mdc-notched-outline__notch">
+                              <span class="mdc-floating-label" th:utext="#{screen.pm.confirmpsw}">Confirm Password:</span>
+                            </span>
+                            <span class="mdc-notched-outline__trailing"></span>
+                        </span>
+                    </label>
+
                     <i class="mdi mdi-alert mdc-text-field__icon text-danger caps-warn"></i>
                 </div>
             </div>
@@ -103,14 +135,14 @@
                 <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
                 <input type="hidden" name="_eventId" value="submit"/>
                 <button class="mdc-button mdc-button--raised mr-2"
-                    name="submit"
-                    accesskey="s"
-                    th:value="#{screen.pm.button.submit}"
-                    th:attr="data-processing-text=#{screen.welcome.button.loginwip}"
-                    value="SUBMIT"
-                    id="submit"
-                    type="submit"
-                    disabled="true">
+                        name="submit"
+                        accesskey="s"
+                        th:value="#{screen.pm.button.submit}"
+                        th:attr="data-processing-text=#{screen.welcome.button.loginwip}"
+                        value="SUBMIT"
+                        id="submit"
+                        type="submit"
+                        disabled="true">
                     <span class="mdc-button__label" th:text="#{screen.pm.button.submit}">Submit</span>
                 </button>
                 <a class="mdc-button mdc-button--outlined" th:href="@{/login}">
@@ -118,7 +150,7 @@
                 </a>
             </div>
         </form>
-        <p th:unless="${passwordManagementEnabled}"
+        <p id="pwddesc" th:unless="${passwordManagementEnabled}"
            th:utext="${expiredPass} ? #{screen.expiredpass.message('https://pwd.example.org')} : #{screen.mustchangepass.message('https://pwd.example.org')}">Expired/Must Change Password text</p>
     </div>
 </main>

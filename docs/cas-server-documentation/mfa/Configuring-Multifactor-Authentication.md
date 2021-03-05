@@ -4,9 +4,17 @@ title: CAS - Multifactor Authentication
 category: Multifactor Authentication
 ---
 
+{% include variables.html %}
+
 # Multifactor Authentication (MFA)
 
-CAS provides support for a variety of multifactor authentication providers and options, while allowing one to design their own. The secondary authentication factor always kicks in *after* the primary step and existing authentication sessions will be asked to step-up to the needed multifactor authentication factor, should the request or trigger require it. The satisfied authentication context is communicated back to the application as well to denote a successful multifactor authentication event.
+CAS provides support for a variety of multifactor authentication providers and 
+options, while allowing one to design their own. The secondary authentication 
+factor always kicks in *after* the primary step and existing authentication 
+sessions will be asked to step-up to the needed multifactor authentication 
+factor, should the request or trigger require it. The satisfied authentication 
+context is communicated back to the application as well to denote a successful 
+multifactor authentication event.
 
 At a minimum, you need answer the following questions:
 
@@ -27,9 +35,15 @@ The following multifactor providers are supported by CAS.
 | WiKID                 | `mfa-radius`    | [See this guide](RADIUS-Authentication.html).
 | Google Authenticator  | `mfa-gauth`     | [See this guide](GoogleAuthenticator-Authentication.html).
 | FIDO U2F              | `mfa-u2f`       | [See this guide](FIDO-U2F-Authentication.html).
+| FIDO2 WebAuthN        | `mfa-webauthn`  | [See this guide](FIDO2-WebAuthn-Authentication.html).
 | CAS Simple            | `mfa-simple`    | [See this guide](Simple-Multifactor-Authentication.html).
 | Swivel Secure         | `mfa-swivel`    | [See this guide](SwivelSecure-Authentication.html).
+| Inwebo                | `mfa-inwebo`    | [See this guide](Inwebo-Authentication.html).
 | Custom                | Custom          | [See this guide](../mfa/Custom-MFA-Authentication.html).
+  
+## Core Configuration
+
+{% include casproperties.html properties="cas.authn.mfa.core" %}
 
 ## Triggers
 
@@ -38,27 +52,13 @@ To learn more, [please see this guide](Configuring-Multifactor-Authentication-Tr
 
 ## Bypass Rules
 
-Each multifactor provider is equipped with options to allow for MFA bypass. To learn more, [please see this guide](../mfa/Configuring-Multifactor-Authentication-Bypass.html).
+Each multifactor provider is equipped with options to allow for MFA 
+bypass. To learn more, [please see this guide](../mfa/Configuring-Multifactor-Authentication-Bypass.html).
 
-## Failure Modes
+## Failure Modes Selection
 
-The authentication policy by default supports fail-closed mode, which means that if you attempt to exercise a particular
-provider available to CAS and the provider cannot be reached, authentication will be stopped and an error
-will be displayed. You can of course change this behavior so that authentication proceeds without exercising the provider
-functionality, if that provider cannot respond.
-
-The following failure modes are supported:
-
-| Field                | Description
-|----------------------|----------------------------------
-| `CLOSED`             | Authentication is blocked if the provider cannot be reached.
-| `OPEN`               | Authentication proceeds yet requested MFA is NOT communicated to the client if provider is unavailable.
-| `PHANTOM`            | Authentication proceeds and requested MFA is communicated to the client if provider is unavailable.
-| `NONE`               | Do not contact the provider at all to check for availability. Assume the provider is available.
-
-### Failure Mode Selection
-
-CAS will consult the current configuration in the event that the provider being requested is unreachable to determine how to proceed.  
+CAS will consult the current configuration in the event that the provider 
+being requested is unreachable to determine how to proceed.  
 The failure mode can be configured at these locations and CAS will use the first defined failure mode in this order:
 
 - Registered Service Multifactor Authentication Policy
@@ -69,7 +69,7 @@ If no actionable failure mode is encountered the user will be shown a generic "A
 
 ### Failure Mode by Registered Service
 
-Set as part of the "multifactorPolicy".  This location will override a failure a mode set at any other location.
+Set as part of the `multifactorPolicy` which will override a failure a mode set at any other location.
 
 ```json
 {
@@ -84,21 +84,15 @@ Set as part of the "multifactorPolicy".  This location will override a failure a
 }
 ```
 
-### Failure Mode by Multifactor Authentication Provider
-
-Each defined multifactor authentication provider can set its own failure mode policy. Failure modes set at this location will override the global failure mode, but defer to any failure mode set by the registered service.
-
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties-Common.html#multifactor-authentication-providers).
-
-### Global Failure Mode
-
-A default failure mode can be specified globally via CAS properties and will be used in the case where no failure mode is set in either the provider or the registered service.
-
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#multifactor-authentication).
 
 ## Multiple Provider Selection
 
-In the event that multiple multifactor authentication providers are determined for a multifactor authentication transaction, by default CAS will attempt to sort the collection of providers based on their rank and will pick one with the highest priority. This use case may arise if multiple triggers are defined where each decides on a different multifactor authentication provider, or the same provider instance is configured multiple times with many instances.
+In the event that multiple multifactor authentication providers are determined for a 
+multifactor authentication transaction, by default CAS will attempt to sort the 
+collection of providers based on their rank and will pick one with the highest 
+priority. This use case may arise if multiple triggers are defined where each 
+decides on a different multifactor authentication provider, or the same 
+provider instance is configured multiple times with many instances.
 
 Provider selection may also be carried out using Groovy scripting strategies more dynamically. 
 The following example should serve as an outline of how to select multifactor providers based on a Groovy script:
@@ -107,7 +101,7 @@ The following example should serve as an outline of how to select multifactor pr
 import java.util.*
 
 class SampleGroovyProviderSelection {
-    def String run(final Object... args) {
+    String run(final Object... args) {
         def service = args[0]
         def principal = args[1]
         def providersCollection = args[2]
@@ -128,9 +122,6 @@ The parameters passed are as follows:
 | `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
 
 
-To see the relevant list of CAS properties, 
-please [review this guide](../configuration/Configuration-Properties.html#multifactor-authentication).
-
 ## Ranking Providers
 
 At times, CAS needs to determine the correct provider when step-up authentication is required. Consider for a moment that CAS
@@ -150,24 +141,23 @@ Ranking of authentication methods is done per provider via specific properties f
 the higher the rank value is, the higher on the security scale it remains. A provider that ranks higher with a larger weight value trumps
 and override others with a lower value.
 
-## Provider Selection Menu
-
-If more than one multifactor authentication provider qualifies for the authentication request, CAS may be configured to
-present all choices to the user, allowing them to select a provider that makes the most sense at a given time. This approach
-is an alternative strategy to ranking providers. 
-
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#multifactor-authentication).
 
 ## Trusted Devices/Browsers
 
-CAS is able to natively provide trusted device/browser features as part of any multifactor authentication flow. While certain providers tend to support this feature as well, this behavior is now put into CAS directly providing you with exact control over how devices/browsers are checked, how is that decision remembered for subsequent requests and how you might allow delegated management of those trusted decisions both for admins and end-users.
+CAS is able to natively provide trusted device/browser features as part of 
+any multifactor authentication flow. While certain providers tend to 
+support this feature as well, this behavior is now put into 
+CAS directly providing you with exact control over how devices/browsers are checked, 
+how is that decision remembered for subsequent requests and how you might allow 
+delegated management of those trusted decisions both for admins and end-users.
 
 [See this guide for more info](Multifactor-TrustedDevice-Authentication.html).
 
 ## 2FA vs. MFA
 
-Multifactor authentication in CAS mostly presents itself in form of two-factor authentication when deployed. The framework however is designed in such a way to allow additional chaining of other providers into an existing authentication experience. If you have a need to string along multiple factors together one after another, it is likely that you may need to adjust and extend the existing authentication workflows to deliver the use case.
+Multifactor authentication in CAS mostly presents itself in form of two-factor 
+authentication when deployed. The framework however is designed in such a way to allow additional chaining of other 
+providers into an existing authentication experience. If you have a need 
+to string along multiple factors together one after another, it is likely 
+that you may need to adjust and extend the existing authentication workflows to deliver the use case.
 
-## Settings
-
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#multifactor-authentication).

@@ -5,7 +5,6 @@ import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.RegisteredServiceProperty;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenCipherExecutor;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
@@ -22,7 +21,6 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link OAuth20JwtAccessTokenEncoderTests}.
@@ -44,11 +42,30 @@ public class OAuth20JwtAccessTokenEncoderTests extends AbstractOAuth20Tests {
             .build();
     }
 
-    private static OAuth20JwtBuilder getCipherDisabledJwtBuilder() {
+    private OAuth20JwtBuilder getCipherDisabledJwtBuilder() {
         return new OAuth20JwtBuilder("http://cas.example.org/prefix",
             CipherExecutor.noOp(),
-            mock(ServicesManager.class),
+            servicesManager,
             RegisteredServiceCipherExecutor.noOp());
+    }
+
+    @Test
+    public void verifyAccessTokenHeaderService() {
+        val accessToken = getAccessToken();
+        val builder = getCipherDisabledJwtBuilder();
+
+        val registeredService = getRegisteredService("example", "secret", new LinkedHashSet<>());
+        registeredService.setId(100200);
+        registeredService.setJwtAccessToken(true);
+        servicesManager.save(registeredService);
+
+        var encoder = getAccessTokenEncoder(accessToken, builder, registeredService);
+        val encodedAccessToken = encoder.encode();
+        assertNotNull(encodedAccessToken);
+
+        encoder = getAccessTokenEncoder(accessToken, builder, null);
+        encoder.decode(encodedAccessToken);
+
     }
 
     @Test

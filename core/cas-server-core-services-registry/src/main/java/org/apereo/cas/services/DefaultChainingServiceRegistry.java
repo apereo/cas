@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,13 +24,13 @@ import java.util.stream.Collectors;
 public class DefaultChainingServiceRegistry extends AbstractServiceRegistry implements ChainingServiceRegistry {
     private final List<ServiceRegistry> serviceRegistries;
 
-    public DefaultChainingServiceRegistry(final ApplicationEventPublisher eventPublisher) {
-        this(eventPublisher, new ArrayList<>(0));
+    public DefaultChainingServiceRegistry(final ConfigurableApplicationContext applicationContext) {
+        this(applicationContext, new ArrayList<>(0));
     }
 
-    public DefaultChainingServiceRegistry(final ApplicationEventPublisher eventPublisher,
+    public DefaultChainingServiceRegistry(final ConfigurableApplicationContext applicationContext,
                                           final List<ServiceRegistry> serviceRegistries) {
-        super(eventPublisher, new ArrayList<>(0));
+        super(applicationContext, new ArrayList<>(0));
         this.serviceRegistries = serviceRegistries;
     }
 
@@ -41,17 +41,21 @@ public class DefaultChainingServiceRegistry extends AbstractServiceRegistry impl
 
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
-        serviceRegistries.forEach(registry -> registry.save(registeredService));
-        return registeredService;
+        var savedService = (RegisteredService) null;
+        for (var serviceRegistry : serviceRegistries) {
+            savedService = serviceRegistry.save(savedService == null ? registeredService : savedService);
+        }
+        return savedService;
     }
 
     @Override
     public boolean delete(final RegisteredService registeredService) {
-        return serviceRegistries.stream()
-            .map(registry -> registry.delete(registeredService))
-            .filter(Boolean::booleanValue)
-            .findAny()
-            .orElse(Boolean.FALSE);
+        return serviceRegistries.stream().allMatch(registry -> registry.delete(registeredService));
+    }
+
+    @Override
+    public void deleteAll() {
+        this.serviceRegistries.forEach(ServiceRegistry::deleteAll);
     }
 
     @Override
@@ -138,4 +142,14 @@ public class DefaultChainingServiceRegistry extends AbstractServiceRegistry impl
             })
             .forEach(serviceRegistry -> serviceRegistry.save(service));
     }
+
+    @Override
+    public RegisteredService findServiceBy(final String id) {
+        return serviceRegistries.stream()
+                .map(registry -> registry.findServiceBy(id))
+                .filter(Objects::nonNull)
+                .findFirst()
+                 .orElse(null);
+    }
+
 }

@@ -4,10 +4,12 @@ title: CAS - SAML SP Integrations
 category: Integration
 ---
 
+{% include variables.html %}
+
 # SAML SP Integrations
 
 CAS provides built-in integration support for a number of SAML2 service providers. Configuring these service providers
-is simply about declaring the relevant properties in the CAS configuration as well as the configuration module below. Each integration,
+is about declaring the relevant properties in the CAS configuration as well as the configuration module below. Each integration,
 when configured appropriately, will register the service provider with the CAS service registry as a SAML SP and will follow
 a recipe (that is documented by the SP publicly) to configure attribute release policies, name ids and entity IDs. If you need to,
 you can review the registration record inside the CAS service registry to adjust options.
@@ -15,17 +17,11 @@ you can review the registration record inside the CAS service registry to adjust
 **NOTE:** In the event that special attributes and/or name ids are required for the integration, you are required
 to ensure all such [attributes are properly resolved](Attribute-Resolution.html) and are available to the CAS principal.
 
-<div class="alert alert-warning"><strong>Remember</strong><p>SAML2 service provider integrations listed here simply attempt to automate CAS configuration based on known and documented integration guidelines and recipes provided by the service provider owned by the vendor. These recipes can change and break CAS over time and needless to say, they need to be properly and thoroughly tested as the project itself does not have a subscription to each application to test for correctness. YMMV. If you find an issue with an automated integration strategy here, please <strong>speak up</strong>.</p></div>
+<div class="alert alert-warning"><strong>Remember</strong><p>SAML2 service provider integrations listed here attempt to automate CAS configuration based on known and documented integration guidelines and recipes provided by the service provider owned by the vendor. These recipes can change and break CAS over time and needless to say, they need to be properly and thoroughly tested as the project itself does not have a subscription to each application to test for correctness. YMMV. If you find an issue with an automated integration strategy here, please <strong>speak up</strong>.</p></div>
 
-Support is enabled by including the following module in the Overlay:
+Support is enabled by including the following module in the WAR Overlay:
 
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-saml-sp-integrations</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-saml-sp-integrations" %}
 
 The following SAML SP integrations, as samples, are provided by CAS:
 
@@ -209,12 +205,52 @@ The following SAML SP integrations, as samples, are provided by CAS:
 
 </div>
 
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#saml-sps).
-
-<div class="alert alert-info"><strong>Configure Once, Run Everywhere</strong><p>If you have developed a recipe for integrating
+<div class="alert alert-info"><strong>Configure Once, Run Everywhere</strong>
+<p>If you have developed a recipe for integrating
 with a SAML service provider, consider contributing that recipe to the project so its configuration
-can be automated once and for all to use. Let the change become a feature of the project, rather than something you alone have to maintain.</p></div>
+can be automated once and for all to use. Let the change become a feature of the project, 
+rather than something you alone have to maintain.</p></div>
+
+## Configuration
+
+Allow CAS to register and enable a number of built-in SAML service provider integrations.
+
+<div class="alert alert-warning"><strong>Remember</strong><p>SAML2 service provider integrations listed 
+here attempt to automate CAS configuration based on known and documented integration 
+guidelines and recipes provided by the service provider owned by the vendor. These 
+recipes can change and break CAS over time.</p></div>
+
+The settings defined for each service provider attempt to automate the creation of
+SAML service definition and nothing more. If you find the applicable settings lack in certain areas, it
+is best to fall back onto the native configuration strategy for registering
+SAML service providers with CAS which would depend on your service registry of choice.
+
+The SAML2 service provider supports the following settings:
+
+| Name                  |  Description
+|-----------------------|---------------------------------------------------------------------------
+| `metadata`            | Location of metadata for the service provider (i.e URL, path, etc)
+| `name`                | The name of the service provider registered in the service registry.
+| `description`         | The description of the service provider registered in the service registry.
+| `name-id-attribute`   | Attribute to use when generating name ids for this service provider.
+| `name-id-format`      | The forced NameID Format identifier (i.e. `urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress`).
+| `attributes`          | Attributes to release to the service provider, which may virtually be mapped and renamed.
+| `signature-location`  | Signature location to verify metadata.
+| `entity-ids`          | List of entity ids allowed for this service provider.
+| `sign-responses`      | Indicate whether responses should be signed. Default is `true`.
+| `sign-assertions`     | Indicate whether assertions should be signed. Default is `false`.
+
+The only required setting that would activate the automatic configuration for a
+service provider is the presence and definition of metadata. All other settings are optional.
+     
+{% include casproperties.html properties="cas.saml-sp" %}
+
+**Note**: For InCommon and other metadata aggregates, multiple entity ids can be specified to
+filter [the InCommon metadata](https://spaces.internet2.edu/display/InCFederation/Metadata+Aggregates). EntityIds
+can be regular expression patterns and are mapped to
+CAS' `serviceId` field in the registry. The signature location MUST BE the public key used to sign the metadata.
 
 ## Google Apps
 
-The Google Apps SAML integration is also provided by CAS natively [based on this guide](Google-Apps-Integration.html).
+The Google Apps SAML integration is also provided by 
+CAS natively [based on this guide](Google-Apps-Integration.html).

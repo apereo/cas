@@ -1,4 +1,5 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration,\
   org.apereo.cas.config.CasCoreServicesConfiguration,\
+  org.apereo.cas.config.CasCoreServicesComponentSerializationConfiguration,\
   org.apereo.cas.config.CasServiceRegistryInitializationConfiguration,\
   org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration

@@ -3,7 +3,9 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
 import org.apereo.cas.configuration.support.JpaBeans;
+import org.apereo.cas.hibernate.CasHibernatePersistenceProvider;
 import org.apereo.cas.jpa.JpaBeanFactory;
+import org.apereo.cas.jpa.JpaPersistenceProviderContext;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.SneakyThrows;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
@@ -27,6 +30,7 @@ import javax.sql.DataSource;
  */
 @TestConfiguration("databaseAuthenticationTestConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Lazy(false)
 public class DatabaseAuthenticationTestConfiguration {
     @Value("${database.user:sa}")
     private String databaseUser;
@@ -40,7 +44,7 @@ public class DatabaseAuthenticationTestConfiguration {
     @Value("${database.name:cas-authentications}")
     private String databaseName;
 
-    @Value("${database.driverClass:org.hsqldb.jdbcDriver}")
+    @Value("${database.driver-class:org.hsqldb.jdbcDriver}")
     private String databaseDriverClassName;
 
     @Value("${database.dialect:org.hibernate.dialect.HSQLDialect}")
@@ -52,6 +56,10 @@ public class DatabaseAuthenticationTestConfiguration {
     @Autowired
     @Qualifier("jpaBeanFactory")
     private JpaBeanFactory jpaBeanFactory;
+
+    @Autowired
+    @Qualifier("persistenceProviderContext")
+    private JpaPersistenceProviderContext persistenceProviderContext;
 
     @SneakyThrows
     @Bean
@@ -66,12 +74,13 @@ public class DatabaseAuthenticationTestConfiguration {
 
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
-        val ctx = new JpaConfigurationContext(
-            jpaVendorAdapter(),
-            "databaseAuthnContext",
-            CollectionUtils.wrap("org.apereo.cas.adaptors.jdbc"),
-            dataSource());
-
+        val ctx = JpaConfigurationContext.builder()
+            .jpaVendorAdapter(jpaVendorAdapter())
+            .persistenceUnitName("databaseAuthnContext")
+            .dataSource(dataSource())
+            .persistenceProvider(new CasHibernatePersistenceProvider(persistenceProviderContext))
+            .packagesToScan(CollectionUtils.wrap("org.apereo.cas.adaptors.jdbc"))
+            .build();
         val jpaProperties = ctx.getJpaProperties();
         jpaProperties.put("hibernate.dialect", databaseDialect);
         jpaProperties.put("hibernate.hbm2ddl.auto", this.hbm2ddl);

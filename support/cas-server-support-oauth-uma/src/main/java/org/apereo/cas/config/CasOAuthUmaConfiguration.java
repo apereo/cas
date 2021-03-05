@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -8,6 +9,7 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
+import org.apereo.cas.ticket.TicketFactoryExecutionPlanConfigurer;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
@@ -39,6 +41,7 @@ import org.apereo.cas.uma.web.controllers.resource.UmaFindResourceSetRegistratio
 import org.apereo.cas.uma.web.controllers.resource.UmaUpdateResourceSetRegistrationEndpointController;
 import org.apereo.cas.uma.web.controllers.rpt.UmaRequestingPartyTokenJwksEndpointController;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import lombok.val;
 import org.pac4j.core.authorization.authorizer.DefaultAuthorizers;
@@ -55,6 +58,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
@@ -75,6 +79,12 @@ import static org.apereo.cas.support.oauth.OAuth20Constants.BASE_OAUTH20_URL;
 @Configuration("casOAuthUmaConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
+    @Autowired
+    @Qualifier("centralAuthenticationService")
+    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
 
     @Autowired
     @Qualifier("accessTokenJwtBuilder")
@@ -87,6 +97,10 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
     @Autowired
     @Qualifier("ticketRegistry")
     private ObjectProvider<TicketRegistry> ticketRegistry;
+
+    @Autowired
+    @Qualifier("oauthDistributedSessionCookieGenerator")
+    private ObjectProvider<CasCookieBuilder> oauthDistributedSessionCookieGenerator;
 
     @Autowired
     @Qualifier("oauthDistributedSessionStore")
@@ -116,17 +130,19 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
     @RefreshScope
     @ConditionalOnMissingBean(name = "umaRequestingPartyTokenGenerator")
     public IdTokenGeneratorService umaRequestingPartyTokenGenerator() {
-        val uma = casProperties.getAuthn().getUma();
-        val jwks = uma.getRequestingPartyToken().getJwksFile();
-        val signingService = new UmaRequestingPartyTokenSigningService(jwks, uma.getIssuer());
+        val uma = casProperties.getAuthn().getOauth().getUma();
+        val jwks = uma.getRequestingPartyToken().getJwksFile().getLocation();
+        val signingService = new UmaRequestingPartyTokenSigningService(jwks, uma.getCore().getIssuer());
         val context = OAuth20ConfigurationContext.builder()
             .ticketRegistry(ticketRegistry.getObject())
             .servicesManager(servicesManager.getObject())
             .idTokenSigningAndEncryptionService(signingService)
+            .oauthDistributedSessionCookieGenerator(oauthDistributedSessionCookieGenerator.getObject())
             .sessionStore(oauthDistributedSessionStore.getObject())
             .casProperties(casProperties)
             .accessTokenJwtBuilder(accessTokenJwtBuilder.getObject())
             .accessTokenGenerator(oauthTokenGenerator.getObject())
+            .applicationContext(applicationContext)
             .build();
         return new UmaIdTokenGeneratorService(context);
     }
@@ -224,15 +240,22 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
         return new DefaultUmaPermissionTicketFactory(umaPermissionTicketIdGenerator(), umaPermissionTicketExpirationPolicy());
     }
 
+    @ConditionalOnMissingBean(name = "defaultUmaPermissionTicketFactoryConfigurer")
+    @Bean
+    @RefreshScope
+    public TicketFactoryExecutionPlanConfigurer defaultUmaPermissionTicketFactoryConfigurer() {
+        return this::defaultUmaPermissionTicketFactory;
+    }
+
     @Bean
     public SecurityInterceptor umaRequestingPartyTokenSecurityInterceptor() {
-        val authenticator = new UmaRequestingPartyTokenAuthenticator(ticketRegistry.getObject(), accessTokenJwtBuilder.getObject());
+        val authenticator = new UmaRequestingPartyTokenAuthenticator(centralAuthenticationService.getObject(), accessTokenJwtBuilder.getObject());
         return getSecurityInterceptor(authenticator, "CAS_UMA_CLIENT_RPT_AUTH");
     }
 
     @Bean
     public SecurityInterceptor umaAuthorizationApiTokenSecurityInterceptor() {
-        val authenticator = new UmaAuthorizationApiTokenAuthenticator(ticketRegistry.getObject(), accessTokenJwtBuilder.getObject());
+        val authenticator = new UmaAuthorizationApiTokenAuthenticator(centralAuthenticationService.getObject(), accessTokenJwtBuilder.getObject());
         return getSecurityInterceptor(authenticator, "CAS_UMA_CLIENT_AAT_AUTH");
     }
 
@@ -272,6 +295,7 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
             .servicesManager(servicesManager.getObject())
             .sessionStore(oauthDistributedSessionStore.getObject())
             .ticketRegistry(ticketRegistry.getObject())
+            .centralAuthenticationService(centralAuthenticationService.getObject())
             .umaPermissionTicketFactory(defaultUmaPermissionTicketFactory())
             .umaResourceSetRepository(umaResourceSetRepository());
     }

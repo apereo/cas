@@ -4,6 +4,8 @@ import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.userinfo.client.UserInfo;
@@ -17,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.hjson.JsonValue;
+import org.springframework.http.HttpMethod;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -32,7 +35,8 @@ import java.util.Map;
 @Setter
 @Getter
 public abstract class AbstractGeoLocationService implements GeoLocationService {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     private String ipStackAccessKey;
 
@@ -50,6 +54,7 @@ public abstract class AbstractGeoLocationService implements GeoLocationService {
             }
             return null;
         } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
             return locateByIpStack(address);
         }
     }
@@ -80,7 +85,11 @@ public abstract class AbstractGeoLocationService implements GeoLocationService {
         val url = buildIpStackUrlFor(address);
         HttpResponse response = null;
         try {
-            response = HttpUtils.executeGet(url);
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .method(HttpMethod.GET)
+                .url(url)
+                .build();
+            response = HttpUtils.execute(exec);
             if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
                 val infos = MAPPER.readValue(JsonValue.readHjson(result).toString(), Map.class);

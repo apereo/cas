@@ -24,6 +24,12 @@ public class Capacity implements Serializable {
 
     private final Double size;
 
+    /**
+     * Parse.
+     *
+     * @param capacity the capacity
+     * @return the capacity
+     */
     public static Capacity parse(final String capacity) {
         val matcher = SIZE_PATTERN.matcher(capacity);
         if (!matcher.matches()) {

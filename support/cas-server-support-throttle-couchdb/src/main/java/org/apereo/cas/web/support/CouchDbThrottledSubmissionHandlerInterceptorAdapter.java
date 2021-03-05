@@ -24,7 +24,7 @@ public class CouchDbThrottledSubmissionHandlerInterceptorAdapter extends Abstrac
     private final AuditActionContextCouchDbRepository repository;
 
     public CouchDbThrottledSubmissionHandlerInterceptorAdapter(final ThrottledSubmissionHandlerConfigurationContext configurationContext,
-                                                               final AuditActionContextCouchDbRepository repository) {
+        final AuditActionContextCouchDbRepository repository) {
         super(configurationContext);
         this.repository = repository;
     }

@@ -30,6 +30,10 @@ public class StubPrincipalAttributesProperties implements Serializable {
      * and value is the attribute value. The key is the attribute fetched
      * from the source and the value is the attribute name CAS should
      * use for virtual renames.
+     *
+     * Attributes may be allowed to be virtually renamed and remapped. The key in the
+     * attribute map is the original attribute,
+     * and the value should be the virtually-renamed attribute.
      */
     private Map<String, String> attributes = new HashMap<>(0);
 

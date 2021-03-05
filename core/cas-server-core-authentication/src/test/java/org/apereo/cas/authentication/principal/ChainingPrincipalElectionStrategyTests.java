@@ -2,13 +2,14 @@ package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.PrincipalElectionStrategyConflictResolver;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
+@Tag("Authentication")
 public class ChainingPrincipalElectionStrategyTests {
     @Test
     public void verifyOperationWithSingleAuthn() {
@@ -44,7 +46,7 @@ public class ChainingPrincipalElectionStrategyTests {
         strategy2.setOrder(10);
 
         val strategy = new ChainingPrincipalElectionStrategy(strategy1, strategy2);
-        
+
         val authentication1 = CoreAuthenticationTestUtils.getAuthentication(CoreAuthenticationTestUtils.getPrincipal("casuser1"));
         val authentication2 = CoreAuthenticationTestUtils.getAuthentication(CoreAuthenticationTestUtils.getPrincipal("casuser2"));
         val attributes = CoreAuthenticationTestUtils.getAttributes();
@@ -58,14 +60,8 @@ public class ChainingPrincipalElectionStrategyTests {
         val strategy1 = new DefaultPrincipalElectionStrategy();
         strategy1.setOrder(100);
 
-        val strategy2 = new DefaultPrincipalElectionStrategy() {
-            private static final long serialVersionUID = -6904928099265096984L;
-
-            @Override
-            public Principal nominate(final List<Principal> principals, final Map<String, List<Object>> attributes) {
-                return principals.get(0);
-            }
-        };
+        val strategy2 = new DefaultPrincipalElectionStrategy(
+            PrincipalElectionStrategyConflictResolver.first());
         strategy2.setOrder(10);
 
         val strategy = new ChainingPrincipalElectionStrategy(strategy1, strategy2);
@@ -73,7 +69,7 @@ public class ChainingPrincipalElectionStrategyTests {
         val principal1 = CoreAuthenticationTestUtils.getPrincipal("casuser1");
         val principal2 = CoreAuthenticationTestUtils.getPrincipal("casuser2");
         val attributes = CoreAuthenticationTestUtils.getAttributes();
-        
+
         val principal = strategy.nominate(List.of(principal1, principal2), attributes);
         assertNotNull(principal);
         assertEquals("casuser1", principal.getId());

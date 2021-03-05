@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.model.core.web.flow.WebflowAutoConfiguration
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -23,6 +24,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("TokenAuthenticationProperties")
 public class TokenAuthenticationProperties implements Serializable {
 
     private static final long serialVersionUID = 6016124091895278265L;
@@ -43,7 +45,7 @@ public class TokenAuthenticationProperties implements Serializable {
      * The webflow configuration.
      */
     @NestedConfigurationProperty
-    private WebflowAutoConfigurationProperties webflow = new WebflowAutoConfigurationProperties(100);
+    private WebflowAutoConfigurationProperties webflow = new WebflowAutoConfigurationProperties().setOrder(100);
     
     /**
      * Name of the authentication handler.

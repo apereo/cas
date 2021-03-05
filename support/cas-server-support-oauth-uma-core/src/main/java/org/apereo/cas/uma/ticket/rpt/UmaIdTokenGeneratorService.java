@@ -40,7 +40,7 @@ public class UmaIdTokenGeneratorService extends BaseIdTokenGeneratorService {
                            final OAuth20ResponseTypes responseType,
                            final OAuthRegisteredService registeredService) {
 
-        val context = new JEEContext(request, response, getConfigurationContext().getSessionStore());
+        val context = new JEEContext(request, response);
         LOGGER.debug("Attempting to produce claims for the rpt access token [{}]", accessToken);
         val authenticatedProfile = getAuthenticatedProfile(request, response);
         val claims = buildJwtClaims(request, accessToken, timeoutInSeconds,
@@ -73,7 +73,7 @@ public class UmaIdTokenGeneratorService extends BaseIdTokenGeneratorService {
 
         val claims = new JwtClaims();
         claims.setJwtId(UUID.randomUUID().toString());
-        claims.setIssuer(getConfigurationContext().getCasProperties().getAuthn().getUma().getIssuer());
+        claims.setIssuer(getConfigurationContext().getCasProperties().getAuthn().getOauth().getUma().getCore().getIssuer());
         claims.setAudience(String.valueOf(permissionTicket.getResourceSet().getId()));
 
         val expirationDate = NumericDate.now();

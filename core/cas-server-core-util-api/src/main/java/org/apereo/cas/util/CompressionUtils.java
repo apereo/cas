@@ -79,10 +79,6 @@ public class CompressionUtils {
         try {
             val resultLength = inflater.inflate(xmlMessageBytes);
             inflater.end();
-            if (!inflater.finished()) {
-                throw new RuntimeException("buffer not large enough.");
-            }
-            inflater.end();
             return new String(xmlMessageBytes, 0, resultLength, StandardCharsets.UTF_8);
         } catch (final DataFormatException e) {
             return null;
@@ -125,7 +121,7 @@ public class CompressionUtils {
             }
             return new String(baos.toByteArray(), StandardCharsets.UTF_8);
         } catch (final Exception e) {
-            LOGGER.error("Base64 decoding failed", e);
+            LoggingUtils.error(LOGGER, e);
             return null;
         }
     }

@@ -7,7 +7,9 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
@@ -15,6 +17,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,29 +25,18 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Tag("Authentication")
 public class AcceptUsersAuthenticationHandlerTests {
     private static final String SCOTT = "scott";
+
     private static final String RUTGERS = "rutgers";
 
-    private final AcceptUsersAuthenticationHandler authenticationHandler;
-
-    public AcceptUsersAuthenticationHandlerTests() {
-        val users = new HashMap<String, String>();
-        users.put(SCOTT, RUTGERS);
-        users.put("dima", "javarules");
-        users.put("bill", "thisisAwesoME");
-        users.put("brian", "t�st");
-
-        this.authenticationHandler = new AcceptUsersAuthenticationHandler(StringUtils.EMPTY, null, PrincipalFactoryUtils.newPrincipalFactory(), null, users);
-    }
-
     @Test
-    @SneakyThrows
-    public void verifySupportsSpecialCharacters() {
+    public void verifySupportsSpecialCharacters() throws Exception {
         val c = new UsernamePasswordCredential();
         c.setUsername("brian");
         c.setPassword("t�st");
-        assertEquals("brian", this.authenticationHandler.authenticate(c).getPrincipal().getId());
+        assertEquals("brian", getAuthenticationHandler().authenticate(c).getPrincipal().getId());
     }
 
     @Test
@@ -53,13 +45,13 @@ public class AcceptUsersAuthenticationHandlerTests {
 
         c.setUsername(SCOTT);
         c.setPassword(RUTGERS);
-        assertTrue(this.authenticationHandler.supports(c));
+        assertTrue(getAuthenticationHandler().supports(c));
     }
 
     @Test
     public void verifyDoesntSupportBadUserCredentials() {
         try {
-            assertFalse(this.authenticationHandler
+            assertFalse(getAuthenticationHandler()
                 .supports(new HttpBasedServiceCredential(new URL(
                     "http://www.rutgers.edu"), CoreAuthenticationTestUtils.getRegisteredService("https://some.app.edu"))));
         } catch (final MalformedURLException e) {
@@ -76,7 +68,7 @@ public class AcceptUsersAuthenticationHandlerTests {
         c.setPassword(RUTGERS);
 
         try {
-            assertEquals(SCOTT, this.authenticationHandler.authenticate(c).getPrincipal().getId());
+            assertEquals(SCOTT, getAuthenticationHandler().authenticate(c).getPrincipal().getId());
         } catch (final GeneralSecurityException e) {
             throw new AssertionError("Authentication exception caught but it should not have been thrown.", e);
         }
@@ -89,7 +81,7 @@ public class AcceptUsersAuthenticationHandlerTests {
         c.setUsername("fds");
         c.setPassword(RUTGERS);
 
-        assertThrows(AccountNotFoundException.class, () -> this.authenticationHandler.authenticate(c));
+        assertThrows(AccountNotFoundException.class, () -> getAuthenticationHandler().authenticate(c));
     }
 
     @Test
@@ -99,7 +91,7 @@ public class AcceptUsersAuthenticationHandlerTests {
         c.setUsername(null);
         c.setPassword("user");
 
-        assertThrows(AccountNotFoundException.class, () -> this.authenticationHandler.authenticate(c));
+        assertThrows(AccountNotFoundException.class, () -> getAuthenticationHandler().authenticate(c));
     }
 
     @Test
@@ -109,16 +101,83 @@ public class AcceptUsersAuthenticationHandlerTests {
         c.setUsername(null);
         c.setPassword(null);
 
-        assertThrows(AccountNotFoundException.class, () -> this.authenticationHandler.authenticate(c));
+        assertThrows(AccountNotFoundException.class, () -> getAuthenticationHandler().authenticate(c));
     }
 
     @Test
     public void verifyFailsNullPassword() {
         val c = new UsernamePasswordCredential();
-
         c.setUsername(SCOTT);
         c.setPassword(null);
+        assertThrows(FailedLoginException.class, () -> getAuthenticationHandler().authenticate(c));
+    }
 
-        assertThrows(FailedLoginException.class, () -> this.authenticationHandler.authenticate(c));
+    @Test
+    public void verifyEmptyUsers() {
+        val handler = new AcceptUsersAuthenticationHandler(StringUtils.EMPTY,
+            null, PrincipalFactoryUtils.newPrincipalFactory(), null, Map.of());
+        assertThrows(FailedLoginException.class,
+            () -> handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
+    }
+
+    @Test
+    public void verifyNoPasswordStrategy() {
+        val handler = new AcceptUsersAuthenticationHandler(StringUtils.EMPTY,
+            null, PrincipalFactoryUtils.newPrincipalFactory(), null, Map.of("another", "another"));
+        handler.setPasswordPolicyHandlingStrategy(null);
+
+        assertThrows(FailedLoginException.class,
+            () -> handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("another")));
+    }
+
+
+    @Test
+    public void verifyUserTransforms() {
+        val handler = new AcceptUsersAuthenticationHandler(StringUtils.EMPTY,
+            null, PrincipalFactoryUtils.newPrincipalFactory(), null, Map.of("another", "another"));
+        handler.setPrincipalNameTransformer(user -> null);
+
+        assertThrows(AccountNotFoundException.class,
+            () -> handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("another")));
+    }
+
+    @Test
+    public void verifyPasswordTransform() {
+        val handler = new AcceptUsersAuthenticationHandler(StringUtils.EMPTY,
+            null, PrincipalFactoryUtils.newPrincipalFactory(), null, Map.of("another", "another"));
+        handler.setPasswordEncoder(new PasswordEncoder() {
+            @Override
+            public String encode(final CharSequence charSequence) {
+                return null;
+            }
+
+            @Override
+            public boolean matches(final CharSequence charSequence, final String s) {
+                return true;
+            }
+        });
+
+        assertThrows(AccountNotFoundException.class,
+            () -> handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("another")));
+    }
+
+    @Test
+    public void verifyCredentialPredicate() {
+        val handler = new AcceptUsersAuthenticationHandler(StringUtils.EMPTY,
+            null, PrincipalFactoryUtils.newPrincipalFactory(), null, Map.of("another", "another"));
+        handler.setCredentialSelectionPredicate(null);
+        assertTrue(handler.supports(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("another")));
+    }
+
+
+    private static AuthenticationHandler getAuthenticationHandler() {
+        val users = new HashMap<String, String>();
+        users.put(SCOTT, RUTGERS);
+        users.put("dima", "javarules");
+        users.put("bill", "thisisAwesoME");
+        users.put("brian", "t�st");
+
+        return new AcceptUsersAuthenticationHandler(StringUtils.EMPTY,
+            null, PrincipalFactoryUtils.newPrincipalFactory(), null, users);
     }
 }

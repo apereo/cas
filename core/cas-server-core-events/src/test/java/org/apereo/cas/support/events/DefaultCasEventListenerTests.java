@@ -17,6 +17,7 @@ import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -25,6 +26,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import javax.security.auth.login.FailedLoginException;
@@ -45,6 +47,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreEventsConfiguration.class,
     RefreshAutoConfiguration.class
 })
+@Tag("Simple")
 public class DefaultCasEventListenerTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
@@ -60,6 +63,16 @@ public class DefaultCasEventListenerTests {
         request.setLocalAddr("123.456.789.000");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
+    }
+
+    @Test
+    public void verifyCasAuthenticationWithNoClientInfo() {
+        ClientInfoHolder.setClientInfo(null);
+        val event = new CasAuthenticationTransactionFailureEvent(this,
+            CollectionUtils.wrap("error", new FailedLoginException()),
+            CollectionUtils.wrap(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
+        applicationContext.publishEvent(event);
+        assertFalse(casEventRepository.load().isEmpty());
     }
 
     @Test
@@ -101,6 +114,7 @@ public class DefaultCasEventListenerTests {
     }
 
     @TestConfiguration("EventTestConfiguration")
+    @Lazy(false)
     public static class EventTestConfiguration {
         @Bean
         public CasEventRepository casEventRepository() {

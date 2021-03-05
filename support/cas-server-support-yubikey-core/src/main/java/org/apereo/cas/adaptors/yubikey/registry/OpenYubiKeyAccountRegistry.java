@@ -2,11 +2,14 @@ package org.apereo.cas.adaptors.yubikey.registry;
 
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
+import org.apereo.cas.adaptors.yubikey.YubiKeyDeviceRegistrationRequest;
+import org.apereo.cas.adaptors.yubikey.YubiKeyRegisteredDevice;
 import org.apereo.cas.util.CollectionUtils;
 
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -31,18 +34,54 @@ public class OpenYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
-    public boolean registerAccountFor(final String uid, final String yubikeyPublicId) {
+    public boolean registerAccountFor(final YubiKeyDeviceRegistrationRequest request) {
         return true;
     }
 
     @Override
-    public Optional<? extends YubiKeyAccount> getAccount(final String uid) {
-        return Optional.of(new YubiKeyAccount(System.currentTimeMillis(),
-            CollectionUtils.wrapArrayList(UUID.randomUUID().toString()), uid));
+    public void delete(final String uid) {
     }
 
     @Override
-    public Collection<? extends YubiKeyAccount> getAccounts() {
+    public void delete(final String username, final long deviceId) {
+    }
+
+    @Override
+    public void deleteAll() {
+    }
+
+    @Override
+    public YubiKeyAccount getAccountInternal(final String uid) {
+        return getStaticAccount(uid);
+    }
+
+    @Override
+    public Collection<? extends YubiKeyAccount> getAccountsInternal() {
         return new ArrayList<>(0);
+    }
+
+    private static YubiKeyAccount getStaticAccount(final String uid) {
+        return YubiKeyAccount.builder()
+            .username(uid)
+            .id(System.currentTimeMillis())
+            .devices(CollectionUtils.wrapArrayList(
+                YubiKeyRegisteredDevice.builder()
+                    .id(System.currentTimeMillis())
+                    .name(UUID.randomUUID().toString())
+                    .publicId(UUID.randomUUID().toString())
+                    .registrationDate(ZonedDateTime.now(ZoneOffset.UTC))
+                    .build()))
+            .build();
+    }
+
+    @Override
+    public YubiKeyAccount save(final YubiKeyDeviceRegistrationRequest request,
+                                  final YubiKeyRegisteredDevice... device) {
+        return getStaticAccount(request.getUsername());
+    }
+
+    @Override
+    public boolean update(final YubiKeyAccount account) {
+        return true;
     }
 }

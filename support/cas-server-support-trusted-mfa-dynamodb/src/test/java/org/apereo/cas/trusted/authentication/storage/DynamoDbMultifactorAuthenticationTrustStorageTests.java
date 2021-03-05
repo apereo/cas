@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
+import software.amazon.awssdk.core.SdkSystemSetting;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -26,18 +27,18 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Import(DynamoDbMultifactorAuthenticationTrustConfiguration.class)
 @TestPropertySource(properties = {
-    "cas.authn.mfa.trusted.dynamoDb.endpoint=http://localhost:8000",
-    "cas.authn.mfa.trusted.dynamoDb.dropTablesOnStartup=true",
-    "cas.authn.mfa.trusted.dynamoDb.localInstance=true",
-    "cas.authn.mfa.trusted.dynamoDb.region=us-east-1"
+    "cas.authn.mfa.trusted.dynamo-db.endpoint=http://localhost:8000",
+    "cas.authn.mfa.trusted.dynamo-db.drop-tables-on-startup=true",
+    "cas.authn.mfa.trusted.dynamo-db.local-instance=true",
+    "cas.authn.mfa.trusted.dynamo-db.region=us-east-1"
 })
 @Tag("DynamoDb")
 @EnabledIfPortOpen(port = 8000)
 public class DynamoDbMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorAuthenticationTrustStorageTests {
 
     static {
-        System.setProperty("aws.accessKeyId", "AKIAIPPIGGUNIO74C63Z");
-        System.setProperty("aws.secretKey", "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");
+        System.setProperty(SdkSystemSetting.AWS_ACCESS_KEY_ID.property(), "AKIAIPPIGGUNIO74C63Z");
+        System.setProperty(SdkSystemSetting.AWS_SECRET_ACCESS_KEY.property(), "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");
     }
 
     @BeforeEach

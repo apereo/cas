@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasGoogleAnalyticsConfiguration.class,
     BaseWebflowConfigurerTests.SharedTestConfiguration.class
 })
-@Tag("Webflow")
+@Tag("WebflowConfig")
 public class CasGoogleAnalyticsWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     public void verifyOperation() {

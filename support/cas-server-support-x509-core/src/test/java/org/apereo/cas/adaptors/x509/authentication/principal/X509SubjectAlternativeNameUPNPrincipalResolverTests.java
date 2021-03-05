@@ -1,6 +1,14 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
+import org.apereo.cas.util.CollectionUtils;
+
 import lombok.val;
+import org.apereo.services.persondir.IPersonAttributeDao;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -9,11 +17,17 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
+import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.params.provider.Arguments.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Unit test for {@link X509SubjectAlternativeNameUPNPrincipalResolver}.
@@ -21,6 +35,7 @@ import static org.junit.jupiter.params.provider.Arguments.*;
  * @author Dmitriy Kopylenko
  * @since 3.0.0
  */
+@Tag("X509")
 public class X509SubjectAlternativeNameUPNPrincipalResolverTests {
 
     /**
@@ -67,8 +82,16 @@ public class X509SubjectAlternativeNameUPNPrincipalResolverTests {
                                                final String expectedResult,
                                                final String alternatePrincipalAttribute) throws FileNotFoundException, CertificateException {
 
-        val resolver = new X509SubjectAlternativeNameUPNPrincipalResolver();
-        resolver.setAlternatePrincipalAttribute(alternatePrincipalAttribute);
+        val context = PrincipalResolutionContext.builder()
+            .attributeRepository(CoreAuthenticationTestUtils.getAttributeRepository())
+            .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())
+            .returnNullIfNoAttributes(false)
+            .principalNameTransformer(formUserId -> formUserId)
+            .useCurrentPrincipalId(false)
+            .resolveAttributes(true)
+            .activeAttributeRepositoryIdentifiers(CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD))
+            .build();
+        val resolver = new X509SubjectAlternativeNameUPNPrincipalResolver(context, alternatePrincipalAttribute);
         val certificate = (X509Certificate) CertificateFactory.getInstance("X509").generateCertificate(
             new FileInputStream(getClass().getResource(certPath).getPath()));
 
@@ -84,5 +107,22 @@ public class X509SubjectAlternativeNameUPNPrincipalResolverTests {
         } else {
             assertNull(principal);
         }
+    }
+
+    @Test
+    public void verifyAlternate() throws Exception {
+        val context = PrincipalResolutionContext.builder()
+            .attributeRepository(CoreAuthenticationTestUtils.getAttributeRepository())
+            .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())
+            .returnNullIfNoAttributes(false)
+            .principalNameTransformer(formUserId -> formUserId)
+            .useCurrentPrincipalId(false)
+            .resolveAttributes(true)
+            .activeAttributeRepositoryIdentifiers(CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD))
+            .build();
+        val resolver = new X509SubjectAlternativeNameUPNPrincipalResolver(context, null);
+        val certificate = mock(X509Certificate.class);
+        when(certificate.getSubjectAlternativeNames()).thenThrow(new CertificateParsingException());
+        assertNull(resolver.resolvePrincipalInternal(certificate));
     }
 }

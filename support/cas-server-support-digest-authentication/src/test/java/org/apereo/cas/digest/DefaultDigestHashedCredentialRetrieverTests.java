@@ -2,6 +2,7 @@ package org.apereo.cas.digest;
 
 import lombok.SneakyThrows;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import javax.security.auth.login.AccountNotFoundException;
@@ -13,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author David Rodriguez
  * @since 5.1.0
  */
+@Tag("Authentication")
 public class DefaultDigestHashedCredentialRetrieverTests {
 
     @Test

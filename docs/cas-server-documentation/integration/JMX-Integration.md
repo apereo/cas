@@ -4,6 +4,8 @@ title: CAS - JMX Integration
 category: Integration
 ---
 
+{% include variables.html %}
+
 # JMX Integration
 
 The JMX support in CAS provides you with the features to easily and transparently integrate your CAS deployment into a JMX infrastructure. These features are 
@@ -20,10 +22,4 @@ Additional wrappers and components will be worked out and added iteratively.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-jmx</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
+{% include casmodule.html group="org.apereo.cas" module="cas-server-support-jmx" %}

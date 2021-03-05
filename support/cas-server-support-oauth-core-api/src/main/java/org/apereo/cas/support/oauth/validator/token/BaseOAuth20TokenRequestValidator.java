@@ -6,6 +6,7 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -24,7 +25,7 @@ import org.springframework.core.Ordered;
  * @since 5.3.0
  */
 @Slf4j
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Setter
 public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRequestValidator {
@@ -46,19 +47,9 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
                 return true;
             }
         }
+
         LOGGER.error("Unsupported grant type: [{}]", type);
         return false;
-    }
-
-    /**
-     * Is grant type supported.
-     *
-     * @param registeredService the registered service
-     * @param type              the type
-     * @return the boolean
-     */
-    protected boolean isGrantTypeSupportedBy(final OAuthRegisteredService registeredService, final OAuth20GrantTypes type) {
-        return isGrantTypeSupportedBy(registeredService, type.getType());
     }
 
     /**
@@ -68,7 +59,7 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
      * @param type              the type
      * @return true/false
      */
-    protected boolean isGrantTypeSupportedBy(final OAuthRegisteredService registeredService, final String type) {
+    protected static boolean isGrantTypeSupportedBy(final OAuthRegisteredService registeredService, final String type) {
         return OAuth20Utils.isAuthorizedGrantTypeForService(type, registeredService);
     }
 
@@ -83,9 +74,9 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
             return false;
         }
 
-        val context = new JEEContext(request, response, getConfigurationContext().getSessionStore());
-        val manager = new ProfileManager<>(context, context.getSessionStore());
-        val profile = manager.get(true);
+        val context = new JEEContext(request, response);
+        val manager = new ProfileManager(context, getConfigurationContext().getSessionStore());
+        val profile = manager.getProfile();
         if (profile.isEmpty()) {
             LOGGER.warn("Could not locate authenticated profile for this request. Request is not authenticated");
             return false;

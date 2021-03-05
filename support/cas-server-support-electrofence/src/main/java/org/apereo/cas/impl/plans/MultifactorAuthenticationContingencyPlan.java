@@ -26,7 +26,8 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 public class MultifactorAuthenticationContingencyPlan extends BaseAuthenticationRiskContingencyPlan {
 
-    public MultifactorAuthenticationContingencyPlan(final CasConfigurationProperties casProperties, final ApplicationContext applicationContext) {
+    public MultifactorAuthenticationContingencyPlan(final CasConfigurationProperties casProperties,
+        final ApplicationContext applicationContext) {
         super(casProperties, applicationContext);
     }
 
@@ -35,14 +36,15 @@ public class MultifactorAuthenticationContingencyPlan extends BaseAuthentication
                                                                     final RegisteredService service,
                                                                     final AuthenticationRiskScore score,
                                                                     final HttpServletRequest request) {
-        val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
-        if (providerMap.isEmpty()) {
-            LOGGER.warn("No multifactor authentication providers are available in the application context");
-            throw new AuthenticationException();
-        }
-
         var id = casProperties.getAuthn().getAdaptive().getRisk().getResponse().getMfaProvider();
         if (StringUtils.isBlank(id)) {
+
+            val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
+            if (providerMap.isEmpty()) {
+                LOGGER.warn("No multifactor authentication providers are available in the application context");
+                throw new AuthenticationException();
+            }
+            
             if (providerMap.size() == 1) {
                 id = providerMap.values().iterator().next().getId();
             } else {

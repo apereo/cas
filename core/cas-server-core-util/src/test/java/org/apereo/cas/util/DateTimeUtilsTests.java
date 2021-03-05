@@ -2,8 +2,11 @@ package org.apereo.cas.util;
 
 import lombok.val;
 import org.joda.time.DateTime;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -21,6 +24,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Tag("Utility")
+@SuppressWarnings("JavaUtilDate")
 public class DateTimeUtilsTests {
 
     @Test
@@ -68,6 +73,8 @@ public class DateTimeUtilsTests {
         assertNotNull(DateTimeUtils.zonedDateTimeOf(System.currentTimeMillis()));
         assertNotNull(DateTimeUtils.localDateTimeOf(new Date()));
         assertNotNull(DateTimeUtils.localDateTimeOf(System.currentTimeMillis()));
+        assertNotNull(DateTimeUtils.dateTimeOf(Instant.now(Clock.systemUTC())));
+        assertNotNull(DateTimeUtils.dateTimeOf(ZonedDateTime.now(ZoneOffset.UTC)));
     }
 
     @Test
@@ -79,10 +86,12 @@ public class DateTimeUtilsTests {
         assertEquals(ChronoUnit.MICROS, DateTimeUtils.toChronoUnit(TimeUnit.MICROSECONDS));
         assertEquals(ChronoUnit.MILLIS, DateTimeUtils.toChronoUnit(TimeUnit.MILLISECONDS));
         assertEquals(ChronoUnit.NANOS, DateTimeUtils.toChronoUnit(TimeUnit.NANOSECONDS));
+        assertNull(DateTimeUtils.toChronoUnit(null));
     }
 
     @Test
     public void verifyTimeUnit() {
+        assertNull(DateTimeUtils.toTimeUnit(null));
         assertEquals(TimeUnit.DAYS, DateTimeUtils.toTimeUnit(ChronoUnit.DAYS));
         assertEquals(TimeUnit.HOURS, DateTimeUtils.toTimeUnit(ChronoUnit.HOURS));
         assertEquals(TimeUnit.MINUTES, DateTimeUtils.toTimeUnit(ChronoUnit.MINUTES));

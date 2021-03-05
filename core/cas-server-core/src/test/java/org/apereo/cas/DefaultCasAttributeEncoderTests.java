@@ -7,6 +7,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -25,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Tag("Attributes")
 public class DefaultCasAttributeEncoderTests extends BaseCasCoreTests {
     private Map<String, Object> attributes;
 
@@ -48,7 +50,7 @@ public class DefaultCasAttributeEncoderTests extends BaseCasCoreTests {
     public void checkNoPublicKeyDefined() {
         val service = RegisteredServiceTestUtils.getService("testDefault");
         val encoder = new DefaultCasProtocolAttributeEncoder(this.servicesManager, CipherExecutor.noOpOfStringToString());
-        val encoded = encoder.encodeAttributes(this.attributes, this.servicesManager.findServiceBy(service));
+        val encoded = encoder.encodeAttributes(this.attributes, servicesManager.findServiceBy(service), service);
         assertEquals(this.attributes.size() - 2, encoded.size());
     }
 
@@ -56,7 +58,7 @@ public class DefaultCasAttributeEncoderTests extends BaseCasCoreTests {
     public void checkAttributesEncodedCorrectly() {
         val service = RegisteredServiceTestUtils.getService("testencryption");
         val encoder = new DefaultCasProtocolAttributeEncoder(this.servicesManager, CipherExecutor.noOpOfStringToString());
-        val encoded = encoder.encodeAttributes(this.attributes, this.servicesManager.findServiceBy(service));
+        val encoded = encoder.encodeAttributes(this.attributes, servicesManager.findServiceBy(service), service);
         assertEquals(encoded.size(), this.attributes.size());
         checkEncryptedValues(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL, encoded);
         checkEncryptedValues(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET, encoded);

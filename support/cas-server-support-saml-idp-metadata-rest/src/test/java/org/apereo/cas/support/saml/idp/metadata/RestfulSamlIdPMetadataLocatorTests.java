@@ -4,6 +4,7 @@ import org.apereo.cas.support.saml.BaseRestfulSamlMetadataTests;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.MockWebServer;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
@@ -34,15 +35,16 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("RestfulApi")
 @TestPropertySource(properties = {
-    "cas.authn.samlIdp.metadata.rest.url=http://localhost:9433",
-    "cas.authn.samlIdp.metadata.rest.basicAuthUsername=user",
-    "cas.authn.samlIdp.metadata.rest.basicAuthPassword=passw0rd",
-    "cas.authn.samlIdp.metadata.rest.idpMetadataEnabled=true",
-    "cas.authn.samlIdp.metadata.rest.crypto.enabled=false"
+    "cas.authn.saml-idp.metadata.rest.url=http://localhost:9433",
+    "cas.authn.saml-idp.metadata.rest.basic-auth-username=user",
+    "cas.authn.saml-idp.metadata.rest.basic-auth-password=passw0rd",
+    "cas.authn.saml-idp.metadata.rest.idp-metadata-enabled=true",
+    "cas.authn.saml-idp.metadata.rest.crypto.enabled=false"
 })
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class RestfulSamlIdPMetadataLocatorTests extends BaseRestfulSamlMetadataTests {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     private static MockWebServer SERVER;
 

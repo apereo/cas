@@ -18,13 +18,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@Tag("Webflow")
+@Tag("WebflowActions")
 public class TicketGrantingTicketCheckActionTests extends AbstractWebflowActionsTests {
 
     @Test
     public void verifyNullTicket() throws Exception {
         val ctx = new MockRequestContext();
-        val action = new TicketGrantingTicketCheckAction(getCentralAuthenticationService().getObject());
+        val action = new TicketGrantingTicketCheckAction(getCentralAuthenticationService());
         val event = action.execute(ctx);
         assertEquals(CasWebflowConstants.TRANSITION_ID_TICKET_GRANTING_TICKET_NOT_EXISTS, event.getId());
     }
@@ -34,7 +34,7 @@ public class TicketGrantingTicketCheckActionTests extends AbstractWebflowActions
         val ctx = new MockRequestContext();
         val tgt = new MockTicketGrantingTicket("user");
         WebUtils.putTicketGrantingTicketInScopes(ctx, tgt);
-        val action = new TicketGrantingTicketCheckAction(getCentralAuthenticationService().getObject());
+        val action = new TicketGrantingTicketCheckAction(getCentralAuthenticationService());
         val event = action.execute(ctx);
         assertEquals(CasWebflowConstants.TRANSITION_ID_TICKET_GRANTING_TICKET_INVALID, event.getId());
     }
@@ -43,9 +43,9 @@ public class TicketGrantingTicketCheckActionTests extends AbstractWebflowActions
     public void verifyValidTicket() throws Exception {
         val ctx = new MockRequestContext();
         val ctxAuthN = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport());
-        val tgt = getCentralAuthenticationService().getObject().createTicketGrantingTicket(ctxAuthN);
+        val tgt = getCentralAuthenticationService().createTicketGrantingTicket(ctxAuthN);
         WebUtils.putTicketGrantingTicketInScopes(ctx, tgt);
-        val action = new TicketGrantingTicketCheckAction(getCentralAuthenticationService().getObject());
+        val action = new TicketGrantingTicketCheckAction(getCentralAuthenticationService());
         val event = action.execute(ctx);
         assertEquals(CasWebflowConstants.TRANSITION_ID_TICKET_GRANTING_TICKET_VALID, event.getId());
     }

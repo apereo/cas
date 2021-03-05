@@ -9,18 +9,19 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-cookie-api")
+    implementation project(":core:cas-server-core-webflow-api")
     implementation project(":support:cas-server-support-pac4j-core")
     implementation project(":support:cas-server-support-pac4j-api")
     implementation project(":support:cas-server-support-pac4j-core-clients")
     implementation project(":support:cas-server-support-pac4j-authentication")
 
-    implementation libraries.pac4j
+    implementation libraries.pac4joidcoauth
     implementation libraries.pac4jsaml
     implementation libraries.pac4jcore
     implementation libraries.pac4jcas
     implementation libraries.nimbus
     implementation libraries.jose4j
-    implementation libraries.shibidpjavasupport
+    implementation libraries.shibutiljavasupport
     implementation libraries.opensaml
     implementation libraries.dropwizard
 

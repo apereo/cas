@@ -41,7 +41,9 @@ import static org.springframework.util.StringUtils.commaDelimitedListToSet;
 @RequiredArgsConstructor
 public class PrincipalAttributeMultifactorAuthenticationTrigger implements MultifactorAuthenticationTrigger {
     private final CasConfigurationProperties casProperties;
+
     private final MultifactorAuthenticationProviderResolver multifactorAuthenticationProviderResolver;
+
     private final ApplicationContext applicationContext;
 
     private int order = Ordered.LOWEST_PRECEDENCE;
@@ -89,7 +91,8 @@ public class PrincipalAttributeMultifactorAuthenticationTrigger implements Multi
     protected Set<Event> resolveMultifactorAuthenticationProvider(final Optional<RequestContext> context,
                                                                   final RegisteredService service,
                                                                   final Principal principal) {
-        val globalPrincipalAttributeValueRegex = casProperties.getAuthn().getMfa().getGlobalPrincipalAttributeValueRegex();
+        val globalPrincipalAttributeValueRegex = casProperties.getAuthn().getMfa()
+            .getTriggers().getPrincipal().getGlobalPrincipalAttributeValueRegex();
         val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);
         val providers = providerMap.values();
         if (providers.size() == 1 && StringUtils.isNotBlank(globalPrincipalAttributeValueRegex)) {
@@ -112,9 +115,10 @@ public class PrincipalAttributeMultifactorAuthenticationTrigger implements Multi
                                                                 final RegisteredService service,
                                                                 final Principal principal,
                                                                 final Collection<MultifactorAuthenticationProvider> providers) {
-        val attributeNames = commaDelimitedListToSet(casProperties.getAuthn().getMfa().getGlobalPrincipalAttributeNameTriggers());
+        val attributeNames = commaDelimitedListToSet(casProperties.getAuthn().getMfa()
+            .getTriggers().getPrincipal().getGlobalPrincipalAttributeNameTriggers());
         return multifactorAuthenticationProviderResolver.resolveEventViaPrincipalAttribute(principal, attributeNames, service, context, providers,
-            input -> providers.stream().anyMatch(provider -> input != null && provider.matches(input)));
+            (attributeValue, provider) -> attributeValue != null && provider.matches(attributeValue));
     }
 
     /**
@@ -129,11 +133,13 @@ public class PrincipalAttributeMultifactorAuthenticationTrigger implements Multi
     protected Set<Event> resolveSingleMultifactorProvider(final Optional<RequestContext> context, final RegisteredService service,
                                                           final Principal principal,
                                                           final Collection<MultifactorAuthenticationProvider> providers) {
-        val globalPrincipalAttributeValueRegex = casProperties.getAuthn().getMfa().getGlobalPrincipalAttributeValueRegex();
+        val globalPrincipalAttributeValueRegex = casProperties.getAuthn().getMfa()
+            .getTriggers().getPrincipal().getGlobalPrincipalAttributeValueRegex();
         val provider = providers.iterator().next();
         LOGGER.trace("Found a single multifactor provider [{}] in the application context", provider);
-        val attributeNames = commaDelimitedListToSet(casProperties.getAuthn().getMfa().getGlobalPrincipalAttributeNameTriggers());
+        val attributeNames = commaDelimitedListToSet(casProperties.getAuthn().getMfa()
+            .getTriggers().getPrincipal().getGlobalPrincipalAttributeNameTriggers());
         return multifactorAuthenticationProviderResolver.resolveEventViaPrincipalAttribute(principal, attributeNames, service, context, providers,
-            input -> input != null && input.matches(globalPrincipalAttributeValueRegex));
+            (attributeValue, mfaProvider) -> attributeValue != null && attributeValue.matches(globalPrincipalAttributeValueRegex));
     }
 }

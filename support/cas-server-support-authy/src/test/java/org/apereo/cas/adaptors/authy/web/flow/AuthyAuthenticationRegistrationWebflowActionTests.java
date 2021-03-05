@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
+import com.authy.api.Error;
 import com.authy.api.Hash;
 import com.authy.api.Token;
 import com.authy.api.Tokens;
@@ -14,8 +15,6 @@ import com.authy.api.Users;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -32,8 +31,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@SpringBootTest(classes = RefreshAutoConfiguration.class)
-@Tag("Webflow")
+@Tag("WebflowMfaActions")
 public class AuthyAuthenticationRegistrationWebflowActionTests {
     @Test
     public void verifyOperation() throws Exception {
@@ -63,7 +61,16 @@ public class AuthyAuthenticationRegistrationWebflowActionTests {
 
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
         val action = new AuthyAuthenticationRegistrationWebflowAction(authyInstance);
-        val event = action.doExecute(context);
-        assertEquals(CasWebflowConstants.STATE_ID_SUCCESS, event.getId());
+        var event = action.doExecute(context);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
+
+        user.setStatus(400);
+        assertThrows(IllegalArgumentException.class, () -> action.doExecute(context));
+
+        user.setStatus(200);
+        hash.setSuccess(false);
+        hash.setError(new Error());
+        hash.setMessage("Message");
+        assertThrows(IllegalArgumentException.class, () -> action.doExecute(context));
     }
 }

@@ -2,7 +2,6 @@ package org.apereo.cas.adaptors.x509.authentication.revocation.policy;
 
 import lombok.extern.slf4j.Slf4j;
 
-
 /**
  * Implements an unqualified allow policy.
  *
@@ -11,10 +10,8 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class AllowRevocationPolicy implements RevocationPolicy<Void> {
-
-
     @Override
     public void apply(final Void data) {
-        LOGGER.info("Continuing since AllowRevocationPolicy is in effect.");
+        LOGGER.debug("Continuing since [{}] is in effect.", getClass().getSimpleName());
     }
 }

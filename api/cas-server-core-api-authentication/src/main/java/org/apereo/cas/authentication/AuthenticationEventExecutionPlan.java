@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link AuthenticationEventExecutionPlan}.
@@ -137,6 +139,16 @@ public interface AuthenticationEventExecutionPlan {
     Set<AuthenticationHandler> getAuthenticationHandlers();
 
     /**
+     * Gets authentication handlers by a filter.
+     *
+     * @param filter the filter
+     * @return the authentication handlers by
+     */
+    default Set<AuthenticationHandler> getAuthenticationHandlersBy(final Predicate<AuthenticationHandler> filter) {
+        return getAuthenticationHandlers().stream().filter(filter).collect(Collectors.toSet());
+    }
+
+    /**
      * Gets authentication metadata populators.
      *
      * @param transaction the transaction
@@ -184,6 +196,13 @@ public interface AuthenticationEventExecutionPlan {
      * @return the authentication policies
      */
     Collection<AuthenticationPolicy> getAuthenticationPolicies(Authentication authentication);
+
+    /**
+     * Gets authentication policies.
+     *
+     * @return the authentication policies
+     */
+    Collection<AuthenticationPolicy> getAuthenticationPolicies();
 
     /**
      * Gets authentication handler resolvers.

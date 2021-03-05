@@ -47,11 +47,26 @@ public class RestfulPasswordlessTokenRepositoryTests extends BasePasswordlessUse
             webServer.start();
             val tokens = new CasConfigurationProperties().getAuthn().getPasswordless().getTokens();
             tokens.getRest().setUrl("http://localhost:9306");
-            val passwordless = new RestfulPasswordlessTokenRepository(tokens.getExpireInSeconds(), tokens.getRest(), passwordlessCipherExecutor);
+            val passwordless = new RestfulPasswordlessTokenRepository(tokens.getExpireInSeconds(),
+                tokens.getRest(), passwordlessCipherExecutor);
 
             val foundToken = passwordless.findToken("casuser");
             assertNotNull(foundToken);
             assertTrue(foundToken.isPresent());
+        }
+    }
+
+    @Test
+    public void verifyFindTokenFails() {
+        try (val webServer = new MockWebServer(9306,
+            new ByteArrayResource("token".getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
+            webServer.start();
+            val tokens = new CasConfigurationProperties().getAuthn().getPasswordless().getTokens();
+            tokens.getRest().setUrl("http://localhost:9306");
+            val passwordless = new RestfulPasswordlessTokenRepository(tokens.getExpireInSeconds(),
+                tokens.getRest(), passwordlessCipherExecutor);
+            val foundToken = passwordless.findToken("casuser");
+            assertTrue(foundToken.isEmpty());
         }
     }
 
@@ -63,8 +78,8 @@ public class RestfulPasswordlessTokenRepositoryTests extends BasePasswordlessUse
             webServer.start();
             val tokens = new CasConfigurationProperties().getAuthn().getPasswordless().getTokens();
             tokens.getRest().setUrl("http://localhost:9307");
-            val passwordless = new RestfulPasswordlessTokenRepository(tokens.getExpireInSeconds(), tokens.getRest(), passwordlessCipherExecutor);
-
+            val passwordless = new RestfulPasswordlessTokenRepository(tokens.getExpireInSeconds(),
+                tokens.getRest(), passwordlessCipherExecutor);
             passwordless.saveToken("casuser", data);
         }
     }
@@ -77,6 +92,16 @@ public class RestfulPasswordlessTokenRepositoryTests extends BasePasswordlessUse
             webServer.start();
             passwordlessTokenRepository.deleteToken("casuser", "123456");
             passwordlessTokenRepository.deleteTokens("casuser");
+        }
+    }
+
+    @Test
+    public void verifyClean() {
+        try (val webServer = new MockWebServer(9293,
+            new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "REST Output"),
+            MediaType.APPLICATION_JSON_VALUE)) {
+            webServer.start();
+            passwordlessTokenRepository.clean();
         }
     }
 }

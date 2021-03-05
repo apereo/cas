@@ -14,6 +14,7 @@ import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 
 import java.io.File;
+import java.util.Objects;
 
 /**
  * This is {@link ValidateRegisteredServiceCommand}.
@@ -36,17 +37,12 @@ public class ValidateRegisteredServiceCommand {
      */
     @ShellMethod(key = "validate-service", value = "Validate a given JSON/YAML service definition by path or directory")
     public static void validateService(
-        @ShellOption(value = { "file", "--file" },
+        @ShellOption(value = {"file", "--file"},
             help = "Path to the JSON/YAML service definition file",
             defaultValue = StringUtils.EMPTY) final String file,
-        @ShellOption(value = { "directory", "--directory" },
+        @ShellOption(value = {"directory", "--directory"},
             help = "Path to the JSON/YAML service definitions directory",
-            defaultValue = "/etc/cas/services") final String directory) {
-
-        if (StringUtils.isBlank(file) && StringUtils.isBlank(directory)) {
-            LOGGER.warn("Either file or directory must be specified");
-            return;
-        }
+            defaultValue = StringUtils.EMPTY) final String directory) {
 
         if (StringUtils.isNotBlank(file)) {
             val filePath = new File(file);
@@ -58,16 +54,14 @@ public class ValidateRegisteredServiceCommand {
             if (directoryPath.isDirectory()) {
                 FileUtils.listFiles(directoryPath, new String[]{"json", "yml", "yaml"}, false).forEach(ValidateRegisteredServiceCommand::validate);
             }
-            return;
         }
-
     }
 
     private static void validate(final File filePath) {
         try {
             var validator = (RegisteredServiceJsonSerializer) null;
             if (filePath.isFile() && filePath.exists() && filePath.canRead() && filePath.length() > 0) {
-                switch (FilenameUtils.getExtension(filePath.getPath())) {
+                switch (FilenameUtils.getExtension(filePath.getPath()).toLowerCase()) {
                     case "json":
                         validator = new RegisteredServiceJsonSerializer();
                         break;
@@ -76,10 +70,14 @@ public class ValidateRegisteredServiceCommand {
                         validator = new RegisteredServiceYamlSerializer();
                         break;
                     default:
-                        throw new IllegalStateException("Incorrect file extension");
+                        LOGGER.debug("Unknown file [{}]", filePath.getCanonicalPath());
+                        break;
                 }
-                val svc = validator.from(filePath);
-                LOGGER.info("Service [{}] is valid at [{}].", svc.getName(), filePath.getCanonicalPath());
+
+                if (validator != null) {
+                    val svc = Objects.requireNonNull(validator).from(filePath);
+                    LOGGER.info("Service [{}] is valid at [{}].", svc.getName(), filePath.getCanonicalPath());
+                }
             } else {
                 LOGGER.warn("File [{}] is does not exist, is not readable or is empty", filePath.getCanonicalPath());
             }
@@ -88,6 +86,5 @@ public class ValidateRegisteredServiceCommand {
         } finally {
             LOGGER.info("-".repeat(SEP_LINE_LENGTH));
         }
-
     }
 }

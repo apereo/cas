@@ -5,6 +5,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
+import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.util.HttpRequestUtils;
 
@@ -27,46 +28,28 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidator extends BaseOAuth
     }
 
     @Override
-    protected OAuth20GrantTypes getGrantType() {
-        return OAuth20GrantTypes.REFRESH_TOKEN;
-    }
-
-    @Override
     protected boolean validateInternal(final JEEContext context, final String grantType,
-                                       final ProfileManager manager, final UserProfile uProfile) {
+        final ProfileManager manager, final UserProfile uProfile) {
+
         val request = context.getNativeRequest();
-        val clientId = OAuth20Utils.getClientIdAndClientSecret(context).getLeft();
-        if (!HttpRequestUtils.doesParameterExist(request, OAuth20Constants.REFRESH_TOKEN)
-            || clientId.isEmpty()) {
+        val clientId = OAuth20Utils.getClientIdAndClientSecret(context, getConfigurationContext().getSessionStore()).getLeft();
+        if (!HttpRequestUtils.doesParameterExist(request, OAuth20Constants.REFRESH_TOKEN) || clientId.isEmpty()) {
             return false;
         }
 
         val token = request.getParameter(OAuth20Constants.REFRESH_TOKEN);
-        val refreshToken = getConfigurationContext().getTicketRegistry().getTicket(token);
-        if (refreshToken == null) {
-            LOGGER.warn("Provided refresh token [{}] cannot be found in the registry", token);
-            return false;
-        }
-        if (!OAuth20RefreshToken.class.isAssignableFrom(refreshToken.getClass())) {
-            LOGGER.warn("Provided refresh token [{}] is found in the registry but its type is not classified as a refresh token", token);
-            return false;
-        }
-        if (refreshToken.isExpired()) {
-            LOGGER.warn("Provided refresh token [{}] has expired and is no longer valid.", token);
+        try {
+            val refreshToken = getConfigurationContext().getCentralAuthenticationService().getTicket(token, OAuth20RefreshToken.class);
+            LOGGER.trace("Found valid refresh token [{}] in the registry", refreshToken);
+        } catch (final InvalidTicketException e) {
+            LOGGER.warn("Provided refresh token [{}] cannot be found in the registry or has expired", token);
             return false;
         }
 
         LOGGER.debug("Received grant type [{}] with client id [{}]", grantType, clientId);
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
             getConfigurationContext().getServicesManager(), clientId);
-        if (registeredService == null) {
-            LOGGER.warn("Provided client id cannot be matched against a service definition");
-            return false;
-        }
-        val service = getConfigurationContext().getWebApplicationServiceServiceFactory()
-            .createService(registeredService.getServiceId());
         val audit = AuditableContext.builder()
-            .service(service)
             .registeredService(registeredService)
             .build();
         val accessResult = getConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
@@ -78,5 +61,10 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidator extends BaseOAuth
         }
 
         return true;
+    }
+
+    @Override
+    protected OAuth20GrantTypes getGrantType() {
+        return OAuth20GrantTypes.REFRESH_TOKEN;
     }
 }

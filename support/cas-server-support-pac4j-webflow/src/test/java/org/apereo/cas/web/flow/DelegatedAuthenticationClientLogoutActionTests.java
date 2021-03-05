@@ -1,7 +1,13 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.logout.LogoutManager;
+import org.apereo.cas.logout.SingleLogoutExecutionRequest;
+import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockServletContext;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
+import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.apache.http.HttpStatus;
@@ -18,6 +24,8 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -27,13 +35,16 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @SpringBootTest(classes =
-    BaseDelegatedAuthenticationTests.SharedTestConfiguration.class
-)
-@Tag("Webflow")
+    BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
+@Tag("WebflowActions")
 public class DelegatedAuthenticationClientLogoutActionTests {
     @Autowired
-    @Qualifier("delegatedAuthenticationClientLogoutAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_LOGOUT)
     private Action delegatedAuthenticationClientLogoutAction;
+
+    @Autowired
+    @Qualifier(LogoutManager.DEFAULT_BEAN_NAME)
+    private LogoutManager logoutManager;
 
     @Test
     public void verifyOperationWithProfile() throws Exception {
@@ -41,13 +52,24 @@ public class DelegatedAuthenticationClientLogoutActionTests {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
+
         val profile = new CommonProfile();
         profile.setId("casuser");
         profile.setClientName("CasClient");
-        request.setAttribute(Pac4jConstants.USER_PROFILES, profile);
+        request.setAttribute(Pac4jConstants.USER_PROFILES,
+            CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
         val result = delegatedAuthenticationClientLogoutAction.execute(context);
         assertNull(result);
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, response.getStatus());
+        val tgt = new MockTicketGrantingTicket("casuser");
+
+        logoutManager.performLogout(SingleLogoutExecutionRequest.builder()
+            .httpServletRequest(Optional.of(request))
+            .httpServletResponse(Optional.of(response))
+            .ticketGrantingTicket(tgt)
+            .build());
+        assertNull(request.getSession(false));
     }
 
     @Test

@@ -9,11 +9,14 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import org.apereo.cas.util.serialization.SerializationUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -29,12 +32,16 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Scott Battaglia
  * @since 3.2.1
  */
+@Tag("ExpirationPolicy")
 public class RememberMeDelegatingExpirationPolicyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "rememberMeDelegatingExpirationPolicy.json");
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     private static final Long REMEMBER_ME_TTL = 20000L;
+
     private static final Long DEFAULT_TTL = 10000L;
 
     /**
@@ -65,10 +72,20 @@ public class RememberMeDelegatingExpirationPolicyTests {
     }
 
     @Test
+    public void verifyNoRememberMe() {
+        val authentication = CoreAuthenticationTestUtils.getAuthentication(
+            principalFactory.createPrincipal("test"),
+            Collections.singletonMap(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, List.of(false)));
+        val t = new TicketGrantingTicketImpl("111", authentication, this.expirationPolicy);
+        assertFalse(t.isExpired());
+    }
+
+    @Test
     public void verifyTicketExpirationWithRememberMeBuiltAuthn() {
         val builder = new DefaultAuthenticationResultBuilder();
         val p1 = CoreAuthenticationTestUtils.getPrincipal("casuser", CollectionUtils.wrap("uid", "casuser"));
-        val authn1 = CoreAuthenticationTestUtils.getAuthentication(p1, CollectionUtils.wrap(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, true));
+        val authn1 = CoreAuthenticationTestUtils.getAuthentication(p1,
+            CollectionUtils.wrap(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, true));
         val result = builder.collect(authn1).build(new DefaultPrincipalElectionStrategy());
 
         val authentication = result.getAuthentication();
@@ -110,6 +127,13 @@ public class RememberMeDelegatingExpirationPolicyTests {
     public void verifySerializeATimeoutExpirationPolicyToJson() throws IOException {
         MAPPER.writeValue(JSON_FILE, expirationPolicy);
         val policyRead = MAPPER.readValue(JSON_FILE, RememberMeDelegatingExpirationPolicy.class);
+        assertEquals(expirationPolicy, policyRead);
+    }
+
+    @Test
+    public void verifySerialization() {
+        val result = SerializationUtils.serialize(expirationPolicy);
+        val policyRead = SerializationUtils.deserialize(result, RememberMeDelegatingExpirationPolicy.class);
         assertEquals(expirationPolicy, policyRead);
     }
 }

@@ -38,7 +38,7 @@ import java.util.Map;
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class RegisteredServiceScriptedAttributeFilter implements RegisteredServiceAttributeFilter {
 
     private static final long serialVersionUID = 122972056984610198L;
@@ -57,8 +57,6 @@ public class RegisteredServiceScriptedAttributeFilter implements RegisteredServi
                                                     @JsonProperty("script") final String script) {
         this.order = order;
         this.script = script;
-
-        initializeWatchableScriptIfNeeded();
     }
 
     @PostLoad

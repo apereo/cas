@@ -8,11 +8,10 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.saml.ext.saml2mdui.Description;
 import org.opensaml.saml.ext.saml2mdui.DisplayName;
+import org.opensaml.saml.ext.saml2mdui.Logo;
 import org.opensaml.saml.ext.saml2mdui.UIInfo;
-import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.annotation.DirtiesContext;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -23,11 +22,6 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    AopAutoConfiguration.class
-})
-@DirtiesContext
 @Tag("SAML")
 public class SamlMetadataUIInfoTests {
     @Test
@@ -40,6 +34,7 @@ public class SamlMetadataUIInfoTests {
         assertEquals(service.getDescription(), info.getDescription());
         assertEquals(service.getInformationUrl(), info.getInformationURL());
         assertEquals("en", info.getLocale());
+        assertTrue(info.getLogoUrls().isEmpty());
         assertEquals(service.getPrivacyUrl(), info.getPrivacyStatementURL());
     }
 
@@ -57,9 +52,16 @@ public class SamlMetadataUIInfoTests {
         when(mdui.getDescriptions()).thenReturn(CollectionUtils.wrapList(description));
         when(mdui.getDisplayNames()).thenReturn(CollectionUtils.wrapList(names));
 
+        val logo = mock(Logo.class);
+        when(logo.getURI()).thenReturn("https://example.logo.com");
+        when(logo.getWidth()).thenReturn(16);
+        when(logo.getHeight()).thenReturn(16);
+        when(mdui.getLogos()).thenReturn(List.of(logo));
+
         val service = RegisteredServiceTestUtils.getRegisteredService();
         val info = new SamlMetadataUIInfo(mdui, service);
         assertEquals(names.getValue(), info.getDisplayName());
         assertEquals(description.getValue(), info.getDescription());
+        assertFalse(info.getLogoUrls().isEmpty());
     }
 }

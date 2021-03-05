@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.support.password;
 
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.DefaultPasswordEncoder;
 import org.apereo.cas.util.crypto.GlibcCryptPasswordEncoder;
@@ -58,8 +59,9 @@ public class PasswordEncoderUtils {
                 val clazz = (Class<PasswordEncoder>) Class.forName(type);
                 return clazz.getDeclaredConstructor().newInstance();
             } catch (final Exception e) {
-                LOGGER.error("Falling back to a no-op password encoder as CAS has failed to create "
-                    + "an instance of the custom password encoder class " + type, e);
+                val msg = "Falling back to a no-op password encoder as CAS has failed to create "
+                    + "an instance of the custom password encoder class " + type;
+                LoggingUtils.error(LOGGER, msg, e);
                 return NoOpPasswordEncoder.getInstance();
             }
         }
@@ -97,9 +99,10 @@ public class PasswordEncoderUtils {
                 return new Pbkdf2PasswordEncoder(properties.getSecret(), properties.getStrength(), HASH_WIDTH);
             case GLIBC_CRYPT:
                 val hasSecret = StringUtils.isNotBlank(properties.getSecret());
-                LOGGER.debug("Creating glibc CRYPT encoder with encoding alg [{}], strength [{}] and {}secret",
+                val msg = String.format("Creating glibc CRYPT encoder with encoding alg [%s], strength [%s] and %ssecret",
                     properties.getEncodingAlgorithm(), properties.getStrength(),
                     BooleanUtils.toString(hasSecret, StringUtils.EMPTY, "without "));
+                LOGGER.debug(msg);
                 return new GlibcCryptPasswordEncoder(properties.getEncodingAlgorithm(), properties.getStrength(), properties.getSecret());
             case NONE:
             default:

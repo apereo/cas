@@ -1,7 +1,11 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.attribute.DefaultAttributeDefinitionStore;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.PrincipalResolutionExecutionPlanConfigurer;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
@@ -13,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 
 import java.util.List;
 import java.util.Map;
@@ -24,6 +29,7 @@ import java.util.Map;
  * @since 5.2.0
  */
 @TestConfiguration("casPersonDirectoryTestConfiguration")
+@Lazy(false)
 public class CasPersonDirectoryTestConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -33,7 +39,7 @@ public class CasPersonDirectoryTestConfiguration {
         return CollectionUtils.wrap(attributeRepository());
     }
 
-    @ConditionalOnMissingBean(name = "attributeRepository")
+    @ConditionalOnMissingBean(name = PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
     @Bean
     public IPersonAttributeDao attributeRepository() {
         val attrs = CollectionUtils.wrap("uid", CollectionUtils.wrap("uid"),
@@ -42,14 +48,24 @@ public class CasPersonDirectoryTestConfiguration {
         return new StubPersonAttributeDao((Map) attrs);
     }
 
-    @ConditionalOnMissingBean(name = "attributeDefinitionStore")
+    @ConditionalOnMissingBean(name = AttributeDefinitionStore.BEAN_NAME)
     @Bean
     public AttributeDefinitionStore attributeDefinitionStore() throws Exception {
-        val resource = casProperties.getPersonDirectory()
+        val resource = casProperties.getAuthn().getAttributeRepository()
             .getAttributeDefinitionStore().getJson().getLocation();
         if (ResourceUtils.doesResourceExist(resource)) {
             return new DefaultAttributeDefinitionStore(resource);
         }
         return new DefaultAttributeDefinitionStore();
+    }
+    
+    @Bean
+    public PrincipalResolutionExecutionPlanConfigurer testPersonDirectoryPrincipalResolutionExecutionPlanConfigurer() {
+        return plan -> {
+            val personDirectory = casProperties.getPersonDirectory();
+            val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(PrincipalFactoryUtils.newPrincipalFactory(),
+                attributeRepository(), personDirectory);
+            plan.registerPrincipalResolver(resolver);
+        };
     }
 }

@@ -1,23 +1,20 @@
 package org.apereo.cas.consent;
 
-import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
-import org.apereo.cas.config.CasConsentCoreConfiguration;
-import org.apereo.cas.config.CasCoreHttpConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link DefaultConsentDecisionBuilderTests}.
@@ -25,21 +22,20 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@SpringBootTest(classes = {
-    CasConsentCoreConfiguration.class,
-    CasCoreAuditConfiguration.class,
-    RefreshAutoConfiguration.class,
-    MailSenderAutoConfiguration.class,
-    CasCoreHttpConfiguration.class,
-    CasCoreUtilConfiguration.class
-}, properties = {
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
-})
+@SpringBootTest(classes = BaseConsentRepositoryTests.SharedTestConfiguration.class)
+@Tag("Simple")
 public class DefaultConsentDecisionBuilderTests {
     @Autowired
     @Qualifier("consentDecisionBuilder")
     private ConsentDecisionBuilder consentDecisionBuilder;
+
+    @Test
+    public void verifyUnableToDecodeConsentDecision() {
+        val consentDecision = mock(ConsentDecision.class);
+        when(consentDecision.getAttributes()).thenCallRealMethod();
+        val builder = new DefaultConsentDecisionBuilder(CipherExecutor.noOpOfSerializableToString());
+        assertTrue(builder.getConsentableAttributesFrom(consentDecision).isEmpty());
+    }
 
     @Test
     public void verifyNewConsentDecision() {
@@ -47,6 +43,17 @@ public class DefaultConsentDecisionBuilderTests {
         assertNotNull(consentDecision);
         assertEquals("casuser", consentDecision.getPrincipal());
         assertEquals(consentDecision.getService(), RegisteredServiceTestUtils.getService().getId());
+    }
+
+    @Test
+    public void verifyBadDecision() {
+        val consentDecision = new ConsentDecision();
+        consentDecision.setPrincipal("casuser");
+        consentDecision.setService(RegisteredServiceTestUtils.getService().getId());
+        assertThrows(IllegalArgumentException.class,
+            () -> consentDecisionBuilder.getConsentableAttributesFrom(consentDecision));
+        assertThrows(IllegalArgumentException.class,
+            () -> consentDecisionBuilder.update(consentDecision, null));
     }
 
     @Test

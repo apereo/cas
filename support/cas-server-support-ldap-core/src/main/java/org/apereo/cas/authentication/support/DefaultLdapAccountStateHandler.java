@@ -70,14 +70,20 @@ public class DefaultLdapAccountStateHandler implements AuthenticationAccountStat
         this.errorMap.put(ActiveDirectoryAccountState.Error.PASSWORD_MUST_CHANGE, new AccountPasswordMustChangeException());
         this.errorMap.put(ActiveDirectoryAccountState.Error.PASSWORD_EXPIRED, new CredentialExpiredException());
         this.errorMap.put(ActiveDirectoryAccountState.Error.ACCOUNT_EXPIRED, new AccountExpiredException());
+        this.errorMap.put(ActiveDirectoryAccountState.Error.LOGON_FAILURE, new FailedLoginException());
+        
         this.errorMap.put(EDirectoryAccountState.Error.ACCOUNT_EXPIRED, new AccountExpiredException());
+        this.errorMap.put(EDirectoryAccountState.Error.FAILED_AUTHENTICATION, new FailedLoginException());
         this.errorMap.put(EDirectoryAccountState.Error.LOGIN_LOCKOUT, new AccountLockedException());
         this.errorMap.put(EDirectoryAccountState.Error.LOGIN_TIME_LIMITED, new InvalidLoginTimeException());
         this.errorMap.put(EDirectoryAccountState.Error.PASSWORD_EXPIRED, new CredentialExpiredException());
+
         this.errorMap.put(PasswordExpirationAccountState.Error.PASSWORD_EXPIRED, new CredentialExpiredException());
         this.errorMap.put(PasswordPolicyControl.Error.ACCOUNT_LOCKED, new AccountLockedException());
         this.errorMap.put(PasswordPolicyControl.Error.PASSWORD_EXPIRED, new CredentialExpiredException());
+        this.errorMap.put(PasswordPolicyControl.Error.INSUFFICIENT_PASSWORD_QUALITY, new AccountPasswordMustChangeException());
         this.errorMap.put(PasswordPolicyControl.Error.CHANGE_AFTER_RESET, new AccountPasswordMustChangeException());
+
         this.errorMap.put(FreeIPAAccountState.Error.FAILED_AUTHENTICATION, new FailedLoginException());
         this.errorMap.put(FreeIPAAccountState.Error.PASSWORD_EXPIRED, new CredentialExpiredException());
         this.errorMap.put(FreeIPAAccountState.Error.ACCOUNT_EXPIRED, new AccountExpiredException());
@@ -90,7 +96,8 @@ public class DefaultLdapAccountStateHandler implements AuthenticationAccountStat
     }
 
     @Override
-    public List<MessageDescriptor> handle(final AuthenticationResponse response, final PasswordPolicyContext configuration) throws LoginException {
+    public List<MessageDescriptor> handle(final AuthenticationResponse response,
+        final PasswordPolicyContext configuration) throws LoginException {
         LOGGER.debug("Attempting to handle LDAP account state for [{}]", response);
         if (!this.attributesToErrorMap.isEmpty() && response.isSuccess()) {
             LOGGER.debug("Handling policy based on pre-defined attributes");
@@ -154,8 +161,7 @@ public class DefaultLdapAccountStateHandler implements AuthenticationAccountStat
         if (warning.getExpiration() != null) {
             val expDate = DateTimeUtils.zonedDateTimeOf(warning.getExpiration());
             val ttl = ZonedDateTime.now(ZoneOffset.UTC).until(expDate, ChronoUnit.DAYS);
-            LOGGER.debug(
-                "Password expires in [{}] days. Expiration warning threshold is [{}] days.",
+            LOGGER.debug("Password expires in [{}] days. Expiration warning threshold is [{}] days.",
                 ttl,
                 configuration.getPasswordWarningNumberOfDays());
             if (configuration.isAlwaysDisplayPasswordExpirationWarning() || ttl < configuration.getPasswordWarningNumberOfDays()) {

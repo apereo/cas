@@ -17,7 +17,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
-import org.apereo.cas.validation.DefaultServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.AbstractServiceValidateController;
 import org.apereo.cas.web.AbstractServiceValidateControllerTests;
 import org.apereo.cas.web.ServiceValidateConfigurationContext;
@@ -32,12 +31,14 @@ import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -51,7 +52,6 @@ import org.springframework.web.servlet.support.RequestContext;
 import javax.crypto.Cipher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Optional;
@@ -67,7 +67,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @DirtiesContext
 @Slf4j
 @SpringBootTest(properties = {
-    "cas.clearpass.cacheCredential=true",
+    "cas.clearpass.cache-credential=true",
     "cas.clearpass.crypto.enabled=false"
 },
     classes = {
@@ -77,6 +77,7 @@ import static org.junit.jupiter.api.Assertions.*;
         CasThymeleafConfiguration.class,
         CasValidationConfiguration.class
     })
+@Tag("CAS")
 public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
 
     @Autowired
@@ -114,12 +115,12 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
             .validationSpecifications(CollectionUtils.wrapSet(getValidationSpecification()))
             .authenticationSystemSupport(getAuthenticationSystemSupport())
             .servicesManager(getServicesManager())
-            .centralAuthenticationService(getCentralAuthenticationService().getObject())
+            .centralAuthenticationService(getCentralAuthenticationService())
             .argumentExtractor(getArgumentExtractor())
             .proxyHandler(getProxyHandler())
             .requestedContextValidator((assertion, request) -> Pair.of(Boolean.TRUE, Optional.empty()))
             .authnContextAttribute("authenticationContext")
-            .validationAuthorizers(new DefaultServiceTicketValidationAuthorizersExecutionPlan())
+            .validationAuthorizers(getServiceValidationAuthorizers())
             .renewEnabled(true)
             .validationViewFactory(serviceValidationViewFactory)
             .build();
@@ -202,7 +203,8 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
         assertEquals("binaryAttributeValue", EncodingUtils.decodeBase64ToString(binaryAttr.toString()));
     }
 
-    @TestConfiguration
+    @TestConfiguration("AttributeRepositoryTestConfiguration")
+    @Lazy(false)
     public static class AttributeRepositoryTestConfiguration {
         @Bean
         public IPersonAttributeDao attributeRepository() {

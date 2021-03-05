@@ -2,7 +2,7 @@ package org.apereo.cas.adaptors.duo.web.flow;
 
 import org.apereo.cas.adaptors.duo.BaseDuoSecurityTests;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.web.flow.configurer.BaseMultifactorWebflowConfigurerTests;
 
 import org.junit.jupiter.api.Tag;
@@ -20,27 +20,27 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
  */
 @SpringBootTest(classes = BaseDuoSecurityTests.SharedTestConfiguration.class,
     properties = {
-        "cas.authn.mfa.duo[0].duoSecretKey=1234567890",
-        "cas.authn.mfa.duo[0].duoApplicationKey=abcdefghijklmnop",
-        "cas.authn.mfa.duo[0].duoIntegrationKey=QRSTUVWXYZ",
-        "cas.authn.mfa.duo[0].duoApiHost=theapi.duosecurity.com",
-        "cas.authn.mfa.duo[0].trustedDeviceEnabled=true",
-        "cas.authn.mfa.trusted.deviceRegistrationEnabled=true"
+        "cas.authn.mfa.duo[0].duo-secret-key=1234567890",
+        "cas.authn.mfa.duo[0].duo-application-key=abcdefghijklmnop",
+        "cas.authn.mfa.duo[0].duo-integration-key=QRSTUVWXYZ",
+        "cas.authn.mfa.duo[0].duo-api-host=theapi.duosecurity.com",
+        "cas.authn.mfa.duo[0].trusted-device-enabled=true",
+        "cas.authn.mfa.trusted.core.device-registration-enabled=true"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("Webflow")
+@Tag("WebflowConfig")
 public class DuoSecurityMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowConfigurerTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
     @Override
     protected FlowDefinitionRegistry getMultifactorFlowDefinitionRegistry() {
-        return this.applicationContext.getBean(DuoSecurityMultifactorProperties.DEFAULT_IDENTIFIER, FlowDefinitionRegistry.class);
+        return this.applicationContext.getBean(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER, FlowDefinitionRegistry.class);
     }
 
     @Override
     protected String getMultifactorEventId() {
-        return DuoSecurityMultifactorProperties.DEFAULT_IDENTIFIER;
+        return DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER;
     }
 }
 

@@ -38,14 +38,14 @@ public class SamlProfileAttributeQueryResponseBuilder extends SamlProfileSamlSoa
                           final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                           final String binding,
                           final MessageContext messageContext) throws SamlException {
-        val header = newSoapObject(Header.class);
-        val body = newSoapObject(Body.class);
+        val header = SamlUtils.newSoapObject(Header.class);
+        val body = SamlUtils.newSoapObject(Body.class);
         val query = (AttributeQuery) authnRequest;
         val saml2Response = buildSaml2Response(casAssertion, query, service,
-            adaptor, request, SAMLConstants.SAML2_POST_BINDING_URI, messageContext);
+            adaptor, request, response, SAMLConstants.SAML2_POST_BINDING_URI, messageContext);
         body.getUnknownXMLObjects().add(saml2Response);
 
-        val envelope = newSoapObject(Envelope.class);
+        val envelope = SamlUtils.newSoapObject(Envelope.class);
         envelope.setHeader(header);
         envelope.setBody(body);
         SamlUtils.logSamlObject(this.openSamlConfigBean, envelope);

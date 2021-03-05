@@ -4,7 +4,7 @@ import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.DefaultAuthenticationTransaction;
+import org.apereo.cas.authentication.DefaultAuthenticationTransactionFactory;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -15,6 +15,7 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
@@ -35,6 +36,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -55,7 +57,6 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
 
 import javax.servlet.http.HttpServletResponse;
-
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -82,13 +83,6 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
     @Qualifier("casAuthenticationManager")
     protected AuthenticationManager authenticationManager;
 
-    private static UsernamePasswordCredential badCredentials(final String username) {
-        val credentials = new UsernamePasswordCredential();
-        credentials.setUsername(username);
-        credentials.setPassword("badpassword");
-        return credentials;
-    }
-
     @BeforeEach
     public void initialize() {
         val request = new MockHttpServletRequest();
@@ -103,8 +97,7 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
     }
 
     @Test
-    @SneakyThrows
-    public void verifyThrottle() {
+    public void verifyThrottle() throws Exception {
         /* Ensure that repeated logins BELOW threshold rate are allowed */
         failLoop(3, 1000, HttpStatus.SC_UNAUTHORIZED);
 
@@ -117,23 +110,21 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
         failLoop(3, 1000, HttpStatus.SC_UNAUTHORIZED);
     }
 
+    public abstract ThrottledSubmissionHandlerInterceptor getThrottle();
+
     @SneakyThrows
     protected void failLoop(final int trials, final int period, final int expected) {
         /* Seed with something to compare against */
         loginUnsuccessfully("mog", "1.2.3.4");
 
-        IntStream.range(0, trials).forEach(i -> {
-            try {
-                LOGGER.debug("Waiting for [{}] ms", period);
-                Thread.sleep(period);
-                val status = loginUnsuccessfully("mog", "1.2.3.4");
-                if (i == trials) {
-                    assertEquals(expected, status.getStatus());
-                }
-            } catch (final Exception e) {
-                throw new AssertionError(e.getMessage(), e);
+        IntStream.range(0, trials).forEach(Unchecked.intConsumer(i -> {
+            LOGGER.debug("Waiting for [{}] ms", period);
+            Thread.sleep(period);
+            val status = loginUnsuccessfully("mog", "1.2.3.4");
+            if (i == trials) {
+                assertEquals(expected, status.getStatus());
             }
-        });
+        }));
     }
 
     @SneakyThrows
@@ -152,7 +143,8 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
         getThrottle().preHandle(request, response, null);
 
         try {
-            val transaction = DefaultAuthenticationTransaction.of(CoreAuthenticationTestUtils.getService(), badCredentials(username));
+            val transaction = new DefaultAuthenticationTransactionFactory()
+                .newTransaction(CoreAuthenticationTestUtils.getService(), badCredentials(username));
             authenticationManager.authenticate(transaction);
         } catch (final AuthenticationException e) {
             getThrottle().postHandle(request, response, null, null);
@@ -161,7 +153,12 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
         throw new AssertionError("Expected AbstractAuthenticationException");
     }
 
-    public abstract ThrottledSubmissionHandlerInterceptor getThrottle();
+    private static UsernamePasswordCredential badCredentials(final String username) {
+        val credentials = new UsernamePasswordCredential();
+        credentials.setUsername(username);
+        credentials.setPassword("badpassword");
+        return credentials;
+    }
 
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
@@ -172,6 +169,7 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
     @Import({
         CasCoreConfiguration.class,
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+        CasCoreNotificationsConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasCoreUtilConfiguration.class,
         CasCoreTicketsConfiguration.class,

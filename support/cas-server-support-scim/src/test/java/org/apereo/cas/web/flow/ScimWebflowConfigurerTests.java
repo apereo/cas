@@ -21,12 +21,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasScimConfiguration.class,
     BaseWebflowConfigurerTests.SharedTestConfiguration.class
 })
-@TestPropertySource(properties = {
-    "cas.scim.target=http://localhost:8218",
-    "spring.mail.host=localhost",
-    "spring.mail.port=25000"
-})
-@Tag("Webflow")
+@TestPropertySource(properties = "cas.scim.target=http://localhost:8218")
+@Tag("WebflowConfig")
 public class ScimWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     public void verifyOperation() {

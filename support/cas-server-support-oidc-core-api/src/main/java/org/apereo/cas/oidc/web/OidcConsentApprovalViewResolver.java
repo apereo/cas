@@ -10,6 +10,7 @@ import org.apereo.cas.support.oauth.web.views.OAuth20ConsentApprovalViewResolver
 
 import lombok.val;
 import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.session.SessionStore;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -22,8 +23,9 @@ import java.util.Map;
  */
 public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewResolver {
 
-    public OidcConsentApprovalViewResolver(final CasConfigurationProperties casProperties) {
-        super(casProperties);
+    public OidcConsentApprovalViewResolver(final CasConfigurationProperties casProperties,
+                                           final SessionStore sessionStore) {
+        super(casProperties, sessionStore);
     }
 
     @Override
@@ -52,7 +54,7 @@ public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewR
             val oidcRegisteredService = (OidcRegisteredService) svc;
             model.put("dynamic", oidcRegisteredService.isDynamicallyRegistered());
             model.put("dynamicTime", oidcRegisteredService.getDynamicRegistrationDateTime());
-            val supportedScopes = new HashSet<String>(casProperties.getAuthn().getOidc().getScopes());
+            val supportedScopes = new HashSet<>(casProperties.getAuthn().getOidc().getDiscovery().getScopes());
             supportedScopes.retainAll(oidcRegisteredService.getScopes());
             supportedScopes.retainAll(OAuth20Utils.getRequestedScopes(ctx));
             supportedScopes.add(OidcConstants.StandardScopes.OPENID.getScope());

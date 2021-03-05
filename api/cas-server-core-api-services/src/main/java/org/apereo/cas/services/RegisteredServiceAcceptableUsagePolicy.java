@@ -16,7 +16,7 @@ public interface RegisteredServiceAcceptableUsagePolicy extends Serializable {
     /**
      * Indicate whether policy is enabled.
      *
-     * @return the boolean
+     * @return true/false
      */
     default boolean isEnabled() {
         return true;
