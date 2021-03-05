@@ -5,8 +5,6 @@ import org.apereo.cas.authentication.attribute.AttributeDefinition;
 import org.apereo.cas.authentication.attribute.DefaultAttributeDefinition;
 import org.apereo.cas.authentication.attribute.DefaultAttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServicePublicKey;
 import org.apereo.cas.services.RegisteredServicePublicKeyImpl;
@@ -27,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 
@@ -48,11 +45,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@SpringBootTest(classes = {
-    CasPersonDirectoryConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    RefreshAutoConfiguration.class
-},
+@SpringBootTest(classes = BasePrincipalAttributeRepositoryTests.SharedTestConfiguration.class,
     properties = {
         "cas.authn.attribute-repository.stub.attributes.uid=cas-user-id",
         "cas.authn.attribute-repository.stub.attributes.givenName=cas-given-name",

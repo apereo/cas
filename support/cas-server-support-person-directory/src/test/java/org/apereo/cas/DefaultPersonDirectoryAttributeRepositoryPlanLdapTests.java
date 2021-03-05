@@ -3,7 +3,6 @@ package org.apereo.cas;
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
@@ -16,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ClassPathResource;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,10 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@SpringBootTest(classes = {
-    CasPersonDirectoryConfiguration.class,
-    RefreshAutoConfiguration.class
-}, properties = {
+@SpringBootTest(classes = BasePrincipalAttributeRepositoryTests.SharedTestConfiguration.class, properties = {
     "cas.authn.attribute-repository.ldap[0].ldap-url=ldap://localhost:10389",
     "cas.authn.attribute-repository.ldap[0].base-dn=ou=people,dc=example,dc=org",
     "cas.authn.attribute-repository.ldap[0].search-filter=cn={0}",

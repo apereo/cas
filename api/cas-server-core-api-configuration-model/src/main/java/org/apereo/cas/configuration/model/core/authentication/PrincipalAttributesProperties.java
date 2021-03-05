@@ -90,7 +90,9 @@ public class PrincipalAttributesProperties implements Serializable {
 
     /**
      * Retrieve attributes from multiple scripted repositories.
+     * @deprecated Since 6.2
      */
+    @Deprecated(since = "6.2")
     private List<ScriptedPrincipalAttributesProperties> script = new ArrayList<>(0);
 
     /**

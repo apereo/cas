@@ -20,6 +20,8 @@ import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryGroovyConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryJsonConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 
@@ -57,6 +59,8 @@ public abstract class BaseX509Tests {
         CasCoreTicketCatalogConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasPersonDirectoryConfiguration.class,
+        CasPersonDirectoryJsonConfiguration.class,
+        CasPersonDirectoryGroovyConfiguration.class,
         CasCoreAuthenticationConfiguration.class,
         CasCoreWebConfiguration.class,
         CasCoreServicesAuthenticationConfiguration.class,

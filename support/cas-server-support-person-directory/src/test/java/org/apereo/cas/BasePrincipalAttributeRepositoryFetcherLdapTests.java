@@ -1,8 +1,6 @@
 package org.apereo.cas;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.Cleanup;
@@ -14,7 +12,6 @@ import org.ldaptive.Credential;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
@@ -26,11 +23,8 @@ import java.util.UUID;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    CasPersonDirectoryConfiguration.class,
-    CasCoreUtilConfiguration.class
-}, properties = {
+@SpringBootTest(classes = BasePrincipalAttributeRepositoryTests.SharedTestConfiguration.class,
+properties = {
     "cas.authn.attribute-repository.ldap[0].base-dn=ou=people,dc=example,dc=org",
     "cas.authn.attribute-repository.ldap[0].ldap-url=ldap://localhost:10389",
     "cas.authn.attribute-repository.ldap[0].attributes.cn=cn",

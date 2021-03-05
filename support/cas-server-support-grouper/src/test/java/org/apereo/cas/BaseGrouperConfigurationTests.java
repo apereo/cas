@@ -16,6 +16,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryGrouperConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.GrouperMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
@@ -68,6 +69,7 @@ public abstract class BaseGrouperConfigurationTests {
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
         CasCoreUtilConfiguration.class,
         CasPersonDirectoryConfiguration.class,
+        CasPersonDirectoryGrouperConfiguration.class,
         GrouperMultifactorAuthenticationPolicyEventResolverTests.GrouperTestConfiguration.class,
         GrouperMultifactorAuthenticationConfiguration.class
     })

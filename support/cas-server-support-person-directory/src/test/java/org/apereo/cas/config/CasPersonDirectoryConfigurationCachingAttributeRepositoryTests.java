@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.BasePrincipalAttributeRepositoryTests;
+
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.junit.jupiter.api.Tag;
@@ -7,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -17,11 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    CasPersonDirectoryConfiguration.class,
-    CasCoreUtilConfiguration.class
-}, properties = {
+@SpringBootTest(classes = BasePrincipalAttributeRepositoryTests.SharedTestConfiguration.class, properties = {
     "cas.authn.attribute-repository.json[0].location=classpath:/json-attribute-repository.json",
     "cas.authn.attribute-repository.core.expiration-time=30",
     "cas.authn.attribute-repository.core.expiration-time-unit=seconds"
