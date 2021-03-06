@@ -1,5 +1,7 @@
 package org.apereo.cas.util;
 
+import org.apereo.cas.util.function.FunctionUtils;
+
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.joda.time.DateTime;
@@ -19,6 +21,8 @@ import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAccessor;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -143,7 +147,13 @@ public class DateTimeUtils {
      */
     public static ZonedDateTime zonedDateTimeOf(final String value) {
         try {
-            return ZonedDateTime.parse(value);
+            val parsers = List.of(DateTimeFormatter.ISO_ZONED_DATE_TIME, DateTimeFormatter.RFC_1123_DATE_TIME);
+            return parsers
+                .stream()
+                .map(parser -> FunctionUtils.doAndHandle(() -> ZonedDateTime.parse(value, parser), throwable -> null).get())
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(null);
         } catch (final Exception e) {
             return null;
         }

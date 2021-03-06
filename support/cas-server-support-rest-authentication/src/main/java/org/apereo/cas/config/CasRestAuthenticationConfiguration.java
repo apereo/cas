@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.adaptors.rest.RestAuthenticationApi;
 import org.apereo.cas.adaptors.rest.RestAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -82,21 +81,11 @@ public class CasRestAuthenticationConfiguration {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
-    @ConditionalOnMissingBean(name = "restAuthenticationApi")
     @Bean
-    @RefreshScope
-    public RestAuthenticationApi restAuthenticationApi() {
-        val rest = casProperties.getAuthn().getRest();
-        return new RestAuthenticationApi(restAuthenticationTemplate(),
-            rest.getUri(),
-            rest.getCharset());
-    }
-
-    @Bean
+    @ConditionalOnMissingBean(name = "restAuthenticationHandler")
     public AuthenticationHandler restAuthenticationHandler() {
         val rest = casProperties.getAuthn().getRest();
-        val r = new RestAuthenticationHandler(rest.getName(), restAuthenticationApi(),
-            servicesManager.getObject(), restAuthenticationPrincipalFactory());
+        val r = new RestAuthenticationHandler(servicesManager.getObject(), restAuthenticationPrincipalFactory(), rest);
         r.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(rest.getPasswordEncoder(), applicationContext));
         return r;
     }

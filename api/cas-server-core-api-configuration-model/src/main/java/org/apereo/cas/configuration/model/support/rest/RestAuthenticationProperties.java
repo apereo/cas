@@ -46,4 +46,9 @@ public class RestAuthenticationProperties implements Serializable {
      * Name of the authentication handler.
      */
     private String name;
+
+    /**
+     * Order of the authentication handler in the chain.
+     */
+    private Integer order;
 }
