@@ -31,8 +31,9 @@ public interface OneTimeTokenCredentialValidator<C extends OneTimeTokenCredentia
      * Store.
      *
      * @param validatedToken the validated token
+     * @return the one time token credential validator
      */
-    void store(T validatedToken);
+    OneTimeTokenCredentialValidator store(T validatedToken);
 
     /**
      * Is token authorized for account?
