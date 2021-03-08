@@ -95,9 +95,8 @@ public class GoogleAuthenticatorOneTimeTokenCredentialValidator implements
         }
         if (authzAccount != null) {
             return new GoogleAuthenticatorToken(otp, uid);
-        } else {
-            return null;
         }
+        return null;
     }
 
     @Override
