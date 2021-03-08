@@ -114,7 +114,11 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
 
     @Override
     public void destroy() {
-        this.clients.forEach(Unchecked.consumer(c -> destroy()));
+        this.clients
+            .stream()
+            .filter(c -> c instanceof SAML2Client)
+            .map(SAML2Client.class::cast)
+            .forEach(Unchecked.consumer(SAML2Client::destroy));
     }
 
     /**

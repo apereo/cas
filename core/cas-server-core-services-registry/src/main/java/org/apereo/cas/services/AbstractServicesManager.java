@@ -204,7 +204,9 @@ public abstract class AbstractServicesManager implements ServicesManager {
 
     @Override
     public Collection<RegisteredService> getAllServices() {
-        return configurationContext.getServicesCache().asMap().values()
+        return configurationContext.getServicesCache()
+            .asMap()
+            .values()
             .stream()
             .filter(this::validateAndFilterServiceByEnvironment)
             .filter(getRegisteredServicesFilteringPredicate())

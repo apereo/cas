@@ -7,6 +7,7 @@ import lombok.experimental.SuperBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -23,7 +24,8 @@ public class ServicesManagerConfigurationContext {
 
     private final ConfigurableApplicationContext applicationContext;
 
-    private final Set<String> environments;
+    @Builder.Default
+    private final Set<String> environments = new HashSet<>();
 
     private final Cache<Long, RegisteredService> servicesCache;
 
