@@ -3,6 +3,7 @@ package org.apereo.cas.discovery;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 
@@ -37,6 +38,7 @@ import java.util.stream.Collectors;
 @Setter
 @RequiredArgsConstructor
 public class CasServerProfileRegistrar implements ApplicationContextAware {
+    private final CasConfigurationProperties casProperties;
     private final Clients clients;
     private final Set<String> availableAttributes;
     private ApplicationContext applicationContext;
@@ -93,6 +95,7 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
         profile.setMultifactorAuthenticationProviderTypesSupported(locateMultifactorAuthenticationProviderTypesSupported());
         profile.setDelegatedClientTypesSupported(locateDelegatedClientTypesSupported());
         profile.setAvailableAttributes(this.availableAttributes);
+        profile.setUserDefinedScopes(casProperties.getAuthn().getOidc().getUserDefinedScopes().keySet());
         return profile;
     }
 }
