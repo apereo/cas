@@ -18,7 +18,7 @@
             let selector = document.querySelector('.mdc-select.authn-source');
             if (selector != null) {
                 const select = new material.select.MDCSelect(selector);
-                select.listen('MDCSelect:change', () => {
+                select.listen('MDCSelect:change', function () {
                     $('#source').val(select.value);
                 });
                 $('#source').val(select.value);
