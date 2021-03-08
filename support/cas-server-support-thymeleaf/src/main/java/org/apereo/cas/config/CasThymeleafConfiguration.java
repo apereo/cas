@@ -8,6 +8,7 @@ import org.apereo.cas.services.web.ThemeBasedViewResolver;
 import org.apereo.cas.services.web.ThemeViewResolver;
 import org.apereo.cas.services.web.ThemeViewResolverFactory;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.validation.CasProtocolViewFactory;
 import org.apereo.cas.web.view.CasProtocolThymeleafViewFactory;
 import org.apereo.cas.web.view.ChainingTemplateViewResolver;
@@ -18,7 +19,6 @@ import org.apereo.cas.web.view.ThemeFileTemplateResolver;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -49,7 +49,6 @@ import org.thymeleaf.templateresolver.AbstractTemplateResolver;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.templateresolver.FileTemplateResolver;
 
-import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
@@ -96,6 +95,7 @@ public class CasThymeleafConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "chainingTemplateViewResolver")
     public AbstractTemplateResolver chainingTemplateViewResolver() {
         val chain = new ChainingTemplateViewResolver();
 
@@ -109,36 +109,36 @@ public class CasThymeleafConfiguration {
         themeCp.setPrefix("templates/%s/");
         chain.addResolver(themeCp);
 
+        val rest = casProperties.getView().getRest();
+        if (StringUtils.isNotBlank(rest.getUrl())) {
+            val url = new RestfulUrlTemplateResolver(casProperties);
+            configureTemplateViewResolver(url);
+            chain.addResolver(url);
+        }
+
         val templatePrefixes = casProperties.getView().getTemplatePrefixes();
-        templatePrefixes.forEach(Unchecked.consumer(prefix -> {
+        templatePrefixes.forEach(prefix -> {
             try {
                 val prefixPath = ResourceUtils.getFile(prefix).getCanonicalPath();
                 val viewPath = StringUtils.appendIfMissing(prefixPath, "/");
 
-                val rest = casProperties.getView().getRest();
-                if (StringUtils.isNotBlank(rest.getUrl())) {
-                    val url = new RestfulUrlTemplateResolver(casProperties);
-                    configureTemplateViewResolver(url);
-                    chain.addResolver(url);
-                }
-
                 val theme = prefix.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)
-                        ? new ThemeClassLoaderTemplateResolver(casProperties)
-                        : new ThemeFileTemplateResolver(casProperties);
+                    ? new ThemeClassLoaderTemplateResolver(casProperties)
+                    : new ThemeFileTemplateResolver(casProperties);
                 configureTemplateViewResolver(theme);
                 theme.setPrefix(viewPath + "themes/%s/");
                 chain.addResolver(theme);
 
                 val template = prefix.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)
-                        ? new ClassLoaderTemplateResolver()
-                        : new FileTemplateResolver();
+                    ? new ClassLoaderTemplateResolver()
+                    : new FileTemplateResolver();
                 configureTemplateViewResolver(template);
                 template.setPrefix(viewPath);
                 chain.addResolver(template);
-            } catch (IOException e) {
-                LOGGER.warn("Could not add template prefix '{}' to resolver", prefix, e);
+            } catch (final Exception e) {
+                LoggingUtils.warn(LOGGER, String.format("Could not add template prefix '%s' to resolver", prefix), e);
             }
-        }));
+        });
 
         chain.initialize();
         return chain;
