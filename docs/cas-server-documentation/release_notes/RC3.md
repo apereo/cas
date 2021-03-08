@@ -54,4 +54,7 @@ The following items are new improvements and enhancements presented in this rele
 
 ## Library Upgrades
 
-- Person Directory    
+- Person Directory  
+- Hibernate
+- Apache Veloci
+- Apache jClouds
