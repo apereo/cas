@@ -50,7 +50,8 @@ The following items are new improvements and enhancements presented in this rele
 
 ## Other Stuff
 
-- Ordering and sorting of the attribute repositories is now restored to respect the `order` setting.                  
+- Ordering and sorting of the attribute repositories is now restored to respect the `order` setting.      
+- Thymeleaf views specified via template prefixes in the configuration can now support `classpath` resources.
 
 ## Library Upgrades
 
