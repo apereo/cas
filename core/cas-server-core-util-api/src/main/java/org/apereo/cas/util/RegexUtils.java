@@ -100,7 +100,12 @@ public class RegexUtils {
      * @see Matcher#matches()
      */
     public static boolean matches(final Pattern pattern, final String string) {
-        return pattern.matcher(string).matches();
+        try {
+            return pattern.matcher(string).matches();
+        } catch (NullPointerException npe) {
+            LOGGER.trace("Value to match is null! ", npe);
+            return false;
+        }
     }
 
     /**
@@ -113,11 +118,16 @@ public class RegexUtils {
      */
     public static boolean matches(final Pattern pattern, final String value, final boolean completeMatch) {
         val matcher = pattern.matcher(value);
-        LOGGER.debug("Matching value [{}] against pattern [{}]", value, pattern.pattern());
-        if (completeMatch) {
-            return matcher.matches();
+        try {
+            LOGGER.debug("Matching value [{}] against pattern [{}]", value, pattern.pattern());
+            if (completeMatch) {
+                return matcher.matches();
+            }
+            return matcher.find();
+        } catch (NullPointerException npe) {
+            LOGGER.trace("Value to match is null! ", npe);
+            return false;
         }
-        return matcher.find();
     }
 
     /**
@@ -129,7 +139,12 @@ public class RegexUtils {
      * @see Matcher#find()
      */
     public static boolean find(final Pattern pattern, final String string) {
-        return pattern.matcher(string).find();
+        try {
+            return pattern.matcher(string).find();
+        } catch (NullPointerException npe) {
+            LOGGER.trace("Value to find is null! ", npe);
+            return false;
+        }
     }
 
     /**
@@ -140,7 +155,12 @@ public class RegexUtils {
      * @return true/false
      */
     public static boolean find(final String pattern, final String string) {
-        return createPattern(pattern, Pattern.CASE_INSENSITIVE).matcher(string).find();
+        try {
+            return createPattern(pattern, Pattern.CASE_INSENSITIVE).matcher(string).find();
+        } catch (NullPointerException npe) {
+            LOGGER.trace("Value to find is null! ", npe);
+            return false;
+        }
     }
 
 }

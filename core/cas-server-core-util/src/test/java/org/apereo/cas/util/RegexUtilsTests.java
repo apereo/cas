@@ -36,4 +36,14 @@ public class RegexUtilsTests {
     public void verifyNullRegex() {
         assertFalse(RegexUtils.isValidRegex(null));
     }
+
+    @Test
+    public void verifyNullFindValue() {
+        assertFalse(RegexUtils.find(RegexUtils.MATCH_NOTHING_PATTERN.toString(), null));
+    }
+
+    @Test
+    public void verifyNullMatchValue() {
+        assertFalse(RegexUtils.matches(RegexUtils.MATCH_NOTHING_PATTERN, null));
+    }
 }
