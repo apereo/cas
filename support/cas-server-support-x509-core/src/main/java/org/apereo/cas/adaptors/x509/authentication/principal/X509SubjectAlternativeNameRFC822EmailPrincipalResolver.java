@@ -31,7 +31,7 @@ public class X509SubjectAlternativeNameRFC822EmailPrincipalResolver extends Abst
         LOGGER.debug("Resolving principal from Subject Alternative Name RFC8222 type (email) for [{}]", certificate);
         try {
             val subjectAltNames = certificate.getSubjectAlternativeNames();
-            val email = getRFC822EmailAddress(subjectAltNames);
+            val email = X509ExtractorUtils.getRFC822EmailAddress(subjectAltNames);
             if (email != null) {
                 return email;
             }

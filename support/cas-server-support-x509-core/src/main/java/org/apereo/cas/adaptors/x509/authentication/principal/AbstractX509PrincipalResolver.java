@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.LoggingUtils;
 
 import lombok.Setter;
 import lombok.ToString;
@@ -13,9 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
-import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,14 +30,12 @@ import java.util.Optional;
 @Setter
 public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrincipalResolver {
 
-    private static int SAN_RFC822_EMAIL_TYPE = 1;
-
     private String alternatePrincipalAttribute;
 
     protected AbstractX509PrincipalResolver(final PrincipalResolutionContext context) {
         super(context);
     }
-    
+
     @Override
     public boolean supports(final Credential credential) {
         return credential instanceof X509CertificateCredential;
@@ -103,74 +98,13 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
     }
 
     /**
-     * Get additional attributes from the certificate.
-     *
-     * @param certificate X509 Certificate of user
-     * @return map of attributes
+     * Extract various attributes from the certificate about the person.
+     * This method is here for backwards compatibility with deployments that overrode this method.
+     * @param certificate X509 Certificate
+     * @return Map of the attributes
      */
     protected Map<String, List<Object>> extractPersonAttributes(final X509Certificate certificate) {
-        val attributes = new LinkedHashMap<String, List<Object>>();
-
-        if (certificate != null) {
-            if (StringUtils.isNotBlank(certificate.getSigAlgOID())) {
-                attributes.put("sigAlgOid", CollectionUtils.wrapList(certificate.getSigAlgOID()));
-            }
-            val subjectDn = certificate.getSubjectDN();
-            if (subjectDn != null) {
-                attributes.put("subjectDn", CollectionUtils.wrapList(subjectDn.getName()));
-            }
-            val subjectPrincipal = certificate.getSubjectX500Principal();
-            if (subjectPrincipal != null) {
-                attributes.put("subjectX500Principal", CollectionUtils.wrapList(subjectPrincipal.getName()));
-            }
-            val issuerDn = certificate.getIssuerDN();
-            if (issuerDn != null) {
-                attributes.put("issuerDn", CollectionUtils.wrapList(issuerDn.getName()));
-            }
-            val issuerPrincipal = certificate.getIssuerX500Principal();
-            if (issuerPrincipal != null) {
-                attributes.put("issuerX500Principal", CollectionUtils.wrapList(issuerPrincipal.getName()));
-            }
-            try {
-                val rfc822Email = getRFC822EmailAddress(certificate.getSubjectAlternativeNames());
-                if (rfc822Email != null) {
-                    attributes.put("x509Rfc822Email", CollectionUtils.wrapList(rfc822Email));
-                }
-            } catch (final CertificateParsingException e) {
-                if (LOGGER.isDebugEnabled()) {
-                    LoggingUtils.warn(LOGGER, "Error parsing subject alternative names to get rfc822 email", e);
-                }
-                LOGGER.warn("Error parsing subject alternative names to get rfc822 email [{}]", e.getMessage());
-            }
-            try {
-                val x509subjectUPN = X509UPNExtractorUtils.extractUPNString(certificate);
-                if (x509subjectUPN != null) {
-                    attributes.put("x509subjectUPN", CollectionUtils.wrapList(x509subjectUPN));
-                }
-            } catch (final CertificateParsingException e) {
-                LoggingUtils.warn(LOGGER, e);
-            }
-        }
-        return attributes;
+        return x509AttributeExtractor.extractPersonAttributes(certificate);
     }
 
-    /**
-     * Get Email Address.
-     *
-     * @param subjectAltNames list of subject alternative name values encoded as collection of Lists with two elements in each List containing type and value.
-     * @return String email address or null if the item passed in is not type 1 (rfc822Name)
-     * as expected to be returned by implementation of {@code X509Certificate.html#getSubjectAlternativeNames}
-     * @see <a href="http://docs.oracle.com/javase/7/docs/api/java/security/cert/X509Certificate.html#getSubjectAlternativeNames()">
-     * X509Certificate#getSubjectAlternativeNames</a>
-     */
-    protected String getRFC822EmailAddress(final Collection<List<?>> subjectAltNames) {
-        if (subjectAltNames == null) {
-            return null;
-        }
-        val email = subjectAltNames
-            .stream()
-            .filter(s -> s.size() == 2 && (Integer) s.get(0) == SAN_RFC822_EMAIL_TYPE)
-            .findFirst();
-        return email.map(objects -> (String) objects.get(1)).orElse(null);
-    }
 }

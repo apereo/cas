@@ -6,10 +6,8 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 
 import java.security.cert.X509Certificate;
-import java.util.StringTokenizer;
 
 /**
  * This is {@link X509CommonNameEDIPIPrincipalResolver}.
@@ -42,11 +40,11 @@ public class X509CommonNameEDIPIPrincipalResolver extends AbstractX509PrincipalR
         if (StringUtils.isBlank(subjectDn)) {
             return getAlternatePrincipal(certificate);
         }
-        val commonName = retrieveTheCommonName(subjectDn);
+        val commonName = X509ExtractorUtils.retrieveTheCommonName(subjectDn);
         if (StringUtils.isBlank(commonName)) {
             return getAlternatePrincipal(certificate);
         }
-        val result = retrieveTheEDIPI(commonName);
+        val result = X509ExtractorUtils.retrieveTheEDIPI(commonName);
         if (StringUtils.isBlank(result)) {
             return getAlternatePrincipal(certificate);
         }
@@ -54,46 +52,5 @@ public class X509CommonNameEDIPIPrincipalResolver extends AbstractX509PrincipalR
         return result;
     }
 
-    private static String retrieveTheCommonName(final String inSubjectDN) {
-        var commonNameFound = false;
-        var tempCommonName = StringUtils.EMPTY;
-        val st = new StringTokenizer(inSubjectDN, ",");
-        while (!commonNameFound && st.hasMoreTokens()) {
-            val token = st.nextToken();
-            if (isTokenCommonName(token)) {
-                commonNameFound = true;
-                tempCommonName = token;
-            }
-        }
-        return StringUtils.remove(tempCommonName, COMMON_NAME_VAR + '=');
-    }
 
-    private static String retrieveTheEDIPI(final String commonName) {
-        var found = false;
-        var tempEDIPI = StringUtils.EMPTY;
-        val st = new StringTokenizer(commonName, ".");
-        while (!found && st.hasMoreTokens()) {
-            val token = st.nextToken();
-            if (isTokenEDIPI(token)) {
-                found = true;
-                tempEDIPI = token;
-            }
-        }
-        return tempEDIPI;
-    }
-
-    /**
-     * This method determines whether or not the input token is the Common Name (CN).
-     *
-     * @param inToken The input token to be tested
-     * @return Returns boolean value indicating whether or not the token string is the Common Name (CN) number
-     */
-    private static boolean isTokenCommonName(final String inToken) {
-        val st = new StringTokenizer(inToken, "=");
-        return st.nextToken().equals(COMMON_NAME_VAR);
-    }
-
-    private static boolean isTokenEDIPI(final String inToken) {
-        return inToken.length() == EDIPI_LENGTH && NumberUtils.isCreatable(inToken);
-    }
 }

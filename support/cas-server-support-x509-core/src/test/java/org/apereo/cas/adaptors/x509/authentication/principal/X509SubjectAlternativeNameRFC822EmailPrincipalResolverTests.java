@@ -100,6 +100,7 @@ public class X509SubjectAlternativeNameRFC822EmailPrincipalResolverTests {
 
         val resolver = new X509SubjectAlternativeNameRFC822EmailPrincipalResolver(context);
         resolver.setAlternatePrincipalAttribute(alternatePrincipalAttribute);
+        resolver.setX509AttributeExtractor(new DefaultX509AttributeExtractor());
         val certificate = (X509Certificate) CertificateFactory.getInstance("X509").generateCertificate(
             new FileInputStream(getClass().getResource(certPath).getPath()));
 
@@ -113,7 +114,7 @@ public class X509SubjectAlternativeNameRFC822EmailPrincipalResolverTests {
             assertNotNull(principal);
             assertFalse(principal.getAttributes().isEmpty());
             if (requiredAttribute != null) {
-                assertTrue(principal.getAttributes().keySet().contains(requiredAttribute));
+                assertTrue(principal.getAttributes().containsKey(requiredAttribute));
             }
         } else {
             assertNull(principal);
