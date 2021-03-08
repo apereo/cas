@@ -85,11 +85,11 @@ public class Beans {
      */
     @SneakyThrows
     public static Duration newDuration(final String value) {
-        if ("0".equalsIgnoreCase(value) || "NEVER".equals(value)) {
+        if ("0".equalsIgnoreCase(value) || "NEVER".equalsIgnoreCase(value)) {
             return Duration.ZERO;
         }
-        if ("-1".equalsIgnoreCase(value) || !StringUtils.hasText(value) || "INFINITE".equals(value)) {
-            return Duration.ofDays(Long.MAX_VALUE);
+        if ("-1".equalsIgnoreCase(value) || !StringUtils.hasText(value) || "INFINITE".equalsIgnoreCase(value)) {
+            return Duration.ofDays(Integer.MAX_VALUE);
         }
         if (NumberUtils.isCreatable(value)) {
             return Duration.ofSeconds(Long.parseLong(value));
