@@ -370,7 +370,7 @@ public class DefaultAttributeDefinitionStoreTests {
         assertNotNull(store.locateAttributeDefinition(defn.getKey()));
         assertFalse(store.getAttributeDefinitions().isEmpty());
         store.removeAttributeDefinition(defn.getKey());
-        assertNull(store.locateAttributeDefinition(defn.getKey()));
+        assertTrue(store.locateAttributeDefinition(defn.getKey()).isEmpty());
     }
 
 }
