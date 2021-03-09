@@ -9,6 +9,9 @@
         <Logger name="org.apereo" level="error">
             <AppenderRef ref="console"/>
         </Logger>
+        <Logger name="org.hibernate" level="warn">
+            <AppenderRef ref="console"/>
+        </Logger>
         <Root level="off">
             <AppenderRef ref="console"/>
         </Root>
