@@ -56,6 +56,14 @@ public interface AttributeDefinitionStore {
     AttributeDefinitionStore registerAttributeDefinition(String key, AttributeDefinition defn);
 
     /**
+     * Removes attribute definition attribute by key.
+     *
+     * @param key the key
+     * @return the attribute definition store
+     */
+    AttributeDefinitionStore removeAttributeDefinition(String key);
+
+    /**
      * Locate attribute definition.
      *
      * @param name the name

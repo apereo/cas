@@ -111,6 +111,19 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
     }
 
     @Override
+    public AttributeDefinitionStore removeAttributeDefinition(final String key) {
+        LOGGER.debug("Removing attribute definition by key [{}]", key);
+
+        if (this.attributeDefinitions.containsKey(key)) {
+            val defn = this.attributeDefinitions.remove(key);
+            LOGGER.debug("Attribute definition [{}] has been removed from the definition store", defn);
+        } else {
+            LOGGER.debug("Attribute definition with the registered key [{}] was not found and the store was not altered", key);
+        }
+        return this;
+    }
+
+    @Override
     public Optional<AttributeDefinition> locateAttributeDefinition(final String key) {
         LOGGER.trace("Locating attribute definition for [{}]", key);
         return Optional.ofNullable(attributeDefinitions.get(key));
