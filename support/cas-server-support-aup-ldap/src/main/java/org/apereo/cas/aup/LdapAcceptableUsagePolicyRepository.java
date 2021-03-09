@@ -6,7 +6,6 @@ import org.apereo.cas.configuration.model.support.aup.LdapAcceptableUsagePolicyP
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
-import org.apereo.cas.util.LoggingUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -45,6 +44,30 @@ public class LdapAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
         this.connectionFactoryList = connectionFactoryList;
     }
 
+    @Override
+    public AcceptableUsagePolicyStatus verify(final RequestContext requestContext, final Credential credential) {
+        var status = super.verify(requestContext, credential);
+        if (!status.isAccepted()) {
+            return aupProperties.getLdap()
+                .stream()
+                .sorted(Comparator.comparing(LdapAcceptableUsagePolicyProperties::getName))
+                .map(Unchecked.function(ldap -> searchLdapForId(ldap, credential.getId())))
+                .filter(Optional::isPresent)
+                .findFirst()
+                .filter(Optional::isPresent)
+                .map(result -> result.get().getMiddle().getEntry())
+                .map(entry -> {
+                    val attribute = entry.getAttribute(aupProperties.getCore().getAupAttributeName());
+                    return attribute != null && attribute.getStringValues()
+                        .stream()
+                        .anyMatch(value -> value.equalsIgnoreCase(getAcceptedAttributeValue()));
+                })
+                .map(result -> new AcceptableUsagePolicyStatus(result, status.getPrincipal()))
+                .orElse(AcceptableUsagePolicyStatus.denied(status.getPrincipal()));
+        }
+        return status;
+    }
+
     /**
      * Search ldap for id and return optional.
      *
@@ -73,24 +96,20 @@ public class LdapAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
 
     @Override
     public boolean submit(final RequestContext requestContext, final Credential credential) {
-        try {
-            val response = aupProperties.getLdap()
-                .stream()
-                .sorted(Comparator.comparing(LdapAcceptableUsagePolicyProperties::getName))
-                .map(Unchecked.function(ldap -> searchLdapForId(ldap, credential.getId())))
-                .filter(Optional::isPresent)
-                .findFirst();
+        val response = aupProperties.getLdap()
+            .stream()
+            .sorted(Comparator.comparing(LdapAcceptableUsagePolicyProperties::getName))
+            .map(Unchecked.function(ldap -> searchLdapForId(ldap, credential.getId())))
+            .filter(Optional::isPresent)
+            .findFirst();
 
-            if (response.isPresent()) {
-                val result = response.get().get();
-                val currentDn = result.getMiddle().getEntry().getDn();
-                LOGGER.debug("Updating [{}]", currentDn);
-                val attributes = CollectionUtils.<String, Set<String>>wrap(aupProperties.getCore().getAupAttributeName(),
-                    CollectionUtils.wrapSet(result.getRight().getAupAcceptedAttributeValue()));
-                return LdapUtils.executeModifyOperation(currentDn, result.getLeft(), attributes);
-            }
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
+        if (response.isPresent()) {
+            val result = response.get().get();
+            val currentDn = result.getMiddle().getEntry().getDn();
+            LOGGER.debug("Updating [{}]", currentDn);
+            val attributes = CollectionUtils.<String, Set<String>>wrap(aupProperties.getCore().getAupAttributeName(),
+                CollectionUtils.wrapSet(result.getRight().getAupAcceptedAttributeValue()));
+            return LdapUtils.executeModifyOperation(currentDn, result.getLeft(), attributes);
         }
         return false;
     }

@@ -28,7 +28,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
@@ -56,7 +55,6 @@ import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.test.MockRequestContext;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -120,16 +118,10 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
         assertFalse(getAcceptableUsagePolicyRepository().verify(context, c).isAccepted());
         assertTrue(getAcceptableUsagePolicyRepository().submit(context, c));
         if (hasLiveUpdates()) {
-            val authentication = WebUtils.getAuthentication(context);
-            var principal = authentication.getPrincipal();
-            val attributes = new HashMap<>(principal.getAttributes());
-            attributes.put(casProperties.getAcceptableUsagePolicy().getCore().getAupAttributeName(), List.of(Boolean.TRUE));
-            principal = RegisteredServiceTestUtils.getPrincipal(principal.getId(), attributes);
-            WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(principal), context);
             assertTrue(getAcceptableUsagePolicyRepository().verify(context, c).isAccepted());
         }
     }
-
+    
     protected UsernamePasswordCredential getCredential(final String actualPrincipalId) {
         return CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(actualPrincipalId);
     }

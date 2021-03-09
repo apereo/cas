@@ -31,7 +31,10 @@ import static org.mockito.Mockito.*;
     HazelcastTicketRegistryConfiguration.class,
     HazelcastTicketRegistryTicketCatalogConfiguration.class,
     BaseTicketRegistryTests.SharedTestConfiguration.class
-}, properties = "cas.ticket.registry.hazelcast.cluster.core.instance-name=testlocalhostinstance")
+}, properties = {
+    "cas.ticket.registry.hazelcast.cluster.network.port-auto-increment=false",
+    "cas.ticket.registry.hazelcast.cluster.core.instance-name=testlocalhostinstance"
+})
 @Tag("Hazelcast")
 @Getter
 public class HazelcastTicketRegistryTests extends BaseTicketRegistryTests {
