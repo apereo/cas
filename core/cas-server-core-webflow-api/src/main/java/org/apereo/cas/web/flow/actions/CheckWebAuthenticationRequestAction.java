@@ -11,6 +11,8 @@ import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Optional;
+
 /**
  * This is {@link CheckWebAuthenticationRequestAction}.
  *
@@ -26,7 +28,7 @@ public class CheckWebAuthenticationRequestAction extends AbstractAction {
     protected Event doExecute(final RequestContext context) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         LOGGER.trace("Checking request content type [{}] against [{}]", request.getContentType(), this.contentType);
-        if (RegexUtils.find(contentType, request.getContentType())) {
+        if (RegexUtils.find(contentType, Optional.ofNullable(request.getContentType()).orElse(""))) {
             LOGGER.debug("Authentication request via type [{}] is not web-based", this.contentType);
             return new EventFactorySupport().no(this);
         }
