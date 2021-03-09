@@ -97,7 +97,7 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
         profile.setMultifactorAuthenticationProviderTypesSupported(locateMultifactorAuthenticationProviderTypesSupported());
         profile.setDelegatedClientTypesSupported(locateDelegatedClientTypesSupported());
         profile.setAvailableAttributes(this.availableAttributes);
-        profile.setUserDefinedScopes(casProperties.getAuthn().getOidc().getUserDefinedScopes().keySet());
+        profile.setUserDefinedScopes(casProperties.getAuthn().getOidc().getCore().getUserDefinedScopes().keySet());
         return profile;
     }
 }
