@@ -35,4 +35,9 @@ public class CasServerProfile {
      * The list of available attributes currently active and configured in the CAS application context.
      */
     private Set<String> availableAttributes;
+
+    /**
+     * List of user defined OIDC scopes.
+     */
+    private Set<String> userDefinedScopes;
 }
