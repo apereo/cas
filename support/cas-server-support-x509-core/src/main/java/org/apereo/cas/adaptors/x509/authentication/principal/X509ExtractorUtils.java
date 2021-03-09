@@ -92,7 +92,7 @@ public class X509ExtractorUtils {
      * X509Certificate#getSubjectAlternativeNames</a>
      */
     public String getRFC822EmailAddress(final Collection<List<?>> subjectAltNames) {
-        if (subjectAltNames == null) {
+        if (subjectAltNames == null || subjectAltNames.isEmpty()) {
             return null;
         }
         val email = subjectAltNames

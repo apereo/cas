@@ -13,18 +13,14 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * Get the default set of attributes from an X509 certificate.
  * @author Hal Deadman
  * @since 6.4
  */
 @Slf4j
 public class DefaultX509AttributeExtractor implements X509AttributeExtractor {
 
-    /**
-     * Get additional attributes from the certificate.
-     *
-     * @param certificate X509 Certificate of user
-     * @return map of attributes
-     */
+    @Override
     public Map<String, List<Object>> extractPersonAttributes(final X509Certificate certificate) {
         val attributes = new LinkedHashMap<String, List<Object>>();
 

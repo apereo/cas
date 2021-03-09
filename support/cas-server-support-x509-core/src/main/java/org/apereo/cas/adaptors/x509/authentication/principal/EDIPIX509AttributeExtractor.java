@@ -19,14 +19,9 @@ import java.util.Map;
 @Slf4j
 public class EDIPIX509AttributeExtractor extends DefaultX509AttributeExtractor {
 
-    /**
-     * Get additional attributes from the certificate.
-     *
-     * @param certificate X509 Certificate of user
-     * @return map of attributes
-     */
+    @Override
     public Map<String, List<Object>> extractPersonAttributes(final X509Certificate certificate) {
-        var personAttributes = super.extractPersonAttributes(certificate);
+        val personAttributes = super.extractPersonAttributes(certificate);
         val subjectPrincipal = certificate.getSubjectX500Principal();
         val commonName = X509ExtractorUtils.retrieveTheCommonName(subjectPrincipal.getName());
         val edipi = X509ExtractorUtils.retrieveTheEDIPI(commonName);

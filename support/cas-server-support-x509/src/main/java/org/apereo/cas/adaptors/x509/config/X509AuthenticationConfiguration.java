@@ -348,6 +348,7 @@ public class X509AuthenticationConfiguration {
     }
 
     @ConditionalOnMissingBean(name = "x509AttributeExtractor")
+    @RefreshScope
     @Bean
     public X509AttributeExtractor x509AttributeExtractor() {
         val x509 = casProperties.getAuthn().getX509();

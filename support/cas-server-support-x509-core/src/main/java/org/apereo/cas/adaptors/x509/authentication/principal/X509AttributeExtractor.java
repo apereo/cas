@@ -8,6 +8,7 @@ import java.util.Map;
  * @author Hal Deadman
  * @since 6.4
  */
+@FunctionalInterface
 public interface X509AttributeExtractor {
 
     /**
