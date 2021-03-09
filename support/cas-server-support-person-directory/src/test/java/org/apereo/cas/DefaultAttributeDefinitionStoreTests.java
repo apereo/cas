@@ -344,4 +344,20 @@ public class DefaultAttributeDefinitionStoreTests {
         assertTrue(store.isEmpty());
     }
 
+    @Test
+    public void verifyRemoveDefinition() {
+        val store = new DefaultAttributeDefinitionStore();
+        store.setScope("example.org");
+        val defn = DefaultAttributeDefinition.builder()
+                .key("eduPersonPrincipalName")
+                .name("urn:oid:1.3.6.1.4.1.5923.1.1.1.6")
+                .build();
+
+        store.registerAttributeDefinition(defn);
+        assertNotNull(store.locateAttributeDefinition(defn.getKey()));
+        assertFalse(store.getAttributeDefinitions().isEmpty());
+        store.removeAttributeDefinition(defn.getKey());
+        assertNull(store.locateAttributeDefinition(defn.getKey()));
+    }
+
 }
