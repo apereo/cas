@@ -58,7 +58,7 @@ import static org.junit.jupiter.api.Assertions.*;
 },
     properties = {
         "cas.view.rest.url=http://localhost:8182",
-        "cas.view.template-prefixes=file:/templates"
+        "cas.view.template-prefixes=classpath:templates,file:/templates"
     })
 @Tag("Web")
 public class CasThymeleafConfigurationTests {

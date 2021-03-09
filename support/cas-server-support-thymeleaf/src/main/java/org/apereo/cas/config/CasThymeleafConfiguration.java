@@ -8,6 +8,7 @@ import org.apereo.cas.services.web.ThemeBasedViewResolver;
 import org.apereo.cas.services.web.ThemeViewResolver;
 import org.apereo.cas.services.web.ThemeViewResolverFactory;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.validation.CasProtocolViewFactory;
 import org.apereo.cas.web.view.CasProtocolThymeleafViewFactory;
 import org.apereo.cas.web.view.ChainingTemplateViewResolver;
@@ -15,9 +16,9 @@ import org.apereo.cas.web.view.RestfulUrlTemplateResolver;
 import org.apereo.cas.web.view.ThemeClassLoaderTemplateResolver;
 import org.apereo.cas.web.view.ThemeFileTemplateResolver;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -62,6 +63,7 @@ import java.util.Set;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnClass(value = SpringTemplateEngine.class)
 @ImportAutoConfiguration(ThymeleafAutoConfiguration.class)
+@Slf4j
 public class CasThymeleafConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -93,6 +95,7 @@ public class CasThymeleafConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "chainingTemplateViewResolver")
     public AbstractTemplateResolver chainingTemplateViewResolver() {
         val chain = new ChainingTemplateViewResolver();
 
@@ -106,28 +109,36 @@ public class CasThymeleafConfiguration {
         themeCp.setPrefix("templates/%s/");
         chain.addResolver(themeCp);
 
+        val rest = casProperties.getView().getRest();
+        if (StringUtils.isNotBlank(rest.getUrl())) {
+            val url = new RestfulUrlTemplateResolver(casProperties);
+            configureTemplateViewResolver(url);
+            chain.addResolver(url);
+        }
+
         val templatePrefixes = casProperties.getView().getTemplatePrefixes();
-        templatePrefixes.forEach(Unchecked.consumer(prefix -> {
-            val prefixPath = ResourceUtils.getFile(prefix).getCanonicalPath();
-            val viewPath = StringUtils.appendIfMissing(prefixPath, "/");
+        templatePrefixes.forEach(prefix -> {
+            try {
+                val prefixPath = ResourceUtils.getFile(prefix).getCanonicalPath();
+                val viewPath = StringUtils.appendIfMissing(prefixPath, "/");
 
-            val rest = casProperties.getView().getRest();
-            if (StringUtils.isNotBlank(rest.getUrl())) {
-                val url = new RestfulUrlTemplateResolver(casProperties);
-                configureTemplateViewResolver(url);
-                chain.addResolver(url);
+                val theme = prefix.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)
+                    ? new ThemeClassLoaderTemplateResolver(casProperties)
+                    : new ThemeFileTemplateResolver(casProperties);
+                configureTemplateViewResolver(theme);
+                theme.setPrefix(viewPath + "themes/%s/");
+                chain.addResolver(theme);
+
+                val template = prefix.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)
+                    ? new ClassLoaderTemplateResolver()
+                    : new FileTemplateResolver();
+                configureTemplateViewResolver(template);
+                template.setPrefix(viewPath);
+                chain.addResolver(template);
+            } catch (final Exception e) {
+                LoggingUtils.warn(LOGGER, String.format("Could not add template prefix '%s' to resolver", prefix), e);
             }
-
-            val theme = new ThemeFileTemplateResolver(casProperties);
-            configureTemplateViewResolver(theme);
-            theme.setPrefix(viewPath + "themes/%s/");
-            chain.addResolver(theme);
-
-            val file = new FileTemplateResolver();
-            configureTemplateViewResolver(file);
-            file.setPrefix(viewPath);
-            chain.addResolver(file);
-        }));
+        });
 
         chain.initialize();
         return chain;

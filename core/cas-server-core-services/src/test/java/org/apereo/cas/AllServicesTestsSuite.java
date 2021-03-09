@@ -19,6 +19,7 @@ import org.apereo.cas.services.DefaultRegisteredServiceProxyTicketExpirationPoli
 import org.apereo.cas.services.DefaultRegisteredServiceServiceTicketExpirationPolicyTests;
 import org.apereo.cas.services.DefaultRegisteredServiceUsernameProviderTests;
 import org.apereo.cas.services.DefaultServicesManagerByEnvironmentTests;
+import org.apereo.cas.services.DefaultServicesManagerCachingTests;
 import org.apereo.cas.services.DefaultServicesManagerRegisteredServiceLocatorTests;
 import org.apereo.cas.services.DefaultServicesManagerTests;
 import org.apereo.cas.services.FullRegexRegisteredServiceMatchingStrategyTests;
@@ -91,6 +92,7 @@ import org.junit.runner.RunWith;
     UnauthorizedServiceExceptionTests.class,
     UnauthorizedSsoServiceExceptionTests.class,
     ResponseTests.class,
+    DefaultServicesManagerCachingTests.class,
     GroovyAuthenticationHandlerResolverTests.class,
     RegisteredServicesEventListenerTests.class,
     DefaultRegisteredServiceDomainExtractorTests.class,

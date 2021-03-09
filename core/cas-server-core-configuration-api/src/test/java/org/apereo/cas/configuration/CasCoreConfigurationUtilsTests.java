@@ -21,7 +21,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@SpringBootTest(classes = RefreshAutoConfiguration.class, properties = {
+@SpringBootTest(classes = RefreshAutoConfiguration.class,
+    properties = {
     "cas.server.name=https://sso.example.org",
     "cas.server.prefix=https://sso.example.org/cas",
     "cas.authn.attribute-repository.attribute-definition-store.json.location=file:/defn-test.json",

@@ -26,4 +26,11 @@ public class BeansTests {
         assertNotNull(input);
     }
 
+    @Test
+    public void verifyDurations() {
+        assertNotNull(Beans.newDuration("0"));
+        assertNotNull(Beans.newDuration("never"));
+        assertNotNull(Beans.newDuration("infinite"));
+        assertNotNull(Beans.newDuration("-1"));
+    }
 }

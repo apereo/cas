@@ -645,7 +645,6 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "log4j", module: "log4j")
                     exclude(group: "com.hazelcast", module: "hazelcast")
-
                 }
         ],
         jclouds                 : [
@@ -653,22 +652,18 @@ ext.libraries = [
                     exclude(group: "commons-codec", module: "commons-codec")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.hazelcast", module: "hazelcast")
-
                 },
                 dependencies.create("org.apache.jclouds:jclouds-compute:$jcloudsVersion") {
                     exclude(group: "commons-codec", module: "commons-codec")
                     exclude(group: "org.slf4j", module: "slf4j-api")
-
                 },
                 dependencies.create("org.apache.jclouds:jclouds-allcompute:$jcloudsVersion") {
                     exclude(group: "commons-codec", module: "commons-codec")
                     exclude(group: "org.slf4j", module: "slf4j-api")
-
                 },
                 dependencies.create("org.apache.jclouds.labs:google-compute-engine:$jcloudsGoogleEngineVersion") {
                     exclude(group: "commons-codec", module: "commons-codec")
                     exclude(group: "org.slf4j", module: "slf4j-api")
-
                 }
         ],
         jasypt                  : dependencies.create("org.jasypt:jasypt:$jasyptVersion") {
@@ -702,13 +697,11 @@ ext.libraries = [
                 dependencies.create("com.zaxxer:HikariCP:$hikariVersion") {
                     exclude(group: "xml-apis", module: "xml-apis")
                     exclude(group: "org.slf4j", module: "slf4j-api")
-
                 }
         ],
         eclipselink             : [
                 dependencies.create("org.eclipse.persistence:org.eclipse.persistence.jpa:$eclipseLinkVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
-
                 }
         ],
         hibernate               : [
@@ -724,11 +717,9 @@ ext.libraries = [
                     exclude(group: "org.jboss.logging", module: "jboss-logging")
                     exclude(group: "net.bytebuddy", module: "byte-buddy")
                     exclude(group: "org.glassfish.jaxb", module: "jaxb-runtime")
-
                 },
                 dependencies.create("org.dom4j:dom4j:$dom4jVersion") {
                     exclude(group: "xml-apis", module: "xml-apis")
-
                 },
                 dependencies.create("org.hibernate:hibernate-hikaricp:$hibernateVersion") {
                     exclude(group: "org.javassist", module: "javassist")

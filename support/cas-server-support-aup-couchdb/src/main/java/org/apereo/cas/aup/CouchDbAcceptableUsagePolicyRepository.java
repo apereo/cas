@@ -6,7 +6,6 @@ import org.apereo.cas.couchdb.core.CouchDbProfileDocument;
 import org.apereo.cas.couchdb.core.ProfileCouchDbRepository;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -40,26 +39,20 @@ public class CouchDbAcceptableUsagePolicyRepository extends BaseAcceptableUsageP
 
     @Override
     public AcceptableUsagePolicyStatus verify(final RequestContext requestContext, final Credential credential) {
-        val principal = WebUtils.getPrincipalFromRequestContext(requestContext, this.ticketRegistrySupport);
-
-        if (principal != null) {
-            if (isUsagePolicyAcceptedBy(principal)) {
-                LOGGER.debug("Usage policy has been accepted by [{}]", principal.getId());
-                return AcceptableUsagePolicyStatus.accepted(principal);
+        var status = super.verify(requestContext, credential);
+        if (!status.isAccepted()) {
+            val profile = couchDb.findByUsername(credential.getId());
+            var accepted = false;
+            if (profile != null) {
+                val values = CollectionUtils.toCollection(profile.getAttribute(aupProperties.getCore().getAupAttributeName()));
+                accepted = CollectionUtils.firstElement(values).map(value -> (Boolean) value).orElse(Boolean.FALSE);
             }
-            LOGGER.debug("Usage policy has not been accepted by [{}] in the resolved principal", principal.getId());
+            if (accepted) {
+                LOGGER.debug("Usage policy has been accepted by [{}]", profile.getUsername());
+            }
+            status = new AcceptableUsagePolicyStatus(accepted, status.getPrincipal());
         }
-
-        val profile = couchDb.findByUsername(credential.getId());
-        var accepted = false;
-        if (profile != null) {
-            val values = CollectionUtils.toCollection(profile.getAttribute(aupProperties.getCore().getAupAttributeName()));
-            accepted = CollectionUtils.firstElement(values).map(value -> (Boolean) value).orElse(Boolean.FALSE);
-        }
-        if (accepted) {
-            LOGGER.debug("Usage policy has been accepted by [{}]", profile.getUsername());
-        }
-        return new AcceptableUsagePolicyStatus(accepted, principal);
+        return status;
     }
 
     @Override

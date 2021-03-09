@@ -3,13 +3,14 @@ package org.apereo.cas.aup;
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.config.CasAcceptableUsagePolicyLdapConfiguration;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.Cleanup;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.val;
+import org.apache.commons.io.IOUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.BeforeAll;
@@ -22,6 +23,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
 
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -45,7 +48,8 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Getter
 public class LdapAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicyRepositoryTests {
-
+    private static final String USER = RandomUtils.randomAlphabetic(10);
+    
     private static final int LDAP_PORT = 10389;
 
     @Autowired
@@ -53,19 +57,27 @@ public class LdapAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsag
     protected AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;
 
     @BeforeAll
-    @SneakyThrows
-    public static void bootstrap() {
+    public static void bootstrap() throws Exception {
         ClientInfoHolder.setClientInfo(new ClientInfo(new MockHttpServletRequest()));
         @Cleanup
         val localhost = new LDAPConnection("localhost", LDAP_PORT, "cn=Directory Manager", "password");
+
+        val ldif = IOUtils.toString(new ClassPathResource("ldif/ldap-aup.ldif").getInputStream(), StandardCharsets.UTF_8)
+            .replace("$user", USER);
         LdapIntegrationTestsOperations.populateEntries(localhost,
-            new ClassPathResource("ldif/ldap-aup.ldif").getInputStream(), "ou=people,dc=example,dc=org");
+            new ByteArrayInputStream(ldif.getBytes(StandardCharsets.UTF_8)),
+            "ou=people,dc=example,dc=org");
+    }
+
+    @Override
+    public boolean hasLiveUpdates() {
+        return true;
     }
 
     @Test
     public void verifyOperation() {
         assertNotNull(acceptableUsagePolicyRepository);
-        verifyRepositoryAction("casaupldap",
+        verifyRepositoryAction(USER,
             CollectionUtils.wrap("carLicense", List.of("false"), "email", List.of("casaupldap@example.org")));
     }
 }

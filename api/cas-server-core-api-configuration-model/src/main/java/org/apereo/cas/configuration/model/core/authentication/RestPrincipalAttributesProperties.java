@@ -40,4 +40,13 @@ public class RestPrincipalAttributesProperties extends RestEndpointProperties {
      * A value can be assigned to this field to uniquely identify this resolver.
      */
     private String id;
+
+    /**
+     * The attribute name that would be used to look up and
+     * determine the user id from the query map. The value
+     * linked to this attribute would be used as the username
+     * or subject by the attribute repository to pass on
+     * to the ultimate source to locate the user record.
+     */
+    private String usernameAttribute = "username";
 }

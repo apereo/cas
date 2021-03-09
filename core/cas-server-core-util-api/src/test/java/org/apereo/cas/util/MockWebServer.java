@@ -1,9 +1,13 @@
 package org.apereo.cas.util;
 
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jooq.lambda.Unchecked;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
@@ -14,6 +18,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 
@@ -26,6 +32,9 @@ import java.util.function.Function;
  */
 @Slf4j
 public class MockWebServer implements AutoCloseable {
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
+
     /**
      * Request handler.
      */
@@ -44,10 +53,20 @@ public class MockWebServer implements AutoCloseable {
         }
     }
 
+    public MockWebServer(final int port, final Object body, final Map headers, final HttpStatus status) {
+        try {
+            val data = MAPPER.writeValueAsString(body);
+            val resource = new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output");
+            this.worker = new Worker(new ServerSocket(port), resource, status, MediaType.APPLICATION_JSON_VALUE, headers);
+        } catch (final IOException e) {
+            throw new IllegalArgumentException("Cannot create Web server", e);
+        }
+    }
+
     public MockWebServer(final int port, final HttpStatus status) {
         this(port, new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "REST Output"), status);
     }
-    
+
     public MockWebServer(final int port, final Resource resource, final HttpStatus status) {
         try {
             this.worker = new Worker(new ServerSocket(port), resource, status);
@@ -137,6 +156,8 @@ public class MockWebServer implements AutoCloseable {
          */
         private static final int BUFFER_SIZE = 2048;
 
+        private final Map<String, String> headers = new HashMap<>();
+
         private final ServerSocket serverSocket;
 
         private final String contentType;
@@ -176,6 +197,19 @@ public class MockWebServer implements AutoCloseable {
             this.status = HttpStatus.OK;
         }
 
+        Worker(final ServerSocket serverSocket,
+               final ByteArrayResource resource,
+               final HttpStatus status,
+               final String contentType,
+               final Map<String, String> headers) {
+            this(serverSocket, resource, contentType, status);
+            this.headers.putAll(headers);
+        }
+
+        private static byte[] header(final String name, final Object value) {
+            return String.format("%s: %s%s", name, value, SEPARATOR).getBytes(StandardCharsets.UTF_8);
+        }
+
         @Override
         public synchronized void run() {
             while (this.running) {
@@ -205,10 +239,6 @@ public class MockWebServer implements AutoCloseable {
             }
         }
 
-        private static byte[] header(final String name, final Object value) {
-            return String.format("%s: %s%s", name, value, SEPARATOR).getBytes(StandardCharsets.UTF_8);
-        }
-
         private void writeResponse(final Socket socket) throws IOException {
             if (resource != null) {
                 LOGGER.debug("Socket response for resource [{}]", resource.getDescription());
@@ -218,6 +248,7 @@ public class MockWebServer implements AutoCloseable {
                 out.write(statusLine.getBytes(StandardCharsets.UTF_8));
                 out.write(header("Content-Length", this.resource.contentLength()));
                 out.write(header("Content-Type", this.contentType));
+                headers.forEach(Unchecked.biConsumer((key, value) -> out.write(header(key, value))));
                 out.write(SEPARATOR.getBytes(StandardCharsets.UTF_8));
 
                 val buffer = new byte[BUFFER_SIZE];
@@ -230,7 +261,7 @@ public class MockWebServer implements AutoCloseable {
                     }
                 } catch (final SocketException e) {
                     LOGGER.debug("Error while writing response, current response buffer [{}], response length [{}]",
-                            buffer, this.resource.contentLength());
+                        buffer, this.resource.contentLength());
                     throw e;
                 }
                 out.flush();

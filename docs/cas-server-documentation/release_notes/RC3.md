@@ -46,11 +46,16 @@ cas.version=6.4.0-RC3
 
 ## New & Noteworthy
 
-The following items are new improvements and enhancements presented in this release. 
-
+The following items are new improvements and enhancements presented in this release.
 
 ## Other Stuff
 
+- Ordering and sorting of the attribute repositories is now restored to respect the `order` setting.      
+- Thymeleaf views specified via template prefixes in the configuration can now support `classpath` resources.
 
 ## Library Upgrades
 
+- Person Directory  
+- Hibernate
+- Apache Veloci
+- Apache jClouds

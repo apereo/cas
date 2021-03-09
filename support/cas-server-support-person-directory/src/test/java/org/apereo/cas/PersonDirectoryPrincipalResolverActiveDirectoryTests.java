@@ -1,11 +1,11 @@
-package org.apereo.cas.authentication.principal;
+package org.apereo.cas;
 
-import org.apereo.cas.authentication.BaseActiveDirectoryLdapAuthenticationHandlerTests;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
-import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
@@ -18,7 +18,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import java.util.Optional;
 
@@ -30,17 +29,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@SpringBootTest(classes = {
-    CasPersonDirectoryConfiguration.class,
-    RefreshAutoConfiguration.class
-}, properties = {
+@SpringBootTest(classes = BasePrincipalAttributeRepositoryTests.SharedTestConfiguration.class, properties = {
     "cas.authn.attribute-repository.ldap[0].bind-dn=Administrator@cas.example.org",
-    "cas.authn.attribute-repository.ldap[0].bind-credential=" + BaseActiveDirectoryLdapAuthenticationHandlerTests.AD_ADMIN_PASSWORD,
-    "cas.authn.attribute-repository.ldap[0].ldap-url=" + BaseActiveDirectoryLdapAuthenticationHandlerTests.AD_LDAP_URL,
+    "cas.authn.attribute-repository.ldap[0].bind-credential=" + PersonDirectoryPrincipalResolverActiveDirectoryTests.AD_ADMIN_PASSWORD,
+    "cas.authn.attribute-repository.ldap[0].ldap-url=" + PersonDirectoryPrincipalResolverActiveDirectoryTests.AD_LDAP_URL,
     "cas.authn.attribute-repository.ldap[0].use-start-tls=true",
     "cas.authn.attribute-repository.ldap[0].base-dn=dc=cas,dc=example,dc=org",
     "cas.authn.attribute-repository.ldap[0].search-filter=(sAMAccountName={user})",
-    "cas.authn.attribute-repository.ldap[0].trust-store=" + BaseActiveDirectoryLdapAuthenticationHandlerTests.AD_TRUST_STORE,
+    "cas.authn.attribute-repository.ldap[0].trust-store=" + PersonDirectoryPrincipalResolverActiveDirectoryTests.AD_TRUST_STORE,
     "cas.authn.attribute-repository.ldap[0].trust-store-type=JKS",
     "cas.authn.attribute-repository.ldap[0].trust-manager=ANY",
     "cas.authn.attribute-repository.ldap[0].trust-store-password=changeit",
@@ -51,6 +47,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfPortOpen(port = 10390)
 @Tag("Ldap")
 public class PersonDirectoryPrincipalResolverActiveDirectoryTests {
+    public static final String AD_TRUST_STORE = "file:/tmp/adcacerts.jks";
+
+    public static final String AD_ADMIN_PASSWORD = "M3110nM3110n#1";
+
+    public static final String AD_LDAP_URL = "ldap://localhost:10390";
+
     @Autowired
     @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
     private IPersonAttributeDao attributeRepository;

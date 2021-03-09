@@ -16,6 +16,8 @@ Support is enabled by including the following dependency in the overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-swagger" %}
 
+{% include casproperties.html thirdPartyStartsWith="springdoc." %}
+
 ## Endpoints
 
 The following Swagger endpoints may be used to analyze and test the APIs: 
