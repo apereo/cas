@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -41,6 +42,12 @@ public class HttpUtils {
     private static final int MAX_CONNECTIONS = 200;
 
     private static final int MAX_CONNECTIONS_PER_ROUTE = 20;
+
+    private static final int CONNECT_TIMEOUT_IN_MILLISECONDS = 500;
+
+    private static final int CONNECTION_REQUEST_TIMEOUT_IN_MILLISECONDS = 5 * 1000;
+
+    private static final int SOCKET_TIMEOUT_IN_MILLISECONDS = 10 * 1000;
 
     /**
      * Execute http response.
@@ -538,9 +545,15 @@ public class HttpUtils {
     }
 
     private HttpClientBuilder getHttpClientBuilder() {
+        val requestConfig = RequestConfig.custom();
+        requestConfig.setConnectTimeout(CONNECT_TIMEOUT_IN_MILLISECONDS);
+        requestConfig.setConnectionRequestTimeout(CONNECTION_REQUEST_TIMEOUT_IN_MILLISECONDS);
+        requestConfig.setSocketTimeout(SOCKET_TIMEOUT_IN_MILLISECONDS);
+
         return HttpClientBuilder
             .create()
             .setMaxConnTotal(MAX_CONNECTIONS)
-            .setMaxConnPerRoute(MAX_CONNECTIONS_PER_ROUTE);
+            .setMaxConnPerRoute(MAX_CONNECTIONS_PER_ROUTE)
+            .setDefaultRequestConfig(requestConfig.build());
     }
 }
