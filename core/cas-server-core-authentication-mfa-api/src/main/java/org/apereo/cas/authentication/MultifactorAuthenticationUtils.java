@@ -108,6 +108,7 @@ public class MultifactorAuthenticationUtils {
             values.forEach(value -> {
                 val id = provider.getId();
                 try {
+                    LOGGER.trace("Testing attribute value [{}] against multifactor provider [{}]", value, provider);
                     if (predicate.test(value, provider)) {
                         val attributeMap = buildEventAttributeMap(principal, Optional.ofNullable(service), provider);
                         LOGGER.trace("Event attribute map for provider [{}] transition is [{}]", provider, attributeMap);

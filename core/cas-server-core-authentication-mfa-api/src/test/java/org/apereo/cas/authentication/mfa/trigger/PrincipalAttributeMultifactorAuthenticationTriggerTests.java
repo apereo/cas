@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.mfa.trigger;
 
 import org.apereo.cas.authentication.DefaultMultifactorAuthenticationProviderResolver;
+import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
@@ -24,7 +25,7 @@ public class PrincipalAttributeMultifactorAuthenticationTriggerTests extends Bas
         val props = new CasConfigurationProperties();
         props.getAuthn().getMfa().getTriggers().getPrincipal().setGlobalPrincipalAttributeNameTriggers("email");
         props.getAuthn().getMfa().getTriggers().getPrincipal().setGlobalPrincipalAttributeValueRegex(".+@example.*");
-        val resolver = new DefaultMultifactorAuthenticationProviderResolver();
+        val resolver = new DefaultMultifactorAuthenticationProviderResolver(MultifactorAuthenticationPrincipalResolver.identical());
 
         val trigger = new PrincipalAttributeMultifactorAuthenticationTrigger(props, resolver, applicationContext);
         val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));

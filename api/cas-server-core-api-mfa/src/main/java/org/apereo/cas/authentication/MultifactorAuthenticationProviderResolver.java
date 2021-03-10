@@ -22,10 +22,8 @@ import java.util.function.BiPredicate;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@FunctionalInterface
 public interface MultifactorAuthenticationProviderResolver {
     Logger LOGGER = LoggerFactory.getLogger(MultifactorAuthenticationProviderResolver.class);
-
 
     /**
      * Gets name.
@@ -104,8 +102,18 @@ public interface MultifactorAuthenticationProviderResolver {
             return null;
         }
 
-        val attributes = principal.getAttributes();
-        return resolveEventViaAttribute(principal, attributes, attributeNames, service, context, providers, predicate);
+        val resolvedPrincipal = resolvePrincipal(principal);
+        LOGGER.debug("Multifactor authentication principal [{}] to evaluate for [{}] using attributes [{}]",
+            resolvedPrincipal, providers, attributeNames);
+        return resolveEventViaAttribute(principal, resolvedPrincipal.getAttributes(),
+            attributeNames, service, context, providers, predicate);
     }
 
+    /**
+     * Resolve principal.
+     *
+     * @param principal the principal
+     * @return the principal
+     */
+    Principal resolvePrincipal(Principal principal);
 }

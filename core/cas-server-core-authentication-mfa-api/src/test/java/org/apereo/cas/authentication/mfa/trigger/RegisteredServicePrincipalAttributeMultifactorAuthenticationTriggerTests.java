@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.mfa.trigger;
 
 import org.apereo.cas.authentication.DefaultMultifactorAuthenticationProviderResolver;
+import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.Service;
@@ -37,7 +38,7 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger
 
         val props = new CasConfigurationProperties();
         val trigger = new RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger(props,
-            new DefaultMultifactorAuthenticationProviderResolver(), applicationContext,
+            new DefaultMultifactorAuthenticationProviderResolver(MultifactorAuthenticationPrincipalResolver.identical()), applicationContext,
             mock(MultifactorAuthenticationProviderSelector.class));
         val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
         assertTrue(result.isPresent());
@@ -62,7 +63,7 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger
         val selector = mock(MultifactorAuthenticationProviderSelector.class);
         when(selector.resolve(any(Collection.class), any(), any())).thenReturn(provider2);
         val trigger = new RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger(props,
-            new DefaultMultifactorAuthenticationProviderResolver(), appCtx, selector);
+            new DefaultMultifactorAuthenticationProviderResolver(MultifactorAuthenticationPrincipalResolver.identical()), appCtx, selector);
         val result = trigger.isActivated(authentication, registeredService, httpRequest, mock(Service.class));
         assertTrue(result.isPresent());
         assertEquals(provider2.getId(), result.get().getId());
@@ -78,7 +79,7 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger
 
         val props = new CasConfigurationProperties();
         val trigger = new RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger(props,
-            new DefaultMultifactorAuthenticationProviderResolver(), applicationContext,
+            new DefaultMultifactorAuthenticationProviderResolver(MultifactorAuthenticationPrincipalResolver.identical()), applicationContext,
             mock(MultifactorAuthenticationProviderSelector.class));
         val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
         assertFalse(result.isPresent());
@@ -94,7 +95,7 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger
 
         val props = new CasConfigurationProperties();
         val trigger = new RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger(props,
-            new DefaultMultifactorAuthenticationProviderResolver(), applicationContext,
+            new DefaultMultifactorAuthenticationProviderResolver(MultifactorAuthenticationPrincipalResolver.identical()), applicationContext,
             mock(MultifactorAuthenticationProviderSelector.class));
         val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
         assertTrue(result.isEmpty());

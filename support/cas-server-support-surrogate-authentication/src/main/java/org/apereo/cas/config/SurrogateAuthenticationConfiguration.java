@@ -5,8 +5,10 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationPostProcessor;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
+import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.SurrogateAuthenticationExpirationPolicyBuilder;
 import org.apereo.cas.authentication.SurrogateAuthenticationPostProcessor;
+import org.apereo.cas.authentication.SurrogateMultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.SurrogatePrincipalBuilder;
 import org.apereo.cas.authentication.SurrogatePrincipalElectionStrategy;
 import org.apereo.cas.authentication.SurrogatePrincipalResolver;
@@ -128,12 +130,21 @@ public class SurrogateAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "surrogatePrincipalBuilder")
     @Bean
+    @RefreshScope
     public SurrogatePrincipalBuilder surrogatePrincipalBuilder() {
         return new SurrogatePrincipalBuilder(surrogatePrincipalFactory(), attributeRepository.getObject(), surrogateAuthenticationService());
     }
 
+    @Bean
+    @ConditionalOnMissingBean(name = "surrogateMultifactorAuthenticationPrincipalResolver")
+    @RefreshScope
+    public MultifactorAuthenticationPrincipalResolver surrogateMultifactorAuthenticationPrincipalResolver() {
+        return new SurrogateMultifactorAuthenticationPrincipalResolver();
+    }
+    
     @ConditionalOnMissingBean(name = "surrogatePrincipalElectionStrategyConfigurer")
     @Bean
+    @RefreshScope
     public PrincipalElectionStrategyConfigurer surrogatePrincipalElectionStrategyConfigurer() {
         return chain -> {
             val strategy = new SurrogatePrincipalElectionStrategy();
