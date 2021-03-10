@@ -107,7 +107,8 @@ header>nav .cas-brand .cas-logo {
     border-right: 1px solid rgba(0, 0, 0, .2);
     border-right: var(--cas-theme-border-light, 1px solid rgba(0, 0, 0, .2));
     padding: 2rem 2.5rem;
-    flex: 1;
+    flex: 1 1 auto;
+    /* IE flex fix */
 }
 
 .login-section:last-child {
@@ -599,3 +600,24 @@ text-align: justify;
     margin-left: auto;
     margin-right: auto;
 }
+
+/* IE flex fix */
+
+#main-content {
+    margin-right: inherit;
+    margin-left: inherit;
+}
+
+/* oddly, the auto right and left margins caused the login form to not be centered in IE */
+
+@media all and (min-width: 768px) {
+    .login-section {
+        flex: 1 1 500px;
+        /* according to flexbugs, flex-basis should be explicitly set for IE */
+        /* https://github.com/philipwalton/flexbugs#flexbug-4 */
+    }
+}
+
+/* flex-basis: auto works in IE with the column view,
+     but a specific value needs to be set for row view
+   */
