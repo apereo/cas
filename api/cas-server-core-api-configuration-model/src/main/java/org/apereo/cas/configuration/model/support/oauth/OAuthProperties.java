@@ -3,11 +3,11 @@ package org.apereo.cas.configuration.model.support.oauth;
 import org.apereo.cas.configuration.model.core.util.EncryptionOptionalSigningOptionalJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.uma.UmaProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.apereo.cas.util.crypto.CipherExecutor;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
