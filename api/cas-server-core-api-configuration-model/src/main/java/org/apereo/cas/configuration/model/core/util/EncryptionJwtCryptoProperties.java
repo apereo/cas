@@ -33,5 +33,5 @@ public class EncryptionJwtCryptoProperties implements Serializable {
     /**
      * The encryption key size.
      */
-    private int keySize = 256;
+    private int keySize = 512;
 }
