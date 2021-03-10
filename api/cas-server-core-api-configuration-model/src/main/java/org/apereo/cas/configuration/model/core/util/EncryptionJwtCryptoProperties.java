@@ -25,7 +25,7 @@ public class EncryptionJwtCryptoProperties implements Serializable {
     private static final long serialVersionUID = 616825635591169628L;
 
     /**
-     * The encryption key is a JWT whose length is defined by the signing key size setting.
+     * The encryption key is a JWT whose length is defined by the encryption key size setting.
      */
     @RequiredProperty
     private String key = StringUtils.EMPTY;
@@ -33,5 +33,5 @@ public class EncryptionJwtCryptoProperties implements Serializable {
     /**
      * The encryption key size.
      */
-    private int keySize = 512;
+    private int keySize = 256;
 }
