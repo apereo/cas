@@ -1,7 +1,7 @@
 package org.apereo.cas.oidc.web.controllers.introspection;
 
+import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
-import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20IntrospectionEndpointController;
 import org.apereo.cas.support.oauth.web.response.introspection.OAuth20IntrospectionAccessTokenResponse;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
@@ -22,8 +22,8 @@ import javax.servlet.http.HttpServletResponse;
  * @since 5.2.0
  */
 public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEndpointController {
-    public OidcIntrospectionEndpointController(final OAuth20ConfigurationContext oAuthConfigurationContext) {
-        super(oAuthConfigurationContext);
+    public OidcIntrospectionEndpointController(final OidcConfigurationContext context) {
+        super(context);
     }
 
     /**

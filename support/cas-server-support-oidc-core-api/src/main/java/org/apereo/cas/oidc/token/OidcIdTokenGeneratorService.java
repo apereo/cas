@@ -1,12 +1,13 @@
 package org.apereo.cas.oidc.token;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20AccessTokenAtHashGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.BaseIdTokenGeneratorService;
@@ -15,7 +16,6 @@ import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
 
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
@@ -27,7 +27,6 @@ import org.pac4j.core.profile.UserProfile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -38,10 +37,9 @@ import java.util.stream.Stream;
  * @since 5.0.0
  */
 @Slf4j
-@Getter
 public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
 
-    public OidcIdTokenGeneratorService(final OAuth20ConfigurationContext configurationContext) {
+    public OidcIdTokenGeneratorService(final OidcConfigurationContext configurationContext) {
         super(configurationContext);
     }
 
@@ -67,6 +65,10 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
         return encodeAndFinalizeToken(claims, oidcRegisteredService, accessToken);
     }
 
+    @Override
+    public OidcConfigurationContext getConfigurationContext() {
+        return (OidcConfigurationContext) super.getConfigurationContext();
+    }
 
     /**
      * Produce claims as jwt.
@@ -135,7 +137,8 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
         LOGGER.trace("Comparing principal attributes [{}] with supported claims [{}]",
             principal.getAttributes(), oidc.getDiscovery().getClaims());
 
-        principal.getAttributes().entrySet()
+        principal.getAttributes()
+            .entrySet()
             .stream()
             .filter(entry -> {
                 if (oidc.getDiscovery().getClaims().contains(entry.getKey())) {
@@ -146,24 +149,43 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
                     entry.getKey(), oidc.getDiscovery().getClaims());
                 return false;
             })
-            .forEach(entry -> {
-                val claimValue = CollectionUtils.toCollection(entry.getValue());
-                if (claimValue.size() == 1) {
-                    val value = CollectionUtils.firstElement(claimValue);
-                    value.ifPresent(v -> {
-                        val bool = BooleanUtils.toBooleanObject(v.toString());
-                        claims.setClaim(entry.getKey(), Objects.requireNonNullElse(bool, v));
-                    });
-                } else {
-                    claims.setClaim(entry.getKey(), claimValue);
-                }
-            });
+            .forEach(entry -> handleMappedClaimOrDefault(entry.getKey(), principal, claims, entry.getValue()));
 
         if (!claims.hasClaim(OidcConstants.CLAIM_PREFERRED_USERNAME)) {
-            claims.setClaim(OidcConstants.CLAIM_PREFERRED_USERNAME, principal.getId());
+            handleMappedClaimOrDefault(OidcConstants.CLAIM_PREFERRED_USERNAME,
+                principal, claims, principal.getId());
         }
 
         return claims;
+    }
+
+    /**
+     * Handle mapped claim or default.
+     *
+     * @param claimName    the claim name
+     * @param principal    the principal
+     * @param claims       the claims
+     * @param defaultValue the default value
+     */
+    protected void handleMappedClaimOrDefault(final String claimName,
+                                              final Principal principal,
+                                              final JwtClaims claims,
+                                              final Object defaultValue) {
+        val mapper = getConfigurationContext().getAttributeToScopeClaimMapper();
+        val attribute = mapper.containsMappedAttribute(claimName)
+            ? mapper.getMappedAttribute(claimName)
+            : claimName;
+
+        val attributeValues = principal.getAttributes().containsKey(attribute)
+            ? principal.getAttributes().get(attribute)
+            : defaultValue;
+
+        LOGGER.trace("Handling claim [{}] with value(s) [{}]", attribute, attributeValues);
+        CollectionUtils.firstElement(attributeValues)
+            .ifPresent(value -> {
+                val bool = BooleanUtils.toBooleanObject(value.toString());
+                claims.setClaim(attribute, Objects.requireNonNullElse(bool, value));
+            });
     }
 
     /**
@@ -220,6 +242,5 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
             .generate();
         claims.setClaim(OidcConstants.CLAIM_AT_HASH, hash);
     }
-
 }
 

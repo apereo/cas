@@ -34,10 +34,10 @@ import org.apereo.cas.util.gen.RandomStringGenerator;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -55,7 +55,7 @@ import java.util.Set;
 @ToString
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 public class OAuth20ConfigurationContext {
     private final ConfigurableApplicationContext applicationContext;
 

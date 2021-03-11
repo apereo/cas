@@ -59,6 +59,7 @@ public class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry newTicketRegistry;
+    
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;

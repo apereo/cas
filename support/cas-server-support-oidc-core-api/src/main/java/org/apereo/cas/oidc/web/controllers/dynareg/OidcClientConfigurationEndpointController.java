@@ -1,10 +1,10 @@
 package org.apereo.cas.oidc.web.controllers.dynareg;
 
+import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
-import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 
 import lombok.val;
 import org.springframework.http.HttpStatus;
@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
  * @since 6.1.0
  */
 public class OidcClientConfigurationEndpointController extends BaseOAuth20Controller {
-    public OidcClientConfigurationEndpointController(final OAuth20ConfigurationContext oAuthConfigurationContext) {
+    public OidcClientConfigurationEndpointController(final OidcConfigurationContext oAuthConfigurationContext) {
         super(oAuthConfigurationContext);
     }
 

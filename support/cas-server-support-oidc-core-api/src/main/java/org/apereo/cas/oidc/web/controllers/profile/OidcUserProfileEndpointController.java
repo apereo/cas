@@ -1,8 +1,8 @@
 package org.apereo.cas.oidc.web.controllers.profile;
 
+import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20UserProfileEndpointController;
 
 import org.springframework.http.MediaType;
@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class OidcUserProfileEndpointController extends OAuth20UserProfileEndpointController {
 
-    public OidcUserProfileEndpointController(final OAuth20ConfigurationContext configurationContext) {
+    public OidcUserProfileEndpointController(final OidcConfigurationContext configurationContext) {
         super(configurationContext);
     }
 
