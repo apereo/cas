@@ -116,9 +116,12 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
         }
 
         if (user.has("relationships")) {
-            user.get("relationships").forEach(r -> attributes.put(
-                    "syncopeUserRelationships" + r.get("type").asText(),
-                    List.of(r.get("otherEndName").asText())));
+            val relationships = new ArrayList<>();
+            user.get("relationships").forEach(
+                    r -> relationships.add(r.get("type").asText() + ";" + r.get("otherEndName").asText()));
+            if (!relationships.isEmpty()) {
+                attributes.put("syncopeUserRelationships", relationships);
+            }
         }
 
         if (user.has("plainAttrs")) {
