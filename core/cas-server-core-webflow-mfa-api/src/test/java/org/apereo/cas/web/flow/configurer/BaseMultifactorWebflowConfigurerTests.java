@@ -25,7 +25,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Slf4j
 public abstract class BaseMultifactorWebflowConfigurerTests {
     @Autowired
     @Qualifier("casWebflowExecutionPlan")
@@ -45,13 +44,13 @@ public abstract class BaseMultifactorWebflowConfigurerTests {
         assertTrue(registry.containsFlowDefinition(getMultifactorEventId()));
         val flow = (Flow) registry.getFlowDefinition(getMultifactorEventId());
         val states = Arrays.asList(flow.getStateIds());
-        states.forEach(id -> {
-            val state = (State) flow.getState(id);
+        states.forEach(stateId -> {
+            val state = (State) flow.getState(stateId);
             if (state instanceof TransitionableState) {
                 TransitionableState.class.cast(state).getTransitionSet().forEach(t -> {
-                    LOGGER.trace("Testing destination of transition {} from state {} to {}",
-                            t.getId(), id, t.getTargetStateId());
-                    assertTrue(flow.containsState(t.getTargetStateId()));
+                    assertTrue(flow.containsState(t.getTargetStateId()),
+                            String.format("Destination of transition [%s]-%s->[%s] must be in flow definition",
+                                stateId, t.getId(), t.getTargetStateId()));
                 });
             }
         });
