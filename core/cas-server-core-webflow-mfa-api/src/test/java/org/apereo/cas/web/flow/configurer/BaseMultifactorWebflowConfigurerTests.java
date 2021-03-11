@@ -5,12 +5,17 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 
 import lombok.val;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.Flow;
+import org.springframework.webflow.engine.State;
+import org.springframework.webflow.engine.TransitionableState;
 import org.springframework.webflow.engine.SubflowState;
+
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
+@Slf4j
 public abstract class BaseMultifactorWebflowConfigurerTests {
     @Autowired
     @Qualifier("casWebflowExecutionPlan")
@@ -34,6 +40,24 @@ public abstract class BaseMultifactorWebflowConfigurerTests {
     protected abstract String getMultifactorEventId();
 
     @Test
+    public void ensureAllTransitions() {
+        val registry = getMultifactorFlowDefinitionRegistry();
+        assertTrue(registry.containsFlowDefinition(getMultifactorEventId()));
+        val flow = (Flow) registry.getFlowDefinition(getMultifactorEventId());
+        val states = Arrays.asList(flow.getStateIds());
+        states.forEach(id -> {
+            val state = (State) flow.getState(id);
+            if (state instanceof TransitionableState) {
+                TransitionableState.class.cast(state).getTransitionSet().forEach(t -> {
+                    LOGGER.trace("Testing destination of transition {} from state {} to {}",
+                            t.getId(), id, t.getTargetStateId());
+                    assertTrue(flow.containsState(t.getTargetStateId()));
+                });
+            }
+        });
+    }
+
+    @Test
     public void verifyOperation() {
         val registry = getMultifactorFlowDefinitionRegistry();
         assertTrue(registry.containsFlowDefinition(getMultifactorEventId()));
@@ -41,6 +65,7 @@ public abstract class BaseMultifactorWebflowConfigurerTests {
         assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_MFA_CHECK_BYPASS));
         assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_MFA_CHECK_AVAILABLE));
         assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_MFA_FAILURE));
+        assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_SUCCESS));
         val loginFlow = (Flow) loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertTrue(loginFlow.getState(getMultifactorEventId()) instanceof SubflowState);
     }
