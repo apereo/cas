@@ -14,6 +14,7 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-authentication-mfa-api")
     implementation project(":support:cas-server-support-redis-core")
+    implementation project(":support:cas-server-support-person-directory-core")
     implementation project(":support:cas-server-support-person-directory")
 
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
