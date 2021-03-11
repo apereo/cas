@@ -1,9 +1,10 @@
 package org.apereo.cas.adaptors.x509.config;
 
-import lombok.val;
 import org.apereo.cas.adaptors.x509.BaseX509Tests;
 import org.apereo.cas.adaptors.x509.authentication.principal.EDIPIX509AttributeExtractor;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509AttributeExtractor;
+
+import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
