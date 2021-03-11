@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.config;
 
+import lombok.val;
 import org.apereo.cas.adaptors.x509.BaseX509Tests;
 import org.apereo.cas.adaptors.x509.authentication.principal.EDIPIX509AttributeExtractor;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509AttributeExtractor;
@@ -8,9 +9,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.ResourceLoader;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import java.io.IOException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Testing configuration for {@link X509AttributeExtractor} and {@link EDIPIX509AttributeExtractor}.
@@ -26,6 +32,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class EDIPIX509AttributeExtractorConfigTests {
 
     @Autowired
+    private ResourceLoader resourceLoader;
+
+    @Autowired
     @Qualifier("x509AttributeExtractor")
     private X509AttributeExtractor x509AttributeExtractor;
 
@@ -34,8 +43,10 @@ public class EDIPIX509AttributeExtractorConfigTests {
      * Confirm that non-default bean loaded per properties.
      */
     @Test
-    public void verifyCorrectX509AttributeExtractorLoaded() {
+    public void verifyCorrectX509AttributeExtractorLoaded() throws IOException, CertificateException {
         assertNotNull(x509AttributeExtractor);
-        assertEquals(EDIPIX509AttributeExtractor.class, x509AttributeExtractor.getClass());
+        val certificate = (X509Certificate) CertificateFactory.getInstance("X509").generateCertificate(
+                resourceLoader.getResource("classpath:/edipi.cer").getInputStream());
+        assertTrue(x509AttributeExtractor.extractPersonAttributes(certificate).containsKey("x509EDIPI"));
     }
 }
