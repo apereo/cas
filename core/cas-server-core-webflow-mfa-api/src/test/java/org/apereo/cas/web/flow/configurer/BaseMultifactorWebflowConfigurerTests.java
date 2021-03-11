@@ -5,7 +5,6 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 
 import lombok.val;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -64,7 +63,6 @@ public abstract class BaseMultifactorWebflowConfigurerTests {
         assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_MFA_CHECK_BYPASS));
         assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_MFA_CHECK_AVAILABLE));
         assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_MFA_FAILURE));
-        assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_SUCCESS));
         val loginFlow = (Flow) loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertTrue(loginFlow.getState(getMultifactorEventId()) instanceof SubflowState);
     }
