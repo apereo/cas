@@ -38,7 +38,7 @@ public abstract class BaseMultifactorWebflowConfigurerTests {
     protected abstract String getMultifactorEventId();
 
     @Test
-    public void ensureAllTransitions() {
+    public void ensureAllTransitionDestinationsExistInFlow() {
         val registry = getMultifactorFlowDefinitionRegistry();
         assertTrue(registry.containsFlowDefinition(getMultifactorEventId()));
         val flow = (Flow) registry.getFlowDefinition(getMultifactorEventId());
