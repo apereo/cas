@@ -593,6 +593,12 @@ task casVersion(description: "Display current CAS version") {
     }
 }
 
+task tomcatVersion(description: "Display current Apache Tomcat version") {
+    doLast {
+        println "${tomcatVersion}"
+    }
+}
+
 task signingKey(description: "Display CAS signing key id") {
     doLast {
         println "Signing key: " + project.findProperty("signing.keyId")
