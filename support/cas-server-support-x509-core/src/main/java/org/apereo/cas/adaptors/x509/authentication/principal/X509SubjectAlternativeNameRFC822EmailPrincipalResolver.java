@@ -22,9 +22,8 @@ import java.security.cert.X509Certificate;
 @ToString(callSuper = true)
 public class X509SubjectAlternativeNameRFC822EmailPrincipalResolver extends AbstractX509PrincipalResolver {
 
-    public X509SubjectAlternativeNameRFC822EmailPrincipalResolver(final PrincipalResolutionContext context,
-                                                                  final String alternatePrincipalAttribute) {
-        super(context, alternatePrincipalAttribute);
+    public X509SubjectAlternativeNameRFC822EmailPrincipalResolver(final PrincipalResolutionContext context) {
+        super(context);
     }
 
     @Override

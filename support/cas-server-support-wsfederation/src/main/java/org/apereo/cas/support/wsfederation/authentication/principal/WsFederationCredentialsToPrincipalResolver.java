@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionCont
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 
+import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -23,15 +24,13 @@ import java.util.Optional;
  * @since 4.2.0
  */
 @Slf4j
+@Setter
 @ToString(callSuper = true)
 public class WsFederationCredentialsToPrincipalResolver extends PersonDirectoryPrincipalResolver {
+    private WsFederationConfiguration configuration;
 
-    private final WsFederationConfiguration configuration;
-
-    public WsFederationCredentialsToPrincipalResolver(final PrincipalResolutionContext context,
-                                                      final WsFederationConfiguration configuration) {
+    public WsFederationCredentialsToPrincipalResolver(final PrincipalResolutionContext context) {
         super(context);
-        this.configuration = configuration;
     }
 
     /**

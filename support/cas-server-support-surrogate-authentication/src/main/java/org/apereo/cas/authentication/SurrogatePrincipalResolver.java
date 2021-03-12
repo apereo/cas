@@ -4,6 +4,8 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
 
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.core.Ordered;
@@ -19,13 +21,13 @@ import java.util.Optional;
  * @since 5.1.0
  */
 @Slf4j
+@Setter
+@Accessors(chain = true)
 public class SurrogatePrincipalResolver extends PersonDirectoryPrincipalResolver {
-    private final SurrogatePrincipalBuilder surrogatePrincipalBuilder;
+    private SurrogatePrincipalBuilder surrogatePrincipalBuilder;
 
-    public SurrogatePrincipalResolver(final PrincipalResolutionContext context,
-                                      final SurrogatePrincipalBuilder surrogatePrincipalBuilder) {
+    public SurrogatePrincipalResolver(final PrincipalResolutionContext context) {
         super(context);
-        this.surrogatePrincipalBuilder = surrogatePrincipalBuilder;
     }
 
     @Override

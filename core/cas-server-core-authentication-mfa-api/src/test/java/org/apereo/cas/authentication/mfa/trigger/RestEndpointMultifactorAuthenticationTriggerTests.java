@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.mfa.trigger;
 
 import org.apereo.cas.authentication.DefaultMultifactorAuthenticationProviderResolver;
+import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -43,7 +44,7 @@ public class RestEndpointMultifactorAuthenticationTriggerTests extends BaseMulti
             val props = new CasConfigurationProperties();
             props.getAuthn().getMfa().getTriggers().getRest().setUrl("http://localhost:9313");
             val trigger = new RestEndpointMultifactorAuthenticationTrigger(props,
-                new DefaultMultifactorAuthenticationProviderResolver(),
+                new DefaultMultifactorAuthenticationProviderResolver(MultifactorAuthenticationPrincipalResolver.identical()),
                 applicationContext);
             val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
             assertTrue(result.isEmpty());
@@ -60,7 +61,7 @@ public class RestEndpointMultifactorAuthenticationTriggerTests extends BaseMulti
             val props = new CasConfigurationProperties();
             props.getAuthn().getMfa().getTriggers().getRest().setUrl("http://localhost:9313");
             val trigger = new RestEndpointMultifactorAuthenticationTrigger(props,
-                new DefaultMultifactorAuthenticationProviderResolver(),
+                new DefaultMultifactorAuthenticationProviderResolver(MultifactorAuthenticationPrincipalResolver.identical()),
                 applicationContext);
             val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
             assertTrue(result.isPresent());
@@ -77,7 +78,7 @@ public class RestEndpointMultifactorAuthenticationTriggerTests extends BaseMulti
             val props = new CasConfigurationProperties();
             props.getAuthn().getMfa().getTriggers().getRest().setUrl("http://localhost:9313");
             val trigger = new RestEndpointMultifactorAuthenticationTrigger(props,
-                new DefaultMultifactorAuthenticationProviderResolver(),
+                new DefaultMultifactorAuthenticationProviderResolver(MultifactorAuthenticationPrincipalResolver.identical()),
                 applicationContext);
             val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
             assertTrue(result.isEmpty());
@@ -89,7 +90,7 @@ public class RestEndpointMultifactorAuthenticationTriggerTests extends BaseMulti
     public void verifyNoProvider() {
         val props = new CasConfigurationProperties();
         val trigger = new RestEndpointMultifactorAuthenticationTrigger(props,
-            new DefaultMultifactorAuthenticationProviderResolver(),
+            new DefaultMultifactorAuthenticationProviderResolver(MultifactorAuthenticationPrincipalResolver.identical()),
             applicationContext);
         var result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
         assertTrue(result.isEmpty());
