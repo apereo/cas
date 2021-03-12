@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.principal.resolvers;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
@@ -49,6 +50,7 @@ public class PersonDirectoryPrincipalResolverTests {
     @Test
     public void verifyOp() {
         val context = PrincipalResolutionContext.builder()
+            .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()))
             .attributeRepository(CoreAuthenticationTestUtils.getAttributeRepository())
             .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())
             .returnNullIfNoAttributes(true)
@@ -66,6 +68,7 @@ public class PersonDirectoryPrincipalResolverTests {
     @Test
     public void verifyOperation() {
         val context = PrincipalResolutionContext.builder()
+            .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()))
             .attributeRepository(CoreAuthenticationTestUtils.getAttributeRepository())
             .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())
             .returnNullIfNoAttributes(false)
@@ -84,6 +87,7 @@ public class PersonDirectoryPrincipalResolverTests {
     @Test
     public void verifyNullPrincipal() {
         val context = PrincipalResolutionContext.builder()
+            .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()))
             .attributeRepository(new StubPersonAttributeDao(new HashMap<>(0)))
             .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())
             .returnNullIfNoAttributes(false)
@@ -101,6 +105,7 @@ public class PersonDirectoryPrincipalResolverTests {
     @Test
     public void verifyNullAttributes() {
         val context = PrincipalResolutionContext.builder()
+            .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()))
             .attributeRepository(new StubPersonAttributeDao(new HashMap<>(0)))
             .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())
             .returnNullIfNoAttributes(true)
@@ -122,6 +127,7 @@ public class PersonDirectoryPrincipalResolverTests {
         val attributes = new ArrayList<>();
         attributes.add(null);
         val context = PrincipalResolutionContext.builder()
+            .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()))
             .attributeRepository(new StubPersonAttributeDao(Map.of("a", attributes)))
             .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())
             .returnNullIfNoAttributes(false)
@@ -139,6 +145,7 @@ public class PersonDirectoryPrincipalResolverTests {
     @Test
     public void verifyNoAttributesWithPrincipal() {
         val context = PrincipalResolutionContext.builder()
+            .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()))
             .attributeRepository(CoreAuthenticationTestUtils.getAttributeRepository())
             .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())
             .returnNullIfNoAttributes(false)
@@ -158,6 +165,7 @@ public class PersonDirectoryPrincipalResolverTests {
     @Test
     public void verifyAttributesWithPrincipal() {
         val context = PrincipalResolutionContext.builder()
+            .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()))
             .attributeRepository(CoreAuthenticationTestUtils.getAttributeRepository())
             .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())
             .returnNullIfNoAttributes(false)
@@ -179,6 +187,7 @@ public class PersonDirectoryPrincipalResolverTests {
     @Test
     public void verifyChainingResolverOverwrite() {
         val context = PrincipalResolutionContext.builder()
+            .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()))
             .attributeRepository(CoreAuthenticationTestUtils.getAttributeRepository())
             .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())
             .returnNullIfNoAttributes(false)
@@ -208,6 +217,7 @@ public class PersonDirectoryPrincipalResolverTests {
     @Test
     public void verifyChainingResolver() {
         val context = PrincipalResolutionContext.builder()
+            .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()))
             .attributeRepository(CoreAuthenticationTestUtils.getAttributeRepository())
             .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())
             .returnNullIfNoAttributes(false)
@@ -232,6 +242,7 @@ public class PersonDirectoryPrincipalResolverTests {
     @Test
     public void verifyChainingResolverOverwritePrincipal() {
         val context1 = PrincipalResolutionContext.builder()
+            .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()))
             .attributeRepository(CoreAuthenticationTestUtils.getAttributeRepository())
             .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())
             .returnNullIfNoAttributes(false)
@@ -243,6 +254,7 @@ public class PersonDirectoryPrincipalResolverTests {
         val resolver = new PersonDirectoryPrincipalResolver(context1);
 
         val context2 = PrincipalResolutionContext.builder()
+            .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()))
             .attributeRepository(new StubPersonAttributeDao(Collections.singletonMap("principal",
                 CollectionUtils.wrap("changedPrincipal"))))
             .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())
@@ -272,6 +284,7 @@ public class PersonDirectoryPrincipalResolverTests {
     @Test
     public void verifyMultiplePrincipalAttributeNames() {
         val context1 = PrincipalResolutionContext.builder()
+            .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()))
             .attributeRepository(CoreAuthenticationTestUtils.getAttributeRepository())
             .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())
             .returnNullIfNoAttributes(false)
@@ -283,6 +296,7 @@ public class PersonDirectoryPrincipalResolverTests {
         val resolver = new PersonDirectoryPrincipalResolver(context1);
 
         val context2 = PrincipalResolutionContext.builder()
+            .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()))
             .attributeRepository(new StubPersonAttributeDao(Collections.singletonMap("something", CollectionUtils.wrap("principal-id"))))
             .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())
             .returnNullIfNoAttributes(false)
@@ -306,6 +320,7 @@ public class PersonDirectoryPrincipalResolverTests {
     @Test
     public void verifyMultiplePrincipalAttributeNamesNotFound() {
         val context1 = PrincipalResolutionContext.builder()
+            .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()))
             .attributeRepository(CoreAuthenticationTestUtils.getAttributeRepository())
             .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())
             .returnNullIfNoAttributes(false)
@@ -317,6 +332,7 @@ public class PersonDirectoryPrincipalResolverTests {
         val resolver = new PersonDirectoryPrincipalResolver(context1);
 
         val context2 = PrincipalResolutionContext.builder()
+            .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()))
             .attributeRepository(new StubPersonAttributeDao(Collections.singletonMap("something", CollectionUtils.wrap("principal-id"))))
             .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())
             .returnNullIfNoAttributes(false)
@@ -335,5 +351,25 @@ public class PersonDirectoryPrincipalResolverTests {
             Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
         assertNotNull(p);
         assertEquals("test", p.getId());
+    }
+
+    @Test
+    public void verifyPrincipalIdViaCurrentPrincipal() {
+        val context = PrincipalResolutionContext.builder()
+            .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()))
+            .attributeRepository(CoreAuthenticationTestUtils.getAttributeRepository())
+            .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())
+            .returnNullIfNoAttributes(true)
+            .principalAttributeNames("custom:attribute")
+            .useCurrentPrincipalId(true)
+            .resolveAttributes(true)
+            .build();
+
+        val resolver = new PersonDirectoryPrincipalResolver(context);
+        val credential = mock(Credential.class);
+        val principal = CoreAuthenticationTestUtils.getPrincipal(Map.of("custom:attribute", List.of("customUserId")));
+        val p = resolver.resolve(credential, Optional.of(principal), Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
+        assertNotNull(p);
+        assertEquals("customUserId", p.getId());
     }
 }

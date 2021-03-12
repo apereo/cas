@@ -188,7 +188,10 @@ public class CasCoreAuthenticationHandlersConfiguration {
                 .map(jaas -> {
                     val jaasPrincipal = jaas.getPrincipal();
                     return CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(jaasPrincipalFactory(),
-                        attributeRepository.getObject(), jaasPrincipal, personDirectory);
+                        attributeRepository.getObject(),
+                        CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
+                        jaasPrincipal,
+                        personDirectory);
                 })
                 .collect(Collectors.toList());
         }

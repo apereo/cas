@@ -32,6 +32,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import groovy.lang.GroovyClassLoader;
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -297,15 +298,42 @@ public class CoreAuthenticationUtils {
      *
      * @param principalFactory    the principal factory
      * @param attributeRepository the attribute repository
+     * @param attributeMerger     the attribute merger
      * @param personDirectory     the person directory
      * @return the principal resolver
      */
     public static PrincipalResolver newPersonDirectoryPrincipalResolver(
-        final PrincipalFactory principalFactory, final IPersonAttributeDao attributeRepository,
+        final PrincipalFactory principalFactory,
+        final IPersonAttributeDao attributeRepository,
+        final IAttributeMerger attributeMerger,
+        final PersonDirectoryPrincipalResolverProperties... personDirectory) {
+        
+        return newPersonDirectoryPrincipalResolver(principalFactory, attributeRepository,
+            attributeMerger, PersonDirectoryPrincipalResolver.class, personDirectory);
+    }
+    
+    /**
+     * New person directory principal resolver.
+     *
+     * @param <T>                 the type parameter
+     * @param principalFactory    the principal factory
+     * @param attributeRepository the attribute repository
+     * @param attributeMerger     the attribute merger
+     * @param resolverClass       the resolver class
+     * @param personDirectory     the person directory
+     * @return the resolver
+     */
+    @SneakyThrows
+    public static <T extends PrincipalResolver> T newPersonDirectoryPrincipalResolver(
+        final PrincipalFactory principalFactory,
+        final IPersonAttributeDao attributeRepository,
+        final IAttributeMerger attributeMerger,
+        final Class<T> resolverClass,
         final PersonDirectoryPrincipalResolverProperties... personDirectory) {
 
         val context = PrincipalResolutionContext.builder()
             .attributeRepository(attributeRepository)
+            .attributeMerger(attributeMerger)
             .principalFactory(principalFactory)
             .returnNullIfNoAttributes(Arrays.stream(personDirectory).anyMatch(PersonDirectoryPrincipalResolverProperties::isReturnNull))
             .principalAttributeNames(Arrays.stream(personDirectory)
@@ -323,9 +351,11 @@ public class CoreAuthenticationUtils {
                 .collect(Collectors.toSet()))
             .build();
 
-        return new PersonDirectoryPrincipalResolver(context);
+        val ctor = resolverClass.getDeclaredConstructor(PrincipalResolutionContext.class);
+        return ctor.newInstance(context);
     }
 
+    
     /**
      * New authentication policy collection.
      *

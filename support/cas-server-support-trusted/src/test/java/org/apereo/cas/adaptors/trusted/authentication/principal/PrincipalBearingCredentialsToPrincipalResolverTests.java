@@ -1,10 +1,12 @@
 package org.apereo.cas.adaptors.trusted.authentication.principal;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
+import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
@@ -28,6 +30,7 @@ public class PrincipalBearingCredentialsToPrincipalResolverTests {
     @BeforeEach
     public void initialize() {
         val context = PrincipalResolutionContext.builder()
+            .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE))
             .attributeRepository(CoreAuthenticationTestUtils.getAttributeRepository())
             .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())
             .returnNullIfNoAttributes(false)

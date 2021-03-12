@@ -108,7 +108,9 @@ public class PersonDirectoryPrincipalResolverConcurrencyTests {
     protected void setUp() {
         this.personDirectoryResolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(
             PrincipalFactoryUtils.newPrincipalFactory(),
-            attributeRepository, casProperties.getPersonDirectory()
+            attributeRepository,
+            CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
+            casProperties.getPersonDirectory()
         );
     }
 

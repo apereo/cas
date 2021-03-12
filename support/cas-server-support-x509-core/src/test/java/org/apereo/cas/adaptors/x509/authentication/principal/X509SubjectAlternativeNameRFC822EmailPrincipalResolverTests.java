@@ -1,8 +1,10 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
+import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
@@ -86,6 +88,7 @@ public class X509SubjectAlternativeNameRFC822EmailPrincipalResolverTests {
                                                final String requiredAttribute) throws Exception {
 
         val context = PrincipalResolutionContext.builder()
+            .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE))
             .attributeRepository(CoreAuthenticationTestUtils.getAttributeRepository())
             .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())
             .returnNullIfNoAttributes(false)
@@ -95,7 +98,8 @@ public class X509SubjectAlternativeNameRFC822EmailPrincipalResolverTests {
             .activeAttributeRepositoryIdentifiers(CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD))
             .build();
 
-        val resolver = new X509SubjectAlternativeNameRFC822EmailPrincipalResolver(context, alternatePrincipalAttribute);
+        val resolver = new X509SubjectAlternativeNameRFC822EmailPrincipalResolver(context);
+        resolver.setAlternatePrincipalAttribute(alternatePrincipalAttribute);
         val certificate = (X509Certificate) CertificateFactory.getInstance("X509").generateCertificate(
             new FileInputStream(getClass().getResource(certPath).getPath()));
 
@@ -119,6 +123,7 @@ public class X509SubjectAlternativeNameRFC822EmailPrincipalResolverTests {
     @Test
     public void verifyAlternate() throws Exception {
         val context = PrincipalResolutionContext.builder()
+            .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE))
             .attributeRepository(CoreAuthenticationTestUtils.getAttributeRepository())
             .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())
             .returnNullIfNoAttributes(false)
@@ -128,7 +133,7 @@ public class X509SubjectAlternativeNameRFC822EmailPrincipalResolverTests {
             .activeAttributeRepositoryIdentifiers(CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD))
             .build();
 
-        val resolver = new X509SubjectAlternativeNameRFC822EmailPrincipalResolver(context, null);
+        val resolver = new X509SubjectAlternativeNameRFC822EmailPrincipalResolver(context);
         val certificate = mock(X509Certificate.class);
         when(certificate.getSubjectAlternativeNames()).thenThrow(new CertificateParsingException());
         assertNull(resolver.resolvePrincipalInternal(certificate));
