@@ -28,6 +28,7 @@ import java.util.List;
  *
  * @author Misagh Moayyed
  * @since 6.4.0
+ * @deprecated Since 6.2
  */
 @ConditionalOnMultiValuedProperty(name = "cas.authn.attribute-repository.script[0]", value = "location")
 @Configuration("CasPersonDirectoryScriptedConfiguration")
