@@ -37,16 +37,10 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
 
     private String alternatePrincipalAttribute;
 
-    protected AbstractX509PrincipalResolver(final PrincipalResolutionContext context,
-                                            final String alternatePrincipalAttribute) {
-        super(context);
-        this.alternatePrincipalAttribute = alternatePrincipalAttribute;
-    }
-
     protected AbstractX509PrincipalResolver(final PrincipalResolutionContext context) {
-        this(context, null);
+        super(context);
     }
-
+    
     @Override
     public boolean supports(final Credential credential) {
         return credential instanceof X509CertificateCredential;

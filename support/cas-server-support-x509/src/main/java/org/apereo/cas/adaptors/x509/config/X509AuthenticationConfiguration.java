@@ -21,11 +21,10 @@ import org.apereo.cas.adaptors.x509.authentication.revocation.policy.RevocationP
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.ThresholdExpiredCRLRevocationPolicy;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
-import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.x509.SubjectDnPrincipalResolverProperties;
 import org.apereo.cas.configuration.model.support.x509.X509Properties;
@@ -227,20 +226,14 @@ public class X509AuthenticationConfiguration {
         val personDirectory = casProperties.getPersonDirectory();
         val x509 = casProperties.getAuthn().getX509();
         val principal = x509.getPrincipal();
-        val principalAttribute = StringUtils.defaultIfBlank(principal.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
-        val context = PrincipalResolutionContext.builder()
-            .attributeRepository(attributeRepository.getObject())
-            .principalFactory(x509PrincipalFactory())
-            .returnNullIfNoAttributes(principal.isReturnNull() || personDirectory.isReturnNull())
-            .principalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(x509.getPrincipalTransformation()))
-            .principalAttributeNames(principalAttribute)
-            .useCurrentPrincipalId(principal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId())
-            .resolveAttributes(principal.isAttributeResolutionEnabled())
-            .activeAttributeRepositoryIdentifiers(org.springframework.util.StringUtils
-                .commaDelimitedListToSet(principal.getActiveAttributeRepositoryIds()))
-            .build();
 
-        return new X509SubjectPrincipalResolver(context, x509.getPrincipalDescriptor());
+        val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(x509PrincipalFactory(),
+            attributeRepository.getObject(),
+            CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
+            X509SubjectPrincipalResolver.class,
+            principal, personDirectory);
+        resolver.setPrincipalDescriptor(x509.getPrincipalDescriptor());
+        return resolver;
     }
 
     @Bean
@@ -251,19 +244,14 @@ public class X509AuthenticationConfiguration {
         val subjectDn = x509.getSubjectDn();
         val personDirectory = casProperties.getPersonDirectory();
         val principal = x509.getPrincipal();
-        val principalAttribute = StringUtils.defaultIfBlank(principal.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
-        val context = PrincipalResolutionContext.builder()
-            .attributeRepository(attributeRepository.getObject())
-            .principalFactory(x509PrincipalFactory())
-            .returnNullIfNoAttributes(principal.isReturnNull() || personDirectory.isReturnNull())
-            .principalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(x509.getPrincipalTransformation()))
-            .principalAttributeNames(principalAttribute)
-            .useCurrentPrincipalId(principal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId())
-            .resolveAttributes(principal.isAttributeResolutionEnabled())
-            .activeAttributeRepositoryIdentifiers(org.springframework.util.StringUtils
-                .commaDelimitedListToSet(principal.getActiveAttributeRepositoryIds()))
-            .build();
-        return new X509SubjectDNPrincipalResolver(context, getSubjectDnFormat(subjectDn.getFormat()));
+
+        val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(x509PrincipalFactory(),
+            attributeRepository.getObject(),
+            CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
+            X509SubjectDNPrincipalResolver.class,
+            principal, personDirectory);
+        resolver.setSubjectDnFormat(getSubjectDnFormat(subjectDn.getFormat()));
+        return resolver;
     }
 
     @Bean
@@ -274,21 +262,14 @@ public class X509AuthenticationConfiguration {
         val personDirectory = casProperties.getPersonDirectory();
         val subjectAltNameProperties = x509.getSubjectAltName();
         val principal = x509.getPrincipal();
-        val principalAttribute = StringUtils.defaultIfBlank(principal.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
 
-        val context = PrincipalResolutionContext.builder()
-            .attributeRepository(attributeRepository.getObject())
-            .principalFactory(x509PrincipalFactory())
-            .returnNullIfNoAttributes(principal.isReturnNull() || personDirectory.isReturnNull())
-            .principalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(x509.getPrincipalTransformation()))
-            .principalAttributeNames(principalAttribute)
-            .useCurrentPrincipalId(principal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId())
-            .resolveAttributes(principal.isAttributeResolutionEnabled())
-            .activeAttributeRepositoryIdentifiers(org.springframework.util.StringUtils
-                .commaDelimitedListToSet(principal.getActiveAttributeRepositoryIds()))
-            .build();
-        return new X509SubjectAlternativeNameUPNPrincipalResolver(context,
-            subjectAltNameProperties.getAlternatePrincipalAttribute());
+        val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(x509PrincipalFactory(),
+            attributeRepository.getObject(),
+            CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
+            X509SubjectAlternativeNameUPNPrincipalResolver.class,
+            principal, personDirectory);
+        resolver.setAlternatePrincipalAttribute(subjectAltNameProperties.getAlternatePrincipalAttribute());
+        return resolver;
     }
 
     @Bean
@@ -299,22 +280,13 @@ public class X509AuthenticationConfiguration {
         val personDirectory = casProperties.getPersonDirectory();
         val rfc822EmailProperties = x509.getRfc822Email();
         val principal = x509.getPrincipal();
-        val principalAttribute = StringUtils.defaultIfBlank(principal.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
-
-        val context = PrincipalResolutionContext.builder()
-            .attributeRepository(attributeRepository.getObject())
-            .principalFactory(x509PrincipalFactory())
-            .returnNullIfNoAttributes(principal.isReturnNull() || personDirectory.isReturnNull())
-            .principalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(x509.getPrincipalTransformation()))
-            .principalAttributeNames(principalAttribute)
-            .useCurrentPrincipalId(principal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId())
-            .resolveAttributes(principal.isAttributeResolutionEnabled())
-            .activeAttributeRepositoryIdentifiers(org.springframework.util.StringUtils
-                .commaDelimitedListToSet(principal.getActiveAttributeRepositoryIds()))
-            .build();
-
-        return new X509SubjectAlternativeNameRFC822EmailPrincipalResolver(context,
-            rfc822EmailProperties.getAlternatePrincipalAttribute());
+        val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(x509PrincipalFactory(),
+            attributeRepository.getObject(),
+            CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
+            X509SubjectAlternativeNameRFC822EmailPrincipalResolver.class,
+            principal, personDirectory);
+        resolver.setAlternatePrincipalAttribute(rfc822EmailProperties.getAlternatePrincipalAttribute());
+        return resolver;
     }
 
     @Bean
@@ -339,23 +311,15 @@ public class X509AuthenticationConfiguration {
         val serialNoDnProperties = x509.getSerialNoDn();
         val principal = x509.getPrincipal();
         val personDirectory = casProperties.getPersonDirectory();
-        val principalAttribute = StringUtils.defaultIfBlank(principal.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
 
-        val context = PrincipalResolutionContext.builder()
-            .attributeRepository(attributeRepository.getObject())
-            .principalFactory(x509PrincipalFactory())
-            .returnNullIfNoAttributes(principal.isReturnNull() || personDirectory.isReturnNull())
-            .principalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(x509.getPrincipalTransformation()))
-            .principalAttributeNames(principalAttribute)
-            .useCurrentPrincipalId(principal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId())
-            .resolveAttributes(principal.isAttributeResolutionEnabled())
-            .activeAttributeRepositoryIdentifiers(org.springframework.util.StringUtils
-                .commaDelimitedListToSet(principal.getActiveAttributeRepositoryIds()))
-            .build();
-
-        return new X509SerialNumberAndIssuerDNPrincipalResolver(context,
-            serialNoDnProperties.getSerialNumberPrefix(),
-            serialNoDnProperties.getValueDelimiter());
+        val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(x509PrincipalFactory(),
+            attributeRepository.getObject(),
+            CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
+            X509SerialNumberAndIssuerDNPrincipalResolver.class,
+            principal, personDirectory);
+        resolver.setSerialNumberPrefix(serialNoDnProperties.getSerialNumberPrefix());
+        resolver.setValueDelimiter(serialNoDnProperties.getValueDelimiter());
+        return resolver;
     }
 
     @Bean
@@ -366,22 +330,14 @@ public class X509AuthenticationConfiguration {
         val cnEdipiProperties = x509.getCnEdipi();
         val principal = x509.getPrincipal();
         val personDirectory = casProperties.getPersonDirectory();
-        val principalAttribute = StringUtils.defaultIfBlank(principal.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
 
-        val context = PrincipalResolutionContext.builder()
-            .attributeRepository(attributeRepository.getObject())
-            .principalFactory(x509PrincipalFactory())
-            .returnNullIfNoAttributes(principal.isReturnNull() || personDirectory.isReturnNull())
-            .principalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(x509.getPrincipalTransformation()))
-            .principalAttributeNames(principalAttribute)
-            .useCurrentPrincipalId(principal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId())
-            .resolveAttributes(principal.isAttributeResolutionEnabled())
-            .activeAttributeRepositoryIdentifiers(org.springframework.util.StringUtils
-                .commaDelimitedListToSet(principal.getActiveAttributeRepositoryIds()))
-            .build();
-
-        return new X509CommonNameEDIPIPrincipalResolver(context,
-            cnEdipiProperties.getAlternatePrincipalAttribute());
+        val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(x509PrincipalFactory(),
+            attributeRepository.getObject(),
+            CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
+            X509CommonNameEDIPIPrincipalResolver.class,
+            principal, personDirectory);
+        resolver.setAlternatePrincipalAttribute(cnEdipiProperties.getAlternatePrincipalAttribute());
+        return resolver;
     }
 
     @ConditionalOnMissingBean(name = "x509AuthenticationEventExecutionPlanConfigurer")
@@ -421,27 +377,23 @@ public class X509AuthenticationConfiguration {
         val personDirectory = casProperties.getPersonDirectory();
         val radix = serialNoProperties.getPrincipalSNRadix();
         val principal = x509.getPrincipal();
-        val principalAttribute = StringUtils.defaultIfBlank(principal.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
 
-        val context = PrincipalResolutionContext.builder()
-            .attributeRepository(attributeRepository.getObject())
-            .principalFactory(x509PrincipalFactory())
-            .returnNullIfNoAttributes(principal.isReturnNull() || personDirectory.isReturnNull())
-            .principalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(x509.getPrincipalTransformation()))
-            .principalAttributeNames(principalAttribute)
-            .useCurrentPrincipalId(principal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId())
-            .resolveAttributes(principal.isAttributeResolutionEnabled())
-            .activeAttributeRepositoryIdentifiers(org.springframework.util.StringUtils
-                .commaDelimitedListToSet(principal.getActiveAttributeRepositoryIds()))
-            .build();
+        val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(x509PrincipalFactory(),
+            attributeRepository.getObject(),
+            CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
+            X509SerialNumberPrincipalResolver.class,
+            principal, personDirectory);
 
         if (Character.MIN_RADIX <= radix && radix <= Character.MAX_RADIX) {
             if (radix == HEX) {
-                return new X509SerialNumberPrincipalResolver(context, radix, serialNoProperties.isPrincipalHexSNZeroPadding());
+                resolver.setRadix(radix);
+                resolver.setZeroPadding(serialNoProperties.isPrincipalHexSNZeroPadding());
+                return resolver;
             }
-            return new X509SerialNumberPrincipalResolver(context, radix, false);
+            resolver.setRadix(radix);
+            return resolver;
         }
-        return new X509SerialNumberPrincipalResolver(context);
+        return resolver;
     }
 
     private RevocationChecker getRevocationCheckerFrom(final X509Properties x509) {

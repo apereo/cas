@@ -72,7 +72,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
                 return null;
             }
             LOGGER.debug("Retrieved [{}] attribute(s) from the repository", attributes.size());
-            val pair = convertPersonAttributesToPrincipal(principalId, attributes);
+            val pair = convertPersonAttributesToPrincipal(principalId, currentPrincipal, attributes);
             val principal = buildResolvedPrincipal(pair.getKey(), pair.getValue(), credential, currentPrincipal, handler);
             LOGGER.debug("Final resolved principal by [{}] is [{}]", getName(), principal);
             return principal;
@@ -113,11 +113,13 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
      * Convert person attributes to principal pair.
      *
      * @param extractedPrincipalId the extracted principal id
+     * @param currentPrincipal     the current principal
      * @param attributes           the attributes
      * @return the pair
      */
     @SuppressWarnings("unchecked")
     protected Pair<String, Map<String, List<Object>>> convertPersonAttributesToPrincipal(final String extractedPrincipalId,
+                                                                                         final Optional<Principal> currentPrincipal,
                                                                                          final Map<String, List<Object>> attributes) {
         val convertedAttributes = new LinkedHashMap<String, List<Object>>();
         attributes.forEach((key, attrValue) -> {
@@ -130,26 +132,35 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         });
 
         var principalId = extractedPrincipalId;
-
         if (StringUtils.isNotBlank(context.getPrincipalAttributeNames())) {
             val attrNames = org.springframework.util.StringUtils.commaDelimitedListToSet(context.getPrincipalAttributeNames());
+
+            val principalIdAttributes = new LinkedHashMap<>(attributes);
+            if (context.isUseCurrentPrincipalId() && currentPrincipal.isPresent()) {
+                val currentPrincipalAttributes = currentPrincipal.get().getAttributes();
+                LOGGER.trace("Merging current principal attributes [{}] with resolved attributes [{}]",
+                    currentPrincipalAttributes, principalIdAttributes);
+                context.getAttributeMerger().mergeAttributes(principalIdAttributes, currentPrincipalAttributes);
+            }
+
+            LOGGER.debug("Using principal attributes [{}] to determine principal id", principalIdAttributes);
             val result = attrNames.stream()
                 .map(String::trim)
-                .filter(attributes::containsKey)
-                .map(attributes::get)
+                .filter(principalIdAttributes::containsKey)
+                .map(principalIdAttributes::get)
                 .findFirst();
 
             if (result.isPresent()) {
                 val values = result.get();
                 if (!values.isEmpty()) {
                     principalId = CollectionUtils.firstElement(values).map(Object::toString).orElseThrow();
-                    LOGGER.debug("Found principal id attribute value [{}] and removed it from the collection of attributes", principalId);
+                    LOGGER.debug("Found principal id attribute value [{}]", principalId);
                 }
             } else {
                 LOGGER.warn("Principal resolution is set to resolve users via attribute(s) [{}], and yet "
                     + "the collection of attributes retrieved [{}] do not contain any of those attributes. This is "
                     + "likely due to misconfiguration and CAS will use [{}] as the final principal id",
-                    context.getPrincipalAttributeNames(), attributes.keySet(), principalId);
+                    context.getPrincipalAttributeNames(), principalIdAttributes.keySet(), principalId);
             }
         }
 

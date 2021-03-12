@@ -31,9 +31,8 @@ public class X509CommonNameEDIPIPrincipalResolver extends AbstractX509PrincipalR
 
     private static final int EDIPI_LENGTH = 10;
 
-    public X509CommonNameEDIPIPrincipalResolver(final PrincipalResolutionContext context,
-                                                final String alternatePrincipalAttribute) {
-        super(context, alternatePrincipalAttribute);
+    public X509CommonNameEDIPIPrincipalResolver(final PrincipalResolutionContext context) {
+        super(context);
     }
 
     @Override

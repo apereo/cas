@@ -64,7 +64,9 @@ public class CasPersonDirectoryTestConfiguration {
         return plan -> {
             val personDirectory = casProperties.getPersonDirectory();
             val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(PrincipalFactoryUtils.newPrincipalFactory(),
-                attributeRepository(), personDirectory);
+                attributeRepository(),
+                CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
+                personDirectory);
             plan.registerPrincipalResolver(resolver);
         };
     }

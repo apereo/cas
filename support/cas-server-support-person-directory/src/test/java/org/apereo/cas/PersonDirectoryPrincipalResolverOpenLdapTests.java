@@ -72,7 +72,9 @@ public class PersonDirectoryPrincipalResolverOpenLdapTests {
         LdapIntegrationTestsOperations.populateEntries(connection, rs, "ou=people,dc=example,dc=org", bindInit);
 
         val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(PrincipalFactoryUtils.newPrincipalFactory(),
-            this.attributeRepository, casProperties.getPersonDirectory());
+            this.attributeRepository,
+            CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
+            casProperties.getPersonDirectory());
         val p = resolver.resolve(new UsernamePasswordCredential(uid, "password"),
             Optional.of(CoreAuthenticationTestUtils.getPrincipal(uid)),
             Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));

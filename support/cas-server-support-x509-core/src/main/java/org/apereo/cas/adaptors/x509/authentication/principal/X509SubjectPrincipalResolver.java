@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.x509.authentication.principal;
 
 import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
 
+import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -24,6 +25,7 @@ import java.util.regex.Pattern;
  * @since 3.4.4
  */
 @Slf4j
+@Setter
 @ToString(callSuper = true)
 public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver {
 
@@ -34,8 +36,15 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
 
     /**
      * Descriptor representing an abstract format of the principal to be resolved.
+     * Descriptor string where attribute names are prefixed with "$"
+     * to identify replacement by real attribute values from the subject DN.
+     * Valid attributes include common X.509 DN attributes such as the following:
+     * <ul><li>C</li><li>CN</li><li>DC</li><li>EMAILADDRESS</li>
+     * <li>L</li><li>O</li><li>OU</li><li>SERIALNUMBER</li>
+     * <li>ST</li><li>UID</li><li>UNIQUEIDENTIFIER</li></ul>
+     * For a complete list of supported attributes, see {@link org.cryptacular.x509.dn.StandardAttributeType}.
      */
-    private final String descriptor;
+    private String principalDescriptor;
 
     /**
      * Sets the descriptor that describes for format of the principal ID to
@@ -59,17 +68,9 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
      * produces the principal <strong>jacky@vt.edu</strong>.</p>
      *
      * @param context    configuration context.
-     * @param descriptor Descriptor string where attribute names are prefixed with "$"
-     *                   to identify replacement by real attribute values from the subject DN.
-     *                   Valid attributes include common X.509 DN attributes such as the following:
-     *                   <ul><li>C</li><li>CN</li><li>DC</li><li>EMAILADDRESS</li>
-     *                   <li>L</li><li>O</li><li>OU</li><li>SERIALNUMBER</li>
-     *                   <li>ST</li><li>UID</li><li>UNIQUEIDENTIFIER</li></ul>
-     *                   For a complete list of supported attributes, see {@link org.cryptacular.x509.dn.StandardAttributeType}.
      */
-    public X509SubjectPrincipalResolver(final PrincipalResolutionContext context, final String descriptor) {
+    public X509SubjectPrincipalResolver(final PrincipalResolutionContext context) {
         super(context);
-        this.descriptor = descriptor;
     }
 
     /**
@@ -103,7 +104,7 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
     protected String resolvePrincipalInternal(final X509Certificate certificate) {
         LOGGER.debug("Resolving principal for [{}]", certificate);
         val sb = new StringBuilder();
-        val m = ATTR_PATTERN.matcher(this.descriptor);
+        val m = ATTR_PATTERN.matcher(this.principalDescriptor);
         val attrMap = new HashMap<String, AttributeContext>();
         val rdnSequence = new NameReader(certificate).readSubject();
         while (m.find()) {
