@@ -8,6 +8,11 @@ const assert = require('assert');
     const page = await browser.newPage();
     await page.goto("https://localhost:8443/cas/login");
 
+    let uid = await page.$('#username');
+    assert("none" === await uid.evaluate(el => el.getAttribute("autocapitalize")))
+    assert("false" === await uid.evaluate(el => el.getAttribute("spellcheck")))
+    assert("username" === await uid.evaluate(el => el.getAttribute("autocomplete")))
+    
     await page.type('#username', "casuser");
     await page.type('#password', "Mellon");
     await page.keyboard.press('Enter');

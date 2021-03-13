@@ -21,6 +21,10 @@ const assert = require('assert');
 
     let uid = await page.$('#username');
     assert(await uid.boundingBox() != null);
+    
+    assert("none" === await uid.evaluate(el => el.getAttribute("autocapitalize")))
+    assert("false" === await uid.evaluate(el => el.getAttribute("spellcheck")))
+    assert("username" === await uid.evaluate(el => el.getAttribute("autocomplete")))
 
     let pswd = await page.$('#password');
     assert(await pswd.boundingBox() != null);
