@@ -45,7 +45,7 @@ import static java.util.stream.Collectors.toList;
 public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
 
     private final PrincipalResolutionContext context;
-
+    
     @Override
     public Principal resolve(final Credential credential, final Optional<Principal> currentPrincipal,
                              final Optional<AuthenticationHandler> handler) {
