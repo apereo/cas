@@ -52,6 +52,8 @@ public class X509SubjectDNPrincipalResolverTests {
         resolver = new X509SubjectDNPrincipalResolver(context);
         resolverRFC2253 = new X509SubjectDNPrincipalResolver(context);
         resolverRFC2253.setSubjectDnFormat(X500Principal.RFC2253);
+        resolver.setX509AttributeExtractor(new DefaultX509AttributeExtractor());
+        resolverRFC2253.setX509AttributeExtractor(new DefaultX509AttributeExtractor());
     }
 
     @Test

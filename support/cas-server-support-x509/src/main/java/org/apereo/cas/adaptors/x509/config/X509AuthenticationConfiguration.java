@@ -4,6 +4,9 @@ import org.apereo.cas.adaptors.x509.authentication.CRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.ResourceCRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.handler.support.X509CredentialsAuthenticationHandler;
 import org.apereo.cas.adaptors.x509.authentication.ldap.LdaptiveResourceCRLFetcher;
+import org.apereo.cas.adaptors.x509.authentication.principal.DefaultX509AttributeExtractor;
+import org.apereo.cas.adaptors.x509.authentication.principal.EDIPIX509AttributeExtractor;
+import org.apereo.cas.adaptors.x509.authentication.principal.X509AttributeExtractor;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CommonNameEDIPIPrincipalResolver;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509SerialNumberAndIssuerDNPrincipalResolver;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509SerialNumberPrincipalResolver;
@@ -233,6 +236,7 @@ public class X509AuthenticationConfiguration {
             X509SubjectPrincipalResolver.class,
             principal, personDirectory);
         resolver.setPrincipalDescriptor(x509.getPrincipalDescriptor());
+        resolver.setX509AttributeExtractor(x509AttributeExtractor());
         return resolver;
     }
 
@@ -251,6 +255,7 @@ public class X509AuthenticationConfiguration {
             X509SubjectDNPrincipalResolver.class,
             principal, personDirectory);
         resolver.setSubjectDnFormat(getSubjectDnFormat(subjectDn.getFormat()));
+        resolver.setX509AttributeExtractor(x509AttributeExtractor());
         return resolver;
     }
 
@@ -269,6 +274,7 @@ public class X509AuthenticationConfiguration {
             X509SubjectAlternativeNameUPNPrincipalResolver.class,
             principal, personDirectory);
         resolver.setAlternatePrincipalAttribute(subjectAltNameProperties.getAlternatePrincipalAttribute());
+        resolver.setX509AttributeExtractor(x509AttributeExtractor());
         return resolver;
     }
 
@@ -286,6 +292,7 @@ public class X509AuthenticationConfiguration {
             X509SubjectAlternativeNameRFC822EmailPrincipalResolver.class,
             principal, personDirectory);
         resolver.setAlternatePrincipalAttribute(rfc822EmailProperties.getAlternatePrincipalAttribute());
+        resolver.setX509AttributeExtractor(x509AttributeExtractor());
         return resolver;
     }
 
@@ -319,6 +326,7 @@ public class X509AuthenticationConfiguration {
             principal, personDirectory);
         resolver.setSerialNumberPrefix(serialNoDnProperties.getSerialNumberPrefix());
         resolver.setValueDelimiter(serialNoDnProperties.getValueDelimiter());
+        resolver.setX509AttributeExtractor(x509AttributeExtractor());
         return resolver;
     }
 
@@ -337,6 +345,7 @@ public class X509AuthenticationConfiguration {
             X509CommonNameEDIPIPrincipalResolver.class,
             principal, personDirectory);
         resolver.setAlternatePrincipalAttribute(cnEdipiProperties.getAlternatePrincipalAttribute());
+        resolver.setX509AttributeExtractor(x509AttributeExtractor());
         return resolver;
     }
 
@@ -344,6 +353,17 @@ public class X509AuthenticationConfiguration {
     @Bean
     public AuthenticationEventExecutionPlanConfigurer x509AuthenticationEventExecutionPlanConfigurer() {
         return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(x509CredentialsAuthenticationHandler(), getPrincipalResolver());
+    }
+
+    @ConditionalOnMissingBean(name = "x509AttributeExtractor")
+    @RefreshScope
+    @Bean
+    public X509AttributeExtractor x509AttributeExtractor() {
+        val x509 = casProperties.getAuthn().getX509();
+        if (x509.getCnEdipi().isExtractEdipiAsAttribute()) {
+            return new EDIPIX509AttributeExtractor();
+        }
+        return new DefaultX509AttributeExtractor();
     }
 
     private PrincipalResolver getPrincipalResolver() {
@@ -371,7 +391,6 @@ public class X509AuthenticationConfiguration {
         }
         return x509SubjectDNPrincipalResolver();
     }
-
     private X509SerialNumberPrincipalResolver getX509SerialNumberPrincipalResolver(final X509Properties x509) {
         val serialNoProperties = x509.getSerialNo();
         val personDirectory = casProperties.getPersonDirectory();
@@ -383,7 +402,7 @@ public class X509AuthenticationConfiguration {
             CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
             X509SerialNumberPrincipalResolver.class,
             principal, personDirectory);
-
+        resolver.setX509AttributeExtractor(x509AttributeExtractor());
         if (Character.MIN_RADIX <= radix && radix <= Character.MAX_RADIX) {
             if (radix == HEX) {
                 resolver.setRadix(radix);
