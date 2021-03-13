@@ -2,7 +2,7 @@
 <img src="https://user-images.githubusercontent.com/2813838/66173345-91b00380-e604-11e9-95f4-546767cc134c.png">
 </p>
 
-# Central Authentication Service (CAS)
+## Central Authentication Service (CAS)
 
 [![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/apereo/cas/blob/master/LICENSE)
 [![Twitter](https://img.shields.io/badge/Apereo%20CAS-Twitter-blue.svg)](https://twitter.com/apereo)
