@@ -4,6 +4,7 @@
 <script type="text/javascript" th:src="@{#{webjars.material-components.js}}"></script>
 
 <script type="text/javascript" th:src="@{${#themes.code('cas.standard.js.file')}}"></script>
+<script type="text/javascript" th:src="@{${#themes.code('cas.append.js.file')}}" th:if="@{${#themes.code('cas.append.js.file')}}" ></script>
 
 <script th:inline="javascript">
     if (typeof resourceLoadedSuccessfully === "function") {
