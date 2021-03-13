@@ -312,24 +312,3 @@ alias bci='clear; cas; \
     -DskipBootifulArtifact=true'
 ```
 
-# CAS Initializr Build Process
-
-The code for the CAS Initializr is found in the CAS repository on the `heroku-casinit` branch.
-Clone CAS and checkout the `heroku-casinit` branch if you want to customize it or improve it.
-
-```bash
-git clone --single-branch --branch heroku-casinit https://github.com/apereo/cas.git casinit
-cd casinit
-gradlew bootRun
-```
-
-Then in another terminal, test the local running instance using:
-
-```bash
-mkdir cas-server
-cd cas-server
-curl -k http://localhost:8080/starter.tgz -d dependencies="ldap,aup,x509" | tar -xzvf 
-gradlew build
-```
-
-Make any desired changes to the CAS Initializr project and submit the changes as a PR if they are generally useful.

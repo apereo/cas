@@ -70,9 +70,9 @@ The project selection is indicated using a `type` parameter. The following types
 
 [CAS Initializr][initializr] is available at:
 
-| Source Branch      | Location | Heroku
+| Source Repository      | Location | Heroku
 |--------------------|---------------------------------------|---------------------------------------
-| `heroku-casinit`   | [Link](https://casinit.herokuapp.com) | ![](https://heroku-badge.herokuapp.com/?app=casinit)
+| `https://github.com/apereo/cas-initializr`   | [Link](https://casinit.herokuapp.com) | ![](https://heroku-badge.herokuapp.com/?app=casinit)
 
 ## Project Generation
 
