@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordA
 import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
@@ -27,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -355,21 +357,25 @@ public class PersonDirectoryPrincipalResolverTests {
 
     @Test
     public void verifyPrincipalIdViaCurrentPrincipal() {
-        val context = PrincipalResolutionContext.builder()
-            .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()))
-            .attributeRepository(CoreAuthenticationTestUtils.getAttributeRepository())
-            .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())
-            .returnNullIfNoAttributes(true)
-            .principalAttributeNames("custom:attribute")
-            .useCurrentPrincipalId(true)
-            .resolveAttributes(true)
-            .build();
+        Stream.of(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE, PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED)
+            .forEach(merger -> {
+                val context = PrincipalResolutionContext.builder()
+                    .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(merger))
+                    .attributeRepository(CoreAuthenticationTestUtils.getAttributeRepository())
+                    .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())
+                    .returnNullIfNoAttributes(true)
+                    .principalAttributeNames("custom:attribute")
+                    .useCurrentPrincipalId(true)
+                    .resolveAttributes(true)
+                    .build();
 
-        val resolver = new PersonDirectoryPrincipalResolver(context);
-        val credential = mock(Credential.class);
-        val principal = CoreAuthenticationTestUtils.getPrincipal(Map.of("custom:attribute", List.of("customUserId")));
-        val p = resolver.resolve(credential, Optional.of(principal), Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
-        assertNotNull(p);
-        assertEquals("customUserId", p.getId());
+                val resolver = new PersonDirectoryPrincipalResolver(context);
+                val credential = mock(Credential.class);
+                val principal = CoreAuthenticationTestUtils.getPrincipal(Map.of("custom:attribute", List.of("customUserId")));
+                val p = resolver.resolve(credential, Optional.of(principal), Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
+                assertNotNull(p);
+                assertEquals("customUserId", p.getId());
+            });
+
     }
 }
