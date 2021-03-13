@@ -27,6 +27,7 @@ public class CasPullRequestListener implements PullRequestListener {
         if (processLabelSeeMaintenancePolicy(pr) || processInvalidPullRequest(pr)) {
             return;
         }
+        processLabelReadyForContinuousIntegration(pr);
         processLabelPendingPortForward(pr);
         processLabelPendingUpdateProperty(pr);
         processMilestoneAssignment(pr);
@@ -34,6 +35,14 @@ public class CasPullRequestListener implements PullRequestListener {
         removeLabelWorkInProgress(pr);
         checkForPullRequestTestCases(pr);
         mergePullRequestIfPossible(pr);
+    }
+
+    private void processLabelReadyForContinuousIntegration(final PullRequest pr) {
+       val ci = repository.getGitHubProperties().getRepository().getCommitters().contains(pr.getUser().getLogin());
+       if (ci && !pr.isLabeledAs(CasLabels.LABEL_CI)) {
+           log.info("Pull request {} is for continuous integration", pr);
+           repository.labelPullRequestAs(pr, CasLabels.LABEL_CI);
+       }
     }
 
     private void checkForPullRequestTestCases(final PullRequest pr) {

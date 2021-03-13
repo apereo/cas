@@ -32,6 +32,7 @@ public enum CasLabels {
     LABEL_AUTHORIZATION_ACCESS_STRATEGY("Authorization & Access Strategy", "authz|authorization|abac|access\\sstrategy"),
     LABEL_BASIC_AUTHENTICATION("Basic Authentication"),
     LABEL_CAS_PROTOCOL("CAS Protocol", "proxy callback|pgt"),
+    LABEL_CI("CI", "continuous integration|github actions"),
     LABEL_CLEARPASS("ClearPass", "credential cache"),
     LABEL_COMMAND_LINE_SHELL("Command-line Shell", "\\bcli\\b|shell"),
     LABEL_CONFIGURATION("Configuration", "properties|property"),

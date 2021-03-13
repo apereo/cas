@@ -23,6 +23,9 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * {@link ConfigurationProperties} for connecting to GitHub.
  *
@@ -62,6 +65,8 @@ public class GitHubProperties {
         private String name;
 
         private String url;
+
+        private List<String> committers = new ArrayList<>();
     }
 
     /**
