@@ -17,6 +17,7 @@ on:
       - master
       - '!**.**.**'
   pull_request:
+    types: [ labeled ]
     branches:
       - master
       - '!**.**.**'
