@@ -135,6 +135,7 @@ public class X509SubjectAlternativeNameRFC822EmailPrincipalResolverTests {
             .build();
 
         val resolver = new X509SubjectAlternativeNameRFC822EmailPrincipalResolver(context);
+        resolver.setX509AttributeExtractor(new DefaultX509AttributeExtractor());
         val certificate = mock(X509Certificate.class);
         when(certificate.getSubjectAlternativeNames()).thenThrow(new CertificateParsingException());
         assertNull(resolver.resolvePrincipalInternal(certificate));

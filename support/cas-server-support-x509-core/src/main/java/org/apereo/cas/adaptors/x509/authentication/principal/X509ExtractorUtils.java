@@ -1,12 +1,17 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
+import java.security.cert.CertificateParsingException;
+import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.StringTokenizer;
 
 /**
@@ -18,6 +23,7 @@ import java.util.StringTokenizer;
  * @since 6.4.0
  */
 @UtilityClass
+@Slf4j
 public class X509ExtractorUtils {
 
     private static final String COMMON_NAME_VAR = "CN";
@@ -53,18 +59,15 @@ public class X509ExtractorUtils {
      * @param commonName Value of CN field.
      * @return EDIPI number if found or empty string.
      */
-    public String retrieveTheEDIPI(final String commonName) {
-        var found = false;
-        var tempEDIPI = StringUtils.EMPTY;
+    public Optional<String> retrieveTheEDIPI(final String commonName) {
         val st = new StringTokenizer(commonName, ".");
-        while (!found && st.hasMoreTokens()) {
+        while (st.hasMoreTokens()) {
             val token = st.nextToken();
             if (isTokenEDIPI(token)) {
-                found = true;
-                tempEDIPI = token;
+                return Optional.of(token);
             }
         }
-        return tempEDIPI;
+        return Optional.empty();
     }
 
     /**
@@ -91,14 +94,29 @@ public class X509ExtractorUtils {
      * @see <a href="http://docs.oracle.com/javase/7/docs/api/java/security/cert/X509Certificate.html#getSubjectAlternativeNames()">
      * X509Certificate#getSubjectAlternativeNames</a>
      */
-    public String getRFC822EmailAddress(final Collection<List<?>> subjectAltNames) {
+    public Optional<String> getRFC822EmailAddress(final Collection<List<?>> subjectAltNames) {
         if (subjectAltNames == null || subjectAltNames.isEmpty()) {
-            return null;
+            return Optional.empty();
         }
-        val email = subjectAltNames
+        return subjectAltNames
                 .stream()
                 .filter(s -> s.size() == 2 && (Integer) s.get(0) == SAN_RFC822_EMAIL_TYPE)
-                .findFirst();
-        return email.map(objects -> (String) objects.get(1)).orElse(null);
+                .findFirst()
+                .map(objects -> (String) objects.get(1));
+    }
+
+    /**
+     * Get subject alt names without checked exception.
+     * @param certificate x509 certificate
+     * @return subject alternative names as collection of two item lists, empty collection if null or error
+     */
+    public Collection<List<?>> getSubjectAltNames(final X509Certificate certificate) {
+        try {
+            val subjectAltNames = certificate.getSubjectAlternativeNames();
+            return subjectAltNames != null ? subjectAltNames : CollectionUtils.emptyCollection();
+        } catch (final CertificateParsingException e) {
+            LOGGER.warn("Error parsing certificate for subject alt names [{}]: [{}]", certificate.getSubjectDN(), e.getMessage(), e);
+            return CollectionUtils.emptyCollection();
+        }
     }
 }

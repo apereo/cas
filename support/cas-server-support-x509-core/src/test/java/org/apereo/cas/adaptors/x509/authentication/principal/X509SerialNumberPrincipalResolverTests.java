@@ -50,7 +50,7 @@ public class X509SerialNumberPrincipalResolverTests {
             .activeAttributeRepositoryIdentifiers(CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD))
             .build();
         resolver = new X509SerialNumberPrincipalResolver(context);
-        resolver.sexX509AttributeExtractor(new DefaultX509AttributeExtractor());
+        resolver.setX509AttributeExtractor(new DefaultX509AttributeExtractor());
     }
 
     @Test

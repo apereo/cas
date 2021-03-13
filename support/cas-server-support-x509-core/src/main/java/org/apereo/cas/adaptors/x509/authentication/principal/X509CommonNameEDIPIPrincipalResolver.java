@@ -25,10 +25,6 @@ import java.security.cert.X509Certificate;
 @ToString(callSuper = true)
 public class X509CommonNameEDIPIPrincipalResolver extends AbstractX509PrincipalResolver {
 
-    private static final String COMMON_NAME_VAR = "CN";
-
-    private static final int EDIPI_LENGTH = 10;
-
     public X509CommonNameEDIPIPrincipalResolver(final PrincipalResolutionContext context) {
         super(context);
     }
@@ -45,12 +41,10 @@ public class X509CommonNameEDIPIPrincipalResolver extends AbstractX509PrincipalR
             return getAlternatePrincipal(certificate);
         }
         val result = X509ExtractorUtils.retrieveTheEDIPI(commonName);
-        if (StringUtils.isBlank(result)) {
+        if (result.isEmpty()) {
             return getAlternatePrincipal(certificate);
         }
-        LOGGER.debug("Final principal id extracted from [{}] is [{}]", subjectDn, result);
-        return result;
+        LOGGER.debug("Final principal id extracted from [{}] is [{}]", subjectDn, result.get());
+        return result.get();
     }
-
-
 }

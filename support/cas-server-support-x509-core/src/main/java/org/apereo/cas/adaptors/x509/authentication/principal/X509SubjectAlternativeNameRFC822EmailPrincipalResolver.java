@@ -32,8 +32,8 @@ public class X509SubjectAlternativeNameRFC822EmailPrincipalResolver extends Abst
         try {
             val subjectAltNames = certificate.getSubjectAlternativeNames();
             val email = X509ExtractorUtils.getRFC822EmailAddress(subjectAltNames);
-            if (email != null) {
-                return email;
+            if (email.isPresent()) {
+                return email.get();
             }
         } catch (final CertificateParsingException e) {
             LoggingUtils.error(LOGGER, e);

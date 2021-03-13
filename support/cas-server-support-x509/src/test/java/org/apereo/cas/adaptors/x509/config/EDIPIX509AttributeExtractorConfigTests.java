@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.x509.config;
 import org.apereo.cas.adaptors.x509.BaseX509Tests;
 import org.apereo.cas.adaptors.x509.authentication.principal.EDIPIX509AttributeExtractor;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509AttributeExtractor;
+import org.apereo.cas.util.ResourceUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -10,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.io.ResourceLoader;
 
 import java.io.IOException;
 import java.security.cert.CertificateException;
@@ -33,9 +33,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class EDIPIX509AttributeExtractorConfigTests {
 
     @Autowired
-    private ResourceLoader resourceLoader;
-
-    @Autowired
     @Qualifier("x509AttributeExtractor")
     private X509AttributeExtractor x509AttributeExtractor;
 
@@ -47,7 +44,7 @@ public class EDIPIX509AttributeExtractorConfigTests {
     public void verifyCorrectX509AttributeExtractorLoaded() throws IOException, CertificateException {
         assertNotNull(x509AttributeExtractor);
         val certificate = (X509Certificate) CertificateFactory.getInstance("X509").generateCertificate(
-                resourceLoader.getResource("classpath:/edipi.cer").getInputStream());
+                ResourceUtils.getResourceFrom("classpath:/edipi.cer").getInputStream());
         assertTrue(x509AttributeExtractor.extractPersonAttributes(certificate).containsKey("x509EDIPI"));
     }
 }

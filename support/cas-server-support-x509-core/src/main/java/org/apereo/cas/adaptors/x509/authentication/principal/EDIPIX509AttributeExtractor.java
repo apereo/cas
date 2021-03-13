@@ -4,7 +4,6 @@ import org.apereo.cas.util.CollectionUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import java.security.cert.X509Certificate;
 import java.util.List;
 import java.util.Map;
@@ -25,10 +24,10 @@ public class EDIPIX509AttributeExtractor extends DefaultX509AttributeExtractor {
         val subjectPrincipal = certificate.getSubjectX500Principal();
         val commonName = X509ExtractorUtils.retrieveTheCommonName(subjectPrincipal.getName());
         val edipi = X509ExtractorUtils.retrieveTheEDIPI(commonName);
-        if (StringUtils.isNotEmpty(edipi)) {
-            personAttributes.put("x509EDIPI", CollectionUtils.wrapList(edipi));
+        if (edipi.isPresent()) {
+            personAttributes.put("x509EDIPI", CollectionUtils.wrapList(edipi.get()));
         } else {
-            LOGGER.debug("EDIPI not found in certificate common name: [{}]", commonName);
+            LOGGER.trace("EDIPI not found in certificate common name: [{}]", commonName);
         }
         return personAttributes;
     }

@@ -32,6 +32,8 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
 
     private String alternatePrincipalAttribute;
 
+    private X509AttributeExtractor x509AttributeExtractor;
+
     protected AbstractX509PrincipalResolver(final PrincipalResolutionContext context) {
         super(context);
     }
