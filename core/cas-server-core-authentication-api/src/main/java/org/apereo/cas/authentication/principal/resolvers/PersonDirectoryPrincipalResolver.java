@@ -90,6 +90,8 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
      */
     protected final Set<String> activeAttributeRepositoryIdentifiers;
 
+    private int order;
+
     public PersonDirectoryPrincipalResolver() {
         this(new StubPersonAttributeDao(new HashMap<>(0)), PrincipalFactoryUtils.newPrincipalFactory(), false,
             String::trim, null,
