@@ -4,6 +4,7 @@ import org.apereo.cas.util.CollectionUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+
 import java.security.cert.X509Certificate;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,7 @@ import java.util.Map;
  * Extracts EDIPI as an attribute in addition to default attributes.
  * Only certain types of certificates have EDIPI numbers so users of those certificates
  * must choose to use this extractor if they want the value extracted.
+ *
  * @author Hal Deadman
  * @since 6.4
  */
@@ -23,12 +25,9 @@ public class EDIPIX509AttributeExtractor extends DefaultX509AttributeExtractor {
         val personAttributes = super.extractPersonAttributes(certificate);
         val subjectPrincipal = certificate.getSubjectX500Principal();
         val commonName = X509ExtractorUtils.retrieveTheCommonName(subjectPrincipal.getName());
-        val edipi = X509ExtractorUtils.retrieveTheEDIPI(commonName);
-        if (edipi.isPresent()) {
-            personAttributes.put("x509EDIPI", CollectionUtils.wrapList(edipi.get()));
-        } else {
-            LOGGER.trace("EDIPI not found in certificate common name: [{}]", commonName);
-        }
+        val result = X509ExtractorUtils.retrieveTheEDIPI(commonName);
+        result.ifPresentOrElse(edipi -> personAttributes.put("x509EDIPI", CollectionUtils.wrapList(edipi)),
+            () -> LOGGER.trace("EDIPI not found in certificate common name: [{}]", commonName));
         return personAttributes;
     }
 }
