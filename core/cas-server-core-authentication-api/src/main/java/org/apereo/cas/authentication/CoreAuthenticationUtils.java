@@ -262,7 +262,7 @@ public class CoreAuthenticationUtils {
             }
 
             val predicateClazz = ClassUtils.getClass(selectionCriteria);
-            return (Predicate<org.apereo.cas.authentication.Credential>) predicateClazz.getDeclaredConstructor().newInstance();
+            return (Predicate<Credential>) predicateClazz.getDeclaredConstructor().newInstance();
         } catch (final Exception e) {
             val predicate = Pattern.compile(selectionCriteria).asPredicate();
             return credential -> predicate.test(credential.getId());
@@ -307,7 +307,6 @@ public class CoreAuthenticationUtils {
         final IPersonAttributeDao attributeRepository,
         final IAttributeMerger attributeMerger,
         final PersonDirectoryPrincipalResolverProperties... personDirectory) {
-        
         return newPersonDirectoryPrincipalResolver(principalFactory, attributeRepository,
             attributeMerger, PersonDirectoryPrincipalResolver.class, personDirectory);
     }
