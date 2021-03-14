@@ -167,6 +167,8 @@ public class CloseableKryoFactory implements FactoryBean<CloseableKryo> {
 
         val list = Arrays.asList("key");
         kryo.register(list.getClass(), new ArraysAsListSerializer());
+
+        kryo.register(String.CASE_INSENSITIVE_ORDER.getClass());
     }
 
     private static void registerNativeJdkComponentsWithKryo(final Kryo kryo) {
