@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.services.DefaultRegisteredServiceExpirationPolicy;
 import org.apereo.cas.support.saml.services.BaseSamlIdPServicesTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCacheKey;
@@ -17,7 +18,9 @@ import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.core.io.FileSystemResource;
 
+import java.time.Clock;
 import java.time.Duration;
+import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -75,5 +78,30 @@ public class SamlRegisteredServiceMetadataExpirationPolicyTests extends BaseSaml
         when(resolver.resolveSingle(argThat(argument -> argument != null && argument.size() == 1))).thenReturn(entity);
         when(resolver.resolveSingle(argThat(argument -> argument != null && argument.size() > 1))).thenReturn(null);
         assertEquals(spCacheDuration.toNanos(), policy.expireAfterCreate(cacheKey, resolver, System.currentTimeMillis()));
+    }
+
+    @Test
+    @SuppressWarnings("JavaTimeDefaultTimeZone")
+    public void verifyPolicyByServiceExpirationPolicy() throws Exception {
+        val policy = new SamlRegisteredServiceMetadataExpirationPolicy(Beans.newDuration("PT5M"));
+        val props = new SamlIdPProperties();
+        props.getMetadata().getFileSystem().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
+
+        val service = new SamlRegisteredService();
+        service.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy()
+            .setExpirationDate(LocalDate.now(Clock.systemDefaultZone()).plusDays(1).toString()));
+        
+        service.setMetadataExpirationDuration(StringUtils.EMPTY);
+        service.setServiceId("https://carmenwiki.osu.edu/shibboleth");
+        service.setMetadataLocation("classpath:GroovyMetadataResolver.groovy");
+        val cacheKey = new SamlRegisteredServiceCacheKey(service, new CriteriaSet());
+        val resolver = mock(MetadataResolver.class);
+
+        val entity = mock(EntityDescriptor.class);
+        when(entity.getCacheDuration()).thenReturn(null);
+        when(resolver.resolveSingle(argThat(argument -> argument != null && argument.size() == 1))).thenReturn(entity);
+        when(resolver.resolveSingle(argThat(argument -> argument != null && argument.size() > 1))).thenReturn(null);
+
+        assertNotEquals(policy.getDefaultExpiration(), policy.expireAfterCreate(cacheKey, resolver, System.currentTimeMillis()));
     }
 }

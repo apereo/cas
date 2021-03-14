@@ -48,14 +48,34 @@ cas.version=6.4.0-RC3
 
 The following items are new improvements and enhancements presented in this release.
 
+## CAS Initializr
+
+[CAS Initializr](../installation/WAR-Overlay-Initializr.html) is now moved to its own separate repository.
+
+<div class="alert alert-info">
+<strong>Note</strong><br/>It is expected that at some point in the not-too-distant future, previous/existing 
+WAR overlay projects would be deprecated and ultimately archived, allowing the CAS Initializr 
+to be the one true way to generate a starting template project for all CAS deployments.
+</div>
+
 ## Other Stuff
 
 - Ordering and sorting of the attribute repositories is now restored to respect the `order` setting.      
 - Thymeleaf views specified via template prefixes in the configuration can now support `classpath` resources.
+- SAML2 metadata cache can determine its expiration policy using [service expiration policy](../services/Configuring-Service-Expiration-Policy.html) if defined.
+- User interface forms that contain a `username` field are set to prevent spell check and auto capitalization.
+- [X509 EDIPI](../authentication/X509-Authentication.html) can now be extracted as an attribute, when available.
+- [Syncope authentication](../authentication/Syncope-Authentication.html) adds support for multiple relationships of the same type.
+- User interfaces fixes for login sizing related to flexbox in IE11 where the login page is far too thin to be usable.
+- [Surrogate authentication](../authentication/Surrogate-Authentication.html) can correctly identify the primary principal's attributes for MFA activation.
+- Person directory principal resolution can use attributes from the *current authentication attempt* to build the final principal.
 
 ## Library Upgrades
 
 - Person Directory  
 - Hibernate
-- Apache Veloci
+- Apache Velocity
 - Apache jClouds
+- Kryo
+- Hazelcast
+- Infinispan
