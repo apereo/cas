@@ -4,14 +4,13 @@ import org.apereo.cas.config.OktaConfigurationFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.MockWebServer;
 
+import com.okta.sdk.impl.oauth2.OAuth2TokenRetrieverException;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
-
-import java.io.EOFException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
