@@ -45,7 +45,7 @@ public class OktaConfigurationFactoryTests {
         try (val webServer = new MockWebServer(8923, HttpStatus.OK)) {
             webServer.start();
             assertNotNull(OktaConfigurationFactory.buildAuthenticationClient(casProperties.getAuthn().getOkta()));
-            assertThrows(EOFException.class, () -> OktaConfigurationFactory.buildClient(casProperties.getAuthn().getAttributeRepository().getOkta()));
+            assertThrows(OAuth2TokenRetrieverException.class, () -> OktaConfigurationFactory.buildClient(casProperties.getAuthn().getAttributeRepository().getOkta()));
         }
 
     }
