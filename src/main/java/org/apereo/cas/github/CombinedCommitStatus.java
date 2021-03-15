@@ -16,7 +16,6 @@ import java.util.List;
 @Getter
 @ToString
 public class CombinedCommitStatus {
-    public static final String TRAVIS_CI = "continuous-integration/travis-ci/pr";
     public static final String WIP = "WIP";
 
     private final String state;

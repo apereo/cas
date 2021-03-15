@@ -58,6 +58,9 @@ public interface GitHubOperations {
 
     Page<PullRequestFile> getPullRequestFiles(String organization, String repository, String number);
 
+    WorkflowRun getWorkflowRuns(String organization, String repository, String branch, String event, String status);
+
+
     Page<CommitStatus> getPullRequestCommitStatus(String organization, String repository, String number);
 
     Page<CommitStatus> getPullRequestCommitStatus(PullRequest pr);
@@ -65,6 +68,8 @@ public interface GitHubOperations {
     CombinedCommitStatus getCombinedPullRequestCommitStatus(final String organization, final String repository, String ref);
 
     Page<Commit> getPullRequestCommits(String organization, String repository, String number);
+
+    Commit getCommits(String organization, String repository, String branch);
 
     void closePullRequest(String organization, String repository, String number);
 
@@ -78,4 +83,9 @@ public interface GitHubOperations {
     boolean createStatus(String organization, String repository, String ref,
                          String state, String targetUrl, String description,
                          String context) throws Exception;
+
+    boolean cancelWorkflowRun(String organization, String repository,
+                           WorkflowRun.WorkflowRunDetails run) throws Exception;
+
+    Page<Branch> getBranches(String organization, String name);
 }

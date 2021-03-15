@@ -34,7 +34,7 @@ public class CasPullRequestListener implements PullRequestListener {
         processLabelsByFeatures(pr);
         removeLabelWorkInProgress(pr);
         checkForPullRequestTestCases(pr);
-        mergePullRequestIfPossible(pr);
+//        mergePullRequestIfPossible(pr);
     }
 
     private void processLabelReadyForContinuousIntegration(final PullRequest pr) {
@@ -72,14 +72,14 @@ public class CasPullRequestListener implements PullRequestListener {
         }
     }
 
-    private void mergePullRequestIfPossible(final PullRequest pr) {
-        if (pr.isLabeledAs(CasLabels.LABEL_BOT) && pr.isLabeledAs(CasLabels.LABEL_DEPENDENCIES_MODULES)) {
-            val checkRun = this.repository.getCombinedPullRequestCommitStatuses(pr);
-            if (checkRun.isCheckStatusSuccess(CombinedCommitStatus.TRAVIS_CI)) {
-                this.repository.mergePullRequestIntoBase(pr);
-            }
-        }
-    }
+//    private void mergePullRequestIfPossible(final PullRequest pr) {
+//        if (pr.isLabeledAs(CasLabels.LABEL_BOT) && pr.isLabeledAs(CasLabels.LABEL_DEPENDENCIES_MODULES)) {
+//            val checkRun = this.repository.getCombinedPullRequestCommitStatuses(pr);
+//            if (checkRun.isCheckStatusSuccess(CombinedCommitStatus.TRAVIS_CI)) {
+//                this.repository.mergePullRequestIntoBase(pr);
+//            }
+//        }
+//    }
 
     private boolean processInvalidPullRequest(final PullRequest pr) {
         val count = repository.getPullRequestFiles(pr).stream()

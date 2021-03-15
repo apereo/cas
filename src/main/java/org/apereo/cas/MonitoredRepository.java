@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+
+import org.apereo.cas.github.Branch;
 import org.apereo.cas.github.CheckRun;
 import org.apereo.cas.github.CombinedCommitStatus;
 import org.apereo.cas.github.Commit;
@@ -70,6 +72,21 @@ public class MonitoredRepository {
         throw new RuntimeException("Unable to determine version in master branch");
     }
 
+    public List<Branch> getActiveBranches() {
+        final List<Branch> branches = new ArrayList<>();
+        try {
+            Page<Branch> br = gitHub.getBranches(getOrganization(), getName());
+            while (br != null) {
+                branches.addAll(br.getContent());
+                br = br.next();
+            }
+            log.info("Available branches are {}", branches.stream().map(Object::toString).collect(Collectors.joining(",")));
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return branches;
+    }
+
     private List<Label> getActiveLabels() {
         final List<Label> labels = new ArrayList<>();
         try {
@@ -85,7 +102,7 @@ public class MonitoredRepository {
         return labels;
     }
 
-    private List<Milestone> getActiveMilestones() {
+    public List<Milestone> getActiveMilestones() {
         final List<Milestone> milestones = new ArrayList<>();
         try {
             Page<Milestone> page = gitHub.getMilestones(getOrganization(), getName());
@@ -111,7 +128,7 @@ public class MonitoredRepository {
     public Optional<Milestone> getMilestoneForMaster() {
         List<Milestone> milestones = getActiveMilestones();
 
-        final Version currentVersion = Version.valueOf(currentVersionInMaster.toString().replace("-SNAPSHOT", ""));
+        var currentVersion = Version.valueOf(currentVersionInMaster.toString().replace("-SNAPSHOT", ""));
         Optional<Milestone> result = milestones
             .stream()
             .sorted()
@@ -134,6 +151,15 @@ public class MonitoredRepository {
                     && milestoneVersion.getMinorVersion() == branchVersion.getMinorVersion();
             })
             .findFirst();
+    }
+
+    public String getBranchForMilestone(final Milestone ms) {
+        var result = getMilestoneForMaster();
+        if (result.isPresent() && result.get().getNumber().equalsIgnoreCase(ms.getNumber())) {
+             return "master";
+        }
+        val branchVersion = Version.valueOf(ms.getTitle());
+        return branchVersion.getMajorVersion() + "." + branchVersion.getMinorVersion() + ".x";
     }
 
     public PullRequest mergePullRequestWithBase(final PullRequest pr) {
@@ -187,6 +213,10 @@ public class MonitoredRepository {
             pages = pages.next();
         }
         return commits;
+    }
+
+    public Commit getHeadCommitFor(final String shaOrBranch) {
+        return this.gitHub.getCommits(getOrganization(), getName(), shaOrBranch);
     }
 
     public CheckRun getLatestCompletedCheckRunsFor(final PullRequest pr, String checkName) {
@@ -244,5 +274,49 @@ public class MonitoredRepository {
 
     public CombinedCommitStatus getCombinedPullRequestCommitStatuses(final PullRequest pr) {
         return this.gitHub.getCombinedPullRequestCommitStatus(getOrganization(), getName(), pr.getHead().getSha());
+    }
+
+    public void processSupersededQueuedWorkflowRuns(final String branch) {
+        var head = getHeadCommitFor(branch);
+        var workflowRun = gitHub.getWorkflowRuns(getOrganization(), getName(),
+            branch, null, "queued");
+        workflowRun.getRuns().forEach(run -> {
+            try {
+                if (!run.getHeadSha().equalsIgnoreCase(head.getSha())) {
+                    log.info("Cancelling superseded workflow run {}", run);
+                    this.gitHub.cancelWorkflowRun(getOrganization(), getName(), run);
+                }
+            } catch (final Exception e) {
+                log.error(e.getMessage(), e);
+            }
+        });
+    }
+
+    public void processWorkflowRunsForPullRequests(final List<Branch> currentBranches) {
+        var workflowRun = gitHub.getWorkflowRuns(getOrganization(), getName(),
+            null, "pull_request", "queued");
+        workflowRun.getRuns().forEach(run -> {
+            try {
+                if (!run.getHeadRepository().isFork()) {
+                    val found = currentBranches.stream().anyMatch(c -> c.getName().equalsIgnoreCase(run.getHeadBranch()));
+                    if (!found) {
+                        log.info("Workflow run has no active branches; Cancelling workflow run {}", run);
+                        this.gitHub.cancelWorkflowRun(getOrganization(), getName(), run);
+                    } else {
+                        log.info("Workflow run {} is linked to active branch", run);
+                    }
+                } else {
+                    if (run.getPullRequests().isEmpty()) {
+                        log.info("Workflow run has no pull requests; cancelling workflow run {}", run);
+                        this.gitHub.cancelWorkflowRun(getOrganization(), getName(), run);
+                    } else {
+                        log.info("Workflow run {} has open pull requests", run);
+                    }
+                }
+
+            } catch (final Exception e) {
+                log.error(e.getMessage(), e);
+            }
+        });
     }
 }

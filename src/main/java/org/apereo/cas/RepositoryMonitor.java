@@ -16,16 +16,15 @@
 
 package org.apereo.cas;
 
-import org.apereo.cas.github.CombinedCommitStatus;
 import org.apereo.cas.github.GitHubOperations;
 import org.apereo.cas.github.Page;
 import org.apereo.cas.github.PullRequest;
 
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Central class for monitoring the configured repository.
@@ -52,48 +51,32 @@ class RepositoryMonitor {
     void monitor() {
         log.info("Monitoring {}/{}", this.repository.getOrganization(), this.repository.getName());
         try {
-            Page<PullRequest> page = this.gitHub.getPullRequests(this.repository.getOrganization(), this.repository.getName());
+
+            log.info("Processing pull requests for {}/{}", this.repository.getOrganization(), this.repository.getName());
+            var page = this.gitHub.getPullRequests(this.repository.getOrganization(), this.repository.getName());
             while (page != null) {
-                for (final PullRequest pr : page.getContent()) {
-                    for (final PullRequestListener listener : this.pullRequestListeners) {
-                        try {
-                            if (pr.isOpen()) {
-                                listener.onOpenPullRequest(pr);
-                            }
-                        } catch (final Exception ex) {
-                            log.warn("Listener '{}' failed when handling pr '{}'", listener, pr, ex);
-                        }
-                    }
-                }
+                page.getContent()
+                    .stream()
+                    .filter(PullRequest::isOpen)
+                    .forEach(pr -> pullRequestListeners.forEach(listener -> listener.onOpenPullRequest(pr)));
                 page = page.next();
             }
+            
+            log.info("Processing workflow runs for {}/{}", this.repository.getOrganization(), this.repository.getName());
+            var milestones = this.repository.getActiveMilestones();
+            var branches = milestones
+                .stream()
+                .map(repository::getBranchForMilestone)
+                .collect(Collectors.toSet());
+            var currentBranches = this.repository.getActiveBranches();
+            branches.removeIf(br -> currentBranches.stream().noneMatch(c -> c.getName().equalsIgnoreCase(br)));
+            branches.forEach(repository::processSupersededQueuedWorkflowRuns);
+            repository.processWorkflowRunsForPullRequests(currentBranches);
+
         } catch (final Exception ex) {
             log.warn("A failure occurred during monitoring", ex);
         }
         log.info("Monitoring of {}/{} completed", this.repository.getOrganization(), this.repository.getName());
-    }
-
-    @Scheduled(fixedRate = 90 * 60 * 1000)
-    void monitorHourly() {
-        log.info("Starting hourly monitoring {}/{}", this.repository.getOrganization(), this.repository.getName());
-        try {
-            Page<PullRequest> page = this.gitHub.getPullRequests(this.repository.getOrganization(), this.repository.getName());
-            while (page != null) {
-                for (final PullRequest pr : page.getContent()) {
-                    if (!pr.isLabeledAs(CasLabels.LABEL_WIP) && !pr.isLabeledAs(CasLabels.LABEL_PENDING)
-                        && !pr.isLabeledAs(CasLabels.LABEL_BOT)) {
-                        val runs = this.repository.getCombinedPullRequestCommitStatuses(pr);
-                        if (runs.isCheckStatusFailure(CombinedCommitStatus.TRAVIS_CI)) {
-                            // repository.mergePullRequestWithBase(pr);
-                        }
-                    }
-                }
-                page = page.next();
-            }
-        } catch (final Exception ex) {
-            log.warn("A failure occurred during monitoring", ex);
-        }
-        log.info("Hourly monitoring of {}/{} completed", this.repository.getOrganization(), this.repository.getName());
     }
 
 }

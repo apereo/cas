@@ -19,6 +19,7 @@ package org.apereo.cas.github;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import lombok.ToString;
 
 /**
  * A GitHub user.
@@ -26,6 +27,7 @@ import lombok.Getter;
  * @author Andy Wilkinson
  */
 @Getter
+@ToString
 public class User {
 
     private final String login;

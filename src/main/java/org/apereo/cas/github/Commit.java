@@ -19,8 +19,10 @@ package org.apereo.cas.github;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
+@ToString(of={"author", "url"})
 public final class Commit {
     private String url;
     private String sha;

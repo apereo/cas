@@ -17,7 +17,9 @@
 package org.apereo.cas.github;
 
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.val;
+import org.apache.http.client.utils.URIBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -157,6 +159,25 @@ public class GitHubTemplate implements GitHubOperations {
     }
 
     @Override
+    @SneakyThrows
+    public WorkflowRun getWorkflowRuns(String organization, String repository, String branch, String event, String status) {
+        var url = "https://api.github.com/repos/" + organization + '/' + repository + "/actions/runs?";
+        var urlBuilder = new URIBuilder(url);
+
+        if (branch != null) {
+            urlBuilder.addParameter("branch", branch);
+        }
+        if (event != null) {
+            urlBuilder.addParameter("event", event);
+        }
+        if (status != null) {
+            urlBuilder.addParameter("status", status);
+        }
+        val headers = new LinkedMultiValueMap(Map.of("Accept", List.of("application/vnd.github.v3+json")));
+        return getSinglePage(urlBuilder.toString(), WorkflowRun.class, Map.of(), headers);
+    }
+
+    @Override
     public Page<CommitStatus> getPullRequestCommitStatus(final String organization, final String repository, final String number) {
         val pr = getPullRequest(organization, repository, number);
         return getPullRequestCommitStatus(pr);
@@ -177,6 +198,12 @@ public class GitHubTemplate implements GitHubOperations {
     public Page<Commit> getPullRequestCommits(final String organization, final String repository, final String number) {
         val url = "https://api.github.com/repos/" + organization + '/' + repository + "/pulls/" + number + "/commits";
         return getPage(url, Commit[].class);
+    }
+
+    @Override
+    public Commit getCommits(final String organization, final String repository, final String branch) {
+        val url = "https://api.github.com/repos/" + organization + '/' + repository + "/commits/" + branch;
+        return getSinglePage(url, Commit.class);
     }
 
     @Override
@@ -268,50 +295,6 @@ public class GitHubTemplate implements GitHubOperations {
         if (response.getStatusCode() != HttpStatus.OK) {
             log.warn("Failed to add milestone to pull request. Response status: " + response.getStatusCode());
         }
-    }
-
-    private <T> Page<T> getPage(final String url, final Class<T[]> type, final Map params) {
-        return getPage(url, type, params, new HttpHeaders());
-    }
-
-    private <T> Page<T> getPage(final String url, final Class<T[]> type, final Map params, final MultiValueMap headers) {
-        if (!StringUtils.hasText(url)) {
-            return null;
-        }
-        final HttpHeaders hd = new HttpHeaders(headers);
-        final ResponseEntity<T> contents = this.rest.exchange(url, HttpMethod.GET, new HttpEntity<>(hd), type, params);
-        List<T> body = Arrays.asList(type.cast(contents.getBody()));
-        return new StandardPage<T>(body, () -> getPage(getNextUrl(contents), type));
-    }
-
-    private <T> Page<T> getPage(final String url, final Class<T[]> type) {
-        return getPage(url, type, Map.of());
-    }
-
-    private <T> T getSinglePage(final String url, final Class<T> type) {
-        return getSinglePage(url, type, Map.of());
-    }
-
-
-    private <T> T getSinglePage(final String url, final Class<T> type, final Map params) {
-        if (!StringUtils.hasText(url)) {
-            return null;
-        }
-        final ResponseEntity<T> contents = this.rest.getForEntity(url, type, params);
-        return contents.getBody();
-    }
-
-    private <T> T getSinglePage(final String url, final Class<T> type, final Map params, final MultiValueMap headers) {
-        if (!StringUtils.hasText(url)) {
-            return null;
-        }
-        val hd = new HttpHeaders(headers);
-        final ResponseEntity<T> contents = this.rest.exchange(url, HttpMethod.GET, new HttpEntity<>(hd), type, params);
-        return contents.getBody();
-    }
-
-    private String getNextUrl(final ResponseEntity<?> response) {
-        return this.linkParser.parse(response.getHeaders().getFirst("Link")).get("next");
     }
 
     @Override
@@ -466,6 +449,23 @@ public class GitHubTemplate implements GitHubOperations {
         return response.getStatusCode().is2xxSuccessful();
 
     }
+
+    @Override
+    public Page<Branch> getBranches(final String organization, final String name) {
+        val url = "https://api.github.com/repos/" + organization + '/' + name + "/branches";
+        return getPage(url, Branch[].class);
+    }
+
+    @Override
+    public boolean cancelWorkflowRun(final String organization,
+                                     final String repository,
+                                     final WorkflowRun.WorkflowRunDetails run) throws Exception {
+        val body = new HashMap<>();
+        val url = run.getCancelUrl();
+        val response = this.rest.exchange(new RequestEntity(body, HttpMethod.POST, new URI(url)), Map.class);
+        return response.getStatusCode().is2xxSuccessful();
+    }
+
     private static final class ErrorLoggingMappingJackson2HttpMessageConverter
         extends MappingJackson2HttpMessageConverter {
 
@@ -505,6 +505,49 @@ public class GitHubTemplate implements GitHubOperations {
             return execution.execute(request, body);
         }
 
+    }
+
+    private <T> Page<T> getPage(final String url, final Class<T[]> type, final Map params) {
+        return getPage(url, type, params, new HttpHeaders());
+    }
+
+    private <T> Page<T> getPage(final String url, final Class<T[]> type, final Map params, final MultiValueMap headers) {
+        if (!StringUtils.hasText(url)) {
+            return null;
+        }
+        final HttpHeaders hd = new HttpHeaders(headers);
+        final ResponseEntity<T> contents = this.rest.exchange(url, HttpMethod.GET, new HttpEntity<>(hd), type, params);
+        List<T> body = Arrays.asList(type.cast(contents.getBody()));
+        return new StandardPage<T>(body, () -> getPage(getNextUrl(contents), type));
+    }
+
+    private <T> Page<T> getPage(final String url, final Class<T[]> type) {
+        return getPage(url, type, Map.of());
+    }
+
+    private <T> T getSinglePage(final String url, final Class<T> type) {
+        return getSinglePage(url, type, Map.of());
+    }
+
+    private <T> T getSinglePage(final String url, final Class<T> type, final Map params) {
+        if (!StringUtils.hasText(url)) {
+            return null;
+        }
+        final ResponseEntity<T> contents = this.rest.getForEntity(url, type, params);
+        return contents.getBody();
+    }
+
+    private <T> T getSinglePage(final String url, final Class<T> type, final Map params, final MultiValueMap headers) {
+        if (!StringUtils.hasText(url)) {
+            return null;
+        }
+        val hd = new HttpHeaders(headers);
+        final ResponseEntity<T> contents = this.rest.exchange(url, HttpMethod.GET, new HttpEntity<>(hd), type, params);
+        return contents.getBody();
+    }
+
+    private String getNextUrl(final ResponseEntity<?> response) {
+        return this.linkParser.parse(response.getHeaders().getFirst("Link")).get("next");
     }
 
 }
