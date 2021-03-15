@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.duo.authn;
 
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.http.HttpClient;
@@ -15,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -34,8 +36,8 @@ public class BasicDuoSecurityAuthenticationService extends BaseDuoSecurityAuthen
     private static final long serialVersionUID = -6690808348975271382L;
 
     public BasicDuoSecurityAuthenticationService(final DuoSecurityMultifactorProperties duoProperties,
-        final HttpClient httpClient) {
-        super(duoProperties, httpClient);
+        final HttpClient httpClient, final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver) {
+        super(duoProperties, httpClient, multifactorAuthenticationPrincipalResolver);
     }
 
     @Override

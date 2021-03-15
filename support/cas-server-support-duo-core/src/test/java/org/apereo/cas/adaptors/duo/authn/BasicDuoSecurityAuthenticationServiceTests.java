@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.duo.authn;
 
 import org.apereo.cas.adaptors.duo.DuoSecurityUserAccountStatus;
+import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -23,6 +24,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
 
+import java.util.List;
 import java.util.Map;
 
 import static java.nio.charset.StandardCharsets.*;
@@ -59,14 +61,16 @@ public class BasicDuoSecurityAuthenticationServiceTests {
 
     @Test
     public void verifySign() {
-        val service = new BasicDuoSecurityAuthenticationService(casProperties.getAuthn().getMfa().getDuo().get(0), httpClient);
+        val service = new BasicDuoSecurityAuthenticationService(casProperties.getAuthn().getMfa().getDuo().get(0),
+            httpClient, List.of(MultifactorAuthenticationPrincipalResolver.identical()));
         assertTrue(service.getDuoClient().isEmpty());
         assertTrue(service.signRequestToken("casuser").isPresent());
     }
 
     @Test
     public void verifyAuthN() {
-        val service = new BasicDuoSecurityAuthenticationService(casProperties.getAuthn().getMfa().getDuo().get(0), httpClient);
+        val service = new BasicDuoSecurityAuthenticationService(casProperties.getAuthn().getMfa().getDuo().get(0),
+            httpClient, List.of(MultifactorAuthenticationPrincipalResolver.identical()));
         assertTrue(service.getDuoClient().isEmpty());
         val token = service.signRequestToken("casuser").get();
         val creds = new DuoSecurityCredential("casuser", token + ":casuser", "mfa-duo");
@@ -75,7 +79,8 @@ public class BasicDuoSecurityAuthenticationServiceTests {
 
     @Test
     public void verifyAuthNNoToken() {
-        val service = new BasicDuoSecurityAuthenticationService(casProperties.getAuthn().getMfa().getDuo().get(0), httpClient);
+        val service = new BasicDuoSecurityAuthenticationService(casProperties.getAuthn().getMfa().getDuo().get(0),
+            httpClient, List.of(MultifactorAuthenticationPrincipalResolver.identical()));
         assertTrue(service.getDuoClient().isEmpty());
         val creds = new DuoSecurityCredential("casuser", StringUtils.EMPTY, "mfa-duo");
         assertThrows(IllegalArgumentException.class, () -> service.authenticate(creds));
@@ -83,7 +88,8 @@ public class BasicDuoSecurityAuthenticationServiceTests {
 
     @Test
     public void verifyAuthNDirect() throws Exception {
-        val service = new BasicDuoSecurityAuthenticationService(casProperties.getAuthn().getMfa().getDuo().get(0), httpClient);
+        val service = new BasicDuoSecurityAuthenticationService(casProperties.getAuthn().getMfa().getDuo().get(0),
+            httpClient, List.of(MultifactorAuthenticationPrincipalResolver.identical()));
         try (val webServer = new MockWebServer(6342)) {
             webServer.start();
             val creds = new DuoSecurityDirectCredential(RegisteredServiceTestUtils.getAuthentication(), "mfa-duo");
@@ -94,7 +100,7 @@ public class BasicDuoSecurityAuthenticationServiceTests {
     @Test
     public void verifyGetAccountNoStat() {
         val props = casProperties.getAuthn().getMfa().getDuo().get(0);
-        val service = new BasicDuoSecurityAuthenticationService(props, httpClient) {
+        val service = new BasicDuoSecurityAuthenticationService(props, httpClient, List.of(MultifactorAuthenticationPrincipalResolver.identical())) {
             private static final long serialVersionUID = 6245462449489284549L;
 
             @Override
@@ -109,7 +115,7 @@ public class BasicDuoSecurityAuthenticationServiceTests {
     @Test
     public void verifyGetAccountEnroll() {
         val props = casProperties.getAuthn().getMfa().getDuo().get(0);
-        val service = new BasicDuoSecurityAuthenticationService(props, httpClient) {
+        val service = new BasicDuoSecurityAuthenticationService(props, httpClient, List.of(MultifactorAuthenticationPrincipalResolver.identical())) {
             private static final long serialVersionUID = 6245462449489284549L;
 
             @Override
@@ -126,7 +132,7 @@ public class BasicDuoSecurityAuthenticationServiceTests {
     @Test
     public void verifyGetAccountFail() {
         val props = casProperties.getAuthn().getMfa().getDuo().get(0);
-        val service = new BasicDuoSecurityAuthenticationService(props, httpClient) {
+        val service = new BasicDuoSecurityAuthenticationService(props, httpClient, List.of(MultifactorAuthenticationPrincipalResolver.identical())) {
             private static final long serialVersionUID = 6245462449489284549L;
 
             @Override
@@ -142,7 +148,7 @@ public class BasicDuoSecurityAuthenticationServiceTests {
     @Test
     public void verifyGetAccountAuth() {
         val props = casProperties.getAuthn().getMfa().getDuo().get(0);
-        val service = new BasicDuoSecurityAuthenticationService(props, httpClient) {
+        val service = new BasicDuoSecurityAuthenticationService(props, httpClient, List.of(MultifactorAuthenticationPrincipalResolver.identical())) {
             private static final long serialVersionUID = 6245462449489284549L;
 
             @Override
@@ -162,7 +168,7 @@ public class BasicDuoSecurityAuthenticationServiceTests {
             new ByteArrayResource(entity.getBytes(UTF_8), "Output"), OK)) {
             webServer.start();
             val props = new DuoSecurityMultifactorProperties().setDuoApiHost("http://localhost:9310");
-            val service = new BasicDuoSecurityAuthenticationService(props, httpClient);
+            val service = new BasicDuoSecurityAuthenticationService(props, httpClient, List.of(MultifactorAuthenticationPrincipalResolver.identical()));
             assertTrue(service.ping());
         }
     }

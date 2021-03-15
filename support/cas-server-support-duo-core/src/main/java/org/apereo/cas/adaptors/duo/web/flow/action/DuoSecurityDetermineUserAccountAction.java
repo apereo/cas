@@ -28,7 +28,7 @@ public class DuoSecurityDetermineUserAccountAction extends AbstractMultifactorAu
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         val authentication = WebUtils.getAuthentication(requestContext);
-        val principal = authentication.getPrincipal();
+        val principal = resolvePrincipal(authentication.getPrincipal());
 
         val duoAuthenticationService = provider.getDuoAuthenticationService();
         val account = duoAuthenticationService.getUserAccount(principal.getId());
