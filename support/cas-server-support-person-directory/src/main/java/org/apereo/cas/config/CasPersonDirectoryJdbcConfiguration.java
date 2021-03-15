@@ -1,7 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.core.authentication.JdbcPrincipalAttributesProperties;
+import org.apereo.cas.configuration.model.support.jdbc.JdbcPrincipalAttributesProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlan;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;

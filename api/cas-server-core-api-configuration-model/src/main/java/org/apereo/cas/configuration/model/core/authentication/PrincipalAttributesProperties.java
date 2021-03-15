@@ -1,6 +1,11 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
 import org.apereo.cas.configuration.model.support.azuread.AzureActiveDirectoryAttributesProperties;
+import org.apereo.cas.configuration.model.support.couchbase.authentication.CouchbasePrincipalAttributesProperties;
+import org.apereo.cas.configuration.model.support.jdbc.JdbcPrincipalAttributesProperties;
+import org.apereo.cas.configuration.model.support.ldap.LdapPrincipalAttributesProperties;
+import org.apereo.cas.configuration.model.support.okta.OktaPrincipalAttributesProperties;
+import org.apereo.cas.configuration.model.support.redis.RedisPrincipalAttributesProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -121,4 +126,10 @@ public class PrincipalAttributesProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private AttributeDefinitionStoreProperties attributeDefinitionStore = new AttributeDefinitionStoreProperties();
+
+    /**
+     * Fetch user attributes from Okta.
+     */
+    @NestedConfigurationProperty
+    private OktaPrincipalAttributesProperties okta = new OktaPrincipalAttributesProperties();
 }

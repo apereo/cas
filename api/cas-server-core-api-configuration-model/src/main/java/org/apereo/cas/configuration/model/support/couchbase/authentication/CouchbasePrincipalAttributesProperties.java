@@ -1,4 +1,4 @@
-package org.apereo.cas.configuration.model.core.authentication;
+package org.apereo.cas.configuration.model.support.couchbase.authentication;
 
 import org.apereo.cas.configuration.model.support.couchbase.BaseCouchbaseProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;

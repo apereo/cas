@@ -1,6 +1,6 @@
 package org.apereo.cas.persondir.support;
 
-import org.apereo.cas.configuration.model.core.authentication.CouchbasePrincipalAttributesProperties;
+import org.apereo.cas.configuration.model.support.couchbase.authentication.CouchbasePrincipalAttributesProperties;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.util.CollectionUtils;
 

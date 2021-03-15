@@ -12,11 +12,13 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.okta.OktaAuthenticationHandler;
 import org.apereo.cas.services.ServicesManager;
 
+import com.okta.authn.sdk.client.AuthenticationClient;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -29,10 +31,11 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Configuration(value = "oktaAuthenticationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "oktaAuthenticationConfiguration", proxyBeanMethods = true)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnProperty("cas.authn.okta.organization-url")
 public class OktaAuthenticationConfiguration {
-
+    
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
@@ -47,7 +50,6 @@ public class OktaAuthenticationConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-
     @ConditionalOnMissingBean(name = "oktaAuthenticationEventExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer oktaAuthenticationEventExecutionPlanConfigurer(
@@ -56,29 +58,33 @@ public class OktaAuthenticationConfiguration {
             oktaAuthenticationHandler, defaultPrincipalResolver.getObject());
     }
 
-    @Configuration(value = "OktaInternalAuthenticationConfiguration", proxyBeanMethods = false)
-    public class OktaAuthenticationInternalConfiguration {
-        @ConditionalOnMissingBean(name = "oktaPrincipalFactory")
-        @Bean
-        public PrincipalFactory oktaPrincipalFactory() {
-            return PrincipalFactoryUtils.newPrincipalFactory();
-        }
+    @ConditionalOnMissingBean(name = "oktaPrincipalFactory")
+    @Bean
+    public PrincipalFactory oktaPrincipalFactory() {
+        return PrincipalFactoryUtils.newPrincipalFactory();
+    }
 
-        @ConditionalOnMissingBean(name = "oktaAuthenticationHandler")
-        @Bean
-        @RefreshScope
-        @Autowired
-        public AuthenticationHandler oktaAuthenticationHandler(
-            @Qualifier("oktaPrincipalFactory") final PrincipalFactory oktaPrincipalFactory) {
-            val okta = casProperties.getAuthn().getOkta();
-            val handler = new OktaAuthenticationHandler(okta.getName(),
-                servicesManager.getObject(),
-                oktaPrincipalFactory,
-                okta);
-            handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(okta.getPrincipalTransformation()));
-            handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(okta.getPasswordEncoder(), applicationContext));
-            handler.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(okta.getCredentialCriteria()));
-            return handler;
-        }
+    @ConditionalOnMissingBean(name = "oktaAuthenticationHandler")
+    @Bean
+    @RefreshScope
+    public AuthenticationHandler oktaAuthenticationHandler() {
+        val okta = casProperties.getAuthn().getOkta();
+        val handler = new OktaAuthenticationHandler(okta.getName(),
+            servicesManager.getObject(),
+            oktaPrincipalFactory(),
+            okta,
+            oktaAuthenticationClient());
+        handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(okta.getPrincipalTransformation()));
+        handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(okta.getPasswordEncoder(), applicationContext));
+        handler.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(okta.getCredentialCriteria()));
+        return handler;
+    }
+
+    @ConditionalOnMissingBean(name = "oktaAuthenticationClient")
+    @Bean
+    @RefreshScope
+    public AuthenticationClient oktaAuthenticationClient() {
+        val properties = casProperties.getAuthn().getOkta();
+        return OktaConfigurationFactory.buildAuthenticationClient(properties);
     }
 }

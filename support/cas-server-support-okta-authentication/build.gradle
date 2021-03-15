@@ -17,6 +17,7 @@ dependencies {
     implementation project(":core:cas-server-core-configuration-api")
     
     implementation project(":support:cas-server-support-person-directory")
+    implementation project(":support:cas-server-support-person-directory-core")
 
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-services")

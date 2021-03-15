@@ -1,6 +1,5 @@
-package org.apereo.cas.configuration.model.core.authentication;
+package org.apereo.cas.configuration.model.support.redis;
 
-import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
