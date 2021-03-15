@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.duo.authn;
 
+import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -41,7 +43,8 @@ public class UniversalPromptDuoSecurityAuthenticationServiceTests {
         when(duoClient.healthCheck()).thenThrow(new RuntimeException());
 
         val duoProperties = new DuoSecurityMultifactorAuthenticationProperties();
-        val service = new UniversalPromptDuoSecurityAuthenticationService(duoProperties, mock(HttpClient.class), duoClient);
+        val service = new UniversalPromptDuoSecurityAuthenticationService(duoProperties, mock(HttpClient.class), duoClient,
+            List.of(MultifactorAuthenticationPrincipalResolver.identical()));
         assertTrue(service.getDuoClient().isPresent());
         assertFalse(service.ping());
     }
@@ -51,7 +54,8 @@ public class UniversalPromptDuoSecurityAuthenticationServiceTests {
         val duoClient = mock(Client.class);
         when(duoClient.healthCheck()).thenReturn(new HealthCheckResponse());
         val duoProperties = new DuoSecurityMultifactorAuthenticationProperties();
-        val service = new UniversalPromptDuoSecurityAuthenticationService(duoProperties, mock(HttpClient.class), duoClient);
+        val service = new UniversalPromptDuoSecurityAuthenticationService(duoProperties, mock(HttpClient.class), duoClient,
+            List.of(MultifactorAuthenticationPrincipalResolver.identical()));
         assertTrue(service.getDuoClient().isPresent());
         assertTrue(service.ping());
     }
@@ -88,7 +92,7 @@ public class UniversalPromptDuoSecurityAuthenticationServiceTests {
 
         val duoProperties = new DuoSecurityMultifactorAuthenticationProperties();
         val service = new UniversalPromptDuoSecurityAuthenticationService(duoProperties,
-            mock(HttpClient.class), duoClient);
+            mock(HttpClient.class), duoClient, List.of(MultifactorAuthenticationPrincipalResolver.identical()));
         val result = service.authenticate(credential);
         assertNotNull(result);
         assertTrue(result.isSuccess());

@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.duo.authn;
 
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.util.CollectionUtils;
@@ -35,15 +36,17 @@ public class UniversalPromptDuoSecurityAuthenticationService extends BaseDuoSecu
     public UniversalPromptDuoSecurityAuthenticationService(
         final DuoSecurityMultifactorAuthenticationProperties duoProperties,
         final HttpClient httpClient,
-        final CasConfigurationProperties casProperties) {
-        this(duoProperties, httpClient, getDuoClient(duoProperties, casProperties));
+        final CasConfigurationProperties casProperties,
+        final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver) {
+        this(duoProperties, httpClient, getDuoClient(duoProperties, casProperties), multifactorAuthenticationPrincipalResolver);
     }
 
     UniversalPromptDuoSecurityAuthenticationService(
         final DuoSecurityMultifactorAuthenticationProperties duoProperties,
         final HttpClient httpClient,
-        final Client duoClient) {
-        super(duoProperties, httpClient);
+        final Client duoClient,
+        final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver) {
+        super(duoProperties, httpClient, multifactorAuthenticationPrincipalResolver);
         this.duoClient = duoClient;
     }
 
@@ -51,8 +54,8 @@ public class UniversalPromptDuoSecurityAuthenticationService extends BaseDuoSecu
     public DuoSecurityAuthenticationResult authenticateInternal(final Credential c) throws Exception {
         val credential = (DuoSecurityUniversalPromptCredential) c;
         LOGGER.trace("Exchanging Duo Security authorization code [{}]", credential.getId());
-        val result = duoClient.exchangeAuthorizationCodeFor2FAResult(credential.getId(),
-            credential.getAuthentication().getPrincipal().getId());
+        val principal = resolvePrincipal(credential.getAuthentication().getPrincipal());
+        val result = duoClient.exchangeAuthorizationCodeFor2FAResult(credential.getId(), principal.getId());
         LOGGER.debug("Validated Duo Security code [{}] with result [{}]", credential.getId(), result);
 
         val username = StringUtils.defaultIfBlank(result.getPreferred_username(), result.getSub());

@@ -3,7 +3,8 @@ package org.apereo.cas.adaptors.duo.authn;
 import org.apereo.cas.adaptors.duo.DuoSecurityUserAccount;
 import org.apereo.cas.adaptors.duo.DuoSecurityUserAccountStatus;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
+import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -24,6 +25,7 @@ import org.springframework.http.HttpMethod;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -60,20 +62,17 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
      */
     protected final transient HttpClient httpClient;
 
+    private final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver;
+
     private final transient Map<String, DuoSecurityUserAccount> userAccountCachedMap;
 
     private final transient Cache<String, DuoSecurityUserAccount> userAccountCache;
 
-    /**
-     * Instantiates a new Base duo security authentication service.
-     *
-     * @param duoProperties the duo properties
-     * @param httpClient    the http client
-     */
-    protected BaseDuoSecurityAuthenticationService(final DuoSecurityMultifactorAuthenticationProperties duoProperties,
-        final HttpClient httpClient) {
+    protected BaseDuoSecurityAuthenticationService(final DuoSecurityMultifactorProperties duoProperties, final HttpClient httpClient,
+                                                   final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver) {
         this.duoProperties = duoProperties;
         this.httpClient = httpClient;
+        this.multifactorAuthenticationPrincipalResolver = multifactorAuthenticationPrincipalResolver;
 
         this.userAccountCache = Caffeine.newBuilder()
             .initialCapacity(USER_ACCOUNT_CACHE_INITIAL_SIZE)
@@ -224,9 +223,9 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
     protected DuoSecurityAuthenticationResult authenticateDuoCredentialDirect(final Credential crds) {
         try {
             val credential = DuoSecurityDirectCredential.class.cast(crds);
-            val p = credential.getAuthentication().getPrincipal();
+            val principal = resolvePrincipal(credential.getAuthentication().getPrincipal());
             val request = buildHttpPostAuthRequest();
-            signHttpAuthRequest(request, p.getId());
+            signHttpAuthRequest(request, principal.getId());
             val result = (JSONObject) request.executeRequest();
             LOGGER.debug("Duo authentication response: [{}]", result);
             if ("allow".equalsIgnoreCase(result.getString("result"))) {
@@ -268,5 +267,20 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
             duoProperties.getDuoIntegrationKey(),
             duoProperties.getDuoSecretKey());
         return request;
+    }
+
+    /**
+     * Resolve principal.
+     *
+     * @param principal the principal
+     * @return the principal
+     */
+    protected Principal resolvePrincipal(final Principal principal) {
+        return multifactorAuthenticationPrincipalResolver
+            .stream()
+            .filter(resolver -> resolver.supports(principal))
+            .findFirst()
+            .map(r -> r.resolve(principal))
+            .orElseThrow(() -> new IllegalStateException("Unable to resolve principal for multifactor authentication"));
     }
 }

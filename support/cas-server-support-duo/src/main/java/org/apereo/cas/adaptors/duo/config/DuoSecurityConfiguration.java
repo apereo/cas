@@ -13,6 +13,7 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
+import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBean;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
@@ -36,7 +37,10 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.webflow.execution.Action;
+
+import java.util.ArrayList;
 
 /**
  * This is {@link DuoSecurityConfiguration}.
@@ -129,7 +133,9 @@ public class DuoSecurityConfiguration {
     @Bean
     @RefreshScope
     public Action duoUniversalPromptPrepareLoginAction() {
-        return new DuoSecurityUniversalPromptPrepareLoginAction(ticketRegistry.getObject(),
+        val resolvers = new ArrayList<>(applicationContext.getBeansOfType(MultifactorAuthenticationPrincipalResolver.class).values());
+        AnnotationAwareOrderComparator.sort(resolvers);
+        return new DuoSecurityUniversalPromptPrepareLoginAction(applicationContext, ticketRegistry.getObject(),
             duoProviderBean.getObject(), ticketFactory.getObject());
     }
 

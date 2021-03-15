@@ -16,6 +16,7 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.MultifactorAuthenticationFailureModeEvaluator;
+import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBean;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderFactoryBean;
 import org.apereo.cas.authentication.bypass.ChainingMultifactorAuthenticationProviderBypassEvaluator;
@@ -46,11 +47,13 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -118,8 +121,11 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProviderFactoryBean<DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorAuthenticationProperties> duoProviderFactory() {
-        return new DuoSecurityMultifactorAuthenticationProviderFactory(httpClient.getObject(), duoSecurityBypassEvaluator.getObject(),
-            failureModeEvaluator.getObject(), casProperties);
+        val resolvers = new ArrayList<>(applicationContext.getBeansOfType(MultifactorAuthenticationPrincipalResolver.class).values());
+        AnnotationAwareOrderComparator.sort(resolvers);
+        return new DuoSecurityMultifactorAuthenticationProviderFactory(httpClient.getObject(),
+            duoSecurityBypassEvaluator.getObject(),
+            failureModeEvaluator.getObject(), casProperties, resolvers);
     }
 
     @ConditionalOnMissingBean(name = "duoProviderBean")
@@ -143,13 +149,16 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
         if (duos.isEmpty()) {
             throw new BeanCreationException("No configuration/settings could be found for Duo Security.");
         }
+
+        val resolvers = new ArrayList<>(applicationContext.getBeansOfType(MultifactorAuthenticationPrincipalResolver.class).values());
+        AnnotationAwareOrderComparator.sort(resolvers);
         return duos
             .stream()
             .map(d -> new DuoSecurityAuthenticationHandler(d.getId(),
                 servicesManager.getObject(),
                 duoPrincipalFactory(),
                 duoProviderBean().getProvider(d.getId()),
-                d.getOrder()))
+                d.getOrder(), resolvers))
             .collect(Collectors.toList());
     }
 

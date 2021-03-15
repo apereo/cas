@@ -3,7 +3,9 @@ package org.apereo.cas.adaptors.duo.authn;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MultifactorAuthenticationCredential;
+import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.LoggingUtils;
@@ -15,6 +17,7 @@ import lombok.val;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Authenticate CAS credentials against Duo Security.
@@ -26,13 +29,16 @@ import java.util.ArrayList;
 @Slf4j
 public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
     private final DuoSecurityMultifactorAuthenticationProvider provider;
+    private final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver;
 
     public DuoSecurityAuthenticationHandler(final String name, final ServicesManager servicesManager,
-        final PrincipalFactory principalFactory,
-        final DuoSecurityMultifactorAuthenticationProvider provider,
-        final Integer order) {
+                                            final PrincipalFactory principalFactory,
+                                            final DuoSecurityMultifactorAuthenticationProvider provider,
+                                            final Integer order,
+                                            final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver) {
         super(name, servicesManager, principalFactory, order);
         this.provider = provider;
+        this.multifactorAuthenticationPrincipalResolver = multifactorAuthenticationPrincipalResolver;
     }
 
     @Override
@@ -89,7 +95,7 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
             val duoAuthenticationService = provider.getDuoAuthenticationService();
             val creds = DuoSecurityDirectCredential.class.cast(credential);
             if (duoAuthenticationService.authenticate(creds).isSuccess()) {
-                val principal = creds.getAuthentication().getPrincipal();
+                val principal = resolvePrincipal(creds.getAuthentication().getPrincipal());
                 LOGGER.debug("Duo has successfully authenticated [{}]", principal.getId());
                 return createHandlerResult(credential, principal, new ArrayList<>(0));
             }
@@ -126,5 +132,20 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
             LoggingUtils.error(LOGGER, e);
             throw new FailedLoginException(e.getMessage());
         }
+    }
+
+    /**
+     * Resolve principal.
+     *
+     * @param principal the principal
+     * @return the principal
+     */
+    protected Principal resolvePrincipal(final Principal principal) {
+        return multifactorAuthenticationPrincipalResolver
+            .stream()
+            .filter(resolver -> resolver.supports(principal))
+            .findFirst()
+            .map(r -> r.resolve(principal))
+            .orElseThrow(() -> new IllegalStateException("Unable to resolve principal for multifactor authentication"));
     }
 }

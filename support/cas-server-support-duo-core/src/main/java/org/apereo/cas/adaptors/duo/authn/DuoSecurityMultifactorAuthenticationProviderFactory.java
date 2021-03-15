@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.duo.authn;
 
 import org.apereo.cas.authentication.MultifactorAuthenticationFailureModeEvaluator;
+import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderFactoryBean;
 import org.apereo.cas.authentication.bypass.ChainingMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
@@ -12,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.List;
 
 /**
  * Implementation of {@link MultifactorAuthenticationProviderFactoryBean} that provides instances of
@@ -32,6 +35,8 @@ public class DuoSecurityMultifactorAuthenticationProviderFactory implements
     private final MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator;
 
     private final CasConfigurationProperties casProperties;
+
+    private final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver;
 
     @Override
     public DuoSecurityMultifactorAuthenticationProvider createProvider(final DuoSecurityMultifactorAuthenticationProperties properties) {
@@ -66,8 +71,9 @@ public class DuoSecurityMultifactorAuthenticationProviderFactory implements
     protected DuoSecurityAuthenticationService getDuoAuthenticationService(final DuoSecurityMultifactorAuthenticationProperties properties) {
         if (StringUtils.isBlank(properties.getDuoApplicationKey())) {
             LOGGER.trace("Activating universal prompt authentication service for duo security");
-            return new UniversalPromptDuoSecurityAuthenticationService(properties, httpClient, casProperties);
+            return new UniversalPromptDuoSecurityAuthenticationService(properties, httpClient,
+                casProperties, multifactorAuthenticationPrincipalResolver);
         }
-        return new BasicDuoSecurityAuthenticationService(properties, httpClient);
+        return new BasicDuoSecurityAuthenticationService(properties, httpClient, multifactorAuthenticationPrincipalResolver);
     }
 }
