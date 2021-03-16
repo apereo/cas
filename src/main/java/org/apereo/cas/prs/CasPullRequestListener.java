@@ -1,17 +1,15 @@
 package org.apereo.cas.prs;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apereo.cas.CasLabels;
 import org.apereo.cas.MonitoredRepository;
 import org.apereo.cas.PullRequestListener;
-import org.apereo.cas.github.CombinedCommitStatus;
 import org.apereo.cas.github.PullRequest;
-import org.apereo.cas.github.PullRequestFile;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.regex.Pattern;
 
 @Slf4j
@@ -29,18 +27,20 @@ public class CasPullRequestListener implements PullRequestListener {
         }
         processLabelReadyForContinuousIntegration(pr);
         processLabelPendingPortForward(pr);
-        processLabelPendingUpdateProperty(pr);
         processMilestoneAssignment(pr);
         processLabelsByFeatures(pr);
         removeLabelWorkInProgress(pr);
         checkForPullRequestTestCases(pr);
-//        mergePullRequestIfPossible(pr);
     }
 
     private void processLabelReadyForContinuousIntegration(final PullRequest pr) {
        val ci = repository.getGitHubProperties().getRepository().getCommitters().contains(pr.getUser().getLogin());
        if (ci && !pr.isLabeledAs(CasLabels.LABEL_CI)) {
            log.info("Pull request {} is for continuous integration", pr);
+           repository.labelPullRequestAs(pr, CasLabels.LABEL_CI);
+       }
+       if (repository.shouldResumeCiBuild(pr)) {
+           repository.removeLabelFrom(pr, CasLabels.LABEL_CI);
            repository.labelPullRequestAs(pr, CasLabels.LABEL_CI);
        }
     }
@@ -71,15 +71,6 @@ public class CasPullRequestListener implements PullRequestListener {
             }
         }
     }
-
-//    private void mergePullRequestIfPossible(final PullRequest pr) {
-//        if (pr.isLabeledAs(CasLabels.LABEL_BOT) && pr.isLabeledAs(CasLabels.LABEL_DEPENDENCIES_MODULES)) {
-//            val checkRun = this.repository.getCombinedPullRequestCommitStatuses(pr);
-//            if (checkRun.isCheckStatusSuccess(CombinedCommitStatus.TRAVIS_CI)) {
-//                this.repository.mergePullRequestIntoBase(pr);
-//            }
-//        }
-//    }
 
     private boolean processInvalidPullRequest(final PullRequest pr) {
         val count = repository.getPullRequestFiles(pr).stream()
@@ -134,25 +125,6 @@ public class CasPullRequestListener implements PullRequestListener {
         }
     }
 
-    private void processLabelPendingUpdateProperty(final PullRequest pr) {
-        if (!pr.isLabeledAs(CasLabels.LABEL_PENDING_DOCUMENT_PROPERTY)) {
-            Collection<PullRequestFile> files = repository.getPullRequestFiles(pr);
-            val hasProperty = files.stream().anyMatch(f -> f.getFilename().endsWith("Properties.java"));
-            if (hasProperty) {
-                val hasNoDocs = files.stream().noneMatch(f -> f.getFilename().contains("Configuration-Properties.md"));
-                if (hasNoDocs) {
-                    log.info("{} changes CAS properties, yet documentation is not updated to reflect changes", pr);
-                    if (!pr.isLabeledAs(CasLabels.LABEL_PENDING_DOCUMENT_PROPERTY)) {
-                        repository.labelPullRequestAs(pr, CasLabels.LABEL_PENDING_DOCUMENT_PROPERTY);
-                    }
-                } else {
-                    if (pr.isLabeledAs(CasLabels.LABEL_PENDING_DOCUMENT_PROPERTY)) {
-                        repository.removeLabelFrom(pr, CasLabels.LABEL_PENDING_DOCUMENT_PROPERTY);
-                    }
-                }
-            }
-        }
-    }
 
     private boolean processLabelSeeMaintenancePolicy(final PullRequest pr) {
         if (!pr.isTargetedAtMasterBranch() && !pr.isLabeledAs(CasLabels.LABEL_SEE_MAINTENANCE_POLICY)

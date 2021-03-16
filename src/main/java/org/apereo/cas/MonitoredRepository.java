@@ -3,15 +3,15 @@ package org.apereo.cas;
 import org.apereo.cas.github.Branch;
 import org.apereo.cas.github.CheckRun;
 import org.apereo.cas.github.CombinedCommitStatus;
+import org.apereo.cas.github.Comment;
 import org.apereo.cas.github.Commit;
 import org.apereo.cas.github.CommitStatus;
 import org.apereo.cas.github.GitHubOperations;
 import org.apereo.cas.github.Label;
 import org.apereo.cas.github.Milestone;
-import org.apereo.cas.github.Page;
 import org.apereo.cas.github.PullRequest;
 import org.apereo.cas.github.PullRequestFile;
-import org.apereo.cas.github.WorkflowRun;
+import org.apereo.cas.github.Workflows;
 
 import com.github.zafarkhaja.semver.Version;
 import lombok.Getter;
@@ -35,11 +35,6 @@ import java.util.Properties;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-/**
- * A repository that should be monitored.
- *
- * @author Misagh Moayyed
- */
 @RequiredArgsConstructor
 @Getter
 @Slf4j
@@ -85,7 +80,7 @@ public class MonitoredRepository {
             val entity = rest.getForEntity(uri, String.class);
             val properties = new Properties();
             properties.load(new StringReader(Objects.requireNonNull(entity.getBody())));
-            final String version = properties.get("version").toString();
+            var version = properties.get("version").toString();
             log.info("Version found in CAS codebase is {}", version);
             currentVersionInMaster = Version.valueOf(version);
             log.info("Current master version is {}", currentVersionInMaster);
@@ -97,7 +92,7 @@ public class MonitoredRepository {
     }
 
     public List<Branch> getActiveBranches() {
-        final List<Branch> branches = new ArrayList<>();
+        var branches = new ArrayList<Branch>();
         try {
             var br = gitHub.getBranches(getOrganization(), getName());
             while (br != null) {
@@ -112,13 +107,13 @@ public class MonitoredRepository {
         return branches
             .stream()
             .filter(branch -> {
-                if (branch.getName().equalsIgnoreCase("master")) {
+                if (branch.isMasterBranch()) {
                     return true;
                 }
-                if (branch.getName().matches("\\d+.\\d.x") && getMilestoneForBranch(milestones, branch.getName()).isEmpty()) {
+                if (branch.isMilestoneBranch() && getMilestoneForBranch(milestones, branch.getName()).isEmpty()) {
                     return false;
                 }
-                if (branch.getName().equalsIgnoreCase("gh-pages") || branch.getName().startsWith("heroku-")) {
+                if (branch.isGhPagesBranch() || branch.isHerokuBranch()) {
                     return false;
                 }
                 return true;
@@ -133,7 +128,7 @@ public class MonitoredRepository {
     public List<Milestone> getActiveMilestones() {
         final List<Milestone> milestones = new ArrayList<>();
         try {
-            Page<Milestone> page = gitHub.getMilestones(getOrganization(), getName());
+            var page = gitHub.getMilestones(getOrganization(), getName());
             while (page != null) {
                 milestones.addAll(page.getContent());
                 page = page.next();
@@ -154,14 +149,14 @@ public class MonitoredRepository {
     }
 
     public Optional<Milestone> getMilestoneForMaster() {
-        List<Milestone> milestones = getActiveMilestones();
+        var milestones = getActiveMilestones();
 
         var currentVersion = Version.valueOf(currentVersionInMaster.toString().replace("-SNAPSHOT", ""));
-        Optional<Milestone> result = milestones
+        var result = milestones
             .stream()
             .sorted()
             .filter(milestone -> {
-                final Version masterVersion = Version.valueOf(milestone.getTitle());
+                var masterVersion = Version.valueOf(milestone.getTitle());
                 return masterVersion.getMajorVersion() == currentVersion.getMajorVersion()
                     && masterVersion.getMinorVersion() == currentVersion.getMinorVersion();
             })
@@ -200,7 +195,7 @@ public class MonitoredRepository {
 
     public List<PullRequestFile> getPullRequestFiles(final String pr) {
         List<PullRequestFile> files = new ArrayList<>();
-        Page<PullRequestFile> pages = this.gitHub.getPullRequestFiles(getOrganization(), getName(), pr);
+        var pages = this.gitHub.getPullRequestFiles(getOrganization(), getName(), pr);
         while (pages != null) {
             files.addAll(pages.getContent());
             pages = pages.next();
@@ -214,7 +209,7 @@ public class MonitoredRepository {
 
     public List<Commit> getPullRequestCommits(final PullRequest pr) {
         List<Commit> commits = new ArrayList<>();
-        Page<Commit> pages = this.gitHub.getPullRequestCommits(getOrganization(), getName(), pr.getNumber());
+        var pages = this.gitHub.getPullRequestCommits(getOrganization(), getName(), pr.getNumber());
         while (pages != null) {
             commits.addAll(pages.getContent());
             pages = pages.next();
@@ -293,12 +288,65 @@ public class MonitoredRepository {
         var workflowRun = gitHub.getWorkflowRuns(getOrganization(), getName(),
             null, "pull_request", "queued");
         cancelQualifyingWorkflowRuns(workflowRun);
+        cancelWorkflowRunsForMissingPullRequests(workflowRun);
+    }
+
+    public void removeCancelledWorkflowRuns() {
+        var workflowRun = gitHub.getWorkflowRuns(getOrganization(), getName(),
+            null, null, "cancelled");
+        log.info("Found {} cancelled workflow runs", workflowRun.getCount());
+        workflowRun.getRuns().forEach(run -> {
+            log.info("Removing workflow run {}", run);
+            gitHub.removeWorkflowRun(getOrganization(), getName(), run);
+        });
+    }
+
+    private void cancelWorkflowRunsForMissingPullRequests(final Workflows workflows) {
+        var runs = new ArrayList<>(workflows.getRuns());
+
+        var pullRequests = new ArrayList<PullRequest>();
+        var pages = this.gitHub.getPullRequests(getOrganization(), getName());
+        while (pages != null) {
+            pullRequests.addAll(pages.getContent());
+            pages = pages.next();
+        }
+
+        runs.forEach(run -> {
+            val found = pullRequests.stream().anyMatch(pr -> pr.getHead().getRef().equals(run.getHeadBranch()));
+            if (!found) {
+                cancelWorkflowRun(run);
+            }
+        });
+    }
+
+    public boolean shouldResumeCiBuild(final PullRequest pr) {
+        var allComments = new ArrayList<Comment>();
+        try {
+            var comments = gitHub.getComments(getOrganization(), getName(), pr.getNumber());
+            while (comments != null) {
+                allComments.addAll(comments.getContent());
+                comments = comments.next();
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        if (!allComments.isEmpty()) {
+            allComments.sort(Collections.reverseOrder(Comparator.comparing(Comment::getUpdatedTime)));
+            var lastComment = allComments.get(0);
+            var body = lastComment.getBody().trim();
+            val runci = body.equals("@apereocas-bot runci");
+            if (gitHubProperties.getRepository().getCommitters().contains(lastComment.getUser().getLogin()) && runci) {
+                gitHub.removeComment(getOrganization(), getName(), lastComment.getId());
+                return true;
+            }
+        }
+        return false;
     }
 
     private List<Label> getActiveLabels() {
         final List<Label> labels = new ArrayList<>();
         try {
-            Page<Label> lbl = gitHub.getLabels(getOrganization(), getName());
+            var lbl = gitHub.getLabels(getOrganization(), getName());
             while (lbl != null) {
                 labels.addAll(lbl.getContent());
                 lbl = lbl.next();
@@ -310,12 +358,12 @@ public class MonitoredRepository {
         return labels;
     }
 
-    private void cancelQualifyingWorkflowRuns(final WorkflowRun workflowRun) {
-        var runs = new ArrayList<>(workflowRun.getRuns());
-        runs.sort(Collections.reverseOrder(Comparator.comparingLong(WorkflowRun.WorkflowRunDetails::getRunNumber)));
+    private void cancelQualifyingWorkflowRuns(final Workflows workflows) {
+        var runs = new ArrayList<>(workflows.getRuns());
+        runs.sort(Collections.reverseOrder(Comparator.comparingLong(Workflows.WorkflowRun::getRunNumber)));
 
-        var groupedRuns = new HashMap<String, WorkflowRun.WorkflowRunDetails>(runs.size());
-        var runsToCancel = new HashSet<WorkflowRun.WorkflowRunDetails>();
+        var groupedRuns = new HashMap<String, Workflows.WorkflowRun>(runs.size());
+        var runsToCancel = new HashSet<Workflows.WorkflowRun>();
 
         runs.forEach(run -> {
             if (!groupedRuns.containsKey(run.getName())) {
@@ -324,13 +372,15 @@ public class MonitoredRepository {
                 runsToCancel.add(run);
             }
         });
-        runsToCancel.forEach(run -> {
-            try {
-                log.info("Cancelling workflow run {}", run);
-                this.gitHub.cancelWorkflowRun(getOrganization(), getName(), run);
-            } catch (final Exception e) {
-                log.error(e.getMessage(), e);
-            }
-        });
+        runsToCancel.forEach(this::cancelWorkflowRun);
+    }
+
+    private void cancelWorkflowRun(final Workflows.WorkflowRun run) {
+        try {
+            log.info("Cancelling workflow run {}", run);
+            this.gitHub.cancelWorkflowRun(getOrganization(), getName(), run);
+        } catch (final Exception e) {
+            log.error(e.getMessage(), e);
+        }
     }
 }

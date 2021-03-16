@@ -40,6 +40,10 @@ public interface GitHubOperations {
 
     Comment addComment(PullRequest pullRequest, String comment);
 
+    Page<Comment> getComments(String organization, String name, String number);
+
+    void removeComment(String organization, String name, String commentId);
+
     Issue close(Issue issue);
 
     Page<Event> getEvents(Issue issue);
@@ -58,7 +62,7 @@ public interface GitHubOperations {
 
     Page<PullRequestFile> getPullRequestFiles(String organization, String repository, String number);
 
-    WorkflowRun getWorkflowRuns(String organization, String repository, Branch branch, String event, String status);
+    Workflows getWorkflowRuns(String organization, String repository, Branch branch, String event, String status);
 
     Page<CommitStatus> getPullRequestCommitStatus(String organization, String repository, String number);
 
@@ -84,7 +88,9 @@ public interface GitHubOperations {
                          String context) throws Exception;
 
     boolean cancelWorkflowRun(String organization, String repository,
-                           WorkflowRun.WorkflowRunDetails run) throws Exception;
+                           Workflows.WorkflowRun run) throws Exception;
 
     Page<Branch> getBranches(String organization, String name);
+
+    void removeWorkflowRun(String organization, String name, Workflows.WorkflowRun run);
 }

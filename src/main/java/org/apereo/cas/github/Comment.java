@@ -19,6 +19,7 @@ package org.apereo.cas.github;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.time.OffsetDateTime;
 
@@ -28,24 +29,30 @@ import java.time.OffsetDateTime;
  * @author Andy Wilkinson
  */
 @Getter
+@ToString(of = {"id", "user"})
 public final class Comment {
+
+    private final String id;
 
     private final User user;
 
     private final OffsetDateTime creationTime;
 
-    /**
-     * Creates a new comment that was authored by the given {@code user} at the given
-     * {@code creationTime}.
-     *
-     * @param user         the user
-     * @param creationTime the creation time
-     */
+    private final OffsetDateTime updatedTime;
+
+    private final String body;
+
     @JsonCreator
-    public Comment(@JsonProperty("user") final User user,
-                   @JsonProperty("created_at") final OffsetDateTime creationTime) {
+    public Comment(@JsonProperty("id") final String id,
+                   @JsonProperty("body") final String body,
+                   @JsonProperty("user") final User user,
+                   @JsonProperty("created_at") final OffsetDateTime creationTime,
+                   @JsonProperty("updated_at") final OffsetDateTime updatedTime) {
         this.user = user;
         this.creationTime = creationTime;
+        this.updatedTime = updatedTime;
+        this.id = id;
+        this.body = body;
     }
 
 }

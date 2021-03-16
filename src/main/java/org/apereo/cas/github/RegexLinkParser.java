@@ -35,8 +35,8 @@ public class RegexLinkParser implements LinkParser {
     @Override
     public Map<String, String> parse(final String input) {
         final Map<String, String> links = new HashMap<>();
-        for (final String link : StringUtils.commaDelimitedListToStringArray(input)) {
-            final Matcher matcher = LINK_PATTERN.matcher(link.trim());
+        for (var link : StringUtils.commaDelimitedListToStringArray(input)) {
+            var matcher = LINK_PATTERN.matcher(link.trim());
             if (matcher.matches()) {
                 links.put(matcher.group(2), matcher.group(1));
             }

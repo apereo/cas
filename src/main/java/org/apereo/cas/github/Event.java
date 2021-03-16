@@ -156,7 +156,7 @@ public class Event {
         }
 
         static Type valueFrom(final String type) {
-            for (final Type value : values()) {
+            for (var value : values()) {
                 if (type.equals(value.type)) {
                     return value;
                 }

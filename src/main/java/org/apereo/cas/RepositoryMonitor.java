@@ -65,6 +65,8 @@ class RepositoryMonitor {
             var currentBranches = this.repository.getActiveBranches();
             repository.cancelQualifyingWorkflowRuns(currentBranches);
 
+            repository.removeCancelledWorkflowRuns();
+
         } catch (final Exception ex) {
             log.warn("A failure occurred during monitoring", ex);
         }

@@ -28,7 +28,7 @@ import java.time.ZonedDateTime;
  * Note: this class has a natural ordering that is inconsistent with equals.
  */
 @Getter
-@ToString(of = {"title"})
+@ToString(of = {"title"}, includeFieldNames = false)
 @EqualsAndHashCode(of = "number")
 public class Milestone implements Comparable<Milestone> {
 
