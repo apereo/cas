@@ -34,6 +34,8 @@ import java.util.stream.Collectors;
 @Slf4j
 class RepositoryMonitor {
 
+    private static final int ONE_MINUTE = 60 * 1000;
+
     private final GitHubOperations gitHub;
 
     private final MonitoredRepository repository;
@@ -47,7 +49,7 @@ class RepositoryMonitor {
         this.pullRequestListeners = pullRequestListeners;
     }
 
-    @Scheduled(fixedRate = 60 * 1000)
+    @Scheduled(fixedRate = ONE_MINUTE)
     void monitor() {
         log.info("Monitoring {}", this.repository.getFullName());
         try {
@@ -64,9 +66,7 @@ class RepositoryMonitor {
             log.info("Processing workflow runs for {}", this.repository.getFullName());
             var currentBranches = this.repository.getActiveBranches();
             repository.cancelQualifyingWorkflowRuns(currentBranches);
-
             repository.removeCancelledWorkflowRuns();
-
         } catch (final Exception ex) {
             log.warn("A failure occurred during monitoring", ex);
         }

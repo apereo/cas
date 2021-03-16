@@ -301,24 +301,6 @@ public class MonitoredRepository {
         });
     }
 
-    private void cancelWorkflowRunsForMissingPullRequests(final Workflows workflows) {
-        var runs = new ArrayList<>(workflows.getRuns());
-
-        var pullRequests = new ArrayList<PullRequest>();
-        var pages = this.gitHub.getPullRequests(getOrganization(), getName());
-        while (pages != null) {
-            pullRequests.addAll(pages.getContent());
-            pages = pages.next();
-        }
-
-        runs.forEach(run -> {
-            val found = pullRequests.stream().anyMatch(pr -> pr.getHead().getRef().equals(run.getHeadBranch()));
-            if (!found) {
-                cancelWorkflowRun(run);
-            }
-        });
-    }
-
     public boolean shouldResumeCiBuild(final PullRequest pr) {
         var allComments = new ArrayList<Comment>();
         try {
@@ -341,6 +323,24 @@ public class MonitoredRepository {
             }
         }
         return false;
+    }
+
+    private void cancelWorkflowRunsForMissingPullRequests(final Workflows workflows) {
+        var runs = new ArrayList<>(workflows.getRuns());
+
+        var pullRequests = new ArrayList<PullRequest>();
+        var pages = this.gitHub.getPullRequests(getOrganization(), getName());
+        while (pages != null) {
+            pullRequests.addAll(pages.getContent());
+            pages = pages.next();
+        }
+
+        runs.forEach(run -> {
+            val found = pullRequests.stream().anyMatch(pr -> pr.getHead().getRef().equals(run.getHeadBranch()));
+            if (!found) {
+                cancelWorkflowRun(run);
+            }
+        });
     }
 
     private List<Label> getActiveLabels() {
@@ -366,8 +366,9 @@ public class MonitoredRepository {
         var runsToCancel = new HashSet<Workflows.WorkflowRun>();
 
         runs.forEach(run -> {
-            if (!groupedRuns.containsKey(run.getName())) {
-                groupedRuns.put(run.getName(), run);
+            var key = run.getHeadBranch() + "@" + run.getName();
+            if (!groupedRuns.containsKey(key)) {
+                groupedRuns.put(key, run);
             } else {
                 runsToCancel.add(run);
             }
