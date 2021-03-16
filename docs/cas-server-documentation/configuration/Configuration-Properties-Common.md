@@ -1022,6 +1022,7 @@ The following  options are shared and apply when CAS is configured to integrate 
 # ${configurationKey}.memcached.locator-type=ARRAY_MOD
 # ${configurationKey}.memcached.failure-mode=Redistribute
 # ${configurationKey}.memcached.hash-algorithm=FNV1_64_HASH
+# ${configurationKey}.memcached.protocol=TEXT
 # ${configurationKey}.memcached.should-optimize=false
 # ${configurationKey}.memcached.daemon=true
 # ${configurationKey}.memcached.max-reconnect-delay=-1

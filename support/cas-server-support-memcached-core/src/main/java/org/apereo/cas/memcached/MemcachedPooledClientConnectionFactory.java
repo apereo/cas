@@ -49,6 +49,9 @@ public class MemcachedPooledClientConnectionFactory extends BasePooledObjectFact
         if (StringUtils.isNotBlank(memcachedProperties.getHashAlgorithm())) {
             factoryBean.setHashAlg(DefaultHashAlgorithm.valueOf(memcachedProperties.getHashAlgorithm()));
         }
+        if (StringUtils.isNotBlank(memcachedProperties.getProtocol())) {
+            factoryBean.setProtocol(ConnectionFactoryBuilder.Protocol.valueOf(memcachedProperties.getProtocol()));
+        }
 
         factoryBean.setDaemon(memcachedProperties.isDaemon());
         factoryBean.setShouldOptimize(memcachedProperties.isShouldOptimize());
