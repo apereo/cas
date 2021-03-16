@@ -325,6 +325,27 @@ public class MonitoredRepository {
         return false;
     }
 
+    public void removePullRequestWorkflowRunsForMissingBranches() {
+        var workflowRun = gitHub.getWorkflowRuns(getOrganization(), getName(),
+            null, "pull_request", "completed");
+        log.info("Found {} completed workflow runs for pull requests", workflowRun.getCount());
+
+        var pullRequests = new ArrayList<PullRequest>();
+        var pages = this.gitHub.getPullRequests(getOrganization(), getName());
+        while (pages != null) {
+            pullRequests.addAll(pages.getContent());
+            pages = pages.next();
+        }
+        workflowRun.getRuns().forEach(run -> {
+            log.info("Removing workflow run {}", run);
+            val found = pullRequests.stream().anyMatch(pr -> pr.getHead().getRef().equals(run.getHeadBranch()));
+            if (!found) {
+                log.info("Removing workflow run {}", run);
+                gitHub.removeWorkflowRun(getOrganization(), getName(), run);
+            }
+        });
+    }
+
     private void cancelWorkflowRunsForMissingPullRequests(final Workflows workflows) {
         var runs = new ArrayList<>(workflows.getRuns());
 

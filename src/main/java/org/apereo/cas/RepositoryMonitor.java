@@ -17,14 +17,12 @@
 package org.apereo.cas;
 
 import org.apereo.cas.github.GitHubOperations;
-import org.apereo.cas.github.Page;
 import org.apereo.cas.github.PullRequest;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Central class for monitoring the configured repository.
@@ -50,7 +48,7 @@ class RepositoryMonitor {
     }
 
     @Scheduled(fixedRate = ONE_MINUTE)
-    void monitor() {
+    void monitorPullRequests() {
         log.info("Monitoring {}", this.repository.getFullName());
         try {
             log.info("Processing pull requests for {}", this.repository.getFullName());
@@ -62,11 +60,21 @@ class RepositoryMonitor {
                     .forEach(pr -> pullRequestListeners.forEach(listener -> listener.onOpenPullRequest(pr)));
                 page = page.next();
             }
+        } catch (final Exception ex) {
+            log.warn("A failure occurred during monitoring", ex);
+        }
+        log.info("Monitoring of {} completed", this.repository.getFullName());
+    }
 
+    @Scheduled(fixedRate = ONE_MINUTE * 2)
+    void monitorWorkflowRuns() {
+        log.info("Monitoring {}", this.repository.getFullName());
+        try {
             log.info("Processing workflow runs for {}", this.repository.getFullName());
             var currentBranches = this.repository.getActiveBranches();
             repository.cancelQualifyingWorkflowRuns(currentBranches);
             repository.removeCancelledWorkflowRuns();
+            repository.removePullRequestWorkflowRunsForMissingBranches();
         } catch (final Exception ex) {
             log.warn("A failure occurred during monitoring", ex);
         }

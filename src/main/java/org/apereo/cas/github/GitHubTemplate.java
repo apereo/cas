@@ -166,7 +166,7 @@ public class GitHubTemplate implements GitHubOperations {
         if (status != null) {
             urlBuilder.addParameter("status", status);
         }
-        urlBuilder.addParameter("per_page", "50");
+        urlBuilder.addParameter("per_page", "25");
         
         val headers = new LinkedMultiValueMap(Map.of("Accept", List.of("application/vnd.github.v3+json")));
         return getSinglePage(urlBuilder.toString(), Workflows.class, Map.of(), headers);
