@@ -157,7 +157,8 @@ public class CasPullRequestListener implements PullRequestListener {
     private boolean processLabelSeeMaintenancePolicy(final PullRequest pr) {
         if (!pr.isTargetedAtMasterBranch() && !pr.isLabeledAs(CasLabels.LABEL_SEE_MAINTENANCE_POLICY)
                 && !pr.isTargetBranchOnHeroku() && !pr.isWorkInProgress()) {
-            val milestone = repository.getMilestoneForBranch(pr.getBase().getRef());
+            var milestones = repository.getActiveMilestones();
+            val milestone = MonitoredRepository.getMilestoneForBranch(milestones, pr.getBase().getRef());
             if (milestone.isEmpty()) {
                 log.info("{} is targeted at a branch {} that is no longer maintained. See maintenance policy", pr, pr.getBase());
                 repository.labelPullRequestAs(pr, CasLabels.LABEL_SEE_MAINTENANCE_POLICY);
@@ -191,7 +192,8 @@ public class CasPullRequestListener implements PullRequestListener {
                     repository.getGitHub().setMilestone(pr, milestone);
                 });
             } else {
-                val milestone = repository.getMilestoneForBranch(pr.getBase().getRef());
+                var milestones = repository.getActiveMilestones();
+                val milestone = MonitoredRepository.getMilestoneForBranch(milestones, pr.getBase().getRef());
                 milestone.ifPresent(result -> {
                     log.info("{} will be assigned the maintenance milestone {}", pr, milestone);
                     repository.getGitHub().setMilestone(pr, result);

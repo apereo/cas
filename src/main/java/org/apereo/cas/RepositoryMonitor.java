@@ -49,10 +49,9 @@ class RepositoryMonitor {
 
     @Scheduled(fixedRate = 60 * 1000)
     void monitor() {
-        log.info("Monitoring {}/{}", this.repository.getOrganization(), this.repository.getName());
+        log.info("Monitoring {}", this.repository.getFullName());
         try {
-
-            log.info("Processing pull requests for {}/{}", this.repository.getOrganization(), this.repository.getName());
+            log.info("Processing pull requests for {}", this.repository.getFullName());
             var page = this.gitHub.getPullRequests(this.repository.getOrganization(), this.repository.getName());
             while (page != null) {
                 page.getContent()
@@ -61,22 +60,15 @@ class RepositoryMonitor {
                     .forEach(pr -> pullRequestListeners.forEach(listener -> listener.onOpenPullRequest(pr)));
                 page = page.next();
             }
-            
-            log.info("Processing workflow runs for {}/{}", this.repository.getOrganization(), this.repository.getName());
-            var milestones = this.repository.getActiveMilestones();
-            var branches = milestones
-                .stream()
-                .map(repository::getBranchForMilestone)
-                .collect(Collectors.toSet());
+
+            log.info("Processing workflow runs for {}", this.repository.getFullName());
             var currentBranches = this.repository.getActiveBranches();
-            branches.removeIf(br -> currentBranches.stream().noneMatch(c -> c.getName().equalsIgnoreCase(br)));
-            branches.forEach(repository::processSupersededQueuedWorkflowRuns);
-            repository.processWorkflowRunsForPullRequests(currentBranches);
+            repository.cancelQualifyingWorkflowRuns(currentBranches);
 
         } catch (final Exception ex) {
             log.warn("A failure occurred during monitoring", ex);
         }
-        log.info("Monitoring of {}/{} completed", this.repository.getOrganization(), this.repository.getName());
+        log.info("Monitoring of {} completed", this.repository.getFullName());
     }
 
 }

@@ -22,9 +22,9 @@ public class WorkflowRun {
     }
 
     @Getter
-    @ToString(of = {"id", "name", "status", "event", "workflowId", "headRepository", "headBranch"}, includeFieldNames = false)
+    @ToString(of = {"runNumber", "name", "status", "event", "workflowId", "headRepository", "headBranch"}, includeFieldNames = false)
     public static class WorkflowRunDetails {
-        private String id;
+        private long id;
 
         private String name;
 
@@ -42,15 +42,18 @@ public class WorkflowRun {
 
         private String headSha;
 
-        private String workflowId;
+        private long workflowId;
 
         private Commit headCommit;
 
         private Repository headRepository;
 
+        private long runNumber;
+
         @JsonCreator
-        public WorkflowRunDetails(@JsonProperty("id") String id,
+        public WorkflowRunDetails(@JsonProperty("id") long id,
                                   @JsonProperty("name") String name,
+                                  @JsonProperty("run_number") long runNumber,
                                   @JsonProperty("event") String event,
                                   @JsonProperty("status") String status,
                                   @JsonProperty("cancel_url") String cancelUrl,
@@ -58,7 +61,7 @@ public class WorkflowRun {
                                   @JsonProperty("repository") Repository repository,
                                   @JsonProperty("head_branch") String headBranch,
                                   @JsonProperty("head_sha") String headSha,
-                                  @JsonProperty("workflow_id") String workflowId,
+                                  @JsonProperty("workflow_id") long workflowId,
                                   @JsonProperty("head_commit") Commit headCommit,
                                   @JsonProperty("head_repository") Repository headRepository) {
             this.id = id;
@@ -69,6 +72,7 @@ public class WorkflowRun {
             this.repository = repository;
             this.cancelUrl = cancelUrl;
             this.headBranch = headBranch;
+            this.runNumber = runNumber;
             this.headSha = headSha;
             this.workflowId = workflowId;
             this.headCommit = headCommit;

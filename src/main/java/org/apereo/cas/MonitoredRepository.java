@@ -1,11 +1,5 @@
 package org.apereo.cas;
 
-import com.github.zafarkhaja.semver.Version;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-
 import org.apereo.cas.github.Branch;
 import org.apereo.cas.github.CheckRun;
 import org.apereo.cas.github.CombinedCommitStatus;
@@ -17,11 +11,22 @@ import org.apereo.cas.github.Milestone;
 import org.apereo.cas.github.Page;
 import org.apereo.cas.github.PullRequest;
 import org.apereo.cas.github.PullRequestFile;
+import org.apereo.cas.github.WorkflowRun;
+
+import com.github.zafarkhaja.semver.Version;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.StringReader;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -47,6 +52,25 @@ public class MonitoredRepository {
 
     private static Predicate<Label> getLabelPredicateByName(final CasLabels name) {
         return l -> l.getName().equals(name.getTitle());
+    }
+
+    public static Optional<Milestone> getMilestoneForBranch(final List<Milestone> milestones, final String branch) {
+        val branchVersion = Version.valueOf(branch.replace(".x", "." + Integer.MAX_VALUE));
+        return milestones.stream()
+            .filter(milestone -> {
+                val milestoneVersion = Version.valueOf(milestone.getTitle());
+                return milestoneVersion.getMajorVersion() == branchVersion.getMajorVersion()
+                    && milestoneVersion.getMinorVersion() == branchVersion.getMinorVersion();
+            })
+            .findFirst();
+    }
+
+    public static String getBranchForMilestone(final Milestone ms, final Optional<Milestone> master) {
+        if (master.isPresent() && master.get().getNumber().equalsIgnoreCase(ms.getNumber())) {
+            return "master";
+        }
+        val branchVersion = Version.valueOf(ms.getTitle());
+        return branchVersion.getMajorVersion() + "." + branchVersion.getMinorVersion() + ".x";
     }
 
     public Version getCurrentVersionInMaster() {
@@ -75,7 +99,7 @@ public class MonitoredRepository {
     public List<Branch> getActiveBranches() {
         final List<Branch> branches = new ArrayList<>();
         try {
-            Page<Branch> br = gitHub.getBranches(getOrganization(), getName());
+            var br = gitHub.getBranches(getOrganization(), getName());
             while (br != null) {
                 branches.addAll(br.getContent());
                 br = br.next();
@@ -84,22 +108,26 @@ public class MonitoredRepository {
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
-        return branches;
+        var milestones = getActiveMilestones();
+        return branches
+            .stream()
+            .filter(branch -> {
+                if (branch.getName().equalsIgnoreCase("master")) {
+                    return true;
+                }
+                if (branch.getName().matches("\\d+.\\d.x") && getMilestoneForBranch(milestones, branch.getName()).isEmpty()) {
+                    return false;
+                }
+                if (branch.getName().equalsIgnoreCase("gh-pages") || branch.getName().startsWith("heroku-")) {
+                    return false;
+                }
+                return true;
+            })
+            .collect(Collectors.toList());
     }
 
-    private List<Label> getActiveLabels() {
-        final List<Label> labels = new ArrayList<>();
-        try {
-            Page<Label> lbl = gitHub.getLabels(getOrganization(), getName());
-            while (lbl != null) {
-                labels.addAll(lbl.getContent());
-                lbl = lbl.next();
-            }
-            log.info("Available labels are {}", labels.stream().map(Object::toString).collect(Collectors.joining(",")));
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-        }
-        return labels;
+    public String getFullName() {
+        return gitHubProperties.getRepository().getFullName();
     }
 
     public List<Milestone> getActiveMilestones() {
@@ -139,27 +167,6 @@ public class MonitoredRepository {
             })
             .findFirst();
         return result;
-    }
-
-    public Optional<Milestone> getMilestoneForBranch(final String branch) {
-        val milestones = getActiveMilestones();
-        val branchVersion = Version.valueOf(branch.replace(".x", "." + Integer.MAX_VALUE));
-        return milestones.stream()
-            .filter(milestone -> {
-                val milestoneVersion = Version.valueOf(milestone.getTitle());
-                return milestoneVersion.getMajorVersion() == branchVersion.getMajorVersion()
-                    && milestoneVersion.getMinorVersion() == branchVersion.getMinorVersion();
-            })
-            .findFirst();
-    }
-
-    public String getBranchForMilestone(final Milestone ms) {
-        var result = getMilestoneForMaster();
-        if (result.isPresent() && result.get().getNumber().equalsIgnoreCase(ms.getNumber())) {
-             return "master";
-        }
-        val branchVersion = Version.valueOf(ms.getTitle());
-        return branchVersion.getMajorVersion() + "." + branchVersion.getMinorVersion() + ".x";
     }
 
     public PullRequest mergePullRequestWithBase(final PullRequest pr) {
@@ -215,8 +222,8 @@ public class MonitoredRepository {
         return commits;
     }
 
-    public Commit getHeadCommitFor(final String shaOrBranch) {
-        return this.gitHub.getCommits(getOrganization(), getName(), shaOrBranch);
+    public Commit getHeadCommitFor(final Branch shaOrBranch) {
+        return this.gitHub.getCommits(getOrganization(), getName(), shaOrBranch.getName());
     }
 
     public CheckRun getLatestCompletedCheckRunsFor(final PullRequest pr, String checkName) {
@@ -276,44 +283,51 @@ public class MonitoredRepository {
         return this.gitHub.getCombinedPullRequestCommitStatus(getOrganization(), getName(), pr.getHead().getSha());
     }
 
-    public void processSupersededQueuedWorkflowRuns(final String branch) {
-        var head = getHeadCommitFor(branch);
-        var workflowRun = gitHub.getWorkflowRuns(getOrganization(), getName(),
-            branch, null, "queued");
-        workflowRun.getRuns().forEach(run -> {
-            try {
-                if (!run.getHeadSha().equalsIgnoreCase(head.getSha())) {
-                    log.info("Cancelling superseded workflow run {}", run);
-                    this.gitHub.cancelWorkflowRun(getOrganization(), getName(), run);
-                }
-            } catch (final Exception e) {
-                log.error(e.getMessage(), e);
-            }
+    public void cancelQualifyingWorkflowRuns(final List<Branch> currentBranches) {
+        currentBranches.forEach(branch -> {
+            var workflowRun = gitHub.getWorkflowRuns(getOrganization(), getName(),
+                branch, null, "queued");
+            cancelQualifyingWorkflowRuns(workflowRun);
         });
-    }
 
-    public void processWorkflowRunsForPullRequests(final List<Branch> currentBranches) {
         var workflowRun = gitHub.getWorkflowRuns(getOrganization(), getName(),
             null, "pull_request", "queued");
-        workflowRun.getRuns().forEach(run -> {
-            try {
-                if (!run.getHeadRepository().isFork()) {
-                    val found = currentBranches.stream().anyMatch(c -> c.getName().equalsIgnoreCase(run.getHeadBranch()));
-                    if (!found) {
-                        log.info("Workflow run has no active branches; Cancelling workflow run {}", run);
-                        this.gitHub.cancelWorkflowRun(getOrganization(), getName(), run);
-                    } else {
-                        log.info("Workflow run {} is linked to active branch", run);
-                    }
-                } else {
-                    if (run.getPullRequests().isEmpty()) {
-                        log.info("Workflow run has no pull requests; cancelling workflow run {}", run);
-                        this.gitHub.cancelWorkflowRun(getOrganization(), getName(), run);
-                    } else {
-                        log.info("Workflow run {} has open pull requests", run);
-                    }
-                }
+        cancelQualifyingWorkflowRuns(workflowRun);
+    }
 
+    private List<Label> getActiveLabels() {
+        final List<Label> labels = new ArrayList<>();
+        try {
+            Page<Label> lbl = gitHub.getLabels(getOrganization(), getName());
+            while (lbl != null) {
+                labels.addAll(lbl.getContent());
+                lbl = lbl.next();
+            }
+            log.info("Available labels are {}", labels.stream().map(Object::toString).collect(Collectors.joining(",")));
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return labels;
+    }
+
+    private void cancelQualifyingWorkflowRuns(final WorkflowRun workflowRun) {
+        var runs = new ArrayList<>(workflowRun.getRuns());
+        runs.sort(Collections.reverseOrder(Comparator.comparingLong(WorkflowRun.WorkflowRunDetails::getRunNumber)));
+
+        var groupedRuns = new HashMap<String, WorkflowRun.WorkflowRunDetails>(runs.size());
+        var runsToCancel = new HashSet<WorkflowRun.WorkflowRunDetails>();
+
+        runs.forEach(run -> {
+            if (!groupedRuns.containsKey(run.getName())) {
+                groupedRuns.put(run.getName(), run);
+            } else {
+                runsToCancel.add(run);
+            }
+        });
+        runsToCancel.forEach(run -> {
+            try {
+                log.info("Cancelling workflow run {}", run);
+                this.gitHub.cancelWorkflowRun(getOrganization(), getName(), run);
             } catch (final Exception e) {
                 log.error(e.getMessage(), e);
             }

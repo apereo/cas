@@ -91,9 +91,7 @@ public class GitHubTemplate implements GitHubOperations {
                     .getHeaders().getFirst("X-RateLimit-Remaining").equals("0")) {
                     throw new IllegalStateException(
                         "Rate limit exceeded. Limit will reset at "
-                            + new Date(Long
-                            .valueOf(response.getHeaders().getFirst("X-RateLimit-Reset"))
-                            * 1000));
+                            + new Date(Long.parseLong(response.getHeaders().getFirst("X-RateLimit-Reset")) * 1000));
                 }
             }
         });
@@ -160,12 +158,12 @@ public class GitHubTemplate implements GitHubOperations {
 
     @Override
     @SneakyThrows
-    public WorkflowRun getWorkflowRuns(String organization, String repository, String branch, String event, String status) {
-        var url = "https://api.github.com/repos/" + organization + '/' + repository + "/actions/runs?";
+    public WorkflowRun getWorkflowRuns(String organization, String repository, Branch branch, String event, String status) {
+        var url = "https://api.github.com/repos/" + organization + '/' + repository + "/actions/runs";
         var urlBuilder = new URIBuilder(url);
 
         if (branch != null) {
-            urlBuilder.addParameter("branch", branch);
+            urlBuilder.addParameter("branch", branch.getName());
         }
         if (event != null) {
             urlBuilder.addParameter("event", event);

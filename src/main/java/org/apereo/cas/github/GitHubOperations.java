@@ -58,8 +58,7 @@ public interface GitHubOperations {
 
     Page<PullRequestFile> getPullRequestFiles(String organization, String repository, String number);
 
-    WorkflowRun getWorkflowRuns(String organization, String repository, String branch, String event, String status);
-
+    WorkflowRun getWorkflowRuns(String organization, String repository, Branch branch, String event, String status);
 
     Page<CommitStatus> getPullRequestCommitStatus(String organization, String repository, String number);
 
