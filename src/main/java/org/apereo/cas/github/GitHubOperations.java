@@ -62,7 +62,44 @@ public interface GitHubOperations {
 
     Page<PullRequestFile> getPullRequestFiles(String organization, String repository, String number);
 
-    Workflows getWorkflowRuns(String organization, String repository, Branch branch, String event, String status);
+    Workflows getWorkflowRuns(String organization, String repository, Branch branch,
+                              Workflows.WorkflowRunEvent event, Workflows.WorkflowRunStatus status,
+                              long page);
+
+    default Workflows getWorkflowRuns(String organization, String repository, Branch branch,
+                              Workflows.WorkflowRunEvent event, Workflows.WorkflowRunStatus status) {
+        return getWorkflowRuns(organization, repository, branch, event, status, 1);
+    }
+
+    default Workflows getWorkflowRuns(String organization, String repository,
+                              Workflows.WorkflowRunEvent event, Workflows.WorkflowRunStatus status) {
+        return getWorkflowRuns(organization, repository, null, event, status);
+    }
+
+    default Workflows getWorkflowRuns(String organization, String repository,
+                                      Workflows.WorkflowRunEvent event) {
+        return getWorkflowRuns(organization, repository, null, event, null);
+    }
+
+    default Workflows getWorkflowRuns(String organization, String repository,
+                                       Workflows.WorkflowRunStatus status) {
+        return getWorkflowRuns(organization, repository, null, null, status);
+    }
+
+
+    default Workflows getWorkflowRuns(String organization, String repository, Branch branch,
+                                      Workflows.WorkflowRunStatus status) {
+        return getWorkflowRuns(organization, repository, branch, null, status);
+    }
+
+    default Workflows getWorkflowRuns(String organization, String repository) {
+        return getWorkflowRuns(organization, repository, null, null, null);
+    }
+
+
+    default Workflows getWorkflowRuns(String organization, String repository, long page) {
+        return getWorkflowRuns(organization, repository, null, null, null, page);
+    }
 
     Page<CommitStatus> getPullRequestCommitStatus(String organization, String repository, String number);
 

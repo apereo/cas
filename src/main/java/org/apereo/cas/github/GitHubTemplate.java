@@ -153,7 +153,9 @@ public class GitHubTemplate implements GitHubOperations {
 
     @Override
     @SneakyThrows
-    public Workflows getWorkflowRuns(String organization, String repository, Branch branch, String event, String status) {
+    public Workflows getWorkflowRuns(String organization, String repository, Branch branch,
+                                     Workflows.WorkflowRunEvent event, Workflows.WorkflowRunStatus status,
+                                     long page) {
         var url = "https://api.github.com/repos/" + organization + '/' + repository + "/actions/runs";
         var urlBuilder = new URIBuilder(url);
 
@@ -161,13 +163,14 @@ public class GitHubTemplate implements GitHubOperations {
             urlBuilder.addParameter("branch", branch.getName());
         }
         if (event != null) {
-            urlBuilder.addParameter("event", event);
+            urlBuilder.addParameter("event", event.getName());
         }
         if (status != null) {
-            urlBuilder.addParameter("status", status);
+            urlBuilder.addParameter("status", status.getName());
         }
         urlBuilder.addParameter("per_page", "25");
-        
+        urlBuilder.addParameter("page", String.valueOf(page));
+
         val headers = new LinkedMultiValueMap(Map.of("Accept", List.of("application/vnd.github.v3+json")));
         return getSinglePage(urlBuilder.toString(), Workflows.class, Map.of(), headers);
     }

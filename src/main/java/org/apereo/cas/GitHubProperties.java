@@ -47,6 +47,8 @@ public class GitHubProperties {
 
     private long maximumChangedFiles = 40;
 
+    private long staleWorkflowRunInDays = 7;
+
     /**
      * Configuration for a GitHub repository.
      */

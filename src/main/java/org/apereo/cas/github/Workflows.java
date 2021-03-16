@@ -3,10 +3,13 @@ package org.apereo.cas.github;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 import java.time.OffsetDateTime;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Getter
 public class Workflows {
@@ -15,6 +18,39 @@ public class Workflows {
 
     private final List<WorkflowRun> runs;
 
+    @RequiredArgsConstructor
+    @Getter
+    public enum WorkflowRunStatus {
+        QUEUED("queued"),
+        WAITING("waiting"),
+        CANCELLED("cancelled"),
+        IN_PROGRESS("in progress"),
+        SUCCESS("success"),
+        FAILURE("failure"),
+        STALE("stale"),
+        COMPLETED("completed");
+
+        private final String name;
+
+        public static Optional<WorkflowRunStatus> from(final WorkflowRun run) {
+            return Arrays.stream(values()).filter(name -> run.getStatus().equalsIgnoreCase(name.getName())).findFirst();
+        }
+    }
+
+    @RequiredArgsConstructor
+    @Getter
+    public enum WorkflowRunEvent {
+        PULL_REQUEST("pull_request"),
+        PUSH("push"),
+        SCHEDULE("schedule");
+
+        private final String name;
+
+        public static Optional<WorkflowRunEvent> from(final WorkflowRun run) {
+            return Arrays.stream(values()).filter(name -> run.getStatus().equalsIgnoreCase(name.getName())).findFirst();
+        }
+    }
+    
     @JsonCreator
     public Workflows(@JsonProperty("total_count") final long count,
                      @JsonProperty("workflow_runs") final List<WorkflowRun> runs) {

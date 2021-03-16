@@ -66,7 +66,7 @@ class RepositoryMonitor {
         log.info("Monitoring of {} completed", this.repository.getFullName());
     }
 
-    @Scheduled(fixedRate = ONE_MINUTE * 2)
+    @Scheduled(fixedRate = ONE_MINUTE * 3)
     void monitorWorkflowRuns() {
         log.info("Monitoring {}", this.repository.getFullName());
         try {
@@ -75,6 +75,7 @@ class RepositoryMonitor {
             repository.cancelQualifyingWorkflowRuns(currentBranches);
             repository.removeCancelledWorkflowRuns();
             repository.removePullRequestWorkflowRunsForMissingBranches();
+            repository.removeOldWorkflowRuns();
         } catch (final Exception ex) {
             log.warn("A failure occurred during monitoring", ex);
         }

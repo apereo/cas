@@ -22,6 +22,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.StringReader;
 import java.net.URI;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -34,6 +35,7 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @RequiredArgsConstructor
 @Getter
@@ -281,19 +283,18 @@ public class MonitoredRepository {
     public void cancelQualifyingWorkflowRuns(final List<Branch> currentBranches) {
         currentBranches.forEach(branch -> {
             var workflowRun = gitHub.getWorkflowRuns(getOrganization(), getName(),
-                branch, null, "queued");
+            branch, Workflows.WorkflowRunStatus.QUEUED);
             cancelQualifyingWorkflowRuns(workflowRun);
         });
 
         var workflowRun = gitHub.getWorkflowRuns(getOrganization(), getName(),
-            null, "pull_request", "queued");
+            Workflows.WorkflowRunEvent.PULL_REQUEST, Workflows.WorkflowRunStatus.QUEUED);
         cancelQualifyingWorkflowRuns(workflowRun);
         cancelWorkflowRunsForMissingPullRequests(workflowRun);
     }
 
     public void removeCancelledWorkflowRuns() {
-        var workflowRun = gitHub.getWorkflowRuns(getOrganization(), getName(),
-            null, null, "cancelled");
+        var workflowRun = gitHub.getWorkflowRuns(getOrganization(), getName(), Workflows.WorkflowRunStatus.CANCELLED);
         log.info("Found {} cancelled workflow runs", workflowRun.getCount());
         workflowRun.getRuns().forEach(run -> {
             log.info("Removing workflow run {}", run);
@@ -326,9 +327,8 @@ public class MonitoredRepository {
     }
 
     public void removePullRequestWorkflowRunsForMissingBranches() {
-        var workflowRun = gitHub.getWorkflowRuns(getOrganization(), getName(),
-            null, "pull_request", "completed");
-        log.info("Found {} completed workflow runs for pull requests", workflowRun.getCount());
+        var workflowRun = gitHub.getWorkflowRuns(getOrganization(), getName(), Workflows.WorkflowRunEvent.PULL_REQUEST);
+        log.info("Found {} workflow runs for pull requests", workflowRun.getCount());
 
         var pullRequests = new ArrayList<PullRequest>();
         var pages = this.gitHub.getPullRequests(getOrganization(), getName());
@@ -337,13 +337,36 @@ public class MonitoredRepository {
             pages = pages.next();
         }
         workflowRun.getRuns().forEach(run -> {
-            log.info("Removing workflow run {}", run);
             val found = pullRequests.stream().anyMatch(pr -> pr.getHead().getRef().equals(run.getHeadBranch()));
             if (!found) {
-                log.info("Removing workflow run {}", run);
+                Workflows.WorkflowRunStatus.from(run)
+                    .filter(status -> status == Workflows.WorkflowRunStatus.IN_PROGRESS)
+                    .ifPresent(status -> cancelWorkflowRun(run));
+
+                log.info("Removing workflow run {} without an active pull request", run);
                 gitHub.removeWorkflowRun(getOrganization(), getName(), run);
             }
         });
+    }
+
+    public void removeOldWorkflowRuns() {
+        for (var i = 20; i > 0; i--) {
+            var workflowRun = gitHub.getWorkflowRuns(getOrganization(), getName(), i);
+            log.info("Found {} workflow runs for page {}", workflowRun.getCount(), i);
+
+            val now = OffsetDateTime.now();
+            workflowRun.getRuns().forEach(run -> {
+                val exp = run.getUpdatedTime().plusDays(this.gitHubProperties.getStaleWorkflowRunInDays());
+                if (exp.isBefore(now)) {
+                    Workflows.WorkflowRunStatus.from(run)
+                        .filter(status -> status == Workflows.WorkflowRunStatus.IN_PROGRESS)
+                        .ifPresent(status -> cancelWorkflowRun(run));
+
+                    log.info("Removing ols workflow run {} @ {}", run, run.getUpdatedTime());
+                    gitHub.removeWorkflowRun(getOrganization(), getName(), run);
+                }
+            });
+        }
     }
 
     private void cancelWorkflowRunsForMissingPullRequests(final Workflows workflows) {
@@ -387,7 +410,7 @@ public class MonitoredRepository {
         var runsToCancel = new HashSet<Workflows.WorkflowRun>();
 
         runs.forEach(run -> {
-            var key = run.getHeadBranch() + "@" + run.getName();
+            var key = run.getHeadBranch() + '@' + run.getName();
             if (!groupedRuns.containsKey(key)) {
                 groupedRuns.put(key, run);
             } else {
