@@ -20,7 +20,7 @@
             <form name="fm1" th:action="@{/adminlogin}" method="post">
 
                 <h3 th:utext="#{screen.welcome.instructions}">Enter your Username and Password</h3>
-                
+
                 <div th:if="${param.error}" class="banner banner-danger banner-dismissible">Invalid credentials.</div>
                 <section class="cas-field my-3">
                     <div class="d-flex">
@@ -30,7 +30,9 @@
                                    name="username"
                                    size="25"
                                    type="text"
-                                   autocomplete="off" />
+                                   autocapitalize="none"
+                                   spellcheck="false"
+                                   autocomplete="username" />
                             <span class="mdc-notched-outline">
                                 <span class="mdc-notched-outline__leading"></span>
                                 <span class="mdc-notched-outline__notch">
@@ -79,7 +81,7 @@
                     </button>
                 </section>
 
-            
+
                 <button class="mdc-button mdc-button--raised"
                     accesskey="l"
                     th:value="#{screen.welcome.button.login}"

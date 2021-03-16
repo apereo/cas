@@ -43,7 +43,9 @@ public class X509CommonNameEDIPIPrincipalResolverTests {
             arguments(
                 "/edipi.cer",
                 "1234567890",
-                null
+                null,
+                new EDIPIX509AttributeExtractor(),
+                true
             ),
 
             /*
@@ -52,7 +54,19 @@ public class X509CommonNameEDIPIPrincipalResolverTests {
             arguments(
                 "/user-valid.crt",
                 "CN=Alice, OU=CAS, O=Jasig, L=Westminster, ST=Colorado, C=US",
-                "subjectDn"
+                "subjectDn",
+                new EDIPIX509AttributeExtractor(),
+                false
+            ),
+            /*
+             * test with cert with EDIPI and no alternate, default attribute extractor
+             */
+            arguments(
+                    "/edipi.cer",
+                    "1234567890",
+                    null,
+                    new DefaultX509AttributeExtractor(),
+                    false
             )
         );
 
@@ -62,7 +76,9 @@ public class X509CommonNameEDIPIPrincipalResolverTests {
     @MethodSource("getTestParameters")
     public void verifyResolvePrincipalInternal(final String certPath,
                                                final String expectedResult,
-                                               final String alternatePrincipalAttribute) throws Exception {
+                                               final String alternatePrincipalAttribute,
+                                               final X509AttributeExtractor x509AttributeExtractor,
+                                               final boolean edipiExpected) throws Exception {
 
         val context = PrincipalResolutionContext.builder()
             .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE))
@@ -77,10 +93,18 @@ public class X509CommonNameEDIPIPrincipalResolverTests {
 
         val resolver = new X509CommonNameEDIPIPrincipalResolver(context);
         resolver.setAlternatePrincipalAttribute(alternatePrincipalAttribute);
+        resolver.setX509AttributeExtractor(x509AttributeExtractor);
         val certificate = (X509Certificate) CertificateFactory.getInstance("X509").generateCertificate(
             new FileInputStream(getClass().getResource(certPath).getPath()));
 
         val userId = resolver.resolvePrincipalInternal(certificate);
         assertEquals(expectedResult, userId);
+
+        val attributes = resolver.extractPersonAttributes(certificate);
+        if (edipiExpected) {
+            assertEquals(attributes.get("x509EDIPI"), CollectionUtils.wrapList(expectedResult));
+        } else {
+            assertNull(attributes.get("x509EDIPI"));
+        }
     }
 }

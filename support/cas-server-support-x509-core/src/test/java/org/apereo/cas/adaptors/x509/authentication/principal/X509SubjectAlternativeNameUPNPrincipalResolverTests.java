@@ -96,6 +96,7 @@ public class X509SubjectAlternativeNameUPNPrincipalResolverTests {
             .build();
         val resolver = new X509SubjectAlternativeNameUPNPrincipalResolver(context);
         resolver.setAlternatePrincipalAttribute(alternatePrincipalAttribute);
+        resolver.setX509AttributeExtractor(new DefaultX509AttributeExtractor());
         val certificate = (X509Certificate) CertificateFactory.getInstance("X509").generateCertificate(
             new FileInputStream(getClass().getResource(certPath).getPath()));
 
@@ -126,6 +127,7 @@ public class X509SubjectAlternativeNameUPNPrincipalResolverTests {
             .activeAttributeRepositoryIdentifiers(CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD))
             .build();
         val resolver = new X509SubjectAlternativeNameUPNPrincipalResolver(context);
+        resolver.setX509AttributeExtractor(new DefaultX509AttributeExtractor());
         val certificate = mock(X509Certificate.class);
         when(certificate.getSubjectAlternativeNames()).thenThrow(new CertificateParsingException());
         assertNull(resolver.resolvePrincipalInternal(certificate));

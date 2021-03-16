@@ -14,6 +14,11 @@ const url = require('url');
     var pswd = await page.$('#password');
     assert(pswd == null);
 
+    let uid = await page.$('#username');
+    assert("none" === await uid.evaluate(el => el.getAttribute("autocapitalize")))
+    assert("false" === await uid.evaluate(el => el.getAttribute("spellcheck")))
+    assert("username" === await uid.evaluate(el => el.getAttribute("autocomplete")))
+    
     await page.type('#username', "casuser");
     await page.keyboard.press('Enter');
     await page.waitForNavigation();

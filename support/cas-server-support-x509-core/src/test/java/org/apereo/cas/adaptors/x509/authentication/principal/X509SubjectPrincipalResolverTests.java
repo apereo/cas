@@ -106,6 +106,7 @@ public class X509SubjectPrincipalResolverTests {
 
         val resolver = new X509SubjectPrincipalResolver(context);
         resolver.setPrincipalDescriptor(descriptor);
+        resolver.setX509AttributeExtractor(new DefaultX509AttributeExtractor());
         val certificate = (X509Certificate) CertificateFactory.getInstance("X509").generateCertificate(
             new FileInputStream(certPath));
 

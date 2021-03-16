@@ -47,6 +47,7 @@ public class X509SerialNumberAndIssuerDNPrincipalResolverTests {
             .activeAttributeRepositoryIdentifiers(CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD))
             .build();
         resolver = new X509SerialNumberAndIssuerDNPrincipalResolver(context);
+        resolver.setX509AttributeExtractor(new DefaultX509AttributeExtractor());
     }
 
     @Test

@@ -11,6 +11,12 @@ const https = require('https');
     const service = "https://example.com";
 
     await page.goto("https://localhost:8443/cas/login?service=" + service);
+
+    let uid = await page.$('#username');
+    assert("none" === await uid.evaluate(el => el.getAttribute("autocapitalize")))
+    assert("false" === await uid.evaluate(el => el.getAttribute("spellcheck")))
+    assert("username" === await uid.evaluate(el => el.getAttribute("autocomplete")))
+    
     await page.type('#username', "casuser");
     await page.type('#password', "Mellon");
     await page.keyboard.press('Enter');

@@ -64,7 +64,9 @@
                                        th:readonly="!${@casThymeleafLoginFormDirector.isLoginFormUsernameInputVisible(#vars)}"
                                        th:field="*{username}"
                                        th:accesskey="#{screen.welcome.label.netid.accesskey}"
-                                       autocomplete="off"/>
+                                       autocapitalize="none"
+                                       spellcheck="false"
+                                       autocomplete="username"/>
 
                                 <span class="mdc-notched-outline">
                                     <span class="mdc-notched-outline__leading"></span>
@@ -235,7 +237,7 @@
                     </section>
 
                     <section class="cas-field">
-                        
+
                         <span th:if="${recaptchaLoginEnabled}">
                             <div th:replace="fragments/recaptcha :: recaptchaToken"/>
                         </span>
