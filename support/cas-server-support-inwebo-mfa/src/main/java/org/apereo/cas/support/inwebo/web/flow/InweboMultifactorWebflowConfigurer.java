@@ -44,6 +44,7 @@ public class InweboMultifactorWebflowConfigurer extends AbstractCasMultifactorWe
             val flow = getFlow(registry, MFA_INWEBO_EVENT_ID);
 
             flow.getStartActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_INITIAL_FLOW_SETUP));
+            createEndState(flow, CasWebflowConstants.STATE_ID_SUCCESS);
 
             val initializeLoginFormState = createActionState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, createEvaluateAction("inweboSuccessAction"));
             createTransitionForState(initializeLoginFormState, CasWebflowConstants.TRANSITION_ID_SUCCESS, "checkUser");
