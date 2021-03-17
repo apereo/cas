@@ -199,8 +199,8 @@ public class GitHubTemplate implements GitHubOperations {
     }
 
     @Override
-    public Commit getCommits(final String organization, final String repository, final String branch) {
-        val url = "https://api.github.com/repos/" + organization + '/' + repository + "/commits/" + branch;
+    public Commit getCommit(final String organization, final String repository, final String branchOrSha) {
+        val url = "https://api.github.com/repos/" + organization + '/' + repository + "/commits/" + branchOrSha;
         return getSinglePage(url, Commit.class);
     }
 
@@ -553,7 +553,7 @@ public class GitHubTemplate implements GitHubOperations {
             return null;
         }
         final ResponseEntity<T> contents = this.rest.getForEntity(url, type, params);
-        return contents.getBody();
+        return contents.getStatusCode().is2xxSuccessful() ? contents.getBody() : null;
     }
 
     private <T> T getSinglePage(final String url, final Class<T> type, final Map params, final MultiValueMap headers) {
@@ -562,7 +562,7 @@ public class GitHubTemplate implements GitHubOperations {
         }
         val hd = new HttpHeaders(headers);
         final ResponseEntity<T> contents = this.rest.exchange(url, HttpMethod.GET, new HttpEntity<>(hd), type, params);
-        return contents.getBody();
+        return contents.getStatusCode().is2xxSuccessful() ? contents.getBody() : null;
     }
 
     private String getNextUrl(final ResponseEntity<?> response) {

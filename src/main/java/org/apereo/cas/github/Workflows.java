@@ -83,7 +83,7 @@ public class Workflows {
 
         private final long workflowId;
 
-        private final Commit headCommit;
+        private final HeadCommit headCommit;
 
         private final Repository headRepository;
 
@@ -106,7 +106,7 @@ public class Workflows {
                            @JsonProperty("head_branch") String headBranch,
                            @JsonProperty("head_sha") String headSha,
                            @JsonProperty("workflow_id") long workflowId,
-                           @JsonProperty("head_commit") Commit headCommit,
+                           @JsonProperty("head_commit") HeadCommit headCommit,
                            @JsonProperty("created_at") final OffsetDateTime creationTime,
                            @JsonProperty("updated_at") final OffsetDateTime updatedTime,
                            @JsonProperty("head_repository") Repository headRepository) {

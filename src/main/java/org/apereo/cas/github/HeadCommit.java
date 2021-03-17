@@ -21,38 +21,32 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.time.OffsetDateTime;
+
 @Getter
-@ToString(of={"author", "url", "sha"})
-public class Commit {
-    private final String url;
-    private final String sha;
+@ToString(of = {"author", "id"})
+public class HeadCommit {
+    private final String id;
+
+    private final String message;
+
     private final User author;
+
     private final User committer;
-    private final GitCommit commit;
+
+    private final OffsetDateTime timestamp;
 
     @JsonCreator
-    public Commit(@JsonProperty("url") final String url,
-                  @JsonProperty("sha") final String sha,
-                  @JsonProperty("author") final User author,
-                  @JsonProperty("committer") final User committer,
-                  @JsonProperty("commit") final GitCommit commit) {
-        this.url = url;
-        this.sha = sha;
+    public HeadCommit(@JsonProperty("id") final String id,
+                      @JsonProperty("message") final String message,
+                      @JsonProperty("timestamp") final OffsetDateTime timestamp,
+                      @JsonProperty("author") final User author,
+                      @JsonProperty("committer") final User committer) {
+        this.id = id;
+        this.message = message;
         this.author = author;
         this.committer = committer;
-        this.commit = commit;
+        this.timestamp = timestamp;
     }
 
-    @Getter
-    public static class GitCommit {
-        private final String url;
-        private final String message;
-
-        @JsonCreator
-        public GitCommit(@JsonProperty("url") final String url,
-                         @JsonProperty("message") final String message) {
-            this.url = url;
-            this.message = message;
-        }
-    }
 }

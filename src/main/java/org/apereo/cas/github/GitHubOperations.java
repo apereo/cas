@@ -109,7 +109,7 @@ public interface GitHubOperations {
 
     Page<Commit> getPullRequestCommits(String organization, String repository, String number);
 
-    Commit getCommits(String organization, String repository, String branch);
+    Commit getCommit(String organization, String repository, String branchOrSha);
 
     void closePullRequest(String organization, String repository, String number);
 

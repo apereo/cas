@@ -35,7 +35,6 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @RequiredArgsConstructor
 @Getter
@@ -220,7 +219,7 @@ public class MonitoredRepository {
     }
 
     public Commit getHeadCommitFor(final Branch shaOrBranch) {
-        return this.gitHub.getCommits(getOrganization(), getName(), shaOrBranch.getName());
+        return this.gitHub.getCommit(getOrganization(), getName(), shaOrBranch.getName());
     }
 
     public CheckRun getLatestCompletedCheckRunsFor(final PullRequest pr, String checkName) {
@@ -283,7 +282,7 @@ public class MonitoredRepository {
     public void cancelQualifyingWorkflowRuns(final List<Branch> currentBranches) {
         currentBranches.forEach(branch -> {
             var workflowRun = gitHub.getWorkflowRuns(getOrganization(), getName(),
-            branch, Workflows.WorkflowRunStatus.QUEUED);
+                branch, Workflows.WorkflowRunStatus.QUEUED);
             cancelQualifyingWorkflowRuns(workflowRun);
         });
 
@@ -337,14 +336,21 @@ public class MonitoredRepository {
             pages = pages.next();
         }
         workflowRun.getRuns().forEach(run -> {
-            val found = pullRequests.stream().anyMatch(pr -> pr.getHead().getRef().equals(run.getHeadBranch()));
-            if (!found) {
+            val found = pullRequests.stream().filter(pr -> pr.getHead().getRef().equals(run.getHeadBranch())).findFirst();
+            if (found.isEmpty()) {
                 Workflows.WorkflowRunStatus.from(run)
                     .filter(status -> status == Workflows.WorkflowRunStatus.IN_PROGRESS)
                     .ifPresent(status -> cancelWorkflowRun(run));
 
                 log.info("Removing workflow run {} without an active pull request", run);
                 gitHub.removeWorkflowRun(getOrganization(), getName(), run);
+            } else {
+                var pr = found.get();
+                var foundci = pr.getLabels().stream().anyMatch(label -> label.getName().equalsIgnoreCase(CasLabels.LABEL_CI.getTitle()));
+                if (!gitHubProperties.getRepository().getCommitters().contains(pr.getUser().getLogin()) && !foundci) {
+                    log.info("Removing workflow run {} without the label {}", run, CasLabels.LABEL_CI.getTitle());
+                    gitHub.removeWorkflowRun(getOrganization(), getName(), run);
+                }
             }
         });
     }
@@ -362,12 +368,13 @@ public class MonitoredRepository {
                         .filter(status -> status == Workflows.WorkflowRunStatus.IN_PROGRESS)
                         .ifPresent(status -> cancelWorkflowRun(run));
 
-                    log.info("Removing ols workflow run {} @ {}", run, run.getUpdatedTime());
+                    log.info("Removing old workflow run {} @ {}", run, run.getUpdatedTime());
                     gitHub.removeWorkflowRun(getOrganization(), getName(), run);
                 }
             });
         }
     }
+
 
     private void cancelWorkflowRunsForMissingPullRequests(final Workflows workflows) {
         var runs = new ArrayList<>(workflows.getRuns());
