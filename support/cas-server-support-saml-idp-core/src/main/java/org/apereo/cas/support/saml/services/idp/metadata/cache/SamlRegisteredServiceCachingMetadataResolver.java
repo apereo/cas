@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache;
 
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
@@ -47,4 +48,11 @@ public interface SamlRegisteredServiceCachingMetadataResolver {
      * @param criteriaSet the criteria set
      */
     void invalidate(SamlRegisteredService service, CriteriaSet criteriaSet);
+
+    /**
+     * Gets OpenSAML config bean.
+     *
+     * @return the OpenSAML config bean
+     */
+    OpenSamlConfigBean getOpenSamlConfigBean();
 }

@@ -62,12 +62,11 @@ public class SamlIdPUtils {
      * @param openSamlConfigBean the open saml config bean
      * @param clazz              the clazz
      * @return the request
-     * @throws Exception the exception
      */
     public static <T extends RequestAbstractType> T retrieveSamlRequest(final WebContext context,
                                                                         final SessionStore sessionStore,
                                                                         final OpenSamlConfigBean openSamlConfigBean,
-                                                                        final Class<T> clazz) throws Exception {
+                                                                        final Class<T> clazz) {
         LOGGER.trace("Retrieving authentication request from scope");
         val requestValue = sessionStore
             .get(context, SamlProtocolConstants.PARAMETER_SAML_REQUEST)
@@ -76,6 +75,21 @@ public class SamlIdPUtils {
         if (StringUtils.isBlank(requestValue)) {
             throw new IllegalArgumentException("SAML request could not be determined from the authentication request");
         }
+        return retrieveSamlRequest(openSamlConfigBean, clazz, requestValue);
+    }
+
+    /**
+     * Retrieve saml request.
+     *
+     * @param <T>                the type parameter
+     * @param openSamlConfigBean the open saml config bean
+     * @param clazz              the clazz
+     * @param requestValue       the request value
+     * @return the t
+     */
+    @SneakyThrows
+    public static <T extends RequestAbstractType> T retrieveSamlRequest(final OpenSamlConfigBean openSamlConfigBean,
+                                                                        final Class<T> clazz, final String requestValue) {
         val encodedRequest = EncodingUtils.decodeBase64(requestValue.getBytes(StandardCharsets.UTF_8));
         return clazz.cast(XMLObjectSupport.unmarshallFromInputStream(
             openSamlConfigBean.getParserPool(),

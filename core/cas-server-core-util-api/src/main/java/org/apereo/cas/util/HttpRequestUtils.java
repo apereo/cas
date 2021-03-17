@@ -51,13 +51,8 @@ public class HttpRequestUtils {
      * @return the http servlet request from request attributes
      */
     public static HttpServletRequest getHttpServletRequestFromRequestAttributes() {
-        try {
-            val requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-            return Optional.of(Objects.requireNonNull(requestAttributes)).map(ServletRequestAttributes::getRequest).orElse(null);
-        } catch (final Exception e) {
-            LOGGER.trace(e.getMessage(), e);
-        }
-        return null;
+        val requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        return Optional.ofNullable(requestAttributes).map(ServletRequestAttributes::getRequest).orElse(null);
     }
 
     /**

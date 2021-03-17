@@ -50,6 +50,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEnc
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlObjectSignatureValidator;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.config.CasCookieConfiguration;
@@ -245,13 +246,17 @@ public abstract class BaseSamlIdPConfigurationTests {
         val service = new SamlRegisteredService();
         service.setName("TestShib");
         service.setServiceId(entityId);
-        service.setId(100);
+        service.setId(RandomUtils.nextInt());
         service.setSignAssertions(signAssertion);
         service.setSignResponses(signResponses);
         service.setEncryptAssertions(encryptAssertions);
         service.setDescription("SAML Service");
         service.setMetadataLocation("classpath:metadata/testshib-providers.xml");
         return service;
+    }
+
+    protected static SamlRegisteredService getSamlRegisteredServiceFor(final String entityId) {
+        return getSamlRegisteredServiceFor(false, false, false, entityId);
     }
 
     @TestConfiguration

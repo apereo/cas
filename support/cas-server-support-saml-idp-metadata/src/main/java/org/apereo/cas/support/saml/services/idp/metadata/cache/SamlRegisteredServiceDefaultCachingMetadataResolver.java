@@ -1,10 +1,12 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache;
 
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
@@ -37,8 +39,13 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
 
     private final LoadingCache<SamlRegisteredServiceCacheKey, MetadataResolver> cache;
 
+    @Getter
+    private final OpenSamlConfigBean openSamlConfigBean;
+
     public SamlRegisteredServiceDefaultCachingMetadataResolver(final Duration metadataCacheExpiration,
-                                                               final SamlRegisteredServiceMetadataResolverCacheLoader loader) {
+                                                               final SamlRegisteredServiceMetadataResolverCacheLoader loader,
+                                                               final OpenSamlConfigBean openSamlConfigBean) {
+        this.openSamlConfigBean = openSamlConfigBean;
         this.chainingMetadataResolverCacheLoader = loader;
         this.cache = Caffeine.newBuilder()
             .maximumSize(MAX_CACHE_SIZE)
@@ -49,10 +56,9 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
     @Override
     @Synchronized
     public MetadataResolver resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
-        LOGGER.debug("Resolving metadata for [{}] at [{}].", service.getName(), service.getMetadataLocation());
+        LOGGER.debug("Resolving metadata for [{}] at [{}]", service.getName(), service.getMetadataLocation());
         val cacheKey = new SamlRegisteredServiceCacheKey(service, criteriaSet);
         LOGGER.trace("Locating cached metadata resolver using key [{}] for service [{}]", cacheKey.getId(), service.getName());
-
         val retryTemplate = new RetryTemplate();
         retryTemplate.setBackOffPolicy(new FixedBackOffPolicy());
         retryTemplate.setRetryPolicy(new SimpleRetryPolicy());
