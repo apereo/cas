@@ -1,22 +1,19 @@
 package org.apereo.cas.web.flow.actions;
 
 import org.apereo.cas.authentication.AuthenticationException;
-import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import java.util.ArrayList;
 
 /**
  * Abstract class that provides the doPreExecute() hook to set the find the provider for this webflow to be used by
@@ -49,9 +46,7 @@ public abstract class AbstractMultifactorAuthenticationAction<T extends Multifac
      * @return the principal
      */
     protected Principal resolvePrincipal(final Principal principal) {
-        val resolvers = new ArrayList<>(applicationContext.getBeansOfType(MultifactorAuthenticationPrincipalResolver.class).values());
-        AnnotationAwareOrderComparator.sort(resolvers);
-        
+        val resolvers = ApplicationContextProvider.getMultifactorAuthenticationPrincipalResolvers();
         return resolvers
             .stream()
             .filter(resolver -> resolver.supports(principal))

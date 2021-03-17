@@ -1,5 +1,6 @@
 package org.apereo.cas.util.spring;
 
+import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.PrincipalAttributesRepositoryCache;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -13,7 +14,10 @@ import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -27,6 +31,17 @@ public class ApplicationContextProvider implements ApplicationContextAware {
 
     public static ApplicationContext getApplicationContext() {
         return CONTEXT;
+    }
+
+    /**
+     * Gets multifactor authentication principal resolvers.
+     *
+     * @return the multifactor authentication principal resolvers
+     */
+    public static List<MultifactorAuthenticationPrincipalResolver> getMultifactorAuthenticationPrincipalResolvers() {
+        val resolvers = new ArrayList<>(CONTEXT.getBeansOfType(MultifactorAuthenticationPrincipalResolver.class).values());
+        AnnotationAwareOrderComparator.sort(resolvers);
+        return resolvers;
     }
 
     @Override

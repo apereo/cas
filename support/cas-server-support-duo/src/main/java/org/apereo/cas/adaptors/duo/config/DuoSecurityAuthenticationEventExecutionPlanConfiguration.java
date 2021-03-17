@@ -16,7 +16,6 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.MultifactorAuthenticationFailureModeEvaluator;
-import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBean;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderFactoryBean;
 import org.apereo.cas.authentication.bypass.ChainingMultifactorAuthenticationProviderBypassEvaluator;
@@ -28,6 +27,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
@@ -47,13 +47,11 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -121,8 +119,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProviderFactoryBean<DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorAuthenticationProperties> duoProviderFactory() {
-        val resolvers = new ArrayList<>(applicationContext.getBeansOfType(MultifactorAuthenticationPrincipalResolver.class).values());
-        AnnotationAwareOrderComparator.sort(resolvers);
+        val resolvers = ApplicationContextProvider.getMultifactorAuthenticationPrincipalResolvers();
         return new DuoSecurityMultifactorAuthenticationProviderFactory(httpClient.getObject(),
             duoSecurityBypassEvaluator.getObject(),
             failureModeEvaluator.getObject(), casProperties, resolvers);
@@ -150,8 +147,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
             throw new BeanCreationException("No configuration/settings could be found for Duo Security.");
         }
 
-        val resolvers = new ArrayList<>(applicationContext.getBeansOfType(MultifactorAuthenticationPrincipalResolver.class).values());
-        AnnotationAwareOrderComparator.sort(resolvers);
+        val resolvers = ApplicationContextProvider.getMultifactorAuthenticationPrincipalResolvers();
         return duos
             .stream()
             .map(d -> new DuoSecurityAuthenticationHandler(d.getId(),
