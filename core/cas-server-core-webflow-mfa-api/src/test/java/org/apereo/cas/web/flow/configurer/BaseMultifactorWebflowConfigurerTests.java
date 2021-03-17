@@ -10,7 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.Flow;
+import org.springframework.webflow.engine.State;
 import org.springframework.webflow.engine.SubflowState;
+import org.springframework.webflow.engine.TransitionableState;
+
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * This is {@link BaseMultifactorWebflowConfigurerTests}.
  *
  * @author Misagh Moayyed
+ * @author Hayden Sartoris
  * @since 6.2.0
  */
 public abstract class BaseMultifactorWebflowConfigurerTests {
@@ -32,6 +37,28 @@ public abstract class BaseMultifactorWebflowConfigurerTests {
     protected abstract FlowDefinitionRegistry getMultifactorFlowDefinitionRegistry();
 
     protected abstract String getMultifactorEventId();
+
+    /**
+     * Ensures that, for every transition within this MFA flow, the target
+     * state is present within the flow.
+     */
+    @Test
+    public void ensureAllTransitionDestinationsExistInFlow() {
+        val registry = getMultifactorFlowDefinitionRegistry();
+        assertTrue(registry.containsFlowDefinition(getMultifactorEventId()));
+        val flow = (Flow) registry.getFlowDefinition(getMultifactorEventId());
+        val states = Arrays.asList(flow.getStateIds());
+        states.forEach(stateId -> {
+            val state = (State) flow.getState(stateId);
+            if (state instanceof TransitionableState) {
+                TransitionableState.class.cast(state).getTransitionSet().forEach(t -> {
+                    assertTrue(flow.containsState(t.getTargetStateId()),
+                            String.format("Destination of transition [%s]-%s->[%s] must be in flow definition",
+                                stateId, t.getId(), t.getTargetStateId()));
+                });
+            }
+        });
+    }
 
     @Test
     public void verifyOperation() {

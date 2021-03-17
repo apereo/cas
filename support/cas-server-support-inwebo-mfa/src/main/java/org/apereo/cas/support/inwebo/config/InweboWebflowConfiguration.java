@@ -204,7 +204,7 @@ public class InweboWebflowConfiguration {
      */
     @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
     @ConditionalOnProperty(prefix = "cas.authn.mfa.inwebo", name = "trusted-device-enabled", havingValue = "true", matchIfMissing = true)
-    @Configuration("inweoMultifactorTrustConfiguration")
+    @Configuration("inweboMultifactorTrustConfiguration")
     public class InweboMultifactorTrustConfiguration {
 
         @ConditionalOnMissingBean(name = "inweboMultifactorTrustWebflowConfigurer")

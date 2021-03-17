@@ -6,6 +6,7 @@ import org.apereo.cas.support.inwebo.authentication.InweboCredentialTests;
 import org.apereo.cas.support.inwebo.config.InweboConfigurationTests;
 import org.apereo.cas.support.inwebo.service.InweboConsoleAdminTests;
 import org.apereo.cas.support.inwebo.service.InweboServiceTests;
+import org.apereo.cas.support.inwebo.web.flow.InweboMultifactorWebflowConfigurerTests;
 import org.apereo.cas.support.inwebo.web.flow.actions.InweboCheckAuthenticationActionTests;
 import org.apereo.cas.support.inwebo.web.flow.actions.InweboCheckUserActionTests;
 import org.apereo.cas.support.inwebo.web.flow.actions.InweboMustEnrollActionTests;
@@ -32,7 +33,8 @@ import org.junit.runner.RunWith;
     InweboMultifactorAuthenticationProviderTests.class,
     InweboCredentialTests.class,
     InweboConsoleAdminTests.class,
-    InweboServiceTests.class
+    InweboServiceTests.class,
+    InweboMultifactorWebflowConfigurerTests.class
 })
 @RunWith(JUnitPlatform.class)
 public class AllInweboTestsSuite {

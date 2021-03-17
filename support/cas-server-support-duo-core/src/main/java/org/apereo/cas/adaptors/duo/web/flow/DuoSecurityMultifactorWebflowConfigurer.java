@@ -179,9 +179,9 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
     }
 
     private static void createDuoSuccessEndState(final List<AbstractStateModel> states) {
-        states.add(new EndStateModel(CasWebflowConstants.TRANSITION_ID_SUCCESS));
-        states.add(new EndStateModel(CasWebflowConstants.TRANSITION_ID_DENY));
-        states.add(new EndStateModel(CasWebflowConstants.TRANSITION_ID_UNAVAILABLE));
+        states.add(new EndStateModel(CasWebflowConstants.STATE_ID_SUCCESS));
+        states.add(new EndStateModel(CasWebflowConstants.STATE_ID_MFA_DENIED));
+        states.add(new EndStateModel(CasWebflowConstants.STATE_ID_MFA_UNAVAILABLE));
     }
 
     private static void createDuoRedirectToRegistrationAction(final List<AbstractStateModel> states) {
@@ -200,7 +200,7 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
 
         var transModel = new TransitionModel();
         transModel.setOn(CasWebflowConstants.TRANSITION_ID_SUCCESS);
-        transModel.setTo(CasWebflowConstants.TRANSITION_ID_SUCCESS);
+        transModel.setTo(CasWebflowConstants.STATE_ID_SUCCESS);
         trans.add(transModel);
 
         transModel = new TransitionModel();
@@ -210,12 +210,12 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
 
         transModel = new TransitionModel();
         transModel.setOn(CasWebflowConstants.TRANSITION_ID_DENY);
-        transModel.setTo(CasWebflowConstants.TRANSITION_ID_DENY);
+        transModel.setTo(CasWebflowConstants.STATE_ID_MFA_DENIED);
         trans.add(transModel);
 
         transModel = new TransitionModel();
         transModel.setOn(CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
-        transModel.setTo(CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
+        transModel.setTo(CasWebflowConstants.STATE_ID_MFA_UNAVAILABLE);
         trans.add(transModel);
 
         actModel.setTransitions(trans);
@@ -259,7 +259,7 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
         val trans = new LinkedList<TransitionModel>();
         val transModel = new TransitionModel();
         transModel.setOn(CasWebflowConstants.TRANSITION_ID_SUCCESS);
-        transModel.setTo(CasWebflowConstants.TRANSITION_ID_SUCCESS);
+        transModel.setTo(CasWebflowConstants.STATE_ID_SUCCESS);
         trans.add(transModel);
 
         actModel.setTransitions(trans);
@@ -329,12 +329,12 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
 
         transModel = new TransitionModel();
         transModel.setOn(CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
-        transModel.setTo(CasWebflowConstants.TRANSITION_ID_MFA_FAILURE);
+        transModel.setTo(CasWebflowConstants.STATE_ID_MFA_FAILURE);
         trans.add(transModel);
 
         transModel = new TransitionModel();
         transModel.setOn(CasWebflowConstants.TRANSITION_ID_DENY);
-        transModel.setTo(CasWebflowConstants.TRANSITION_ID_DENY);
+        transModel.setTo(CasWebflowConstants.STATE_ID_MFA_DENIED);
         trans.add(transModel);
 
         transModel = new TransitionModel();
