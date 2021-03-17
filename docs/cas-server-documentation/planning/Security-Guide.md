@@ -234,7 +234,7 @@ To learn how sensitive CAS settings can be secured via encryption, [please revie
 
 ### CAS Security Filter
 
-The CAS project provides a number of a blunt [generic security filters][cas-sec-filter] suitable for patching-in-place Java
+The CAS project provides a number of a blunt security filters suitable for patching-in-place Java
 CAS server and Java CAS client deployments vulnerable to certain request parameter based bad-CAS-protocol-input attacks.
 The filters are configured to sanitize authentication request parameters and reject the request if it is not compliant with
 the CAS protocol in the event that for instance, a parameter is repeated multiple times, includes multiple values, contains unacceptable values, etc.
