@@ -8,7 +8,6 @@ import org.apereo.cas.services.web.RegisteredServiceThemeResolver;
 import org.apereo.cas.services.web.RequestHeaderThemeResolver;
 import org.apereo.cas.util.ResourceUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -44,7 +43,6 @@ import java.util.stream.Collectors;
  */
 @Configuration(value = "casThemesConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class CasThemesConfiguration {
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
@@ -56,9 +54,6 @@ public class CasThemesConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Autowired
-    private ObjectProvider<ThymeleafProperties> properties;
 
     @Bean
     public Supplier<Map<String, String>> serviceThemeResolverSupportedBrowsers() {
@@ -111,32 +106,5 @@ public class CasThemesConfiguration {
             .addResolver(fixedResolver);
         chainingThemeResolver.setDefaultThemeName(defaultThemeName);
         return chainingThemeResolver;
-    }
-    
-    @Bean
-    @ConditionalOnMissingBean(name = "themesStaticResourcesWebMvcConfigurer")
-    public WebMvcConfigurer themesStaticResourcesWebMvcConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addResourceHandlers(final ResourceHandlerRegistry registry) {
-                val templatePrefixes = casProperties.getView().getTemplatePrefixes();
-                if (!templatePrefixes.isEmpty()) {
-                    val registration = registry.addResourceHandler("/**");
-                    val resources = templatePrefixes
-                        .stream()
-                        .map(prefix -> StringUtils.appendIfMissing(prefix, "/"))
-                        .map(Unchecked.function(ResourceUtils::getRawResourceFrom))
-                        .toArray(Resource[]::new);
-                    LOGGER.debug("Adding resource handler for resources [{}]", (Object[]) resources);
-                    registration.addResourceLocations(templatePrefixes.toArray(ArrayUtils.EMPTY_STRING_ARRAY));
-                    registration.setUseLastModified(true);
-                    val cache = properties.getIfAvailable() != null && properties.getObject().isCache();
-                    val chainRegistration = registration.resourceChain(cache);
-                    val resolver = new PathResourceResolver();
-                    resolver.setAllowedLocations(resources);
-                    chainRegistration.addResolver(resolver);
-                }
-            }
-        };
     }
 }
