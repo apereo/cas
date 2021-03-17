@@ -42,7 +42,7 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends Ba
         resolutionPlan.registerMetadataResolver(
             new ClasspathResourceMetadataResolver(casProperties.getAuthn().getSamlIdp(), openSamlConfigBean));
         val cacheLoader = new SamlRegisteredServiceMetadataResolverCacheLoader(openSamlConfigBean, httpClient, resolutionPlan);
-        val resolver = new SamlRegisteredServiceDefaultCachingMetadataResolver(Duration.ofSeconds(5), cacheLoader);
+        val resolver = new SamlRegisteredServiceDefaultCachingMetadataResolver(Duration.ofSeconds(5), cacheLoader, openSamlConfigBean);
         assertThrows(SamlException.class, () -> resolver.resolve(service, criteriaSet));
         resolver.invalidate();
     }
@@ -63,7 +63,7 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends Ba
         resolutionPlan.registerMetadataResolver(
             new ClasspathResourceMetadataResolver(casProperties.getAuthn().getSamlIdp(), openSamlConfigBean));
         val cacheLoader = new SamlRegisteredServiceMetadataResolverCacheLoader(openSamlConfigBean, httpClient, resolutionPlan);
-        val resolver = new SamlRegisteredServiceDefaultCachingMetadataResolver(Duration.ofSeconds(5), cacheLoader);
+        val resolver = new SamlRegisteredServiceDefaultCachingMetadataResolver(Duration.ofSeconds(5), cacheLoader, openSamlConfigBean);
         assertNotNull(resolver.resolve(service, criteriaSet));
         resolver.invalidate();
     }
