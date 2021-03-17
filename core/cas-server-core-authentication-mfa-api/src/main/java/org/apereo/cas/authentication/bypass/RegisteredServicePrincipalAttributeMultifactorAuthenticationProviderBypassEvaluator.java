@@ -39,7 +39,7 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationProvide
         val shouldProceed = mfaPolicy == null || !mfaPolicy.isBypassEnabled();
 
         if (!shouldProceed) {
-            val principal = authentication.getPrincipal();
+            val principal = resolvePrincipal(authentication.getPrincipal());
             val bypass = locateMatchingAttributeValue(mfaPolicy.getBypassPrincipalAttributeName(),
                 mfaPolicy.getBypassPrincipalAttributeValue(),
                 principal.getAttributes(), true);

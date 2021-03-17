@@ -52,7 +52,6 @@ public class CredentialMultifactorAuthenticationProviderBypassEvaluator extends 
             LOGGER.debug("Bypass rules for credential types [{}] indicate the request may be ignored", bypassProperties.getCredentialClassType());
             return false;
         }
-
         return true;
     }
 }

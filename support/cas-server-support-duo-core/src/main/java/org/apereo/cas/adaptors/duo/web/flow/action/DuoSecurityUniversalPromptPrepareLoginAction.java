@@ -36,7 +36,7 @@ public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractMultif
 
     public DuoSecurityUniversalPromptPrepareLoginAction(final ApplicationContext applicationContext, final TicketRegistry ticketRegistry,
                                                         final MultifactorAuthenticationProviderBean<
-                                                            DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorProperties> duoProviderBean,
+                                                            DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorAuthenticationProperties> duoProviderBean,
                                                         final TicketFactory ticketFactory) {
         super(applicationContext);
         this.ticketRegistry = ticketRegistry;

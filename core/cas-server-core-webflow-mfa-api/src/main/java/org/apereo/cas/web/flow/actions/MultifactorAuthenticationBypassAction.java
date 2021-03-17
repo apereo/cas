@@ -31,7 +31,7 @@ public class MultifactorAuthenticationBypassAction extends AbstractMultifactorAu
 
         val bypass = provider.getBypassEvaluator();
 
-        val principal = authentication.getPrincipal();
+        val principal = resolvePrincipal(authentication.getPrincipal());
         if (requestContext.getCurrentTransition().getId().equals(CasWebflowConstants.TRANSITION_ID_BYPASS)) {
             LOGGER.debug("Bypass triggered by MFA webflow for MFA for user [{}] for provider [{}]",
                     principal.getId(), provider.getId());

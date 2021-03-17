@@ -37,7 +37,7 @@ public class GroovyMultifactorAuthenticationProviderBypassEvaluator extends Base
                                                                           final MultifactorAuthenticationProvider provider,
                                                                           final HttpServletRequest request) {
         try {
-            val principal = authentication.getPrincipal();
+            val principal = resolvePrincipal(authentication.getPrincipal());
             LOGGER.debug("Evaluating multifactor authentication bypass properties for principal [{}], "
                     + "service [{}] and provider [{}] via Groovy script [{}]",
                 principal.getId(), registeredService, provider, watchableScript.getResource());

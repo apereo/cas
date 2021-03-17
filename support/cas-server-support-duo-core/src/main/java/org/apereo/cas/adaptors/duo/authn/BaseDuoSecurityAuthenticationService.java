@@ -5,6 +5,7 @@ import org.apereo.cas.adaptors.duo.DuoSecurityUserAccountStatus;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -68,7 +69,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
 
     private final transient Cache<String, DuoSecurityUserAccount> userAccountCache;
 
-    protected BaseDuoSecurityAuthenticationService(final DuoSecurityMultifactorProperties duoProperties, final HttpClient httpClient,
+    protected BaseDuoSecurityAuthenticationService(final DuoSecurityMultifactorAuthenticationProperties duoProperties, final HttpClient httpClient,
                                                    final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver) {
         this.duoProperties = duoProperties;
         this.httpClient = httpClient;
