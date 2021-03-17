@@ -144,6 +144,7 @@ public abstract class BaseDuoSecurityTests {
         CasCookieConfiguration.class,
         CasCoreUtilConfiguration.class,
         CasCoreWebConfiguration.class,
+        CasMultifactorAuthenticationWebflowConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
         CasDefaultServiceTicketIdGeneratorsConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class

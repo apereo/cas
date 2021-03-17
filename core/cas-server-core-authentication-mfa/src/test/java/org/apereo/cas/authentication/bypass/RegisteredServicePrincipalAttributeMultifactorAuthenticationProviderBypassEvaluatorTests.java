@@ -1,8 +1,10 @@
 package org.apereo.cas.authentication.bypass;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -12,6 +14,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -32,7 +35,10 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationProvide
         applicationContext.refresh();
 
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
-
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
+        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
+            MultifactorAuthenticationPrincipalResolver.identical(), UUID.randomUUID().toString());
+        
         val eval = new DefaultChainingMultifactorAuthenticationBypassProvider();
         eval.addMultifactorAuthenticationProviderBypassEvaluator(
             new RegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator(TestMultifactorAuthenticationProvider.ID));
@@ -55,6 +61,9 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationProvide
         applicationContext.refresh();
 
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
+        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
+            MultifactorAuthenticationPrincipalResolver.identical(), UUID.randomUUID().toString());
 
         val eval = new DefaultChainingMultifactorAuthenticationBypassProvider();
         eval.addMultifactorAuthenticationProviderBypassEvaluator(
