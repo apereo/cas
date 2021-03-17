@@ -49,6 +49,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEnc
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlObjectSignatureValidator;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.config.CasCookieConfiguration;
@@ -191,6 +192,26 @@ public abstract class BaseSamlIdPConfigurationTests {
     @Qualifier("samlArtifactMap")
     protected SAMLArtifactMap samlArtifactMap;
 
+    protected static SamlRegisteredService getSamlRegisteredServiceFor(final String entityId) {
+        return getSamlRegisteredServiceFor(false, false, false, entityId);
+    }
+
+    protected static SamlRegisteredService getSamlRegisteredServiceFor(final boolean signAssertion,
+                                                                       final boolean signResponses,
+                                                                       final boolean encryptAssertions,
+                                                                       final String entityId) {
+        val service = new SamlRegisteredService();
+        service.setName("TestShib");
+        service.setServiceId(entityId);
+        service.setId(RandomUtils.nextInt());
+        service.setSignAssertions(signAssertion);
+        service.setSignResponses(signResponses);
+        service.setEncryptAssertions(encryptAssertions);
+        service.setDescription("SAML Service");
+        service.setMetadataLocation("classpath:metadata/testshib-providers.xml");
+        return service;
+    }
+    
     @TestConfiguration
     @Lazy(false)
     public static class SamlIdPMetadataTestConfiguration implements AuthenticationEventExecutionPlanConfigurer {
@@ -314,21 +335,5 @@ public abstract class BaseSamlIdPConfigurationTests {
                                                                                final boolean signResponses,
                                                                                final boolean encryptAssertions) {
         return getSamlRegisteredServiceFor(signAssertion, signResponses, encryptAssertions, "https://sp.testshib.org/shibboleth-sp");
-    }
-
-    protected static SamlRegisteredService getSamlRegisteredServiceFor(final boolean signAssertion,
-                                                                       final boolean signResponses,
-                                                                       final boolean encryptAssertions,
-                                                                       final String entityId) {
-        val service = new SamlRegisteredService();
-        service.setName("TestShib");
-        service.setServiceId(entityId);
-        service.setId(100);
-        service.setSignAssertions(signAssertion);
-        service.setSignResponses(signResponses);
-        service.setEncryptAssertions(encryptAssertions);
-        service.setDescription("SAML Service");
-        service.setMetadataLocation("classpath:metadata/testshib-providers.xml");
-        return service;
     }
 }

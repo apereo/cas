@@ -5,6 +5,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.EncodingUtils;
 
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
@@ -13,6 +14,7 @@ import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.opensaml.core.criterion.EntityIdCriterion;
+import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.messaging.context.SAMLEndpointContext;
@@ -34,6 +36,8 @@ import org.opensaml.saml.saml2.metadata.Endpoint;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.impl.AssertionConsumerServiceBuilder;
 
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -48,9 +52,27 @@ import java.util.stream.Collectors;
 public class SamlIdPUtils {
 
     /**
-     * Prepare peer entity saml endpoint.
+     * Retrieve saml request.
      *
-     * @param request         the authn request
+     * @param <T>                the type parameter
+     * @param openSamlConfigBean the open saml config bean
+     * @param clazz              the clazz
+     * @param requestValue       the request value
+     * @return the t
+     */
+    @SneakyThrows
+    public static <T extends RequestAbstractType> T retrieveSamlRequest(final OpenSamlConfigBean openSamlConfigBean,
+                                                                        final Class<T> clazz, final String requestValue) {
+        val encodedRequest = EncodingUtils.decodeBase64(requestValue.getBytes(StandardCharsets.UTF_8));
+        return clazz.cast(XMLObjectSupport.unmarshallFromInputStream(
+            openSamlConfigBean.getParserPool(),
+            new ByteArrayInputStream(encodedRequest)));
+    }
+
+    /**
+     * Prepare peer entity saml endpoint context.
+     *
+     * @param request         the request
      * @param outboundContext the outbound context
      * @param adaptor         the adaptor
      * @param binding         the binding

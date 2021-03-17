@@ -4,6 +4,7 @@ import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -91,29 +92,35 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
                                                                                     final SamlRegisteredService registeredService,
                                                                                     final String entityID,
                                                                                     final CriteriaSet criterions) {
-        LOGGER.trace("Adapting SAML metadata for CAS service [{}] issued by [{}]", registeredService.getName(), entityID);
-        criterions.add(new EntityIdCriterion(entityID), true);
-        LOGGER.debug("Locating metadata for entityID [{}] by attempting to run through the metadata chain...", entityID);
-        val chainingMetadataResolver = resolver.resolve(registeredService, criterions);
-        LOGGER.info("Resolved metadata chain from [{}]. Filtering the chain by entity ID [{}]",
-            registeredService.getMetadataLocation(), entityID);
+        try {
+            LOGGER.trace("Adapting SAML metadata for CAS service [{}] issued by [{}]", registeredService.getName(), entityID);
+            criterions.add(new EntityIdCriterion(entityID), true);
+            LOGGER.debug("Locating metadata for entityID [{}] by attempting to run through the metadata chain...", entityID);
+            val chainingMetadataResolver = resolver.resolve(registeredService, criterions);
+            LOGGER.info("Resolved metadata chain from [{}]. Filtering the chain by entity ID [{}]",
+                registeredService.getMetadataLocation(), entityID);
 
-        val entityDescriptor = chainingMetadataResolver.resolveSingle(criterions);
-        if (entityDescriptor == null) {
-            LOGGER.warn("Cannot find entity [{}] in metadata provider. Ensure the metadata is valid and has not expired.", entityID);
-            return Optional.empty();
-        }
-        LOGGER.trace("Located entity descriptor in metadata for [{}]", entityID);
-
-        if (entityDescriptor.getValidUntil() != null) {
-            val expired = entityDescriptor.getValidUntil()
-                .isBefore(ZonedDateTime.now(ZoneOffset.UTC).toInstant());
-            if (expired) {
-                LOGGER.warn("Entity descriptor in the metadata has expired at [{}]", entityDescriptor.getValidUntil());
+            val entityDescriptor = chainingMetadataResolver.resolveSingle(criterions);
+            if (entityDescriptor == null) {
+                LOGGER.warn("Cannot find entity [{}] in metadata provider. Ensure the metadata is valid and has not expired.", entityID);
                 return Optional.empty();
             }
+            LOGGER.trace("Located entity descriptor in metadata for [{}]", entityID);
+
+            if (entityDescriptor.getValidUntil() != null) {
+                val expired = entityDescriptor.getValidUntil()
+                    .isBefore(ZonedDateTime.now(ZoneOffset.UTC).toInstant());
+                if (expired) {
+                    LOGGER.warn("Entity descriptor in the metadata has expired at [{}]", entityDescriptor.getValidUntil());
+                    return Optional.empty();
+                }
+            }
+            return getServiceProviderSsoDescriptor(entityID, chainingMetadataResolver, entityDescriptor);
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
         }
-        return getServiceProviderSsoDescriptor(entityID, chainingMetadataResolver, entityDescriptor);
+        return Optional.empty();
+
     }
     
     public ZonedDateTime getValidUntil() {
