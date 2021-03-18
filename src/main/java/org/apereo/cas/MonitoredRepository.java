@@ -362,14 +362,22 @@ public class MonitoredRepository {
 
             val now = OffsetDateTime.now();
             workflowRun.getRuns().forEach(run -> {
-                val exp = run.getUpdatedTime().plusDays(this.gitHubProperties.getStaleWorkflowRunInDays());
-                if (exp.isBefore(now)) {
+                val staleExp = run.getUpdatedTime().plusDays(this.gitHubProperties.getStaleWorkflowRunInDays());
+                if (staleExp.isBefore(now)) {
                     Workflows.WorkflowRunStatus.from(run)
                         .filter(status -> status == Workflows.WorkflowRunStatus.IN_PROGRESS)
                         .ifPresent(status -> cancelWorkflowRun(run));
 
                     log.info("Removing old workflow run {} @ {}", run, run.getUpdatedTime());
                     gitHub.removeWorkflowRun(getOrganization(), getName(), run);
+                } else {
+                    if (run.isConcludedSuccessfully() && Workflows.WorkflowRunEvent.PUSH.getName().equalsIgnoreCase(run.getEvent())) {
+                        val completedExp = run.getUpdatedTime().plusDays(this.gitHubProperties.getCompletedWorkflowRunInDays());
+                        if (completedExp.isBefore(now)) {
+                            log.info("Removing completed workflow run {} @ {}", run, run.getUpdatedTime());
+                            gitHub.removeWorkflowRun(getOrganization(), getName(), run);
+                        }
+                    }
                 }
             });
         }

@@ -75,16 +75,19 @@ public class CasPullRequestListener implements PullRequestListener {
 
     private boolean processInvalidPullRequest(final PullRequest pr) {
         val count = repository.getPullRequestFiles(pr).stream()
-                .filter(file -> !file.getFilename().contains("src/test/java")
-                        && !file.getFilename().endsWith(".html")
-                        && !file.getFilename().endsWith(".js")
-                        && !file.getFilename().endsWith(".jpg")
-                        && !file.getFilename().endsWith(".jpeg")
-                        && !file.getFilename().endsWith(".sh")
-                        && !file.getFilename().endsWith(".txt")
-                        && !file.getFilename().endsWith(".md")
-                        && !file.getFilename().endsWith(".gif")
-                        && !file.getFilename().endsWith(".css"))
+                .filter(file -> {
+                    var fname = file.getFilename();
+                    return !fname.contains("src/test/java")
+                            && !fname.endsWith(".html")
+                            && !fname.endsWith(".js")
+                            && !fname.endsWith(".jpg")
+                            && !fname.endsWith(".jpeg")
+                            && !fname.endsWith(".sh")
+                            && !fname.endsWith(".txt")
+                            && !fname.endsWith(".md")
+                            && !fname.endsWith(".gif")
+                            && !fname.endsWith(".css");
+                })
                 .count();
 
         if (count >= repository.getGitHubProperties().getMaximumChangedFiles()) {

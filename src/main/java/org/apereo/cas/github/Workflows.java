@@ -127,5 +127,10 @@ public class Workflows {
             this.creationTime = creationTime;
             this.updatedTime = updatedTime;
         }
+
+        public boolean isConcludedSuccessfully() {
+            return Workflows.WorkflowRunStatus.COMPLETED.getName().equalsIgnoreCase(status)
+                && "success".equalsIgnoreCase(conclusion);
+        }
     }
 }
