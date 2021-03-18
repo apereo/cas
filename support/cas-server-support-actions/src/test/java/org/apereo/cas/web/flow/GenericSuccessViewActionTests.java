@@ -52,6 +52,7 @@ public class GenericSuccessViewActionTests extends AbstractWebflowActionsTests {
     
     @BeforeEach
     public void setup() {
+        casProperties.getView().setDefaultRedirectUrl(null);
         getServicesManager().deleteAll();
     }
 
@@ -60,7 +61,7 @@ public class GenericSuccessViewActionTests extends AbstractWebflowActionsTests {
         val registeredService1 = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), Map.of());
         getServicesManager().save(registeredService1);
 
-        val registeredService2 = RegisteredServiceTestUtils.getRegisteredService();
+        val registeredService2 = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
         registeredService2.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(false, false));
         getServicesManager().save(registeredService2);
 
