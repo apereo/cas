@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = {
     "cas.authn.saml-idp.metadata.git.sign-commits=false",
     "cas.authn.saml-idp.metadata.git.idp-metadata-enabled=true",
-    "cas.authn.saml-idp.metadata.git.repository-url=file:${java.io.tmpdir}/cas-metadata-idp-gen.git"
+    "cas.authn.saml-idp.metadata.git.repository-url=file:${java.io.tmpdir}/cas-saml-metadata.git"
 })
 @Tag("FileSystem")
 @Slf4j
@@ -39,10 +39,6 @@ public class GitSamlIdPMetadataGeneratorTests extends BaseGitSamlMetadataTests {
     @BeforeAll
     public static void setup() {
         try {
-            val sourceGit = new File(FileUtils.getTempDirectory(), "cas-metadata-idp-gen");
-            if (sourceGit.exists()) {
-                PathUtils.deleteDirectory(sourceGit.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
-            }
             val gitDir = new File(FileUtils.getTempDirectory(), "cas-saml-metadata");
             if (gitDir.exists()) {
                 PathUtils.deleteDirectory(gitDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
@@ -60,16 +56,11 @@ public class GitSamlIdPMetadataGeneratorTests extends BaseGitSamlMetadataTests {
 
     @AfterAll
     public static void cleanUp() throws Exception {
-        val sourceGit = new File(FileUtils.getTempDirectory(), "cas-metadata-idp-gen");
-        if (sourceGit.exists()) {
-            PathUtils.deleteDirectory(sourceGit.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
-        }
         val gitDir = new File(FileUtils.getTempDirectory(), "cas-saml-metadata");
         if (gitDir.exists()) {
             PathUtils.deleteDirectory(gitDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
         }
     }
-
 
     @Test
     public void verifyOperation() {
