@@ -34,6 +34,7 @@ public class DistributedCacheManagerTests {
             .build();
         
         assertDoesNotThrow(() -> mgr.set("key", object, true));
+        assertDoesNotThrow(mgr::clear);
         assertDoesNotThrow(() -> mgr.set("key", object, true));
         assertDoesNotThrow(() -> mgr.remove("key", object, true));
         assertNotNull(mgr.update("key", object, true));

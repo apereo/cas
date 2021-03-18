@@ -64,6 +64,12 @@ public interface DistributedCacheManager<K extends Serializable, V extends Seria
     }
 
     /**
+     * Clear.
+     */
+    default void clear() {
+    }
+
+    /**
      * Set item in the cache.
      *
      * @param key        the key

@@ -8,6 +8,7 @@ import org.apereo.cas.util.cache.DistributedCacheObject;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,5 +60,12 @@ public class RegisteredServiceKafkaDistributedCacheManagerTests {
         assertNotNull(registeredServiceDistributedCacheManager.update(service, item, true));
         assertNotNull(registeredServiceDistributedCacheManager.update(service, item, false));
     }
+
+
+    @BeforeEach
+    public void tearDown() {
+        registeredServiceDistributedCacheManager.clear();
+    }
+
 
 }

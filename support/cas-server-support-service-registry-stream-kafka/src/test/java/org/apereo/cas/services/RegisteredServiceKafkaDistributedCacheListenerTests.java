@@ -8,6 +8,7 @@ import org.apereo.cas.util.cache.DistributedCacheObject;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -40,6 +41,11 @@ public class RegisteredServiceKafkaDistributedCacheListenerTests {
     @Autowired
     @Qualifier("registeredServiceKafkaDistributedCacheListener")
     private RegisteredServiceKafkaDistributedCacheListener listener;
+
+    @BeforeEach
+    public void tearDown() {
+        this.listener.getCacheManager().clear();
+    }
 
     @Test
     public void verifyRemoval() {
