@@ -94,8 +94,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
 
         var foundService = configurationContext.getRegisteredServiceLocators()
             .stream()
-            .map(locator -> locator.locate(getCandidateServicesToMatch(service.getId()), service,
-                entry -> entry.matches(service.getId())))
+            .map(locator -> locator.locate(getCandidateServicesToMatch(service.getId()), service))
             .filter(Objects::nonNull)
             .findFirst()
             .orElse(null);

@@ -23,8 +23,7 @@ public interface ServicesManagerRegisteredServiceLocator extends Ordered {
      * @param predicateFilter the predicate filter
      * @return the registered service
      */
-    RegisteredService locate(Collection<RegisteredService> candidates, Service service,
-        Predicate<RegisteredService> predicateFilter);
+    RegisteredService locate(Collection<RegisteredService> candidates, Service service);
 
     @Override
     default int getOrder() {

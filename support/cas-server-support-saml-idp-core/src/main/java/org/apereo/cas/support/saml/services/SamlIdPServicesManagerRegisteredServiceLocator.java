@@ -31,9 +31,10 @@ public class SamlIdPServicesManagerRegisteredServiceLocator extends DefaultServi
         setOrder(Ordered.HIGHEST_PRECEDENCE);
         setRegisteredServiceFilter((registeredService, service) -> {
             val isSamlServiceProvider = isSamlRegisteredService(registeredService, service);
-            if (isSamlServiceProvider && registeredService.matches(service.getId())) {
+            val entityId = getServiceEntityId(service);
+            if (isSamlServiceProvider && registeredService.matches(entityId)) {
                 val samlService = SamlRegisteredService.class.cast(registeredService);
-                val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, samlService, service.getId());
+                val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, samlService, entityId);
                 return adaptor.isPresent();
             }
             return false;
@@ -58,4 +59,13 @@ public class SamlIdPServicesManagerRegisteredServiceLocator extends DefaultServi
         }
         return false;
     }
+
+    private String getServiceEntityId(final Service service) {
+        val entityIdAttribute = service.getAttributes().get(SamlProtocolConstants.PARAMETER_ENTITY_ID);
+        if (entityIdAttribute == null) {
+            return service.getId();
+        }
+        return entityIdAttribute.get(0).toString();
+    }
 }
+

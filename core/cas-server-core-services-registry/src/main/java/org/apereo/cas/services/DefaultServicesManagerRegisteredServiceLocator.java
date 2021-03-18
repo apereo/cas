@@ -26,16 +26,15 @@ public class DefaultServicesManagerRegisteredServiceLocator implements ServicesM
     private int order = Ordered.LOWEST_PRECEDENCE;
 
     private BiPredicate<RegisteredService, Service> registeredServiceFilter =
-        (registeredService, service) -> registeredService.getClass().equals(RegexRegisteredService.class);
+        (registeredService, service) -> registeredService.getClass().equals(RegexRegisteredService.class) && registeredService.matches(service.getId());
 
     @Override
-    public RegisteredService locate(final Collection<RegisteredService> candidates, final Service service,
-        final Predicate<RegisteredService> requestedFilter) {
-        return candidates
+    public RegisteredService locate(final Collection<RegisteredService> candidates, final Service service) {
+       return candidates
             .stream()
             .filter(entry -> registeredServiceFilter.test(entry, service))
-            .filter(requestedFilter::test)
             .findFirst()
             .orElse(null);
     }
 }
+
