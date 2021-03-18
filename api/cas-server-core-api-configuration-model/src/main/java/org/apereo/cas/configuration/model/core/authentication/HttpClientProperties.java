@@ -59,10 +59,10 @@ public class HttpClientProperties implements Serializable {
     private HttpClientTrustStoreProperties truststore = new HttpClientTrustStoreProperties();
 
     /**
-     * Whether CAS should accept local logout URLs.
+     * Whether CAS should accept local URLs.
      * For example {@code http(s)://localhost/logout}.
      */
-    private boolean allowLocalLogoutUrls;
+    private boolean allowLocalUrls;
 
     /**
      * If specified the regular expression will be used to validate the url's authority.

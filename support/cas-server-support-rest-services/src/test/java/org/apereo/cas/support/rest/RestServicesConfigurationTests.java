@@ -59,8 +59,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilConfiguration.class,
     RestServicesConfiguration.class
 }, properties = {
-    "cas.rest.attribute-name=attr-name",
-    "cas.rest.attribute-value=attr-v"
+    "cas.rest.services.attribute-name=attr-name",
+    "cas.rest.services.attribute-value=attr-v"
 })
 @Tag("Simple")
 public class RestServicesConfigurationTests {

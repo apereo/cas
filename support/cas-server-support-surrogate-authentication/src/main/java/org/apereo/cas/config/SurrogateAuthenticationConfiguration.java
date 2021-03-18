@@ -5,8 +5,10 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationPostProcessor;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
+import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.SurrogateAuthenticationExpirationPolicyBuilder;
 import org.apereo.cas.authentication.SurrogateAuthenticationPostProcessor;
+import org.apereo.cas.authentication.SurrogateMultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.SurrogatePrincipalBuilder;
 import org.apereo.cas.authentication.SurrogatePrincipalElectionStrategy;
 import org.apereo.cas.authentication.SurrogatePrincipalResolver;
@@ -17,7 +19,6 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolutionExecutionPlanConfigurer;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
 import org.apereo.cas.authentication.surrogate.JsonResourceSurrogateAuthenticationService;
 import org.apereo.cas.authentication.surrogate.SimpleSurrogateAuthenticationService;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
@@ -59,7 +60,7 @@ import java.util.List;
 @Slf4j
 public class SurrogateAuthenticationConfiguration {
     @Autowired
-    @Qualifier("attributeRepository")
+    @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
     private ObjectProvider<IPersonAttributeDao> attributeRepository;
 
     @Autowired
@@ -128,12 +129,21 @@ public class SurrogateAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "surrogatePrincipalBuilder")
     @Bean
+    @RefreshScope
     public SurrogatePrincipalBuilder surrogatePrincipalBuilder() {
         return new SurrogatePrincipalBuilder(surrogatePrincipalFactory(), attributeRepository.getObject(), surrogateAuthenticationService());
     }
 
+    @Bean
+    @ConditionalOnMissingBean(name = "surrogateMultifactorAuthenticationPrincipalResolver")
+    @RefreshScope
+    public MultifactorAuthenticationPrincipalResolver surrogateMultifactorAuthenticationPrincipalResolver() {
+        return new SurrogateMultifactorAuthenticationPrincipalResolver();
+    }
+    
     @ConditionalOnMissingBean(name = "surrogatePrincipalElectionStrategyConfigurer")
     @Bean
+    @RefreshScope
     public PrincipalElectionStrategyConfigurer surrogatePrincipalElectionStrategyConfigurer() {
         return chain -> {
             val strategy = new SurrogatePrincipalElectionStrategy();
@@ -168,21 +178,13 @@ public class SurrogateAuthenticationConfiguration {
     public PrincipalResolver surrogatePrincipalResolver() {
         val principal = casProperties.getAuthn().getSurrogate().getPrincipal();
         val personDirectory = casProperties.getPersonDirectory();
-        val principalAttribute = org.apache.commons.lang3.StringUtils.defaultIfBlank(
-            principal.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
-
-        val context = PrincipalResolutionContext.builder()
-            .attributeRepository(attributeRepository.getObject())
-            .principalFactory(surrogatePrincipalFactory())
-            .returnNullIfNoAttributes(principal.isReturnNull() || personDirectory.isReturnNull())
-            .principalNameTransformer(String::trim)
-            .principalAttributeNames(principalAttribute)
-            .useCurrentPrincipalId(principal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId())
-            .resolveAttributes(principal.isAttributeResolutionEnabled())
-            .activeAttributeRepositoryIdentifiers(StringUtils.commaDelimitedListToSet(principal.getActiveAttributeRepositoryIds()))
-            .build();
-
-        return new SurrogatePrincipalResolver(context, surrogatePrincipalBuilder());
+        val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(surrogatePrincipalFactory(),
+            attributeRepository.getObject(),
+            CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
+            SurrogatePrincipalResolver.class,
+            principal, personDirectory);
+        resolver.setSurrogatePrincipalBuilder(surrogatePrincipalBuilder());
+        return resolver;
     }
 
     @ConditionalOnMissingBean(name = "surrogatePrincipalResolutionExecutionPlanConfigurer")

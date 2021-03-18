@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.consent.AttributeConsentReportEndpoint;
@@ -116,8 +118,10 @@ public class CasConsentCoreConfiguration {
     @ConditionalOnMissingBean(name = "casConsentAuditTrailRecordResolutionPlanConfigurer")
     public AuditTrailRecordResolutionPlanConfigurer casConsentAuditTrailRecordResolutionPlanConfigurer() {
         return plan -> {
-            plan.registerAuditActionResolver("SAVE_CONSENT_ACTION_RESOLVER", authenticationActionResolver.getObject());
-            plan.registerAuditResourceResolver("SAVE_CONSENT_RESOURCE_RESOLVER", returnValueResourceResolver.getObject());
+            plan.registerAuditActionResolver(AuditActionResolvers.SAVE_CONSENT_ACTION_RESOLVER,
+                authenticationActionResolver.getObject());
+            plan.registerAuditResourceResolver(AuditResourceResolvers.SAVE_CONSENT_RESOURCE_RESOLVER,
+                returnValueResourceResolver.getObject());
         };
     }
 

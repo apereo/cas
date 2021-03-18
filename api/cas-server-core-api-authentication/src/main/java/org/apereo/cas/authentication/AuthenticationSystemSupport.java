@@ -35,6 +35,20 @@ public interface AuthenticationSystemSupport {
     PrincipalElectionStrategy getPrincipalElectionStrategy();
 
     /**
+     * Gets authentication transaction factory.
+     *
+     * @return the authentication transaction factory
+     */
+    AuthenticationTransactionFactory getAuthenticationTransactionFactory();
+
+    /**
+     * Gets authentication result builder factory.
+     *
+     * @return the authentication result builder factory
+     */
+    AuthenticationResultBuilderFactory getAuthenticationResultBuilderFactory();
+
+    /**
      * Initiate potential multi-transaction authentication event by handling the initial authentication transaction.
      *
      * @param authentication a pre-established authentication object in a multi-legged authentication flow.

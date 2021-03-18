@@ -1,7 +1,7 @@
 package org.apereo.cas.support.inwebo.authentication;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.DefaultAuthenticationTransaction;
+import org.apereo.cas.authentication.DefaultAuthenticationTransactionFactory;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -27,7 +27,7 @@ public class InweboAuthenticationDeviceMetadataPopulatorTests {
         val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
         assertTrue(this.populator.supports(credentials));
         assertNotNull(populator.toString());
-        this.populator.populateAttributes(builder, DefaultAuthenticationTransaction.of(credentials));
+        this.populator.populateAttributes(builder, new DefaultAuthenticationTransactionFactory().newTransaction(credentials));
         val auth = builder.build();
         assertEquals(
             credentials.getDeviceName(),

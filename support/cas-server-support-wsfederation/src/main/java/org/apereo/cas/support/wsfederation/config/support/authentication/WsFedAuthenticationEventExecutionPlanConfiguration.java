@@ -1,9 +1,10 @@
 package org.apereo.cas.support.wsfederation.config.support.authentication;
 
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
-import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationDelegatedCookieProperties;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationDelegationProperties;
@@ -51,7 +52,7 @@ import java.util.HashSet;
 public class WsFedAuthenticationEventExecutionPlanConfiguration {
 
     @Autowired
-    @Qualifier("attributeRepository")
+    @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
     private ObjectProvider<IPersonAttributeDao> attributeRepository;
 
     @Autowired
@@ -160,22 +161,13 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
                             + wsfed.getIdentityProviderUrl()));
 
                     val principal = wsfed.getPrincipal();
-                    val principalAttribute = StringUtils.defaultIfBlank(principal.getPrincipalAttribute(),
-                        personDirectory.getPrincipalAttribute());
 
-                    val context = PrincipalResolutionContext.builder()
-                        .attributeRepository(attributeRepository.getObject())
-                        .principalFactory(wsfedPrincipalFactory())
-                        .returnNullIfNoAttributes(principal.isReturnNull() || personDirectory.isReturnNull())
-                        .principalNameTransformer(String::trim)
-                        .principalAttributeNames(principalAttribute)
-                        .useCurrentPrincipalId(principal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId())
-                        .resolveAttributes(principal.isAttributeResolutionEnabled())
-                        .activeAttributeRepositoryIdentifiers(org.springframework.util.StringUtils
-                            .commaDelimitedListToSet(principal.getActiveAttributeRepositoryIds()))
-                        .build();
-
-                    val resolver = new WsFederationCredentialsToPrincipalResolver(context, cfg);
+                    val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(wsfedPrincipalFactory(),
+                        attributeRepository.getObject(),
+                        CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
+                        WsFederationCredentialsToPrincipalResolver.class,
+                        principal, personDirectory);
+                    resolver.setConfiguration(cfg);
                     plan.registerAuthenticationHandlerWithPrincipalResolver(handler, resolver);
                 }
             });

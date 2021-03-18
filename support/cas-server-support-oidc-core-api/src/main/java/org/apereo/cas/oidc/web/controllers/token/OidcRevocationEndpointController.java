@@ -1,8 +1,8 @@
 package org.apereo.cas.oidc.web.controllers.token;
 
+import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20RevocationEndpointController;
 
 import org.springframework.http.MediaType;
@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class OidcRevocationEndpointController extends OAuth20RevocationEndpointController {
 
-    public OidcRevocationEndpointController(final OAuth20ConfigurationContext configurationContext) {
+    public OidcRevocationEndpointController(final OidcConfigurationContext configurationContext) {
         super(configurationContext);
     }
 

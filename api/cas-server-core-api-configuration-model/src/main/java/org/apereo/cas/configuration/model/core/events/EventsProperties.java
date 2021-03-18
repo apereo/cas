@@ -60,5 +60,11 @@ public class EventsProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private DynamoDbEventsProperties dynamoDb = new DynamoDbEventsProperties();
+
+    /**
+     * Track authentication events inside a Redis instance.
+     */
+    @NestedConfigurationProperty
+    private RedisEventsProperties redis = new RedisEventsProperties();
     
 }

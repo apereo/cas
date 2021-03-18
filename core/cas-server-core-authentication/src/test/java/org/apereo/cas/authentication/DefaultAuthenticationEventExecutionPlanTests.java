@@ -6,6 +6,8 @@ import org.apereo.cas.authentication.policy.AllCredentialsValidatedAuthenticatio
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
+import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
+import org.apereo.cas.configuration.model.core.ticket.RememberMeAuthenticationProperties;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
@@ -36,19 +38,20 @@ public class DefaultAuthenticationEventExecutionPlanTests {
             .principalNameTransformer(formUserId -> formUserId)
             .useCurrentPrincipalId(false)
             .resolveAttributes(true)
+            .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE))
             .activeAttributeRepositoryIdentifiers(CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD))
             .build();
 
         val plan = new DefaultAuthenticationEventExecutionPlan();
         plan.registerAuthenticationPreProcessor(transaction -> false);
         plan.registerAuthenticationMetadataPopulators(
-            Set.of(new RememberMeAuthenticationMetaDataPopulator()));
+            Set.of(new RememberMeAuthenticationMetaDataPopulator(new RememberMeAuthenticationProperties())));
         plan.registerAuthenticationHandlerWithPrincipalResolvers(
             Set.of(new SimpleTestUsernamePasswordAuthenticationHandler()), new PersonDirectoryPrincipalResolver(context));
         plan.registerAuthenticationPolicy(new AllCredentialsValidatedAuthenticationPolicy());
         plan.registerAuthenticationPolicyResolver(transaction -> Set.of(new AllCredentialsValidatedAuthenticationPolicy()));
         assertFalse(plan.getAuthenticationPolicies(
-            DefaultAuthenticationTransaction.of(
+            new DefaultAuthenticationTransactionFactory().newTransaction(
                 CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword())).isEmpty());
     }
 

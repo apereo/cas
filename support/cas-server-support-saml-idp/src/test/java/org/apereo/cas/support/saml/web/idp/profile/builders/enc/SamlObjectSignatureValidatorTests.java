@@ -9,7 +9,6 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceSe
 import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -23,12 +22,14 @@ import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.opensaml.xmlsec.context.SecurityParametersContext;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.config.SAML2Configuration;
 import org.pac4j.saml.context.SAML2MessageContext;
 import org.pac4j.saml.crypto.DefaultSignatureSigningParametersProvider;
 import org.pac4j.saml.sso.impl.SAML2AuthnRequestBuilder;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
 
 import java.io.File;
@@ -56,14 +57,11 @@ public class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationT
 
     private SamlRegisteredServiceServiceProviderMetadataFacade adaptor;
 
-    @BeforeEach
-    public void before() throws Exception {
+    private void setupTestContextFor(final String spMetadataPath, final String spEntityId) throws Exception {
         val idpMetadata = new File("src/test/resources/metadata/idp-metadata.xml").getCanonicalPath();
         val keystorePath = new File(FileUtils.getTempDirectory(), "keystore").getCanonicalPath();
-        val spMetadataPath = new File(FileUtils.getTempDirectory(), "sp-metadata.xml").getCanonicalPath();
-
         saml2ClientConfiguration = new SAML2Configuration(keystorePath, "changeit", "changeit", idpMetadata);
-        saml2ClientConfiguration.setServiceProviderEntityId("cas:example:sp");
+        saml2ClientConfiguration.setServiceProviderEntityId(spEntityId);
         saml2ClientConfiguration.setServiceProviderMetadataPath(spMetadataPath);
         saml2ClientConfiguration.init();
 
@@ -73,7 +71,8 @@ public class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationT
 
         samlContext = new MessageContext();
         saml2MessageContext = new SAML2MessageContext();
-
+        saml2MessageContext.setSaml2Configuration(saml2ClientConfiguration);
+        saml2MessageContext.setWebContext(new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse()));
         val peer = saml2MessageContext.getMessageContext().getSubcontext(SAMLPeerEntityContext.class, true);
         assertNotNull(peer);
 
@@ -92,7 +91,7 @@ public class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationT
 
         val sp = self.getSubcontext(SAMLMetadataContext.class, true);
         assertNotNull(sp);
-        val spRes = new InMemoryResourceMetadataResolver(new File(spMetadataPath), openSamlConfigBean);
+        val spRes = new InMemoryResourceMetadataResolver(saml2ClientConfiguration.getServiceProviderMetadataResource(), openSamlConfigBean);
         spRes.setId(getClass().getSimpleName());
         spRes.initialize();
         val spResolver = SamlIdPUtils.getRoleDescriptorResolver(spRes, true);
@@ -114,16 +113,21 @@ public class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationT
 
     @Test
     public void verifySamlAuthnRequestNotSigned() throws Exception {
+        val spMetadataPath = new File(FileUtils.getTempDirectory(), "sp-metadata.xml").getCanonicalPath();
+        setupTestContextFor(spMetadataPath, "cas:example:sp");
         val request = new MockHttpServletRequest();
-        val builder = new SAML2AuthnRequestBuilder(saml2ClientConfiguration);
+        val builder = new SAML2AuthnRequestBuilder();
         val authnRequest = builder.build(saml2MessageContext);
         samlObjectSignatureValidator.verifySamlProfileRequestIfNeeded(authnRequest, adaptor, request, samlContext);
     }
 
     @Test
     public void verifySamlAuthnRequestSigned() throws Exception {
+        val spMetadataPath = new File(FileUtils.getTempDirectory(), "sp-metadata.xml").getCanonicalPath();
+        setupTestContextFor(spMetadataPath, "cas:example:sp");
+
         val request = new MockHttpServletRequest();
-        val builder = new SAML2AuthnRequestBuilder(saml2ClientConfiguration);
+        val builder = new SAML2AuthnRequestBuilder();
         val authnRequest = builder.build(saml2MessageContext);
 
         val messageContext = new MessageContext();
@@ -143,13 +147,33 @@ public class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationT
                 samlObjectSignatureValidator.verifySamlProfileRequestIfNeeded(authnRequest, adaptor, request, samlContext);
             }
         });
+    }
+
+    @Test
+    public void verifySamlAuthnRequestSignedMultipleCertificates() throws Exception {
+        setupTestContextFor("classpath:metadata/sp-metadata-multicerts.xml", "https://bard.zoom.us");
+
+        val request = new MockHttpServletRequest();
+        val builder = new SAML2AuthnRequestBuilder();
+        saml2ClientConfiguration.setAuthnRequestSigned(true);
+        val authnRequest = builder.build(saml2MessageContext);
+
+        assertDoesNotThrow(new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                samlObjectSignatureValidator.verifySamlProfileRequestIfNeeded(authnRequest, adaptor, request, samlContext);
+            }
+        });
 
     }
 
     @Test
-    public void verifySamlAuthnRequestWithoutSig() {
+    public void verifySamlAuthnRequestWithoutSig() throws Exception {
+        val spMetadataPath = new File(FileUtils.getTempDirectory(), "sp-metadata.xml").getCanonicalPath();
+        setupTestContextFor(spMetadataPath, "cas:example:sp");
+
         val request = new MockHttpServletRequest();
-        val builder = new SAML2AuthnRequestBuilder(saml2ClientConfiguration);
+        val builder = new SAML2AuthnRequestBuilder();
         val authnRequest = builder.build(saml2MessageContext);
         val messageContext = new MessageContext();
         messageContext.setMessage(authnRequest);

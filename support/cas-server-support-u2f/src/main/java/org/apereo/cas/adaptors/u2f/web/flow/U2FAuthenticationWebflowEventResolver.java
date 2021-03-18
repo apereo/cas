@@ -1,5 +1,8 @@
 package org.apereo.cas.adaptors.u2f.web.flow;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 
@@ -27,9 +30,9 @@ public class U2FAuthenticationWebflowEventResolver extends BaseMultifactorAuthen
         return handleAuthenticationTransactionAndGrantTicketGrantingTicket(context);
     }
 
-    @Audit(action = "AUTHENTICATION_EVENT",
-        actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",
-        resourceResolverName = "AUTHENTICATION_EVENT_RESOURCE_RESOLVER")
+    @Audit(action = AuditableActions.AUTHENTICATION_EVENT,
+        actionResolverName = AuditActionResolvers.AUTHENTICATION_EVENT_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.AUTHENTICATION_EVENT_RESOURCE_RESOLVER)
     @Override
     public Event resolveSingle(final RequestContext context) {
         return super.resolveSingle(context);

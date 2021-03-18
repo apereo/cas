@@ -48,7 +48,6 @@ public class PasswordEncoderProperties implements Serializable {
      *     <li>{@code org.example.MyEncoder}: An implementation of {@code PasswordEncoder} of your own choosing.</li>
      *     <li>{@code file:///path/to/script.groovy}: Path to a Groovy script charged with handling password encoding operations.</li>
      * </ul>
-     * @see PasswordEncoderTypes
      */
     @RequiredProperty
     private String type = "NONE";

@@ -92,6 +92,11 @@ public class CosmosDbServiceRegistry extends AbstractServiceRegistry {
     }
 
     @Override
+    public void deleteAll() {
+        this.documentDbTemplate.deleteAll(this.collectionName);
+    }
+
+    @Override
     public Collection<RegisteredService> load() {
         val query = String.format("SELECT * FROM %s c", this.collectionName);
         val results = queryDocuments(query);

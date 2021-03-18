@@ -5,8 +5,11 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.support.merger.IAttributeMerger;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -15,7 +18,7 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Builder
+@SuperBuilder
 @Getter
 public class PrincipalResolutionContext {
     /**
@@ -57,5 +60,8 @@ public class PrincipalResolutionContext {
      * Active attribute repositories ids for this resolver
      * to use for attribute resolution.
      */
-    private final Set<String> activeAttributeRepositoryIdentifiers;
+    @Builder.Default
+    private final Set<String> activeAttributeRepositoryIdentifiers = new HashSet<>();
+
+    private final IAttributeMerger attributeMerger;
 }

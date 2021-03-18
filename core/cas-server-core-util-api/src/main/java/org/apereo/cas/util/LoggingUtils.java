@@ -6,6 +6,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 
+import java.util.Objects;
+
 /**
  * This is {@link LoggingUtils}.
  *
@@ -66,7 +68,7 @@ public class LoggingUtils {
     static String getMessage(final Throwable throwable) {
         if (StringUtils.isEmpty(throwable.getMessage())) {
             val message = ExceptionUtils.getThrowableList(throwable)
-                    .stream().map(t -> t.getMessage()).filter(m -> m != null).findFirst();
+                    .stream().map(Throwable::getMessage).filter(Objects::nonNull).findFirst();
             if (message.isPresent()) {
                 return message.get();
             }

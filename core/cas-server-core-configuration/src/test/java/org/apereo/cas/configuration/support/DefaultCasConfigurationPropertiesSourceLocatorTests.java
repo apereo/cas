@@ -103,6 +103,6 @@ public class DefaultCasConfigurationPropertiesSourceLocatorTests {
     public void verifyYamlLoaderThrows() {
         val loader = configurationPropertiesLoaderFactory.getLoader(
                 resourceLoader.getResource("classpath:/badyaml.yml"), "test");
-        assertThrows(YAMLException.class, () ->loader.load());
+        assertThrows(YAMLException.class, loader::load);
     }
 }

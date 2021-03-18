@@ -1,5 +1,8 @@
 package org.apereo.cas;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.Authentication;
@@ -88,9 +91,9 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
     }
 
     @Audit(
-        action = "SERVICE_TICKET",
-        actionResolverName = "GRANT_SERVICE_TICKET_RESOLVER",
-        resourceResolverName = "GRANT_SERVICE_TICKET_RESOURCE_RESOLVER")
+        action = AuditableActions.SERVICE_TICKET,
+        actionResolverName = AuditActionResolvers.GRANT_SERVICE_TICKET_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.GRANT_SERVICE_TICKET_RESOURCE_RESOLVER)
     @Override
     public ServiceTicket grantServiceTicket(final String ticketGrantingTicketId, final Service service, final AuthenticationResult authenticationResult)
         throws AuthenticationException, AbstractTicketException {
@@ -123,9 +126,9 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
     }
 
     @Audit(
-        action = "PROXY_TICKET",
-        actionResolverName = "GRANT_PROXY_TICKET_RESOLVER",
-        resourceResolverName = "GRANT_PROXY_TICKET_RESOURCE_RESOLVER")
+        action = AuditableActions.PROXY_TICKET,
+        actionResolverName = AuditActionResolvers.GRANT_PROXY_TICKET_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.GRANT_PROXY_TICKET_RESOURCE_RESOLVER)
     @Override
     public ProxyTicket grantProxyTicket(final String proxyGrantingTicket, final Service service)
         throws AbstractTicketException {
@@ -164,9 +167,9 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
 
 
     @Audit(
-        action = "PROXY_GRANTING_TICKET",
-        actionResolverName = "CREATE_PROXY_GRANTING_TICKET_RESOLVER",
-        resourceResolverName = "CREATE_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER")
+        action = AuditableActions.PROXY_GRANTING_TICKET,
+        actionResolverName = AuditActionResolvers.CREATE_PROXY_GRANTING_TICKET_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.CREATE_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER)
     @Override
     public ProxyGrantingTicket createProxyGrantingTicket(final String serviceTicketId, final AuthenticationResult authenticationResult)
         throws AuthenticationException, AbstractTicketException {
@@ -207,9 +210,9 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
     }
 
     @Audit(
-        action = "SERVICE_TICKET_VALIDATE",
-        actionResolverName = "VALIDATE_SERVICE_TICKET_RESOLVER",
-        resourceResolverName = "VALIDATE_SERVICE_TICKET_RESOURCE_RESOLVER")
+        action = AuditableActions.SERVICE_TICKET_VALIDATE,
+        actionResolverName = AuditActionResolvers.VALIDATE_SERVICE_TICKET_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.VALIDATE_SERVICE_TICKET_RESOURCE_RESOLVER)
     @Override
     public Assertion validateServiceTicket(final String serviceTicketId, final Service service) throws AbstractTicketException {
 
@@ -305,9 +308,9 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
     }
 
     @Audit(
-        action = "TICKET_GRANTING_TICKET",
-        actionResolverName = "CREATE_TICKET_GRANTING_TICKET_RESOLVER",
-        resourceResolverName = "CREATE_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER")
+        action = AuditableActions.TICKET_GRANTING_TICKET,
+        actionResolverName = AuditActionResolvers.CREATE_TICKET_GRANTING_TICKET_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.CREATE_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER)
     @Override
     public TicketGrantingTicket createTicketGrantingTicket(final AuthenticationResult authenticationResult)
         throws AuthenticationException, AbstractTicketException {

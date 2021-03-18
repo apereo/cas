@@ -8,8 +8,12 @@ category: Attributes
 
 # Attribute Consent
 
-CAS provides the ability to enforce user-informed consent upon attribute release. Practically, this means that prior to accessing the target application, the
- user will be presented with a collection of attributes allowed to be released to the application with options to either proceed or deny the release of said attributes. There are also additional options to indicate how should underlying changes in the attribute release policy be considered by the consent engine. Users are also provided the ability to set up reminders in the event that no change is detected in the attribute release policy.
+CAS provides the ability to enforce user-informed consent upon attribute release. Practically, this 
+means that prior to accessing the target application, the
+ user will be presented with a collection of attributes allowed to be released to the application with 
+options to either proceed or deny the release of said attributes. There are also additional options to 
+indicate how should underlying changes in the attribute release policy be considered by the consent 
+engine. Users are also provided the ability to set up reminders in the event that no change is detected in the attribute release policy.
 
 Consent attribute records stored in the configured repository are signed and encrypted.
 
@@ -28,7 +32,8 @@ The following endpoints are provided by CAS:
 
 ## Attribute Selection
 
-By default, all attributes that are marked for release do qualify for consent. To control this process, you may define a consent policy that indicates a criteria by which attribute selection for consent is carried out.
+By default, all attributes that are marked for release do qualify for consent. To control this process, you 
+may define a consent policy that indicates a criteria by which attribute selection for consent is carried out.
 
 The policy assigned to each service includes the following features:
 
@@ -71,8 +76,10 @@ the service definition may override the global rules using the `status` field wh
 | `TRUE`      | Consent policy is enabled, overriding the global configuration.
 | `UNDEFINED` | Consent policy is undefined, delegating the decision to the global configuration.
 
-Note that attribute consent policies may also be chained together to compose multiple policies. Each policy can be individually disabled or enabled and the overall aggregate status
-of the entire attribute consent policy will be used to determine attribute consent activation and selection. A sample chain of attribute consent polices follows:
+Note that attribute consent policies may also be chained together to compose multiple policies. Each policy 
+can be individually disabled or enabled and the overall aggregate status
+of the entire attribute consent policy will be used to determine attribute consent activation and 
+selection. A sample chain of attribute consent polices follows:
 
 ```json
 {
@@ -206,32 +213,29 @@ The script may be designed as:
 import java.util.*
 import org.apereo.cas.consent.*
 
-def Set<ConsentDecision> read(final Object... args) {
-    def consentDecisions = args[0]
+def read(Object[] args) {
+    def currentConsentDecisions = args[0]
     def logger = args[1]
-    ...
-    return null;
+    currentConsentDecisions
 }
 
-def Boolean write(final Object... args) {
+def write(Object[] args) {
     def consentDecision = args[0]
     def logger = args[1]
-    ...
-    return true;
+    true
 }
 
-def Boolean delete(final Object... args) {
+def delete(Object[] args) {
     def decisionId = args[0]
-    def logger = args[1]
-    ...
-    return true;
+    def principalId = args[1]
+    def logger = args[2]
+    !principalId.contains("-")
 }
 
-def Boolean deleteAll(final Object... args) {
-    def principal = args[0]
+def deletePrincipal(Object[] args) {
+    def principalId = args[0]
     def logger = args[1]
-    ...
-    return true;
+    !principalId.contains("-")
 }
 ```
 
@@ -281,15 +285,14 @@ Endpoints must be designed to accept/process `application/json`.
 
 | Operation                 | Method    | Data                                 | Expected Response
 |---------------------------|-----------|--------------------------------------------------------------------------------------
-| Locate consent decision   | `GET`     | `service`, `principal` as headers    | `200`. The consent decision object in the body.
-| Locate consent decision for user   | `GET`     | `principal` as headers    | `200`. The consent decisions object in the body.
+| Locate consent decision   | `GET`     | `service`, `principal` as headers.    | `200`. The consent decision object in the body.
+| Locate consent decision for user   | `GET`     | `principal` as header.    | `200`. The consent decisions object in the body.
 | Locate all consent decisions  | `GET`     | N/A    | `200`. The consent decisions object in the body.
-| Store consent decision    | `POST`    |  Consent decision object in the body | `200`.
-| Delete consent decision   | `DELETE`  | `/<decisionId>` appended to URL      | `200`.
-| Delete consent decisions   | `DELETE`  | `principal` as header      | `200`.
+| Store consent decision    | `POST`    |  Consent decision object in the body. | `200`.
+| Delete consent decision   | `DELETE`  | `/<decisionId>` appended to URL. `principal` as header      | `200`.
+| Delete consent decisions   | `DELETE`  | `principal` as header.      | `200`.
 
 The consent decision object in transit will and must match the JSON structure above.
-
 
 ### LDAP
 

@@ -137,6 +137,10 @@ Only return the principal attributes that are explicitly allowed by the service 
   }
 }
 ```
+     
+Attributes authorized and allowed for release by this policy may not necessarily be available
+as resolved principal attributes and can be resolved on the fly dynamically 
+using the [attribute definition store](Attribute-Definitions.html).
 
 ### Return Encrypted
 
@@ -168,9 +172,15 @@ openssl rsa -pubout -in private.key -out public.key -inform PEM -outform DER
 openssl pkcs8 -topk8 -inform PER -outform DER -nocrypt -in private.key -out private.p8
 ```
 
+Attributes authorized and allowed for release by this policy may not necessarily be available
+as resolved principal attributes and can be resolved on the fly dynamically
+using the [attribute definition store](Attribute-Definitions.html).
+
 ### REST
 
-Only return the principal attributes that are explicitly allowed by contacting a REST endpoint. Endpoints must be designed to accept/process `application/json`. The expected response status code is `200` where the body of the response includes a `Map` of attributes linked to their values.
+Only return the principal attributes that are explicitly allowed by contacting a REST endpoint. Endpoints must be designed to 
+accept/process `application/json`. The expected response status code is `200` where the body of 
+the response includes a `Map` of attributes linked to their values.
 
 ```json
 {
@@ -221,12 +231,19 @@ release `affiliation` and `group` to the web application configured.
 }
 ```
 
+Attributes authorized and allowed for release by this policy may not necessarily be available
+as resolved principal attributes and can be resolved on the fly dynamically
+using the [attribute definition store](Attribute-Definitions.html).
+
 ### Return MultiMapped
 
 The same policy may allow attribute definitions to be renamed and remapped to multiple attribute names, 
 with duplicate attributes values mapped to different names.
 
-For example, the following configuration will recognize the resolved attribute `eduPersonAffiliation` and will then release `affiliation` and `personAffiliation` whose values stem from the original `eduPersonAffiliation` attribute while `groupMembership` is released as `group`. In other words, the `eduPersonAffiliation` attribute is released twice under two different names each sharing the same value.
+For example, the following configuration will recognize the resolved attribute `eduPersonAffiliation` and will then 
+release `affiliation` and `personAffiliation` whose values stem from the original `eduPersonAffiliation` attribute 
+while `groupMembership` is released as `group`. In other words, the `eduPersonAffiliation` attribute is 
+released twice under two different names each sharing the same value.
 
 ```json
 {
@@ -244,6 +261,10 @@ For example, the following configuration will recognize the resolved attribute `
   }
 }
 ```
+
+Attributes authorized and allowed for release by this policy may not necessarily be available
+as resolved principal attributes and can be resolved on the fly dynamically
+using the [attribute definition store](Attribute-Definitions.html).
 
 ### Inline Groovy Attributes
 
@@ -363,7 +384,6 @@ natively supported by CAS, the following module is required in the overlay to in
 such as Python, etc.
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-script-engines" %}
- 
 
 The service definition then may be designed as:
 
@@ -425,6 +445,12 @@ has access to the collection of resolved `attributes` as well as a `logger` obje
   }
 }
 ```
+    
+### Attribute Repository Filtering
+
+Attribute release policies can be assigned a `principalAttributesRepository` to consult attribute sources 
+defined and controlled by [Person Directory](Attribute-Resolution.html) attribute repositories
+to fetch, resolve, cache and release attributes. To learn more about this topic, please [see this guide](Attribute-Release-Caching.html).
 
 ### Chaining Policies
 

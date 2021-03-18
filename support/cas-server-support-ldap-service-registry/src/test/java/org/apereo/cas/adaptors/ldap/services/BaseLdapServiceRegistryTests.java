@@ -12,7 +12,9 @@ import org.apereo.cas.services.ServiceRegistry;
 
 import lombok.Getter;
 import lombok.val;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +47,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.service-registry.ldap.base-dn=dc=example,dc=org"
 })
 @Getter
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public abstract class BaseLdapServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Autowired

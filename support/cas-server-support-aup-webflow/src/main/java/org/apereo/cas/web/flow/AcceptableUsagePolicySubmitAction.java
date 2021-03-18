@@ -1,5 +1,8 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.web.support.WebUtils;
@@ -42,9 +45,9 @@ public class AcceptableUsagePolicySubmitAction extends AbstractAction {
         return error();
     }
 
-    @Audit(action = "AUP_SUBMIT",
-        actionResolverName = "AUP_SUBMIT_ACTION_RESOLVER",
-        resourceResolverName = "AUP_SUBMIT_RESOURCE_RESOLVER")
+    @Audit(action = AuditableActions.AUP_SUBMIT,
+        actionResolverName = AuditActionResolvers.AUP_SUBMIT_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.AUP_SUBMIT_RESOURCE_RESOLVER)
     @Override
     public Event doExecute(final RequestContext requestContext) {
         val credential = WebUtils.getCredential(requestContext);

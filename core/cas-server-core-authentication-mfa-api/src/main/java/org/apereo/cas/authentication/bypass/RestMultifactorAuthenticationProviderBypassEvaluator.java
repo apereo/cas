@@ -40,7 +40,7 @@ public class RestMultifactorAuthenticationProviderBypassEvaluator extends BaseMu
                                                                           final MultifactorAuthenticationProvider provider,
                                                                           final HttpServletRequest request) {
         try {
-            val principal = authentication.getPrincipal();
+            val principal = resolvePrincipal(authentication.getPrincipal());
             val rest = bypassProperties.getRest();
             LOGGER.debug("Evaluating multifactor authentication bypass properties for principal [{}], "
                     + "service [{}] and provider [{}] via REST endpoint [{}]",

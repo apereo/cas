@@ -42,6 +42,7 @@ public class OidcCustomScopeAttributeReleasePolicyTests extends AbstractOidcTest
             CoreAuthenticationTestUtils.getService(),
             CoreAuthenticationTestUtils.getRegisteredService());
         assertTrue(policy.getAllowedAttributes().stream().allMatch(releaseAttrs::containsKey));
+        assertTrue(policy.getAllowedAttributes().containsAll(policy.determineRequestedAttributeDefinitions()));
         assertEquals(releaseAttrs.get("groups"), List.of("admin", "user"));
     }
 }

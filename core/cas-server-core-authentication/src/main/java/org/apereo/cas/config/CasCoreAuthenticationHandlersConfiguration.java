@@ -167,7 +167,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
     public class JaasAuthenticationConfiguration {
 
         @Autowired
-        @Qualifier("attributeRepository")
+        @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
         private ObjectProvider<IPersonAttributeDao> attributeRepository;
 
         @ConditionalOnMissingBean(name = "jaasPrincipalFactory")
@@ -188,7 +188,10 @@ public class CasCoreAuthenticationHandlersConfiguration {
                 .map(jaas -> {
                     val jaasPrincipal = jaas.getPrincipal();
                     return CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(jaasPrincipalFactory(),
-                        attributeRepository.getObject(), jaasPrincipal, personDirectory);
+                        attributeRepository.getObject(),
+                        CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
+                        jaasPrincipal,
+                        personDirectory);
                 })
                 .collect(Collectors.toList());
         }

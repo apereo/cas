@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jooq.lambda.Unchecked;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.cas.config.CasProtocol;
@@ -57,10 +58,12 @@ import org.pac4j.saml.config.SAML2Configuration;
 import org.pac4j.saml.metadata.SAML2ServiceProviderRequestedAttribute;
 import org.pac4j.saml.metadata.XMLSecSAML2MetadataSigner;
 import org.pac4j.saml.store.SAMLMessageStoreFactory;
+import org.springframework.beans.factory.DisposableBean;
 
 import java.security.interfaces.ECPrivateKey;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -74,16 +77,18 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 @Getter
-public class DefaultDelegatedClientFactory implements DelegatedClientFactory<IndirectClient> {
+public class DefaultDelegatedClientFactory implements DelegatedClientFactory<IndirectClient>, DisposableBean {
     private static final Pattern PATTERN_LOGIN_URL = Pattern.compile("/login$");
 
     private final CasConfigurationProperties casProperties;
 
     private final Collection<DelegatedClientFactoryCustomizer> customizers;
 
+    private final Set<IndirectClient> clients = new LinkedHashSet<>();
+
     @Override
     public Collection<IndirectClient> build() {
-        val clients = new LinkedHashSet<IndirectClient>();
+        this.clients.clear();
 
         configureCasClient(clients);
         configureFacebookClient(clients);
@@ -105,6 +110,15 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
         configureHiOrgServerClient(clients);
 
         return clients;
+    }
+
+    @Override
+    public void destroy() {
+        this.clients
+            .stream()
+            .filter(c -> c instanceof SAML2Client)
+            .map(SAML2Client.class::cast)
+            .forEach(Unchecked.consumer(SAML2Client::destroy));
     }
 
     /**
@@ -405,13 +419,11 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
                 && StringUtils.isNotBlank(saml.getServiceProviderEntityId())
                 && StringUtils.isNotBlank(saml.getServiceProviderMetadataPath()))
             .forEach(saml -> {
-                val cfg = new SAML2Configuration(saml.getKeystorePath(),
-                    saml.getKeystorePassword(),
+                val cfg = new SAML2Configuration(saml.getKeystorePath(), saml.getKeystorePassword(),
                     saml.getPrivateKeyPassword(), saml.getIdentityProviderMetadataPath());
-
                 cfg.setForceKeystoreGeneration(saml.isForceKeystoreGeneration());
                 cfg.setCertificateNameToAppend(StringUtils.defaultIfBlank(saml.getCertificateNameToAppend(), saml.getClientName()));
-                cfg.setMaximumAuthenticationLifetime(saml.getMaximumAuthenticationLifetime());
+                cfg.setMaximumAuthenticationLifetime(Beans.newDuration(saml.getMaximumAuthenticationLifetime()).toSeconds());
                 cfg.setServiceProviderEntityId(saml.getServiceProviderEntityId());
                 cfg.setServiceProviderMetadataPath(saml.getServiceProviderMetadataPath());
                 cfg.setAuthnRequestBindingType(saml.getDestinationBinding());
@@ -421,7 +433,7 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
                 cfg.setMetadataSigner(new XMLSecSAML2MetadataSigner(cfg));
                 cfg.setAuthnRequestSigned(saml.isSignAuthnRequest());
                 cfg.setSpLogoutRequestSigned(saml.isSignServiceProviderLogoutRequest());
-                cfg.setAcceptedSkew(saml.getAcceptedSkew());
+                cfg.setAcceptedSkew(Beans.newDuration(saml.getAcceptedSkew()).toSeconds());
 
                 if (StringUtils.isNotBlank(saml.getPrincipalIdAttribute())) {
                     cfg.setAttributeAsId(saml.getPrincipalIdAttribute());

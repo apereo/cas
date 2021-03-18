@@ -2,11 +2,11 @@ package org.apereo.cas.oidc.web.controllers.logout;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.audit.AuditableContext;
+import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
-import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.SneakyThrows;
@@ -32,7 +32,7 @@ import java.util.Optional;
  */
 @Slf4j
 public class OidcLogoutEndpointController extends BaseOAuth20Controller {
-    public OidcLogoutEndpointController(final OAuth20ConfigurationContext context) {
+    public OidcLogoutEndpointController(final OidcConfigurationContext context) {
         super(context);
     }
 

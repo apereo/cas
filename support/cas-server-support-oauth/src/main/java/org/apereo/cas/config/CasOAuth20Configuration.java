@@ -1,6 +1,8 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditTrailConstants;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.audit.AuditableExecution;
@@ -10,8 +12,6 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.oauth.CsrfCookieProperties;
-import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
 import org.apereo.cas.pac4j.DistributedJEESessionStore;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
@@ -797,28 +797,28 @@ public class CasOAuth20Configuration {
     @ConditionalOnMissingBean(name = "oauthAuditTrailRecordResolutionPlanConfigurer")
     public AuditTrailRecordResolutionPlanConfigurer oauthAuditTrailRecordResolutionPlanConfigurer() {
         return plan -> {
-            plan.registerAuditActionResolver("OAUTH2_USER_PROFILE_ACTION_RESOLVER",
+            plan.registerAuditActionResolver(AuditActionResolvers.OAUTH2_USER_PROFILE_ACTION_RESOLVER,
                 new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED,
                     AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED));
-            plan.registerAuditResourceResolver("OAUTH2_USER_PROFILE_RESOURCE_RESOLVER",
+            plan.registerAuditResourceResolver(AuditResourceResolvers.OAUTH2_USER_PROFILE_RESOURCE_RESOLVER,
                 new OAuth20UserProfileDataAuditResourceResolver());
 
-            plan.registerAuditActionResolver("OAUTH2_ACCESS_TOKEN_REQUEST_ACTION_RESOLVER",
+            plan.registerAuditActionResolver(AuditActionResolvers.OAUTH2_ACCESS_TOKEN_REQUEST_ACTION_RESOLVER,
                 new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED,
                     AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED));
-            plan.registerAuditResourceResolver("OAUTH2_ACCESS_TOKEN_REQUEST_RESOURCE_RESOLVER",
+            plan.registerAuditResourceResolver(AuditResourceResolvers.OAUTH2_ACCESS_TOKEN_REQUEST_RESOURCE_RESOLVER,
                 new OAuth20AccessTokenGrantRequestAuditResourceResolver());
 
-            plan.registerAuditActionResolver("OAUTH2_ACCESS_TOKEN_RESPONSE_ACTION_RESOLVER",
+            plan.registerAuditActionResolver(AuditActionResolvers.OAUTH2_ACCESS_TOKEN_RESPONSE_ACTION_RESOLVER,
                 new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED,
                     AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED));
-            plan.registerAuditResourceResolver("OAUTH2_ACCESS_TOKEN_RESPONSE_RESOURCE_RESOLVER",
+            plan.registerAuditResourceResolver(AuditResourceResolvers.OAUTH2_ACCESS_TOKEN_RESPONSE_RESOURCE_RESOLVER,
                 new OAuth20AccessTokenResponseAuditResourceResolver());
 
-            plan.registerAuditActionResolver("OAUTH2_CODE_RESPONSE_ACTION_RESOLVER",
+            plan.registerAuditActionResolver(AuditActionResolvers.OAUTH2_CODE_RESPONSE_ACTION_RESOLVER,
                 new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED,
                     AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED));
-            plan.registerAuditResourceResolver("OAUTH2_CODE_RESPONSE_RESOURCE_RESOLVER",
+            plan.registerAuditResourceResolver(AuditResourceResolvers.OAUTH2_CODE_RESPONSE_RESOURCE_RESOLVER,
                 new OAuth20CodeResponseAuditResourceResolver());
         };
     }

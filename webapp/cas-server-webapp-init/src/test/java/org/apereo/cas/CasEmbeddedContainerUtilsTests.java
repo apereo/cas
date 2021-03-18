@@ -34,6 +34,15 @@ public class CasEmbeddedContainerUtilsTests {
     }
 
     @Test
+    public void verifyStartup() {
+        assertNotNull(CasEmbeddedContainerUtils.getApplicationStartup());
+        System.setProperty("CAS_APP_STARTUP", "buffering");
+        assertNotNull(CasEmbeddedContainerUtils.getApplicationStartup());
+        System.setProperty("CAS_APP_STARTUP", "jfr");
+        assertNotNull(CasEmbeddedContainerUtils.getApplicationStartup());
+    }
+
+    @Test
     public void verifyCustomBanner() {
         val banner = CasEmbeddedContainerUtils.getCasBannerInstance();
         assertNotNull(banner);

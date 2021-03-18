@@ -2,9 +2,10 @@ package org.apereo.cas.config.support.authentication;
 
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
-import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.openid.authentication.handler.support.OpenIdCredentialsAuthenticationHandler;
@@ -12,7 +13,6 @@ import org.apereo.cas.support.openid.authentication.principal.OpenIdPrincipalRes
 import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +39,7 @@ public class OpenIdAuthenticationEventExecutionPlanConfiguration {
     private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
-    @Qualifier("attributeRepository")
+    @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
     private ObjectProvider<IPersonAttributeDao> attributeRepository;
 
     @Autowired
@@ -61,20 +61,11 @@ public class OpenIdAuthenticationEventExecutionPlanConfiguration {
     public OpenIdPrincipalResolver openIdPrincipalResolver() {
         val personDirectory = casProperties.getPersonDirectory();
         val principal = casProperties.getAuthn().getOpenid().getPrincipal();
-        val principalAttribute = StringUtils.defaultIfBlank(principal.getPrincipalAttribute(), personDirectory.getPrincipalAttribute());
-
-        val context = PrincipalResolutionContext.builder()
-            .attributeRepository(attributeRepository.getObject())
-            .principalFactory(openidPrincipalFactory())
-            .returnNullIfNoAttributes(principal.isReturnNull() || personDirectory.isReturnNull())
-            .principalNameTransformer(String::trim)
-            .principalAttributeNames(principalAttribute)
-            .useCurrentPrincipalId(principal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId())
-            .resolveAttributes(principal.isAttributeResolutionEnabled())
-            .activeAttributeRepositoryIdentifiers(org.springframework.util.StringUtils
-                .commaDelimitedListToSet(principal.getActiveAttributeRepositoryIds()))
-            .build();
-        return new OpenIdPrincipalResolver(context);
+        return CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(openidPrincipalFactory(),
+            attributeRepository.getObject(),
+            CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
+            OpenIdPrincipalResolver.class,
+            principal, personDirectory);
     }
 
     @ConditionalOnMissingBean(name = "openidPrincipalFactory")

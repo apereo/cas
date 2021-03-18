@@ -4,8 +4,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.attribute.AttributeDefinition;
 import org.apereo.cas.authentication.attribute.DefaultAttributeDefinition;
 import org.apereo.cas.authentication.attribute.DefaultAttributeDefinitionStore;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServicePublicKey;
 import org.apereo.cas.services.RegisteredServicePublicKeyImpl;
@@ -26,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 
@@ -47,11 +45,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@SpringBootTest(classes = {
-    CasPersonDirectoryConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    RefreshAutoConfiguration.class
-},
+@SpringBootTest(classes = BasePrincipalAttributeRepositoryTests.SharedTestConfiguration.class,
     properties = {
         "cas.authn.attribute-repository.stub.attributes.uid=cas-user-id",
         "cas.authn.attribute-repository.stub.attributes.givenName=cas-given-name",
@@ -73,7 +67,7 @@ public class DefaultAttributeDefinitionStoreTests {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("attributeRepository")
+    @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
     private IPersonAttributeDao attributeRepository;
 
     @Test
@@ -361,6 +355,22 @@ public class DefaultAttributeDefinitionStoreTests {
         val store = new DefaultAttributeDefinitionStore(new FileSystemResource(file));
         store.setScope("example.org");
         assertTrue(store.isEmpty());
+    }
+
+    @Test
+    public void verifyRemoveDefinition() {
+        val store = new DefaultAttributeDefinitionStore();
+        store.setScope("example.org");
+        val defn = DefaultAttributeDefinition.builder()
+                .key("eduPersonPrincipalName")
+                .name("urn:oid:1.3.6.1.4.1.5923.1.1.1.6")
+                .build();
+
+        store.registerAttributeDefinition(defn);
+        assertNotNull(store.locateAttributeDefinition(defn.getKey()));
+        assertFalse(store.getAttributeDefinitions().isEmpty());
+        store.removeAttributeDefinition(defn.getKey());
+        assertTrue(store.locateAttributeDefinition(defn.getKey()).isEmpty());
     }
 
 }

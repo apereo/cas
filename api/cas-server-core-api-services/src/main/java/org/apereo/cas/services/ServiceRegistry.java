@@ -34,6 +34,12 @@ public interface ServiceRegistry {
     boolean delete(RegisteredService registeredService);
 
     /**
+     * Delete all services from the registry data store
+     * and start clean.
+     */
+    void deleteAll();
+
+    /**
      * Retrieve the services from the data store.
      *
      * @return the collection of services.

@@ -4,7 +4,7 @@
 
 echo "Running Radius docker image..."
 docker stop radius-server || true && docker rm radius-server || true
-docker run --name radius-server -d -p 1812-1813:1812-1813/udp mmoayyed/radius-server
+docker run --rm --name radius-server -d -p 1812-1813:1812-1813/udp mmoayyed/radius-server
 
 docker ps | grep "radius-server"
 retVal=$?

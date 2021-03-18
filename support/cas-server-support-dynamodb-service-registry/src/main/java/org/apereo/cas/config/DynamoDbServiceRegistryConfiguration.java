@@ -51,6 +51,7 @@ public class DynamoDbServiceRegistryConfiguration {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "dynamoDbServiceRegistry")
     public ServiceRegistry dynamoDbServiceRegistry() {
         return new DynamoDbServiceRegistry(applicationContext, dynamoDbServiceRegistryFacilitator(), serviceRegistryListeners.getObject());
     }

@@ -13,10 +13,8 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.TreeMap;
 
 /**
@@ -50,7 +48,7 @@ public class SimplePrincipal implements Principal {
      * Principal attributes.
      **/
     @JsonSetter(nulls = Nulls.AS_EMPTY)
-    private Map<String, List<Object>> attributes = new HashMap<>(0);
+    private Map<String, List<Object>> attributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
     /**
      * Instantiates a new simple principal.
@@ -62,17 +60,8 @@ public class SimplePrincipal implements Principal {
     protected SimplePrincipal(@JsonProperty("id") final @NonNull String id,
                               @JsonProperty("attributes") final Map<String, List<Object>> attributes) {
         this.id = id;
-        this.attributes = Objects.requireNonNullElseGet(attributes, HashMap::new);
-    }
-
-    /**
-     * @return An immutable map of principal attributes
-     */
-    @Override
-    public Map<String, List<Object>> getAttributes() {
-        val attrs = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
-        attrs.putAll(this.attributes);
-        return attrs;
+        this.attributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        this.attributes.putAll(attributes);
     }
 
     @Override

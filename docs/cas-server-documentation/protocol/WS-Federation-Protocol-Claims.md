@@ -63,6 +63,10 @@ The above snippet allows CAS to release the
 claim `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname` whose value
 is identified by the value of the `givenName` attribute that is already retrieved for the authenticated principal.
 
+Attributes authorized and allowed for release by this policy may not necessarily be available
+as resolved principal attributes and can be resolved on the fly dynamically
+using the [attribute definition store](../integration/Attribute-Definitions.html).
+
 ## Inline Groovy Claims
 
 Claims may produce their values from an inline Groovy 
@@ -146,3 +150,7 @@ already retrieved for the authenticated principal.
   }
 }
 ```
+
+Attributes authorized and allowed for release by this policy may not necessarily be available
+as resolved principal attributes and can be resolved on the fly dynamically
+using the [attribute definition store](../integration/Attribute-Definitions.html).

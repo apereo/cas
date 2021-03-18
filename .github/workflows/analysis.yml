@@ -14,6 +14,7 @@ on:
   push:
     branches: [ master ]
   pull_request:
+    types: [ labeled ]
     branches: [ master ]
 
 ##########################################################################
@@ -21,6 +22,7 @@ on:
 jobs:
   cancel-previous-runs:
     runs-on: ubuntu-latest
+    if: ${{ (github.event_name == 'push' || contains(github.event.pull_request.labels.*.name, 'CI')) && !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
     timeout-minutes: 1
     steps:
       - uses: styfle/cancel-workflow-action@0.7.0
@@ -29,6 +31,7 @@ jobs:
           
   initialize:
     runs-on: ubuntu-latest
+    needs: [cancel-previous-runs]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -43,7 +46,6 @@ jobs:
   cache:
     runs-on: ubuntu-latest
     needs: [initialize]
-    if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -68,7 +70,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: [cache]
     continue-on-error: true
-    if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -99,7 +100,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: [cache]
     continue-on-error: true
-    if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
     strategy:
       matrix:
         category:
@@ -131,7 +131,7 @@ jobs:
 
   validate-codebase:
     runs-on: ubuntu-latest
-    if: ${{ !contains(github.head_ref, 'renovate') && !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
+    if: ${{ !contains(github.head_ref, 'renovate') }}
     needs: [cache]
     continue-on-error: false
     strategy:

@@ -68,7 +68,8 @@ public class CasCoreAuthenticationPrincipalConfiguration {
     @RefreshScope
     public PrincipalElectionStrategyConfigurer defaultPrincipalElectionStrategyConfigurer() {
         return chain -> {
-            val strategy = new DefaultPrincipalElectionStrategy(principalFactory());
+            val strategy = new DefaultPrincipalElectionStrategy(principalFactory(),
+                CoreAuthenticationUtils.newPrincipalElectionStrategyConflictResolver(casProperties.getPersonDirectory()));
             val merger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
             strategy.setAttributeMerger(merger);
             chain.registerElectionStrategy(strategy);
@@ -84,7 +85,7 @@ public class CasCoreAuthenticationPrincipalConfiguration {
 
     @Bean
     @RefreshScope
-    @ConditionalOnMissingBean(name = "globalPrincipalAttributeRepository")
+    @ConditionalOnMissingBean(name = PrincipalResolver.BEAN_NAME_GLOBAL_PRINCIPAL_ATTRIBUTE_REPOSITORY)
     public RegisteredServicePrincipalAttributesRepository globalPrincipalAttributeRepository() {
         val props = casProperties.getAuthn().getAttributeRepository().getCore();
         val cacheTime = props.getExpirationTime();
@@ -94,8 +95,7 @@ public class CasCoreAuthenticationPrincipalConfiguration {
         }
         return new CachingPrincipalAttributesRepository(props.getExpirationTimeUnit().toUpperCase(), cacheTime);
     }
-
-
+    
     @Bean
     @ConditionalOnMissingBean(name = "defaultPrincipalResolver")
     @RefreshScope

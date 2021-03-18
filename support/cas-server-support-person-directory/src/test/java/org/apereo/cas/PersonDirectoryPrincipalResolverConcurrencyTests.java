@@ -4,8 +4,6 @@ import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.Getter;
@@ -19,7 +17,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,11 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @since 6.2
  */
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    CasPersonDirectoryConfiguration.class,
-    CasCoreUtilConfiguration.class
-}, properties = {
+@SpringBootTest(classes = BasePrincipalAttributeRepositoryTests.SharedTestConfiguration.class, properties = {
     "cas.authn.attribute-repository.stub.attributes.uid=cas",
     "cas.authn.attribute-repository.stub.attributes.givenName=apereo-cas",
     "cas.authn.attribute-repository.stub.attributes.phone=123456789",
@@ -62,7 +55,7 @@ public class PersonDirectoryPrincipalResolverConcurrencyTests {
     private static final int EXECUTIONS_PER_USER = 1000;
 
     @Autowired
-    @Qualifier("attributeRepository")
+    @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
     private IPersonAttributeDao attributeRepository;
 
     @Autowired
@@ -115,7 +108,9 @@ public class PersonDirectoryPrincipalResolverConcurrencyTests {
     protected void setUp() {
         this.personDirectoryResolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(
             PrincipalFactoryUtils.newPrincipalFactory(),
-            attributeRepository, casProperties.getPersonDirectory()
+            attributeRepository,
+            CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
+            casProperties.getPersonDirectory()
         );
     }
 

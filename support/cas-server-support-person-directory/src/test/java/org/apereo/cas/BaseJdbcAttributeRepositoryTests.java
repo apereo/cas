@@ -1,6 +1,6 @@
 package org.apereo.cas;
 
-import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
 
@@ -13,7 +13,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import javax.sql.DataSource;
 
@@ -25,13 +24,10 @@ import java.sql.Statement;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@SpringBootTest(classes = {
-    CasPersonDirectoryConfiguration.class,
-    RefreshAutoConfiguration.class
-})
+@SpringBootTest(classes = BasePrincipalAttributeRepositoryTests.SharedTestConfiguration.class)
 public abstract class BaseJdbcAttributeRepositoryTests {
     @Autowired
-    @Qualifier("attributeRepository")
+    @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
     protected IPersonAttributeDao attributeRepository;
 
     protected DataSource dataSource;

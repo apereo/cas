@@ -45,7 +45,7 @@ public class CasCoreAuthenticationMetadataConfiguration {
     @ConditionalOnMissingBean(name = "rememberMeAuthenticationMetaDataPopulator")
     @Bean
     public AuthenticationMetaDataPopulator rememberMeAuthenticationMetaDataPopulator() {
-        return new RememberMeAuthenticationMetaDataPopulator();
+        return new RememberMeAuthenticationMetaDataPopulator(casProperties.getTicket().getTgt().getRememberMe());
     }
 
     @ConditionalOnMissingBean(name = "cacheCredentialsCipherExecutor")

@@ -3,10 +3,14 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationManager;
+import org.apereo.cas.authentication.AuthenticationResultBuilderFactory;
+import org.apereo.cas.authentication.AuthenticationTransactionFactory;
 import org.apereo.cas.authentication.AuthenticationTransactionManager;
 import org.apereo.cas.authentication.DefaultAuthenticationAttributeReleasePolicy;
 import org.apereo.cas.authentication.DefaultAuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationManager;
+import org.apereo.cas.authentication.DefaultAuthenticationResultBuilderFactory;
+import org.apereo.cas.authentication.DefaultAuthenticationTransactionFactory;
 import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
@@ -52,6 +56,7 @@ public class CasCoreAuthenticationConfiguration {
     @Bean
     @RefreshScope
     @Autowired
+    @ConditionalOnMissingBean(name = "authenticationTransactionManager")
     public AuthenticationTransactionManager authenticationTransactionManager(@Qualifier("casAuthenticationManager")
                                                                              final AuthenticationManager casAuthenticationManager) {
         return new DefaultAuthenticationTransactionManager(applicationContext, casAuthenticationManager);
@@ -68,6 +73,20 @@ public class CasCoreAuthenticationConfiguration {
         );
     }
 
+    @ConditionalOnMissingBean(name = "authenticationResultBuilderFactory")
+    @Bean
+    @RefreshScope
+    public AuthenticationResultBuilderFactory authenticationResultBuilderFactory() {
+        return new DefaultAuthenticationResultBuilderFactory();
+    }
+
+    @ConditionalOnMissingBean(name = "authenticationTransactionFactory")
+    @Bean
+    @RefreshScope
+    public AuthenticationTransactionFactory authenticationTransactionFactory() {
+        return new DefaultAuthenticationTransactionFactory();
+    }
+    
     @ConditionalOnMissingBean(name = "authenticationEventExecutionPlan")
     @Autowired
     @Bean

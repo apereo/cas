@@ -3,6 +3,8 @@ package org.apereo.cas.web.flow.actions;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.AccessLevel;
@@ -35,5 +37,21 @@ public abstract class AbstractMultifactorAuthenticationAction<T extends Multifac
         this.provider = (T) MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(providerId, applicationContext)
             .orElseThrow(() -> new AuthenticationException("Unable to determine multifactor authentication provider for " + providerId));
         return null;
+    }
+
+    /**
+     * Resolve principal.
+     *
+     * @param principal the principal
+     * @return the principal
+     */
+    protected Principal resolvePrincipal(final Principal principal) {
+        val resolvers = ApplicationContextProvider.getMultifactorAuthenticationPrincipalResolvers();
+        return resolvers
+            .stream()
+            .filter(resolver -> resolver.supports(principal))
+            .findFirst()
+            .map(r -> r.resolve(principal))
+            .orElseThrow(() -> new IllegalStateException("Unable to resolve principal for multifactor authentication"));
     }
 }

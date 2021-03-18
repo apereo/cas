@@ -192,6 +192,13 @@ public class DynamoDbServiceRegistryFacilitator {
         return values;
     }
 
+    /**
+     * Delete all.
+     */
+    public void deleteAll() {
+        createServicesTable(true);
+    }
+
     private RegisteredService deserializeServiceFromBinaryBlob(final Map<String, AttributeValue> returnItem) {
         val bb = returnItem.get(ColumnNames.ENCODED.getColumnName()).b();
         LOGGER.debug("Located binary encoding of service item [{}]. Transforming item into service object", returnItem);

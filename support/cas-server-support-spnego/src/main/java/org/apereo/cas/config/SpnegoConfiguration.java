@@ -2,11 +2,10 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
-import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
@@ -18,7 +17,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 
 import jcifs.spnego.Authentication;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +48,7 @@ public class SpnegoConfiguration {
     private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
-    @Qualifier("attributeRepository")
+    @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
     private ObjectProvider<IPersonAttributeDao> attributeRepository;
 
     @Autowired
@@ -133,24 +131,13 @@ public class SpnegoConfiguration {
     @ConditionalOnMissingBean(name = "spnegoPrincipalResolver")
     public PrincipalResolver spnegoPrincipalResolver() {
         val personDirectory = casProperties.getPersonDirectory();
-        val spnegoProperties = casProperties.getAuthn().getSpnego();
-        val spnegoPrincipal = spnegoProperties.getPrincipal();
+        val spnegoPrincipal = casProperties.getAuthn().getSpnego().getPrincipal();
 
-        val principalAttribute = StringUtils.defaultIfBlank(spnegoPrincipal.getPrincipalAttribute(),
-            personDirectory.getPrincipalAttribute());
-        
-        val context = PrincipalResolutionContext.builder()
-            .attributeRepository(attributeRepository.getObject())
-            .principalFactory(spnegoPrincipalFactory())
-            .returnNullIfNoAttributes(spnegoPrincipal.isReturnNull() || personDirectory.isReturnNull())
-            .principalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(spnegoProperties.getPrincipalTransformation()))
-            .principalAttributeNames(principalAttribute)
-            .useCurrentPrincipalId(spnegoPrincipal.isUseExistingPrincipalId() || personDirectory.isUseExistingPrincipalId())
-            .resolveAttributes(spnegoPrincipal.isAttributeResolutionEnabled())
-            .activeAttributeRepositoryIdentifiers(org.springframework.util.StringUtils
-                .commaDelimitedListToSet(spnegoPrincipal.getActiveAttributeRepositoryIds()))
-            .build();
-        return new SpnegoPrincipalResolver(context);
+        return CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(spnegoPrincipalFactory(),
+            attributeRepository.getObject(),
+            CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
+            SpnegoPrincipalResolver.class,
+            spnegoPrincipal, personDirectory);
     }
 
     @ConditionalOnMissingBean(name = "spnegoPrincipalFactory")

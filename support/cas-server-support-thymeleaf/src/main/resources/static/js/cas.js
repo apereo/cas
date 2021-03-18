@@ -18,7 +18,7 @@
             let selector = document.querySelector('.mdc-select.authn-source');
             if (selector != null) {
                 const select = new material.select.MDCSelect(selector);
-                select.listen('MDCSelect:change', () => {
+                select.listen('MDCSelect:change', function () {
                     $('#source').val(select.value);
                 });
                 $('#source').val(select.value);
@@ -67,6 +67,16 @@ function copyClipboard(element) {
     element.select();
     element.setSelectionRange(0, 99999);
     document.execCommand("copy");
+}
+
+function isValidURL(str) {
+    let pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+        '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+        '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+        '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+    return !!pattern.test(str);
 }
 
 function requestGeoPosition() {

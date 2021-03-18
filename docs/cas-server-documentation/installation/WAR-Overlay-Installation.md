@@ -75,19 +75,7 @@ To learn more about the initializr, please [review this guide](WAR-Overlay-Initi
 
 ### CAS Overlay Template
                  
-The CAS WAR overlay template project can be bootstrapped via the [CAS Initializr](WAR-Overlay-Initializr.html).
-
-<div class="alert alert-info"><strong>Review Branch!</strong><p>The below repositories point you towards their <code>master</code> branch.
-You should always make sure the branch you are on matches the version of CAS you wish to configure and deploy. The <code>master</code>
-branch typically points to the latest stable release of the CAS server. Check the build configuration and if inappropriate,
-use <code>git branch -a</code> to see available branches, and then <code>git checkout [branch-name]</code> to switch if necessary.</p></div>
-
-| Project                                       | Build Directory                               | Source Directory
-|-----------------------------------------------|-----------------------------------------------|-----------------------
-| [CAS Initializr](WAR-Overlay-Initializr.html) | `cas/build/cas-resources`     | `src/main/resources`
-
-To construct the overlay project, you need to copy directories and 
-files *that you need to customize* in the build directory over to the source directory.
+The CAS WAR overlay template project can be bootstrapped and generated via the [CAS Initializr](WAR-Overlay-Initializr.html).
 
 The WAR overlay also provides additional tasks to explode the binary artifact first before re-assembling it again.
 You may need to do that step manually yourself to learn what files/directories need to be copied over to the source directory.
@@ -113,7 +101,7 @@ the relevant dependency in the overlay `build.gradle` file.
 <div class="alert alert-warning"><strong>Stop Coding</strong><p>
 Overlaying or modifying CAS internal components and classes, <i>unless ABSOLUTELY required</i>, should be a last resort and is generally 
 considered a misguided malpractice. Where possible, avoid making custom changes to carry the maintenance burden solely on your own. 
-Avoid carrying . You will risk the stability and security of your deployment. If the enhancement 
+You will risk the stability and security of your deployment. If the enhancement 
 case is attractive or modest, contribute back to the project. Stop writing code, or write it where it belongs.
 </p></div>
 

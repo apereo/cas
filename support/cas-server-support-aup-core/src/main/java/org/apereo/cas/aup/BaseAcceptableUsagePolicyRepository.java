@@ -14,6 +14,8 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -121,7 +123,16 @@ public abstract class BaseAcceptableUsagePolicyRepository implements AcceptableU
     protected boolean isUsagePolicyAcceptedBy(final Principal principal) {
         val attributes = principal.getAttributes();
         LOGGER.debug("Principal attributes found for [{}] are [{}]", principal.getId(), attributes);
+        return isUsagePolicyAcceptedBy(attributes);
+    }
 
+    /**
+     * Is usage policy accepted by.
+     *
+     * @param attributes the attributes
+     * @return the boolean
+     */
+    protected boolean isUsagePolicyAcceptedBy(final Map<String, List<Object>> attributes) {
         val core = aupProperties.getCore();
         if (attributes != null && attributes.containsKey(core.getAupAttributeName())) {
             val value = CollectionUtils.toCollection(attributes.get(core.getAupAttributeName()));

@@ -140,6 +140,15 @@ public class RestConsentRepositoryTests extends BaseConsentRepositoryTests {
                 }
                 return ResponseEntity.notFound().build();
             }
+
+            @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+            public ResponseEntity deleteForPrincipal(@RequestHeader("principal") final String principal) {
+                if (storage.getRecords().containsKey(principal)) {
+                    storage.getRecords().remove(principal);
+                    return ResponseEntity.ok().build();
+                }
+                return ResponseEntity.notFound().build();
+            }
         }
     }
 }

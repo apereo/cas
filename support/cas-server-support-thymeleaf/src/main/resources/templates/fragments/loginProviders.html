@@ -21,12 +21,29 @@
 
                 <h3 class="text-center mt-md-0 mt-4">
                     <i class="fas fa-user-shield"></i>
-                    <span th:utext="#{screen.welcome.label.loginwith}">External Identity Providers</span>
+                    <span th:if="${delegatedAuthenticationProviderPrimary == null}"
+                          th:utext="#{screen.welcome.label.loginwith}">External Identity Providers</span>
                 </h3>
 
                 <div class="card-title" th:if="${delegatedAuthenticationProviderPrimary != null}">
                     <div class="alert alert-info" role="alert">
-                        <span th:utext="#{screen.welcome.label.navto}" />
+                        <span th:utext="#{screen.welcome.label.navto(${delegatedAuthenticationProviderPrimary.name})}" />
+
+                        <p>
+                        <div role="progressbar" class="mdc-linear-progress mdc-linear-progress--indeterminate">
+                            <div class="mdc-linear-progress__buffer">
+                                <div class="mdc-linear-progress__buffer-bar"></div>
+                                <div class="mdc-linear-progress__buffer-dots"></div>
+                            </div>
+                            <div class="mdc-linear-progress__bar mdc-linear-progress__primary-bar">
+                                <span class="mdc-linear-progress__bar-inner"></span>
+                            </div>
+                            <div class="mdc-linear-progress__bar mdc-linear-progress__secondary-bar">
+                                <span class="mdc-linear-progress__bar-inner"></span>
+                            </div>
+                        </div>
+                        </p>
+                        <script>new mdc.linearProgress.MDCLinearProgress(document.querySelector('.mdc-linear-progress'));</script>
                     </div>
                 </div>
 
@@ -140,7 +157,7 @@
             </div>
 
             <script>
-                var redirectTo = $("a[autoRedirect=true]").attr("href");
+                const redirectTo = $("a[autoRedirect=true]").attr("href");
                 if (redirectTo != null && redirectTo != undefined) {
                     window.location.href = redirectTo;
                 }

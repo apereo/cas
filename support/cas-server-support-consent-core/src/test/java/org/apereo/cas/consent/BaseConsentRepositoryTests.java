@@ -108,6 +108,17 @@ public abstract class BaseConsentRepositoryTests {
         assertNull(repo.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication(CASUSER_2)));
     }
 
+    @Test
+    public void verifyDeleteRecordsForPrincipal() {
+        val repo = getRepository("verifyDeleteRecordsForPrincipal");
+        var decision = BUILDER.build(SVC, REG_SVC, CASUSER_2, ATTR);
+        decision.setId(200);
+        decision = repo.storeConsentDecision(decision);
+        assertNotNull(decision);
+        assertTrue(repo.deleteConsentDecisions(decision.getPrincipal()));
+        assertNull(repo.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication(CASUSER_2)));
+    }
+
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         AopAutoConfiguration.class

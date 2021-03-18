@@ -138,12 +138,11 @@ public class SamlObjectSignatureValidator {
                                                           final HttpServletRequest request,
                                                           final MessageContext context,
                                                           final RoleDescriptorResolver roleDescriptorResolver) throws Exception {
-        val handler = new SAML2HTTPRedirectDeflateSignatureSecurityHandler();
         val peer = context.getSubcontext(SAMLPeerEntityContext.class, true);
         peer.setEntityId(SamlIdPUtils.getIssuerFromSamlObject(profileRequest));
 
         val peerEntityId = peer.getEntityId();
-        LOGGER.debug("Validating request signature for [{}] via [{}]...", peerEntityId, handler.getClass().getSimpleName());
+        LOGGER.debug("Validating request signature for [{}]...", peerEntityId);
 
         val roleDescriptor = roleDescriptorResolver.resolveSingle(
             new CriteriaSet(new EntityIdCriterion(peerEntityId),
@@ -175,11 +174,11 @@ public class SamlObjectSignatureValidator {
         var foundValidCredential = false;
         val it = credentials.iterator();
         while (!foundValidCredential && it.hasNext()) {
+            val handler = new SAML2HTTPRedirectDeflateSignatureSecurityHandler();
             try {
-                val c = it.next();
-
-                val resolver = new StaticCredentialResolver(c);
-                val keyResolver = new StaticKeyInfoCredentialResolver(c);
+                val credential = it.next();
+                val resolver = new StaticCredentialResolver(credential);
+                val keyResolver = new StaticKeyInfoCredentialResolver(credential);
                 val trustEngine = new ExplicitKeySignatureTrustEngine(resolver, keyResolver);
                 validationParams.setSignatureTrustEngine(trustEngine);
                 secCtx.setSignatureValidationParameters(validationParams);

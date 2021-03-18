@@ -6,7 +6,8 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo.cas" level="error" />
+        <Logger name="org.apereo.cas" level="warn" />
+        <Logger name="org.apereo.cas.adaptors.ldap.services" level="warn" />
         <Logger name="org.ldaptive" level="warn" />
         <Logger name="org.springframework" level="off" />
         <Root level="off">
