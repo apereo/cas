@@ -49,7 +49,7 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
     public void setup() {
         servicesManager.deleteAll();
     }
-
+    
     @Test
     public void verifyOperation() {
         assertNotNull(samlIdPServicesManagerRegisteredServiceLocator);
