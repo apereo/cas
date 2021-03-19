@@ -30,7 +30,10 @@ import static org.junit.jupiter.api.Assertions.*;
     JpaServiceRegistryConfiguration.class
 })
 @Tag("SAML")
-@TestPropertySource(properties = "cas.service-registry.jpa.ddl-auto=create-drop")
+@TestPropertySource(properties = {
+    "cas.service-registry.jpa.ddl-auto=create-drop",
+    "cas.service-registry.jpa.url=jdbc:hsqldb:mem:cas-services-${#randomString6}"
+})
 public class SamlRegisteredServiceJpaTests extends BaseSamlIdPConfigurationTests {
 
     @BeforeEach

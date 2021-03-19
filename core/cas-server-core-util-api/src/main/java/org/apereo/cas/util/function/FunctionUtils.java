@@ -5,9 +5,14 @@ import org.apereo.cas.util.LoggingUtils;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.jooq.lambda.fi.util.function.CheckedConsumer;
 import org.jooq.lambda.fi.util.function.CheckedFunction;
+import org.springframework.retry.RetryCallback;
+import org.springframework.retry.backoff.FixedBackOffPolicy;
+import org.springframework.retry.policy.SimpleRetryPolicy;
+import org.springframework.retry.support.RetryTemplate;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -270,5 +275,21 @@ public class FunctionUtils {
      */
     public static void doAndIgnore(final CheckedConsumer<Object> consumer, final Object... params) {
         Unchecked.consumer(s -> consumer.accept(params)).accept(null);
+    }
+
+    /**
+     * Do and retry.
+     *
+     * @param <T>      the type parameter
+     * @param callback the callback
+     * @return the t
+     */
+    @SneakyThrows
+    public static <T> T doAndRetry(final RetryCallback<T, Exception> callback) {
+        val retryTemplate = new RetryTemplate();
+        retryTemplate.setBackOffPolicy(new FixedBackOffPolicy());
+        retryTemplate.setRetryPolicy(new SimpleRetryPolicy());
+        retryTemplate.setThrowLastExceptionOnExhausted(true);
+        return retryTemplate.execute(callback);
     }
 }

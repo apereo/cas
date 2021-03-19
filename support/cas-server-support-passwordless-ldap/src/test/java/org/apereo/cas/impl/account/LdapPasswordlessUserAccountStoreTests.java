@@ -4,6 +4,7 @@ import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.config.LdapPasswordlessAuthenticationConfiguration;
 import org.apereo.cas.impl.BasePasswordlessUserAccountStoreTests;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
@@ -58,9 +59,12 @@ public class LdapPasswordlessUserAccountStoreTests extends BasePasswordlessUserA
 
     @Test
     public void verifyAction() {
-        val user = passwordlessUserAccountStore.findUser("passwordlessuser");
-        assertTrue(user.isPresent());
-        assertEquals("passwordlessuser@example.org", user.get().getEmail());
-        assertEquals("123456789", user.get().getPhone());
+       assertNotNull(FunctionUtils.doAndRetry(retryContext -> {
+           val user = passwordlessUserAccountStore.findUser("passwordlessuser");
+           assertTrue(user.isPresent());
+           assertEquals("passwordlessuser@example.org", user.get().getEmail());
+           assertEquals("123456789", user.get().getPhone());
+           return user.get();
+       }));
     }
 }

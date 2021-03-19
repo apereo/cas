@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = {
     "cas.authn.saml-idp.metadata.git.sign-commits=false",
     "cas.authn.saml-idp.metadata.git.idp-metadata-enabled=true",
-    "cas.authn.saml-idp.metadata.git.repository-url=file:${java.io.tmpdir}/cas-metadata-idp.git"
+    "cas.authn.saml-idp.metadata.git.repository-url=file:${java.io.tmpdir}/cas-metadata-idp"
 })
 @Tag("FileSystem")
 @Slf4j
@@ -39,13 +39,12 @@ public class GitSamlIdPMetadataLocatorTests extends BaseGitSamlMetadataTests {
     @BeforeAll
     public static void setup() {
         try {
-            val gitRepoDir = new File(FileUtils.getTempDirectory(), "cas-metadata-idp");
-            if (gitRepoDir.exists()) {
-                PathUtils.deleteDirectory(gitRepoDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
-            }
-            val gitDir = new File(FileUtils.getTempDirectory(), "cas-saml-metadata");
+            val gitDir = new File(FileUtils.getTempDirectory(), "cas-metadata-idp");
             if (gitDir.exists()) {
                 PathUtils.deleteDirectory(gitDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
+            }
+            if (!gitDir.mkdir()) {
+                throw new IllegalArgumentException("Git repository directory location " + gitDir + " cannot be located/created");
             }
             val git = Git.init().setDirectory(gitDir).setBare(false).call();
             FileUtils.write(new File(gitDir, "readme.txt"), "text", StandardCharsets.UTF_8);
@@ -61,10 +60,6 @@ public class GitSamlIdPMetadataLocatorTests extends BaseGitSamlMetadataTests {
         val gitRepoDir = new File(FileUtils.getTempDirectory(), "cas-metadata-idp");
         if (gitRepoDir.exists()) {
             PathUtils.deleteDirectory(gitRepoDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
-        }
-        val gitDir = new File(FileUtils.getTempDirectory(), "cas-saml-metadata");
-        if (gitDir.exists()) {
-            PathUtils.deleteDirectory(gitDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
         }
     }
 

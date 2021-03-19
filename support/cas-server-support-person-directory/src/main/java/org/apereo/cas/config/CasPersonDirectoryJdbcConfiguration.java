@@ -7,6 +7,7 @@ import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlan;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.util.spring.boot.ConditionalOnMultiValuedProperty;
 
 import lombok.extern.slf4j.Slf4j;
@@ -100,20 +101,21 @@ public class CasPersonDirectoryJdbcConfiguration implements PersonDirectoryAttri
     }
 
     private AbstractJdbcPersonAttributeDao createJdbcPersonAttributeDao(final JdbcPrincipalAttributesProperties jdbc) {
+        val url = SpringExpressionLanguageValueResolver.getInstance().resolve(jdbc.getUrl());
         if (jdbc.isSingleRow()) {
-            LOGGER.debug("Configured single-row JDBC attribute repository for [{}]", jdbc.getUrl());
+            LOGGER.debug("Configured single-row JDBC attribute repository for [{}]", url);
             return configureJdbcPersonAttributeDao(
                 new SingleRowJdbcPersonAttributeDao(
                     JpaBeans.newDataSource(jdbc),
                     jdbc.getSql()
                 ), jdbc);
         }
-        LOGGER.debug("Configured multi-row JDBC attribute repository for [{}]", jdbc.getUrl());
+        LOGGER.debug("Configured multi-row JDBC attribute repository for [{}]", url);
         val jdbcDao = new MultiRowJdbcPersonAttributeDao(
             JpaBeans.newDataSource(jdbc),
             jdbc.getSql()
         );
-        LOGGER.debug("Configured multi-row JDBC column mappings for [{}] are [{}]", jdbc.getUrl(), jdbc.getColumnMappings());
+        LOGGER.debug("Configured multi-row JDBC column mappings for [{}] are [{}]", url, jdbc.getColumnMappings());
         jdbcDao.setNameValueColumnMappings(jdbc.getColumnMappings());
         return configureJdbcPersonAttributeDao(jdbcDao, jdbc);
     }
