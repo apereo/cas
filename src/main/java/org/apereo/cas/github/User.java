@@ -31,20 +31,15 @@ import lombok.ToString;
 public class User {
 
     private final String login;
+    private final String name;
+    private final String email;
 
-    /**
-     * Creates a new {@code User} with the given login.
-     *
-     * @param login the login
-     */
     @JsonCreator
-    public User(@JsonProperty("login") final String login) {
+    public User(@JsonProperty("login") final String login,
+                @JsonProperty("name") final String name,
+                @JsonProperty("email") final String email) {
         this.login = login;
+        this.name = name;
+        this.email = email;
     }
-
-    @Override
-    public String toString() {
-        return this.login;
-    }
-
 }

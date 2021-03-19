@@ -49,7 +49,9 @@ public class GitHubProperties {
 
     private long staleWorkflowRunInDays = 5;
 
-    private long completedWorkflowRunInDays = 1;
+    private long completedSuccessfulWorkflowRunInDays = 1;
+
+    private long completedFailedWorkflowRunInDays = 2;
 
     /**
      * Configuration for a GitHub repository.

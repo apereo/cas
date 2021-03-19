@@ -370,11 +370,17 @@ public class MonitoredRepository {
 
                     log.info("Removing old workflow run {} @ {}", run, run.getUpdatedTime());
                     gitHub.removeWorkflowRun(getOrganization(), getName(), run);
-                } else {
-                    if (run.isConcludedSuccessfully() && Workflows.WorkflowRunEvent.PUSH.getName().equalsIgnoreCase(run.getEvent())) {
-                        val completedExp = run.getUpdatedTime().plusDays(this.gitHubProperties.getCompletedWorkflowRunInDays());
+                } else if (Workflows.WorkflowRunEvent.PUSH.getName().equalsIgnoreCase(run.getEvent())) {
+                    if (run.isConcludedSuccessfully()) {
+                        val completedExp = run.getUpdatedTime().plusDays(this.gitHubProperties.getCompletedSuccessfulWorkflowRunInDays());
                         if (completedExp.isBefore(now)) {
-                            log.info("Removing completed workflow run {} @ {}", run, run.getUpdatedTime());
+                            log.info("Removing completed successful workflow run {} @ {}", run, run.getUpdatedTime());
+                            gitHub.removeWorkflowRun(getOrganization(), getName(), run);
+                        }
+                    } else {
+                        val completedExp = run.getUpdatedTime().plusDays(this.gitHubProperties.getCompletedFailedWorkflowRunInDays());
+                        if (completedExp.isBefore(now)) {
+                            log.info("Removing completed failed workflow run {} @ {}", run, run.getUpdatedTime());
                             gitHub.removeWorkflowRun(getOrganization(), getName(), run);
                         }
                     }
