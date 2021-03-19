@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.springframework.core.Ordered;
@@ -39,6 +40,7 @@ public class SamlIdPServicesManagerRegisteredServiceLocator extends DefaultServi
                     val attributeValue = pair.getRight();
                     return attribute.getEntityIdFrom(resolver, attributeValue);
                 })
+                .filter(StringUtils::isNotBlank)
                 .filter(registeredService::matches)
                 .stream()
                 .anyMatch(entityId -> {
@@ -57,7 +59,8 @@ public class SamlIdPServicesManagerRegisteredServiceLocator extends DefaultServi
      * @param service           the service
      * @return the boolean
      */
-    protected Optional<Pair<SamlProtocolServiceAttribute, String>> getSamlParameterValue(final RegisteredService registeredService, final Service service) {
+    protected Optional<Pair<SamlProtocolServiceAttribute, String>> getSamlParameterValue(final RegisteredService registeredService,
+                                                                                         final Service service) {
         if (registeredService instanceof SamlRegisteredService) {
             val attributes = service.getAttributes();
             LOGGER.trace("Reviewing service attributes [{}] for service id [{}] to match registered service [{}]",
@@ -66,7 +69,8 @@ public class SamlIdPServicesManagerRegisteredServiceLocator extends DefaultServi
             return SamlProtocolServiceAttribute.values()
                 .stream()
                 .filter(attr -> attributes.containsKey(attr.getAttributeName()))
-                .map(attr -> Pair.of(attr, CollectionUtils.firstElement(attributes.get(attr.getAttributeName())).map(Object::toString).orElseThrow()))
+                .map(attr -> Pair.of(attr, CollectionUtils.firstElement(attributes.get(attr.getAttributeName()))
+                    .map(Object::toString).orElseThrow()))
                 .findFirst();
         }
         LOGGER.trace("Registered service [{}] is not a SAML2 registered service", registeredService.getName());

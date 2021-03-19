@@ -1505,7 +1505,14 @@ ext.libraries = [
                     exclude(group: "ch.qos.logback", module: "logback-classic")
                 },
                 dependencies.create("org.json:json:$jsonVersion") {
-                }
+                },
+                dependencies.create("org.testcontainers:testcontainers:$testContainersVersion") {
+                },
+                dependencies.create("org.testcontainers:junit-jupiter:$testContainersVersion") {
+                    exclude(group: "org.junit.jupiter", module: "junit-jupiter-api")
+                },
+                dependencies.create("org.testcontainers:mockserver:$testContainersVersion") {
+                },
         ],
         kryo                    : [
                 dependencies.create("com.esotericsoftware:kryo:$kryoVersion") {
