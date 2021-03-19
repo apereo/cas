@@ -43,6 +43,9 @@ public class GitSamlIdPMetadataGeneratorTests extends BaseGitSamlMetadataTests {
             if (gitDir.exists()) {
                 PathUtils.deleteDirectory(gitDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
             }
+            if (!gitDir.mkdir()) {
+                throw new IllegalArgumentException("Git repository directory location " + gitDir + " cannot be located/created");
+            }
             val git = Git.init().setDirectory(gitDir).setBare(false).call();
             FileUtils.write(new File(gitDir, "readme.txt"), "text", StandardCharsets.UTF_8);
             git.add().addFilepattern("*.*").call();

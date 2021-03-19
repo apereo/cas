@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.saml-idp.metadata.git.sign-commits=false",
     "cas.authn.saml-idp.metadata.git.push-changes=true",
     "cas.authn.saml-idp.metadata.git.idp-metadata-enabled=true",
-    "cas.authn.saml-idp.metadata.git.repository-url=file:${java.io.tmpdir}/cas-metadata-data.git"
+    "cas.authn.saml-idp.metadata.git.repository-url=file:${java.io.tmpdir}/cas-metadata-data"
 })
 @Slf4j
 @Tag("FileSystem")
@@ -43,10 +43,9 @@ public class GitSamlRegisteredServiceMetadataResolverTests extends BaseGitSamlMe
     @BeforeAll
     public static void setup() {
         try {
-            val gitDir = new File(FileUtils.getTempDirectory(), "cas-saml-metadata");
+            val gitDir = new File(FileUtils.getTempDirectory(), "cas-metadata-data");
             if (gitDir.exists()) {
-                PathUtils.deleteDirectory(gitDir.toPath(),
-                        StandardDeleteOption.OVERRIDE_READ_ONLY);
+                PathUtils.deleteDirectory(gitDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
             }
             if (!gitDir.mkdir()) {
                 throw new IllegalArgumentException("Git repository directory location " + gitDir + " cannot be located/created");
@@ -64,13 +63,7 @@ public class GitSamlRegisteredServiceMetadataResolverTests extends BaseGitSamlMe
     public static void cleanUp() throws Exception {
         val gitRepoDir = new File(FileUtils.getTempDirectory(), "cas-metadata-data");
         if (gitRepoDir.exists()) {
-            PathUtils.deleteDirectory(gitRepoDir.toPath(),
-                    StandardDeleteOption.OVERRIDE_READ_ONLY);
-        }
-        val gitDir = new File(FileUtils.getTempDirectory(), "cas-saml-metadata");
-        if (gitDir.exists()) {
-            PathUtils.deleteDirectory(gitDir.toPath(),
-                    StandardDeleteOption.OVERRIDE_READ_ONLY);
+            PathUtils.deleteDirectory(gitRepoDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
         }
     }
 
