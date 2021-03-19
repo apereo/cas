@@ -15,6 +15,7 @@ import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.exception.CredentialsException;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.retry.annotation.Retryable;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -37,6 +38,7 @@ public class OAuth20RefreshTokenAuthenticatorTests extends BaseOAuth20Authentica
     }
 
     @Test
+    @Retryable(value = Error.class)
     public void verifyAuthentication() {
         val refreshToken = getRefreshToken(serviceWithoutSecret);
         ticketRegistry.addTicket(refreshToken);
@@ -73,10 +75,8 @@ public class OAuth20RefreshTokenAuthenticatorTests extends BaseOAuth20Authentica
         val badClientIdCtx = new JEEContext(badClientIdRequest, new MockHttpServletResponse());
         assertThrows(CredentialsException.class, () -> authenticator.validate(badClientIdCredentials, badClientIdCtx, JEESessionStore.INSTANCE));
 
-
         val unsupportedClientRefreshToken = getRefreshToken(service);
         ticketRegistry.addTicket(unsupportedClientRefreshToken);
-
 
         val unsupportedClientCredentials = new UsernamePasswordCredentials("client", refreshToken.getId());
         val unsupportedClientRequest = new MockHttpServletRequest();

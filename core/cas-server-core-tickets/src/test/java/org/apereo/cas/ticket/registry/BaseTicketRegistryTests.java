@@ -106,6 +106,7 @@ public abstract class BaseTicketRegistryTests {
     private TicketRegistry ticketRegistry;
 
     @BeforeEach
+    @Retryable(value = Error.class)
     public void initialize(final TestInfo info, final RepetitionInfo repetitionInfo) {
         this.ticketGrantingTicketId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
             .getNewTicketId(TicketGrantingTicket.PREFIX);
