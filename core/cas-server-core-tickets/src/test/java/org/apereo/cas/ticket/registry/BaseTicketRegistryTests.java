@@ -61,6 +61,8 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Import;
+import org.springframework.retry.annotation.EnableRetry;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.test.util.AopTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -80,6 +82,7 @@ import static org.junit.jupiter.api.Assumptions.*;
  */
 @Slf4j
 @SpringBootTest(classes = BaseTicketRegistryTests.SharedTestConfiguration.class)
+@EnableRetry
 public abstract class BaseTicketRegistryTests {
 
     private static final int TICKETS_IN_REGISTRY = 1;
@@ -323,6 +326,7 @@ public abstract class BaseTicketRegistryTests {
             });
     }
 
+    @Retryable(value = Error.class)
     @RepeatedTest(2)
     public void verifyTicketCountsEqualToTicketsAdded() {
         assumeTrue(isIterableRegistry());

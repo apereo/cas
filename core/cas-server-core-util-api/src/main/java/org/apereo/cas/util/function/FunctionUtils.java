@@ -14,6 +14,7 @@ import org.springframework.retry.backoff.FixedBackOffPolicy;
 import org.springframework.retry.policy.SimpleRetryPolicy;
 import org.springframework.retry.support.RetryTemplate;
 
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -288,7 +289,7 @@ public class FunctionUtils {
     public static <T> T doAndRetry(final RetryCallback<T, Exception> callback) {
         val retryTemplate = new RetryTemplate();
         retryTemplate.setBackOffPolicy(new FixedBackOffPolicy());
-        retryTemplate.setRetryPolicy(new SimpleRetryPolicy());
+        retryTemplate.setRetryPolicy(new SimpleRetryPolicy(SimpleRetryPolicy.DEFAULT_MAX_ATTEMPTS, Map.of(Error.class, Boolean.TRUE)));
         retryTemplate.setThrowLastExceptionOnExhausted(true);
         return retryTemplate.execute(callback);
     }
