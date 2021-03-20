@@ -13,6 +13,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 
 import java.io.File;
@@ -34,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("FileSystem")
 @Slf4j
+@DirtiesContext
 public class GitSamlIdPMetadataLocatorTests extends BaseGitSamlMetadataTests {
 
     @BeforeAll

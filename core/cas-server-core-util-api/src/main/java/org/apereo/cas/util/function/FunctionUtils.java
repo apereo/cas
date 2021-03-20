@@ -14,7 +14,8 @@ import org.springframework.retry.backoff.FixedBackOffPolicy;
 import org.springframework.retry.policy.SimpleRetryPolicy;
 import org.springframework.retry.support.RetryTemplate;
 
-import java.util.Map;
+import java.util.HashMap;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -287,9 +288,27 @@ public class FunctionUtils {
      */
     @SneakyThrows
     public static <T> T doAndRetry(final RetryCallback<T, Exception> callback) {
+        return doAndRetry(List.of(), callback);
+    }
+
+    /**
+     * Do and retry.
+     *
+     * @param <T>      the type parameter
+     * @param clazzes  the classified clazzes
+     * @param callback the callback
+     * @return the t
+     */
+    @SneakyThrows
+    public static <T> T doAndRetry(final List<Class<? extends Throwable>> clazzes, final RetryCallback<T, Exception> callback) {
         val retryTemplate = new RetryTemplate();
         retryTemplate.setBackOffPolicy(new FixedBackOffPolicy());
-        retryTemplate.setRetryPolicy(new SimpleRetryPolicy(SimpleRetryPolicy.DEFAULT_MAX_ATTEMPTS, Map.of(Error.class, Boolean.TRUE)));
+
+        val classified = new HashMap<Class<? extends Throwable>, Boolean>();
+        classified.put(Error.class, Boolean.TRUE);
+        clazzes.forEach(clz -> classified.put(clz, Boolean.TRUE));
+        
+        retryTemplate.setRetryPolicy(new SimpleRetryPolicy(SimpleRetryPolicy.DEFAULT_MAX_ATTEMPTS, classified, true));
         retryTemplate.setThrowLastExceptionOnExhausted(true);
         return retryTemplate.execute(callback);
     }
