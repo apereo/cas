@@ -9,18 +9,15 @@ import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.Cleanup;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.RetryingTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.retry.annotation.EnableRetry;
-import org.springframework.retry.annotation.Retryable;
 import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -44,7 +41,6 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Slf4j
 @Import(LdapPasswordlessAuthenticationConfiguration.class)
-@EnableRetry
 public class LdapPasswordlessUserAccountStoreTests extends BasePasswordlessUserAccountStoreTests {
     @Autowired
     @Qualifier("passwordlessUserAccountStore")
@@ -59,8 +55,7 @@ public class LdapPasswordlessUserAccountStoreTests extends BasePasswordlessUserA
         LdapIntegrationTestsOperations.populateEntries(localhost, resource.getInputStream(), "ou=people,dc=example,dc=org");
     }
 
-    @Test
-    @Retryable(Error.class)
+    @RetryingTest(3)
     public void verifyAction() {
        assertNotNull(FunctionUtils.doAndRetry(retryContext -> {
            val user = passwordlessUserAccountStore.findUser("passwordlessuser");
