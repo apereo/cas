@@ -1513,6 +1513,8 @@ ext.libraries = [
                 },
                 dependencies.create("org.testcontainers:mockserver:$testContainersVersion") {
                 },
+                dependencies.create("org.junit-pioneer:junit-pioneer:$junitPioneerVersion") {
+                }
         ],
         kryo                    : [
                 dependencies.create("com.esotericsoftware:kryo:$kryoVersion") {
