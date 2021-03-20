@@ -19,6 +19,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.cloud.zookeeper.config.ZookeeperConfigAutoConfiguration;
 import org.springframework.cloud.zookeeper.config.ZookeeperConfigBootstrapConfiguration;
+import org.springframework.retry.annotation.EnableRetry;
+import org.springframework.retry.annotation.RetryConfiguration;
+import org.springframework.retry.annotation.Retryable;
 
 import java.nio.charset.StandardCharsets;
 
@@ -32,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    RetryConfiguration.class,
     ZookeeperConfigBootstrapConfiguration.class,
     ZookeeperConfigAutoConfiguration.class
 }, properties = {
@@ -45,6 +49,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("ZooKeeper")
 @EnabledIfPortOpen(port = 2181)
+@EnableRetry
 public class ZooKeeperCloudConfigBootstrapConfigurationTests {
     @Autowired
     @Qualifier("curatorFramework")
@@ -54,6 +59,7 @@ public class ZooKeeperCloudConfigBootstrapConfigurationTests {
     private CasConfigurationProperties casProperties;
 
     @BeforeAll
+    @Retryable(Error.class)
     public static void setup() throws Exception {
         val curator = CuratorFrameworkFactory.newClient("localhost:2181",
             5000, 5000, new RetryNTimes(2, 100));
