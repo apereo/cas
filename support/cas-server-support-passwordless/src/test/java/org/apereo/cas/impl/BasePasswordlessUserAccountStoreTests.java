@@ -37,7 +37,9 @@ import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration;
 import org.springframework.context.annotation.Import;
+import org.springframework.retry.annotation.RetryConfiguration;
 
 /**
  * This is {@link BasePasswordlessUserAccountStoreTests}.
@@ -51,6 +53,7 @@ public abstract class BasePasswordlessUserAccountStoreTests {
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
+        RetryConfiguration.class,
         AopAutoConfiguration.class
     })
     @SpringBootConfiguration

@@ -19,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.retry.annotation.EnableRetry;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -42,6 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Slf4j
 @Import(LdapPasswordlessAuthenticationConfiguration.class)
+@EnableRetry
 public class LdapPasswordlessUserAccountStoreTests extends BasePasswordlessUserAccountStoreTests {
     @Autowired
     @Qualifier("passwordlessUserAccountStore")
@@ -57,6 +60,7 @@ public class LdapPasswordlessUserAccountStoreTests extends BasePasswordlessUserA
     }
 
     @Test
+    @Retryable(Error.class)
     public void verifyAction() {
        assertNotNull(FunctionUtils.doAndRetry(retryContext -> {
            val user = passwordlessUserAccountStore.findUser("passwordlessuser");
