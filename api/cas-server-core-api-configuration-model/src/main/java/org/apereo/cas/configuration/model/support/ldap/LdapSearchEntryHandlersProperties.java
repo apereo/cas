@@ -24,7 +24,7 @@ public class LdapSearchEntryHandlersProperties implements Serializable {
     private static final long serialVersionUID = -5198990160347131821L;
     /**
      * The type of search entry handler to choose.
-     * Accepted values are {@code OBJECT_GUID,OBJECT_SID,CASE_CHANGE,DN_ATTRIBUTE_ENTRY,MERGE,PRIMARY_GROUP,RANGE_ENTRY,RECURSIVE_ENTRY}
+     * Accepted values are {@code OBJECT_GUID,OBJECT_SID,CASE_CHANGE,DN_ATTRIBUTE_ENTRY,MERGE,PRIMARY_GROUP,RANGE_ENTRY,RECURSIVE_ENTRY, MERGE_ENTRIES}
      */
     private SearchEntryHandlerTypes type;
     /**
@@ -57,6 +57,13 @@ public class LdapSearchEntryHandlersProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private RecursiveSearchEntryHandlersProperties recursive = new RecursiveSearchEntryHandlersProperties();
+
+    /**
+     * Merges the values of one or more attributes in all entries into a single attribute. The merged attribute may or may not already
+     * exist on the entry. If it does exist it's existing values will remain intact.
+     */
+    @NestedConfigurationProperty
+    private MergeAllEntriesAttributesSearchEntryHandlersProperties mergeAllAttribute = new MergeAllEntriesAttributesSearchEntryHandlersProperties();
 
     /**
      * The enum Search entry handler types.
@@ -94,6 +101,10 @@ public class LdapSearchEntryHandlersProperties implements Serializable {
         /**
          * Recursive entry search handler.
          */
-        RECURSIVE_ENTRY
+        RECURSIVE_ENTRY,
+        /**
+         * Merge entries handler.
+         */
+        MERGE_ENTRIES
     }
 }
