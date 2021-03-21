@@ -343,9 +343,10 @@ public class SamlIdPUtils {
         return Optional.empty();
     }
 
-    private static AssertionConsumerService getAssertionConsumerServiceFromRequest(final RequestAbstractType authnRequest, final String binding) {
-        if (authnRequest instanceof AuthnRequest) {
-            val acsUrl = AuthnRequest.class.cast(authnRequest).getAssertionConsumerServiceURL();
+    private static AssertionConsumerService getAssertionConsumerServiceFromRequest(final RequestAbstractType request, final String binding) {
+        if (request instanceof AuthnRequest) {
+            var authnRequest = AuthnRequest.class.cast(request);
+            val acsUrl = authnRequest.getAssertionConsumerServiceURL();
             if (StringUtils.isBlank(acsUrl)) {
                 return null;
             }
@@ -355,6 +356,8 @@ public class SamlIdPUtils {
             endpoint.setBinding(binding);
             endpoint.setResponseLocation(acsUrl);
             endpoint.setLocation(acsUrl);
+            endpoint.setIndex(authnRequest.getAssertionConsumerServiceIndex());
+
             return endpoint;
         }
         return null;

@@ -47,7 +47,7 @@ jobs:
     needs: [initialize]
     runs-on: ubuntu-latest
     outputs:
-      categories: ${{ steps.get-categories.outputs.categories }}
+      scenarios: ${{ steps.get-categories.outputs.scenarios }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -57,7 +57,7 @@ jobs:
       - id: print-categories
         run: ./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios
       - id: get-categories
-        run: echo "::set-output name=categories::$(./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios)]}"
+        run: echo "::set-output name=scenarios::$(./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios)]}"
 
 ##########################################################################
   puppeteer-tests:
@@ -68,7 +68,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        category: ${{fromJSON(needs.testcategories.outputs.categories)}}
+        scenario: ${{fromJSON(needs.puppeteer-scenarios.outputs.scenarios)}}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -78,5 +78,5 @@ jobs:
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh
       - name: Run Tests
-        run: ./ci/tests/puppeteer/run.sh $PWD/ci/tests/puppeteer/scenarios/${{matrix.category}}
+        run: ./ci/tests/puppeteer/run.sh $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
 ##########################################################################
