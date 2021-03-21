@@ -11,6 +11,7 @@ import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import net.shibboleth.utilities.java.support.codec.Base64Support;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.opensaml.core.criterion.EntityIdCriterion;
@@ -40,6 +41,8 @@ import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.zip.Inflater;
+import java.util.zip.InflaterInputStream;
 
 /**
  * This is {@link SamlIdPUtils}.
@@ -50,7 +53,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @UtilityClass
 public class SamlIdPUtils {
-
+    
     /**
      * Retrieve saml request.
      *
@@ -63,10 +66,20 @@ public class SamlIdPUtils {
     @SneakyThrows
     public static <T extends RequestAbstractType> T retrieveSamlRequest(final OpenSamlConfigBean openSamlConfigBean,
                                                                         final Class<T> clazz, final String requestValue) {
-        val encodedRequest = EncodingUtils.decodeBase64(requestValue.getBytes(StandardCharsets.UTF_8));
-        return clazz.cast(XMLObjectSupport.unmarshallFromInputStream(
-            openSamlConfigBean.getParserPool(),
-            new ByteArrayInputStream(encodedRequest)));
+        LOGGER.trace("Retrieving SAML request from [{}]", requestValue);
+        try {
+            val decodedBytes = Base64Support.decode(requestValue);
+            try (val is = new InflaterInputStream(new ByteArrayInputStream(decodedBytes), new Inflater(true))) {
+                return clazz.cast(XMLObjectSupport.unmarshallFromInputStream(
+                    openSamlConfigBean.getParserPool(), is));
+            }
+        } catch (final Exception e) {
+            val encodedRequest = EncodingUtils.decodeBase64(requestValue.getBytes(StandardCharsets.UTF_8));
+            try (val is = new ByteArrayInputStream(encodedRequest)) {
+                return clazz.cast(XMLObjectSupport.unmarshallFromInputStream(
+                    openSamlConfigBean.getParserPool(), is));
+            }
+        }
     }
 
     /**
