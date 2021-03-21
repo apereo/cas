@@ -327,9 +327,8 @@ public abstract class BaseTicketRegistryTests {
             });
     }
 
-    @Retryable(value = Error.class)
     @RepeatedTest(2)
-    public void verifyTicketCountsEqualToTicketsAdded() {
+    public void verifyTicketCountsEqualToTicketsAdded() throws Exception {
         assumeTrue(isIterableRegistry());
         val tgts = new ArrayList<Ticket>();
         val sts = new ArrayList<Ticket>();
@@ -347,13 +346,14 @@ public abstract class BaseTicketRegistryTests {
             ticketRegistry.addTicket(ticketGrantingTicket);
             ticketRegistry.addTicket(st);
         }
+        Thread.sleep(2000);
         val sessionCount = this.ticketRegistry.sessionCount();
         assertEquals(tgts.size(), sessionCount,
-            "The sessionCount is not the same as the collection.");
+            "The sessionCount " + sessionCount + " is not the same as the collection " + tgts.size());
 
         val ticketCount = this.ticketRegistry.serviceTicketCount();
         assertEquals(sts.size(), ticketCount,
-            "The serviceTicketCount is not the same as the collection.");
+            "The serviceTicketCount " + ticketCount + " is not the same as the collection " + sts.size());
     }
 
     @RepeatedTest(2)
