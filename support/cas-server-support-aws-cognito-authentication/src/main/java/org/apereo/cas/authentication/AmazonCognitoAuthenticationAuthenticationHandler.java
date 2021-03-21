@@ -26,6 +26,7 @@ import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -91,7 +92,14 @@ public class AmazonCognitoAuthenticationAuthenticationHandler extends AbstractUs
             attributes.put("userModifiedDate", CollectionUtils.wrap(userResult.userLastModifiedDate().toEpochMilli()));
 
             val userAttributes = userResult.userAttributes();
-            userAttributes.forEach(attr -> attributes.put(attr.name(), CollectionUtils.wrap(attr.value())));
+            userAttributes.forEach(attr -> {
+                if (!properties.getMappedAttributes().isEmpty() && properties.getMappedAttributes().containsKey(attr.name())) {
+                    final val newName = properties.getMappedAttributes().get(attr.name());
+                    attributes.put(newName, CollectionUtils.wrap(attr.value()));
+                } else {
+                    attributes.put(attr.name(), CollectionUtils.wrap(attr.value()));
+                }
+            });
 
             val principal = principalFactory.createPrincipal(userResult.username(), attributes);
             return createHandlerResult(credential, principal, new ArrayList<>(0));
