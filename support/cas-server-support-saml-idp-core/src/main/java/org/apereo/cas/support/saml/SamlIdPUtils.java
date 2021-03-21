@@ -119,31 +119,29 @@ public class SamlIdPUtils {
     /**
      * Determine assertion consumer service assertion consumer service.
      *
-     * @param authnRequest the authn request
+     * @param request the authn request
      * @param adaptor      the adaptor
      * @param binding      the binding
      * @return the assertion consumer service
      */
-    public static Endpoint determineEndpointForRequest(final RequestAbstractType authnRequest,
+    public static Endpoint determineEndpointForRequest(final RequestAbstractType request,
                                                        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                        final String binding) {
         var endpoint = (Endpoint) null;
-        if (authnRequest instanceof LogoutRequest) {
+        if (request instanceof LogoutRequest) {
             endpoint = adaptor.getSingleLogoutService(binding);
         } else {
-            val acsEndpointFromReq = getAssertionConsumerServiceFromRequest(authnRequest, binding);
+            val acsEndpointFromReq = getAssertionConsumerServiceFromRequest(request, binding);
             val acsEndpointFromMetadata = adaptor.getAssertionConsumerService(binding);
             if (acsEndpointFromReq != null) {
-                if (authnRequest.isSigned()) {
-                    endpoint = acsEndpointFromReq;
-                } else {
+                if (!request.isSigned()) {
                     if (acsEndpointFromMetadata == null
                         || !adaptor.getAssertionConsumerServiceLocations(binding).contains(acsEndpointFromReq.getLocation())) {
                         throw new SamlException(String.format("Assertion consumer service from unsigned request [%s], does not match ACS from SP metadata [%s]",
                             acsEndpointFromReq.getLocation(), adaptor.getAssertionConsumerServiceLocations(binding)));
                     }
-                    endpoint = acsEndpointFromReq;
                 }
+                endpoint = acsEndpointFromReq;
             } else {
                 endpoint = acsEndpointFromMetadata;
             }
@@ -151,13 +149,13 @@ public class SamlIdPUtils {
 
         if (endpoint == null || StringUtils.isBlank(endpoint.getBinding())) {
             throw new SamlException("Endpoint for "
-                + authnRequest.getSchemaType().toString()
+                + request.getSchemaType()
                 + " is not available or does not define a binding for " + binding);
         }
         val location = StringUtils.isBlank(endpoint.getResponseLocation()) ? endpoint.getLocation() : endpoint.getResponseLocation();
         if (StringUtils.isBlank(location)) {
             throw new SamlException("Endpoint for"
-                + authnRequest.getSchemaType().toString()
+                + request.getSchemaType()
                 + " does not define a target location for " + binding);
         }
         return endpoint;
@@ -316,9 +314,10 @@ public class SamlIdPUtils {
         return Optional.empty();
     }
 
-    private static AssertionConsumerService getAssertionConsumerServiceFromRequest(final RequestAbstractType authnRequest, final String binding) {
-        if (authnRequest instanceof AuthnRequest) {
-            val acsUrl = AuthnRequest.class.cast(authnRequest).getAssertionConsumerServiceURL();
+    private static AssertionConsumerService getAssertionConsumerServiceFromRequest(final RequestAbstractType request, final String binding) {
+        if (request instanceof AuthnRequest) {
+            val authnRequest = AuthnRequest.class.cast(request);
+            val acsUrl = authnRequest.getAssertionConsumerServiceURL();
             if (StringUtils.isBlank(acsUrl)) {
                 return null;
             }
@@ -328,6 +327,7 @@ public class SamlIdPUtils {
             endpoint.setBinding(binding);
             endpoint.setResponseLocation(acsUrl);
             endpoint.setLocation(acsUrl);
+            endpoint.setIndex(authnRequest.getAssertionConsumerServiceIndex());
             return endpoint;
         }
         return null;
