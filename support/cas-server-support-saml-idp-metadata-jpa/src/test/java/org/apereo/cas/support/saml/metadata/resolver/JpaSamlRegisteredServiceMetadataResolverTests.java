@@ -7,7 +7,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.RetryingTest;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Transactional(transactionManager = "transactionManagerSamlMetadata")
 public class JpaSamlRegisteredServiceMetadataResolverTests extends BaseJpaSamlMetadataTests {
     
-    @Test
+    @RetryingTest(3)
     public void verifyResolver() throws Exception {
         val res = new ClassPathResource("samlsp-metadata.xml");
         val md = new SamlMetadataDocument();

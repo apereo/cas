@@ -1,3 +1,6 @@
+ext {
+    maxParallelForksForTests = 1
+}
 description = "Apereo CAS SAML Metadata Support via JDBC"
 dependencies {
     implementation project(":core:cas-server-core-util-api")
