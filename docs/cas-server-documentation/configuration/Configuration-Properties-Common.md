@@ -1353,3 +1353,4 @@ The following types are supported:
 | `PRIMARY_GROUP` | Constructs the primary group SID and then searches for that group and puts it's DN in the 'memberOf' attribute of the original search entry. 
 | `RANGE_ENTRY` |  Rewrites attributes returned from Active Directory to include all values by performing additional searches.
 | `RECURSIVE_ENTRY` | This recursively searches based on a supplied attribute and merges those results into the original entry.
+| `MERGE_ENTRIES` | Merges all entries in the search result by merging the attributes with the same name.
