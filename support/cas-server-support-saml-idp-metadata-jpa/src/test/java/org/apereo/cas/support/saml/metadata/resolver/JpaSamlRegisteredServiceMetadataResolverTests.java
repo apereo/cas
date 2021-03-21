@@ -31,19 +31,7 @@ public class JpaSamlRegisteredServiceMetadataResolverTests extends BaseJpaSamlMe
 
     @PersistenceContext(unitName = "samlMetadataEntityManagerFactory")
     private EntityManager entityManager;
-
-    @BeforeEach
-    public void setup() {
-        entityManager.createQuery("DELETE FROM SamlMetadataDocument").executeUpdate();
-    }
-
-    @AfterEach
-    public void tearDown() throws Exception {
-        entityManager.clear();
-        entityManager.flush();
-        entityManager.close();
-    }
-
+    
     @Test
     public void verifyResolver() throws Exception {
         val res = new ClassPathResource("samlsp-metadata.xml");

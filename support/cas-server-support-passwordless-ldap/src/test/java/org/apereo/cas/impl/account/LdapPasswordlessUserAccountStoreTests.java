@@ -4,14 +4,12 @@ import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.config.LdapPasswordlessAuthenticationConfiguration;
 import org.apereo.cas.impl.BasePasswordlessUserAccountStoreTests;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.Cleanup;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junitpioneer.jupiter.RetryingTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,23 +44,16 @@ public class LdapPasswordlessUserAccountStoreTests extends BasePasswordlessUserA
     @Qualifier("passwordlessUserAccountStore")
     private PasswordlessUserAccountStore passwordlessUserAccountStore;
 
-    @BeforeAll
-    public static void bootstrap() throws Exception {
+    @RetryingTest(3)
+    public void verifyAction() throws Exception {
         @Cleanup
         val localhost = new LDAPConnection("localhost", 10389, "cn=Directory Manager", "password");
         val resource = new ClassPathResource("ldif/ldap-passwordless.ldif");
         LOGGER.debug("Populating LDAP entries from [{}]", resource);
         LdapIntegrationTestsOperations.populateEntries(localhost, resource.getInputStream(), "ou=people,dc=example,dc=org");
-    }
-
-    @RetryingTest(3)
-    public void verifyAction() {
-       assertNotNull(FunctionUtils.doAndRetry(retryContext -> {
-           val user = passwordlessUserAccountStore.findUser("passwordlessuser");
-           assertTrue(user.isPresent());
-           assertEquals("passwordlessuser@example.org", user.get().getEmail());
-           assertEquals("123456789", user.get().getPhone());
-           return user.get();
-       }));
+        val user = passwordlessUserAccountStore.findUser("passwordlessuser");
+        assertTrue(user.isPresent());
+        assertEquals("passwordlessuser@example.org", user.get().getEmail());
+        assertEquals("123456789", user.get().getPhone());
     }
 }
