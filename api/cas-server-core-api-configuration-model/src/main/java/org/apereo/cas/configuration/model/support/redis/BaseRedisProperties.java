@@ -86,16 +86,17 @@ public class BaseRedisProperties implements Serializable {
      * Setting that describes how Lettuce routes read operations to replica nodes.
      * Accepted mode are :
      * <ul>
-     * <li>{@code UPSTREAM/MASTER}: Default mode. Read from the current upstream (master) node.</li>
-     * <li>{@code UPSTREAMPREFERRED/MASTERPREFERRED}: Read from the upstream node (master), but if it is unavailable, read from replica nodes.</li>
-     * <li>{@code REPLICA/SLAVE}: Read from replica nodes. </li>
-     * <li>{@code REPLICAPREFERRED/SLAVEPREFERRED}: Read from the replica nodes, but if none is unavailable, read
-     * from the upstream (master) node.</li>
+     * <li>{@code UPSTREAM}: Default mode. Read from the current upstream (formerly master) node.</li>
+     * <li>{@code UPSTREAMPREFERRED}: Read from the upstream node (formerly master), but if it is unavailable, read from replica nodes.</li>
+     * <li>{@code REPLICA}: Read from replica nodes. </li>
+     * <li>{@code REPLICAPREFERRED} or {@code }: Read from the replica nodes, but if none is unavailable, read
+     * from the upstream node.</li>
      * <li>{@code NEAREST}: Read from any node of the cluster with the lowest latency.</li>
      * <li>{@code ANY}: Read from any node of the cluster.</li>
      * <li>{@code ANYREPLICA}: Read from any replica node of the cluster. </li>
      * </ul>
-     * Note that modes referencing MASTER/SLAVE are deprecated in the Lettuce-io redis client dependency so migrate config to UPSTREAM/REPLICA.
+     * Note that modes referencing MASTER/SLAVE are deprecated (but still supported) in the Lettuce-io redis client dependency
+     * so migrate config to UPSTREAM/REPLICA.
      */
     private String readFrom;
 }
