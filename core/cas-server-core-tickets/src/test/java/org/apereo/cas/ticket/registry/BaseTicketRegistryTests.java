@@ -45,6 +45,7 @@ import org.apereo.cas.util.ProxyGrantingTicketIdGenerator;
 import org.apereo.cas.util.ServiceTicketIdGenerator;
 import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -324,7 +325,7 @@ public abstract class BaseTicketRegistryTests {
             });
     }
 
-    @RetryingTest(2)
+    @RepeatedTest(2)
     public void verifyTicketCountsEqualToTicketsAdded() throws Exception {
         assumeTrue(isIterableRegistry());
         val tgts = new ArrayList<Ticket>();
@@ -343,13 +344,16 @@ public abstract class BaseTicketRegistryTests {
             ticketRegistry.addTicket(ticketGrantingTicket);
             ticketRegistry.addTicket(st);
         }
-        val sessionCount = this.ticketRegistry.sessionCount();
-        assertEquals(tgts.size(), sessionCount,
-            "The sessionCount " + sessionCount + " is not the same as the collection " + tgts.size());
+        FunctionUtils.doAndRetry(callback -> {
+            val sessionCount = this.ticketRegistry.sessionCount();
+            assertEquals(tgts.size(), sessionCount,
+                "The sessionCount " + sessionCount + " is not the same as the collection " + tgts.size());
 
-        val ticketCount = this.ticketRegistry.serviceTicketCount();
-        assertEquals(sts.size(), ticketCount,
-            "The serviceTicketCount " + ticketCount + " is not the same as the collection " + sts.size());
+            val ticketCount = this.ticketRegistry.serviceTicketCount();
+            assertEquals(sts.size(), ticketCount,
+                "The serviceTicketCount " + ticketCount + " is not the same as the collection " + sts.size());
+            return null;
+        });
     }
 
     @RepeatedTest(2)

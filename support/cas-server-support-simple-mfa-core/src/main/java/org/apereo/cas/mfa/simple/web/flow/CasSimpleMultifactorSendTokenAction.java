@@ -3,6 +3,7 @@ package org.apereo.cas.mfa.simple.web.flow;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.mfa.CasSimpleMultifactorAuthenticationProperties;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationConstants;
+import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationProvider;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCommunicationStrategy;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicketFactory;
 import org.apereo.cas.notifications.CommunicationsManager;
@@ -11,6 +12,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.actions.AbstractMultifactorAuthenticationAction;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -18,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.binding.message.MessageBuilder;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
@@ -34,7 +35,7 @@ import java.util.Map;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class CasSimpleMultifactorSendTokenAction extends AbstractAction {
+public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuthenticationAction<CasSimpleMultifactorAuthenticationProvider> {
     private static final String MESSAGE_MFA_TOKEN_SENT = "cas.mfa.simple.label.tokensent";
 
     private final TicketRegistry ticketRegistry;
@@ -50,7 +51,7 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         val authentication = WebUtils.getInProgressAuthentication();
-        val principal = authentication.getPrincipal();
+        val principal = resolvePrincipal(authentication.getPrincipal());
         val service = WebUtils.getService(requestContext);
         val token = ticketFactory.create(service,
             CollectionUtils.wrap(CasSimpleMultifactorAuthenticationConstants.PROPERTY_PRINCIPAL, principal));
@@ -81,7 +82,7 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractAction {
             val attributes = new LocalAttributeMap<Object>("token", token.getId());
             return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_SUCCESS, attributes);
         }
-        LOGGER.error("Both email and SMS communication strategies failed to submit token [{}] to user", token);
+        LOGGER.error("Communication strategies failed to submit token [{}] to user", token);
         return error();
     }
 
