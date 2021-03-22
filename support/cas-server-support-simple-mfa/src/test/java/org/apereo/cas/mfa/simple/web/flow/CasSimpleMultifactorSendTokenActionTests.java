@@ -1,6 +1,7 @@
 package org.apereo.cas.mfa.simple.web.flow;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mfa.simple.BaseCasSimpleMultifactorAuthenticationTests;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCredential;
@@ -71,6 +72,10 @@ public class CasSimpleMultifactorSendTokenActionTests {
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
 
+    @Autowired
+    @Qualifier("casSimpleMultifactorAuthenticationProvider")
+    private MultifactorAuthenticationProvider casSimpleMultifactorAuthenticationProvider;
+
     @Test
     public void verifyOperation() throws Exception {
         val theToken = createToken("casuser").getKey();
@@ -100,7 +105,7 @@ public class CasSimpleMultifactorSendTokenActionTests {
         return Pair.of(event.getAttributes().getString("token"), context);
     }
 
-    private static MockRequestContext buildRequestContextFor(final String user) {
+    private MockRequestContext buildRequestContextFor(final String user) {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -111,6 +116,7 @@ public class CasSimpleMultifactorSendTokenActionTests {
         val principal = RegisteredServiceTestUtils.getPrincipal(user,
             CollectionUtils.wrap("phone", List.of("123456789"), "mail", List.of("cas@example.org")));
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(principal), context);
+        WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, casSimpleMultifactorAuthenticationProvider);
         return context;
     }
 

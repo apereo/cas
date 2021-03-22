@@ -2,6 +2,7 @@ description = "Apereo CAS Simple Multifactor Authentication Support"
 dependencies {
     api project(":api:cas-server-core-api-webflow")
     api project(":api:cas-server-core-api-util")
+    api project(":api:cas-server-core-api-mfa")
     
     implementation project(":support:cas-server-support-otp-mfa")
     implementation project(":support:cas-server-support-simple-mfa-core")

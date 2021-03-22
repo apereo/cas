@@ -1,15 +1,18 @@
 package org.apereo.cas.otp.web.flow;
 
+import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockServletContext;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.webflow.context.ExternalContextHolder;
@@ -58,6 +61,12 @@ public class OneTimeTokenAccountCheckRegistrationActionTests {
 
     @Test
     public void verifyCreateAccount() {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
+        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
+            MultifactorAuthenticationPrincipalResolver.identical(), UUID.randomUUID().toString());
+        
         val account = OneTimeTokenAccount.builder()
             .username("casuser")
             .secretKey(UUID.randomUUID().toString())

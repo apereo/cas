@@ -28,7 +28,8 @@ public abstract class AbstractMultifactorAuthenticationAction<T extends Multifac
     @Override
     protected Event doPreExecute(final RequestContext requestContext) {
         val providerId = WebUtils.getMultifactorAuthenticationProviderById(requestContext);
-        this.provider = (T) MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(providerId, ApplicationContextProvider.getApplicationContext())
+        val applicationContext = ApplicationContextProvider.getApplicationContext();
+        this.provider = (T) MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(providerId, applicationContext)
             .orElseThrow(() -> new AuthenticationException("Unable to determine multifactor authentication provider for " + providerId));
         return null;
     }
