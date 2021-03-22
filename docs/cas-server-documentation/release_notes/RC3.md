@@ -76,8 +76,12 @@ CAS attribute resolution engine now allows for fetching [user attributes from Ok
 - Person directory principal resolution can use attributes from the *current authentication attempt* to build the final principal.
 - The ability to retry failing tests is removed from CI to prevent test coverage miscalculations.
 - Triggering CI jobs and workflow runs is no longer automatically triggered to help reduce the load on the backlog.
+- Small improvements to CI test execution to ensure coverage results can be correctly calculated.
+
 ## Library Upgrades
 
+- TestContainers
+- JUnit Pioneer
 - Person Directory
 - Spring Boot
 - Spring

@@ -54,6 +54,7 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.RepetitionInfo;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.TestInfo;
+import org.junitpioneer.jupiter.RetryingTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
@@ -61,8 +62,6 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Import;
-import org.springframework.retry.annotation.EnableRetry;
-import org.springframework.retry.annotation.Retryable;
 import org.springframework.test.util.AopTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -82,7 +81,6 @@ import static org.junit.jupiter.api.Assumptions.*;
  */
 @Slf4j
 @SpringBootTest(classes = BaseTicketRegistryTests.SharedTestConfiguration.class)
-@EnableRetry
 public abstract class BaseTicketRegistryTests {
 
     private static final int TICKETS_IN_REGISTRY = 1;
@@ -106,7 +104,6 @@ public abstract class BaseTicketRegistryTests {
     private TicketRegistry ticketRegistry;
 
     @BeforeEach
-    @Retryable(value = Error.class)
     public void initialize(final TestInfo info, final RepetitionInfo repetitionInfo) {
         this.ticketGrantingTicketId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
             .getNewTicketId(TicketGrantingTicket.PREFIX);
@@ -327,7 +324,7 @@ public abstract class BaseTicketRegistryTests {
             });
     }
 
-    @RepeatedTest(2)
+    @RetryingTest(2)
     public void verifyTicketCountsEqualToTicketsAdded() throws Exception {
         assumeTrue(isIterableRegistry());
         val tgts = new ArrayList<Ticket>();
@@ -346,7 +343,6 @@ public abstract class BaseTicketRegistryTests {
             ticketRegistry.addTicket(ticketGrantingTicket);
             ticketRegistry.addTicket(st);
         }
-        Thread.sleep(2000);
         val sessionCount = this.ticketRegistry.sessionCount();
         assertEquals(tgts.size(), sessionCount,
             "The sessionCount " + sessionCount + " is not the same as the collection " + tgts.size());

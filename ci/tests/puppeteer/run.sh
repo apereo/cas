@@ -9,7 +9,7 @@ echo "Installing Puppeteer"
 npm i --prefix "$PWD"/ci/tests/puppeteer puppeteer
 
 echo "Creating overlay work directory"
-rm -Rf "$PWD"/ci/tests/puppeteer/overlay
+rm -Rf "$TMPDIR/cas" "$PWD"/ci/tests/puppeteer/overlay
 mkdir "$PWD"/ci/tests/puppeteer/overlay
 
 dname="${dname:-CN=cas.example.org,OU=Example,OU=Org,C=US}"
