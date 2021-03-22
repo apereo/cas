@@ -88,6 +88,9 @@ public class HazelcastConfigurationFactory {
         val config = new Config();
 
         config.setLicenseKey(hz.getCore().getLicenseKey());
+        if (cluster.getCore().getCpMemberCount() > 0) {
+            config.getCPSubsystemConfig().setCPMemberCount(cluster.getCore().getCpMemberCount());
+        }
 
         buildManagementCenterConfig(hz, config);
 

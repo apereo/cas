@@ -38,6 +38,7 @@ public class HazelcastConfigurationFactoryTests {
         hz.getCluster().getNetwork().setLocalAddress("127.0.0.1");
         hz.getCluster().getNetwork().setPublicAddress("127.0.0.1");
         hz.getCluster().getNetwork().setNetworkInterfaces("127.0.0.1,*");
+        hz.getCluster().getCore().setCpMemberCount(3);
         val result = HazelcastConfigurationFactory.build(hz);
         assertNotNull(result);
     }
