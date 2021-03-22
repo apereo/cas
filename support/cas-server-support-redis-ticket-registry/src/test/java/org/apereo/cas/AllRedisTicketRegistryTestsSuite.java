@@ -1,6 +1,5 @@
 package org.apereo.cas;
 
-import org.apereo.cas.ticket.registry.RedisPropertyValueTests;
 import org.apereo.cas.ticket.registry.RedisSentinelServerTicketRegistryTests;
 import org.apereo.cas.ticket.registry.RedisServerTicketRegistryTests;
 
@@ -15,7 +14,6 @@ import org.junit.runner.RunWith;
  * @since 6.0.0
  */
 @SelectClasses({
-    RedisPropertyValueTests.class,
     RedisServerTicketRegistryTests.class,
     RedisSentinelServerTicketRegistryTests.class
 })

@@ -62,4 +62,9 @@ public class RedisObjectFactoryTests {
         val connection = RedisObjectFactory.newRedisConnectionFactory(props, true);
         assertNotNull(connection);
     }
+
+    @Test
+    public void validateRedisReadFromValues() {
+        Stream.of(BaseRedisProperties.RedisReadFromTypes.values()).map(e -> e.name()).forEach(ReadFrom::valueOf);
+    }
 }
