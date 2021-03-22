@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.util.MockServletContext;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
@@ -55,6 +56,8 @@ public class DuoSecurityPrepareWebLoginFormActionTests {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
+
         val flowSession = new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN));
         flowSession.setState(new ViewState(flowSession.getDefinitionInternal(), "viewState", mock(ViewFactory.class)));
         val exec = new MockFlowExecutionContext(flowSession);
@@ -79,7 +82,7 @@ public class DuoSecurityPrepareWebLoginFormActionTests {
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext, provider);
 
 
-        val action = new DuoSecurityPrepareWebLoginFormAction(applicationContext);
+        val action = new DuoSecurityPrepareWebLoginFormAction();
         val event = action.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
 

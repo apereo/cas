@@ -7,10 +7,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.support.WebUtils;
 
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -22,19 +19,16 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Travis Schmidt
  * @since 5.3.4
  */
-@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractMultifactorAuthenticationAction<T extends MultifactorAuthenticationProvider> extends AbstractAction {
     /**
      * The resolved provider for this flow.
      */
     protected transient T provider;
 
-    private final transient ApplicationContext applicationContext;
-
     @Override
     protected Event doPreExecute(final RequestContext requestContext) {
         val providerId = WebUtils.getMultifactorAuthenticationProviderById(requestContext);
-        this.provider = (T) MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(providerId, applicationContext)
+        this.provider = (T) MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(providerId, ApplicationContextProvider.getApplicationContext())
             .orElseThrow(() -> new AuthenticationException("Unable to determine multifactor authentication provider for " + providerId));
         return null;
     }

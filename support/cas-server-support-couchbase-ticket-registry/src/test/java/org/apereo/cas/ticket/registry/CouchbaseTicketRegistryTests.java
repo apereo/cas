@@ -42,7 +42,6 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @Getter
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@EnableRetry
 public class CouchbaseTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier("ticketRegistry")

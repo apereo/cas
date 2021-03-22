@@ -70,7 +70,7 @@ public class DuoSecurityDetermineUserAccountActionTests {
         WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, provider);
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext, provider);
 
-        val action = new DuoSecurityDetermineUserAccountAction(applicationContext);
+        val action = new DuoSecurityDetermineUserAccountAction();
         val event = action.execute(context);
         assertEquals(eventId, event.getId());
     }

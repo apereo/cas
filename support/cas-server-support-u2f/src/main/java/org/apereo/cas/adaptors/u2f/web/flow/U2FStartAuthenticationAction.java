@@ -1,7 +1,9 @@
 package org.apereo.cas.adaptors.u2f.web.flow;
 
 import org.apereo.cas.adaptors.u2f.U2FAuthentication;
+import org.apereo.cas.adaptors.u2f.U2FMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
+import org.apereo.cas.web.flow.actions.AbstractMultifactorAuthenticationAction;
 import org.apereo.cas.web.support.WebUtils;
 
 import com.yubico.u2f.U2F;
@@ -9,7 +11,6 @@ import com.yubico.u2f.data.DeviceRegistration;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
  * @since 5.1.0
  */
 @RequiredArgsConstructor
-public class U2FStartAuthenticationAction extends AbstractAction {
+public class U2FStartAuthenticationAction extends AbstractMultifactorAuthenticationAction<U2FMultifactorAuthenticationProvider> {
 
     private final U2F u2f;
 
@@ -33,7 +34,7 @@ public class U2FStartAuthenticationAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
-        val p = WebUtils.getAuthentication(requestContext).getPrincipal();
+        val p = resolvePrincipal(WebUtils.getAuthentication(requestContext).getPrincipal());
         val registeredDevices = u2FDeviceRepository.getRegisteredDevices(p.getId())
             .stream()
             .map(u2FDeviceRepository::decode)

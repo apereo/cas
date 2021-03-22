@@ -2,7 +2,9 @@ package org.apereo.cas.adaptors.yubikey.web.flow;
 
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyDeviceRegistrationRequest;
+import org.apereo.cas.adaptors.yubikey.YubiKeyMultifactorAuthenticationProvider;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.web.flow.actions.AbstractMultifactorAuthenticationAction;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -10,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.binding.message.MessageBuilder;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -22,7 +23,7 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @RequiredArgsConstructor
 @Slf4j
-public class YubiKeyAccountSaveRegistrationAction extends AbstractAction {
+public class YubiKeyAccountSaveRegistrationAction extends AbstractMultifactorAuthenticationAction<YubiKeyMultifactorAuthenticationProvider> {
 
     /**
      * Token parameter.
@@ -41,7 +42,8 @@ public class YubiKeyAccountSaveRegistrationAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         try {
-            val uid = WebUtils.getAuthentication(requestContext).getPrincipal().getId();
+            val principal = resolvePrincipal(WebUtils.getAuthentication(requestContext).getPrincipal());
+            val uid = principal.getId();
             val token = requestContext.getRequestParameters().getRequired(PARAMETER_NAME_TOKEN);
             val accountName = requestContext.getRequestParameters().getRequired(PARAMETER_NAME_ACCOUNT);
 

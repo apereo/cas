@@ -27,6 +27,7 @@ public class OneTimeTokenAccountSaveRegistrationAction extends AbstractAction {
      * Parameter name indicating account name.
      */
     public static final String REQUEST_PARAMETER_ACCOUNT_NAME = "accountName";
+    
     /**
      * Parameter name indicating a validation request event.
      */

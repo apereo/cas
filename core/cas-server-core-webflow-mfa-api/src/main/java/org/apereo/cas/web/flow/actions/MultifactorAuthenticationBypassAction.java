@@ -5,7 +5,6 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -18,10 +17,6 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @Slf4j
 public class MultifactorAuthenticationBypassAction extends AbstractMultifactorAuthenticationAction {
-
-    public MultifactorAuthenticationBypassAction(final ApplicationContext applicationContext) {
-        super(applicationContext);
-    }
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {

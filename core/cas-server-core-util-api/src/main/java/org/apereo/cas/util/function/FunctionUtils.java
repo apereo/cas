@@ -306,6 +306,7 @@ public class FunctionUtils {
 
         val classified = new HashMap<Class<? extends Throwable>, Boolean>();
         classified.put(Error.class, Boolean.TRUE);
+        classified.put(Throwable.class, Boolean.TRUE);
         clazzes.forEach(clz -> classified.put(clz, Boolean.TRUE));
         
         retryTemplate.setRetryPolicy(new SimpleRetryPolicy(SimpleRetryPolicy.DEFAULT_MAX_ATTEMPTS, classified, true));
