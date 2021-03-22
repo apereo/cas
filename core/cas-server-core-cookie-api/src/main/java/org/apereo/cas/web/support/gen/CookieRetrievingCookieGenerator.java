@@ -167,6 +167,8 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
             return Optional.ofNullable(cookie)
                 .map(ck -> this.casCookieValueManager.obtainCookieValue(ck, request))
                 .orElse(null);
+        } catch (final InvalidCookieException e) {
+            LOGGER.debug(e.getMessage(), e);
         } catch (final Exception e) {
             LoggingUtils.warn(LOGGER, e);
         }
