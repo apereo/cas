@@ -154,4 +154,18 @@ public class HazelcastCoreClusterProperties implements Serializable {
      * and members joining the cluster.
      */
     private int timeout = 5;
+
+    /**
+     * CP Subsystem is a component of a Hazelcast cluster that builds a strongly
+     * consistent layer for a set of distributed data structures.
+     * Its data structures are CP with respect to the CAP
+     * principle, i.e., they always maintain linearizability
+     * and prefer consistency over availability during network partitions. Besides network
+     * partitions, CP Subsystem withstands server and client failures.
+     * All members of a Hazelcast cluster do not necessarily take part in CP Subsystem. The number of Hazelcast
+     * members that take part in CP Subsystem is specified here.
+     * CP Subsystem must have at least 3 CP members.
+     */
+    private int cpMemberCount;
+    
 }
