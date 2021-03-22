@@ -347,7 +347,9 @@
             <AssertionConsumerService index="8"
                                       Binding="urn:oasis:names:tc:SAML:1.0:profiles:browser-post"
                                       Location="https://www.testshib.org/Shibboleth.sso/SAML/POST"/>
-
+            <AssertionConsumerService index="9"
+                                      Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                                      Location="https://index9.testshib.org/Shibboleth.sso/SAML/POST"/>
         </SPSSODescriptor>
 
         <!-- This is just information about the entity in human terms. -->
@@ -460,11 +462,6 @@
 
     </EntityDescriptor>
 
-
-
-
-
-
     <EntityDescriptor entityID="https://noenc.example.org"
                       xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
                       xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
@@ -505,14 +502,6 @@
 
 
     </EntityDescriptor>
-
-
-
-
-
-
-
-
 
 
 </EntitiesDescriptor>

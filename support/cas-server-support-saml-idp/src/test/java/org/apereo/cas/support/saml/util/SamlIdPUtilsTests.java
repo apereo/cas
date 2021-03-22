@@ -17,6 +17,7 @@ import org.opensaml.saml.criterion.BindingCriterion;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
+import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -94,9 +95,30 @@ public class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
         when(authnRequest.getProtocolBinding()).thenReturn(SAMLConstants.SAML2_POST_BINDING_URI);
         val acsUrl = "https://some.acs.url";
         when(authnRequest.getAssertionConsumerServiceURL()).thenReturn(acsUrl);
+        when(authnRequest.getAssertionConsumerServiceIndex()).thenReturn(120);
 
         val adapter = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId());
         assertThrows(SamlException.class, () -> SamlIdPUtils.determineEndpointForRequest(authnRequest, adapter.get(), SAMLConstants.SAML2_POST_BINDING_URI));
+    }
+
+    @Test
+    public void verifyUnsignedRequestWithAssertionConsumerServiceUrlNotMatchingMetadataAcsUrlWithIndex() {
+        val service = getSamlRegisteredServiceForTestShib();
+        servicesManager.save(service);
+        val authnRequest = mock(AuthnRequest.class);
+        val issuer = mock(Issuer.class);
+        when(issuer.getValue()).thenReturn(service.getServiceId());
+        when(authnRequest.getIssuer()).thenReturn(issuer);
+        when(authnRequest.getProtocolBinding()).thenReturn(SAMLConstants.SAML2_POST_BINDING_URI);
+        val acsUrl = "https://some.acs.url";
+        when(authnRequest.getAssertionConsumerServiceURL()).thenReturn(acsUrl);
+        when(authnRequest.getAssertionConsumerServiceIndex()).thenReturn(1);
+
+        val adapter = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId());
+        val acs = SamlIdPUtils.determineEndpointForRequest(authnRequest, adapter.get(), SAMLConstants.SAML2_POST_BINDING_URI);
+        assertNotNull(acs);
+        assertEquals("https://sp.testshib.org/Shibboleth.sso/SAML2/POST", acs.getResponseLocation());
+        assertEquals("https://sp.testshib.org/Shibboleth.sso/SAML2/POST", acs.getLocation());
     }
 
     @Test
@@ -116,6 +138,63 @@ public class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
         val acs = SamlIdPUtils.determineEndpointForRequest(authnRequest, adapter.get(), SAMLConstants.SAML2_POST_BINDING_URI);
         assertNotNull(acs);
         assertEquals(acsUrl, acs.getLocation());
+    }
+
+    @Test
+    public void verifySignedRequestWithAssertionConsumerServiceIndex() {
+        val service = getSamlRegisteredServiceForTestShib();
+        servicesManager.save(service);
+        val authnRequest = mock(AuthnRequest.class);
+        val issuer = mock(Issuer.class);
+        when(issuer.getValue()).thenReturn(service.getServiceId());
+        when(authnRequest.getIssuer()).thenReturn(issuer);
+        when(authnRequest.getAssertionConsumerServiceIndex()).thenReturn(9);
+        when(authnRequest.getProtocolBinding()).thenReturn(SAMLConstants.SAML2_POST_BINDING_URI);
+        when(authnRequest.isSigned()).thenReturn(true);
+        
+        val adapter = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId());
+        val acs = SamlIdPUtils.determineEndpointForRequest(authnRequest, adapter.get(), SAMLConstants.SAML2_POST_BINDING_URI);
+        assertNotNull(acs);
+        assertEquals("https://index9.testshib.org/Shibboleth.sso/SAML/POST", acs.getLocation());
+        assertEquals(9, ((AssertionConsumerService) acs).getIndex());
+    }
+
+    @Test
+    public void verifyUnsignedRequestWithAssertionConsumerServiceIndex() {
+        val service = getSamlRegisteredServiceForTestShib();
+        servicesManager.save(service);
+        val authnRequest = mock(AuthnRequest.class);
+        val issuer = mock(Issuer.class);
+        when(issuer.getValue()).thenReturn(service.getServiceId());
+        when(authnRequest.getIssuer()).thenReturn(issuer);
+        when(authnRequest.getAssertionConsumerServiceIndex()).thenReturn(9);
+        when(authnRequest.getProtocolBinding()).thenReturn(SAMLConstants.SAML2_POST_BINDING_URI);
+        when(authnRequest.isSigned()).thenReturn(false);
+
+        val adapter = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId());
+        val acs = SamlIdPUtils.determineEndpointForRequest(authnRequest, adapter.get(), SAMLConstants.SAML2_POST_BINDING_URI);
+        assertNotNull(acs);
+        assertEquals("https://index9.testshib.org/Shibboleth.sso/SAML/POST", acs.getLocation());
+        assertEquals(9, ((AssertionConsumerService) acs).getIndex());
+    }
+
+    @Test
+    public void verifySignedRequestWithAssertionConsumerServiceUnknownIndex() {
+        val service = getSamlRegisteredServiceForTestShib();
+        servicesManager.save(service);
+        val authnRequest = mock(AuthnRequest.class);
+        val issuer = mock(Issuer.class);
+        when(issuer.getValue()).thenReturn(service.getServiceId());
+        when(authnRequest.getIssuer()).thenReturn(issuer);
+        when(authnRequest.getAssertionConsumerServiceIndex()).thenReturn(999);
+        when(authnRequest.getProtocolBinding()).thenReturn(SAMLConstants.SAML2_POST_BINDING_URI);
+        when(authnRequest.isSigned()).thenReturn(true);
+
+        val adapter = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId());
+        val acs = SamlIdPUtils.determineEndpointForRequest(authnRequest, adapter.get(), SAMLConstants.SAML2_POST_BINDING_URI);
+        assertNotNull(acs);
+        assertEquals("https://sp.testshib.org/Shibboleth.sso/SAML2/POST", acs.getLocation());
+        assertEquals(1, ((AssertionConsumerService) acs).getIndex());
     }
 
     @Test
