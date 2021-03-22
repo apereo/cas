@@ -233,7 +233,7 @@ public class GitHubTemplate implements GitHubOperations {
     public PullRequest mergeWithBase(final String organization, final String repository, final PullRequest pr) {
         if (pr.getHead().getRepository().isFork()) {
             val url = "https://api.github.com/repos/" + organization + '/' + repository + "/pulls/" + pr.getNumber() + "/update-branch";
-            var params = new HashMap<String, String>();
+            val params = new HashMap<String, String>();
             params.put("expected_head_sha", pr.getHead().getSha());
             val responseEntity = this.rest.exchange(url, HttpMethod.PUT,
                 new HttpEntity<>(new LinkedMultiValueMap(Map.of("Accept", List.of("application/vnd.github.lydian-preview+json")))), Map.class);
@@ -324,15 +324,12 @@ public class GitHubTemplate implements GitHubOperations {
     }
 
     @Override
+    @SneakyThrows
     public void removeLabel(final PullRequest pullRequest, final String label) {
-        final String encodedName;
-        try {
-            encodedName = new URI(null, null, label, null).toString();
-        } catch (final URISyntaxException ex) {
-            throw new RuntimeException(ex);
-        }
-        log.info("Removing label {} from pull request {}", label, pullRequest);
-        val url = pullRequest.getLabelsUrl().replace("{/name}", '/' + encodedName);
+        var encodedName = new URI(null, null, label, null).toString();
+        val url = pullRequest.getLabelsUrl() + '/' + encodedName;
+        log.info("Removing label {} from pull request {} using {}", label, pullRequest, url);
+
         var response = this.rest.exchange(
             new RequestEntity<Void>(HttpMethod.DELETE, URI.create(url)), Label[].class);
         if (!response.getStatusCode().is2xxSuccessful()) {
