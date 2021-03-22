@@ -7,13 +7,13 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.web.flow.actions.AbstractMultifactorAuthenticationAction;
 import org.apereo.cas.web.support.WebUtils;
 
 import com.duosecurity.Client;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.webflow.action.AbstractAction;
+import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -25,15 +25,24 @@ import java.util.LinkedHashMap;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@RequiredArgsConstructor
 @Slf4j
-public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractAction {
+public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractMultifactorAuthenticationAction<DuoSecurityMultifactorAuthenticationProvider> {
     private final TicketRegistry ticketRegistry;
 
     private final MultifactorAuthenticationProviderBean<
         DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorAuthenticationProperties> duoProviderBean;
 
     private final TicketFactory ticketFactory;
+
+    public DuoSecurityUniversalPromptPrepareLoginAction(final ApplicationContext applicationContext, final TicketRegistry ticketRegistry,
+                                                        final MultifactorAuthenticationProviderBean<
+                                                            DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorAuthenticationProperties> duoProviderBean,
+                                                        final TicketFactory ticketFactory) {
+        super(applicationContext);
+        this.ticketRegistry = ticketRegistry;
+        this.duoProviderBean = duoProviderBean;
+        this.ticketFactory = ticketFactory;
+    }
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
@@ -63,7 +72,8 @@ public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractAction
         ticketRegistry.addTicket(ticket);
         LOGGER.debug("Stored Duo Security session via [{}]", ticket);
 
-        val authUrl = client.createAuthUrl(authentication.getPrincipal().getId(), ticket.getId());
+        val principal = resolvePrincipal(authentication.getPrincipal());
+        val authUrl = client.createAuthUrl(principal.getId(), ticket.getId());
         requestContext.getFlowScope().put("duoUniversalPromptLoginUrl", authUrl);
         LOGGER.debug("Redirecting to Duo Security url at [{}]", authUrl);
         return success(ticket);

@@ -4,6 +4,7 @@ import org.apereo.cas.util.CollectionUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDaoFilter;
@@ -30,7 +31,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Getter
 public class RedisPersonAttributeDao extends BasePersonAttributeDao {
-    private final IUsernameAttributeProvider usernameAttributeProvider = new SimpleUsernameAttributeProvider();
+    @Setter
+    private IUsernameAttributeProvider usernameAttributeProvider = new SimpleUsernameAttributeProvider();
+
     private final RedisTemplate redisTemplate;
 
     private static Map<String, List<Object>> stuffAttributesIntoList(final Map<String, ?> personAttributesMap) {

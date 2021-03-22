@@ -31,6 +31,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -69,7 +70,6 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -159,8 +159,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "multifactorAuthenticationProviderResolver")
     public MultifactorAuthenticationProviderResolver multifactorAuthenticationProviderResolver() {
-        val resolvers = new ArrayList<>(applicationContext.getBeansOfType(MultifactorAuthenticationPrincipalResolver.class).values());
-        AnnotationAwareOrderComparator.sort(resolvers);
+        val resolvers = ApplicationContextProvider.getMultifactorAuthenticationPrincipalResolvers();
         return new DefaultMultifactorAuthenticationProviderResolver(resolvers);
     }
 

@@ -129,7 +129,7 @@ public class DuoSecurityConfiguration {
     @Bean
     @RefreshScope
     public Action duoUniversalPromptPrepareLoginAction() {
-        return new DuoSecurityUniversalPromptPrepareLoginAction(ticketRegistry.getObject(),
+        return new DuoSecurityUniversalPromptPrepareLoginAction(applicationContext, ticketRegistry.getObject(),
             duoProviderBean.getObject(), ticketFactory.getObject());
     }
 

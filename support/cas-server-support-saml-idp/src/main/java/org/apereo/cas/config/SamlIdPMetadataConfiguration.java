@@ -224,7 +224,8 @@ public class SamlIdPMetadataConfiguration {
     public SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver() {
         return new SamlRegisteredServiceDefaultCachingMetadataResolver(
             Beans.newDuration(casProperties.getAuthn().getSamlIdp().getMetadata().getCore().getCacheExpiration()),
-            chainingMetadataResolverCacheLoader()
+            chainingMetadataResolverCacheLoader(),
+            openSamlConfigBean.getObject()
         );
     }
 

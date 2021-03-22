@@ -27,6 +27,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
@@ -118,8 +119,10 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProviderFactoryBean<DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorAuthenticationProperties> duoProviderFactory() {
-        return new DuoSecurityMultifactorAuthenticationProviderFactory(httpClient.getObject(), duoSecurityBypassEvaluator.getObject(),
-            failureModeEvaluator.getObject(), casProperties);
+        val resolvers = ApplicationContextProvider.getMultifactorAuthenticationPrincipalResolvers();
+        return new DuoSecurityMultifactorAuthenticationProviderFactory(httpClient.getObject(),
+            duoSecurityBypassEvaluator.getObject(),
+            failureModeEvaluator.getObject(), casProperties, resolvers);
     }
 
     @ConditionalOnMissingBean(name = "duoProviderBean")
@@ -143,13 +146,15 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
         if (duos.isEmpty()) {
             throw new BeanCreationException("No configuration/settings could be found for Duo Security.");
         }
+
+        val resolvers = ApplicationContextProvider.getMultifactorAuthenticationPrincipalResolvers();
         return duos
             .stream()
             .map(d -> new DuoSecurityAuthenticationHandler(d.getId(),
                 servicesManager.getObject(),
                 duoPrincipalFactory(),
                 duoProviderBean().getProvider(d.getId()),
-                d.getOrder()))
+                d.getOrder(), resolvers))
             .collect(Collectors.toList());
     }
 

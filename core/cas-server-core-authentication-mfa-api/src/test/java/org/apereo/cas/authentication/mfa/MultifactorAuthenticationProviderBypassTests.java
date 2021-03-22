@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.mfa;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.bypass.AuthenticationMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.CredentialMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.HttpRequestMultifactorAuthenticationProviderBypassEvaluator;
@@ -11,12 +12,15 @@ import org.apereo.cas.authentication.bypass.RegisteredServiceMultifactorAuthenti
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
+
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -35,6 +39,9 @@ public class MultifactorAuthenticationProviderBypassTests {
     public void verifyMultifactorAuthenticationBypassByPrincipalAttributes() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
+        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
+            MultifactorAuthenticationPrincipalResolver.identical(), UUID.randomUUID().toString());
 
         val request = new MockHttpServletRequest();
         val props = new MultifactorAuthenticationProviderBypassProperties();
@@ -53,6 +60,9 @@ public class MultifactorAuthenticationProviderBypassTests {
     public void verifyMultifactorAuthenticationBypassByAuthenticationAttributes() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
+        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
+            MultifactorAuthenticationPrincipalResolver.identical(), UUID.randomUUID().toString());
 
         val request = new MockHttpServletRequest();
         val props = new MultifactorAuthenticationProviderBypassProperties();
@@ -72,6 +82,9 @@ public class MultifactorAuthenticationProviderBypassTests {
     public void verifyMultifactorAuthenticationBypassByAuthenticationMethod() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
+        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
+            MultifactorAuthenticationPrincipalResolver.identical(), UUID.randomUUID().toString());
 
         val request = new MockHttpServletRequest();
         val props = new MultifactorAuthenticationProviderBypassProperties();
@@ -91,6 +104,9 @@ public class MultifactorAuthenticationProviderBypassTests {
     public void verifyMultifactorAuthenticationBypassByAuthenticationHandler() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
+        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
+            MultifactorAuthenticationPrincipalResolver.identical(), UUID.randomUUID().toString());
 
         val request = new MockHttpServletRequest();
         val props = new MultifactorAuthenticationProviderBypassProperties();
@@ -110,6 +126,9 @@ public class MultifactorAuthenticationProviderBypassTests {
     public void verifyMultifactorAuthenticationBypassByAuthenticationCredentialClass() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
+        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
+            MultifactorAuthenticationPrincipalResolver.identical(), UUID.randomUUID().toString());
         
         val request = new MockHttpServletRequest();
         val props = new MultifactorAuthenticationProviderBypassProperties();
@@ -128,6 +147,9 @@ public class MultifactorAuthenticationProviderBypassTests {
     public void verifyMultifactorAuthenticationBypassByHttpRequestHeader() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
+        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
+            MultifactorAuthenticationPrincipalResolver.identical(), UUID.randomUUID().toString());
 
         val request = new MockHttpServletRequest();
         request.addHeader("headerbypass", "true");
@@ -147,6 +169,9 @@ public class MultifactorAuthenticationProviderBypassTests {
     public void verifyMultifactorAuthenticationBypassByHttpRequestRemoteAddress() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
+        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
+            MultifactorAuthenticationPrincipalResolver.identical(), UUID.randomUUID().toString());
 
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("123.456.789.000");
@@ -166,6 +191,9 @@ public class MultifactorAuthenticationProviderBypassTests {
     public void verifyMultifactorAuthenticationBypassByHttpRequestRemoteHost() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
+        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
+            MultifactorAuthenticationPrincipalResolver.identical(), UUID.randomUUID().toString());
 
         val request = new MockHttpServletRequest();
         request.setRemoteHost("somewhere.example.org");
@@ -185,6 +213,9 @@ public class MultifactorAuthenticationProviderBypassTests {
     public void verifyMultifactorAuthenticationBypassByService() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
+        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
+            MultifactorAuthenticationPrincipalResolver.identical(), UUID.randomUUID().toString());
 
         val request = new MockHttpServletRequest();
 
@@ -206,6 +237,9 @@ public class MultifactorAuthenticationProviderBypassTests {
     public void verifyMultifactorAuthenticationBypassIgnored() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
+        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
+            MultifactorAuthenticationPrincipalResolver.identical(), UUID.randomUUID().toString());
 
         val request = new MockHttpServletRequest();
 

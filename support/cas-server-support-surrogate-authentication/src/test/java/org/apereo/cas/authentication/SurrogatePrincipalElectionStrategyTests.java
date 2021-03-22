@@ -46,7 +46,7 @@ public class SurrogatePrincipalElectionStrategyTests {
             CoreAuthenticationTestUtils.getAttributeRepository());
 
         val strategy = new SurrogatePrincipalElectionStrategy();
-        val result = strategy.nominate(List.of(CoreAuthenticationTestUtils.getPrincipal("two"), surrogate),
+        val result = strategy.nominate(CollectionUtils.wrapList(CoreAuthenticationTestUtils.getPrincipal("two"), surrogate),
             CoreAuthenticationTestUtils.getAttributes());
         assertEquals(result, surrogate);
     }

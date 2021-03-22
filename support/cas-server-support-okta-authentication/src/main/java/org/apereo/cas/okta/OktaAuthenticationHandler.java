@@ -9,17 +9,13 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.LoggingUtils;
 
 import com.okta.authn.sdk.client.AuthenticationClient;
-import com.okta.authn.sdk.client.AuthenticationClients;
-import com.okta.commons.http.config.Proxy;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.security.auth.login.FailedLoginException;
-
 import java.security.GeneralSecurityException;
+import java.util.Objects;
 
 /**
  * This is {@link OktaAuthenticationHandler}.
@@ -32,15 +28,15 @@ import java.security.GeneralSecurityException;
 public class OktaAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
     private final OktaAuthenticationProperties properties;
 
-    @Setter
-    private AuthenticationClient oktaAuthenticationClient;
+    private final AuthenticationClient oktaAuthenticationClient;
 
     public OktaAuthenticationHandler(final String name, final ServicesManager servicesManager,
                                      final PrincipalFactory principalFactory,
-                                     final OktaAuthenticationProperties properties) {
+                                     final OktaAuthenticationProperties properties,
+                                     final AuthenticationClient oktaAuthenticationClient) {
         super(name, servicesManager, principalFactory, properties.getOrder());
         this.properties = properties;
-        this.oktaAuthenticationClient = getAuthenticationClient();
+        this.oktaAuthenticationClient = oktaAuthenticationClient;
     }
 
     @Override
@@ -49,12 +45,11 @@ public class OktaAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         throws GeneralSecurityException {
 
         try {
-
             val username = credential.getUsername();
             val adapter = new OktaAuthenticationStateHandlerAdapter(getPasswordPolicyHandlingStrategy(), getPasswordPolicyConfiguration());
-            oktaAuthenticationClient.authenticate(username, credential.getPassword().toCharArray(), null, adapter);
+            val response = oktaAuthenticationClient.authenticate(username, credential.getPassword().toCharArray(), null, adapter);
+            Objects.requireNonNull(response, "Authentication response cannot be null");
             adapter.throwExceptionIfNecessary();
-
             LOGGER.debug("Created principal for id [{}] and [{}] attributes", adapter.getUsername(), adapter.getUserAttributes());
             val principal = this.principalFactory.createPrincipal(adapter.getUsername(), adapter.getUserAttributes());
             return createHandlerResult(credential, principal, adapter.getWarnings());
@@ -64,24 +59,4 @@ public class OktaAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         }
     }
 
-    /**
-     * Gets authentication client.
-     *
-     * @return the authentication client
-     */
-    protected AuthenticationClient getAuthenticationClient() {
-        val clientBuilder = AuthenticationClients.builder()
-            .setOrgUrl(properties.getOrganizationUrl())
-            .setConnectionTimeout(properties.getConnectionTimeout());
-
-        if (StringUtils.isNotBlank(properties.getProxyHost()) && properties.getProxyPort() > 0) {
-            if (StringUtils.isNotBlank(properties.getProxyUsername()) && StringUtils.isNotBlank(properties.getProxyPassword())) {
-                clientBuilder.setProxy(new Proxy(properties.getProxyHost(), properties.getProxyPort(),
-                    properties.getProxyUsername(), properties.getProxyPassword()));
-            } else {
-                clientBuilder.setProxy(new Proxy(properties.getProxyHost(), properties.getProxyPort()));
-            }
-        }
-        return clientBuilder.build();
-    }
 }
