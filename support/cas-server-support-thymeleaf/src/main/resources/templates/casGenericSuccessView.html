@@ -23,7 +23,7 @@
                 When you are finished, for security reasons, please <a href="logout">log out</a> and exit your web browser.
             </p>
 
-            <p th:unless="${#maps.isEmpty(authentication.principal.attributes)}">
+            <p>
                 The following attributes and services are resolved and available for <strong th:utext="${authentication.principal.id}" />:
             
                 <div id="attribute-tabs" class="mdc-tab-bar" role="tablist">
