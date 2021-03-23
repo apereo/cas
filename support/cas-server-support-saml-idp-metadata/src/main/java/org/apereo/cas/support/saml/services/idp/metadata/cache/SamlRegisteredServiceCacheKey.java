@@ -42,14 +42,12 @@ public class SamlRegisteredServiceCacheKey implements Serializable {
                                          final CriteriaSet criteriaSet) {
         this.cacheKey = getCacheKeyForRegisteredService(registeredService, criteriaSet);
         LOGGER.trace("Calculated service cache key [{}]", cacheKey);
-        this.id = buildRegisteredServiceCacheKey(registeredService, criteriaSet, this.cacheKey);
+        this.id = buildRegisteredServiceCacheKey(this.cacheKey);
         this.registeredService = registeredService;
         this.criteriaSet = criteriaSet;
     }
     
-    private static String buildRegisteredServiceCacheKey(final SamlRegisteredService service,
-                                                         final CriteriaSet criteriaSet,
-                                                         final String key) {
+    private static String buildRegisteredServiceCacheKey(final String key) {
         val hashedKey = DigestUtils.sha512(key);
         LOGGER.trace("Hashed service cache key [{}] as [{}]", key, hashedKey);
         return hashedKey;
