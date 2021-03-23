@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.u2f.web.flow;
 
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
@@ -85,6 +86,10 @@ public abstract class BaseU2FWebflowActionTests {
     @Qualifier("u2fDeviceRepository")
     protected U2FDeviceRepository deviceRepository;
 
+    @Autowired
+    @Qualifier("u2fMultifactorAuthenticationProvider")
+    protected MultifactorAuthenticationProvider u2fMultifactorAuthenticationProvider;
+
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
@@ -118,7 +123,6 @@ public abstract class BaseU2FWebflowActionTests {
         CasCoreMultifactorAuthenticationConfiguration.class,
         CasMultifactorAuthenticationWebflowConfiguration.class,
         CasCoreConfiguration.class,
-
 
         MultifactorAuthnTrustConfiguration.class,
         MultifactorAuthnTrustedDeviceFingerprintConfiguration.class,
