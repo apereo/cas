@@ -5,6 +5,7 @@ import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationService;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityCredential;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
@@ -57,7 +58,9 @@ public class DuoSecurityPrepareWebLoginFormActionTests {
         applicationContext.refresh();
 
         ApplicationContextProvider.holdApplicationContext(applicationContext);
-
+        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
+            MultifactorAuthenticationPrincipalResolver.identical(), UUID.randomUUID().toString());
+        
         val flowSession = new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN));
         flowSession.setState(new ViewState(flowSession.getDefinitionInternal(), "viewState", mock(ViewFactory.class)));
         val exec = new MockFlowExecutionContext(flowSession);
