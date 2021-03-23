@@ -149,8 +149,9 @@ allprojects {
     if (gradle.startParameter.taskNames.any {task -> task.equalsIgnoreCase("install") }) {
         apply plugin: "maven"
     }
-    
-    if (!Boolean.getBoolean("skipTestRetry")) {
+
+    def skipRetry = providers.systemProperty('skipTestRetry').forUseAtConfigurationTime().present
+    if (!skipRetry) {
         apply plugin: "org.gradle.test-retry"
     }
 
@@ -576,14 +577,6 @@ task jacocoRootReport(type: JacocoReport) {
         html.enabled = true
         xml.enabled = true
         csv.enabled = true
-    }
-    onlyIf = {
-        true
-    }
-    doFirst {
-        executionData files(executionData.findAll {
-            it.exists()
-        })
     }
 }
 
