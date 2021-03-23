@@ -131,8 +131,8 @@ public class RedisObjectFactory {
             poolConfig.useSsl();
             LOGGER.trace("Redis configuration: SSL connections are enabled");
         }
-        if (StringUtils.hasText(redis.getReadFrom())) {
-            poolConfig.readFrom(ReadFrom.valueOf(redis.getReadFrom()));
+        if (redis.getReadFrom() != null) {
+            poolConfig.readFrom(ReadFrom.valueOf(redis.getReadFrom().name()));
             LOGGER.debug("Redis configuration: readFrom property is set to [{}]", redis.getReadFrom());
         }
         if (redis.getTimeout() > 0) {
