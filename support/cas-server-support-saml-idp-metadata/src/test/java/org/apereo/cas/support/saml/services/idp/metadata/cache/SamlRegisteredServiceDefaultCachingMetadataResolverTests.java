@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
+import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("SAML")
+@TestPropertySource(properties = "cas.authn.saml-idp.metadata.metadata-backup-location=file:${#systemProperties['java.io.tmpdir']}")
 public class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlIdPServicesTests {
     @Test
     public void verifyRetryableOpWithFailure() {
