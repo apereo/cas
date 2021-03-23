@@ -64,6 +64,7 @@ CAS attribute resolution engine now allows for fetching [user attributes from Ok
 
 ## Other Stuff
 
+- SAML2 metadata cache for MDQ is modified to correctly calculate the cache key for entity requests.
 - Ordering and sorting of the attribute repositories is now restored to respect the `order` setting.
 - Thymeleaf views specified via template prefixes in the configuration can now support `classpath` resources.
 - SAML2 metadata cache can determine its expiration policy using [service expiration policy](../services/Configuring-Service-Expiration-Policy.html) if defined.

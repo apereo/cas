@@ -45,10 +45,10 @@ import org.opensaml.security.criteria.UsageCriterion;
 import org.opensaml.security.x509.BasicX509Credential;
 import org.opensaml.xmlsec.SignatureSigningConfiguration;
 import org.opensaml.xmlsec.SignatureSigningParameters;
-import org.opensaml.xmlsec.WhitelistBlacklistConfiguration;
 import org.opensaml.xmlsec.config.impl.DefaultSecurityConfigurationBootstrap;
 import org.opensaml.xmlsec.context.SecurityParametersContext;
 import org.opensaml.xmlsec.criterion.SignatureSigningConfigurationCriterion;
+import org.opensaml.xmlsec.impl.BasicAlgorithmPolicyConfiguration;
 import org.opensaml.xmlsec.impl.BasicSignatureSigningConfiguration;
 
 import javax.servlet.http.HttpServletRequest;
@@ -299,10 +299,10 @@ public class SamlIdPObjectSigner {
 
     private BasicSignatureSigningConfiguration configureSignatureSigningSecurityConfiguration(final SamlRegisteredService service) {
         val config = DefaultSecurityConfigurationBootstrap.buildDefaultSignatureSigningConfiguration();
-        LOGGER.trace("Default signature signing blocked algorithms: [{}]", config.getBlacklistedAlgorithms());
+        LOGGER.trace("Default signature signing blocked algorithms: [{}]", config.getExcludedAlgorithms());
         LOGGER.trace("Default signature signing signature algorithms: [{}]", config.getSignatureAlgorithms());
         LOGGER.trace("Default signature signing signature canonicalization algorithm: [{}]", config.getSignatureCanonicalizationAlgorithm());
-        LOGGER.trace("Default signature signing allowed algorithms: [{}]", config.getWhitelistedAlgorithms());
+        LOGGER.trace("Default signature signing allowed algorithms: [{}]", config.getIncludedAlgorithms());
         LOGGER.trace("Default signature signing reference digest methods: [{}]", config.getSignatureReferenceDigestMethods());
 
         val samlIdp = casProperties.getAuthn().getSamlIdp();
@@ -326,14 +326,14 @@ public class SamlIdPObjectSigner {
             ? globalAlgorithms.getOverrideBlockedSignatureSigningAlgorithms()
             : service.getSigningSignatureBlackListedAlgorithms();
         if (overrideBlockedSignatureAlgorithms != null && !overrideBlockedSignatureAlgorithms.isEmpty()) {
-            config.setBlacklistedAlgorithms(overrideBlockedSignatureAlgorithms);
+            config.setExcludedAlgorithms(overrideBlockedSignatureAlgorithms);
         }
 
         val overrideAllowedAlgorithms = service.getSigningSignatureWhiteListedAlgorithms().isEmpty()
             ? globalAlgorithms.getOverrideAllowedSignatureSigningAlgorithms()
             : service.getSigningSignatureWhiteListedAlgorithms();
         if (overrideAllowedAlgorithms != null && !overrideAllowedAlgorithms.isEmpty()) {
-            config.setWhitelistedAlgorithms(overrideAllowedAlgorithms);
+            config.setIncludedAlgorithms(overrideAllowedAlgorithms);
         }
 
         if (StringUtils.isNotBlank(service.getSigningSignatureCanonicalizationAlgorithm())) {
@@ -341,15 +341,15 @@ public class SamlIdPObjectSigner {
         } else if (StringUtils.isNotBlank(globalAlgorithms.getOverrideSignatureCanonicalizationAlgorithm())) {
             config.setSignatureCanonicalizationAlgorithm(globalAlgorithms.getOverrideSignatureCanonicalizationAlgorithm());
         }
-        LOGGER.trace("Finalized signature signing blocked algorithms: [{}]", config.getBlacklistedAlgorithms());
+        LOGGER.trace("Finalized signature signing blocked algorithms: [{}]", config.getExcludedAlgorithms());
         LOGGER.trace("Finalized signature signing signature algorithms: [{}]", config.getSignatureAlgorithms());
         LOGGER.trace("Finalized signature signing signature canonicalization algorithm: [{}]", config.getSignatureCanonicalizationAlgorithm());
-        LOGGER.trace("Finalized signature signing allowed algorithms: [{}]", config.getWhitelistedAlgorithms());
+        LOGGER.trace("Finalized signature signing allowed algorithms: [{}]", config.getIncludedAlgorithms());
         LOGGER.trace("Finalized signature signing reference digest methods: [{}]", config.getSignatureReferenceDigestMethods());
 
         if (StringUtils.isNotBlank(service.getWhiteListBlackListPrecedence())) {
-            val precedence = WhitelistBlacklistConfiguration.Precedence.valueOf(service.getWhiteListBlackListPrecedence().trim().toUpperCase());
-            config.setWhitelistBlacklistPrecedence(precedence);
+            val precedence = BasicAlgorithmPolicyConfiguration.Precedence.valueOf(service.getWhiteListBlackListPrecedence().trim().toUpperCase());
+            config.setIncludeExcludePrecedence(precedence);
         }
         return config;
     }
