@@ -14,6 +14,7 @@ import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectAlternat
 import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectAlternativeNameUPNPrincipalResolverTests;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectDNPrincipalResolverTests;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectPrincipalResolverTests;
+import org.apereo.cas.adaptors.x509.util.X509CertificateCredentialJsonSerializerTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -38,6 +39,7 @@ import org.junit.runner.RunWith;
     X509SubjectPrincipalResolverTests.class,
     ResourceCRLRevocationCheckerTests.class,
     X509CertificateCredentialTests.class,
+    X509CertificateCredentialJsonSerializerTests.class,
     ThresholdExpiredCRLRevocationPolicyTests.class,
     X509CredentialsAuthenticationHandlerTests.class,
     CRLDistributionPointRevocationCheckerTests.class
