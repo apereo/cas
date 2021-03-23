@@ -6,6 +6,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import com.github.benmanes.caffeine.cache.stats.CacheStats;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.Synchronized;
@@ -48,6 +49,7 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
         this.chainingMetadataResolverCacheLoader = loader;
         this.cache = Caffeine.newBuilder()
             .maximumSize(MAX_CACHE_SIZE)
+            .recordStats()
             .expireAfter(new SamlRegisteredServiceMetadataExpirationPolicy(metadataCacheExpirationMinutes))
             .build(this.chainingMetadataResolverCacheLoader);
     }
@@ -120,5 +122,14 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
         LOGGER.trace("Invalidating cache for [{}].", service.getName());
         val k = new SamlRegisteredServiceCacheKey(service, criteriaSet);
         this.cache.invalidate(k);
+    }
+
+    /**
+     * Gets statistics.
+     *
+     * @return the statistics
+     */
+    CacheStats getCacheStatistics() {
+        return this.cache.stats();
     }
 }
