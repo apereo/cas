@@ -178,7 +178,8 @@ Results for test suite [${desc.displayName}]: ${result.resultType} @ ${new java.
             }
         }
     }
-    if (!Boolean.getBoolean("skipTestRetry")) {
+    def skipRetry = providers.systemProperty('skipTestRetry').forUseAtConfigurationTime().present
+    if (!skipRetry) {
         retry {
             maxRetries = 3
             maxFailures = 5
