@@ -72,6 +72,10 @@ while (( "$#" )); do
         parallel=""
         shift
         ;;
+    --no-watch)
+        flags+="--no-watch-fs "
+        shift
+        ;;
     --test)
         tests="--tests \"$2\" "
         shift 2

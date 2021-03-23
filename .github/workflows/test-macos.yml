@@ -113,5 +113,5 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Run Tests
-        run: ./testcas.sh --category ${{ matrix.category }}
+        run: ./testcas.sh --no-watch --category ${{ matrix.category }}
         shell: bash

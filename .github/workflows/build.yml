@@ -96,7 +96,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Build with Gradle
-        run: ./gradlew --build-cache --configure-on-demand --no-daemon build -x test -x javadoc -x check --parallel
+        run: ./gradlew --build-cache --no-watch-fs --configure-on-demand --no-daemon build -x test -x javadoc -x check --parallel
       - uses: actions/upload-artifact@v2
         if: ${{ matrix.os == 'ubuntu-latest' }}
         with:
@@ -124,4 +124,4 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Build with Gradle
-        run: ./gradlew --build-cache --configure-on-demand --no-daemon build -x test -x javadoc -x check --parallel
+        run: ./gradlew --build-cache --no-watch-fs --configure-on-demand --no-daemon build -x test -x javadoc -x check --parallel
