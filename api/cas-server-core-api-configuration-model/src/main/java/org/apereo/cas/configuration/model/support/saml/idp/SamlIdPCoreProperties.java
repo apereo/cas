@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.saml.idp;
 
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -45,6 +46,7 @@ public class SamlIdPCoreProperties implements Serializable {
      * The SAML entity id for the deployment.
      */
     @RequiredProperty
+    @ExpressionLanguageCapable
     private String entityId = "https://cas.example.org/idp";
 
     /**

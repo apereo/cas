@@ -1,6 +1,7 @@
 package org.apereo.cas.metadata;
 
 import org.apereo.cas.configuration.support.DurationCapable;
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.PropertyOwner;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -138,6 +139,9 @@ public class CasConfigurationMetadataCatalog {
                 }
                 if (description.equals(DurationCapable.class.getName())) {
                     builder.duration(true);
+                }
+                if (description.equals(ExpressionLanguageCapable.class.getName())) {
+                    builder.expressionLanguage(true);
                 }
             }
         }));

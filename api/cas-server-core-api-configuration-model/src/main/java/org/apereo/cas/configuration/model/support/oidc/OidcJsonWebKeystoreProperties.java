@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.oidc;
 
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -34,6 +35,7 @@ public class OidcJsonWebKeystoreProperties implements Serializable {
      * Path to the JWKS file resource used to handle signing/encryption of authentication tokens.
      */
     @RequiredProperty
+    @ExpressionLanguageCapable
     private String jwksFile = "file:/etc/cas/config/keystore.jwks";
 
     /**

@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.scripting.ScriptingUtils;
@@ -26,6 +27,7 @@ import java.util.Map;
 public class GroovySurrogateRegisteredServiceAccessStrategy extends BaseSurrogateRegisteredServiceAccessStrategy {
     private static final long serialVersionUID = -3998531629984937388L;
 
+    @ExpressionLanguageCapable
     private String groovyScript;
 
     @Override

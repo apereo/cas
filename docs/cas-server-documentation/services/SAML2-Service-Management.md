@@ -72,7 +72,7 @@ The following fields are available for SAML services:
 | `encryptionKeyAlgorithms` | Collection of encryption key transport algorithms, if any, to override the global defaults.
 | `encryptionBlackListedAlgorithms` | Collection of rejected encryption algorithms, if any, to override the global defaults.
 | `encryptionWhiteListedAlgorithms` | Collection of allowed encryption algorithms, if any, to override the global defaults.
-| `whiteListBlackListPrecedence` | Preference value indicating which should take precedence when both whitelist and blacklist are non-empty. Accepted values are `WHITELIST` or `BLACKLIST`. Default is `WHITELIST`.
+| `whiteListBlackListPrecedence` | Preference value indicating which should take precedence when both whitelist and blacklist are non-empty. Accepted values are `INCLUDE` or `EXCLUDE`. Default is `INCLUDE`.
 
 <div class="alert alert-info"><strong>Keep What You Need!</strong><p>You are encouraged to only keep and maintain properties and settings needed for a 
 particular integration. It is UNNECESSARY to grab a copy of all service fields and try to configure them yet again based on their default. While 

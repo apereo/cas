@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.services;
 
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegexRegisteredService;
 
@@ -41,6 +42,7 @@ public class SamlRegisteredService extends RegexRegisteredService {
     private static final long serialVersionUID = 1218757374062931021L;
 
     @Column
+    @ExpressionLanguageCapable
     private String metadataLocation;
 
     @Column

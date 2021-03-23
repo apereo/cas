@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.jpa;
 
 import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
 import org.apereo.cas.configuration.support.DurationCapable;
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -71,6 +72,7 @@ public abstract class AbstractJpaProperties implements Serializable {
      * The database connection URL.
      */
     @RequiredProperty
+    @ExpressionLanguageCapable
     private String url = "jdbc:hsqldb:mem:cas-hsql-database";
 
     /**

@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
@@ -33,6 +34,7 @@ public class ScriptedRegisteredServiceUsernameProvider extends BaseRegisteredSer
 
     private static final long serialVersionUID = -678554831202936052L;
 
+    @ExpressionLanguageCapable
     private String script;
 
     @Override

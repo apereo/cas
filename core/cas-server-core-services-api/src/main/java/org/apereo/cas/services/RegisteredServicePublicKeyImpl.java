@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
@@ -40,6 +41,7 @@ public class RegisteredServicePublicKeyImpl implements RegisteredServicePublicKe
 
     private static final long serialVersionUID = -8497658523695695863L;
 
+    @ExpressionLanguageCapable
     private String location;
 
     private String algorithm = "RSA";

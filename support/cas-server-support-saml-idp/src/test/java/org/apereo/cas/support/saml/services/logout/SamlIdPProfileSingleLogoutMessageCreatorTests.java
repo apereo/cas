@@ -41,7 +41,7 @@ public class SamlIdPProfileSingleLogoutMessageCreatorTests extends BaseSamlIdPCo
             samlIdPObjectSigner);
 
         val samlRegisteredService = SamlIdPTestUtils.getSamlRegisteredService();
-        samlRegisteredService.setWhiteListBlackListPrecedence("WHITELIST");
+        samlRegisteredService.setWhiteListBlackListPrecedence("INCLUDE");
         samlRegisteredService.setSigningKeyAlgorithm("RSA");
         samlRegisteredService.setSigningSignatureCanonicalizationAlgorithm("http://www.w3.org/2001/10/xml-exc-c14n#");
         val logoutRequest = DefaultSingleLogoutRequestContext.builder()
