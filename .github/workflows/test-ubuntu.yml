@@ -115,7 +115,7 @@ jobs:
 #      - name: Setup tmate session
 #        uses: mxschmitt/action-tmate@v3
       - name: Run Tests
-        run: ./testcas.sh --no-retry --with-coverage --category ${{ matrix.category }}
+        run: ./testcas.sh --no-retry --no-watch --with-coverage --category ${{ matrix.category }}
       - name: "Upload to Codecov"
         uses: "codecov/codecov-action@v1"
         with:
