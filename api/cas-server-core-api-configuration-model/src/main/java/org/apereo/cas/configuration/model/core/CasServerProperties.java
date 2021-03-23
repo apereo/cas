@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.core;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatProperties;
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -42,12 +43,14 @@ public class CasServerProperties implements Serializable {
      * Deployments at root likely need to blank out this value.
      */
     @RequiredProperty
+    @ExpressionLanguageCapable
     private String prefix = name.concat("/cas");
 
     /**
      * The CAS Server scope.
      */
     @RequiredProperty
+    @ExpressionLanguageCapable
     private String scope = "example.org";
 
     /**

@@ -63,7 +63,8 @@ to be the one true way to generate a starting template project for all CAS deplo
 CAS attribute resolution engine now allows for fetching [user attributes from Okta](../integration/Attribute-Resolution-Okta.html).
 
 ## Other Stuff
-
+         
+- SAML2 registered services that define a `whiteListBlackListPrecedence` setting are now required to use `INCLUDE` or `EXCLUDE` as the accepted value.
 - SAML2 metadata cache for MDQ is modified to correctly calculate the cache key for entity requests.
 - Ordering and sorting of the attribute repositories is now restored to respect the `order` setting.
 - Thymeleaf views specified via template prefixes in the configuration can now support `classpath` resources.
@@ -91,5 +92,6 @@ CAS attribute resolution engine now allows for fetching [user attributes from Ok
 - Apache jClouds
 - Kryo
 - Okta
+- OpenSAML  
 - Hazelcast
 - Infinispan
