@@ -53,7 +53,7 @@ Docker images published to Docker Hub, and as a baseline for
 browser/UI tests run by the CAS CI for each relevant feature.
 CAS Initializr uses itself to test itself!
 
-## Overlay Project Types
+## Project Types
 
 The [CAS Initializr][initializr] can be invoked using curl to generate different types of overlay projects.
 The project selection is indicated using a `type` parameter. The following types are supported:
@@ -65,6 +65,20 @@ The project selection is indicated using a `type` parameter. The following types
 | `cas-config-server-overlay`             | Generates a WAR Overlay for the [Spring Cloud Configuration Server](../configuration/Configuration-Server-Management.html).
 | `cas-discovery-server-overlay`          | Generates a WAR Overlay for the [Service Discovery Server](../installation/Service-Discovery-Guide-Eureka.html).
 | `cas-mgmt-overlay`                      | Generates a WAR Overlay for the [CAS Management Web Application](../services/Installing-ServicesMgmt-Webapp.html).
+  
+## Project Versions
+
+The [CAS Initializr][initializr] can be instructed to prepare an overlay project for a specific version.
+The following request parameters control the version selection:
+
+| Type                                    | Description
+|-----------------------------------------|-----------------------------------------------
+| `casVersion`                            | Specify the CAS version for the overlay.
+| `bootVersion`                           | Specify the Spring Boot version for the overlay.
+                                                                   
+Note that mixing and matching different versions generally will lead to unstable projects builds. Do so at your own risk! The specification
+of version numbers in the project generation request is unnecessary, and [CAS Initializr][initializr] will always
+use trusted defaults to handle the generation task. 
 
 ## Source Code
 
@@ -81,7 +95,8 @@ the CAS Initializr, the following strategies can be used.
 
 ### Heroku
 
-The CAS projects provides a public **free** instance of the CAS Initializr on [Heroku][initializr], paid for by the Apereo CAS support subscribers. To get started with this instance, a simple way might be to include the following function in your bash profile:
+The CAS projects provides a public **free** instance of the CAS Initializr on [Heroku][initializr], paid for by the 
+Apereo CAS support subscribers. To get started with this instance, a simple way might be to include the following function in your bash profile:
 
 ```bash
 function getcas(){

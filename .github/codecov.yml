@@ -24,3 +24,5 @@ coverage:
         if_ci_failed: error
         informational: false
         only_pulls: false
+fixes:
+  - "/home/runner/work/cas/cas/::"
