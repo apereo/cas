@@ -6,6 +6,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
@@ -26,7 +27,7 @@ public class CheckWebAuthenticationRequestAction extends AbstractAction {
     protected Event doExecute(final RequestContext context) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         LOGGER.trace("Checking request content type [{}] against [{}]", request.getContentType(), this.contentType);
-        if (RegexUtils.find(contentType, request.getContentType())) {
+        if (StringUtils.isNoneBlank(request.getContentType()) && RegexUtils.find(contentType, request.getContentType())) {
             LOGGER.debug("Authentication request via type [{}] is not web-based", this.contentType);
             return new EventFactorySupport().no(this);
         }

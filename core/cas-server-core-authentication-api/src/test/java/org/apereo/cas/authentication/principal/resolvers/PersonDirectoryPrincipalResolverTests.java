@@ -30,7 +30,6 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@SuppressWarnings("OptionalAssignedToNull")
 @Tag("Attributes")
 public class PersonDirectoryPrincipalResolverTests {
 
@@ -185,5 +184,16 @@ public class PersonDirectoryPrincipalResolverTests {
             Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
         assertNotNull(p);
         assertEquals("test", p.getId());
+    }
+
+    @Test
+    public void verifyPrincipalIdViaCurrentPrincipal() {
+        val resolver = new PersonDirectoryPrincipalResolver(CoreAuthenticationTestUtils.getAttributeRepository(), PrincipalFactoryUtils.newPrincipalFactory(),
+            true, "custom:attribute", true, true);
+        val credential = mock(Credential.class);
+        val principal = CoreAuthenticationTestUtils.getPrincipal(Map.of("custom:attribute", List.of("customUserId")));
+        val p = resolver.resolve(credential, Optional.of(principal), Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
+        assertNotNull(p);
+        assertEquals("customUserId", p.getId());
     }
 }

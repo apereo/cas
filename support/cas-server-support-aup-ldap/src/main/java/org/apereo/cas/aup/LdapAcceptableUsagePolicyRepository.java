@@ -6,11 +6,10 @@ import org.apereo.cas.configuration.model.support.aup.LdapAcceptableUsagePolicyP
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
-import org.apereo.cas.util.LoggingUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.jooq.lambda.Unchecked;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.SearchResponse;
@@ -45,6 +44,30 @@ public class LdapAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
         this.connectionFactoryList = connectionFactoryList;
     }
 
+    @Override
+    public AcceptableUsagePolicyStatus verify(final RequestContext requestContext, final Credential credential) {
+        var status = super.verify(requestContext, credential);
+        if (!status.isAccepted()) {
+            return aupProperties.getLdap()
+                .stream()
+                .sorted(Comparator.comparing(LdapAcceptableUsagePolicyProperties::getName))
+                .map(Unchecked.function(ldap -> searchLdapForId(ldap, credential.getId())))
+                .filter(Optional::isPresent)
+                .findFirst()
+                .filter(Optional::isPresent)
+                .map(result -> result.get().getMiddle().getEntry())
+                .map(entry -> {
+                    val attribute = entry.getAttribute(aupProperties.getAupAttributeName());
+                    return attribute != null && attribute.getStringValues()
+                        .stream()
+                        .anyMatch(value -> value.equalsIgnoreCase(Boolean.TRUE.toString()));
+                })
+                .map(result -> new AcceptableUsagePolicyStatus(result, status.getPrincipal()))
+                .orElse(AcceptableUsagePolicyStatus.denied(status.getPrincipal()));
+        }
+        return status;
+    }
+
     /**
      * Search ldap for id and return optional.
      *
@@ -53,17 +76,19 @@ public class LdapAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
      * @return the optional
      * @throws Exception the exception
      */
-    protected Optional<Pair<ConnectionFactory, SearchResponse>> searchLdapForId(final LdapAcceptableUsagePolicyProperties ldap,
-                                                                                final String id) throws Exception {
+    protected Optional<Triple<ConnectionFactory, SearchResponse, LdapAcceptableUsagePolicyProperties>>
+        searchLdapForId(final LdapAcceptableUsagePolicyProperties ldap, final String id) throws Exception {
+
         val filter = LdapUtils.newLdaptiveSearchFilter(ldap.getSearchFilter(),
             LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
             CollectionUtils.wrap(id));
         LOGGER.debug("Constructed LDAP filter [{}]", filter);
         val connectionFactory = connectionFactoryList.get(ldap.getLdapUrl());
-        val response = LdapUtils.executeSearchOperation(connectionFactory, ldap.getBaseDn(), filter, ldap.getPageSize());
+        val response = LdapUtils.executeSearchOperation(connectionFactory,
+            ldap.getBaseDn(), filter, ldap.getPageSize());
         if (LdapUtils.containsResultEntry(response)) {
             LOGGER.debug("LDAP query located an entry for [{}] and responded with [{}]", id, response);
-            return Optional.of(Pair.of(connectionFactory, response));
+            return Optional.of(Triple.of(connectionFactory, response, ldap));
         }
         LOGGER.debug("LDAP query could not locate an entry for [{}]", id);
         return Optional.empty();
@@ -71,24 +96,20 @@ public class LdapAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
 
     @Override
     public boolean submit(final RequestContext requestContext, final Credential credential) {
-        try {
-            val response = aupProperties.getLdap()
-                .stream()
-                .sorted(Comparator.comparing(LdapAcceptableUsagePolicyProperties::getName))
-                .map(Unchecked.function(ldap -> searchLdapForId(ldap, credential.getId())))
-                .filter(Optional::isPresent)
-                .findFirst();
+        val response = aupProperties.getLdap()
+            .stream()
+            .sorted(Comparator.comparing(LdapAcceptableUsagePolicyProperties::getName))
+            .map(Unchecked.function(ldap -> searchLdapForId(ldap, credential.getId())))
+            .filter(Optional::isPresent)
+            .findFirst();
 
-            if (response.isPresent()) {
-                val result = response.get().get();
-                val currentDn = result.getValue().getEntry().getDn();
-                LOGGER.debug("Updating [{}]", currentDn);
-                val attributes = CollectionUtils.<String, Set<String>>wrap(aupProperties.getAupAttributeName(),
-                    CollectionUtils.wrapSet(Boolean.TRUE.toString().toUpperCase()));
-                return LdapUtils.executeModifyOperation(currentDn, result.getKey(), attributes);
-            }
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
+        if (response.isPresent()) {
+            val result = response.get().get();
+            val currentDn = result.getMiddle().getEntry().getDn();
+            LOGGER.debug("Updating [{}]", currentDn);
+            val attributes = CollectionUtils.<String, Set<String>>wrap(aupProperties.getAupAttributeName(),
+                CollectionUtils.wrapSet(Boolean.TRUE.toString().toUpperCase()));
+            return LdapUtils.executeModifyOperation(currentDn, result.getLeft(), attributes);
         }
         return false;
     }

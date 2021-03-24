@@ -485,7 +485,7 @@ public class CasPersonDirectoryConfiguration {
     }
 
     @ConditionalOnMultiValuedProperty(name = "cas.authn.attribute-repository.json[0]", value = "location")
-    @Configuration("CasPersonDirectoryRestConfiguration")
+    @Configuration("CasPersonDirectoryJsonConfiguration")
     public class CasPersonDirectoryJsonConfiguration implements PersonDirectoryAttributeRepositoryPlanConfigurer {
 
         @ConditionalOnMissingBean(name = "jsonAttributeRepositories")

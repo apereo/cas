@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.duo.authn;
 
+import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -19,6 +20,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -61,7 +63,8 @@ public class DuoSecurityAuthenticationServiceTests {
             HttpStatus.OK)) {
             webServer.start();
             val service = new BasicDuoSecurityAuthenticationService(
-                casProperties.getAuthn().getMfa().getDuo().get(0), httpClient);
+                casProperties.getAuthn().getMfa().getDuo().get(0),
+                httpClient, List.of(MultifactorAuthenticationPrincipalResolver.identical()));
             assertTrue(service.ping());
             assertNotNull(service.getApiHost());
         }
@@ -71,7 +74,8 @@ public class DuoSecurityAuthenticationServiceTests {
     public void verifyPingFails() throws Exception {
         val results = MAPPER.writeValueAsString(Map.of("response", "pong", "stat", "FAIL"));
         val service = new BasicDuoSecurityAuthenticationService(
-            casProperties.getAuthn().getMfa().getDuo().get(0), httpClient);
+            casProperties.getAuthn().getMfa().getDuo().get(0),
+            httpClient, List.of(MultifactorAuthenticationPrincipalResolver.identical()));
         try (val webServer = new MockWebServer(6556,
             new ByteArrayResource(results.getBytes(StandardCharsets.UTF_8), "Output"),
             HttpStatus.OK)) {
@@ -86,7 +90,8 @@ public class DuoSecurityAuthenticationServiceTests {
         val results = MAPPER.writeValueAsString(UUID.randomUUID().toString());
         val props = casProperties.getAuthn().getMfa().getDuo().get(0);
         props.setDuoApiHost(null);
-        val service = new BasicDuoSecurityAuthenticationService(props, httpClient);
+        val service = new BasicDuoSecurityAuthenticationService(props,
+            httpClient, List.of(MultifactorAuthenticationPrincipalResolver.identical()));
         try (val webServer = new MockWebServer(6556,
             new ByteArrayResource(results.getBytes(StandardCharsets.UTF_8), "Output"),
             HttpStatus.OK)) {

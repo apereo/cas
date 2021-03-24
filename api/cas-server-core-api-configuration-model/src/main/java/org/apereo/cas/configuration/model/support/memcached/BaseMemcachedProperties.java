@@ -93,6 +93,11 @@ public class BaseMemcachedProperties implements Serializable {
     private String hashAlgorithm = "FNV1_64_HASH";
 
     /**
+     * Protocol. Acceptable values are {@code TEXT, BINARY}.
+     */
+    private String protocol = "TEXT";
+
+    /**
      * Sets the cap on the number of objects that can be allocated by
      * the pool (checked out to clients, or idle awaiting checkout) at a given time. Use a negative value for no limit.
      */

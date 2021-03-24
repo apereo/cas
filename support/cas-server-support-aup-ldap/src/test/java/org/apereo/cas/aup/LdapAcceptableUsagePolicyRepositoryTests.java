@@ -62,6 +62,12 @@ public class LdapAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsag
             new ClassPathResource("ldif/ldap-aup.ldif").getInputStream(), "ou=people,dc=example,dc=org");
     }
 
+    @Override
+    public boolean hasLiveUpdates() {
+        return true;
+    }
+
+    
     @Test
     public void verifyOperation() {
         assertNotNull(acceptableUsagePolicyRepository);

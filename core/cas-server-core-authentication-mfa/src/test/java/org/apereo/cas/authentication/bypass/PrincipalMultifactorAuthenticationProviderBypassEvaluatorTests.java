@@ -1,9 +1,11 @@
 package org.apereo.cas.authentication.bypass;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -13,6 +15,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -31,6 +34,10 @@ public class PrincipalMultifactorAuthenticationProviderBypassEvaluatorTests {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
+
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
+        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
+            MultifactorAuthenticationPrincipalResolver.identical(), UUID.randomUUID().toString());
 
         val eval = new DefaultChainingMultifactorAuthenticationBypassProvider();
         eval.addMultifactorAuthenticationProviderBypassEvaluator(
@@ -52,6 +59,9 @@ public class PrincipalMultifactorAuthenticationProviderBypassEvaluatorTests {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
+        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
+            MultifactorAuthenticationPrincipalResolver.identical(), UUID.randomUUID().toString());
 
         val eval = new DefaultChainingMultifactorAuthenticationBypassProvider();
         eval.addMultifactorAuthenticationProviderBypassEvaluator(
@@ -70,7 +80,9 @@ public class PrincipalMultifactorAuthenticationProviderBypassEvaluatorTests {
     public void verifyOperationByProperty() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
-
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
+        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
+            MultifactorAuthenticationPrincipalResolver.identical(), UUID.randomUUID().toString());
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
 
         val eval = new DefaultChainingMultifactorAuthenticationBypassProvider();

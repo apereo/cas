@@ -21,6 +21,7 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.exception.http.HttpAction;
 import org.pac4j.core.http.adapter.JEEHttpActionAdapter;
@@ -101,7 +102,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         val webContext = new JEEContext(request, response, configContext.getSessionStore());
         try {
-            val clientName = request.getParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER);
+            val clientName = retrieveClientName(webContext);
             LOGGER.trace("Delegated authentication is handled by client name [{}]", clientName);
 
             var service = (Service) null;
@@ -151,6 +152,16 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             return stopWebflow(e, context);
         }
         return error();
+    }
+
+    /**
+     * Retrieve the client name when calling back the CAS server after the delegated authentication.
+     *
+     * @param webContext the web context
+     * @return the client name
+     */
+    protected String retrieveClientName(final WebContext webContext) {
+        return webContext.getRequestParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER).orElse(null);
     }
 
     private Service resolveServiceFromRequestContext(final RequestContext context) {

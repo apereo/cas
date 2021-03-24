@@ -4,6 +4,7 @@ import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -12,13 +13,13 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.opensaml.saml.saml2.metadata.ContactPerson;
-import org.opensaml.saml.saml2.metadata.Endpoint;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.Extensions;
 import org.opensaml.saml.saml2.metadata.KeyDescriptor;
@@ -91,29 +92,35 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
                                                                                     final SamlRegisteredService registeredService,
                                                                                     final String entityID,
                                                                                     final CriteriaSet criterions) {
-        LOGGER.trace("Adapting SAML metadata for CAS service [{}] issued by [{}]", registeredService.getName(), entityID);
-        criterions.add(new EntityIdCriterion(entityID), true);
-        LOGGER.debug("Locating metadata for entityID [{}] by attempting to run through the metadata chain...", entityID);
-        val chainingMetadataResolver = resolver.resolve(registeredService, criterions);
-        LOGGER.info("Resolved metadata chain from [{}]. Filtering the chain by entity ID [{}]",
-            registeredService.getMetadataLocation(), entityID);
+        try {
+            LOGGER.trace("Adapting SAML metadata for CAS service [{}] issued by [{}]", registeredService.getName(), entityID);
+            criterions.add(new EntityIdCriterion(entityID), true);
+            LOGGER.debug("Locating metadata for entityID [{}] by attempting to run through the metadata chain...", entityID);
+            val chainingMetadataResolver = resolver.resolve(registeredService, criterions);
+            LOGGER.info("Resolved metadata chain from [{}]. Filtering the chain by entity ID [{}]",
+                registeredService.getMetadataLocation(), entityID);
 
-        val entityDescriptor = chainingMetadataResolver.resolveSingle(criterions);
-        if (entityDescriptor == null) {
-            LOGGER.warn("Cannot find entity [{}] in metadata provider. Ensure the metadata is valid and has not expired.", entityID);
-            return Optional.empty();
-        }
-        LOGGER.trace("Located entity descriptor in metadata for [{}]", entityID);
-
-        if (entityDescriptor.getValidUntil() != null) {
-            val expired = entityDescriptor.getValidUntil()
-                .isBefore(ZonedDateTime.now(ZoneOffset.UTC).toInstant());
-            if (expired) {
-                LOGGER.warn("Entity descriptor in the metadata has expired at [{}]", entityDescriptor.getValidUntil());
+            val entityDescriptor = chainingMetadataResolver.resolveSingle(criterions);
+            if (entityDescriptor == null) {
+                LOGGER.warn("Cannot find entity [{}] in metadata provider. Ensure the metadata is valid and has not expired.", entityID);
                 return Optional.empty();
             }
+            LOGGER.trace("Located entity descriptor in metadata for [{}]", entityID);
+
+            if (entityDescriptor.getValidUntil() != null) {
+                val expired = entityDescriptor.getValidUntil()
+                    .isBefore(ZonedDateTime.now(ZoneOffset.UTC).toInstant());
+                if (expired) {
+                    LOGGER.warn("Entity descriptor in the metadata has expired at [{}]", entityDescriptor.getValidUntil());
+                    return Optional.empty();
+                }
+            }
+            return getServiceProviderSsoDescriptor(entityID, chainingMetadataResolver, entityDescriptor);
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
         }
-        return getServiceProviderSsoDescriptor(entityID, chainingMetadataResolver, entityDescriptor);
+        return Optional.empty();
+
     }
     
     public ZonedDateTime getValidUntil() {
@@ -228,8 +235,23 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
         return getAssertionConsumerServices()
             .stream()
             .filter(acs -> acs.getBinding().equalsIgnoreCase(binding))
-            .map(Endpoint::getLocation)
+            .map(acs -> StringUtils.defaultIfBlank(acs.getResponseLocation(), acs.getLocation()))
             .collect(Collectors.toList());
+    }
+
+    /**
+     * Gets assertion consumer service for.
+     *
+     * @param binding the binding
+     * @param index   the index
+     * @return the assertion consumer service for
+     */
+    public Optional<String> getAssertionConsumerServiceFor(final String binding, final Integer index) {
+        return getAssertionConsumerServices()
+            .stream()
+            .filter(acs -> acs.getBinding().equalsIgnoreCase(binding) && index != null && index.equals(acs.getIndex()))
+            .map(acs -> StringUtils.defaultIfBlank(acs.getResponseLocation(), acs.getLocation()))
+            .findFirst();
     }
 
     /**

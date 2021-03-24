@@ -40,7 +40,6 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -247,10 +246,6 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
      */
     @SneakyThrows
     protected String getBackupMetadataFilenamePrefix(final AbstractResource metadataResource, final SamlRegisteredService service) {
-        val mdFileName = metadataResource.getFilename();
-        if (StringUtils.isBlank(mdFileName)) {
-            throw new FileNotFoundException("Unable to determine filename for " + metadataResource);
-        }
         val metadataLocation = SpringExpressionLanguageValueResolver.getInstance().resolve(service.getMetadataLocation());
         val fileName = SamlUtils.isDynamicMetadataQueryConfigured(metadataLocation)
             ? service.getServiceId()

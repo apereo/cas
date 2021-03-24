@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.principal.resolvers;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.attribute.PrincipalAttributeRepositoryFetcher;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
@@ -89,6 +90,8 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
      */
     protected final Set<String> activeAttributeRepositoryIdentifiers;
 
+    private int order;
+
     public PersonDirectoryPrincipalResolver() {
         this(new StubPersonAttributeDao(new HashMap<>(0)), PrincipalFactoryUtils.newPrincipalFactory(), false,
             String::trim, null,
@@ -176,7 +179,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
                 return null;
             }
             LOGGER.debug("Retrieved [{}] attribute(s) from the repository", attributes.size());
-            val pair = convertPersonAttributesToPrincipal(principalId, attributes);
+            val pair = convertPersonAttributesToPrincipal(principalId, currentPrincipal, attributes);
             val principal = buildResolvedPrincipal(pair.getKey(), pair.getValue(), credential, currentPrincipal, handler);
             LOGGER.debug("Final resolved principal by [{}] is [{}]", getName(), principal);
             return principal;
@@ -212,11 +215,13 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
      * Convert person attributes to principal pair.
      *
      * @param extractedPrincipalId the extracted principal id
+     * @param currentPrincipal     the current principal
      * @param attributes           the attributes
      * @return the pair
      */
     @SuppressWarnings("unchecked")
     protected Pair<String, Map<String, List<Object>>> convertPersonAttributesToPrincipal(final String extractedPrincipalId,
+                                                                                         final Optional<Principal> currentPrincipal,
                                                                                          final Map<String, List<Object>> attributes) {
         val convertedAttributes = new LinkedHashMap<String, List<Object>>();
         attributes.forEach((key, attrValue) -> {
@@ -229,25 +234,36 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         });
 
         var principalId = extractedPrincipalId;
-
         if (StringUtils.isNotBlank(this.principalAttributeNames)) {
             val attrNames = org.springframework.util.StringUtils.commaDelimitedListToSet(this.principalAttributeNames);
+
+            val principalIdAttributes = new LinkedHashMap<>(attributes);
+            if (isUseCurrentPrincipalId() && currentPrincipal.isPresent()) {
+                val currentPrincipalAttributes = currentPrincipal.get().getAttributes();
+                LOGGER.trace("Merging current principal attributes [{}] with resolved attributes [{}]",
+                    currentPrincipalAttributes, principalIdAttributes);
+                val merger = CoreAuthenticationUtils.getAttributeMerger("replace");
+                merger.mergeAttributes(principalIdAttributes, currentPrincipalAttributes);
+            }
+
+            LOGGER.debug("Using principal attributes [{}] to determine principal id", principalIdAttributes);
             val result = attrNames.stream()
                 .map(String::trim)
-                .filter(attributes::containsKey)
-                .map(attributes::get)
+                .filter(principalIdAttributes::containsKey)
+                .map(principalIdAttributes::get)
                 .findFirst();
 
             if (result.isPresent()) {
                 val values = result.get();
                 if (!values.isEmpty()) {
                     principalId = CollectionUtils.firstElement(values).map(Object::toString).orElseThrow();
-                    LOGGER.debug("Found principal id attribute value [{}] and removed it from the collection of attributes", principalId);
+                    LOGGER.debug("Found principal id attribute value [{}]", principalId);
                 }
             } else {
                 LOGGER.warn("Principal resolution is set to resolve users via attribute(s) [{}], and yet "
-                    + "the collection of attributes retrieved [{}] do not contain any of those attributes. This is likely due to misconfiguration "
-                    + "and CAS will use [{}] as the final principal id", this.principalAttributeNames, attributes.keySet(), principalId);
+                        + "the collection of attributes retrieved [{}] do not contain any of those attributes. This is "
+                        + "likely due to misconfiguration and CAS will use [{}] as the final principal id",
+                    this.principalAttributeNames, principalIdAttributes.keySet(), principalId);
             }
         }
 
