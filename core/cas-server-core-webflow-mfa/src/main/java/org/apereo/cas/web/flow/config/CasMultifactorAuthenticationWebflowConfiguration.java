@@ -437,21 +437,21 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "mfaAvailableAction")
     public Action mfaAvailableAction() {
-        return new MultifactorAuthenticationAvailableAction(applicationContext);
+        return new MultifactorAuthenticationAvailableAction();
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "mfaBypassAction")
     public Action mfaBypassAction() {
-        return new MultifactorAuthenticationBypassAction(applicationContext);
+        return new MultifactorAuthenticationBypassAction();
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "mfaFailureAction")
     public Action mfaFailureAction() {
-        return new MultifactorAuthenticationFailureAction(applicationContext);
+        return new MultifactorAuthenticationFailureAction();
     }
 
     @Bean

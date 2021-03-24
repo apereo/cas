@@ -7,6 +7,7 @@ import org.apereo.cas.services.web.ChainingThemeResolver;
 import org.apereo.cas.services.web.RegisteredServiceThemeResolver;
 import org.apereo.cas.services.web.RequestHeaderThemeResolver;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
+import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,7 +45,7 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  */
 @Configuration(value = "casThemesConfiguration", proxyBeanMethods = false)
-@EnableConfigurationProperties(CasConfigurationProperties.class)
+@EnableConfigurationProperties({CasConfigurationProperties.class, WebProperties.class})
 @Slf4j
 public class CasThemesConfiguration {
     @Autowired
@@ -59,6 +61,9 @@ public class CasThemesConfiguration {
 
     @Autowired
     private ObjectProvider<ThymeleafProperties> properties;
+
+    @Autowired
+    private WebProperties webProperties;
 
     @Bean
     public Supplier<Map<String, String>> serviceThemeResolverSupportedBrowsers() {
@@ -129,6 +134,10 @@ public class CasThemesConfiguration {
                         .toArray(Resource[]::new);
                     LOGGER.debug("Adding resource handler for resources [{}]", (Object[]) resources);
                     registration.addResourceLocations(templatePrefixes.toArray(ArrayUtils.EMPTY_STRING_ARRAY));
+                    registration.addResourceLocations(webProperties.getResources().getStaticLocations());
+                    FunctionUtils.doIfNotNull(webProperties.getResources().getCache().getPeriod(),
+                        period -> registration.setCachePeriod((int) period.getSeconds()));
+                    registration.setCacheControl(webProperties.getResources().getCache().getCachecontrol().toHttpCacheControl());
                     registration.setUseLastModified(true);
                     val cache = properties.getIfAvailable() != null && properties.getObject().isCache();
                     val chainRegistration = registration.resourceChain(cache);

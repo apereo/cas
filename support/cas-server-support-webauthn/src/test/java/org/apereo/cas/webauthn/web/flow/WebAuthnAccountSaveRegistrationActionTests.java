@@ -1,5 +1,6 @@
 package org.apereo.cas.webauthn.web.flow;
 
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.RandomUtils;
@@ -51,6 +52,10 @@ public class WebAuthnAccountSaveRegistrationActionTests {
     @Qualifier("webAuthnSessionManager")
     private SessionManager webAuthnSessionManager;
 
+    @Autowired
+    @Qualifier("webAuthnMultifactorAuthenticationProvider")
+    private MultifactorAuthenticationProvider webAuthnMultifactorAuthenticationProvider;
+
     @Test
     public void verifyOperation() throws Exception {
         val context = new MockRequestContext();
@@ -59,6 +64,7 @@ public class WebAuthnAccountSaveRegistrationActionTests {
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         RequestContextHolder.setRequestContext(context);
+        WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, webAuthnMultifactorAuthenticationProvider);
         ExternalContextHolder.setExternalContext(context.getExternalContext());
 
         val authn = RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString());

@@ -3,8 +3,10 @@ package org.apereo.cas.webauthn.web.flow;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.actions.AbstractMultifactorAuthenticationAction;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.webauthn.WebAuthnCredential;
+import org.apereo.cas.webauthn.WebAuthnMultifactorAuthenticationProvider;
 
 import com.yubico.core.RegistrationStorage;
 import com.yubico.core.SessionManager;
@@ -12,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -25,7 +26,7 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @RequiredArgsConstructor
 @Slf4j
-public class WebAuthnValidateSessionCredentialTokenAction extends AbstractAction {
+public class WebAuthnValidateSessionCredentialTokenAction extends AbstractMultifactorAuthenticationAction<WebAuthnMultifactorAuthenticationProvider> {
     private final RegistrationStorage webAuthnCredentialRepository;
 
     private final SessionManager sessionManager;

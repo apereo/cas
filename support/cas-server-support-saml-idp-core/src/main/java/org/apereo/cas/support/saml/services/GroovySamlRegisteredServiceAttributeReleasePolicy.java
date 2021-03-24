@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.services;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.LoggingUtils;
@@ -37,6 +38,7 @@ public class GroovySamlRegisteredServiceAttributeReleasePolicy extends BaseSamlR
 
     private static final long serialVersionUID = 3020434998499030162L;
 
+    @ExpressionLanguageCapable
     private String groovyScript;
 
     @Override

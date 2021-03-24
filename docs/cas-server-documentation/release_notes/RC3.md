@@ -6,19 +6,19 @@ category: Planning
 
 # RC3 Release Notes
 
-We strongly recommend that you take advantage of the release candidates as they come out. Waiting for a `GA` release is only going to set 
-you up for unpleasant surprises. A `GA` is [a tag and nothing more](https://apereo.github.io/2017/03/08/the-myth-of-ga-rel/). Note that CAS 
-releases are *strictly* time-based releases; they are not scheduled or based on specific benchmarks, statistics or completion of features. To gain 
+We strongly recommend that you take advantage of the release candidates as they come out. Waiting for a `GA` release is only going to set
+you up for unpleasant surprises. A `GA` is [a tag and nothing more](https://apereo.github.io/2017/03/08/the-myth-of-ga-rel/). Note that CAS
+releases are *strictly* time-based releases; they are not scheduled or based on specific benchmarks, statistics or completion of features. To gain
 confidence in a particular release, it is strongly recommended that you start early by experimenting with release candidates and/or follow-up snapshots.
 
 ## Apereo Membership
 
-If you benefit from Apereo CAS as free and open-source software, we invite you to [join the Apereo Foundation](https://www.apereo.org/content/apereo-membership) 
-and financially support the project at a capacity that best suits your deployment. Note that all development activity 
-is performed *almost exclusively* on a voluntary basis with no expectations, commitments or strings attached. Having the financial means to better 
-sustain engineering activities will allow the developer community to allocate *dedicated and committed* time for long-term support, 
-maintenance and release planning, especially when it comes to addressing critical and security issues in a timely manner. Funding will 
-ensure support for the software you rely on and you gain an advantage and say in the way Apereo, and the CAS project at that, runs 
+If you benefit from Apereo CAS as free and open-source software, we invite you to [join the Apereo Foundation](https://www.apereo.org/content/apereo-membership)
+and financially support the project at a capacity that best suits your deployment. Note that all development activity
+is performed *almost exclusively* on a voluntary basis with no expectations, commitments or strings attached. Having the financial means to better
+sustain engineering activities will allow the developer community to allocate *dedicated and committed* time for long-term support,
+maintenance and release planning, especially when it comes to addressing critical and security issues in a timely manner. Funding will
+ensure support for the software you rely on and you gain an advantage and say in the way Apereo, and the CAS project at that, runs
 and operates. If you consider your CAS deployment to be a critical part of the identity and access management ecosystem, this is a viable option to consider.
 
 ## Get Involved
@@ -53,14 +53,20 @@ The following items are new improvements and enhancements presented in this rele
 [CAS Initializr](../installation/WAR-Overlay-Initializr.html) is now moved to its own separate repository.
 
 <div class="alert alert-info">
-<strong>Note</strong><br/>It is expected that at some point in the not-too-distant future, previous/existing 
-WAR overlay projects would be deprecated and ultimately archived, allowing the CAS Initializr 
+<strong>Note</strong><br/>It is expected that at some point in the not-too-distant future, previous/existing
+WAR overlay projects would be deprecated and ultimately archived, allowing the CAS Initializr
 to be the one true way to generate a starting template project for all CAS deployments.
 </div>
 
-## Other Stuff
+## Okta Attribute Resolution
 
-- Ordering and sorting of the attribute repositories is now restored to respect the `order` setting.      
+CAS attribute resolution engine now allows for fetching [user attributes from Okta](../integration/Attribute-Resolution-Okta.html).
+
+## Other Stuff
+         
+- SAML2 registered services that define a `whiteListBlackListPrecedence` setting are now required to use `INCLUDE` or `EXCLUDE` as the accepted value.
+- SAML2 metadata cache for MDQ is modified to correctly calculate the cache key for entity requests.
+- Ordering and sorting of the attribute repositories is now restored to respect the `order` setting.
 - Thymeleaf views specified via template prefixes in the configuration can now support `classpath` resources.
 - SAML2 metadata cache can determine its expiration policy using [service expiration policy](../services/Configuring-Service-Expiration-Policy.html) if defined.
 - User interface forms that contain a `username` field are set to prevent spell check and auto capitalization.
@@ -68,14 +74,24 @@ to be the one true way to generate a starting template project for all CAS deplo
 - [Syncope authentication](../authentication/Syncope-Authentication.html) adds support for multiple relationships of the same type.
 - User interfaces fixes for login sizing related to flexbox in IE11 where the login page is far too thin to be usable.
 - [Surrogate authentication](../authentication/Surrogate-Authentication.html) can correctly identify the primary principal's attributes for MFA activation.
+- SAML2 registered services are correctly located from the authentication request and are matched against service provider's entity id.
 - Person directory principal resolution can use attributes from the *current authentication attempt* to build the final principal.
+- The ability to retry failing tests is removed from CI to prevent test coverage miscalculations.
+- Triggering CI jobs and workflow runs is no longer automatically triggered to help reduce the load on the backlog.
+- Small improvements to CI test execution to ensure coverage results can be correctly calculated.
 
 ## Library Upgrades
 
-- Person Directory  
+- TestContainers
+- JUnit Pioneer
+- Person Directory
+- Spring Boot
+- Spring
 - Hibernate
 - Apache Velocity
 - Apache jClouds
 - Kryo
+- Okta
+- OpenSAML  
 - Hazelcast
 - Infinispan

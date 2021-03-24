@@ -1,65 +1,65 @@
 enum TestCategories {
-    Kafka,
-    Logout,
-    CAS,
-    ExpirationPolicy,
-    Metrics,
-    Tickets,
-    PasswordOps,
+    ActuatorEndpoint,
+    AmazonWebServices,
     Attributes,
     Audits,
-    Web,
-    Infinispan,
-    Spnego,
-    WebApp,
     Authentication,
-    ActuatorEndpoint,
-    RegisteredService,
-    Utility,
-    WSFederation,
-    SMS,
+    CAS,
     CasConfiguration,
-    Hazelcast,
-    JMX,
-    Simple,
-    MFA,
-    X509,
-    SHELL,
     Cassandra,
-    Webflow,
-    WebflowConfig,
-    WebflowEvents,
-    WebflowActions,
-    WebflowMfaActions,
     CosmosDb,
-    ZooKeeper,
-    JMS,
-    AmazonWebServices,
-    Radius,
     Couchbase,
     CouchDb,
-    MySQL,
-    Postgres,
-    MsSqlServer,
-    MariaDb,
     DynamoDb,
     Ehcache,
+    ExpirationPolicy,
     FileSystem,
-    Ignite,
-    InfluxDb,
-    Oracle,
-    Ldap,
     Groovy,
+    Hazelcast,
+    Ignite,
+    Infinispan,
+    InfluxDb,
+    JDBC,
+    JMS,
+    JMX,
+    Kafka,
+    Ldap,
+    Logout,
     Mail,
-    RestfulApi,
+    MariaDb,
     Memcached,
+    Metrics,
+    MFA,
     MongoDb,
-    Redis,
+    MsSqlServer,
+    MySQL,
     OAuth,
-    UMA,
     OIDC,
+    Oracle,
+    PasswordOps,
+    Postgres,
+    Radius,
+    Redis,
+    RegisteredService,
+    RestfulApi,
     SAML,
-    JDBC
+    SHELL,
+    Simple,
+    SMS,
+    Spnego,
+    Tickets,
+    UMA,
+    Utility,
+    Web,
+    WebApp,
+    Webflow,
+    WebflowActions,
+    WebflowConfig,
+    WebflowEvents,
+    WebflowMfaActions,
+    WSFederation,
+    X509,
+    ZooKeeper
 }
 
 if (rootProject.tasks.findByName("testCategories") == null) {
@@ -71,6 +71,18 @@ if (rootProject.tasks.findByName("testCategories") == null) {
                     })
                     .collect { it.name().toLowerCase() }
             println(groovy.json.JsonOutput.toJson(result))
+        }
+    }
+}
+
+if (rootProject.tasks.findByName("puppeteerScenarios") == null) {
+    rootProject.tasks.create(name: "puppeteerScenarios", description: "Display all available puppeteer scenarios") {
+        doLast {
+            def scenarios = new TreeSet<String>();
+            rootProject.file("ci/tests/puppeteer/scenarios").eachDir {
+                scenarios += it.getName()
+            }
+            println(groovy.json.JsonOutput.toJson(scenarios))
         }
     }
 }
@@ -166,7 +178,8 @@ Results for test suite [${desc.displayName}]: ${result.resultType} @ ${new java.
             }
         }
     }
-    if (!Boolean.getBoolean("skipTestRetry")) {
+    def skipRetry = providers.systemProperty('skipTestRetry').forUseAtConfigurationTime().present
+    if (!skipRetry) {
         retry {
             maxRetries = 3
             maxFailures = 5

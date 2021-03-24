@@ -6,7 +6,8 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo.cas" level="error" />
+        <Logger name="org.apereo.cas" level="debug" />
+        <Logger name="org.eclipse.jgit" level="debug" />
         <Logger name="org.opensaml" level="warn" />
 
         <Logger name="PROTOCOL_MESSAGE" level="off" />

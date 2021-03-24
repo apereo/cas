@@ -37,7 +37,7 @@ public class LdapPasswordlessUserAccountStore implements PasswordlessUserAccount
                 LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
                 CollectionUtils.wrap(username));
 
-            LOGGER.debug("Constructed LDAP filter [{}] to passwordless locate account", filter);
+            LOGGER.debug("Constructed LDAP filter [{}] to locate passwordless account", filter);
             val response = LdapUtils.executeSearchOperation(connectionFactory, ldapProperties.getBaseDn(), filter, ldapProperties.getPageSize());
             LOGGER.debug("LDAP response for passwordless account is [{}]", response);
 
