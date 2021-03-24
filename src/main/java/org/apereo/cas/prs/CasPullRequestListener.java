@@ -41,7 +41,9 @@ public class CasPullRequestListener implements PullRequestListener {
        }
        if (repository.shouldResumeCiBuild(pr)) {
            log.info("Pull request {} should resume CI workflow", pr);
-           repository.removeLabelFrom(pr, CasLabels.LABEL_CI);
+           if (pr.isLabeledAs(CasLabels.LABEL_CI)) {
+               repository.removeLabelFrom(pr, CasLabels.LABEL_CI);
+           }
            repository.labelPullRequestAs(pr, CasLabels.LABEL_CI);
        }
     }
