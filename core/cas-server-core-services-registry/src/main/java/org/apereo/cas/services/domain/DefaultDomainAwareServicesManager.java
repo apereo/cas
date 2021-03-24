@@ -52,7 +52,7 @@ public class DefaultDomainAwareServicesManager extends AbstractServicesManager i
             ? map.get(domain)
             : new TreeSet<RegisteredService>();
         LOGGER.debug("Added service [{}] mapped to domain definition [{}]", r, domain);
-        services.remove(findServiceBy(r.getId()));
+        services.removeIf(s -> s.getId() == r.getId());
         services.add(r);
         map.put(domain, services);
     }
