@@ -46,6 +46,12 @@ public abstract class AbstractDynamoDbProperties extends BaseAmazonWebServicesPr
     private long writeCapacity = 10;
 
     /**
+     * Billing mode.
+     */
+    private String billingMode = "PROVISIONED";
+    
+
+    /**
      * Indicates that the database instance is local to the deployment
      * that does not require or use any credentials or other configuration
      * other than host and region. This is mostly used during development
