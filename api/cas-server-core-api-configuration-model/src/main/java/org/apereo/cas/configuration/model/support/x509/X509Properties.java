@@ -308,7 +308,7 @@ public class X509Properties implements Serializable {
      * The webflow configuration.
      */
     @NestedConfigurationProperty
-    private X509WebflowAutoConfigurationProperties webflow = new X509WebflowAutoConfigurationProperties(100);
+    private X509WebflowAutoConfigurationProperties webflow = new X509WebflowAutoConfigurationProperties(10);
 
     /**
      * The  Principal types.
