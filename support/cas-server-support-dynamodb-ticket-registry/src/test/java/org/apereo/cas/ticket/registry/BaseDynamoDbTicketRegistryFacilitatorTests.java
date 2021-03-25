@@ -24,26 +24,12 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import software.amazon.awssdk.core.SdkSystemSetting;
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
-import software.amazon.awssdk.services.dynamodb.model.BillingMode;
-import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
-import software.amazon.awssdk.services.dynamodb.model.DescribeTableResponse;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-/**
- * This is {@link DynamoDbTicketRegistryFacilitatorBillingModePayPerRequestTests}.
- *
- * @author Ned Regina
- *
- */
-@EnabledIfPortOpen(port = 8000)
 @SpringBootTest(classes = {
         DynamoDbTicketRegistryConfiguration.class,
         DynamoDbTicketRegistryTicketCatalogConfiguration.class,
@@ -73,30 +59,18 @@ import static org.junit.jupiter.api.Assertions.*;
                 "cas.ticket.registry.dynamo-db.endpoint=http://localhost:8000",
                 "cas.ticket.registry.dynamo-db.drop-tables-on-startup=true",
                 "cas.ticket.registry.dynamo-db.local-instance=true",
-                "cas.ticket.registry.dynamo-db.region=us-east-1",
-                "cas.ticket.registry.dynamo-db.billingMode=PAY_PER_REQUEST"
+                "cas.ticket.registry.dynamo-db.region=us-east-1"
         })
 @Tag("DynamoDb")
-public class DynamoDbTicketRegistryFacilitatorBillingModePayPerRequestTests {
+public class BaseDynamoDbTicketRegistryFacilitatorTests {
 
-        static {
-                System.setProperty(SdkSystemSetting.AWS_ACCESS_KEY_ID.property(), "AKIAIPPIGGUNIO74C63Z");
-                System.setProperty(SdkSystemSetting.AWS_SECRET_ACCESS_KEY.property(), "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");
-        }
+    static {
+        System.setProperty(SdkSystemSetting.AWS_ACCESS_KEY_ID.property(), "AKIAIPPIGGUNIO74C63Z");
+        System.setProperty(SdkSystemSetting.AWS_SECRET_ACCESS_KEY.property(), "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");
+    }
 
-        @Autowired
-        @Qualifier("dynamoDbTicketRegistryFacilitator")
-        private DynamoDbTicketRegistryFacilitator dynamoDbTicketRegistryFacilitator;
+    @Autowired
+    @Qualifier("dynamoDbTicketRegistryFacilitator")
+    protected DynamoDbTicketRegistryFacilitator dynamoDbTicketRegistryFacilitator;
 
-        @Test
-        public void verifyCreateTableWithOnDemandBilling() {
-                dynamoDbTicketRegistryFacilitator.createTicketTables(true);
-                DynamoDbClient client = dynamoDbTicketRegistryFacilitator.getAmazonDynamoDBClient();
-                dynamoDbTicketRegistryFacilitator.getTicketCatalog().findAll().forEach(td -> {
-                        DescribeTableResponse resp = client.describeTable(DescribeTableRequest.builder()
-                                .tableName(td.getProperties().getStorageName())
-                                .build());
-                        assertEquals(BillingMode.PAY_PER_REQUEST, resp.table().billingModeSummary().billingMode());
-                });
-        }
 }
