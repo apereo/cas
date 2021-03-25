@@ -348,20 +348,20 @@ public abstract class BaseTicketRegistryTests {
         val tgts = new ArrayList<Ticket>();
         val sts = new ArrayList<Ticket>();
 
-        for (var i = 0; i < TICKETS_IN_REGISTRY; i++) {
-            val a = CoreAuthenticationTestUtils.getAuthentication();
-            val s = RegisteredServiceTestUtils.getService();
-            val ticketGrantingTicket = new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX + '-' + i,
-                a, NeverExpiresExpirationPolicy.INSTANCE);
-            val st = ticketGrantingTicket.grantServiceTicket("ST-" + i,
-                s,
-                NeverExpiresExpirationPolicy.INSTANCE, false, true);
-            tgts.add(ticketGrantingTicket);
-            sts.add(st);
-            ticketRegistry.addTicket(ticketGrantingTicket);
-            ticketRegistry.addTicket(st);
-        }
         FunctionUtils.doAndRetry(callback -> {
+            for (var i = 0; i < TICKETS_IN_REGISTRY; i++) {
+                val a = CoreAuthenticationTestUtils.getAuthentication();
+                val s = RegisteredServiceTestUtils.getService();
+                val ticketGrantingTicket = new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX + '-' + i,
+                    a, NeverExpiresExpirationPolicy.INSTANCE);
+                val st = ticketGrantingTicket.grantServiceTicket("ST-" + i,
+                    s,
+                    NeverExpiresExpirationPolicy.INSTANCE, false, true);
+                tgts.add(ticketGrantingTicket);
+                sts.add(st);
+                ticketRegistry.addTicket(ticketGrantingTicket);
+                ticketRegistry.addTicket(st);
+            }
             val sessionCount = this.ticketRegistry.sessionCount();
             assertEquals(tgts.size(), sessionCount,
                 "The sessionCount " + sessionCount + " is not the same as the collection " + tgts.size());

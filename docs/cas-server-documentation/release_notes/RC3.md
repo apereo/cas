@@ -85,6 +85,7 @@ The CAS codebase and the continuous integration workflows by extension have now 
 - Triggering continuous integration jobs and workflow runs is no longer automatically triggered to help reduce the load on the backlog.
 - CAS settings able to [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) now advertise this capability in the documentation. 
 - Small improvements to CI test execution to ensure coverage results can be correctly calculated.
+- Triggering multifactor authentication via principal attributes can now be configured to deny/block authentication attempts if no match is produced.
 - Cookie session pinning can now allow for a set of authorized and known IP addresses to bypass failures in case mismatches are found.
 
 ## Library Upgrades

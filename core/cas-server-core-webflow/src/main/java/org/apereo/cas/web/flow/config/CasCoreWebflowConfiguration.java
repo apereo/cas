@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderAbsentException;
+import org.apereo.cas.authentication.MultifactorAuthenticationRequiredException;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.adaptive.UnauthorizedAuthenticationException;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
@@ -307,6 +308,7 @@ public class CasCoreWebflowConfiguration {
         errors.add(UnsatisfiedAuthenticationPolicyException.class);
         errors.add(UnauthorizedAuthenticationException.class);
         errors.add(MultifactorAuthenticationProviderAbsentException.class);
+        errors.add(MultifactorAuthenticationRequiredException.class);
 
         errors.addAll(casProperties.getAuthn().getErrors().getExceptions());
         return errors;
