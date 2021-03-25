@@ -6,12 +6,14 @@ import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryInitializer;
 import org.apereo.cas.services.ServicesManager;
 
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -49,12 +51,29 @@ public class CasServiceRegistryInitializationConfigurationTests {
     @Qualifier("webApplicationServiceFactory")
     private ServiceFactory webApplicationServiceFactory;
 
-    @Test
-    public void verifyOperation() {
-        assertNotNull(serviceRegistryInitializer);
-        assertNotNull(embeddedJsonServiceRegistry);
-        assertEquals(1, servicesManager.count());
-        assertNotNull(servicesManager.findServiceBy(12345));
-        assertNotNull(servicesManager.findServiceBy(webApplicationServiceFactory.createService("https://init.cas.org")));
+    @Nested
+    public class WithoutServiceRegistryLocation {
+        @Test
+        public void verifyOperation() {
+            assertNotNull(serviceRegistryInitializer);
+            assertNotNull(embeddedJsonServiceRegistry);
+            assertEquals(1, servicesManager.count());
+            assertNotNull(servicesManager.findServiceBy(12345));
+            assertNotNull(servicesManager.findServiceBy(webApplicationServiceFactory.createService("https://init.cas.org")));
+        }
     }
+
+    @Nested
+    @TestPropertySource(properties = "cas.service-registry.json.location=unknown-bad-location")
+    public class WithUnknownServiceRegistryLocation {
+        @Test
+        public void verifyOperation() {
+            assertNotNull(serviceRegistryInitializer);
+            assertNotNull(embeddedJsonServiceRegistry);
+            assertEquals(1, servicesManager.count());
+            assertNotNull(servicesManager.findServiceBy(12345));
+            assertNotNull(servicesManager.findServiceBy(webApplicationServiceFactory.createService("https://init.cas.org")));
+        }
+    }
+
 }
