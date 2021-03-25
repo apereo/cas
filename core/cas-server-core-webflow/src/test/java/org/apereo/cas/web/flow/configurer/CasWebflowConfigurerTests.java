@@ -14,12 +14,14 @@ import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.validation.MessageCodesResolver;
 import org.springframework.webflow.action.EvaluateAction;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.DecisionState;
 import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.SubflowState;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.TransitionCriteria;
+import org.springframework.webflow.engine.TransitionSet;
 import org.springframework.webflow.engine.TransitionableState;
 import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.builder.BinderConfiguration;
@@ -94,8 +96,16 @@ public class CasWebflowConfigurerTests {
         };
         val state = mock(TransitionableState.class);
         when(state.getId()).thenReturn("example");
+        when(state.getTransitionSet()).thenReturn(new TransitionSet());
         val transition = cfg.createTransition("destination", state);
         assertNotNull(transition);
+
+        val transition2 = cfg.createTransitionForState(state, "criteria");
+        assertNotNull(transition2);
+
+        val flow = mock(Flow.class);
+        assertNull(cfg.getTransitionableState(flow, state.getId(), ActionState.class));
+        assertNull(cfg.getTransitionableState(flow, state.getId()));
     }
 
     @Test

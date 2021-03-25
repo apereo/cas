@@ -26,6 +26,7 @@ import static org.mockito.Mockito.*;
 public class ResourceUtilsTests {
     @Test
     public void verifyResourceExists() {
+        assertThrows(IllegalArgumentException.class, () -> ResourceUtils.getRawResourceFrom(null));
         assertFalse(ResourceUtils.doesResourceExist(new FileSystemResource("invalid.json")));
         val resourceLoader = mock(ResourceLoader.class);
         when(resourceLoader.getResource(anyString())).thenThrow(new RuntimeException());

@@ -146,17 +146,13 @@ public class DateTimeUtils {
      * @return the date/time instance
      */
     public static ZonedDateTime zonedDateTimeOf(final String value) {
-        try {
-            val parsers = List.of(DateTimeFormatter.ISO_ZONED_DATE_TIME, DateTimeFormatter.RFC_1123_DATE_TIME);
-            return parsers
-                .stream()
-                .map(parser -> FunctionUtils.doAndHandle(() -> ZonedDateTime.parse(value, parser), throwable -> null).get())
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElse(null);
-        } catch (final Exception e) {
-            return null;
-        }
+        val parsers = List.of(DateTimeFormatter.ISO_ZONED_DATE_TIME, DateTimeFormatter.RFC_1123_DATE_TIME);
+        return parsers
+            .stream()
+            .map(parser -> FunctionUtils.doAndHandle(() -> ZonedDateTime.parse(value, parser), throwable -> null).get())
+            .filter(Objects::nonNull)
+            .findFirst()
+            .orElse(null);
     }
 
     /**
