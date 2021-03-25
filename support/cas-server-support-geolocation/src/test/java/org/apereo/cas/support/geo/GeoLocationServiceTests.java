@@ -30,7 +30,7 @@ public class GeoLocationServiceTests {
     public void verifyLocateByIpStack() {
         val svc = new DummyGeoLocationService();
         svc.setIpStackAccessKey("abcdefghijklmnop");
-        assertNotNull(svc.locate("0.0.0.0"));
+        assertNotNull(svc.locate("1.2.3.4"));
     }
 
     private static class DummyGeoLocationService extends AbstractGeoLocationService {
