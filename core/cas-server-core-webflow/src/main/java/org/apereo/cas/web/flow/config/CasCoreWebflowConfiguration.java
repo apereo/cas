@@ -80,7 +80,10 @@ import java.util.Set;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasCoreWebflowConfiguration {
-
+    @Autowired
+    @Qualifier("ticketGrantingTicketCookieGenerator")
+    private ObjectProvider<CasCookieBuilder> ticketGrantingTicketCookieGenerator;
+    
     @Autowired
     @Qualifier("centralAuthenticationService")
     private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
@@ -114,6 +117,10 @@ public class CasCoreWebflowConfiguration {
     private ObjectProvider<CasDelegatingWebflowEventResolver> initialAuthenticationAttemptWebflowEventResolver;
 
     @Autowired
+    @Qualifier("singleSignOnParticipationStrategy")
+    private ObjectProvider<SingleSignOnParticipationStrategy> webflowSingleSignOnParticipationStrategy;
+    
+    @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
@@ -139,7 +146,13 @@ public class CasCoreWebflowConfiguration {
     @Bean
     @RefreshScope
     public CasWebflowEventResolver serviceTicketRequestWebflowEventResolver() {
-        val context = CasWebflowEventResolutionConfigurationContext.builder()
+        return new ServiceTicketRequestWebflowEventResolver(casWebflowConfigurationContext());
+    }
+
+    @Bean
+    @RefreshScope
+    public CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext() {
+        return CasWebflowEventResolutionConfigurationContext.builder()
             .casDelegatingWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver.getObject())
             .authenticationContextValidator(authenticationContextValidator.getObject())
             .authenticationSystemSupport(authenticationSystemSupport.getObject())
@@ -150,14 +163,14 @@ public class CasCoreWebflowConfiguration {
             .authenticationRequestServiceSelectionStrategies(authenticationServiceSelectionPlan.getObject())
             .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getObject())
             .casProperties(casProperties)
-            .singleSignOnParticipationStrategy(singleSignOnParticipationStrategy())
             .ticketRegistry(ticketRegistry.getObject())
+            .singleSignOnParticipationStrategy(webflowSingleSignOnParticipationStrategy.getObject())
             .applicationContext(applicationContext)
+            .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator.getObject())
             .authenticationEventExecutionPlan(authenticationEventExecutionPlan.getObject())
             .build();
-        return new ServiceTicketRequestWebflowEventResolver(context);
     }
-
+    
     @Bean
     @RefreshScope
     public CipherExecutor webflowCipherExecutor() {

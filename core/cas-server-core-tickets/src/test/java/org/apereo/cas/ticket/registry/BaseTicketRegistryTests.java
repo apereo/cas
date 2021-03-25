@@ -103,6 +103,22 @@ public abstract class BaseTicketRegistryTests {
 
     private TicketRegistry ticketRegistry;
 
+    protected static ExpirationPolicyBuilder neverExpiresExpirationPolicyBuilder() {
+        return new ExpirationPolicyBuilder() {
+            private static final long serialVersionUID = -9043565995104313970L;
+
+            @Override
+            public ExpirationPolicy buildTicketExpirationPolicy() {
+                return NeverExpiresExpirationPolicy.INSTANCE;
+            }
+
+            @Override
+            public Class<Ticket> getTicketType() {
+                return null;
+            }
+        };
+    }
+
     @BeforeEach
     public void initialize(final TestInfo info, final RepetitionInfo repetitionInfo) {
         this.ticketGrantingTicketId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
@@ -141,7 +157,6 @@ public abstract class BaseTicketRegistryTests {
         assertNotNull(authentication.getWarnings());
         assertNotNull(authentication.getFailures());
     }
-
 
     @RepeatedTest(2)
     public void verifyTicketWithTimeoutPolicy() {
@@ -185,16 +200,18 @@ public abstract class BaseTicketRegistryTests {
         assertTrue(count > 0);
     }
 
-
     @RepeatedTest(2)
     public void verifyGetExistingTicketWithImproperClass() {
-        ticketRegistry.addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId,
-            CoreAuthenticationTestUtils.getAuthentication(),
-            NeverExpiresExpirationPolicy.INSTANCE));
+        FunctionUtils.doAndRetry(callback -> {
+            ticketRegistry.addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId,
+                CoreAuthenticationTestUtils.getAuthentication(),
+                NeverExpiresExpirationPolicy.INSTANCE));
 
-        assertThrows(ClassCastException.class,
-            () -> ticketRegistry.getTicket(ticketGrantingTicketId, ServiceTicket.class),
-            () -> "Should throw ClassCastException. useEncryption[" + useEncryption + ']');
+            assertThrows(ClassCastException.class,
+                () -> ticketRegistry.getTicket(ticketGrantingTicketId, ServiceTicket.class),
+                () -> "Should throw ClassCastException. useEncryption[" + useEncryption + ']');
+            return null;
+        });
     }
 
     @RepeatedTest(2)
@@ -484,15 +501,13 @@ public abstract class BaseTicketRegistryTests {
         assertEquals(6, c);
     }
 
-    private void setUpEncryption() {
-        var registry = (AbstractTicketRegistry) AopTestUtils.getTargetObject(ticketRegistry);
-        if (this.useEncryption) {
-            val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(
-                new EncryptionRandomizedSigningJwtCryptographyProperties(), "[tests]");
-            registry.setCipherExecutor(cipher);
-        } else {
-            registry.setCipherExecutor(CipherExecutor.noOp());
-        }
+    protected abstract TicketRegistry getNewTicketRegistry();
+
+    /**
+     * Determine whether the tested registry is able to iterate its tickets.
+     */
+    protected boolean isIterableRegistry() {
+        return true;
     }
 
     @ImportAutoConfiguration(RefreshAutoConfiguration.class)
@@ -523,28 +538,14 @@ public abstract class BaseTicketRegistryTests {
     static class SharedTestConfiguration {
     }
 
-    protected static ExpirationPolicyBuilder neverExpiresExpirationPolicyBuilder() {
-        return new ExpirationPolicyBuilder() {
-            private static final long serialVersionUID = -9043565995104313970L;
-
-            @Override
-            public ExpirationPolicy buildTicketExpirationPolicy() {
-                return NeverExpiresExpirationPolicy.INSTANCE;
-            }
-
-            @Override
-            public Class<Ticket> getTicketType() {
-                return null;
-            }
-        };
-    }
-
-    protected abstract TicketRegistry getNewTicketRegistry();
-
-    /**
-     * Determine whether the tested registry is able to iterate its tickets.
-     */
-    protected boolean isIterableRegistry() {
-        return true;
+    private void setUpEncryption() {
+        var registry = (AbstractTicketRegistry) AopTestUtils.getTargetObject(ticketRegistry);
+        if (this.useEncryption) {
+            val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(
+                new EncryptionRandomizedSigningJwtCryptographyProperties(), "[tests]");
+            registry.setCipherExecutor(cipher);
+        } else {
+            registry.setCipherExecutor(CipherExecutor.noOp());
+        }
     }
 }

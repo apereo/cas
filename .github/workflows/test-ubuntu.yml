@@ -122,6 +122,7 @@ jobs:
           file: ./build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml
           flags: ${{ matrix.category }}
           name: ${{ matrix.category }}
+          verbose: true
       - name: "Upload Coverage Report"
         uses: "actions/upload-artifact@v2"
         with:
