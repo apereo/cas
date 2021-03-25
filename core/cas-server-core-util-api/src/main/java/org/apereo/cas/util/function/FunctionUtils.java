@@ -77,6 +77,19 @@ public class FunctionUtils {
     }
 
     /**
+     * Do if condition holds.
+     *
+     * @param <T>          the type parameter
+     * @param condition    the condition
+     * @param trueFunction the true function
+     * @return the consumer
+     */
+    public static <T> Consumer<T> doIf(final boolean condition, final Consumer<T> trueFunction) {
+        return doIf(condition, trueFunction, t -> {
+        });
+    }
+
+    /**
      * Do if function.
      *
      * @param <R>           the type parameter
