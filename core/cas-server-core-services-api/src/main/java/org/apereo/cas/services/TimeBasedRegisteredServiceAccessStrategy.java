@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
@@ -36,10 +37,13 @@ public class TimeBasedRegisteredServiceAccessStrategy extends DefaultRegisteredS
 
     private static final long serialVersionUID = -6180748828025837047L;
 
+    @ExpressionLanguageCapable
     private String startingDateTime;
 
+    @ExpressionLanguageCapable
     private String endingDateTime;
 
+    @ExpressionLanguageCapable
     private String zoneId = ZoneOffset.UTC.getId();
 
     /**

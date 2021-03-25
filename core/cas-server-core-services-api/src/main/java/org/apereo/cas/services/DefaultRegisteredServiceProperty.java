@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -43,6 +44,7 @@ public class DefaultRegisteredServiceProperty implements RegisteredServiceProper
 
     @Lob
     @Column(name = "property_values")
+    @ExpressionLanguageCapable
     private HashSet<String> values = new HashSet<>(0);
 
     public DefaultRegisteredServiceProperty(final String... propertyValues) {

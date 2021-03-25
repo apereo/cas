@@ -9,6 +9,7 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.RetryingTest;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
@@ -37,6 +38,7 @@ public class OAuth20RefreshTokenAuthenticatorTests extends BaseOAuth20Authentica
     }
 
     @Test
+    @RetryingTest(3)
     public void verifyAuthentication() {
         val refreshToken = getRefreshToken(serviceWithoutSecret);
         ticketRegistry.addTicket(refreshToken);
@@ -73,10 +75,8 @@ public class OAuth20RefreshTokenAuthenticatorTests extends BaseOAuth20Authentica
         val badClientIdCtx = new JEEContext(badClientIdRequest, new MockHttpServletResponse());
         assertThrows(CredentialsException.class, () -> authenticator.validate(badClientIdCredentials, badClientIdCtx, JEESessionStore.INSTANCE));
 
-
         val unsupportedClientRefreshToken = getRefreshToken(service);
         ticketRegistry.addTicket(unsupportedClientRefreshToken);
-
 
         val unsupportedClientCredentials = new UsernamePasswordCredentials("client", refreshToken.getId());
         val unsupportedClientRequest = new MockHttpServletRequest();

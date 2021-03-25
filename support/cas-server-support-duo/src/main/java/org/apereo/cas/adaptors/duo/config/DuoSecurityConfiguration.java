@@ -115,7 +115,7 @@ public class DuoSecurityConfiguration {
     @ConditionalOnMissingBean(name = "duoNonWebAuthenticationAction")
     @Bean
     public Action duoNonWebAuthenticationAction() {
-        return new DuoSecurityDirectAuthenticationAction(applicationContext);
+        return new DuoSecurityDirectAuthenticationAction();
     }
 
     @ConditionalOnMissingBean(name = "duoAuthenticationWebflowAction")
@@ -129,7 +129,7 @@ public class DuoSecurityConfiguration {
     @Bean
     @RefreshScope
     public Action duoUniversalPromptPrepareLoginAction() {
-        return new DuoSecurityUniversalPromptPrepareLoginAction(applicationContext, ticketRegistry.getObject(),
+        return new DuoSecurityUniversalPromptPrepareLoginAction(ticketRegistry.getObject(),
             duoProviderBean.getObject(), ticketFactory.getObject());
     }
 

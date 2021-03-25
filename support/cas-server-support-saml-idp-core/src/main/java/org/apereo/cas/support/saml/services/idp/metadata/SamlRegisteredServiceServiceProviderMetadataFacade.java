@@ -13,13 +13,13 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.opensaml.saml.saml2.metadata.ContactPerson;
-import org.opensaml.saml.saml2.metadata.Endpoint;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.Extensions;
 import org.opensaml.saml.saml2.metadata.KeyDescriptor;
@@ -234,8 +234,23 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
         return getAssertionConsumerServices()
             .stream()
             .filter(acs -> acs.getBinding().equalsIgnoreCase(binding))
-            .map(Endpoint::getLocation)
+            .map(acs -> StringUtils.defaultIfBlank(acs.getResponseLocation(), acs.getLocation()))
             .collect(Collectors.toList());
+    }
+
+    /**
+     * Gets assertion consumer service for.
+     *
+     * @param binding the binding
+     * @param index   the index
+     * @return the assertion consumer service for
+     */
+    public Optional<String> getAssertionConsumerServiceFor(final String binding, final Integer index) {
+        return getAssertionConsumerServices()
+            .stream()
+            .filter(acs -> acs.getBinding().equalsIgnoreCase(binding) && index != null && index.equals(acs.getIndex()))
+            .map(acs -> StringUtils.defaultIfBlank(acs.getResponseLocation(), acs.getLocation()))
+            .findFirst();
     }
 
     /**

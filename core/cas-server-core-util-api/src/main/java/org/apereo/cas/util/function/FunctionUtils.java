@@ -5,10 +5,17 @@ import org.apereo.cas.util.LoggingUtils;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.jooq.lambda.fi.util.function.CheckedConsumer;
 import org.jooq.lambda.fi.util.function.CheckedFunction;
+import org.springframework.retry.RetryCallback;
+import org.springframework.retry.backoff.FixedBackOffPolicy;
+import org.springframework.retry.policy.SimpleRetryPolicy;
+import org.springframework.retry.support.RetryTemplate;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -270,5 +277,40 @@ public class FunctionUtils {
      */
     public static void doAndIgnore(final CheckedConsumer<Object> consumer, final Object... params) {
         Unchecked.consumer(s -> consumer.accept(params)).accept(null);
+    }
+
+    /**
+     * Do and retry.
+     *
+     * @param <T>      the type parameter
+     * @param callback the callback
+     * @return the t
+     */
+    @SneakyThrows
+    public static <T> T doAndRetry(final RetryCallback<T, Exception> callback) {
+        return doAndRetry(List.of(), callback);
+    }
+
+    /**
+     * Do and retry.
+     *
+     * @param <T>      the type parameter
+     * @param clazzes  the classified clazzes
+     * @param callback the callback
+     * @return the t
+     */
+    @SneakyThrows
+    public static <T> T doAndRetry(final List<Class<? extends Throwable>> clazzes, final RetryCallback<T, Exception> callback) {
+        val retryTemplate = new RetryTemplate();
+        retryTemplate.setBackOffPolicy(new FixedBackOffPolicy());
+
+        val classified = new HashMap<Class<? extends Throwable>, Boolean>();
+        classified.put(Error.class, Boolean.TRUE);
+        classified.put(Throwable.class, Boolean.TRUE);
+        clazzes.forEach(clz -> classified.put(clz, Boolean.TRUE));
+        
+        retryTemplate.setRetryPolicy(new SimpleRetryPolicy(SimpleRetryPolicy.DEFAULT_MAX_ATTEMPTS, classified, true));
+        retryTemplate.setThrowLastExceptionOnExhausted(true);
+        return retryTemplate.execute(callback);
     }
 }

@@ -54,6 +54,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Import;
+import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.test.annotation.DirtiesContext;
 
 import static org.mockito.Mockito.*;
@@ -67,6 +68,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = BaseOAuth20AuthenticatorTests.SharedTestConfiguration.class)
 @DirtiesContext
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@EnableRetry
 public abstract class BaseOAuth20AuthenticatorTests {
     @Autowired
     @Qualifier("servicesManager")

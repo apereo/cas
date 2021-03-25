@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junitpioneer.jupiter.RetryingTest;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.net.URI;
@@ -86,9 +87,10 @@ public abstract class AbstractServiceRegistryTests {
         tearDownServiceRegistry();
     }
 
-    @Test
+    @RetryingTest(3)
     @Order(1000)
     public void verifyEmptyRegistry() {
+        serviceRegistry.deleteAll();
         assertEquals(0, serviceRegistry.load().size(), "Loaded too many");
         assertEquals(0, serviceRegistry.size(), "Counted too many");
     }

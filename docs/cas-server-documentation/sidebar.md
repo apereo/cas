@@ -174,7 +174,7 @@ layout: null
         *   [Couchbase](/cas/{{ version }}/integration/Attribute-Resolution-Couchbase.html)
         *   [Python/Javascript/Groovy](/cas/{{ version }}/integration/Attribute-Resolution-Scripted.html)
         *   [Redis](/cas/{{ version }}/integration/Attribute-Resolution-Redis.html)
-        *   [OKTA](/cas/{{ version }}/integration/Attribute-Resolution-Okta.html)
+        *   [Okta](/cas/{{ version }}/integration/Attribute-Resolution-Okta.html)
         *   [Microsoft Azure AD](/cas/{{ version }}/integration/Attribute-Resolution-AzureAD.html)
     *   [Attribute Release](#attrrelease)
         *   [Overview](/cas/{{ version }}/integration/Attribute-Release.html)
