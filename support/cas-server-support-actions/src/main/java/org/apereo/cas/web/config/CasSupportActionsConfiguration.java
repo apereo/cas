@@ -1,11 +1,9 @@
 package org.apereo.cas.web.config;
 
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -13,7 +11,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.LogoutExecutionPlan;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.FlowExecutionExceptionResolver;
@@ -47,7 +44,6 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
-import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -106,16 +102,8 @@ public class CasSupportActionsConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("authenticationServiceSelectionPlan")
-    private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationServiceSelectionPlan;
-
-    @Autowired
     @Qualifier("webApplicationServiceFactory")
     private ObjectProvider<ServiceFactory> webApplicationServiceFactory;
-
-    @Autowired
-    @Qualifier("registeredServiceAccessStrategyEnforcer")
-    private ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
 
     @Autowired
     @Qualifier("adaptiveAuthenticationPolicy")
@@ -130,12 +118,8 @@ public class CasSupportActionsConfiguration {
     private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
 
     @Autowired
-    @Qualifier("authenticationContextValidator")
-    private ObjectProvider<MultifactorAuthenticationContextValidator> authenticationContextValidator;
-
-    @Autowired
-    @Qualifier("ticketRegistry")
-    private ObjectProvider<TicketRegistry> ticketRegistry;
+    @Qualifier("casWebflowConfigurationContext")
+    private ObjectProvider<CasWebflowEventResolutionConfigurationContext> casWebflowConfigurationContext;
 
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
@@ -194,24 +178,7 @@ public class CasSupportActionsConfiguration {
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_CREATE_TICKET_GRANTING_TICKET)
     @Bean
     public Action createTicketGrantingTicketAction() {
-        val context = CasWebflowEventResolutionConfigurationContext.builder()
-            .casDelegatingWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver.getObject())
-            .authenticationContextValidator(authenticationContextValidator.getObject())
-            .authenticationSystemSupport(authenticationSystemSupport.getObject())
-            .centralAuthenticationService(centralAuthenticationService.getObject())
-            .servicesManager(servicesManager.getObject())
-            .ticketRegistrySupport(ticketRegistrySupport.getObject())
-            .warnCookieGenerator(warnCookieGenerator.getObject())
-            .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator.getObject())
-            .authenticationRequestServiceSelectionStrategies(authenticationServiceSelectionPlan.getObject())
-            .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getObject())
-            .casProperties(casProperties)
-            .singleSignOnParticipationStrategy(webflowSingleSignOnParticipationStrategy.getObject())
-            .ticketRegistry(ticketRegistry.getObject())
-            .authenticationEventExecutionPlan(authenticationEventExecutionPlan.getObject())
-            .applicationContext(applicationContext)
-            .build();
-        return new CreateTicketGrantingTicketAction(context);
+        return new CreateTicketGrantingTicketAction(casWebflowConfigurationContext.getObject());
     }
 
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_FINISH_LOGOUT)

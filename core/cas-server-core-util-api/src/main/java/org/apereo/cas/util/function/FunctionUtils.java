@@ -300,7 +300,8 @@ public class FunctionUtils {
      * @return the t
      */
     @SneakyThrows
-    public static <T> T doAndRetry(final List<Class<? extends Throwable>> clazzes, final RetryCallback<T, Exception> callback) {
+    public static <T> T doAndRetry(final List<Class<? extends Throwable>> clazzes,
+                                   final RetryCallback<T, Exception> callback) {
         val retryTemplate = new RetryTemplate();
         retryTemplate.setBackOffPolicy(new FixedBackOffPolicy());
 

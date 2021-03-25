@@ -1,25 +1,13 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.radius.web.flow.RadiusAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.radius.web.flow.RadiusAuthenticationWebflowEventResolver;
 import org.apereo.cas.adaptors.radius.web.flow.RadiusMultifactorTrustedDeviceWebflowConfigurer;
 import org.apereo.cas.adaptors.radius.web.flow.RadiusMultifactorWebflowConfigurer;
-import org.apereo.cas.audit.AuditableExecution;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
-import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
-import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
-import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
-import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
@@ -57,14 +45,6 @@ public class RadiusMultifactorConfiguration {
     private static final int WEBFLOW_CONFIGURER_ORDER = 100;
 
     @Autowired
-    @Qualifier("authenticationEventExecutionPlan")
-    private ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
-
-    @Autowired
-    @Qualifier("registeredServiceAccessStrategyEnforcer")
-    private ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
-
-    @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
@@ -75,47 +55,11 @@ public class RadiusMultifactorConfiguration {
     private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
-    @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
-    private ObjectProvider<CasDelegatingWebflowEventResolver> initialAuthenticationAttemptWebflowEventResolver;
-
-    @Autowired
     private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
     @Autowired
-    @Qualifier("centralAuthenticationService")
-    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
-
-    @Autowired
-    @Qualifier("defaultAuthenticationSystemSupport")
-    private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
-
-    @Autowired
-    @Qualifier("authenticationContextValidator")
-    private ObjectProvider<MultifactorAuthenticationContextValidator> authenticationContextValidator;
-
-    @Autowired
-    @Qualifier("defaultTicketRegistrySupport")
-    private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    @Qualifier("authenticationServiceSelectionPlan")
-    private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies;
-
-    @Autowired
-    @Qualifier("warnCookieGenerator")
-    private ObjectProvider<CasCookieBuilder> warnCookieGenerator;
-
-    @Autowired
-    @Qualifier("ticketRegistry")
-    private ObjectProvider<TicketRegistry> ticketRegistry;
-
-    @Autowired
-    @Qualifier("singleSignOnParticipationStrategy")
-    private ObjectProvider<SingleSignOnParticipationStrategy> webflowSingleSignOnParticipationStrategy;
+    @Qualifier("casWebflowConfigurationContext")
+    private ObjectProvider<CasWebflowEventResolutionConfigurationContext> casWebflowConfigurationContext;
 
     @Autowired
     @Qualifier("flowBuilder")
@@ -140,24 +84,7 @@ public class RadiusMultifactorConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "radiusAuthenticationWebflowEventResolver")
     public CasWebflowEventResolver radiusAuthenticationWebflowEventResolver() {
-        val context = CasWebflowEventResolutionConfigurationContext.builder()
-            .casDelegatingWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver.getObject())
-            .authenticationContextValidator(authenticationContextValidator.getObject())
-            .authenticationSystemSupport(authenticationSystemSupport.getObject())
-            .centralAuthenticationService(centralAuthenticationService.getObject())
-            .servicesManager(servicesManager.getObject())
-            .singleSignOnParticipationStrategy(webflowSingleSignOnParticipationStrategy.getObject())
-            .ticketRegistrySupport(ticketRegistrySupport.getObject())
-            .warnCookieGenerator(warnCookieGenerator.getObject())
-            .authenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies.getObject())
-            .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getObject())
-            .casProperties(casProperties)
-            .ticketRegistry(ticketRegistry.getObject())
-            .applicationContext(applicationContext)
-            .authenticationEventExecutionPlan(authenticationEventExecutionPlan.getObject())
-            .build();
-
-        return new RadiusAuthenticationWebflowEventResolver(context,
+        return new RadiusAuthenticationWebflowEventResolver(casWebflowConfigurationContext.getObject(),
             casProperties.getAuthn().getMfa().getRadius().getAllowedAuthenticationAttempts());
     }
 

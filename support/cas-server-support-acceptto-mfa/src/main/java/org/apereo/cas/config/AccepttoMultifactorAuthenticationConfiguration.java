@@ -1,14 +1,10 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.audit.AuditableExecution;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
-import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
@@ -29,14 +25,9 @@ import org.apereo.cas.mfa.accepto.web.flow.qr.AccepttoQRCodeValidateWebSocketCha
 import org.apereo.cas.pac4j.DistributedJEESessionStore;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
-import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
-import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
-import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
-import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
@@ -80,14 +71,6 @@ import java.security.PublicKey;
 @Slf4j
 public class AccepttoMultifactorAuthenticationConfiguration {
     @Autowired
-    @Qualifier("singleSignOnParticipationStrategy")
-    private ObjectProvider<SingleSignOnParticipationStrategy> webflowSingleSignOnParticipationStrategy;
-
-    @Autowired
-    @Qualifier("authenticationEventExecutionPlan")
-    private ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
-
-    @Autowired
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
 
@@ -102,40 +85,12 @@ public class AccepttoMultifactorAuthenticationConfiguration {
     private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
 
     @Autowired
-    @Qualifier("authenticationContextValidator")
-    private ObjectProvider<MultifactorAuthenticationContextValidator> authenticationContextValidator;
-
-    @Autowired
-    @Qualifier("defaultTicketRegistrySupport")
-    private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
-
-    @Autowired
-    @Qualifier("warnCookieGenerator")
-    private ObjectProvider<CasCookieBuilder> warnCookieGenerator;
-
-    @Autowired
     @Qualifier("centralAuthenticationService")
     private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
 
     @Autowired
     @Qualifier("loginFlowRegistry")
     private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
-
-    @Autowired
-    @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
-    private ObjectProvider<CasDelegatingWebflowEventResolver> initialAuthenticationAttemptWebflowEventResolver;
-
-    @Autowired
-    @Qualifier("ticketRegistry")
-    private ObjectProvider<TicketRegistry> ticketRegistry;
-
-    @Autowired
-    @Qualifier("authenticationServiceSelectionPlan")
-    private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies;
-
-    @Autowired
-    @Qualifier("registeredServiceAccessStrategyEnforcer")
-    private ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
 
     @Autowired
     private ObjectProvider<FlowBuilderServices> flowBuilderServices;
@@ -155,6 +110,10 @@ public class AccepttoMultifactorAuthenticationConfiguration {
     @Autowired
     @Qualifier("flowBuilder")
     private ObjectProvider<FlowBuilder> flowBuilder;
+
+    @Autowired
+    @Qualifier("casWebflowConfigurationContext")
+    private ObjectProvider<CasWebflowEventResolutionConfigurationContext> casWebflowConfigurationContext;
 
     @Bean
     @ConditionalOnMissingBean(name = "mfaAccepttoAuthenticatorFlowRegistry")
@@ -241,24 +200,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
     @RefreshScope
     @Bean
     public CasWebflowEventResolver mfaAccepttoMultifactorAuthenticationWebflowEventResolver() {
-        val context = CasWebflowEventResolutionConfigurationContext.builder()
-            .casDelegatingWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver.getObject())
-            .authenticationContextValidator(authenticationContextValidator.getObject())
-            .authenticationSystemSupport(authenticationSystemSupport.getObject())
-            .centralAuthenticationService(centralAuthenticationService.getObject())
-            .servicesManager(servicesManager.getObject())
-            .ticketRegistrySupport(ticketRegistrySupport.getObject())
-            .warnCookieGenerator(warnCookieGenerator.getObject())
-            .authenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies.getObject())
-            .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getObject())
-            .casProperties(casProperties)
-            .singleSignOnParticipationStrategy(webflowSingleSignOnParticipationStrategy.getObject())
-            .ticketRegistry(ticketRegistry.getObject())
-            .applicationContext(applicationContext)
-            .authenticationEventExecutionPlan(authenticationEventExecutionPlan.getObject())
-            .build();
-
-        return new AccepttoMultifactorAuthenticationWebflowEventResolver(context);
+        return new AccepttoMultifactorAuthenticationWebflowEventResolver(casWebflowConfigurationContext.getObject());
     }
 
     @ConditionalOnMissingBean(name = "mfaAccepttoMultifactorFinalizeAuthenticationWebflowAction")

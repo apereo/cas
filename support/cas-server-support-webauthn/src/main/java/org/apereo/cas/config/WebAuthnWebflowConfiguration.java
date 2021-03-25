@@ -1,21 +1,10 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.audit.AuditableExecution;
-import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
-import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
-import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
-import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
@@ -87,48 +76,8 @@ public class WebAuthnWebflowConfiguration {
     private ConfigurableApplicationContext applicationContext;
 
     @Autowired
-    @Qualifier("authenticationServiceSelectionPlan")
-    private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies;
-
-    @Autowired
-    @Qualifier("singleSignOnParticipationStrategy")
-    private ObjectProvider<SingleSignOnParticipationStrategy> webflowSingleSignOnParticipationStrategy;
-
-    @Autowired
-    @Qualifier("centralAuthenticationService")
-    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
-
-    @Autowired
-    @Qualifier("defaultAuthenticationSystemSupport")
-    private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
-
-    @Autowired
-    @Qualifier("defaultTicketRegistrySupport")
-    private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    @Qualifier("registeredServiceAccessStrategyEnforcer")
-    private ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
-
-    @Autowired
-    @Qualifier("warnCookieGenerator")
-    private ObjectProvider<CasCookieBuilder> warnCookieGenerator;
-
-    @Autowired
-    @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
-    private ObjectProvider<CasDelegatingWebflowEventResolver> initialAuthenticationAttemptWebflowEventResolver;
-
-    @Autowired
-    @Qualifier("ticketRegistry")
-    private ObjectProvider<TicketRegistry> ticketRegistry;
-
-    @Autowired
-    @Qualifier("authenticationContextValidator")
-    private ObjectProvider<MultifactorAuthenticationContextValidator> authenticationContextValidator;
+    @Qualifier("casWebflowConfigurationContext")
+    private ObjectProvider<CasWebflowEventResolutionConfigurationContext> casWebflowConfigurationContext;
 
     @Autowired
     @Qualifier("flowBuilder")
@@ -204,22 +153,7 @@ public class WebAuthnWebflowConfiguration {
     @Bean
     @RefreshScope
     public CasWebflowEventResolver webAuthnAuthenticationWebflowEventResolver() {
-        val context = CasWebflowEventResolutionConfigurationContext.builder()
-            .casDelegatingWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver.getObject())
-            .authenticationContextValidator(authenticationContextValidator.getObject())
-            .authenticationSystemSupport(authenticationSystemSupport.getObject())
-            .centralAuthenticationService(centralAuthenticationService.getObject())
-            .servicesManager(servicesManager.getObject())
-            .singleSignOnParticipationStrategy(webflowSingleSignOnParticipationStrategy.getObject())
-            .ticketRegistrySupport(ticketRegistrySupport.getObject())
-            .warnCookieGenerator(warnCookieGenerator.getObject())
-            .authenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies.getObject())
-            .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getObject())
-            .casProperties(casProperties)
-            .ticketRegistry(ticketRegistry.getObject())
-            .applicationContext(applicationContext)
-            .build();
-        return new WebAuthnAuthenticationWebflowEventResolver(context);
+        return new WebAuthnAuthenticationWebflowEventResolver(casWebflowConfigurationContext.getObject());
     }
 
     @ConditionalOnMissingBean(name = "webAuthnCasWebflowExecutionPlanConfigurer")

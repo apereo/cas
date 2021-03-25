@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
 import org.apereo.cas.adaptors.u2f.web.U2FRegisteredDevicesEndpoint;
 import org.apereo.cas.adaptors.u2f.web.flow.U2FAccountCheckRegistrationAction;
@@ -11,21 +10,10 @@ import org.apereo.cas.adaptors.u2f.web.flow.U2FMultifactorTrustedDeviceWebflowCo
 import org.apereo.cas.adaptors.u2f.web.flow.U2FMultifactorWebflowConfigurer;
 import org.apereo.cas.adaptors.u2f.web.flow.U2FStartAuthenticationAction;
 import org.apereo.cas.adaptors.u2f.web.flow.U2FStartRegistrationAction;
-import org.apereo.cas.audit.AuditableExecution;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
-import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
-import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
-import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
-import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
@@ -80,54 +68,6 @@ public class U2FWebflowConfiguration {
     private ConfigurableApplicationContext applicationContext;
 
     @Autowired
-    @Qualifier("authenticationServiceSelectionPlan")
-    private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies;
-
-    @Autowired
-    @Qualifier("centralAuthenticationService")
-    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
-
-    @Autowired
-    @Qualifier("singleSignOnParticipationStrategy")
-    private ObjectProvider<SingleSignOnParticipationStrategy> webflowSingleSignOnParticipationStrategy;
-
-    @Autowired
-    @Qualifier("authenticationEventExecutionPlan")
-    private ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
-
-    @Autowired
-    @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
-    private ObjectProvider<CasDelegatingWebflowEventResolver> initialAuthenticationAttemptWebflowEventResolver;
-
-    @Autowired
-    @Qualifier("defaultAuthenticationSystemSupport")
-    private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
-
-    @Autowired
-    @Qualifier("authenticationContextValidator")
-    private ObjectProvider<MultifactorAuthenticationContextValidator> authenticationContextValidator;
-
-    @Autowired
-    @Qualifier("defaultTicketRegistrySupport")
-    private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    @Qualifier("registeredServiceAccessStrategyEnforcer")
-    private ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
-
-    @Autowired
-    @Qualifier("warnCookieGenerator")
-    private ObjectProvider<CasCookieBuilder> warnCookieGenerator;
-
-    @Autowired
-    @Qualifier("ticketRegistry")
-    private ObjectProvider<TicketRegistry> ticketRegistry;
-
-    @Autowired
     @Qualifier("u2fService")
     private ObjectProvider<U2F> u2fService;
 
@@ -135,6 +75,10 @@ public class U2FWebflowConfiguration {
     @Qualifier("flowBuilder")
     private ObjectProvider<FlowBuilder> flowBuilder;
 
+    @Autowired
+    @Qualifier("casWebflowConfigurationContext")
+    private ObjectProvider<CasWebflowEventResolutionConfigurationContext> casWebflowConfigurationContext;
+    
     @Bean
     @ConditionalOnMissingBean(name = "u2fFlowRegistry")
     public FlowDefinitionRegistry u2fFlowRegistry() {
@@ -197,24 +141,7 @@ public class U2FWebflowConfiguration {
     @Bean
     @RefreshScope
     public CasWebflowEventResolver u2fAuthenticationWebflowEventResolver() {
-        val context = CasWebflowEventResolutionConfigurationContext.builder()
-            .casDelegatingWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver.getObject())
-            .authenticationContextValidator(authenticationContextValidator.getObject())
-            .authenticationSystemSupport(authenticationSystemSupport.getObject())
-            .centralAuthenticationService(centralAuthenticationService.getObject())
-            .servicesManager(servicesManager.getObject())
-            .singleSignOnParticipationStrategy(webflowSingleSignOnParticipationStrategy.getObject())
-            .ticketRegistrySupport(ticketRegistrySupport.getObject())
-            .warnCookieGenerator(warnCookieGenerator.getObject())
-            .authenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies.getObject())
-            .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getObject())
-            .casProperties(casProperties)
-            .ticketRegistry(ticketRegistry.getObject())
-            .applicationContext(applicationContext)
-            .authenticationEventExecutionPlan(authenticationEventExecutionPlan.getObject())
-            .build();
-
-        return new U2FAuthenticationWebflowEventResolver(context);
+        return new U2FAuthenticationWebflowEventResolver(casWebflowConfigurationContext.getObject());
     }
 
     @Bean

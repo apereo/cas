@@ -329,6 +329,10 @@ public class OidcConfiguration implements WebMvcConfigurer {
     private ConfigurableApplicationContext applicationContext;
 
     @Autowired
+    @Qualifier("casWebflowConfigurationContext")
+    private ObjectProvider<CasWebflowEventResolutionConfigurationContext> casWebflowConfigurationContext;
+    
+    @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
     private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies;
 
@@ -604,24 +608,8 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @RefreshScope
     @Bean
     public CasWebflowEventResolver oidcAuthenticationContextWebflowEventResolver() {
-        val context = CasWebflowEventResolutionConfigurationContext.builder()
-            .casDelegatingWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver.getObject())
-            .authenticationContextValidator(authenticationContextValidator.getObject())
-            .authenticationSystemSupport(authenticationSystemSupport.getObject())
-            .centralAuthenticationService(centralAuthenticationService.getObject())
-            .servicesManager(servicesManager.getObject())
-            .singleSignOnParticipationStrategy(webflowSingleSignOnParticipationStrategy.getObject())
-            .ticketRegistrySupport(ticketRegistrySupport.getObject())
-            .warnCookieGenerator(warnCookieGenerator.getObject())
-            .authenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies.getObject())
-            .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getObject())
-            .casProperties(casProperties)
-            .ticketRegistry(ticketRegistry.getObject())
-            .applicationContext(applicationContext)
-            .authenticationEventExecutionPlan(authenticationEventExecutionPlan.getObject())
-            .build();
-
-        val r = new DefaultMultifactorAuthenticationProviderWebflowEventResolver(context, oidcMultifactorAuthenticationTrigger());
+        val r = new DefaultMultifactorAuthenticationProviderWebflowEventResolver(
+            casWebflowConfigurationContext.getObject(), oidcMultifactorAuthenticationTrigger());
         Objects.requireNonNull(this.initialAuthenticationAttemptWebflowEventResolver.getObject()).addDelegate(r);
         return r;
     }
