@@ -174,7 +174,7 @@ public class DynamoDbTicketRegistryFacilitator {
                 .attributeDefinitions(AttributeDefinition.builder().attributeName(ColumnNames.ID.getColumnName()).attributeType(ScalarAttributeType.S).build())
                 .keySchema(KeySchemaElement.builder().attributeName(ColumnNames.ID.getColumnName()).keyType(KeyType.HASH).build())
                 .provisionedThroughput(throughput)
-                .billingMode(BillingMode.fromValue(dynamoDbProperties.getBillingMode()))
+                .billingMode(BillingMode.fromValue(dynamoDbProperties.getBillingMode().name()))
                 .tableName(r.getProperties().getStorageName())
                 .build();
             if (deleteTables) {
