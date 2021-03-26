@@ -30,6 +30,7 @@ public class DynamoDbTicketRegistryFacilitatorTests {
 
     @Nested
     @EnabledIfPortOpen(port = 8000)
+    @SuppressWarnings("ClassCanBeStatic")
     public class OriginalDynamoDbTicketRegistryFacilitatorTests extends BaseDynamoDbTicketRegistryFacilitatorTests {
         @Test
         public void verifyBuildAttributeMap() {
@@ -62,6 +63,7 @@ public class DynamoDbTicketRegistryFacilitatorTests {
     @Nested
     @EnabledIfPortOpen(port = 8000)
     @TestPropertySource(properties = "cas.ticket.registry.dynamo-db.billing-mode=PAY_PER_REQUEST")
+    @SuppressWarnings("ClassCanBeStatic")
     public class DynamoDbTicketRegistryFacilitatorBillingModePayPerRequestTests
             extends BaseDynamoDbTicketRegistryFacilitatorTests {
         @Test
