@@ -28,6 +28,7 @@ public class CustomPasswordPolicyLdapAuthenticationHandlerTests {
     })
     @EnabledIfPortOpen(port = 10389)
     @Nested
+    @SuppressWarnings("ClassCanBeStatic")
     public class ValidPasswordPolicyClassTests extends DirectLdapAuthenticationHandlerTests {
         @Test
         public void verifyOperation() {
@@ -42,6 +43,7 @@ public class CustomPasswordPolicyLdapAuthenticationHandlerTests {
         "cas.authn.ldap[0].password-policy.enabled=true",
         "cas.authn.ldap[0].password-policy.custom-policy-class=org.apereo.cas.authentication.UnknownAuthenticationResponseHandler"
     })
+    @SuppressWarnings("ClassCanBeStatic")
     @EnabledIfPortOpen(port = 10389)
     @Nested
     public class UnknownPasswordPolicyClassTests extends DirectLdapAuthenticationHandlerTests {
