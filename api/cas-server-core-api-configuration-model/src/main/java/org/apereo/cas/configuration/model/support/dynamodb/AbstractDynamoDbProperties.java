@@ -48,15 +48,6 @@ public abstract class AbstractDynamoDbProperties extends BaseAmazonWebServicesPr
     /**
      * Billing mode specifies how you are charged for read and write throughput
      * and how you manage capacity.
-     *
-     * Accepted values are {@code PROVISIONED, PAY_PER_REQUEST}.
-     *
-     * Defaults to {@code PROVISIONED}
-     *
-     * @see <a href="https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/dynamodbv2/model/CreateTableRequest.html#setBillingMode-java.lang.String-">CreateTableRequest.setBillingMode</a>
-     * @see <a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.ReadWriteCapacityMode.html#HowItWorks.ProvisionedThroughput.Manual">Provisioned Mode</a>
-     * @see <a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.ReadWriteCapacityMode.html#HowItWorks.OnDemand">On-Demand Mode</a>
-     *
      */
     private BillingMode billingMode = BillingMode.PROVISIONED;
     
@@ -70,11 +61,35 @@ public abstract class AbstractDynamoDbProperties extends BaseAmazonWebServicesPr
     private boolean localInstance;
 
     /**
-     * Mirrors the <a href="https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/dynamodbv2/model/BillingMode.html">BillingMode</a> enum in the AWS client.
      *
      */
     public enum BillingMode {
+        /**
+         * Provisioned mode means that you specify the number of reads and writes per second that you expect your
+         * application to use.
+         * <br/><br/>
+         * Provisioned mode is a good option if any of the following are true:
+         *
+         *     <ul><li>You have predictable application traffic.</li>
+         *
+         *     <li>You run applications whose traffic is consistent or ramps gradually.</li>
+         *
+         *     <li>You can forecast capacity requirements to control costs.</li></ul>
+         */
         PROVISIONED,
+
+        /**
+         * Pay-per-request or on-demand billing means that you're charged for only the read/write
+         * requests that you use.
+         * <br/><br/>
+         * On-demand mode is a good option if any of the following are true:
+         *
+         *     <ul><li>You create new tables with unknown workloads.</li>
+         *
+         *     <li>You have unpredictable application traffic.</li>
+         *
+         *     <li>You prefer the ease of paying for only what you use.</li></ul>
+         */
         PAY_PER_REQUEST
     }
 }

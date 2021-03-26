@@ -30,38 +30,37 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import software.amazon.awssdk.core.SdkSystemSetting;
 
 @SpringBootTest(classes = {
-        DynamoDbTicketRegistryConfiguration.class,
-        DynamoDbTicketRegistryTicketCatalogConfiguration.class,
-        CasCoreTicketsConfiguration.class,
-        CasCoreTicketCatalogConfiguration.class,
-        CasCoreLogoutConfiguration.class,
-        CasCoreHttpConfiguration.class,
-        CasCoreServicesConfiguration.class,
-        CasCoreAuthenticationConfiguration.class,
-        CasCoreTicketIdGeneratorsConfiguration.class,
-        CasCoreServicesAuthenticationConfiguration.class,
-        CasCoreConfiguration.class,
-        CasCoreNotificationsConfiguration.class,
-        CasCoreWebConfiguration.class,
-        CasCoreUtilConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
-        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        CasCoreAuthenticationHandlersConfiguration.class,
-        CasCoreAuthenticationMetadataConfiguration.class,
-        CasCoreAuthenticationPolicyConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
-        CasCoreAuthenticationSupportConfiguration.class,
-        CasPersonDirectoryConfiguration.class,
-        RefreshAutoConfiguration.class
-},
-        properties = {
-                "cas.ticket.registry.dynamo-db.endpoint=http://localhost:8000",
-                "cas.ticket.registry.dynamo-db.drop-tables-on-startup=true",
-                "cas.ticket.registry.dynamo-db.local-instance=true",
-                "cas.ticket.registry.dynamo-db.region=us-east-1"
-        })
-@Tag("DynamoDb")
-public class BaseDynamoDbTicketRegistryFacilitatorTests {
+    DynamoDbTicketRegistryConfiguration.class,
+    DynamoDbTicketRegistryTicketCatalogConfiguration.class,
+    CasCoreTicketsConfiguration.class,
+    CasCoreTicketCatalogConfiguration.class,
+    CasCoreLogoutConfiguration.class,
+    CasCoreHttpConfiguration.class,
+    CasCoreServicesConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
+    CasCoreServicesAuthenticationConfiguration.class,
+    CasCoreConfiguration.class,
+    CasCoreNotificationsConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+    CasCoreAuthenticationHandlersConfiguration.class,
+    CasCoreAuthenticationMetadataConfiguration.class,
+    CasCoreAuthenticationPolicyConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class,
+    CasCoreAuthenticationSupportConfiguration.class,
+    CasPersonDirectoryConfiguration.class,
+    RefreshAutoConfiguration.class
+    },
+    properties = {
+        "cas.ticket.registry.dynamo-db.endpoint=http://localhost:8000",
+        "cas.ticket.registry.dynamo-db.drop-tables-on-startup=true",
+        "cas.ticket.registry.dynamo-db.local-instance=true",
+        "cas.ticket.registry.dynamo-db.region=us-east-1"
+    })
+public abstract class BaseDynamoDbTicketRegistryFacilitatorTests {
 
     static {
         System.setProperty(SdkSystemSetting.AWS_ACCESS_KEY_ID.property(), "AKIAIPPIGGUNIO74C63Z");
