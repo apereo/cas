@@ -60,9 +60,6 @@ public abstract class AbstractDynamoDbProperties extends BaseAmazonWebServicesPr
      */
     private boolean localInstance;
 
-    /**
-     *
-     */
     public enum BillingMode {
         /**
          * Provisioned mode means that you specify the number of reads and writes per second that you expect your
