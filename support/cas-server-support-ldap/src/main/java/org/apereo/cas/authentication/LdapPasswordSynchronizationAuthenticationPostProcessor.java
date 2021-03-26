@@ -27,6 +27,7 @@ import java.util.Collections;
 @Slf4j
 public class LdapPasswordSynchronizationAuthenticationPostProcessor implements AuthenticationPostProcessor, DisposableBean {
     private final ConnectionFactory searchFactory;
+
     private final AbstractLdapSearchProperties ldapProperties;
 
     public LdapPasswordSynchronizationAuthenticationPostProcessor(final AbstractLdapSearchProperties properties) {
