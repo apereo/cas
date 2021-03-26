@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Clock;
@@ -39,6 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("SAML")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@DirtiesContext
 public class SamlIdPSingleLogoutServiceMessageHandlerTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("samlSingleLogoutServiceMessageHandler")
@@ -124,6 +126,22 @@ public class SamlIdPSingleLogoutServiceMessageHandlerTests extends BaseSamlIdPCo
                 .httpServletRequest(Optional.of(request))
                 .httpServletResponse(Optional.of(response))
                 .build());
+        assertFalse(result.isEmpty());
+    }
+
+    @Test
+    @Order(6)
+    public void verifySoap() {
+        val service = RegisteredServiceTestUtils.getService("urn:soap:slo:example");
+        val registeredService = new SamlRegisteredService();
+        registeredService.setName("MockySoap");
+        registeredService.setServiceId(service.getId());
+        registeredService.setId(101);
+        registeredService.setMetadataLocation("classpath:metadata/testshib-providers.xml");
+        servicesManager.save(registeredService);
+
+        val result = samlSingleLogoutServiceMessageHandler.handle(service, "ST-1234567890",
+            SingleLogoutExecutionRequest.builder().ticketGrantingTicket(new MockTicketGrantingTicket("casuser")).build());
         assertFalse(result.isEmpty());
     }
 }

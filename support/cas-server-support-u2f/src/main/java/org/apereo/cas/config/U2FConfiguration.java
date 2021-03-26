@@ -13,7 +13,6 @@ import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.yubico.u2f.U2F;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -75,9 +74,9 @@ public class U2FConfiguration {
         @Qualifier("u2fRegistrationRecordCipherExecutor") final CipherExecutor u2fRegistrationRecordCipherExecutor) {
         val u2f = casProperties.getAuthn().getMfa().getU2f();
 
-        final LoadingCache<String, String> requestStorage = Caffeine.newBuilder()
+        val requestStorage = Caffeine.newBuilder()
             .expireAfterWrite(u2f.getExpireRegistrations(), u2f.getExpireRegistrationsTimeUnit())
-            .build(key -> StringUtils.EMPTY);
+            .<String, String>build(key -> StringUtils.EMPTY);
 
         if (u2f.getJson().getLocation() != null) {
             return new U2FJsonResourceDeviceRepository(requestStorage,
@@ -96,10 +95,9 @@ public class U2FConfiguration {
                 u2f.getExpireDevices(), u2f.getExpireDevicesTimeUnit(), u2f.getRest(), u2fRegistrationRecordCipherExecutor);
         }
 
-        final LoadingCache<String, List<U2FDeviceRegistration>> userStorage =
-            Caffeine.newBuilder()
+        val userStorage = Caffeine.newBuilder()
                 .expireAfterWrite(u2f.getExpireDevices(), u2f.getExpireDevicesTimeUnit())
-                .build(key -> new ArrayList<>(0));
+                .<String, List<U2FDeviceRegistration>>build(key -> new ArrayList<>(0));
         return new U2FInMemoryDeviceRepository(userStorage, requestStorage, u2fRegistrationRecordCipherExecutor);
     }
 

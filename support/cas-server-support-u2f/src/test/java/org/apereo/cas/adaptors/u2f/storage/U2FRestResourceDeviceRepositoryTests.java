@@ -93,9 +93,9 @@ public class U2FRestResourceDeviceRepositoryTests extends AbstractU2FDeviceRepos
 
         @Autowired
         public void configureJackson(final ObjectMapper objectMapper) {
-            objectMapper.findAndRegisterModules().
-                    activateDefaultTyping(BasicPolymorphicTypeValidator.builder().build(),
-                            ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
+            objectMapper.findAndRegisterModules()
+                .activateDefaultTyping(BasicPolymorphicTypeValidator.builder().build(),
+                    ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
         }
 
         @RestController("deviceRepositoryController")

@@ -36,7 +36,7 @@ public class U2FInMemoryDeviceRepository extends BaseU2FDeviceRepository {
 
     @Override
     @SneakyThrows
-    public Collection<? extends U2FDeviceRegistration> getRegisteredDevices(final String username) {
+    public List<U2FDeviceRegistration> getRegisteredDevices(final String username) {
         val values = userStorage.get(username);
         if (values == null) {
             return new ArrayList<>(0);
@@ -46,21 +46,9 @@ public class U2FInMemoryDeviceRepository extends BaseU2FDeviceRepository {
 
     @Override
     public U2FDeviceRegistration registerDevice(final U2FDeviceRegistration registration) {
-        val values = userStorage.get(registration.getUsername());
-        if (values != null) {
-            values.add(registration);
-            userStorage.put(registration.getUsername(), values);
-        }
-        return registration;
-    }
-
-    @Override
-    public U2FDeviceRegistration verifyRegisteredDevice(final U2FDeviceRegistration registration) {
-        val values = userStorage.get(registration.getUsername());
-        if (values != null && values.isEmpty()) {
-            values.add(registration);
-            userStorage.put(registration.getUsername(), values);
-        }
+        val values = getRegisteredDevices(registration.getUsername());
+        values.add(registration);
+        userStorage.put(registration.getUsername(), new ArrayList<>(values));
         return registration;
     }
 

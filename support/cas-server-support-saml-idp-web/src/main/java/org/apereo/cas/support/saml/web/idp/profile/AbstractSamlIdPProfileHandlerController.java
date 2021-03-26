@@ -235,7 +235,8 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * @param request      the request
      * @return the redirect url
      */
-    protected String buildRedirectUrlByRequestedAuthnContext(final String initialUrl, final AuthnRequest authnRequest, final HttpServletRequest request) {
+    protected String buildRedirectUrlByRequestedAuthnContext(final String initialUrl, final AuthnRequest authnRequest,
+                                                             final HttpServletRequest request) {
         val authenticationContextClassMappings = samlProfileHandlerConfigurationContext.getCasProperties()
             .getAuthn().getSamlIdp().getCore().getAuthenticationContextClassMappings();
         if (authnRequest.getRequestedAuthnContext() == null || authenticationContextClassMappings == null || authenticationContextClassMappings.isEmpty()) {
@@ -243,7 +244,6 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         }
 
         val mappings = getAuthenticationContextMappings();
-
         val p =
             authnRequest.getRequestedAuthnContext().getAuthnContextClassRefs()
                 .stream()
@@ -252,7 +252,6 @@ public abstract class AbstractSamlIdPProfileHandlerController {
                     return mappings.containsKey(clazz);
                 })
                 .findFirst();
-
         if (p.isPresent()) {
             val mappedClazz = mappings.get(p.get().getURI());
             return initialUrl + '&' + samlProfileHandlerConfigurationContext.getCasProperties()

@@ -74,10 +74,9 @@ public class SamlIdPInitiatedProfileHandlerController extends AbstractSamlIdPPro
             LOGGER.warn("Resolving service provider assertion consumer service URL for [{}] and binding [{}]",
                 providerId, SAMLConstants.SAML2_POST_BINDING_URI);
             val acs = facade.getAssertionConsumerService(SAMLConstants.SAML2_POST_BINDING_URI);
-            if (acs == null || StringUtils.isBlank(acs.getLocation())) {
-                throw new MessageDecodingException("Unable to resolve SP ACS URL location for binding " + SAMLConstants.SAML2_POST_BINDING_URI);
-            }
-            shire = acs.getLocation();
+            shire = acs != null
+                ? StringUtils.isBlank(acs.getResponseLocation()) ? acs.getLocation() : acs.getResponseLocation()
+                : null;
         }
         if (StringUtils.isBlank(shire)) {
             LOGGER.warn("Unable to resolve service provider assertion consumer service URL for AuthnRequest construction for entityID: [{}]", providerId);
@@ -85,7 +84,6 @@ public class SamlIdPInitiatedProfileHandlerController extends AbstractSamlIdPPro
         }
 
         val target = request.getParameter(SamlIdPConstants.TARGET);
-
         val time = request.getParameter(SamlIdPConstants.TIME);
 
         val builder = (SAMLObjectBuilder) getSamlProfileHandlerConfigurationContext()
