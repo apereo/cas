@@ -127,6 +127,20 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties impleme
     private boolean forceKeystoreGeneration;
 
     /**
+     * Define the validity period for the certificate
+     * in number of days. The end-date of the certificate
+     * is controlled by this setting, when defined as a value
+     * greater than zero.
+     */
+    private int certificateExpirationDays = 365 * 20;
+
+    /**
+     * Certificate signature algorithm to use
+     * when generating the certificate. 
+     */
+    private String certificateSignatureAlg = "SHA1WithRSA";
+
+    /**
      * The key alias used in the keystore.
      */
     private String keystoreAlias;

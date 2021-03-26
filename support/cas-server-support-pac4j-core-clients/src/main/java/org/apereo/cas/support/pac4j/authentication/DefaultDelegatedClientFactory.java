@@ -11,6 +11,7 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import com.github.scribejava.core.model.Verb;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -58,6 +59,7 @@ import org.pac4j.saml.metadata.SAML2ServiceProvicerRequestedAttribute;
 import org.pac4j.saml.store.SAMLMessageStoreFactory;
 
 import java.security.interfaces.ECPrivateKey;
+import java.time.Period;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -409,6 +411,10 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
                     saml.getPrivateKeyPassword(), saml.getIdentityProviderMetadataPath());
 
                 cfg.setForceKeystoreGeneration(saml.isForceKeystoreGeneration());
+                if (saml.getCertificateExpirationDays() > 0) {
+                    cfg.setCertificateExpirationPeriod(Period.ofDays(saml.getCertificateExpirationDays()));
+                }
+                FunctionUtils.doIfNotNull(saml.getCertificateSignatureAlg(), cfg::setCertificateSignatureAlg);
                 cfg.setCertificateNameToAppend(StringUtils.defaultIfBlank(saml.getCertificateNameToAppend(), saml.getClientName()));
                 cfg.setMaximumAuthenticationLifetime(saml.getMaximumAuthenticationLifetime());
                 cfg.setServiceProviderEntityId(saml.getServiceProviderEntityId());
