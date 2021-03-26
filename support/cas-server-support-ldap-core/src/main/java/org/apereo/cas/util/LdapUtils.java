@@ -749,29 +749,29 @@ public class LdapUtils {
     /**
      * New connection config connection config.
      *
-     * @param l the ldap properties
+     * @param properties the ldap properties
      * @return the connection config
      */
-    public static ConnectionConfig newLdaptiveConnectionConfig(final AbstractLdapProperties l) {
-        if (StringUtils.isBlank(l.getLdapUrl())) {
+    public static ConnectionConfig newLdaptiveConnectionConfig(final AbstractLdapProperties properties) {
+        if (StringUtils.isBlank(properties.getLdapUrl())) {
             throw new IllegalArgumentException("LDAP url cannot be empty/blank");
         }
 
-        LOGGER.debug("Creating LDAP connection configuration for [{}]", l.getLdapUrl());
+        LOGGER.debug("Creating LDAP connection configuration for [{}]", properties.getLdapUrl());
         val cc = new ConnectionConfig();
 
-        val urls = l.getLdapUrl().contains(" ")
-            ? l.getLdapUrl()
-            : String.join(" ", l.getLdapUrl().split(","));
-        LOGGER.debug("Transformed LDAP urls from [{}] to [{}]", l.getLdapUrl(), urls);
+        val urls = properties.getLdapUrl().contains(" ")
+            ? properties.getLdapUrl()
+            : String.join(" ", properties.getLdapUrl().split(","));
+        LOGGER.debug("Transformed LDAP urls from [{}] to [{}]", properties.getLdapUrl(), urls);
         cc.setLdapUrl(urls);
 
-        cc.setUseStartTLS(l.isUseStartTls());
-        cc.setConnectTimeout(Beans.newDuration(l.getConnectTimeout()));
-        cc.setResponseTimeout(Beans.newDuration(l.getResponseTimeout()));
+        cc.setUseStartTLS(properties.isUseStartTls());
+        cc.setConnectTimeout(Beans.newDuration(properties.getConnectTimeout()));
+        cc.setResponseTimeout(Beans.newDuration(properties.getResponseTimeout()));
 
-        if (StringUtils.isNotBlank(l.getConnectionStrategy())) {
-            val strategy = AbstractLdapProperties.LdapConnectionStrategy.valueOf(l.getConnectionStrategy());
+        if (StringUtils.isNotBlank(properties.getConnectionStrategy())) {
+            val strategy = AbstractLdapProperties.LdapConnectionStrategy.valueOf(properties.getConnectionStrategy());
             switch (strategy) {
                 case RANDOM:
                     cc.setConnectionStrategy(new RandomConnectionStrategy());
@@ -789,24 +789,24 @@ public class LdapUtils {
             }
         }
 
-        if (l.getTrustCertificates() != null) {
-            LOGGER.debug("Creating LDAP SSL configuration via trust certificates [{}]", l.getTrustCertificates());
+        if (properties.getTrustCertificates() != null) {
+            LOGGER.debug("Creating LDAP SSL configuration via trust certificates [{}]", properties.getTrustCertificates());
             val cfg = new X509CredentialConfig();
-            cfg.setTrustCertificates(l.getTrustCertificates());
+            cfg.setTrustCertificates(properties.getTrustCertificates());
             cc.setSslConfig(new SslConfig(cfg));
-        } else if (l.getTrustStore() != null || l.getKeystore() != null) {
+        } else if (properties.getTrustStore() != null || properties.getKeystore() != null) {
             val cfg = new KeyStoreCredentialConfig();
-            if (l.getTrustStore() != null) {
-                LOGGER.trace("Creating LDAP SSL configuration with truststore [{}]", l.getTrustStore());
-                cfg.setTrustStore(l.getTrustStore());
-                cfg.setTrustStoreType(l.getTrustStoreType());
-                cfg.setTrustStorePassword(l.getTrustStorePassword());
+            if (properties.getTrustStore() != null) {
+                LOGGER.trace("Creating LDAP SSL configuration with truststore [{}]", properties.getTrustStore());
+                cfg.setTrustStore(properties.getTrustStore());
+                cfg.setTrustStoreType(properties.getTrustStoreType());
+                cfg.setTrustStorePassword(properties.getTrustStorePassword());
             }
-            if (l.getKeystore() != null) {
-                LOGGER.trace("Creating LDAP SSL configuration via keystore [{}]", l.getKeystore());
-                cfg.setKeyStore(l.getKeystore());
-                cfg.setKeyStoreType(l.getKeystoreType());
-                cfg.setKeyStorePassword(l.getKeystorePassword());
+            if (properties.getKeystore() != null) {
+                LOGGER.trace("Creating LDAP SSL configuration via keystore [{}]", properties.getKeystore());
+                cfg.setKeyStore(properties.getKeystore());
+                cfg.setKeyStoreType(properties.getKeystoreType());
+                cfg.setKeyStorePassword(properties.getKeystorePassword());
             }
             cc.setSslConfig(new SslConfig(cfg));
         } else {
@@ -816,7 +816,7 @@ public class LdapUtils {
 
         val sslConfig = cc.getSslConfig();
         if (sslConfig != null) {
-            switch (l.getHostnameVerifier()) {
+            switch (properties.getHostnameVerifier()) {
                 case ANY:
                     sslConfig.setHostnameVerifier(new AllowAnyHostnameVerifier());
                     break;
@@ -825,8 +825,8 @@ public class LdapUtils {
                     sslConfig.setHostnameVerifier(new DefaultHostnameVerifier());
             }
 
-            if (StringUtils.isNotBlank(l.getTrustManager())) {
-                switch (AbstractLdapProperties.LdapTrustManagerOptions.valueOf(l.getTrustManager().trim().toUpperCase())) {
+            if (StringUtils.isNotBlank(properties.getTrustManager())) {
+                switch (AbstractLdapProperties.LdapTrustManagerOptions.valueOf(properties.getTrustManager().trim().toUpperCase())) {
                     case ANY:
                         sslConfig.setTrustManagers(new AllowAnyTrustManager());
                         break;
@@ -838,30 +838,30 @@ public class LdapUtils {
             }
         }
 
-        if (StringUtils.isNotBlank(l.getSaslMechanism())) {
-            LOGGER.debug("Creating LDAP SASL mechanism via [{}]", l.getSaslMechanism());
+        if (StringUtils.isNotBlank(properties.getSaslMechanism())) {
+            LOGGER.debug("Creating LDAP SASL mechanism via [{}]", properties.getSaslMechanism());
 
             val bc = new BindConnectionInitializer();
-            val sc = getSaslConfigFrom(l);
+            val sc = getSaslConfigFrom(properties);
 
-            if (StringUtils.isNotBlank(l.getSaslAuthorizationId())) {
-                sc.setAuthorizationId(l.getSaslAuthorizationId());
+            if (StringUtils.isNotBlank(properties.getSaslAuthorizationId())) {
+                sc.setAuthorizationId(properties.getSaslAuthorizationId());
             }
-            sc.setMutualAuthentication(l.getSaslMutualAuth());
-            if (StringUtils.isNotBlank(l.getSaslQualityOfProtection())) {
-                sc.setQualityOfProtection(QualityOfProtection.valueOf(l.getSaslQualityOfProtection()));
+            sc.setMutualAuthentication(properties.getSaslMutualAuth());
+            if (StringUtils.isNotBlank(properties.getSaslQualityOfProtection())) {
+                sc.setQualityOfProtection(QualityOfProtection.valueOf(properties.getSaslQualityOfProtection()));
             }
-            if (StringUtils.isNotBlank(l.getSaslSecurityStrength())) {
-                sc.setSecurityStrength(SecurityStrength.valueOf(l.getSaslSecurityStrength()));
+            if (StringUtils.isNotBlank(properties.getSaslSecurityStrength())) {
+                sc.setSecurityStrength(SecurityStrength.valueOf(properties.getSaslSecurityStrength()));
             }
             bc.setBindSaslConfig(sc);
             cc.setConnectionInitializers(bc);
-        } else if (StringUtils.equals(l.getBindCredential(), "*") && StringUtils.equals(l.getBindDn(), "*")) {
+        } else if (StringUtils.equals(properties.getBindCredential(), "*") && StringUtils.equals(properties.getBindDn(), "*")) {
             LOGGER.debug("Creating LDAP fast-bind connection initializer");
             cc.setConnectionInitializers(new FastBindConnectionInitializer());
-        } else if (StringUtils.isNotBlank(l.getBindDn()) && StringUtils.isNotBlank(l.getBindCredential())) {
-            LOGGER.debug("Creating LDAP bind connection initializer via [{}]", l.getBindDn());
-            cc.setConnectionInitializers(new BindConnectionInitializer(l.getBindDn(), new Credential(l.getBindCredential())));
+        } else if (StringUtils.isNotBlank(properties.getBindDn()) && StringUtils.isNotBlank(properties.getBindCredential())) {
+            LOGGER.debug("Creating LDAP bind connection initializer via [{}]", properties.getBindDn());
+            cc.setConnectionInitializers(new BindConnectionInitializer(properties.getBindDn(), new Credential(properties.getBindCredential())));
         }
         return cc;
     }

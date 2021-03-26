@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
+import org.ldaptive.auth.AccountState;
 import org.ldaptive.auth.AuthenticationResponse;
 
 import javax.security.auth.login.AccountLockedException;
@@ -46,6 +47,34 @@ public class DefaultLdapAccountStateHandlerTests {
         val entry = new LdapEntry();
         when(response.getLdapEntry()).thenReturn(entry);
         when(response.isSuccess()).thenReturn(Boolean.TRUE);
+        assertDoesNotThrow(new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                handler.handle(response, new PasswordPolicyContext());
+            }
+        });
+    }
+
+    @Test
+    public void verifyNoWarning() {
+        val handler = new DefaultLdapAccountStateHandler();
+        val response = mock(AuthenticationResponse.class);
+        handler.setAttributesToErrorMap(Map.of("attr1", AccountLockedException.class));
+        val entry = new LdapEntry();
+        val accountState = mock(AccountState.class);
+        when(response.getAccountState()).thenReturn(accountState);
+        when(response.getLdapEntry()).thenReturn(entry);
+        when(response.isSuccess()).thenReturn(Boolean.TRUE);
+        assertDoesNotThrow(new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                handler.handle(response, new PasswordPolicyContext());
+            }
+        });
+
+        val warning = mock(AccountState.Warning.class);
+        when(accountState.getWarning()).thenReturn(warning);
+        when(response.getAccountState()).thenReturn(accountState);
         assertDoesNotThrow(new Executable() {
             @Override
             public void execute() throws Throwable {
