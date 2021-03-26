@@ -46,6 +46,27 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilderTests extends BaseSamlIdP
     }
 
     @Test
+    public void verifySoapOperation() {
+        val builder = new SamlIdPSingleLogoutServiceLogoutUrlBuilder(servicesManager,
+            defaultSamlRegisteredServiceCachingMetadataResolver);
+        val samlRegisteredService = SamlIdPTestUtils.getSamlRegisteredService();
+        val service = RegisteredServiceTestUtils.getService("urn:soap:slo:example");
+        val results = builder.determineLogoutUrl(samlRegisteredService, service);
+        assertFalse(results.isEmpty());
+        assertEquals("https://mocky.io/Shibboleth.sso/SAML2/SOAP", results.iterator().next().getUrl());
+    }
+
+    @Test
+    public void verifyNoOperation() {
+        val builder = new SamlIdPSingleLogoutServiceLogoutUrlBuilder(servicesManager,
+            defaultSamlRegisteredServiceCachingMetadataResolver);
+        val samlRegisteredService = SamlIdPTestUtils.getSamlRegisteredService();
+        val service = RegisteredServiceTestUtils.getService("no:slo:service");
+        val results = builder.determineLogoutUrl(samlRegisteredService, service);
+        assertTrue(results.isEmpty());
+    }
+
+    @Test
     public void verifyFailsLogoutUrl() {
         val builder = new SamlIdPSingleLogoutServiceLogoutUrlBuilder(servicesManager,
             defaultSamlRegisteredServiceCachingMetadataResolver);

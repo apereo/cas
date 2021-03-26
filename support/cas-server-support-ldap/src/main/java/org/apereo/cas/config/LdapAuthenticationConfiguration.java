@@ -185,12 +185,8 @@ public class LdapAuthenticationConfiguration {
         casProperties.getAuthn().getLdap()
             .stream()
             .filter(l -> {
-                if (l.getType() == null) {
-                    LOGGER.warn("Skipping LDAP authentication entry since no type is defined");
-                    return false;
-                }
-                if (StringUtils.isBlank(l.getLdapUrl())) {
-                    LOGGER.warn("Skipping LDAP authentication entry since no LDAP url is defined");
+                if (l.getType() == null || StringUtils.isBlank(l.getLdapUrl())) {
+                    LOGGER.warn("Skipping LDAP authentication entry since no type or LDAP url is defined");
                     return false;
                 }
                 return true;
