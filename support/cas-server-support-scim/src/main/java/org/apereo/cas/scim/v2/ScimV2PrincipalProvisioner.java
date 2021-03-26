@@ -10,6 +10,7 @@ import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProper
 import org.apereo.cas.util.LoggingUtils;
 
 import com.unboundid.scim2.client.ScimService;
+import com.unboundid.scim2.common.filters.Filter;
 import com.unboundid.scim2.common.types.UserResource;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -41,10 +42,11 @@ public class ScimV2PrincipalProvisioner implements PrincipalProvisioner {
                           final RegisteredService registeredService) {
         try {
             val principal = auth.getPrincipal();
-            val currentUser = getScimService(registeredService)
-                .retrieve("Users", principal.getId(), UserResource.class);
-            if (currentUser != null) {
-                return updateUserResource(currentUser, principal, credential, registeredService);
+            val userList = getScimService(registeredService)
+                .search("Users", Filter.eq("userName", principal.getId()).toString(), UserResource.class);
+            if (userList.getTotalResults() > 0) {
+                val user = userList.getResources().iterator().next();
+                return updateUserResource(user, principal, credential, registeredService);
             }
             return createUserResource(principal, credential, registeredService);
         } catch (final Exception e) {
