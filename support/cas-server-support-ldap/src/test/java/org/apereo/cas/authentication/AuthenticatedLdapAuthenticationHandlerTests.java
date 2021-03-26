@@ -37,13 +37,13 @@ public class AuthenticatedLdapAuthenticationHandlerTests extends BaseLdapAuthent
     @Test
     public void verifyAuthenticateNotFound() {
         assertThrowsWithRootCause(UncheckedException.class, AccountNotFoundException.class,
-            () -> this.handler.forEach(Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential("notfound", "badpassword")))));
+            () -> this.ldapAuthenticationHandlers.forEach(Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential("notfound", "badpassword")))));
     }
 
     @Test
     public void verifyAuthenticateFailureNotFound() {
-        assertNotEquals(handler.size(), 0);
+        assertNotEquals(ldapAuthenticationHandlers.size(), 0);
         assertThrowsWithRootCause(UncheckedException.class, AccountNotFoundException.class,
-            () -> this.handler.forEach(Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential("bad", "bad")))));
+            () -> this.ldapAuthenticationHandlers.forEach(Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential("bad", "bad")))));
     }
 }
