@@ -2,10 +2,12 @@ package org.apereo.cas.adaptors.x509.authentication.principal;
 
 import org.apereo.cas.adaptors.x509.authentication.CasX509Certificate;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
+import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
@@ -38,6 +40,7 @@ public class X509SubjectDNPrincipalResolverTests {
     @BeforeEach
     public void setup() {
         val context = PrincipalResolutionContext.builder()
+            .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE))
             .attributeRepository(CoreAuthenticationTestUtils.getAttributeRepository())
             .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())
             .returnNullIfNoAttributes(false)
@@ -46,8 +49,11 @@ public class X509SubjectDNPrincipalResolverTests {
             .resolveAttributes(true)
             .activeAttributeRepositoryIdentifiers(CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD))
             .build();
-        resolver = new X509SubjectDNPrincipalResolver(context, null);
-        resolverRFC2253 = new X509SubjectDNPrincipalResolver(context, X500Principal.RFC2253);
+        resolver = new X509SubjectDNPrincipalResolver(context);
+        resolverRFC2253 = new X509SubjectDNPrincipalResolver(context);
+        resolverRFC2253.setSubjectDnFormat(X500Principal.RFC2253);
+        resolver.setX509AttributeExtractor(new DefaultX509AttributeExtractor());
+        resolverRFC2253.setX509AttributeExtractor(new DefaultX509AttributeExtractor());
     }
 
     @Test

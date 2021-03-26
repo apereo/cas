@@ -4,12 +4,14 @@ import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
 import org.apereo.cas.configuration.model.support.redis.RedisClusterNodeProperties;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
+import io.lettuce.core.ReadFrom;
 import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -61,5 +63,10 @@ public class RedisObjectFactoryTests {
         props.getCluster().setMaxRedirects(3);
         val connection = RedisObjectFactory.newRedisConnectionFactory(props, true);
         assertNotNull(connection);
+    }
+
+    @Test
+    public void validateRedisReadFromValues() {
+        Stream.of(BaseRedisProperties.RedisReadFromTypes.values()).map(e -> e.name()).forEach(ReadFrom::valueOf);
     }
 }

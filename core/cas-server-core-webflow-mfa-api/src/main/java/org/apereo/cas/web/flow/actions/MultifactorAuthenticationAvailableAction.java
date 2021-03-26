@@ -3,7 +3,6 @@ package org.apereo.cas.web.flow.actions;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
-import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -16,16 +15,9 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public class MultifactorAuthenticationAvailableAction extends AbstractMultifactorAuthenticationAction {
 
-    public MultifactorAuthenticationAvailableAction(final ApplicationContext applicationContext) {
-        super(applicationContext);
-    }
-
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         val service = WebUtils.getRegisteredService(requestContext);
-        if (provider.isAvailable(service)) {
-            return yes();
-        }
-        return no();
+        return provider.isAvailable(service) ? yes() : no();
     }
 }

@@ -6,13 +6,11 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
 
 import lombok.val;
 import org.apache.commons.io.IOUtils;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.RetryingTest;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,17 +22,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 @Tag("JDBC")
+@Transactional(transactionManager = "transactionManagerSamlMetadata")
 public class JpaSamlRegisteredServiceMetadataResolverTests extends BaseJpaSamlMetadataTests {
-
-    @PersistenceContext(unitName = "samlMetadataEntityManagerFactory")
-    private EntityManager entityManager;
-
-    @BeforeEach
-    public void setup() {
-        entityManager.createQuery("DELETE FROM SamlMetadataDocument");
-    }
-
-    @Test
+    
+    @RetryingTest(3)
     public void verifyResolver() throws Exception {
         val res = new ClassPathResource("samlsp-metadata.xml");
         val md = new SamlMetadataDocument();

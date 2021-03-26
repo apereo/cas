@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.support;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.SneakyThrows;
@@ -92,7 +93,8 @@ public class JpaBeans {
         if (StringUtils.isNotBlank(jpaProperties.getDriverClass())) {
             bean.setDriverClassName(jpaProperties.getDriverClass());
         }
-        bean.setJdbcUrl(jpaProperties.getUrl());
+        val url = SpringExpressionLanguageValueResolver.getInstance().resolve(jpaProperties.getUrl());
+        bean.setJdbcUrl(url);
         bean.setUsername(jpaProperties.getUser());
         bean.setPassword(jpaProperties.getPassword());
         bean.setLoginTimeout((int) Beans.newDuration(jpaProperties.getPool().getMaxWait()).getSeconds());

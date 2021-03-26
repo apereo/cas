@@ -30,8 +30,8 @@ import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfigu
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 
+import lombok.Getter;
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -39,6 +39,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -84,21 +85,27 @@ import java.util.Map;
 public abstract class BaseJdbcAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicyRepositoryTests {
     @Autowired
     @Qualifier("acceptableUsagePolicyDataSource")
-    protected ObjectProvider<DataSource> acceptableUsagePolicyDataSource;
+    protected DataSource acceptableUsagePolicyDataSource;
 
     @Autowired
     @Qualifier("acceptableUsagePolicyRepository")
-    protected ObjectProvider<AcceptableUsagePolicyRepository> acceptableUsagePolicyRepository;
+    @Getter
+    protected AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;
 
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
-    protected ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
+    protected TicketRegistrySupport ticketRegistrySupport;
 
+    @Autowired
+    @Qualifier("jdbcAcceptableUsagePolicyTransactionTemplate")
+    protected TransactionTemplate jdbcAcceptableUsagePolicyTransactionTemplate;
+    
     protected String determinePrincipalId(final String actualPrincipalId, final Map<String, List<Object>> profileAttributes) {
         val aupProperties = casProperties.getAcceptableUsagePolicy();
         val jdbcAupRepository = new JdbcAcceptableUsagePolicyRepository(
-            ticketRegistrySupport.getObject(),
-            aupProperties, acceptableUsagePolicyDataSource.getObject());
+            ticketRegistrySupport,
+            aupProperties, acceptableUsagePolicyDataSource,
+            jdbcAcceptableUsagePolicyTransactionTemplate);
 
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
@@ -109,12 +116,7 @@ public abstract class BaseJdbcAcceptableUsagePolicyRepositoryTests extends BaseA
         WebUtils.putAuthentication(auth, context);
         return jdbcAupRepository.determinePrincipalId(principal);
     }
-
-    @Override
-    public AcceptableUsagePolicyRepository getAcceptableUsagePolicyRepository() {
-        return acceptableUsagePolicyRepository.getObject();
-    }
-
+    
     @Override
     public boolean hasLiveUpdates() {
         return false;

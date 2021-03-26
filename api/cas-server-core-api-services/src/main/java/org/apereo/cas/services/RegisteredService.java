@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -91,6 +92,7 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
      *
      * @return the theme name associated with this service.
      */
+    @ExpressionLanguageCapable
     String getTheme();
 
     /**

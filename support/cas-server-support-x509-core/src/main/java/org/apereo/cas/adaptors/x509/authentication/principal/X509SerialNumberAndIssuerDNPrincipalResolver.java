@@ -2,8 +2,8 @@ package org.apereo.cas.adaptors.x509.authentication.principal;
 
 import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
 
+import lombok.Setter;
 import lombok.ToString;
-import org.apache.commons.lang3.StringUtils;
 
 import java.security.cert.X509Certificate;
 
@@ -24,24 +24,21 @@ import java.security.cert.X509Certificate;
  * @since 3.1
  */
 @ToString(callSuper = true)
+@Setter
 public class X509SerialNumberAndIssuerDNPrincipalResolver extends AbstractX509PrincipalResolver {
 
     /**
      * Prefix for Certificate Serial Number.
      */
-    private final String serialNumberPrefix;
+    private String serialNumberPrefix = "SERIALNUMBER=";
 
     /**
      * Prefix for Value Delimiter.
      */
-    private final String valueDelimiter;
+    private String valueDelimiter = ", ";
 
-    public X509SerialNumberAndIssuerDNPrincipalResolver(final PrincipalResolutionContext context,
-                                                        final String serialNumberPrefix,
-                                                        final String valueDelimiter) {
+    public X509SerialNumberAndIssuerDNPrincipalResolver(final PrincipalResolutionContext context) {
         super(context);
-        this.serialNumberPrefix = StringUtils.defaultString(serialNumberPrefix, "SERIALNUMBER=");
-        this.valueDelimiter = StringUtils.defaultIfBlank(valueDelimiter, ", ");
     }
 
     @Override

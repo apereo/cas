@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.mfa.trigger;
 
 import org.apereo.cas.authentication.DefaultMultifactorAuthenticationProviderResolver;
+import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -34,7 +35,7 @@ public class AuthenticationAttributeMultifactorAuthenticationTriggerTests extend
         mfa.setGlobalAuthenticationAttributeNameTriggers("category");
         mfa.setGlobalAuthenticationAttributeValueRegex(".+object.*");
         val trigger = new AuthenticationAttributeMultifactorAuthenticationTrigger(props,
-            new DefaultMultifactorAuthenticationProviderResolver(),
+            new DefaultMultifactorAuthenticationProviderResolver(MultifactorAuthenticationPrincipalResolver.identical()),
             applicationContext);
         val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
         assertTrue(result.isPresent());
@@ -52,7 +53,7 @@ public class AuthenticationAttributeMultifactorAuthenticationTriggerTests extend
         mfa.setGlobalAuthenticationAttributeNameTriggers("mfa-mode");
         mfa.setGlobalAuthenticationAttributeValueRegex(otherProvider.getId());
         val trigger = new AuthenticationAttributeMultifactorAuthenticationTrigger(props,
-            new DefaultMultifactorAuthenticationProviderResolver(),
+            new DefaultMultifactorAuthenticationProviderResolver(MultifactorAuthenticationPrincipalResolver.identical()),
             applicationContext);
         val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
         assertTrue(result.isPresent());

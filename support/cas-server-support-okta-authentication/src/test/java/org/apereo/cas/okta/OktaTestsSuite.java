@@ -11,6 +11,8 @@ import org.junit.runner.RunWith;
  * @since 6.2.0
  */
 @SelectClasses({
+    OktaPersonAttributeDaoTests.class,
+    OktaConfigurationFactoryTests.class,
     OktaAuthenticationStateHandlerTests.class,
     OktaAuthenticationStateHandlerAdapterTests.class
 })

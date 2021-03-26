@@ -1,3 +1,6 @@
+ext {
+    maxParallelForksForTests = 1
+}
 description = "Apereo CAS SAML Identity Provider Metadata Resolution Via Git Repositories"
 dependencies {
     implementation project(":core:cas-server-core-services")

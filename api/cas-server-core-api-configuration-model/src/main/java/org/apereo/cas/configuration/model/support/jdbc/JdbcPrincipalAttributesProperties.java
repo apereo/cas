@@ -1,4 +1,4 @@
-package org.apereo.cas.configuration.model.core.authentication;
+package org.apereo.cas.configuration.model.support.jdbc;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.support.RequiresModule;

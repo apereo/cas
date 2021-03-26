@@ -1,12 +1,14 @@
-package org.apereo.cas.authentication.principal;
+package org.apereo.cas;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
+import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolver;
-import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
@@ -17,7 +19,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.Arrays;
@@ -33,10 +34,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@SpringBootTest(classes = {
-    CasPersonDirectoryConfiguration.class,
-    RefreshAutoConfiguration.class
-}, properties = {
+@SpringBootTest(classes = BasePrincipalAttributeRepositoryTests.SharedTestConfiguration.class,
+    properties = {
     "cas.authn.attribute-repository.ldap[0].base-dn=dc=example,dc=org",
     "cas.authn.attribute-repository.ldap[0].ldap-url=ldap://localhost:10389",
     "cas.authn.attribute-repository.ldap[0].search-filter=cn={user}",
@@ -61,7 +60,9 @@ public class PersonDirectoryPrincipalResolverLdapTests {
     @Test
     public void verifyResolver() {
         val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(PrincipalFactoryUtils.newPrincipalFactory(),
-            this.attributeRepository, casProperties.getPersonDirectory());
+            this.attributeRepository,
+            CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
+            casProperties.getPersonDirectory());
         val p = resolver.resolve(new UsernamePasswordCredential("admin", "password"),
             Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
             Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
@@ -73,7 +74,9 @@ public class PersonDirectoryPrincipalResolverLdapTests {
     @Test
     public void verifyChainedResolver() {
         val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(PrincipalFactoryUtils.newPrincipalFactory(),
-            this.attributeRepository, casProperties.getPersonDirectory());
+            this.attributeRepository,
+            CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
+            casProperties.getPersonDirectory());
         val chain = new ChainingPrincipalResolver(new DefaultPrincipalElectionStrategy(), casProperties);
         chain.setChain(Arrays.asList(new EchoingPrincipalResolver(), resolver));
         val attributes = new HashMap<String, List<Object>>(2);

@@ -27,6 +27,10 @@ const assert = require('assert');
     let uid = await page.$('#username');
     assert(await uid.boundingBox() != null);
 
+    assert("none" === await uid.evaluate(el => el.getAttribute("autocapitalize")))
+    assert("false" === await uid.evaluate(el => el.getAttribute("spellcheck")))
+    assert("username" === await uid.evaluate(el => el.getAttribute("autocomplete")))
+
     await page.type('#username', "casuser");
     await page.keyboard.press('Enter');
     await page.waitForNavigation();

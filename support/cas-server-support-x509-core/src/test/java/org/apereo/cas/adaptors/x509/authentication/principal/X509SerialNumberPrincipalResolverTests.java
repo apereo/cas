@@ -2,10 +2,12 @@ package org.apereo.cas.adaptors.x509.authentication.principal;
 
 import org.apereo.cas.adaptors.x509.authentication.CasX509Certificate;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
+import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
@@ -38,6 +40,7 @@ public class X509SerialNumberPrincipalResolverTests {
     @BeforeEach
     public void setup() {
         val context = PrincipalResolutionContext.builder()
+            .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE))
             .attributeRepository(CoreAuthenticationTestUtils.getAttributeRepository())
             .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())
             .returnNullIfNoAttributes(false)
@@ -47,13 +50,13 @@ public class X509SerialNumberPrincipalResolverTests {
             .activeAttributeRepositoryIdentifiers(CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD))
             .build();
         resolver = new X509SerialNumberPrincipalResolver(context);
+        resolver.setX509AttributeExtractor(new DefaultX509AttributeExtractor());
     }
 
     @Test
     public void verifyResolvePrincipalInternal() {
         val c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
         c.setCertificate(VALID_CERTIFICATE);
-
         assertEquals(VALID_CERTIFICATE.getSerialNumber().toString(),
             resolver.resolve(c, Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
                 Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler())).getId());
@@ -73,6 +76,7 @@ public class X509SerialNumberPrincipalResolverTests {
     @Test
     public void verifyHexPrincipalOdd() {
         val context = PrincipalResolutionContext.builder()
+            .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE))
             .attributeRepository(CoreAuthenticationTestUtils.getAttributeRepository())
             .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())
             .returnNullIfNoAttributes(false)
@@ -82,7 +86,9 @@ public class X509SerialNumberPrincipalResolverTests {
             .activeAttributeRepositoryIdentifiers(CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD))
             .build();
 
-        val r = new X509SerialNumberPrincipalResolver(context, 16, true);
+        val r = new X509SerialNumberPrincipalResolver(context);
+        r.setRadix(16);
+        r.setZeroPadding(true);
         val mockCert = mock(X509Certificate.class);
         when(mockCert.getSerialNumber()).thenReturn(BigInteger.valueOf(300L));
 
@@ -93,6 +99,7 @@ public class X509SerialNumberPrincipalResolverTests {
     @Test
     public void verifyHexPrincipalOddFalse() {
         val context = PrincipalResolutionContext.builder()
+            .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE))
             .attributeRepository(CoreAuthenticationTestUtils.getAttributeRepository())
             .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())
             .returnNullIfNoAttributes(false)
@@ -101,7 +108,8 @@ public class X509SerialNumberPrincipalResolverTests {
             .resolveAttributes(true)
             .activeAttributeRepositoryIdentifiers(CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD))
             .build();
-        val r = new X509SerialNumberPrincipalResolver(context, 16, false);
+        val r = new X509SerialNumberPrincipalResolver(context);
+        r.setRadix(16);
         val mockCert = mock(X509Certificate.class);
         when(mockCert.getSerialNumber()).thenReturn(BigInteger.valueOf(300L));
 
@@ -112,6 +120,7 @@ public class X509SerialNumberPrincipalResolverTests {
     @Test
     public void verifyHexPrincipalEven() {
         val context = PrincipalResolutionContext.builder()
+            .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE))
             .attributeRepository(CoreAuthenticationTestUtils.getAttributeRepository())
             .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())
             .returnNullIfNoAttributes(false)
@@ -120,7 +129,9 @@ public class X509SerialNumberPrincipalResolverTests {
             .resolveAttributes(true)
             .activeAttributeRepositoryIdentifiers(CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD))
             .build();
-        val r = new X509SerialNumberPrincipalResolver(context, 16, true);
+        val r = new X509SerialNumberPrincipalResolver(context);
+        r.setRadix(16);
+        r.setZeroPadding(true);
         val mockCert = mock(X509Certificate.class);
         when(mockCert.getSerialNumber()).thenReturn(BigInteger.valueOf(60300L));
 

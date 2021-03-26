@@ -75,47 +75,21 @@ sources [can be found here](https://github.com/apereo/person-directory).
 ### Overview
 
 {% include {{ version }}/attribute-resolution-configuration.md %}
+    
+### Sources
 
-### Stub
-     
-To learn more, please [see this guide](Attribute-Resolution-Stub.html).
+The following options may be used to fetch attributes in CAS.
 
-### LDAP
-
-To learn more, please [see this guide](Attribute-Resolution-LDAP.html).
-
-### Groovy
-
-To learn more, please [see this guide](Attribute-Resolution-Groovy.html).
-
-### JSON
-
-To learn more, please [see this guide](Attribute-Resolution-JSON.html).
-
-### REST
-
-To learn more, please [see this guide](Attribute-Resolution-REST.html).
-
-### Grouper
-
-To learn more, please [see this guide](Attribute-Resolution-Grouper.html).
-
-### Couchbase
-
-To learn more, please [see this guide](Attribute-Resolution-Couchbase.html).
-
-### Python/Javascript/Groovy
-
-To learn more, please [see this guide](Attribute-Resolution-Scripted.html).
-
-### Redis
-
-To learn more, please [see this guide](Attribute-Resolution-Redis.html).
-
-### Microsoft Azure Active Directory
-
-To learn more, please [see this guide](Attribute-Resolution-AzureAD.html).
-
-### JDBC
-
-To learn more, please [see this guide](Attribute-Resolution-JDBC.html).
+| Source         | Reference                                           
+|---------------------------------------------------------------------------------
+| Stub           | [See this guide](Attribute-Resolution-Stub.html).   
+| LDAP           | [See this guide](Attribute-Resolution-LDAP.html).   
+| Groovy         | [See this guide](Attribute-Resolution-Groovy.html).   
+| REST           | [See this guide](Attribute-Resolution-REST.html).   
+| Grouper        | [See this guide](Attribute-Resolution-Grouper.html).   
+| Couchbase      | [See this guide](Attribute-Resolution-Couchbase.html).   
+| Redis          | [See this guide](Attribute-Resolution-Redis.html).   
+| JDBC           | [See this guide](Attribute-Resolution-JDBC.html).
+| OKTA           | [See this guide](Attribute-Resolution-Okta.html).
+| Python/Javascript/Groovy          | [See this guide](Attribute-Resolution-Scripted.html).   
+| Microsoft Azure Active Directory  | [See this guide](Attribute-Resolution-AzureAD.html).   

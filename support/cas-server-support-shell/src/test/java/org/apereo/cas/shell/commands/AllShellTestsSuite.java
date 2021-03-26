@@ -33,6 +33,7 @@ import org.junit.runner.RunWith;
     GenerateCryptoKeysCommandTests.class,
     GenerateDdlCommandTests.class,
     GenerateJwtCommandTests.class,
+    ExitCommandTests.class,
     AnonymousUsernameAttributeProviderCommandTests.class,
     GenerateSamlIdPMetadataCommandTests.class,
     ValidateRegisteredServiceCommandTests.class,

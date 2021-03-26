@@ -20,6 +20,7 @@ import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilderConfigurer;
 import org.apereo.cas.logout.slo.SingleLogoutServiceMessageHandler;
+import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.authn.OidcAccessTokenAuthenticator;
 import org.apereo.cas.oidc.authn.OidcClientConfigurationAccessTokenAuthenticator;
@@ -90,7 +91,6 @@ import org.apereo.cas.support.oauth.profile.OAuth20UserProfileDataCreator;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator;
-import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20DefaultTokenGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
@@ -428,7 +428,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @ConditionalOnMissingBean(name = "oidcIdTokenGenerator")
     @Bean
     public IdTokenGeneratorService oidcIdTokenGenerator() {
-        val context = buildConfigurationContext();
+        val context = oidcConfigurationContext();
         context.setIdTokenSigningAndEncryptionService(oidcTokenSigningAndEncryptionService());
         return new OidcIdTokenGeneratorService(context);
     }
@@ -483,28 +483,28 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @RefreshScope
     @Bean
     public OidcIntrospectionEndpointController oidcIntrospectionEndpointController() {
-        val context = buildConfigurationContext();
+        val context = oidcConfigurationContext();
         return new OidcIntrospectionEndpointController(context);
     }
 
     @RefreshScope
     @Bean
     public OidcLogoutEndpointController oidcLogoutEndpointController() {
-        val context = buildConfigurationContext();
+        val context = oidcConfigurationContext();
         return new OidcLogoutEndpointController(context);
     }
 
     @RefreshScope
     @Bean
     public OidcRevocationEndpointController oidcRevocationEndpointController() {
-        val context = buildConfigurationContext();
+        val context = oidcConfigurationContext();
         return new OidcRevocationEndpointController(context);
     }
 
     @RefreshScope
     @Bean
     public OidcAccessTokenEndpointController oidcAccessTokenController() {
-        val context = buildConfigurationContext();
+        val context = oidcConfigurationContext();
         return new OidcAccessTokenEndpointController(context, accessTokenGrantAuditableRequestExtractor.getObject());
     }
 
@@ -518,21 +518,21 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @RefreshScope
     @Bean
     public OidcDynamicClientRegistrationEndpointController oidcDynamicClientRegistrationEndpointController() {
-        val context = buildConfigurationContext();
+        val context = oidcConfigurationContext();
         return new OidcDynamicClientRegistrationEndpointController(context);
     }
 
     @RefreshScope
     @Bean
     public OidcClientConfigurationEndpointController oidcClientConfigurationEndpointController() {
-        val context = buildConfigurationContext();
+        val context = oidcConfigurationContext();
         return new OidcClientConfigurationEndpointController(context);
     }
 
     @RefreshScope
     @Bean
     public OidcJwksEndpointController oidcJwksController() {
-        val context = buildConfigurationContext();
+        val context = oidcConfigurationContext();
         return new OidcJwksEndpointController(context, oidcJsonWebKeystoreGeneratorService());
     }
 
@@ -540,7 +540,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Bean
     @Autowired
     public OidcWellKnownEndpointController oidcWellKnownController(@Qualifier("oidcWebFingerDiscoveryService") final OidcWebFingerDiscoveryService oidcWebFingerDiscoveryService) {
-        val context = buildConfigurationContext();
+        val context = oidcConfigurationContext();
         return new OidcWellKnownEndpointController(context, oidcWebFingerDiscoveryService);
     }
 
@@ -576,7 +576,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @ConditionalOnMissingBean(name = "oidcProfileController")
     @Bean
     public OidcUserProfileEndpointController oidcProfileController() {
-        val context = buildConfigurationContext();
+        val context = oidcConfigurationContext();
         return new OidcUserProfileEndpointController(context);
     }
 
@@ -590,7 +590,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @RefreshScope
     @Bean
     public OidcAuthorizeEndpointController oidcAuthorizeController() {
-        val context = buildConfigurationContext();
+        val context = oidcConfigurationContext();
         return new OidcAuthorizeEndpointController(context);
     }
 
@@ -919,7 +919,7 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Bean
     @RefreshScope
     public SingleLogoutMessageCreator oidcSingleLogoutMessageCreator() {
-        return new OidcSingleLogoutMessageCreator(buildConfigurationContext());
+        return new OidcSingleLogoutMessageCreator(oidcConfigurationContext());
     }
 
     @ConditionalOnMissingBean(name = "oidcSingleLogoutServiceMessageHandler")
@@ -977,8 +977,10 @@ public class OidcConfiguration implements WebMvcConfigurer {
             casProperties);
     }
 
-    private OAuth20ConfigurationContext buildConfigurationContext() {
-        return OAuth20ConfigurationContext.builder()
+    @Bean
+    public OidcConfigurationContext oidcConfigurationContext() {
+        return (OidcConfigurationContext) OidcConfigurationContext.builder()
+            .attributeToScopeClaimMapper(oidcAttributeToScopeClaimMapper())
             .applicationContext(applicationContext)
             .registeredServiceCipherExecutor(oauthRegisteredServiceCipherExecutor.getObject())
             .sessionStore(oauthDistributedSessionStore.getObject())

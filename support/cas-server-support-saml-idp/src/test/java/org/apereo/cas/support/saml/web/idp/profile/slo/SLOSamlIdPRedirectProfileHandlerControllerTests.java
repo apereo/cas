@@ -9,6 +9,7 @@ import lombok.val;
 import net.shibboleth.utilities.java.support.net.URLBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
@@ -45,6 +46,11 @@ public class SLOSamlIdPRedirectProfileHandlerControllerTests extends BaseSamlIdP
     @Autowired
     @Qualifier("sloRedirectProfileHandlerController")
     private SLOSamlIdPRedirectProfileHandlerController controller;
+
+    @BeforeEach
+    public void initialize() {
+        servicesManager.deleteAll();
+    }
 
     @Test
     @Order(1)

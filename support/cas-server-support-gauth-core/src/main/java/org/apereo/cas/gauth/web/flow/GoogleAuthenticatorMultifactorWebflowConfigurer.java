@@ -64,7 +64,7 @@ public class GoogleAuthenticatorMultifactorWebflowConfigurer extends AbstractCas
             val acctRegSaveState = createActionState(flow, "saveRegistration",
                 createEvaluateAction("googleSaveAccountRegistrationAction"));
             createTransitionForState(acctRegSaveState, CasWebflowConstants.TRANSITION_ID_SUCCESS, "accountRegistrationCheck");
-            createTransitionForState(acctRegSaveState, CasWebflowConstants.TRANSITION_ID_ERROR);
+            createStateDefaultTransition(acctRegSaveState, "accountRegistrationCheck");
 
             val realSubmitState = createActionState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT,
                 createEvaluateAction("validateSelectedRegistrationAction"),

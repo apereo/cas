@@ -84,17 +84,66 @@ public class BaseRedisProperties implements Serializable {
 
     /**
      * Setting that describes how Lettuce routes read operations to replica nodes.
-     * Accepted mode are :
-     * <ul>
-     * <li>{@code MASTER}: Default mode. Read from the current master node.</li>
-     * <li>{@code MASTER_PREFERRED}: Read from the master, but if it is unavailable, read from replica nodes.</li>
-     * <li>{@code REPLICA/SLAVE}: Read from replica nodes. The value REPLICA should be used from lettuce-core version
-     * 5.2.</li>
-     * <li>{@code REPLICA_PREFERRED/SLAVE_PREFERRED}: Read from the replica nodes, but if none is unavailable, read
-     * from the master. The value REPLICA_PREFERRED should be used from lettuce-core version 5.2.</li>
-     * <li>{@code NEAREST}: Read from any node of the cluster with the lowest latency.</li>
-     * <li>{@code ANY}: Read from any node of the cluster.The value should be used from lettuce-core version 5.2.</li>
-     * </ul>
+     * Note that modes referencing MASTER/SLAVE are deprecated (but still supported) in the Lettuce redis client dependency
+     * so migrate config to UPSTREAM/REPLICA.
      */
-    private String readFrom;
+    private RedisReadFromTypes readFrom;
+
+    /**
+     * The Lettuce library {@code ReadFrom} types that determine how Lettuce routes read operations to replica nodes.
+     */
+    public enum RedisReadFromTypes {
+        /**
+         * Read from the current upstream node.
+         */
+        UPSTREAM,
+        /**
+         * Read from the upstream node, but if it is unavailable, read from replica nodes.
+         */
+        UPSTREAMPREFERRED,
+        /**
+         * Read from the current upstream node.
+         * @deprecated Use {@link org.apereo.cas.configuration.model.support.redis.BaseRedisProperties.RedisReadFromTypes#UPSTREAM} instead.
+         */
+        @Deprecated
+        MASTER,
+        /**
+         * Read from the upstream node, but if it is unavailable, read from replica nodes.
+         * @deprecated Use {@link org.apereo.cas.configuration.model.support.redis.BaseRedisProperties.RedisReadFromTypes#UPSTREAMPREFERRED} instead.
+         */
+        @Deprecated
+        MASTERPREFERRED,
+        /**
+         * Read from replica nodes.
+         * @deprecated Use {@link org.apereo.cas.configuration.model.support.redis.BaseRedisProperties.RedisReadFromTypes#REPLICA} instead.
+         */
+        @Deprecated
+        SLAVE,
+        /**
+         *  Read from the replica nodes, but if none is unavailable, read from the upstream node.
+         * @deprecated Use {@link org.apereo.cas.configuration.model.support.redis.BaseRedisProperties.RedisReadFromTypes#REPLICAPREFERRED} instead.
+         */
+        @Deprecated
+        SLAVEPREFERRED,
+        /**
+         * Read from replica nodes.
+         */
+        REPLICA,
+        /**
+         * Read from the replica nodes, but if none is unavailable, read from the upstream node.
+         */
+        REPLICAPREFERRED,
+        /**
+         * Read from any node of the cluster.
+         */
+        ANY,
+        /**
+         * Read from any replica node of the cluster.
+         */
+        ANYREPLICA,
+        /**
+         * Read from the nearest node.
+         */
+        NEAREST
+    }
 }

@@ -140,7 +140,7 @@ public class CasJdbcAuthenticationConfiguration {
 
     private AuthenticationHandler queryDatabaseAuthenticationHandler(final QueryJdbcAuthenticationProperties b) {
         val attributes = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(b.getPrincipalAttributeList());
-        LOGGER.trace("Created and mapped principal attributes [{}] for [{}]...", attributes, b.getUrl());
+        LOGGER.trace("Created and mapped principal attributes [{}] for [{}]...", attributes, b.getName());
 
         val h = new QueryDatabaseAuthenticationHandler(b.getName(), servicesManager.getObject(),
             jdbcPrincipalFactory(), b.getOrder(),
@@ -169,6 +169,6 @@ public class CasJdbcAuthenticationConfiguration {
         if (StringUtils.isNotBlank(properties.getCredentialCriteria())) {
             handler.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(properties.getCredentialCriteria()));
         }
-        LOGGER.trace("Configured authentication handler [{}] to handle database url at [{}]", handler.getName(), properties.getUrl());
+        LOGGER.trace("Configured authentication handler [{}] to handle database url at [{}]", handler.getName(), properties.getName());
     }
 }

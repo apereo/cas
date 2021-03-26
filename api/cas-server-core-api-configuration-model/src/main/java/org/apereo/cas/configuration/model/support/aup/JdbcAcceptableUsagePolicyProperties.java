@@ -52,4 +52,10 @@ public class JdbcAcceptableUsagePolicyProperties extends AbstractJpaProperties {
      * %s placeholders represent {@link #tableName}, {@link #aupColumn}, {@link #principalIdColumn} settings.
      */
     private String sqlUpdate = "UPDATE %s SET %s=true WHERE %s=?";
+
+    /**
+     * The query template to search for the AUP attribute.
+     * %s placeholders represent {@link #aupColumn}, {@link #tableName}, {@link #principalIdColumn} settings.
+     */
+    private String sqlSelect = "SELECT %s FROM %s WHERE %s=?";
 }

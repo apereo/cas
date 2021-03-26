@@ -1,1 +1,2 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.OktaAuthenticationConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.OktaAuthenticationConfiguration,\
+  org.apereo.cas.config.OktaPersonDirectoryConfiguration

@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.saml.idp.metadata;
 
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -30,6 +31,7 @@ public class FileSystemSamlMetadataProperties implements Serializable {
      * This directory will be used to hold the configuration files.
      */
     @RequiredProperty
+    @ExpressionLanguageCapable
     private String location = "file:/etc/cas/saml";
 
     /**

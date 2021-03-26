@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.web.controllers.dynareg;
 
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.dynareg.OidcClientRegistrationRequest;
 import org.apereo.cas.oidc.profile.OidcUserProfileSigningAndEncryptionService;
@@ -12,7 +13,6 @@ import org.apereo.cas.services.OidcSubjectTypes;
 import org.apereo.cas.services.PairwiseOidcRegisteredServiceUsernameAttributeProvider;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
-import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.HttpUtils;
@@ -57,7 +57,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
 
     private static final int GENERATED_CLIENT_NAME_LENGTH = 8;
 
-    public OidcDynamicClientRegistrationEndpointController(final OAuth20ConfigurationContext oAuthConfigurationContext) {
+    public OidcDynamicClientRegistrationEndpointController(final OidcConfigurationContext oAuthConfigurationContext) {
         super(oAuthConfigurationContext);
     }
 

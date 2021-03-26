@@ -4,7 +4,6 @@ env:
   JAVA_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server -XX:+UseG1GC"
   GRADLE_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server -XX:+UseG1GC"
   TERM: xterm-256color
-  RENOVATE_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
   GRADLE_BUILDCACHE_USER: ${{ secrets.GRADLE_BUILDCACHE_USER }}
   GRADLE_BUILDCACHE_PSW: ${{ secrets.GRADLE_BUILDCACHE_PSW }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -17,12 +16,14 @@ on:
   push:
     branches: [ master ]
   pull_request:
+    types: [ labeled ]
     branches: [ master ]
 
 ##########################################################################
 
 jobs:
   cancel-previous-runs:
+    if: ${{ (github.event_name == 'push' || contains(github.event.pull_request.labels.*.name, 'CI')) && !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
     runs-on: ubuntu-latest
     timeout-minutes: 1
     steps:
@@ -34,6 +35,7 @@ jobs:
 
   initialize:
     runs-on: ubuntu-latest
+    needs: [cancel-previous-runs]
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -48,7 +50,6 @@ jobs:
   cache:
     runs-on: ubuntu-latest
     needs: [initialize]
-    if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -72,7 +73,6 @@ jobs:
   build:
     needs: [cache]
     continue-on-error: false
-    if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
     strategy:
       fail-fast: false
       matrix:
@@ -96,7 +96,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Build with Gradle
-        run: ./gradlew --build-cache --configure-on-demand --no-daemon build -x test -x javadoc -x check --parallel
+        run: ./gradlew --build-cache --no-watch-fs --configure-on-demand --no-daemon build -x test -x javadoc -x check --parallel
       - uses: actions/upload-artifact@v2
         if: ${{ matrix.os == 'ubuntu-latest' }}
         with:
@@ -107,7 +107,6 @@ jobs:
 
   build-latest-jdk:
     runs-on: ubuntu-latest
-    if: ${{ !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
     needs: [cache]
     continue-on-error: false
     steps:
@@ -125,4 +124,4 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Build with Gradle
-        run: ./gradlew --build-cache --configure-on-demand --no-daemon build -x test -x javadoc -x check --parallel
+        run: ./gradlew --build-cache --no-watch-fs --configure-on-demand --no-daemon build -x test -x javadoc -x check --parallel

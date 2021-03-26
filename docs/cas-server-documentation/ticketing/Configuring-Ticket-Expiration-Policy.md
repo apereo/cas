@@ -67,6 +67,13 @@ whose ticket granting ticket expiration policy is to deviate from the default co
 }
 ```
 
+Remember that applications are responsible to manage their own session. CAS will not and cannot manage the application session
+and generally has no control over the application's timeout policies, logout practices, etc. The expiration policy
+of the ticket-granting ticket per application allows to CAS to use that policy as an override and separate from the global defaults,
+at the time the ticket is constructed and only if the incoming service request matches 
+that given registered service definition. Once created, the policy remains global and affects all other applications and 
+it has nothing to do with how the application manages its own sessions.
+
 ### Timeout
 
 The expiration policy applied to TGTs provides for most-recently-used expiration policy, similar to a Web server session timeout.
