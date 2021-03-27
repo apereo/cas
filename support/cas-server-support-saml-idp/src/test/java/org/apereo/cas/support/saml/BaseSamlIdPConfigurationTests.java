@@ -50,6 +50,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEnc
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlObjectSignatureValidator;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.UrlValidator;
@@ -93,6 +94,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Lazy;
 
+import java.time.Clock;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -208,7 +211,10 @@ public abstract class BaseSamlIdPConfigurationTests {
         permissions.add(new PermissionSamlAttributeValue("designer", "cas-designers", "cas-ux"));
         attributes.put("permissions", permissions);
         val casuser = new AttributePrincipalImpl("casuser", attributes);
-        return new AssertionImpl(casuser, attributes);
+        return new AssertionImpl(casuser, DateTimeUtils.dateOf(LocalDate.now(Clock.systemUTC())),
+            DateTimeUtils.dateOf(LocalDate.now(Clock.systemUTC()).plusDays(1)),
+            DateTimeUtils.dateOf(LocalDate.now(Clock.systemUTC())),
+            attributes);
     }
 
     protected static AuthnRequest getAuthnRequestFor(final SamlRegisteredService service) {

@@ -43,8 +43,8 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
     private final CasConfigurationProperties casProperties;
 
     public SamlProfileSamlAuthNStatementBuilder(final OpenSamlConfigBean configBean,
-        final AuthnContextClassRefBuilder authnContextClassRefBuilder,
-        final CasConfigurationProperties casProperties) {
+                                                final AuthnContextClassRefBuilder authnContextClassRefBuilder,
+                                                final CasConfigurationProperties casProperties) {
         super(configBean);
         this.authnContextClassRefBuilder = authnContextClassRefBuilder;
         this.casProperties = casProperties;
@@ -52,13 +52,13 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
 
     @Override
     public AuthnStatement build(final RequestAbstractType authnRequest,
-        final HttpServletRequest request,
-        final HttpServletResponse response,
-        final Object assertion,
-        final SamlRegisteredService service,
-        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-        final String binding,
-        final MessageContext messageContext) throws SamlException {
+                                final HttpServletRequest request,
+                                final HttpServletResponse response,
+                                final Object assertion,
+                                final SamlRegisteredService service,
+                                final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                final String binding,
+                                final MessageContext messageContext) throws SamlException {
         return buildAuthnStatement(assertion, authnRequest, adaptor, service, binding, request);
     }
 
@@ -72,9 +72,10 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
      * @return the subject locality
      * @throws SamlException the saml exception
      */
-    protected SubjectLocality buildSubjectLocality(final Assertion assertion, final RequestAbstractType authnRequest,
-        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-        final String binding) throws SamlException {
+    protected SubjectLocality buildSubjectLocality(final Assertion assertion,
+                                                   final RequestAbstractType authnRequest,
+                                                   final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                                   final String binding) throws SamlException {
         val subjectLocality = SamlUtils.newSamlObject(SubjectLocality.class);
         val hostAddress = InetAddressUtils.getCasServerHostAddress(casProperties.getServer().getName());
         val issuer = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
@@ -96,12 +97,12 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
      * @throws SamlException the saml exception
      */
     private AuthnStatement buildAuthnStatement(final Object casAssertion,
-        final RequestAbstractType authnRequest,
-        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-        final SamlRegisteredService service,
-        final String binding,
-        final HttpServletRequest request) throws SamlException {
-        
+                                               final RequestAbstractType authnRequest,
+                                               final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                               final SamlRegisteredService service,
+                                               final String binding,
+                                               final HttpServletRequest request) throws SamlException {
+
         val assertion = Assertion.class.cast(casAssertion);
         val authenticationMethod = this.authnContextClassRefBuilder.build(assertion, authnRequest, adaptor, service);
         var id = request != null ? CommonUtils.safeGetParameter(request, CasProtocolConstants.PARAMETER_TICKET) : StringUtils.EMPTY;

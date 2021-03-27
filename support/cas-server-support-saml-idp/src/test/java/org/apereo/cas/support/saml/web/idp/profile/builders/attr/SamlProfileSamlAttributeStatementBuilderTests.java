@@ -36,7 +36,8 @@ public class SamlProfileSamlAttributeStatementBuilderTests extends BaseSamlIdPCo
     public void verifyTestAttributeDefns() {
         val service = getSamlRegisteredServiceForTestShib();
 
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).get();
+        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade
+            .get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).get();
         val statement = samlProfileSamlAttributeStatementBuilder.build(getAuthnRequestFor(service), new MockHttpServletRequest(),
             new MockHttpServletResponse(), getAssertion(), service, adaptor, SAMLConstants.SAML2_POST_BINDING_URI,
             new MessageContext());
