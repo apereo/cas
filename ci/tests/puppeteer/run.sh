@@ -33,7 +33,7 @@ echo "Using scenario configuration file: ${config}"
 dependencies=$(cat "${config}" | jq -j '.dependencies')
 echo -e "\nBuilding CAS found in $PWD for dependencies [${dependencies}]"
 ./gradlew :webapp:cas-server-webapp-tomcat:build -DskipNestedConfigMetadataGen=true -x check -x javadoc \
-  --no-daemon --build-cache --configure-on-demand --parallel -PcasModules="${dependencies}"
+  --build-cache --configure-on-demand --parallel -PcasModules="${dependencies}"
 mv "$PWD"/webapp/cas-server-webapp-tomcat/build/libs/cas-server-webapp-tomcat-*.war "$PWD"/cas.war
 
 initScript=$(cat "${config}" | jq -j '.initScript // empty')
