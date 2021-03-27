@@ -5,6 +5,9 @@
 
 random=$(openssl rand -hex 8)
 
+# Note: The following lines can be commented out when we've got Puppeteer
+# already installed and we don't need a fresh version. Note that
+# Puppeteer downloads the Chromium browser everytime otherwise.
 echo "Installing Puppeteer"
 npm i --prefix "$PWD"/ci/tests/puppeteer puppeteer
 
