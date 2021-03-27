@@ -527,7 +527,7 @@ public class WebUtils {
      * @param context the context
      */
     public static void putPublicWorkstationToFlowIfRequestParameterPresent(final RequestContext context) {
-        if (StringUtils.isNotBlank(context.getExternalContext().getRequestParameterMap().get(PUBLIC_WORKSTATION_ATTRIBUTE))) {
+        if (context.getRequestParameters().contains(PUBLIC_WORKSTATION_ATTRIBUTE)) {
             context.getFlowScope().put(PUBLIC_WORKSTATION_ATTRIBUTE, Boolean.TRUE);
         }
     }
@@ -710,6 +710,16 @@ public class WebUtils {
      */
     public static void putGeoLocationTrackingIntoFlowScope(final RequestContext context, final Object value) {
         context.getFlowScope().put("trackGeoLocation", value);
+    }
+
+    /**
+     * Gets geo location tracking into flow scope.
+     *
+     * @param context the context
+     * @return the geo location tracking into flow scope
+     */
+    public static Boolean isGeoLocationTrackingIntoFlowScope(final RequestContext context) {
+        return context.getFlowScope().get("trackGeoLocation", Boolean.class);
     }
 
     /**
