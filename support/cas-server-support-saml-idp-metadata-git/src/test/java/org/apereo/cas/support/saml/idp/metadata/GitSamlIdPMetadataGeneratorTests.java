@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = {
     "cas.authn.saml-idp.metadata.git.sign-commits=false",
     "cas.authn.saml-idp.metadata.git.idp-metadata-enabled=true",
-    "cas.authn.saml-idp.metadata.git.repository-url=file://${java.io.tmpdir}/cas-saml-metadata.git"
+    "cas.authn.saml-idp.metadata.git.repository-url=file://${java.io.tmpdir}/cas-saml-metadata"
 })
 @Tag("FileSystem")
 @Slf4j

@@ -127,11 +127,11 @@ public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @AfterAll
     public static void cleanUp() throws Exception {
-        PathUtils.delete(new File(FileUtils.getTempDirectory() + "cas-sample-data").toPath(),
-                StandardDeleteOption.OVERRIDE_READ_ONLY);
+        val gitRepoDir = new File(FileUtils.getTempDirectory(), "cas-sample-data");
+        PathUtils.deleteDirectory(gitRepoDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
         val gitDir = new File(FileUtils.getTempDirectory(), GitServiceRegistryProperties.DEFAULT_CAS_SERVICE_REGISTRY_NAME);
         if (gitDir.exists()) {
-            PathUtils.delete(gitDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
+            PathUtils.deleteDirectory(gitDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
         }
     }
 }
