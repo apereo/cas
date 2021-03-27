@@ -15,6 +15,7 @@ import org.apereo.inspektr.audit.AuditActionContext;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.BillingMode;
 import software.amazon.awssdk.services.dynamodb.model.ComparisonOperator;
 import software.amazon.awssdk.services.dynamodb.model.Condition;
 import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
@@ -73,6 +74,7 @@ public class DynamoDbAuditTrailManagerFacilitator {
                 .build())
             .provisionedThroughput(throughput)
             .tableName(dynamoDbProperties.getTableName())
+            .billingMode(BillingMode.fromValue(dynamoDbProperties.getBillingMode().name()))
             .build();
 
         if (deleteTables) {
