@@ -13,10 +13,10 @@ import org.apereo.cas.web.flow.InitialFlowSetupActionTests;
 import org.apereo.cas.web.flow.InitialFlowSetupCookieActionTests;
 import org.apereo.cas.web.flow.InitializeLoginActionTests;
 import org.apereo.cas.web.flow.LogoutActionTests;
+import org.apereo.cas.web.flow.LogoutViewSetupActionTests;
 import org.apereo.cas.web.flow.RedirectUnauthorizedServiceUrlActionTests;
 import org.apereo.cas.web.flow.RenderLoginActionTests;
 import org.apereo.cas.web.flow.SendTicketGrantingTicketActionTests;
-import org.apereo.cas.web.flow.SendTicketGrantingTicketSsoActionTests;
 import org.apereo.cas.web.flow.ServiceAuthorizationCheckActionTests;
 import org.apereo.cas.web.flow.ServiceAuthorizationCheckMockitoActionTests;
 import org.apereo.cas.web.flow.ServiceWarningActionTests;
@@ -52,12 +52,12 @@ import org.junit.runner.RunWith;
     InitializeLoginActionTests.class,
     InitialFlowSetupCookieActionTests.class,
     SendTicketGrantingTicketActionTests.class,
-    SendTicketGrantingTicketSsoActionTests.class,
     ServiceAuthorizationCheckMockitoActionTests.class,
     CreateTicketGrantingTicketActionTests.class,
     TicketGrantingTicketCheckActionTests.class,
     ServiceWarningActionTests.class,
     ConfirmLogoutActionTests.class,
+    LogoutViewSetupActionTests.class,
     TerminateSessionActionTests.class,
     VerifyRequiredServiceActionTests.class,
     SetServiceUnauthorizedRedirectUrlActionTests.class,

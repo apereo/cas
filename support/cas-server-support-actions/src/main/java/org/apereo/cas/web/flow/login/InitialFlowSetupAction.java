@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.login;
 
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
@@ -24,6 +25,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -130,13 +132,9 @@ public class InitialFlowSetupAction extends AbstractAction {
         val ssoParticipation = this.renewalStrategy.supports(context) && this.renewalStrategy.isParticipating(context);
         if (!ssoParticipation && StringUtils.isNotBlank(ticketGrantingTicketId)) {
             val auth = this.ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicketId);
-            if (auth != null) {
-                WebUtils.putExistingSingleSignOnSessionAvailable(context, true);
-                WebUtils.putExistingSingleSignOnSessionPrincipal(context, auth.getPrincipal());
-            } else {
-                WebUtils.putExistingSingleSignOnSessionAvailable(context, false);
-                WebUtils.putExistingSingleSignOnSessionPrincipal(context, NullPrincipal.getInstance());
-            }
+            WebUtils.putExistingSingleSignOnSessionAvailable(context, auth != null);
+            WebUtils.putExistingSingleSignOnSessionPrincipal(context,
+                Optional.ofNullable(auth).map(Authentication::getPrincipal).orElse(NullPrincipal.getInstance()));
         }
     }
 

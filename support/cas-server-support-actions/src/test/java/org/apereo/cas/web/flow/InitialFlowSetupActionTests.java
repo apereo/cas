@@ -32,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("WebflowActions")
 @TestPropertySource(properties = {
+    "cas.authn.policy.source-selection-enabled=true",
     "cas.sso.sso-enabled=false",
     "cas.tgc.crypto.enabled=false"
 })
