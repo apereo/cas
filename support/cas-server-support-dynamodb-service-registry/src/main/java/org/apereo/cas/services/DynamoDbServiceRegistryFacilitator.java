@@ -16,6 +16,7 @@ import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.BillingMode;
 import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
@@ -157,6 +158,7 @@ public class DynamoDbServiceRegistryFacilitator {
                 .keyType(KeyType.HASH)
                 .build())
             .provisionedThroughput(throughput)
+            .billingMode(BillingMode.fromValue(dynamoDbProperties.getBillingMode().name()))
             .build();
         if (deleteTables) {
             val delete = DeleteTableRequest.builder().tableName(request.tableName()).build();

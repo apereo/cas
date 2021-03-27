@@ -20,6 +20,7 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeAction;
 import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValueUpdate;
+import software.amazon.awssdk.services.dynamodb.model.BillingMode;
 import software.amazon.awssdk.services.dynamodb.model.ComparisonOperator;
 import software.amazon.awssdk.services.dynamodb.model.Condition;
 import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
@@ -85,6 +86,7 @@ public class DynamoDbYubiKeyFacilitator {
                 .keyType(KeyType.HASH)
                 .build())
             .provisionedThroughput(throughput)
+            .billingMode(BillingMode.fromValue(dynamoDbProperties.getBillingMode().name()))
             .tableName(dynamoDbProperties.getTableName())
             .build();
 
