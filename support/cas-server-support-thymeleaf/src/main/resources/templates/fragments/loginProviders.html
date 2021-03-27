@@ -134,7 +134,7 @@
                         th:if="${delegatedAuthenticationProviderPrimary == null}">Login with:</h3>
                     <div class="card-title" th:if="${delegatedAuthenticationProviderPrimary != null}">
                         <div class="alert alert-info">
-                            <span th:utext="#{screen.welcome.label.navto}" />
+                            <span th:utext="#{screen.welcome.label.navto(${delegatedAuthenticationProviderPrimary.name})}" />
                         </div>
                     </div>
 
