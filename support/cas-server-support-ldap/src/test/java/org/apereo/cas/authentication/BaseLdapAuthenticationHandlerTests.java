@@ -86,7 +86,6 @@ public abstract class BaseLdapAuthenticationHandlerTests {
     @Test
     public void verifyAuthenticateSuccess() {
         assertNotEquals(ldapAuthenticationHandlers.size(), 0);
-
         this.ldapAuthenticationHandlers.forEach(Unchecked.consumer(h -> {
             val credential = new UsernamePasswordCredential(getUsername(), getSuccessPassword());
             val result = h.authenticate(credential);
