@@ -92,6 +92,7 @@ public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
             }
             val gitSampleRepo = Git.init().setDirectory(gitRepoSampleDir).setBare(false).call();
             FileUtils.write(new File(gitRepoSampleDir, "readme.txt"), "text", StandardCharsets.UTF_8);
+            gitSampleRepo.add().addFilepattern("*.txt").call();
             gitSampleRepo.commit().setSign(false).setMessage("Initial commit").call();
 
             val git = Git.init().setDirectory(gitDir).setBare(false).call();
