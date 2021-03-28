@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.radius;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import net.jradius.client.RadiusClient;
 
 import java.io.Serializable;
@@ -16,6 +17,7 @@ import java.net.InetAddress;
  */
 @ToString
 @AllArgsConstructor
+@Slf4j
 public class RadiusClientFactory implements Serializable {
 
     private static final int DEFAULT_SOCKET_TIMEOUT = 60;
@@ -49,7 +51,9 @@ public class RadiusClientFactory implements Serializable {
 
     /**
      * New instance radius client.
-     *
+     * Attempts to pre-load authenticators
+     * that are defined statically before
+     * returning the client.
      * @return the radius client
      */
     @SneakyThrows
