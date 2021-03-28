@@ -4,6 +4,7 @@ import org.apereo.cas.support.saml.idp.metadata.locator.AbstractSamlIdPMetadataL
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.SneakyThrows;
@@ -34,7 +35,7 @@ public class AmazonS3SamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocat
                                           final Cache<String, SamlIdPMetadataDocument> metadataCache,
                                           final String bucketName, final S3Client s3Client) {
         super(metadataCipherExecutor, metadataCache);
-        this.bucketName = bucketName;
+        this.bucketName = SpringExpressionLanguageValueResolver.getInstance().resolve(bucketName);
         this.s3Client = s3Client;
     }
 
