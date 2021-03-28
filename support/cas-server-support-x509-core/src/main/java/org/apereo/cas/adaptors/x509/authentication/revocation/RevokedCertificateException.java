@@ -46,21 +46,10 @@ public class RevokedCertificateException extends GeneralSecurityException {
      */
     private final Reason reason;
 
-    /**
-     * Instantiates a new revoked certificate exception.
-     *
-     * @param revoked the revoked
-     * @param serial  the serial
-     */
     public RevokedCertificateException(final ZonedDateTime revoked, final BigInteger serial) {
         this(revoked, serial, null);
     }
-
-    /**
-     * Instantiates a new revoked certificate exception.
-     *
-     * @param entry the entry
-     */
+    
     public RevokedCertificateException(final X509CRLEntry entry) {
         this(DateTimeUtils.zonedDateTimeOf(entry.getRevocationDate()), entry.getSerialNumber(), getReasonFromX509Entry(entry));
     }

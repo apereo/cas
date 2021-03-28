@@ -1,11 +1,11 @@
 package org.apereo.cas.adaptors.x509.authentication;
 
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CertUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jooq.lambda.Unchecked;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 
@@ -28,12 +28,17 @@ public class ResourceCRLFetcher implements CRLFetcher {
     @Override
     public Collection<X509CRL> fetch(final Collection<Resource> crls) {
         return crls.stream()
-            .map(Unchecked.function(crl -> {
-                LOGGER.debug("Fetching CRL data from [{}]", crl);
-                try (val ins = crl.getInputStream()) {
-                    return (X509CRL) CertUtils.getCertificateFactory().generateCRL(ins);
+            .map(crl -> {
+                try {
+                    LOGGER.debug("Fetching CRL data from [{}]", crl);
+                    try (val ins = crl.getInputStream()) {
+                        return (X509CRL) CertUtils.getCertificateFactory().generateCRL(ins);
+                    }
+                } catch (final Exception e) {
+                    LoggingUtils.warn(LOGGER, e);
                 }
-            }))
+                return null;
+            })
             .filter(Objects::nonNull)
             .collect(Collectors.toSet());
     }
