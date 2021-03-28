@@ -104,7 +104,7 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
             LOGGER.debug("Failed to execute the search [{}]", result);
             throw new CertificateException("Failed to establish a connection ldap and search.");
 
-        } catch (final LdapException e) {
+        } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
             throw new CertificateException(e.getMessage());
         }
