@@ -3,7 +3,6 @@ package org.apereo.cas.adaptors.radius.authentication;
 import org.apereo.cas.adaptors.radius.web.flow.BaseRadiusMultifactorAuthenticationTests;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -41,7 +40,6 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.radius.client.inet-address=localhost"
     })
 @Tag("Radius")
-@EnabledIfPortOpen(port = 1812)
 public class RadiusTokenAuthenticationHandlerTests {
 
     @Autowired

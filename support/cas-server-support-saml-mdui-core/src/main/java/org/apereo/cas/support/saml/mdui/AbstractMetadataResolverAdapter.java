@@ -153,26 +153,22 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
      * @param document            the xml document to parse
      * @return list of resolved metadata from resources.
      */
+    @SneakyThrows
     private List<MetadataResolver> buildSingleMetadataResolver(final MetadataFilter metadataFilterChain, final Resource resource,
                                                                final Document document) {
-        try {
-            val metadataRoot = document.getDocumentElement();
-            val metadataProvider = new DOMMetadataResolver(metadataRoot);
-            metadataProvider.setParserPool(this.configBean.getParserPool());
-            metadataProvider.setFailFastInitialization(true);
-            metadataProvider.setRequireValidMetadata(this.requireValidMetadata);
-            metadataProvider.setId(metadataProvider.getClass().getCanonicalName());
-            if (metadataFilterChain != null) {
-                metadataProvider.setMetadataFilter(metadataFilterChain);
-            }
-            LOGGER.debug("Initializing metadata resolver for [{}]", resource);
-            metadataProvider.initialize();
-            val resolvers = new ArrayList<MetadataResolver>(1);
-            resolvers.add(metadataProvider);
-            return resolvers;
-        } catch (final Exception ex) {
-            LoggingUtils.warn(LOGGER, ex);
+        val metadataRoot = document.getDocumentElement();
+        val metadataProvider = new DOMMetadataResolver(metadataRoot);
+        metadataProvider.setParserPool(this.configBean.getParserPool());
+        metadataProvider.setFailFastInitialization(true);
+        metadataProvider.setRequireValidMetadata(this.requireValidMetadata);
+        metadataProvider.setId(metadataProvider.getClass().getCanonicalName());
+        if (metadataFilterChain != null) {
+            metadataProvider.setMetadataFilter(metadataFilterChain);
         }
-        return new ArrayList<>(0);
+        LOGGER.debug("Initializing metadata resolver for [{}]", resource);
+        metadataProvider.initialize();
+        val resolvers = new ArrayList<MetadataResolver>(1);
+        resolvers.add(metadataProvider);
+        return resolvers;
     }
 }

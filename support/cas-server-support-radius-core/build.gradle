@@ -1,4 +1,25 @@
 description = "Apereo CAS RADIUS Support"
+
+/**
+ * The JRadius library requires a number
+ * of components that are now removed from bouncycastle.
+ * Need to force an older version of bouncyastle to restore
+ * functional behavior until jradius is
+ * updated or an alterantive is found.
+ */
+def bouncyCastleOverrideVersion="1.60"
+
+configurations.all {
+    resolutionStrategy {
+        eachDependency { DependencyResolveDetails details ->
+            def requested = details.requested
+            if (requested.group == "org.bouncycastle")  {
+                details.useVersion(bouncyCastleOverrideVersion)
+            }
+        }
+    }
+}
+
 dependencies {
     api libraries.jradius
     implementation libraries.bouncycastle
