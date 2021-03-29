@@ -100,6 +100,7 @@ The CAS codebase and the continuous integration workflows by extension have now 
 - Apache Velocity
 - Apache jClouds
 - Kryo
+- Pac4j
 - Okta
 - Gradle
 - OpenSAML  
