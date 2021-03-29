@@ -76,7 +76,6 @@ public class VerifyPasswordlessAccountAuthenticationActionTests extends BasePass
             new MockParameterMap().put("username", username));
         when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
         when(context.getFlowScope()).thenReturn(new LocalAttributeMap<>());
-        when(context.getRequestParameters()).thenReturn(new MockParameterMap());
         when(context.getConversationScope()).thenReturn(new LocalAttributeMap<>());
         when(context.getFlowExecutionContext()).thenReturn(exec);
         when(context.getExternalContext()).thenReturn(

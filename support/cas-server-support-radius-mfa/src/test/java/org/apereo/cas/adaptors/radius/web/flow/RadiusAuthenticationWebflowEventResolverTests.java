@@ -63,7 +63,6 @@ public class RadiusAuthenticationWebflowEventResolverTests extends BaseCasWebflo
         when(context.getRequestScope()).thenReturn(new LocalAttributeMap<>());
         when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
         when(context.getRequestParameters()).thenReturn(new MockParameterMap());
-        when(context.getRequestParameters()).thenReturn(new MockParameterMap());
         val request = new MockHttpServletRequest();
         when(context.getExternalContext())
             .thenReturn(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
