@@ -94,7 +94,7 @@ public class AmazonCognitoAuthenticationAuthenticationHandler extends AbstractUs
             val userAttributes = userResult.userAttributes();
             userAttributes.forEach(attr -> {
                 if (!properties.getMappedAttributes().isEmpty() && properties.getMappedAttributes().containsKey(attr.name())) {
-                    final val newName = properties.getMappedAttributes().get(attr.name());
+                    val newName = properties.getMappedAttributes().get(attr.name());
                     attributes.put(newName, CollectionUtils.wrap(attr.value()));
                 } else {
                     attributes.put(attr.name(), CollectionUtils.wrap(attr.value()));
