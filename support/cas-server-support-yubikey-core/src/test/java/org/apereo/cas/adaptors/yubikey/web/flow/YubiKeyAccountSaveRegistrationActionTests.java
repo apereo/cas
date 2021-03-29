@@ -68,6 +68,7 @@ public class YubiKeyAccountSaveRegistrationActionTests {
         val context = mock(RequestContext.class);
         when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
         when(context.getFlowScope()).thenReturn(new LocalAttributeMap<>());
+        when(context.getRequestParameters()).thenReturn(new MockParameterMap());
         when(context.getConversationScope()).thenReturn(new LocalAttributeMap<>());
         when(context.getRequestParameters()).thenReturn(new MockParameterMap());
         val request = new MockHttpServletRequest();

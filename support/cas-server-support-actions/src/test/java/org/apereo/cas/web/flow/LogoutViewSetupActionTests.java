@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class LogoutViewSetupActionTests extends AbstractWebflowActionsTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_LOGOUT_VIEW_SETUP)
-    public Action logoutViewSetupAction;
+    private Action logoutViewSetupAction;
 
     @Test
     public void verifyOperation() throws Exception {

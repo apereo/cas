@@ -22,28 +22,28 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Radius")
 public class BlockingRadiusServerTests extends AbstractRadiusServerTests {
 
-    public static final String XYZ = "xyz";
+    public static final String USERNAME = UUID.randomUUID().toString();
 
     @Test
     public void verifyBadSecret() {
         assertThrows(TimeoutException.class,
             () -> new BlockingRadiusServer(RadiusProtocol.MSCHAPv2,
-                new RadiusClientFactory(ACCOUNTING_PORT, AUTHENTICATION_PORT, 1, INET_ADDRESS, XYZ))
-                .authenticate(XYZ, XYZ));
+                new RadiusClientFactory(ACCOUNTING_PORT, AUTHENTICATION_PORT, 1, INET_ADDRESS, USERNAME))
+                .authenticate(USERNAME, USERNAME));
     }
 
     @Test
     public void verifyBadPorts() {
         assertThrows(TimeoutException.class,
-            () -> new BlockingRadiusServer(RadiusProtocol.MSCHAPv2, new RadiusClientFactory(1234, 4567, 1, INET_ADDRESS, XYZ))
-                .authenticate(XYZ, XYZ));
+            () -> new BlockingRadiusServer(RadiusProtocol.MSCHAPv2, new RadiusClientFactory(1234, 4567, 1, INET_ADDRESS, USERNAME))
+                .authenticate(USERNAME, USERNAME));
     }
 
     @Test
     public void verifyBadAddress() {
         assertThrows(TimeoutException.class,
             () -> new BlockingRadiusServer(RadiusProtocol.MSCHAPv2, new RadiusClientFactory(1234, 4567, 1, "131.211.138.166", "1234"))
-                .authenticate(XYZ, XYZ));
+                .authenticate(USERNAME, USERNAME));
     }
 
     @Test
@@ -59,7 +59,7 @@ public class BlockingRadiusServerTests extends AbstractRadiusServerTests {
             .nasRealPort(ACCOUNTING_PORT)
             .nasPortType(1)
             .build();
-        assertThrows(TimeoutException.class, () -> new BlockingRadiusServer(context).authenticate(XYZ, XYZ));
+        assertThrows(TimeoutException.class, () -> new BlockingRadiusServer(context).authenticate(USERNAME, USERNAME));
     }
 
     @Override

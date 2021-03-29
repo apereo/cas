@@ -20,6 +20,7 @@ import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockFlowExecutionContext;
 import org.springframework.webflow.test.MockFlowSession;
+import org.springframework.webflow.test.MockParameterMap;
 
 import java.util.List;
 import java.util.UUID;
@@ -43,6 +44,7 @@ public class GoogleAuthenticatorValidateSelectedRegistrationActionTests {
         when(context.getFlowScope()).thenReturn(new LocalAttributeMap<>());
         when(context.getRequestScope()).thenReturn(new LocalAttributeMap<>());
         when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
+        when(context.getRequestParameters()).thenReturn(new MockParameterMap());
         when(context.getFlowExecutionContext()).thenReturn(
             new MockFlowExecutionContext(new MockFlowSession(new Flow("mockFlow"))));
 

@@ -22,6 +22,7 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
+import org.springframework.webflow.test.MockParameterMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -46,6 +47,7 @@ public class WebAuthnAuthenticationWebflowEventResolverTests extends BaseCasWebf
         val context = mock(RequestContext.class);
         when(context.getRequestScope()).thenReturn(new LocalAttributeMap<>());
         when(context.getConversationScope()).thenReturn(new LocalAttributeMap<>());
+        when(context.getRequestParameters()).thenReturn(new MockParameterMap());
         when(context.getFlowScope()).thenReturn(new LocalAttributeMap<>());
         when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
         when(context.getExternalContext()).thenReturn(new ServletExternalContext(new MockServletContext(), request, response));

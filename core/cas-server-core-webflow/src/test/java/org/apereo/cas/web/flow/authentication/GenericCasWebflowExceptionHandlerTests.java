@@ -11,6 +11,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.test.MockParameterMap;
 
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
@@ -40,6 +41,7 @@ public class GenericCasWebflowExceptionHandlerTests {
         val response = new MockHttpServletResponse();
         val context = mock(RequestContext.class);
         when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
+        when(context.getRequestParameters()).thenReturn(new MockParameterMap());
         when(context.getExternalContext()).thenReturn(new ServletExternalContext(new MockServletContext(), request, response));
 
         val handler = new GenericCasWebflowExceptionHandler(errors, MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE);

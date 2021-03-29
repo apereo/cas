@@ -3,7 +3,6 @@ package org.apereo.cas.adaptors.radius;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import net.jradius.client.RadiusClient;
 
 import java.io.Serializable;
