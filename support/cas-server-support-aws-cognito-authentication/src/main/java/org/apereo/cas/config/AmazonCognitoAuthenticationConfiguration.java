@@ -1,3 +1,4 @@
+
 package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.AmazonCognitoAuthenticationAuthenticationHandler;
