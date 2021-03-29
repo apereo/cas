@@ -1330,7 +1330,6 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "commons-collections", module: "commons-collections")
                     exclude(group: "commons-beanutils", module: "commons-beanutils")
-                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15")
                     exclude(group: "org.slf4j", module: "slf4j-log4j12")
                     exclude(group: "org.springframework", module: "spring-beans")
                     exclude(group: "org.springframework", module: "spring-context")
@@ -1345,7 +1344,6 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "commons-collections", module: "commons-collections")
                     exclude(group: "commons-beanutils", module: "commons-beanutils")
-                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15")
                     exclude(group: "org.slf4j", module: "slf4j-log4j12")
                     exclude(group: "org.springframework", module: "spring-beans")
                     exclude(group: "org.springframework", module: "spring-context")
@@ -1360,7 +1358,6 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "commons-collections", module: "commons-collections")
                     exclude(group: "commons-beanutils", module: "commons-beanutils")
-                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15")
                     exclude(group: "org.slf4j", module: "slf4j-log4j12")
                     exclude(group: "org.springframework", module: "spring-beans")
                     exclude(group: "org.springframework", module: "spring-context")
@@ -1375,7 +1372,6 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "commons-collections", module: "commons-collections")
                     exclude(group: "commons-beanutils", module: "commons-beanutils")
-                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15")
                     exclude(group: "org.slf4j", module: "slf4j-log4j12")
                     exclude(group: "org.springframework", module: "spring-beans")
                     exclude(group: "org.springframework", module: "spring-context")
@@ -1390,7 +1386,6 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "commons-collections", module: "commons-collections")
                     exclude(group: "commons-beanutils", module: "commons-beanutils")
-                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15")
                     exclude(group: "org.slf4j", module: "slf4j-log4j12")
                     exclude(group: "org.springframework", module: "spring-beans")
                     exclude(group: "org.springframework", module: "spring-context")
@@ -1405,7 +1400,6 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "commons-collections", module: "commons-collections")
                     exclude(group: "commons-beanutils", module: "commons-beanutils")
-                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15")
                     exclude(group: "org.slf4j", module: "slf4j-log4j12")
                     exclude(group: "org.springframework", module: "spring-beans")
                     exclude(group: "org.springframework", module: "spring-context")
@@ -1420,7 +1414,6 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "commons-collections", module: "commons-collections")
                     exclude(group: "commons-beanutils", module: "commons-beanutils")
-                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15")
                     exclude(group: "org.slf4j", module: "slf4j-log4j12")
                     exclude(group: "org.springframework", module: "spring-beans")
                     exclude(group: "org.springframework", module: "spring-context")
@@ -1428,6 +1421,9 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "commons-lang", module: "commons-lang")
                     exclude(group: "net.sf.ehcache", module: "ehcache-core")
+                },
+                dependencies.create("org.bouncycastle:bcprov-jdk15on:1.60") {
+                    exclude(group: "commons-cli", module: "commons-cli")
                 }
         ],
         tests                   : [

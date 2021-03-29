@@ -70,6 +70,7 @@ public class LdaptiveResourceCRLFetcherTests {
     @Nested
     @Tag("Ldap")
     @TestPropertySource(properties = "cas.authn.x509.ldap.certificate-attribute=cn")
+    @SuppressWarnings("ClassCanBeStatic")
     public class InvalidNonBinaryAttributeFetchFromLdap extends BaseX509LdapTests {
         @Autowired
         @Qualifier("crlFetcher")
@@ -86,6 +87,7 @@ public class LdaptiveResourceCRLFetcherTests {
     @Nested
     @Tag("Ldap")
     @TestPropertySource(properties = "cas.authn.x509.ldap.certificate-attribute=unknown")
+    @SuppressWarnings("ClassCanBeStatic")
     public class UnknownAttributeFetchFromLdap extends BaseX509LdapTests {
         @Autowired
         @Qualifier("crlFetcher")
@@ -101,6 +103,7 @@ public class LdaptiveResourceCRLFetcherTests {
     
     @Nested
     @Tag("Ldap")
+    @SuppressWarnings("ClassCanBeStatic")
     public class DefaultFetchFromLdap extends BaseX509LdapTests {
         @Autowired
         @Qualifier("crlFetcher")
