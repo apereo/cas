@@ -1,20 +1,12 @@
 package org.apereo.cas.support.saml;
 
+import org.apereo.cas.couchdb.saml.CouchDbSamlMetadataDocument;
+
 import lombok.val;
 import org.junit.jupiter.api.Tag;
-
-import org.apereo.cas.couchdb.saml.CouchDbSamlMetadataDocument;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.TestPropertySource;
-
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link CouchDbSamlMetadataDocumentTests}.

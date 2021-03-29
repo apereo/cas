@@ -18,7 +18,6 @@ import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.logout.SingleLogoutExecutionRequest;
-import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
@@ -35,7 +34,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.util.Optional;
-
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;

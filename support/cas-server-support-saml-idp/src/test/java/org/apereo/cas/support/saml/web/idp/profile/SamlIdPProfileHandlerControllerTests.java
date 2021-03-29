@@ -17,7 +17,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLException;
-import org.opensaml.saml.common.SignableSAMLObject;
 import org.opensaml.saml.saml2.core.AuthnContextClassRef;
 import org.opensaml.saml.saml2.core.RequestedAuthnContext;
 import org.springframework.beans.factory.annotation.Autowired;
