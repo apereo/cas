@@ -1,22 +1,8 @@
 package org.apereo.cas.authentication;
 
-import lombok.val;
-import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
-import org.jooq.lambda.Unchecked;
-import org.jooq.lambda.UncheckedException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
-
-import javax.security.auth.login.AccountNotFoundException;
-
-import java.util.Arrays;
-
-import static org.apereo.cas.util.junit.Assertions.assertThrowsWithRootCause;
-import static org.junit.Assert.assertEquals;
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for {@link LdapAuthenticationHandler}.
@@ -40,12 +26,12 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DnFromAttributeAuthenticationHandlerTests extends BaseLdapAuthenticationHandlerTests {
 
     @Override
-    String getUsername() {
+    protected String getUsername() {
         return "PD Managers";
     }
 
     @Override
-    String getSuccessPassword() {
+    protected String getSuccessPassword() {
         return "password";
     }
 }
