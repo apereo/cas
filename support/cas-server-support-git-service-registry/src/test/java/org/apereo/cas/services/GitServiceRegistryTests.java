@@ -92,10 +92,12 @@ public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
             }
             val gitSampleRepo = Git.init().setDirectory(gitRepoSampleDir).setBare(false).call();
             FileUtils.write(new File(gitRepoSampleDir, "readme.txt"), "text", StandardCharsets.UTF_8);
+            gitSampleRepo.add().addFilepattern("*.txt").call();
             gitSampleRepo.commit().setSign(false).setMessage("Initial commit").call();
 
             val git = Git.init().setDirectory(gitDir).setBare(false).call();
             FileUtils.write(new File(gitDir, "readme.txt"), "text", StandardCharsets.UTF_8);
+            git.add().addFilepattern("*.txt").call();
             git.commit().setSign(false).setMessage("Initial commit").call();
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
@@ -125,11 +127,11 @@ public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @AfterAll
     public static void cleanUp() throws Exception {
-        PathUtils.delete(new File(FileUtils.getTempDirectory() + "cas-sample-data").toPath(),
-                StandardDeleteOption.OVERRIDE_READ_ONLY);
+        val gitRepoDir = new File(FileUtils.getTempDirectory(), "cas-sample-data");
+        PathUtils.deleteDirectory(gitRepoDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
         val gitDir = new File(FileUtils.getTempDirectory(), GitServiceRegistryProperties.DEFAULT_CAS_SERVICE_REGISTRY_NAME);
         if (gitDir.exists()) {
-            PathUtils.delete(gitDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
+            PathUtils.deleteDirectory(gitDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
         }
     }
 }
