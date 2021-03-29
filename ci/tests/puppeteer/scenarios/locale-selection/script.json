@@ -1,0 +1,6 @@
+{
+  "dependencies": "core",
+  "properties": [
+    "--cas.locale.default-value="
+  ]
+}

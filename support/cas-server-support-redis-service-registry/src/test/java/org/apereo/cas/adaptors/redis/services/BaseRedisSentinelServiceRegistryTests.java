@@ -9,12 +9,15 @@ import org.apereo.cas.services.AbstractServiceRegistryTests;
 import org.apereo.cas.services.ServiceRegistry;
 
 import lombok.Getter;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.scheduling.annotation.EnableScheduling;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Common class of Unit test for {@link RedisServiceRegistry} class.
@@ -36,4 +39,10 @@ public abstract class BaseRedisSentinelServiceRegistryTests extends AbstractServ
     @Autowired
     @Qualifier("redisServiceRegistry")
     private ServiceRegistry newServiceRegistry;
+
+    @Test
+    public void verifyFailures() {
+        assertNull(newServiceRegistry.save(null));
+        assertFalse(newServiceRegistry.delete(null));
+    }
 }
