@@ -15,6 +15,7 @@ import com.duosecurity.client.Http;
 import com.duosecurity.duoweb.DuoWebException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -24,6 +25,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.List;
 import java.util.Map;
@@ -50,6 +52,7 @@ import static org.springframework.http.HttpStatus.*;
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("MFA")
+@DirtiesContext
 public class BasicDuoSecurityAuthenticationServiceTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
@@ -100,6 +103,16 @@ public class BasicDuoSecurityAuthenticationServiceTests {
     }
 
     @Test
+    public void verifyAccountStatusDisabled() throws Exception {
+        val props = new DuoSecurityMultifactorAuthenticationProperties();
+        BeanUtils.copyProperties(props, casProperties.getAuthn().getMfa().getDuo().get(0));
+        props.setAccountStatusEnabled(false);
+        val service = new BasicDuoSecurityAuthenticationService(props, httpClient, List.of(MultifactorAuthenticationPrincipalResolver.identical()));
+        assertEquals(DuoSecurityUserAccountStatus.AUTH, service.getUserAccount("casuser").getStatus());
+    }
+
+
+    @Test
     public void verifyGetAccountNoStat() {
         val props = casProperties.getAuthn().getMfa().getDuo().get(0);
         val service = new BasicDuoSecurityAuthenticationService(props, httpClient, List.of(MultifactorAuthenticationPrincipalResolver.identical())) {
@@ -132,7 +145,7 @@ public class BasicDuoSecurityAuthenticationServiceTests {
     }
 
     @Test
-    public void verifyGetAccountFail() {
+    public void verifyGetAccountFail() throws Exception {
         val props = casProperties.getAuthn().getMfa().getDuo().get(0);
         val service = new BasicDuoSecurityAuthenticationService(props, httpClient, List.of(MultifactorAuthenticationPrincipalResolver.identical())) {
             private static final long serialVersionUID = 6245462449489284549L;
