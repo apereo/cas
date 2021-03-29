@@ -69,6 +69,10 @@ public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapS
      * </ul>
      */
     private String derefAliases;
+    /**
+     * If this attribute is set, the value found in the first attribute value will be used in place of the DN.
+     */
+    private String resolveFromAttribute;
 
     /**
      * The enum Authentication types.

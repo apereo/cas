@@ -638,6 +638,7 @@ public class LdapUtils {
         resolver.setAllowMultipleDns(l.isAllowMultipleDns());
         resolver.setConnectionFactory(connectionFactoryForSearch);
         resolver.setUserFilter(l.getSearchFilter());
+        resolver.setResolveFromAttribute(l.getResolveFromAttribute());
 
         if (l.isFollowReferrals()) {
             resolver.setSearchResultHandlers(new FollowSearchReferralHandler());

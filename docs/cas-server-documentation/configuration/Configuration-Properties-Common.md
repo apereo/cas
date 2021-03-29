@@ -1305,6 +1305,7 @@ The following  options apply  given the provider's *configuration key*:
 # ${configurationKey}.deref-aliases=NEVER|SEARCHING|FINDING|ALWAYS
 # ${configurationKey}.dn-format=uid=%s,ou=people,dc=example,dc=org
 # ${configurationKey}.principal-attribute-password=password
+# ${configurationKey}.resolve-from-attribute=
 
 ```
 
