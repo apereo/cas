@@ -3,11 +3,18 @@ package org.apereo.cas.configuration.support;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
-import java.util.Arrays;
+import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 /**
  * This is {@link RelaxedPropertyNamesTests}.
@@ -18,27 +25,34 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("CasConfiguration")
 public class RelaxedPropertyNamesTests {
 
-    @Test
-    public void verifyValues() {
-        val names = RelaxedPropertyNames.forCamelCase("casProperties");
+    @ParameterizedTest
+    @ValueSource(strings = {"casProperties", "cas-properties"})
+    public void verifyValues(final String property) {
+        val names = RelaxedPropertyNames.forCamelCase(property);
         assertNotNull(names.getValues());
         assertTrue(names.iterator().hasNext());
-
-        val names2 = RelaxedPropertyNames.forCamelCase("cas-properties");
-        assertNotNull(names2.getValues());
-        assertTrue(names2.iterator().hasNext());
     }
 
-    @Test
-    public void verifyTransforms() {
-        Arrays.stream(RelaxedPropertyNames.Manipulation.values())
-            .forEach(mani -> assertEquals(StringUtils.EMPTY, mani.apply(StringUtils.EMPTY)));
+    @ParameterizedTest
+    @EnumSource
+    public void verifyEmptyTransforms(final RelaxedPropertyNames.Manipulation mani) {
+        assertEquals(StringUtils.EMPTY, mani.apply(StringUtils.EMPTY));
+    }
 
-        assertEquals("cas_properties", RelaxedPropertyNames.Manipulation.CAMELCASE_TO_UNDERSCORE.apply("casProperties"));
-        assertEquals("cas-properties", RelaxedPropertyNames.Manipulation.CAMELCASE_TO_HYPHEN.apply("casProperties"));
-        assertEquals("cas_properties", RelaxedPropertyNames.Manipulation.PERIOD_TO_UNDERSCORE.apply("cas.properties"));
-        assertEquals("cas_properties", RelaxedPropertyNames.Manipulation.NONE.apply("cas_properties"));
-        assertEquals("cas_properties", RelaxedPropertyNames.Manipulation.HYPHEN_TO_UNDERSCORE.apply("cas-properties"));
-        assertEquals("cas.properties", RelaxedPropertyNames.Manipulation.UNDERSCORE_TO_PERIOD.apply("cas_properties"));
+    @ParameterizedTest
+    @MethodSource("transformsProvider")
+    public void verifyTransforms(final String expected, final RelaxedPropertyNames.Manipulation mani, final String testValue) {
+        assertEquals(expected, mani.apply(testValue));
+    }
+
+    static Stream<Arguments> transformsProvider() {
+        return Stream.of(
+                arguments("cas_properties", RelaxedPropertyNames.Manipulation.CAMELCASE_TO_UNDERSCORE, "casProperties"),
+                arguments("cas-properties", RelaxedPropertyNames.Manipulation.CAMELCASE_TO_HYPHEN, "casProperties"),
+                arguments("cas_properties", RelaxedPropertyNames.Manipulation.PERIOD_TO_UNDERSCORE, "cas.properties"),
+                arguments("cas_properties", RelaxedPropertyNames.Manipulation.NONE, "cas_properties"),
+                arguments("cas_properties", RelaxedPropertyNames.Manipulation.HYPHEN_TO_UNDERSCORE, "cas-properties"),
+                arguments("cas.properties", RelaxedPropertyNames.Manipulation.UNDERSCORE_TO_PERIOD, "cas_properties")
+        );
     }
 }
