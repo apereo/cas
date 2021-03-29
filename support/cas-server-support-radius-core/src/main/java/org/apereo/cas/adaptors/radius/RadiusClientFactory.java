@@ -17,7 +17,6 @@ import java.net.InetAddress;
  */
 @ToString
 @AllArgsConstructor
-@Slf4j
 public class RadiusClientFactory implements Serializable {
 
     private static final int DEFAULT_SOCKET_TIMEOUT = 60;

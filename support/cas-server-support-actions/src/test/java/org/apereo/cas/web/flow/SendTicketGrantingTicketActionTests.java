@@ -42,6 +42,7 @@ public class SendTicketGrantingTicketActionTests {
     private static final String SUCCESS = "success";
 
     @Nested
+    @SuppressWarnings("ClassCanBeStatic")
     public class PublicWorkstationCookie extends AbstractWebflowActionsTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_SEND_TICKET_GRANTING_TICKET)
@@ -83,6 +84,7 @@ public class SendTicketGrantingTicketActionTests {
     }
 
     @Nested
+    @SuppressWarnings("ClassCanBeStatic")
     public class CreateSsoCookieOnRenew extends AbstractWebflowActionsTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_SEND_TICKET_GRANTING_TICKET)
@@ -146,6 +148,7 @@ public class SendTicketGrantingTicketActionTests {
     }
 
     @Nested
+    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "cas.sso.create-sso-cookie-on-renew-authn=false")
     public class IgnoreSsoCookieOnRenew extends AbstractWebflowActionsTests {
         @Autowired
