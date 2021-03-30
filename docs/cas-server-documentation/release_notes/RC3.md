@@ -68,7 +68,8 @@ CAS attribute resolution engine now allows for fetching [user attributes from Ok
 The CAS codebase and the continuous integration workflows by extension have now switched to Gradle 7 for internal builds and validation.
 
 ## Other Stuff
-         
+       
+- Locale selection can now accept and recognize the `Accept-Language` header and user's native browser locale.  
 - SAML2 registered services that define a `whiteListBlackListPrecedence` setting are now required to use `INCLUDE` or `EXCLUDE` as the accepted value.
 - SAML2 metadata cache for MDQ is modified to correctly calculate the cache key for entity requests.
 - Ordering and sorting of the attribute repositories is now restored to respect the `order` setting.
@@ -79,15 +80,16 @@ The CAS codebase and the continuous integration workflows by extension have now 
 - [Syncope authentication](../authentication/Syncope-Authentication.html) adds support for multiple relationships of the same type.
 - User interfaces fixes for login sizing related to flexbox in IE11 where the login page is far too thin to be usable.
 - [Surrogate authentication](../authentication/Surrogate-Authentication.html) can correctly identify the primary principal's attributes for MFA activation.
-- SAML2 registered services are correctly located from the authentication request and are matched against service provider's entity id.
+- [SAML2 registered services](../authentication/Configuring-SAML2-Authentication.html) are correctly located from the authentication request and are matched against service provider's entity id.
 - Person directory principal resolution can use attributes from the *current authentication attempt* to build the final principal.
 - The ability to retry failing tests is removed from continuous integration builds to prevent test coverage miscalculations.
 - Triggering continuous integration jobs and workflow runs is no longer automatically triggered to help reduce the load on the backlog.
 - CAS settings able to [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) now advertise this capability in the documentation. 
 - Small improvements to CI test execution to ensure coverage results can be correctly calculated.
 - DynamoDb integrations can now specify the `billing-mode` in the CAS configuration.
-- Triggering multifactor authentication via principal attributes can now be configured to deny/block authentication attempts if no match is produced.
-- Cookie session pinning can now allow for a set of authorized and known IP addresses to bypass failures in case mismatches are found.
+- Triggering [multifactor authentication via principal attributes](../mfa/Configuring-Multifactor-Authentication-Triggers-Global-PrincipalAttribute.html) can now be configured to deny/block authentication attempts if no match is produced.
+- [Cookie session pinning](../authentication/Configuring-SSO.html) can now allow for a set of authorized and known IP addresses to bypass failures in case mismatches are found.
+- Multifactor authentication with [Duo Security](../mfa/DuoSecurity-Authentication.html) can now be tuned to turn off account status checking.
 
 ## Library Upgrades
 
