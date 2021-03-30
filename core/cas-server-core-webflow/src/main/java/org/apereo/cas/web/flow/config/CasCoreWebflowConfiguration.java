@@ -270,7 +270,7 @@ public class CasCoreWebflowConfiguration {
     }
 
 
-    @ConditionalOnMissingBean(name = "authenticationExceptionHandler")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_AUTHENTICATION_EXCEPTION_HANDLER)
     @Bean
     @RefreshScope
     public Action authenticationExceptionHandler() {

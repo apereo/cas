@@ -38,7 +38,6 @@ public class WsFederationWebflowConfigurer extends AbstractCasWebflowConfigurer 
             val actionState = createActionState(flow, STATE_ID_WS_FEDERATION_ACTION, STATE_ID_WS_FEDERATION_ACTION);
             createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET);
             createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_REDIRECT, WS_FEDERATION_REDIRECT);
-            actionState.getExitActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_CLEAR_WEBFLOW_CREDENTIALS));
 
             val currentStartState = getStartState(flow).getId();
             createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_PROCEED, currentStartState);
