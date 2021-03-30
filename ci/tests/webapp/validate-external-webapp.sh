@@ -20,6 +20,10 @@ ${CATALINA_HOME}/bin/startup.sh & >/dev/null 2>&1
 sleep 30
 rc=`curl -k --connect-timeout 60 -s -o /dev/null -I -w "%{http_code}" http://localhost:8080/cas/login`
 ${CATALINA_HOME}/bin/shutdown.sh & >/dev/null 2>&1
+
+rm -Rf ${CATALINA_HOME}
+rm -Rf apache-tomcat-${tomcatVersion}.zip
+
 if [ "$rc" == 200 ]; then
     echo "Deployed the CAS web application successfully."
     exit 0
