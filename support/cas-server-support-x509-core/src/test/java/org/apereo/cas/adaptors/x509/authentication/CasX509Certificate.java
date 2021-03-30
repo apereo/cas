@@ -3,8 +3,11 @@ package org.apereo.cas.adaptors.x509.authentication;
 import org.apereo.cas.util.crypto.CertUtils;
 
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.ToString;
+import lombok.experimental.Accessors;
+import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -19,6 +22,8 @@ import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.Set;
 
+import static org.mockito.Mockito.*;
+
 /**
  * This is {@link CasX509Certificate}.
  *
@@ -27,13 +32,20 @@ import java.util.Set;
  */
 @ToString
 @RequiredArgsConstructor
+@Setter
+@Accessors(chain = true)
 public class CasX509Certificate extends X509Certificate {
     private static final long serialVersionUID = -4449243195531417769L;
 
     private final Resource certificateResource = new ClassPathResource("ldap-crl.crt");
+
     private final X509Certificate x509Certificate = CertUtils.readCertificate(certificateResource);
 
     private final boolean valid;
+
+    private int basicConstraints = -1;
+
+    private String subjectDn;
 
     @SneakyThrows
     public String getContent() {
@@ -56,7 +68,7 @@ public class CasX509Certificate extends X509Certificate {
 
     @Override
     public int getBasicConstraints() {
-        return x509Certificate.getBasicConstraints();
+        return this.basicConstraints >= 0 ? this.basicConstraints : x509Certificate.getBasicConstraints();
     }
 
     @Override
@@ -111,7 +123,13 @@ public class CasX509Certificate extends X509Certificate {
 
     @Override
     public Principal getSubjectDN() {
-        return x509Certificate.getSubjectDN();
+        if (this.subjectDn == null) {
+            return x509Certificate.getSubjectDN();
+        }
+        
+        val principal = mock(Principal.class);
+        when(principal.getName()).thenReturn(this.subjectDn);
+        return principal;
     }
 
     @Override

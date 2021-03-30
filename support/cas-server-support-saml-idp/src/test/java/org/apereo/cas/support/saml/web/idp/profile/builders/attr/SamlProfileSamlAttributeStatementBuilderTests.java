@@ -16,6 +16,9 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
 
+import java.util.List;
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -36,9 +39,11 @@ public class SamlProfileSamlAttributeStatementBuilderTests extends BaseSamlIdPCo
     public void verifyTestAttributeDefns() {
         val service = getSamlRegisteredServiceForTestShib();
 
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).get();
+        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade
+            .get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).get();
         val statement = samlProfileSamlAttributeStatementBuilder.build(getAuthnRequestFor(service), new MockHttpServletRequest(),
-            new MockHttpServletResponse(), getAssertion(), service, adaptor, SAMLConstants.SAML2_POST_BINDING_URI,
+            new MockHttpServletResponse(), getAssertion(Map.of("emptyAttributeCol", List.of())),
+            service, adaptor, SAMLConstants.SAML2_POST_BINDING_URI,
             new MessageContext());
 
         val attributes = statement.getAttributes();

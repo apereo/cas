@@ -40,7 +40,6 @@ public class DetermineMultifactorPasswordlessAuthenticationAction extends Abstra
 
     private final CasConfigurationProperties casProperties;
 
-
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         val user = WebUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class);

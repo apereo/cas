@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -25,8 +26,24 @@ public class SamlIdPObjectEncrypterTests extends BaseSamlIdPConfigurationTests {
     @Test
     public void verifyEncOptional() {
         val registeredService = getSamlRegisteredServiceForTestShib(true, false, true);
+        registeredService.setEncryptionOptional(true);
+        registeredService.setEncryptionBlackListedAlgorithms(CollectionUtils.wrapArrayList("excludeAlg1"));
+        registeredService.setEncryptionWhiteListedAlgorithms(CollectionUtils.wrapArrayList("includeAlg1"));
+        registeredService.setWhiteListBlackListPrecedence("exclude");
+
+        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade
+            .get(samlRegisteredServiceCachingMetadataResolver, registeredService,
+                registeredService.getServiceId()).get();
+        assertNull(samlIdPObjectEncrypter.encode(mock(Assertion.class), registeredService, adaptor));
+    }
+
+    @Test
+    public void verifyEncBadService() {
+        val registeredService = getSamlRegisteredServiceForTestShib(true, false, true);
         registeredService.setServiceId("https://noenc.example.org");
         registeredService.setEncryptionOptional(true);
+        registeredService.setEncryptionBlackListedAlgorithms(null);
+        registeredService.setEncryptionWhiteListedAlgorithms(null);
 
         val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade
             .get(samlRegisteredServiceCachingMetadataResolver, registeredService,

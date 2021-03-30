@@ -53,6 +53,7 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.test.MockParameterMap;
 import org.springframework.webflow.test.MockRequestContext;
 
 import java.util.List;
@@ -95,6 +96,7 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
         val credential = getCredential("casuser");
         val context = mock(RequestContext.class);
         when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
+        when(context.getRequestParameters()).thenReturn(new MockParameterMap());
         when(context.getFlowScope()).thenReturn(new LocalAttributeMap<>());
         when(context.getConversationScope()).thenReturn(new LocalAttributeMap<>());
         val flowDefn = mock(FlowDefinition.class);

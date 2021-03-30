@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdG
 import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImplTests;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactoryTests;
 import org.apereo.cas.config.CasServiceRegistryInitializationConfigurationTests;
+import org.apereo.cas.config.DomainServicesManagerConfigurationTests;
 import org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProviderTests;
 import org.apereo.cas.services.ChainingRegisteredServiceSingleSignOnParticipationPolicyTests;
 import org.apereo.cas.services.ChainingServicesManagerTests;
@@ -126,6 +127,7 @@ import org.junit.runner.RunWith;
     RegisteredServiceScriptedAttributeFilterTests.class,
     GroovyRegisteredServiceAccessStrategyTests.class,
     ChainingServicesManagerTests.class,
+    DomainServicesManagerConfigurationTests.class,
     RegisteredServiceJsonSerializerTests.class
 })
 @RunWith(JUnitPlatform.class)

@@ -32,7 +32,8 @@ public class ResourceCRLRevocationCheckerTests extends BaseCRLRevocationCheckerT
 
     @ParameterizedTest
     @MethodSource("getTestParameters")
-    public void checkCertificate(final ResourceCRLRevocationChecker checker, final String[] certFiles, final GeneralSecurityException expected) {
+    public void checkCertificate(final ResourceCRLRevocationChecker checker, final String[] certFiles,
+                                 final GeneralSecurityException expected) {
         checker.init();
         BaseCRLRevocationCheckerTests.checkCertificate(checker, certFiles, expected);
         checker.destroy();

@@ -347,7 +347,7 @@ public class SamlIdPObjectEncrypter {
             ? globalAlgorithms.getOverrideBlockedEncryptionAlgorithms()
             : service.getEncryptionBlackListedAlgorithms();
         if (overrideBlockedEncryptionAlgorithms != null && !overrideBlockedEncryptionAlgorithms.isEmpty()) {
-            config.setBlacklistedAlgorithms(overrideBlockedEncryptionAlgorithms);
+            config.setExcludedAlgorithms(overrideBlockedEncryptionAlgorithms);
         }
 
         val overrideWhiteListedAlgorithms = service.getEncryptionWhiteListedAlgorithms().isEmpty()

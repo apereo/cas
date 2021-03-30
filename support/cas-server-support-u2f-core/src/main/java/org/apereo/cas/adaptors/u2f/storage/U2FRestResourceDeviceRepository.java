@@ -11,6 +11,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -59,7 +60,7 @@ public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceReposi
                 .method(HttpMethod.GET)
                 .url(restProperties.getUrl())
                 .build();
-            
+
             response = HttpUtils.execute(exec);
             if (Objects.requireNonNull(response).getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
                 return MAPPER.readValue(response.getEntity().getContent(),
@@ -75,6 +76,7 @@ public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceReposi
     }
 
     @Override
+    @SneakyThrows
     public void writeDevicesBackToResource(final List<U2FDeviceRegistration> list) {
         HttpResponse response = null;
         try (val writer = new StringWriter()) {
@@ -94,8 +96,6 @@ public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceReposi
                 .build();
 
             response = HttpUtils.execute(exec);
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }
@@ -113,8 +113,6 @@ public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceReposi
                 .url(url)
                 .build();
             response = HttpUtils.execute(exec);
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }
@@ -131,8 +129,6 @@ public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceReposi
                 .url(restProperties.getUrl())
                 .build();
             response = HttpUtils.execute(exec);
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }

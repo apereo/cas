@@ -53,6 +53,7 @@ import static org.springframework.webflow.execution.RequestContextHolder.*;
 public abstract class BaseActionTests {
 
     protected static final String LOGIN = "jerome@casinthecloud.com";
+    
     protected static final String SESSION_ID = "12454312154564321";
 
     private static final String DEVICE_NAME = "my device";

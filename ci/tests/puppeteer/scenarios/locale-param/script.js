@@ -11,6 +11,5 @@ const assert = require('assert');
     const header = await page.$eval('#content #fm1 button[name=submit]', el => el.innerText)
     console.log(header)
     assert(header == "ANMELDEN")
-    
     await browser.close();
 })();
