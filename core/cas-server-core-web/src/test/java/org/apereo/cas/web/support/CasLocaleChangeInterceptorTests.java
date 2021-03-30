@@ -23,8 +23,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Web")
 public class CasLocaleChangeInterceptorTests {
 
+    // note: default request locale returned from MockHttpServletRequest is ENGLISH
+    
     @Test
-    public void verifyOp() throws Exception {
+    public void verifyRequestHeaderBeatsCasDefault() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -32,11 +34,11 @@ public class CasLocaleChangeInterceptorTests {
         request.setAttribute(DispatcherServlet.LOCALE_RESOLVER_ATTRIBUTE, resolver);
         val interceptor = new CasLocaleChangeInterceptor(new LocaleProperties().setDefaultValue("fr"));
         interceptor.preHandle(request, response, new Object());
-        assertEquals(Locale.FRENCH, resolver.resolveLocale(request));
+        assertEquals(Locale.ENGLISH, resolver.resolveLocale(request));
     }
 
     @Test
-    public void verifyOpWithParam() throws Exception {
+    public void verifyRequestParamBeatsCasDefault() throws Exception {
         val request = new MockHttpServletRequest();
         request.addParameter("locale", "it");
         val response = new MockHttpServletResponse();
@@ -48,11 +50,10 @@ public class CasLocaleChangeInterceptorTests {
         assertEquals(Locale.ITALIAN, resolver.resolveLocale(request));
     }
 
-
     @Test
-    public void verifyForceOpWithParam() throws Exception {
+    public void verifyForcedCasDefaultBeatsAll() throws Exception {
         val request = new MockHttpServletRequest();
-        request.addParameter("locale", "de");
+        request.addParameter("locale", "it");
         val response = new MockHttpServletResponse();
 
         val resolver = new SessionLocaleResolver();
@@ -62,15 +63,4 @@ public class CasLocaleChangeInterceptorTests {
         assertEquals(Locale.FRENCH, resolver.resolveLocale(request));
     }
 
-    @Test
-    public void verifyDefault() throws Exception {
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-
-        val resolver = new SessionLocaleResolver();
-        request.setAttribute(DispatcherServlet.LOCALE_RESOLVER_ATTRIBUTE, resolver);
-        val interceptor = new CasLocaleChangeInterceptor(new LocaleProperties());
-        interceptor.preHandle(request, response, new Object());
-        assertEquals(Locale.ENGLISH, resolver.resolveLocale(request));
-    }
 }
