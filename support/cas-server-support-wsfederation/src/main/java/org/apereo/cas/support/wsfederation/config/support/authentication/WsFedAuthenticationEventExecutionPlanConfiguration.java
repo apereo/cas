@@ -17,6 +17,7 @@ import org.apereo.cas.support.wsfederation.web.WsFederationCookieCipherExecutor;
 import org.apereo.cas.support.wsfederation.web.WsFederationCookieGenerator;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.mgmr.DefaultCasCookieValueManager;
 
@@ -36,6 +37,7 @@ import org.springframework.core.io.ResourceLoader;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.function.Consumer;
 
 /**
  * This is {@link WsFedAuthenticationEventExecutionPlanConfiguration}.
@@ -86,7 +88,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
         config.setAutoRedirect(wsfed.isAutoRedirect());
         config.setName(wsfed.getName());
         config.setCookieGenerator(getCookieGeneratorForWsFederationConfig(wsfed));
-
+        FunctionUtils.doIfNotNull(wsfed.getId(), config::setId);
         config.initialize();
         return config;
     }
