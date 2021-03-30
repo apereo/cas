@@ -480,25 +480,28 @@ public abstract class BaseTicketRegistryTests {
     @RepeatedTest(2)
     @Transactional
     public void verifyDeleteTicketsWithMultiplePGTs() {
-        val a = CoreAuthenticationTestUtils.getAuthentication();
-        ticketRegistry.addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId, a, NeverExpiresExpirationPolicy.INSTANCE));
-        val tgt = ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
-        assertNotNull(tgt, "Ticket-granting ticket must not be null");
-        val service = RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
-        IntStream.range(1, 5).forEach(i -> {
-            val st = tgt.grantServiceTicket(serviceTicketId + '-' + i, service,
-                NeverExpiresExpirationPolicy.INSTANCE, false, true);
-            ticketRegistry.addTicket(st);
-            ticketRegistry.updateTicket(tgt);
+        FunctionUtils.doAndRetry(callback -> {
+            val a = CoreAuthenticationTestUtils.getAuthentication();
+            ticketRegistry.addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId, a, NeverExpiresExpirationPolicy.INSTANCE));
+            val tgt = ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
+            assertNotNull(tgt, "Ticket-granting ticket must not be null");
+            val service = RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
+            IntStream.range(1, 5).forEach(i -> {
+                val st = tgt.grantServiceTicket(serviceTicketId + '-' + i, service,
+                    NeverExpiresExpirationPolicy.INSTANCE, false, true);
+                ticketRegistry.addTicket(st);
+                ticketRegistry.updateTicket(tgt);
 
-            val pgt = st.grantProxyGrantingTicket(proxyGrantingTicketId + '-' + i, a, NeverExpiresExpirationPolicy.INSTANCE);
-            ticketRegistry.addTicket(pgt);
-            ticketRegistry.updateTicket(tgt);
-            ticketRegistry.updateTicket(st);
+                val pgt = st.grantProxyGrantingTicket(proxyGrantingTicketId + '-' + i, a, NeverExpiresExpirationPolicy.INSTANCE);
+                ticketRegistry.addTicket(pgt);
+                ticketRegistry.updateTicket(tgt);
+                ticketRegistry.updateTicket(st);
+            });
+
+            val c = ticketRegistry.deleteTicket(ticketGrantingTicketId);
+            assertEquals(6, c);
+            return null;
         });
-
-        val c = ticketRegistry.deleteTicket(ticketGrantingTicketId);
-        assertEquals(6, c);
     }
 
     protected abstract TicketRegistry getNewTicketRegistry();
