@@ -26,8 +26,7 @@ public class CasLocaleChangeInterceptor extends LocaleChangeInterceptor {
     @Override
     public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response,
                              final Object handler) throws ServletException {
-        val newLocale = request.getParameter(localeProperties.getParamName());
-        if (localeProperties.isForceDefaultLocale() || StringUtils.isBlank(newLocale)) {
+        if (localeProperties.isForceDefaultLocale()) {
             val localeResolver = RequestContextUtils.getLocaleResolver(request);
             if (localeResolver != null) {
                 val locale = new Locale(localeProperties.getDefaultValue());
