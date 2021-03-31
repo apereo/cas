@@ -9,7 +9,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
-import org.jasig.cas.client.util.URIBuilder;
+import org.apache.http.client.utils.URIBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -57,7 +57,7 @@ public class OAuth20ServicesManagerRegisteredServiceLocatorTests extends Abstrac
     }
 
     @Test
-    public void verifyWithCallback() {
+    public void verifyWithCallback() throws Exception {
         val callbackUrl = "http://localhost:8443/cas"
             + OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.CALLBACK_AUTHORIZE_URL;
 

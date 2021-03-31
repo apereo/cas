@@ -12,7 +12,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 
 import lombok.val;
-import org.jasig.cas.client.util.URIBuilder;
+import org.apache.http.client.utils.URIBuilder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,7 +72,7 @@ public class WsFederationServicesManagerRegisteredServiceLocatorTests extends Ba
     }
 
     @Test
-    public void verifyWithCallback() {
+    public void verifyWithCallback() throws Exception {
         val callbackUrl = "http://localhost:8443/cas" + WSFederationConstants.ENDPOINT_FEDERATION_REQUEST_CALLBACK;
         
         val service0 = RegisteredServiceTestUtils.getRegisteredService(callbackUrl + ".*");
