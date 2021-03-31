@@ -46,8 +46,7 @@ public class WsFederationServicesManagerRegisteredServiceLocatorTests extends Ba
         service.setWsdlLocation("classpath:wsdl/ws-trust-1.4-service.wsdl");
         service.setMatchingStrategy(new PartialRegexRegisteredServiceMatchingStrategy());
         val result = wsFederationServicesManagerRegisteredServiceLocator.locate(List.of(service),
-            webApplicationServiceFactory.createService("http://app.example.org/wsfed-whatever"),
-            r -> r.matches("http://app.example.org/wsfed-whatever"));
+            webApplicationServiceFactory.createService("http://app.example.org/wsfed-whatever"));
         assertNotNull(result);
     }
 
