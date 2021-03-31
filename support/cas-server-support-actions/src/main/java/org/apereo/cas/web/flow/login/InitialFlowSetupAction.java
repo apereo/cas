@@ -104,8 +104,8 @@ public class InitialFlowSetupAction extends AbstractAction {
     private void configureWebflowForServices(final RequestContext context) {
         val service = WebUtils.getService(this.argumentExtractors, context);
         if (service != null) {
-            LOGGER.debug("Placing service in context scope: [{}]", service.getId());
             val selectedService = authenticationRequestServiceSelectionStrategies.resolveService(service);
+            LOGGER.debug("Extracted service: [{}]", selectedService.getId());
             val registeredService = servicesManager.findServiceBy(selectedService);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service.getId(), registeredService);
             if (registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed()) {
