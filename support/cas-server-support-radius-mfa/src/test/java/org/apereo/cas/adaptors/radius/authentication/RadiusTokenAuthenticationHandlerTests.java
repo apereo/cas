@@ -10,6 +10,8 @@ import net.jradius.dictionary.Attr_State;
 import net.jradius.packet.attribute.value.StringValue;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -40,6 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.radius.client.inet-address=localhost"
     })
 @Tag("Radius")
+@EnabledOnOs(OS.LINUX)
 public class RadiusTokenAuthenticationHandlerTests {
 
     @Autowired

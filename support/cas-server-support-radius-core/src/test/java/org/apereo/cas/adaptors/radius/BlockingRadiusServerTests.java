@@ -7,6 +7,8 @@ import lombok.val;
 import net.jradius.exception.TimeoutException;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import java.util.UUID;
 
@@ -20,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 @Tag("Radius")
+@EnabledOnOs(OS.LINUX)
 public class BlockingRadiusServerTests extends AbstractRadiusServerTests {
 
     public static final String USERNAME = UUID.randomUUID().toString();

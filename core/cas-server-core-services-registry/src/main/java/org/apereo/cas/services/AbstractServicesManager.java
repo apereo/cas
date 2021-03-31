@@ -93,8 +93,10 @@ public abstract class AbstractServicesManager implements ServicesManager {
 
         var foundService = configurationContext.getRegisteredServiceLocators()
             .stream()
-            .map(locator -> locator.locate(getCandidateServicesToMatch(service.getId()), service,
-                entry -> entry.matches(service.getId())))
+            .map(locator -> {
+                val candidates = getCandidateServicesToMatch(service.getId());
+                return locator.locate(candidates, service);
+            })
             .filter(Objects::nonNull)
             .findFirst()
             .orElse(null);

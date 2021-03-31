@@ -59,8 +59,7 @@ public class DefaultServicesManagerRegisteredServiceLocatorTests {
         assertEquals(Ordered.LOWEST_PRECEDENCE, defaultServicesManagerRegisteredServiceLocator.getOrder());
         val service = RegisteredServiceTestUtils.getRegisteredService("https://example.org.+");
         val result = defaultServicesManagerRegisteredServiceLocator.locate(List.of(service),
-            webApplicationServiceFactory.createService("https://example.org/test"),
-            r -> r.matches("https://example.org/test"));
+            webApplicationServiceFactory.createService("https://example.org/test"));
         assertNotNull(result);
     }
 
@@ -69,8 +68,7 @@ public class DefaultServicesManagerRegisteredServiceLocatorTests {
         val service = new TestRegisteredService();
         service.setServiceId("https://example.com.+");
         val result = defaultServicesManagerRegisteredServiceLocator.locate(List.of(service),
-            webApplicationServiceFactory.createService("https://example.com/test"),
-            r -> r.matches("https://example.com/test"));
+            webApplicationServiceFactory.createService("https://example.com/test"));
         assertNotNull(result);
     }
 
