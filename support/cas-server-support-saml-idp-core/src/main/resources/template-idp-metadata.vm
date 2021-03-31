@@ -34,17 +34,40 @@
         <ArtifactResolutionService Binding="urn:oasis:names:tc:SAML:1.0:bindings:SOAP-binding" 
                                    Location="${context.EndpointUrl}/profile/SAML1/SOAP/ArtifactResolution" index="1"/>
         -->
-        
-        <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="$context.EndpointUrl/profile/SAML2/POST/SLO"/>
-        <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="$context.EndpointUrl/profile/SAML2/Redirect/SLO" />
+
+        #if( $context.SloServicePostBindingEnabled )
+        <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                             Location="$context.EndpointUrl/profile/SAML2/POST/SLO"/>
+        #end
+
+        #if( $context.SloServiceRedirectBindingEnabled )
+        <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+                             Location="$context.EndpointUrl/profile/SAML2/Redirect/SLO" />
+        #end
 
         <NameIDFormat>urn:mace:shibboleth:1.0:nameIdentifier</NameIDFormat>
         <NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</NameIDFormat>
 
-        <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="$context.EndpointUrl/profile/SAML2/POST/SSO"/>
-        <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign" Location="$context.EndpointUrl/profile/SAML2/POST-SimpleSign/SSO"/>
-        <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="$context.EndpointUrl/profile/SAML2/Redirect/SSO"/>
-        <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="$context.EndpointUrl/profile/SAML2/SOAP/ECP"/>
+        #if( $context.SsoServicePostBindingEnabled )
+        <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                             Location="$context.EndpointUrl/profile/SAML2/POST/SSO"/>
+        #end
+
+        #if( $context.SsoServicePostSimpleSignBindingEnabled )
+        <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign"
+                             Location="$context.EndpointUrl/profile/SAML2/POST-SimpleSign/SSO"/>
+        #end
+
+        #if( $context.SsoServiceRedirectBindingEnabled )
+        <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+                             Location="$context.EndpointUrl/profile/SAML2/Redirect/SSO"/>
+        #end
+
+        #if( $context.SsoServiceSoapBindingEnabled )
+        <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP"
+                             Location="$context.EndpointUrl/profile/SAML2/SOAP/ECP"/>
+        #end
+
     </IDPSSODescriptor>
 
     <!--

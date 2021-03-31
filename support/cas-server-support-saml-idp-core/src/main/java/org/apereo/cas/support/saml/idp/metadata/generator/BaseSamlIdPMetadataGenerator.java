@@ -168,6 +168,12 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
                 .entityId(entityId)
                 .scope(scope)
                 .endpointUrl(getIdPEndpointUrl())
+                .ssoServicePostBindingEnabled(idp.getMetadata().getCore().isSsoServicePostBindingEnabled())
+                .ssoServicePostSimpleSignBindingEnabled(idp.getMetadata().getCore().isSsoServicePostSimpleSignBindingEnabled())
+                .ssoServiceRedirectBindingEnabled(idp.getMetadata().getCore().isSsoServiceRedirectBindingEnabled())
+                .ssoServiceSoapBindingEnabled(idp.getMetadata().getCore().isSsoServiceSoapBindingEnabled())
+                .sloServicePostBindingEnabled(idp.getMetadata().getCore().isSloServicePostBindingEnabled())
+                .sloServiceRedirectBindingEnabled(idp.getMetadata().getCore().isSloServiceRedirectBindingEnabled())
                 .build();
 
             val template = configurationContext.getVelocityEngine()
@@ -181,12 +187,12 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
             val customizers = configurationContext.getApplicationContext()
                 .getBeansOfType(SamlIdPMetadataCustomizer.class, false, true).values();
             if (!customizers.isEmpty()) {
-                val entityDescriptor = SamlUtils.transformSamlObject(configurationContext.getOpenSamlConfigBean(),
-                    metadata, EntityDescriptor.class);
+                val openSamlConfigBean = configurationContext.getOpenSamlConfigBean();
+                val entityDescriptor = SamlUtils.transformSamlObject(openSamlConfigBean, metadata, EntityDescriptor.class);
                 customizers.stream()
                     .sorted(AnnotationAwareOrderComparator.INSTANCE)
                     .forEach(customizer -> customizer.customize(entityDescriptor, registeredService));
-                metadata = SamlUtils.transformSamlObject(configurationContext.getOpenSamlConfigBean(), entityDescriptor).toString();
+                metadata = SamlUtils.transformSamlObject(openSamlConfigBean, entityDescriptor).toString();
             }
             writeMetadata(metadata, registeredService);
             return metadata;
@@ -202,6 +208,15 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
         private final String endpointUrl;
         private final String encryptionCertificate;
         private final String signingCertificate;
+
+        private final boolean ssoServicePostBindingEnabled;
+        private final boolean ssoServicePostSimpleSignBindingEnabled;
+        private final boolean ssoServiceRedirectBindingEnabled;
+        private final boolean ssoServiceSoapBindingEnabled;
+
+        private final boolean sloServicePostBindingEnabled;
+        private final boolean sloServiceRedirectBindingEnabled;
+
     }
 
 }
