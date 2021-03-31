@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
+import org.apache.commons.lang.StringUtils;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -73,6 +74,15 @@ public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapS
      * If this attribute is set, the value found in the first attribute value will be used in place of the DN.
      */
     private String resolveFromAttribute;
+    /**
+     * Setter for resolveFromAttribute which sets the value to the name attribute,
+     * except if the attribute is a blank string in which
+     * case the property is set to null.
+     * @param name name of the attribute to use
+     */
+    public void setResolveFromAttribute(String name) {
+        this.resolveFromAttribute = StringUtils.isBlank(name) ? null : name;
+    }
 
     /**
      * The enum Authentication types.
