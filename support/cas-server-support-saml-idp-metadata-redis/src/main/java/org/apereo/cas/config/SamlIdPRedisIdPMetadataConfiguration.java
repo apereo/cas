@@ -60,10 +60,13 @@ public class SamlIdPRedisIdPMetadataConfiguration {
     @Qualifier("samlSelfSignedCertificateWriter")
     private ObjectProvider<SamlIdPCertificateAndKeyWriter> samlSelfSignedCertificateWriter;
 
+    @Autowired
+    @Qualifier("samlIdPMetadataGeneratorConfigurationContext")
+    private ObjectProvider<SamlIdPMetadataGeneratorConfigurationContext> samlIdPMetadataGeneratorConfigurationContext;
+
     @Bean
-    @ConditionalOnMissingBean(name = "redisSamlIdPMetadataCipherExecutor")
     @RefreshScope
-    public CipherExecutor redisSamlIdPMetadataCipherExecutor() {
+    public CipherExecutor samlIdPMetadataGeneratorCipherExecutor() {
         val idp = casProperties.getAuthn().getSamlIdp();
         val crypto = idp.getMetadata().getRedis().getCrypto();
 
@@ -94,22 +97,14 @@ public class SamlIdPRedisIdPMetadataConfiguration {
     @Bean
     @RefreshScope
     public SamlIdPMetadataGenerator samlIdPMetadataGenerator() {
-        val context = SamlIdPMetadataGeneratorConfigurationContext.builder()
-            .samlIdPMetadataLocator(samlIdPMetadataLocator())
-            .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter.getObject())
-            .applicationContext(applicationContext)
-            .casProperties(casProperties)
-            .openSamlConfigBean(openSamlConfigBean.getObject())
-            .metadataCipherExecutor(redisSamlIdPMetadataCipherExecutor())
-            .build();
-        return new RedisSamlIdPMetadataGenerator(context, redisSamlIdPMetadataTemplate());
+        return new RedisSamlIdPMetadataGenerator(samlIdPMetadataGeneratorConfigurationContext.getObject(), redisSamlIdPMetadataTemplate());
     }
 
     @Bean
     @RefreshScope
     public SamlIdPMetadataLocator samlIdPMetadataLocator() {
         return new RedisSamlIdPMetadataLocator(
-            redisSamlIdPMetadataCipherExecutor(),
+            samlIdPMetadataGeneratorCipherExecutor(),
             samlIdPMetadataCache.getObject(),
             redisSamlIdPMetadataTemplate());
     }
