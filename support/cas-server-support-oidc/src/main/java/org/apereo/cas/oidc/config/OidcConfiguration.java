@@ -175,6 +175,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 /**
@@ -187,6 +188,9 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class OidcConfiguration implements WebMvcConfigurer {
+
+    public static final String POST_LOGOUT_REDIRECTURL_MATCHER_BEAN_NAME = "postLogoutRedirectUrlMatcher";
+
     @Autowired
     @Qualifier("oauthRegisteredServiceCipherExecutor")
     private ObjectProvider<CipherExecutor> oauthRegisteredServiceCipherExecutor;
@@ -463,11 +467,26 @@ public class OidcConfiguration implements WebMvcConfigurer {
         return new OidcIntrospectionEndpointController(context);
     }
 
+    /**
+     * defines how the logoutURL configured at the OIDC service is matched against the given
+     * <i>post_logout_redirect_uri</i> at an OIDC RP-initiated logout.<br/>
+     * default is String::equalsIgnoreCase
+     *
+     * @return
+     *  the function that matches the given logout url against the configured logout url(s).
+     */
+    @Bean(name = POST_LOGOUT_REDIRECTURL_MATCHER_BEAN_NAME)
+    @ConditionalOnMissingBean(name = POST_LOGOUT_REDIRECTURL_MATCHER_BEAN_NAME)
+    public BiFunction<String, String, Boolean> postLogoutRedirectUrlMatcher() {
+        return String::equalsIgnoreCase;
+    }
+
     @RefreshScope
     @Bean
-    public OidcLogoutEndpointController oidcLogoutEndpointController() {
+    public OidcLogoutEndpointController oidcLogoutEndpointController(@Qualifier(POST_LOGOUT_REDIRECTURL_MATCHER_BEAN_NAME)
+                                                                        final BiFunction<String, String, Boolean> postLogoutRedirectUrlMatcher) {
         val context = oidcConfigurationContext();
-        return new OidcLogoutEndpointController(context);
+        return new OidcLogoutEndpointController(context, postLogoutRedirectUrlMatcher);
     }
 
     @RefreshScope
