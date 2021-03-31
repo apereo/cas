@@ -9,10 +9,12 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 
 import lombok.val;
 import org.apache.http.client.utils.URIBuilder;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -48,13 +51,19 @@ public class WsFederationServicesManagerRegisteredServiceLocatorTests extends Ba
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
+    @BeforeEach
+    public void setup() {
+        servicesManager.deleteAll();
+    }
+
     @Test
     public void verifyOperation() {
         assertNotNull(wsFederationServicesManagerRegisteredServiceLocator);
         assertEquals(Ordered.HIGHEST_PRECEDENCE, wsFederationServicesManagerRegisteredServiceLocator.getOrder());
-        val service = getWsFederationRegisteredService("http://app.example.org/wsfed-.+", "CAS");
-        val result = wsFederationServicesManagerRegisteredServiceLocator.locate(List.of(service),
-            webApplicationServiceFactory.createService("http://app.example.org/wsfed-whatever"));
+        val registeredService = getWsFederationRegisteredService("http://app.example.org/wsfed.*", "CAS");
+        val service = webApplicationServiceFactory.createService("http://app.example.org/wsfed-whatever");
+        service.setAttributes(Map.of(WSFederationConstants.WREPLY, List.of("http://app.example.org/wsfed")));
+        val result = wsFederationServicesManagerRegisteredServiceLocator.locate(List.of(registeredService), service);
         assertNotNull(result);
     }
 
@@ -64,7 +73,7 @@ public class WsFederationServicesManagerRegisteredServiceLocatorTests extends Ba
         service.setRealm(realm);
         service.setServiceId(serviceId);
         service.setName("WSFED App");
-        service.setId(100);
+        service.setId(RandomUtils.nextInt());
         service.setAppliesTo("Example");
         service.setWsdlLocation("classpath:wsdl/ws-trust-1.4-service.wsdl");
         service.setMatchingStrategy(new PartialRegexRegisteredServiceMatchingStrategy());
@@ -97,6 +106,6 @@ public class WsFederationServicesManagerRegisteredServiceLocatorTests extends Ba
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, new MockHttpServletResponse()));
         val service = webApplicationServiceFactory.createService(url.toString());
         val result = servicesManager.findServiceBy(service);
-        assertEquals(result, service1);
+        assertEquals(service1, result);
     }
 }

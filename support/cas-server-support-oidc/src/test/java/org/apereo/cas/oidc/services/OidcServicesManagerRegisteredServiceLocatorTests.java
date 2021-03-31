@@ -79,10 +79,12 @@ public class OidcServicesManagerRegisteredServiceLocatorTests extends AbstractOi
     public void verifyOperation() {
         assertNotNull(oidcServicesManagerRegisteredServiceLocator);
         assertEquals(Ordered.HIGHEST_PRECEDENCE, oidcServicesManagerRegisteredServiceLocator.getOrder());
-        val service = getOidcRegisteredService(UUID.randomUUID().toString());
+
+        val clientId = UUID.randomUUID().toString();
+        val service = getOidcRegisteredService(clientId);
         service.setMatchingStrategy(new PartialRegexRegisteredServiceMatchingStrategy());
         val svc = webApplicationServiceFactory.createService(
-            String.format("https://oauth.example.org/whatever?%s=clientid", OAuth20Constants.CLIENT_ID));
+            String.format("https://oauth.example.org/whatever?%s=%s", OAuth20Constants.CLIENT_ID, clientId));
         val result = oidcServicesManagerRegisteredServiceLocator.locate(List.of(service), svc);
         assertNotNull(result);
     }
