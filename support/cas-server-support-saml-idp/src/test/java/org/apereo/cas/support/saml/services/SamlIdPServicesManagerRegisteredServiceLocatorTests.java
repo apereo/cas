@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.services;
 
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
@@ -11,12 +12,17 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 
 import lombok.val;
+import org.jasig.cas.client.util.URIBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.Ordered;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.Collections;
 import java.util.List;
@@ -58,6 +64,37 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
     }
     
     @Test
+    public void verifyInCommonAggregateWithCallback() {
+        val callbackUrl = "http://localhost:8443/cas" + SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK;
+
+        val service0 = RegisteredServiceTestUtils.getRegisteredService(callbackUrl + ".*");
+        service0.setEvaluationOrder(0);
+
+        val service1 = getSamlRegisteredServiceFor("https://sp.testshib.org/shibboleth-sp");
+        service1.setEvaluationOrder(100);
+
+        val service2 = getSamlRegisteredServiceFor(".+");
+        service2.setMetadataLocation("https://mdq.incommon.org/entities");
+        service2.setEvaluationOrder(1000);
+
+        val candidateServices = CollectionUtils.wrapList(service0, service1, service2);
+        servicesManager.save(candidateServices.toArray(new RegisteredService[0]));
+
+        Collections.sort(candidateServices);
+
+        val url = new URIBuilder(callbackUrl + "?entityId=https://sp.testshib.org/shibboleth-sp");
+        val request = new MockHttpServletRequest();
+        request.setRequestURI(callbackUrl);
+        url.getQueryParams().forEach(param -> request.addParameter(param.getName(), param.getValue()));
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, new MockHttpServletResponse()));
+        val service = webApplicationServiceFactory.createService(url.toString());
+
+        val result = servicesManager.findServiceBy(service);
+        assertEquals(result, service1);
+    }
+
+
+    @Test
     public void verifyOperation() {
         assertNotNull(samlIdPServicesManagerRegisteredServiceLocator);
         assertEquals(Ordered.HIGHEST_PRECEDENCE, samlIdPServicesManagerRegisteredServiceLocator.getOrder());
@@ -75,8 +112,7 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
         service.setAttributes(Map.of(SamlProtocolConstants.PARAMETER_SAML_REQUEST, List.of(samlRequest)));
 
         val result = samlIdPServicesManagerRegisteredServiceLocator.locate(
-            (List) candidateServices,
-            service, r -> r.matches("https://sp.testshib.org/shibboleth-sp"));
+            (List) candidateServices, service);
         assertNotNull(result);
     }
 
@@ -97,8 +133,7 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
         service.setAttributes(Map.of(SamlProtocolConstants.PARAMETER_SAML_REQUEST, List.of(SAML_AUTHN_REQUEST2)));
 
         val result = samlIdPServicesManagerRegisteredServiceLocator.locate(
-            (List) candidateServices,
-            service, r -> r.matches("mmoayyed.unicon.net"));
+            (List) candidateServices, service);
         assertNotNull(result);
     }
 
@@ -119,8 +154,7 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
         service.setAttributes(Map.of(SamlProtocolConstants.PARAMETER_ENTITY_ID, List.of(service.getId())));
 
         val result = samlIdPServicesManagerRegisteredServiceLocator.locate(
-            (List) candidateServices,
-            service, r -> r.matches("https://sp.testshib.org/shibboleth-sp"));
+            (List) candidateServices, service);
         assertNotNull(result);
     }
 
@@ -141,8 +175,7 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
         service.setAttributes(Map.of(SamlIdPConstants.PROVIDER_ID, List.of(service.getId())));
 
         val result = samlIdPServicesManagerRegisteredServiceLocator.locate(
-            (List) candidateServices,
-            service, r -> r.matches("https://sp.testshib.org/shibboleth-sp"));
+            (List) candidateServices, service);
         assertNotNull(result);
     }
 

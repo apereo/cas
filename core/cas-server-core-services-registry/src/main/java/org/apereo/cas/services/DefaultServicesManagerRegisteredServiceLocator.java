@@ -10,7 +10,6 @@ import org.springframework.core.Ordered;
 
 import java.util.Collection;
 import java.util.function.BiPredicate;
-import java.util.function.Predicate;
 
 /**
  * This is {@link DefaultServicesManagerRegisteredServiceLocator}.
@@ -26,15 +25,14 @@ public class DefaultServicesManagerRegisteredServiceLocator implements ServicesM
     private int order = Ordered.LOWEST_PRECEDENCE;
 
     private BiPredicate<RegisteredService, Service> registeredServiceFilter =
-        (registeredService, service) -> RegexRegisteredService.class.isAssignableFrom(registeredService.getClass());
+        (registeredService, service) -> RegexRegisteredService.class.isAssignableFrom(registeredService.getClass())
+            && registeredService.matches(service.getId());
 
     @Override
-    public RegisteredService locate(final Collection<RegisteredService> candidates, final Service service,
-        final Predicate<RegisteredService> requestedFilter) {
+    public RegisteredService locate(final Collection<RegisteredService> candidates, final Service service) {
         return candidates
             .stream()
-            .filter(entry -> registeredServiceFilter.test(entry, service))
-            .filter(requestedFilter)
+            .filter(registeredService -> registeredServiceFilter.test(registeredService, service))
             .findFirst()
             .orElse(null);
     }
