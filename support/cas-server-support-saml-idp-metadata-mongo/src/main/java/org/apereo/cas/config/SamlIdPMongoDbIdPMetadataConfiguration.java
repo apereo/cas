@@ -43,6 +43,9 @@ import javax.net.ssl.SSLContext;
 @ConditionalOnProperty(prefix = "cas.authn.saml-idp.metadata.mongo", name = "idp-metadata-collection")
 @Slf4j
 public class SamlIdPMongoDbIdPMetadataConfiguration {
+    @Autowired
+    @Qualifier("samlIdPMetadataGeneratorConfigurationContext")
+    private ObjectProvider<SamlIdPMetadataGeneratorConfigurationContext> samlIdPMetadataGeneratorConfigurationContext;
 
     @Autowired
     @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
@@ -67,9 +70,8 @@ public class SamlIdPMongoDbIdPMetadataConfiguration {
     private ObjectProvider<SSLContext> sslContext;
 
     @Bean
-    @ConditionalOnMissingBean(name = "mongoDbSamlIdPMetadataCipherExecutor")
     @RefreshScope
-    public CipherExecutor mongoDbSamlIdPMetadataCipherExecutor() {
+    public CipherExecutor samlIdPMetadataGeneratorCipherExecutor() {
         val idp = casProperties.getAuthn().getSamlIdp();
         val crypto = idp.getMetadata().getMongo().getCrypto();
 
@@ -100,15 +102,7 @@ public class SamlIdPMongoDbIdPMetadataConfiguration {
     @RefreshScope
     public SamlIdPMetadataGenerator samlIdPMetadataGenerator() {
         val idp = casProperties.getAuthn().getSamlIdp();
-        val context = SamlIdPMetadataGeneratorConfigurationContext.builder()
-            .samlIdPMetadataLocator(samlIdPMetadataLocator())
-            .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter.getObject())
-            .applicationContext(applicationContext)
-            .casProperties(casProperties)
-            .openSamlConfigBean(openSamlConfigBean.getObject())
-            .metadataCipherExecutor(mongoDbSamlIdPMetadataCipherExecutor())
-            .build();
-        return new MongoDbSamlIdPMetadataGenerator(context, mongoDbSamlIdPMetadataTemplate(),
+        return new MongoDbSamlIdPMetadataGenerator(samlIdPMetadataGeneratorConfigurationContext.getObject(), mongoDbSamlIdPMetadataTemplate(),
             idp.getMetadata().getMongo().getIdpMetadataCollection());
     }
 
@@ -118,7 +112,7 @@ public class SamlIdPMongoDbIdPMetadataConfiguration {
     public SamlIdPMetadataLocator samlIdPMetadataLocator() {
         val idp = casProperties.getAuthn().getSamlIdp();
         return new MongoDbSamlIdPMetadataLocator(
-            mongoDbSamlIdPMetadataCipherExecutor(),
+            samlIdPMetadataGeneratorCipherExecutor(),
             samlIdPMetadataCache.getObject(),
             mongoDbSamlIdPMetadataTemplate(),
             idp.getMetadata().getMongo().getIdpMetadataCollection());

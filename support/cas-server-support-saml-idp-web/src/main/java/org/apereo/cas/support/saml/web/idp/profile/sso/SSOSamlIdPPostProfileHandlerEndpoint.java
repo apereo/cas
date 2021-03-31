@@ -95,11 +95,12 @@ public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasActuatorEndpoin
     @GetMapping(produces = MediaType.APPLICATION_XML_VALUE)
     @ResponseBody
     public ResponseEntity<Object> produce(final HttpServletRequest request, final HttpServletResponse response) {
-        val username = request.getParameter("username");
-        val password = request.getParameter("password");
-        val entityId = request.getParameter(SamlProtocolConstants.PARAMETER_ENTITY_ID);
 
         try {
+            val username = request.getParameter("username");
+            val password = request.getParameter("password");
+            val entityId = request.getParameter(SamlProtocolConstants.PARAMETER_ENTITY_ID);
+
             val selectedService = this.serviceFactory.createService(entityId);
             val registeredService = this.servicesManager.findServiceBy(selectedService, SamlRegisteredService.class);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
@@ -125,7 +126,7 @@ public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasActuatorEndpoin
             LoggingUtils.error(LOGGER, e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     private Assertion getAssertion(final String username,

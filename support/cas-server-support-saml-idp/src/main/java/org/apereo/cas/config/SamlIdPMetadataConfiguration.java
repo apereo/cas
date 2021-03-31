@@ -140,15 +140,7 @@ public class SamlIdPMetadataConfiguration {
     @Bean
     @SneakyThrows
     public SamlIdPMetadataGenerator samlIdPMetadataGenerator() {
-        val context = SamlIdPMetadataGeneratorConfigurationContext.builder()
-            .samlIdPMetadataLocator(samlIdPMetadataLocator())
-            .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter())
-            .applicationContext(applicationContext)
-            .metadataCipherExecutor(CipherExecutor.noOpOfStringToString())
-            .casProperties(casProperties)
-            .openSamlConfigBean(openSamlConfigBean.getObject())
-            .build();
-        return new FileSystemSamlIdPMetadataGenerator(context);
+        return new FileSystemSamlIdPMetadataGenerator(samlIdPMetadataGeneratorConfigurationContext());
     }
 
     @ConditionalOnMissingBean(name = "samlSelfSignedCertificateWriter")
@@ -256,5 +248,24 @@ public class SamlIdPMetadataConfiguration {
             samlProfileSamlResponseBuilder.getObject(),
             defaultSamlRegisteredServiceCachingMetadataResolver(),
             new NonInflatingSaml20ObjectBuilder(openSamlConfigBean.getObject()));
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "samlIdPMetadataGeneratorCipherExecutor")
+    public CipherExecutor samlIdPMetadataGeneratorCipherExecutor() {
+        return CipherExecutor.noOpOfStringToString();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "samlIdPMetadataGeneratorConfigurationContext")
+    public SamlIdPMetadataGeneratorConfigurationContext samlIdPMetadataGeneratorConfigurationContext() {
+        return SamlIdPMetadataGeneratorConfigurationContext.builder()
+            .samlIdPMetadataLocator(samlIdPMetadataLocator())
+            .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter())
+            .applicationContext(applicationContext)
+            .metadataCipherExecutor(samlIdPMetadataGeneratorCipherExecutor())
+            .casProperties(casProperties)
+            .openSamlConfigBean(openSamlConfigBean.getObject())
+            .build();
     }
 }

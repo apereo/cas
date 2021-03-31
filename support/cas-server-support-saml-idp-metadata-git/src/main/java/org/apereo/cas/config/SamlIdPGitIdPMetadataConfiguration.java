@@ -41,6 +41,9 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 @ConditionalOnProperty(prefix = "cas.authn.saml-idp.metadata.git", name = { "idp-metadata-enabled", "repository-url" })
 public class SamlIdPGitIdPMetadataConfiguration {
+    @Autowired
+    @Qualifier("samlIdPMetadataGeneratorConfigurationContext")
+    private ObjectProvider<SamlIdPMetadataGeneratorConfigurationContext> samlIdPMetadataGeneratorConfigurationContext;
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
@@ -63,7 +66,7 @@ public class SamlIdPGitIdPMetadataConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "gitSamlIdPMetadataCipherExecutor")
     @RefreshScope
-    public CipherExecutor gitSamlIdPMetadataCipherExecutor() {
+    public CipherExecutor samlIdPMetadataGeneratorCipherExecutor() {
         val idp = casProperties.getAuthn().getSamlIdp();
         val crypto = idp.getMetadata().getGit().getCrypto();
 
@@ -89,15 +92,8 @@ public class SamlIdPGitIdPMetadataConfiguration {
     @SneakyThrows
     @RefreshScope
     public SamlIdPMetadataGenerator samlIdPMetadataGenerator() {
-        val context = SamlIdPMetadataGeneratorConfigurationContext.builder()
-            .samlIdPMetadataLocator(samlIdPMetadataLocator())
-            .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter.getObject())
-            .applicationContext(applicationContext)
-            .casProperties(casProperties)
-            .openSamlConfigBean(openSamlConfigBean.getObject())
-            .metadataCipherExecutor(gitSamlIdPMetadataCipherExecutor())
-            .build();
-        return new GitSamlIdPMetadataGenerator(context, gitIdPMetadataRepositoryInstance());
+        return new GitSamlIdPMetadataGenerator(
+            samlIdPMetadataGeneratorConfigurationContext.getObject(), gitIdPMetadataRepositoryInstance());
     }
 
     @Bean
