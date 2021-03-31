@@ -46,6 +46,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.velocity.app.VelocityEngine;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.Response;
 import org.springframework.beans.factory.ObjectProvider;
@@ -112,6 +113,10 @@ public class SamlIdPMetadataConfiguration {
     @Autowired
     @Qualifier("samlProfileSamlResponseBuilder")
     private ObjectProvider<SamlProfileObjectBuilder<Response>> samlProfileSamlResponseBuilder;
+
+    @Autowired
+    @Qualifier("shibboleth.VelocityEngine")
+    private ObjectProvider<VelocityEngine> velocityEngineFactoryBean;
 
     @Lazy
     @Bean(initMethod = "initialize", destroyMethod = "destroy")
@@ -266,6 +271,7 @@ public class SamlIdPMetadataConfiguration {
             .metadataCipherExecutor(samlIdPMetadataGeneratorCipherExecutor())
             .casProperties(casProperties)
             .openSamlConfigBean(openSamlConfigBean.getObject())
+            .velocityEngine(velocityEngineFactoryBean.getObject())
             .build();
     }
 }

@@ -9,13 +9,15 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.velocity.VelocityContext;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
@@ -151,27 +153,36 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
                                                     final Pair<String, String> encryption,
                                                     final Optional<SamlRegisteredService> registeredService) {
 
-        val template = configurationContext.getApplicationContext().getResource("classpath:/template-idp-metadata.xml");
         val signingCert = SamlIdPMetadataGenerator.cleanCertificate(signing.getKey());
         val encryptionCert = SamlIdPMetadataGenerator.cleanCertificate(encryption.getKey());
 
         val idp = configurationContext.getCasProperties().getAuthn().getSamlIdp();
         try (val writer = new StringWriter()) {
-            IOUtils.copy(template.getInputStream(), writer, StandardCharsets.UTF_8);
             val resolver = SpringExpressionLanguageValueResolver.getInstance();
             val entityId = resolver.resolve(idp.getCore().getEntityId());
             val scope = resolver.resolve(configurationContext.getCasProperties().getServer().getScope());
-            var metadata = writer.toString()
-                .replace("${entityId}", entityId)
-                .replace("${scope}", scope)
-                .replace("${idpEndpointUrl}", getIdPEndpointUrl())
-                .replace("${encryptionKey}", encryptionCert)
-                .replace("${signingKey}", signingCert);
+
+            val context = IdPMetadataTemplateContext.builder()
+                .encryptionCertificate(encryptionCert)
+                .signingCertificate(signingCert)
+                .entityId(entityId)
+                .scope(scope)
+                .endpointUrl(getIdPEndpointUrl())
+                .build();
+
+            val template = configurationContext.getVelocityEngine()
+                .getTemplate("/template-idp-metadata.vm", StandardCharsets.UTF_8.name());
+
+            val velocityContext = new VelocityContext();
+            velocityContext.put("context", context);
+            template.merge(velocityContext, writer);
+            var metadata = writer.toString();
 
             val customizers = configurationContext.getApplicationContext()
                 .getBeansOfType(SamlIdPMetadataCustomizer.class, false, true).values();
             if (!customizers.isEmpty()) {
-                val entityDescriptor = SamlUtils.transformSamlObject(configurationContext.getOpenSamlConfigBean(), metadata, EntityDescriptor.class);
+                val entityDescriptor = SamlUtils.transformSamlObject(configurationContext.getOpenSamlConfigBean(),
+                    metadata, EntityDescriptor.class);
                 customizers.stream()
                     .sorted(AnnotationAwareOrderComparator.INSTANCE)
                     .forEach(customizer -> customizer.customize(entityDescriptor, registeredService));
@@ -181,4 +192,16 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
             return metadata;
         }
     }
+
+    @SuperBuilder
+    @Getter
+    public static class IdPMetadataTemplateContext implements Serializable {
+        private static final long serialVersionUID = -8084689071916142718L;
+        private final String entityId;
+        private final String scope;
+        private final String endpointUrl;
+        private final String encryptionCertificate;
+        private final String signingCertificate;
+    }
+
 }

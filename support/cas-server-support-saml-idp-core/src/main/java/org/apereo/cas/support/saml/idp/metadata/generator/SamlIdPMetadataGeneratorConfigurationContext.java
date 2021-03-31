@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.apache.velocity.app.VelocityEngine;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
@@ -34,4 +35,6 @@ public class SamlIdPMetadataGeneratorConfigurationContext {
     private final CasConfigurationProperties casProperties;
 
     private final OpenSamlConfigBean openSamlConfigBean;
+
+    private final VelocityEngine velocityEngine;
 }
