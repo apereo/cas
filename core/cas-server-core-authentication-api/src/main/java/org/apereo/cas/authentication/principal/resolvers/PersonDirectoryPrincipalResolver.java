@@ -7,14 +7,15 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.util.CollectionUtils;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.services.persondir.IPersonAttributeDao;
 
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.*;
 
 
 /**
@@ -72,8 +73,14 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
                 return null;
             }
             LOGGER.debug("Retrieved [{}] attribute(s) from the repository", attributes.size());
-            val pair = convertPersonAttributesToPrincipal(principalId, currentPrincipal, attributes);
-            val principal = buildResolvedPrincipal(pair.getKey(), pair.getValue(), credential, currentPrincipal, handler);
+            val result = convertPersonAttributesToPrincipal(principalId, currentPrincipal, attributes);
+            if (!result.isSuccess() && context.isReturnNullIfNoAttributes()) {
+                LOGGER.warn("Principal resolution is unable to produce a result and will return null");
+                return null;
+            }
+
+            val principal = buildResolvedPrincipal(result.getPrincipalId(), result.getAttributes(),
+                credential, currentPrincipal, handler);
             LOGGER.debug("Final resolved principal by [{}] is [{}]", getName(), principal);
             return principal;
         }
@@ -118,9 +125,9 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
      * @return the pair
      */
     @SuppressWarnings("unchecked")
-    protected Pair<String, Map<String, List<Object>>> convertPersonAttributesToPrincipal(final String extractedPrincipalId,
-                                                                                         final Optional<Principal> currentPrincipal,
-                                                                                         final Map<String, List<Object>> attributes) {
+    protected PrincipalResolutionResult convertPersonAttributesToPrincipal(final String extractedPrincipalId,
+                                                                           final Optional<Principal> currentPrincipal,
+                                                                           final Map<String, List<Object>> attributes) {
         val convertedAttributes = new LinkedHashMap<String, List<Object>>();
         attributes.forEach((key, attrValue) -> {
             val values = ((List<Object>) CollectionUtils.toCollection(attrValue, ArrayList.class))
@@ -131,7 +138,9 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
             convertedAttributes.put(key, values);
         });
 
+        val builder = PrincipalResolutionResult.builder();
         var principalId = extractedPrincipalId;
+
         if (StringUtils.isNotBlank(context.getPrincipalAttributeNames())) {
             val attrNames = org.springframework.util.StringUtils.commaDelimitedListToSet(context.getPrincipalAttributeNames());
 
@@ -150,21 +159,21 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
                 .map(principalIdAttributes::get)
                 .findFirst();
 
-            if (result.isPresent()) {
+            if (result.isEmpty()) {
+                LOGGER.warn("Principal resolution is set to resolve users via attribute(s) [{}], and yet "
+                        + "the collection of attributes retrieved [{}] do not contain any of those attributes. This is "
+                        + "likely due to misconfiguration and CAS will use [{}] as the final principal id",
+                    context.getPrincipalAttributeNames(), principalIdAttributes.keySet(), principalId);
+                builder.success(false);
+            } else {
                 val values = result.get();
                 if (!values.isEmpty()) {
                     principalId = CollectionUtils.firstElement(values).map(Object::toString).orElseThrow();
                     LOGGER.debug("Found principal id attribute value [{}]", principalId);
                 }
-            } else {
-                LOGGER.warn("Principal resolution is set to resolve users via attribute(s) [{}], and yet "
-                    + "the collection of attributes retrieved [{}] do not contain any of those attributes. This is "
-                    + "likely due to misconfiguration and CAS will use [{}] as the final principal id",
-                    context.getPrincipalAttributeNames(), principalIdAttributes.keySet(), principalId);
             }
         }
-
-        return Pair.of(principalId, convertedAttributes);
+        return builder.principalId(principalId).attributes(convertedAttributes).build();
     }
 
     /**
@@ -217,5 +226,17 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         }
         LOGGER.debug("Extracted principal id [{}]", id);
         return id;
+    }
+
+    @SuperBuilder
+    @Getter
+    static class PrincipalResolutionResult {
+        private final String principalId;
+
+        @Builder.Default
+        private final Map<String, List<Object>> attributes = new HashMap<>();
+
+        @Builder.Default
+        private final boolean success = true;
     }
 }
