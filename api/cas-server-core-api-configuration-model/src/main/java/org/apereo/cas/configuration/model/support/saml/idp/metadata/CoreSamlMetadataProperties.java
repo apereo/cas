@@ -41,4 +41,38 @@ public class CoreSamlMetadataProperties implements Serializable {
      * Whether valid metadata is required.
      */
     private boolean requireValidMetadata = true;
+
+    /**
+     * Whether metadata generation process
+     * should support SSO service POST binding.
+     */
+    private boolean ssoServicePostBindingEnabled = true;
+    /**
+     * Whether metadata generation process
+     * should support SSO service POST SimpleSign binding.
+     */
+
+    private boolean ssoServicePostSimpleSignBindingEnabled = true;
+    /**
+     * Whether metadata generation process
+     * should support SSO service REDIRECT binding.
+     */
+    private boolean ssoServiceRedirectBindingEnabled = true;
+    /**
+     * Whether metadata generation process
+     * should support SSO service SOAP binding.
+     */
+    private boolean ssoServiceSoapBindingEnabled = true;
+
+    /**
+     * Whether metadata generation process
+     * should support SLO service POST binding.
+     */
+    private boolean sloServicePostBindingEnabled = true;
+    /**
+     * Whether metadata generation process
+     * should support SLO service REDIRECT binding.
+     */
+    private boolean sloServiceRedirectBindingEnabled = true;
+    
 }
