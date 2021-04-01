@@ -16,7 +16,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.util.function.BiFunction;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Tag("OIDC")
 public class OidcLogoutEndpointControllerMatcherTests extends AbstractOidcTests {
