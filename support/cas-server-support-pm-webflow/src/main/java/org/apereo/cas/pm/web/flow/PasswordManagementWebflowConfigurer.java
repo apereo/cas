@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
 import org.apereo.cas.web.flow.actions.StaticEventExecutionAction;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import org.apereo.cas.web.support.WebUtils;
@@ -57,10 +58,7 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
     }
 
     private void createAccountStatusViewStates(final Flow flow) {
-        flow.getStartActionList().add(requestContext -> {
-            WebUtils.putPasswordManagementEnabled(requestContext, casProperties.getAuthn().getPm().getCore().isEnabled());
-            return null;
-        });
+        enablePasswordManagementForFlow(flow);
 
         createViewState(flow, CasWebflowConstants.VIEW_ID_AUTHENTICATION_BLOCKED, CasWebflowConstants.VIEW_ID_AUTHENTICATION_BLOCKED);
         createViewState(flow, CasWebflowConstants.VIEW_ID_INVALID_WORKSTATION, CasWebflowConstants.VIEW_ID_INVALID_WORKSTATION);
@@ -191,10 +189,8 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
         createTransitionForState(questionsView, CasWebflowConstants.TRANSITION_ID_SUBMIT,
             "verifySecurityQuestions", Map.of("bind", Boolean.FALSE, "validate", Boolean.FALSE));
 
-        pswdFlow.getStartActionList().add(requestContext -> {
-            WebUtils.putPasswordManagementEnabled(requestContext, casProperties.getAuthn().getPm().getCore().isEnabled());
-            return null;
-        });
+        enablePasswordManagementForFlow(pswdFlow);
+
         createViewState(pswdFlow, CasWebflowConstants.STATE_ID_PASSWORD_RESET_ERROR_VIEW, CasWebflowConstants.VIEW_ID_PASSWORD_RESET_ERROR);
         createViewState(pswdFlow, CasWebflowConstants.STATE_ID_PASSWORD_UPDATE_SUCCESS, CasWebflowConstants.VIEW_ID_PASSWORD_UPDATE_SUCCESS);
         configurePasswordResetFlow(pswdFlow, CasWebflowConstants.VIEW_ID_MUST_CHANGE_PASSWORD);
@@ -206,6 +202,12 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
             getTransitionableState(pswdFlow, CasWebflowConstants.STATE_ID_PASSWORD_UPDATE_SUCCESS),
             CasWebflowConstants.TRANSITION_ID_PROCEED,
             CasWebflowConstants.STATE_ID_PASSWORD_RESET_FLOW_COMPLETE);
+    }
+
+    private void enablePasswordManagementForFlow(final Flow flow) {
+        flow.getStartActionList().add(
+            new ConsumerExecutionAction(context -> WebUtils.putPasswordManagementEnabled(context,
+                casProperties.getAuthn().getPm().getCore().isEnabled())));
     }
 
     private void configurePasswordResetFlow(final Flow flow, final String id) {

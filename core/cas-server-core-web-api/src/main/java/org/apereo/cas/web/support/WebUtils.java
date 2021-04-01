@@ -1601,4 +1601,24 @@ public class WebUtils {
     public static Boolean isRecaptchaForgotUsernameEnabled(final RequestContext requestContext) {
         return requestContext.getFlowScope().get("recaptchaForgotUsernameEnabled", Boolean.class);
     }
+
+    /**
+     * Put recaptcha password management enabled.
+     *
+     * @param requestContext the request context
+     * @param recaptcha      the recaptcha
+     */
+    public static void putRecaptchaPasswordManagementEnabled(final RequestContext requestContext, final GoogleRecaptchaProperties recaptcha) {
+        requestContext.getFlowScope().put("recaptchaPasswordManagementEnabled", recaptcha.isEnabled());
+    }
+
+    /**
+     * Is recaptcha forgot username enabled.
+     *
+     * @param requestContext the request context
+     * @return the boolean
+     */
+    public static Boolean isRecaptchaPasswordManagementEnabled(final RequestContext requestContext) {
+        return requestContext.getFlowScope().get("recaptchaPasswordManagementEnabled", Boolean.class);
+    }
 }
