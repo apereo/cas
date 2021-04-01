@@ -4,7 +4,7 @@ const assert = require('assert');
 (async () => {
     const browser = await puppeteer.launch({
         ignoreHTTPSErrors: true,
-        headless: false,
+        headless: true,
         args: ['--lang=de']
     });
     const page = await browser.newPage();
