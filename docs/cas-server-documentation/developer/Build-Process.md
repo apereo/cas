@@ -94,6 +94,9 @@ The following IDEA settings for Gradle may also be useful:
 
 ![image](https://user-images.githubusercontent.com/1205228/71612835-5ea5ed80-2bbc-11ea-8f49-9746dc2b3a70.png)
 
+If you have problems importing the project in IntelliJ idea with Gradle errors like `Unable to find method ''java.lang.String org.gradle.api.artifacts.result.ComponentSelectionReason.getDescription()''`
+please make sure you're using a recent version. At the time of this writing, v2020.3.3 had no problems. 
+
 Additionally, you may need to customize the VM settings to ensure the development environment can load and index the codebase:
 
 ```bash
@@ -127,6 +130,10 @@ Additionally, you may need to customize the VM settings to ensure the developmen
 -ea
 -Xverify:none
 ```
+
+If you're using OpenJDK 11 (or later) you may find the above VM options do not work. The key point for making IntelliJ 
+handle the project nicely is to give it lots of memory (either by specifiying the `-Xmx8g` VM options or in the IDE 
+menu Help -> Change Memory Settings).
 
 #### Plugins
 
