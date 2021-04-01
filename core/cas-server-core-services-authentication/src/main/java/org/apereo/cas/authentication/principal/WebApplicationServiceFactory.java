@@ -111,7 +111,9 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
             .map(entry -> Pair.of(entry.getKey(), CollectionUtils.toCollection(entry.getValue(), ArrayList.class)))
             .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
 
-        if (UrlValidator.getInstance().isValid(service.getOriginalUrl())) {
+        LOGGER.trace("Collected request parameters [{}] as service attributes", attributes);
+        val validator = new UrlValidator(UrlValidator.ALLOW_LOCAL_URLS);
+        if (validator.isValid(service.getOriginalUrl())) {
             new URIBuilder(service.getOriginalUrl()).getQueryParams()
                 .forEach(pair -> attributes.put(pair.getName(), CollectionUtils.wrapArrayList(pair.getValue())));
         }

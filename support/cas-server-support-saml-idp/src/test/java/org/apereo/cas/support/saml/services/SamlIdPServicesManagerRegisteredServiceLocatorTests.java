@@ -276,4 +276,40 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
             assertNull(res1);
         }
     }
+
+    @Test
+    public void verifyWithSelectionStrategy() {
+        val prefix = "http://localhost:8443/cas";
+        val callbackUrl = prefix + SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK;
+
+        val service0 = RegisteredServiceTestUtils.getRegisteredService(callbackUrl + ".*");
+        service0.setEvaluationOrder(0);
+
+        val service1 = getSamlRegisteredServiceFor("https://sp.testshib.org/shibboleth-sp");
+        service1.setEvaluationOrder(100);
+
+        val service2 = getSamlRegisteredServiceFor(".+");
+        service2.setMetadataLocation("https://example.org");
+        service2.setEvaluationOrder(1000);
+
+        val candidateServices = CollectionUtils.wrapList(service0, service1, service2);
+        servicesManager.save(candidateServices.toArray(new RegisteredService[0]));
+
+        Collections.sort(candidateServices);
+
+        val url = new URIBuilder(callbackUrl + "?entityId=https%3A%2F%2Fsp.testshib.org%2Fshibboleth-sp");
+        val request = new MockHttpServletRequest();
+        request.setRequestURI(callbackUrl);
+        url.getQueryParams().forEach(param -> request.addParameter(param.getName(), param.getValue()));
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, new MockHttpServletResponse()));
+        val service = webApplicationServiceFactory.createService(url.toString());
+        assertFalse(service.getAttributes().isEmpty());
+        val selectionStrategy = new SamlIdPEntityIdAuthenticationServiceSelectionStrategy(servicesManager, webApplicationServiceFactory, prefix);
+        val extracted = selectionStrategy.resolveServiceFrom(service);
+        assertNotNull(extracted);
+        assertFalse(extracted.getAttributes().isEmpty());
+
+        val result = servicesManager.findServiceBy(extracted);
+        assertEquals(service1, result);
+    }
 }
