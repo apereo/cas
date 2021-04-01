@@ -94,8 +94,9 @@ The following IDEA settings for Gradle may also be useful:
 
 ![image](https://user-images.githubusercontent.com/1205228/71612835-5ea5ed80-2bbc-11ea-8f49-9746dc2b3a70.png)
 
-If you have problems importing the project in IntelliJ idea with Gradle errors like `Unable to find method ''java.lang.String org.gradle.api.artifacts.result.ComponentSelectionReason.getDescription()''`
-please make sure you're using a recent version. At the time of this writing, v2020.3.3 had no problems. 
+<div class="alert alert-warning"><p>
+You should always use the latest version of the Intellij IDEA
+</p></div>
 
 Additionally, you may need to customize the VM settings to ensure the development environment can load and index the codebase:
 
