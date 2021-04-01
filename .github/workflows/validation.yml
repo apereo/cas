@@ -111,9 +111,7 @@ jobs:
             ${{ runner.os }}-gradle-
       - name: Validate CAS Command-line Shell
         run: |
-          casVersion=$(./gradlew casVersion --no-daemon -q)
-          ./gradlew :support:cas-server-support-shell:build -DskipNestedConfigMetadataGen=true -x check -x javadoc  --no-daemon --build-cache --configure-on-demand --parallel
-          java -jar support/cas-server-support-shell/build/libs/cas-server-support-shell-${casVersion}.jar @ci/tests/shell/cas-shell-script.sh 2>&1 | tee cas-shell.out
+          ./ci/tests/shell/run-shell.sh
           echo "Checking for stack traces in output that would indicate an error"
           cat cas-shell.out
           count=$(grep -c -e ".*\(Exception\|Throwable\|caused\\sby\).*" cas-shell.out || true);
