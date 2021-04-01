@@ -5,7 +5,7 @@ const url = require('url');
 (async () => {
     const browser = await puppeteer.launch({
         ignoreHTTPSErrors: true,
-        headless: false,
+        headless: true,
         devtools: true
     });
     const page = await browser.newPage();
