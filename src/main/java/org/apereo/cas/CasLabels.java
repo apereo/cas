@@ -51,7 +51,7 @@ public enum CasLabels {
     LABEL_EMAIL_SMS_NOTIFICATIONS("Email & SMS Notifications", "nexmo|mail|twilio|email|sms"),
     LABEL_GUA("GUA"),
     LABEL_GEOLOCATION("GeoLocation", "googlemaps"),
-    LABEL_GRADLE_BUILD_RELEASE("Gradle Build & Release", "renovatebot|jdk|gradle|sonatype|snapshot|dependency|module|pom|bom|travis-ci|dependencies|update\\s.+to\\sv.+"),
+    LABEL_GRADLE_BUILD_RELEASE("Gradle Build & Release", "eclipse|IDE|intellij|renovatebot|jdk|gradle|sonatype|snapshot|dependency|module|pom|bom|travis-ci|dependencies|update\\s.+to\\sv.+"),
     LABEL_HAZELCAST("Hazelcast", "\\bhz\\b"),
     LABEL_INFINISPAN("Infinispan"),
     LABEL_INTERNATIONALIZATION("Internationalization", "localization|localized|message bundle|translation|language bundle|I18n|french|spanish|german|italian"),
