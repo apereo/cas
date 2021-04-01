@@ -408,6 +408,11 @@ subprojects {
         it.options.compilerArgs += casCompilerArgs
     }
 
+    def currentTime = java.time.ZonedDateTime.now(ZoneId.systemDefault())
+    compileJava.doLast {
+        buildDate = currentTime
+    }
+
     tasks.jar.onlyIf {
         project.buildDate != null || !project.buildJarFile.exists()
     }
