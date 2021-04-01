@@ -1581,4 +1581,24 @@ public class WebUtils {
     public List<RegisteredService> getAuthorizedServices(final RequestContext requestContext) {
         return requestContext.getFlowScope().get("authorizedServices", List.class);
     }
+
+    /**
+     * Put recaptcha forgot username enabled.
+     *
+     * @param requestContext the request context
+     * @param properties     the properties
+     */
+    public static void putRecaptchaForgotUsernameEnabled(final RequestContext requestContext, final GoogleRecaptchaProperties properties) {
+        requestContext.getFlowScope().put("recaptchaForgotUsernameEnabled", properties.isEnabled());
+    }
+
+    /**
+     * Is recaptcha forgot username enabled.
+     *
+     * @param requestContext the request context
+     * @return the boolean
+     */
+    public static Boolean isRecaptchaForgotUsernameEnabled(final RequestContext requestContext) {
+        return requestContext.getFlowScope().get("recaptchaForgotUsernameEnabled", Boolean.class);
+    }
 }
