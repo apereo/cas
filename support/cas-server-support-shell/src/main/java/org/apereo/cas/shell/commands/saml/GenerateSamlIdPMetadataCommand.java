@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.utilities.java.support.xml.BasicParserPool;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.shell.standard.ShellCommandGroup;
@@ -90,6 +91,9 @@ public class GenerateSamlIdPMetadataCommand {
             props.getServer().setScope(scope);
             props.getServer().setPrefix(serverPrefix);
 
+            val velocityEngine = new VelocityEngine();
+            velocityEngine.init();
+            
             val parserPool = new BasicParserPool();
             parserPool.initialize();
             val context = SamlIdPMetadataGeneratorConfigurationContext.builder()
@@ -99,6 +103,7 @@ public class GenerateSamlIdPMetadataCommand {
                 .casProperties(props)
                 .metadataCipherExecutor(CipherExecutor.noOpOfStringToString())
                 .openSamlConfigBean(new OpenSamlConfigBean(parserPool))
+                .velocityEngine(velocityEngine)
                 .build();
 
             val generator = new FileSystemSamlIdPMetadataGenerator(context);

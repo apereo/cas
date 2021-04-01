@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.idp.metadata.generator;
 
+import org.apereo.cas.configuration.model.support.saml.idp.metadata.CoreSamlMetadataProperties;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
@@ -162,18 +163,19 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
             val entityId = resolver.resolve(idp.getCore().getEntityId());
             val scope = resolver.resolve(configurationContext.getCasProperties().getServer().getScope());
 
+            val metadataCore = idp.getMetadata().getCore();
             val context = IdPMetadataTemplateContext.builder()
                 .encryptionCertificate(encryptionCert)
                 .signingCertificate(signingCert)
                 .entityId(entityId)
                 .scope(scope)
                 .endpointUrl(getIdPEndpointUrl())
-                .ssoServicePostBindingEnabled(idp.getMetadata().getCore().isSsoServicePostBindingEnabled())
-                .ssoServicePostSimpleSignBindingEnabled(idp.getMetadata().getCore().isSsoServicePostSimpleSignBindingEnabled())
-                .ssoServiceRedirectBindingEnabled(idp.getMetadata().getCore().isSsoServiceRedirectBindingEnabled())
-                .ssoServiceSoapBindingEnabled(idp.getMetadata().getCore().isSsoServiceSoapBindingEnabled())
-                .sloServicePostBindingEnabled(idp.getMetadata().getCore().isSloServicePostBindingEnabled())
-                .sloServiceRedirectBindingEnabled(idp.getMetadata().getCore().isSloServiceRedirectBindingEnabled())
+                .ssoServicePostBindingEnabled(metadataCore.isSsoServicePostBindingEnabled())
+                .ssoServicePostSimpleSignBindingEnabled(metadataCore.isSsoServicePostSimpleSignBindingEnabled())
+                .ssoServiceRedirectBindingEnabled(metadataCore.isSsoServiceRedirectBindingEnabled())
+                .ssoServiceSoapBindingEnabled(metadataCore.isSsoServiceSoapBindingEnabled())
+                .sloServicePostBindingEnabled(metadataCore.isSloServicePostBindingEnabled())
+                .sloServiceRedirectBindingEnabled(metadataCore.isSloServiceRedirectBindingEnabled())
                 .build();
 
             val template = configurationContext.getVelocityEngine()
