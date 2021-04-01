@@ -11,6 +11,7 @@ import com.yubico.data.CredentialRegistration;
 import com.yubico.webauthn.RegisteredCredential;
 import com.yubico.webauthn.data.ByteArray;
 import lombok.val;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,8 @@ import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -36,6 +39,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebflowMfaActions")
 @SpringBootTest(classes = BaseWebAuthnWebflowTests.SharedTestConfiguration.class)
 public class WebAuthnStartAuthenticationActionTests {
+    private static final String USER = UUID.randomUUID().toString();
+
     @Autowired
     @Qualifier("webAuthnStartAuthenticationAction")
     private Action webAuthnStartAuthenticationAction;
@@ -48,6 +53,11 @@ public class WebAuthnStartAuthenticationActionTests {
     @Qualifier("webAuthnMultifactorAuthenticationProvider")
     private MultifactorAuthenticationProvider webAuthnMultifactorAuthenticationProvider;
 
+    @BeforeEach
+    public void initialize() {
+        webAuthnCredentialRepository.removeAllRegistrations(USER);
+    }
+
     @Test
     public void verifyOperation() throws Exception {
         val context = new MockRequestContext();
@@ -58,7 +68,7 @@ public class WebAuthnStartAuthenticationActionTests {
         RequestContextHolder.setRequestContext(context);
         ExternalContextHolder.setExternalContext(context.getExternalContext());
 
-        val authn = RegisteredServiceTestUtils.getAuthentication("casuser");
+        val authn = RegisteredServiceTestUtils.getAuthentication(USER);
         WebUtils.putAuthentication(authn, context);
         var result = webAuthnStartAuthenticationAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, result.getId());
