@@ -83,7 +83,6 @@ public class SamlValidateEndpoint extends BaseCasActuatorEndpoint {
             .service(selectedService)
             .authentication(authentication)
             .registeredService(registeredService)
-            .retrievePrincipalAttributesFromReleasePolicy(Boolean.TRUE)
             .build();
         val accessResult = registeredServiceAccessStrategyEnforcer.execute(audit);
         accessResult.throwExceptionIfNeeded();

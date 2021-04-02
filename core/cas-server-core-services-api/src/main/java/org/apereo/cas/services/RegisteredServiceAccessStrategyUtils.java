@@ -2,8 +2,10 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResult;
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 
@@ -13,6 +15,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
@@ -90,7 +93,7 @@ public class RegisteredServiceAccessStrategyUtils {
      * @param ticketGrantingTicket the ticket granting ticket
      */
     public static void ensureServiceSsoAccessIsAllowed(final RegisteredService registeredService, final Service service,
-        final TicketGrantingTicket ticketGrantingTicket) {
+                                                       final TicketGrantingTicket ticketGrantingTicket) {
         ensureServiceSsoAccessIsAllowed(registeredService, service, ticketGrantingTicket, false);
     }
 
@@ -103,8 +106,8 @@ public class RegisteredServiceAccessStrategyUtils {
      * @param credentialsProvided  the credentials provided
      */
     public static void ensureServiceSsoAccessIsAllowed(final RegisteredService registeredService, final Service service,
-        final TicketGrantingTicket ticketGrantingTicket,
-        final boolean credentialsProvided) {
+                                                       final TicketGrantingTicket ticketGrantingTicket,
+                                                       final boolean credentialsProvided) {
 
         if (!registeredService.getAccessStrategy().isServiceAccessAllowedForSso()) {
             LOGGER.debug("Service [{}] is configured to not use SSO", service.getId());
@@ -123,21 +126,7 @@ public class RegisteredServiceAccessStrategyUtils {
         LOGGER.debug("Current authentication via ticket [{}] allows service [{}] to participate in the existing SSO session",
             ticketGrantingTicket.getId(), service.getId());
     }
-
-    /**
-     * Ensure principal access is allowed for service.
-     *
-     * @param service           the service
-     * @param registeredService the registered service
-     * @param authentication    the authentication
-     * @return the boolean
-     */
-    public static boolean ensurePrincipalAccessIsAllowedForService(final Service service,
-        final RegisteredService registeredService,
-        final Authentication authentication) {
-        return ensurePrincipalAccessIsAllowedForService(service, registeredService, authentication, true);
-    }
-
+    
     /**
      * Ensure principal access is allowed for service.
      *
@@ -148,11 +137,11 @@ public class RegisteredServiceAccessStrategyUtils {
      * @return the boolean
      */
     static boolean ensurePrincipalAccessIsAllowedForService(final Service service,
-        final RegisteredService registeredService,
-        final String principalId,
-        final Map<String, Object> attributes) {
+                                                            final RegisteredService registeredService,
+                                                            final String principalId,
+                                                            final Map<String, List<Object>> attributes) {
         ensureServiceAccessIsAllowed(service, registeredService);
-        if (!registeredService.getAccessStrategy().doPrincipalAttributesAllowServiceAccess(principalId, attributes)) {
+        if (!registeredService.getAccessStrategy().doPrincipalAttributesAllowServiceAccess(principalId, (Map) attributes)) {
             LOGGER.warn("Cannot grant access to service [{}]; it is not authorized for use by [{}].",
                 service != null ? service.getId() : "unknown", principalId);
             val handlerErrors = new HashMap<String, Throwable>();
@@ -167,68 +156,64 @@ public class RegisteredServiceAccessStrategyUtils {
     /**
      * Ensure service access is allowed.
      *
-     * @param service                                      the service
-     * @param registeredService                            the registered service
-     * @param authentication                               the authentication
-     * @param retrievePrincipalAttributesFromReleasePolicy retrieve attributes from release policy or rely on the
-     *                                                     principal attributes already collected. Setting this value
-     *                                                     to false bears the assumption that the policy has run already.
+     * @param service           the service
+     * @param registeredService the registered service
+     * @param authentication    the authentication
+     * @return the true if access is granted. false otherwise
      * @throws UnauthorizedServiceException the unauthorized service exception
      * @throws PrincipalException           the principal exception
      */
-    static boolean ensurePrincipalAccessIsAllowedForService(final Service service,
-        final RegisteredService registeredService,
-        final Authentication authentication,
-        final boolean retrievePrincipalAttributesFromReleasePolicy)
+    public static boolean ensurePrincipalAccessIsAllowedForService(final Service service,
+                                                            final RegisteredService registeredService,
+                                                            final Authentication authentication)
         throws UnauthorizedServiceException, PrincipalException {
 
         ensureServiceAccessIsAllowed(service, registeredService);
+
         val principal = authentication.getPrincipal();
-        val principalAttrs =
-            retrievePrincipalAttributesFromReleasePolicy && registeredService != null && registeredService.getAttributeReleasePolicy() != null
-                ? registeredService.getAttributeReleasePolicy().getAttributes(principal, service, registeredService)
-                : authentication.getPrincipal().getAttributes();
-        val attributes = new HashMap<String, Object>(principalAttrs);
-        attributes.putAll(authentication.getAttributes());
-        return ensurePrincipalAccessIsAllowedForService(service, registeredService, principal.getId(), attributes);
+        val principalAttributes = new HashMap<>(principal.getAttributes());
+        val merger = CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED);
+        val policyAttributes = registeredService.getAttributeReleasePolicy().getAttributes(principal, service, registeredService);
+        val result = CoreAuthenticationUtils.mergeAttributes(principalAttributes, policyAttributes, merger);
+        LOGGER.trace("Merged principal attributes [{}] with attributes from release policy [{}]. Result: [{}]",
+            principalAttributes, policyAttributes, result);
+        result.putAll(authentication.getAttributes());
+        return ensurePrincipalAccessIsAllowedForService(service, registeredService, principal.getId(), result);
     }
 
     /**
      * Ensure service access is allowed.
      *
-     * @param serviceTicket                                the service ticket
-     * @param registeredService                            the registered service
-     * @param ticketGrantingTicket                         the ticket granting ticket
-     * @param retrievePrincipalAttributesFromReleasePolicy the retrieve principal attributes from release policy
+     * @param serviceTicket        the service ticket
+     * @param registeredService    the registered service
+     * @param ticketGrantingTicket the ticket granting ticket
      * @throws UnauthorizedServiceException the unauthorized service exception
      * @throws PrincipalException           the principal exception
      */
     static void ensurePrincipalAccessIsAllowedForService(final ServiceTicket serviceTicket,
-        final RegisteredService registeredService,
-        final TicketGrantingTicket ticketGrantingTicket,
-        final boolean retrievePrincipalAttributesFromReleasePolicy)
+                                                         final RegisteredService registeredService,
+                                                         final TicketGrantingTicket ticketGrantingTicket)
         throws UnauthorizedServiceException, PrincipalException {
         ensurePrincipalAccessIsAllowedForService(serviceTicket.getService(),
-            registeredService, ticketGrantingTicket.getAuthentication(), retrievePrincipalAttributesFromReleasePolicy);
+            registeredService, ticketGrantingTicket.getAuthentication());
     }
 
     /**
      * Ensure service access is allowed. Determines the final authentication object
      * by looking into the chained authentications of the ticket granting ticket.
      *
-     * @param service                                      the service
-     * @param registeredService                            the registered service
-     * @param ticketGrantingTicket                         the ticket granting ticket
-     * @param retrievePrincipalAttributesFromReleasePolicy the retrieve principal attributes from release policy
+     * @param service              the service
+     * @param registeredService    the registered service
+     * @param ticketGrantingTicket the ticket granting ticket
      * @throws UnauthorizedServiceException the unauthorized service exception
      * @throws PrincipalException           the principal exception
      */
-    static void ensurePrincipalAccessIsAllowedForService(final Service service, final RegisteredService registeredService,
-        final TicketGrantingTicket ticketGrantingTicket,
-        final boolean retrievePrincipalAttributesFromReleasePolicy)
+    static void ensurePrincipalAccessIsAllowedForService(final Service service,
+                                                         final RegisteredService registeredService,
+                                                         final TicketGrantingTicket ticketGrantingTicket)
         throws UnauthorizedServiceException, PrincipalException {
         ensurePrincipalAccessIsAllowedForService(service, registeredService,
-            ticketGrantingTicket.getRoot().getAuthentication(), retrievePrincipalAttributesFromReleasePolicy);
+            ticketGrantingTicket.getRoot().getAuthentication());
 
     }
 
@@ -242,8 +227,8 @@ public class RegisteredServiceAccessStrategyUtils {
      * @throws PrincipalException           the principal exception
      */
     static void ensurePrincipalAccessIsAllowedForService(final ServiceTicket serviceTicket,
-        final AuthenticationResult context,
-        final RegisteredService registeredService)
+                                                         final AuthenticationResult context,
+                                                         final RegisteredService registeredService)
         throws UnauthorizedServiceException, PrincipalException {
         ensurePrincipalAccessIsAllowedForService(serviceTicket.getService(), registeredService, context.getAuthentication());
     }

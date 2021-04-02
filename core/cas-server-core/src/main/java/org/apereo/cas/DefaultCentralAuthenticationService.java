@@ -334,12 +334,12 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         return ticketGrantingTicket;
     }
 
-    private void enforceRegisteredServiceAccess(final Authentication authentication, final Service service, final RegisteredService registeredService) {
+    private void enforceRegisteredServiceAccess(final Authentication authentication, final Service service,
+                                                final RegisteredService registeredService) {
         val audit = AuditableContext.builder()
             .service(service)
             .authentication(authentication)
             .registeredService(registeredService)
-            .retrievePrincipalAttributesFromReleasePolicy(Boolean.FALSE)
             .build();
         val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
         accessResult.throwExceptionIfNeeded();
@@ -350,7 +350,6 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             .service(service)
             .ticketGrantingTicket(ticket)
             .registeredService(registeredService)
-            .retrievePrincipalAttributesFromReleasePolicy(Boolean.FALSE)
             .build();
         val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
         accessResult.throwExceptionIfNeeded();

@@ -67,7 +67,6 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
                 .service(token.getService())
                 .authentication(token.getAuthentication())
                 .registeredService(codeRegisteredService)
-                .retrievePrincipalAttributesFromReleasePolicy(Boolean.TRUE)
                 .build();
             val accessResult = getConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
             accessResult.throwExceptionIfNeeded();
