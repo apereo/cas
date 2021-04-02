@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow.action;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.SurrogateRegisteredServiceAccessStrategy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -39,25 +40,21 @@ public class SurrogateAuthorizationActionTests extends BaseSurrogateInitialAuthe
     private Action surrogateAuthorizationCheck;
 
     @Test
-    public void verifyAuthorized() {
-        try {
-            val context = new MockRequestContext();
-            WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
-            WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
-            val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
-            val strategy = new SurrogateRegisteredServiceAccessStrategy();
-            when(registeredService.getAccessStrategy()).thenReturn(strategy);
-            WebUtils.putRegisteredService(context, registeredService);
-            val request = new MockHttpServletRequest();
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, surrogateAuthorizationCheck.execute(context).getId());
-        } catch (final Exception e) {
-            throw new AssertionError(e);
-        }
+    public void verifyAuthorized() throws Exception {
+        val context = new MockRequestContext();
+        WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
+        WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService();
+        val strategy = new SurrogateRegisteredServiceAccessStrategy();
+        registeredService.setAccessStrategy(strategy);
+        WebUtils.putRegisteredService(context, registeredService);
+        val request = new MockHttpServletRequest();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, surrogateAuthorizationCheck.execute(context).getId());
     }
 
     @Test
-    public void verifyNotAuthorized() {
+    public void verifyNotAuthorized() throws Exception {
         val context = new MockRequestContext();
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
 
@@ -66,12 +63,12 @@ public class SurrogateAuthorizationActionTests extends BaseSurrogateInitialAuthe
         attributes.putAll(CoreAuthenticationTestUtils.getAttributeRepository().getBackingMap());
 
         val p = CoreAuthenticationTestUtils.getPrincipal("casuser", attributes);
-        WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(p), context);
-        val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
+        WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(p), context);
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         val strategy = new SurrogateRegisteredServiceAccessStrategy();
         strategy.setSurrogateEnabled(true);
         strategy.setSurrogateRequiredAttributes(CollectionUtils.wrap("surrogateAttribute", CollectionUtils.wrapSet("someValue")));
-        when(registeredService.getAccessStrategy()).thenReturn(strategy);
+        registeredService.setAccessStrategy(strategy);
         WebUtils.putRegisteredService(context, registeredService);
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
