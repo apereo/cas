@@ -1,0 +1,14 @@
+<script type="text/javascript" th:src="@{${#themes.code('webjars.bootstrapmin.js')}}"></script>
+<script type="text/javascript" th:src="@{${#themes.code('cas.standard.js.file')}}"></script>
+
+<script th:inline="javascript">
+(function () {
+    document.addEventListener('DOMContentLoaded', function () {
+        if (typeof resourceLoadedSuccessfully === "function") {
+            resourceLoadedSuccessfully();
+        }
+    });
+})();
+</script>
+
+<script th:replace="fragments/googleanalytics :: ga"></script>

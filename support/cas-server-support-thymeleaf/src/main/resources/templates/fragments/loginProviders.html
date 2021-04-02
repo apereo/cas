@@ -54,7 +54,7 @@
                             th:each="entry: ${delegatedAuthenticationProviderConfigurations}"
                             th:switch="${entry.type}">
 
-                            <a class="mdc-button mdc-button--raised w-100"
+                            <a class="mdc-button mdc-button--raised btn btn-primary w-100"
                                 th:id="${entry.name}"
                                 th:classappend="'mdc-button-' + ${entry.type}"
                                 th:href="@{${entry.redirectUrl}}"
@@ -115,7 +115,7 @@
                                     returnUrl += encodeURIComponent(window.location.search);
                                 }
                                 url += "?return=" + returnUrl;
-                                var link = `<a href='${url}' class='mdc-button mdc-button--raised d-block'>
+                                var link = `<a href='${url}' class='mdc-button mdc-button--raised btn btn-primary d-block'>
                                                                     <i class='mdi mdi-shield' aria-hidden='true'></i>
                                                                     <span class="mdc-button__label">SAML2 Identity Provider Discovery</span></a>`;
                                 document.write(link);
@@ -142,7 +142,7 @@
                         th:style="'display:' + ${delegatedAuthenticationProviderPrimary != null ? 'none' : 'block'}">
                         <ul>
                             <li th:each="entry: ${wsfedUrls}">
-                                <a class="mdc-button mdc-button--raised d-block"
+                                <a class="mdc-button mdc-button--raised btn btn-primary d-block"
                                     th:href="@{${entry.redirectUrl}}" th:inline="text" onload=""
                                     th:attr="autoredirect=${entry.autoRedirect}" th:title="${entry.name}">
 

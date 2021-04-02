@@ -21,11 +21,11 @@
 
                 <h3 th:utext="#{screen.welcome.instructions}">Enter your Username and Password</h3>
 
-                <div th:if="${param.error}" class="banner banner-danger banner-dismissible">Invalid credentials.</div>
-                <section class="cas-field my-3">
+                <div th:if="${param.error}" class="banner banner-danger alert alert-danger banner-dismissible">Invalid credentials.</div>
+                <section class="cas-field form-group my-3">
                     <div class="d-flex">
-                        <label for="username" class="mdc-text-field mdc-text-field--outlined">
-                            <input class="mdc-text-field__input"
+                        <label for="username" class="mdc-text-field mdc-text-field--outlined control-label">
+                            <input class="mdc-text-field__input form-control"
                                    id="username"
                                    name="username"
                                    size="25"
@@ -44,14 +44,14 @@
                     </div>
                 </section>
 
-                <section class="cas-field my-3 mdc-input-group">
+                <section class="cas-field form-group my-3 mdc-input-group">
                     <div class="mdc-input-group-field mdc-input-group-field-append">
                         <div class="d-flex caps-check">
 
                             <label for="password"
-                                   class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">
+                                   class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon">
 
-                                <input class="mdc-text-field__input pwd"
+                                <input class="mdc-text-field__input form-control pwd"
                                        type="password" id="password" size="25"
                                        name="password"
                                        th:accesskey="#{screen.welcome.label.password.accesskey}"
@@ -75,14 +75,14 @@
                             </p>
                         </div>
                     </div>
-                    <button class="reveal-password mdc-button mdc-button--raised mdc-input-group-append mdc-icon-button" type="button">
+                    <button class="reveal-password mdc-button mdc-button--raised btn btn-primary mdc-input-group-append mdc-icon-button" type="button">
                         <i class="mdi mdi-eye reveal-password-icon"></i>
                         <span class="sr-only">Toggle Password</span>
                     </button>
                 </section>
 
 
-                <button class="mdc-button mdc-button--raised"
+                <button class="mdc-button mdc-button--raised btn btn-primary"
                     accesskey="l"
                     th:value="#{screen.welcome.button.login}"
                     value="Login">

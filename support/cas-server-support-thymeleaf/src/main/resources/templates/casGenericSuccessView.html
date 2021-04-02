@@ -12,7 +12,7 @@
 <body>
 <main role="main" class="container mt-3 mb-3">
     <div layout:fragment="content" class="row">
-        <div class="w-100 m-auto mdc-card p-4 text-justify">
+        <div class="w-100 m-auto mdc-card card p-4 text-justify">
             <h2>
                 <i class="mdi mdi-door-open"></i>
                 <span th:utext="#{screen.success.header}">Log In Successful</span>
@@ -65,8 +65,8 @@
                 </div>
 
                 <section id="attribute-tab-0" class="attribute-tab">
-                    <div class="w-100 mdc-data-table mx-auto my-4" id="divPrincipalAttributes" role="tabpanel" aria-labelledby="attributes-tab">
-                        <table id="attributesTable" class="mdc-data-table__table" style="white-space: unset">
+                    <div class="w-100 mdc-data-table table-responsive mx-auto my-4" id="divPrincipalAttributes" role="tabpanel" aria-labelledby="attributes-tab">
+                        <table id="attributesTable" class="table table-striped" style="white-space: unset">
                             <thead>
                             <tr class="mdc-data-table__header-row">
                                 <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Attribute</th>
@@ -88,8 +88,8 @@
                 </section>
 
                 <section id="attribute-tab-1" class="d-none attribute-tab">
-                    <div class="w-100 mdc-data-table mx-auto my-4" id="divPrincipalAttributes" role="tabpanel" aria-labelledby="attributes-tab">
-                        <table id="attributesTable" class="mdc-data-table__table" style="white-space: unset">
+                    <div class="w-100 mdc-data-table table-responsive mx-auto my-4" id="divPrincipalAttributes" role="tabpanel" aria-labelledby="attributes-tab">
+                        <table id="attributesTable" class="table table-striped" style="white-space: unset">
                             <thead>
                             <tr class="mdc-data-table__header-row">
                                 <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Attribute</th>
@@ -111,8 +111,8 @@
                 </section>
 
                 <section id="attribute-tab-2" class="d-none attribute-tab" th:if="${authorizedServices}">
-                    <div class="w-100 mdc-data-table mx-auto my-4" id="divPrincipalAttributes" role="tabpanel" aria-labelledby="attributes-tab">
-                        <table id="attributesTable" class="mdc-data-table__table" style="white-space: unset">
+                    <div class="w-100 mdc-data-table table-responsive mx-auto my-4" id="divPrincipalAttributes" role="tabpanel" aria-labelledby="attributes-tab">
+                        <table id="attributesTable" class="table table-striped" style="white-space: unset">
                             <thead>
                             <tr class="mdc-data-table__header-row">
                                 <th class="mdc-data-table__header-cell" role="columnheader" scope="col"></th>

@@ -11,16 +11,16 @@
 
 <body>
     <main role="main" class="container mt-3 mb-3">
-        <div layout:fragment="content" id="login" class="mdc-card mdc-card-content w-lg-50 p-4 m-auto">
+        <div layout:fragment="content" id="login" class="mdc-card card mdc-card card-content w-lg-50 p-4 m-auto">
             <h2 th:text="#{cas.mfa.registerdevice.label.title}">Register Device</h2>
             <p th:text="#{cas.mfa.registerdevice.label.intro}">Please name the current device.</p>
 
             <form method="post" id="registerform" th:object="${mfaTrustRecord}" th:action="@{/login}">
                 <div class="d-flex caps-check">
                     <label for="deviceName"
-                           class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">
+                           class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon">
 
-                        <input class="mdc-text-field__input"
+                        <input class="mdc-text-field__input form-control"
                                type="text"
                                name="deviceName"
                                id="deviceName"
@@ -42,8 +42,8 @@
                 <div><p>How long should we remember this device?</p></div>
                 <div class="d-flex mt-2">
                     <div id="expirationField" class="mr-2" style="display:none">
-                        <label for="expiration" class="mdc-text-field mdc-text-field--outlined">
-                            <input class="mdc-text-field__input"
+                        <label for="expiration" class="mdc-text-field mdc-text-field--outlined control-label">
+                            <input class="mdc-text-field__input form-control"
                                    type="number"
                                    name="expiration"
                                    id="expiration"
@@ -74,11 +74,11 @@
                 </div>
 
                 <div class="d-flex mt-3">
-                    <button class="mdc-button mdc-button--raised" accesskey="s">
+                    <button class="mdc-button mdc-button--raised btn btn-primary" accesskey="s">
                         <span class="mdc-button__label"
                             th:text="#{cas.mfa.registerdevice.button.register}">Register</span>
                     </button>&nbsp;
-                    <button class="mdc-button mdc-button--raised" accesskey="k" formnovalidate
+                    <button class="mdc-button mdc-button--raised btn btn-primary" accesskey="k" formnovalidate
                         onclick="$('#eventId').val('skip');">
                         <span class="mdc-button__label" th:text="#{cas.mfa.registerdevice.button.skip}">Skip</span>
                     </button>

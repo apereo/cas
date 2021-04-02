@@ -23,12 +23,12 @@
 <body>
 <main role="main" class="container mt-3 mb-3">
 <div layout:fragment="content">
-    <div class="mdc-card p-4 banner banner-danger">
+    <div class="mdc-card card p-4 banner banner-danger alert alert-danger">
         <h2 th:utext="#{screen.unavailable.heading(${status},${error})}">CAS is unable to process this request: "{0}:{1}"</h2>
         <div th:utext="#{screen.unavailable.message}">screen.unavailable.message would go here</div>
         <pre id="errorMsg" class="mt-4" style="white-space: pre-wrap;" th:text="${'Error: ' + message}">error message would go here</pre>
         <p id="errorDetails" class="word-break-all" th:if="${trace}">
-            <button type="button" class="mdc-button mdc-button--raised"
+            <button type="button" class="mdc-button mdc-button--raised btn btn-primary"
                     onclick="showErrorDetails();">
                 <span class="mdc-button__label">View Details</span>
             </button>
