@@ -67,6 +67,12 @@ CAS attribute resolution engine now allows for fetching [user attributes from Ok
 
 The CAS codebase and the continuous integration workflows by extension have now switched to Gradle 7 for internal builds and validation.
 
+## JDK 16 Compatibility
+
+CAS is able to build and run successfully against the latest versions of JDK 16. The JDK baseline 
+requirement continues to be set at JDK 11, and this release is keeping up with JDK releases to ensure 
+CAS can correctly switch the baseline requirement when deemed necessary.
+
 ## Other Stuff
        
 - Locale selection can now accept and recognize the `Accept-Language` header and user's native browser locale.  
@@ -103,6 +109,8 @@ The CAS codebase and the continuous integration workflows by extension have now 
 - Apache jClouds
 - Kryo
 - Pac4j
+- Lombok
+- ErrorProne
 - Okta
 - Gradle
 - OpenSAML  
