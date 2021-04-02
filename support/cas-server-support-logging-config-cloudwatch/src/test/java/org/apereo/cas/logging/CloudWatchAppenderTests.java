@@ -3,12 +3,14 @@ package org.apereo.cas.logging;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.core.io.ClassPathResource;
 import software.amazon.awssdk.core.SdkSystemSetting;
 
 import java.util.stream.IntStream;
@@ -31,10 +33,13 @@ public class CloudWatchAppenderTests {
     }
 
     @Test
-    public void verifyOperation() {
-        val context = LoggerContext.getContext(false);
+    public void verifyOperation() throws Exception {
+        val config = new ClassPathResource("log4j2-test.xml");
+        val context = LoggerContext.getContext(CloudWatchAppenderTests.class.getClassLoader(), false, config.getURI());
         val logger = context.getLogger(CloudWatchAppender.class.getName());
+        System.out.println(logger.getAppenders());
         val appender = (CloudWatchAppender) logger.getAppenders().get("CloudWatchAppender");
+        System.out.println(appender);
         assertNotNull(appender);
         assertDoesNotThrow(new Executable() {
             @Override
