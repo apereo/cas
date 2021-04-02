@@ -126,9 +126,8 @@ public class CloudWatchAppender extends AbstractAppender implements Serializable
             val builder = CloudWatchLogsClient.builder();
             if (StringUtils.isNotBlank(endpoint)) {
                 builder.endpointOverride(new URI(endpoint));
-            } else {
-                builder.region(Region.of(awsLogRegionName));
             }
+            builder.region(Region.of(awsLogRegionName));
             builder.credentialsProvider(ChainingAWSCredentialsProvider.getInstance(credentialAccessKey, credentialSecretKey));
 
             this.awsLogsClient = builder.build();

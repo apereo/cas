@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import software.amazon.awssdk.core.SdkSystemSetting;
 
 import java.util.stream.IntStream;
 
@@ -24,6 +25,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("AmazonWebServices")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CloudWatchAppenderTests {
+    static {
+        System.setProperty(SdkSystemSetting.AWS_ACCESS_KEY_ID.property(), "AKIAIPPIGGUNIO74C63Z");
+        System.setProperty(SdkSystemSetting.AWS_SECRET_ACCESS_KEY.property(), "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");
+    }
+
     @Test
     public void verifyOperation() {
         val context = LoggerContext.getContext(false);
