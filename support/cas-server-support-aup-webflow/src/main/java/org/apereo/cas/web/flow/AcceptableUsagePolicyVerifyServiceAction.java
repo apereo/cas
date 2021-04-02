@@ -47,7 +47,6 @@ public class AcceptableUsagePolicyVerifyServiceAction extends AbstractAction {
                 .service(service)
                 .authentication(authentication)
                 .registeredService(registeredService)
-                .retrievePrincipalAttributesFromReleasePolicy(Boolean.TRUE)
                 .build();
             val accessResult = registeredServiceAccessStrategyEnforcer.execute(audit);
             accessResult.throwExceptionIfNeeded();

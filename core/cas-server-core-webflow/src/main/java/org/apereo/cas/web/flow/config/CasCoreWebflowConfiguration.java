@@ -220,7 +220,7 @@ public class CasCoreWebflowConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(name = "redirectToServiceAction")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_REDIRECT_TO_SERVICE)
     @RefreshScope
     public Action redirectToServiceAction() {
         return new RedirectToServiceAction(responseBuilderLocator.getObject());

@@ -51,8 +51,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
             try {
                 RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
                     registeredService,
-                    ticketGrantingTicket.get(),
-                    context.getRetrievePrincipalAttributesFromReleasePolicy().orElse(Boolean.TRUE));
+                    ticketGrantingTicket.get());
             } catch (final PrincipalException | UnauthorizedServiceException e) {
                 result.setException(e);
             }
@@ -74,8 +73,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
             try {
                 RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
                     registeredService,
-                    authentication,
-                    context.getRetrievePrincipalAttributesFromReleasePolicy().orElse(Boolean.TRUE));
+                    authentication);
             } catch (final PrincipalException | UnauthorizedServiceException e) {
                 result.setException(e);
             }

@@ -40,12 +40,6 @@ public class AuditableContext {
     private final Object httpResponse;
 
     /**
-     * Should attributes be refreshed from the release policy?
-     */
-    @Builder.Default
-    private Boolean retrievePrincipalAttributesFromReleasePolicy = Boolean.FALSE;
-
-    /**
      * Properties.
      */
     @Builder.Default
@@ -112,16 +106,7 @@ public class AuditableContext {
     public Optional<TicketGrantingTicket> getTicketGrantingTicket() {
         return Optional.ofNullable(ticketGrantingTicket);
     }
-
-    /**
-     * Get.
-     *
-     * @return optional attribute retrieval policy flag
-     */
-    public Optional<Boolean> getRetrievePrincipalAttributesFromReleasePolicy() {
-        return Optional.ofNullable(retrievePrincipalAttributesFromReleasePolicy);
-    }
-
+    
     /**
      * Get.
      *

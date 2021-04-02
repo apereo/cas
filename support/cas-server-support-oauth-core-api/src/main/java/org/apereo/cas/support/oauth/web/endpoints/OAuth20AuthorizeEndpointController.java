@@ -172,7 +172,6 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
                 .service(service)
                 .authentication(authentication)
                 .registeredService(registeredService)
-                .retrievePrincipalAttributesFromReleasePolicy(Boolean.TRUE)
                 .build();
             val accessResult = getOAuthConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
             accessResult.throwExceptionIfNeeded();

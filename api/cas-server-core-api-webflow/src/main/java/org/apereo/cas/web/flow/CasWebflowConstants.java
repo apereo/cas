@@ -44,7 +44,7 @@ public interface CasWebflowConstants {
      * The transition state 'finalize'.
      */
     String TRANSITION_ID_FINALIZE = "finalize";
-    
+
 
     /**
      * The transition state 'warn'.
@@ -327,7 +327,7 @@ public interface CasWebflowConstants {
     /**
      * The state 'cancel'.
      */
-    String STATE_ID_CANCEL= "cancel";
+    String STATE_ID_CANCEL = "cancel";
 
     /**
      * The state 'viewLoginForm'.
@@ -639,7 +639,7 @@ public interface CasWebflowConstants {
      * Views.
      ****************************************
      */
-    
+
     /**
      * The view state 'error'.
      */
@@ -932,7 +932,7 @@ public interface CasWebflowConstants {
      * Action id 'logoutAction'.
      */
     String ACTION_ID_LOGOUT = "logoutAction";
-    
+
     /**
      * Action id 'authenticationExceptionHandler'.
      */
