@@ -9,8 +9,8 @@
                             awsLogGroupName="LogGroupName"
                             awsLogStreamName="LogStreamName"
                             awsLogRegionName="us-west-1"
-                            credentialAccessKey="test"
-                            credentialSecretKey="test"
+                            credentialAccessKey="AKIAIPPIGGUNIO74C63Z"
+                            credentialSecretKey="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"
                             endpoint="http://127.0.0.1:4566"
                             awsLogStreamFlushPeriodInSeconds="1">
             <PatternLayout>

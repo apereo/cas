@@ -111,7 +111,7 @@ jobs:
             ${{ runner.os }}-gradle-
       - name: Validate CAS Command-line Shell
         run: |
-          chmod -R 777 ./ci/tests/run-shell.sh && ./ci/tests/shell/run-shell.sh
+          chmod -R 777 ./ci/tests/shell/run-shell.sh && ./ci/tests/shell/run-shell.sh
           echo "Checking for stack traces in output that would indicate an error"
           cat cas-shell.out
           count=$(grep -c -e ".*\(Exception\|Throwable\|caused\\sby\).*" cas-shell.out || true);
