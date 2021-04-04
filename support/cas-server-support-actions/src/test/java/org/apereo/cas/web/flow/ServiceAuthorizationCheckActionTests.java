@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebflowActions")
 public class ServiceAuthorizationCheckActionTests extends AbstractWebflowActionsTests {
     @Autowired
-    @Qualifier("serviceAuthorizationCheck")
+    @Qualifier(CasWebflowConstants.ACTION_ID_SERVICE_AUTHZ_CHECK)
     private Action action;
 
     @Test

@@ -154,7 +154,7 @@ jobs:
           echo "SONAR_COVERAGE_REPORTS=${files}" >> $GITHUB_ENV
       - name: Upload Coverage to SonarCloud
         if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' && env.SONARCLOUD_TOKEN != null }}
-        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel sonarqube -x javadoc -Dsonar.login="${SONARCLOUD_TOKEN}" -DskipNestedConfigMetadataGen=true -DshowStandardStreams=true -Dsonar.coverage.jacoco.xmlReportPaths="${SONAR_COVERAGE_REPORTS}"
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel sonarqube -x javadoc -Dsonar.login="${SONARCLOUD_TOKEN}" -DskipNestedConfigMetadataGen=true -Dverbose=true -Dsonar.coverage.jacoco.xmlReportPaths="${SONAR_COVERAGE_REPORTS}"
       - name: "Collect Files for Codacy"
         run: |
           find $PWD -type f -name 'jacocoRootReport.xml'

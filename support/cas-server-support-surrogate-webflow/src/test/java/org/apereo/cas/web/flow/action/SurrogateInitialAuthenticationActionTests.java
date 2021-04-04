@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class SurrogateInitialAuthenticationActionTests extends BaseSurrogateInitialAuthenticationActionTests {
 
     @Autowired
-    @Qualifier("authenticationViaFormAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_AUTHENTICATION_VIA_FORM_ACTION)
     private Action authenticationViaFormAction;
 
     @Test
