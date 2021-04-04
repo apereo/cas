@@ -1,12 +1,10 @@
 package org.apereo.cas;
 
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.apereo.cas.util.spring.boot.AbstractCasSpringBootServletInitializer;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.SessionTrackingMode;
-import java.util.Set;
+import org.springframework.core.metrics.ApplicationStartup;
+
+import java.util.List;
 
 /**
  * This is {@link CasEurekaServerServletInitializer}.
@@ -14,18 +12,9 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class CasEurekaServerServletInitializer extends SpringBootServletInitializer {
-    @Override
-    public void onStartup(final ServletContext servletContext) throws ServletException {
-        servletContext.setSessionTrackingModes(Set.of(SessionTrackingMode.COOKIE));
-        super.onStartup(servletContext);
-    }
-
-    @Override
-    public SpringApplicationBuilder configure(final SpringApplicationBuilder builder) {
-        return builder
-            .sources(CasEurekaServerWebApplication.class)
-            .banner(new CasEurekaServerBanner())
-            .logStartupInfo(true);
+public class CasEurekaServerServletInitializer extends AbstractCasSpringBootServletInitializer {
+    public CasEurekaServerServletInitializer() {
+        super(List.of(CasEurekaServerWebApplication.class),
+            new CasEurekaServerBanner(), ApplicationStartup.DEFAULT);
     }
 }

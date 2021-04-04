@@ -1,12 +1,10 @@
 package org.apereo.cas;
 
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.apereo.cas.util.spring.boot.AbstractCasSpringBootServletInitializer;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.SessionTrackingMode;
-import java.util.Set;
+import org.springframework.core.metrics.ApplicationStartup;
+
+import java.util.List;
 
 /**
  * This is {@link CasSpringBootAdminServletInitializer}.
@@ -14,19 +12,11 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class CasSpringBootAdminServletInitializer extends SpringBootServletInitializer {
+public class CasSpringBootAdminServletInitializer extends AbstractCasSpringBootServletInitializer {
 
-    @Override
-    public void onStartup(final ServletContext servletContext) throws ServletException {
-        servletContext.setSessionTrackingModes(Set.of(SessionTrackingMode.COOKIE));
-        super.onStartup(servletContext);
-    }
-    
-    @Override
-    protected SpringApplicationBuilder configure(final SpringApplicationBuilder builder) {
-        return builder
-            .sources(CasSpringBootAdminServerWebApplication.class)
-            .banner(new CasSpringBootAdminServerBanner())
-            .logStartupInfo(true);
+    public CasSpringBootAdminServletInitializer() {
+        super(List.of(CasSpringBootAdminServerWebApplication.class),
+            new CasSpringBootAdminServerBanner(),
+            ApplicationStartup.DEFAULT);
     }
 }
