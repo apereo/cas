@@ -40,6 +40,9 @@ In the `gradle.properties` of the [CAS WAR Overlay](../installation/WAR-Overlay-
 cas.version=6.4.0-RC4
 ```
 
+Alternatively and for new deployments, [CAS Initializr](../installation/WAR-Overlay-Initializr.html) can also 
+be used to generate an overlay project template for this release.
+
 <div class="alert alert-info">
   <strong>System Requirements</strong><br/>There are no changes to the minimum system/platform requirements for this release.
 </div>
@@ -47,7 +50,6 @@ cas.version=6.4.0-RC4
 ## New & Noteworthy
 
 The following items are new improvements and enhancements presented in this release.
-
 
 ## Other Stuff
 

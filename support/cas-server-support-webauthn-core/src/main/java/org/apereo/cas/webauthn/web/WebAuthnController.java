@@ -118,9 +118,7 @@ public class WebAuthnController {
      * @return the response entity
      */
     @PostMapping(value = WEBAUTHN_ENDPOINT_AUTHENTICATE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> startAuthentication(
-        @RequestParam("username")
-        final String username) {
+    public ResponseEntity<Object> startAuthentication(@RequestParam(value = "username", required = false) final String username) {
         val request = server.startAuthentication(Optional.ofNullable(username));
         if (request.isRight()) {
             return startResponse(new StartAuthenticationResponse(request.right().get()));

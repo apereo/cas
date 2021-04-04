@@ -59,7 +59,9 @@ public abstract class BaseWebAuthnCredentialRepositoryTests {
         assertFalse(webAuthnCredentialRepository.getCredentialIdsForUsername(id.toUpperCase()).isEmpty());
 
         val ba = ByteArray.fromBase64Url(id);
-        assertTrue(webAuthnCredentialRepository.getRegistrationByUsernameAndCredentialId(id.toUpperCase(), ba).isPresent());
+        val newRegistration = webAuthnCredentialRepository.getRegistrationByUsernameAndCredentialId(id.toUpperCase(), ba);
+        assertTrue(newRegistration.isPresent());
+        assertNotNull(newRegistration.get().getRegistrationTime());
         assertFalse(webAuthnCredentialRepository.getRegistrationsByUserHandle(ba).isEmpty());
         assertFalse(webAuthnCredentialRepository.getRegistrationsByUsername(id.toUpperCase()).isEmpty());
         assertFalse(webAuthnCredentialRepository.getUserHandleForUsername(id.toUpperCase()).isEmpty());
