@@ -100,6 +100,8 @@ public class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests 
         centralAuthenticationService.addTicket(tgt);
         val results = singleSignOnSessionsEndpoint.getSsoSessions(SingleSignOnSessionsEndpoint.SsoSessionReportOptions.ALL.getType());
         assertFalse(results.isEmpty());
+        results = singleSignOnSessionsEndpoint.getSsoSessions(null);
+        assertFalse(results.isEmpty());
     }
 
     @Test
@@ -108,6 +110,8 @@ public class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests 
         tgt.setProxiedBy(CoreAuthenticationTestUtils.getWebApplicationService());
         centralAuthenticationService.addTicket(tgt);
         val results = singleSignOnSessionsEndpoint.getSsoSessions(SingleSignOnSessionsEndpoint.SsoSessionReportOptions.DIRECT.getType());
+        assertFalse(results.isEmpty());
+        results = singleSignOnSessionsEndpoint.getSsoSessions(null);
         assertFalse(results.isEmpty());
     }
 
