@@ -14,8 +14,9 @@ import com.duosecurity.client.Http;
 import com.duosecurity.duoweb.DuoWebException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -25,9 +26,7 @@ import org.springframework.http.HttpMethod;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
 import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link BaseDuoSecurityAuthenticationService}.
@@ -37,18 +36,13 @@ import java.util.Map;
  */
 @Slf4j
 @EqualsAndHashCode(of = "duoProperties")
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurityAuthenticationService {
     private static final long serialVersionUID = -8044100706027708789L;
 
     private static final int AUTH_API_VERSION = 2;
 
     private static final int RESULT_CODE_ERROR_THRESHOLD = 49999;
-
-    private static final int USER_ACCOUNT_CACHE_INITIAL_SIZE = 50;
-
-    private static final long USER_ACCOUNT_CACHE_MAX_SIZE = 100_000_000;
-
-    private static final int USER_ACCOUNT_CACHE_EXPIRATION_SECONDS = 5;
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
@@ -65,23 +59,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
 
     private final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver;
 
-    private final transient Map<String, DuoSecurityUserAccount> userAccountCachedMap;
-
-    private final transient Cache<String, DuoSecurityUserAccount> userAccountCache;
-
-    protected BaseDuoSecurityAuthenticationService(final DuoSecurityMultifactorAuthenticationProperties duoProperties, final HttpClient httpClient,
-                                                   final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver) {
-        this.duoProperties = duoProperties;
-        this.httpClient = httpClient;
-        this.multifactorAuthenticationPrincipalResolver = multifactorAuthenticationPrincipalResolver;
-
-        this.userAccountCache = Caffeine.newBuilder()
-            .initialCapacity(USER_ACCOUNT_CACHE_INITIAL_SIZE)
-            .maximumSize(USER_ACCOUNT_CACHE_MAX_SIZE)
-            .expireAfterWrite(Duration.ofSeconds(USER_ACCOUNT_CACHE_EXPIRATION_SECONDS))
-            .build();
-        this.userAccountCachedMap = this.userAccountCache.asMap();
-    }
+    private final Cache<String, DuoSecurityUserAccount> userAccountCache;
 
     @Override
     public DuoSecurityAuthenticationResult authenticate(final Credential credential) throws Exception {
@@ -104,7 +82,8 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
             account.setStatus(DuoSecurityUserAccountStatus.AUTH);
             return account;
         }
-        
+
+        val userAccountCachedMap = userAccountCache.asMap();
         if (userAccountCachedMap.containsKey(username)) {
             val account = userAccountCachedMap.get(username);
             LOGGER.debug("Found cached duo user account [{}]", account);

@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.duo.authn;
 
+import org.apereo.cas.adaptors.duo.DuoSecurityUserAccount;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
@@ -9,6 +10,7 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.duosecurity.duoweb.DuoWeb;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.benmanes.caffeine.cache.Cache;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -38,8 +40,17 @@ public class BasicDuoSecurityAuthenticationService extends BaseDuoSecurityAuthen
     private static final long serialVersionUID = -6690808348975271382L;
 
     public BasicDuoSecurityAuthenticationService(final DuoSecurityMultifactorAuthenticationProperties duoProperties,
-        final HttpClient httpClient, final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver) {
-        super(duoProperties, httpClient, multifactorAuthenticationPrincipalResolver);
+                                                 final HttpClient httpClient,
+                                                 final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver,
+                                                 final Cache<String, DuoSecurityUserAccount> userAccountCache) {
+        super(duoProperties, httpClient, multifactorAuthenticationPrincipalResolver, userAccountCache);
+    }
+
+    private static String buildUrlHttpScheme(final String url) {
+        if (!RegexUtils.find("^http(s)*://", url)) {
+            return "https://" + url;
+        }
+        return url;
     }
 
     @Override
@@ -89,13 +100,6 @@ public class BasicDuoSecurityAuthenticationService extends BaseDuoSecurityAuthen
             duoProperties.getDuoSecretKey(),
             duoProperties.getDuoApplicationKey(), signedRequestToken);
         return DuoSecurityAuthenticationResult.builder().success(true).username(authUserId).build();
-    }
-
-    private static String buildUrlHttpScheme(final String url) {
-        if (!RegexUtils.find("^http(s)*://", url)) {
-            return "https://" + url;
-        }
-        return url;
     }
 
 }
