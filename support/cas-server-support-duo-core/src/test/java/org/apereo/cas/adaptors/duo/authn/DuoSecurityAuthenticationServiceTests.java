@@ -9,6 +9,7 @@ import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -66,7 +67,8 @@ public class DuoSecurityAuthenticationServiceTests {
             webServer.start();
             val service = new BasicDuoSecurityAuthenticationService(
                 casProperties.getAuthn().getMfa().getDuo().get(0),
-                httpClient, List.of(MultifactorAuthenticationPrincipalResolver.identical()));
+                httpClient, List.of(MultifactorAuthenticationPrincipalResolver.identical()),
+                Caffeine.newBuilder().build());
             assertTrue(service.ping());
             assertNotNull(service.getApiHost());
         }
@@ -77,7 +79,8 @@ public class DuoSecurityAuthenticationServiceTests {
         val results = MAPPER.writeValueAsString(Map.of("response", "pong", "stat", "FAIL"));
         val service = new BasicDuoSecurityAuthenticationService(
             casProperties.getAuthn().getMfa().getDuo().get(0),
-            httpClient, List.of(MultifactorAuthenticationPrincipalResolver.identical()));
+            httpClient, List.of(MultifactorAuthenticationPrincipalResolver.identical()),
+            Caffeine.newBuilder().build());
         try (val webServer = new MockWebServer(6556,
             new ByteArrayResource(results.getBytes(StandardCharsets.UTF_8), "Output"),
             HttpStatus.OK)) {
@@ -93,7 +96,8 @@ public class DuoSecurityAuthenticationServiceTests {
         val props = casProperties.getAuthn().getMfa().getDuo().get(0);
         props.setDuoApiHost(null);
         val service = new BasicDuoSecurityAuthenticationService(props,
-            httpClient, List.of(MultifactorAuthenticationPrincipalResolver.identical()));
+            httpClient, List.of(MultifactorAuthenticationPrincipalResolver.identical()),
+            Caffeine.newBuilder().build());
         try (val webServer = new MockWebServer(6556,
             new ByteArrayResource(results.getBytes(StandardCharsets.UTF_8), "Output"),
             HttpStatus.OK)) {
