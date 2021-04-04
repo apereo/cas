@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebflowActions")
 public class TerminateSessionActionTests extends AbstractWebflowActionsTests {
     @Autowired
-    @Qualifier("terminateSessionAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_TERMINATE_SESSION)
     private Action action;
 
     @Test
