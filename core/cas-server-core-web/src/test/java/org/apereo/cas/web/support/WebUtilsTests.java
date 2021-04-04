@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.authentication.credential.OneTimeTokenCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.MockServletContext;
 
 import lombok.val;
@@ -88,6 +89,9 @@ public class WebUtilsTests {
         assertThrows(ClassCastException.class, () -> WebUtils.getCredential(context, OneTimeTokenCredential.class));
 
         WebUtils.putTicketGrantingTicketInScopes(context, StringUtils.EMPTY);
+        WebUtils.putTicketGrantingTicketInScopes(context, (TicketGrantingTicket) null);
+        WebUtils.putTicketGrantingTicketInScopes(context, (String) null);
+        assertNull(WebUtils.getTicketGrantingTicket(context));
         assertThrows(IllegalArgumentException.class, () -> WebUtils.getPrincipalFromRequestContext(context, null));
 
         request.addParameter(WebUtils.PUBLIC_WORKSTATION_ATTRIBUTE, "true");
