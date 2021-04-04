@@ -291,6 +291,7 @@ function showServerResponse(data) {
 function hideDeviceInfo() {
     $("#device-info").hide();
     $("#registerButton").show();
+    $("#registerDiscoverableCredentialButton").show();
 }
 
 function showDeviceInfo(params) {
@@ -299,6 +300,9 @@ function showDeviceInfo(params) {
     $("#device-icon").attr("src", params.imageUrl);
     $("#registerButton").hide();
     $("#deviceNamePanel").hide();
+
+    $("#registerDiscoverableCredentialButton").hide();
+    $("#residentKeysPanel").hide();
 }
 
 function resetDisplays() {

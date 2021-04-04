@@ -104,6 +104,9 @@ public class WebAuthnMultifactorWebflowConfigurer extends AbstractCasMultifactor
             createTransitionForState(viewLoginFormState, TRANSITION_ID_VALIDATE_WEBAUTHN, "validateWebAuthnToken");
 
             val validateAction = createActionState(flow, "validateWebAuthnToken", "webAuthnValidateSessionCredentialTokenAction");
+            validateAction.getEntryActionList()
+                .add(createSetAction("flowScope.".concat(CasWebflowConstants.VAR_ID_MFA_PROVIDER_ID), StringUtils.quote(webAuthn.getId())));
+
             createTransitionForState(validateAction,
                 CasWebflowConstants.TRANSITION_ID_FINALIZE, CasWebflowConstants.STATE_ID_REAL_SUBMIT);
         }

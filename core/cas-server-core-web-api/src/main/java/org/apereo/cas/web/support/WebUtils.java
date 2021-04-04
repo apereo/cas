@@ -22,6 +22,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 
@@ -269,8 +270,11 @@ public class WebUtils {
      * @param map         the map
      * @param ticketValue the ticket value
      */
-    public static void putTicketGrantingTicketIntoMap(final MutableAttributeMap map, final String ticketValue) {
-        map.put(PARAMETER_TICKET_GRANTING_TICKET_ID, ticketValue);
+    public static void putTicketGrantingTicketIntoMap(final MutableAttributeMap<Object> map, final String ticketValue) {
+        FunctionUtils.doIf(StringUtils.isNotBlank(ticketValue),
+            value -> map.put(PARAMETER_TICKET_GRANTING_TICKET_ID, value),
+            value -> map.remove(PARAMETER_TICKET_GRANTING_TICKET_ID))
+            .accept(ticketValue);
     }
 
     /**
