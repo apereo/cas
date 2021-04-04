@@ -10,6 +10,7 @@ import org.springframework.boot.Banner;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.groovy.template.GroovyTemplateAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
@@ -23,7 +24,10 @@ import java.time.Instant;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@SpringBootApplication(exclude = GroovyTemplateAutoConfiguration.class, proxyBeanMethods = false)
+@SpringBootApplication(exclude = {
+    GroovyTemplateAutoConfiguration.class,
+    DataSourceAutoConfiguration.class
+}, proxyBeanMethods = false)
 @EnableEurekaServer
 @NoArgsConstructor
 @Slf4j

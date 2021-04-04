@@ -1,14 +1,9 @@
 package org.apereo.cas.web;
 
 import org.apereo.cas.CasEmbeddedContainerUtils;
+import org.apereo.cas.util.spring.boot.AbstractCasSpringBootServletInitializer;
 
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
-
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.SessionTrackingMode;
-import java.util.Set;
+import java.util.List;
 
 /**
  * This is {@link CasWebApplicationServletInitializer}.
@@ -16,20 +11,10 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class CasWebApplicationServletInitializer extends SpringBootServletInitializer {
+public class CasWebApplicationServletInitializer extends AbstractCasSpringBootServletInitializer {
 
-    @Override
-    public void onStartup(final ServletContext servletContext) throws ServletException {
-        servletContext.setSessionTrackingModes(Set.of(SessionTrackingMode.COOKIE));
-        super.onStartup(servletContext);
-    }
-
-    @Override
-    protected SpringApplicationBuilder configure(final SpringApplicationBuilder builder) {
-        return builder
-            .sources(CasWebApplication.class)
-            .applicationStartup(CasEmbeddedContainerUtils.getApplicationStartup())
-            .banner(CasEmbeddedContainerUtils.getCasBannerInstance());
+    public CasWebApplicationServletInitializer() {
+        super(List.of(CasWebApplication.class), CasEmbeddedContainerUtils.getCasBannerInstance(), CasEmbeddedContainerUtils.getApplicationStartup());
     }
 }
 
