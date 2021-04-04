@@ -20,16 +20,17 @@ Support is enabled by including the following module in the WAR overlay:
 
 {% include casproperties.html properties="cas.authn.mfa.web-authn" %}
 
-## Primary Authentication
+## Discoverable Credentials
 
 It is possible to allow WebAuthN to act as a standalone authentication strategy for primary authentication. Using this approach,
 user accounts and FIDO2-enabled devices that have already registered with 
-CAS are given the option to login using their FIDO2-enabled
-device by only providing the username linked to their registration record for a passwordless authentication experience.
+CAS are given the option to login using their FIDO2-enabled device for a passwordless authentication experience.
+
+> Discoverable Credential means that the private key and associated metadata is stored in persistent 
+memory on the authenticator, instead of encrypted and stored on the relying party server. 
 
 Device registration can occur out of band using available CAS APIs, or by allowing users to pass through the registration flow
 as part of the typical multifactor authentication. See below for details on device registration.
-
 
 ## Registration
 

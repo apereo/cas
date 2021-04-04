@@ -51,8 +51,12 @@ be used to generate an overlay project template for this release.
 
 The following items are new improvements and enhancements presented in this release.
 
+### FIDO2 Discoverable Credentials
+          
+[FIDO2 WebAuthn Multifactor Authentication](../mfa/FIDO2-WebAuthn-Authentication.html) is now able to support
+Discoverable Credentials / Resident Keys.
+
 ## Other Stuff
 
- 
 ## Library Upgrades
 
