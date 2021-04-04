@@ -77,7 +77,7 @@ public class DelegatedClientAuthenticationActionTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Autowired
-    @Qualifier("delegatedAuthenticationAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION)
     private Action delegatedAuthenticationAction;
 
     @Autowired

@@ -37,7 +37,7 @@ public class AcceptableUsagePolicyVerifyServiceActionTests extends BaseAcceptabl
     private ServicesManager servicesManager;
 
     @Autowired
-    @Qualifier("acceptableUsagePolicyVerifyServiceAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_AUP_VERIFY_SERVICE)
     private Action acceptableUsagePolicyVerifyAction;
 
     @Test

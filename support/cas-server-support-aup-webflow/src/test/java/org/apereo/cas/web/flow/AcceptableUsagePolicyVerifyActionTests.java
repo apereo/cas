@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class AcceptableUsagePolicyVerifyActionTests extends BaseAcceptableUsagePolicyActionTests {
 
     @Autowired
-    @Qualifier("acceptableUsagePolicyVerifyAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_AUP_VERIFY)
     private Action acceptableUsagePolicyVerifyAction;
 
     @Test

@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 public class InitialFlowSetupActionTests extends AbstractWebflowActionsTests {
     @Autowired
-    @Qualifier("initialFlowSetupAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_INITIAL_FLOW_SETUP)
     private Action action;
 
     @Test

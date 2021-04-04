@@ -38,7 +38,7 @@ import static org.mockito.Mockito.*;
 @TestPropertySource(properties = "cas.acceptable-usage-policy.core.aup-policy-terms-attribute-name=cn")
 public class AcceptableUsagePolicyRenderActionTests extends BaseAcceptableUsagePolicyActionTests {
     @Autowired
-    @Qualifier("acceptableUsagePolicyRenderAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_AUP_RENDER)
     private Action acceptableUsagePolicyRenderAction;
 
     @Test
