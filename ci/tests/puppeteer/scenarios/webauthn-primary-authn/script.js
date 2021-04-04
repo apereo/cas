@@ -11,9 +11,6 @@ const assert = require('assert');
     var element = await page.$('#webauthnLoginPanel div div h2#status');
     assert(await element.boundingBox() == null);
     
-    await page.type('#username', "casuser");
-    await page.keyboard.press('Tab');
-    
     element = await page.$('#webauthnLoginPanel div div h2#status');
     assert(await element.boundingBox() != null);
     const header = await page.evaluate(element => element.textContent, element);
