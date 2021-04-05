@@ -91,19 +91,14 @@ public class DistributedJEESessionStore implements SessionStore {
 
     @Override
     public boolean destroySession(final WebContext webContext) {
-        try {
-            val sessionId = fetchSessionIdFromContext(webContext);
-            val ticketId = TransientSessionTicketFactory.normalizeTicketId(sessionId);
-            this.centralAuthenticationService.deleteTicket(ticketId);
+        val sessionId = fetchSessionIdFromContext(webContext);
+        val ticketId = TransientSessionTicketFactory.normalizeTicketId(sessionId);
+        this.centralAuthenticationService.deleteTicket(ticketId);
 
-            val context = JEEContext.class.cast(webContext);
-            cookieGenerator.removeCookie(context.getNativeResponse());
-            LOGGER.trace("Removes session cookie and ticket: [{}]", ticketId);
-            return true;
-        } catch (final Exception e) {
-            LOGGER.trace(e.getMessage(), e);
-        }
-        return false;
+        val context = JEEContext.class.cast(webContext);
+        cookieGenerator.removeCookie(context.getNativeResponse());
+        LOGGER.trace("Removes session cookie and ticket: [{}]", ticketId);
+        return true;
     }
 
     @Override
