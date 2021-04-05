@@ -5,17 +5,22 @@ import org.apereo.cas.util.ResourceUtils;
 
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
+import org.jose4j.jwk.PublicJsonWebKey;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.test.context.TestPropertySource;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -39,6 +44,37 @@ public class OidcDefaultJsonWebKeystoreCacheLoaderTests extends AbstractOidcTest
         file.delete();
     }
 
+    @Test
+    public void verifyNoWebKeys() {
+        val jwks = new JsonWebKeySet();
+        val loader = mock(OidcDefaultJsonWebKeystoreCacheLoader.class);
+        when(loader.buildJsonWebKeySet()).thenReturn(Optional.of(jwks));
+        when(loader.load(anyString())).thenCallRealMethod();
+        assertTrue(loader.load(UUID.randomUUID().toString()).isEmpty());
+
+        jwks.getJsonWebKeys().add(mock(JsonWebKey.class));
+        when(loader.getJsonSigningWebKeyFromJwks(any())).thenReturn(null);
+        assertTrue(loader.load(UUID.randomUUID().toString()).isEmpty());
+    }
+
+    @Test
+    public void verifyBadKeyCount() throws Exception {
+        val jwks = new JsonWebKeySet();
+        val jsonWebKey = mock(PublicJsonWebKey.class);
+        jwks.getJsonWebKeys().add(jsonWebKey);
+
+        val loader = mock(OidcDefaultJsonWebKeystoreCacheLoader.class);
+        when(loader.buildJsonWebKeySet()).thenCallRealMethod();
+        when(loader.load(anyString())).thenCallRealMethod();
+        when(loader.generateJwksResource()).thenReturn(new ByteArrayResource("jwks".getBytes(StandardCharsets.UTF_8)));
+        when(loader.buildJsonWebKeySet(any(Resource.class))).thenReturn(jwks);
+        assertTrue(loader.load(UUID.randomUUID().toString()).isEmpty());
+
+        when(jsonWebKey.getAlgorithm()).thenReturn("some-alg");
+        when(loader.getJsonSigningWebKeyFromJwks(any())).thenReturn(jsonWebKey);
+        assertTrue(loader.load(UUID.randomUUID().toString()).isEmpty());
+    }
+    
     @Test
     public void verifyOperation() {
         val publicJsonWebKey1 = oidcDefaultJsonWebKeystoreCache.get("https://sso.example.org/cas/oidc");
