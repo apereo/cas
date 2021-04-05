@@ -18,7 +18,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.HttpUtils;
-import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpClient;
 
 import lombok.extern.slf4j.Slf4j;
@@ -103,12 +102,10 @@ public class OidcSingleLogoutServiceMessageHandler extends BaseSingleLogoutServi
                 .headers(CollectionUtils.wrap("Content-Type", msg.getContentType()))
                 .build();
             response = HttpUtils.execute(exec);
-            if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
+            if (response != null && !Objects.requireNonNull(HttpStatus.resolve(response.getStatusLine().getStatusCode())).isError()) {
                 LOGGER.trace("Received OK logout response");
                 return true;
             }
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
         }

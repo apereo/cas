@@ -3,6 +3,7 @@ package org.apereo.cas.oidc.services;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
+import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.OidcRegisteredService;
 
 import lombok.val;
@@ -49,4 +50,17 @@ public class OidcServiceRegistryListenerTests extends AbstractOidcTests {
         val processed = (OidcRegisteredService) oidcServiceRegistryListener.postLoad(service);
         assertEquals(service.getAttributeReleasePolicy(), processed.getAttributeReleasePolicy());
     }
+
+    @Test
+    public void verifyUnknownScope() {
+        var service = getOidcRegisteredService();
+        val scopes = service.getScopes();
+        service.getScopes().clear();
+        scopes.add("unknown");
+        service = (OidcRegisteredService) oidcServiceRegistryListener.postLoad(service);
+        val policy = service.getAttributeReleasePolicy();
+        assertTrue(policy instanceof DenyAllAttributeReleasePolicy);
+    }
+
+
 }
