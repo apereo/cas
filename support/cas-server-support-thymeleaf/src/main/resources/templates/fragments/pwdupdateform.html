@@ -58,7 +58,7 @@
                             
                         </label>
 
-                        <i class="mdi mdi-alert mdc-text-field__icon text-danger caps-warn"></i>
+                        <i class="mdi mdi-alert fas fa-exclamation-triangle mdc-text-field__icon text-danger caps-warn"></i>
 
                     </div>
                 </div>
@@ -87,7 +87,7 @@
                                autocomplete="off" required/>
                     </label>
 
-                    <i class="mdi mdi-alert mdc-text-field__icon text-danger caps-warn"></i>
+                    <i class="mdi mdi-alert mdc-text-field__icon fas fa-exclamation-triangle text-danger caps-warn"></i>
                 </div>
             </div>
 
@@ -112,7 +112,7 @@
             </div>
             <div class="cas-field form-group my-3 text-warning" id="password-strength-msg" style="display: none;">
                 <div class="suggestions banner banner-warning alert alert-warning p-2 mb-2 d-flex align-items-center" role="alert">
-                    <span class="mdi mdi-information" aria-hidden="true"></span>&nbsp;
+                    <span class="mdi mdi-information fas fa-info" aria-hidden="true"></span>&nbsp;
                     <p class="m-0">
                         <span id="password-strength-warning"></span>&nbsp;
                         <span id="password-strength-suggestions"></span>
@@ -121,12 +121,12 @@
             </div>
             <div class="cas-field form-group my-3 text-danger" id="password-strength-notes">
                 <div id="password-policy-violation-msg" class="banner banner-danger alert alert-danger p-2" role="alert" style="display: none;">
-                    <span class="mdi mdi-alert" aria-hidden="true"></span>&nbsp;
+                    <span class="mdi mdi-alert fas fa-exclamation-triangle" aria-hidden="true"></span>&nbsp;
                     <strong th:text="#{screen.pm.password.policyViolation}">Password does not match the password policy
                         requirement.</strong>
                 </div>
                 <div id="password-confirm-mismatch-msg" class="banner banner-danger alert alert-danger p-2" role="alert" style="display: none;">
-                    <span class="mdi mdi-alert" aria-hidden="true"></span>&nbsp;
+                    <span class="mdi mdi-alert fas fa-exclamation-triangle" aria-hidden="true"></span>&nbsp;
                     <strong th:text="#{screen.pm.password.confirmMismatch}">Passwords do not match.</strong>
                 </div>
             </div>

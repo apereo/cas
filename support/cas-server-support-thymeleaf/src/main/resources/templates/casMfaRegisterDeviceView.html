@@ -19,7 +19,13 @@
                 <div class="d-flex caps-check">
                     <label for="deviceName"
                            class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon">
-
+                        <span class="mdc-notched-outline">
+                            <span class="mdc-notched-outline__leading"></span>
+                            <span class="mdc-notched-outline__notch">
+                                <span class="mdc-floating-label" th:utext="#{cas.mfa.registerdevice.label.name}">Name</span>
+                            </span>
+                            <span class="mdc-notched-outline__trailing"></span>
+                        </span>
                         <input class="mdc-text-field__input form-control"
                                type="text"
                                name="deviceName"
@@ -27,14 +33,6 @@
                                th:field="*{deviceName}"
                                size="25"
                                autocomplete="off" required />
-
-                        <span class="mdc-notched-outline">
-                            <span class="mdc-notched-outline__leading"></span>
-                            <span class="mdc-notched-outline__notch">
-                              <span class="mdc-floating-label" th:utext="#{cas.mfa.registerdevice.label.name}">Name</span>
-                            </span>
-                            <span class="mdc-notched-outline__trailing"></span>
-                        </span>
                     </label>
                     <script>document.getElementById("deviceName").value = randomWord();</script>
                 </div>
@@ -43,20 +41,19 @@
                 <div class="d-flex mt-2">
                     <div id="expirationField" class="mr-2" style="display:none">
                         <label for="expiration" class="mdc-text-field mdc-text-field--outlined control-label">
+                            <span class="mdc-notched-outline">
+                                <span class="mdc-notched-outline__leading"></span>
+                                <span class="mdc-notched-outline__notch">
+                                    <span class="mdc-floating-label">Expiration</span>
+                                </span>
+                                <span class="mdc-notched-outline__trailing"></span>
+                            </span>
                             <input class="mdc-text-field__input form-control"
                                    type="number"
                                    name="expiration"
                                    id="expiration"
                                    th:field="*{expiration}"
                                    autocomplete="off" required />
-
-                            <span class="mdc-notched-outline">
-                                    <span class="mdc-notched-outline__leading"></span>
-                                    <span class="mdc-notched-outline__notch">
-                                      <span class="mdc-floating-label">Expiration</span>
-                                    </span>
-                                    <span class="mdc-notched-outline__trailing"></span>
-                                </span>
                         </label>
                     </div>
                     

@@ -82,20 +82,19 @@
                         <br>
                         <div class="d-flex">
                             <label for="credentialNickname" class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon">
+                                <span class="mdc-notched-outline">
+                                    <span class="mdc-notched-outline__leading"></span>
+                                    <span class="mdc-notched-outline__notch">
+                                        <span class="mdc-floating-label" th:utext="#{screen.authentication.webauthn.name}">Nickname</span>
+                                    </span>
+                                    <span class="mdc-notched-outline__trailing"></span>
+                                </span>
                                 <input class="mdc-text-field__input form-control"
                                        type="text"
                                        name="credentialNickname"
                                        id="credentialNickname"
                                        size="50"
                                        autocomplete="off" required />
-
-                                <span class="mdc-notched-outline">
-                                    <span class="mdc-notched-outline__leading"></span>
-                                    <span class="mdc-notched-outline__notch">
-                                      <span class="mdc-floating-label" th:utext="#{screen.authentication.webauthn.name}">Nickname</span>
-                                    </span>
-                                    <span class="mdc-notched-outline__trailing"></span>
-                                </span>
                             </label>
                             
                         </div>

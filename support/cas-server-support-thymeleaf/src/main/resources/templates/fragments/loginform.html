@@ -45,7 +45,7 @@
                                 th:utext="#{screen.welcome.forcedsso(${existingSingleSignOnSessionPrincipal.id},${registeredService.name})}" />
                         </div>
                         <h3 th:unless="${existingSingleSignOnSessionAvailable}" class="text-center">
-                            <i class="mdi mdi-security"></i>
+                            <i class="mdi mdi-security fas fa-shield-alt"></i>
                             <span th:utext="#{screen.welcome.instructions}">Enter your Username and Password:</span>
                         </h3>
 
@@ -73,8 +73,6 @@
                                         th:readonly="!${@casThymeleafLoginFormDirector.isLoginFormUsernameInputVisible(#vars)}"
                                         th:field="*{username}" th:accesskey="#{screen.welcome.label.netid.accesskey}"
                                         autocapitalize="none" spellcheck="false" autocomplete="username" />
-
-
                                 </label>
 
                                 <script type="text/javascript" th:inline="javascript">
@@ -107,7 +105,6 @@
                                             </span>
                                             <span class="mdc-notched-outline__trailing"></span>
                                         </span>
-
                                         <input class="mdc-text-field__input form-control pwd" type="password"
                                             id="password" size="25"
                                             th:accesskey="#{screen.welcome.label.password.accesskey}"
@@ -146,11 +143,9 @@
                                             </span>
                                             <span class="mdc-notched-outline__trailing"></span>
                                         </span>
-
                                         <span class="mdc-select__selected-text-container">
                                             <span class="mdc-select__selected-text" />
                                         </span>
-
                                         <span class="mdc-select__dropdown-icon">
                                             <svg class="mdc-select__dropdown-icon-graphic" viewBox="7 10 10 5"
                                                 focusable="false">
@@ -193,7 +188,6 @@
                                         th:id="${entry.key + '-customField'}" th:name="${entry.key + '-customField'}"
                                         size="25" type="text" th:field="*{customFields[__${entry.key}__]}"
                                         autocomplete="off" />
-
                                     <span class="mdc-notched-outline">
                                         <span class="mdc-notched-outline__leading"></span>
                                         <span class="mdc-notched-outline__notch">

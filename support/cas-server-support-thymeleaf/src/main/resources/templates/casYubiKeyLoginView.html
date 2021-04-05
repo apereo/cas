@@ -26,6 +26,13 @@
                     <div class="d-flex caps-check">
 
                         <label for="token" class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon">
+                            <span class="mdc-notched-outline">
+                                <span class="mdc-notched-outline__leading"></span>
+                                <span class="mdc-notched-outline__notch">
+                                    <span class="mdc-floating-label" th:utext="#{screen.welcome.label.password}">Token</span>
+                                </span>
+                                <span class="mdc-notched-outline__trailing"></span>
+                            </span>
                             <input class="mdc-text-field__input form-control pwd"
                                    type="password"
                                    name="token"
@@ -33,14 +40,6 @@
                                    th:field="*{token}"
                                    size="25"
                                    autocomplete="off" required />
-
-                            <span class="mdc-notched-outline">
-                                    <span class="mdc-notched-outline__leading"></span>
-                                    <span class="mdc-notched-outline__notch">
-                                      <span class="mdc-floating-label" th:utext="#{screen.welcome.label.password}">Token</span>
-                                    </span>
-                                    <span class="mdc-notched-outline__trailing"></span>
-                                </span>
                         </label>
                     </div>
                     <div class="mdc-text-field-helper-line caps-warn">
@@ -51,7 +50,7 @@
                     </div>
                 </div>
                 <button class="reveal-password mdc-button mdc-button--raised btn btn-primary mdc-input-group-append mdc-icon-button" type="button">
-                    <i class="mdi mdi-eye reveal-password-icon"></i>
+                    <i class="mdi mdi-eye fas fa-eye reveal-password-icon"></i>
                     <span class="sr-only">Toggle Password</span>
                 </button>
             </section>

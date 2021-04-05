@@ -14,7 +14,7 @@
     <div layout:fragment="content" class="row">
         <div class="w-100 m-auto mdc-card card p-4 text-justify">
             <h2>
-                <i class="mdi mdi-door-open"></i>
+                <i class="mdi mdi-door-open fas fa-door-open"></i>
                 <span th:utext="#{screen.success.header}">Log In Successful</span>
             </h2>
             <p th:utext="#{screen.success.success(${authentication.principal.id})}">You, <strong>username</strong>, have successfully logged into the Central Authentication Service.
@@ -125,7 +125,7 @@
 
                             <tr th:each="service : ${authorizedServices}" class="mdc-data-table__row">
                                 <td class="mdc-data-table__cell">
-                                    <i class="mdi mdi-web" th:unless="${service.logo}"></i>
+                                    <i class="mdi mdi-web fas fa-globe" th:unless="${service.logo}"></i>
                                     <img th:src="${service.logo}" width="26px" height="26px" th:if="${service.logo}" />
                                 </td>
                                 <td class="mdc-data-table__cell">

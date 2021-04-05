@@ -27,24 +27,20 @@
 
                             <label for="token"
                                    class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon">
+                                <span class="mdc-notched-outline">
+                                    <span class="mdc-notched-outline__leading"></span>
+                                    <span class="mdc-notched-outline__notch">
+                                        <span class="mdc-floating-label" th:utext="#{cas.mfa.yubikey.label.token}">Token</span>
+                                    </span>
+                                    <span class="mdc-notched-outline__trailing"></span>
+                                </span>
                                 <input class="mdc-text-field__input form-control pwd"
                                        type="password"
                                        name="token"
                                        id="token"
                                        size="25"
                                        autocomplete="off" required />
-                                <span class="mdc-notched-outline">
-                                    <span class="mdc-notched-outline__leading"></span>
-                                    <span class="mdc-notched-outline__notch">
-                                      <span class="mdc-floating-label" th:utext="#{cas.mfa.yubikey.label.token}">Token</span>
-                                    </span>
-                                    <span class="mdc-notched-outline__trailing"></span>
-                                </span>
-
                             </label>
-
-
-
                         </div>
                         <div class="mdc-text-field-helper-line caps-warn">
                             <p
@@ -55,7 +51,7 @@
                     </div>
                     <button class="reveal-password mdc-button mdc-button--raised btn btn-primary mdc-input-group-append mdc-icon-button"
                         type="button">
-                        <i class="mdi mdi-eye reveal-password-icon"></i>
+                        <i class="mdi mdi-eye fas fa-eye reveal-password-icon"></i>
                         <span class="sr-only">Toggle Password</span>
                     </button>
 
@@ -64,20 +60,19 @@
                     
 
                     <label for="accountName" class="mdc-text-field mdc-text-field--outlined control-label">
+                        <span class="mdc-notched-outline">
+                            <span class="mdc-notched-outline__leading"></span>
+                            <span class="mdc-notched-outline__notch">
+                                <span class="mdc-floating-label" th:utext="#{screen.authentication.yubikey.name}">Token</span>
+                            </span>
+                            <span class="mdc-notched-outline__trailing"></span>
+                        </span>
                         <input class="mdc-text-field__input form-control"
                                type="text"
                                name="accountName"
                                id="accountName"
                                size="50"
                                autocomplete="off" required />
-
-                        <span class="mdc-notched-outline">
-                                    <span class="mdc-notched-outline__leading"></span>
-                                    <span class="mdc-notched-outline__notch">
-                                      <span class="mdc-floating-label" th:utext="#{screen.authentication.yubikey.name}">Token</span>
-                                    </span>
-                                    <span class="mdc-notched-outline__trailing"></span>
-                                </span>
                     </label>
 
                     <script>document.getElementById("accountName").value = randomWord();</script>

@@ -15,7 +15,7 @@
         <section class="col-lg-6 offset-lg-3 col-xs-12">
             <div class="card-header text-center d-flex justify-content-center mb-4">
                 <h2 th:text="#{cas.login.pagetitle}" class="mr-2">Login</h2>
-                <i class="mdi mdi-shield-lock-outline"></i>
+                <i class="mdi mdi-shield-lock-outline fas fa-shield-alt"></i>
             </div>
             <form name="fm1" th:action="@{/adminlogin}" method="post">
 
@@ -25,6 +25,13 @@
                 <section class="cas-field form-group my-3">
                     <div class="d-flex">
                         <label for="username" class="mdc-text-field mdc-text-field--outlined control-label">
+                            <span class="mdc-notched-outline">
+                                <span class="mdc-notched-outline__leading"></span>
+                                <span class="mdc-notched-outline__notch">
+                                    <span class="mdc-floating-label" th:utext="#{screen.welcome.label.netid}">Username</span>
+                                </span>
+                                <span class="mdc-notched-outline__trailing"></span>
+                            </span>
                             <input class="mdc-text-field__input form-control"
                                    id="username"
                                    name="username"
@@ -33,13 +40,7 @@
                                    autocapitalize="none"
                                    spellcheck="false"
                                    autocomplete="username" />
-                            <span class="mdc-notched-outline">
-                                <span class="mdc-notched-outline__leading"></span>
-                                <span class="mdc-notched-outline__notch">
-                                  <span class="mdc-floating-label" th:utext="#{screen.welcome.label.netid}">Username</span>
-                                </span>
-                                <span class="mdc-notched-outline__trailing"></span>
-                              </span>
+                            
                         </label>
                     </div>
                 </section>
@@ -50,20 +51,20 @@
 
                             <label for="password"
                                    class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon">
-
+                                <span class="mdc-notched-outline">
+                                    <span class="mdc-notched-outline__leading"></span>
+                                    <span class="mdc-notched-outline__notch">
+                                        <span class="mdc-floating-label" th:utext="#{screen.welcome.label.password}">Username</span>
+                                    </span>
+                                    <span class="mdc-notched-outline__trailing"></span>
+                                </span>
                                 <input class="mdc-text-field__input form-control pwd"
                                        type="password" id="password" size="25"
                                        name="password"
                                        th:accesskey="#{screen.welcome.label.password.accesskey}"
                                        autocomplete="off" />
 
-                                <span class="mdc-notched-outline">
-                                        <span class="mdc-notched-outline__leading"></span>
-                                        <span class="mdc-notched-outline__notch">
-                                          <span class="mdc-floating-label" th:utext="#{screen.welcome.label.password}">Username</span>
-                                        </span>
-                                        <span class="mdc-notched-outline__trailing"></span>
-                                    </span>
+                                
 
                             </label>
                         </div>
@@ -76,7 +77,7 @@
                         </div>
                     </div>
                     <button class="reveal-password mdc-button mdc-button--raised btn btn-primary mdc-input-group-append mdc-icon-button" type="button">
-                        <i class="mdi mdi-eye reveal-password-icon"></i>
+                        <i class="mdi mdi-eye fas fa-eye reveal-password-icon"></i>
                         <span class="sr-only">Toggle Password</span>
                     </button>
                 </section>

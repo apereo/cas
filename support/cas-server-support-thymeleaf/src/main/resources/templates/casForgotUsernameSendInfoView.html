@@ -32,20 +32,19 @@
                                 <input type="hidden" name="_eventId" value="findUsername" />
                                 <div class="d-flex">
                                     <label for="email" class="mdc-text-field mdc-text-field--outlined control-label">
+                                        <span class="mdc-notched-outline">
+                                            <span class="mdc-notched-outline__leading"></span>
+                                            <span class="mdc-notched-outline__notch">
+                                                <span class="mdc-floating-label" th:utext="#{screen.pm.reset.email}">Email</span>
+                                            </span>
+                                            <span class="mdc-notched-outline__trailing"></span>
+                                        </span>
                                         <input class="mdc-text-field__input form-control"
                                                type="text"
                                                name="email"
                                                id="email"
                                                size="45"
                                                autocomplete="off" required />
-
-                                        <span class="mdc-notched-outline">
-                                            <span class="mdc-notched-outline__leading"></span>
-                                            <span class="mdc-notched-outline__notch">
-                                              <span class="mdc-floating-label" th:utext="#{screen.pm.reset.email}">Email</span>
-                                            </span>
-                                            <span class="mdc-notched-outline__trailing"></span>
-                                        </span>
                                     </label>
 
                                 </div>

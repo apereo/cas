@@ -19,7 +19,7 @@
                 <button
                         th:if="${'true' == #strings.defaultString(#themes.code('cas.drawer-menu.enabled'), 'true')}"
                         class="mdc-icon-button mdc-top-app-bar__navigation-icon">
-                    <span class="mdi mdi-menu"></span>
+                    <span class="mdi mdi-menu fa fa-bars"></span>
                     <span class="sr-only">menu</span>
                 </button>
             </section>
@@ -37,7 +37,7 @@
                         th:if="${'true' == #strings.defaultString(#themes.code('cas.notifications-menu.enabled'), 'true')}"
                         class="mdc-icon-button mdc-top-app-bar__action-item cas-notification-toggle"
                         aria-label="Bookmark this page">
-                    <span class="mdi mdi-bell-alert"></span>
+                    <span class="mdi mdi-bell-alert fas fa-bell"></span>
                     <span class="sr-only">notifications</span>
                     <i id="notifications-count" class="notifications-count count">2</i>
                 </button>
@@ -57,36 +57,36 @@
         <div class="mdc-drawer__content">
             <nav class="mdc-list">
                 <a th:href="@{/actuator}" class="mdc-list-item">
-                    <i class="mdi mdi-cogs"></i>&nbsp;
+                    <i class="mdi mdi-cogs fa fa-cogs"></i>&nbsp;
                     <span class="mdc-list-item__text">[[#{cas.login.resources.endpoints}]]</span>
                 </a>
                 <hr class="mdc-list-divider"/>
                 <a class="mdc-list-item" href="https://apereo.github.io/cas">
-                    <i class="mdi mdi-file-code-outline"></i>&nbsp;
+                    <i class="mdi mdi-file-code-outline fas fa-file-code"></i>&nbsp;
                     <span class="mdc-list-item__text">[[#{cas.login.resources.wiki}]]</span>
                 </a>
                 <a class="mdc-list-item" href="https://github.com/apereo/cas/pulls">
-                    <i class="mdi mdi-call-merge"></i>&nbsp;
+                    <i class="mdi mdi-call-merge fas fa-code-merge"></i>&nbsp;
                     <span class="mdc-list-item__text">[[#{cas.login.resources.pulls}]]</span>
                 </a>
                 <a class="mdc-list-item" href="https://apereo.github.io/cas/developer/Contributor-Guidelines.html">
-                    <i class="mdi mdi-information"></i>&nbsp;
+                    <i class="mdi mdi-information fas fa-info"></i>&nbsp;
                     <span class="mdc-list-item__text">[[#{cas.login.resources.contribguide}]]</span>
                 </a>
                 <a class="mdc-list-item" href="https://apereo.github.io/cas/Support.html">
-                    <i class="mdi mdi-help-circle"></i>&nbsp;
+                    <i class="mdi mdi-help-circle fas fa-question-circle"></i>&nbsp;
                     <span class="mdc-list-item__text">[[#{cas.login.resources.support}]]</span>
                 </a>
                 <a class="mdc-list-item" href="https://apereo.github.io/cas/Mailing-Lists.html">
-                    <i class="mdi mdi-email-newsletter"></i>&nbsp;
+                    <i class="mdi mdi-email-newsletter fas fa-envelope-open-text"></i>&nbsp;
                     <span class="mdc-list-item__text">[[#{cas.login.resources.mailinglist}]]</span>
                 </a>
                 <a class="mdc-list-item" href="https://gitter.im/apereo/cas">
-                    <i class="mdi mdi-message-text"></i>&nbsp;
+                    <i class="mdi mdi-message-text fas fa-comment-dots"></i>&nbsp;
                     <span class="mdc-list-item__text">[[#{cas.login.resources.chat}]]</span>
                 </a>
                 <a class="mdc-list-item" href="https://apereo.github.io/">
-                    <i class="mdi mdi-post"></i>&nbsp;
+                    <i class="mdi mdi-post fas fa-newspaper"></i>&nbsp;
                     <span class="mdc-list-item__text">[[#{cas.login.resources.blog}]]</span>
                 </a>
             </nav>
@@ -109,9 +109,9 @@
                 <div class="mdc-dialog__content" id="notif-dialog-content">
                     <div class="cas-notification-message mdc-typography--body1" th:if="${staticAuthentication}">
                         <script>countMessages++;</script>
-                        <h6 class="mdc-typography--headline6 mdi mdi-alert-circle" th:utext="#{screen.defaultauthn.title}"/>
+                        <h6 class="mdc-typography--headline6 mdi mdi-alert-circle fas fa-exclamation-circle" th:utext="#{screen.defaultauthn.title}"/>
                         <p class="text text-wrap small" th:utext="#{screen.defaultauthn.heading}">
-                            <i class="mdi mdi-google"></i>
+                            <i class="mdi mdi-google fas fa-google"></i>
                             Static AuthN is ONLY useful for demo purposes. It is recommended that you connect CAS to
                             LDAP,
                             JDBC, etc
@@ -120,7 +120,7 @@
                     </div>
                     <div class="cas-notification-message mdc-typography--body1"
                          th:if="${not #httpServletRequest.secure}">
-                        <h6 class="mdc-typography--headline6 mdi mdi-alert-circle" th:utext="#{screen.nonsecure.title}"/>
+                        <h6 class="mdc-typography--headline6 mdi mdi-alert-circle fas fa-exclamation-circle" th:utext="#{screen.nonsecure.title}"/>
                         <script>countMessages++;</script>
                         <p class="text-wrap small" th:utext="#{screen.nonsecure.message}">
                             Unsure Connection
