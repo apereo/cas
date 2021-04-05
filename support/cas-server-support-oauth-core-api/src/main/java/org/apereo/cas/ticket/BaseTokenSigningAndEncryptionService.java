@@ -74,7 +74,7 @@ public abstract class BaseTokenSigningAndEncryptionService implements OAuth20Tok
         if (jsonWebKey.getPublicKey() == null) {
             throw new IllegalArgumentException("JSON web key used to validate the id token signature has no associated public key");
         }
-        val jwt = EncodingUtils.verifyJwsSignature(jsonWebKey.getPublicKey(), token);
+        val jwt = verifySignature(token, jsonWebKey);
         if (jwt == null) {
             throw new IllegalArgumentException("Unable to verify signature of the token using the JSON web key public key");
         }
@@ -94,6 +94,17 @@ public abstract class BaseTokenSigningAndEncryptionService implements OAuth20Tok
             throw new IllegalArgumentException("Claims do not contain a client id claim");
         }
         return JwtClaims.parse(claims.toString());
+    }
+
+    /**
+     * Verify signature.
+     *
+     * @param token      the token
+     * @param jsonWebKey the json web key
+     * @return the byte []
+     */
+    protected byte[] verifySignature(final String token, final PublicJsonWebKey jsonWebKey) {
+        return EncodingUtils.verifyJwsSignature(jsonWebKey.getPublicKey(), token);
     }
 
     /**

@@ -59,6 +59,7 @@ import org.apereo.cas.support.oauth.web.response.callback.OAuth20TokenAuthorizat
 import org.apereo.cas.support.oauth.web.views.OAuth20DefaultUserProfileViewRendererFlatTests;
 import org.apereo.cas.support.oauth.web.views.OAuth20DefaultUserProfileViewRendererNestedTests;
 import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionServiceTests;
+import org.apereo.cas.ticket.TokenSigningAndEncryptionServiceTests;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenExpirationPolicyTests;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenSovereignExpirationPolicyTests;
 import org.apereo.cas.ticket.accesstoken.OAuth20DefaultAccessTokenFactoryTests;
@@ -138,6 +139,7 @@ import org.junit.runner.RunWith;
     OAuth20HandlerInterceptorAdapterTests.class,
     AccessTokenAuthorizationCodeGrantRequestExtractorTests.class,
     OAuth20DeviceTokenUtilsTests.class,
+    TokenSigningAndEncryptionServiceTests.class,
     OAuth20DefaultDeviceUserCodeTests.class,
     OAuth20CasAuthenticationBuilderTests.class,
     OAuth20TokenSigningAndEncryptionServiceTests.class,
