@@ -44,7 +44,8 @@ ext {
     skipErrorProneCompiler = providers.systemProperty("skipErrorProneCompiler").forUseAtConfigurationTime().present
 
     enableRemoteDebugging = providers.systemProperty("enableRemoteDebugging").forUseAtConfigurationTime().present
-    remoteDebuggingSuspend = providers.systemProperty("remoteDebuggingSuspend").forUseAtConfigurationTime().present ? "y" : "n"
+    remoteDebuggingSuspend = providers.systemProperty("remoteDebuggingSuspend")
+            .forUseAtConfigurationTime().getOrElse("false") == "true" ? "y" : "n"
     generateGitProperties = providers.systemProperty("generateGitProperties").forUseAtConfigurationTime().present
 
     ci = System.getenv("CI") || providers.systemProperty("CI").forUseAtConfigurationTime().present
