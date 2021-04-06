@@ -47,6 +47,14 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
         + "xmlns:saml2=\"urn:oasis:names:tc:SAML:2.0:assertion\">%s</saml2:Issuer><saml2p:NameIDPolicy "
         + "AllowCreate=\"true\"/></saml2p:AuthnRequest>";
 
+    private static final String SAML_LOGOUT_REQUEST1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+        + "<saml2p:LogoutRequest xmlns:saml2p=\"urn:oasis:names:tc:SAML:2.0:protocol\""
+        + " Destination=\"http://localhost:8081/callback?client_name=SAML2Client\" ID=\"_81838f9e55714ae79732d8525266bc230c53dbe\""
+        + " IssueInstant=\"2021-04-06T12:22:57.210Z\" Version=\"2.0\"><saml2:Issuer xmlns:saml2=\"urn:oasis:names:tc:SAML:2"
+        + ".0:assertion\">%s</saml2:Issuer><saml2:NameID xmlns:saml2=\"urn:oasis:names:tc:SAML:2.0:assertion\""
+        + " Format=\"urn:oasis:names:tc:SAML:2.0:nameid-format:persistent\">bellini</saml2:NameID><saml2p:SessionIndex>ST-1-7EEGV0DEBGW5I"
+        + "-FhzInvmTzVG8o</saml2p:SessionIndex></saml2p:LogoutRequest>";
+
     private static final String SAML_AUTHN_REQUEST2 = "fVNdj9owEHyv1P9g+Z3E5OAoFlBR6AcShYjQPvSlMvbmsJTYrte5o/++ToATlVqeYtkzszO7mwmKunJ83"
         + "oSj2cGvBjCQU10Z5N3DlDbecCtQIzeiBuRB8mL+dc2zhHHnbbDSVvSGcp8hEMEHbQ0lq+WUbjcf19vPq83Pd2w8YqOSsQcmhoqxx4z"
         + "JsRqrcjwqH7ORKGGspMwGlHwHj5E/pVGOktzbZ63Ab2KlKS1yEmKAqI3YwMpgECZEJOsPemzU6z/uswc+zPhg+IOSZURqI0IndgzB8TT"
@@ -62,7 +70,7 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
     public void setup() {
         servicesManager.deleteAll();
     }
-    
+
     @Test
     public void verifyInCommonAggregateWithCallback() {
         val callbackUrl = "http://localhost:8443/cas" + SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK;
@@ -93,6 +101,27 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
         assertEquals(result, service1);
     }
 
+    @Test
+    public void verifyLogoutOperation() {
+        assertNotNull(samlIdPServicesManagerRegisteredServiceLocator);
+        assertEquals(Ordered.HIGHEST_PRECEDENCE, samlIdPServicesManagerRegisteredServiceLocator.getOrder());
+        val service1 = RegisteredServiceTestUtils.getRegisteredService(".+");
+        service1.setEvaluationOrder(10);
+
+        val service2 = getSamlRegisteredServiceFor(false, false, false, ".+");
+        service2.setEvaluationOrder(9);
+
+        val candidateServices = CollectionUtils.wrapList(service1, service2);
+        Collections.sort(candidateServices);
+
+        val service = webApplicationServiceFactory.createService("https://sp.testshib.org/shibboleth-sp");
+        val samlRequest = EncodingUtils.encodeBase64(String.format(SAML_LOGOUT_REQUEST1, service.getId()));
+        service.setAttributes(Map.of(SamlProtocolConstants.PARAMETER_SAML_REQUEST, List.of(samlRequest)));
+
+        val result = samlIdPServicesManagerRegisteredServiceLocator.locate(
+            (List) candidateServices, service);
+        assertNotNull(result);
+    }
 
     @Test
     public void verifyOperation() {
