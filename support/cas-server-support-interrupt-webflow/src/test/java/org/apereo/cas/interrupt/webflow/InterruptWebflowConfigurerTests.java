@@ -46,6 +46,7 @@ public class InterruptWebflowConfigurerTests {
     })
     @Nested
     @Tag("WebflowConfig")
+    @SuppressWarnings("ClassCanBeStatic")
     public class InterruptAfterAuthentication extends BaseWebflowConfigurerTests {
 
         @Test
@@ -67,6 +68,7 @@ public class InterruptWebflowConfigurerTests {
     })
     @Nested
     @Tag("WebflowConfig")
+    @SuppressWarnings("ClassCanBeStatic")
     public class InterruptAfterSingleSignOn extends BaseWebflowConfigurerTests {
         @Test
         public void verifyOperation() {
