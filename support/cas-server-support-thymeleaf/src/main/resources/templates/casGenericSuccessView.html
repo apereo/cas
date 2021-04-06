@@ -31,8 +31,8 @@
                 <div id="attribute-tabs" class="mdc-tab-bar" role="tablist">
                     <div class="mdc-tab-scroller">
                         <div class="mdc-tab-scroller__scroll-area">
-                            <div class="mdc-tab-scroller__scroll-content">
-                                <button class="mdc-tab" role="tab" aria-selected="true">
+                            <nav class="nav nav-tabs mdc-tab-scroller__scroll-content">
+                                <button id="principal-tab" class="mdc-tab nav-link" role="tab" aria-selected="true" data-toggle="tab" data-target="attribute-tab-0">
                                     <span class="mdc-tab__content">
                                         <span class="mdc-tab__text-label">Principal</span>
                                     </span>
@@ -41,7 +41,7 @@
                                     </span>
                                     <span class="mdc-tab__ripple"></span>
                                 </button>
-                                <button class="mdc-tab" role="tab" aria-selected="true">
+                                <button id="auth-tab" class="mdc-tab nav-link" role="tab" aria-selected="true" data-toggle="tab" data-target="attribute-tab-1">
                                     <span class="mdc-tab__content">
                                         <span class="mdc-tab__text-label">Authentication</span>
                                     </span>
@@ -50,7 +50,7 @@
                                     </span>
                                     <span class="mdc-tab__ripple"></span>
                                 </button>
-                                <button th:if="${authorizedServices}" class="mdc-tab" role="tab" aria-selected="true">
+                                <button id="services-tab" th:if="${authorizedServices}" class="mdc-tab nav-link" role="tab" aria-selected="true" data-toggle="tab"  data-target="attribute-tab-2">
                                     <span class="mdc-tab__content">
                                         <span class="mdc-tab__text-label">Services</span>
                                     </span>
@@ -59,12 +59,12 @@
                                     </span>
                                     <span class="mdc-tab__ripple"></span>
                                 </button>
-                            </div>
+                            </nav>
                         </div>
                     </div>
                 </div>
 
-                <section id="attribute-tab-0" class="attribute-tab">
+                <section id="attribute-tab-0" class="attribute-tab tab-pane active">
                     <div class="w-100 mdc-data-table table-responsive mx-auto my-4" id="divPrincipalAttributes" role="tabpanel" aria-labelledby="attributes-tab">
                         <table id="attributesTable" class="table table-striped" style="white-space: unset">
                             <thead>
@@ -87,7 +87,7 @@
                     </div>
                 </section>
 
-                <section id="attribute-tab-1" class="d-none attribute-tab">
+                <section id="attribute-tab-1" class="d-none attribute-tab tab-pane">
                     <div class="w-100 mdc-data-table table-responsive mx-auto my-4" id="divPrincipalAttributes" role="tabpanel" aria-labelledby="attributes-tab">
                         <table id="attributesTable" class="table table-striped" style="white-space: unset">
                             <thead>
@@ -110,7 +110,7 @@
                     </div>
                 </section>
 
-                <section id="attribute-tab-2" class="d-none attribute-tab" th:if="${authorizedServices}">
+                <section id="attribute-tab-2" class="d-none attribute-tab tab-pane" th:if="${authorizedServices}">
                     <div class="w-100 mdc-data-table table-responsive mx-auto my-4" id="divPrincipalAttributes" role="tabpanel" aria-labelledby="attributes-tab">
                         <table id="attributesTable" class="table table-striped" style="white-space: unset">
                             <thead>
@@ -155,23 +155,37 @@
 
         <script type="text/javascript" th:inline="javascript">
             let div = document.querySelector('#divPrincipalAttributes');
-            new mdc.dataTable.MDCDataTable(div);
 
             $(function() {
-                tabify(mdc);
+                if (typeof mdc !== 'undefined') {
+                    new mdc.dataTable.MDCDataTable(div);
+                    tabify(mdc);
+                } else {
+                    $('#principal-tab').tab('show');
+
+                    $('button[data-toggle="tab"]').on('shown.bs.tab', function (event) {
+                        var id = $(event.target).data('target');
+                        $('.tab-pane').addClass('d-none');
+                        $('#' + id).removeClass('d-none');
+                        
+                    })
+                }
+                
             });
             
             function tabify(material) {
                 var elm = document.getElementById('attribute-tabs');
-                var tabs = material.tabBar.MDCTabBar.attachTo(elm);
+                if (material) {
+                    var tabs = material.tabBar.MDCTabBar.attachTo(elm);
 
-                tabs.listen('MDCTabBar:activated', function (ev) {
-                    var index = ev.detail.index;
-                    $('.attribute-tab').addClass('d-none');
-                    $('#attribute-tab-' + index).removeClass('d-none');
-                });
+                    tabs.listen('MDCTabBar:activated', function (ev) {
+                        var index = ev.detail.index;
+                        $('.attribute-tab').addClass('d-none');
+                        $('#attribute-tab-' + index).removeClass('d-none');
+                    });
 
-                tabs.foundation.adapter.activateTabAtIndex(0);
+                    tabs.foundation.adapter.activateTabAtIndex(0);
+                }
 
                 return tabs;
             }

@@ -10,8 +10,8 @@
         th:text="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS - Central Authentication Service')}" />
     </title>
     <link rel="stylesheet" type="text/css" href="../static/css/bootstrap.min.css"
-        th:href="@{${#themes.code('webjars.bootstrapmin.css')}}" />
-    <link rel="stylesheet" type="text/css" href="../static/css/fontawesome.min.css" th:href="@{${#themes.code('webjars.fontawesomemin.css')}}" />
+        th:href="@{${#themes.code('webjars.bootstrap.css')}}" />
+    <link rel="stylesheet" type="text/css" href="../static/css/fontawesome.min.css" th:href="@{${#themes.code('webjars.fontawesome.css')}}" />
     <link rel="stylesheet" type="text/css" href="../static/css/cas.css" th:href="@{${#themes.code('cas.standard.css.file')}}" />
 
     <link rel="shortcut icon"
@@ -20,7 +20,6 @@
 </head>
 
 <body>
-
     <div class="d-flex justify-content-center">
         <main role="main" id="main-content" class="container-lg py-4">
             <div layout:fragment="content" id="content">

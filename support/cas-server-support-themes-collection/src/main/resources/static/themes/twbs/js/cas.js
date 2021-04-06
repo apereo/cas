@@ -87,16 +87,16 @@ function resourceLoadedSuccessfully() {
         preserveAnchorTagOnForm();
         preventFormResubmission();
 
-        $('#capslock-on').hide();
+        $('.caps-warn').hide();
         $('#fm1 input[name="username"],[name="password"]').trigger('input');
         $('#fm1 input[name="username"]').focus();
 
         $('#password').keypress(function (e) {
             var s = String.fromCharCode(e.which);
             if (s.toUpperCase() === s && s.toLowerCase() !== s && !e.shiftKey) {
-                $('#capslock-on').show();
+                $('.caps-warn').show();
             } else {
-                $('#capslock-on').hide();
+                $('.caps-warn').hide();
             }
         });
         if (typeof(jqueryReady) == 'function') {

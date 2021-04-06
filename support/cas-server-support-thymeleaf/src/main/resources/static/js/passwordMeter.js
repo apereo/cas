@@ -3,8 +3,6 @@
 function jqueryReady() {
     var strength = passwordStrengthI18n;
 
-    console.log('jqueryReady')
-
     $.fn.zxcvbnProgressBar = function (options) {
 
         //init settings
@@ -28,7 +26,6 @@ function jqueryReady() {
         });
 
         function setProgress(value, bar) {
-            console.log(value, bar);
             var materialBar = bar.foundation;
             if (materialBar) {
                 materialBar.setProgress(value > 0 ? value / 100 : 0);

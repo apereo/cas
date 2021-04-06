@@ -25,12 +25,13 @@
             }
         },
         checkCaps: function (ev) {
-            var s = String.fromCharCode(ev.which);
+            var s = String.fromCharCode(ev.which),
+                parent = $(ev.target).parents('.mdc-input-group');
+                console.log(parent);
             if (s.toUpperCase() === s && s.toLowerCase() !== s && !ev.shiftKey) {
-                ev.target.parentElement.classList.add('caps-on');
+                parent.addClass('caps-on');
             } else {
-                console.log('caps off')
-                ev.target.parentElement.classList.remove('caps-on');
+                parent.removeClass('caps-on');
             }
         }
     }

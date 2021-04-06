@@ -13,28 +13,28 @@
 <body class="login mdc-typography">
 <div layout:fragment="content" class="d-flex justify-content-center">
 
-    <div class="d-flex justify-content-center flex-md-row flex-column mdc-card card mdc-card card-content w-lg-25">
+    <div class="d-flex justify-content-center flex-md-row flex-column mdc-card mdc-card card w-lg-25">
         <section id="loginForm"
                  th:if="${@casThymeleafLoginFormDirector.isLoginFormViewable(#vars)}"
-                 class="login-section login-form">
+                 class="login-section login-form card-body">
             <div th:replace="fragments/loginform :: loginform">
                 <a href="fragments/loginform.html">Login Form goes here</a>
             </div>
         </section>
-        <section id="loginProviders" class="login-section login-providers"
+        <section id="loginProviders" class="login-section login-providers card-body"
                  th:if="${delegatedAuthenticationProviderConfigurations} OR ${wsfedUrls}">
             <div th:replace="fragments/loginProviders :: loginProviders">
                 <a href="fragments/loginProviders.html">loginProviders</a>
             </div>
         </section>
 
-        <section id="acceptto" class="login-section login-qr d-xs-none d-md-block" th:if="${accepttoApplicationId}">
+        <section id="acceptto" class="login-section login-qr d-xs-none d-md-block card-body" th:if="${accepttoApplicationId}">
             <div th:replace="fragments/accepttoQRCode :: accepttoQRCode">
                 <a href="fragments/accepttoQRCode.html">accepttoQRCode</a>
             </div>
         </section>
 
-        <section id="qrlogin" class="login-section login-qr d-xs-none d-md-block" th:if="${qrAuthenticationEnabled}">
+        <section id="qrlogin" class="login-section login-qr d-xs-none d-md-block card-body" th:if="${qrAuthenticationEnabled}">
             <div th:replace="fragments/qrAuthentication :: qrAuthentication">
                 <a href="fragments/qrAuthentication.html">qrAuthentication</a>
             </div>
