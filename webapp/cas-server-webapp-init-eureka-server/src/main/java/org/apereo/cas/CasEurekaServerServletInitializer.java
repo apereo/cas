@@ -1,7 +1,10 @@
 package org.apereo.cas;
 
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.apereo.cas.util.spring.boot.AbstractCasSpringBootServletInitializer;
+
+import org.springframework.core.metrics.ApplicationStartup;
+
+import java.util.List;
 
 /**
  * This is {@link CasEurekaServerServletInitializer}.
@@ -9,13 +12,9 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class CasEurekaServerServletInitializer extends SpringBootServletInitializer {
-
-    @Override
-    public SpringApplicationBuilder configure(final SpringApplicationBuilder builder) {
-        return builder
-            .sources(CasEurekaServerWebApplication.class)
-            .banner(new CasEurekaServerBanner())
-            .logStartupInfo(true);
+public class CasEurekaServerServletInitializer extends AbstractCasSpringBootServletInitializer {
+    public CasEurekaServerServletInitializer() {
+        super(List.of(CasEurekaServerWebApplication.class),
+            new CasEurekaServerBanner(), ApplicationStartup.DEFAULT);
     }
 }

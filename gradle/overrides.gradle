@@ -1,6 +1,6 @@
 configurations.all {
     resolutionStrategy {
-        if (!Boolean.getBoolean("skipVersionConflict")) {
+        if (!providers.systemProperty("skipVersionConflict").forUseAtConfigurationTime().present) {
             failOnVersionConflict()
         }
         preferProjectModules()

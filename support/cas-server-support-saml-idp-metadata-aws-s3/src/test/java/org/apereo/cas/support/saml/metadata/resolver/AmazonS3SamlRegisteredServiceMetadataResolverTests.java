@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
 }, properties = {
     "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/saml",
     
-    "cas.authn.saml-idp.metadata.amazon-s3.bucket-name=CAS-SAML",
+    "cas.authn.saml-idp.metadata.amazon-s3.bucket-name=cassamlmetadata",
     "cas.authn.saml-idp.metadata.amazon-s3.endpoint=http://127.0.0.1:4566",
     "cas.authn.saml-idp.metadata.amazon-s3.credential-access-key=test",
     "cas.authn.saml-idp.metadata.amazon-s3.credential-secret-key=test",

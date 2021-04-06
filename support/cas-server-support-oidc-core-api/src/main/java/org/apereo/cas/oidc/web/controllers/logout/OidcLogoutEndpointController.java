@@ -81,7 +81,6 @@ public class OidcLogoutEndpointController extends BaseOAuth20Controller {
             val audit = AuditableContext.builder()
                 .service(service)
                 .registeredService(registeredService)
-                .retrievePrincipalAttributesFromReleasePolicy(Boolean.FALSE)
                 .build();
             val accessResult = configContext.getRegisteredServiceAccessStrategyEnforcer().execute(audit);
             accessResult.throwExceptionIfNeeded();

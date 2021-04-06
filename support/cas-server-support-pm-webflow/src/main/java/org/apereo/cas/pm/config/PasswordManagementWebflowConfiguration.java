@@ -28,6 +28,7 @@ import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategyConfigurer;
 import org.apereo.cas.web.flow.ValidateCaptchaAction;
 import org.apereo.cas.web.flow.actions.StaticEventExecutionAction;
+import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -248,7 +249,7 @@ public class PasswordManagementWebflowConfiguration {
             return new InitializeCaptchaAction(recaptcha) {
                 @Override
                 protected Event doExecute(final RequestContext requestContext) {
-                    requestContext.getFlowScope().put("recaptchaPasswordManagementEnabled", recaptcha.isEnabled());
+                    WebUtils.putRecaptchaPasswordManagementEnabled(requestContext, recaptcha);
                     return super.doExecute(requestContext);
                 }
             };

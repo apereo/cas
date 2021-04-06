@@ -40,6 +40,9 @@ In the `gradle.properties` of the [CAS WAR Overlay](../installation/WAR-Overlay-
 cas.version=6.4.0-RC4
 ```
 
+Alternatively and for new deployments, [CAS Initializr](../installation/WAR-Overlay-Initializr.html) has been updated and can also 
+be used to generate an overlay project template for this release.
+
 <div class="alert alert-info">
   <strong>System Requirements</strong><br/>There are no changes to the minimum system/platform requirements for this release.
 </div>
@@ -48,9 +51,20 @@ cas.version=6.4.0-RC4
 
 The following items are new improvements and enhancements presented in this release.
 
+### FIDO2 Discoverable Credentials
+          
+[FIDO2 WebAuthn Multifactor Authentication](../mfa/FIDO2-WebAuthn-Authentication.html) is now able to support
+Discoverable Credentials / Resident Keys.
+
+### CodeCov Test Coverage
+
+CAS test coverage across all modules in the codebase has now reached `91%` and continues to climb.
 
 ## Other Stuff
+   
+- CAS CI builds are updated to ensure all web application types can be deployed successfully via external servlet containers.
 
- 
 ## Library Upgrades
+
+- JUnit
 

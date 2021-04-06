@@ -1,7 +1,10 @@
 package org.apereo.cas;
 
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.apereo.cas.util.spring.boot.AbstractCasSpringBootServletInitializer;
+
+import org.springframework.core.metrics.ApplicationStartup;
+
+import java.util.List;
 
 /**
  * This is {@link CasConfigurationServerServletInitializer}.
@@ -9,12 +12,10 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class CasConfigurationServerServletInitializer extends SpringBootServletInitializer {
-    @Override
-    protected SpringApplicationBuilder configure(final SpringApplicationBuilder builder) {
-        return builder
-            .sources(CasConfigurationServerWebApplication.class)
-            .banner(new CasConfigurationServerBanner())
-            .logStartupInfo(true);
+public class CasConfigurationServerServletInitializer extends AbstractCasSpringBootServletInitializer {
+
+    public CasConfigurationServerServletInitializer() {
+        super(List.of(CasConfigurationServerWebApplication.class),
+            new CasConfigurationServerBanner(), ApplicationStartup.DEFAULT);
     }
 }

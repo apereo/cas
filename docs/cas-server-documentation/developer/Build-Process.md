@@ -62,7 +62,7 @@ The following commandline boolean flags are supported by the build and can be pa
 |-----------------------------------+---------------------------------------------------------------------------+
 | `enableRemoteDebugging`           | Allows for remote debugging via a pre-defined port (i.e. `5000`).
 | `remoteDebuggingSuspend`          | Set to `true` to suspend JVM remote debugging until the debugger attaches to the running session.
-| `showStandardStreams`             | Let the build output logs that are sent to the standard streams. (i.e. console, etc)
+| `verbose`                         | Control the logging level for tests and output additional data about passing/failing/skipped tests.
 | `skipCheckstyle`                  | Skip running Checkstyle checks.
 | `skipSpotbugs`                    | Skip running Spotbugs checks.
 | `skipVersionConflict`             | If a dependency conflict is found, use the latest version rather than failing the build.

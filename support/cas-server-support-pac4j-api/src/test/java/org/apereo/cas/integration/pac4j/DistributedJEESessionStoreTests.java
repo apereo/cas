@@ -25,6 +25,7 @@ import org.apereo.cas.web.support.CookieUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.pac4j.core.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -80,12 +81,18 @@ public class DistributedJEESessionStoreTests {
     public void verifyOperation() {
         val cookie = casProperties.getSessionReplication().getCookie();
         val cookieGenerator = CookieUtils.buildCookieRetrievingGenerator(cookie);
+
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
+
         val store = new DistributedJEESessionStore(centralAuthenticationService, ticketFactory, cookieGenerator);
         val context = new JEEContext(request, response);
 
         assertNotNull(request.getSession());
+
+        assertFalse(store.renewSession(context));
+        assertTrue(store.buildFromTrackableSession(context, "trackable-session").isPresent());
+        assertTrue(store.getTrackableSession(context).isPresent());
 
         store.set(context, "attribute", "test");
         var value = store.get(context, "attribute");
@@ -104,8 +111,18 @@ public class DistributedJEESessionStoreTests {
         assertTrue(value.isPresent());
         assertEquals("test3", value.get());
 
+        assertDoesNotThrow(new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                store.set(context, "not-serializable", new NoSerializable());
+            }
+        });
         store.destroySession(context);
         value = store.get(context, "attribute");
         assertTrue(value.isEmpty());
+        
+        assertTrue(store.getSessionId(context, false).isPresent());
     }
+
+    private static class NoSerializable {}
 }

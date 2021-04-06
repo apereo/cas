@@ -17,6 +17,7 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.InitializeCaptchaAction;
 import org.apereo.cas.web.flow.ValidateCaptchaAction;
+import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
@@ -148,7 +149,7 @@ public class PasswordManagementForgotUsernameConfiguration {
             return new InitializeCaptchaAction(recaptcha) {
                 @Override
                 protected Event doExecute(final RequestContext requestContext) {
-                    requestContext.getFlowScope().put("recaptchaForgotUsernameEnabled", recaptcha.isEnabled());
+                    WebUtils.putRecaptchaForgotUsernameEnabled(requestContext, recaptcha);
                     return super.doExecute(requestContext);
                 }
             };

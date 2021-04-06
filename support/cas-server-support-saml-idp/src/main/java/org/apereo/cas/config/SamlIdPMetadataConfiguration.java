@@ -46,6 +46,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.velocity.app.VelocityEngine;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.Response;
 import org.springframework.beans.factory.ObjectProvider;
@@ -113,6 +114,10 @@ public class SamlIdPMetadataConfiguration {
     @Qualifier("samlProfileSamlResponseBuilder")
     private ObjectProvider<SamlProfileObjectBuilder<Response>> samlProfileSamlResponseBuilder;
 
+    @Autowired
+    @Qualifier("shibboleth.VelocityEngine")
+    private ObjectProvider<VelocityEngine> velocityEngineFactoryBean;
+
     @Lazy
     @Bean(initMethod = "initialize", destroyMethod = "destroy")
     @DependsOn("samlIdPMetadataGenerator")
@@ -140,15 +145,7 @@ public class SamlIdPMetadataConfiguration {
     @Bean
     @SneakyThrows
     public SamlIdPMetadataGenerator samlIdPMetadataGenerator() {
-        val context = SamlIdPMetadataGeneratorConfigurationContext.builder()
-            .samlIdPMetadataLocator(samlIdPMetadataLocator())
-            .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter())
-            .applicationContext(applicationContext)
-            .metadataCipherExecutor(CipherExecutor.noOpOfStringToString())
-            .casProperties(casProperties)
-            .openSamlConfigBean(openSamlConfigBean.getObject())
-            .build();
-        return new FileSystemSamlIdPMetadataGenerator(context);
+        return new FileSystemSamlIdPMetadataGenerator(samlIdPMetadataGeneratorConfigurationContext());
     }
 
     @ConditionalOnMissingBean(name = "samlSelfSignedCertificateWriter")
@@ -256,5 +253,25 @@ public class SamlIdPMetadataConfiguration {
             samlProfileSamlResponseBuilder.getObject(),
             defaultSamlRegisteredServiceCachingMetadataResolver(),
             new NonInflatingSaml20ObjectBuilder(openSamlConfigBean.getObject()));
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "samlIdPMetadataGeneratorCipherExecutor")
+    public CipherExecutor samlIdPMetadataGeneratorCipherExecutor() {
+        return CipherExecutor.noOpOfStringToString();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "samlIdPMetadataGeneratorConfigurationContext")
+    public SamlIdPMetadataGeneratorConfigurationContext samlIdPMetadataGeneratorConfigurationContext() {
+        return SamlIdPMetadataGeneratorConfigurationContext.builder()
+            .samlIdPMetadataLocator(samlIdPMetadataLocator())
+            .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter())
+            .applicationContext(applicationContext)
+            .metadataCipherExecutor(samlIdPMetadataGeneratorCipherExecutor())
+            .casProperties(casProperties)
+            .openSamlConfigBean(openSamlConfigBean.getObject())
+            .velocityEngine(velocityEngineFactoryBean.getObject())
+            .build();
     }
 }

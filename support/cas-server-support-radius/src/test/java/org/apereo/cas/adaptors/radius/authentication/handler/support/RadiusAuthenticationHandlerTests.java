@@ -26,6 +26,8 @@ import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -67,6 +69,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.radius.client.inet-address=localhost"
 })
 @Tag("Radius")
+@EnabledOnOs(OS.LINUX)
 public class RadiusAuthenticationHandlerTests {
     @Autowired
     @Qualifier("radiusAuthenticationHandler")
