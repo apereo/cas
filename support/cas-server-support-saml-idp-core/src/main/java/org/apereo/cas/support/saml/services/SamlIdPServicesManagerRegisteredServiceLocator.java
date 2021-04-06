@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.springframework.core.Ordered;
 
 import java.util.List;
@@ -86,7 +86,7 @@ public class SamlIdPServicesManagerRegisteredServiceLocator extends DefaultServi
             @Override
             public String getEntityIdFrom(final SamlRegisteredServiceCachingMetadataResolver resolver, final String attributeValue) {
                 val openSamlConfigBean = resolver.getOpenSamlConfigBean();
-                val authnRequest = SamlIdPUtils.retrieveSamlRequest(openSamlConfigBean, AuthnRequest.class, attributeValue);
+                val authnRequest = SamlIdPUtils.retrieveSamlRequest(openSamlConfigBean, RequestAbstractType.class, attributeValue);
                 SamlUtils.logSamlObject(openSamlConfigBean, authnRequest);
                 return SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
             }
