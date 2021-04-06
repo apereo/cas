@@ -38,9 +38,7 @@ Device registration flows are baked into CAS automatically. A background
 *cleaner* process is also automatically scheduled to scan the 
 repository periodically and remove expired device registration records 
 based on configured parameters. In the default setting, devices
-expire after a fixed period since a user registered their device. If you deploy U2F
-MFA for a setup where tokens are centrally distributed and revoked, 
-you may want to extend the internal.
+expire after a fixed period since a user registered their device. 
 
 {% include casproperties.html properties="cas.authn.mfa.web-authn.cleaner" %}
 
