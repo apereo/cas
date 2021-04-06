@@ -168,7 +168,7 @@ function resourceLoadedSuccessfully() {
         $('#fm1 input[name="username"],[name="password"]').trigger('input');
         $('#fm1 input[name="username"]').focus();
 
-        let $revealpassword = $('.reveal-password');
+        var $revealpassword = $('.reveal-password');
         $revealpassword.mouseup(function (ev) {
             $('.pwd').attr('type', 'password');
             $(".reveal-password-icon").removeClass("mdi mdi-eye-off").addClass("mdi mdi-eye");

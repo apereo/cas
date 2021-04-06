@@ -25,3 +25,16 @@ label.mdc-text-field {
 .caps-on .caps-warn {
     display: block;
 }
+
+.mdc-checkbox__background {
+    display: none;
+}
+
+#duo_iframe {
+    width: 100%;
+    min-width: 304px;
+    height: 330px;
+    border: none;
+    padding: 0;
+    margin: 0;
+}

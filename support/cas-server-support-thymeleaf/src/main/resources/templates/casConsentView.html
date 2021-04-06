@@ -255,8 +255,10 @@
         </form>
 
         <script type="text/javascript" th:inline="javascript">
-            let div = document.querySelector('#divAttributes');
-            new mdc.dataTable.MDCDataTable(div);
+            if (typeof mdc !== 'undefined') {
+                let div = document.querySelector('#divAttributes');
+                new mdc.dataTable.MDCDataTable(div);
+            }
         </script>
 
     </div>

@@ -99,6 +99,20 @@ function resourceLoadedSuccessfully() {
                 $('.caps-warn').hide();
             }
         });
+
+        var $revealpassword = $('.reveal-password');
+        $revealpassword.mouseup(function (ev) {
+            $('.pwd').attr('type', 'password');
+            $(".reveal-password-icon").removeClass("fas fa-eye-slash").addClass("fas fa-eye");
+            ev.preventDefault();
+        })
+
+        $revealpassword.mousedown(function (ev) {
+            $('.pwd').attr('type', 'text');
+            $(".reveal-password-icon").removeClass("fas fa-eye").addClass("fas fa-eye-slash");
+            ev.preventDefault();
+        });
+
         if (typeof(jqueryReady) == 'function') {
             jqueryReady();
         }
