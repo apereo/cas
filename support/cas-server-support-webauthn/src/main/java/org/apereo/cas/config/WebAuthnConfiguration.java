@@ -147,7 +147,7 @@ public class WebAuthnConfiguration {
         val attestationResolvers = new ArrayList<AttestationResolver>();
         attestationResolvers.add(StandardMetadataService.createDefaultAttestationResolver(trustResolver));
 
-        val resource = casProperties.getAuthn().getMfa().getWebAuthn().getTrustedDeviceMetadata().getLocation();
+        val resource = casProperties.getAuthn().getMfa().getWebAuthn().getCore().getTrustedDeviceMetadata().getLocation();
         if (resource != null) {
             val metadata = WebAuthnUtils.getObjectMapper().readValue(resource.getInputStream(), MetadataObject.class);
             attestationResolvers.add(new SimpleAttestationResolver(CollectionUtils.wrapList(metadata), trustResolver));
@@ -167,7 +167,7 @@ public class WebAuthnConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "webAuthnServer")
     public WebAuthnServer webAuthnServer() throws Exception {
-        val webAuthn = casProperties.getAuthn().getMfa().getWebAuthn();
+        val webAuthn = casProperties.getAuthn().getMfa().getWebAuthn().getCore();
         val serverName = casProperties.getServer().getName();
         val appId = new AppId(StringUtils.defaultString(webAuthn.getApplicationId(), serverName));
 

@@ -37,7 +37,7 @@ public class AuthenticationViaFormActionTests extends AbstractWebflowActionsTest
     private static final String PASSWORD_PARAM = "password";
 
     @Autowired
-    @Qualifier("authenticationViaFormAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_AUTHENTICATION_VIA_FORM_ACTION)
     private Action action;
 
     @Autowired

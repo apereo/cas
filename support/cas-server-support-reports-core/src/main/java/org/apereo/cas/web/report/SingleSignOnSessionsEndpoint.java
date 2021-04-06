@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -112,7 +113,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
     @ReadOperation
     public Map<String, Object> getSsoSessions(final String type) {
         val sessionsMap = new HashMap<String, Object>();
-        val option = SsoSessionReportOptions.valueOf(type);
+        val option = Optional.ofNullable(type).map(SsoSessionReportOptions::valueOf).orElse(SsoSessionReportOptions.ALL);
         val activeSsoSessions = getActiveSsoSessions(option);
         sessionsMap.put("activeSsoSessions", activeSsoSessions);
         val totalTicketGrantingTickets = new AtomicLong();

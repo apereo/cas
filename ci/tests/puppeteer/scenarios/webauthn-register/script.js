@@ -35,5 +35,10 @@ const assert = require('assert');
     var registerButton = await page.$('#registerButton');
     assert(await registerButton.boundingBox() != null);
     
+    var residentKeysPanel = await page.$('#residentKeysPanel');
+    assert(await residentKeysPanel.boundingBox() != null);
+    var registerResident = await page.$('#registerDiscoverableCredentialButton');
+    assert(await registerResident.boundingBox() != null);
+
     await browser.close();
 })();

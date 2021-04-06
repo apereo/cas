@@ -92,9 +92,9 @@ public class WebAuthnMultifactorWebflowConfigurer extends AbstractCasMultifactor
         registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), MFA_WEB_AUTHN_EVENT_ID, webAuthn.getId());
 
         val flow = getLoginFlow();
-        if (flow != null && webAuthn.isAllowPrimaryAuthentication()) {
+        if (flow != null && webAuthn.getCore().isAllowPrimaryAuthentication()) {
             val setAppIdAction = createSetAction("flowScope." + WebAuthnStartRegistrationAction.FLOW_SCOPE_WEB_AUTHN_APPLICATION_ID,
-                StringUtils.quote(webAuthn.getApplicationId()));
+                StringUtils.quote(webAuthn.getCore().getApplicationId()));
             flow.getStartActionList().add(setAppIdAction);
 
             val setPrimaryAuthAction = createSetAction("flowScope.webAuthnPrimaryAuthenticationEnabled", "true");
@@ -104,6 +104,9 @@ public class WebAuthnMultifactorWebflowConfigurer extends AbstractCasMultifactor
             createTransitionForState(viewLoginFormState, TRANSITION_ID_VALIDATE_WEBAUTHN, "validateWebAuthnToken");
 
             val validateAction = createActionState(flow, "validateWebAuthnToken", "webAuthnValidateSessionCredentialTokenAction");
+            validateAction.getEntryActionList()
+                .add(createSetAction("flowScope.".concat(CasWebflowConstants.VAR_ID_MFA_PROVIDER_ID), StringUtils.quote(webAuthn.getId())));
+
             createTransitionForState(validateAction,
                 CasWebflowConstants.TRANSITION_ID_FINALIZE, CasWebflowConstants.STATE_ID_REAL_SUBMIT);
         }

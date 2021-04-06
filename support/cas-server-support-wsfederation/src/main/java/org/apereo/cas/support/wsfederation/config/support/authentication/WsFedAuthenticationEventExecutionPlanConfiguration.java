@@ -39,7 +39,6 @@ import org.springframework.core.io.ResourceLoader;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.function.Consumer;
 
 /**
  * This is {@link WsFedAuthenticationEventExecutionPlanConfiguration}.

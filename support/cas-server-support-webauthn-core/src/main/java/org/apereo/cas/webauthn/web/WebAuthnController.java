@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -69,7 +70,7 @@ public class WebAuthnController {
      * @return the response entity
      * @throws Exception the exception
      */
-    @PostMapping(WEBAUTHN_ENDPOINT_REGISTER)
+    @PostMapping(value = WEBAUTHN_ENDPOINT_REGISTER, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> startRegistration(
         @NonNull
         @RequestParam("username")
@@ -104,10 +105,8 @@ public class WebAuthnController {
      * @param responseJson the response json
      * @return the response entity
      */
-    @PostMapping(WEBAUTHN_ENDPOINT_REGISTER + WEBAUTHN_ENDPOINT_FINISH)
-    public ResponseEntity<Object> finishRegistration(
-        @RequestBody
-        final String responseJson) {
+    @PostMapping(value = WEBAUTHN_ENDPOINT_REGISTER + WEBAUTHN_ENDPOINT_FINISH, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> finishRegistration(@RequestBody final String responseJson) {
         val result = server.finishRegistration(responseJson);
         return finishResponse(result, responseJson);
     }
@@ -118,10 +117,8 @@ public class WebAuthnController {
      * @param username the username
      * @return the response entity
      */
-    @PostMapping(WEBAUTHN_ENDPOINT_AUTHENTICATE)
-    public ResponseEntity<Object> startAuthentication(
-        @RequestParam("username")
-        final String username) {
+    @PostMapping(value = WEBAUTHN_ENDPOINT_AUTHENTICATE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> startAuthentication(@RequestParam(value = "username", required = false) final String username) {
         val request = server.startAuthentication(Optional.ofNullable(username));
         if (request.isRight()) {
             return startResponse(new StartAuthenticationResponse(request.right().get()));
@@ -135,10 +132,8 @@ public class WebAuthnController {
      * @param responseJson the response json
      * @return the response entity
      */
-    @PostMapping(WEBAUTHN_ENDPOINT_AUTHENTICATE + WEBAUTHN_ENDPOINT_FINISH)
-    public ResponseEntity<Object> finishAuthentication(
-        @RequestBody
-        final String responseJson) {
+    @PostMapping(value = WEBAUTHN_ENDPOINT_AUTHENTICATE + WEBAUTHN_ENDPOINT_FINISH, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> finishAuthentication(@RequestBody final String responseJson) {
         val result = server.finishAuthentication(responseJson);
         return finishResponse(result, responseJson);
     }
@@ -150,11 +145,10 @@ public class WebAuthnController {
 
     @SneakyThrows
     private static String writeJson(final Object o) {
-        return MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(o);
+        return MAPPER.writeValueAsString(o);
     }
 
-    private static ResponseEntity<Object> finishResponse(final Either<List<String>, ?> result,
-        final String responseJson) {
+    private static ResponseEntity<Object> finishResponse(final Either<List<String>, ?> result, final String responseJson) {
         if (result.isRight()) {
             LOGGER.trace("Response: [{}]", responseJson);
             return ResponseEntity.ok(writeJson(result.right().get()));

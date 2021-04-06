@@ -164,7 +164,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
 
         val authentication = getOAuthConfigurationContext().getAuthenticationBuilder()
             .build(profile, registeredService, context, service);
-        LOGGER.trace("Created OAuth authentication [{}] for service [{}]", service, authentication);
+        LOGGER.trace("Created OAuth authentication [{}] for service [{}]", authentication, service);
 
         try {
             AuthenticationCredentialsThreadLocalBinder.bindCurrent(authentication);
@@ -172,7 +172,6 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
                 .service(service)
                 .authentication(authentication)
                 .registeredService(registeredService)
-                .retrievePrincipalAttributesFromReleasePolicy(Boolean.TRUE)
                 .build();
             val accessResult = getOAuthConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
             accessResult.throwExceptionIfNeeded();

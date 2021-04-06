@@ -132,7 +132,6 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
             .service(service)
             .authentication(authn)
             .registeredService(registeredService)
-            .retrievePrincipalAttributesFromReleasePolicy(Boolean.FALSE)
             .build();
         val result = getWebflowEventResolutionConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
         result.throwExceptionIfNeeded();
