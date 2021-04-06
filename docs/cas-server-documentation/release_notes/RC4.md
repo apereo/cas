@@ -55,6 +55,11 @@ The following items are new improvements and enhancements presented in this rele
           
 [FIDO2 WebAuthn Multifactor Authentication](../mfa/FIDO2-WebAuthn-Authentication.html) is now able to support
 Discoverable Credentials / Resident Keys.
+       
+### Authentication Interrupts
+
+[Authentication Interrupts](../webflow/Webflow-Customization-Interrupt.html) are now able 
+to execute and trigger after the single sign-on session.
 
 ### CodeCov Test Coverage
 
@@ -64,10 +69,12 @@ CAS test coverage across all modules in the codebase has now reached `91%` and c
    
 - CAS CI builds are updated to ensure all web application types can be deployed successfully via external servlet containers.
 - System properties used during the build now use the proper Gradle API to respect the configuration cache.
+- Additional puppeteer tests to ensure authentication interrupts do function correctly with or without authentication warnings.
 
 ## Library Upgrades
 
 - JUnit
 - Apache Tomcat
 - Infinispan
+- JSON Smart
 

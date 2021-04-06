@@ -78,7 +78,7 @@ public class OidcServicesManagerRegisteredServiceLocatorTests extends AbstractOi
     @Test
     public void verifyOperation() {
         assertNotNull(oidcServicesManagerRegisteredServiceLocator);
-        assertEquals(Ordered.HIGHEST_PRECEDENCE, oidcServicesManagerRegisteredServiceLocator.getOrder());
+        assertEquals(OidcServicesManagerRegisteredServiceLocator.DEFAULT_ORDER, oidcServicesManagerRegisteredServiceLocator.getOrder());
 
         val clientId = UUID.randomUUID().toString();
         val service = getOidcRegisteredService(clientId);
