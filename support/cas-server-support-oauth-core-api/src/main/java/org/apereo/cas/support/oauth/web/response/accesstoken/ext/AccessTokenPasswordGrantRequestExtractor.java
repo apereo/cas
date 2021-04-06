@@ -48,9 +48,6 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
         LOGGER.debug("Creating matching service request based on [{}]", registeredService);
         val requireServiceHeader = getOAuthConfigurationContext().getCasProperties().getAuthn()
             .getOauth().getGrants().getResourceOwner().isRequireServiceHeader();
-        if (requireServiceHeader) {
-            LOGGER.debug("Using request headers to identify and build the target service url");
-        }
         val service = getOAuthConfigurationContext().getAuthenticationBuilder().buildService(registeredService, context, requireServiceHeader);
 
         LOGGER.debug("Authenticating the OAuth request indicated by [{}]", service);
@@ -60,7 +57,6 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
             .service(service)
             .authentication(authentication)
             .registeredService(registeredService)
-            .retrievePrincipalAttributesFromReleasePolicy(Boolean.TRUE)
             .build();
         val accessResult = getOAuthConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
         accessResult.throwExceptionIfNeeded();

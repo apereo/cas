@@ -41,9 +41,8 @@ public class FunctionUtils {
      * @param falseFunction the false function
      * @return the function
      */
-    @SneakyThrows
     public static <T, R> Function<T, R> doIf(final Predicate<Object> condition, final Supplier<R> trueFunction,
-        final Supplier<R> falseFunction) {
+                                             final Supplier<R> falseFunction) {
         return t -> {
             try {
                 if (condition.test(t)) {
@@ -66,9 +65,8 @@ public class FunctionUtils {
      * @param falseFunction the false function
      * @return the consumer
      */
-    @SneakyThrows
     public static <T> Consumer<T> doIf(final boolean condition, final Consumer<T> trueFunction,
-        final Consumer<T> falseFunction) {
+                                       final Consumer<T> falseFunction) {
         return account -> {
             if (condition) {
                 trueFunction.accept(account);
@@ -76,6 +74,19 @@ public class FunctionUtils {
                 falseFunction.accept(account);
             }
         };
+    }
+
+    /**
+     * Do if condition holds.
+     *
+     * @param <T>          the type parameter
+     * @param condition    the condition
+     * @param trueFunction the true function
+     * @return the consumer
+     */
+    public static <T> Consumer<T> doIf(final boolean condition, final Consumer<T> trueFunction) {
+        return doIf(condition, trueFunction, t -> {
+        });
     }
 
     /**
@@ -87,9 +98,8 @@ public class FunctionUtils {
      * @param falseFunction the false function
      * @return the function
      */
-    @SneakyThrows
     public static <R> Supplier<R> doIf(final boolean condition, final Supplier<R> trueFunction,
-        final Supplier<R> falseFunction) {
+                                       final Supplier<R> falseFunction) {
         return () -> {
             try {
                 if (condition) {
@@ -114,7 +124,7 @@ public class FunctionUtils {
      * @return the function
      */
     public static <T, R> Function<T, R> doIf(final Predicate<T> condition, final CheckedFunction<T, R> trueFunction,
-        final CheckedFunction<T, R> falseFunction) {
+                                             final CheckedFunction<T, R> falseFunction) {
         return t -> {
             try {
                 if (condition.test(t)) {
@@ -141,10 +151,9 @@ public class FunctionUtils {
      * @param falseFunction the false function
      * @return the supplier
      */
-    @SneakyThrows
     public static <R> Supplier<R> doIfNotNull(final Object input,
-        final Supplier<R> trueFunction,
-        final Supplier<R> falseFunction) {
+                                              final Supplier<R> trueFunction,
+                                              final Supplier<R> falseFunction) {
         return () -> {
             try {
                 if (input != null) {
@@ -165,9 +174,8 @@ public class FunctionUtils {
      * @param input        the input
      * @param trueFunction the true function
      */
-    @SneakyThrows
     public static <T> void doIfNotNull(final T input,
-        final Consumer<T> trueFunction) {
+                                       final Consumer<T> trueFunction) {
         try {
             if (input != null) {
                 trueFunction.accept(input);
@@ -186,10 +194,9 @@ public class FunctionUtils {
      * @param falseFunction the false function
      * @return the supplier
      */
-    @SneakyThrows
     public static <R> Supplier<R> doIfNull(final Object input,
-        final Supplier<R> trueFunction,
-        final Supplier<R> falseFunction) {
+                                           final Supplier<R> trueFunction,
+                                           final Supplier<R> falseFunction) {
         return () -> {
             try {
                 if (input == null) {
@@ -212,7 +219,6 @@ public class FunctionUtils {
      * @param errorHandler the error handler
      * @return the function
      */
-    @SneakyThrows
     public static <T, R> Function<T, R> doAndHandle(final CheckedFunction<T, R> function, final CheckedFunction<Throwable, R> errorHandler) {
         return t -> {
             try {
@@ -236,7 +242,6 @@ public class FunctionUtils {
      * @param errorHandler the error handler
      * @return the supplier
      */
-    @SneakyThrows
     public static <R> Supplier<R> doAndHandle(final Supplier<R> function, final CheckedFunction<Throwable, R> errorHandler) {
         return () -> {
             try {
@@ -300,7 +305,8 @@ public class FunctionUtils {
      * @return the t
      */
     @SneakyThrows
-    public static <T> T doAndRetry(final List<Class<? extends Throwable>> clazzes, final RetryCallback<T, Exception> callback) {
+    public static <T> T doAndRetry(final List<Class<? extends Throwable>> clazzes,
+                                   final RetryCallback<T, Exception> callback) {
         val retryTemplate = new RetryTemplate();
         retryTemplate.setBackOffPolicy(new FixedBackOffPolicy());
 
@@ -308,7 +314,7 @@ public class FunctionUtils {
         classified.put(Error.class, Boolean.TRUE);
         classified.put(Throwable.class, Boolean.TRUE);
         clazzes.forEach(clz -> classified.put(clz, Boolean.TRUE));
-        
+
         retryTemplate.setRetryPolicy(new SimpleRetryPolicy(SimpleRetryPolicy.DEFAULT_MAX_ATTEMPTS, classified, true));
         retryTemplate.setThrowLastExceptionOnExhausted(true);
         return retryTemplate.execute(callback);

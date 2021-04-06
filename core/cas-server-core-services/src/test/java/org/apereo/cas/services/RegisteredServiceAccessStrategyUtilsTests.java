@@ -51,7 +51,7 @@ public class RegisteredServiceAccessStrategyUtilsTests {
         val tgt = mock(TicketGrantingTicket.class);
         when(tgt.getAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication());
         assertThrows(PrincipalException.class, () ->
-            RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(st, service, tgt, false));
+            RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(st, service, tgt));
     }
 
 }

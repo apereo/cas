@@ -9,17 +9,12 @@ import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
  * @since 6.0.0
  */
 public class CouchDbSamlIdPMetadataCipherExecutor extends BaseStringCipherExecutor {
-    public CouchDbSamlIdPMetadataCipherExecutor(final String secretKeyEncryption, final String secretKeySigning,
+    public CouchDbSamlIdPMetadataCipherExecutor(final String secretKeyEncryption,
+                                                final String secretKeySigning,
                                                 final String alg,
                                                 final int signingKeySize,
                                                 final int encryptionKeySize) {
         super(secretKeyEncryption, secretKeySigning, alg, signingKeySize, encryptionKeySize);
-    }
-
-    public CouchDbSamlIdPMetadataCipherExecutor(final String secretKeyEncryption, final String secretKeySigning,
-                                                final int signingKeySize,
-                                                final int encryptionKeySize) {
-        super(secretKeyEncryption, secretKeySigning, signingKeySize, encryptionKeySize);
     }
 
     @Override

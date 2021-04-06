@@ -18,6 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.annotation.DirtiesContext;
+
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -29,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("SAML")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@DirtiesContext
 public class SamlIdPInitiatedProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("idpInitiatedSamlProfileHandlerController")
@@ -44,6 +48,36 @@ public class SamlIdPInitiatedProfileHandlerControllerTests extends BaseSamlIdPCo
     }
 
     @Test
+    @Order(6)
+    public void verifyNoShire() {
+        val request = new MockHttpServletRequest();
+
+        val service = getSamlRegisteredServiceForTestShib();
+        service.setServiceId("no:acs:service");
+        servicesManager.save(service);
+
+        request.addParameter(SamlIdPConstants.PROVIDER_ID, service.getServiceId());
+        val response = new MockHttpServletResponse();
+        assertThrows(MessageDecodingException.class,
+            () -> idpInitiatedSamlProfileHandlerController.handleIdPInitiatedSsoRequest(response, request));
+    }
+
+    @Test
+    @Order(5)
+    public void verifyBadServiceWithNoMetadata() {
+        val request = new MockHttpServletRequest();
+
+        val service = new SamlRegisteredService();
+        service.setServiceId(UUID.randomUUID().toString());
+        servicesManager.save(service);
+
+        request.addParameter(SamlIdPConstants.PROVIDER_ID, service.getServiceId());
+        val response = new MockHttpServletResponse();
+        assertThrows(UnauthorizedServiceException.class,
+            () -> idpInitiatedSamlProfileHandlerController.handleIdPInitiatedSsoRequest(response, request));
+    }
+
+    @Test
     @Order(4)
     public void verifyNoProvider() {
         val request = new MockHttpServletRequest();
@@ -51,6 +85,7 @@ public class SamlIdPInitiatedProfileHandlerControllerTests extends BaseSamlIdPCo
         assertThrows(MessageDecodingException.class,
             () -> idpInitiatedSamlProfileHandlerController.handleIdPInitiatedSsoRequest(response, request));
     }
+
 
     @Test
     @Order(3)

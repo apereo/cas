@@ -259,18 +259,11 @@
 
                 <span id="webauthnLoginPanel" th:if="${webAuthnPrimaryAuthenticationEnabled}">
                     <script type="text/javascript">
-                        $("#fm1 #username").on("input", function () {
-                            let user = $("#fm1 #username").val();
-                            if (user !== '') {
-                                $('#webauthnLoginPanel').show();
-                            } else {
-                                $('#webauthnLoginPanel').hide();
-                            }
-                        });
+                        $('#webauthnLoginPanel').show();
                     </script>
 
-                    <div th:replace="fragments/webAuthnLogin :: webAuthnLogin" />
-                    <hr class="my-4" />
+                    <div th:replace="fragments/webAuthnLogin :: webAuthnLogin"/>
+                    <hr class="my-4"/>
                 </span>
 
                 <span th:if="${@casThymeleafLoginFormDirector.isLoginFormViewable(#vars)}">

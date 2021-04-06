@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderAbsentException;
+import org.apereo.cas.authentication.MultifactorAuthenticationRequiredException;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.adaptive.UnauthorizedAuthenticationException;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
@@ -80,7 +81,10 @@ import java.util.Set;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasCoreWebflowConfiguration {
-
+    @Autowired
+    @Qualifier("ticketGrantingTicketCookieGenerator")
+    private ObjectProvider<CasCookieBuilder> ticketGrantingTicketCookieGenerator;
+    
     @Autowired
     @Qualifier("centralAuthenticationService")
     private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
@@ -114,6 +118,10 @@ public class CasCoreWebflowConfiguration {
     private ObjectProvider<CasDelegatingWebflowEventResolver> initialAuthenticationAttemptWebflowEventResolver;
 
     @Autowired
+    @Qualifier("singleSignOnParticipationStrategy")
+    private ObjectProvider<SingleSignOnParticipationStrategy> webflowSingleSignOnParticipationStrategy;
+    
+    @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
@@ -139,7 +147,13 @@ public class CasCoreWebflowConfiguration {
     @Bean
     @RefreshScope
     public CasWebflowEventResolver serviceTicketRequestWebflowEventResolver() {
-        val context = CasWebflowEventResolutionConfigurationContext.builder()
+        return new ServiceTicketRequestWebflowEventResolver(casWebflowConfigurationContext());
+    }
+
+    @Bean
+    @RefreshScope
+    public CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext() {
+        return CasWebflowEventResolutionConfigurationContext.builder()
             .casDelegatingWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver.getObject())
             .authenticationContextValidator(authenticationContextValidator.getObject())
             .authenticationSystemSupport(authenticationSystemSupport.getObject())
@@ -150,14 +164,14 @@ public class CasCoreWebflowConfiguration {
             .authenticationRequestServiceSelectionStrategies(authenticationServiceSelectionPlan.getObject())
             .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getObject())
             .casProperties(casProperties)
-            .singleSignOnParticipationStrategy(singleSignOnParticipationStrategy())
             .ticketRegistry(ticketRegistry.getObject())
+            .singleSignOnParticipationStrategy(webflowSingleSignOnParticipationStrategy.getObject())
             .applicationContext(applicationContext)
+            .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator.getObject())
             .authenticationEventExecutionPlan(authenticationEventExecutionPlan.getObject())
             .build();
-        return new ServiceTicketRequestWebflowEventResolver(context);
     }
-
+    
     @Bean
     @RefreshScope
     public CipherExecutor webflowCipherExecutor() {
@@ -206,7 +220,7 @@ public class CasCoreWebflowConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(name = "redirectToServiceAction")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_REDIRECT_TO_SERVICE)
     @RefreshScope
     public Action redirectToServiceAction() {
         return new RedirectToServiceAction(responseBuilderLocator.getObject());
@@ -256,7 +270,7 @@ public class CasCoreWebflowConfiguration {
     }
 
 
-    @ConditionalOnMissingBean(name = "authenticationExceptionHandler")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_AUTHENTICATION_EXCEPTION_HANDLER)
     @Bean
     @RefreshScope
     public Action authenticationExceptionHandler() {
@@ -294,6 +308,7 @@ public class CasCoreWebflowConfiguration {
         errors.add(UnsatisfiedAuthenticationPolicyException.class);
         errors.add(UnauthorizedAuthenticationException.class);
         errors.add(MultifactorAuthenticationProviderAbsentException.class);
+        errors.add(MultifactorAuthenticationRequiredException.class);
 
         errors.addAll(casProperties.getAuthn().getErrors().getExceptions());
         return errors;

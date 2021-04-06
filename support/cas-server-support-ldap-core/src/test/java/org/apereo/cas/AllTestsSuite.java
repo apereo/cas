@@ -5,6 +5,8 @@ import org.apereo.cas.authentication.support.DefaultLdapAccountStateHandlerTests
 import org.apereo.cas.authentication.support.GroovyPasswordPolicyHandlingStrategyTests;
 import org.apereo.cas.authentication.support.OptionalWarningLdapAccountStateHandlerTests;
 import org.apereo.cas.authentication.support.RejectResultCodeLdapPasswordPolicyHandlingStrategyTests;
+import org.apereo.cas.authorization.LdapUserAttributesToRolesAuthorizationGeneratorTests;
+import org.apereo.cas.authorization.LdapUserGroupsToRolesAuthorizationGeneratorTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -18,6 +20,8 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     LdapUtilsTests.class,
+    LdapUserGroupsToRolesAuthorizationGeneratorTests.class,
+    LdapUserAttributesToRolesAuthorizationGeneratorTests.class,
     DefaultLdapAccountStateHandlerTests.class,
     GroovyPasswordPolicyHandlingStrategyTests.class,
     OptionalWarningLdapAccountStateHandlerTests.class,

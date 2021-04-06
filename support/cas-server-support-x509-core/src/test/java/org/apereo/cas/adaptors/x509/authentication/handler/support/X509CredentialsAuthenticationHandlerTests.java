@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
+import org.apereo.cas.adaptors.x509.authentication.CasX509Certificate;
 import org.apereo.cas.adaptors.x509.authentication.ExpiredCRLException;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.apereo.cas.adaptors.x509.authentication.revocation.RevokedCertificateException;
@@ -190,6 +191,39 @@ public class X509CredentialsAuthenticationHandlerTests {
             new ExpiredCRLException(null, ZonedDateTime.now(ZoneOffset.UTC))
         ));
 
+
+        /* Certificate not allowed */
+        handler = new X509CredentialsAuthenticationHandler(RegexUtils.createPattern(".*"), false, RegexUtils.MATCH_NOTHING_PATTERN);
+        credential = new X509CertificateCredential(createCertificates(USER_VALID_CRT));
+        params.add(arguments(
+            handler,
+            credential,
+            true,
+            new DefaultAuthenticationHandlerExecutionResult(handler, credential, PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(credential.getId())),
+            new FailedLoginException()));
+
+        handler = new X509CredentialsAuthenticationHandler(RegexUtils.createPattern(".*"), false, 0);
+        var certificate = new CasX509Certificate(true);
+        certificate.setBasicConstraints(Integer.MAX_VALUE);
+        credential = new X509CertificateCredential(Stream.of(certificate).toArray(X509Certificate[]::new));
+        params.add(arguments(
+            handler,
+            credential,
+            true,
+            new DefaultAuthenticationHandlerExecutionResult(handler, credential, PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(credential.getId())),
+            new FailedLoginException()));
+
+        handler = new X509CredentialsAuthenticationHandler(RegexUtils.createPattern(".*"), false, 1);
+        certificate = new CasX509Certificate(true);
+        certificate.setBasicConstraints(10);
+        credential = new X509CertificateCredential(Stream.of(certificate).toArray(X509Certificate[]::new));
+        params.add(arguments(
+            handler,
+            credential,
+            true,
+            new DefaultAuthenticationHandlerExecutionResult(handler, credential, PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(credential.getId())),
+            new FailedLoginException()));
+
         return params.stream();
     }
 
@@ -224,6 +258,7 @@ public class X509CredentialsAuthenticationHandlerTests {
         });
 
         assertEquals(expectedSupports, handler.supports(credential));
+        assertEquals(expectedSupports, handler.supports(credential.getClass()));
     }
 }
 

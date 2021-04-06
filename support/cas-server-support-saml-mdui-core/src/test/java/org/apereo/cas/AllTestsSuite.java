@@ -3,6 +3,7 @@ package org.apereo.cas;
 import org.apereo.cas.support.saml.mdui.DynamicMetadataResolverAdapterTests;
 import org.apereo.cas.support.saml.mdui.MetadataUIUtilsTests;
 import org.apereo.cas.support.saml.mdui.SamlMetadataUIInfoTests;
+import org.apereo.cas.support.saml.mdui.StaticMetadataResolverAdapterTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
@@ -16,6 +17,7 @@ import org.junit.runner.RunWith;
  */
 @SelectClasses({
     DynamicMetadataResolverAdapterTests.class,
+    StaticMetadataResolverAdapterTests.class,
     MetadataUIUtilsTests.class,
     SamlMetadataUIInfoTests.class
 })

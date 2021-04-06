@@ -32,12 +32,13 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("WebflowActions")
 @TestPropertySource(properties = {
+    "cas.authn.policy.source-selection-enabled=true",
     "cas.sso.sso-enabled=false",
     "cas.tgc.crypto.enabled=false"
 })
 public class InitialFlowSetupActionTests extends AbstractWebflowActionsTests {
     @Autowired
-    @Qualifier("initialFlowSetupAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_INITIAL_FLOW_SETUP)
     private Action action;
 
     @Test

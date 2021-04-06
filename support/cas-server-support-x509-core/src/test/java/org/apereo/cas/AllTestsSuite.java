@@ -1,5 +1,7 @@
 package org.apereo.cas;
 
+import org.apereo.cas.adaptors.x509.authentication.ResourceCRLFetcherTests;
+import org.apereo.cas.adaptors.x509.authentication.RevokedCertificateExceptionTests;
 import org.apereo.cas.adaptors.x509.authentication.handler.support.CRLDistributionPointRevocationCheckerTests;
 import org.apereo.cas.adaptors.x509.authentication.handler.support.ResourceCRLRevocationCheckerTests;
 import org.apereo.cas.adaptors.x509.authentication.handler.support.ThresholdExpiredCRLRevocationPolicyTests;
@@ -14,6 +16,7 @@ import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectAlternat
 import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectAlternativeNameUPNPrincipalResolverTests;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectDNPrincipalResolverTests;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectPrincipalResolverTests;
+import org.apereo.cas.adaptors.x509.authentication.principal.X509UPNExtractorUtilsTests;
 import org.apereo.cas.adaptors.x509.util.X509CertificateCredentialJsonSerializerTests;
 
 import org.junit.platform.runner.JUnitPlatform;
@@ -39,6 +42,9 @@ import org.junit.runner.RunWith;
     X509SubjectPrincipalResolverTests.class,
     ResourceCRLRevocationCheckerTests.class,
     X509CertificateCredentialTests.class,
+    ResourceCRLFetcherTests.class,
+    RevokedCertificateExceptionTests.class,
+    X509UPNExtractorUtilsTests.class,
     X509CertificateCredentialJsonSerializerTests.class,
     ThresholdExpiredCRLRevocationPolicyTests.class,
     X509CredentialsAuthenticationHandlerTests.class,

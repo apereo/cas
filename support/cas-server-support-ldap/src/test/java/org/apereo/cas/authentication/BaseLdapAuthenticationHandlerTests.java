@@ -74,20 +74,19 @@ import static org.junit.jupiter.api.Assertions.*;
 public abstract class BaseLdapAuthenticationHandlerTests {
     @Autowired
     @Qualifier("ldapAuthenticationHandlers")
-    protected Collection<AuthenticationHandler> handler;
+    protected Collection<AuthenticationHandler> ldapAuthenticationHandlers;
 
     @Test
     public void verifyAuthenticateFailure() {
-        assertNotEquals(handler.size(), 0);
+        assertNotEquals(ldapAuthenticationHandlers.size(), 0);
         assertThrowsWithRootCause(UncheckedException.class, FailedLoginException.class,
-            () -> this.handler.forEach(Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential(getUsername(), getFailurePassword())))));
+            () -> this.ldapAuthenticationHandlers.forEach(Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential(getUsername(), getFailurePassword())))));
     }
 
     @Test
     public void verifyAuthenticateSuccess() {
-        assertNotEquals(handler.size(), 0);
-
-        this.handler.forEach(Unchecked.consumer(h -> {
+        assertNotEquals(ldapAuthenticationHandlers.size(), 0);
+        this.ldapAuthenticationHandlers.forEach(Unchecked.consumer(h -> {
             val credential = new UsernamePasswordCredential(getUsername(), getSuccessPassword());
             val result = h.authenticate(credential);
             assertNotNull(result.getPrincipal());

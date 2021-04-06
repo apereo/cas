@@ -220,6 +220,10 @@ button.close {
     color: inherit;
 }
 
+.login-provider-item {
+    list-style: none;
+}
+
 .login-provider-item .mdc-button .mdi {
     margin-right: 0.375rem;
 }

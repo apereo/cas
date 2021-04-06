@@ -25,7 +25,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class StaticEventExecutionActionTests {
     @Test
     public void verifyOperation() throws Exception {
-
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

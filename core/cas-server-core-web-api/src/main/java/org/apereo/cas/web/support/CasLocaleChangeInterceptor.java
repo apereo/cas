@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.model.core.web.LocaleProperties;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
@@ -26,8 +25,7 @@ public class CasLocaleChangeInterceptor extends LocaleChangeInterceptor {
     @Override
     public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response,
                              final Object handler) throws ServletException {
-        val newLocale = request.getParameter(localeProperties.getParamName());
-        if (localeProperties.isForceDefaultLocale() || StringUtils.isBlank(newLocale)) {
+        if (localeProperties.isForceDefaultLocale()) {
             val localeResolver = RequestContextUtils.getLocaleResolver(request);
             if (localeResolver != null) {
                 val locale = new Locale(localeProperties.getDefaultValue());

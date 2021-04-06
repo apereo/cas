@@ -121,6 +121,16 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
 
     public X509CredentialsAuthenticationHandler(final Pattern regExTrustedIssuerDnPattern,
                                                 final boolean maxPathLengthAllowUnspecified,
+                                                final int maxPathLength) {
+        this(StringUtils.EMPTY, null, null, regExTrustedIssuerDnPattern,
+            maxPathLength, maxPathLengthAllowUnspecified, false,
+            false, null,
+            new NoOpRevocationChecker(),
+            null);
+    }
+
+    public X509CredentialsAuthenticationHandler(final Pattern regExTrustedIssuerDnPattern,
+                                                final boolean maxPathLengthAllowUnspecified,
                                                 final boolean checkKeyUsage,
                                                 final boolean requireKeyUsage) {
         this(StringUtils.EMPTY, null, null, regExTrustedIssuerDnPattern,
@@ -292,7 +302,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
      * @return true, if  certificate allowed
      */
     private boolean isCertificateAllowed(final X509Certificate cert) {
-        return doesNameMatchPattern(cert.getSubjectDN(), this.regExSubjectDnPattern);
+        return regExSubjectDnPattern == null || doesNameMatchPattern(cert.getSubjectDN(), this.regExSubjectDnPattern);
     }
 
     /**
