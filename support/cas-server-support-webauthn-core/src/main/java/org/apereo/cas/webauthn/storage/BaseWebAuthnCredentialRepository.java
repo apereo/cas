@@ -144,7 +144,7 @@ public abstract class BaseWebAuthnCredentialRepository implements WebAuthnCreden
     @Override
     public void clean() {
         try {
-            val webAuthn = properties.getAuthn().getMfa().getWebAuthn();
+            val webAuthn = properties.getAuthn().getMfa().getWebAuthn().getCore();
             val expirationDate = LocalDate.now(ZoneOffset.UTC)
                 .minus(webAuthn.getExpireDevices(), DateTimeUtils.toChronoUnit(webAuthn.getExpireDevicesTimeUnit()));
             LOGGER.debug("Filtering devices based on device expiration date [{}]", expirationDate);

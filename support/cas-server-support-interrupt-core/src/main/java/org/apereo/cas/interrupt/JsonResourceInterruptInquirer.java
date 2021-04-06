@@ -12,6 +12,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import lombok.val;
+import org.apache.commons.io.IOUtils;
 import org.hjson.JsonValue;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.Resource;
@@ -63,9 +64,7 @@ public class JsonResourceInterruptInquirer extends BaseInterruptInquirer impleme
 
     @Override
     public void destroy() {
-        if (this.keystorePatchWatcherService != null) {
-            this.keystorePatchWatcherService.close();
-        }
+        IOUtils.closeQuietly(this.keystorePatchWatcherService);
     }
 
     @SneakyThrows
