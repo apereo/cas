@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +21,7 @@ import java.util.Map;
 @Getter
 @Setter
 public class CasUserAccount implements Serializable {
-    private static final int MAP_SIZE = 8;
+    private static final int SIZE = 8;
 
     private static final long serialVersionUID = 7579594722197541062L;
 
@@ -30,7 +31,9 @@ public class CasUserAccount implements Serializable {
     
     private String location;
 
-    private Map<String, List<Object>> attributes = new LinkedHashMap<>(MAP_SIZE);
+    private Map<String, List<Object>> attributes = new LinkedHashMap<>(SIZE);
+
+    private List<String> warnings = new ArrayList<>(SIZE);
 
     private AccountStatus status = AccountStatus.OK;
 

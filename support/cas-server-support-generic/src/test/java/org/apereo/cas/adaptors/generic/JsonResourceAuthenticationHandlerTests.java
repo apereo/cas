@@ -31,6 +31,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
+import javax.security.auth.login.FailedLoginException;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
@@ -64,6 +65,7 @@ public class JsonResourceAuthenticationHandlerTests {
         acct = new CasUserAccount();
         acct.setPassword("Mellon");
         acct.setStatus(CasUserAccount.AccountStatus.OK);
+        acct.setWarnings(CollectionUtils.wrapList("hello.world", "test.message"));
         acct.setAttributes(CollectionUtils.wrap("firstName",
             CollectionUtils.wrapList("Apereo"), "lastName",
             CollectionUtils.wrapList("CAS")));
@@ -147,11 +149,13 @@ public class JsonResourceAuthenticationHandlerTests {
     @Test
     public void verifyOkAccountFromExternalFile() throws Exception {
         val resource = new ClassPathResource("sample-users.json");
-        val creds = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
         val jsonHandler = new JsonResourceAuthenticationHandler(null, mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), null, resource);
-        val result = jsonHandler.authenticate(creds);
+        assertThrows(FailedLoginException.class,
+            () -> jsonHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "bad-password")));
+        val result = jsonHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon"));
         assertNotNull(result);
+        assertEquals(1, result.getWarnings().size());
         assertEquals("casuser", result.getPrincipal().getId());
         assertFalse(result.getPrincipal().getAttributes().isEmpty());
         assertTrue(result.getPrincipal().getAttributes().containsKey("firstName"));
