@@ -18,7 +18,7 @@ import org.springframework.core.Ordered;
 @Slf4j
 public class OidcServicesManagerRegisteredServiceLocator extends DefaultServicesManagerRegisteredServiceLocator {
     public OidcServicesManagerRegisteredServiceLocator() {
-        setOrder(Ordered.HIGHEST_PRECEDENCE);
+        setOrder(Ordered.HIGHEST_PRECEDENCE + 1);
         setRegisteredServiceFilter(
             (registeredService, service) -> {
                 var match = service.getAttributes().containsKey(OAuth20Constants.CLIENT_ID)
