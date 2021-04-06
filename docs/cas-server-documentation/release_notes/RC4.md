@@ -63,8 +63,11 @@ CAS test coverage across all modules in the codebase has now reached `91%` and c
 ## Other Stuff
    
 - CAS CI builds are updated to ensure all web application types can be deployed successfully via external servlet containers.
+- System properties used during the build now use the proper Gradle API to respect the configuration cache.
 
 ## Library Upgrades
 
 - JUnit
+- Apache Tomcat
+- Infinispan
 
