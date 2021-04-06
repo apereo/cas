@@ -64,7 +64,7 @@ public class CasInterruptWebflowConfiguration {
     @Bean
     @RefreshScope
     public Action inquireInterruptAction() {
-        return new InquireInterruptAction(interruptInquirer.getObject().getInterruptInquirers());
+        return new InquireInterruptAction(interruptInquirer.getObject().getInterruptInquirers(), casProperties);
     }
 
     @ConditionalOnMissingBean(name = "prepareInterruptViewAction")

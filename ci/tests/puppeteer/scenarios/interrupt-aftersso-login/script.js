@@ -25,13 +25,16 @@ const url = require('url');
     element = await page.$('#content p');
     header = await page.evaluate(element => element.textContent.trim(), element);
     console.log(header)
-    assert(header.startsWith("The authentication flow has been interrupted."));
+    assert(header.startsWith("The authentication flow has been interrupted"));
 
     element = await page.$('#interruptMessage');
     header = await page.evaluate(element => element.textContent.trim(), element);
     console.log(header)
     assert(header === "We interrupted your login");
 
+    const tgc = (await page.cookies()).filter(value => value.name === "TGC")
+    assert(tgc.length !== 0);
+    
     let interruptLinks = await page.$('#interruptLinks');
     assert(await interruptLinks.boundingBox() != null);
 
@@ -53,9 +56,6 @@ const url = require('url');
 
     await page.$eval('#fm1', form => form.submit());
     await page.waitForTimeout(2000)
-
-    const tgc = (await page.cookies()).filter(value => value.name === "TGC")
-    assert(tgc.length !== 0);
-
+    
     await browser.close();
 })();

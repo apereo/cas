@@ -47,4 +47,10 @@ public class InterruptProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private RegexInterruptProperties regex = new RegexInterruptProperties();
+
+    /**
+     * Core settings for interrupt notifications.
+     */
+    @NestedConfigurationProperty
+    private InterruptCoreProperties core = new InterruptCoreProperties();
 }

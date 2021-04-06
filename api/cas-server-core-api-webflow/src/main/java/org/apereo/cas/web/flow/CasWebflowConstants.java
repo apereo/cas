@@ -1038,6 +1038,16 @@ public interface CasWebflowConstants {
     String ACTION_ID_PREPARE_INTERRUPT_VIEW = "prepareInterruptViewAction";
 
     /**
+     * Action id 'inquireInterruptAction .
+     */
+    String ACTION_ID_INQUIRE_INTERRUPT = "inquireInterruptAction";
+
+    /**
+     * Action id 'finalizeInterruptFlowAction .
+     */
+    String ACTION_ID_FINALIZE_INTERRUPT = "finalizeInterruptFlowAction";
+
+    /**
      * Action id 'oneTimeTokenAuthenticationWebflowAction .
      */
     String ACTION_ID_OTP_AUTHENTICATION_ACTION = "oneTimeTokenAuthenticationWebflowAction";
