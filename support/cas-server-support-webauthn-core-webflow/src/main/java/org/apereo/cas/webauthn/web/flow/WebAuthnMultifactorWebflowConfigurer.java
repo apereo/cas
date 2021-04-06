@@ -92,9 +92,9 @@ public class WebAuthnMultifactorWebflowConfigurer extends AbstractCasMultifactor
         registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), MFA_WEB_AUTHN_EVENT_ID, webAuthn.getId());
 
         val flow = getLoginFlow();
-        if (flow != null && webAuthn.isAllowPrimaryAuthentication()) {
+        if (flow != null && webAuthn.getCore().isAllowPrimaryAuthentication()) {
             val setAppIdAction = createSetAction("flowScope." + WebAuthnStartRegistrationAction.FLOW_SCOPE_WEB_AUTHN_APPLICATION_ID,
-                StringUtils.quote(webAuthn.getApplicationId()));
+                StringUtils.quote(webAuthn.getCore().getApplicationId()));
             flow.getStartActionList().add(setAppIdAction);
 
             val setPrimaryAuthAction = createSetAction("flowScope.webAuthnPrimaryAuthenticationEnabled", "true");

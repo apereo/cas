@@ -33,10 +33,10 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = BaseWebAuthnWebflowTests.SharedTestConfiguration.class,
     properties = {
-        "cas.authn.mfa.web-authn.allowed-origins=https://localhost:8443",
-        "cas.authn.mfa.web-authn.application-id=https://localhost:8443",
-        "cas.authn.mfa.web-authn.relying-party-name=CAS WebAuthn Demo",
-        "cas.authn.mfa.web-authn.relying-party-id=example.org"
+        "cas.authn.mfa.web-authn.core.allowed-origins=https://localhost:8443",
+        "cas.authn.mfa.web-authn.core.application-id=https://localhost:8443",
+        "cas.authn.mfa.web-authn.core.relying-party-name=CAS WebAuthn Demo",
+        "cas.authn.mfa.web-authn.core.relying-party-id=example.org"
     })
 public abstract class BaseWebAuthnCredentialRepositoryTests {
     @Autowired

@@ -34,7 +34,7 @@ public class WebAuthnStartRegistrationAction extends AbstractMultifactorAuthenti
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        val webAuthn = casProperties.getAuthn().getMfa().getWebAuthn();
+        val webAuthn = casProperties.getAuthn().getMfa().getWebAuthn().getCore();
 
         val authn = WebUtils.getAuthentication(requestContext);
         val principal = resolvePrincipal(authn.getPrincipal());

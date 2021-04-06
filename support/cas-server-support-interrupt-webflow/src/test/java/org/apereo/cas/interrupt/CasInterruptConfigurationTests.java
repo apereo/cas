@@ -23,8 +23,8 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     CasInterruptConfiguration.class
 }, properties = {
-    "cas.interrupt.attribute-name=attr-name",
-    "cas.interrupt.attribute-value=attr-value",
+    "cas.interrupt.regex.attribute-name=attr-name",
+    "cas.interrupt.regex.attribute-value=attr-value",
     "cas.interrupt.json.location=classpath:/interrupt.json",
     "cas.interrupt.groovy.location=classpath:/interrupt.groovy",
     "cas.interrupt.rest.url=http://localhost:1234"
