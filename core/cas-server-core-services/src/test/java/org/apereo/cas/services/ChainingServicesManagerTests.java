@@ -57,9 +57,8 @@ public class ChainingServicesManagerTests extends AbstractServicesManagerTests<C
         svc.setName("domainService2");
         svc.setServiceId("https://www.example.com/two");
         assertNotNull(servicesManager.save(svc, false));
-        val chain = DomainAwareServicesManager.class.cast(servicesManager);
-        assertEquals(chain.getDomains().count(), 0);
-        assertTrue(chain.getServicesForDomain("example.org").isEmpty());
+        assertEquals(servicesManager.getDomains().count(), 0);
+        assertTrue(servicesManager.getServicesForDomain("example.org").isEmpty());
     }
 
     @Override
