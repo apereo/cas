@@ -23,7 +23,7 @@ import java.util.stream.Stream;
  * @since 6.2.0
  */
 @Getter
-public class ChainingServicesManager implements ServicesManager, DomainAwareServicesManager {
+public class ChainingServicesManager implements DomainAwareServicesManager {
 
     private final List<ServicesManager> serviceManagers = new ArrayList<>();
 
