@@ -48,4 +48,15 @@ public class SamlRegisteredServiceMetadataHealthIndicatorTests extends BaseSamlI
         assertEquals(Status.DOWN, health.getStatus());
     }
 
+    @Test
+    public void verifyFailsOperationWithMultiple() {
+        val samlRegisteredService = SamlIdPTestUtils.getSamlRegisteredService();
+        samlRegisteredService.setMetadataLocation("unknown-metadata-location");
+        servicesManager.save(samlRegisteredService);
+        servicesManager.save(SamlIdPTestUtils.getSamlRegisteredService());
+
+        val health = samlRegisteredServiceMetadataHealthIndicator.health();
+        assertEquals(Status.UP, health.getStatus());
+    }
+
 }

@@ -49,6 +49,7 @@ public class SamlRegisteredServiceMetadataHealthIndicator extends AbstractHealth
                 val available = availableResolvers
                     .stream()
                     .filter(Objects::nonNull)
+                    .filter(r -> r.supports(service))
                     .anyMatch(r -> r.isAvailable(service));
                 map.put("availability", BooleanUtils.toStringYesNo(available));
                 builder.withDetail(service.getName(), map);
