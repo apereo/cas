@@ -9,8 +9,7 @@ import java.util.stream.Stream;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@FunctionalInterface
-public interface DomainAwareServicesManager {
+public interface DomainAwareServicesManager extends ServicesManager {
     /**
      * Returns a list of domains being managed by the ServiceManager.
      *
