@@ -70,6 +70,8 @@ CAS test coverage across all modules in the codebase has now reached `91%` and c
 - CAS CI builds are updated to ensure all web application types can be deployed successfully via external servlet containers.
 - System properties used during the build now use the proper Gradle API to respect the configuration cache.
 - Additional puppeteer tests to ensure authentication interrupts do function correctly with or without authentication warnings.
+- The `authenticationHandlers` actuator endpoint is corrected to respond with the collection of registered authentication handlers.
+- The `xml-apis` module dependency is now removed from the CAS dependency graph.
 
 ## Library Upgrades
 
