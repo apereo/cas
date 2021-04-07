@@ -223,4 +223,21 @@ public interface ServicesManager extends Ordered {
     default int getOrder() {
         return Ordered.LOWEST_PRECEDENCE;
     }
+
+    /**
+     * Returns a list of domains being managed by the ServiceManager.
+     *
+     * @return list of domain names
+     */
+    default Stream<String> getDomains() {
+        return Stream.of("default");
+    }
+
+    /**
+     * Return a list of services for the passed domain.
+     *
+     * @param domain the domain name
+     * @return list of services
+     */
+    Collection<RegisteredService> getServicesForDomain(String domain);
 }
