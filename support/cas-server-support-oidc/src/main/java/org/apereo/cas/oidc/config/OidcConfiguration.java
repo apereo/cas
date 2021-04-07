@@ -467,26 +467,11 @@ public class OidcConfiguration implements WebMvcConfigurer {
         return new OidcIntrospectionEndpointController(context);
     }
 
-    /**
-     * defines how the logoutURL configured at the OIDC service is matched against the given
-     * <i>post_logout_redirect_uri</i> at an OIDC RP-initiated logout.<br/>
-     * default is String::equalsIgnoreCase
-     *
-     * @return
-     *  the function that matches the given logout url against the configured logout url(s).
-     */
-    @Bean(name = POST_LOGOUT_REDIRECTURL_MATCHER_BEAN_NAME)
-    @ConditionalOnMissingBean(name = POST_LOGOUT_REDIRECTURL_MATCHER_BEAN_NAME)
-    public BiFunction<String, String, Boolean> postLogoutRedirectUrlMatcher() {
-        return String::equalsIgnoreCase;
-    }
-
     @RefreshScope
     @Bean
-    public OidcLogoutEndpointController oidcLogoutEndpointController(@Qualifier(POST_LOGOUT_REDIRECTURL_MATCHER_BEAN_NAME)
-                                                                        final BiFunction<String, String, Boolean> postLogoutRedirectUrlMatcher) {
+    public OidcLogoutEndpointController oidcLogoutEndpointController() {
         val context = oidcConfigurationContext();
-        return new OidcLogoutEndpointController(context, postLogoutRedirectUrlMatcher);
+        return new OidcLogoutEndpointController(context);
     }
 
     @RefreshScope

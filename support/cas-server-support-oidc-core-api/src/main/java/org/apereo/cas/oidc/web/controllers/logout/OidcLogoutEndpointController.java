@@ -37,15 +37,10 @@ import java.util.stream.Collectors;
 @Slf4j
 public class OidcLogoutEndpointController extends BaseOAuth20Controller {
 
-    private final BiFunction<String, String, Boolean> postLogoutRedirectUrlMatcher;
-
     private final UrlValidator urlValidator;
 
-    public OidcLogoutEndpointController(final OidcConfigurationContext context,
-                                        BiFunction<String, String, Boolean> postLogoutRedirectUrlMatcher) {
+    public OidcLogoutEndpointController(final OidcConfigurationContext context) {
         super(context);
-        this.postLogoutRedirectUrlMatcher = postLogoutRedirectUrlMatcher;
-        //default CAS urlValidator is not configured to allow local urls - I dont see why not
         this.urlValidator = new UrlValidator(UrlValidator.ALLOW_LOCAL_URLS);
     }
 
@@ -92,7 +87,7 @@ public class OidcLogoutEndpointController extends BaseOAuth20Controller {
             LOGGER.debug("Logout urls assigned to registered service are [{}]", urls);
             if (StringUtils.isNotBlank(postLogoutRedirectUrl)) {
                 val matchResult = registeredService.matches(postLogoutRedirectUrl)
-                    || urls.stream().anyMatch(url -> postLogoutRedirectUrlMatcher.apply(postLogoutRedirectUrl, url));
+                    || urls.stream().anyMatch(url -> url.matches(postLogoutRedirectUrl));
                 if (matchResult) {
                     LOGGER.debug("Requested logout URL [{}] is authorized for redirects", postLogoutRedirectUrl);
                     return new ResponseEntity<>(executeLogoutRedirect(Optional.ofNullable(StringUtils.trimToNull(state)),

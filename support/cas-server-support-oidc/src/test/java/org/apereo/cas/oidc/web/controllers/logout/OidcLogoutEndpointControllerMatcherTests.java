@@ -25,12 +25,6 @@ public class OidcLogoutEndpointControllerMatcherTests extends AbstractOidcTests 
     @Qualifier("oidcLogoutEndpointController")
     protected OidcLogoutEndpointController oidcLogoutEndpointController;
 
-    @Bean(name = OidcConfiguration.POST_LOGOUT_REDIRECTURL_MATCHER_BEAN_NAME)
-    public BiFunction<String, String, Boolean> postLogoutRedirectUrlMatcher() {
-        //this test uses regex-matching against the configured logout URLs
-        return String::matches;
-    }
-
     @Test
     public void verifyOidcLogoutWithIdTokenAndValidRegExMatchingPostLogoutRedirectUrlParams() {
         val request = new MockHttpServletRequest();
@@ -55,6 +49,4 @@ public class OidcLogoutEndpointControllerMatcherTests extends AbstractOidcTests 
         redirectUrl = WebUtils.getLogoutRedirectUrl(request, String.class);
         assertEquals("https://oauth.example.org/logout?state=abcd1234&client_id=clientid", redirectUrl);
     }
-
-
 }
