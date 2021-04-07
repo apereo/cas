@@ -27,7 +27,7 @@
                     <span class="cas-brand mx-auto">
                         <span class="sr-only"
                               th:text="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS')}">CAS</span>
-                        <img class="cas-logo"
+                        <img id="cas-logo" class="cas-logo"
                              th:title="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS')}"
                              th:src="@{${#strings.defaultString(#themes.code('cas.logo.file'), '/images/cas-logo.png')}}" />
                     </span>
