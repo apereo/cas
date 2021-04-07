@@ -57,8 +57,8 @@ public class ChainingServicesManagerTests extends AbstractServicesManagerTests<C
         svc.setName("domainService2");
         svc.setServiceId("https://www.example.com/two");
         assertNotNull(servicesManager.save(svc, false));
-        assertEquals(servicesManager.getDomains().count(), 0);
-        assertTrue(servicesManager.getServicesForDomain("example.org").isEmpty());
+        assertEquals(servicesManager.getDomains().count(), 1);
+        assertFalse(servicesManager.getServicesForDomain("example.org").isEmpty());
     }
 
     @Override
