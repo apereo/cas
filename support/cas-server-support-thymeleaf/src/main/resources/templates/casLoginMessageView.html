@@ -10,7 +10,7 @@
    <body>
       <main role="main" class="container mt-3 mb-3">
          <div layout:fragment="content" class="loginMessageView mdc-card p-4 w-lg-66 m-auto">
-            <h3 class="m-0" th:text="#{screen.authentication.warning}">Authentication Succeeded with Warnings</h3>
+            <h1 class="m-0" th:text="#{screen.authentication.warning}">Authentication Succeeded with Warnings</h1>
             <ul class="mdc-list">
                <li class="mdc-list-item text-warn" tabindex="0" th:each="message : ${messages}">
                   <span class="mdc-list-item__text" th:utext="${message.text}">Lorem ipsum dolor sit amet, consectetur
@@ -22,8 +22,8 @@
                   <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
                   <input type="hidden" name="_eventId" value="proceed" />
                   <button class="mdc-button mdc-button--raised mdc-card__action mdc-card__action--button"
-                     name="continue" accesskey="l" th:value="#{screen.button.continue}" value="Continue">
-                  <span class="mdc-button__label" th:text="#{screen.button.continue}">Continue</span>
+                     type="submit" name="continue" accesskey="l" th:value="#{screen.button.continue}" value="Continue">
+                     <span class="mdc-button__label" th:text="#{screen.button.continue}">Continue</span>
                   </button>
                </form>
                <form method="post" id="changePasswordForm" class="fm-v" th:action="@{/login}"

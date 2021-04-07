@@ -1,0 +1,8 @@
+{
+  "@class" : "java.util.LinkedHashMap",
+  "testuser" : {
+    "@class" : "org.apereo.cas.adaptors.generic.CasUserAccount",
+    "password" : "testuser",
+    "warnings" : [ "java.util.ArrayList", [ "Hello, World!" ] ]
+  }
+}
