@@ -1,6 +1,5 @@
 package org.apereo.cas.oidc.web.controllers.logout;
 
-import org.apache.commons.validator.routines.UrlValidator;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.logout.slo.SingleLogoutUrl;
@@ -15,6 +14,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -95,14 +95,14 @@ public class OidcLogoutEndpointController extends BaseOAuth20Controller {
                 }
             }
             Optional<String> validURL = urls.stream().filter(urlValidator::isValid).findFirst();
-            if(validURL.isPresent()) {
+            if (validURL.isPresent()) {
                 return new ResponseEntity<>(executeLogoutRedirect(Optional.ofNullable(StringUtils.trimToNull(state)),
                         validURL, Optional.of(clientId), request, response));
             }
             LOGGER.debug("No logout urls could be determined for registered service [{}]", registeredService.getName());
         }
         return new ResponseEntity<>(executeLogoutRedirect(Optional.ofNullable(StringUtils.trimToNull(state)),
-            Optional.empty(), Optional.of(clientId), request, response));
+            Optional.empty(), Optional.ofNullable(clientId), request, response));
     }
 
     /**
