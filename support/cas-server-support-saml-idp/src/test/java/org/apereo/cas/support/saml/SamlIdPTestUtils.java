@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml;
 
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.util.RandomUtils;
 
 import lombok.experimental.UtilityClass;
 import lombok.val;
@@ -35,7 +36,7 @@ public class SamlIdPTestUtils {
      */
     public static SamlRegisteredService getSamlRegisteredService(final String serviceId) {
         val registeredService = new SamlRegisteredService();
-        registeredService.setId(100);
+        registeredService.setId(RandomUtils.nextInt());
         registeredService.setName("SAML");
         registeredService.setServiceId(serviceId);
         registeredService.setMetadataLocation("classpath:metadata/testshib-providers.xml");
