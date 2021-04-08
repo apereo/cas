@@ -388,13 +388,14 @@ public class OAuth20Utils {
      * @param redirectUri       the callback url
      * @return whether the callback url is valid
      */
-    public static boolean checkCallbackValid(final @NonNull RegisteredService registeredService, final String redirectUri) {
-        val registeredServiceId = registeredService.getServiceId();
-        if (!redirectUri.matches(registeredServiceId)) {
+    public static boolean checkCallbackValid(final @NonNull RegisteredService registeredService,
+                                             final String redirectUri) {
+        val matchingStrategy = registeredService.getMatchingStrategy();
+        if (matchingStrategy == null || !matchingStrategy.matches(registeredService, redirectUri)) {
             LOGGER.error("Unsupported [{}]: [{}] does not match what is defined for registered service: [{}]. "
                     + "Service is considered unauthorized. Verify the service definition in the registry is correct "
                     + "and does in fact match the client [{}]",
-                OAuth20Constants.REDIRECT_URI, redirectUri, registeredServiceId, redirectUri);
+                OAuth20Constants.REDIRECT_URI, redirectUri, registeredService.getServiceId(), redirectUri);
             return false;
         }
         return true;
