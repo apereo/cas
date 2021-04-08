@@ -79,4 +79,8 @@ CAS test coverage across all modules in the codebase has now reached `91%` and c
 - Apache Tomcat
 - Infinispan
 - JSON Smart
+- Twilio
+- Couchbase
+- Mockito
+- DropWizard
 
