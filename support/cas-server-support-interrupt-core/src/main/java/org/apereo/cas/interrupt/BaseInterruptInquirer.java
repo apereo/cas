@@ -20,7 +20,8 @@ public abstract class BaseInterruptInquirer implements InterruptInquirer {
     @Override
     public final InterruptResponse inquire(final Authentication authentication,
                                            final RegisteredService registeredService,
-                                           final Service service, final Credential credential,
+                                           final Service service,
+                                           final Credential credential,
                                            final RequestContext requestContext) {
         if (shouldSkipInterruptForRegisteredService(registeredService)) {
             return InterruptResponse.none();

@@ -83,15 +83,22 @@
                     accesskey="l">
                     <span class="mdc-button__label" th:text="#{screen.interrupt.btn.proceed}">Proceed</span>
                 </button>
-                <a class="mdc-button" id="login" name="login" th:href="${service?.id} ?: @{/login}">
-                    <span class="mdc-button__label" th:text="#{screen.error.page.loginagain}">Login Again</span>
-                </a>
+
+                <span th:if="${interruptTriggerMode == 'AFTER_AUTHENTICATION'}">
+                    <a class="mdc-button mdc-button--raised mr-2" id="login" name="login" th:href="${service?.id} ?: @{/login}">
+                        <span class="mdc-button__label" th:text="#{screen.error.page.loginagain}">Login Again</span>
+                    </a>
+                </span>
             </div>
         </form>
 
         <div th:if="${interrupt.block}">
-            <a class="mdc-button mdc-button--outline btn btn-outline-secondary" id="cancel" name="cancel" th:href="@{/login}">
-                <span class="mdc-button__label" th:text="#{screen.interrupt.btn.cancel}">Cancel</span>
+            <a class="mdc-button mdc-button--raised mr-2 btn btn-outline-secondary" id="cancel" name="cancel" th:href="@{/login}">
+                <span th:if="${interruptTriggerMode == 'AFTER_AUTHENTICATION'}" class="mdc-button__label"
+                      th:text="#{screen.interrupt.btn.cancel}">Cancel</span>
+
+                <span th:if="${interruptTriggerMode == 'AFTER_SSO'}" class="mdc-button__label"
+                      th:text="#{screen.interrupt.btn.proceed}">Proceed</span>
             </a>
         </div>
     </div>

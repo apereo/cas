@@ -26,7 +26,7 @@ import java.util.stream.Stream;
  * @since 6.2.0
  */
 @Getter
-public class ChainingServicesManager implements ServicesManager, DomainAwareServicesManager {
+public class ChainingServicesManager implements ServicesManager {
 
     private final List<ServicesManager> serviceManagers = new ArrayList<>();
 
@@ -172,16 +172,12 @@ public class ChainingServicesManager implements ServicesManager, DomainAwareServ
     @Override
     public Stream<String> getDomains() {
         return serviceManagers.stream()
-            .filter(mgr -> mgr instanceof DomainAwareServicesManager)
-            .map(DomainAwareServicesManager.class::cast)
-            .flatMap(DomainAwareServicesManager::getDomains);
+            .flatMap(ServicesManager::getDomains);
     }
 
     @Override
     public Collection<RegisteredService> getServicesForDomain(final String domain) {
         return serviceManagers.stream()
-            .filter(mgr -> mgr instanceof DomainAwareServicesManager)
-            .map(DomainAwareServicesManager.class::cast)
             .flatMap(d -> d.getServicesForDomain(domain).stream())
             .collect(Collectors.toList());
     }

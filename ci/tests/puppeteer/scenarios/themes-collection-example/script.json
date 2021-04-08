@@ -1,0 +1,6 @@
+{
+  "dependencies": "themes-collection",
+  "properties": [
+    "--cas.theme.default-theme-name=example"
+  ]
+}

@@ -39,6 +39,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("SAML")
+@SuppressWarnings("InlineFormatString")
 public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSamlIdPConfigurationTests {
     private static final String SAML_AUTHN_REQUEST1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><saml2p:AuthnRequest "
         + "xmlns:saml2p=\"urn:oasis:names:tc:SAML:2.0:protocol\" AssertionConsumerServiceURL=\"http://localhost:8081/callback"
