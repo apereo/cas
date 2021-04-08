@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.actuate.health.Status;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -50,9 +52,10 @@ public class SamlRegisteredServiceMetadataHealthIndicatorTests extends BaseSamlI
 
     @Test
     public void verifyFailsOperationWithMultiple() {
-        val samlRegisteredService = SamlIdPTestUtils.getSamlRegisteredService();
+        val samlRegisteredService = SamlIdPTestUtils.getSamlRegisteredService(UUID.randomUUID().toString());
         samlRegisteredService.setMetadataLocation("unknown-metadata-location");
         servicesManager.save(samlRegisteredService);
+        
         servicesManager.save(SamlIdPTestUtils.getSamlRegisteredService());
 
         val health = samlRegisteredServiceMetadataHealthIndicator.health();
