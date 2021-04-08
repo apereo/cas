@@ -1667,6 +1667,9 @@ ext.libraries = [
                     exclude(group: "commons-cli", module: "commons-cli")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 },
+                dependencies.create("org.mongodb:bson:$mongoDriverVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                },
                 dependencies.create("org.springframework.data:spring-data-mongodb:$springDataMongoDbVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.slf4j", module: "jcl-over-slf4j")
