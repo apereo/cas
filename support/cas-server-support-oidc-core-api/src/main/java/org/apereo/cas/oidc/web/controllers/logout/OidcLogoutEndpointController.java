@@ -86,7 +86,7 @@ public class OidcLogoutEndpointController extends BaseOAuth20Controller {
             LOGGER.debug("Logout urls assigned to registered service are [{}]", urls);
             if (StringUtils.isNotBlank(postLogoutRedirectUrl)) {
                 val matchResult = registeredService.matches(postLogoutRedirectUrl)
-                    || urls.stream().anyMatch(url -> url.matches(postLogoutRedirectUrl));
+                    || urls.stream().anyMatch(url -> postLogoutRedirectUrl.matches(url));
                 if (matchResult) {
                     LOGGER.debug("Requested logout URL [{}] is authorized for redirects", postLogoutRedirectUrl);
                     return new ResponseEntity<>(executeLogoutRedirect(Optional.ofNullable(StringUtils.trimToNull(state)),
