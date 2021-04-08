@@ -18,7 +18,6 @@ The following endpoints are secured and available by
 
 | Endpoint                  | Description
 |---------------------------|-------------------------------------------------------------------------------------
-| `autoconfig`              | Describes how the CAS application context is auto-configured. 
 | `beans`                   | Displays all CAS application context **internal** Spring beans.
 | `conditions`              | Shows the conditions that were evaluated on configuration and auto-configuration classes and the reasons why they did or did not match.
 | `configprops`             | List of **internal** configuration properties.

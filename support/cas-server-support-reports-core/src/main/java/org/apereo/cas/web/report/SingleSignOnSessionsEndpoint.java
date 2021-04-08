@@ -111,7 +111,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
      * @return the sso sessions
      */
     @ReadOperation
-    public Map<String, Object> getSsoSessions(final String type) {
+    public Map<String, Object> getSsoSessions(@Nullable final String type) {
         val sessionsMap = new HashMap<String, Object>();
         val option = Optional.ofNullable(type).map(SsoSessionReportOptions::valueOf).orElse(SsoSessionReportOptions.ALL);
         val activeSsoSessions = getActiveSsoSessions(option);
