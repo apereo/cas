@@ -27,7 +27,9 @@ import org.pac4j.core.profile.UserProfile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -181,11 +183,19 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
             : defaultValue;
 
         LOGGER.trace("Handling claim [{}] with value(s) [{}]", attribute, attributeValues);
-        CollectionUtils.firstElement(attributeValues)
-            .ifPresent(value -> {
+        val collectionValues = CollectionUtils.toCollection(attributeValues)
+            .stream()
+            .map(value -> {
                 val bool = BooleanUtils.toBooleanObject(value.toString());
-                claims.setClaim(attribute, Objects.requireNonNullElse(bool, value));
-            });
+                return Objects.requireNonNullElse(bool, value);
+            })
+            .collect(Collectors.toCollection(ArrayList::new));
+        
+        if (collectionValues.size() == 1) {
+            claims.setClaim(attribute, collectionValues.get(0));
+        } else if (collectionValues.size() > 1) {
+            claims.setClaim(attribute, collectionValues);
+        }
     }
 
     /**
