@@ -39,7 +39,6 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("SAML")
-@SuppressWarnings("InlineFormatString")
 public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSamlIdPConfigurationTests {
     private static final String SAML_AUTHN_REQUEST = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><saml2p:AuthnRequest "
         + "xmlns:saml2p=\"urn:oasis:names:tc:SAML:2.0:protocol\" AssertionConsumerServiceURL=\"http://localhost:8081/callback"
@@ -47,14 +46,6 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
         + "ProtocolBinding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST\" Version=\"2.0\"><saml2:Issuer "
         + "xmlns:saml2=\"urn:oasis:names:tc:SAML:2.0:assertion\">%s</saml2:Issuer><saml2p:NameIDPolicy "
         + "AllowCreate=\"true\"/></saml2p:AuthnRequest>";
-
-    private static final String SAML_LOGOUT_REQUEST1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-        + "<saml2p:LogoutRequest xmlns:saml2p=\"urn:oasis:names:tc:SAML:2.0:protocol\""
-        + " Destination=\"http://localhost:8081/callback?client_name=SAML2Client\" ID=\"_81838f9e55714ae79732d8525266bc230c53dbe\""
-        + " IssueInstant=\"2021-04-06T12:22:57.210Z\" Version=\"2.0\"><saml2:Issuer xmlns:saml2=\"urn:oasis:names:tc:SAML:2"
-        + ".0:assertion\">%s</saml2:Issuer><saml2:NameID xmlns:saml2=\"urn:oasis:names:tc:SAML:2.0:assertion\""
-        + " Format=\"urn:oasis:names:tc:SAML:2.0:nameid-format:persistent\">bellini</saml2:NameID><saml2p:SessionIndex>ST-1-7EEGV0DEBGW5I"
-        + "-FhzInvmTzVG8o</saml2p:SessionIndex></saml2p:LogoutRequest>";
 
     @Autowired
     @Qualifier("samlIdPServicesManagerRegisteredServiceLocator")
@@ -108,8 +99,16 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
         val candidateServices = CollectionUtils.wrapList(service1, service2);
         Collections.sort(candidateServices);
 
+        val logoutRequest = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+            + "<saml2p:LogoutRequest xmlns:saml2p=\"urn:oasis:names:tc:SAML:2.0:protocol\""
+            + " Destination=\"http://localhost:8081/callback?client_name=SAML2Client\" ID=\"_81838f9e55714ae79732d8525266bc230c53dbe\""
+            + " IssueInstant=\"2021-04-06T12:22:57.210Z\" Version=\"2.0\"><saml2:Issuer xmlns:saml2=\"urn:oasis:names:tc:SAML:2"
+            + ".0:assertion\">%s</saml2:Issuer><saml2:NameID xmlns:saml2=\"urn:oasis:names:tc:SAML:2.0:assertion\""
+            + " Format=\"urn:oasis:names:tc:SAML:2.0:nameid-format:persistent\">bellini</saml2:NameID><saml2p:SessionIndex>ST-1-7EEGV0DEBGW5I"
+            + "-FhzInvmTzVG8o</saml2p:SessionIndex></saml2p:LogoutRequest>";
+
         val service = webApplicationServiceFactory.createService("https://sp.testshib.org/shibboleth-sp");
-        val samlRequest = EncodingUtils.encodeBase64(String.format(SAML_LOGOUT_REQUEST1, service.getId()));
+        val samlRequest = EncodingUtils.encodeBase64(String.format(logoutRequest, service.getId()));
         service.setAttributes(Map.of(SamlProtocolConstants.PARAMETER_SAML_REQUEST, List.of(samlRequest)));
 
         val result = samlIdPServicesManagerRegisteredServiceLocator.locate(
