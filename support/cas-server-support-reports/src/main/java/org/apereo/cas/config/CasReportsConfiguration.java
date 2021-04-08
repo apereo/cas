@@ -36,6 +36,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.actuate.health.HealthEndpoint;
+import org.springframework.boot.actuate.trace.http.HttpTraceEndpoint;
+import org.springframework.boot.actuate.trace.http.HttpTraceRepository;
+import org.springframework.boot.actuate.trace.http.InMemoryHttpTraceRepository;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -170,6 +173,12 @@ public class CasReportsConfiguration {
         return new CasResolveAttributesReportEndpoint(casProperties, defaultPrincipalResolver.getObject());
     }
 
+    @Bean
+    @ConditionalOnAvailableEndpoint(endpoint = HttpTraceEndpoint.class)
+    public HttpTraceRepository httpTraceRepository() {
+        return new InMemoryHttpTraceRepository();
+    }
+    
     @Bean
     @ConditionalOnAvailableEndpoint
     public CasReleaseAttributesReportEndpoint releaseAttributesReportEndpoint() {
