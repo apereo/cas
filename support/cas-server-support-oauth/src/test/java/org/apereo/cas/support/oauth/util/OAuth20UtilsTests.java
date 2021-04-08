@@ -1,6 +1,8 @@
 package org.apereo.cas.support.oauth.util;
 
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.services.FullRegexRegisteredServiceMatchingStrategy;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -79,6 +81,17 @@ public class OAuth20UtilsTests {
         assertTrue(OAuth20Utils.isAuthorizedGrantTypeForService(context, registeredService));
         assertTrue(OAuth20Utils.isAuthorizedGrantTypeForService(
             OAuth20GrantTypes.PASSWORD.getType(), new OAuthRegisteredService()));
+    }
+
+    @Test
+    public void verifyCheckCallbackValid() {
+        val registeredService = mock(RegisteredService.class);
+        when(registeredService.getServiceId()).thenReturn("http://test.org/.*");
+        when(registeredService.getMatchingStrategy()).thenReturn(null);
+        assertFalse(OAuth20Utils.checkCallbackValid(registeredService, "http://test.org/cas"));
+        when(registeredService.getMatchingStrategy()).thenReturn(new FullRegexRegisteredServiceMatchingStrategy());
+        assertTrue(OAuth20Utils.checkCallbackValid(registeredService, "http://test.org/cas"));
+        assertFalse(OAuth20Utils.checkCallbackValid(registeredService, "http://test2.org/cas"));
     }
 
     @Test
