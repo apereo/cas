@@ -6,7 +6,6 @@ import org.apereo.cas.support.saml.SamlUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.val;
-import org.apache.commons.io.FileUtils;
 import org.pac4j.core.client.Clients;
 import org.pac4j.saml.client.SAML2Client;
 import org.springframework.http.HttpHeaders;
@@ -17,8 +16,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import java.nio.charset.StandardCharsets;
 
 /**
  * This is {@link Saml2ClientMetadataController}.
@@ -40,7 +37,7 @@ public class Saml2ClientMetadataController {
         val headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_XML);
         saml2Client.init();
-        val md = FileUtils.readFileToString(saml2Client.getConfiguration().getServiceProviderMetadataResource().getFile(), StandardCharsets.UTF_8);
+        val md = saml2Client.getSpMetadataResolver().getMetadata();
         return new ResponseEntity<>(md, headers, HttpStatus.OK);
     }
 
