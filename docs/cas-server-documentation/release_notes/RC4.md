@@ -81,6 +81,7 @@ CAS test coverage across all modules in the codebase has now reached `91%` and c
 - JSON Smart
 - Twilio
 - Couchbase
+- Kryo
 - Mockito
 - DropWizard
 
