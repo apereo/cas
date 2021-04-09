@@ -54,7 +54,6 @@ import org.apereo.cas.oidc.web.controllers.authorize.OidcAuthorizeEndpointContro
 import org.apereo.cas.oidc.web.controllers.dynareg.OidcClientConfigurationEndpointControllerTests;
 import org.apereo.cas.oidc.web.controllers.dynareg.OidcDynamicClientRegistrationEndpointControllerTests;
 import org.apereo.cas.oidc.web.controllers.jwks.OidcJwksEndpointControllerTests;
-import org.apereo.cas.oidc.web.controllers.logout.OidcLogoutEndpointControllerMatcherTests;
 import org.apereo.cas.oidc.web.controllers.logout.OidcLogoutEndpointControllerTests;
 import org.apereo.cas.oidc.web.controllers.profile.OidcUserProfileEndpointControllerTests;
 import org.apereo.cas.oidc.web.controllers.token.OidcAccessTokenEndpointControllerTests;
@@ -104,7 +103,6 @@ import org.junit.runner.RunWith;
     OidcAccessTokenResponseGeneratorTests.class,
     OidcIntrospectionEndpointControllerTests.class,
     OidcLogoutEndpointControllerTests.class,
-    OidcLogoutEndpointControllerMatcherTests.class,
     OidcRestfulWebFingerUserInfoRepositoryTests.class,
     OidcAddressScopeAttributeReleasePolicyTests.class,
     OidcCustomScopeAttributeReleasePolicyTests.class,

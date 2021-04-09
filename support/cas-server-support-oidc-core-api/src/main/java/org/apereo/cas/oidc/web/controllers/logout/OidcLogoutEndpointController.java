@@ -94,7 +94,7 @@ public class OidcLogoutEndpointController extends BaseOAuth20Controller {
                         request, response));
                 }
             }
-            Optional<String> validURL = urls.stream().filter(urlValidator::isValid).findFirst();
+            val validURL = urls.stream().filter(urlValidator::isValid).findFirst();
             if (validURL.isPresent()) {
                 return new ResponseEntity<>(executeLogoutRedirect(Optional.ofNullable(StringUtils.trimToNull(state)),
                         validURL, Optional.of(clientId), request, response));
