@@ -85,11 +85,11 @@ public class OAuth20UtilsTests {
 
     @Test
     public void verifyCheckCallbackValid() {
-        val registeredService = mock(RegisteredService.class);
-        when(registeredService.getServiceId()).thenReturn("http://test.org/.*");
-        when(registeredService.getMatchingStrategy()).thenReturn(null);
+        val registeredService = new OAuthRegisteredService();
+        registeredService.setServiceId("http://test.org/.*");
+        registeredService.setMatchingStrategy(null);
         assertFalse(OAuth20Utils.checkCallbackValid(registeredService, "http://test.org/cas"));
-        when(registeredService.getMatchingStrategy()).thenReturn(new FullRegexRegisteredServiceMatchingStrategy());
+        registeredService.setMatchingStrategy(new FullRegexRegisteredServiceMatchingStrategy());
         assertTrue(OAuth20Utils.checkCallbackValid(registeredService, "http://test.org/cas"));
         assertFalse(OAuth20Utils.checkCallbackValid(registeredService, "http://test2.org/cas"));
     }
