@@ -11,6 +11,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -154,12 +155,14 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
             ? sloService.getLocation()
             : sloService.getResponseLocation();
         LOGGER.trace("Encoding logout response given endpoint [{}] for binding [{}]", location, sloService.getBinding());
+
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val encoder = new SamlIdPHttpRedirectDeflateEncoder(location, logoutResponse);
+        encoder.setRelayState(request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE));
         encoder.doEncode();
         val redirectUrl = encoder.getRedirectUrl();
         LOGGER.debug("Final logout redirect URL is [{}]", redirectUrl);
 
-        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         WebUtils.putLogoutRedirectUrl(request, redirectUrl);
     }
 
@@ -173,6 +176,8 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
     @SneakyThrows
     protected void postSamlLogoutResponse(final SingleLogoutService sloService, final LogoutResponse logoutResponse,
                                           final RequestContext requestContext) {
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        
         val payload = SerializeSupport.nodeToString(XMLObjectSupport.marshall(logoutResponse));
         LOGGER.trace("Logout request payload is [{}]", payload);
 
@@ -184,10 +189,14 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
             : sloService.getResponseLocation();
         LOGGER.debug("Sending logout response using [{}] binding to [{}]", sloService.getBinding(), location);
 
+        val parameters = CollectionUtils.<String, Object>wrap(SamlProtocolConstants.PARAMETER_SAML_RESPONSE, message);
+        val relayState = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE);
+        FunctionUtils.doIfNotNull(relayState, value -> parameters.put(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, value));
+
         val exec = HttpUtils.HttpExecutionRequest.builder()
             .method(HttpMethod.POST)
             .url(location)
-            .parameters(CollectionUtils.wrap(SamlProtocolConstants.PARAMETER_SAML_RESPONSE, message))
+            .parameters(parameters)
             .headers(CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_XML_VALUE))
             .build();
         HttpUtils.execute(exec);
