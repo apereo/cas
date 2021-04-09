@@ -31,6 +31,9 @@ const assert = require('assert');
         "httptrace",
         "scheduledtasks",
 
+        "configurationMetadata",
+        "events",
+        "loggingConfig",
         "registeredServices",
         "registeredServices/10000001",
         "authenticationHandlers",

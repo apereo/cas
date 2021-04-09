@@ -81,6 +81,12 @@ const assert = require('assert');
     opt = await page.$('#cancel');
     assert(await opt != null);
 
+    const url = "https://localhost:8443/cas/actuator/attributeConsent/casuser"
+    console.log("Trying " + url)
+    const response = await page.goto(url);
+    console.log(response.status() + " " + response.statusText())
+    assert(response.ok())
+    
     await browser.close();
 })();
 
