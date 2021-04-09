@@ -1,5 +1,5 @@
 {
-  "dependencies": "reports",
+  "dependencies": "reports,configuration-metadata-repository,events",
   "properties": [
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
 
