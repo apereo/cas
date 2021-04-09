@@ -22,7 +22,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         "cas.authn.x509.reg-ex-trusted-issuer-dn-pattern=CN=\\\\w+,DC=jasig,DC=org",
         "cas.authn.x509.principal-type=SERIAL_NO_DN",
         "cas.authn.x509.crl-fetcher=ldap",
-        "cas.authn.x509.ldap.ldap-url=ldap://localhost:1389",
+        "cas.authn.x509.ldap.ldap-url=ldap://localhost:1388",
         "cas.authn.x509.ldap.base-dn=ou=people,dc=example,dc=org",
         "cas.authn.x509.ldap.search-filter=cn=X509",
         "cas.authn.x509.ldap.bind-dn=cn=Directory Manager,dc=example,dc=org",

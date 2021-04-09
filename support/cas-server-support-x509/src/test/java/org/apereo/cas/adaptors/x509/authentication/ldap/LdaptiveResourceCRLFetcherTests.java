@@ -36,7 +36,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Ldap")
 public class LdaptiveResourceCRLFetcherTests {
-    private static final int LDAP_PORT = 1389;
+    private static final int LDAP_PORT = 1388;
 
     @BeforeAll
     public static void bootstrapTests() throws Exception {
@@ -89,18 +89,18 @@ public class LdaptiveResourceCRLFetcherTests {
         @Test
         public void verifyResourceFromResourceUrl() throws Exception {
             val resource = mock(Resource.class);
-            when(resource.toString()).thenReturn("ldap://localhost:1389");
+            when(resource.toString()).thenReturn("ldap://localhost:1388");
             assertNotNull(fetcher.fetch(resource));
 
             val uri = new URI("ldap://localhost:1389");
             assertNotNull(fetcher.fetch(uri));
 
             val url = mock(URL.class);
-            when(url.toString()).thenReturn("ldap://localhost:1389");
+            when(url.toString()).thenReturn("ldap://localhost:1388");
             when(url.getProtocol()).thenReturn("ldap");
             assertNotNull(fetcher.fetch(url));
 
-            assertNotNull(fetcher.fetch("ldap://localhost:1389"));
+            assertNotNull(fetcher.fetch("ldap://localhost:1388"));
         }
         
         @Test
