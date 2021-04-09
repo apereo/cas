@@ -326,16 +326,6 @@ public class SamlIdPUtils {
         }
         return null;
     }
-
-    /**
-     * Gets issuer from saml request.
-     *
-     * @param request the request
-     * @return the issuer from saml request
-     */
-    private static String getIssuerFromSamlRequest(final RequestAbstractType request) {
-        return request.getIssuer().getValue();
-    }
 }
 
 
