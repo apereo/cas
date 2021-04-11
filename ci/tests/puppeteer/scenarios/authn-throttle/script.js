@@ -19,8 +19,15 @@ const assert = require('assert');
     assert(header === "Access Denied")
 
     header = await page.$eval('#content p', el => el.innerText)
+    assert(header === "You've entered the wrong password for the user too many times. You've been throttled.")
     console.log(header)
 
+    const url = "https://localhost:8443/cas/actuator/throttles"
+    console.log("Trying " + url)
+    const response = await page.goto(url);
+    console.log(response.status() + " " + response.statusText())
+    assert(response.ok())
+    
     await browser.close();
 })();
 
