@@ -25,6 +25,8 @@ of views cannot be modified via this method.
 ### Configuration
 
 {% include casproperties.html properties="cas.theme." %}
+                       
+To create a theme, please follow the below instructions:
 
 - Add a `[theme_name].properties` placed to the root of `src/main/resources` folder. 
 Contents of this file may contain the following settings:
