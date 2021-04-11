@@ -42,6 +42,8 @@
 
                         <label for="password" class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">
                             <input class="mdc-text-field__input pwd"
+                                   autocapitalize="none"
+                                   spellcheck="false"
                                    type="password"
                                    name="password"
                                    id="password"
@@ -73,6 +75,8 @@
                     <label for="confirmedPassword" class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">
                         <input class="mdc-text-field__input pwd"
                                type="password"
+                               autocapitalize="none"
+                               spellcheck="false"
                                name="confirmedPassword"
                                id="confirmedPassword"
                                th:field="*{confirmedPassword}"

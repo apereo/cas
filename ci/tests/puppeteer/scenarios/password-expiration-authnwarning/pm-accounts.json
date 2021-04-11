@@ -1,0 +1,11 @@
+{
+  "casuser" : {
+    "email" : "casuser@example.org",
+    "password" : "EaP8R&iX$eK4nb8eAI",
+    "phone" : "3477464665",
+    "securityQuestions" : {
+      "question1" : "answer1",
+      "question2" : "answer2"
+    }
+  }
+}
