@@ -14,6 +14,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketFactory;
+import org.apereo.cas.ticket.proxy.ProxyTicket;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -63,6 +64,8 @@ public class DefaultTicketStringSerializationManagerTests {
         assertNotNull(result);
         val deserializedTicket = ticketSerializationManager.deserializeTicket(result, TicketGrantingTicket.class);
         assertNotNull(deserializedTicket);
+
+        assertThrows(InvalidTicketException.class, () -> ticketSerializationManager.deserializeTicket(result, ProxyTicket.class));
     }
 
     @Test

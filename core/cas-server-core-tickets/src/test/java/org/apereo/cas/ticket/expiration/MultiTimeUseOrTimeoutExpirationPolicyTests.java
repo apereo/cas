@@ -56,6 +56,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicyTests {
     public void verifyTicketIsNotExpired() {
         this.expirationPolicy.setClock(Clock.fixed(this.ticket.getLastTimeUsed().toInstant().plusSeconds(TIMEOUT_SECONDS).minusNanos(1), ZoneOffset.UTC));
         assertFalse(this.ticket.isExpired());
+        assertEquals(0, this.expirationPolicy.getTimeToIdle());
     }
 
     @Test

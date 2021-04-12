@@ -135,7 +135,14 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
         req.setAttribute(RequestContext.WEB_APPLICATION_CONTEXT_ATTRIBUTE, new GenericWebApplicationContext(req.getServletContext()));
 
         val encoder = new DefaultCasProtocolAttributeEncoder(this.servicesManager, CipherExecutor.noOpOfStringToString());
-        val viewDelegated = new View() {
+        val view = getCasViewToRender(encoder, getDelegatedView());
+        val resp = new MockHttpServletResponse();
+        view.render(modelAndView.getModel(), req, resp);
+        return getRenderedViewModelMap(req);
+    }
+
+    protected static View getDelegatedView() {
+        return new View() {
             @Override
             public String getContentType() {
                 return MediaType.TEXT_HTML_VALUE;
@@ -147,11 +154,6 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
                 map.forEach(request::setAttribute);
             }
         };
-
-        val view = getCasViewToRender(encoder, viewDelegated);
-        val resp = new MockHttpServletResponse();
-        view.render(modelAndView.getModel(), req, resp);
-        return getRenderedViewModelMap(req);
     }
 
     protected Map getRenderedViewModelMap(final MockHttpServletRequest req) {

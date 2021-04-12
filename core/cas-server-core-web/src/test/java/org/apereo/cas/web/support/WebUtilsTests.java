@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.credential.OneTimeTokenCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.MockServletContext;
 
 import lombok.val;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link WebUtilsTests}.
@@ -47,6 +49,11 @@ public class WebUtilsTests {
         val mockExecutionContext = new MockFlowExecutionContext(flowSession);
         context.setFlowExecutionContext(mockExecutionContext);
 
+        WebUtils.putLogoutRedirectUrl(context, "https://logout.com");
+        assertNotNull(WebUtils.getLogoutRedirectUrl(context, String.class));
+        WebUtils.removeLogoutRedirectUrl(context);
+        assertNull(WebUtils.getLogoutRedirectUrl(context, String.class));
+
         assertNull(WebUtils.getHttpServletRequestUserAgentFromRequestContext(context));
         assertNull(WebUtils.getHttpServletRequestUserAgentFromRequestContext(request));
         assertNull(WebUtils.getAuthenticationResult(context));
@@ -57,9 +64,13 @@ public class WebUtilsTests {
         assertNotNull(WebUtils.produceErrorView(new IllegalArgumentException()));
         assertNotNull(WebUtils.produceErrorView("error-view", new IllegalArgumentException()));
         assertNotNull(WebUtils.getHttpRequestFullUrl(context));
+        
+        request.setQueryString("param=value");
+        assertNotNull(WebUtils.getHttpRequestFullUrl(request));
         assertFalse(WebUtils.isGraphicalUserAuthenticationEnabled(context));
         assertTrue(WebUtils.getDelegatedAuthenticationProviderConfigurations(context).isEmpty());
         assertNull(WebUtils.getAvailableAuthenticationHandleNames(context));
+        
 
         assertDoesNotThrow(new Executable() {
             @Override
@@ -97,5 +108,9 @@ public class WebUtilsTests {
         request.addParameter(WebUtils.PUBLIC_WORKSTATION_ATTRIBUTE, "true");
         WebUtils.putPublicWorkstationToFlowIfRequestParameterPresent(context);
         assertTrue(WebUtils.isAuthenticatingAtPublicWorkstation(context));
+
+        val ticketRegistrySupport = mock(TicketRegistrySupport.class);
+        WebUtils.putTicketGrantingTicketInScopes(context, "TGT-XYZ123");
+        assertNull(WebUtils.getPrincipalFromRequestContext(context, ticketRegistrySupport));
     }
 }

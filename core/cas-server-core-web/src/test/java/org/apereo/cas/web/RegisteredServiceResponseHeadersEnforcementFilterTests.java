@@ -64,10 +64,24 @@ public class RegisteredServiceResponseHeadersEnforcementFilterTests {
         val filter = getFilterForProperty(RegisteredServiceProperties.HTTP_HEADER_ENABLE_CONTENT_SECURITY_POLICY);
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
+        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, "service-0");
         request.setRequestURI("/cas/login");
         filter.setContentSecurityPolicy("sample-policy");
         filter.doFilter(request, response, new MockFilterChain());
         assertNotNull(response.getHeader("Content-Security-Policy"));
+    }
+
+    @Test
+    public void verifyContentSecurityPolicyDisabled() throws Exception {
+        val filter = getFilterForProperty(Pair.of(RegisteredServiceProperties.HTTP_HEADER_ENABLE_CONTENT_SECURITY_POLICY, "false"));
+        filter.setContentSecurityPolicy(null);
+        val response = new MockHttpServletResponse();
+        val request = new MockHttpServletRequest();
+        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, "service-0");
+        request.setRequestURI("/cas/login");
+        filter.setContentSecurityPolicy("sample-policy");
+        filter.doFilter(request, response, new MockFilterChain());
+        assertNull(response.getHeader("Content-Security-Policy"));
     }
 
     @Test
