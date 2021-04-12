@@ -1,8 +1,5 @@
 package org.apereo.cas.util;
 
-import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.val;
@@ -28,9 +25,6 @@ import java.util.Properties;
  */
 @UtilityClass
 public class SystemUtils {
-    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(false).build().toObjectMapper();
-
     private static final int SYSTEM_INFO_DEFAULT_SIZE = 20;
 
     private static final GitProperties GIT_PROPERTIES;
