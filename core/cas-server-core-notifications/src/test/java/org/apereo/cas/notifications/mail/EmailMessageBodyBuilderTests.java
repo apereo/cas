@@ -34,6 +34,21 @@ public class EmailMessageBodyBuilderTests {
     }
 
     @Test
+    public void verifyTemplateOperation() {
+        val props = new EmailProperties().setText("classpath:GroovyEmailTemplate.gtemplate");
+
+        val results = EmailMessageBodyBuilder.builder()
+            .properties(props)
+            .parameters(CollectionUtils.wrap("firstname", "Bob",
+                "lastname", "Smith", "accepted", true,
+                "title", "Advanced Title"))
+            .build();
+        val result = results.produce();
+        assertNotNull(result);
+        assertTrue(result.startsWith("Dear Bob Smith,"));
+    }
+    
+    @Test
     public void verifyGroovyOperation() {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();

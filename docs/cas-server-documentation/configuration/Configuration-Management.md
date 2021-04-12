@@ -28,10 +28,6 @@ values try using a YAML configuration file.</p></div>
 On startup, CAS will display a banner along with some diagnostics info.
 In order to skip this step and summarize, set the system property `-DCAS_BANNER_SKIP=true`.
 
-CAS may also be conditionally configured to report, as part of the
-banner, whether a newer CAS release is available for an upgrade.
-This check is off by default and may be enabled with a system property of `-DCAS_UPDATE_CHECK_ENABLED=true`.
-
 On startup, CAS will perform many tasks related to the application lifecycle, the beans lifecycle
 or even processing application events. Such events can be tracked at startup and collected
 for profiling purposes to have a better understanding of the application startup process.
