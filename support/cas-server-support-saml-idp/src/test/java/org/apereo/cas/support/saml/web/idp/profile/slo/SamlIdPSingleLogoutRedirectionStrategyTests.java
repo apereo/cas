@@ -121,8 +121,7 @@ public class SamlIdPSingleLogoutRedirectionStrategyTests extends BaseSamlIdPConf
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         RequestContextHolder.setRequestContext(context);
         ExternalContextHolder.setExternalContext(context.getExternalContext());
-        samlIdPSingleLogoutRedirectionStrategy.handle(context);
-        assertNull(WebUtils.getLogoutRedirectUrl(request, String.class));
+        assertFalse(samlIdPSingleLogoutRedirectionStrategy.supports(context));
     }
 
 }
