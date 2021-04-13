@@ -65,21 +65,15 @@ public class CasTomcatServletWebServerFactoryCloudClusterTests {
     @Qualifier("casTomcatEmbeddedServletContainerCustomizer")
     private ServletWebServerFactoryCustomizer casTomcatEmbeddedServletContainerCustomizer;
 
-
     @Test
     public void verifyOperation() {
         casTomcatEmbeddedServletContainerCustomizer.customize(casServletWebServerFactory);
         val server = casServletWebServerFactory.getWebServer();
-        try {
-            server.start();
-            val tomcatServer = (TomcatWebServer) server;
-            val cluster = (SimpleTcpCluster) tomcatServer.getTomcat().getEngine().getCluster();
-            val channel = (GroupChannel) cluster.getChannel();
-            val membership = channel.getMembershipService();
-            assertTrue(membership instanceof CloudMembershipService);
-        } finally {
-            server.stop();
-        }
+        val tomcatServer = (TomcatWebServer) server;
+        val cluster = (SimpleTcpCluster) tomcatServer.getTomcat().getEngine().getCluster();
+        val channel = (GroupChannel) cluster.getChannel();
+        val membership = channel.getMembershipService();
+        assertTrue(membership instanceof CloudMembershipService);
     }
 
     @Test
@@ -94,14 +88,14 @@ public class CasTomcatServletWebServerFactoryCloudClusterTests {
         val tc = mock(Tomcat.class);
         when(tc.getEngine()).thenReturn(mock(Engine.class));
         val service = mock(Service.class);
-        when(service.findConnectors()).thenReturn(new Connector[] {});
+        when(service.findConnectors()).thenReturn(new Connector[]{});
 
         val host = mock(Host.class);
         val context = mock(Context.class);
         when(context.getBaseName()).thenReturn("cas");
         when(context.getState()).thenReturn(LifecycleState.STARTED);
-        when(host.findChildren()).thenReturn(new Container[] {context});
-        
+        when(host.findChildren()).thenReturn(new Container[]{context});
+
         when(tc.getHost()).thenReturn(host);
         when(tc.getService()).thenReturn(service);
         assertDoesNotThrow(new Executable() {
