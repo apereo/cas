@@ -57,12 +57,18 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
     @Override
     public void handle(final RequestContext context) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        val samlRegisteredService = (SamlRegisteredService) WebUtils.getRegisteredService(request);
+
+        if (!samlRegisteredService.isLogoutResponseEnabled()) {
+            LOGGER.debug("Registered service [{}] is configured to disable SAML2 logout responses.", samlRegisteredService.getServiceId());
+            return;
+        }
+
         val decodedRequest = EncodingUtils.decodeBase64(WebUtils.getSingleLogoutRequest(request));
         val samlLogoutRequest = SamlUtils.transformSamlObject(configurationContext.getOpenSamlConfigBean(),
             decodedRequest, LogoutRequest.class);
 
         val logoutRequestIssuer = SamlIdPUtils.getIssuerFromSamlObject(samlLogoutRequest);
-        val samlRegisteredService = (SamlRegisteredService) WebUtils.getRegisteredService(request);
         val adaptorRes = SamlRegisteredServiceServiceProviderMetadataFacade.get(
             configurationContext.getSamlRegisteredServiceCachingMetadataResolver(),
             samlRegisteredService, logoutRequestIssuer);

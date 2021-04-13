@@ -109,4 +109,20 @@ public class SamlIdPSingleLogoutRedirectionStrategyTests extends BaseSamlIdPConf
         assertNotNull(WebUtils.getLogoutRedirectUrl(request, String.class));
     }
 
+    @Test
+    public void verifyNoLogoutResponse() throws Exception {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val registeredService = getSamlRegisteredServiceFor(false, false,
+            false, "https://mocky.io");
+        registeredService.setLogoutResponseEnabled(false);
+        WebUtils.putRegisteredService(request, registeredService);
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        RequestContextHolder.setRequestContext(context);
+        ExternalContextHolder.setExternalContext(context.getExternalContext());
+        samlIdPSingleLogoutRedirectionStrategy.handle(context);
+        assertNull(WebUtils.getLogoutRedirectUrl(request, String.class));
+    }
+
 }

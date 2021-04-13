@@ -71,6 +71,9 @@ public class SamlRegisteredService extends RegexRegisteredService {
 
     @Column
     private String metadataSignatureLocation;
+    
+    @Column
+    private boolean logoutResponseEnabled = true;
 
     @Column
     private String logoutResponseBinding;
