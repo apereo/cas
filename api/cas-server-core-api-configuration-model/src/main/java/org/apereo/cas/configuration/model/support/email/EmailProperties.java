@@ -40,7 +40,7 @@ public class EmailProperties implements Serializable {
      *
      * If specified as a path to an external file with an extension {@code .gtemplate},
      * then the email message body would be processed using the Groovy template engine.
-     * The template engine uses JSP style <% %> script and <%= %> expression syntax or
+     * The template engine uses JSP style &lt;% %&gt; script and &lt;%= %&gt; expression syntax or
      * GString style expressions. The variable {@code out} is bound to
      * the writer that the template is being written to.
      */
