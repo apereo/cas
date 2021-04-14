@@ -94,8 +94,8 @@ The following IDEA settings for Gradle may also be useful:
 
 ![image](https://user-images.githubusercontent.com/1205228/71612835-5ea5ed80-2bbc-11ea-8f49-9746dc2b3a70.png)
 
-<div class="alert alert-warning"><p>
-You should always use the latest version of the Intellij IDEA
+<div class="alert alert-info"><p>
+You should always use the latest version of the Intellij IDEA.
 </p></div>
 
 Additionally, you may need to customize the VM settings to ensure the development environment can load and index the codebase:
@@ -132,9 +132,9 @@ Additionally, you may need to customize the VM settings to ensure the developmen
 -Xverify:none
 ```
 
-If you're using OpenJDK 11 (or later) you may find the above VM options do not work. The key point for making IntelliJ 
-handle the project nicely is to give it lots of memory (either by specifiying the `-Xmx8g` VM options or in the IDE 
-menu Help -> Change Memory Settings).
+If you're using OpenJDK 11 or later, you may find the above VM options do not work. The key point for making IntelliJ IDEA 
+handle the project nicely is to give it lots of memory (either by specifying the `-Xmx8g` VM options or in the IDE 
+menu `Help -> Change Memory Settings`).
 
 #### Plugins
 
@@ -160,7 +160,7 @@ should look something like the below screenshot:
 It is possible to run the CAS web application directly from IDEA by 
 creating a *Run Configuration* that roughly matches the following screenshot:
 
-![image](https://user-images.githubusercontent.com/1205228/41805461-9ea25b76-765f-11e8-9a36-fa82d286cf09.png)
+[image](https://user-images.githubusercontent.com/1205228/41805461-9ea25b76-765f-11e8-9a36-fa82d286cf09.png)
 
 This setup allows the developer to run the CAS web 
 application via an [embedded servlet container](Build-Process.html#embedded-containers).
