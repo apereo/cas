@@ -26,13 +26,6 @@ public class GeoLocationServiceTests {
         assertNotNull(svc.locate(new GeoLocationRequest(1, 1)));
     }
 
-    @Test
-    public void verifyLocateByIpStack() {
-        val svc = new DummyGeoLocationService();
-        svc.setIpStackAccessKey("abcdefghijklmnop");
-        assertNotNull(svc.locate("1.2.3.4"));
-    }
-
     private static class DummyGeoLocationService extends AbstractGeoLocationService {
         @Override
         public GeoLocationResponse locate(final InetAddress address) {

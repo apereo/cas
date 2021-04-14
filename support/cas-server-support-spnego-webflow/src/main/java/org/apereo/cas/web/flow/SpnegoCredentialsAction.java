@@ -101,12 +101,6 @@ public class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAc
      */
     private void setResponseHeader(final RequestContext context) {
         val credential = WebUtils.getCredential(context);
-
-        if (credential == null) {
-            LOGGER.debug("No credential was provided. No response header set.");
-            return;
-        }
-
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         val spnegoCredentials = (SpnegoCredential) credential;
         val nextToken = spnegoCredentials.getNextToken();

@@ -37,6 +37,12 @@ public class OAuth20IntrospectionEndpointControllerTests extends AbstractOAuth20
     private OAuth20IntrospectionEndpointController introspectionEndpoint;
 
     @Test
+    public void verifyBadCredentialsOperation() {
+        val body = internalVerifyOperation("---");
+        assertNull(body);
+    }
+
+    @Test
     public void verifyOperation() {
         val auth = CLIENT_ID + ':' + CLIENT_SECRET;
 

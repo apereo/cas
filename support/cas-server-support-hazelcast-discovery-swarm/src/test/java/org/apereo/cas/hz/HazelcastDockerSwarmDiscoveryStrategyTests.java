@@ -38,4 +38,24 @@ public class HazelcastDockerSwarmDiscoveryStrategyTests {
         assertNotNull(result);
     }
 
+    @Test
+    public void verifyOperationMembers() {
+        val cluster = new HazelcastClusterProperties();
+        val swarm = cluster.getDiscovery().getDockerSwarm();
+
+        swarm.getMemberProvider().setEnabled(true);
+        swarm.getMemberProvider().setDockerNetworkNames("network-names");
+        swarm.getMemberProvider().setDockerServiceNames("service-names");
+        swarm.getMemberProvider().setDockerServiceLabels("label-names");
+        swarm.getMemberProvider().setSwarmMgrUri("https://swarm.uri");
+        swarm.getMemberProvider().setHazelcastPeerPort(1234);
+
+
+        val hz = new HazelcastDockerSwarmDiscoveryStrategy();
+        val networkConfig = mock(NetworkConfig.class);
+        when(networkConfig.getMemberAddressProviderConfig()).thenReturn(new MemberAddressProviderConfig());
+        val result = hz.get(cluster, mock(JoinConfig.class), mock(Config.class), networkConfig);
+        assertNotNull(result);
+    }
+
 }
