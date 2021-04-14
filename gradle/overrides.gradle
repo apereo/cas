@@ -33,13 +33,7 @@ configurations.all {
                 if (requested.group == "org.springframework")  {
                     details.useVersion("${springVersion}")
                 }
-                if (requested.group == "org.springframework.session")  {
-                    if (requested.name == "spring-session-data-mongodb") {
-                        details.useVersion("${springSessionMongoVersion}")
-                    } else {
-                        details.useVersion("${springSessionVersion}")
-                    }
-                }
+                
                 if (requested.group == "org.apache.tomcat")  {
                     details.useVersion("${tomcatVersion}")
                 }
@@ -133,7 +127,6 @@ ext["spring.version"] = ext["springVersion"]
 ext["jackson.version"] = ext["jacksonVersion"]
 ext["thymeleaf.version"] = ext["thymeleafVersion"]
 ext["thymeleaf-layout-dialect.version"] = ext["thymeleafDialectVersion"]
-ext["spring-session.version"] = ext["springSessionVersion"]
 ext["hsqldb.version"] = ext["hsqlVersion"]
 ext["httpcore.version"] = ext["httpCoreVersion"]
 ext["hikaricp.version"] = ext["hikariVersion"]
