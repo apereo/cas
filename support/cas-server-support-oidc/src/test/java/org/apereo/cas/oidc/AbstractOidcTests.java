@@ -58,6 +58,7 @@ import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationRe
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
+import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
 import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
@@ -254,6 +255,10 @@ public abstract class AbstractOidcTests {
     @Autowired
     @Qualifier("oidcAccessTokenJwtBuilder")
     protected JwtBuilder oidcAccessTokenJwtBuilder;
+
+    @Autowired
+    @Qualifier("accessTokenExpirationPolicy")
+    protected ExpirationPolicyBuilder accessTokenExpirationPolicy;
 
     @BeforeEach
     public void initialize() {

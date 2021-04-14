@@ -3,12 +3,14 @@ package org.apereo.cas.hz;
 import org.apereo.cas.configuration.model.support.hazelcast.BaseHazelcastProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastClusterProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.discovery.HazelcastDockerSwarmDiscoveryProperties;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.hazelcast.config.Config;
 import com.hazelcast.config.DiscoveryStrategyConfig;
 import com.hazelcast.config.JoinConfig;
 import com.hazelcast.config.NetworkConfig;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.bitsofinfo.hazelcast.discovery.docker.swarm.DockerSwarmDiscoveryStrategyFactory;
@@ -25,6 +27,7 @@ import java.util.Properties;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
+@Slf4j
 public class HazelcastDockerSwarmDiscoveryStrategy implements HazelcastDiscoveryStrategy {
 
     @Override
@@ -71,13 +74,12 @@ public class HazelcastDockerSwarmDiscoveryStrategy implements HazelcastDiscovery
 
         val memberAddressProviderConfig = networkConfig.getMemberAddressProviderConfig();
         memberAddressProviderConfig.setEnabled(true);
-        memberAddressProviderConfig.setImplementation(new SwarmMemberAddressProvider());
 
         val properties = new HashMap<String, Comparable>();
         if (StringUtils.isNotBlank(memberProvider.getDockerNetworkNames())) {
             properties.put("docker-network-names", memberProvider.getDockerNetworkNames());
         }
-        if (StringUtils.isNotBlank(memberProvider.getDockerNetworkNames())) {
+        if (StringUtils.isNotBlank(memberProvider.getDockerServiceNames())) {
             properties.put("docker-service-names", memberProvider.getDockerServiceNames());
         }
         if (StringUtils.isNotBlank(memberProvider.getDockerServiceLabels())) {
@@ -90,7 +92,13 @@ public class HazelcastDockerSwarmDiscoveryStrategy implements HazelcastDiscovery
         if (memberProvider.getHazelcastPeerPort() > 0) {
             properties.put("hazelcast-peer-port", memberProvider.getHazelcastPeerPort());
         }
-        return new DiscoveryStrategyConfig(new DockerSwarmDiscoveryStrategyFactory(), properties);
+        val cfg = new DiscoveryStrategyConfig(new DockerSwarmDiscoveryStrategyFactory(), properties);
+        try {
+            memberAddressProviderConfig.setImplementation(new SwarmMemberAddressProvider());
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        }
+        return cfg;
     }
 
 }
