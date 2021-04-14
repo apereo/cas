@@ -20,18 +20,6 @@ RADIUS support is enabled by only including the following dependency in the over
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#radius-authentication).
 
-You may also need to declare the following repository in
-your CAS overlay to be able to resolve dependencies:
-
-```groovy       
-repositories {
-    maven { 
-        mavenContent { releasesOnly() }
-        url "https://dl.bintray.com/apereocas/jradius" 
-    }
-}
-```
-
 # RSA RADIUS MFA
 
 RSA RADIUS OTP support for MFA is enabled by only including the following dependency in the overlay:

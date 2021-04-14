@@ -110,7 +110,7 @@ ext.libraries = [
                     exclude(group: "org.eclipse.jetty", module: "jetty-eclipse")
                     exclude(group: "org.glassfish.jersey.containers", module: "jersey-container-servlet-core")
                 },
-                dependencies.create("org.apereo.cas:cas-server-webauthn-helper:$casWebauthnVersion") {
+                dependencies.create("org.apereo:cas-server-webauthn-helper:$casWebauthnVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
@@ -3505,9 +3505,6 @@ ext.libraries = [
                     exclude(group: "com.google.guava", module: "guava")
                 },
         duojava                 : [
-                dependencies.create("net.unicon.iam:duo-java:$duoWebSdkVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                },
                 dependencies.create("com.duosecurity:duo-client:$duoClientVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 },

@@ -44,16 +44,6 @@ SPNEGO support is enabled by including the following dependency in the WAR overl
 </dependency>
 ```
 
-You may also need to declare the following repository in your CAS overlay to be able to resolve dependencies:
-
-```groovy
-repositories {
-    maven { 
-        mavenContent { releasesOnly() }
-        url "https://dl.bintray.com/uniconiam/maven" 
-    }
-}
-```
 
 ## Configuration
 

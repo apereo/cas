@@ -6,7 +6,6 @@ defaultTasks "clean", "build"
 buildscript {
     repositories {
         mavenCentral()
-        jcenter()
         gradlePluginPortal()
         maven {
             url "https://maven.eveoh.nl/content/repositories/releases"
@@ -190,7 +189,6 @@ allprojects {
     repositories {
         mavenLocal()
         mavenCentral()
-        jcenter()
         maven {
             url "$sonatypeReleasesRepositoryUrl"
             mavenContent { releasesOnly() }
@@ -247,16 +245,6 @@ subprojects {
             }
         }
         maven {
-            url "https://dl.bintray.com/apereocas/webauthn-cas/"
-            mavenContent { releasesOnly() }
-        }
-        maven {
-            url "https://dl.bintray.com/apereocas/jradius/"
-            content {
-                includeGroupByRegex "net\\.jradius.*"
-            }
-        }
-        maven {
             url "https://oss.sonatype.org/content/repositories/snapshots"
             mavenContent { snapshotsOnly() }
         }
@@ -272,10 +260,6 @@ subprojects {
             mavenContent { releasesOnly() }
         }
         maven {
-            url "https://dl.bintray.com/uniconiam/maven"
-            mavenContent { releasesOnly() }
-        }
-        maven {
             url "https://repo.terracotta.org/maven2"
             mavenContent { releasesOnly() }
             content {
@@ -286,7 +270,6 @@ subprojects {
             url "https://oss.jfrog.org/artifactory/oss-snapshot-local"
             mavenContent { snapshotsOnly() }
         }
-        jcenter()
     }
 
     configurations {
@@ -458,7 +441,7 @@ subprojects {
                 it.options.errorprone.allErrorsAsWarnings = false
                 it.options.errorprone.disableWarningsInGeneratedCode = true
                 it.options.errorprone.errorproneArgs += ['-Xep:ParameterName:OFF', '-Xep:MissingOverride:OFF', '-Xep:MissingSummary:OFF']
-
+                it.options.errorprone.excludedPaths = ".*com/duosecurity.*"
                 casCompilerArgs.add("-XDcompilePolicy=byfile")
             }
             it.options.compilerArgs += casCompilerArgs

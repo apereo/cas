@@ -1,7 +1,7 @@
 description = "Apereo CAS Couchbase Support Core"
 repositories {
     maven { url "https://files.couchbase.com/maven2" }
-    jcenter()
+    mavenCentral()
 }
 
 dependencies {
