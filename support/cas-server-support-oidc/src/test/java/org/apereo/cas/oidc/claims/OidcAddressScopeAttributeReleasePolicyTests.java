@@ -27,10 +27,11 @@ public class OidcAddressScopeAttributeReleasePolicyTests extends AbstractOidcTes
         assertEquals(OidcConstants.StandardScopes.ADDRESS.getScope(), policy.getScopeType());
         assertNotNull(policy.getAllowedAttributes());
         val principal = CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("name", List.of("cas"), "address", List.of("Main St")));
+        val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         val attrs = policy.getAttributes(principal,
             CoreAuthenticationTestUtils.getService(),
-            CoreAuthenticationTestUtils.getRegisteredService());
+            registeredService);
         assertTrue(policy.getAllowedAttributes().stream().allMatch(attrs::containsKey));
-        assertTrue(policy.getRequestedDefinitions().containsAll(policy.getAllowedAttributes()));
+        assertTrue(policy.getRequestedDefinitions(registeredService).containsAll(policy.getAllowedAttributes()));
     }
 }

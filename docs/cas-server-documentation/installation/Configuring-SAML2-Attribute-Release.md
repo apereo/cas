@@ -297,12 +297,9 @@ This attribute release policy authorizes the release of defined attributes, base
   "metadataLocation": "path/to/metadata.xml",
   "attributeReleasePolicy": {
     "@class": "org.apereo.cas.support.saml.services.MetadataRequestedAttributesAttributeReleasePolicy",
-    "useFriendlyName" : false
   }
 }
 ```
-
-The `useFriendlyName` allows the filter to compare the requested attribute's friendly name with the resolved attribute.
 
 ### SAML IdP Attribute Definition
 

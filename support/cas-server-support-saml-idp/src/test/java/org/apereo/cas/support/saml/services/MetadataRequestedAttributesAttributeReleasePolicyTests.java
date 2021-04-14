@@ -36,7 +36,6 @@ public class MetadataRequestedAttributesAttributeReleasePolicyTests extends Base
     @Test
     public void verifyMatch() {
         val filter = new MetadataRequestedAttributesAttributeReleasePolicy();
-        filter.setUseFriendlyName(true);
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         registeredService.setAttributeReleasePolicy(filter);
         val attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal("casuser",
@@ -49,7 +48,6 @@ public class MetadataRequestedAttributesAttributeReleasePolicyTests extends Base
     @Test
     public void verifySerializationToJson() throws IOException {
         val filter = new MetadataRequestedAttributesAttributeReleasePolicy();
-        filter.setUseFriendlyName(true);
         MAPPER.writeValue(JSON_FILE, filter);
         val strategyRead = MAPPER.readValue(JSON_FILE, MetadataRequestedAttributesAttributeReleasePolicy.class);
         assertEquals(filter, strategyRead);

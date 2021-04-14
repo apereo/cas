@@ -79,7 +79,7 @@ public class ReturnAllowedAttributeReleasePolicyTests {
         allowedAttributes.add("cn");
         allowedAttributes.add("givenName");
         val policy = new ReturnAllowedAttributeReleasePolicy(allowedAttributes);
-        assertTrue(policy.getRequestedDefinitions().containsAll(policy.getAllowedAttributes()));
+        assertTrue(policy.getRequestedDefinitions(CoreAuthenticationTestUtils.getRegisteredService()).containsAll(policy.getAllowedAttributes()));
     }
 
     @Test

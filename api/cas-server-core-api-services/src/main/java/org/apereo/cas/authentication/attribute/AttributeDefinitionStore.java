@@ -24,6 +24,11 @@ import java.util.stream.Collectors;
  */
 public interface AttributeDefinitionStore {
     /**
+     * Default bean name for the implementation class.
+     */
+    String BEAN_NAME = "attributeDefinitionStore";
+
+    /**
      * The constant LOGGER.
      */
     Logger LOGGER = LoggerFactory.getLogger(AttributeDefinitionStore.class);

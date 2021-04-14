@@ -104,7 +104,7 @@ public class ReturnEncryptedAttributeReleasePolicy extends AbstractRegisteredSer
     }
 
     @Override
-    public List<String> getRequestedDefinitions() {
+    protected List<String> getRequestedDefinitions(final RegisteredService registeredService) {
         return allowedAttributes;
     }
 }

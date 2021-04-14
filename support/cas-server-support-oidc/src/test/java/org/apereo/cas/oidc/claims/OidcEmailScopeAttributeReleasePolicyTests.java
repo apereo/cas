@@ -33,11 +33,12 @@ public class OidcEmailScopeAttributeReleasePolicyTests extends AbstractOidcTests
         assertNotNull(policy.getAllowedAttributes());
         val principal = CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("email", List.of("cas@example.org"),
             "email_verified", List.of("cas@example.org")));
+        val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         val attrs = policy.getAttributes(principal,
             CoreAuthenticationTestUtils.getService(),
-            CoreAuthenticationTestUtils.getRegisteredService());
+            registeredService);
         assertTrue(policy.getAllowedAttributes().stream().allMatch(attrs::containsKey));
-        assertTrue(policy.getRequestedDefinitions().containsAll(policy.getAllowedAttributes()));
+        assertTrue(policy.getRequestedDefinitions(registeredService).containsAll(policy.getAllowedAttributes()));
     }
 
     @Test

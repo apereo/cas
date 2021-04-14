@@ -179,7 +179,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
             return principalAttributes;
         }
         LOGGER.trace("Finding requested attribute definitions");
-        getRequestedDefinitions().stream()
+        getRequestedDefinitions(registeredService).stream()
                 .filter(a -> attributeDefinitionStore.locateAttributeDefinition(a).isPresent())
                 .forEach(a -> principalAttributes.putIfAbsent(a, List.of()));
 
@@ -272,7 +272,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
      * @return - List of requested definitions to be released.
      */
     @JsonIgnore
-    protected List<String> getRequestedDefinitions() {
+    protected List<String> getRequestedDefinitions(final RegisteredService registeredService) {
         return new ArrayList<>();
     }
 

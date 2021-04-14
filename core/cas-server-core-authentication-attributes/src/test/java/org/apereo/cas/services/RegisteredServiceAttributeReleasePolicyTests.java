@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.CoreAttributesTestUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
@@ -77,13 +78,13 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         map.put("ATTR1", List.of(VALUE_1));
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn(PRINCIPAL_ID);
-
+        val registeredService = CoreAttributesTestUtils.getRegisteredService();
         val attr = policy.getAttributes(p,
             CoreAttributesTestUtils.getService(),
-            CoreAttributesTestUtils.getRegisteredService());
+            registeredService);
         assertEquals(1, attr.size());
         assertTrue(attr.containsKey(NEW_ATTR_1_VALUE));
-        assertTrue(policy.getRequestedDefinitions().containsAll(policy.getAllowedAttributes().keySet()));
+        assertTrue(policy.getRequestedDefinitions(registeredService).containsAll(policy.getAllowedAttributes().keySet()));
     }
 
     @Test
@@ -101,13 +102,13 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         map.put("ATTR2", List.of(VALUE_2));
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn(PRINCIPAL_ID);
-
+        val registeredService = CoreAttributesTestUtils.getRegisteredService();
         val attr = policy.getAttributes(p, CoreAttributesTestUtils.getService(),
-            CoreAttributesTestUtils.getRegisteredService());
+            registeredService);
         assertEquals(2, attr.size());
         assertTrue(attr.containsKey(ATTR_1));
         assertTrue(attr.containsKey(ATTR_2));
-        assertTrue(policy.getRequestedDefinitions().containsAll(policy.getAllowedAttributes()));
+        assertTrue(policy.getRequestedDefinitions(registeredService).containsAll(policy.getAllowedAttributes()));
     }
 
     @Test

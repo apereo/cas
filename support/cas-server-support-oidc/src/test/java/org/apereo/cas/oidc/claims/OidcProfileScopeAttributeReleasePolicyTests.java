@@ -30,10 +30,11 @@ public class OidcProfileScopeAttributeReleasePolicyTests extends AbstractOidcTes
             "profile", List.of("test"),
             "preferred_username", List.of("casuser"),
             "family_name", List.of("given_name")));
+        val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         val attrs = policy.getAttributes(principal,
             CoreAuthenticationTestUtils.getService(),
-            CoreAuthenticationTestUtils.getRegisteredService());
+            registeredService);
         assertTrue(policy.getAllowedAttributes().containsAll(attrs.keySet()));
-        assertTrue(policy.getRequestedDefinitions().containsAll(policy.getAllowedAttributes()));
+        assertTrue(policy.getRequestedDefinitions(registeredService).containsAll(policy.getAllowedAttributes()));
     }
 }

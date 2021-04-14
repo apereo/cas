@@ -75,7 +75,7 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
         return authorizeReleaseOfAllowedAttributes(principal, attributes, registeredService, selectedService);
     }
 
-    private static String getEntityIdFromRequest(final HttpServletRequest request) {
+    protected static String getEntityIdFromRequest(final HttpServletRequest request) {
         if (request == null) {
             LOGGER.debug("No http request could be identified to locate the entity id");
             return null;

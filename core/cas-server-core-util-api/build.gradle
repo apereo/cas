@@ -6,6 +6,7 @@ dependencies {
     api project(":api:cas-server-core-api-ticket")
     api project(":api:cas-server-core-api-util")
     api project(":api:cas-server-core-api-web")
+    api project(":api:cas-server-core-api-services")
 
     implementation libraries.jose4j
     implementation libraries.pac4jcore
