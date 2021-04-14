@@ -87,7 +87,6 @@ public class WSFederationValidateRequestControllerTests extends BaseCoreWsSecuri
     @Test
     public void verifyUnauthzServicesWithUnknownRealm() {
         val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
 
         val registeredService = getWsFederationRegisteredService();
         request.addParameter(WSFederationConstants.WTREALM, "unknown");
@@ -102,7 +101,6 @@ public class WSFederationValidateRequestControllerTests extends BaseCoreWsSecuri
     @Test
     public void verifyUnauthzServicesWithMismatchedRealm() {
         val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
 
         val registeredService = getWsFederationRegisteredService("custom-realm");
         request.addParameter(WSFederationConstants.WTREALM, "custom-realm");
