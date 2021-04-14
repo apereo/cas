@@ -3211,54 +3211,6 @@ ext.libraries = [
 
                 }
         ],
-
-        springsession           : [
-                dependencies.create("org.springframework.session:spring-session-core:$springSessionVersion") {
-                    exclude(group: "org.springframework", module: "spring-web")
-                    exclude(group: "org.springframework", module: "spring-core")
-                    exclude(group: "org.springframework", module: "spring-webmvc")
-                    exclude(group: "org.springframework", module: "spring-context")
-
-                }
-        ],
-        springsessionhazelcast  : [
-                dependencies.create("org.springframework.session:spring-session-hazelcast:$springSessionVersion") {
-                    exclude(group: "org.springframework", module: "spring-web")
-                    exclude(group: "org.springframework", module: "spring-core")
-                    exclude(group: "org.springframework", module: "spring-webmvc")
-                    exclude(group: "org.springframework", module: "spring-context")
-
-                }
-        ],
-        springsessionjdbc       : [
-                dependencies.create("org.springframework.session:spring-session-jdbc:$springSessionVersion") {
-                    exclude(group: "org.springframework", module: "spring-web")
-                    exclude(group: "org.springframework", module: "spring-core")
-                    exclude(group: "org.springframework", module: "spring-webmvc")
-                    exclude(group: "org.springframework", module: "spring-context")
-
-                }
-        ],
-        springsessionredis      : [
-                dependencies.create("org.springframework.session:spring-session-data-redis:$springSessionVersion") {
-                    exclude(group: "org.springframework", module: "spring-web")
-                    exclude(group: "org.springframework", module: "spring-core")
-                    exclude(group: "org.springframework", module: "spring-webmvc")
-                    exclude(group: "org.springframework", module: "spring-context")
-
-                }
-        ],
-        springsessionmongo      : [
-                dependencies.create("org.springframework.session:spring-session-data-mongodb:$springSessionMongoVersion") {
-                    exclude(group: "org.springframework", module: "spring-web")
-                    exclude(group: "org.springframework", module: "spring-core")
-                    exclude(group: "org.springframework", module: "spring-webmvc")
-                    exclude(group: "org.springframework", module: "spring-context")
-                    exclude(group: "org.springframework.session", module: "spring-session")
-
-                }
-        ],
-
         springshell             : [
                 dependencies.create("org.springframework.shell:spring-shell-starter:$springShellVersion") {
                     exclude(group: "org.springframework", module: "spring-beans")
