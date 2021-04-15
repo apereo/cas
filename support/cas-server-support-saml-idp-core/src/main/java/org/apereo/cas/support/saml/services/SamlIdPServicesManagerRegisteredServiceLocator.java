@@ -6,6 +6,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
+import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.CollectionUtils;
@@ -14,8 +15,9 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.springframework.core.Ordered;
 
 import java.util.List;
@@ -37,8 +39,10 @@ public class SamlIdPServicesManagerRegisteredServiceLocator extends DefaultServi
                 .map(pair -> {
                     val attribute = pair.getLeft();
                     val attributeValue = pair.getRight();
+                    LOGGER.trace("Located service attribute [{}] with value [{}]", attribute, attributeValue);
                     return attribute.getEntityIdFrom(resolver, attributeValue);
                 })
+                .filter(StringUtils::isNotBlank)
                 .filter(registeredService::matches)
                 .stream()
                 .anyMatch(entityId -> {
@@ -57,7 +61,8 @@ public class SamlIdPServicesManagerRegisteredServiceLocator extends DefaultServi
      * @param service           the service
      * @return the boolean
      */
-    protected Optional<Pair<SamlProtocolServiceAttribute, String>> getSamlParameterValue(final RegisteredService registeredService, final Service service) {
+    protected Optional<Pair<SamlProtocolServiceAttribute, String>> getSamlParameterValue(final RegisteredService registeredService,
+                                                                                         final Service service) {
         if (registeredService instanceof SamlRegisteredService) {
             val attributes = service.getAttributes();
             LOGGER.trace("Reviewing service attributes [{}] for service id [{}] to match registered service [{}]",
@@ -66,7 +71,8 @@ public class SamlIdPServicesManagerRegisteredServiceLocator extends DefaultServi
             return SamlProtocolServiceAttribute.values()
                 .stream()
                 .filter(attr -> attributes.containsKey(attr.getAttributeName()))
-                .map(attr -> Pair.of(attr, CollectionUtils.firstElement(attributes.get(attr.getAttributeName())).map(Object::toString).orElseThrow()))
+                .map(attr -> Pair.of(attr, CollectionUtils.firstElement(attributes.get(attr.getAttributeName()))
+                    .map(Object::toString).orElseThrow()))
                 .findFirst();
         }
         LOGGER.trace("Registered service [{}] is not a SAML2 registered service", registeredService.getName());
@@ -80,7 +86,8 @@ public class SamlIdPServicesManagerRegisteredServiceLocator extends DefaultServi
             @Override
             public String getEntityIdFrom(final SamlRegisteredServiceCachingMetadataResolver resolver, final String attributeValue) {
                 val openSamlConfigBean = resolver.getOpenSamlConfigBean();
-                val authnRequest = SamlIdPUtils.retrieveSamlRequest(openSamlConfigBean, AuthnRequest.class, attributeValue);
+                val authnRequest = SamlIdPUtils.retrieveSamlRequest(openSamlConfigBean, RequestAbstractType.class, attributeValue);
+                SamlUtils.logSamlObject(openSamlConfigBean, authnRequest);
                 return SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
             }
         };

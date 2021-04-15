@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -131,7 +132,6 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
             .service(service)
             .authentication(authn)
             .registeredService(registeredService)
-            .retrievePrincipalAttributesFromReleasePolicy(Boolean.FALSE)
             .build();
         val result = getWebflowEventResolutionConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
         result.throwExceptionIfNeeded();
@@ -139,19 +139,19 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
     }
 
     private Event returnAuthenticationExceptionEventIfNeeded(final Exception e) {
-        if (e instanceof AuthenticationException || e instanceof AbstractTicketException) {
-            LOGGER.warn(e.getMessage());
-            LOGGER.debug(e.getMessage(), e);
-            return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, e);
-        }
-
-        if (e.getCause() instanceof AuthenticationException || e.getCause() instanceof AbstractTicketException) {
-            val ex = e.getCause();
-            LOGGER.warn(ex.getMessage());
-            LOGGER.debug(ex.getMessage(), ex);
-            return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, ex);
-        }
-        return null;
+        val result = (e instanceof AuthenticationException || e instanceof AbstractTicketException)
+            ? Optional.of(e)
+            : (e.getCause() instanceof AuthenticationException || e.getCause() instanceof AbstractTicketException)
+            ? Optional.of(e.getCause())
+            : Optional.empty();
+        return result
+            .map(Exception.class::cast)
+            .map(ex -> {
+                LOGGER.warn(ex.getMessage());
+                LOGGER.debug(ex.getMessage(), ex);
+                return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, ex);
+            })
+            .orElse(null);
     }
 
     /**

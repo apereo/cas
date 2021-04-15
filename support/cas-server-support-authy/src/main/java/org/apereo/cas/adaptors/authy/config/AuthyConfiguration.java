@@ -1,25 +1,13 @@
 package org.apereo.cas.adaptors.authy.config;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.authy.web.flow.AuthyAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.authy.web.flow.AuthyAuthenticationWebflowEventResolver;
 import org.apereo.cas.adaptors.authy.web.flow.AuthyMultifactorTrustedDeviceWebflowConfigurer;
 import org.apereo.cas.adaptors.authy.web.flow.AuthyMultifactorWebflowConfigurer;
-import org.apereo.cas.audit.AuditableExecution;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
-import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
-import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
-import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
-import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
@@ -55,22 +43,6 @@ public class AuthyConfiguration {
     private static final int WEBFLOW_CONFIGURER_ORDER = 100;
 
     @Autowired
-    @Qualifier("singleSignOnParticipationStrategy")
-    private ObjectProvider<SingleSignOnParticipationStrategy> webflowSingleSignOnParticipationStrategy;
-
-    @Autowired
-    @Qualifier("authenticationEventExecutionPlan")
-    private ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    @Qualifier("registeredServiceAccessStrategyEnforcer")
-    private ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
-
-    @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
@@ -79,41 +51,13 @@ public class AuthyConfiguration {
 
     @Autowired
     private ObjectProvider<FlowBuilderServices> flowBuilderServices;
-
-    @Autowired
-    @Qualifier("centralAuthenticationService")
-    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
-
-    @Autowired
-    @Qualifier("defaultAuthenticationSystemSupport")
-    private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
-
-    @Autowired
-    @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
-    private ObjectProvider<CasDelegatingWebflowEventResolver> initialAuthenticationAttemptWebflowEventResolver;
     
     @Autowired
-    @Qualifier("authenticationContextValidator")
-    private ObjectProvider<MultifactorAuthenticationContextValidator> authenticationContextValidator;
+    @Qualifier("casWebflowConfigurationContext")
+    private ObjectProvider<CasWebflowEventResolutionConfigurationContext> casWebflowConfigurationContext;
     
-    @Autowired
-    @Qualifier("ticketRegistry")
-    private ObjectProvider<TicketRegistry> ticketRegistry;
-
-    @Autowired
-    @Qualifier("defaultTicketRegistrySupport")
-    private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
-
-    @Autowired
-    @Qualifier("warnCookieGenerator")
-    private ObjectProvider<CasCookieBuilder> warnCookieGenerator;
-
     @Autowired
     private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    @Qualifier("authenticationServiceSelectionPlan")
-    private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies;
 
     @Autowired
     @Qualifier("flowBuilder")
@@ -130,24 +74,7 @@ public class AuthyConfiguration {
     @RefreshScope
     @Bean
     public CasWebflowEventResolver authyAuthenticationWebflowEventResolver() {
-        val context = CasWebflowEventResolutionConfigurationContext.builder()
-            .casDelegatingWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver.getObject())
-            .authenticationContextValidator(authenticationContextValidator.getObject())
-            .authenticationSystemSupport(authenticationSystemSupport.getObject())
-            .centralAuthenticationService(centralAuthenticationService.getObject())
-            .servicesManager(servicesManager.getObject())
-            .ticketRegistrySupport(ticketRegistrySupport.getObject())
-            .warnCookieGenerator(warnCookieGenerator.getObject())
-            .authenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies.getObject())
-            .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer.getObject())
-            .casProperties(casProperties)
-            .singleSignOnParticipationStrategy(webflowSingleSignOnParticipationStrategy.getObject())
-            .ticketRegistry(ticketRegistry.getObject())
-            .applicationContext(applicationContext)
-            .authenticationEventExecutionPlan(authenticationEventExecutionPlan.getObject())
-            .build();
-
-        return new AuthyAuthenticationWebflowEventResolver(context);
+        return new AuthyAuthenticationWebflowEventResolver(casWebflowConfigurationContext.getObject());
     }
 
     @ConditionalOnMissingBean(name = "authyMultifactorWebflowConfigurer")

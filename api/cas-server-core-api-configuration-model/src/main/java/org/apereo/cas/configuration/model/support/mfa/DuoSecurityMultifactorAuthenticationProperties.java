@@ -78,6 +78,15 @@ public class DuoSecurityMultifactorAuthenticationProperties extends BaseMultifac
      */
     private boolean trustedDeviceEnabled;
 
+    /**
+     * When set to {@code true}, CAS will contact Duo Security
+     * to check for user's account status and to evaluate whether
+     * user qualifies for multifactor authentication from Duo's perspective.
+     * When disabled, user account status is set to authenticate with Duo
+     * and the API call will never be made.
+     */
+    private boolean accountStatusEnabled = true;
+
     public DuoSecurityMultifactorAuthenticationProperties() {
         setId(DEFAULT_IDENTIFIER);
     }

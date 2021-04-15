@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.Id;
@@ -31,7 +32,7 @@ import java.io.Serializable;
 @Setter
 @AllArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-@Builder
+@SuperBuilder
 public class SamlIdPMetadataDocument implements Serializable {
 
     private static final long serialVersionUID = -705737727407407083L;

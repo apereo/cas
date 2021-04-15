@@ -1,65 +1,65 @@
 enum TestCategories {
-    Kafka,
-    Logout,
-    CAS,
-    ExpirationPolicy,
-    Metrics,
-    Tickets,
-    PasswordOps,
+    ActuatorEndpoint,
+    AmazonWebServices,
     Attributes,
     Audits,
-    Web,
-    Infinispan,
-    Spnego,
-    WebApp,
     Authentication,
-    ActuatorEndpoint,
-    RegisteredService,
-    Utility,
-    WSFederation,
-    SMS,
+    CAS,
     CasConfiguration,
-    Hazelcast,
-    JMX,
-    Simple,
-    MFA,
-    X509,
-    SHELL,
     Cassandra,
-    Webflow,
-    WebflowConfig,
-    WebflowEvents,
-    WebflowActions,
-    WebflowMfaActions,
     CosmosDb,
-    ZooKeeper,
-    JMS,
-    AmazonWebServices,
-    Radius,
     Couchbase,
     CouchDb,
-    MySQL,
-    Postgres,
-    MsSqlServer,
-    MariaDb,
     DynamoDb,
     Ehcache,
+    ExpirationPolicy,
     FileSystem,
-    Ignite,
-    InfluxDb,
-    Oracle,
-    Ldap,
     Groovy,
+    Hazelcast,
+    Ignite,
+    Infinispan,
+    InfluxDb,
+    JDBC,
+    JMS,
+    JMX,
+    Kafka,
+    Ldap,
+    Logout,
     Mail,
-    RestfulApi,
+    MariaDb,
     Memcached,
+    Metrics,
+    MFA,
     MongoDb,
-    Redis,
+    MsSqlServer,
+    MySQL,
     OAuth,
-    UMA,
     OIDC,
+    Oracle,
+    PasswordOps,
+    Postgres,
+    Radius,
+    Redis,
+    RegisteredService,
+    RestfulApi,
     SAML,
-    JDBC
+    SHELL,
+    Simple,
+    SMS,
+    Spnego,
+    Tickets,
+    UMA,
+    Utility,
+    Web,
+    WebApp,
+    Webflow,
+    WebflowActions,
+    WebflowConfig,
+    WebflowEvents,
+    WebflowMfaActions,
+    WSFederation,
+    X509,
+    ZooKeeper
 }
 
 if (rootProject.tasks.findByName("testCategories") == null) {
@@ -71,6 +71,18 @@ if (rootProject.tasks.findByName("testCategories") == null) {
                     })
                     .collect { it.name().toLowerCase() }
             println(groovy.json.JsonOutput.toJson(result))
+        }
+    }
+}
+
+if (rootProject.tasks.findByName("puppeteerScenarios") == null) {
+    rootProject.tasks.create(name: "puppeteerScenarios", description: "Display all available puppeteer scenarios") {
+        doLast {
+            def scenarios = new TreeSet<String>();
+            rootProject.file("ci/tests/puppeteer/scenarios").eachDir {
+                scenarios += it.getName()
+            }
+            println(groovy.json.JsonOutput.toJson(scenarios))
         }
     }
 }
@@ -100,7 +112,7 @@ test {
 
 tasks.withType(Test) {
     scanForTestClasses = false
-    ignoreFailures = Boolean.getBoolean("ignoreTestFailures")
+    ignoreFailures = providers.systemProperty("ignoreTestFailures").forUseAtConfigurationTime().present
     forkEvery = 1000
     doFirst {
         maxParallelForks = project.ext.properties.get("maxParallelForksForTests", 2)
@@ -108,12 +120,14 @@ tasks.withType(Test) {
             logger.info "Maximum number of parallel forks is set to ${maxParallelForks}"
         }
     }
-    if (System.getenv().containsKey("CI")) {
+
+    def ci = System.getenv().containsKey("CI")
+    if (ci) {
         outputs.upToDateWhen { false }
     }
     systemProperty("spring.main.banner-mode", "off")
 //    systemProperty("spring.main.lazy-initialization", "true")
-    systemProperty("CI", System.getProperty("CI"))
+    systemProperty("CI", ci)
 
     failFast = true
 
@@ -138,35 +152,44 @@ tasks.withType(Test) {
 
     classpath = it.classpath + files("${projectDir}/src/main/resources") + files("${projectDir}/src/test/resources")
     testLogging {
-        events = ["FAILED", "STANDARD_OUT"]
+        events "PASSED", "SKIPPED", "FAILED", "STANDARD_OUT", "STANDARD_ERROR"
         exceptionFormat = "full"
-        showStandardStreams = Boolean.getBoolean("showStandardStreams")
-        showExceptions = true
-        showCauses = true
-        beforeSuite { desc ->
-            if (!desc.parent) {
-                println "Started running test suite [${desc.displayName}] @ ${new java.util.Date()} "
+
+        def verbose = providers.systemProperty("verbose").forUseAtConfigurationTime().present
+
+        showStandardStreams = verbose
+        showExceptions = verbose
+        showCauses = verbose
+
+        if (verbose) {
+            beforeSuite { desc ->
+                if (!desc.parent) {
+                    println "Started running test suite [${desc.displayName}] @ ${new java.util.Date()} "
+                }
             }
-        }
-        beforeTest { desc ->
-            println "Started running test [${desc.className}:${desc.displayName}] @ ${new java.util.Date()} "
-        }
-        afterTest { desc, result ->
-            println """
+
+            beforeTest { desc ->
+                println "Started running test [${desc.className}:${desc.displayName}] @ ${new java.util.Date()} "
+            }
+            
+            afterTest { desc, result ->
+                println """
 Results for test [${desc.className}:${desc.displayName}]: ${result.resultType} @ ${new java.util.Date()} 
 (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)
 """
-        }
-        afterSuite { desc, result ->
-            if (!desc.parent) {
-                println """
+            }
+            afterSuite { desc, result ->
+                if (!desc.parent) {
+                    println """
 Results for test suite [${desc.displayName}]: ${result.resultType} @ ${new java.util.Date()} 
 (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)
 """
+                }
             }
         }
     }
-    if (!Boolean.getBoolean("skipTestRetry")) {
+    def skipRetry = providers.systemProperty('skipTestRetry').forUseAtConfigurationTime().present
+    if (!skipRetry) {
         retry {
             maxRetries = 3
             maxFailures = 5
@@ -184,7 +207,7 @@ def shouldTest(Project project, String category) {
     if (!foundTest) {
         logger.debug "No tests with category ${category} found for ${project.name}"
     }
-    return !Boolean.getBoolean("skipTests") && foundTest && hasTestsOfCategory(project, category)
+    return !providers.systemProperty("skipTests").forUseAtConfigurationTime().present && foundTest && hasTestsOfCategory(project, category)
 }
 
 def hasTestsOfCategory(Project project, String category) {

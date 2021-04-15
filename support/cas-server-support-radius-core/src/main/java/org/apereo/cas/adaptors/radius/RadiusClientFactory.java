@@ -49,7 +49,9 @@ public class RadiusClientFactory implements Serializable {
 
     /**
      * New instance radius client.
-     *
+     * Attempts to pre-load authenticators
+     * that are defined statically before
+     * returning the client.
      * @return the radius client
      */
     @SneakyThrows

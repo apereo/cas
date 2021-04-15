@@ -24,18 +24,9 @@ import java.util.Optional;
 public class LdapUserAttributesToRolesAuthorizationGenerator extends BaseUseAttributesAuthorizationGenerator {
 
     private final String roleAttribute;
+    
     private final String rolePrefix;
 
-    /**
-     * Creates a new instance with the given required parameters.
-     *
-     * @param userSearchOperation   Executes the LDAP search for user data.
-     * @param allowMultipleResults allow multiple search results in which case the first result
-     *                             returned is used to construct user details, or false to indicate that
-     *                             a runtime exception should be raised on multiple search results for user details.
-     * @param roleAttribute        the role attribute
-     * @param rolePrefix           the role prefix
-     */
     public LdapUserAttributesToRolesAuthorizationGenerator(final SearchOperation userSearchOperation,
                                                            final boolean allowMultipleResults,
                                                            final String roleAttribute,
@@ -46,7 +37,8 @@ public class LdapUserAttributesToRolesAuthorizationGenerator extends BaseUseAttr
     }
 
     @Override
-    protected Optional<UserProfile> generateAuthorizationForLdapEntry(final UserProfile profile, final LdapEntry userEntry) {
+    protected Optional<UserProfile> generateAuthorizationForLdapEntry(final UserProfile profile,
+                                                                      final LdapEntry userEntry) {
         if (!userEntry.getAttributes().isEmpty()) {
             val attribute = userEntry.getAttribute(this.roleAttribute);
             if (attribute != null) {

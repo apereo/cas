@@ -9,11 +9,13 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.RetryingTest;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.annotation.DirtiesContext;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("OAuth")
+@DirtiesContext
 public class OAuth20ClientIdClientSecretAuthenticatorTests extends BaseOAuth20AuthenticatorTests {
     protected OAuth20ClientIdClientSecretAuthenticator authenticator;
 
@@ -37,7 +40,7 @@ public class OAuth20ClientIdClientSecretAuthenticatorTests extends BaseOAuth20Au
             defaultPrincipalResolver);
     }
 
-    @Test
+    @RetryingTest(3)
     public void verifyAuthentication() {
         val credentials = new UsernamePasswordCredentials("client", "secret");
         val request = new MockHttpServletRequest();

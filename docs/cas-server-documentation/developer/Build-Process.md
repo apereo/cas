@@ -53,7 +53,7 @@ git checkout master
 When done, you may build the codebase via the following command:
 
 ```bash
-./gradlew build install --parallel -x test -x javadoc -x check --build-cache --configure-on-demand
+./gradlew build --parallel -x test -x javadoc -x check --build-cache --configure-on-demand
 ```
 
 The following commandline boolean flags are supported by the build and can be passed in form of system properties via `-D`:
@@ -62,7 +62,7 @@ The following commandline boolean flags are supported by the build and can be pa
 |-----------------------------------+---------------------------------------------------------------------------+
 | `enableRemoteDebugging`           | Allows for remote debugging via a pre-defined port (i.e. `5000`).
 | `remoteDebuggingSuspend`          | Set to `true` to suspend JVM remote debugging until the debugger attaches to the running session.
-| `showStandardStreams`             | Let the build output logs that are sent to the standard streams. (i.e. console, etc)
+| `verbose`                         | Control the logging level for tests and output additional data about passing/failing/skipped tests.
 | `skipCheckstyle`                  | Skip running Checkstyle checks.
 | `skipSpotbugs`                    | Skip running Spotbugs checks.
 | `skipVersionConflict`             | If a dependency conflict is found, use the latest version rather than failing the build.
@@ -94,6 +94,10 @@ The following IDEA settings for Gradle may also be useful:
 
 ![image](https://user-images.githubusercontent.com/1205228/71612835-5ea5ed80-2bbc-11ea-8f49-9746dc2b3a70.png)
 
+<div class="alert alert-warning"><p>
+You should always use the latest version of the Intellij IDEA
+</p></div>
+
 Additionally, you may need to customize the VM settings to ensure the development environment can load and index the codebase:
 
 ```bash
@@ -106,11 +110,6 @@ Additionally, you may need to customize the VM settings to ensure the developmen
 -XX:ReservedCodeCacheSize=240m
 -XX:+UseCompressedOops
 -XX:SoftRefLRUPolicyMSPerMB=50
-
--XX:+UseParNewGC
--XX:ParallelGCThreads=4
--XX:+UseConcMarkSweepGC
--XX:ConcGCThreads=4
 
 -XX:+CMSClassUnloadingEnabled
 -XX:+CMSParallelRemarkEnabled
@@ -133,6 +132,10 @@ Additionally, you may need to customize the VM settings to ensure the developmen
 -Xverify:none
 ```
 
+If you're using OpenJDK 11 (or later) you may find the above VM options do not work. The key point for making IntelliJ 
+handle the project nicely is to give it lots of memory (either by specifiying the `-Xmx8g` VM options or in the IDE 
+menu Help -> Change Memory Settings).
+
 #### Plugins
 
 The following plugins may prove useful during development:
@@ -141,7 +144,8 @@ The following plugins may prove useful during development:
 - [FindBugs](https://plugins.jetbrains.com/plugin/3847-findbugs-idea)
 - [Lombok](https://github.com/mplushnikov/lombok-intellij-plugin)
 
-Once you have installed the Lombok plugin, you will also need to ensure Annotation Processing is turned on. You may need to restart IDEA in order for changes to take full effect.
+Once you have installed the Lombok plugin, you will also need to ensure *Annotation Processing* is turned on. You may 
+need to restart IDEA in order for changes to take full effect.
 
 ![image](https://user-images.githubusercontent.com/1205228/35231112-287f625a-ffad-11e7-8c1a-af23ff33918d.png)
 
@@ -185,7 +189,8 @@ Please [see this page](Test-Process.html) to learn more about the testing proces
 ## Embedded Containers
 
 The CAS project comes with a number of built-in modules that are pre-configured with embedded servlet containers such as 
-Apache Tomcat, Jetty, etc for the server web application, the management web application and others. These modules are found in the `webapp` folder of the CAS project.
+Apache Tomcat, Jetty, etc for the server web application, the management web application 
+and others. These modules are found in the `webapp` folder of the CAS project.
 
 ### Configure SSL
 
@@ -260,7 +265,7 @@ The response will look something like this:
 
 ```bash
 ...
-2017-05-26 19:10:46,470 INFO [org.apereo.cas.web.CasWebApplication] - <Started CasWebApplication in 21.893 seconds (JVM running for 36.888)>
+INFO [org.apereo.cas.web.CasWebApplication] - <Started CasWebApplication in 21.893 seconds (JVM running for 36.888)>
 ...
 ```
 

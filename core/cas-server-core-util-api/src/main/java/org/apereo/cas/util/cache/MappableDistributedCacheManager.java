@@ -49,6 +49,11 @@ public class MappableDistributedCacheManager<K extends Serializable, V extends D
     }
 
     @Override
+    public void clear() {
+        this.mapInstance.clear();
+    }
+
+    @Override
     public boolean contains(final K key) {
         return this.mapInstance.containsKey(buildKey(key));
     }

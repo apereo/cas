@@ -302,6 +302,10 @@ public abstract class AbstractOAuth20Tests {
     protected OAuth20TokenGenerator oauthTokenGenerator;
 
     @Autowired
+    @Qualifier("deviceTokenExpirationPolicy")
+    protected ExpirationPolicyBuilder deviceTokenExpirationPolicy;
+
+    @Autowired
     protected CasConfigurationProperties casProperties;
 
     public static ExpirationPolicyBuilder alwaysExpiresExpirationPolicyBuilder() {

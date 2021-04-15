@@ -36,29 +36,6 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
         super(config);
     }
 
-    private MessageContext bindRelayStateParameter(final HttpServletRequest request,
-                                                   final HttpServletResponse response) {
-        val messageContext = new MessageContext();
-        val context = new JEEContext(request, response);
-        val relayState = samlProfileHandlerConfigurationContext.getSessionStore()
-            .get(context, SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE).orElse(StringUtils.EMPTY).toString();
-        LOGGER.trace("Relay state is [{}]", relayState);
-        SAMLBindingSupport.setRelayState(messageContext, relayState);
-        return messageContext;
-    }
-
-    private Assertion validateRequestAndBuildCasAssertion(final HttpServletResponse response,
-                                                          final HttpServletRequest request,
-                                                          final Pair<AuthnRequest, MessageContext> pair) throws Exception {
-        val ticket = request.getParameter(CasProtocolConstants.PARAMETER_TICKET);
-        val validator = getSamlProfileHandlerConfigurationContext().getTicketValidator();
-        val serviceUrl = constructServiceUrl(request, response, pair);
-        LOGGER.trace("Created service url for validation: [{}]", serviceUrl);
-        val assertion = validator.validate(ticket, serviceUrl);
-        logCasValidationAssertion(assertion);
-        return assertion;
-    }
-
     /**
      * Build authentication context pair pair.
      *
@@ -88,15 +65,9 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
 
         LOGGER.info("Received SAML callback profile request [{}]", request.getRequestURI());
         val authnRequest = SamlIdPUtils.retrieveSamlRequest(new JEEContext(request, response),
-                samlProfileHandlerConfigurationContext.getSessionStore(),
+            samlProfileHandlerConfigurationContext.getSessionStore(),
             samlProfileHandlerConfigurationContext.getOpenSamlConfigBean(),
             AuthnRequest.class);
-        
-        if (authnRequest == null) {
-            LOGGER.error("Can not validate the request because the original Authn request can not be found.");
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            return;
-        }
 
         val ticket = request.getParameter(CasProtocolConstants.PARAMETER_TICKET);
         if (StringUtils.isBlank(ticket)) {
@@ -142,5 +113,28 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
         }
         LOGGER.warn("Checking determine profile binding for [{}]", entityId);
         return null;
+    }
+
+    private MessageContext bindRelayStateParameter(final HttpServletRequest request,
+                                                   final HttpServletResponse response) {
+        val messageContext = new MessageContext();
+        val context = new JEEContext(request, response);
+        val relayState = samlProfileHandlerConfigurationContext.getSessionStore()
+            .get(context, SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE).orElse(StringUtils.EMPTY).toString();
+        LOGGER.trace("Relay state is [{}]", relayState);
+        SAMLBindingSupport.setRelayState(messageContext, relayState);
+        return messageContext;
+    }
+
+    private Assertion validateRequestAndBuildCasAssertion(final HttpServletResponse response,
+                                                          final HttpServletRequest request,
+                                                          final Pair<AuthnRequest, MessageContext> pair) throws Exception {
+        val ticket = request.getParameter(CasProtocolConstants.PARAMETER_TICKET);
+        val validator = getSamlProfileHandlerConfigurationContext().getTicketValidator();
+        val serviceUrl = constructServiceUrl(request, response, pair);
+        LOGGER.trace("Created service url for validation: [{}]", serviceUrl);
+        val assertion = validator.validate(ticket, serviceUrl);
+        logCasValidationAssertion(assertion);
+        return assertion;
     }
 }

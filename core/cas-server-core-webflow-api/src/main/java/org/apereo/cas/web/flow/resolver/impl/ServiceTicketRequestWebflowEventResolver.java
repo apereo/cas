@@ -117,7 +117,6 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
                 val audit = AuditableContext.builder().service(service)
                     .authentication(existingAuthn)
                     .registeredService(registeredService)
-                    .retrievePrincipalAttributesFromReleasePolicy(Boolean.TRUE)
                     .build();
                 val accessResult = configContext.getRegisteredServiceAccessStrategyEnforcer().execute(audit);
                 accessResult.throwExceptionIfNeeded();

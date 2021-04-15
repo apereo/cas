@@ -30,7 +30,10 @@ import static org.junit.jupiter.api.Assertions.*;
     JpaServiceRegistryConfiguration.class
 })
 @Tag("SAML")
-@TestPropertySource(properties = "cas.service-registry.jpa.ddl-auto=create-drop")
+@TestPropertySource(properties = {
+    "cas.service-registry.jpa.ddl-auto=create-drop",
+    "cas.service-registry.jpa.url=jdbc:hsqldb:mem:cas-services-${#randomString6}"
+})
 public class SamlRegisteredServiceJpaTests extends BaseSamlIdPConfigurationTests {
 
     @BeforeEach
@@ -40,8 +43,6 @@ public class SamlRegisteredServiceJpaTests extends BaseSamlIdPConfigurationTests
 
     @Test
     public void verifySavingSamlService() {
-        assertTrue(servicesManager.load().isEmpty());
-        
         var service = new SamlRegisteredService();
         service.setName("SAML");
         service.setServiceId("http://mmoayyed.example.net");

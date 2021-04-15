@@ -9,7 +9,7 @@ echo "Installing Puppeteer"
 npm i --prefix "$PWD"/ci/tests/puppeteer puppeteer
 
 echo "Creating overlay work directory"
-rm -Rf "$PWD"/ci/tests/puppeteer/overlay
+rm -Rf "$TMPDIR/cas" "$PWD"/ci/tests/puppeteer/overlay
 mkdir "$PWD"/ci/tests/puppeteer/overlay
 
 dname="${dname:-CN=cas.example.org,OU=Example,OU=Org,C=US}"
@@ -67,8 +67,8 @@ echo -e "Running ${scriptPath}\n"
 node --unhandled-rejections=strict ${scriptPath} ${config}
 echo -e "*************************************\n"
 
-docker container stop $(docker container ls -aq) >/dev/null 2>/dev/null
-docker container rm $(docker container ls -aq) >/dev/null 2>/dev/null
+docker container stop $(docker container ls -aq) >/dev/null 2>&1 || true
+docker container rm $(docker container ls -aq) >/dev/null 2>&1 || true
 
 echo -e "\nKilling process ${pid} ..."
 kill -9 $pid

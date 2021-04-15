@@ -33,6 +33,7 @@ import static org.mockito.Mockito.*;
     BaseTicketRegistryTests.SharedTestConfiguration.class
 }, properties = {
     "cas.ticket.registry.hazelcast.cluster.network.port-auto-increment=false",
+    "cas.ticket.registry.hazelcast.cluster.network.port=5703",
     "cas.ticket.registry.hazelcast.cluster.core.instance-name=testlocalhostinstance"
 })
 @Tag("Hazelcast")

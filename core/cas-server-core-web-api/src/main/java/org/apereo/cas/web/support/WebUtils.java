@@ -22,6 +22,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 
@@ -269,8 +270,11 @@ public class WebUtils {
      * @param map         the map
      * @param ticketValue the ticket value
      */
-    public static void putTicketGrantingTicketIntoMap(final MutableAttributeMap map, final String ticketValue) {
-        map.put(PARAMETER_TICKET_GRANTING_TICKET_ID, ticketValue);
+    public static void putTicketGrantingTicketIntoMap(final MutableAttributeMap<Object> map, final String ticketValue) {
+        FunctionUtils.doIf(StringUtils.isNotBlank(ticketValue),
+            value -> map.put(PARAMETER_TICKET_GRANTING_TICKET_ID, value),
+            value -> map.remove(PARAMETER_TICKET_GRANTING_TICKET_ID))
+            .accept(ticketValue);
     }
 
     /**
@@ -527,7 +531,7 @@ public class WebUtils {
      * @param context the context
      */
     public static void putPublicWorkstationToFlowIfRequestParameterPresent(final RequestContext context) {
-        if (StringUtils.isNotBlank(context.getExternalContext().getRequestParameterMap().get(PUBLIC_WORKSTATION_ATTRIBUTE))) {
+        if (context.getRequestParameters().contains(PUBLIC_WORKSTATION_ATTRIBUTE)) {
             context.getFlowScope().put(PUBLIC_WORKSTATION_ATTRIBUTE, Boolean.TRUE);
         }
     }
@@ -710,6 +714,16 @@ public class WebUtils {
      */
     public static void putGeoLocationTrackingIntoFlowScope(final RequestContext context, final Object value) {
         context.getFlowScope().put("trackGeoLocation", value);
+    }
+
+    /**
+     * Gets geo location tracking into flow scope.
+     *
+     * @param context the context
+     * @return the geo location tracking into flow scope
+     */
+    public static Boolean isGeoLocationTrackingIntoFlowScope(final RequestContext context) {
+        return context.getFlowScope().get("trackGeoLocation", Boolean.class);
     }
 
     /**
@@ -1570,5 +1584,45 @@ public class WebUtils {
      */
     public List<RegisteredService> getAuthorizedServices(final RequestContext requestContext) {
         return requestContext.getFlowScope().get("authorizedServices", List.class);
+    }
+
+    /**
+     * Put recaptcha forgot username enabled.
+     *
+     * @param requestContext the request context
+     * @param properties     the properties
+     */
+    public static void putRecaptchaForgotUsernameEnabled(final RequestContext requestContext, final GoogleRecaptchaProperties properties) {
+        requestContext.getFlowScope().put("recaptchaForgotUsernameEnabled", properties.isEnabled());
+    }
+
+    /**
+     * Is recaptcha forgot username enabled.
+     *
+     * @param requestContext the request context
+     * @return the boolean
+     */
+    public static Boolean isRecaptchaForgotUsernameEnabled(final RequestContext requestContext) {
+        return requestContext.getFlowScope().get("recaptchaForgotUsernameEnabled", Boolean.class);
+    }
+
+    /**
+     * Put recaptcha password management enabled.
+     *
+     * @param requestContext the request context
+     * @param recaptcha      the recaptcha
+     */
+    public static void putRecaptchaPasswordManagementEnabled(final RequestContext requestContext, final GoogleRecaptchaProperties recaptcha) {
+        requestContext.getFlowScope().put("recaptchaPasswordManagementEnabled", recaptcha.isEnabled());
+    }
+
+    /**
+     * Is recaptcha forgot username enabled.
+     *
+     * @param requestContext the request context
+     * @return the boolean
+     */
+    public static Boolean isRecaptchaPasswordManagementEnabled(final RequestContext requestContext) {
+        return requestContext.getFlowScope().get("recaptchaPasswordManagementEnabled", Boolean.class);
     }
 }

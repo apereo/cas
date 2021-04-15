@@ -1,7 +1,6 @@
 package org.apereo.cas.services.domain;
 
 import org.apereo.cas.services.AbstractServicesManager;
-import org.apereo.cas.services.DomainAwareServicesManager;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.ServicesManagerConfigurationContext;
@@ -25,7 +24,7 @@ import java.util.stream.Stream;
  * @since 5.2.0
  */
 @Slf4j
-public class DefaultDomainAwareServicesManager extends AbstractServicesManager implements DomainAwareServicesManager {
+public class DefaultDomainAwareServicesManager extends AbstractServicesManager {
     private final Map<String, TreeSet<RegisteredService>> domains = new ConcurrentHashMap<>();
 
     private final RegisteredServiceDomainExtractor registeredServiceDomainExtractor;
@@ -52,6 +51,7 @@ public class DefaultDomainAwareServicesManager extends AbstractServicesManager i
             ? map.get(domain)
             : new TreeSet<RegisteredService>();
         LOGGER.debug("Added service [{}] mapped to domain definition [{}]", r, domain);
+        services.removeIf(s -> s.getId() == r.getId());
         services.add(r);
         map.put(domain, services);
     }

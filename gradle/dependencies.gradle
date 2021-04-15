@@ -1330,8 +1330,9 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "commons-collections", module: "commons-collections")
                     exclude(group: "commons-beanutils", module: "commons-beanutils")
-                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15")
                     exclude(group: "org.slf4j", module: "slf4j-log4j12")
+                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
+                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15")
                     exclude(group: "org.springframework", module: "spring-beans")
                     exclude(group: "org.springframework", module: "spring-context")
                     exclude(group: "org.springframework", module: "spring-context-support")
@@ -1342,10 +1343,11 @@ ext.libraries = [
                 dependencies.create("net.jradius:jradius-apps:$jradiusVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "log4j", module: "log4j")
+                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
+                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "commons-collections", module: "commons-collections")
                     exclude(group: "commons-beanutils", module: "commons-beanutils")
-                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15")
                     exclude(group: "org.slf4j", module: "slf4j-log4j12")
                     exclude(group: "org.springframework", module: "spring-beans")
                     exclude(group: "org.springframework", module: "spring-context")
@@ -1357,10 +1359,11 @@ ext.libraries = [
                 dependencies.create("net.jradius:jradius-dictionary:$jradiusVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "log4j", module: "log4j")
+                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
+                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "commons-collections", module: "commons-collections")
                     exclude(group: "commons-beanutils", module: "commons-beanutils")
-                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15")
                     exclude(group: "org.slf4j", module: "slf4j-log4j12")
                     exclude(group: "org.springframework", module: "spring-beans")
                     exclude(group: "org.springframework", module: "spring-context")
@@ -1372,10 +1375,11 @@ ext.libraries = [
                 dependencies.create("net.jradius:jradius-client:$jradiusVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "log4j", module: "log4j")
+                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
+                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "commons-collections", module: "commons-collections")
                     exclude(group: "commons-beanutils", module: "commons-beanutils")
-                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15")
                     exclude(group: "org.slf4j", module: "slf4j-log4j12")
                     exclude(group: "org.springframework", module: "spring-beans")
                     exclude(group: "org.springframework", module: "spring-context")
@@ -1386,11 +1390,16 @@ ext.libraries = [
                 },
                 dependencies.create("net.jradius:jradius-extended:$jradiusVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "net.jradius", module: "jradius-server")
+                    exclude(group: "net.jradius", module: "jradius-extras")
+                    exclude(group: "net.jradius", module: "jradius-client")
+                    exclude(group: "net.jradius", module: "jradius-example")
                     exclude(group: "log4j", module: "log4j")
+                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
+                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "commons-collections", module: "commons-collections")
                     exclude(group: "commons-beanutils", module: "commons-beanutils")
-                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15")
                     exclude(group: "org.slf4j", module: "slf4j-log4j12")
                     exclude(group: "org.springframework", module: "spring-beans")
                     exclude(group: "org.springframework", module: "spring-context")
@@ -1402,10 +1411,11 @@ ext.libraries = [
                 dependencies.create("net.jradius:jradius-core:$jradiusVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "log4j", module: "log4j")
+                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
+                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "commons-collections", module: "commons-collections")
                     exclude(group: "commons-beanutils", module: "commons-beanutils")
-                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15")
                     exclude(group: "org.slf4j", module: "slf4j-log4j12")
                     exclude(group: "org.springframework", module: "spring-beans")
                     exclude(group: "org.springframework", module: "spring-context")
@@ -1417,10 +1427,11 @@ ext.libraries = [
                 dependencies.create("net.jradius:jradius-server:$jradiusVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "log4j", module: "log4j")
+                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
+                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "commons-collections", module: "commons-collections")
                     exclude(group: "commons-beanutils", module: "commons-beanutils")
-                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15")
                     exclude(group: "org.slf4j", module: "slf4j-log4j12")
                     exclude(group: "org.springframework", module: "spring-beans")
                     exclude(group: "org.springframework", module: "spring-context")
@@ -1505,6 +1516,15 @@ ext.libraries = [
                     exclude(group: "ch.qos.logback", module: "logback-classic")
                 },
                 dependencies.create("org.json:json:$jsonVersion") {
+                },
+                dependencies.create("org.testcontainers:testcontainers:$testContainersVersion") {
+                },
+                dependencies.create("org.testcontainers:junit-jupiter:$testContainersVersion") {
+                    exclude(group: "org.junit.jupiter", module: "junit-jupiter-api")
+                },
+                dependencies.create("org.testcontainers:mockserver:$testContainersVersion") {
+                },
+                dependencies.create("org.junit-pioneer:junit-pioneer:$junitPioneerVersion") {
                 }
         ],
         kryo                    : [
@@ -1645,6 +1665,9 @@ ext.libraries = [
                 },
                 dependencies.create("org.mongodb:mongodb-driver-sync:$mongoDriverVersion") {
                     exclude(group: "commons-cli", module: "commons-cli")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                },
+                dependencies.create("org.mongodb:bson:$mongoDriverVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 },
                 dependencies.create("org.springframework.data:spring-data-mongodb:$springDataMongoDbVersion") {
@@ -3540,24 +3563,18 @@ ext.libraries = [
                     exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-dom")
                     exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-common")
                     exclude(group: "org.jvnet.mimepull", module: "mimepull")
-
                 },
                 dependencies.create("com.sun.xml.messaging.saaj:saaj-impl:$saajImplVersion") {
                     exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-dom")
                     exclude(group: "org.jvnet.mimepull", module: "mimepull")
                     exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-common")
-
                 }
         ],
         validationapi           : dependencies.create("javax.validation:validation-api:$javaxValidationVersion"),
-        xmlapis                 : dependencies.create("xml-apis:xml-apis:$xmlapisVersion") {
-
-        },
         yubicoapi               :
                 dependencies.create("com.yubico:yubico-validation-client2:$yubicoVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "commons-codec", module: "commons-codec")
-
                 },
         u2flibserver            :
                 dependencies.create("com.yubico:u2flib-server-core:$yubicoU2fServerVersion") {
@@ -3592,7 +3609,6 @@ ext.libraries = [
                 dependencies.create("com.github.vladimir-bukhtoyarov:bucket4j-core:$bucket4jVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.json", module: "json")
-
                 }
         ],
         webjars                 : [

@@ -1,5 +1,6 @@
 package org.apereo.cas.interrupt.webflow.actions;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.interrupt.InterruptInquirer;
 import org.apereo.cas.interrupt.webflow.InterruptUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -31,6 +32,8 @@ public class InquireInterruptAction extends AbstractAction {
 
     private final List<InterruptInquirer> interruptInquirers;
 
+    private final CasConfigurationProperties casProperties;
+
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         val authentication = WebUtils.getAuthentication(requestContext);
@@ -49,6 +52,7 @@ public class InquireInterruptAction extends AbstractAction {
             if (response != null && response.isInterrupt()) {
                 LOGGER.debug("Interrupt inquiry is required since inquirer produced a response [{}]", response);
                 InterruptUtils.putInterruptIn(requestContext, response);
+                InterruptUtils.putInterruptTriggerMode(requestContext, casProperties.getInterrupt().getCore().getTriggerMode());
                 WebUtils.putPrincipal(requestContext, authentication.getPrincipal());
                 return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_INTERRUPT_REQUIRED);
             }

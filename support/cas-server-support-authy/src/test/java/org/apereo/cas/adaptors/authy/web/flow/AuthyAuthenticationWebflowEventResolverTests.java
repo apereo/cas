@@ -24,6 +24,7 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
+import org.springframework.webflow.test.MockParameterMap;
 
 import java.util.Optional;
 
@@ -57,6 +58,7 @@ public class AuthyAuthenticationWebflowEventResolverTests {
         when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
         when(context.getConversationScope()).thenReturn(new LocalAttributeMap<>());
         when(context.getFlowScope()).thenReturn(new LocalAttributeMap<>());
+        when(context.getRequestParameters()).thenReturn(new MockParameterMap());
         when(context.getRequestScope()).thenReturn(new LocalAttributeMap<>());
         when(context.getFlashScope()).thenReturn(new LocalAttributeMap<>());
         when(context.getExternalContext()).thenReturn(new ServletExternalContext(new MockServletContext(), request, response));

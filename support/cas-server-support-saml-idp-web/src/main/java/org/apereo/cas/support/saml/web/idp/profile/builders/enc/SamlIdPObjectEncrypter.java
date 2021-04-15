@@ -31,12 +31,12 @@ import org.opensaml.security.credential.Credential;
 import org.opensaml.security.credential.UsageType;
 import org.opensaml.security.criteria.UsageCriterion;
 import org.opensaml.xmlsec.EncryptionParameters;
-import org.opensaml.xmlsec.WhitelistBlacklistConfiguration;
 import org.opensaml.xmlsec.config.impl.DefaultSecurityConfigurationBootstrap;
 import org.opensaml.xmlsec.criterion.EncryptionConfigurationCriterion;
 import org.opensaml.xmlsec.criterion.EncryptionOptionalCriterion;
 import org.opensaml.xmlsec.encryption.support.DataEncryptionParameters;
 import org.opensaml.xmlsec.encryption.support.KeyEncryptionParameters;
+import org.opensaml.xmlsec.impl.BasicAlgorithmPolicyConfiguration;
 import org.opensaml.xmlsec.impl.BasicEncryptionConfiguration;
 import org.opensaml.xmlsec.impl.BasicEncryptionParametersResolver;
 import org.opensaml.xmlsec.keyinfo.impl.BasicProviderKeyInfoCredentialResolver;
@@ -322,10 +322,10 @@ public class SamlIdPObjectEncrypter {
      */
     protected BasicEncryptionConfiguration configureEncryptionSecurityConfiguration(final SamlRegisteredService service) {
         val config = DefaultSecurityConfigurationBootstrap.buildDefaultEncryptionConfiguration();
-        LOGGER.trace("Default encryption blocked algorithms: [{}]", config.getBlacklistedAlgorithms());
+        LOGGER.trace("Default encryption blocked algorithms: [{}]", config.getExcludedAlgorithms());
         LOGGER.trace("Default encryption key algorithms: [{}]", config.getKeyTransportEncryptionAlgorithms());
         LOGGER.trace("Default encryption data algorithms: [{}]", config.getDataEncryptionAlgorithms());
-        LOGGER.trace("Default encryption allowed algorithms: [{}]", config.getWhitelistedAlgorithms());
+        LOGGER.trace("Default encryption allowed algorithms: [{}]", config.getIncludedAlgorithms());
 
         val globalAlgorithms = samlIdPProperties.getAlgs();
 
@@ -347,24 +347,24 @@ public class SamlIdPObjectEncrypter {
             ? globalAlgorithms.getOverrideBlockedEncryptionAlgorithms()
             : service.getEncryptionBlackListedAlgorithms();
         if (overrideBlockedEncryptionAlgorithms != null && !overrideBlockedEncryptionAlgorithms.isEmpty()) {
-            config.setBlacklistedAlgorithms(overrideBlockedEncryptionAlgorithms);
+            config.setExcludedAlgorithms(overrideBlockedEncryptionAlgorithms);
         }
 
         val overrideWhiteListedAlgorithms = service.getEncryptionWhiteListedAlgorithms().isEmpty()
             ? globalAlgorithms.getOverrideAllowedAlgorithms()
             : service.getEncryptionWhiteListedAlgorithms();
         if (overrideWhiteListedAlgorithms != null && !overrideWhiteListedAlgorithms.isEmpty()) {
-            config.setWhitelistedAlgorithms(overrideWhiteListedAlgorithms);
+            config.setIncludedAlgorithms(overrideWhiteListedAlgorithms);
         }
 
-        LOGGER.trace("Finalized encryption blocked algorithms: [{}]", config.getBlacklistedAlgorithms());
+        LOGGER.trace("Finalized encryption blocked algorithms: [{}]", config.getExcludedAlgorithms());
         LOGGER.trace("Finalized encryption key algorithms: [{}]", config.getKeyTransportEncryptionAlgorithms());
         LOGGER.trace("Finalized encryption data algorithms: [{}]", config.getDataEncryptionAlgorithms());
-        LOGGER.trace("Finalized encryption allowed algorithms: [{}]", config.getWhitelistedAlgorithms());
+        LOGGER.trace("Finalized encryption allowed algorithms: [{}]", config.getIncludedAlgorithms());
 
         if (StringUtils.isNotBlank(service.getWhiteListBlackListPrecedence())) {
-            val precedence = WhitelistBlacklistConfiguration.Precedence.valueOf(service.getWhiteListBlackListPrecedence().trim().toUpperCase());
-            config.setWhitelistBlacklistPrecedence(precedence);
+            val precedence = BasicAlgorithmPolicyConfiguration.Precedence.valueOf(service.getWhiteListBlackListPrecedence().trim().toUpperCase());
+            config.setIncludeExcludePrecedence(precedence);
         }
         return config;
     }

@@ -7,6 +7,7 @@ import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 
 import lombok.Builder;
+import lombok.experimental.SuperBuilder;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -18,7 +19,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Builder
+@SuperBuilder
 public class OAuth20TokenGeneratedResult {
     private static final int MAP_SIZE = 8;
 

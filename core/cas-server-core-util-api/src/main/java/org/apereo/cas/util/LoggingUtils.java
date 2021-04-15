@@ -35,7 +35,6 @@ public class LoggingUtils {
      * @param throwable the throwable
      */
     public static void error(final Logger logger, final Throwable throwable) {
-
         error(logger, getMessage(throwable), throwable);
     }
 

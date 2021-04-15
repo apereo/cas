@@ -46,17 +46,13 @@ public class ECPSamlIdPProfileHandlerController extends AbstractSamlIdPProfileHa
 
     private static Credential extractBasicAuthenticationCredential(final HttpServletRequest request,
                                                                    final HttpServletResponse response) {
-        try {
-            val extractor = new BasicAuthExtractor();
-            val webContext = new JEEContext(request, response);
-            val credentialsResult = extractor.extract(webContext, JEESessionStore.INSTANCE);
-            if (credentialsResult.isPresent()) {
-                val credentials = (UsernamePasswordCredentials) credentialsResult.get();
-                LOGGER.debug("Received basic authentication ECP request from credentials [{}]", credentials);
-                return new UsernamePasswordCredential(credentials.getUsername(), credentials.getPassword());
-            }
-        } catch (final Exception e) {
-            LoggingUtils.warn(LOGGER, e);
+        val extractor = new BasicAuthExtractor();
+        val webContext = new JEEContext(request, response);
+        val credentialsResult = extractor.extract(webContext, JEESessionStore.INSTANCE);
+        if (credentialsResult.isPresent()) {
+            val credentials = (UsernamePasswordCredentials) credentialsResult.get();
+            LOGGER.debug("Received basic authentication ECP request from credentials [{}]", credentials);
+            return new UsernamePasswordCredential(credentials.getUsername(), credentials.getPassword());
         }
         return null;
     }

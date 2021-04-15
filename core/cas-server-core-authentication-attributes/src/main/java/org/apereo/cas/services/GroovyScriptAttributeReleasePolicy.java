@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.scripting.ScriptingUtils;
@@ -38,6 +39,7 @@ public class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServic
 
     private static final long serialVersionUID = 1703080077563402223L;
 
+    @ExpressionLanguageCapable
     private String groovyScript;
 
     @Override

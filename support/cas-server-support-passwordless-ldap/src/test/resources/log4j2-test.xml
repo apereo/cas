@@ -6,7 +6,10 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo" level="warn"  additivity="false"/>
+        <Logger name="org.apereo" level="warn" />
+        <Logger name="org.apereo.cas.impl.account" level="debug" />
+        <Logger name="org.apereo.cas.util" level="debug" />
+        <Logger name="org.ldaptive" level="warn" />
         <Root level="off">
             <AppenderRef ref="console"/>
         </Root>

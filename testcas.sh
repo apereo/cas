@@ -19,7 +19,7 @@ hasDocker() {
 
 printHelp() {
     hasDocker
-    echo -e "\nUsage: ./testcas.sh --category [category1,category2,...] [--help] [--test TestClass] [--ignore-failures] [--no-wrapper] [--no-retry] [--debug] [--no-parallel] [--dry-run] [--info] [--with-coverage] [--no-build-cache] \n"
+    echo -e "\nUsage: ./testcas.sh --category [category1,category2,...] [--help] [--test TestClass] [--ignore-failures] [--no-watch] [--no-wrapper] [--no-retry] [--debug] [--no-parallel] [--dry-run] [--info] [--with-coverage] [--no-build-cache] \n"
     echo -e "To see what test categories are available, use:\n"
     echo -e "\t./gradlew -q testCategories"
     echo -e "\nPlease see the test script for details."
@@ -30,7 +30,7 @@ parallel="--parallel "
 dryRun=""
 info=""
 gradleCmd="./gradlew"
-flags="--no-daemon --configure-on-demand --build-cache -x javadoc -x check -DskipNestedConfigMetadataGen=true -DshowStandardStreams=true "
+flags="--no-daemon --configure-on-demand --build-cache -x javadoc -x check -DskipNestedConfigMetadataGen=true -Dverbose=true "
 coverageTask=""
 
 while (( "$#" )); do
@@ -70,6 +70,10 @@ while (( "$#" )); do
     --debug)
         debug="--debug-jvm "
         parallel=""
+        shift
+        ;;
+    --no-watch)
+        flags+=" --no-watch-fs"
         shift
         ;;
     --test)
