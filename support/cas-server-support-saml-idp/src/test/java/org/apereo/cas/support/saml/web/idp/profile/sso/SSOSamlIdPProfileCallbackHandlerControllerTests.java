@@ -12,8 +12,7 @@ import org.apereo.cas.util.EncodingUtils;
 import lombok.val;
 import org.apache.http.HttpStatus;
 import org.jasig.cas.client.authentication.AttributePrincipalImpl;
-import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
-import org.jasig.cas.client.validation.Assertion;
+import org.jasig.cas.client.validation.TicketValidator;
 import org.jasig.cas.client.validation.AssertionImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
@@ -37,10 +36,10 @@ import org.springframework.test.context.TestPropertySource;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.net.URL;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link SSOSamlIdPProfileCallbackHandlerControllerTests}.
@@ -147,23 +146,11 @@ public class SSOSamlIdPProfileCallbackHandlerControllerTests extends BaseSamlIdP
     public static class SamlIdPTestConfiguration {
 
         @Bean
-        public AbstractUrlBasedTicketValidator casClientTicketValidator() {
-            return new AbstractUrlBasedTicketValidator("https://cas.example.org") {
-                @Override
-                protected String getUrlSuffix() {
-                    return "/cas";
-                }
-
-                @Override
-                protected Assertion parseResponseFromServer(final String s) {
-                    return new AssertionImpl(new AttributePrincipalImpl("casuser", CollectionUtils.wrap("cn", "cas")));
-                }
-
-                @Override
-                protected String retrieveResponseFromServer(final URL url, final String s) {
-                    return "the-response";
-                }
-            };
+        public TicketValidator samlIdPTicketValidator() throws Exception {
+            val validator = mock(TicketValidator.class);
+            val principal = new AttributePrincipalImpl("casuser", CollectionUtils.wrap("cn", "cas"));
+            when(validator.validate(anyString(), anyString())).thenReturn(new AssertionImpl(principal));
+            return validator;
         }
     }
 }
