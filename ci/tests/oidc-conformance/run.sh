@@ -65,6 +65,5 @@ docker-compose -f "$PWD"/ci/tests/oidc-conformance/conformance-suite/docker-comp
 docker container stop $(docker container ls -aq) && docker container rm $(docker container ls -aq) 
 rm "$PWD"/cas.war
 [ -f "${keystore}" ] && rm "${keystore}"
-rm -Rf "$PWD"/ci/tests/oidc-conformance/overlay
-chmod -R 777 "$PWD"/ci/tests/oidc-conformance/conformance-suite
-rm -Rf "$PWD"/ci/tests/oidc-conformance/conformance-suite
+rm -Rf "$PWD"/ci/tests/oidc-conformance/overlay || true
+rm -Rf "$PWD"/ci/tests/oidc-conformance/conformance-suite || true
