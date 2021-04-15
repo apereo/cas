@@ -61,7 +61,8 @@ echo -e "\n\nReady!"
 
 echo -e "\nKilling process ${pid} ..."
 kill -9 $pid
-docker-compose -f "$PWD"/ci/tests/oidc-conformance/conformance-suite/docker-compose-dev.yml stop
+docker-compose -f "$PWD"/ci/tests/oidc-conformance/conformance-suite/docker-compose-dev.yml down
+docker container stop $(docker container ls -aq) && docker container rm $(docker container ls -aq) 
 rm "$PWD"/cas.war
 [ -f "${keystore}" ] && rm "${keystore}"
 rm -Rf "$PWD"/ci/tests/oidc-conformance/overlay
