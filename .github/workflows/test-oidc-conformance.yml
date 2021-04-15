@@ -68,4 +68,4 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Run Tests
-        run: ./ci/tests/oidc-conformance/run.sh
+        run: chmod +x ./ci/tests/oidc-conformance/run.sh && ./ci/tests/oidc-conformance/run.sh
