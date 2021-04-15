@@ -4,9 +4,7 @@ import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.util.LoggingUtils;
-import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.userinfo.client.UserInfo;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,9 +23,6 @@ import org.apache.commons.lang3.StringUtils;
 @Setter
 @Getter
 public abstract class AbstractGeoLocationService implements GeoLocationService {
-    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(false).build().toObjectMapper();
-
     @Override
     @SneakyThrows
     public GeoLocationResponse locate(final String address) {
