@@ -79,16 +79,16 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
 
             val credential = new UsernamePasswordCredential(upc.getUsername(), upc.getPassword());
             val principal = principalResolver.resolve(credential);
+            val attributes = registeredService.getAttributeReleasePolicy().getAttributes(principal, service, registeredService);
 
             val profile = new CommonProfile();
-            profile.setId(id);
-            principal.getAttributes().forEach(profile::addAttribute);
+            val username = registeredService.getUsernameAttributeProvider().resolveUsername(principal, service, registeredService);
+            LOGGER.debug("Created profile id [{}]", username);
 
-            val attributes = registeredService.getAttributeReleasePolicy().getAttributes(principal, service, registeredService);
+            profile.setId(username);
             profile.addAttributes((Map) attributes);
-
-            credentials.setUserProfile(profile);
             LOGGER.debug("Authenticated user profile [{}]", profile);
+            credentials.setUserProfile(profile);
         }
     }
 
