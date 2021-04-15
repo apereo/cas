@@ -117,7 +117,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v2
         with:
-          java-version: ${{ env.JDK_CURRENT }}
+          java-version: ${{ env.JDK_LATEST }}
           distribution: 'adopt'
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
