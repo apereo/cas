@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -41,18 +40,6 @@ public class DelegatedAuthenticationClientLogoutAction extends AbstractAction {
 
     private final SessionStore sessionStore;
 
-    /**
-     * Finds the current profile from the context.
-     *
-     * @param webContext A web context (request + response).
-     * @return The common profile active.
-     */
-    private UserProfile findCurrentProfile(final JEEContext webContext) {
-        val pm = new ProfileManager(webContext, this.sessionStore);
-        val profile = pm.getProfile();
-        return profile.orElse(null);
-    }
-
     @Override
     protected Event doPreExecute(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
@@ -74,36 +61,43 @@ public class DelegatedAuthenticationClientLogoutAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        try {
-            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-            val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-            val context = new JEEContext(request, response);
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
+        val context = new JEEContext(request, response);
 
-            val currentProfile = findCurrentProfile(context);
-            val clientResult = currentProfile == null
-                ? Optional.<Client>empty()
-                : clients.findClient(currentProfile.getClientName());
-            if (clientResult.isPresent()) {
-                val client = clientResult.get();
-                LOGGER.trace("Located client [{}]", client);
+        val currentProfile = findCurrentProfile(context);
+        val clientResult = currentProfile == null
+            ? Optional.<Client>empty()
+            : clients.findClient(currentProfile.getClientName());
+        if (clientResult.isPresent()) {
+            val client = clientResult.get();
+            LOGGER.trace("Located client [{}]", client);
 
-                val service = WebUtils.getService(requestContext);
-                val targetUrl = service != null ? service.getId() : null;
-                LOGGER.debug("Logout target url based on service [{}] is [{}]", service, targetUrl);
+            val service = WebUtils.getService(requestContext);
+            val targetUrl = service != null ? service.getId() : null;
+            LOGGER.debug("Logout target url based on service [{}] is [{}]", service, targetUrl);
 
-                val actionResult = client.getLogoutAction(context, sessionStore, currentProfile, targetUrl);
-                if (actionResult.isPresent()) {
-                    val action = (HttpAction) actionResult.get();
-                    LOGGER.debug("Adapting logout action [{}] for client [{}]", action, client);
-                    JEEHttpActionAdapter.INSTANCE.adapt(action, context);
-                }
-            } else {
-                LOGGER.debug("The current client cannot be found; No logout action can execute");
+            val actionResult = client.getLogoutAction(context, sessionStore, currentProfile, targetUrl);
+            if (actionResult.isPresent()) {
+                val action = (HttpAction) actionResult.get();
+                LOGGER.debug("Adapting logout action [{}] for client [{}]", action, client);
+                JEEHttpActionAdapter.INSTANCE.adapt(action, context);
             }
-        } catch (final Exception e) {
-            LoggingUtils.warn(LOGGER, e);
+        } else {
+            LOGGER.debug("The current client cannot be found; No logout action can execute");
         }
         return null;
     }
 
+    /**
+     * Finds the current profile from the context.
+     *
+     * @param webContext A web context (request + response).
+     * @return The common profile active.
+     */
+    private UserProfile findCurrentProfile(final JEEContext webContext) {
+        val pm = new ProfileManager(webContext, this.sessionStore);
+        val profile = pm.getProfile();
+        return profile.orElse(null);
+    }
 }

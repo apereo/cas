@@ -13,7 +13,7 @@ import org.springframework.webflow.execution.Action;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link Saml2ClientMetadataControllerTests}.
+ * This is {@link DelegatedSaml2ClientMetadataControllerTests}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
@@ -22,10 +22,10 @@ import static org.junit.jupiter.api.Assertions.*;
     BaseDelegatedAuthenticationTests.SharedTestConfiguration.class
 )
 @Tag("SAML")
-public class Saml2ClientMetadataControllerTests {
+public class DelegatedSaml2ClientMetadataControllerTests {
     @Autowired
     @Qualifier("delegatedSaml2ClientMetadataController")
-    private Saml2ClientMetadataController saml2ClientMetadataController;
+    private DelegatedSaml2ClientMetadataController delegatedSaml2ClientMetadataController;
 
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION)
@@ -34,9 +34,12 @@ public class Saml2ClientMetadataControllerTests {
     @Test
     public void verifyOperation() {
         assertNotNull(delegatedAuthenticationAction);
-        assertNotNull(saml2ClientMetadataController.getFirstIdentityProviderMetadata());
-        assertNotNull(saml2ClientMetadataController.getFirstServiceProviderMetadata());
-        assertNotNull(saml2ClientMetadataController.getIdentityProviderMetadataByName("SAML2Client"));
-        assertNotNull(saml2ClientMetadataController.getServiceProviderMetadataByName("SAML2Client"));
+        assertNotNull(delegatedSaml2ClientMetadataController.getFirstIdentityProviderMetadata());
+        assertNotNull(delegatedSaml2ClientMetadataController.getFirstServiceProviderMetadata());
+        assertTrue(delegatedSaml2ClientMetadataController.getIdentityProviderMetadataByName("SAML2Client").getStatusCode().is2xxSuccessful());
+        assertTrue(delegatedSaml2ClientMetadataController.getServiceProviderMetadataByName("SAML2Client").getStatusCode().is2xxSuccessful());
+
+        assertFalse(delegatedSaml2ClientMetadataController.getIdentityProviderMetadataByName("UnknownClient").getStatusCode().is2xxSuccessful());
+        assertFalse(delegatedSaml2ClientMetadataController.getServiceProviderMetadataByName("UnknownClient").getStatusCode().is2xxSuccessful());
     }
 }

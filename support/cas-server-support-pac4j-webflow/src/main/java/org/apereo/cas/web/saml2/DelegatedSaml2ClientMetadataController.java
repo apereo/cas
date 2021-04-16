@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
- * This is {@link Saml2ClientMetadataController}.
+ * This is {@link DelegatedSaml2ClientMetadataController}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller("delegatedSaml2ClientMetadataController")
 @RequestMapping
 @RequiredArgsConstructor
-public class Saml2ClientMetadataController {
+public class DelegatedSaml2ClientMetadataController {
 
     private final Clients builtClients;
 
@@ -53,8 +53,8 @@ public class Saml2ClientMetadataController {
     @GetMapping("/sp/metadata")
     public ResponseEntity<String> getFirstServiceProviderMetadata() {
         val saml2Client = builtClients.findClient(SAML2Client.class);
-        return saml2Client.map(Saml2ClientMetadataController::getSaml2ClientServiceProviderMetadataResponseEntity)
-            .orElseGet(Saml2ClientMetadataController::getNotAcceptableResponseEntity);
+        return saml2Client.map(DelegatedSaml2ClientMetadataController::getSaml2ClientServiceProviderMetadataResponseEntity)
+            .orElseGet(DelegatedSaml2ClientMetadataController::getNotAcceptableResponseEntity);
     }
 
     /**
@@ -66,7 +66,7 @@ public class Saml2ClientMetadataController {
     public ResponseEntity<String> getFirstIdentityProviderMetadata() {
         val saml2Client = builtClients.findClient(SAML2Client.class);
         return saml2Client.map(this::getSaml2ClientIdentityProviderMetadataResponseEntity)
-            .orElseGet(Saml2ClientMetadataController::getNotAcceptableResponseEntity);
+            .orElseGet(DelegatedSaml2ClientMetadataController::getNotAcceptableResponseEntity);
     }
 
     /**
@@ -79,7 +79,7 @@ public class Saml2ClientMetadataController {
     public ResponseEntity<String> getServiceProviderMetadataByName(@PathVariable("client") final String client) {
         val saml2Client = builtClients.findClient(client);
         return saml2Client.map(value -> getSaml2ClientServiceProviderMetadataResponseEntity(SAML2Client.class.cast(value)))
-            .orElseGet(Saml2ClientMetadataController::getNotAcceptableResponseEntity);
+            .orElseGet(DelegatedSaml2ClientMetadataController::getNotAcceptableResponseEntity);
     }
 
     /**
@@ -92,7 +92,7 @@ public class Saml2ClientMetadataController {
     public ResponseEntity<String> getIdentityProviderMetadataByName(@PathVariable("client") final String client) {
         val saml2Client = builtClients.findClient(client);
         return saml2Client.map(value -> getSaml2ClientIdentityProviderMetadataResponseEntity(SAML2Client.class.cast(value)))
-            .orElseGet(Saml2ClientMetadataController::getNotAcceptableResponseEntity);
+            .orElseGet(DelegatedSaml2ClientMetadataController::getNotAcceptableResponseEntity);
     }
 
     private ResponseEntity<String> getSaml2ClientIdentityProviderMetadataResponseEntity(final SAML2Client saml2Client) {
@@ -100,9 +100,6 @@ public class Saml2ClientMetadataController {
         headers.setContentType(MediaType.APPLICATION_XML);
         saml2Client.init();
         val identityProviderMetadataResolver = saml2Client.getIdentityProviderMetadataResolver();
-        if (identityProviderMetadataResolver == null) {
-            return getNotAcceptableResponseEntity();
-        }
         identityProviderMetadataResolver.resolve();
         val entity = identityProviderMetadataResolver.getEntityDescriptorElement();
         val metadata = SamlUtils.transformSamlObject(openSamlConfigBean, entity).toString();

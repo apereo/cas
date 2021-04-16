@@ -92,7 +92,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             model.put(CasProtocolConstants.PARAMETER_SERVICE, request.getAttribute(CasProtocolConstants.PARAMETER_SERVICE));
             model.put("client", StringEscapeUtils.escapeHtml4(request.getParameter("client_name")));
             LOGGER.debug("Delegation request has failed. Details are [{}]", model);
-            return Optional.of(new ModelAndView("casPac4jStopWebflow", model));
+            return Optional.of(new ModelAndView(CasWebflowConstants.VIEW_ID_PAC4J_STOP_WEBFLOW, model));
         }
         return Optional.empty();
     }
@@ -199,11 +199,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             return Optional.empty();
         }
         val ticket = configContext.getCentralAuthenticationService().getTicket(tgtId, TicketGrantingTicket.class);
-        if (ticket != null && !ticket.isExpired()) {
-            LOGGER.trace("Located a valid ticket-granting ticket");
-            return Optional.of(ticket.getAuthentication());
-        }
-        return Optional.empty();
+        LOGGER.trace("Located a valid ticket-granting ticket");
+        return Optional.of(ticket.getAuthentication());
     }
 
     private boolean isDelegatedClientAuthorizedForService(final Client client,
