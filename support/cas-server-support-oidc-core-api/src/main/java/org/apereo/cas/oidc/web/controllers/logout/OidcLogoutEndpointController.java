@@ -5,18 +5,16 @@ import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.logout.slo.SingleLogoutUrl;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
-import org.apereo.cas.services.RegexRegisteredService;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
+import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.validator.routines.UrlValidator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,9 +41,10 @@ public class OidcLogoutEndpointController extends BaseOAuth20Controller {
     private final OidcPostLogoutRedirectUrlMatcher postLogoutRedirectUrlMatcher;
 
     public OidcLogoutEndpointController(final OidcConfigurationContext context,
-                                        OidcPostLogoutRedirectUrlMatcher postLogoutRedirectUrlMatcher) {
+                                        OidcPostLogoutRedirectUrlMatcher postLogoutRedirectUrlMatcher,
+                                        UrlValidator urlValidator) {
         super(context);
-        this.urlValidator = new UrlValidator(UrlValidator.ALLOW_LOCAL_URLS);
+        this.urlValidator = urlValidator;
         this.postLogoutRedirectUrlMatcher = postLogoutRedirectUrlMatcher;
     }
 

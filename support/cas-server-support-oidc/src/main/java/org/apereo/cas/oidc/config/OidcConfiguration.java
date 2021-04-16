@@ -124,6 +124,7 @@ import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.validation.CasProtocolViewFactory;
 import org.apereo.cas.web.ProtocolEndpointConfigurer;
+import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -188,8 +189,6 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class OidcConfiguration implements WebMvcConfigurer {
-
-    public static final String POST_LOGOUT_REDIRECTURL_MATCHER_BEAN_NAME = "postLogoutRedirectUrlMatcher";
 
     @Autowired
     @Qualifier("oauthRegisteredServiceCipherExecutor")
@@ -352,6 +351,11 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Qualifier("oauthInvalidAuthorizationBuilder")
     private ObjectProvider<OAuth20InvalidAuthorizationResponseBuilder> oauthInvalidAuthorizationBuilder;
 
+    @Autowired
+    @Qualifier("urlValidator")
+    private ObjectProvider<UrlValidator> urlValidator;
+
+
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
         registry.addInterceptor(oauthInterceptor()).addPathPatterns('/' + OidcConstants.BASE_OIDC_URL.concat("/").concat("*"));
@@ -467,23 +471,18 @@ public class OidcConfiguration implements WebMvcConfigurer {
         return new OidcIntrospectionEndpointController(context);
     }
 
-    /**
-     * @return
-     *  default implementation for {@link OidcPostLogoutRedirectUrlMatcher}: <pre>String::equalsIgnoreCase</pre>
-     */
     @RefreshScope
-    @Bean(name = POST_LOGOUT_REDIRECTURL_MATCHER_BEAN_NAME)
-    @ConditionalOnMissingBean(name = POST_LOGOUT_REDIRECTURL_MATCHER_BEAN_NAME)
+    @Bean(name = OidcPostLogoutRedirectUrlMatcher.BEAN_NAME_POST_LOGOUT_REDIRECTURL_MATCHER)
+    @ConditionalOnMissingBean(name = OidcPostLogoutRedirectUrlMatcher.BEAN_NAME_POST_LOGOUT_REDIRECTURL_MATCHER)
     public OidcPostLogoutRedirectUrlMatcher postLogoutRedirectUrlMatcher() {
         return String::equalsIgnoreCase;
     }
 
     @RefreshScope
     @Bean
-    public OidcLogoutEndpointController oidcLogoutEndpointController(@Qualifier(POST_LOGOUT_REDIRECTURL_MATCHER_BEAN_NAME)
-                                                                         final OidcPostLogoutRedirectUrlMatcher postLogoutRedirectUrlMatcher) {
+    public OidcLogoutEndpointController oidcLogoutEndpointController() {
         val context = oidcConfigurationContext();
-        return new OidcLogoutEndpointController(context, postLogoutRedirectUrlMatcher);
+        return new OidcLogoutEndpointController(context, postLogoutRedirectUrlMatcher(), urlValidator.getObject());
     }
 
     @RefreshScope

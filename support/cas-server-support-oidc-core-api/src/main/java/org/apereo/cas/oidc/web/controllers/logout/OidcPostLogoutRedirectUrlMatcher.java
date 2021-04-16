@@ -9,5 +9,8 @@ package org.apereo.cas.oidc.web.controllers.logout;
  */
 @FunctionalInterface
 public interface OidcPostLogoutRedirectUrlMatcher {
+
+    public static final String BEAN_NAME_POST_LOGOUT_REDIRECTURL_MATCHER = "postLogoutRedirectUrlMatcher";
+
     boolean matches(String postLogoutRedirectUrl, String configuredUrl);
 }
