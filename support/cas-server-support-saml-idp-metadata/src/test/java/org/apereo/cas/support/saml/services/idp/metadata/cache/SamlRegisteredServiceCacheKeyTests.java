@@ -55,7 +55,7 @@ public class SamlRegisteredServiceCacheKeyTests {
         val result1 = new SamlRegisteredServiceCacheKey(service, criteriaSet);
         assertNotNull(result1.getId());
         assertNotNull(result1.toString());
-        assertEquals(entityIdCriterion.getEntityId(), result1.getCacheKey());
+        assertEquals(service.getId() + " " + entityIdCriterion.getEntityId(), result1.getCacheKey());
 
         val result2 = new SamlRegisteredServiceCacheKey(service, criteriaSet);
         assertEquals(result1, result2);
@@ -74,6 +74,6 @@ public class SamlRegisteredServiceCacheKeyTests {
 
         val results = new SamlRegisteredServiceCacheKey(service, criteriaSet);
         assertNotNull(results.getId());
-        assertEquals(service.getServiceId(), results.getCacheKey());
+        assertEquals(String.valueOf(service.getId()), results.getCacheKey());
     }
 }

@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = "cas.authn.saml-idp.metadata.metadata-backup-location=file:${#systemProperties['java.io.tmpdir']}")
 public class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlIdPServicesTests {
     @Test
-    public void verifyRetryableOpWithFailure() {
+    public void verifySearchForEntityInMetadataFailure() {
         val criteriaSet = new CriteriaSet();
         criteriaSet.add(new EntityIdCriterion("urn:app.e2ma.net"));
         criteriaSet.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
@@ -49,7 +49,7 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends Ba
     }
 
     @Test
-    public void verifyRetryableOp() {
+    public void verifySearchForEntityInMetadata() {
         val criteriaSet = new CriteriaSet();
         criteriaSet.add(new EntityIdCriterion("https://carmenwiki.osu.edu/shibboleth"));
         criteriaSet.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));

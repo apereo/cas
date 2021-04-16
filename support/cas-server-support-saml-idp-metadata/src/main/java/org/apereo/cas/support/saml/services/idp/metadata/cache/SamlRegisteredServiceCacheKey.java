@@ -28,6 +28,7 @@ import java.util.Objects;
 @Getter
 public class SamlRegisteredServiceCacheKey implements Serializable {
     private static final long serialVersionUID = -7238573226470492601L;
+    private static final String KEY_SEPARATOR = " ";
 
     private final String id;
 
@@ -55,9 +56,10 @@ public class SamlRegisteredServiceCacheKey implements Serializable {
 
     private static String getCacheKeyForRegisteredService(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
         if (SamlUtils.isDynamicMetadataQueryConfigured(service.getMetadataLocation())) {
-            return criteriaSet.contains(EntityIdCriterion.class)
-                ? Objects.requireNonNull(criteriaSet.get(EntityIdCriterion.class)).getEntityId()
-                : service.getServiceId();
+            return service.getId()
+                + (criteriaSet.contains(EntityIdCriterion.class)
+                    ? KEY_SEPARATOR + Objects.requireNonNull(criteriaSet.get(EntityIdCriterion.class)).getEntityId()
+                    : "");
         }
         return service.getMetadataLocation();
     }

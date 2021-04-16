@@ -38,6 +38,10 @@ import org.opensaml.saml.metadata.resolver.impl.AbstractMetadataResolver;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
+import org.springframework.retry.RetryCallback;
+import org.springframework.retry.backoff.FixedBackOffPolicy;
+import org.springframework.retry.policy.SimpleRetryPolicy;
+import org.springframework.retry.support.RetryTemplate;
 
 import java.io.File;
 import java.io.IOException;
@@ -87,7 +91,6 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
 
     @Override
     public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
-        HttpResponse response = null;
         try {
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service);
 
@@ -103,20 +106,33 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
             LOGGER.debug("Metadata backup file will be at [{}]", canonicalPath);
             FileUtils.forceMkdirParent(backupFile);
 
-            response = fetchMetadata(service, metadataLocation, criteriaSet, backupFile);
-            val status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
-            if (shouldHttpResponseStatusBeProcessed(status)) {
-                val metadataProvider = getMetadataResolverFromResponse(response, backupFile);
-                configureAndInitializeSingleMetadataResolver(metadataProvider, service);
-                return CollectionUtils.wrap(metadataProvider);
-            }
+            val retryTemplate = new RetryTemplate();
+            retryTemplate.setBackOffPolicy(new FixedBackOffPolicy());
+            retryTemplate.setRetryPolicy(new SimpleRetryPolicy());
+            return retryTemplate.execute((RetryCallback<Collection<? extends MetadataResolver>, Exception>) retryContext -> {
+                HttpResponse response = null;
+                HttpStatus status;
+                try {
+                    response = fetchMetadata(service, metadataLocation, criteriaSet, backupFile);
+                    status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
+                    if (shouldHttpResponseStatusBeProcessed(status)) {
+                        val metadataProvider = getMetadataResolverFromResponse(response, backupFile);
+                        configureAndInitializeSingleMetadataResolver(metadataProvider, service);
+                        return CollectionUtils.wrap(metadataProvider);
+                    }
+                } catch (final Exception e) {
+                    throw e;
+                } finally {
+                    HttpUtils.close(response);
+                }
+                throw new SamlException("Metadata " + service.getMetadataLocation()
+                    + " fetch failed with status " + status.toString());
+            });
         } catch (final UnauthorizedServiceException e) {
             LoggingUtils.error(LOGGER, e);
             throw new SamlException(e.getMessage(), e);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
-        } finally {
-            HttpUtils.close(response);
         }
         return new ArrayList<>(0);
     }

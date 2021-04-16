@@ -157,6 +157,33 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
         assertTrue(result instanceof SamlRegisteredService);
     }
 
+    @Test
+    public void verifyTwoMetadataAggregates() {
+        val callbackUrl = "http://localhost:8443/cas" + SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK;
+
+        val service1 = getSamlRegisteredServiceFor(".*");
+        service1.setMetadataLocation("classpath:metadata/no-testshib-providers.xml");
+        service1.setEvaluationOrder(100);
+
+        val service2 = getSamlRegisteredServiceFor(".+");
+        service2.setEvaluationOrder(1000);
+
+        val candidateServices = CollectionUtils.wrapList(service1, service2);
+        servicesManager.save(candidateServices.toArray(new RegisteredService[0]));
+
+        val url = new URIBuilder(callbackUrl + "?entityId=https://sp.testshib.org/shibboleth-sp");
+        val request = new MockHttpServletRequest();
+        request.setRequestURI(callbackUrl);
+        url.getQueryParams().forEach(param -> request.addParameter(param.getName(), param.getValue()));
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, new MockHttpServletResponse()));
+        val service = webApplicationServiceFactory.createService(url.toString());
+
+        val result = servicesManager.findServiceBy(service);
+        assertNotNull(result);
+        // The entity should be found in the metadata from service2 despite preceding failed resolution from service1 metadata.
+        assertTrue(service2.getServiceId().equals(result.getServiceId()));
+    }
+
     /**
      * Locator should not trigger metadata lookups when requested
      * entityID does not match pattern for service in question.
