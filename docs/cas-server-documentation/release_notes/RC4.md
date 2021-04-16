@@ -65,6 +65,11 @@ to execute and trigger after the single sign-on session.
 
 CAS test coverage across all modules in the codebase has now reached `91%` and continues to climb.
 
+### OpenID Connect Conformance
+
+Initial groundwork to integrate the OpenID Connect conformance test suite with the CAS CI to then
+ensure compatibility and compliance of the CAS implementation with the OpenID Connect test suite.
+
 ## Other Stuff
 
 - CAS CI builds are updated to ensure all web application types can be deployed successfully via external servlet containers.
@@ -86,6 +91,11 @@ CAS test coverage across all modules in the codebase has now reached `91%` and c
 - Couchbase
 - Kryo
 - Mockito
+- Pac4j
+- Material Web Components
+- Spring Boot Admin
+- Spring Session
+- Spring Data
 - Infinispan
 - Amazon SDK
 - Spring
