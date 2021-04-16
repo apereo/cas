@@ -144,7 +144,7 @@ public class DelegatedClientAuthenticationActionTests {
         setExternalContext(context.getExternalContext());
 
         val event = delegatedAuthenticationAction.execute(context);
-        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_STOP, event.getId());
     }
 
     @Test
