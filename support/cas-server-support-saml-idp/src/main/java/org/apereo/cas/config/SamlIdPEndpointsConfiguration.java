@@ -47,6 +47,7 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.InternalTicketValidator;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.ProtocolEndpointConfigurer;
@@ -57,7 +58,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.velocity.app.VelocityEngine;
-import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
+import org.jasig.cas.client.validation.TicketValidator;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostDecoder;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostSimpleSignDecoder;
@@ -108,10 +109,6 @@ public class SamlIdPEndpointsConfiguration {
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
     private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationServiceSelectionPlan;
-
-    @Autowired
-    @Qualifier("casClientTicketValidator")
-    private ObjectProvider<AbstractUrlBasedTicketValidator> casClientTicketValidator;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -435,10 +432,16 @@ public class SamlIdPEndpointsConfiguration {
             plan.registerSingleLogoutServiceMessageHandler(samlSingleLogoutServiceMessageHandler());
         };
     }
-    
+
     @Bean
     public SamlIdPLogoutResponseObjectBuilder samlIdPLogoutResponseObjectBuilder() {
         return new SamlIdPLogoutResponseObjectBuilder(openSamlConfigBean.getObject());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "samlIdPTicketValidator")
+    public TicketValidator samlIdPTicketValidator() {
+        return new InternalTicketValidator(centralAuthenticationService.getObject(), samlIdPServiceFactory.getObject());
     }
 
     private SamlProfileHandlerConfigurationContext.SamlProfileHandlerConfigurationContextBuilder getSamlProfileHandlerConfigurationContextBuilder() {
@@ -456,7 +459,7 @@ public class SamlIdPEndpointsConfiguration {
             .samlObjectSignatureValidator(samlObjectSignatureValidator())
             .samlHttpRequestExtractor(ssoSamlHttpRequestExtractor())
             .responseBuilder(samlProfileSamlResponseBuilder.getObject())
-            .ticketValidator(casClientTicketValidator.getObject())
+            .ticketValidator(samlIdPTicketValidator())
             .ticketRegistry(ticketRegistry.getObject())
             .sessionStore(samlIdPDistributedSessionStore())
             .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator.getObject())
