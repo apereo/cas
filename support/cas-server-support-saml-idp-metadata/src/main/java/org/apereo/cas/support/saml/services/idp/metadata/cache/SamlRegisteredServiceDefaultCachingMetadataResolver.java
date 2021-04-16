@@ -60,22 +60,13 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
         LOGGER.debug("Resolving metadata for [{}] at [{}]", service.getName(), service.getMetadataLocation());
         val cacheKey = new SamlRegisteredServiceCacheKey(service, criteriaSet);
         LOGGER.trace("Locating cached metadata resolver using key [{}] for service [{}]", cacheKey.getId(), service.getName());
-        val retryTemplate = new RetryTemplate();
-        retryTemplate.setBackOffPolicy(new FixedBackOffPolicy());
-        retryTemplate.setRetryPolicy(new SimpleRetryPolicy());
-        return retryTemplate.execute((RetryCallback<MetadataResolver, SamlException>) retryContext -> {
-            val resolver = locateAndCacheMetadataResolver(service, cacheKey);
-            if (!isMetadataResolverAcceptable(resolver, criteriaSet)) {
-                invalidate(service, criteriaSet);
-                LOGGER.warn("SAML metadata resolver [{}] obtained from the cache is "
-                        + "unable to produce/resolve valid metadata [{}]. Metadata resolver cache entry with key [{}] "
-                        + "has been invalidated. Retry attempt: [{}]",
-                    resolver.getId(), service.getMetadataLocation(), cacheKey.getId(), retryContext.getRetryCount());
-                throw new SamlException("Unable to locate a valid SAML metadata resolver for "
-                    + service.getMetadataLocation());
-            }
-            return resolver;
-        });
+        val resolver = locateAndCacheMetadataResolver(service, cacheKey);
+        if (!isMetadataResolverAcceptable(resolver, criteriaSet)) {
+            LOGGER.debug("SAML metadata resolver [{}] obtained from the cache is unable to produce/resolve valid metadata [{}].",
+                resolver.getId(), service.getMetadataLocation());
+            return null;
+        }
+        return resolver;
     }
 
     /**

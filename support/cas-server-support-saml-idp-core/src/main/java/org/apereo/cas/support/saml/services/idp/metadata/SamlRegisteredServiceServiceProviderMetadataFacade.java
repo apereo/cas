@@ -97,6 +97,9 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
             criterions.add(new EntityIdCriterion(entityID), true);
             LOGGER.debug("Locating metadata for entityID [{}] by attempting to run through the metadata chain...", entityID);
             val chainingMetadataResolver = resolver.resolve(registeredService, criterions);
+            if (chainingMetadataResolver == null) {
+                return Optional.empty();
+            }
             LOGGER.info("Resolved metadata chain from [{}]. Filtering the chain by entity ID [{}]",
                 registeredService.getMetadataLocation(), entityID);
 
@@ -120,7 +123,6 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
             LoggingUtils.error(LOGGER, e);
         }
         return Optional.empty();
-
     }
     
     public ZonedDateTime getValidUntil() {
