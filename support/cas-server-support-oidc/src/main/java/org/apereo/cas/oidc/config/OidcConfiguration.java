@@ -68,6 +68,7 @@ import org.apereo.cas.oidc.web.controllers.dynareg.OidcDynamicClientRegistration
 import org.apereo.cas.oidc.web.controllers.introspection.OidcIntrospectionEndpointController;
 import org.apereo.cas.oidc.web.controllers.jwks.OidcJwksEndpointController;
 import org.apereo.cas.oidc.web.controllers.logout.OidcLogoutEndpointController;
+import org.apereo.cas.oidc.web.controllers.logout.OidcPostLogoutRedirectUrlMatcher;
 import org.apereo.cas.oidc.web.controllers.profile.OidcUserProfileEndpointController;
 import org.apereo.cas.oidc.web.controllers.token.OidcAccessTokenEndpointController;
 import org.apereo.cas.oidc.web.controllers.token.OidcRevocationEndpointController;
@@ -187,6 +188,8 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class OidcConfiguration implements WebMvcConfigurer {
+
+    public static final String POST_LOGOUT_REDIRECTURL_MATCHER_BEAN_NAME = "postLogoutRedirectUrlMatcher";
 
     @Autowired
     @Qualifier("oauthRegisteredServiceCipherExecutor")
@@ -464,11 +467,23 @@ public class OidcConfiguration implements WebMvcConfigurer {
         return new OidcIntrospectionEndpointController(context);
     }
 
+    /**
+     * @return
+     *  default implementation for {@link OidcPostLogoutRedirectUrlMatcher}: <pre>String::equalsIgnoreCase</pre>
+     */
+    @RefreshScope
+    @Bean(name = POST_LOGOUT_REDIRECTURL_MATCHER_BEAN_NAME)
+    @ConditionalOnMissingBean(name = POST_LOGOUT_REDIRECTURL_MATCHER_BEAN_NAME)
+    public OidcPostLogoutRedirectUrlMatcher postLogoutRedirectUrlMatcher() {
+        return String::equalsIgnoreCase;
+    }
+
     @RefreshScope
     @Bean
-    public OidcLogoutEndpointController oidcLogoutEndpointController() {
+    public OidcLogoutEndpointController oidcLogoutEndpointController(@Qualifier(POST_LOGOUT_REDIRECTURL_MATCHER_BEAN_NAME)
+                                                                         final OidcPostLogoutRedirectUrlMatcher postLogoutRedirectUrlMatcher) {
         val context = oidcConfigurationContext();
-        return new OidcLogoutEndpointController(context);
+        return new OidcLogoutEndpointController(context, postLogoutRedirectUrlMatcher);
     }
 
     @RefreshScope

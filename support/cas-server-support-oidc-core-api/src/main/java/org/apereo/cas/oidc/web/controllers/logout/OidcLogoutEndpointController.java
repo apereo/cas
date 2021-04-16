@@ -40,9 +40,13 @@ public class OidcLogoutEndpointController extends BaseOAuth20Controller {
 
     private final UrlValidator urlValidator;
 
-    public OidcLogoutEndpointController(final OidcConfigurationContext context) {
+    private final OidcPostLogoutRedirectUrlMatcher postLogoutRedirectUrlMatcher;
+
+    public OidcLogoutEndpointController(final OidcConfigurationContext context,
+                                        OidcPostLogoutRedirectUrlMatcher postLogoutRedirectUrlMatcher) {
         super(context);
         this.urlValidator = new UrlValidator(UrlValidator.ALLOW_LOCAL_URLS);
+        this.postLogoutRedirectUrlMatcher = postLogoutRedirectUrlMatcher;
     }
 
     /**
@@ -88,8 +92,7 @@ public class OidcLogoutEndpointController extends BaseOAuth20Controller {
             LOGGER.debug("Logout urls assigned to registered service are [{}]", urls);
             if (StringUtils.isNotBlank(postLogoutRedirectUrl) && registeredService.getMatchingStrategy() != null) {
                 val matchResult = registeredService.matches(postLogoutRedirectUrl)
-                    || urls.stream().anyMatch(url ->
-                        logoutUrlMatchesRegisteredServiceMatchingStrategy(registeredService, url, postLogoutRedirectUrl));
+                    || urls.stream().anyMatch(url -> postLogoutRedirectUrlMatcher.matches(postLogoutRedirectUrl, url));
                 if (matchResult) {
                     LOGGER.debug("Requested logout URL [{}] is authorized for redirects", postLogoutRedirectUrl);
                     return new ResponseEntity<>(executeLogoutRedirect(Optional.ofNullable(StringUtils.trimToNull(state)),
@@ -107,15 +110,6 @@ public class OidcLogoutEndpointController extends BaseOAuth20Controller {
         return new ResponseEntity<>(executeLogoutRedirect(Optional.ofNullable(StringUtils.trimToNull(state)),
             Optional.empty(), Optional.ofNullable(clientId), request, response));
     }
-
-    private boolean logoutUrlMatchesRegisteredServiceMatchingStrategy(RegisteredService registeredService,
-                                                                      final String configuredLogoutURL,
-                                                                      final String postLogoutRedirectUrl) {
-        val pointless = new RegexRegisteredService();
-        pointless.setServiceId(configuredLogoutURL);
-        return registeredService.getMatchingStrategy().matches(pointless, postLogoutRedirectUrl);
-    }
-
 
     /**
      * Gets logout redirect view.
