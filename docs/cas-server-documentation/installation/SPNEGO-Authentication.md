@@ -44,6 +44,17 @@ SPNEGO support is enabled by including the following dependency in the WAR overl
 </dependency>
 ```
 
+### JCIFS SDK
+
+Note that `jcifs-ext` library is no longer published to a public Maven repository. This means that you will need to download
+the necessary JAR files and include them in your build configuration. The SDK may be downloaded
+from [the CAS codebase](https://github.com/apereo/cas/blob/master/support/cas-server-support-spnego/lib/jcifs-ext.jar). Then,
+assuming the SDK is placed inside a `lib` directory of the [WAR overlay](../installation/WAR-Overlay-Installation.html)
+directory, it can be referenced in the build configuration as such:
+
+```gradle
+implementation files("${projectDir}/lib/jcifs-ext.jar")
+```
 
 ## Configuration
 
