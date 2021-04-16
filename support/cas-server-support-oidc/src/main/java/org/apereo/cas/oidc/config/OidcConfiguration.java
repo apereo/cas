@@ -492,8 +492,8 @@ public class OidcConfiguration implements WebMvcConfigurer {
     }
 
     @RefreshScope
-    @Bean(name = OidcPostLogoutRedirectUrlMatcher.BEAN_NAME_POST_LOGOUT_REDIRECTURL_MATCHER)
-    @ConditionalOnMissingBean(name = OidcPostLogoutRedirectUrlMatcher.BEAN_NAME_POST_LOGOUT_REDIRECTURL_MATCHER)
+    @Bean
+    @ConditionalOnMissingBean(name = OidcPostLogoutRedirectUrlMatcher.BEAN_NAME_POST_LOGOUT_REDIRECT_URL_MATCHER)
     public OidcPostLogoutRedirectUrlMatcher postLogoutRedirectUrlMatcher() {
         return String::equalsIgnoreCase;
     }
