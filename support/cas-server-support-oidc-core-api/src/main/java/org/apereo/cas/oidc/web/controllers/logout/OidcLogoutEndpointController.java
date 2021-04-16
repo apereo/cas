@@ -40,9 +40,9 @@ public class OidcLogoutEndpointController extends BaseOAuth20Controller {
 
     private final OidcPostLogoutRedirectUrlMatcher postLogoutRedirectUrlMatcher;
 
-    public OidcLogoutEndpointController(final OidcConfigurationContext context,
-                                        OidcPostLogoutRedirectUrlMatcher postLogoutRedirectUrlMatcher,
-                                        UrlValidator urlValidator) {
+    public OidcLogoutEndpointController(final OAuth20ConfigurationContext context,
+                                        final OidcPostLogoutRedirectUrlMatcher postLogoutRedirectUrlMatcher,
+                                        final UrlValidator urlValidator) {
         super(context);
         this.urlValidator = urlValidator;
         this.postLogoutRedirectUrlMatcher = postLogoutRedirectUrlMatcher;
@@ -88,7 +88,7 @@ public class OidcLogoutEndpointController extends BaseOAuth20Controller {
             WebUtils.putRegisteredService(request, Objects.requireNonNull(registeredService));
             val urls = configContext.getSingleLogoutServiceLogoutUrlBuilder()
                 .determineLogoutUrl(registeredService, service, Optional.of(request))
-                    .stream().map(SingleLogoutUrl::getUrl).collect(Collectors.toList());
+                .stream().map(SingleLogoutUrl::getUrl).collect(Collectors.toList());
             LOGGER.debug("Logout urls assigned to registered service are [{}]", urls);
             if (StringUtils.isNotBlank(postLogoutRedirectUrl) && registeredService.getMatchingStrategy() != null) {
                 val matchResult = registeredService.matches(postLogoutRedirectUrl)
@@ -103,7 +103,7 @@ public class OidcLogoutEndpointController extends BaseOAuth20Controller {
             val validURL = urls.stream().filter(urlValidator::isValid).findFirst();
             if (validURL.isPresent()) {
                 return new ResponseEntity<>(executeLogoutRedirect(Optional.ofNullable(StringUtils.trimToNull(state)),
-                        validURL, Optional.of(clientId), request, response));
+                    validURL, Optional.of(clientId), request, response));
             }
             LOGGER.debug("No logout urls could be determined for registered service [{}]", registeredService.getName());
         }
