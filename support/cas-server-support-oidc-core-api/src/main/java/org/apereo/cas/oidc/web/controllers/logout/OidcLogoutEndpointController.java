@@ -41,8 +41,8 @@ public class OidcLogoutEndpointController extends BaseOAuth20Controller {
     private final OidcPostLogoutRedirectUrlMatcher postLogoutRedirectUrlMatcher;
 
     public OidcLogoutEndpointController(final OidcConfigurationContext context,
-                                        OidcPostLogoutRedirectUrlMatcher postLogoutRedirectUrlMatcher,
-                                        UrlValidator urlValidator) {
+                                        final OidcPostLogoutRedirectUrlMatcher postLogoutRedirectUrlMatcher,
+                                        final UrlValidator urlValidator) {
         super(context);
         this.urlValidator = urlValidator;
         this.postLogoutRedirectUrlMatcher = postLogoutRedirectUrlMatcher;
