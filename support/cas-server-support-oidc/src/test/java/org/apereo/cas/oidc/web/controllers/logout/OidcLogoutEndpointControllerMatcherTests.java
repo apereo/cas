@@ -1,9 +1,7 @@
 package org.apereo.cas.oidc.web.controllers.logout;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.cas.oidc.AbstractOidcTests;
-import org.apereo.cas.oidc.config.OidcConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
