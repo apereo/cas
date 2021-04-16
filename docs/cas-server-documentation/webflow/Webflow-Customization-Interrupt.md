@@ -33,6 +33,8 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-support-interrupt-webflow" %}
 
+{% include casproperties.html properties="cas.interrupt.core" %}
+
 ## Interrupt Payload
 
 Each interrupt strategy is ultimately tasked to produce a response that contains the following settings:
@@ -86,7 +88,6 @@ should be able to take advantage of the established single sign-on session.</p>
 ## Interrupt Strategies
 
 Interrupt queries can be executed via the following ways:
-
 
 | Storage             | Description                                           
 |----------------------------------------------------------------------------------

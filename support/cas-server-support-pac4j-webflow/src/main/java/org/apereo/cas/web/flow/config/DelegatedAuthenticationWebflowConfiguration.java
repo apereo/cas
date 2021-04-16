@@ -31,7 +31,7 @@ import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
-import org.apereo.cas.web.saml2.Saml2ClientMetadataController;
+import org.apereo.cas.web.saml2.DelegatedSaml2ClientMetadataController;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.CookieUtils;
 
@@ -237,8 +237,8 @@ public class DelegatedAuthenticationWebflowConfiguration {
     }
 
     @Bean
-    public Saml2ClientMetadataController delegatedSaml2ClientMetadataController() {
-        return new Saml2ClientMetadataController(builtClients.getObject(), configBean.getObject());
+    public DelegatedSaml2ClientMetadataController delegatedSaml2ClientMetadataController() {
+        return new DelegatedSaml2ClientMetadataController(builtClients.getObject(), configBean.getObject());
     }
 
     @ConditionalOnMissingBean(name = "delegatedClientNavigationController")

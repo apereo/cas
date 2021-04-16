@@ -46,7 +46,7 @@ jobs:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: 'adopt'
       - name: Initialize
-        run: ls ./ci && chmod -R 777 ./ci/*.sh && env && ./ci/init-build.sh
+        run: ls ./ci && chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
 
 ##########################################################################
 
