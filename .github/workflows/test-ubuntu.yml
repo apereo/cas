@@ -170,7 +170,7 @@ jobs:
           echo "CODACY_COVERAGE_REPORTS=${files}" >> $GITHUB_ENV
       - name: Upload Coverage to Codacy
         if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' && env.CODACY_PROJECT_TOKEN != null }}
-        uses: codacy/codacy-coverage-reporter-action@master
+        uses: codacy/codacy-coverage-reporter-action@v1
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
           coverage-reports: ${{ env.CODACY_COVERAGE_REPORTS }}
