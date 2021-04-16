@@ -1,4 +1,10 @@
 description = "Apereo CAS RADIUS Support"
+
+["runtimeClasspath", "testRuntimeClasspath"].each {
+    def cfg = configurations.findByName(it)
+    cfg.resolutionStrategy.force "org.bouncycastle:bcprov-jdk15on:1.63"
+}
+
 dependencies {
     api libraries.jradius
     implementation libraries.bouncycastle
