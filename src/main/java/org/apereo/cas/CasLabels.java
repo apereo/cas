@@ -60,6 +60,7 @@ public enum CasLabels {
     LABEL_INSTALLATION_DEPLOYMENT("Installation & Deployment", "deployment|helm chart|helm|docker|overlay|initializr"),
     LABEL_JDBC_HIBERNATE_JPA("JDBC & Hibernate & JPA", "transaction|mysql|postgres|oracle|mariadb|jpa|hibernate|database|jdbc|rdbms"),
     LABEL_JWT_AUTHN_TICKETS("JWS & JWT AuthN & Tickets", "jwt|jws"),
+    LABEL_JGIT("JGit", "jgit|git.*registry"),
     LABEL_LDAP_ACTIVE_DIRECTORY("LDAP & Active Directory", "passivator|ldap|\\bad\\b|active directory"),
     LABEL_LOGOUT_SLO("Logout & SLO", "\\bslo\\b|logout|signoff|signout"),
     LABEL_MFA("MFA", "multifactor authentication|MFA|FailureMode"),
