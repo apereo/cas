@@ -68,7 +68,7 @@ public class GitRepositoryBuilder {
 
     private final boolean clearExistingIdentities;
 
-    private final BaseGitProperties.HttpClientType httpClientType;
+    private final BaseGitProperties.HttpClientTypes httpClientType;
 
     private static String getBranchPath(final String branchName) {
         return "refs/heads/" + branchName;
@@ -146,9 +146,9 @@ public class GitRepositoryBuilder {
                 sshTransport.setSshSessionFactory(sshSessionFactory);
             }
             if (transport instanceof HttpTransport) {
-                if (httpClientType == BaseGitProperties.HttpClientType.JDK) {
+                if (httpClientType == BaseGitProperties.HttpClientTypes.JDK) {
                     HttpTransport.setConnectionFactory(new JDKHttpConnectionFactory());
-                } else if (httpClientType == BaseGitProperties.HttpClientType.HTTP_CLIENT) {
+                } else if (httpClientType == BaseGitProperties.HttpClientTypes.HTTP_CLIENT) {
                     HttpTransport.setConnectionFactory(new HttpClientConnectionFactory());
                 }
             }

@@ -123,12 +123,12 @@ public abstract class BaseGitProperties implements Serializable {
      * so might result in one connection factory being used for clone and another for subsequent
      * fetches.
      */
-    private HttpClientType httpClientType = HttpClientType.JDK;
+    private HttpClientTypes httpClientType = HttpClientTypes.JDK;
 
     /**
      * The jgit library supports multiple HTTP client implementations.
      */
-    public enum HttpClientType {
+    public enum HttpClientTypes {
         /**
          * Built-in JDK http/https client.
          */

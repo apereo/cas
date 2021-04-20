@@ -88,7 +88,7 @@ public class GitRepositoryBuilderTests {
 
     @Test
     public void verifyBuildWithHttpClientOptions() throws Exception {
-        for (BaseGitProperties.HttpClientType type : BaseGitProperties.HttpClientType.values()) {
+        for (BaseGitProperties.HttpClientTypes type : BaseGitProperties.HttpClientTypes.values()) {
             val props = casProperties.getServiceRegistry().getGit();
             props.setHttpClientType(type);
             props.setRepositoryUrl("https://github.com/mmoayyed/sample-data.git");
