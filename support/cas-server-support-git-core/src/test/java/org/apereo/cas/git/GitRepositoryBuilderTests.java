@@ -1,6 +1,7 @@
 package org.apereo.cas.git;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.git.services.BaseGitProperties;
 import org.apereo.cas.util.ResourceUtils;
 
 import lombok.val;
@@ -84,4 +85,21 @@ public class GitRepositoryBuilderTests {
         val builder = GitRepositoryBuilder.newInstance(props);
         assertDoesNotThrow(builder::build);
     }
+
+    @Test
+    public void verifyBuildWithHttpClientOptions() throws Exception {
+        for (BaseGitProperties.HttpClientType type : BaseGitProperties.HttpClientType.values()) {
+            val props = casProperties.getServiceRegistry().getGit();
+            props.setHttpClientType(type);
+            props.setRepositoryUrl("https://github.com/mmoayyed/sample-data.git");
+            props.setUsername("casuser");
+            props.setPassword("password");
+            props.setBranchesToClone("master");
+            props.getCloneDirectory().setLocation(ResourceUtils.getRawResourceFrom(
+                "file://" + FileUtils.getTempDirectoryPath() + File.separator + UUID.randomUUID().toString()));
+            val builder = GitRepositoryBuilder.newInstance(props);
+            assertDoesNotThrow(builder::build);
+        }
+    }
+
 }
