@@ -809,6 +809,16 @@ ext.libraries = [
 
                 }
         ],
+        awssts : [
+                dependencies.create("software.amazon.awssdk:sts:$amazonSdkVersion") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                }
+        ],
         awsssm                  : [
                 dependencies.create("software.amazon.awssdk:ssm:$amazonSdkVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")

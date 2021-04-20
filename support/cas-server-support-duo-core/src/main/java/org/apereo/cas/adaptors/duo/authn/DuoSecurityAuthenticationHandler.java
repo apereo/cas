@@ -29,6 +29,7 @@ import java.util.List;
 @Slf4j
 public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
     private final DuoSecurityMultifactorAuthenticationProvider provider;
+
     private final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver;
 
     public DuoSecurityAuthenticationHandler(final String name, final ServicesManager servicesManager,
@@ -62,6 +63,10 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
      */
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
+        if (credential instanceof DuoSecurityPasscodeCredential) {
+            LOGGER.debug("Attempting to authenticate credential via duo passcode");
+            return authenticateDuoPasscodeCredential(credential);
+        }
         if (credential instanceof DuoSecurityUniversalPromptCredential) {
             LOGGER.debug("Attempting to authenticate credential via duo universal prompt");
             return authenticateDuoUniversalPromptCredential(credential);
@@ -71,6 +76,36 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
             return authenticateDuoApiCredential(credential);
         }
         return authenticateDuoCredential(credential);
+    }
+
+    /**
+     * Resolve principal.
+     *
+     * @param principal the principal
+     * @return the principal
+     */
+    protected Principal resolvePrincipal(final Principal principal) {
+        return multifactorAuthenticationPrincipalResolver
+            .stream()
+            .filter(resolver -> resolver.supports(principal))
+            .findFirst()
+            .map(r -> r.resolve(principal))
+            .orElseThrow(() -> new IllegalStateException("Unable to resolve principal for multifactor authentication"));
+    }
+
+    @SneakyThrows
+    private AuthenticationHandlerExecutionResult authenticateDuoPasscodeCredential(final Credential credential) {
+        try {
+            val duoAuthenticationService = provider.getDuoAuthenticationService();
+            val creds = DuoSecurityPasscodeCredential.class.cast(credential);
+            if (duoAuthenticationService.authenticate(creds).isSuccess()) {
+                val principal = principalFactory.createPrincipal(creds.getId());
+                return createHandlerResult(credential, principal, new ArrayList<>(0));
+            }
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        }
+        throw new FailedLoginException("Duo passcode authentication has failed");
     }
 
     @SneakyThrows
@@ -132,20 +167,5 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
             LoggingUtils.error(LOGGER, e);
             throw new FailedLoginException(e.getMessage());
         }
-    }
-
-    /**
-     * Resolve principal.
-     *
-     * @param principal the principal
-     * @return the principal
-     */
-    protected Principal resolvePrincipal(final Principal principal) {
-        return multifactorAuthenticationPrincipalResolver
-            .stream()
-            .filter(resolver -> resolver.supports(principal))
-            .findFirst()
-            .map(r -> r.resolve(principal))
-            .orElseThrow(() -> new IllegalStateException("Unable to resolve principal for multifactor authentication"));
     }
 }

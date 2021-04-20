@@ -10,7 +10,6 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.rest.audit.RestResponseEntityAuditResourceResolver;
 import org.apereo.cas.rest.factory.CasProtocolServiceTicketResourceEntityResponseFactory;
-import org.apereo.cas.rest.factory.ChainingRestHttpRequestCredentialFactory;
 import org.apereo.cas.rest.factory.CompositeServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.rest.factory.DefaultTicketGrantingTicketResourceEntityResponseFactory;
 import org.apereo.cas.rest.factory.DefaultUserAuthenticationResourceEntityResponseFactory;
@@ -18,9 +17,7 @@ import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
 import org.apereo.cas.rest.factory.ServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.rest.factory.TicketGrantingTicketResourceEntityResponseFactory;
 import org.apereo.cas.rest.factory.UserAuthenticationResourceEntityResponseFactory;
-import org.apereo.cas.rest.factory.UsernamePasswordRestHttpRequestCredentialFactory;
 import org.apereo.cas.rest.plan.DefaultServiceTicketResourceEntityResponseFactoryPlan;
-import org.apereo.cas.rest.plan.RestHttpRequestCredentialFactoryConfigurer;
 import org.apereo.cas.rest.plan.ServiceTicketResourceEntityResponseFactoryConfigurer;
 import org.apereo.cas.support.rest.resources.RestProtocolConstants;
 import org.apereo.cas.support.rest.resources.ServiceTicketResource;
@@ -44,7 +41,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -58,7 +54,6 @@ import java.util.List;
  */
 @Configuration("casRestConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class CasRestConfiguration {
 
     @Autowired
@@ -87,6 +82,12 @@ public class CasRestConfiguration {
     @Bean
     public TicketStatusResource ticketStatusResource() {
         return new TicketStatusResource(centralAuthenticationService.getObject());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "restServiceTicketResourceEntityResponseFactoryConfigurer")
+    public ServiceTicketResourceEntityResponseFactoryConfigurer restServiceTicketResourceEntityResponseFactoryConfigurer() {
+        return plan -> plan.registerFactory(new CasProtocolServiceTicketResourceEntityResponseFactory(centralAuthenticationService.getObject()));
     }
 
     @Bean
@@ -145,33 +146,6 @@ public class CasRestConfiguration {
             webApplicationServiceFactory.getObject(),
             userAuthenticationResourceEntityResponseFactory(),
             applicationContext);
-    }
-
-    @Autowired
-    @Bean
-    public RestHttpRequestCredentialFactory restHttpRequestCredentialFactory(final List<RestHttpRequestCredentialFactoryConfigurer> configurers) {
-        LOGGER.trace("building REST credential factory from [{}]", configurers);
-
-        val factory = new ChainingRestHttpRequestCredentialFactory();
-        AnnotationAwareOrderComparator.sortIfNecessary(configurers);
-
-        configurers.forEach(c -> {
-            LOGGER.trace("Configuring credential factory: [{}]", c);
-            c.configureCredentialFactory(factory);
-        });
-        return factory;
-    }
-
-    @ConditionalOnMissingBean(name = "restHttpRequestCredentialFactoryConfigurer")
-    @Bean
-    public RestHttpRequestCredentialFactoryConfigurer restHttpRequestCredentialFactoryConfigurer() {
-        return factory -> factory.registerCredentialFactory(new UsernamePasswordRestHttpRequestCredentialFactory());
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(name = "restServiceTicketResourceEntityResponseFactoryConfigurer")
-    public ServiceTicketResourceEntityResponseFactoryConfigurer restServiceTicketResourceEntityResponseFactoryConfigurer() {
-        return plan -> plan.registerFactory(new CasProtocolServiceTicketResourceEntityResponseFactory(centralAuthenticationService.getObject()));
     }
 
     @Bean

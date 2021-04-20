@@ -1,6 +1,6 @@
 package org.apereo.cas.clouddirectory;
 
-import org.apereo.cas.configuration.model.support.clouddirectory.CloudDirectoryProperties;
+import org.apereo.cas.configuration.model.support.clouddirectory.AmazonCloudDirectoryProperties;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
@@ -29,19 +29,39 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * This is {@link DefaultCloudDirectoryRepositoryTests}.
+ * This is {@link DefaultAmazonCloudDirectoryRepositoryTests}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
  */
 @Tag("AmazonWebServices")
-public class DefaultCloudDirectoryRepositoryTests {
+public class DefaultAmazonCloudDirectoryRepositoryTests {
+    private static DefaultAmazonCloudDirectoryRepository getMockCloudDirectoryRepository(final CloudDirectoryClient cloud,
+                                                                                         final ListObjectAttributesRequest request) {
+        return new DefaultAmazonCloudDirectoryRepository(cloud, new AmazonCloudDirectoryProperties()) {
+            @Override
+            protected ListIndexRequest getListIndexRequest(final String username, final ObjectReference reference) {
+                return ListIndexRequest.builder().build();
+            }
+
+            @Override
+            protected ObjectReference getObjectReference() {
+                return ObjectReference.builder().build();
+            }
+
+            @Override
+            protected ListObjectAttributesRequest getListObjectAttributesRequest(final String identifier) {
+                return request;
+            }
+        };
+    }
+
     @Test
     public void verifyAction() {
         val cloud = mock(CloudDirectoryClient.class);
         val result = ListIndexResponse.builder().build();
         when(cloud.listIndex(any(ListIndexRequest.class))).thenReturn(result);
-        val r = new DefaultCloudDirectoryRepository(cloud, new CloudDirectoryProperties());
+        val r = new DefaultAmazonCloudDirectoryRepository(cloud, new AmazonCloudDirectoryProperties());
         assertTrue(r.getUser("casuser").isEmpty());
         assertNotNull(r.getListIndexRequest("casuser", ObjectReference.builder().build()));
     }
@@ -117,27 +137,7 @@ public class DefaultCloudDirectoryRepositoryTests {
 
         val attrResult = ListObjectAttributesResponse.builder().attributes(CollectionUtils.wrapList(attr1, attr2, attr3, attr4, attr5)).build();
         when(cloud.listObjectAttributes(any(ListObjectAttributesRequest.class))).thenReturn(attrResult);
-        val r = new DefaultCloudDirectoryRepository(cloud, new CloudDirectoryProperties());
+        val r = new DefaultAmazonCloudDirectoryRepository(cloud, new AmazonCloudDirectoryProperties());
         assertFalse(r.getUserInfoFromIndexResult(result).isEmpty());
-    }
-
-    private static DefaultCloudDirectoryRepository getMockCloudDirectoryRepository(final CloudDirectoryClient cloud,
-        final ListObjectAttributesRequest request) {
-        return new DefaultCloudDirectoryRepository(cloud, new CloudDirectoryProperties()) {
-            @Override
-            protected ListIndexRequest getListIndexRequest(final String username, final ObjectReference reference) {
-                return ListIndexRequest.builder().build();
-            }
-
-            @Override
-            protected ObjectReference getObjectReference() {
-                return ObjectReference.builder().build();
-            }
-
-            @Override
-            protected ListObjectAttributesRequest getListObjectAttributesRequest(final String identifier) {
-                return request;
-            }
-        };
     }
 }

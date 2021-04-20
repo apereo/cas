@@ -72,7 +72,7 @@ public class UserAuthenticationResourceTests {
         val result = new DefaultAuthenticationResultBuilder()
             .collect(CoreAuthenticationTestUtils.getAuthentication())
             .build(new DefaultPrincipalElectionStrategy());
-        when(authenticationSupport.handleAndFinalizeSingleAuthenticationTransaction(any(), anyCollection())).thenReturn(result);
+        when(authenticationSupport.finalizeAuthenticationTransaction(any(), anyCollection())).thenReturn(result);
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
             .param("username", "casuser")
             .param("password", "Mellon"))
@@ -90,7 +90,7 @@ public class UserAuthenticationResourceTests {
     @Test
     public void verifyStatusAuthnException() throws Exception {
         val ex = new AuthenticationException(CollectionUtils.wrap("error", new FailedLoginException()));
-        when(authenticationSupport.handleAndFinalizeSingleAuthenticationTransaction(any(), any(Collection.class))).thenThrow(ex);
+        when(authenticationSupport.finalizeAuthenticationTransaction(any(), any(Collection.class))).thenThrow(ex);
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
             .param("username", "casuser")
             .param("password", "Mellon"))

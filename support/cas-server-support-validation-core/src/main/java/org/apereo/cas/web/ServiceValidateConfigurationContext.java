@@ -2,7 +2,6 @@ package org.apereo.cas.web;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
@@ -40,7 +39,7 @@ public class ServiceValidateConfigurationContext {
 
     private final ArgumentExtractor argumentExtractor;
 
-    private final RequestedAuthenticationContextValidator<MultifactorAuthenticationProvider> requestedContextValidator;
+    private final RequestedAuthenticationContextValidator requestedContextValidator;
 
     private final String authnContextAttribute;
 

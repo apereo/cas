@@ -3,8 +3,8 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.clouddirectory.CloudDirectoryRepository;
-import org.apereo.cas.configuration.model.support.clouddirectory.CloudDirectoryProperties;
+import org.apereo.cas.clouddirectory.AmazonCloudDirectoryRepository;
+import org.apereo.cas.configuration.model.support.clouddirectory.AmazonCloudDirectoryProperties;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.extern.slf4j.Slf4j;
@@ -16,21 +16,21 @@ import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 
 /**
- * This is {@link CloudDirectoryAuthenticationHandler}.
+ * This is {@link AmazonCloudDirectoryAuthenticationHandler}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
 @Slf4j
-public class CloudDirectoryAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
-    private final CloudDirectoryRepository repository;
-    private final CloudDirectoryProperties cloudDirectoryProperties;
+public class AmazonCloudDirectoryAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
+    private final AmazonCloudDirectoryRepository repository;
+    private final AmazonCloudDirectoryProperties cloudDirectoryProperties;
 
-    public CloudDirectoryAuthenticationHandler(final String name,
-                                               final ServicesManager servicesManager,
-                                               final PrincipalFactory principalFactory,
-                                               final CloudDirectoryRepository repository,
-                                               final CloudDirectoryProperties cloudDirectoryProperties) {
+    public AmazonCloudDirectoryAuthenticationHandler(final String name,
+                                                     final ServicesManager servicesManager,
+                                                     final PrincipalFactory principalFactory,
+                                                     final AmazonCloudDirectoryRepository repository,
+                                                     final AmazonCloudDirectoryProperties cloudDirectoryProperties) {
         super(name, servicesManager, principalFactory, cloudDirectoryProperties.getOrder());
         this.repository = repository;
         this.cloudDirectoryProperties = cloudDirectoryProperties;

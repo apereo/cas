@@ -133,7 +133,7 @@ public class TicketGrantingTicketResource {
             throw new BadRestRequestException("No credentials are provided or extracted to authenticate the REST request");
         }
         val service = this.serviceFactory.createService(request);
-        val authenticationResult = authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
+        val authenticationResult = authenticationSystemSupport.finalizeAuthenticationTransaction(service, credential);
         return centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
     }
 }

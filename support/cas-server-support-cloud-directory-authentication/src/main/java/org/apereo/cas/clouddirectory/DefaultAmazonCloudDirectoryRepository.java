@@ -1,6 +1,6 @@
 package org.apereo.cas.clouddirectory;
 
-import org.apereo.cas.configuration.model.support.clouddirectory.CloudDirectoryProperties;
+import org.apereo.cas.configuration.model.support.clouddirectory.AmazonCloudDirectoryProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
 
@@ -23,19 +23,19 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * This is {@link DefaultCloudDirectoryRepository}.
+ * This is {@link DefaultAmazonCloudDirectoryRepository}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
 @Slf4j
 @RequiredArgsConstructor
-public class DefaultCloudDirectoryRepository implements CloudDirectoryRepository {
+public class DefaultAmazonCloudDirectoryRepository implements AmazonCloudDirectoryRepository {
     private static final int MAP_SIZE = 8;
 
     private final CloudDirectoryClient amazonCloudDirectory;
 
-    private final CloudDirectoryProperties properties;
+    private final AmazonCloudDirectoryProperties properties;
 
     @Override
     public Map<String, List<Object>> getUser(final String username) {
@@ -55,7 +55,7 @@ public class DefaultCloudDirectoryRepository implements CloudDirectoryRepository
      * @return the list index request
      */
     protected ListIndexRequest getListIndexRequest(final String username, final ObjectReference reference) {
-        return CloudDirectoryUtils.getListIndexRequest(
+        return AmazonCloudDirectoryUtils.getListIndexRequest(
             properties.getUsernameAttributeName(),
             username, reference, properties);
     }
@@ -84,7 +84,7 @@ public class DefaultCloudDirectoryRepository implements CloudDirectoryRepository
      * @return the object reference
      */
     protected ObjectReference getObjectReference() {
-        return CloudDirectoryUtils.getObjectRefByPath(properties.getUsernameIndexPath());
+        return AmazonCloudDirectoryUtils.getObjectRefByPath(properties.getUsernameIndexPath());
     }
 
     /**
@@ -142,6 +142,6 @@ public class DefaultCloudDirectoryRepository implements CloudDirectoryRepository
      * @return the list object attributes request
      */
     protected ListObjectAttributesRequest getListObjectAttributesRequest(final String identifier) {
-        return CloudDirectoryUtils.getListObjectAttributesRequest(properties.getDirectoryArn(), identifier);
+        return AmazonCloudDirectoryUtils.getListObjectAttributesRequest(properties.getDirectoryArn(), identifier);
     }
 }

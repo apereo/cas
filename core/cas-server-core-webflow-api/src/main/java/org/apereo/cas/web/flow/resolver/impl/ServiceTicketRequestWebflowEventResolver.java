@@ -124,7 +124,7 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
 
             LOGGER.trace("Finalizing authentication transaction for [{}]", credential);
             val authenticationResult = configContext.getAuthenticationSystemSupport()
-                .handleAndFinalizeSingleAuthenticationTransaction(service, credential);
+                .finalizeAuthenticationTransaction(service, credential);
 
             val principal = authenticationResult.getAuthentication().getPrincipal();
             if (existingAuthn != null && !existingAuthn.getPrincipal().equals(principal)) {

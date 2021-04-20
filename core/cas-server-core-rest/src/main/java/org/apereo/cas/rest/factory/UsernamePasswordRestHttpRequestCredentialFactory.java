@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.MultiValueMap;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,7 +35,7 @@ public class UsernamePasswordRestHttpRequestCredentialFactory implements RestHtt
         }
         val username = requestBody.getFirst(RestHttpRequestCredentialFactory.PARAMETER_USERNAME);
         val password = requestBody.getFirst(RestHttpRequestCredentialFactory.PARAMETER_PASSWORD);
-        if (username == null || password == null) {
+        if (StringUtils.isBlank(username) || StringUtils.isBlank(password)) {
             LOGGER.debug("Invalid payload; missing required fields.");
             return new ArrayList<>(0);
         }

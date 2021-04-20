@@ -103,7 +103,7 @@ public class WsFederationResponseValidator {
             }
             WebUtils.putServiceIntoFlowScope(context, service);
             LOGGER.debug("Creating final authentication result based on the given credential");
-            val authenticationResult = this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
+            val authenticationResult = this.authenticationSystemSupport.finalizeAuthenticationTransaction(service, credential);
             WebUtils.putAuthenticationResult(authenticationResult, context);
             WebUtils.putAuthentication(authenticationResult.getAuthentication(), context);
             WebUtils.putCredential(context, credential);
