@@ -1,5 +1,6 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.adaptors.duo.config.DuoSecurityAuthenticationEventExecutionPlanConfiguration,\
   org.apereo.cas.adaptors.duo.config.DuoSecurityConfiguration,\
   org.apereo.cas.adaptors.duo.config.DuoSecurityComponentSerializationConfiguration,\
-  org.apereo.cas.adaptors.duo.config.DuoSecurityMultifactorProviderBypassConfiguration
+  org.apereo.cas.adaptors.duo.config.DuoSecurityMultifactorProviderBypassConfiguration,\
+  org.apereo.cas.adaptors.duo.config.DuoSecurityRestConfiguration
 

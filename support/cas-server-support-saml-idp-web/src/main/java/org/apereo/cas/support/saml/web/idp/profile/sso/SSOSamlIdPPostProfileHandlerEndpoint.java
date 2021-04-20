@@ -136,7 +136,7 @@ public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasActuatorEndpoin
         val registeredService = this.servicesManager.findServiceBy(selectedService, SamlRegisteredService.class);
 
         val credential = new UsernamePasswordCredential(username, password);
-        val result = this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(selectedService, credential);
+        val result = this.authenticationSystemSupport.finalizeAuthenticationTransaction(selectedService, credential);
         val authentication = result.getAuthentication();
 
         val principal = authentication.getPrincipal();

@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,8 +21,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("MFA")
 public class DefaultMultifactorAuthenticationContextValidatorTests {
-
-
     @Test
     public void verifyContextFailsValidationWithNoProviders() {
         val applicationContext = new StaticApplicationContext();
@@ -30,8 +29,8 @@ public class DefaultMultifactorAuthenticationContextValidatorTests {
             "trusted_authn", applicationContext);
         val result = v.validate(
             MultifactorAuthenticationTestUtils.getAuthentication("casuser"),
-            "invalid-context", MultifactorAuthenticationTestUtils.getRegisteredService());
-        assertFalse(result.getKey());
+            "invalid-context", Optional.of(MultifactorAuthenticationTestUtils.getRegisteredService()));
+        assertFalse(result.isSuccess());
     }
 
     @Test
@@ -44,8 +43,8 @@ public class DefaultMultifactorAuthenticationContextValidatorTests {
         val result = v.validate(
             MultifactorAuthenticationTestUtils.getAuthentication("casuser"),
             "invalid-context",
-            MultifactorAuthenticationTestUtils.getRegisteredService());
-        assertFalse(result.getKey());
+            Optional.of(MultifactorAuthenticationTestUtils.getRegisteredService()));
+        assertFalse(result.isSuccess());
     }
 
     @Test
@@ -59,8 +58,8 @@ public class DefaultMultifactorAuthenticationContextValidatorTests {
             MultifactorAuthenticationTestUtils.getPrincipal("casuser"),
             CollectionUtils.wrap("authn_method", List.of("mfa-dummy")));
         val result = v.validate(authentication,
-            "mfa-dummy", MultifactorAuthenticationTestUtils.getRegisteredService());
-        assertTrue(result.getKey());
+            "mfa-dummy", Optional.of(MultifactorAuthenticationTestUtils.getRegisteredService()));
+        assertTrue(result.isSuccess());
     }
 
     @Test
@@ -74,8 +73,8 @@ public class DefaultMultifactorAuthenticationContextValidatorTests {
             MultifactorAuthenticationTestUtils.getPrincipal("casuser"),
             CollectionUtils.wrap("authn_method", List.of("mfa-other"), "trusted_authn", List.of("mfa-dummy")));
         val result = v.validate(authentication,
-            "mfa-dummy", MultifactorAuthenticationTestUtils.getRegisteredService());
-        assertTrue(result.getKey());
+            "mfa-dummy", Optional.of(MultifactorAuthenticationTestUtils.getRegisteredService()));
+        assertTrue(result.isSuccess());
     }
 
     @Test
@@ -89,14 +88,14 @@ public class DefaultMultifactorAuthenticationContextValidatorTests {
             MultifactorAuthenticationTestUtils.getPrincipal("casuser"),
             CollectionUtils.wrap("authn_method", List.of("mfa-other")));
         var result = v.validate(authentication,
-            "mfa-dummy", MultifactorAuthenticationTestUtils.getRegisteredService());
-        assertFalse(result.getKey());
+            "mfa-dummy", Optional.of(MultifactorAuthenticationTestUtils.getRegisteredService()));
+        assertFalse(result.isSuccess());
 
         val otherProvider = new TestMultifactorAuthenticationProvider();
         otherProvider.setId("mfa-other");
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext, otherProvider);
         result = v.validate(authentication,
-            "mfa-dummy", MultifactorAuthenticationTestUtils.getRegisteredService());
-        assertTrue(result.getKey());
+            "mfa-dummy", Optional.of(MultifactorAuthenticationTestUtils.getRegisteredService()));
+        assertTrue(result.isSuccess());
     }
 }

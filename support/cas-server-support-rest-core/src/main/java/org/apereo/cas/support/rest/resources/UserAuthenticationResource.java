@@ -69,7 +69,7 @@ public class UserAuthenticationResource {
             }
             val service = this.serviceFactory.createService(request);
             val authenticationResult =
-                authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
+                authenticationSystemSupport.finalizeAuthenticationTransaction(service, credential);
             if (authenticationResult == null) {
                 throw new FailedLoginException("Authentication failed");
             }

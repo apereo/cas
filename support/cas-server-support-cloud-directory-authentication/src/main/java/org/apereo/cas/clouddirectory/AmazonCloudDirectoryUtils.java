@@ -1,6 +1,7 @@
 package org.apereo.cas.clouddirectory;
 
-import org.apereo.cas.configuration.model.support.clouddirectory.CloudDirectoryProperties;
+
+import org.apereo.cas.configuration.model.support.clouddirectory.AmazonCloudDirectoryProperties;
 
 import lombok.experimental.UtilityClass;
 import lombok.val;
@@ -14,13 +15,13 @@ import software.amazon.awssdk.services.clouddirectory.model.TypedAttributeValue;
 import software.amazon.awssdk.services.clouddirectory.model.TypedAttributeValueRange;
 
 /**
- * This is {@link CloudDirectoryUtils}.
+ * This is {@link AmazonCloudDirectoryUtils}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
 @UtilityClass
-public class CloudDirectoryUtils {
+public class AmazonCloudDirectoryUtils {
 
     /**
      * Gets object ref by id.
@@ -73,7 +74,7 @@ public class CloudDirectoryUtils {
     public static ListIndexRequest getListIndexRequest(final String attributeName,
                                                        final String attributeValue,
                                                        final ObjectReference reference,
-                                                       final CloudDirectoryProperties cloud) {
+                                                       final AmazonCloudDirectoryProperties cloud) {
         val range = getObjectAttributeRanges(cloud.getSchemaArn(), cloud.getFacetName(),
             attributeName, attributeValue);
 

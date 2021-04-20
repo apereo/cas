@@ -27,6 +27,7 @@ import org.springframework.http.HttpMethod;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This is {@link BaseDuoSecurityAuthenticationService}.
@@ -63,6 +64,9 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
 
     @Override
     public DuoSecurityAuthenticationResult authenticate(final Credential credential) throws Exception {
+        if (credential instanceof DuoSecurityPasscodeCredential) {
+            return authenticateDuoPasscodeCredential(credential);
+        }
         if (credential instanceof DuoSecurityDirectCredential) {
             return authenticateDuoCredentialDirect(credential);
         }
@@ -213,7 +217,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
             val principal = resolvePrincipal(credential.getAuthentication().getPrincipal());
             val request = buildHttpPostAuthRequest();
             signHttpAuthRequest(request, principal.getId());
-            val result = (JSONObject) request.executeRequest();
+            val result = executeDuoApiRequest(request);
             LOGGER.debug("Duo authentication response: [{}]", result);
             if ("allow".equalsIgnoreCase(result.getString("result"))) {
                 return DuoSecurityAuthenticationResult.builder().success(true).username(crds.getId()).build();
@@ -225,6 +229,22 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
     }
 
     /**
+     * Execute duo api request.
+     *
+     * @param request the request
+     * @return the json object
+     * @throws Exception the exception
+     */
+    protected JSONObject executeDuoApiRequest(final Http request) throws Exception {
+        return (JSONObject) request.executeRequest();
+    }
+
+    private Http signHttpAuthRequest(final Http request, final Map<String, String> parameters) {
+        parameters.forEach(request::addParam);
+        return signHttpUserPreAuthRequest(request);
+    }
+
+    /**
      * Sign http request.
      *
      * @param request the request
@@ -233,13 +253,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
      */
     @SneakyThrows
     protected Http signHttpAuthRequest(final Http request, final String id) {
-        request.addParam("username", id);
-        request.addParam("factor", "auto");
-        request.addParam("device", "auto");
-        request.signRequest(
-            duoProperties.getDuoIntegrationKey(),
-            duoProperties.getDuoSecretKey());
-        return request;
+        return signHttpAuthRequest(request, Map.of("username", id, "factor", "auto", "device", "auto"));
     }
 
     /**
@@ -269,5 +283,22 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
             .findFirst()
             .map(r -> r.resolve(principal))
             .orElseThrow(() -> new IllegalStateException("Unable to resolve principal for multifactor authentication"));
+    }
+
+    private DuoSecurityAuthenticationResult authenticateDuoPasscodeCredential(final Credential crds) {
+        try {
+            val credential = DuoSecurityPasscodeCredential.class.cast(crds);
+            val request = buildHttpPostAuthRequest();
+            signHttpAuthRequest(request, Map.of("username", credential.getId().trim(),
+                "factor", "passcode", "passcode", credential.getPassword().trim()));
+            val result = executeDuoApiRequest(request);
+            LOGGER.debug("Duo authentication response: [{}]", result);
+            if ("allow".equalsIgnoreCase(result.getString("result"))) {
+                return DuoSecurityAuthenticationResult.builder().success(true).username(crds.getId()).build();
+            }
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        }
+        return DuoSecurityAuthenticationResult.builder().success(false).username(crds.getId()).build();
     }
 }

@@ -54,7 +54,7 @@ public class DefaultRequestedAuthenticationContextValidatorTests {
         val auth = MultifactorAuthenticationTestUtils.getAuthentication(CASUSER);
         when(assertion.getPrimaryAuthentication()).thenReturn(auth);
         val result = validator.validateAuthenticationContext(assertion, new MockHttpServletRequest());
-        assertTrue(result.getKey());
+        assertTrue(result.isSuccess());
     }
 
     @Test
@@ -78,7 +78,7 @@ public class DefaultRequestedAuthenticationContextValidatorTests {
         val auth = MultifactorAuthenticationTestUtils.getAuthentication(principal, AUTH_ATTRIBUTES);
         when(assertion.getPrimaryAuthentication()).thenReturn(auth);
         val result = validator.validateAuthenticationContext(assertion, new MockHttpServletRequest());
-        assertTrue(result.getKey());
+        assertTrue(result.isSuccess());
     }
 
     @Test
@@ -138,7 +138,7 @@ public class DefaultRequestedAuthenticationContextValidatorTests {
         val auth = MultifactorAuthenticationTestUtils.getAuthentication(principal, attrs);
         when(assertion.getPrimaryAuthentication()).thenReturn(auth);
         val result = validator.validateAuthenticationContext(assertion, new MockHttpServletRequest());
-        assertTrue(result.getKey());
+        assertTrue(result.isSuccess());
     }
 
     @Test
@@ -183,7 +183,7 @@ public class DefaultRequestedAuthenticationContextValidatorTests {
         val auth = MultifactorAuthenticationTestUtils.getAuthentication(principal, AUTH_ATTRIBUTES);
         when(assertion.getPrimaryAuthentication()).thenReturn(auth);
         val result = validator.validateAuthenticationContext(assertion, new MockHttpServletRequest());
-        assertTrue(result.getKey());
+        assertTrue(result.isSuccess());
     }
 
     @Test
@@ -237,7 +237,7 @@ public class DefaultRequestedAuthenticationContextValidatorTests {
         val auth = MultifactorAuthenticationTestUtils.getAuthentication(principal, AUTH_ATTRIBUTES);
         when(assertion.getPrimaryAuthentication()).thenReturn(auth);
         val result = validator.validateAuthenticationContext(assertion, new MockHttpServletRequest());
-        assertTrue(result.getKey());
+        assertTrue(result.isSuccess());
     }
 
     @Test

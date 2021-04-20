@@ -99,7 +99,7 @@ public class RegisteredServiceResource {
         LOGGER.debug("Received basic authentication request from credentials [{}]", credentials);
         val c = new UsernamePasswordCredential(credentials.getUsername(), credentials.getPassword());
         val serviceRequest = this.serviceFactory.createService(request);
-        val result = authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(serviceRequest, c);
+        val result = authenticationSystemSupport.finalizeAuthenticationTransaction(serviceRequest, c);
         if (result == null) {
             throw new BadRestRequestException("Unable to establish authentication using provided credentials for " + c.getUsername());
         }

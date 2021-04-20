@@ -68,7 +68,7 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator {
                 ? this.webApplicationServiceFactory.createService(redirectUri)
                 : null;
 
-            val authenticationResult = authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, casCredential);
+            val authenticationResult = authenticationSystemSupport.finalizeAuthenticationTransaction(service, casCredential);
             if (authenticationResult == null) {
                 throw new CredentialsException("Could not authenticate the provided credentials");
             }

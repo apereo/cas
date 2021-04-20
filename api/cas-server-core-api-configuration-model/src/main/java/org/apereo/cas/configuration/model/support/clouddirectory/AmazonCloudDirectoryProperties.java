@@ -22,8 +22,8 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("CloudDirectoryProperties")
-public class CloudDirectoryProperties extends BaseAmazonWebServicesProperties {
+@JsonFilter("AmazonCloudDirectoryProperties")
+public class AmazonCloudDirectoryProperties extends BaseAmazonWebServicesProperties {
 
     private static final long serialVersionUID = 6725526133973304269L;
 

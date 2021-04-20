@@ -1,14 +1,16 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.validation.Assertion;
+import org.apereo.cas.validation.AuthenticationContextValidationResult;
 import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.context.ApplicationContext;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,24 +24,36 @@ import java.util.Optional;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class DefaultRequestedAuthenticationContextValidator implements RequestedAuthenticationContextValidator<MultifactorAuthenticationProvider> {
+public class DefaultRequestedAuthenticationContextValidator implements RequestedAuthenticationContextValidator {
     private final ServicesManager servicesManager;
+
     private final MultifactorAuthenticationTriggerSelectionStrategy multifactorTriggerSelectionStrategy;
+
     private final MultifactorAuthenticationContextValidator authenticationContextValidator;
+
     private final ApplicationContext applicationContext;
 
+    private static AuthenticationContextValidationResult toSuccessfulResult() {
+        return AuthenticationContextValidationResult.builder().success(true).build();
+    }
+
     @Override
-    public Pair<Boolean, Optional<MultifactorAuthenticationProvider>> validateAuthenticationContext(final Assertion assertion,
-                                                                                                    final HttpServletRequest request) {
+    public AuthenticationContextValidationResult validateAuthenticationContext(final Assertion assertion, final HttpServletRequest request) {
         LOGGER.trace("Locating the primary authentication associated with this service request [{}]", assertion.getService());
         val registeredService = servicesManager.findServiceBy(assertion.getService());
         val authentication = assertion.getPrimaryAuthentication();
+        return validateAuthenticationContext(request, registeredService, authentication, assertion.getService());
+    }
 
-        val requestedContext = multifactorTriggerSelectionStrategy.resolve(request, registeredService,
-            authentication, assertion.getService());
+    @Override
+    public AuthenticationContextValidationResult validateAuthenticationContext(final HttpServletRequest request,
+                                                                               final RegisteredService registeredService,
+                                                                               final Authentication authentication,
+                                                                               final Service service) {
+        val requestedContext = multifactorTriggerSelectionStrategy.resolve(request, registeredService, authentication, service);
         if (requestedContext.isEmpty()) {
-            LOGGER.debug("No particular authentication context is required for this request");
-            return Pair.of(Boolean.TRUE, Optional.empty());
+            LOGGER.debug("No authentication context is required for this request");
+            return toSuccessfulResult();
         }
 
         val providerId = requestedContext.get();
@@ -51,25 +65,27 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
                 val bypassEvaluator = provider.getBypassEvaluator();
                 if (bypassEvaluator != null) {
                     if (!bypassEvaluator.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, request)) {
-                        LOGGER.debug("MFA provider [{}] has determined that it should be bypassed for this service request [{}]",
-                            providerId, assertion.getService());
+                        LOGGER.debug("MFA provider [{}] should be bypassed for this service request [{}]", providerId, service);
                         bypassEvaluator.rememberBypass(authentication, provider);
-                        return Pair.of(Boolean.TRUE, Optional.empty());
+                        return toSuccessfulResult();
                     }
                     if (bypassEvaluator.isMultifactorAuthenticationBypassed(authentication, providerId)) {
                         LOGGER.debug("Authentication attempt indicates that MFA is bypassed for this request for [{}]", requestedContext);
                         bypassEvaluator.rememberBypass(authentication, provider);
-                        return Pair.of(Boolean.TRUE, Optional.empty());
+                        return toSuccessfulResult();
                     }
                 }
             } else {
                 val failure = provider.getFailureModeEvaluator().evaluate(registeredService, provider);
                 if (failure != BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.CLOSED) {
-                    return Pair.of(Boolean.TRUE, Optional.empty());
+                    return toSuccessfulResult();
                 }
             }
         }
-
-        return authenticationContextValidator.validate(authentication, providerId, registeredService);
+        val result = authenticationContextValidator.validate(authentication, providerId, Optional.ofNullable(registeredService));
+        return AuthenticationContextValidationResult.builder()
+            .success(result.isSuccess())
+            .providerId(result.getProvider().map(MultifactorAuthenticationProvider::getId))
+            .build();
     }
 }

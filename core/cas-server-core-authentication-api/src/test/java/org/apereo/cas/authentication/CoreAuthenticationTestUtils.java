@@ -205,7 +205,7 @@ public class CoreAuthenticationTestUtils {
     public static AuthenticationResult getAuthenticationResult(final AuthenticationSystemSupport support, final Service service,
                                                                final Credential... credentials) throws AuthenticationException {
 
-        return support.handleAndFinalizeSingleAuthenticationTransaction(service, credentials);
+        return support.finalizeAuthenticationTransaction(service, credentials);
     }
 
     public static AuthenticationResult getAuthenticationResult() throws AuthenticationException {
