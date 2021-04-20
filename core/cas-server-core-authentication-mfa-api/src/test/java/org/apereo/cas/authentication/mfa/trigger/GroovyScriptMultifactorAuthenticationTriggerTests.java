@@ -71,7 +71,7 @@ public class GroovyScriptMultifactorAuthenticationTriggerTests extends BaseMulti
         assertFalse(result.isPresent());
 
         result = trigger.isActivated(authentication, null, this.httpRequest, mock(Service.class));
-        assertFalse(result.isPresent());
+        assertTrue(result.isPresent());
 
         result = trigger.isActivated(authentication, registeredService, this.httpRequest, null);
         assertFalse(result.isPresent());

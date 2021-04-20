@@ -1,10 +1,12 @@
 package org.apereo.cas.aws;
 
+import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
@@ -26,6 +28,7 @@ import software.amazon.awssdk.services.sts.model.GetSessionTokenRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * This is {@link AmazonSecurityTokenServiceEndpoint}.
@@ -68,7 +71,7 @@ public class AmazonSecurityTokenServiceEndpoint extends BaseCasActuatorEndpoint 
         if (credential == null || credential.isEmpty()) {
             return ResponseEntity.badRequest().body("No credentials are provided or extracted to authenticate the request");
         }
-        val authenticationResult = authenticationSystemSupport.finalizeAuthenticationTransaction(credential.toArray(Credential[]::new));
+        val authenticationResult = getAuthenticationResult(credential);
         if (authenticationResult == null) {
             LOGGER.error("Unable to validate the authentication credentials");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed");
@@ -103,5 +106,14 @@ public class AmazonSecurityTokenServiceEndpoint extends BaseCasActuatorEndpoint 
         val result = new StringBuilder("[default]\n");
         properties.forEach((key, value) -> result.append(String.format("%s=%s%n", key, value)));
         return ResponseEntity.ok(result.toString());
+    }
+
+    private AuthenticationResult getAuthenticationResult(final List<Credential> credential) {
+        try {
+            return authenticationSystemSupport.finalizeAuthenticationTransaction(credential.toArray(Credential[]::new));
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        }
+        return null;
     }
 }
