@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
@@ -85,6 +86,19 @@ public class AmazonSecurityTokenServiceEndpoint extends BaseCasActuatorEndpoint 
         }
 
         val amz = casProperties.getAmazonSts();
+        val principal = authenticationResult.getAuthentication().getPrincipal();
+        if (StringUtils.isNotBlank(amz.getPrincipalAttributeName())) {
+            if (!principal.getAttributes().containsKey(amz.getPrincipalAttributeName())) {
+                LOGGER.error("Failed to locate authorization attribute for principal [{}]", principal);
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authorization failure");
+            }
+            val attributeValues = principal.getAttributes().get(amz.getPrincipalAttributeName());
+            if (attributeValues.stream().noneMatch(value -> RegexUtils.find(amz.getPrincipalAttributeValue(), value.toString()))) {
+                LOGGER.error("Failed to locate authorization attribute value for principal [{}]", principal);
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authorization failure");
+            }
+        }
+
         val credentials = ChainingAWSCredentialsProvider.getInstance(amz.getCredentialAccessKey(),
             amz.getCredentialSecretKey(), amz.getProfilePath(), amz.getProfileName());
 

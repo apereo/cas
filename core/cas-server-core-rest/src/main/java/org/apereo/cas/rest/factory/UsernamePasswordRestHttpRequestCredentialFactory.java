@@ -25,7 +25,7 @@ import java.util.List;
 @Getter
 @Setter
 public class UsernamePasswordRestHttpRequestCredentialFactory implements RestHttpRequestCredentialFactory {
-    private int order = Integer.MAX_VALUE;
+    private int order = Integer.MIN_VALUE;
 
     @Override
     public List<Credential> fromRequest(final HttpServletRequest request, final MultiValueMap<String, String> requestBody) {

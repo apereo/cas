@@ -34,10 +34,10 @@ public class ServiceRegistryCacheProperties implements Serializable {
     /**
      * Services cache size specifies the maximum number of entries the cache may contain.
      */
-    private long cacheSize = 1000L;
+    private long cacheSize = 2000L;
 
     /**
      * Services cache capacity sets the minimum total size for the internal data structures.
      */
-    private int cacheCapacity = 1000;
+    private int cacheCapacity = 2000;
 }

@@ -57,12 +57,6 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
     from javadoc.destinationDir
 }
 
-task cleanLogs(description: "Clean build log files") {
-    doLast {
-        delete fileTree(dir: project.projectDir, includes: ["**/*.log", "**/*.gz", "**/*.log.gz", "**/*.orig"])
-    }
-}
-
 task showConfiguration {
     description "Shows the configuration used by the build"
     doLast() {
@@ -99,4 +93,3 @@ task outputDependenciesWithoutLicense(description: "Output dependencies without 
     }
 }
 
-clean.dependsOn("cleanLogs")

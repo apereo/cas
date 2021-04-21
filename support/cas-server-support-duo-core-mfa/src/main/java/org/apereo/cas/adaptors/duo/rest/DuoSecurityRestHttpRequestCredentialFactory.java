@@ -29,7 +29,12 @@ public class DuoSecurityRestHttpRequestCredentialFactory implements RestHttpRequ
      * Parameter name expected in the request body to contain the token
      * based on which credential will be created.
      */
-    public static final String PARAMETER_NAME_OTP = "duootp";
+    public static final String PARAMETER_NAME_PASSCODE = "passcode";
+
+    /**
+     * Identifier for the duo mfa provider.
+     */
+    public static final String PARAMETER_NAME_PROVIDER = "provider";
 
     @Override
     public List<Credential> fromRequest(final HttpServletRequest request, final MultiValueMap<String, String> requestBody) {
@@ -37,9 +42,14 @@ public class DuoSecurityRestHttpRequestCredentialFactory implements RestHttpRequ
             LOGGER.debug("Skipping [{}] because the request body is null or empty", getClass().getSimpleName());
             return new ArrayList<>(0);
         }
+        if (!requestBody.containsKey(RestHttpRequestCredentialFactory.PARAMETER_USERNAME) || !requestBody.containsKey(PARAMETER_NAME_PASSCODE)) {
+            LOGGER.debug("No username or passcode provided");
+            return new ArrayList<>(0);
+        }
         val username = FunctionUtils.throwIfBlank(requestBody.getFirst(RestHttpRequestCredentialFactory.PARAMETER_USERNAME));
-        val token = FunctionUtils.throwIfBlank(requestBody.getFirst(PARAMETER_NAME_OTP));
-        val providerId = StringUtils.defaultString(requestBody.getFirst(PARAMETER_NAME_OTP),
+        val token = FunctionUtils.throwIfBlank(requestBody.getFirst(PARAMETER_NAME_PASSCODE));
+        
+        val providerId = StringUtils.defaultString(requestBody.getFirst(PARAMETER_NAME_PROVIDER),
             DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
         return CollectionUtils.wrap(new DuoSecurityPasscodeCredential(username, token, providerId));
     }

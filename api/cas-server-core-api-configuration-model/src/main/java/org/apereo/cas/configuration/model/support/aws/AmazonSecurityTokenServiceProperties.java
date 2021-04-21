@@ -21,4 +21,18 @@ import lombok.experimental.Accessors;
 public class AmazonSecurityTokenServiceProperties extends BaseAmazonWebServicesProperties {
     private static final long serialVersionUID = 5426637051495147084L;
 
+    /**
+     * Attribute name that must be found and resolved
+     * for the principal to authorize the user to
+     * proceed with obtaining credentials.
+     */
+    private String principalAttributeName;
+
+    /**
+     * Attribute value, defined as a regex pattern
+     * that must be found and resolved
+     * for the principal to authorize the user to
+     * proceed with obtaining credentials.
+     */
+    private String principalAttributeValue;
 }
