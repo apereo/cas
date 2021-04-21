@@ -1205,7 +1205,7 @@ public class Base64 {
 	 * @throws java.io.IOException
 	 *             if there is an error
 	 * @throws NullPointerException
-	 *             if <tt>s</tt> is null
+	 *             if s is null
 	 * @since 1.4
 	 */
 	public static byte[] decode(String s, int options)
@@ -1282,7 +1282,7 @@ public class Base64 {
 
 	/**
 	 * A {@link Base64.OutputStream} will write data to another
-	 * <tt>java.io.OutputStream</tt>, given in the constructor, and
+	 * java.io.OutputStream, given in the constructor, and
 	 * encode/decode to/from Base64 notation on the fly.
 	 * 
 	 * @see Base64
@@ -1305,7 +1305,7 @@ public class Base64 {
 		 * Constructs a {@link Base64.OutputStream} in ENCODE mode.
 		 * 
 		 * @param out
-		 *            the <tt>java.io.OutputStream</tt> to which data will be
+		 *            the java.io.OutputStream to which data will be
 		 *            written.
 		 * @since 1.3
 		 */
@@ -1328,7 +1328,7 @@ public class Base64 {
 		 * Example: <code>new Base64.OutputStream( out, Base64.ENCODE )</code>
 		 * 
 		 * @param out
-		 *            the <tt>java.io.OutputStream</tt> to which data will be
+		 *            the java.io.OutputStream to which data will be
 		 *            written.
 		 * @param options
 		 *            Specified options.
