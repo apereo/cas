@@ -70,15 +70,23 @@ CAS test coverage across all modules in the codebase has now reached `91%` and c
 Initial groundwork to integrate the OpenID Connect conformance test suite with the CAS CI to then
 ensure compatibility and compliance of the CAS implementation with the OpenID Connect test suite.
 
-### AWS CLI Integration
+### AWS Integration
 
-A dedicated [integration module](../integration/AWS-CLI-Integration.html) and endpoint is 
-now available to obtain temporary AWS access credentials.
+A dedicated [integration module](../integration/AWS-Integration.html) and endpoint is 
+now available to obtain temporary AWS access credentials from AWS STS.
 
 ### Duo Security Passcodes
 
 Multifactor authentication with [Duo Security](../mfa/DuoSecurity-Authentication.html) is now given the ability to support passcodes
 as credentials, mainly for CLI or REST-based authentication requests.
+ 
+### Multifactor Authentication via REST Protocol
+                                                
+Operations provided by the [CAS REST Protocol](../protocol/REST-Protocol.html) that allow one to 
+[authenticate credentials](../protocol/REST-Protocol-CredentialAuthentication.html)
+or [generate ticket-granting tickets](../protocol/REST-Protocol-Request-TicketGrantingTicket.html) are 
+now put through multifactor authentication, if the authentication request is deemed eligible
+via the configured [multifactor authentication triggers](../mfa/Configuring-Multifactor-Authentication-Triggers.html).
 
 ## Other Stuff
 

@@ -1,6 +1,9 @@
 package org.apereo.cas.adaptors.duo.rest;
 
+import org.apereo.cas.adaptors.duo.authn.DuoSecurityDirectCredential;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityPasscodeCredential;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
 
 import lombok.val;
@@ -34,9 +37,15 @@ public class DuoSecurityRestHttpRequestCredentialFactoryTests {
 
         body.put(DuoSecurityRestHttpRequestCredentialFactory.PARAMETER_NAME_PASSCODE, List.of("123456"));
         body.put(DuoSecurityRestHttpRequestCredentialFactory.PARAMETER_NAME_PROVIDER, List.of("custom-duo"));
-        val credentials = factory.fromRequest(request, body);
+        var credentials = factory.fromRequest(request, body);
         assertFalse(credentials.isEmpty());
-        val credential = (DuoSecurityPasscodeCredential) credentials.get(0);
+        var credential = (DuoSecurityPasscodeCredential) credentials.get(0);
         assertEquals(credential.getProviderId(), "custom-duo");
+
+        credentials = factory.fromAuthentication(request, body, CoreAuthenticationTestUtils.getAuthentication(),
+            new TestMultifactorAuthenticationProvider());
+        val directCredential = (DuoSecurityDirectCredential) credentials.get(0);
+        assertEquals(TestMultifactorAuthenticationProvider.ID, directCredential.getProviderId());
+        assertNotNull(directCredential.getPrincipal());
     }
 }

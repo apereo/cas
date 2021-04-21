@@ -18,6 +18,8 @@ import org.apereo.cas.rest.factory.UsernamePasswordRestHttpRequestCredentialFact
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.rest.resources.UserAuthenticationResource;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.validation.AuthenticationContextValidationResult;
+import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -64,6 +66,9 @@ public class UserAuthenticationResourceTests {
     @Mock
     private MultifactorAuthenticationTriggerSelectionStrategy multifactorTriggerSelectionStrategy;
 
+    @Mock
+    private RequestedAuthenticationContextValidator requestedContextValidator;
+
     private RestHttpRequestCredentialFactory httpRequestCredentialFactory;
 
     @InjectMocks
@@ -93,7 +98,8 @@ public class UserAuthenticationResourceTests {
             new DefaultUserAuthenticationResourceEntityResponseFactory(),
             new GenericApplicationContext(),
             multifactorTriggerSelectionStrategy,
-            servicesManager);
+            servicesManager,
+            requestedContextValidator);
 
         this.mockMvc = MockMvcBuilders.standaloneSetup(this.userAuthenticationResource)
             .defaultRequest(get("/")
@@ -107,7 +113,8 @@ public class UserAuthenticationResourceTests {
         val builder = new DefaultAuthenticationResultBuilder().collect(CoreAuthenticationTestUtils.getAuthentication());
         val result = builder.build(new DefaultPrincipalElectionStrategy());
         when(authenticationSupport.handleInitialAuthenticationTransaction(any(), any())).thenReturn(builder);
-
+        when(requestedContextValidator.validateAuthenticationContext(any(), any(), any(), any()))
+            .thenReturn(AuthenticationContextValidationResult.builder().success(false).build());
         when(multifactorTriggerSelectionStrategy.resolve(any(), any(), any(), any()))
             .thenReturn(Optional.of(new TestMultifactorAuthenticationProvider("mfa-unknown")));
 
@@ -123,7 +130,8 @@ public class UserAuthenticationResourceTests {
         val result = builder.build(new DefaultPrincipalElectionStrategy());
         when(authenticationSupport.finalizeAuthenticationTransaction(any(), anyCollection())).thenReturn(result);
         when(authenticationSupport.handleInitialAuthenticationTransaction(any(), any())).thenReturn(builder);
-
+        when(requestedContextValidator.validateAuthenticationContext(any(), any(), any(), any()))
+            .thenReturn(AuthenticationContextValidationResult.builder().success(false).build());
         when(multifactorTriggerSelectionStrategy.resolve(any(), any(), any(), any()))
             .thenReturn(Optional.of(new TestMultifactorAuthenticationProvider()));
 
@@ -140,9 +148,9 @@ public class UserAuthenticationResourceTests {
         when(authenticationSupport.finalizeAuthenticationTransaction(any(), anyCollection())).thenReturn(result);
         when(authenticationSupport.handleInitialAuthenticationTransaction(any(), any())).thenReturn(builder);
         when(authenticationSupport.finalizeAllAuthenticationTransactions(any(), any())).thenReturn(result);
-
+        when(requestedContextValidator.validateAuthenticationContext(any(), any(), any(), any()))
+            .thenReturn(AuthenticationContextValidationResult.builder().success(false).build());
         when(multifactorTriggerSelectionStrategy.resolve(any(), any(), any(), any())).thenReturn(Optional.empty());
-
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
             .param("username", "casuser")
             .param("password", "Mellon"))

@@ -28,6 +28,7 @@ import org.apereo.cas.support.rest.resources.TicketStatusResource;
 import org.apereo.cas.support.rest.resources.UserAuthenticationResource;
 import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
 import org.apereo.cas.web.ProtocolEndpointConfigurer;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
@@ -61,6 +62,10 @@ public class CasRestConfiguration {
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
 
+    @Autowired
+    @Qualifier("requestedContextValidator")
+    private ObjectProvider<RequestedAuthenticationContextValidator> requestedContextValidator;
+    
     @Autowired
     @Qualifier("centralAuthenticationService")
     private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
@@ -155,7 +160,8 @@ public class CasRestConfiguration {
             webApplicationServiceFactory.getObject(),
             userAuthenticationResourceEntityResponseFactory(),
             applicationContext, multifactorTriggerSelectionStrategy.getObject(),
-            servicesManager.getObject());
+            servicesManager.getObject(),
+            requestedContextValidator.getObject());
     }
 
     @Bean
