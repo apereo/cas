@@ -131,7 +131,7 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
             val duoAuthenticationService = provider.getDuoAuthenticationService();
             val creds = DuoSecurityDirectCredential.class.cast(credential);
             if (duoAuthenticationService.authenticate(creds).isSuccess()) {
-                val principal = resolvePrincipal(creds.getAuthentication().getPrincipal());
+                val principal = resolvePrincipal(creds.getPrincipal());
                 LOGGER.debug("Duo has successfully authenticated [{}]", principal.getId());
                 return createHandlerResult(credential, principal, new ArrayList<>(0));
             }

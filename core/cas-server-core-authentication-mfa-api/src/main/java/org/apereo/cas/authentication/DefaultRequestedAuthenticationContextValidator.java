@@ -11,6 +11,7 @@ import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 
 import javax.servlet.http.HttpServletRequest;
@@ -50,27 +51,19 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
                                                                                final RegisteredService registeredService,
                                                                                final Authentication authentication,
                                                                                final Service service) {
-        val requestedContext = multifactorTriggerSelectionStrategy.resolve(request, registeredService, authentication, service);
-        if (requestedContext.isEmpty()) {
-            LOGGER.debug("No authentication context is required for this request");
-            return toSuccessfulResult();
-        }
-
-        val providerId = requestedContext.get();
-        val providerResult = MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(providerId, applicationContext);
-
+        val providerResult = multifactorTriggerSelectionStrategy.resolve(request, registeredService, authentication, service);
         if (providerResult.isPresent()) {
             val provider = providerResult.get();
             if (provider.isAvailable(registeredService)) {
                 val bypassEvaluator = provider.getBypassEvaluator();
                 if (bypassEvaluator != null) {
                     if (!bypassEvaluator.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, request)) {
-                        LOGGER.debug("MFA provider [{}] should be bypassed for this service request [{}]", providerId, service);
+                        LOGGER.debug("MFA provider [{}] should be bypassed for this service request [{}]", provider, service);
                         bypassEvaluator.rememberBypass(authentication, provider);
                         return toSuccessfulResult();
                     }
-                    if (bypassEvaluator.isMultifactorAuthenticationBypassed(authentication, providerId)) {
-                        LOGGER.debug("Authentication attempt indicates that MFA is bypassed for this request for [{}]", requestedContext);
+                    if (bypassEvaluator.isMultifactorAuthenticationBypassed(authentication, provider.getId())) {
+                        LOGGER.debug("Authentication attempt indicates that MFA is bypassed for this request for [{}]", provider);
                         bypassEvaluator.rememberBypass(authentication, provider);
                         return toSuccessfulResult();
                     }
@@ -82,7 +75,10 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
                 }
             }
         }
-        val result = authenticationContextValidator.validate(authentication, providerId, Optional.ofNullable(registeredService));
+        val result = authenticationContextValidator.validate(authentication,
+            providerResult.map(MultifactorAuthenticationProvider::getId).orElse(StringUtils.EMPTY),
+            Optional.ofNullable(registeredService));
+
         return AuthenticationContextValidationResult.builder()
             .success(result.isSuccess())
             .providerId(result.getProvider().map(MultifactorAuthenticationProvider::getId))

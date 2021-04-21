@@ -109,7 +109,7 @@ public class DuoSecurityAuthenticationHandlerTests {
         val handler = new DuoSecurityAuthenticationHandler(null,
             mock(ServicesManager.class), PrincipalFactoryUtils.newPrincipalFactory(),
             provider, 0, List.of(MultifactorAuthenticationPrincipalResolver.identical()));
-        val credential = new DuoSecurityDirectCredential(authentication, provider.getId());
+        val credential = new DuoSecurityDirectCredential(authentication.getPrincipal(), provider.getId());
         val result = handler.authenticate(credential);
         assertNotNull(result);
     }
@@ -181,7 +181,7 @@ public class DuoSecurityAuthenticationHandlerTests {
         val handler = new DuoSecurityAuthenticationHandler(null,
             mock(ServicesManager.class), PrincipalFactoryUtils.newPrincipalFactory(),
             provider, 0, List.of(MultifactorAuthenticationPrincipalResolver.identical()));
-        val credential = new DuoSecurityDirectCredential(CoreAuthenticationTestUtils.getAuthentication(), provider.getId());
+        val credential = new DuoSecurityDirectCredential(CoreAuthenticationTestUtils.getAuthentication().getPrincipal(), provider.getId());
         assertThrows(FailedLoginException.class, () -> handler.authenticate(credential));
     }
 

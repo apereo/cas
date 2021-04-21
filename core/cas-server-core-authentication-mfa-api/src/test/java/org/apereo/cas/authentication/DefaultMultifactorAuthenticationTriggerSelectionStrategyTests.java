@@ -15,20 +15,20 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * This is {@link DefaultMultifactorTriggerSelectionStrategyTests}.
+ * This is {@link DefaultMultifactorAuthenticationTriggerSelectionStrategyTests}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
  */
 @Tag("MFA")
-public class DefaultMultifactorTriggerSelectionStrategyTests {
+public class DefaultMultifactorAuthenticationTriggerSelectionStrategyTests {
     @Test
     public void verifyOperation() {
         val trigger = mock(MultifactorAuthenticationTrigger.class);
         when(trigger.isActivated(any(), any(), any(), any()))
             .thenReturn(Optional.of(new TestMultifactorAuthenticationProvider()));
 
-        val strategy = new DefaultMultifactorTriggerSelectionStrategy(List.of(trigger));
+        val strategy = new DefaultMultifactorAuthenticationTriggerSelectionStrategy(List.of(trigger));
         val result = strategy.resolve(new MockHttpServletRequest(), MultifactorAuthenticationTestUtils.getRegisteredService(),
             MultifactorAuthenticationTestUtils.getAuthentication("casuser"),
             MultifactorAuthenticationTestUtils.getService("https://www.example.org"));
