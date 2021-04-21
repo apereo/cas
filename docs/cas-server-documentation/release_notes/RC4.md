@@ -70,6 +70,16 @@ CAS test coverage across all modules in the codebase has now reached `91%` and c
 Initial groundwork to integrate the OpenID Connect conformance test suite with the CAS CI to then
 ensure compatibility and compliance of the CAS implementation with the OpenID Connect test suite.
 
+### AWS CLI Integration
+
+A dedicated [integration module](../integration/AWS-CLI-Integration.html) and endpoint is 
+now available to obtain temporary AWS access credentials.
+
+### Duo Security Passcodes
+
+Multifactor authentication with [Duo Security](../mfa/DuoSecurity-Authentication.html) is now given the ability to support passcodes
+as credentials, mainly for CLI or REST-based authentication requests.
+
 ## Other Stuff
 
 - CAS CI builds are updated to ensure all web application types can be deployed successfully via external servlet containers.
@@ -80,6 +90,9 @@ ensure compatibility and compliance of the CAS implementation with the OpenID Co
 - Minor improvements to SAML2 SLO responses to handle and recognize `Asynchronous` logout requests.
 - Puppeteer tests to ensure actuator endpoints can produce the expected output for `GET/READ` operations.
 - Puppeteer tests to password reset flows with security questions.
+- Git-based integrations are given the option to specify the HTTP client used for remote operations.
+- JDBC/JPA integrations are given the option to specify the database `fetch-size`. Furthermore, a number of JPA collections 
+  and relationships associated with registered services are now marked as lazy to improve query performance for load operations.
 
 ## Library Upgrades
 

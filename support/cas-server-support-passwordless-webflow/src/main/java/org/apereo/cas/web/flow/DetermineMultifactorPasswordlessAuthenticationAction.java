@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionStrategy;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -15,6 +16,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
@@ -76,7 +78,7 @@ public class DetermineMultifactorPasswordlessAuthenticationAction extends Abstra
         populateContextWithAuthenticationResult(requestContext, auth, service);
 
         LOGGER.debug("Proceed with multifactor authentication flow [{}] for user [{}]", result.get(), user);
-        return new EventFactorySupport().event(this, result.get());
+        return new EventFactorySupport().event(this, result.map(MultifactorAuthenticationProvider::getId).orElse(StringUtils.EMPTY));
     }
 
     /**
@@ -106,8 +108,8 @@ public class DetermineMultifactorPasswordlessAuthenticationAction extends Abstra
      * @param service        the service
      * @return the optional
      */
-    protected Optional<String> resolveMultifactorAuthenticationProvider(final RequestContext requestContext, final Authentication auth,
-                                                                        final WebApplicationService service) {
+    protected Optional<MultifactorAuthenticationProvider> resolveMultifactorAuthenticationProvider(final RequestContext requestContext, final Authentication auth,
+                                                                                                   final WebApplicationService service) {
         try {
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
             val registeredService = WebUtils.getRegisteredService(requestContext);

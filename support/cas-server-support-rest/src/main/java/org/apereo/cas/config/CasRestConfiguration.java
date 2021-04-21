@@ -6,6 +6,7 @@ import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditTrailConstants;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionStrategy;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.rest.audit.RestResponseEntityAuditResourceResolver;
@@ -19,6 +20,7 @@ import org.apereo.cas.rest.factory.TicketGrantingTicketResourceEntityResponseFac
 import org.apereo.cas.rest.factory.UserAuthenticationResourceEntityResponseFactory;
 import org.apereo.cas.rest.plan.DefaultServiceTicketResourceEntityResponseFactoryPlan;
 import org.apereo.cas.rest.plan.ServiceTicketResourceEntityResponseFactoryConfigurer;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.rest.resources.RestProtocolConstants;
 import org.apereo.cas.support.rest.resources.ServiceTicketResource;
 import org.apereo.cas.support.rest.resources.TicketGrantingTicketResource;
@@ -55,6 +57,9 @@ import java.util.List;
 @Configuration("casRestConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasRestConfiguration {
+    @Autowired
+    @Qualifier("servicesManager")
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("centralAuthenticationService")
@@ -76,6 +81,10 @@ public class CasRestConfiguration {
     @Qualifier("argumentExtractor")
     private ObjectProvider<ArgumentExtractor> argumentExtractor;
 
+    @Autowired
+    @Qualifier("defaultMultifactorTriggerSelectionStrategy")
+    private ObjectProvider<MultifactorAuthenticationTriggerSelectionStrategy> multifactorTriggerSelectionStrategy;
+    
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
@@ -145,7 +154,8 @@ public class CasRestConfiguration {
             restHttpRequestCredentialFactory,
             webApplicationServiceFactory.getObject(),
             userAuthenticationResourceEntityResponseFactory(),
-            applicationContext);
+            applicationContext, multifactorTriggerSelectionStrategy.getObject(),
+            servicesManager.getObject());
     }
 
     @Bean

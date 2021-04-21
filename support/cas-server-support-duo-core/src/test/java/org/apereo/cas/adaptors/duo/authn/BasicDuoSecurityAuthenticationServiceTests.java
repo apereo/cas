@@ -99,7 +99,7 @@ public class BasicDuoSecurityAuthenticationServiceTests {
             httpClient, List.of(MultifactorAuthenticationPrincipalResolver.identical()), Caffeine.newBuilder().build());
         try (val webServer = new MockWebServer(6342)) {
             webServer.start();
-            val creds = new DuoSecurityDirectCredential(RegisteredServiceTestUtils.getAuthentication(), "mfa-duo");
+            val creds = new DuoSecurityDirectCredential(RegisteredServiceTestUtils.getAuthentication().getPrincipal(), "mfa-duo");
             assertFalse(service.authenticate(creds).isSuccess());
         }
     }

@@ -1,6 +1,8 @@
 package org.apereo.cas.rest.factory;
 
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -8,7 +10,6 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.util.MultiValueMap;
 
 import javax.servlet.http.HttpServletRequest;
-
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,6 +46,19 @@ public class ChainingRestHttpRequestCredentialFactory implements RestHttpRequest
             .stream()
             .sorted(Comparator.comparing(RestHttpRequestCredentialFactory::getOrder))
             .map(f -> f.fromRequest(request, requestBody))
+            .flatMap(List::stream)
+            .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Credential> fromAuthentication(final HttpServletRequest request, final MultiValueMap<String, String> requestBody,
+                                               final Authentication authentication,
+                                               final MultifactorAuthenticationProvider provider) {
+        AnnotationAwareOrderComparator.sort(this.chain);
+        return this.chain
+            .stream()
+            .sorted(Comparator.comparing(RestHttpRequestCredentialFactory::getOrder))
+            .map(f -> f.fromAuthentication(request, requestBody, authentication, provider))
             .flatMap(List::stream)
             .collect(Collectors.toList());
     }

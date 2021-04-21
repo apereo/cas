@@ -214,7 +214,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
     protected DuoSecurityAuthenticationResult authenticateDuoCredentialDirect(final Credential crds) {
         try {
             val credential = DuoSecurityDirectCredential.class.cast(crds);
-            val principal = resolvePrincipal(credential.getAuthentication().getPrincipal());
+            val principal = resolvePrincipal(credential.getPrincipal());
             val request = buildHttpPostAuthRequest();
             signHttpAuthRequest(request, principal.getId());
             val result = executeDuoApiRequest(request);
