@@ -24,8 +24,6 @@ public abstract class BaseAbstractMultifactorAuthenticationProviderTests {
         assertNotNull(p.getId());
         assertNotNull(p.getFriendlyName());
         assertEquals(BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.UNDEFINED, p.getFailureMode());
-        val id = p.createUniqueId();
-        assertTrue(p.validateId(id));
     }
 
     @Test

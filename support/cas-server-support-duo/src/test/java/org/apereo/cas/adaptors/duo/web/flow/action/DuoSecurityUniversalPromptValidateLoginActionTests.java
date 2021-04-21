@@ -152,8 +152,6 @@ public class DuoSecurityUniversalPromptValidateLoginActionTests extends BaseCasW
 
             val provider = mock(DuoSecurityMultifactorAuthenticationProvider.class);
             when(provider.getId()).thenReturn(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
-            when(provider.createUniqueId()).thenReturn(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
-            when(provider.validateId(anyString())).thenReturn(Boolean.TRUE);
             when(provider.getDuoAuthenticationService()).thenReturn(duoAuthService);
             val bean = mock(MultifactorAuthenticationProviderBean.class);
             when(bean.getProvider(anyString())).thenReturn(provider);

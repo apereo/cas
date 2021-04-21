@@ -32,7 +32,8 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
 
     private final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver;
 
-    public DuoSecurityAuthenticationHandler(final String name, final ServicesManager servicesManager,
+    public DuoSecurityAuthenticationHandler(final String name,
+                                            final ServicesManager servicesManager,
                                             final PrincipalFactory principalFactory,
                                             final DuoSecurityMultifactorAuthenticationProvider provider,
                                             final Integer order,
@@ -46,7 +47,7 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
     public boolean supports(final Credential credential) {
         if (credential instanceof MultifactorAuthenticationCredential) {
             val id = ((MultifactorAuthenticationCredential) credential).getProviderId();
-            return provider.validateId(id);
+            return provider.matches(id);
         }
         return false;
     }

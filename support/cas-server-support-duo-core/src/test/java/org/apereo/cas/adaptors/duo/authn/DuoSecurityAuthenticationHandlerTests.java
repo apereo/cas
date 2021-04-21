@@ -34,8 +34,6 @@ public class DuoSecurityAuthenticationHandlerTests {
         val provider = mock(DuoSecurityMultifactorAuthenticationProvider.class);
         when(provider.getId()).thenReturn(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
         when(provider.getDuoAuthenticationService()).thenReturn(duoService);
-        when(provider.createUniqueId()).thenReturn(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
-        when(provider.validateId(anyString())).thenReturn(Boolean.TRUE);
 
         val handler = new DuoSecurityAuthenticationHandler(null,
             mock(ServicesManager.class), PrincipalFactoryUtils.newPrincipalFactory(),
@@ -67,8 +65,6 @@ public class DuoSecurityAuthenticationHandlerTests {
         val provider = mock(DuoSecurityMultifactorAuthenticationProvider.class);
         when(provider.getId()).thenReturn(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
         when(provider.getDuoAuthenticationService()).thenReturn(duoService);
-        when(provider.createUniqueId()).thenReturn(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
-        when(provider.validateId(anyString())).thenReturn(Boolean.TRUE);
 
         val handler = new DuoSecurityAuthenticationHandler(null,
             mock(ServicesManager.class), PrincipalFactoryUtils.newPrincipalFactory(),
@@ -90,8 +86,6 @@ public class DuoSecurityAuthenticationHandlerTests {
         val provider = mock(DuoSecurityMultifactorAuthenticationProvider.class);
         when(provider.getId()).thenReturn(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
         when(provider.getDuoAuthenticationService()).thenReturn(duoService);
-        when(provider.createUniqueId()).thenReturn(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
-        when(provider.validateId(anyString())).thenReturn(Boolean.TRUE);
 
         val handler = new DuoSecurityAuthenticationHandler(null,
             mock(ServicesManager.class), PrincipalFactoryUtils.newPrincipalFactory(),
@@ -202,7 +196,6 @@ public class DuoSecurityAuthenticationHandlerTests {
         val provider = mock(DuoSecurityMultifactorAuthenticationProvider.class);
         when(provider.getId()).thenReturn(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
         when(provider.getDuoAuthenticationService()).thenReturn(duoService);
-        when(provider.validateId(anyString())).thenReturn(Boolean.TRUE);
 
         val handler = new DuoSecurityAuthenticationHandler(null,
             mock(ServicesManager.class), PrincipalFactoryUtils.newPrincipalFactory(),

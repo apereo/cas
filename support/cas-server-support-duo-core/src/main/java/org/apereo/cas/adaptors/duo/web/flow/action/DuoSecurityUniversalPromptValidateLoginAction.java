@@ -63,7 +63,7 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
 
                 val credential = new DuoSecurityUniversalPromptCredential(duoCode, authentication);
                 val provider = duoProviderBean.getProvider(duoSecurityIdentifier);
-                credential.setProviderId(provider.createUniqueId());
+                credential.setProviderId(provider.getId());
                 WebUtils.putCredential(requestContext, credential);
 
                 val authenticationResultBuilder = (AuthenticationResultBuilder) properties.get("authenticationResultBuilder");

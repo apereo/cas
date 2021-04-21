@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.duo.rest;
 
+import org.apereo.cas.adaptors.duo.authn.DuoSecurityPasscodeCredential;
 import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
 
 import lombok.val;
@@ -24,11 +25,18 @@ public class DuoSecurityRestHttpRequestCredentialFactoryTests {
     public void verifyOperation() {
         val factory = new DuoSecurityRestHttpRequestCredentialFactory();
         val request = new MockHttpServletRequest();
+
         val body = new LinkedMultiValueMap<String, String>();
         assertTrue(factory.fromRequest(request, body).isEmpty());
+
         body.put(RestHttpRequestCredentialFactory.PARAMETER_USERNAME, List.of("user"));
-        assertThrows(IllegalArgumentException.class, () -> factory.fromRequest(request, body));
-        body.put(DuoSecurityRestHttpRequestCredentialFactory.PARAMETER_NAME_OTP, List.of("123456"));
-        assertFalse(factory.fromRequest(request, body).isEmpty());
+        assertTrue(factory.fromRequest(request, body).isEmpty());
+
+        body.put(DuoSecurityRestHttpRequestCredentialFactory.PARAMETER_NAME_PASSCODE, List.of("123456"));
+        body.put(DuoSecurityRestHttpRequestCredentialFactory.PARAMETER_NAME_PROVIDER, List.of("custom-duo"));
+        val credentials = factory.fromRequest(request, body);
+        assertFalse(credentials.isEmpty());
+        val credential = (DuoSecurityPasscodeCredential) credentials.get(0);
+        assertEquals(credential.getProviderId(), "custom-duo");
     }
 }

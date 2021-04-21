@@ -14,7 +14,7 @@ Support is enabled by including the following dependency in the overlay:
 
 ## Configuration
 
-{% include casproperties.html properties="cas.aamazon-sts." %}
+{% include casproperties.html properties="cas.amazon-sts." %}
 
 ## Administrative Endpoints
 
@@ -22,4 +22,4 @@ The following endpoints are provided by CAS:
 
 | Endpoint                 | Description
 |--------------------------|--------------------------------------------------------
-| `awsSts`                 | Obtain temporary AWS access credentials.
+| `awsSts`                 | Obtain temporary AWS access credentials via `POST`. Can accept a `duration` parameter to specify the expiration policy for the credentials. User credentials can be provided in the `POST` request body via `username` and `password` parameters.
