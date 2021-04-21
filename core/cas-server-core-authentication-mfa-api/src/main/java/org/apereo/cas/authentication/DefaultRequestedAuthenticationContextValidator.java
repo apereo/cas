@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.context.ApplicationContext;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
@@ -31,8 +30,6 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
     private final MultifactorAuthenticationTriggerSelectionStrategy multifactorTriggerSelectionStrategy;
 
     private final MultifactorAuthenticationContextValidator authenticationContextValidator;
-
-    private final ApplicationContext applicationContext;
 
     private static AuthenticationContextValidationResult toSuccessfulResult() {
         return AuthenticationContextValidationResult.builder().success(true).build();
