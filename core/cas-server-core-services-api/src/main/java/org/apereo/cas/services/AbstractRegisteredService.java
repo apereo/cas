@@ -168,13 +168,13 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     @Column(name = "authn_policy", length = Integer.MAX_VALUE)
     private RegisteredServiceAuthenticationPolicy authenticationPolicy = new DefaultRegisteredServiceAuthenticationPolicy();
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "RegexRegisteredService_RegexRegisteredServiceProperty")
     @MapKeyColumn(name = "RegexRegisteredServiceProperty_name")
     @Column(name = "RegexRegisteredServiceProperty_value")
     private Map<String, DefaultRegisteredServiceProperty> properties = new HashMap<>(0);
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "RegexRegisteredService_RegisteredServiceImplContact")
     @OrderColumn
     private List<DefaultRegisteredServiceContact> contacts = new ArrayList<>(0);

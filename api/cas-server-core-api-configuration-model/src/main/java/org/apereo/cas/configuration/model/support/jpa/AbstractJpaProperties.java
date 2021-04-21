@@ -119,6 +119,11 @@ public abstract class AbstractJpaProperties implements Serializable {
     private int batchSize = 5;
 
     /**
+     * Used to specify number of rows to be fetched in a select query.
+     */
+    private int fetchSize = 100;
+    
+    /**
      * Set the pool initialization failure timeout.
      * <ul>
      * <li>Any value greater than zero will be treated as a timeout for pool initialization.

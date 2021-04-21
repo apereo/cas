@@ -67,6 +67,8 @@ public class CasHibernateJpaBeanFactory implements JpaBeanFactory {
         properties.put("hibernate.connection.charSet", StandardCharsets.UTF_8.name());
         properties.put(Environment.AUTOCOMMIT, jpaProperties.isAutocommit());
         properties.put("hibernate.jdbc.time_zone", "UTC");
+        properties.put("hibernate.jdbc.fetch_size", jpaProperties.getFetchSize());
+
         if (StringUtils.isNotBlank(jpaProperties.getPhysicalNamingStrategyClassName())) {
             try {
                 val clazz = ClassUtils.getClass(JpaBeans.class.getClassLoader(), jpaProperties.getPhysicalNamingStrategyClassName());
