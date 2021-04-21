@@ -1,7 +1,10 @@
 package org.apereo.cas.adaptors.duo.rest;
 
+import org.apereo.cas.adaptors.duo.authn.DuoSecurityDirectCredential;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityPasscodeCredential;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
 import org.apereo.cas.util.CollectionUtils;
@@ -48,9 +51,18 @@ public class DuoSecurityRestHttpRequestCredentialFactory implements RestHttpRequ
         }
         val username = FunctionUtils.throwIfBlank(requestBody.getFirst(RestHttpRequestCredentialFactory.PARAMETER_USERNAME));
         val token = FunctionUtils.throwIfBlank(requestBody.getFirst(PARAMETER_NAME_PASSCODE));
-        
+
         val providerId = StringUtils.defaultString(requestBody.getFirst(PARAMETER_NAME_PROVIDER),
             DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
         return CollectionUtils.wrap(new DuoSecurityPasscodeCredential(username, token, providerId));
+    }
+
+    @Override
+    public List<Credential> fromAuthentication(final HttpServletRequest request,
+                                               final MultiValueMap<String, String> requestBody,
+                                               final Authentication authentication,
+                                               final MultifactorAuthenticationProvider provider) {
+        val principal = authentication.getPrincipal();
+        return List.of(new DuoSecurityDirectCredential(principal, provider.getId()));
     }
 }

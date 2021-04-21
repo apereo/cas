@@ -5,11 +5,13 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionStrategy;
 import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.rest.BadRestRequestException;
 import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
 import org.apereo.cas.rest.factory.UserAuthenticationResourceEntityResponseFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,7 +52,7 @@ public class UserAuthenticationResource {
 
     private final RestHttpRequestCredentialFactory credentialFactory;
 
-    private final ServiceFactory serviceFactory;
+    private final ServiceFactory<WebApplicationService> serviceFactory;
 
     private final UserAuthenticationResourceEntityResponseFactory userAuthenticationResourceEntityResponseFactory;
 
@@ -59,6 +61,8 @@ public class UserAuthenticationResource {
     private final MultifactorAuthenticationTriggerSelectionStrategy multifactorTriggerSelectionStrategy;
 
     private final ServicesManager servicesManager;
+
+    private final RequestedAuthenticationContextValidator requestedContextValidator;
 
     /**
      * Create new ticket granting ticket.
@@ -76,25 +80,24 @@ public class UserAuthenticationResource {
                 throw new BadRestRequestException("No credentials are provided or extracted to authenticate the REST request");
             }
             val service = this.serviceFactory.createService(request);
+            val registeredService = servicesManager.findServiceBy(service);
             val authResult = Optional.ofNullable(
                 authenticationSystemSupport.handleInitialAuthenticationTransaction(service, credentials.toArray(Credential[]::new)));
 
-            val authenticationResult = authResult
-                .map(result -> result.getInitialAuthentication()
-                    .map(authn -> {
-                        val registeredService = servicesManager.findServiceBy(service);
-                        return multifactorTriggerSelectionStrategy.resolve(request, registeredService, authn, service)
-                            .map(provider -> {
-                                LOGGER.debug("Extracting credentials for multifactor authentication via [{}]", provider);
-                                val authnCredentials = credentialFactory.fromAuthentication(request, requestBody, authn, provider);
-                                if (authnCredentials.isEmpty()) {
-                                    throw new AuthenticationException("Unable to extract credentials for multifactor authentication");
-                                }
-                                return authenticationSystemSupport.finalizeAuthenticationTransaction(service, authnCredentials);
-                            })
-                            .orElseGet(() -> authenticationSystemSupport.finalizeAllAuthenticationTransactions(result, service));
-                    })
-                    .orElse(authenticationSystemSupport.finalizeAuthenticationTransaction(service, credentials)));
+            val authenticationResult = authResult.map(result -> result.getInitialAuthentication()
+                .filter(authn -> !requestedContextValidator.validateAuthenticationContext(request, registeredService, authn, service).isSuccess())
+                .map(authn ->
+                    multifactorTriggerSelectionStrategy.resolve(request, registeredService, authn, service)
+                        .map(provider -> {
+                            LOGGER.debug("Extracting credentials for multifactor authentication via [{}]", provider);
+                            val authnCredentials = credentialFactory.fromAuthentication(request, requestBody, authn, provider);
+                            if (authnCredentials == null || authnCredentials.isEmpty()) {
+                                throw new AuthenticationException("Unable to extract credentials for multifactor authentication");
+                            }
+                            return authenticationSystemSupport.finalizeAuthenticationTransaction(service, authnCredentials);
+                        })
+                        .orElseGet(() -> authenticationSystemSupport.finalizeAllAuthenticationTransactions(result, service)))
+                .orElse(authenticationSystemSupport.finalizeAuthenticationTransaction(service, credentials)));
             val result = authenticationResult.orElseThrow(FailedLoginException::new);
             return this.userAuthenticationResourceEntityResponseFactory.build(result, request);
         } catch (final AuthenticationException e) {
