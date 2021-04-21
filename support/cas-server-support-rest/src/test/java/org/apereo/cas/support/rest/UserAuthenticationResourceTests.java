@@ -1,14 +1,19 @@
 package org.apereo.cas.support.rest;
 
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationResultBuilder;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionStrategy;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.rest.factory.DefaultUserAuthenticationResourceEntityResponseFactory;
+import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
 import org.apereo.cas.rest.factory.UsernamePasswordRestHttpRequestCredentialFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.rest.resources.UserAuthenticationResource;
@@ -27,8 +32,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.util.MultiValueMap;
 
 import javax.security.auth.login.FailedLoginException;
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;
@@ -56,6 +64,8 @@ public class UserAuthenticationResourceTests {
     @Mock
     private MultifactorAuthenticationTriggerSelectionStrategy multifactorTriggerSelectionStrategy;
 
+    private RestHttpRequestCredentialFactory httpRequestCredentialFactory;
+
     @InjectMocks
     private UserAuthenticationResource userAuthenticationResource;
 
@@ -63,8 +73,22 @@ public class UserAuthenticationResourceTests {
 
     @BeforeEach
     public void initialize() {
-        this.userAuthenticationResource = new UserAuthenticationResource(authenticationSupport,
-            new UsernamePasswordRestHttpRequestCredentialFactory(),
+        this.httpRequestCredentialFactory = new UsernamePasswordRestHttpRequestCredentialFactory() {
+            @Override
+            public List<Credential> fromAuthentication(final HttpServletRequest request,
+                                                       final MultiValueMap<String, String> requestBody,
+                                                       final Authentication authentication,
+                                                       final MultifactorAuthenticationProvider provider) {
+                if (provider.getId().contains("unknown")) {
+                    return List.of();
+                }
+                return List.of(new UsernamePasswordCredential("mfa-user", "mfa-user"));
+            }
+        };
+
+        this.userAuthenticationResource = new UserAuthenticationResource(
+            this.authenticationSupport,
+            this.httpRequestCredentialFactory,
             new WebApplicationServiceFactory(),
             new DefaultUserAuthenticationResourceEntityResponseFactory(),
             new GenericApplicationContext(),
@@ -76,6 +100,21 @@ public class UserAuthenticationResourceTests {
                 .contextPath("/cas")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
             .build();
+    }
+
+    @Test
+    public void verifyAuthWithMfaFails() throws Exception {
+        val builder = new DefaultAuthenticationResultBuilder().collect(CoreAuthenticationTestUtils.getAuthentication());
+        val result = builder.build(new DefaultPrincipalElectionStrategy());
+        when(authenticationSupport.handleInitialAuthenticationTransaction(any(), any())).thenReturn(builder);
+
+        when(multifactorTriggerSelectionStrategy.resolve(any(), any(), any(), any()))
+            .thenReturn(Optional.of(new TestMultifactorAuthenticationProvider("mfa-unknown")));
+
+        this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
+            .param("username", "casuser")
+            .param("password", "Mellon"))
+            .andExpect(status().is4xxClientError());
     }
 
     @Test
@@ -93,7 +132,6 @@ public class UserAuthenticationResourceTests {
             .param("password", "Mellon"))
             .andExpect(status().isOk());
     }
-
 
     @Test
     public void verifyStatus() throws Exception {

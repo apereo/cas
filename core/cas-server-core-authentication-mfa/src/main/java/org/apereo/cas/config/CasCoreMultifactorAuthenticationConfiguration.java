@@ -60,8 +60,7 @@ public class CasCoreMultifactorAuthenticationConfiguration {
     public RequestedAuthenticationContextValidator requestedContextValidator() {
         return new DefaultRequestedAuthenticationContextValidator(servicesManager.getObject(),
             multifactorTriggerSelectionStrategy.getObject(),
-            authenticationContextValidator(),
-            applicationContext);
+            authenticationContextValidator());
     }
 
     @RefreshScope

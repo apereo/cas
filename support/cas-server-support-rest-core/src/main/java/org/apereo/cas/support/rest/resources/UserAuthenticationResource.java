@@ -85,7 +85,11 @@ public class UserAuthenticationResource {
                         val registeredService = servicesManager.findServiceBy(service);
                         return multifactorTriggerSelectionStrategy.resolve(request, registeredService, authn, service)
                             .map(provider -> {
+                                LOGGER.debug("Extracting credentials for multifactor authentication via [{}]", provider);
                                 val authnCredentials = credentialFactory.fromAuthentication(request, requestBody, authn, provider);
+                                if (authnCredentials.isEmpty()) {
+                                    throw new AuthenticationException("Unable to extract credentials for multifactor authentication");
+                                }
                                 return authenticationSystemSupport.finalizeAuthenticationTransaction(service, authnCredentials);
                             })
                             .orElseGet(() -> authenticationSystemSupport.finalizeAllAuthenticationTransactions(result, service));
