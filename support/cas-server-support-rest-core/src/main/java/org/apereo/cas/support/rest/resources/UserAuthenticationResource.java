@@ -65,15 +65,23 @@ public class UserAuthenticationResource {
     private final RequestedAuthenticationContextValidator requestedContextValidator;
 
     /**
-     * Create new ticket granting ticket.
+     * Authenticate requests.
      *
      * @param requestBody username and password application/x-www-form-urlencoded values
      * @param request     raw HttpServletRequest used to call this method
      * @return ResponseEntity representing RESTful response
      */
-    @PostMapping(value = RestProtocolConstants.ENDPOINT_USERS, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<String> createTicketGrantingTicket(@RequestBody final MultiValueMap<String, String> requestBody,
-                                                             final HttpServletRequest request) {
+    @PostMapping(value = RestProtocolConstants.ENDPOINT_USERS,
+        consumes = {
+            MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            MediaType.APPLICATION_JSON_VALUE
+        },
+        produces = {
+            MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            MediaType.APPLICATION_JSON_VALUE
+        })
+    public ResponseEntity<String> authenticateRequest(@RequestBody final MultiValueMap<String, String> requestBody,
+                                                      final HttpServletRequest request) {
         try {
             val credentials = this.credentialFactory.fromRequest(request, requestBody);
             if (credentials == null || credentials.isEmpty()) {

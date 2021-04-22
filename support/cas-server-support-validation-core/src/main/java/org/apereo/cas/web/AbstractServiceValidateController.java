@@ -256,7 +256,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         onSuccessfulValidation(serviceTicketId, assertion);
         LOGGER.debug("Successfully validated service ticket [{}] for service [{}]", serviceTicketId, service.getId());
         return generateSuccessView(assertion, proxyIou, service, request,
-            ctxResult.getProviderId(), proxyGrantingTicketId);
+            ctxResult.getContextId(), proxyGrantingTicketId);
     }
 
     /**

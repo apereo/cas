@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
@@ -16,6 +17,7 @@ import java.util.Optional;
 public class MultifactorAuthenticationContextValidationResult {
     private final boolean success;
 
-    private final Optional<MultifactorAuthenticationProvider> provider;
+    @Builder.Default
+    private final Optional<MultifactorAuthenticationProvider> provider = Optional.empty();
 
 }

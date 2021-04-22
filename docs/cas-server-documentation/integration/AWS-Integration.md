@@ -31,6 +31,17 @@ Obtaining temporary security credentials from AWS STS is done using the `GetSess
 calling this operation is when a user must be authenticated with multi-factor authentication (MFA). THe authenticated user can qualify and 
 initiate multifactor authentication using the available [multifactor authentication triggers](../mfa/Configuring-Multifactor-Authentication-Triggers.html).
 
+For convenience you can simply copy and paste the temporary AWS access credentials
+generated above to set them as environment variables or save the output into `~/.aws/credentials` 
+that would be loaded and recognized by AWS CLI given the profile name.
+
+The AWS CLI stores sensitive credential information that you specify 
+with `aws configure` in a local file named `credentials`, in a folder named `.aws` in your 
+home directory. The less sensitive configuration options that you specify with aws 
+configure are stored in a local file named `config`, also stored in the `.aws` folder in your home directory.
+
+To learn more about AWS CLI, please [see this guide](https://docs.aws.amazon.com/cli/latest).
+
 ### Required Permissions
 
 Per Amazon Web Services,
