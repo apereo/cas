@@ -2,6 +2,7 @@ package org.apereo.cas.validation;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
@@ -15,6 +16,7 @@ import java.util.Optional;
  */
 @SuperBuilder
 @Getter
+@ToString
 public class AuthenticationContextValidationResult implements Serializable {
     private static final long serialVersionUID = 5276264106164141194L;
 

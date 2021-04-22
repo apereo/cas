@@ -12,7 +12,6 @@ const jwt = require('jsonwebtoken');
     assert(decoded != null);
 
     console.log("Creating service ticket as JWT")
-
     opts = await getRequestOptions('/cas/v1/tickets?username=casuser&password=Mellon', 'POST');
     tgt = await executeRequest(opts, 201);
     console.log(tgt);
