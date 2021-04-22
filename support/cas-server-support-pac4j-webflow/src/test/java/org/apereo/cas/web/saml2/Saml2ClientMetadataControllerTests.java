@@ -34,9 +34,9 @@ public class Saml2ClientMetadataControllerTests {
     @Test
     public void verifyOperation() {
         assertNotNull(delegatedAuthenticationAction);
-        assertNotNull(saml2ClientMetadataController.getFirstIdentityProviderMetadata());
+        assertNotNull(saml2ClientMetadataController.getFirstIdentityProviderMetadata(true));
         assertNotNull(saml2ClientMetadataController.getFirstServiceProviderMetadata());
-        assertNotNull(saml2ClientMetadataController.getIdentityProviderMetadataByName("SAML2Client"));
+        assertNotNull(saml2ClientMetadataController.getIdentityProviderMetadataByName("SAML2Client", true));
         assertNotNull(saml2ClientMetadataController.getServiceProviderMetadataByName("SAML2Client"));
     }
 }
