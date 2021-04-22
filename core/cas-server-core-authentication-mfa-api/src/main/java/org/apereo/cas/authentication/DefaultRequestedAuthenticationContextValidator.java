@@ -49,27 +49,30 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
                                                                                final Authentication authentication,
                                                                                final Service service) {
         val providerResult = multifactorTriggerSelectionStrategy.resolve(request, registeredService, authentication, service);
-        if (providerResult.isPresent()) {
-            val provider = providerResult.get();
-            if (provider.isAvailable(registeredService)) {
-                val bypassEvaluator = provider.getBypassEvaluator();
-                if (bypassEvaluator != null) {
-                    if (!bypassEvaluator.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, request)) {
-                        LOGGER.debug("MFA provider [{}] should be bypassed for this service request [{}]", provider, service);
-                        bypassEvaluator.rememberBypass(authentication, provider);
-                        return toSuccessfulResult();
-                    }
-                    if (bypassEvaluator.isMultifactorAuthenticationBypassed(authentication, provider.getId())) {
-                        LOGGER.debug("Authentication attempt indicates that MFA is bypassed for this request for [{}]", provider);
-                        bypassEvaluator.rememberBypass(authentication, provider);
-                        return toSuccessfulResult();
-                    }
-                }
-            } else {
-                val failure = provider.getFailureModeEvaluator().evaluate(registeredService, provider);
-                if (failure != BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.CLOSED) {
+        if (providerResult.isEmpty()) {
+            LOGGER.debug("No particular authentication context is required for this request");
+            return toSuccessfulResult();
+        }
+        
+        val provider = providerResult.get();
+        if (provider.isAvailable(registeredService)) {
+            val bypassEvaluator = provider.getBypassEvaluator();
+            if (bypassEvaluator != null) {
+                if (!bypassEvaluator.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, request)) {
+                    LOGGER.debug("MFA provider [{}] should be bypassed for this service request [{}]", provider, service);
+                    bypassEvaluator.rememberBypass(authentication, provider);
                     return toSuccessfulResult();
                 }
+                if (bypassEvaluator.isMultifactorAuthenticationBypassed(authentication, provider.getId())) {
+                    LOGGER.debug("Authentication attempt indicates that MFA is bypassed for this request for [{}]", provider);
+                    bypassEvaluator.rememberBypass(authentication, provider);
+                    return toSuccessfulResult();
+                }
+            }
+        } else {
+            val failure = provider.getFailureModeEvaluator().evaluate(registeredService, provider);
+            if (failure != BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.CLOSED) {
+                return toSuccessfulResult();
             }
         }
         val result = authenticationContextValidator.validate(authentication,

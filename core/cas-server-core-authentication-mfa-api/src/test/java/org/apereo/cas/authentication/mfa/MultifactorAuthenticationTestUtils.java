@@ -3,8 +3,8 @@ package org.apereo.cas.authentication.mfa;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.CredentialMetaData;
+import org.apereo.cas.authentication.DefaultMultifactorAuthenticationContextValidator;
 import org.apereo.cas.authentication.DefaultRequestedAuthenticationContextValidator;
-import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionStrategy;
 import org.apereo.cas.authentication.principal.Principal;
@@ -21,7 +21,7 @@ import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
 
 import lombok.experimental.UtilityClass;
 import lombok.val;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.HashMap;
 import java.util.List;
@@ -96,14 +96,18 @@ public class MultifactorAuthenticationTestUtils {
 
     public static RequestedAuthenticationContextValidator mockRequestAuthnContextValidator(
         final Optional<MultifactorAuthenticationProvider> provider,
-        final ApplicationContext applicationContext, final String failureMode) {
+        final ConfigurableApplicationContext applicationContext, final String failureMode) {
         val servicesManager = mock(ServicesManager.class);
         val multifactorTrigger = mock(MultifactorAuthenticationTriggerSelectionStrategy.class);
-        val multifactorContextValidator = mock(MultifactorAuthenticationContextValidator.class);
+
         val service = MultifactorAuthenticationTestUtils.getRegisteredService("https://www.github.com/apereo/cas", failureMode);
         when(servicesManager.findServiceBy(any(Service.class))).thenReturn(service);
         when(servicesManager.findServiceBy(any(Service.class))).thenReturn(service);
         when(multifactorTrigger.resolve(any(), any(), any(), any())).thenReturn(provider);
+
+        val multifactorContextValidator = new DefaultMultifactorAuthenticationContextValidator(
+            "authn_method",
+            "trusted_authn", applicationContext);
         return new DefaultRequestedAuthenticationContextValidator(servicesManager, multifactorTrigger, multifactorContextValidator);
     }
 
