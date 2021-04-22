@@ -77,13 +77,16 @@ public class TicketGrantingTicketResource {
      * @param request     raw HttpServletRequest used to call this method
      * @return ResponseEntity representing RESTful response
      */
-    @PostMapping(value = RestProtocolConstants.ENDPOINT_TICKETS, consumes = {
-        MediaType.APPLICATION_FORM_URLENCODED_VALUE,
-        MediaType.APPLICATION_JSON_VALUE
-    },
+    @PostMapping(value = RestProtocolConstants.ENDPOINT_TICKETS,
+        consumes = {
+            MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            MediaType.APPLICATION_JSON_VALUE,
+            MediaType.TEXT_HTML_VALUE
+        },
         produces = {
             MediaType.APPLICATION_FORM_URLENCODED_VALUE,
-            MediaType.APPLICATION_JSON_VALUE
+            MediaType.APPLICATION_JSON_VALUE,
+            MediaType.TEXT_HTML_VALUE
         })
     public ResponseEntity<String> createTicketGrantingTicket(@RequestBody(required = false) final MultiValueMap<String, String> requestBody,
                                                              final HttpServletRequest request) {
