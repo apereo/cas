@@ -1,8 +1,10 @@
 package org.apereo.cas.validation;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serializable;
 import java.util.Optional;
 
 /**
@@ -13,8 +15,11 @@ import java.util.Optional;
  */
 @SuperBuilder
 @Getter
-public class AuthenticationContextValidationResult {
+public class AuthenticationContextValidationResult implements Serializable {
+    private static final long serialVersionUID = 5276264106164141194L;
+
     private final boolean success;
 
-    private final Optional<String> providerId;
+    @Builder.Default
+    private final Optional<String> contextId = Optional.empty();
 }

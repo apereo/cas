@@ -52,7 +52,8 @@ properties="${properties//\$\{PWD\}/${PWD}}"
 properties="${properties//\%\{random\}/${random}}"
 
 echo -e "\nLaunching CAS with properties [${properties}] and dependencies [${dependencies}]"
-java ${runArgs} -jar "$PWD"/cas.war ${properties} --spring.profiles.active=none --server.ssl.key-store="$keystore" &
+java ${runArgs} -jar "$PWD"/cas.war ${properties} \
+  --spring.profiles.active=none --server.ssl.key-store="$keystore" &
 pid=$!
 echo -e "\nWaiting for CAS under process id ${pid}"
 until curl -k -L --output /dev/null --silent --fail https://localhost:8443/cas/login; do

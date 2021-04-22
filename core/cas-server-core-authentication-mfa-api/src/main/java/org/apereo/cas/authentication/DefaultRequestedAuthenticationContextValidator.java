@@ -78,7 +78,7 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
 
         return AuthenticationContextValidationResult.builder()
             .success(result.isSuccess())
-            .providerId(result.getProvider().map(MultifactorAuthenticationProvider::getId))
+            .contextId(result.getProvider().map(MultifactorAuthenticationProvider::getId))
             .build();
     }
 }
