@@ -111,7 +111,6 @@ public class UserAuthenticationResourceTests {
     @Test
     public void verifyAuthWithMfaFails() throws Exception {
         val builder = new DefaultAuthenticationResultBuilder().collect(CoreAuthenticationTestUtils.getAuthentication());
-        val result = builder.build(new DefaultPrincipalElectionStrategy());
         when(authenticationSupport.handleInitialAuthenticationTransaction(any(), any())).thenReturn(builder);
         when(requestedContextValidator.validateAuthenticationContext(any(), any(), any(), any()))
             .thenReturn(AuthenticationContextValidationResult.builder().success(false).build());
