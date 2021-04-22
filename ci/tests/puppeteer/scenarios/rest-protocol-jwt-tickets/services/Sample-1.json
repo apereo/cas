@@ -1,0 +1,14 @@
+{
+  "@class": "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId": "https://.+",
+  "name": "Sample",
+  "id": 1,
+  "description": "CAS",
+  "properties" : {
+    "@class" : "java.util.HashMap",
+    "jwtAsServiceTicket" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values" : [ "java.util.HashSet", [ "true" ] ]
+    }
+  }
+}
