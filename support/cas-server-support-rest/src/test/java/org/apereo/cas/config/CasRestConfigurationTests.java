@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.rest.config.CasCoreRestConfiguration;
 import org.apereo.cas.rest.factory.TicketGrantingTicketResourceEntityResponseFactory;
 
 import org.junit.jupiter.api.Tag;
@@ -42,6 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilConfiguration.class,
     CasThrottlingConfiguration.class,
     CasCoreAuditConfiguration.class,
+    CasCoreRestConfiguration.class,
     CasRestConfiguration.class
 })
 @EnableWebMvc

@@ -40,7 +40,7 @@ const https = require('https');
         method: 'POST',
         rejectUnauthorized: false,
         headers: {
-            'Content-Length': request.length,
+            'Content-Length': request.length
         },
     };
 

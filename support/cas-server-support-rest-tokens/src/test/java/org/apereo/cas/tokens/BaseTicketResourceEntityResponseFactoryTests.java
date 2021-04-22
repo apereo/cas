@@ -26,6 +26,7 @@ import org.apereo.cas.config.CasRestTokensConfiguration;
 import org.apereo.cas.config.TokenCoreConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.rest.config.CasCoreRestConfiguration;
 import org.apereo.cas.rest.factory.ServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.rest.factory.TicketGrantingTicketResourceEntityResponseFactory;
 import org.apereo.cas.services.RegisteredService;
@@ -59,6 +60,7 @@ import java.util.List;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     BaseTicketResourceEntityResponseFactoryTests.TicketResourceTestConfiguration.class,
+    CasCoreRestConfiguration.class,
     CasRestTokensConfiguration.class,
     CasRestConfiguration.class,
     TokenCoreConfiguration.class,

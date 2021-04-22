@@ -51,11 +51,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class TicketGrantingTicketResourceTests {
 
     private static final String TICKETS_RESOURCE_URL = "/cas/v1/tickets";
+
     private static final String USERNAME = "username";
+
     private static final String OTHER_EXCEPTION = "Other exception";
+
     private static final String TEST_VALUE = "test";
+
     private static final String PASSWORD = "password";
-    
+
     @Mock
     private CentralAuthenticationService casMock;
 

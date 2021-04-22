@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.rest.BadRestRequestException;
 import org.apereo.cas.services.RegisteredService;
@@ -45,9 +46,13 @@ import javax.servlet.http.HttpServletResponse;
 @RequiredArgsConstructor
 public class RegisteredServiceResource {
     private final AuthenticationSystemSupport authenticationSystemSupport;
-    private final ServiceFactory serviceFactory;
+
+    private final ServiceFactory<WebApplicationService> serviceFactory;
+
     private final ServicesManager servicesManager;
+
     private final String attributeName;
+
     private final String attributeValue;
 
     /**

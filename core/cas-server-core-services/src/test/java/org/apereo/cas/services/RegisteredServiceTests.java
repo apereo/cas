@@ -3,13 +3,17 @@ package org.apereo.cas.services;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import com.google.common.collect.ArrayListMultimap;
 import lombok.Setter;
 import lombok.val;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.support.StaticApplicationContext;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -75,6 +79,15 @@ public class RegisteredServiceTests {
         }
     };
 
+    @BeforeEach
+    public void beforeEach() {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, CasConfigurationProperties.class,
+            CasConfigurationProperties.class.getSimpleName());
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
+    }
+    
     @Test
     public void verifyAllowToProxyIsFalseByDefault() {
         val regexRegisteredService = new RegexRegisteredService();

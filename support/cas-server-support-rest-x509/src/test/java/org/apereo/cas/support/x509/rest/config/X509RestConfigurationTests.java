@@ -16,6 +16,7 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasRestConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.rest.config.CasCoreRestConfiguration;
 import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
 
 import org.junit.jupiter.api.Tag;
@@ -51,6 +52,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreConfiguration.class,
+    CasCoreRestConfiguration.class,
     CasRestConfiguration.class
 },
     properties = "cas.rest.x509.tls-client-auth=true")

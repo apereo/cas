@@ -1,4 +1,7 @@
-package org.apereo.cas.tokens;
+package org.apereo.cas;
+
+import org.apereo.cas.tokens.JwtServiceTicketResourceEntityResponseFactoryTests;
+import org.apereo.cas.tokens.JwtTicketGrantingTicketResourceEntityResponseFactoryTests;
 
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
