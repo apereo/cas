@@ -626,44 +626,44 @@ jobs:
           name: "cas-tests-${{ matrix.category }}.coverage"
           path: "./build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
 ##########################################################################
-  upload_coverage:
-    runs-on: ubuntu-latest
-    needs: [tests]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: "Download coverage files"
-        uses: "actions/download-artifact@v2"
-        with:
-          path: "reports"
-      - name: "Collect Files for SonarCloud"
-        run: |
-          find $PWD -type f -name 'jacocoRootReport.xml'
-          export files=''
-          for file in $(find $PWD -type f -name 'jacocoRootReport.xml'); do export files="$file,${files}"; done
-          export files="${files%?}"
-          echo $files
-          echo "SONAR_COVERAGE_REPORTS=${files}" >> $GITHUB_ENV
-      - name: Upload Coverage to SonarCloud
-        if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' && env.SONARCLOUD_TOKEN != null }}
-        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel sonarqube -x javadoc -Dsonar.login="${SONARCLOUD_TOKEN}" -DskipNestedConfigMetadataGen=true -DshowStandardStreams=true -Dsonar.coverage.jacoco.xmlReportPaths="${SONAR_COVERAGE_REPORTS}"
-      - name: "Collect Files for Codacy"
-        run: |
-          find $PWD -type f -name 'jacocoRootReport.xml'
-          export files=''
-          for file in $(find . -type f -name 'jacocoRootReport.xml'); do export files="$file,${files}"; done
-          export files="${files%?}"
-          echo $files
-          echo "CODACY_COVERAGE_REPORTS=${files}" >> $GITHUB_ENV
-      - name: Upload Coverage to Codacy
-        if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' && env.CODACY_PROJECT_TOKEN != null }}
-        uses: codacy/codacy-coverage-reporter-action@v1
-        with:
-          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-          coverage-reports: ${{ env.CODACY_COVERAGE_REPORTS }}
+#  upload_coverage:
+#    runs-on: ubuntu-latest
+#    needs: [tests]
+#    steps:
+#      - uses: actions/checkout@v2
+#      - name: Set up JDK
+#        uses: actions/setup-java@v1
+#        with:
+#          java-version: ${{ env.JDK_CURRENT }}
+#      - name: "Download coverage files"
+#        uses: "actions/download-artifact@v2"
+#        with:
+#          path: "reports"
+#      - name: "Collect Files for SonarCloud"
+#        run: |
+#          find $PWD -type f -name 'jacocoRootReport.xml'
+#          export files=''
+#          for file in $(find $PWD -type f -name 'jacocoRootReport.xml'); do export files="$file,${files}"; done
+#          export files="${files%?}"
+#          echo $files
+#          echo "SONAR_COVERAGE_REPORTS=${files}" >> $GITHUB_ENV
+#      - name: Upload Coverage to SonarCloud
+#        if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' && env.SONARCLOUD_TOKEN != null }}
+#        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel sonarqube -x javadoc -Dsonar.login="${SONARCLOUD_TOKEN}" -DskipNestedConfigMetadataGen=true -DshowStandardStreams=true -Dsonar.coverage.jacoco.xmlReportPaths="${SONAR_COVERAGE_REPORTS}"
+#      - name: "Collect Files for Codacy"
+#        run: |
+#          find $PWD -type f -name 'jacocoRootReport.xml'
+#          export files=''
+#          for file in $(find . -type f -name 'jacocoRootReport.xml'); do export files="$file,${files}"; done
+#          export files="${files%?}"
+#          echo $files
+#          echo "CODACY_COVERAGE_REPORTS=${files}" >> $GITHUB_ENV
+#      - name: Upload Coverage to Codacy
+#        if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' && env.CODACY_PROJECT_TOKEN != null }}
+#        uses: codacy/codacy-coverage-reporter-action@v1
+#        with:
+#          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+#          coverage-reports: ${{ env.CODACY_COVERAGE_REPORTS }}
   ##########################################################################
   
 #  tests-performance-locust:

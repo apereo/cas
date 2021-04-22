@@ -198,7 +198,7 @@ allprojects {
     javadoc {
         options.addBooleanOption('html5', true)
         failOnError = Boolean.getBoolean("ignoreJavadocFailures")
-        excludes = ['**/generated/**']
+        excludes = ['**/generated/**', '**/com/duosecurity/**']
     }
 
 
