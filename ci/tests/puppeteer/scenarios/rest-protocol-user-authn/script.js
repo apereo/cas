@@ -10,6 +10,7 @@ const assert = require('assert');
         method: 'POST',
         rejectUnauthorized: false,
         headers: {
+            'Accept': 'application/json',
             'Content-Type': 'application/x-www-form-urlencoded'
         }
     };

@@ -4,6 +4,7 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.rest.BadRestRequestException;
 import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
 import org.apereo.cas.rest.factory.TicketGrantingTicketResourceEntityResponseFactory;
@@ -53,7 +54,7 @@ public class TicketGrantingTicketResource {
 
     private final CentralAuthenticationService centralAuthenticationService;
 
-    private final ServiceFactory serviceFactory;
+    private final ServiceFactory<WebApplicationService> serviceFactory;
 
     private final TicketGrantingTicketResourceEntityResponseFactory ticketGrantingTicketResourceEntityResponseFactory;
 
@@ -76,7 +77,14 @@ public class TicketGrantingTicketResource {
      * @param request     raw HttpServletRequest used to call this method
      * @return ResponseEntity representing RESTful response
      */
-    @PostMapping(value = RestProtocolConstants.ENDPOINT_TICKETS, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @PostMapping(value = RestProtocolConstants.ENDPOINT_TICKETS, consumes = {
+        MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+        MediaType.APPLICATION_JSON_VALUE
+    },
+        produces = {
+            MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            MediaType.APPLICATION_JSON_VALUE
+        })
     public ResponseEntity<String> createTicketGrantingTicket(@RequestBody(required = false) final MultiValueMap<String, String> requestBody,
                                                              final HttpServletRequest request) {
         try {
