@@ -172,7 +172,7 @@ public class CoreAuthenticationUtils {
      *
      * @param currentAttributes the current attributes
      * @param attributesToMerge the attributes to merge
-     * @param merger        the merger type
+     * @param merger            the merger
      * @return the map
      */
     public static Map<String, List<Object>> mergeAttributes(final Map<String, List<Object>> currentAttributes,
@@ -192,6 +192,20 @@ public class CoreAuthenticationUtils {
         val results = merger.mergeAttributes((Map) toModify, (Map) toMerge);
         LOGGER.debug("Merged attributes with the final result as [{}]", results);
         return results;
+    }
+
+    /**
+     * Merge attributes map.
+     *
+     * @param currentAttributes the current attributes
+     * @param attributesToMerge the attributes to merge
+     * @return the map
+     */
+    public static Map<String, List<Object>> mergeAttributes(final Map<String, List<Object>> currentAttributes,
+                                                            final Map<String, List<Object>> attributesToMerge) {
+        val merger = new MultivaluedAttributeMerger();
+        merger.setDistinctValues(true);
+        return mergeAttributes(currentAttributes, attributesToMerge, merger);
     }
 
     /**
