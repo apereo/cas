@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.Service;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.services.persondir.support.merger.ReplacingAttributeAdder;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -48,7 +49,8 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
             LOGGER.debug("Collected principal attributes [{}] for inclusion in this result for principal [{}]",
                 principalAttributes, authenticatedPrincipal.getId());
 
-            authenticationAttributes.putAll(CoreAuthenticationUtils.mergeAttributes(authenticationAttributes, authn.getAttributes(), merger));
+            authenticationAttributes.putAll(CoreAuthenticationUtils.mergeAttributes(authenticationAttributes,
+                authn.getAttributes(), new ReplacingAttributeAdder()));
             LOGGER.debug("Finalized authentication attributes [{}] for inclusion in this authentication result", authenticationAttributes);
 
             authenticationBuilder
