@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.val;
 import org.springframework.core.Ordered;
 
 import java.util.Collection;
@@ -24,9 +25,11 @@ import java.util.function.BiPredicate;
 public class DefaultServicesManagerRegisteredServiceLocator implements ServicesManagerRegisteredServiceLocator {
     private int order = Ordered.LOWEST_PRECEDENCE;
 
-    private BiPredicate<RegisteredService, Service> registeredServiceFilter =
-        (registeredService, service) -> RegexRegisteredService.class.isAssignableFrom(registeredService.getClass())
-            && registeredService.matches(service.getId());
+    private BiPredicate<RegisteredService, Service> registeredServiceFilter = (registeredService, service) -> {
+        val supportedType = RegexRegisteredService.class.isAssignableFrom(registeredService.getClass())
+            && registeredService.getFriendlyName().equalsIgnoreCase(RegexRegisteredService.FRIENDLY_NAME);
+        return supportedType && registeredService.matches(service.getId());
+    };
 
     @Override
     public RegisteredService locate(final Collection<RegisteredService> candidates, final Service service) {
