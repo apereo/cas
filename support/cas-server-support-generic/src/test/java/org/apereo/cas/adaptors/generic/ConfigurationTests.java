@@ -79,7 +79,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.json.location=classpath:sample-users.json",
     "cas.authn.reject.users=one,two,three"
 })
-@Tag("Simple")
+@Tag("CasConfiguration")
 public class ConfigurationTests {
     @Autowired
     @Qualifier("fileAuthenticationHandler")

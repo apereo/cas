@@ -158,9 +158,14 @@ allprojects {
 
     apply from: rootProject.file("gradle/tasks.gradle")
 
+    
     if (rootProject.publishReleases || rootProject.publishSnapshots || rootProject.generateGitProperties) {
         apply plugin: "com.gorylenko.gradle-git-properties"
         gitProperties {
+            def project = [version: project.version,
+                           name: project.name,
+                           description: project.description]
+            customProperty 'project', { project }
             extProperty = "gitProps"
             keys = ["git.branch", "git.build.time", "git.build.user.name",
                     "git.build.version", "git.commit.id", "git.remote.origin.url"]
