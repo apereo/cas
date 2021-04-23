@@ -8,18 +8,23 @@ category: Planning
 
 We strongly recommend that you take advantage of the release candidates as they come out. Waiting for a `GA` release is only going to set
 you up for unpleasant surprises. A `GA` is [a tag and nothing more](https://apereo.github.io/2017/03/08/the-myth-of-ga-rel/). Note that CAS
-releases are *strictly* time-based releases; they are not scheduled or based on specific benchmarks, statistics or completion of features. To gain
-confidence in a particular release, it is strongly recommended that you start early by experimenting with release candidates and/or follow-up snapshots.
+releases are *strictly* time-based releases; they are not scheduled 
+or based on specific benchmarks, statistics or completion of features. To gain
+confidence in a particular release, it is strongly recommended that you 
+start early by experimenting with release candidates and/or follow-up snapshots.
 
 ## Apereo Membership
 
-If you benefit from Apereo CAS as free and open-source software, we invite you to [join the Apereo Foundation](https://www.apereo.org/content/apereo-membership)
+If you benefit from Apereo CAS as free and open-source software, we invite 
+you to [join the Apereo Foundation](https://www.apereo.org/content/apereo-membership)
 and financially support the project at a capacity that best suits your deployment. Note that all development activity
-is performed *almost exclusively* on a voluntary basis with no expectations, commitments or strings attached. Having the financial means to better
-sustain engineering activities will allow the developer community to allocate *dedicated and committed* time for long-term support,
+is performed *almost exclusively* on a voluntary basis with no expectations, commitments 
+or strings attached. Having the financial means to better sustain engineering activities will 
+allow the developer community to allocate *dedicated and committed* time for long-term support,
 maintenance and release planning, especially when it comes to addressing critical and security issues in a timely manner. Funding will
 ensure support for the software you rely on and you gain an advantage and say in the way Apereo, and the CAS project at that, runs
-and operates. If you consider your CAS deployment to be a critical part of the identity and access management ecosystem, this is a viable option to consider.
+and operates. If you consider your CAS deployment to be a critical part of the identity 
+and access management ecosystem, this is a viable option to consider.
 
 ## Get Involved
 
@@ -75,13 +80,17 @@ ensure compatibility and compliance of the CAS implementation with the OpenID Co
 A dedicated [integration module](../integration/AWS-Integration.html) and endpoint is 
 now available to obtain temporary AWS access credentials from AWS STS.
 
-### Duo Security Passcodes
+### Duo Security Passcode Authentication
 
 Multifactor authentication with [Duo Security](../mfa/DuoSecurity-Authentication.html) is now given the ability to support passcodes
 as credentials, mainly for CLI or REST-based authentication requests.
  
 ### Multifactor Authentication via REST Protocol
-                                                
+
+<div class="alert alert-info">
+  <strong>Workers Ahead</strong><br/>This is a work-in-progress and will be improved and refined in future releases. 
+</div>
+
 Operations provided by the [CAS REST Protocol](../protocol/REST-Protocol.html) that allow one to 
 [authenticate credentials](../protocol/REST-Protocol-CredentialAuthentication.html)
 or [generate ticket-granting tickets](../protocol/REST-Protocol-Request-TicketGrantingTicket.html) are 
@@ -99,6 +108,7 @@ via the configured [multifactor authentication triggers](../mfa/Configuring-Mult
 - Puppeteer tests to ensure actuator endpoints can produce the expected output for `GET/READ` operations.
 - Puppeteer tests to password reset flows with security questions.
 - Git-based integrations are given the option to specify the HTTP client used for remote operations.
+- Multiple Javascript and/or CSS files can be specified in theme configurations, separated via comma.
 - JDBC/JPA integrations are given the option to specify the database `fetch-size`. Furthermore, a number of JPA collections 
   and relationships associated with registered services are now marked as lazy to improve query performance for load operations.
 
@@ -123,4 +133,3 @@ via the configured [multifactor authentication triggers](../mfa/Configuring-Mult
 - Spring Boot
 - DropWizard
 - Gradle
-

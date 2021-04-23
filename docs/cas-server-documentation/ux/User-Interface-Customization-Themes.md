@@ -33,8 +33,8 @@ Contents of this file may contain the following settings:
 
 | Setting                  | Description               | Value
 |--------------------------|---------------------------|-----------------------------------------------------------
-| `cas.standard.css.file`  | Path to theme CSS file    | `/themes/[theme_name]/css/cas.css`
-| `cas.standard.js.file`   | Path to theme Javascript file     | `/themes/[theme_name]/js/js/css`
+| `cas.standard.css.file`  | Path to theme CSS file; Multiple files may be comma-separated.    | `/themes/[theme_name]/css/cas.css`
+| `cas.standard.js.file`   | Path to theme Javascript file; Multiple files may be comma-separated.   | `/themes/[theme_name]/js/js/css`
 | `cas.logo.file`          | Path to theme logo to display via the common layout | `/images/logo.png`
 | `cas.drawer-menu.enabled`  |  Decide whether drawer menu should be displayed   | `true`
 | `cas.theme.name`           | Theme name used in various titles/captions   | `Example Theme`
