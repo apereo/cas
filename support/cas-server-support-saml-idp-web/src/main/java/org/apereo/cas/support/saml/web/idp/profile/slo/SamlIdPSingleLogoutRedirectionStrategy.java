@@ -55,25 +55,28 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
 
     @Override
     public boolean supports(final RequestContext context) {
-        val logout = configurationContext.getCasProperties().getAuthn().getSamlIdp().getLogout();
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        val samlRegisteredService = (SamlRegisteredService) WebUtils.getRegisteredService(request);
-        val sloRequest = WebUtils.getSingleLogoutRequest(request);
-        val async = new AtomicBoolean(false);
+        val registeredService = WebUtils.getRegisteredService(request);
+        if (registeredService instanceof SamlRegisteredService) {
+            val logout = configurationContext.getCasProperties().getAuthn().getSamlIdp().getLogout();
+            val samlRegisteredService = (SamlRegisteredService) registeredService;
+            val sloRequest = WebUtils.getSingleLogoutRequest(request);
+            val async = new AtomicBoolean(false);
 
-        if (StringUtils.isNotBlank(sloRequest)) {
-            async.set(getLogoutRequest(request)
-                .map(RequestAbstractType::getExtensions)
-                .stream()
-                .filter(Objects::nonNull)
-                .anyMatch(extensions -> !extensions.getUnknownXMLObjects(Asynchronous.DEFAULT_ELEMENT_NAME).isEmpty()));
+            if (StringUtils.isNotBlank(sloRequest)) {
+                async.set(getLogoutRequest(request)
+                    .map(RequestAbstractType::getExtensions)
+                    .stream()
+                    .filter(Objects::nonNull)
+                    .anyMatch(extensions -> !extensions.getUnknownXMLObjects(Asynchronous.DEFAULT_ELEMENT_NAME).isEmpty()));
+            }
+            return logout.isSendLogoutResponse()
+                && samlRegisteredService != null
+                && samlRegisteredService.isLogoutResponseEnabled()
+                && sloRequest != null
+                && !async.get();
         }
-
-        return logout.isSendLogoutResponse()
-            && samlRegisteredService != null
-            && samlRegisteredService.isLogoutResponseEnabled()
-            && sloRequest != null
-            && !async.get();
+        return false;
     }
 
     @Override
