@@ -350,8 +350,6 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
         return this.getClass().getSimpleName();
     }
     
-    
-
     /**
      * Initialize the registered service instance by defaulting fields to specific
      * values or object instances, etc.
