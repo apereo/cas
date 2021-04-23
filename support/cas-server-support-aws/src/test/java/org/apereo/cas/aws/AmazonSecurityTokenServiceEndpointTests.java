@@ -75,11 +75,11 @@ public class AmazonSecurityTokenServiceEndpointTests {
             val body = new LinkedMultiValueMap<String, String>();
             body.put("username", List.of("casuser"));
             body.put("password", List.of("resusac"));
-            val status = awsSecurityTokenServiceEndpoint.fetchCredentials("PT15S", body, request);
+            val status = awsSecurityTokenServiceEndpoint.fetchCredentials("PT15S", null, null, null, body, request);
             assertEquals(HttpStatus.UNAUTHORIZED, status.getStatusCode());
         }
     }
-    
+
     @Nested
     @Tag("AmazonWebServices")
     @TestPropertySource(properties = "cas.amazon-sts.principal-attribute-name=unknown")
@@ -104,7 +104,7 @@ public class AmazonSecurityTokenServiceEndpointTests {
             val body = new LinkedMultiValueMap<String, String>();
             body.put("username", List.of("casuser"));
             body.put("password", List.of("resusac"));
-            val status = awsSecurityTokenServiceEndpoint.fetchCredentials("PT15S", body, request);
+            val status = awsSecurityTokenServiceEndpoint.fetchCredentials("PT15S", null, null, null, body, request);
             assertEquals(HttpStatus.UNAUTHORIZED, status.getStatusCode());
         }
     }
@@ -138,7 +138,7 @@ public class AmazonSecurityTokenServiceEndpointTests {
             body.put("username", List.of("casuser"));
             body.put("password", List.of("resusac"));
 
-            val credentials = awsSecurityTokenServiceEndpoint.fetchCredentials("PT15S", body, request);
+            val credentials = awsSecurityTokenServiceEndpoint.fetchCredentials("PT15S", null, null, null, body, request);
             assertNotNull(credentials);
         }
 
@@ -150,7 +150,7 @@ public class AmazonSecurityTokenServiceEndpointTests {
             body.put("username", List.of("test1234"));
             body.put("password", List.of("4321tset"));
 
-            val credentials = awsSecurityTokenServiceEndpoint.fetchCredentials("PT15S", body, request);
+            val credentials = awsSecurityTokenServiceEndpoint.fetchCredentials("PT15S", null, null, null, body, request);
             assertNotNull(credentials);
         }
 
@@ -158,7 +158,7 @@ public class AmazonSecurityTokenServiceEndpointTests {
         public void verifyNoCredentials() {
             val request = new MockHttpServletRequest();
             val body = new LinkedMultiValueMap<String, String>();
-            val status = awsSecurityTokenServiceEndpoint.fetchCredentials("PT15S", body, request);
+            val status = awsSecurityTokenServiceEndpoint.fetchCredentials("PT15S", null, null, null, body, request);
             assertEquals(HttpStatus.BAD_REQUEST, status.getStatusCode());
         }
 
@@ -170,7 +170,7 @@ public class AmazonSecurityTokenServiceEndpointTests {
             body.put("username", List.of("casuser"));
             body.put("password", List.of("bad-password"));
 
-            val status = awsSecurityTokenServiceEndpoint.fetchCredentials("PT15S", body, request);
+            val status = awsSecurityTokenServiceEndpoint.fetchCredentials("PT15S", null, null, null, body, request);
             assertEquals(HttpStatus.UNAUTHORIZED, status.getStatusCode());
         }
     }

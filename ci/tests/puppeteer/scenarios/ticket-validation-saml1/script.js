@@ -41,7 +41,7 @@ const https = require('https');
         rejectUnauthorized: false,
         headers: {
             'Content-Length': request.length
-        },
+        }
     };
 
     const post = options => {

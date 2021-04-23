@@ -20,6 +20,7 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.PropertiesFactoryBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.HierarchicalMessageSource;
@@ -91,6 +92,7 @@ public class CasCoreWebConfiguration {
 
     @Autowired
     @Bean
+    @ConditionalOnMissingBean(name = "argumentExtractor")
     public ArgumentExtractor argumentExtractor(final List<ServiceFactoryConfigurer> configurers) {
         val serviceFactoryList = new ArrayList<ServiceFactory<? extends WebApplicationService>>();
         configurers.forEach(c -> serviceFactoryList.addAll(c.buildServiceFactories()));
@@ -100,6 +102,7 @@ public class CasCoreWebConfiguration {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "urlValidator")
     public FactoryBean<UrlValidator> urlValidator() {
         val httpClient = this.casProperties.getHttpClient();
         val allowLocalLogoutUrls = httpClient.isAllowLocalUrls();
@@ -109,11 +112,13 @@ public class CasCoreWebConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "yamlHttpMessageConverter")
     public HttpMessageConverter yamlHttpMessageConverter() {
         return new CasYamlHttpMessageConverter();
     }
-    
+
     @Bean
+    @ConditionalOnMissingBean(name = "casProtocolEndpointConfigurer")
     public ProtocolEndpointConfigurer casProtocolEndpointConfigurer() {
         return () -> List.of(
             StringUtils.prependIfMissing(CasProtocolConstants.ENDPOINT_LOGIN, "/"),

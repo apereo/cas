@@ -87,8 +87,7 @@ public class CasWebAppConfiguration implements WebMvcConfigurer {
 
     @Bean
     @Autowired
-    public SimpleUrlHandlerMapping handlerMapping(@Qualifier("rootController")
-                                                  final Controller rootController) {
+    public SimpleUrlHandlerMapping handlerMapping(@Qualifier("rootController") final Controller rootController) {
         val mapping = new SimpleUrlHandlerMapping();
 
         mapping.setOrder(1);
