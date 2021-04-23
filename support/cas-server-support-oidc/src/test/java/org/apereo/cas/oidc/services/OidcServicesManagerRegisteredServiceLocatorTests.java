@@ -104,7 +104,7 @@ public class OidcServicesManagerRegisteredServiceLocatorTests extends AbstractOi
         servicesManager.save(service1, service2, service3);
 
         var svc = webApplicationServiceFactory.createService(
-            String.format("https://app.example.org/whatever?%s=clientid", OAuth20Constants.CLIENT_ID));
+            String.format("https://app.example.org/whatever?%s=%s", OAuth20Constants.CLIENT_ID, oidcClientId));
         var result = servicesManager.findServiceBy(svc);
         assertTrue(result instanceof OidcRegisteredService);
 
