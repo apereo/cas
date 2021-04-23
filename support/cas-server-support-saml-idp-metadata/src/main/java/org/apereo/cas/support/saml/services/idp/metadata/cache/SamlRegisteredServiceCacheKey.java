@@ -54,11 +54,12 @@ public class SamlRegisteredServiceCacheKey implements Serializable {
     }
 
     private static String getCacheKeyForRegisteredService(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
+        val entityId = criteriaSet.contains(EntityIdCriterion.class)
+            ? Objects.requireNonNull(criteriaSet.get(EntityIdCriterion.class)).getEntityId()
+            : service.getServiceId();
         if (SamlUtils.isDynamicMetadataQueryConfigured(service.getMetadataLocation())) {
-            return criteriaSet.contains(EntityIdCriterion.class)
-                ? Objects.requireNonNull(criteriaSet.get(EntityIdCriterion.class)).getEntityId()
-                : service.getServiceId();
+            return entityId;
         }
-        return service.getMetadataLocation();
+        return String.format("%s|%s", entityId, service.getMetadataLocation());
     }
 }
