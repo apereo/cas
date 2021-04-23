@@ -33,6 +33,7 @@ public class DuoSecurityAuthenticationHandlerTests {
 
         val provider = mock(DuoSecurityMultifactorAuthenticationProvider.class);
         when(provider.getId()).thenReturn(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
+        when(provider.matches(anyString())).thenReturn(true);
         when(provider.getDuoAuthenticationService()).thenReturn(duoService);
 
         val handler = new DuoSecurityAuthenticationHandler(null,
@@ -41,7 +42,6 @@ public class DuoSecurityAuthenticationHandlerTests {
 
         val credential = new DuoSecurityPasscodeCredential(authentication.getPrincipal().getId(), "645341",
             DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
-        credential.setProviderId(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
         assertTrue(handler.supports(credential));
 
         when(duoService.authenticate(any(Credential.class)))
@@ -65,6 +65,7 @@ public class DuoSecurityAuthenticationHandlerTests {
         val provider = mock(DuoSecurityMultifactorAuthenticationProvider.class);
         when(provider.getId()).thenReturn(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
         when(provider.getDuoAuthenticationService()).thenReturn(duoService);
+        when(provider.matches(anyString())).thenReturn(true);
 
         val handler = new DuoSecurityAuthenticationHandler(null,
             mock(ServicesManager.class), PrincipalFactoryUtils.newPrincipalFactory(),
@@ -196,6 +197,7 @@ public class DuoSecurityAuthenticationHandlerTests {
         val provider = mock(DuoSecurityMultifactorAuthenticationProvider.class);
         when(provider.getId()).thenReturn(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
         when(provider.getDuoAuthenticationService()).thenReturn(duoService);
+        when(provider.matches(anyString())).thenReturn(true);
 
         val handler = new DuoSecurityAuthenticationHandler(null,
             mock(ServicesManager.class), PrincipalFactoryUtils.newPrincipalFactory(),
