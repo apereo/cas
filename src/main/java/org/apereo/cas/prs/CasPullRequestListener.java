@@ -38,12 +38,12 @@ public class CasPullRequestListener implements PullRequestListener {
         repository.getPullRequestFiles(pr)
             .forEach(file -> {
                 var fname = file.getFilename();
-                if (fname.contains("api/cas-server-core-api-configuration-model")) {
+                if (fname.contains("api/cas-server-core-api-configuration-model") && !pr.isLabeledAs(CasLabels.LABEL_CONFIGURATION)) {
                     repository.labelPullRequestAs(pr, CasLabels.LABEL_CONFIGURATION);
                 }
-                if (fname.contains("dependencies.gradle")) {
+                if (fname.contains("dependencies.gradle") && !pr.isLabeledAs(CasLabels.LABEL_DEPENDENCIES_MODULES)) {
                     repository.labelPullRequestAs(pr, CasLabels.LABEL_DEPENDENCIES_MODULES);
-                } else if (fname.endsWith(".gradle")) {
+                } else if (fname.endsWith(".gradle") && !pr.isLabeledAs(CasLabels.LABEL_GRADLE_BUILD_RELEASE)) {
                     repository.labelPullRequestAs(pr, CasLabels.LABEL_GRADLE_BUILD_RELEASE);
                 }
             });
