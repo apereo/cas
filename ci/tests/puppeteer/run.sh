@@ -6,7 +6,7 @@
 random=$(openssl rand -hex 8)
 
 echo "Installing Puppeteer"
-npm i --prefix "$PWD"/ci/tests/puppeteer puppeteer jsonwebtoken
+npm i --prefix "$PWD"/ci/tests/puppeteer puppeteer jsonwebtoken axios
 
 echo "Creating overlay work directory"
 rm -Rf "$TMPDIR/cas" "$PWD"/ci/tests/puppeteer/overlay

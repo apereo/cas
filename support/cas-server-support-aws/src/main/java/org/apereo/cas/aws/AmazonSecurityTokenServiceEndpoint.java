@@ -59,13 +59,19 @@ public class AmazonSecurityTokenServiceEndpoint extends BaseCasActuatorEndpoint 
     /**
      * Fetch credentials.
      *
-     * @param duration    the duration
-     * @param requestBody the request body
-     * @param request     the request
+     * @param duration     the duration
+     * @param tokenCode    the token code
+     * @param profile      the profile
+     * @param serialNumber the serial number
+     * @param requestBody  the request body
+     * @param request      the request
      * @return the map
      */
-    @PostMapping(produces = MediaType.TEXT_PLAIN_VALUE)
+    @PostMapping
     public ResponseEntity<String> fetchCredentials(@RequestParam(required = false, defaultValue = "PT1H") final String duration,
+                                                   @RequestParam(value = "token", required = false) final String tokenCode,
+                                                   @RequestParam(required = false) final String profile,
+                                                   @RequestParam(required = false) final String serialNumber,
                                                    @RequestBody final MultiValueMap<String, String> requestBody,
                                                    final HttpServletRequest request) {
         val credential = this.credentialFactory.fromRequest(request, requestBody);
@@ -100,13 +106,15 @@ public class AmazonSecurityTokenServiceEndpoint extends BaseCasActuatorEndpoint 
         }
 
         val credentials = ChainingAWSCredentialsProvider.getInstance(amz.getCredentialAccessKey(),
-            amz.getCredentialSecretKey(), amz.getProfilePath(), amz.getProfileName());
+            amz.getCredentialSecretKey(), amz.getProfilePath(), StringUtils.defaultString(profile, amz.getProfileName()));
 
         val builder = StsClient.builder();
         AmazonClientConfigurationBuilder.prepareClientBuilder(builder, credentials, amz);
         val client = builder.build();
         val sessionTokenRequest = GetSessionTokenRequest.builder()
             .durationSeconds(Long.valueOf(Beans.newDuration(duration).toSeconds()).intValue())
+            .serialNumber(serialNumber)
+            .tokenCode(tokenCode)
             .build();
         val sessionResult = client.getSessionToken(sessionTokenRequest);
         val stsCredentials = sessionResult.credentials();
