@@ -46,7 +46,8 @@ ext {
     enableRemoteDebugging = providers.systemProperty("enableRemoteDebugging").forUseAtConfigurationTime().present
     remoteDebuggingSuspend = providers.systemProperty("remoteDebuggingSuspend")
             .forUseAtConfigurationTime().getOrElse("false") == "true" ? "y" : "n"
-    generateGitProperties = providers.systemProperty("generateGitProperties").forUseAtConfigurationTime().present
+    generateGitProperties = publishReleases || publishSnapshots
+            || providers.systemProperty("generateGitProperties").forUseAtConfigurationTime().present
 
     ci = System.getenv("CI") || providers.systemProperty("CI").forUseAtConfigurationTime().present
 
@@ -158,18 +159,8 @@ allprojects {
 
     apply from: rootProject.file("gradle/tasks.gradle")
 
-    
-    if (rootProject.publishReleases || rootProject.publishSnapshots || rootProject.generateGitProperties) {
+    if (rootProject.generateGitProperties) {
         apply plugin: "com.gorylenko.gradle-git-properties"
-        gitProperties {
-            def project = [version: project.version,
-                           name: project.name,
-                           description: project.description]
-            customProperty 'project', { project }
-            extProperty = "gitProps"
-            keys = ["git.branch", "git.build.time", "git.build.user.name",
-                    "git.build.version", "git.commit.id", "git.remote.origin.url"]
-        }
     }
 
     project.ext["forceBootifulArtifact"] = null
@@ -177,6 +168,18 @@ allprojects {
     afterEvaluate { project ->
         jacoco {
             toolVersion = "$gradleJacocoVersion"
+        }
+
+        if (rootProject.generateGitProperties) {
+            gitProperties {
+                customProperty 'project.group', project.group
+                customProperty 'project.name', project.name
+                customProperty 'project.version', project.version
+                customProperty 'project.description', project.description
+                extProperty = "gitProps"
+                keys = ["git.branch", "git.build.time", "git.build.user.name",
+                        "git.build.version", "git.commit.id", "git.remote.origin.url"]
+            }
         }
     }
 
@@ -391,6 +394,11 @@ subprojects {
     ext.buildJarFile = new File(project.buildDir, "libs/${project.name}-${project.version}.jar")
 
     [compileTestJava, compileJava].each {
+
+        if (rootProject.generateGitProperties) {
+            it.dependsOn("generateGitProperties")
+        }
+
         it.options.fork = true
         it.options.incremental = true
 
