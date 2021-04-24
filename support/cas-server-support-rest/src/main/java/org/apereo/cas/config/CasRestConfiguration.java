@@ -8,6 +8,7 @@ import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionStrategy;
 import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.rest.audit.RestResponseEntityAuditResourceResolver;
 import org.apereo.cas.rest.factory.CasProtocolServiceTicketResourceEntityResponseFactory;
@@ -21,6 +22,7 @@ import org.apereo.cas.rest.factory.UserAuthenticationResourceEntityResponseFacto
 import org.apereo.cas.rest.plan.DefaultServiceTicketResourceEntityResponseFactoryPlan;
 import org.apereo.cas.rest.plan.ServiceTicketResourceEntityResponseFactoryConfigurer;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.rest.resources.RestAuthenticationService;
 import org.apereo.cas.support.rest.resources.RestProtocolConstants;
 import org.apereo.cas.support.rest.resources.ServiceTicketResource;
 import org.apereo.cas.support.rest.resources.TicketGrantingTicketResource;
@@ -65,7 +67,7 @@ public class CasRestConfiguration {
     @Autowired
     @Qualifier("requestedContextValidator")
     private ObjectProvider<RequestedAuthenticationContextValidator> requestedContextValidator;
-    
+
     @Autowired
     @Qualifier("centralAuthenticationService")
     private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
@@ -76,7 +78,7 @@ public class CasRestConfiguration {
 
     @Autowired
     @Qualifier("webApplicationServiceFactory")
-    private ObjectProvider<ServiceFactory> webApplicationServiceFactory;
+    private ObjectProvider<ServiceFactory<WebApplicationService>> webApplicationServiceFactory;
 
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
@@ -89,7 +91,15 @@ public class CasRestConfiguration {
     @Autowired
     @Qualifier("defaultMultifactorTriggerSelectionStrategy")
     private ObjectProvider<MultifactorAuthenticationTriggerSelectionStrategy> multifactorTriggerSelectionStrategy;
+
+    @Autowired
+    @Qualifier("serviceTicketResourceEntityResponseFactory")
+    private ObjectProvider<ServiceTicketResourceEntityResponseFactory> serviceTicketResourceEntityResponseFactory;
     
+    @Autowired
+    @Qualifier("restHttpRequestCredentialFactory")
+    private ObjectProvider<RestHttpRequestCredentialFactory> restHttpRequestCredentialFactory;
+
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
@@ -106,14 +116,13 @@ public class CasRestConfiguration {
 
     @Bean
     @Autowired
-    public ServiceTicketResource serviceTicketResource(
-        @Qualifier("serviceTicketResourceEntityResponseFactory") final ServiceTicketResourceEntityResponseFactory serviceTicketResourceEntityResponseFactory,
-        @Qualifier("restHttpRequestCredentialFactory") final RestHttpRequestCredentialFactory restHttpRequestCredentialFactory) {
-        return new ServiceTicketResource(authenticationSystemSupport.getObject(),
+    public ServiceTicketResource serviceTicketResource() {
+        return new ServiceTicketResource(
+            authenticationSystemSupport.getObject(),
             ticketRegistrySupport.getObject(),
             argumentExtractor.getObject(),
-            serviceTicketResourceEntityResponseFactory,
-            restHttpRequestCredentialFactory,
+            serviceTicketResourceEntityResponseFactory.getObject(),
+            restHttpRequestCredentialFactory.getObject(),
             applicationContext);
     }
 
@@ -139,29 +148,31 @@ public class CasRestConfiguration {
         return new DefaultUserAuthenticationResourceEntityResponseFactory();
     }
 
-    @Autowired
     @Bean
-    public TicketGrantingTicketResource ticketGrantingTicketResource(
-        @Qualifier("restHttpRequestCredentialFactory") final RestHttpRequestCredentialFactory restHttpRequestCredentialFactory) {
-        return new TicketGrantingTicketResource(authenticationSystemSupport.getObject(),
-            restHttpRequestCredentialFactory,
-            centralAuthenticationService.getObject(),
+    public RestAuthenticationService restAuthenticationService() {
+        return new RestAuthenticationService(
+            authenticationSystemSupport.getObject(),
+            restHttpRequestCredentialFactory.getObject(),
             webApplicationServiceFactory.getObject(),
+            multifactorTriggerSelectionStrategy.getObject(),
+            servicesManager.getObject(),
+            requestedContextValidator.getObject());
+    }
+
+    @Bean
+    public TicketGrantingTicketResource ticketGrantingTicketResource() {
+        return new TicketGrantingTicketResource(restAuthenticationService(),
+            centralAuthenticationService.getObject(),
             ticketGrantingTicketResourceEntityResponseFactory(),
             applicationContext);
     }
 
-    @Autowired
     @Bean
-    public UserAuthenticationResource userAuthenticationRestController(
-        @Qualifier("restHttpRequestCredentialFactory") final RestHttpRequestCredentialFactory restHttpRequestCredentialFactory) {
-        return new UserAuthenticationResource(authenticationSystemSupport.getObject(),
-            restHttpRequestCredentialFactory,
-            webApplicationServiceFactory.getObject(),
+    public UserAuthenticationResource userAuthenticationRestController() {
+        return new UserAuthenticationResource(
+            restAuthenticationService(),
             userAuthenticationResourceEntityResponseFactory(),
-            applicationContext, multifactorTriggerSelectionStrategy.getObject(),
-            servicesManager.getObject(),
-            requestedContextValidator.getObject());
+            applicationContext);
     }
 
     @Bean
@@ -181,6 +192,7 @@ public class CasRestConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "restProtocolEndpointConfigurer")
     public ProtocolEndpointConfigurer restProtocolEndpointConfigurer() {
         return () -> List.of(StringUtils.prependIfMissing(RestProtocolConstants.BASE_ENDPOINT, "/"));
     }

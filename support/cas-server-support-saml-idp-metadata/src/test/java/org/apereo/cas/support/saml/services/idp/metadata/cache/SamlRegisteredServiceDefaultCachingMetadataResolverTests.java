@@ -45,7 +45,7 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends Ba
         resolutionPlan.registerMetadataResolver(
             new UrlResourceMetadataResolver(casProperties.getAuthn().getSamlIdp(), openSamlConfigBean));
         val cacheLoader = new SamlRegisteredServiceMetadataResolverCacheLoader(openSamlConfigBean, httpClient, resolutionPlan);
-        val resolver = new SamlRegisteredServiceDefaultCachingMetadataResolver(1, cacheLoader, openSamlConfigBean);
+        val resolver = new SamlRegisteredServiceDefaultCachingMetadataResolver(Duration.ofMinutes(1), cacheLoader, openSamlConfigBean);
 
         try (val webServer = new MockWebServer(9191, new ClassPathResource("aggregate-md.xml"), MediaType.APPLICATION_XML_VALUE)) {
             webServer.start();
@@ -81,7 +81,7 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends Ba
         resolutionPlan.registerMetadataResolver(
             new ClasspathResourceMetadataResolver(casProperties.getAuthn().getSamlIdp(), openSamlConfigBean));
         val cacheLoader = new SamlRegisteredServiceMetadataResolverCacheLoader(openSamlConfigBean, httpClient, resolutionPlan);
-        val resolver = new SamlRegisteredServiceDefaultCachingMetadataResolver(1, cacheLoader, openSamlConfigBean);
+        val resolver = new SamlRegisteredServiceDefaultCachingMetadataResolver(Duration.ofMinutes(1), cacheLoader, openSamlConfigBean);
         assertNotNull(resolver.resolve(aggregateRegisteredService, criteriaSet1));
         assertTrue(resolver.resolveIfPresent(aggregateRegisteredService, criteriaSet1).isPresent());
 
@@ -113,7 +113,7 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends Ba
         resolutionPlan.registerMetadataResolver(
             new ClasspathResourceMetadataResolver(casProperties.getAuthn().getSamlIdp(), openSamlConfigBean));
         val cacheLoader = new SamlRegisteredServiceMetadataResolverCacheLoader(openSamlConfigBean, httpClient, resolutionPlan);
-        val resolver = new SamlRegisteredServiceDefaultCachingMetadataResolver(1, cacheLoader, openSamlConfigBean);
+        val resolver = new SamlRegisteredServiceDefaultCachingMetadataResolver(Duration.ofMinutes(1), cacheLoader, openSamlConfigBean);
         assertNotNull(resolver.resolve(service, criteriaSet));
         assertTrue(resolver.resolveIfPresent(service, criteriaSet).isPresent());
 
