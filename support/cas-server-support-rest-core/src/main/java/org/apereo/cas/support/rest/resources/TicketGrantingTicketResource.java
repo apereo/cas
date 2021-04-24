@@ -2,11 +2,7 @@ package org.apereo.cas.support.rest.resources;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationException;
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.rest.BadRestRequestException;
-import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
 import org.apereo.cas.rest.factory.TicketGrantingTicketResourceEntityResponseFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.LoggingUtils;
@@ -26,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.security.auth.login.FailedLoginException;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -47,14 +44,9 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 @RequiredArgsConstructor
 public class TicketGrantingTicketResource {
-
-    private final AuthenticationSystemSupport authenticationSystemSupport;
-
-    private final RestHttpRequestCredentialFactory credentialFactory;
+    private final RestAuthenticationService authenticationService;
 
     private final CentralAuthenticationService centralAuthenticationService;
-
-    private final ServiceFactory<WebApplicationService> serviceFactory;
 
     private final TicketGrantingTicketResourceEntityResponseFactory ticketGrantingTicketResourceEntityResponseFactory;
 
@@ -127,7 +119,7 @@ public class TicketGrantingTicketResource {
      */
     protected ResponseEntity<String> createResponseEntityForTicket(final HttpServletRequest request,
                                                                    final TicketGrantingTicket tgtId) throws Exception {
-        return this.ticketGrantingTicketResourceEntityResponseFactory.build(tgtId, request);
+        return ticketGrantingTicketResourceEntityResponseFactory.build(tgtId, request);
     }
 
     /**
@@ -136,15 +128,12 @@ public class TicketGrantingTicketResource {
      * @param requestBody the request body
      * @param request     the request
      * @return the ticket granting ticket
+     * @throws AuthenticationException the authentication exception
      */
     protected TicketGrantingTicket createTicketGrantingTicketForRequest(final MultiValueMap<String, String> requestBody,
-                                                                        final HttpServletRequest request) {
-        val credential = this.credentialFactory.fromRequest(request, requestBody);
-        if (credential == null || credential.isEmpty()) {
-            throw new BadRestRequestException("No credentials are provided or extracted to authenticate the REST request");
-        }
-        val service = this.serviceFactory.createService(request);
-        val authenticationResult = authenticationSystemSupport.finalizeAuthenticationTransaction(service, credential);
-        return centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
+                                                                        final HttpServletRequest request) throws Exception {
+        val authenticationResult = authenticationService.authenticate(requestBody, request);
+        val result = authenticationResult.orElseThrow(FailedLoginException::new);
+        return centralAuthenticationService.createTicketGrantingTicket(result);
     }
 }

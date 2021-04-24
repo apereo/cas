@@ -13,9 +13,9 @@ import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.rest.factory.DefaultUserAuthenticationResourceEntityResponseFactory;
-import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
 import org.apereo.cas.rest.factory.UsernamePasswordRestHttpRequestCredentialFactory;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.rest.resources.RestAuthenticationService;
 import org.apereo.cas.support.rest.resources.UserAuthenticationResource;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.AuthenticationContextValidationResult;
@@ -69,8 +69,6 @@ public class UserAuthenticationResourceTests {
     @Mock
     private RequestedAuthenticationContextValidator requestedContextValidator;
 
-    private RestHttpRequestCredentialFactory httpRequestCredentialFactory;
-
     @InjectMocks
     private UserAuthenticationResource userAuthenticationResource;
 
@@ -78,7 +76,7 @@ public class UserAuthenticationResourceTests {
 
     @BeforeEach
     public void initialize() {
-        this.httpRequestCredentialFactory = new UsernamePasswordRestHttpRequestCredentialFactory() {
+        val httpRequestCredentialFactory = new UsernamePasswordRestHttpRequestCredentialFactory() {
             @Override
             public List<Credential> fromAuthentication(final HttpServletRequest request,
                                                        final MultiValueMap<String, String> requestBody,
@@ -91,15 +89,11 @@ public class UserAuthenticationResourceTests {
             }
         };
 
-        this.userAuthenticationResource = new UserAuthenticationResource(
-            this.authenticationSupport,
-            this.httpRequestCredentialFactory,
-            new WebApplicationServiceFactory(),
+        val api = new RestAuthenticationService(authenticationSupport, httpRequestCredentialFactory,
+            new WebApplicationServiceFactory(), multifactorTriggerSelectionStrategy, servicesManager, requestedContextValidator);
+        this.userAuthenticationResource = new UserAuthenticationResource(api,
             new DefaultUserAuthenticationResourceEntityResponseFactory(),
-            new GenericApplicationContext(),
-            multifactorTriggerSelectionStrategy,
-            servicesManager,
-            requestedContextValidator);
+            new GenericApplicationContext());
 
         this.mockMvc = MockMvcBuilders.standaloneSetup(this.userAuthenticationResource)
             .defaultRequest(get("/")
