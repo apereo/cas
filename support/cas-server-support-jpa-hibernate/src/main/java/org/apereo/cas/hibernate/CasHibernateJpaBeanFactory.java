@@ -54,6 +54,8 @@ public class CasHibernateJpaBeanFactory implements JpaBeanFactory {
         properties.put(Environment.DIALECT, jpaProperties.getDialect());
         properties.put(Environment.HBM2DDL_AUTO, jpaProperties.getDdlAuto());
         properties.put(Environment.STATEMENT_BATCH_SIZE, jpaProperties.getBatchSize());
+        properties.put(Environment.GENERATE_STATISTICS, jpaProperties.isGenerateStatistics());
+
         if (StringUtils.isNotBlank(jpaProperties.getDefaultCatalog())) {
             properties.put(Environment.DEFAULT_CATALOG, jpaProperties.getDefaultCatalog());
         }

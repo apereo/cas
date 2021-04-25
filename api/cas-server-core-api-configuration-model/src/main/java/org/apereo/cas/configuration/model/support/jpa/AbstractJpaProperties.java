@@ -136,6 +136,11 @@ public abstract class AbstractJpaProperties implements Serializable {
     private int leakThreshold = 3_000;
 
     /**
+     * Allow hibernate to generate query statistics.
+     */
+    private boolean generateStatistics;
+
+    /**
      * A non-zero value enables use of JDBC2 batch updates by Hibernate. e.g. recommended values between 5 and 30.
      */
     private int batchSize = 5;

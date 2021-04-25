@@ -146,10 +146,10 @@ public class DefaultChainingServiceRegistry extends AbstractServiceRegistry impl
     @Override
     public RegisteredService findServiceBy(final String id) {
         return serviceRegistries.stream()
-                .map(registry -> registry.findServiceBy(id))
-                .filter(Objects::nonNull)
-                .findFirst()
-                 .orElse(null);
+            .map(registry -> registry.findServiceBy(id))
+            .filter(Objects::nonNull)
+            .findFirst()
+            .orElse(null);
     }
 
 }
