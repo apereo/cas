@@ -21,7 +21,7 @@ import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.rest.factory.DefaultTicketGrantingTicketResourceEntityResponseFactory;
 import org.apereo.cas.rest.factory.UsernamePasswordRestHttpRequestCredentialFactory;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.rest.resources.RestAuthenticationService;
+import org.apereo.cas.support.rest.resources.DefaultRestAuthenticationService;
 import org.apereo.cas.support.rest.resources.TicketGrantingTicketResource;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -122,7 +122,7 @@ public class TicketGrantingTicketResourceTests {
         val authenticationSystemSupport = new DefaultAuthenticationSystemSupport(new DefaultAuthenticationTransactionManager(publisher, manager),
             new DefaultPrincipalElectionStrategy(), new DefaultAuthenticationResultBuilderFactory(),
             new DefaultAuthenticationTransactionFactory());
-        val api = new RestAuthenticationService(authenticationSystemSupport,
+        val api = new DefaultRestAuthenticationService(authenticationSystemSupport,
             httpRequestCredentialFactory,
             new WebApplicationServiceFactory(),
             multifactorTriggerSelectionStrategy,

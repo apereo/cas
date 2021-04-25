@@ -22,6 +22,7 @@ import org.apereo.cas.rest.factory.UserAuthenticationResourceEntityResponseFacto
 import org.apereo.cas.rest.plan.DefaultServiceTicketResourceEntityResponseFactoryPlan;
 import org.apereo.cas.rest.plan.ServiceTicketResourceEntityResponseFactoryConfigurer;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.rest.resources.DefaultRestAuthenticationService;
 import org.apereo.cas.support.rest.resources.RestAuthenticationService;
 import org.apereo.cas.support.rest.resources.RestProtocolConstants;
 import org.apereo.cas.support.rest.resources.ServiceTicketResource;
@@ -150,7 +151,7 @@ public class CasRestConfiguration {
 
     @Bean
     public RestAuthenticationService restAuthenticationService() {
-        return new RestAuthenticationService(
+        return new DefaultRestAuthenticationService(
             authenticationSystemSupport.getObject(),
             restHttpRequestCredentialFactory.getObject(),
             webApplicationServiceFactory.getObject(),

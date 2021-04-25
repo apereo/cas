@@ -15,7 +15,7 @@ import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.rest.factory.DefaultUserAuthenticationResourceEntityResponseFactory;
 import org.apereo.cas.rest.factory.UsernamePasswordRestHttpRequestCredentialFactory;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.rest.resources.RestAuthenticationService;
+import org.apereo.cas.support.rest.resources.DefaultRestAuthenticationService;
 import org.apereo.cas.support.rest.resources.UserAuthenticationResource;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.AuthenticationContextValidationResult;
@@ -89,7 +89,7 @@ public class UserAuthenticationResourceTests {
             }
         };
 
-        val api = new RestAuthenticationService(authenticationSupport, httpRequestCredentialFactory,
+        val api = new DefaultRestAuthenticationService(authenticationSupport, httpRequestCredentialFactory,
             new WebApplicationServiceFactory(), multifactorTriggerSelectionStrategy, servicesManager, requestedContextValidator);
         this.userAuthenticationResource = new UserAuthenticationResource(api,
             new DefaultUserAuthenticationResourceEntityResponseFactory(),
