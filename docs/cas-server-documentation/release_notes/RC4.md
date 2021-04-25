@@ -111,6 +111,7 @@ via the configured [multifactor authentication triggers](../mfa/Configuring-Mult
 - Multiple Javascript and/or CSS files can be specified in theme configurations, separated via comma.
 - JDBC/JPA integrations are given the option to specify the database `fetch-size`. Furthermore, a number of JPA collections 
   and relationships associated with registered services are now marked as lazy to improve query performance for load operations.
+- A new `casModules` [actuator endpoint](../configuration/Configuration-Metadata-Repository.html) to output the collection of CAS modules activated and included at runtime.
 
 ## Library Upgrades
 

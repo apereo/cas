@@ -17,7 +17,8 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include casmodule.html group="org.apereo.cas" module="cas-server-core-configuration-metadata-repository" %}
 
-Configuration metadata may also be accessed and queried using the CAS actuator endpoints. [See this guide](../monitoring/Monitoring-Statistics.html) to learn more.
+Configuration metadata may also be accessed and queried using the
+CAS actuator endpoints. [See this guide](../monitoring/Monitoring-Statistics.html) to learn more.
 
 ## Administrative Endpoints
 
@@ -26,6 +27,7 @@ The following endpoints are provided by CAS:
 | Endpoint                 | Description
 |--------------------------|------------------------------------------------
 | `configurationMetadata`       | Exposes [CAS configuration metadata](Configuration-Metadata-Repository.html) that can be used to query settings. The default endpoint presents a list of all settings recognized by CAS, with the added capability to search for a specific CAS setting by its partial `name` as a selector. This interface ships with CAS by default and you need not do anything special to enable it.
+| `casModules`       | Output the collection of CAS feature modules that are included and activated at runtime
 
 ## Metadata via Commandline
 
