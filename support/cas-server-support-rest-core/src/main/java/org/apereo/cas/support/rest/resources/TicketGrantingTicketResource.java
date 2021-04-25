@@ -3,6 +3,7 @@ package org.apereo.cas.support.rest.resources;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.rest.BadRestRequestException;
+import org.apereo.cas.rest.authentication.RestAuthenticationService;
 import org.apereo.cas.rest.factory.TicketGrantingTicketResourceEntityResponseFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.LoggingUtils;

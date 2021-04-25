@@ -6,11 +6,9 @@ import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditTrailConstants;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionStrategy;
-import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.rest.audit.RestResponseEntityAuditResourceResolver;
+import org.apereo.cas.rest.authentication.RestAuthenticationService;
 import org.apereo.cas.rest.factory.CasProtocolServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.rest.factory.CompositeServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.rest.factory.DefaultTicketGrantingTicketResourceEntityResponseFactory;
@@ -21,9 +19,6 @@ import org.apereo.cas.rest.factory.TicketGrantingTicketResourceEntityResponseFac
 import org.apereo.cas.rest.factory.UserAuthenticationResourceEntityResponseFactory;
 import org.apereo.cas.rest.plan.DefaultServiceTicketResourceEntityResponseFactoryPlan;
 import org.apereo.cas.rest.plan.ServiceTicketResourceEntityResponseFactoryConfigurer;
-import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.rest.resources.DefaultRestAuthenticationService;
-import org.apereo.cas.support.rest.resources.RestAuthenticationService;
 import org.apereo.cas.support.rest.resources.RestProtocolConstants;
 import org.apereo.cas.support.rest.resources.ServiceTicketResource;
 import org.apereo.cas.support.rest.resources.TicketGrantingTicketResource;
@@ -31,7 +26,6 @@ import org.apereo.cas.support.rest.resources.TicketStatusResource;
 import org.apereo.cas.support.rest.resources.UserAuthenticationResource;
 import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
 import org.apereo.cas.web.ProtocolEndpointConfigurer;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
@@ -61,13 +55,10 @@ import java.util.List;
 @Configuration("casRestConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasRestConfiguration {
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
-    @Qualifier("requestedContextValidator")
-    private ObjectProvider<RequestedAuthenticationContextValidator> requestedContextValidator;
+    @Qualifier("restAuthenticationService")
+    private ObjectProvider<RestAuthenticationService> restAuthenticationService;
 
     @Autowired
     @Qualifier("centralAuthenticationService")
@@ -78,10 +69,6 @@ public class CasRestConfiguration {
     private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
 
     @Autowired
-    @Qualifier("webApplicationServiceFactory")
-    private ObjectProvider<ServiceFactory<WebApplicationService>> webApplicationServiceFactory;
-
-    @Autowired
     @Qualifier("defaultTicketRegistrySupport")
     private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
 
@@ -90,13 +77,9 @@ public class CasRestConfiguration {
     private ObjectProvider<ArgumentExtractor> argumentExtractor;
 
     @Autowired
-    @Qualifier("defaultMultifactorTriggerSelectionStrategy")
-    private ObjectProvider<MultifactorAuthenticationTriggerSelectionStrategy> multifactorTriggerSelectionStrategy;
-
-    @Autowired
     @Qualifier("serviceTicketResourceEntityResponseFactory")
     private ObjectProvider<ServiceTicketResourceEntityResponseFactory> serviceTicketResourceEntityResponseFactory;
-    
+
     @Autowired
     @Qualifier("restHttpRequestCredentialFactory")
     private ObjectProvider<RestHttpRequestCredentialFactory> restHttpRequestCredentialFactory;
@@ -116,7 +99,6 @@ public class CasRestConfiguration {
     }
 
     @Bean
-    @Autowired
     public ServiceTicketResource serviceTicketResource() {
         return new ServiceTicketResource(
             authenticationSystemSupport.getObject(),
@@ -150,19 +132,8 @@ public class CasRestConfiguration {
     }
 
     @Bean
-    public RestAuthenticationService restAuthenticationService() {
-        return new DefaultRestAuthenticationService(
-            authenticationSystemSupport.getObject(),
-            restHttpRequestCredentialFactory.getObject(),
-            webApplicationServiceFactory.getObject(),
-            multifactorTriggerSelectionStrategy.getObject(),
-            servicesManager.getObject(),
-            requestedContextValidator.getObject());
-    }
-
-    @Bean
     public TicketGrantingTicketResource ticketGrantingTicketResource() {
-        return new TicketGrantingTicketResource(restAuthenticationService(),
+        return new TicketGrantingTicketResource(restAuthenticationService.getObject(),
             centralAuthenticationService.getObject(),
             ticketGrantingTicketResourceEntityResponseFactory(),
             applicationContext);
@@ -171,7 +142,7 @@ public class CasRestConfiguration {
     @Bean
     public UserAuthenticationResource userAuthenticationRestController() {
         return new UserAuthenticationResource(
-            restAuthenticationService(),
+            restAuthenticationService.getObject(),
             userAuthenticationResourceEntityResponseFactory(),
             applicationContext);
     }

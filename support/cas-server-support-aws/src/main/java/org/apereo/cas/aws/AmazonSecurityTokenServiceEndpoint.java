@@ -1,14 +1,12 @@
 package org.apereo.cas.aws;
 
+import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
+import org.apereo.cas.rest.authentication.RestAuthenticationService;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RegexUtils;
-import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +26,6 @@ import software.amazon.awssdk.services.sts.model.GetSessionTokenRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.LinkedHashMap;
-import java.util.List;
 
 /**
  * This is {@link AmazonSecurityTokenServiceEndpoint}.
@@ -39,20 +36,12 @@ import java.util.List;
 @RestControllerEndpoint(id = "awsSts", enableByDefault = false)
 @Slf4j
 public class AmazonSecurityTokenServiceEndpoint extends BaseCasActuatorEndpoint {
-    private final AuthenticationSystemSupport authenticationSystemSupport;
-
-    private final RestHttpRequestCredentialFactory credentialFactory;
-
-    private final RequestedAuthenticationContextValidator requestedContextValidator;
+    private final RestAuthenticationService restAuthenticationService;
 
     public AmazonSecurityTokenServiceEndpoint(final CasConfigurationProperties casProperties,
-                                              final AuthenticationSystemSupport authenticationSystemSupport,
-                                              final RestHttpRequestCredentialFactory credentialFactory,
-                                              final RequestedAuthenticationContextValidator requestedContextValidator) {
+                                              final RestAuthenticationService restAuthenticationService) {
         super(casProperties);
-        this.authenticationSystemSupport = authenticationSystemSupport;
-        this.credentialFactory = credentialFactory;
-        this.requestedContextValidator = requestedContextValidator;
+        this.restAuthenticationService = restAuthenticationService;
     }
 
     /**
@@ -73,21 +62,14 @@ public class AmazonSecurityTokenServiceEndpoint extends BaseCasActuatorEndpoint 
                                                    @RequestParam(required = false) final String serialNumber,
                                                    @RequestBody final MultiValueMap<String, String> requestBody,
                                                    final HttpServletRequest request) {
-        val credential = this.credentialFactory.fromRequest(request, requestBody);
-        if (credential == null || credential.isEmpty()) {
-            return ResponseEntity.badRequest().body("No credentials are provided or extracted to authenticate the request");
-        }
-        val authenticationResult = getAuthenticationResult(credential);
-        if (authenticationResult == null) {
-            LOGGER.error("Unable to validate the authentication credentials");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed");
-        }
 
-        val validationResult = requestedContextValidator.validateAuthenticationContext(request, null,
-            authenticationResult.getAuthentication(), authenticationResult.getService());
-        if (!validationResult.isSuccess()) {
-            LOGGER.error("Unable to validate the authentication context");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication context validation failed");
+        var authenticationResult = (AuthenticationResult) null;
+        try {
+            authenticationResult = restAuthenticationService.authenticate(requestBody, request)
+                .orElseThrow(AuthenticationException::new);
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed");
         }
 
         val amz = casProperties.getAmazonSts();
@@ -124,17 +106,8 @@ public class AmazonSecurityTokenServiceEndpoint extends BaseCasActuatorEndpoint 
         properties.put(ProfileProperty.AWS_SESSION_TOKEN, stsCredentials.sessionToken());
         properties.put(ProfileProperty.REGION, StringUtils.isBlank(amz.getRegion()) ? Region.AWS_GLOBAL.id() : Region.of(amz.getRegion()).id());
 
-        val result = new StringBuilder("[default]\n");
-        properties.forEach((key, value) -> result.append(String.format("%s=%s%n", key, value)));
-        return ResponseEntity.ok(result.toString());
-    }
-
-    private AuthenticationResult getAuthenticationResult(final List<Credential> credential) {
-        try {
-            return authenticationSystemSupport.finalizeAuthenticationTransaction(credential.toArray(Credential[]::new));
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return null;
+        val output = new StringBuilder("[default]\n");
+        properties.forEach((key, value) -> output.append(String.format("%s=%s%n", key, value)));
+        return ResponseEntity.ok(output.toString());
     }
 }

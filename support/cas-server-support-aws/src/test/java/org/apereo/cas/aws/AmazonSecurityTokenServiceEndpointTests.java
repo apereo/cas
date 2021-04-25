@@ -159,7 +159,7 @@ public class AmazonSecurityTokenServiceEndpointTests {
             val request = new MockHttpServletRequest();
             val body = new LinkedMultiValueMap<String, String>();
             val status = awsSecurityTokenServiceEndpoint.fetchCredentials("PT15S", null, null, null, body, request);
-            assertEquals(HttpStatus.BAD_REQUEST, status.getStatusCode());
+            assertEquals(HttpStatus.UNAUTHORIZED, status.getStatusCode());
         }
 
         @Test
