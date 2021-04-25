@@ -20,6 +20,7 @@ import org.apereo.cas.web.report.AuditLogEndpoint;
 import org.apereo.cas.web.report.CasInfoEndpointContributor;
 import org.apereo.cas.web.report.CasReleaseAttributesReportEndpoint;
 import org.apereo.cas.web.report.CasResolveAttributesReportEndpoint;
+import org.apereo.cas.web.report.CasRuntimeModulesEndpoint;
 import org.apereo.cas.web.report.ExportRegisteredServicesEndpoint;
 import org.apereo.cas.web.report.ImportRegisteredServicesEndpoint;
 import org.apereo.cas.web.report.RegisteredAuthenticationHandlersEndpoint;
@@ -114,6 +115,12 @@ public class CasReportsConfiguration {
     @ConditionalOnAvailableEndpoint
     public AuditLogEndpoint auditLogEndpoint() {
         return new AuditLogEndpoint(auditTrailExecutionPlan.getObject(), casProperties);
+    }
+
+    @Bean
+    @ConditionalOnAvailableEndpoint
+    public CasRuntimeModulesEndpoint casRuntimeModulesEndpoint() {
+        return new CasRuntimeModulesEndpoint(casProperties, applicationContext);
     }
 
     @Bean
