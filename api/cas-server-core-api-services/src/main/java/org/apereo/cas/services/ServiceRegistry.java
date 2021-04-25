@@ -86,7 +86,7 @@ public interface ServiceRegistry {
         }
         return clazz.cast(service);
     }
-    
+
     /**
      * Find a service by matching with the service id.
      *
@@ -94,9 +94,10 @@ public interface ServiceRegistry {
      * @return the registered service
      */
     default RegisteredService findServiceBy(final String id) {
-        return getServicesStream().filter(r -> r.matches(id))
-                .findFirst()
-                .orElse(null);
+        return getServicesStream()
+            .filter(r -> r.matches(id))
+            .findFirst()
+            .orElse(null);
     }
 
     /**
