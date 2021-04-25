@@ -133,7 +133,7 @@ public class ResourceUtils {
      */
     public static AbstractResource getResourceFrom(final String location) throws IOException {
         val resource = getRawResourceFrom(location);
-        if (!resource.exists() || !resource.isReadable()) {
+        if (!resource.exists() || (resource.isFile() && resource.getFile().isFile() && !resource.isReadable())) {
             throw new FileNotFoundException("Resource " + location + " does not exist or is unreadable");
         }
         return resource;

@@ -774,6 +774,16 @@ public class WebUtils {
     }
 
     /**
+     * Is password management enabled.
+     *
+     * @param context the context
+     * @return the boolean
+     */
+    public static boolean isPasswordManagementEnabled(final RequestContext context) {
+        return context.getFlowScope().get("passwordManagementEnabled", Boolean.class);
+    }
+
+    /**
      * Put principal.
      *
      * @param requestContext          the request context

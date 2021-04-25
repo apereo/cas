@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<md:EntityDescriptor xmlns:shibmd="urn:mace:shibboleth:metadata:1.0" xmlns:remd="http://refeds.org/metadata" xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:mdattr="urn:oasis:names:tc:SAML:metadata:attribute" xmlns:mdrpi="urn:oasis:names:tc:SAML:metadata:rpi" xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" xmlns:xrd="http://docs.oasis-open.org/ns/xri/xrd-1.0" entityID="https://idp.example.net/idp/shibboleth">
+  <md:Extensions>
+    <mdrpi:RegistrationInfo registrationAuthority="https://incommon.org"/>
+    <mdattr:EntityAttributes>
+      <saml:Attribute Name="http://macedir.org/entity-category" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+        <saml:AttributeValue>http://id.incommon.org/category/registered-by-incommon</saml:AttributeValue>
+      </saml:Attribute>
+    </mdattr:EntityAttributes>
+  </md:Extensions>
+  <md:IDPSSODescriptor errorURL="https://www.unicon.net/Unicon's_IdP_Privacy_Policy/" protocolSupportEnumeration="urn:mace:shibboleth:1.0 urn:oasis:names:tc:SAML:1.1:protocol urn:oasis:names:tc:SAML:2.0:protocol">
+    <md:Extensions>
+      <shibmd:Scope regexp="false">unicon.net</shibmd:Scope>
+      <mdui:UIInfo>
+        <mdui:DisplayName xml:lang="en">Unicon, Inc.</mdui:DisplayName>
+        <mdui:Description xml:lang="en">Login service for Unicon Employees</mdui:Description>
+        <mdui:PrivacyStatementURL xml:lang="en">https://www.unicon.net/Unicon's_IdP_Privacy_Policy/</mdui:PrivacyStatementURL>
+        <mdui:Logo height="88" width="600" xml:lang="en">https://www.unicon.net/sites/default/files/logo_135_0.png</mdui:Logo>
+      </mdui:UIInfo>
+    </md:Extensions>
+    <md:KeyDescriptor use="signing">
+      <ds:KeyInfo>
+        <ds:X509Data>
+          <!-- Serial No. 184155676572056142001764246121901689212305856685, expires on Sat Sep 13 03:23:16 2031 GMT -->
+          <ds:X509Certificate>
+MIIDIzCCAgugAwIBAgIUIEHTfbStY0ckKZzxIgqd5p1O2K0wDQYJKoZIhvcNAQEF
+BQAwGTEXMBUGA1UEAxMOaWRwLnVuaWNvbi5uZXQwHhcNMTEwOTEzMDMyMzE2WhcN
+MzEwOTEzMDMyMzE2WjAZMRcwFQYDVQQDEw5pZHAudW5pY29uLm5ldDCCASIwDQYJ
+KoZIhvcNAQEBBQADggEPADCCAQoCggEBANtUsFXxlhvD3bWT5Y7TqKkf5rxa+dPA
+z7vpbJ6bWhDPSMXb/9MiJe/ciY5ZKKrB1rdRC04s7blrzem3YtjGihfGd4ld+NRt
+Pi0xoAT2YIp83CvEe5BHAKwqD7KTonN1unbN84mVo65itbme9d8lZKc0PfLM+BQp
+fhXKUBfYeBCkYU4YWxmgL4Vs7XBaKjEjpTN4ncar4YSrarWTTPyO5RzmVPLAcv88
+1OBqewTyN41+JRXt0Jopi4ZQ8JjKkm73vhoYDBPHr/VMqk1lFfrDcDwJa2ygyWCm
+qTlq6zyLE9Fr6sYz6CbgA2lAqu/b1rYCqVCnRpoHZKahAQ9uGQSfHD8CAwEAAaNj
+MGEwQAYDVR0RBDkwN4IOaWRwLnVuaWNvbi5uZXSGJWh0dHBzOi8vaWRwLnVuaWNv
+bi5uZXQvaWRwL3NoaWJib2xldGgwHQYDVR0OBBYEFK6yUrpGjvY3B09ke0kVl4wA
+CMAnMA0GCSqGSIb3DQEBBQUAA4IBAQDG/gMpr3N+nAMuo7RhtDBsckiJV2+BwT/r
+JmpxlHAV1Zgc3eeuOdyxm5/jA78tspLldL0+6W/LzZWov/je36IqVT1wSGy1n0Sc
+Pjw8DHgyEJLCij2vVScV+j/Y4Eg0bVy6pZTeQW+e3ygb6WgiVT/ARM8QBp6GjAUC
+qIlJCads9Rcx3vAih72I4exUUD4qMuBMeLIdY5XReHy5YHqxbkPjQhDIEORAFlzJ
+jLqO/Ldzn4waEa5snDZyeYjsl6pi+8CVGfXLSDVsDuk5s47B9OD+gOSJ1wEc7O/N
+nU9d/WCcM1V4IGZGL8TXUdfJoVXYZUFF08jUGSL2mj30WS1orIWo
+          </ds:X509Certificate>
+        </ds:X509Data>
+      </ds:KeyInfo>
+    </md:KeyDescriptor>
+    <md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://idp.unicon.net/idp/profile/Logout"/>
+    <md:SingleSignOnService Binding="urn:mace:shibboleth:1.0:profiles:AuthnRequest" Location="https://idp.unicon.net/idp/profile/Shibboleth/SSO"/>
+    <md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://idp.unicon.net/idp/profile/SAML2/POST/SSO"/>
+    <md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://idp.unicon.net/idp/profile/SAML2/Redirect/SSO"/>
+  </md:IDPSSODescriptor>
+  <md:Organization>
+    <md:OrganizationName xml:lang="en">Unicon, Inc.</md:OrganizationName>
+    <md:OrganizationDisplayName xml:lang="en">Unicon, Inc.</md:OrganizationDisplayName>
+    <md:OrganizationURL xml:lang="en">http://www.unicon.net/</md:OrganizationURL>
+  </md:Organization>
+  <md:ContactPerson contactType="technical">
+    <md:GivenName>IdP Administrator</md:GivenName>
+    <md:EmailAddress>idp-admin@unicon.net</md:EmailAddress>
+  </md:ContactPerson>
+  <md:ContactPerson contactType="administrative">
+    <md:GivenName>John Blakley</md:GivenName>
+    <md:EmailAddress>blakley@unicon.net</md:EmailAddress>
+  </md:ContactPerson>
+  <md:ContactPerson contactType="other" remd:contactType="http://refeds.org/metadata/contactType/security">
+    <md:GivenName>Security Operations</md:GivenName>
+    <md:EmailAddress>sec-ops@unicon.net</md:EmailAddress>
+  </md:ContactPerson>
+</md:EntityDescriptor>

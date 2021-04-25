@@ -72,7 +72,7 @@ public class JsonResourceInterruptInquirer extends BaseInterruptInquirer impleme
         this.interrupts.clear();
         if (ResourceUtils.doesResourceExist(resource)) {
             try (val reader = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8)) {
-                final TypeReference<Map<String, InterruptResponse>> personList = new TypeReference<>() {
+                val personList = new TypeReference<Map<String, InterruptResponse>>() {
                 };
                 val data = (Map) MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);
                 this.interrupts.putAll(data);
