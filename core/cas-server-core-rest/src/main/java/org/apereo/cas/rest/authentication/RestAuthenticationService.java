@@ -1,4 +1,4 @@
-package org.apereo.cas.support.rest.resources;
+package org.apereo.cas.rest.authentication;
 
 import org.apereo.cas.authentication.AuthenticationResult;
 

@@ -2,6 +2,7 @@ package org.apereo.cas.support.rest.resources;
 
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.rest.BadRestRequestException;
+import org.apereo.cas.rest.authentication.RestAuthenticationService;
 import org.apereo.cas.rest.factory.UserAuthenticationResourceEntityResponseFactory;
 import org.apereo.cas.util.LoggingUtils;
 
