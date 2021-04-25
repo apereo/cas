@@ -6,6 +6,8 @@ ext {
 dependencies {
     api project(":api:cas-server-core-api")
     api project(":api:cas-server-core-api-services")
+
+    implementation libraries.hibernate
     
     implementation project(":core:cas-server-core-services-registry")
     implementation project(":core:cas-server-core-services")

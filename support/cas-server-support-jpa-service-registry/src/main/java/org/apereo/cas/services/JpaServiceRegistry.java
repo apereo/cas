@@ -26,8 +26,7 @@ import java.util.stream.Collectors;
 @ToString
 public class JpaServiceRegistry extends AbstractServiceRegistry {
     private static final String ENTITY_NAME = AbstractRegisteredService.class.getSimpleName();
-
-
+    
     @PersistenceContext(unitName = "serviceEntityManagerFactory")
     private transient EntityManager entityManager;
 

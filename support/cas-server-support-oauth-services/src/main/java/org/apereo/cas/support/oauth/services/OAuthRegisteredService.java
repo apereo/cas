@@ -48,7 +48,7 @@ public class OAuthRegisteredService extends RegexRegisteredService {
 
     @Column
     private boolean jwtAccessToken;
-
+    
     @Lob
     @Column(name = "code_exp_policy", length = Integer.MAX_VALUE)
     private RegisteredServiceOAuthCodeExpirationPolicy codeExpirationPolicy;
