@@ -55,6 +55,7 @@ ext {
         '**/docs/**',
         '**/soap/generated/**',
         '**/com/duosecurity/**',
+        '**/support/openid/**',
         '**/**ConfigurationMetadata**',
         '**/**NtlmAuthenticationHandler**',
         '**/**CosmosDbServiceRegistry**',
