@@ -195,6 +195,26 @@ public abstract class AbstractServiceRegistryTests {
 
     @ParameterizedTest
     @MethodSource(GET_PARAMETERS)
+    public void verifyServiceLookupByServiceId(final Class<? extends RegisteredService> registeredServiceClass) {
+        val r1 = buildRegisteredServiceInstance(RandomUtils.nextInt(), registeredServiceClass);
+        r1.setServiceId(".*serviceid.*");
+        r1.setEvaluationOrder(100);
+        serviceRegistry.save(r1);
+
+        val r2 = buildRegisteredServiceInstance(RandomUtils.nextInt(), registeredServiceClass);
+        r2.setServiceId(".*serviceid.*");
+        r2.setEvaluationOrder(1);
+        serviceRegistry.save(r2);
+
+        val svc = this.serviceRegistry.findServiceBy("serviceid");
+        assertNotNull(svc);
+        assertEquals(r2, svc);
+
+        assertNull(this.serviceRegistry.findServiceBy("this-service-id-does-not-exist"));
+    }
+
+    @ParameterizedTest
+    @MethodSource(GET_PARAMETERS)
     public void verifyExpiredServiceDisabled(final Class<? extends RegisteredService> registeredServiceClass) {
         val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), registeredServiceClass);
         val expirationDate = LocalDateTime.now(ZoneId.systemDefault()).plusSeconds(1);

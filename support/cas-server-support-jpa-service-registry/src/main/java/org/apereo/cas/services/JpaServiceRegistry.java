@@ -47,8 +47,9 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
     }
 
     @Override
+
     public Collection<RegisteredService> load() {
-        val query = String.format("SELECT r from %s r", ENTITY_NAME);
+        val query = String.format("SELECT r FROM %s r", ENTITY_NAME);
         val list = this.entityManager.createQuery(query, RegisteredService.class).getResultList();
         return list
             .stream()
@@ -72,6 +73,46 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
     @Override
     public RegisteredService findServiceById(final long id) {
         return this.entityManager.find(AbstractRegisteredService.class, id);
+    }
+
+    @Override
+    public RegisteredService findServiceBy(final String id) {
+        val query = String.format("SELECT r FROM %s r WHERE r.serviceId LIKE :serviceId", ENTITY_NAME);
+        val results = entityManager.createQuery(query, RegisteredService.class)
+            .setParameter("serviceId", '%' + id + '%')
+            .getResultList();
+        return results
+            .stream()
+            .sorted()
+            .filter(r -> r.matches(id))
+            .findFirst()
+            .orElse(null);
+    }
+
+    @Override
+    public RegisteredService findServiceByExactServiceId(final String id) {
+        val query = String.format("SELECT r FROM %s r WHERE r.serviceId=:serviceId", ENTITY_NAME);
+        val results = entityManager.createQuery(query, RegisteredService.class)
+            .setParameter("serviceId", id)
+            .getResultList();
+        return results
+            .stream()
+            .sorted()
+            .findFirst()
+            .orElse(null);
+    }
+
+    @Override
+    public RegisteredService findServiceByExactServiceName(final String name) {
+        val query = String.format("SELECT r FROM %s r WHERE r.name=:name", ENTITY_NAME);
+        val results = entityManager.createQuery(query, RegisteredService.class)
+            .setParameter("name", name)
+            .getResultList();
+        return results
+            .stream()
+            .sorted()
+            .findFirst()
+            .orElse(null);
     }
 
     @Override
