@@ -39,7 +39,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * This is {@link SamlIdPJpaIdPMetadataConfiguration}.
@@ -85,10 +85,10 @@ public class SamlIdPJpaIdPMetadataConfiguration {
 
     @Bean
     @RefreshScope
-    public List<String> jpaSamlMetadataIdPPackagesToScan() {
+    public Set<String> jpaSamlMetadataIdPPackagesToScan() {
         val idp = casProperties.getAuthn().getSamlIdp().getMetadata();
         val type = new JpaSamlIdPMetadataDocumentFactory(idp.getJpa().getDialect()).getType();
-        return CollectionUtils.wrapList(type.getPackage().getName());
+        return CollectionUtils.wrapSet(type.getPackage().getName());
     }
 
     @Lazy

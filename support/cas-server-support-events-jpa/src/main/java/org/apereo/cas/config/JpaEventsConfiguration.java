@@ -29,7 +29,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * This is {@link JpaEventsConfiguration}, defines certain beans via configuration
@@ -63,8 +63,8 @@ public class JpaEventsConfiguration {
     }
 
     @Bean
-    public List<String> jpaEventPackagesToScan() {
-        return CollectionUtils.wrap(JpaCasEvent.class.getPackage().getName());
+    public Set<String> jpaEventPackagesToScan() {
+        return CollectionUtils.wrapSet(JpaCasEvent.class.getPackage().getName());
     }
 
     @Lazy

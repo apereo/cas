@@ -79,7 +79,7 @@ public class DatabaseAuthenticationTestConfiguration {
             .persistenceUnitName("databaseAuthnContext")
             .dataSource(dataSource())
             .persistenceProvider(new CasHibernatePersistenceProvider(persistenceProviderContext))
-            .packagesToScan(CollectionUtils.wrap("org.apereo.cas.adaptors.jdbc"))
+            .packagesToScan(CollectionUtils.wrapSet("org.apereo.cas.adaptors.jdbc"))
             .build();
         val jpaProperties = ctx.getJpaProperties();
         jpaProperties.put("hibernate.dialect", databaseDialect);
