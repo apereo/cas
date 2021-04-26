@@ -106,8 +106,8 @@ public class SystemUtils {
             .filter(props -> props.containsKey("project.name"))
             .map(props-> CasRuntimeModule.builder()
                 .name(props.get("project.name").toString())
-                .version(props.containsKey("project.version") ? props.get("project.version").toString() : null)
-                .description(props.containsKey("project.description") ? props.get("project.description").toString() : null)
+                .version(props.get("project.version").toString())
+                .description(props.get("project.description").toString())
                 .build())
             .sorted(Comparator.comparing(CasRuntimeModule::getName))
             .collect(Collectors.toList());

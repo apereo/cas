@@ -14,7 +14,6 @@ dependencies {
     implementation project(":core:cas-server-core-tickets-api")
 
     implementation libraries.bouncycastle
-    implementation libraries.hibernate
 
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-notifications", configuration: "tests")
