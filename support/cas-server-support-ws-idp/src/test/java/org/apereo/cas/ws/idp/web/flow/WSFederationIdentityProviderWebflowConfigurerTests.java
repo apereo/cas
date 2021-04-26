@@ -34,8 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CoreWsSecurityIdentityProviderConfiguration.class,
     CoreWsSecurityIdentityProviderWebflowConfiguration.class,
     BaseWebflowConfigurerTests.SharedTestConfiguration.class,
-    CoreWsSecurityIdentityProviderComponentSerializationConfiguration.class,
-    CoreWsSecurityIdentityProviderConfiguration.CoreWsSecurityJpaServiceRegistryConfiguration.class
+    CoreWsSecurityIdentityProviderComponentSerializationConfiguration.class
 })
 @TestPropertySource(properties = {
     "cas.authn.wsfed-idp.idp.realm=urn:org:apereo:cas:ws:idp:realm-CAS",
