@@ -13,11 +13,11 @@ case "$1" in
         
         dname="${dname:-CN=cas.example.org,OU=Example,OU=Org,C=US}"
         subjectAltName="${subjectAltName:-dns:example.org,dns:localhost,ip:127.0.0.1}"
-        mkdir -p /etc/cas 
+        sudo mkdir -p /etc/cas
         keystore="/etc/cas/casconfigserver.jks"
         echo "Generating keystore ${keystore} for CAS with DN=${dname}, SAN=${subjectAltName}"
         [ -f "${keystore}" ] && rm "${keystore}"
-        keytool -genkey -noprompt -alias cas -keyalg RSA -keypass changeit -storepass changeit \
+        sudo keytool -genkey -noprompt -alias cas -keyalg RSA -keypass changeit -storepass changeit \
           -keystore "${keystore}" -dname "${dname}" -ext SAN="${subjectAltName}"
         ;;
     bootadmin-server)
