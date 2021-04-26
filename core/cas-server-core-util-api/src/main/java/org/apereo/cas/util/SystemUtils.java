@@ -102,15 +102,13 @@ public class SystemUtils {
     @SneakyThrows
     public List<CasRuntimeModule> getRuntimeModules(final ConfigurableApplicationContext applicationContext) {
         return Arrays.stream(applicationContext.getResources("classpath*:/git.properties"))
-            .map(Unchecked.function(resource -> {
-                val loaded = PropertiesLoaderUtils.loadProperties(resource);
-
-                return CasRuntimeModule.builder()
-                    .name(loaded.containsKey("project.name") ? loaded.get("project.name").toString() : null)
-                    .version(loaded.containsKey("project.version") ? loaded.get("project.version").toString() : null)
-                    .description(loaded.containsKey("project.description") ? loaded.get("project.description").toString() : null)
-                    .build();
-            }))
+            .map(Unchecked.function(PropertiesLoaderUtils::loadProperties))
+            .filter(props -> props.containsKey("project.name"))
+            .map(props-> CasRuntimeModule.builder()
+                .name(props.get("project.name").toString())
+                .version(props.containsKey("project.version") ? props.get("project.version").toString() : null)
+                .description(props.containsKey("project.description") ? props.get("project.description").toString() : null)
+                .build())
             .sorted(Comparator.comparing(CasRuntimeModule::getName))
             .collect(Collectors.toList());
     }
