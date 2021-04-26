@@ -5,7 +5,9 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collection;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 /**
@@ -16,7 +18,17 @@ import java.util.stream.Stream;
  * @since 3.1
  */
 public interface ServiceRegistry {
-
+    /**
+     * Persist the service in the data store.
+     *
+     * @param supplier       the supplier
+     * @param countExclusive the count exclusive
+     * @return the stream
+     */
+    default Stream<RegisteredService> save(final Supplier<RegisteredService> supplier, final long countExclusive) {
+        return LongStream.range(0, countExclusive).mapToObj(count -> save(supplier.get()));
+    }
+    
     /**
      * Persist the service in the data store.
      *

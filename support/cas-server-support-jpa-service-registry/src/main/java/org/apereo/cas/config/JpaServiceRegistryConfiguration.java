@@ -1,26 +1,18 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.jpa.JpaPersistenceProviderConfigurer;
-import org.apereo.cas.services.AbstractRegisteredService;
-import org.apereo.cas.services.DefaultRegisteredServiceContact;
-import org.apereo.cas.services.DefaultRegisteredServiceProperty;
+import org.apereo.cas.services.JpaRegisteredServiceEntity;
 import org.apereo.cas.services.JpaServiceRegistry;
-import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
-import org.reflections.Reflections;
-import org.reflections.scanners.SubTypesScanner;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -36,13 +28,13 @@ import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.spi.PersistenceProvider;
 import javax.sql.DataSource;
 import java.util.Collection;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * This this {@link JpaServiceRegistryConfiguration}.
@@ -85,12 +77,7 @@ public class JpaServiceRegistryConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "jpaServicePackagesToScan")
     public Set<String> jpaServicePackagesToScan() {
-        val reflections =
-            new Reflections(new ConfigurationBuilder()
-                .setUrls(ClasspathHelper.forPackage(CentralAuthenticationService.NAMESPACE))
-                .setScanners(new SubTypesScanner(false)));
-        val subTypes = reflections.getSubTypesOf(AbstractRegisteredService.class);
-        return subTypes.stream().map(t -> t.getPackage().getName()).collect(Collectors.toSet());
+        return CollectionUtils.wrapSet(JpaRegisteredServiceEntity.class.getPackage().getName());
     }
 
     @Lazy
@@ -126,7 +113,18 @@ public class JpaServiceRegistryConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "jpaServiceRegistry")
     public ServiceRegistry jpaServiceRegistry() {
-        return new JpaServiceRegistry(applicationContext, serviceRegistryListeners.getObject());
+        return new JpaServiceRegistry(applicationContext,
+            serviceRegistryListeners.getObject(),
+            jdbcServiceRegistryTransactionTemplate());
+    }
+
+    @ConditionalOnMissingBean(name = "jdbcServiceRegistryTransactionTemplate")
+    @Bean
+    public TransactionTemplate jdbcServiceRegistryTransactionTemplate() {
+        val t = new TransactionTemplate(applicationContext.getBean(JpaServiceRegistry.BEAN_NAME_TRANSACTION_MANAGER, PlatformTransactionManager.class));
+        t.setIsolationLevelName(casProperties.getServiceRegistry().getJpa().getIsolationLevelName());
+        t.setPropagationBehaviorName(casProperties.getServiceRegistry().getJpa().getPropagationBehaviorName());
+        return t;
     }
 
     @Bean
@@ -141,12 +139,7 @@ public class JpaServiceRegistryConfiguration {
     @ConditionalOnMissingBean(name = "jpaServicePersistenceProviderConfigurer")
     public JpaPersistenceProviderConfigurer jpaServicePersistenceProviderConfigurer() {
         return context -> {
-            val entities = CollectionUtils.wrapList(
-                AbstractRegisteredService.class.getName(),
-                DefaultRegisteredServiceContact.class.getName(),
-                DefaultRegisteredServiceProperty.class.getName(),
-                RegexRegisteredService.class.getName());
-            entities.addAll(casProperties.getServiceRegistry().getJpa().getManagedEntities());
+            val entities = CollectionUtils.wrapList(JpaRegisteredServiceEntity.class.getName());
             context.getIncludeEntityClasses().addAll(entities);
         };
     }

@@ -21,4 +21,5 @@ import org.springframework.test.context.TestPropertySource;
 @EnabledIfPortOpen(port = 5432)
 @Tag("Postgres")
 public class JpaServiceRegistryPostgresTests extends JpaServiceRegistryTests {
+
 }

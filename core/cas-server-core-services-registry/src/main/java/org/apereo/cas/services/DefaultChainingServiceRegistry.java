@@ -43,7 +43,8 @@ public class DefaultChainingServiceRegistry extends AbstractServiceRegistry impl
     public RegisteredService save(final RegisteredService registeredService) {
         var savedService = (RegisteredService) null;
         for (var serviceRegistry : serviceRegistries) {
-            savedService = serviceRegistry.save(savedService == null ? registeredService : savedService);
+            var toSave = savedService == null ? registeredService : savedService;
+            savedService = serviceRegistry.save(toSave);
         }
         return savedService;
     }
