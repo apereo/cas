@@ -143,7 +143,7 @@ public abstract class AbstractJpaProperties implements Serializable {
     /**
      * A non-zero value enables use of JDBC2 batch updates by Hibernate. e.g. recommended values between 5 and 30.
      */
-    private int batchSize = 5;
+    private int batchSize = 100;
 
     /**
      * Used to specify number of rows to be fetched in a select query.

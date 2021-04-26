@@ -7,9 +7,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-
 /**
  * Mutable registered service that uses Java regular expressions for service matching.
  * Matching is case insensitive, and is successful, if, and only if, the entire region
@@ -19,8 +16,6 @@ import javax.persistence.Entity;
  * @author Misagh Moayyed
  * @since 3.4
  */
-@Entity
-@DiscriminatorValue("regex")
 @EqualsAndHashCode(callSuper = true)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public class RegexRegisteredService extends AbstractRegisteredService {

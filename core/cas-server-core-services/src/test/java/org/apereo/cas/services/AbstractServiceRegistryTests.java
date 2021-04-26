@@ -99,7 +99,9 @@ public abstract class AbstractServiceRegistryTests {
     @MethodSource(GET_PARAMETERS)
     public void verifySave(final Class<? extends RegisteredService> registeredServiceClass) {
         val svc = buildRegisteredServiceInstance(RandomUtils.nextInt(), registeredServiceClass);
-        assertEquals(serviceRegistry.save(svc).getServiceId(), svc.getServiceId(), registeredServiceClass::getName);
+        serviceRegistry.save(() -> svc, 1).forEach(result -> {
+            assertEquals(result.getServiceId(), svc.getServiceId(), registeredServiceClass::getName);
+        });
     }
 
     @ParameterizedTest
