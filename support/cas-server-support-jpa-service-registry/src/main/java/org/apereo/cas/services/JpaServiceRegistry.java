@@ -110,6 +110,9 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
     public RegisteredService findServiceById(final long id) {
         return Optional.ofNullable(this.entityManager.find(JpaRegisteredServiceEntity.class, id))
             .map(JpaRegisteredServiceEntity::toRegisteredService)
+            .stream()
+            .peek(this::invokeServiceRegistryListenerPostLoad)
+            .findFirst()
             .orElse(null);
     }
 
@@ -125,6 +128,7 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
             .map(JpaRegisteredServiceEntity::toRegisteredService)
             .sorted()
             .filter(r -> r.matches(id))
+            .peek(this::invokeServiceRegistryListenerPostLoad)
             .findFirst()
             .orElse(null);
     }
@@ -140,6 +144,7 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
             .stream()
             .map(JpaRegisteredServiceEntity::toRegisteredService)
             .sorted()
+            .peek(this::invokeServiceRegistryListenerPostLoad)
             .findFirst()
             .orElse(null);
     }
@@ -155,6 +160,7 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
             .stream()
             .map(JpaRegisteredServiceEntity::toRegisteredService)
             .sorted()
+            .peek(this::invokeServiceRegistryListenerPostLoad)
             .findFirst()
             .orElse(null);
     }
