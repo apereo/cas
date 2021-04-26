@@ -129,7 +129,7 @@ public class TicketGrantingTicketResource {
      * @param requestBody the request body
      * @param request     the request
      * @return the ticket granting ticket
-     * @throws AuthenticationException the authentication exception
+     * @throws Exception the authentication exception
      */
     protected TicketGrantingTicket createTicketGrantingTicketForRequest(final MultiValueMap<String, String> requestBody,
                                                                         final HttpServletRequest request) throws Exception {

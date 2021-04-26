@@ -71,7 +71,7 @@ records can be controlled via CAS settings.
 | MongoDb          | [See this guide](GoogleAuthenticator-Authentication-Registration-MongoDb.html).
 | Redis            | [See this guide](GoogleAuthenticator-Authentication-Registration-Redis.html).
 | LDAP             | [See this guide](GoogleAuthenticator-Authentication-Registration-LDAP.html).
-| REST             | [See this guide](GoogleAuthenticator-Authentication-Registration-REST.html).
+| REST             | [See this guide](GoogleAuthenticator-Authentication-Registration-Rest.html).
 | JSON             | [See this guide](GoogleAuthenticator-Authentication-Registration-JSON.html).
 
 ## REST Protocol Credential Extraction 
