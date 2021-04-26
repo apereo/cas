@@ -96,7 +96,7 @@ Operations provided by the [CAS REST Protocol](../protocol/REST-Protocol.html) t
 or [generate ticket-granting tickets](../protocol/REST-Protocol-Request-TicketGrantingTicket.html) are 
 now put through multifactor authentication, if the authentication request is deemed eligible
 via the configured [multifactor authentication triggers](../mfa/Configuring-Multifactor-Authentication-Triggers.html).
-
+     
 ## Other Stuff
 
 - CAS CI builds are updated to ensure all web application types can be deployed successfully via external servlet containers.
