@@ -30,7 +30,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * This is {@link CasOAuthUmaJpaConfiguration}.
@@ -58,8 +58,8 @@ public class CasOAuthUmaJpaConfiguration {
     }
 
     @Bean
-    public List<String> jpaUmaPackagesToScan() {
-        return CollectionUtils.wrapList(ResourceSet.class.getPackage().getName());
+    public Set<String> jpaUmaPackagesToScan() {
+        return CollectionUtils.wrapSet(ResourceSet.class.getPackage().getName());
     }
 
     @Lazy

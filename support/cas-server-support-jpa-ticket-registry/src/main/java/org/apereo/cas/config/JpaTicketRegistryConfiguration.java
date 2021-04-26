@@ -40,7 +40,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -66,7 +66,7 @@ public class JpaTicketRegistryConfiguration {
     private ApplicationContext applicationContext;
 
     @Bean
-    public List<String> ticketPackagesToScan() {
+    public Set<String> ticketPackagesToScan() {
         val reflections =
             new Reflections(new ConfigurationBuilder()
                 .setUrls(ClasspathHelper.forPackage(CentralAuthenticationService.NAMESPACE))
@@ -75,7 +75,7 @@ public class JpaTicketRegistryConfiguration {
         return subTypes
             .stream()
             .map(t -> t.getPackage().getName())
-            .collect(Collectors.<String>toList());
+            .collect(Collectors.<String>toSet());
     }
 
     @Lazy

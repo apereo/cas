@@ -41,7 +41,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.spi.PersistenceProvider;
 import javax.sql.DataSource;
 import java.util.Collection;
-import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -84,13 +84,13 @@ public class JpaServiceRegistryConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "jpaServicePackagesToScan")
-    public List<String> jpaServicePackagesToScan() {
+    public Set<String> jpaServicePackagesToScan() {
         val reflections =
             new Reflections(new ConfigurationBuilder()
                 .setUrls(ClasspathHelper.forPackage(CentralAuthenticationService.NAMESPACE))
                 .setScanners(new SubTypesScanner(false)));
         val subTypes = reflections.getSubTypesOf(AbstractRegisteredService.class);
-        return subTypes.stream().map(t -> t.getPackage().getName()).collect(Collectors.toList());
+        return subTypes.stream().map(t -> t.getPackage().getName()).collect(Collectors.toSet());
     }
 
     @Lazy

@@ -30,7 +30,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * This is {@link JdbcMultifactorAuthnTrustConfiguration}.
@@ -73,10 +73,10 @@ public class JdbcMultifactorAuthnTrustConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "jpaMfaTrustedAuthnPackagesToScan")
-    public List<String> jpaMfaTrustedAuthnPackagesToScan() {
+    public Set<String> jpaMfaTrustedAuthnPackagesToScan() {
         val jpa = casProperties.getAuthn().getMfa().getTrusted().getJpa();
         val type = new JpaMultifactorAuthenticationTrustRecordEntityFactory(jpa.getDialect()).getType();
-        return CollectionUtils.wrapList(type.getPackage().getName());
+        return CollectionUtils.wrapSet(type.getPackage().getName());
     }
 
     @Lazy
