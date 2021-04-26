@@ -88,9 +88,11 @@ public interface ServiceRegistry {
      * @return the registered service
      */
     default RegisteredService findServiceBy(final String id) {
-        return getServicesStream().filter(r -> r.matches(id))
-                .findFirst()
-                .orElse(null);
+        return getServicesStream()
+            .sorted()
+            .filter(r -> r.matches(id))
+            .findFirst()
+            .orElse(null);
     }
 
     /**
@@ -100,8 +102,8 @@ public interface ServiceRegistry {
      * @return the registered service
      */
     default RegisteredService findServiceByExactServiceId(final String id) {
-        return load()
-            .stream()
+        return getServicesStream()
+            .sorted()
             .filter(r -> StringUtils.isNotBlank(r.getServiceId()) && r.getServiceId().equals(id))
             .findFirst()
             .orElse(null);
@@ -114,8 +116,8 @@ public interface ServiceRegistry {
      * @return the registered service
      */
     default RegisteredService findServiceByExactServiceName(final String name) {
-        return load()
-            .stream()
+        return getServicesStream()
+            .sorted()
             .filter(r -> r.getName().equals(name))
             .findFirst()
             .orElse(null);
@@ -149,8 +151,8 @@ public interface ServiceRegistry {
      * @return the registered service
      */
     default Collection<RegisteredService> findServicePredicate(final Predicate<RegisteredService> predicate) {
-        return load()
-            .stream()
+        return getServicesStream()
+            .sorted()
             .filter(predicate)
             .collect(Collectors.toList());
     }
