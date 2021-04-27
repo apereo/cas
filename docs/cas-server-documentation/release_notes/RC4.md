@@ -1,5 +1,5 @@
 ---
-layout: default title: CAS - Release Notes 
+layout: default title: CAS - Release Notes
 category: Planning
 ---
 
@@ -7,7 +7,7 @@ category: Planning
 
 We strongly recommend that you take advantage of the release candidates as they come out. Waiting for a `GA` release is only going to set
 you up for unpleasant surprises. A `GA` is [a tag and nothing more](https://apereo.github.io/2017/03/08/the-myth-of-ga-rel/). Note that CAS
-releases are *strictly* time-based releases; they are not scheduled or based on specific benchmarks, statistics or completion of features.
+releases are *strictly* time-based releases; they are not scheduled or based on specific benchmarks, statistics, or completion of features.
 To gain confidence in a particular release, it is strongly recommended that you start early by experimenting with release candidates and/or
 follow-up snapshots.
 
@@ -93,12 +93,12 @@ or [generate ticket-granting tickets](../protocol/REST-Protocol-Request-TicketGr
 authentication, if the authentication request is deemed eligible via the
 configured [multifactor authentication triggers](../mfa/Configuring-Multifactor-Authentication-Triggers.html).
 
-## JPA Service Registry Performance
+### JPA Service Registry Performance
 
 JPA data models and mapping relationships for registered services have changed to improve performance of
-the [JPA service registry](../services/JPA-Service-Management.html). Previous releases struggle int this area to load
-`1000` registered service definitions in under `3` minutes. Changes to the data models in this area 
-vastly improve performance and allow CAS to load and/or store `10,000` registered service definitions `5` seconds or less.
+the [JPA service registry](../services/JPA-Service-Management.html). Previous releases struggled this area to load
+`1000` registered service definitions in under `3` minutes. Changes to the data models have significantly improved
+performance and allow CAS to load and/or store `10,000` registered service definitions `5` seconds or less.
 
 <div class="alert alert-warning">
   <strong>WATCH OUT!</strong><br />This is a breaking change. The underlying data models and repository implementations that manage 
