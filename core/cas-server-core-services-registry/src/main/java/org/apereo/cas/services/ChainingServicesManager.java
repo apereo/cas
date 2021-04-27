@@ -64,10 +64,12 @@ public class ChainingServicesManager implements ServicesManager {
     public void save(final Supplier<RegisteredService> supplier,
                      final Consumer<RegisteredService> andThenConsume,
                      final long countExclusive) {
-        val registeredService = supplier.get();
-        val manager = findServicesManager(registeredService);
-        manager.ifPresent(servicesManager ->
-            servicesManager.save(() -> registeredService, andThenConsume, countExclusive));
+        serviceManagers.forEach(servicesManager -> {
+            servicesManager.save(() -> {
+                val registeredService = supplier.get();
+                return findServicesManager(registeredService).isPresent() ? registeredService : null;
+            }, andThenConsume, countExclusive);
+        });
     }
 
     @Override

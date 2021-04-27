@@ -20,8 +20,10 @@ import org.springframework.context.ApplicationEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -57,6 +59,23 @@ public abstract class AbstractServicesManager implements ServicesManager {
             publishEvent(new CasRegisteredServiceSavedEvent(this, r));
         }
         return r;
+    }
+
+    @Override
+    public void save(final Supplier<RegisteredService> supplier,
+                     final Consumer<RegisteredService> andThenConsume,
+                     final long countExclusive) {
+        configurationContext.getServiceRegistry().save(() -> {
+            val registeredService = supplier.get();
+            if (registeredService != null) {
+                publishEvent(new CasRegisteredServicePreSaveEvent(this, registeredService));
+                configurationContext.getServicesCache().put(registeredService.getId(), registeredService);
+                saveInternal(registeredService);
+                publishEvent(new CasRegisteredServiceSavedEvent(this, registeredService));
+                return registeredService;
+            }
+            return null;
+        }, andThenConsume, countExclusive);
     }
 
     @Override

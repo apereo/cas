@@ -53,7 +53,9 @@ public class JpaServiceRegistryTests extends AbstractServiceRegistryTests {
     @Test
     public void verifyLargeDataset() {
         newServiceRegistry.save(
-            () -> RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), true), COUNT);
+            () -> RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), true),
+            result -> {},
+            COUNT);
         var stopwatch = new StopWatch();
         stopwatch.start();
         assertEquals(newServiceRegistry.size(), newServiceRegistry.load().size());
