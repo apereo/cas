@@ -73,6 +73,14 @@ public class ChainingServicesManager implements ServicesManager {
     }
 
     @Override
+    public void save(final Stream<RegisteredService> toSave) {
+        serviceManagers.forEach(mgr -> {
+            val filtered = toSave.filter(mgr::supports);
+            mgr.save(filtered);
+        });
+    }
+
+    @Override
     public void deleteAll() {
         serviceManagers.forEach(ServicesManager::deleteAll);
     }

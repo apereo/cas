@@ -7,6 +7,7 @@ import org.apereo.cas.config.CasHibernateJpaConfiguration;
 import org.apereo.cas.config.JpaServiceRegistryConfiguration;
 
 import lombok.Getter;
+import lombok.val;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Tag;
@@ -21,6 +22,7 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -54,9 +56,25 @@ public class JpaServiceRegistryTests extends AbstractServiceRegistryTests {
     public void verifyLargeDataset() {
         newServiceRegistry.save(
             () -> RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), true),
-            result -> {},
+            result -> {
+            },
             COUNT);
         var stopwatch = new StopWatch();
+        stopwatch.start();
+        assertEquals(newServiceRegistry.size(), newServiceRegistry.load().size());
+        stopwatch.stop();
+        assertTrue(stopwatch.getTime(TimeUnit.SECONDS) <= 10);
+    }
+
+    @Test
+    public void verifySaveInStreams() {
+        var servicesToImport = Stream.<RegisteredService>empty();
+        for (int i = 0; i < COUNT; i++) {
+            val registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), true);
+            servicesToImport = Stream.concat(servicesToImport, Stream.of(registeredService));
+        }
+        var stopwatch = new StopWatch();
+        newServiceRegistry.save(servicesToImport);
         stopwatch.start();
         assertEquals(newServiceRegistry.size(), newServiceRegistry.load().size());
         stopwatch.stop();

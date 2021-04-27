@@ -43,6 +43,12 @@ public abstract class AbstractServicesManager implements ServicesManager {
      */
     protected final ServicesManagerConfigurationContext configurationContext;
 
+    private static Predicate<RegisteredService> getRegisteredServicesFilteringPredicate(
+        final Predicate<RegisteredService>... p) {
+        val predicates = Stream.of(p).collect(Collectors.toCollection(ArrayList::new));
+        return predicates.stream().reduce(x -> true, Predicate::and);
+    }
+
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
         return save(registeredService, true);
@@ -79,6 +85,18 @@ public abstract class AbstractServicesManager implements ServicesManager {
     }
 
     @Override
+    public void save(final Stream<RegisteredService> toSave) {
+        val resultingStream = toSave.peek(registeredService ->
+            publishEvent(new CasRegisteredServicePreSaveEvent(this, registeredService)));
+        configurationContext.getServiceRegistry().save(resultingStream)
+            .forEach(r -> {
+                configurationContext.getServicesCache().put(r.getId(), r);
+                saveInternal(r);
+                publishEvent(new CasRegisteredServiceSavedEvent(this, r));
+            });
+    }
+
+    @Override
     public synchronized void deleteAll() {
         configurationContext.getServicesCache().asMap().forEach((k, v) -> delete(v));
         configurationContext.getServicesCache().invalidateAll();
@@ -102,7 +120,6 @@ public abstract class AbstractServicesManager implements ServicesManager {
         }
         return service;
     }
-
 
     @Override
     public RegisteredService findServiceBy(final Service service) {
@@ -179,7 +196,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
         service = configurationContext.getServicesCache().get(id, k -> configurationContext.getServiceRegistry().findServiceById(id, clazz));
         return (T) validateRegisteredService(service);
     }
-    
+
     @Override
     public RegisteredService findServiceByName(final String name) {
         if (StringUtils.isBlank(name)) {
@@ -370,11 +387,5 @@ public abstract class AbstractServicesManager implements ServicesManager {
             .filter(filter)
             .findFirst()
             .orElse(null);
-    }
-
-    private static Predicate<RegisteredService> getRegisteredServicesFilteringPredicate(
-        final Predicate<RegisteredService>... p) {
-        val predicates = Stream.of(p).collect(Collectors.toCollection(ArrayList::new));
-        return predicates.stream().reduce(x -> true, Predicate::and);
     }
 }

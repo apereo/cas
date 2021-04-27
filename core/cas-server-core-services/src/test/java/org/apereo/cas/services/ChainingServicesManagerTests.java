@@ -12,6 +12,8 @@ import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.core.Ordered;
 
 import java.util.HashSet;
+import java.util.UUID;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -75,6 +77,16 @@ public class ChainingServicesManagerTests extends AbstractServicesManagerTests<C
         }, Assertions::assertNotNull, 10);
         val results = servicesManager.load();
         assertEquals(10, results.size());
+    }
+
+    @Test
+    public void verifySaveInStreams() {
+        servicesManager.deleteAll();
+        val s1 = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), true);
+        val s2 = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), true);
+        servicesManager.save(Stream.of(s1, s2));
+        val results = servicesManager.load();
+        assertEquals(2, results.size());
     }
 
     @Override

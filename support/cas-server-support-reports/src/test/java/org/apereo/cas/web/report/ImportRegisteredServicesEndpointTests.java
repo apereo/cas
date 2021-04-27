@@ -1,6 +1,7 @@
 package org.apereo.cas.web.report;
 
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
 
@@ -10,10 +11,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
 
+import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -45,5 +50,27 @@ public class ImportRegisteredServicesEndpointTests extends AbstractCasEndpointTe
         request.setContent(content.getBytes(StandardCharsets.UTF_8));
         assertEquals(HttpStatus.CREATED, endpoint.importService(request));
     }
+
+    @Test
+    public void verifyBulkImportAsZip() throws Exception {
+        val request = new MockHttpServletRequest();
+        request.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+        try (val out = new ByteArrayOutputStream(2048);
+             val zipStream = new ZipOutputStream(out)) {
+            var registeredService = RegisteredServiceTestUtils.getRegisteredService();
+            val content = new RegisteredServiceJsonSerializer().toString(registeredService);
+            var name = new DefaultRegisteredServiceResourceNamingStrategy()
+                .build(registeredService, "json");
+            val e = new ZipEntry(name);
+            zipStream.putNextEntry(e);
+
+            val data = content.getBytes(StandardCharsets.UTF_8);
+            zipStream.write(data, 0, data.length);
+            zipStream.closeEntry();
+            request.setContent(out.toByteArray());
+        }
+        assertEquals(HttpStatus.CREATED, endpoint.importService(request));
+    }
+
 }
 
