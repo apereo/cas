@@ -14,10 +14,7 @@ import javax.persistence.PersistenceContext;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.stream.LongStream;
-import java.util.stream.Stream;
 
 /**
  * Implementation of the ServiceRegistry based on JPA.
@@ -78,11 +75,6 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
             .filter(Objects::nonNull)
             .peek(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)))
             .collect(Collectors.toList());
-    }
-
-    @Override
-    public Stream<RegisteredService> save(final Supplier<RegisteredService> supplier, final long countExclusive) {
-        return LongStream.range(0, countExclusive).mapToObj(count -> saveInternal(supplier.get()));
     }
 
     @Override

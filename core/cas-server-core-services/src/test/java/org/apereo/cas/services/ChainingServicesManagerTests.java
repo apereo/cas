@@ -12,7 +12,6 @@ import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.core.Ordered;
 
 import java.util.HashSet;
-import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -66,17 +65,16 @@ public class ChainingServicesManagerTests extends AbstractServicesManagerTests<C
 
     @Test
     public void verifySaveInBulk() {
-        val supplier = new Supplier<RegisteredService>() {
-            @Override
-            public RegisteredService get() {
-                val svc = new RegexRegisteredService();
-                svc.setId(RandomUtils.nextLong());
-                svc.setName("domainService2");
-                svc.setServiceId("https://www.example.com/" + svc.getId());
-                return svc;
-            }
-        };
-        servicesManager.save(supplier, Assertions::assertNotNull, 10);
+        servicesManager.deleteAll();
+        servicesManager.save(() -> {
+            val svc = new RegexRegisteredService();
+            svc.setId(RandomUtils.nextLong());
+            svc.setName("domainService2");
+            svc.setServiceId("https://www.example.com/" + svc.getId());
+            return svc;
+        }, Assertions::assertNotNull, 10);
+        val results = servicesManager.load();
+        assertEquals(10, results.size());
     }
 
     @Override
@@ -88,7 +86,7 @@ public class ChainingServicesManagerTests extends AbstractServicesManagerTests<C
             .serviceRegistry(serviceRegistry)
             .applicationContext(applicationContext)
             .environments(new HashSet<>())
-            .servicesCache(Caffeine.newBuilder().build())
+            .servicesCache(Caffeine.newBuilder().initialCapacity(100).maximumSize(100).build())
             .build();
         val manager = new DefaultServicesManager(context);
         chain.registerServiceManager(manager);
