@@ -195,7 +195,7 @@ public class GitRepositoryBuilder {
                 .map(GitRepositoryBuilder::getBranchPath)
                 .collect(Collectors.toList()));
         }
-        LOGGER.debug("Cloning repository at [{}] with branch [{}]", this.repositoryDirectory, this.activeBranch);
+        LOGGER.debug("Cloning repository to [{}] with branch [{}]", this.repositoryDirectory, this.activeBranch);
         return new GitRepository(cloneCommand.call(), credentialsProviders,
             transportCallback, this.timeoutInSeconds, this.signCommits);
     }
