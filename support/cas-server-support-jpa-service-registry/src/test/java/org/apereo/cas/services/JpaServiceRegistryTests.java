@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
     JpaServiceRegistryConfiguration.class,
     CasHibernateJpaConfiguration.class,
     CasCoreServicesConfiguration.class
-}, properties = "cas.jdbc.show-sql=false")
+}, properties = "cas.jdbc.show-sql=true")
 @Tag("JDBC")
 @DirtiesContext
 @Getter
@@ -55,7 +55,11 @@ public class JpaServiceRegistryTests extends AbstractServiceRegistryTests {
     @Test
     public void verifyLargeDataset() {
         newServiceRegistry.save(
-            () -> RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), true),
+            () -> {
+                val svc = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), true);
+                svc.setId(RegisteredService.INITIAL_IDENTIFIER_VALUE);
+                return svc;
+            },
             result -> {
             },
             COUNT);
@@ -69,8 +73,9 @@ public class JpaServiceRegistryTests extends AbstractServiceRegistryTests {
     @Test
     public void verifySaveInStreams() {
         var servicesToImport = Stream.<RegisteredService>empty();
-        for (int i = 0; i < COUNT; i++) {
+        for (int i = 0; i < 1000; i++) {
             val registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), true);
+            registeredService.setId(RegisteredService.INITIAL_IDENTIFIER_VALUE);
             servicesToImport = Stream.concat(servicesToImport, Stream.of(registeredService));
         }
         var stopwatch = new StopWatch();

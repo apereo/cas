@@ -19,6 +19,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import java.io.Serializable;
 
@@ -49,7 +50,8 @@ public class JpaRegisteredServiceEntity implements Serializable {
         new RegisteredServiceJsonSerializer(new MinimalPrettyPrinter());
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "service_sequence")
+    @SequenceGenerator(name = "service_sequence", allocationSize = 100)
     @Builder.Default
     private long id = RegisteredService.INITIAL_IDENTIFIER_VALUE;
 

@@ -14,7 +14,10 @@ import javax.persistence.PersistenceContext;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.LongStream;
 
 /**
  * Implementation of the ServiceRegistry based on JPA.
@@ -32,10 +35,10 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
      */
     public static final String BEAN_NAME_TRANSACTION_MANAGER = "transactionManagerServiceReg";
 
+    private final TransactionTemplate transactionTemplate;
+
     @PersistenceContext(unitName = "serviceEntityManagerFactory")
     private EntityManager entityManager;
-
-    private final TransactionTemplate transactionTemplate;
 
     public JpaServiceRegistry(final ConfigurableApplicationContext applicationContext,
                               final Collection<ServiceRegistryListener> serviceRegistryListeners,
@@ -78,23 +81,22 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
     }
 
     @Override
-    public RegisteredService save(final RegisteredService registeredService) {
-        return saveInternal(registeredService);
+    public Long save(final Supplier<RegisteredService> supplier,
+                     final Consumer<RegisteredService> andThenConsume,
+                     final long countExclusive) {
+        return transactionTemplate.execute(status ->
+            LongStream.range(0, countExclusive)
+                .mapToObj(count -> supplier.get())
+                .filter(Objects::nonNull)
+                .map(this::saveInternal)
+                .peek(andThenConsume)
+                .filter(Objects::nonNull)
+                .count());
     }
 
-    private RegisteredService saveInternal(final RegisteredService registeredService) {
-        return this.transactionTemplate.execute(transactionStatus -> {
-            val isNew = registeredService.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE;
-            invokeServiceRegistryListenerPreSave(registeredService);
-
-            val entity = JpaRegisteredServiceEntity.fromRegisteredService(registeredService);
-            val r = entityManager.merge(entity);
-            if (!isNew) {
-                entityManager.persist(r);
-            }
-            return r.toRegisteredService();
-        });
-
+    @Override
+    public RegisteredService save(final RegisteredService registeredService) {
+        return this.transactionTemplate.execute(status -> saveInternal(registeredService));
     }
 
     @Override
@@ -162,5 +164,18 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
     public long size() {
         val query = String.format("SELECT COUNT(r.id) FROM %s r", JpaRegisteredServiceEntity.ENTITY_NAME);
         return this.entityManager.createQuery(query, Long.class).getSingleResult();
+    }
+
+    private RegisteredService saveInternal(final RegisteredService registeredService) {
+        val isNew = registeredService.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE;
+        invokeServiceRegistryListenerPreSave(registeredService);
+
+        val entity = JpaRegisteredServiceEntity.fromRegisteredService(registeredService);
+        if (isNew) {
+            entityManager.persist(entity);
+            return entity.toRegisteredService();
+        }
+        val r = entityManager.merge(entity);
+        return r.toRegisteredService();
     }
 }
