@@ -13,7 +13,6 @@ import org.apereo.cas.adaptors.duo.web.flow.DuoSecurityMultifactorWebflowConfigu
 import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityDetermineUserAccountAction;
 import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityPrepareWebLoginFormAction;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
-import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.MultifactorAuthenticationFailureModeEvaluator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBean;
@@ -53,6 +52,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.stream.Collectors;
 
 /**
@@ -136,7 +136,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
 
     @RefreshScope
     @Bean
-    public Collection<AuthenticationHandler> duoAuthenticationHandler() {
+    public Collection<DuoSecurityAuthenticationHandler> duoAuthenticationHandlers() {
         val duos = casProperties.getAuthn().getMfa().getDuo()
             .stream()
             .filter(d -> StringUtils.isNotBlank(d.getDuoApiHost())
@@ -150,13 +150,9 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
         val resolvers = ApplicationContextProvider.getMultifactorAuthenticationPrincipalResolvers();
         return duos
             .stream()
-            .map(d -> new DuoSecurityAuthenticationHandler(
-                d.getName(),
-                servicesManager.getObject(),
-                duoPrincipalFactory(),
-                duoProviderBean().getProvider(d.getId()),
-                d.getOrder(),
-                resolvers))
+            .map(props -> new DuoSecurityAuthenticationHandler(props.getName(), servicesManager.getObject(),
+                duoPrincipalFactory(), duoProviderBean().getProvider(props.getId()), props.getOrder(), resolvers))
+            .sorted(Comparator.comparing(DuoSecurityAuthenticationHandler::getOrder))
             .collect(Collectors.toList());
     }
 
@@ -175,7 +171,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     @Bean
     public AuthenticationEventExecutionPlanConfigurer duoSecurityAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
-            duoAuthenticationHandler()
+            duoAuthenticationHandlers()
                 .forEach(dh -> {
                     plan.registerAuthenticationHandler(dh);
                     plan.registerAuthenticationMetadataPopulator(duoAuthenticationMetaDataPopulator(dh));
@@ -209,11 +205,12 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
         return new DuoSecurityUserAccountStatusEndpoint(casProperties, applicationContext);
     }
 
-    private AuthenticationMetaDataPopulator duoAuthenticationMetaDataPopulator(final AuthenticationHandler authenticationHandler) {
+    private AuthenticationMetaDataPopulator duoAuthenticationMetaDataPopulator(
+        final DuoSecurityAuthenticationHandler authenticationHandler) {
         return new AuthenticationContextAttributeMetaDataPopulator(
             casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute(),
             authenticationHandler,
-            duoProviderBean().getProvider(authenticationHandler.getName()).getId()
+            authenticationHandler.getMultifactorAuthenticationProvider().getId()
         );
     }
 }

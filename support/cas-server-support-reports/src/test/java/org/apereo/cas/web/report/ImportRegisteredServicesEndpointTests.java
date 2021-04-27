@@ -1,7 +1,6 @@
 package org.apereo.cas.web.report;
 
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
 
@@ -59,8 +58,7 @@ public class ImportRegisteredServicesEndpointTests extends AbstractCasEndpointTe
              val zipStream = new ZipOutputStream(out)) {
             var registeredService = RegisteredServiceTestUtils.getRegisteredService();
             val content = new RegisteredServiceJsonSerializer().toString(registeredService);
-            var name = new DefaultRegisteredServiceResourceNamingStrategy()
-                .build(registeredService, "json");
+            var name = registeredService.getName() + ".json";
             val e = new ZipEntry(name);
             zipStream.putNextEntry(e);
 
