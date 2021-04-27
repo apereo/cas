@@ -15,7 +15,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -56,6 +58,16 @@ public class ChainingServicesManager implements ServicesManager {
     public RegisteredService save(final RegisteredService registeredService, final boolean publishEvent) {
         val manager = findServicesManager(registeredService);
         return manager.map(servicesManager -> servicesManager.save(registeredService, publishEvent)).orElse(null);
+    }
+
+    @Override
+    public void save(final Supplier<RegisteredService> supplier,
+                     final Consumer<RegisteredService> andThenConsume,
+                     final long countExclusive) {
+        val registeredService = supplier.get();
+        val manager = findServicesManager(registeredService);
+        manager.ifPresent(servicesManager ->
+            servicesManager.save(() -> registeredService, andThenConsume, countExclusive));
     }
 
     @Override
