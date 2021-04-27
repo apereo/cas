@@ -4,6 +4,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collection;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -22,11 +23,16 @@ public interface ServiceRegistry {
      * Persist the service in the data store.
      *
      * @param supplier       the supplier
+     * @param andThenConsume the and then consume
      * @param countExclusive the count exclusive
      * @return the stream
      */
-    default Stream<RegisteredService> save(final Supplier<RegisteredService> supplier, final long countExclusive) {
-        return LongStream.range(0, countExclusive).mapToObj(count -> save(supplier.get()));
+    default Stream<RegisteredService> save(final Supplier<RegisteredService> supplier,
+                                           final Consumer<RegisteredService> andThenConsume,
+                                           final long countExclusive) {
+        return LongStream.range(0, countExclusive)
+            .mapToObj(count -> save(supplier.get()))
+            .peek(andThenConsume);
     }
     
     /**
