@@ -20,6 +20,12 @@ import java.util.stream.Stream;
  * @since 3.1
  */
 public interface ServicesManager extends Ordered {
+    /**
+     * Save.
+     *
+     * @param toSave the services to import and save
+     */
+    void save(Stream<RegisteredService> toSave);
 
     /**
      * Register a service with CAS, or update an existing an entry.
@@ -46,7 +52,7 @@ public interface ServicesManager extends Ordered {
     default void save(final RegisteredService... services) {
         Arrays.stream(services).forEach(this::save);
     }
-    
+
     /**
      * Save.
      *
@@ -253,4 +259,6 @@ public interface ServicesManager extends Ordered {
      * @return list of services
      */
     Collection<RegisteredService> getServicesForDomain(String domain);
+
+
 }

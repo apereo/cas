@@ -40,6 +40,16 @@ public interface ServiceRegistry {
     }
 
     /**
+     * Save.
+     *
+     * @param toSave the to save
+     * @return the stream
+     */
+    default Stream<RegisteredService> save(final Stream<RegisteredService> toSave) {
+        return toSave.map(this::save);
+    }
+
+    /**
      * Persist the service in the data store.
      *
      * @param registeredService the service to persist.
