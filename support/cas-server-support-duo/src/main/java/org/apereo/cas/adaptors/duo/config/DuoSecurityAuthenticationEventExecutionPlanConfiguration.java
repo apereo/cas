@@ -150,11 +150,13 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
         val resolvers = ApplicationContextProvider.getMultifactorAuthenticationPrincipalResolvers();
         return duos
             .stream()
-            .map(d -> new DuoSecurityAuthenticationHandler(d.getId(),
+            .map(d -> new DuoSecurityAuthenticationHandler(
+                d.getName(),
                 servicesManager.getObject(),
                 duoPrincipalFactory(),
                 duoProviderBean().getProvider(d.getId()),
-                d.getOrder(), resolvers))
+                d.getOrder(),
+                resolvers))
             .collect(Collectors.toList());
     }
 
