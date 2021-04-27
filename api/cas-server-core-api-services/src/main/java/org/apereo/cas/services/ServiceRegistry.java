@@ -28,7 +28,7 @@ public interface ServiceRegistry {
      * @param countExclusive the count exclusive
      * @return the count of saved services
      */
-    default long save(final Supplier<RegisteredService> supplier,
+    default Long save(final Supplier<RegisteredService> supplier,
                       final Consumer<RegisteredService> andThenConsume,
                       final long countExclusive) {
         return LongStream.range(0, countExclusive)

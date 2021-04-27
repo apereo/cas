@@ -26,9 +26,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @DirtiesContext
 @Tag("JDBC")
-@Import(OidcJpaServiceRegistryTests.OidcJpaServiceRegistryTestConfiguration.class)
+@Import(JpaServiceRegistryOidcTests.OidcJpaServiceRegistryTestConfiguration.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class OidcJpaServiceRegistryTests extends JpaServiceRegistryTests {
+public class JpaServiceRegistryOidcTests extends JpaServiceRegistryTests {
 
     @Test
     public void verifyConsentPolicyWithScopesSavedAfterLoad() {
