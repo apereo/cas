@@ -42,6 +42,7 @@ const assert = require('assert');
         "auditLog/PT1H",
         "ssoSessions",
         "sso",
+        "casModules",
         "ticketExpirationPolicies?service=10000001",
         "springWebflow",
         "statistics",
