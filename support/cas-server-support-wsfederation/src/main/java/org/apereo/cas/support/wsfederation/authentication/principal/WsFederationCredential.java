@@ -68,16 +68,19 @@ public class WsFederationCredential implements Credential {
         }
         val retrievedOnTimeDrift = getRetrievedOn().minus(timeDrift, ChronoUnit.MILLIS);
         if (getIssuedOn().isBefore(retrievedOnTimeDrift)) {
-            LOGGER.warn("Ticket is issued before the allowed drift. Issued on [{}] while allowed drift is [{}]", this.issuedOn, retrievedOnTimeDrift);
+            LOGGER.warn("Ticket is issued before the allowed drift. Issued on [{}] while allowed drift is [{}]",
+                this.issuedOn, retrievedOnTimeDrift);
             return false;
         }
         val retrievedOnTimeAfterDrift = getRetrievedOn().plus(timeDrift, ChronoUnit.MILLIS);
         if (getIssuedOn().isAfter(retrievedOnTimeAfterDrift)) {
-            LOGGER.warn("Ticket is issued after the allowed drift. Issued on [{}] while allowed drift is [{}]", getIssuedOn(), retrievedOnTimeAfterDrift);
+            LOGGER.warn("Ticket is issued after the allowed drift. Retrieved on [{}] and issued on [{}] while allowed drift is [{}]",
+                getRetrievedOn(), getIssuedOn(), retrievedOnTimeAfterDrift);
             return false;
         }
         if (getRetrievedOn().isAfter(this.notOnOrAfter)) {
-            LOGGER.warn("Ticket is too late because it's retrieved on [{}] which is after [{}].", getRetrievedOn(), this.notOnOrAfter);
+            LOGGER.warn("Ticket is too late because it's retrieved on [{}] which is after [{}].",
+                getRetrievedOn(), this.notOnOrAfter);
             return false;
         }
         LOGGER.debug("WsFed Credential is validated for [{}] and [{}].", expectedAudience, expectedIssuer);
