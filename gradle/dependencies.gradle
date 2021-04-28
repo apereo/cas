@@ -653,6 +653,7 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "log4j", module: "log4j")
                     exclude(group: "com.hazelcast", module: "hazelcast")
+                    exclude(group: "com.spotify", module: "docker-client")
                 }
         ],
         jclouds                 : [
