@@ -37,7 +37,9 @@ public class ReturnAllAttributeReleasePolicy extends AbstractRegisteredServiceAt
     @Override
     public Map<String, List<Object>> getAttributesInternal(final Principal principal, final Map<String, List<Object>> resolvedAttributes,
                                                            final RegisteredService registeredService, final Service selectedService) {
-        excludedAttributes.forEach(resolvedAttributes::remove);
+        if (excludedAttributes != null) {
+            excludedAttributes.forEach(resolvedAttributes::remove);
+        }
         return resolvedAttributes;
     }
 
