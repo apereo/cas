@@ -42,7 +42,8 @@ public class CasPersonDirectoryTestConfiguration {
     @ConditionalOnMissingBean(name = PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
     @Bean
     public IPersonAttributeDao attributeRepository() {
-        val attrs = CollectionUtils.wrap("uid", CollectionUtils.wrap("uid"),
+        val attrs = CollectionUtils.wrap(
+            "uid", CollectionUtils.wrap("uid"),
             "eduPersonAffiliation", CollectionUtils.wrap("developer"),
             "groupMembership", CollectionUtils.wrap("adopters"));
         return new StubPersonAttributeDao((Map) attrs);
