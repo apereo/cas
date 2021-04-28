@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
@@ -44,6 +45,10 @@ public class CasFiltersConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    @Qualifier("registeredServiceAccessStrategyEnforcer")
+    private ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -120,7 +125,8 @@ public class CasFiltersConfiguration {
         }
         val bean = new FilterRegistrationBean<RegisteredServiceResponseHeadersEnforcementFilter>();
         bean.setFilter(new RegisteredServiceResponseHeadersEnforcementFilter(servicesManager.getObject(),
-            argumentExtractor.getObject(), authenticationRequestServiceSelectionStrategies.getObject()));
+            argumentExtractor.getObject(), authenticationRequestServiceSelectionStrategies.getObject(),
+            registeredServiceAccessStrategyEnforcer.getObject()));
         bean.setUrlPatterns(CollectionUtils.wrap("/*"));
         bean.setInitParameters(initParams);
         bean.setName("responseHeadersSecurityFilter");
