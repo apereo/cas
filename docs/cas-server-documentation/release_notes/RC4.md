@@ -123,6 +123,9 @@ CAS to export services from the existing database and import them back into the 
   relationships associated with registered services are now marked as lazy to improve query performance for load operations.
 - A new `casModules` [actuator endpoint](../configuration/Configuration-Metadata-Repository.html) to output the collection of CAS modules
   activated and included at runtime.
+- Authentication handlers for [Duo Security](../mfa/DuoSecurity-Authentication.html) are now registered 
+  using their name and not the multifactor provider id. Application registration records may need slight adjustments if 
+  Duo Security is specified as a required authentication handler in a service definition body.
 
 ## Library Upgrades
 
