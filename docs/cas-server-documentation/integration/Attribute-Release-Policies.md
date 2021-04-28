@@ -8,7 +8,8 @@ category: Attributes
 
 # Attribute Release Policies
 
-The attribute release policy decides how attributes are selected and provided to a given application in the final CAS response. Additionally, each policy has the ability to apply an optional filter to weed out their attributes based on their values.
+The attribute release policy decides how attributes are selected and provided to a given application in the final 
+CAS response. Additionally, each policy has the ability to apply an optional filter to weed out their attributes based on their values.
 
 The following settings are shared by all attribute release policies:
 
@@ -20,8 +21,10 @@ The following settings are shared by all attribute release policies:
 | `authorizedToReleaseAuthenticationAttributes`   | Boolean to define whether this policy should exclude the authentication/protocol attributes for release. Authentication attributes are considered those that are not tied to a specific principal and define extra supplementary metadata about the authentication event itself, such as the commencement date.
 | `principalIdAttribute`                   | An attribute name of your own choosing that will be stuffed into the final bundle of attributes, carrying the CAS authenticated principal identifier. By default, the principal id is *NOT* released as an attribute.
 
-<div class="alert alert-warning"><strong>Usage Warning!</strong><p>Think <strong>VERY CAREFULLY</strong> before turning on the above settings. Blindly authorizing an application to receive a proxy-granting ticket or the user credential
-may produce an opportunity for security leaks and attacks. Make sure you actually need to enable those features and that you understand the why. Avoid where and when you can, specially when it comes to sharing the user credential.</p></div>
+<div class="alert alert-warning"><strong>Usage Warning!</strong><p>Think <strong>VERY CAREFULLY</strong> before turning on 
+the above settings. Blindly authorizing an application to receive a proxy-granting ticket or the user credential
+may produce an opportunity for security leaks and attacks. Make sure you actually need to enable those features and that 
+you understand the why. Avoid where and when you can, specially when it comes to sharing the user credential.</p></div>
 
 CAS makes a distinction between attributes that convey metadata about the authentication event versus
 those that contain personally identifiable data for the authenticated principal.
@@ -89,7 +92,8 @@ only some applications per their attribute release policy.
 
 ### Return All
 
-Return all resolved principal attributes to the service.
+Return all resolved principal attributes to the service,
+and optionally exclude attributes from the final collection.
 
 ```json
 {
@@ -98,7 +102,8 @@ Return all resolved principal attributes to the service.
   "name" : "sample",
   "id" : 100,
   "attributeReleasePolicy" : {
-    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy",
+    "excludedAttributes": ["java.util.LinkedHashSet", ["cn"]]
   }
 }
 ```
