@@ -2,6 +2,7 @@ package org.apereo.cas.webauthn;
 
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.MultifactorAuthenticationHandler;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
@@ -21,7 +22,7 @@ import java.security.GeneralSecurityException;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-public class WebAuthnAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
+public class WebAuthnAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler implements MultifactorAuthenticationHandler {
     private final RegistrationStorage webAuthnCredentialRepository;
 
     private final SessionManager sessionManager;
