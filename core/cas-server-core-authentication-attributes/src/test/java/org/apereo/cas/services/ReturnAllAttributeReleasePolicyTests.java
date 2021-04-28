@@ -10,8 +10,10 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Misagh Moayyed
@@ -28,8 +30,24 @@ public class ReturnAllAttributeReleasePolicyTests {
     @Test
     public void verifySerializeAReturnAllAttributeReleasePolicyToJson() throws IOException {
         val policyWritten = new ReturnAllAttributeReleasePolicy();
+        policyWritten.setExcludedAttributes(CollectionUtils.wrapSet("Hello", "World"));
         MAPPER.writeValue(JSON_FILE, policyWritten);
         val policyRead = MAPPER.readValue(JSON_FILE, ReturnAllAttributeReleasePolicy.class);
         assertEquals(policyWritten, policyRead);
     }
+
+    @Test
+    public void verifyExclusionRules() {
+        val policy = new ReturnAllAttributeReleasePolicy();
+        policy.setExcludedAttributes(CollectionUtils.wrapSet("cn"));
+        val principal = CoreAuthenticationTestUtils.getPrincipal("casuser",
+            CollectionUtils.wrap("cn", List.of("CommonName"), "uid", List.of("casuser")));
+        val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
+        when(registeredService.getAttributeReleasePolicy()).thenReturn(policy);
+        val results = policy.getAttributes(principal, CoreAuthenticationTestUtils.getService(), registeredService);
+        assertEquals(1, results.size());
+        assertFalse(results.containsKey("cn"));
+        assertTrue(results.containsKey("uid"));
+    }
+
 }

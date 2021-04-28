@@ -98,7 +98,7 @@ configured [multifactor authentication triggers](../mfa/Configuring-Multifactor-
 JPA data models and mapping relationships for registered services have changed to improve performance of
 the [JPA service registry](../services/JPA-Service-Management.html). Previous releases struggled this area to load
 `1000` registered service definitions in under `3` minutes. Changes to the data models have significantly improved
-performance and allow CAS to load and/or store `10,000` registered service definitions `5` seconds or less.
+performance and allow CAS to load and/or store `10,000` registered service definitions in `5` seconds or less.
 
 <div class="alert alert-warning">
   <strong>WATCH OUT!</strong><br />This is a breaking change. The underlying data models and repository implementations that manage 
