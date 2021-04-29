@@ -17,11 +17,6 @@ import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-import javax.persistence.Table;
 import java.time.ZonedDateTime;
 
 /**
@@ -37,21 +32,14 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor
 @EqualsAndHashCode(of = "id")
 @AllArgsConstructor
-@Entity
-@Table(name = "ENCODEDTICKET")
 public class DefaultEncodedTicket implements EncodedTicket {
 
     private static final long serialVersionUID = -7078771807487764116L;
 
-    @Id
-    @Column(name = "ID", nullable = false)
     private String id;
 
-    @Lob
-    @Column(name = "ENCODED_TICKET", length = Integer.MAX_VALUE, nullable = false)
     private byte[] encodedTicket;
 
-    @Column(name = "PREFIX", nullable = false)
     private String prefix;
 
     /**

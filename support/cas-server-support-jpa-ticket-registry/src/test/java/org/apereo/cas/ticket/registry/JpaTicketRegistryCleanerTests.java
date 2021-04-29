@@ -85,8 +85,6 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class
 })
-@Transactional(transactionManager = "ticketTransactionManager", isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-@ResourceLock("jpa-tickets")
 @Tag("JDBC")
 public class JpaTicketRegistryCleanerTests {
     @Autowired

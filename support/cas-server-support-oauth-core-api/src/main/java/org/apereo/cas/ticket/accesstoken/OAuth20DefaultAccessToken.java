@@ -10,9 +10,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
 import java.util.Collection;
 import java.util.Map;
 
@@ -22,8 +19,6 @@ import java.util.Map;
  * @author Jerome Leleu
  * @since 5.0.0
  */
-@Entity
-@DiscriminatorValue(OAuth20AccessToken.PREFIX)
 @NoArgsConstructor
 @Setter
 @Getter
@@ -31,7 +26,6 @@ public class OAuth20DefaultAccessToken extends OAuth20DefaultCode implements OAu
 
     private static final long serialVersionUID = 2339545346159721563L;
 
-    @Column(length = 2048)
     private String idToken;
 
     public OAuth20DefaultAccessToken(final String id, final Service service,

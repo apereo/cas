@@ -10,34 +10,21 @@ import lombok.val;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
 /**
  * This is {@link DefaultSecurityTokenTicket}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Entity
-@Table(name = "SECURITYTOKENTICKET")
-@DiscriminatorColumn(name = "TYPE")
-@DiscriminatorValue(SecurityTokenTicket.PREFIX)
 @NoArgsConstructor
 public class DefaultSecurityTokenTicket extends AbstractTicket implements SecurityTokenTicket {
 
     private static final long serialVersionUID = 3940671352560102114L;
 
-    @ManyToOne(targetEntity = TicketGrantingTicketImpl.class)
     @Getter
     @JsonProperty("ticketGrantingTicket")
     private TicketGrantingTicket ticketGrantingTicket;
 
-    @Column(name = "SECURITY_TOKEN", length = 4096)
     private String securityToken;
 
     public DefaultSecurityTokenTicket(final String id, final TicketGrantingTicket ticketGrantingTicket,
