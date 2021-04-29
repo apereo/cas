@@ -29,7 +29,7 @@ import java.util.stream.Stream;
 
 /**
  * Base ticket registry class that implements common ticket-related ops.
- * 
+ *
  * @author Scott Battaglia
  * @since 3.0.0
  */
@@ -64,7 +64,8 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
             return null;
         }
         if (!clazz.isAssignableFrom(ticket.getClass())) {
-            throw new ClassCastException("Ticket [" + ticket.getId() + " is of type " + ticket.getClass() + " when we were expecting " + clazz);
+            throw new ClassCastException("Ticket [" + ticket.getId() + " is of type "
+                + ticket.getClass() + " when we were expecting " + clazz);
         }
         return clazz.cast(ticket);
     }
@@ -144,22 +145,6 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      * @return true/false
      */
     public abstract boolean deleteSingleTicket(String ticketId);
-
-    private void deleteLinkedProxyGrantingTickets(final AtomicInteger count, final TicketGrantingTicket tgt) {
-        val pgts = new LinkedHashSet<>(tgt.getProxyGrantingTickets().keySet());
-        val hasPgts = !pgts.isEmpty();
-        count.getAndAdd(deleteTickets(pgts));
-        if (hasPgts) {
-            LOGGER.debug("Removing proxy-granting tickets from parent ticket-granting ticket");
-            tgt.getProxyGrantingTickets().clear();
-            updateTicket(tgt);
-        }
-    }
-
-    private void deleteProxyGrantingTicketFromParent(final ProxyGrantingTicket ticket) {
-        ticket.getTicketGrantingTicket().getProxyGrantingTickets().remove(ticket.getId());
-        updateTicket(ticket.getTicketGrantingTicket());
-    }
 
     /**
      * Delete tickets.
@@ -274,7 +259,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
             return ticketToProcess;
         }
         LOGGER.debug("Attempting to decode [{}]", ticketToProcess);
-        val encodedTicket = (DefaultEncodedTicket) ticketToProcess;
+        val encodedTicket = (EncodedTicket) ticketToProcess;
         val ticket = SerializationUtils.decodeAndDeserializeObject(encodedTicket.getEncodedTicket(), this.cipherExecutor, Ticket.class);
         LOGGER.debug("Decoded ticket to [{}]", ticket);
         return ticket;
@@ -306,5 +291,21 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     protected boolean isCipherExecutorEnabled() {
         return this.cipherExecutor != null && this.cipherExecutor.isEnabled();
+    }
+
+    private void deleteLinkedProxyGrantingTickets(final AtomicInteger count, final TicketGrantingTicket tgt) {
+        val pgts = new LinkedHashSet<>(tgt.getProxyGrantingTickets().keySet());
+        val hasPgts = !pgts.isEmpty();
+        count.getAndAdd(deleteTickets(pgts));
+        if (hasPgts) {
+            LOGGER.debug("Removing proxy-granting tickets from parent ticket-granting ticket");
+            tgt.getProxyGrantingTickets().clear();
+            updateTicket(tgt);
+        }
+    }
+
+    private void deleteProxyGrantingTicketFromParent(final ProxyGrantingTicket ticket) {
+        ticket.getTicketGrantingTicket().getProxyGrantingTickets().remove(ticket.getId());
+        updateTicket(ticket.getTicketGrantingTicket());
     }
 }
