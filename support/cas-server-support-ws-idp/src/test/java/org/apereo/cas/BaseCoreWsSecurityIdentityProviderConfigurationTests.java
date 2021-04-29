@@ -26,6 +26,7 @@ import org.apereo.cas.config.CoreWsSecurityIdentityProviderConfiguration;
 import org.apereo.cas.config.CoreWsSecurityIdentityProviderWebflowConfiguration;
 import org.apereo.cas.config.CoreWsSecuritySecurityTokenServiceConfiguration;
 import org.apereo.cas.config.CoreWsSecuritySecurityTokenServiceSamlConfiguration;
+import org.apereo.cas.config.CoreWsSecuritySecurityTokenTicketConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
@@ -112,6 +113,7 @@ public abstract class BaseCoreWsSecurityIdentityProviderConfigurationTests {
         CasWsSecurityTokenTicketCatalogConfiguration.class,
         CasWsSecurityTokenTicketComponentSerializationConfiguration.class,
         CoreWsSecuritySecurityTokenServiceConfiguration.class,
+        CoreWsSecuritySecurityTokenTicketConfiguration.class,
         CoreWsSecuritySecurityTokenServiceSamlConfiguration.class
     })
     public static class SharedTestConfiguration {

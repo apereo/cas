@@ -1,4 +1,4 @@
-package org.apereo.cas.ticket.registry;
+package org.apereo.cas.ticket.registry.support;
 
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
@@ -6,10 +6,10 @@ import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
 
 /**
- * The {@link PostgresOauthJpaTicketRegistryCleanerTests} handles test cases for {@link DefaultTicketRegistryCleaner}.
+ * Unit test for {@link JpaLockingStrategy}.
  *
- * @author charlibot
- * @since 6.1.0
+ * @author Marvin S. Addison
+ * @since 3.0.0
  */
 @TestPropertySource(properties = {
     "cas.ticket.registry.jpa.user=postgres",
@@ -20,5 +20,5 @@ import org.springframework.test.context.TestPropertySource;
 })
 @EnabledIfPortOpen(port = 5432)
 @Tag("Postgres")
-public class PostgresOauthJpaTicketRegistryCleanerTests extends OAuthJpaTicketRegistryCleanerTests {
+public class PostgresJpaLockingStrategyTests extends JpaLockingStrategyTests {
 }

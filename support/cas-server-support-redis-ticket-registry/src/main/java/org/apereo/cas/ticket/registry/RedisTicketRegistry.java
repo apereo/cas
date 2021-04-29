@@ -86,13 +86,13 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Collection<? extends Ticket> getTickets() {
-        try (val ticketsStream = getTicketsStream()) {
+        try (val ticketsStream = stream()) {
             return ticketsStream.collect(Collectors.toSet());
         }
     }
 
     @Override
-    public Stream<? extends Ticket> getTicketsStream() {
+    public Stream<? extends Ticket> stream() {
         return getKeysStream()
             .map(redisKey -> {
                 val ticket = this.client.boundValueOps(redisKey).get();

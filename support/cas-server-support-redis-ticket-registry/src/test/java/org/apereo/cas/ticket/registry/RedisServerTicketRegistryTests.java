@@ -48,7 +48,7 @@ public class RedisServerTicketRegistryTests extends BaseRedisSentinelTicketRegis
         val ticket = secondRegistry.getTicket(ticketGrantingTicketId);
         assertNull(ticket);
         assertTrue(secondRegistry.getTickets().isEmpty());
-        assertEquals(0, getNewTicketRegistry().getTicketsStream().count());
+        assertEquals(0, getNewTicketRegistry().stream().count());
     }
 
     @RepeatedTest(1)

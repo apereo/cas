@@ -16,13 +16,7 @@ import org.apereo.cas.support.util.CryptoUtils;
 import org.apereo.cas.support.validation.CipheredCredentialsValidator;
 import org.apereo.cas.support.validation.SecurityTokenServiceCredentialCipherExecutor;
 import org.apereo.cas.support.x509.X509TokenDelegationHandler;
-import org.apereo.cas.ticket.DefaultSecurityTokenTicketFactory;
-import org.apereo.cas.ticket.ExpirationPolicyBuilder;
-import org.apereo.cas.ticket.SecurityTokenTicketFactory;
-import org.apereo.cas.ticket.TicketFactoryExecutionPlanConfigurer;
-import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.ws.idp.WSFederationConstants;
@@ -90,10 +84,6 @@ import java.util.Map;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ImportResource(locations = "classpath:jaxws-realms.xml")
 public class CoreWsSecuritySecurityTokenServiceConfiguration {
-
-    @Autowired
-    @Qualifier("grantingTicketExpirationPolicy")
-    private ObjectProvider<ExpirationPolicyBuilder> grantingTicketExpirationPolicy;
 
     @Autowired
     @Qualifier("wsFederationAuthenticationServiceSelectionStrategy")
@@ -418,27 +408,6 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     public CipherExecutor securityTokenServiceCredentialCipherExecutor() {
         val crypto = casProperties.getAuthn().getWsfedIdp().getSts().getCrypto();
         return CipherExecutorUtils.newStringCipherExecutor(crypto, SecurityTokenServiceCredentialCipherExecutor.class);
-    }
-
-    @ConditionalOnMissingBean(name = "securityTokenTicketFactory")
-    @Bean
-    @RefreshScope
-    public SecurityTokenTicketFactory securityTokenTicketFactory() {
-        return new DefaultSecurityTokenTicketFactory(securityTokenTicketIdGenerator(), grantingTicketExpirationPolicy.getObject());
-    }
-
-    @ConditionalOnMissingBean(name = "securityTokenTicketFactoryConfigurer")
-    @Bean
-    @RefreshScope
-    public TicketFactoryExecutionPlanConfigurer securityTokenTicketFactoryConfigurer() {
-        return this::securityTokenTicketFactory;
-    }
-
-    @ConditionalOnMissingBean(name = "securityTokenTicketIdGenerator")
-    @Bean
-    @RefreshScope
-    public UniqueTicketIdGenerator securityTokenTicketIdGenerator() {
-        return new DefaultUniqueTicketIdGenerator();
     }
 
 }

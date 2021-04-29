@@ -6,6 +6,7 @@ import org.apereo.cas.config.CoreWsSecurityIdentityProviderComponentSerializatio
 import org.apereo.cas.config.CoreWsSecurityIdentityProviderConfiguration;
 import org.apereo.cas.config.CoreWsSecurityIdentityProviderWebflowConfiguration;
 import org.apereo.cas.config.CoreWsSecuritySecurityTokenServiceConfiguration;
+import org.apereo.cas.config.CoreWsSecuritySecurityTokenTicketConfiguration;
 import org.apereo.cas.web.ProtocolEndpointConfigurer;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -31,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasWsSecurityTokenTicketCatalogConfiguration.class,
     CasWsSecurityTokenTicketComponentSerializationConfiguration.class,
     CoreWsSecuritySecurityTokenServiceConfiguration.class,
+    CoreWsSecuritySecurityTokenTicketConfiguration.class,
     CoreWsSecurityIdentityProviderConfiguration.class,
     CoreWsSecurityIdentityProviderWebflowConfiguration.class,
     BaseWebflowConfigurerTests.SharedTestConfiguration.class,
