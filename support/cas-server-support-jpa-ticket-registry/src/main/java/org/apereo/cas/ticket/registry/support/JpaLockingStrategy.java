@@ -48,7 +48,7 @@ public class JpaLockingStrategy implements LockingStrategy {
      * Transactional entity manager from Spring context.
      */
     @PersistenceContext(unitName = "ticketEntityManagerFactory")
-    protected EntityManager entityManager;
+    private EntityManager entityManager;
 
     /**
      * Acquire the lock object.
