@@ -9,6 +9,7 @@ import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.registry.JpaTicketEntity;
 import org.apereo.cas.ticket.registry.JpaTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.registry.support.JpaLockEntity;
 import org.apereo.cas.ticket.registry.support.JpaLockingStrategy;
 import org.apereo.cas.ticket.registry.support.LockingStrategy;
 import org.apereo.cas.util.CollectionUtils;
@@ -32,6 +33,7 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -50,6 +52,10 @@ import java.util.Set;
 public class JpaTicketRegistryConfiguration {
 
     @Autowired
+    @Qualifier("ticketCatalog")
+    private ObjectProvider<TicketCatalog> ticketCatalog;
+
+    @Autowired
     @Qualifier("jpaBeanFactory")
     private ObjectProvider<JpaBeanFactory> jpaBeanFactory;
 
@@ -61,7 +67,9 @@ public class JpaTicketRegistryConfiguration {
 
     @Bean
     public Set<String> ticketPackagesToScan() {
-        return CollectionUtils.wrapSet(JpaTicketEntity.class.getPackage().getName());
+        return CollectionUtils.wrapSet(
+            JpaTicketEntity.class.getPackage().getName(),
+            JpaLockEntity.class.getPackage().getName());
     }
 
     @Bean
@@ -77,6 +85,7 @@ public class JpaTicketRegistryConfiguration {
         return factory.newEntityManagerFactoryBean(ctx, casProperties.getTicket().getRegistry().getJpa());
     }
 
+    @ConditionalOnMissingBean(name = JpaTicketRegistry.BEAN_NAME_TRANSACTION_MANAGER)
     @Bean
     public PlatformTransactionManager ticketTransactionManager(@Qualifier("ticketEntityManagerFactory") final EntityManagerFactory emf) {
         val mgmr = new JpaTransactionManager();
@@ -91,12 +100,12 @@ public class JpaTicketRegistryConfiguration {
         return JpaBeans.newDataSource(casProperties.getTicket().getRegistry().getJpa());
     }
 
-    @Autowired
     @Bean
     @RefreshScope
-    public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
+    public TicketRegistry ticketRegistry() {
         val jpa = casProperties.getTicket().getRegistry().getJpa();
-        val bean = new JpaTicketRegistry(jpa.getTicketLockType(), ticketCatalog);
+        val bean = new JpaTicketRegistry(jpa.getTicketLockType(), ticketCatalog.getObject(),
+            jpaBeanFactory.getObject(), jpaTicketRegistryTransactionTemplate());
         bean.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(jpa.getCrypto(), "jpa"));
         return bean;
     }
@@ -107,5 +116,16 @@ public class JpaTicketRegistryConfiguration {
         val uniqueId = StringUtils.defaultIfEmpty(casProperties.getHost().getName(), InetAddressUtils.getCasServerHostName());
         return new JpaLockingStrategy("cas-ticket-registry-cleaner", uniqueId,
             Beans.newDuration(registry.getJpa().getJpaLockingTimeout()).getSeconds());
+    }
+
+    @ConditionalOnMissingBean(name = "jpaTicketRegistryTransactionTemplate")
+    @Bean
+    public TransactionTemplate jpaTicketRegistryTransactionTemplate() {
+        var mgr = applicationContext.getBean(JpaTicketRegistry.BEAN_NAME_TRANSACTION_MANAGER, PlatformTransactionManager.class);
+        val t = new TransactionTemplate(mgr);
+        val jpa = casProperties.getTicket().getRegistry().getJpa();
+        t.setIsolationLevelName(jpa.getIsolationLevelName());
+        t.setPropagationBehaviorName(jpa.getPropagationBehaviorName());
+        return t;
     }
 }

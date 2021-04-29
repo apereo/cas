@@ -1,12 +1,10 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apereo.cas.ticket.IdentifiableTicket;
+import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
-import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,10 +16,7 @@ import lombok.val;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import java.io.Serializable;
 
@@ -50,7 +45,7 @@ public class JpaTicketEntity implements Serializable {
 
     private static TicketSerializationManager TICKET_SERIALIZATION_MANAGER;
 
-    @Column(nullable = false, length = 8_000)
+    @Column(nullable = false, length = 64_000)
     private String body;
 
     @Column(nullable = false, length = 1024)
@@ -81,14 +76,15 @@ public class JpaTicketEntity implements Serializable {
      */
     public static JpaTicketEntity fromTicket(final Ticket ticket) {
         val jsonBody = getInstance().serializeTicket(ticket);
+        val authentication = ticket instanceof AuthenticationAwareTicket
+            ? ((AuthenticationAwareTicket) ticket).getAuthentication()
+            : null;
         return JpaTicketEntity.builder()
             .id(ticket.getId())
             .parentId(ticket.getTicketGrantingTicket() != null ? ticket.getTicketGrantingTicket().getId() : null)
             .body(jsonBody)
             .type(ticket.getClass().getName())
-            .principalId(ticket instanceof IdentifiableTicket
-                ? ((IdentifiableTicket) ticket).getAuthentication().getPrincipal().getId()
-                : null)
+            .principalId(authentication != null ? authentication.getPrincipal().getId() : null)
             .build();
     }
 

@@ -223,7 +223,7 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
         when(ticketRegMock.getTicket(eq(stMock.getId()), eq(ServiceTicket.class))).thenReturn(stMock);
         when(ticketRegMock.getTicket(eq(stMock2.getId()), eq(ServiceTicket.class))).thenReturn(stMock2);
         when(ticketRegMock.getTickets()).thenReturn((Collection) Arrays.asList(tgtMock, tgtMock2, stMock, stMock2));
-        when(ticketRegMock.getTicketsStream()).thenCallRealMethod();
+        when(ticketRegMock.stream()).thenCallRealMethod();
     }
 
     @Test

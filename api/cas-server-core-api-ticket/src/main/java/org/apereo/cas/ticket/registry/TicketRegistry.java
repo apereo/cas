@@ -95,7 +95,7 @@ public interface TicketRegistry {
      * @return the tickets
      */
     default Stream<? extends Ticket> getTickets(final Predicate<Ticket> predicate) {
-        return getTicketsStream().filter(predicate);
+        return stream().filter(predicate);
     }
 
     /**
@@ -128,7 +128,7 @@ public interface TicketRegistry {
      *
      * @return the tickets stream
      */
-    default Stream<? extends Ticket> getTicketsStream() {
+    default Stream<? extends Ticket> stream() {
         return getTickets().stream();
     }
 

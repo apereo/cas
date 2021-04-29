@@ -4,10 +4,7 @@ import org.apereo.cas.monitor.SessionHealthIndicatorJpaTests;
 import org.apereo.cas.ticket.registry.JpaTicketRegistryCleanerTests;
 import org.apereo.cas.ticket.registry.JpaTicketRegistryTests;
 import org.apereo.cas.ticket.registry.MySQLJpaTicketRegistryTests;
-import org.apereo.cas.ticket.registry.OAuthJpaTicketRegistryCleanerTests;
-import org.apereo.cas.ticket.registry.OAuthJpaTicketRegistryTests;
 import org.apereo.cas.ticket.registry.OracleJpaTicketRegistryTests;
-import org.apereo.cas.ticket.registry.PostgresOauthJpaTicketRegistryCleanerTests;
 import org.apereo.cas.ticket.registry.support.JpaLockingStrategyTests;
 import org.apereo.cas.ticket.registry.support.OracleJpaLockingStrategyTests;
 
@@ -27,9 +24,6 @@ import org.junit.runner.RunWith;
     JpaLockingStrategyTests.class,
     MySQLJpaTicketRegistryTests.class,
     JpaTicketRegistryCleanerTests.class,
-    OAuthJpaTicketRegistryCleanerTests.class,
-    OAuthJpaTicketRegistryTests.class,
-    PostgresOauthJpaTicketRegistryCleanerTests.class,
     OracleJpaTicketRegistryTests.class,
     OracleJpaLockingStrategyTests.class
 })

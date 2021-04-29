@@ -17,6 +17,7 @@ import lombok.val;
 public class DefaultSecurityTokenTicketFactory implements SecurityTokenTicketFactory {
 
     private final UniqueTicketIdGenerator ticketUniqueTicketIdGenerator;
+
     private final ExpirationPolicyBuilder expirationPolicy;
 
     @Override

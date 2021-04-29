@@ -1,7 +1,5 @@
 package org.apereo.cas.ticket;
 
-import org.apereo.cas.authentication.Authentication;
-
 import java.util.Map;
 import java.util.Set;
 
@@ -11,7 +9,7 @@ import java.util.Set;
  * @author Jerome Leleu
  * @since 5.0.0
  */
-public interface OAuth20Token extends ServiceTicket, IdentifiableTicket {
+public interface OAuth20Token extends ServiceTicket, AuthenticationAwareTicket {
 
     /**
      * Get requested scopes requested at the time of issuing this code.

@@ -19,7 +19,7 @@ import java.util.Map;
  * @since 3.0.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-public interface TicketGrantingTicket extends IdentifiableTicket {
+public interface TicketGrantingTicket extends AuthenticationAwareTicket {
 
     /**
      * The prefix to use when generating an id for a Ticket Granting Ticket.
@@ -76,7 +76,7 @@ public interface TicketGrantingTicket extends IdentifiableTicket {
     TicketGrantingTicket getRoot();
 
     /**
-     * Gets all authentications ({@link IdentifiableTicket#getAuthentication()} from this
+     * Gets all authentications ({@link AuthenticationAwareTicket#getAuthentication()} from this
      * instance and all dependent tickets that reference this one.
      *
      * @return Non -null list of authentication associated with this ticket in leaf-first order.

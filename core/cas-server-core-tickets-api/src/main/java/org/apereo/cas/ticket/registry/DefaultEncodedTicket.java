@@ -42,13 +42,6 @@ public class DefaultEncodedTicket implements EncodedTicket {
 
     private String prefix;
 
-    /**
-     * Instantiates a new Encoded ticket.
-     *
-     * @param encodedTicket   the encoded ticket that will be decoded from base64
-     * @param encodedTicketId the encoded ticket id
-     * @param prefix          the ticket prefix
-     */
     @SneakyThrows
     @JsonCreator
     public DefaultEncodedTicket(@JsonProperty("encoded") final String encodedTicket,
@@ -62,50 +55,48 @@ public class DefaultEncodedTicket implements EncodedTicket {
     @JsonIgnore
     @Override
     public int getCountOfUses() {
-        LOGGER.trace("[Retrieving ticket usage count]");
+        getOpNotSupportedMessage("getCountOfUses");
         return 0;
-    }
-
-    @JsonIgnore
-    @Override
-    public ExpirationPolicy getExpirationPolicy() {
-        LOGGER.trace(getOpNotSupportedMessage("[Retrieving expiration policy]"));
-        return null;
     }
 
     @Override
     @JsonIgnore
     public ZonedDateTime getCreationTime() {
-        LOGGER.trace(getOpNotSupportedMessage("[Retrieving ticket creation time]"));
+        getOpNotSupportedMessage("getCreationTime");
         return null;
     }
 
     @Override
     @JsonIgnore
     public TicketGrantingTicket getTicketGrantingTicket() {
-        LOGGER.trace(getOpNotSupportedMessage("[Retrieving parent ticket-granting ticket]"));
+        getOpNotSupportedMessage("getTicketGrantingTicket");
         return null;
     }
 
-    @JsonIgnore
     @Override
     public boolean isExpired() {
-        LOGGER.trace(getOpNotSupportedMessage("[Ticket expiry checking]"));
+        getOpNotSupportedMessage("getExpirationPolicy");
         return false;
     }
 
     @Override
-    @JsonIgnore
+    public ExpirationPolicy getExpirationPolicy() {
+        getOpNotSupportedMessage("getExpirationPolicy");
+        return null;
+    }
+
+    @Override
     public void markTicketExpired() {
     }
 
     @Override
+    @JsonIgnore
     public int compareTo(final Ticket o) {
         return getId().compareTo(o.getId());
     }
 
-    private String getOpNotSupportedMessage(final String op) {
-        return op + " operation not supported on a " + getClass().getSimpleName() + ". Ticket must be decoded first";
+    private void getOpNotSupportedMessage(final String op) {
+        LOGGER.trace("[{}] operation not supported on a [{}].", op, getClass().getSimpleName());
     }
 
 }
