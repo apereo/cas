@@ -5,7 +5,6 @@ import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.util.LoggingUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -70,8 +69,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         this.entityManager.persist(ticketEntity);
         LOGGER.debug("Added ticket [{}] to registry.", encodeTicket);
     }
-
-
+    
     @Override
     @Transactional(transactionManager = JpaTicketRegistry.BEAN_NAME_TRANSACTION_MANAGER, readOnly = true)
     public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
@@ -93,9 +91,6 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
             return null;
         } catch (final NoResultException e) {
             LOGGER.debug("No record could be found for ticket [{}]", ticketId);
-        } catch (final Exception e) {
-            LOGGER.error("Error getting ticket [{}] from registry.", ticketId);
-            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }
@@ -197,15 +192,10 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
      * @return the total count
      */
     private int deleteTicketGrantingTickets(final String ticketId) {
-        try {
-            var sql = String.format("DELETE FROM %s t WHERE t.parentId = :id OR t.id = :id", JpaTicketEntity.ENTITY_NAME);
-            LOGGER.trace("Creating delete query [{}] for ticket id [{}]", sql, ticketId);
-            var query = entityManager.createQuery(sql);
-            query.setParameter("id", ticketId);
-            return query.executeUpdate();
-        } catch (final Exception e) {
-            LOGGER.trace(e.getMessage(), e);
-        }
-        return 0;
+        var sql = String.format("DELETE FROM %s t WHERE t.parentId = :id OR t.id = :id", JpaTicketEntity.ENTITY_NAME);
+        LOGGER.trace("Creating delete query [{}] for ticket id [{}]", sql, ticketId);
+        var query = entityManager.createQuery(sql);
+        query.setParameter("id", ticketId);
+        return query.executeUpdate();
     }
 }
