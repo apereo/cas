@@ -231,7 +231,7 @@ public class JpaLockingStrategyTests {
             return new TransactionTemplate(txManager).execute(status -> {
                 try {
                     val result = method.invoke(jpaLock, args);
-                    jpaLock.entityManager.flush();
+                    jpaLock.getEntityManager().flush();
                     LOGGER.debug("Performed [{}] on [{}]", method.getName(), jpaLock);
                     return result;
                 } catch (final Exception e) {
@@ -271,7 +271,7 @@ public class JpaLockingStrategyTests {
 
     private LockingStrategy newLockTxProxy(final String appId, final String uniqueId, final String ttl) {
         val lock = new JpaLockingStrategy(appId, uniqueId, Beans.newDuration(ttl).getSeconds());
-        lock.entityManager = SharedEntityManagerCreator.createSharedEntityManager(factory);
+        lock.setEntityManager(SharedEntityManagerCreator.createSharedEntityManager(factory));
         return (LockingStrategy) Proxy.newProxyInstance(
             JpaLockingStrategy.class.getClassLoader(),
             new Class[]{LockingStrategy.class},
