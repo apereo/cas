@@ -271,7 +271,6 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
-    @Transactional
     public void verifyDeleteExistingTicket() {
         ticketRegistry.addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId,
             CoreAuthenticationTestUtils.getAuthentication(),
@@ -281,7 +280,6 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
-    @Transactional
     public void verifyTransientSessionTickets() {
         ticketRegistry.addTicket(new TransientSessionTicketImpl(transientSessionTicketId, NeverExpiresExpirationPolicy.INSTANCE,
             RegisteredServiceTestUtils.getService(), CollectionUtils.wrap("key", "value")));
@@ -290,7 +288,6 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
-    @Transactional
     public void verifyDeleteNonExistingTicket() {
         ticketRegistry.addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId,
             CoreAuthenticationTestUtils.getAuthentication(),
@@ -343,7 +340,7 @@ public abstract class BaseTicketRegistryTests {
 
     @RepeatedTest(1)
     @Tag("DisableTicketRegistryTestWithEncryption")
-    public void verifyTicketCountsEqualToTicketsAdded() throws Exception {
+    public void verifyTicketCountsEqualToTicketsAdded() {
         assumeTrue(isIterableRegistry());
         val tgts = new ArrayList<Ticket>();
         val sts = new ArrayList<Ticket>();
@@ -374,7 +371,6 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
-    @Transactional
     public void verifyDeleteTicketWithChildren() {
         ticketRegistry.addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId + '1', CoreAuthenticationTestUtils.getAuthentication(),
             NeverExpiresExpirationPolicy.INSTANCE));
@@ -405,7 +401,6 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
-    @Transactional
     public void verifyWriteGetDelete() {
         val ticket = new TicketGrantingTicketImpl(ticketGrantingTicketId,
             CoreAuthenticationTestUtils.getAuthentication(),
@@ -446,7 +441,6 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
-    @Transactional
     public void verifyDeleteTicketWithPGT() {
         val a = CoreAuthenticationTestUtils.getAuthentication();
         ticketRegistry.addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId, a, NeverExpiresExpirationPolicy.INSTANCE));
@@ -478,7 +472,6 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
-    @Transactional
     public void verifyDeleteTicketsWithMultiplePGTs() {
         FunctionUtils.doAndRetry(callback -> {
             val a = CoreAuthenticationTestUtils.getAuthentication();

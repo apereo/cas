@@ -11,14 +11,7 @@ import java.util.Set;
  * @author Jerome Leleu
  * @since 5.0.0
  */
-public interface OAuth20Token extends ServiceTicket {
-
-    /**
-     * Get the current authentication.
-     *
-     * @return the current authentication.
-     */
-    Authentication getAuthentication();
+public interface OAuth20Token extends ServiceTicket, IdentifiableTicket {
 
     /**
      * Get requested scopes requested at the time of issuing this code.

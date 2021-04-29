@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.registry;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasHibernateJpaConfiguration;
 import org.apereo.cas.config.CasWsSecurityTokenTicketCatalogConfiguration;
+import org.apereo.cas.config.CasWsSecurityTokenTicketComponentSerializationConfiguration;
 import org.apereo.cas.config.JpaTicketRegistryConfiguration;
 import org.apereo.cas.config.JpaTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.ticket.DefaultSecurityTokenTicketFactory;
@@ -15,13 +16,9 @@ import lombok.val;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
 
@@ -38,17 +35,16 @@ import static org.junit.jupiter.api.Assertions.*;
     JpaTicketRegistryConfiguration.class,
     CasHibernateJpaConfiguration.class,
     BaseTicketRegistryTests.SharedTestConfiguration.class,
+    CasWsSecurityTokenTicketComponentSerializationConfiguration.class,
     CasWsSecurityTokenTicketCatalogConfiguration.class
 })
-@Transactional(transactionManager = "ticketTransactionManager", isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-@ResourceLock("jpa-tickets")
 @Tag("JDBC")
 @Getter
 public class JpaTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired
     @Qualifier("ticketRegistry")
-    private TicketRegistry newTicketRegistry;
+    protected TicketRegistry newTicketRegistry;
 
     @AfterEach
     public void cleanup() {
