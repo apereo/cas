@@ -173,12 +173,12 @@ public class CoreAuthenticationUtils {
      *
      * @param currentAttributes the current attributes
      * @param attributesToMerge the attributes to merge
+     * @param merger            the merger
      * @return the map
      */
-    public static Map<String, List<Object>> mergeAttributes(final Map<String, List<Object>> currentAttributes, final Map<String, List<Object>> attributesToMerge) {
-        val merger = new MultivaluedAttributeMerger();
-        merger.setDistinctValues(true);
-
+    public static Map<String, List<Object>> mergeAttributes(final Map<String, List<Object>> currentAttributes,
+                                                            final Map<String, List<Object>> attributesToMerge,
+                                                            final IAttributeMerger merger) {
         val toModify = currentAttributes.entrySet()
             .stream()
             .map(entry -> Pair.of(entry.getKey(), CollectionUtils.toCollection(entry.getValue(), ArrayList.class)))
@@ -193,6 +193,20 @@ public class CoreAuthenticationUtils {
         val results = merger.mergeAttributes((Map) toModify, (Map) toMerge);
         LOGGER.debug("Merged attributes with the final result as [{}]", results);
         return results;
+    }
+
+    /**
+     * Merge attributes map.
+     *
+     * @param currentAttributes the current attributes
+     * @param attributesToMerge the attributes to merge
+     * @return the map
+     */
+    public static Map<String, List<Object>> mergeAttributes(final Map<String, List<Object>> currentAttributes,
+                                                            final Map<String, List<Object>> attributesToMerge) {
+        val merger = new MultivaluedAttributeMerger();
+        merger.setDistinctValues(true);
+        return mergeAttributes(currentAttributes, attributesToMerge, merger);
     }
 
     /**

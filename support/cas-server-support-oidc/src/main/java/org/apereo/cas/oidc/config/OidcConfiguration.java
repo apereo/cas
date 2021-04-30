@@ -70,6 +70,7 @@ import org.apereo.cas.oidc.web.controllers.dynareg.OidcDynamicClientRegistration
 import org.apereo.cas.oidc.web.controllers.introspection.OidcIntrospectionEndpointController;
 import org.apereo.cas.oidc.web.controllers.jwks.OidcJwksEndpointController;
 import org.apereo.cas.oidc.web.controllers.logout.OidcLogoutEndpointController;
+import org.apereo.cas.oidc.web.controllers.logout.OidcPostLogoutRedirectUrlMatcher;
 import org.apereo.cas.oidc.web.controllers.profile.OidcUserProfileEndpointController;
 import org.apereo.cas.oidc.web.controllers.token.OidcAccessTokenEndpointController;
 import org.apereo.cas.oidc.web.controllers.token.OidcRevocationEndpointController;
@@ -125,6 +126,7 @@ import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.validation.CasProtocolViewFactory;
 import org.apereo.cas.web.ProtocolEndpointConfigurer;
+import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -191,6 +193,7 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class OidcConfiguration implements WebMvcConfigurer {
+
     @Autowired
     @Qualifier("oauthRegisteredServiceCipherExecutor")
     private ObjectProvider<CipherExecutor> oauthRegisteredServiceCipherExecutor;
@@ -368,6 +371,11 @@ public class OidcConfiguration implements WebMvcConfigurer {
     @Qualifier("oauthDistributedSessionCookieGenerator")
     private ObjectProvider<CasCookieBuilder> oauthDistributedSessionCookieGenerator;
 
+    @Autowired
+    @Qualifier("urlValidator")
+    private ObjectProvider<UrlValidator> urlValidator;
+
+
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
         registry.addInterceptor(oauthInterceptor()).addPathPatterns('/' + OidcConstants.BASE_OIDC_URL.concat("/").concat("*"));
@@ -485,9 +493,16 @@ public class OidcConfiguration implements WebMvcConfigurer {
 
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = OidcPostLogoutRedirectUrlMatcher.BEAN_NAME_POST_LOGOUT_REDIRECT_URL_MATCHER)
+    public OidcPostLogoutRedirectUrlMatcher postLogoutRedirectUrlMatcher() {
+        return String::equalsIgnoreCase;
+    }
+
+    @RefreshScope
+    @Bean
     public OidcLogoutEndpointController oidcLogoutEndpointController() {
         val context = buildConfigurationContext();
-        return new OidcLogoutEndpointController(context);
+        return new OidcLogoutEndpointController(context, postLogoutRedirectUrlMatcher(), urlValidator.getObject());
     }
 
     @RefreshScope

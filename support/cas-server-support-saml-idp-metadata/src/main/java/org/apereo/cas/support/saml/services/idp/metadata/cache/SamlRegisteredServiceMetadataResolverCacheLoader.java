@@ -71,11 +71,11 @@ public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLo
                 + " with metadata location " + service.getMetadataLocation());
         }
         metadataResolver.setId(ChainingMetadataResolver.class.getCanonicalName());
-        LOGGER.trace("There are [{}] eligible metadata resolver(s) for this request", size);
+        LOGGER.trace("There are [{}] eligible metadata resolver(s) for this request", metadataResolvers.size());
         metadataResolver.setResolvers(metadataResolvers);
         metadataResolver.initialize();
 
-        LOGGER.debug("Metadata resolvers active for this request are [{}]", metadataResolver);
+        LOGGER.debug("Metadata resolvers active for this request are [{}]", metadataResolvers);
         return metadataResolver;
 
     }

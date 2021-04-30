@@ -49,12 +49,11 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
     private Assertion validateRequestAndBuildCasAssertion(final HttpServletResponse response,
                                                           final HttpServletRequest request,
                                                           final Pair<AuthnRequest, MessageContext> pair) throws Exception {
-        val authnRequest = pair.getKey();
         val ticket = request.getParameter(CasProtocolConstants.PARAMETER_TICKET);
-        getSamlProfileHandlerConfigurationContext().getTicketValidator().setRenew(authnRequest.isForceAuthn());
+        val validator = getSamlProfileHandlerConfigurationContext().getTicketValidator();
         val serviceUrl = constructServiceUrl(request, response, pair);
         LOGGER.trace("Created service url for validation: [{}]", serviceUrl);
-        val assertion = getSamlProfileHandlerConfigurationContext().getTicketValidator().validate(ticket, serviceUrl);
+        val assertion = validator.validate(ticket, serviceUrl);
         logCasValidationAssertion(assertion);
         return assertion;
     }

@@ -15,7 +15,8 @@ public class OAuth20ServicesManagerRegisteredServiceLocator extends DefaultServi
     public OAuth20ServicesManagerRegisteredServiceLocator() {
         setOrder(Ordered.HIGHEST_PRECEDENCE);
         setRegisteredServiceFilter((registeredService, service) -> service.getAttributes().containsKey(OAuth20Constants.CLIENT_ID)
-            && registeredService.getClass().equals(OAuthRegisteredService.class));
+            && registeredService.getClass().equals(OAuthRegisteredService.class)
+            && registeredService.matches(service.getId()));
     }
 }
 

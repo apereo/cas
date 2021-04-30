@@ -24,16 +24,6 @@ Duo offers several options for authenticating users:
 </dependency>
 ```
 
-You may need to add the following repositories to the WAR overlay:
-
-```groovy
-repositories {
-    maven { 
-        mavenContent { releasesOnly() }
-        url "https://dl.bintray.com/uniconiam/maven" 
-    }
-}
-```
 
 ## Administrative Endpoints
 

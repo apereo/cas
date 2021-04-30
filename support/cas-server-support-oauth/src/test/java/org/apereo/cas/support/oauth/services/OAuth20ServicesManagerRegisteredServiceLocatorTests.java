@@ -37,8 +37,7 @@ public class OAuth20ServicesManagerRegisteredServiceLocatorTests extends Abstrac
         service.setMatchingStrategy(new PartialRegexRegisteredServiceMatchingStrategy());
         val svc = serviceFactory.createService(
             String.format("https://oauth.example.org/whatever?%s=clientid", OAuth20Constants.CLIENT_ID));
-        val result = oauthServicesManagerRegisteredServiceLocator.locate(List.of(service),
-            svc, r -> r.matches("https://oauth.example.org"));
+        val result = oauthServicesManagerRegisteredServiceLocator.locate(List.of(service), svc);
         assertNotNull(result);
     }
 

@@ -16,7 +16,8 @@ public class OidcServicesManagerRegisteredServiceLocator extends DefaultServices
     public OidcServicesManagerRegisteredServiceLocator() {
         setOrder(Ordered.HIGHEST_PRECEDENCE);
         setRegisteredServiceFilter((registeredService, service) -> service.getAttributes().containsKey(OAuth20Constants.CLIENT_ID)
-            && registeredService.getClass().equals(OidcRegisteredService.class));
+            && registeredService.getClass().equals(OidcRegisteredService.class)
+            && registeredService.matches(service.getId()));
     }
 }
 

@@ -94,6 +94,10 @@ public class WsFederationDelegationProperties implements Serializable {
      */
     private String encryptionPrivateKeyPassword = "NONE";
 
+    /**
+     * Internal identifier for this wsfed configuration.
+     */
+    private String id;
 
     /**
      * Principal resolution settings.

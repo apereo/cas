@@ -2518,6 +2518,9 @@ AWS settings for this feature are available [here](Configuration-Properties-Comm
 
 # cas.authn.cognito.client-id=
 # cas.authn.cognito.user-pool-id=
+
+# cas.authn.cognito.mapped-attributes.given_name=givenName
+# cas.authn.cognito.mapped-attributes.[custom\:netid]=netid
 ```
 
 ## Okta Authentication

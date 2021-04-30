@@ -21,6 +21,7 @@ import org.springframework.retry.policy.SimpleRetryPolicy;
 import org.springframework.retry.support.RetryTemplate;
 
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * An adaptation of metadata resolver which handles the resolution of metadata resources
@@ -72,7 +73,7 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
                         + "has been invalidated. Retry attempt: [{}]",
                     resolver.getId(), service.getMetadataLocation(), cacheKey.getId(), retryContext.getRetryCount());
                 throw new SamlException("Unable to locate a valid SAML metadata resolver for "
-                    + service.getMetadataLocation());
+                    + service.getMetadataLocation() + " to locate " + criteriaSet);
             }
             return resolver;
         });
@@ -110,6 +111,17 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
         return resolver;
     }
 
+    /**
+     * Resolve if present.
+     *
+     * @param service     the service
+     * @param criteriaSet the criteria set
+     * @return the resolver.
+     */
+    Optional<MetadataResolver> resolveIfPresent(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
+        val cacheKey = new SamlRegisteredServiceCacheKey(service, criteriaSet);
+        return Optional.ofNullable(this.cache.getIfPresent(cacheKey));
+    }
 
     @Override
     public void invalidate() {

@@ -46,8 +46,7 @@ public class OidcServicesManagerRegisteredServiceLocatorTests extends AbstractOi
         service.setMatchingStrategy(new PartialRegexRegisteredServiceMatchingStrategy());
         val svc = webApplicationServiceFactory.createService(
             String.format("https://oauth.example.org/whatever?%s=clientid", OAuth20Constants.CLIENT_ID));
-        val result = oidcServicesManagerRegisteredServiceLocator.locate(List.of(service),
-            svc, r -> r.matches("https://oauth.example.org/whatever"));
+        val result = oidcServicesManagerRegisteredServiceLocator.locate(List.of(service), svc);
         assertNotNull(result);
     }
 
