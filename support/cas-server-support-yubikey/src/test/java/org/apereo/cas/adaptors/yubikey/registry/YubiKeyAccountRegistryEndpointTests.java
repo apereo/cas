@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 
 import java.util.UUID;
 
@@ -53,6 +54,10 @@ public class YubiKeyAccountRegistryEndpointTests {
         assertTrue(yubiKeyAccountRegistry.registerAccountFor(request));
         assertNotNull(endpoint.get(username));
         assertFalse(endpoint.load().isEmpty());
+
+        val entity = endpoint.export();
+        assertEquals(HttpStatus.OK, entity.getStatusCode());
+
         endpoint.delete(username);
         assertNull(endpoint.get(username));
         endpoint.deleteAll();

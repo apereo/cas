@@ -254,7 +254,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
     }
 
     @Override
-    public Stream<? extends RegisteredService> getAllServicesStream() {
+    public Stream<? extends RegisteredService> stream() {
         return configurationContext.getServiceRegistry().getServicesStream();
     }
 

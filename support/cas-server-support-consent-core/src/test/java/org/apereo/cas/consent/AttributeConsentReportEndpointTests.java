@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -46,6 +47,9 @@ public class AttributeConsentReportEndpointTests extends AbstractCasEndpointTest
 
         var results = attributeConsentReportEndpoint.consentDecisions("casuser");
         assertFalse(results.isEmpty());
+
+        val entity = attributeConsentReportEndpoint.export();
+        assertEquals(HttpStatus.OK, entity.getStatusCode());
 
         assertTrue(attributeConsentReportEndpoint.revokeConsents(desc.getPrincipal(), desc.getId()));
         results = attributeConsentReportEndpoint.consentDecisions("casuser");

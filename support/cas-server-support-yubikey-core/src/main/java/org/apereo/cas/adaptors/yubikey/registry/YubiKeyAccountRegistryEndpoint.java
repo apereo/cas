@@ -3,15 +3,28 @@ package org.apereo.cas.adaptors.yubikey.registry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.CompressionUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
-import org.springframework.boot.actuate.endpoint.annotation.DeleteOperation;
-import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
-import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
-import org.springframework.boot.actuate.endpoint.annotation.Selector;
+import org.jooq.lambda.Unchecked;
+import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.io.File;
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * This is {@link YubiKeyAccountRegistryEndpoint}.
@@ -19,8 +32,11 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Endpoint(id = "yubikeyAccountRepository", enableByDefault = false)
+@RestControllerEndpoint(id = "yubikeyAccountRepository", enableByDefault = false)
 public class YubiKeyAccountRegistryEndpoint extends BaseCasActuatorEndpoint {
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
+    
     /**
      * The Registry.
      */
@@ -38,8 +54,8 @@ public class YubiKeyAccountRegistryEndpoint extends BaseCasActuatorEndpoint {
      * @param username the username
      * @return the yubi key account
      */
-    @ReadOperation
-    public YubiKeyAccount get(@Selector final String username) {
+    @GetMapping(path = "{username}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public YubiKeyAccount get(@PathVariable final String username) {
         val result = registry.getAccount(username);
         return result.orElse(null);
     }
@@ -49,7 +65,7 @@ public class YubiKeyAccountRegistryEndpoint extends BaseCasActuatorEndpoint {
      *
      * @return the collection
      */
-    @ReadOperation
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Collection<? extends YubiKeyAccount> load() {
         return registry.getAccounts();
     }
@@ -59,16 +75,39 @@ public class YubiKeyAccountRegistryEndpoint extends BaseCasActuatorEndpoint {
      *
      * @param username the username
      */
-    @DeleteOperation
-    public void delete(@Selector final String username) {
+    @DeleteMapping(path = "{username}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public void delete(@PathVariable final String username) {
         registry.delete(username);
     }
 
     /**
      * Delete all.
      */
-    @DeleteOperation
+    @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public void deleteAll() {
         registry.deleteAll();
+    }
+
+    /**
+     * Export.
+     *
+     * @return the response entity
+     */
+    @GetMapping(path = "/export", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @ResponseBody
+    public ResponseEntity<Resource> export() {
+        val accounts = registry.getAccounts();
+        val resource = CompressionUtils.toZipFile(accounts.stream(),
+            Unchecked.function(entry -> {
+                val acct = (YubiKeyAccount) entry;
+                val fileName = String.format("%s-%s", acct.getUsername(), acct.getId());
+                val sourceFile = File.createTempFile(fileName, ".json");
+                MAPPER.writeValue(sourceFile, acct);
+                return sourceFile;
+            }), "yubikeybaccts");
+        val headers = new HttpHeaders();
+        headers.setContentDisposition(ContentDisposition.attachment()
+            .filename(Objects.requireNonNull(resource.getFilename())).build());
+        return new ResponseEntity<>(resource, headers, HttpStatus.OK);
     }
 }

@@ -1,6 +1,5 @@
 package org.apereo.cas.gauth.credential;
 
-import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.gauth.BaseGoogleAuthenticatorTests;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.web.report.AbstractCasEndpointTests;
@@ -12,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.UUID;
@@ -41,7 +41,7 @@ public class GoogleAuthenticatorTokenCredentialRepositoryEndpointTests extends A
     @Test
     public void verifyOperation() {
         val acct = registry.create(UUID.randomUUID().toString());
-        val toSave = OneTimeTokenAccount.builder()
+        val toSave = GoogleAuthenticatorAccount.builder()
             .username(acct.getUsername())
             .secretKey(acct.getSecretKey())
             .validationCode(acct.getValidationCode())
@@ -51,6 +51,10 @@ public class GoogleAuthenticatorTokenCredentialRepositoryEndpointTests extends A
         registry.save(toSave);
         assertNotNull(endpoint.get(acct.getUsername()));
         assertFalse(endpoint.load().isEmpty());
+
+        val entity = endpoint.exportAccounts();
+        assertEquals(HttpStatus.OK, entity.getStatusCode());
+
         endpoint.delete(acct.getUsername());
         assertTrue(endpoint.get(acct.getUsername()).isEmpty());
         endpoint.deleteAll();

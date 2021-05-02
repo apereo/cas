@@ -66,7 +66,7 @@ public class RestfulWebAuthnCredentialRepository extends BaseWebAuthnCredentialR
     }
 
     @Override
-    protected Stream<CredentialRegistration> load() {
+    public Stream<CredentialRegistration> stream() {
         val restProperties = getProperties().getAuthn().getMfa().getWebAuthn().getRest();
         HttpResponse response = null;
         try {

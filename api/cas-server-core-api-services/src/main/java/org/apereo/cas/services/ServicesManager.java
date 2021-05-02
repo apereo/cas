@@ -177,7 +177,7 @@ public interface ServicesManager extends Ordered {
      *
      * @return the services stream
      */
-    default Stream<? extends RegisteredService> getAllServicesStream() {
+    default Stream<? extends RegisteredService> stream() {
         return getAllServices().stream();
     }
 
