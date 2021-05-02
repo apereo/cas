@@ -63,8 +63,8 @@ dependencies {
                 logger.debug("Matching ${pattern} against CAS module ${project.name}")
                 project.name.matches(pattern)
             }
+            println "Adding CAS modules ${projectsToAdd}"
             projectsToAdd.each {
-                println "Adding CAS module ${it.path}"
                 implementation it
             }
         }
