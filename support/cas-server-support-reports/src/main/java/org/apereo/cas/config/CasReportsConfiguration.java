@@ -38,10 +38,12 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
+import org.springframework.boot.actuate.autoconfigure.info.ConditionalOnEnabledInfoContributor;
 import org.springframework.boot.actuate.health.HealthEndpoint;
 import org.springframework.boot.actuate.trace.http.HttpTraceEndpoint;
 import org.springframework.boot.actuate.trace.http.HttpTraceRepository;
 import org.springframework.boot.actuate.trace.http.InMemoryHttpTraceRepository;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -156,8 +158,9 @@ public class CasReportsConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "casInfoEndpointContributor")
     public CasInfoEndpointContributor casInfoEndpointContributor() {
-        return new CasInfoEndpointContributor();
+        return new CasInfoEndpointContributor(applicationContext);
     }
 
     @Bean
