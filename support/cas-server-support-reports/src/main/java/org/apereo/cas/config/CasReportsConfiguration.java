@@ -21,8 +21,6 @@ import org.apereo.cas.web.report.CasInfoEndpointContributor;
 import org.apereo.cas.web.report.CasReleaseAttributesReportEndpoint;
 import org.apereo.cas.web.report.CasResolveAttributesReportEndpoint;
 import org.apereo.cas.web.report.CasRuntimeModulesEndpoint;
-import org.apereo.cas.web.report.ExportRegisteredServicesEndpoint;
-import org.apereo.cas.web.report.ImportRegisteredServicesEndpoint;
 import org.apereo.cas.web.report.RegisteredAuthenticationHandlersEndpoint;
 import org.apereo.cas.web.report.RegisteredAuthenticationPoliciesEndpoint;
 import org.apereo.cas.web.report.RegisteredServicesEndpoint;
@@ -128,21 +126,10 @@ public class CasReportsConfiguration {
     @ConditionalOnAvailableEndpoint
     public RegisteredServicesEndpoint registeredServicesReportEndpoint() {
         return new RegisteredServicesEndpoint(casProperties, servicesManager.getObject(),
-            webApplicationServiceFactory.getObject());
-    }
-
-    @Bean
-    @ConditionalOnAvailableEndpoint
-    public ExportRegisteredServicesEndpoint exportRegisteredServicesEndpoint() {
-        return new ExportRegisteredServicesEndpoint(casProperties, servicesManager.getObject());
-    }
-
-    @Bean
-    @ConditionalOnAvailableEndpoint
-    public ImportRegisteredServicesEndpoint importRegisteredServicesEndpoint() {
-        return new ImportRegisteredServicesEndpoint(casProperties, servicesManager.getObject(),
+            webApplicationServiceFactory.getObject(),
             CollectionUtils.wrapList(new RegisteredServiceYamlSerializer(), new RegisteredServiceJsonSerializer()));
     }
+
 
     @Bean
     @ConditionalOnAvailableEndpoint

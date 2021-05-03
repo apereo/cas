@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.registry;
 import org.apereo.cas.config.CassandraTicketRegistryConfiguration;
 import org.apereo.cas.config.CassandraTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.Getter;
@@ -45,7 +46,7 @@ public class CassandraTicketRegistryTests extends BaseTicketRegistryTests {
         assertDoesNotThrow(new Executable() {
             @Override
             public void execute() throws Throwable {
-                newTicketRegistry.addTicket(null);
+                newTicketRegistry.addTicket((Ticket) null);
             }
         });
     }
