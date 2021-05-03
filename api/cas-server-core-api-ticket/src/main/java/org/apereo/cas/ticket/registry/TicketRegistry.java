@@ -26,6 +26,15 @@ public interface TicketRegistry {
     void addTicket(Ticket ticket);
 
     /**
+     * Save.
+     *
+     * @param toSave the to save
+     */
+    default void addTicket(final Stream<? extends Ticket> toSave) {
+        toSave.forEach(this::addTicket);
+    }
+
+    /**
      * Retrieve a ticket from the registry. If the ticket retrieved does not
      * match the expected class, an InvalidTicketException is thrown.
      *

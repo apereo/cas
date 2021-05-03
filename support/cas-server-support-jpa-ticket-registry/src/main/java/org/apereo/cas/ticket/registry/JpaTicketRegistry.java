@@ -76,6 +76,11 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
+    public void addTicket(final Stream<? extends Ticket> toSave) {
+        this.transactionTemplate.executeWithoutResult(status -> super.addTicket(toSave));
+    }
+
+    @Override
     @Transactional(transactionManager = JpaTicketRegistry.BEAN_NAME_TRANSACTION_MANAGER, readOnly = true)
     public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
         try {

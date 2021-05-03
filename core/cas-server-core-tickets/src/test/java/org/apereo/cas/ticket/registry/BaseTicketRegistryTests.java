@@ -70,6 +70,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.UUID;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.*;
@@ -142,6 +143,16 @@ public abstract class BaseTicketRegistryTests {
             ticketRegistry.deleteAll();
             setUpEncryption();
         }
+    }
+
+    @RepeatedTest(2)
+    public void verifyAddTicketWithStream() {
+        val originalAuthn = CoreAuthenticationTestUtils.getAuthentication();
+        val s1 = Stream.of(new TicketGrantingTicketImpl(ticketGrantingTicketId,
+            originalAuthn, NeverExpiresExpirationPolicy.INSTANCE));
+        ticketRegistry.addTicket(s1);
+        val tgt = ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
+        assertNotNull(tgt);
     }
 
     @RepeatedTest(2)

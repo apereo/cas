@@ -39,6 +39,7 @@ import org.springframework.context.annotation.Import;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -53,7 +54,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("JDBC")
 @Getter
 public class JpaTicketRegistryTests extends BaseTicketRegistryTests {
-    private static final int COUNT = 10;
+    private static final int COUNT = 20_000;
 
     @Autowired
     @Qualifier("defaultOAuthCodeFactory")
@@ -70,20 +71,18 @@ public class JpaTicketRegistryTests extends BaseTicketRegistryTests {
 
     @RepeatedTest(2)
     public void verifyLargeDataset() {
-        for (var i = 0; i < COUNT; i++) {
+        val ticketGrantingTickets = Stream.generate(() -> {
             var ticketGrantingTicketId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
                 .getNewTicketId(TicketGrantingTicket.PREFIX);
-            val ticketGrantingTicket = new TicketGrantingTicketImpl(ticketGrantingTicketId + '-' + i,
+            return new TicketGrantingTicketImpl(ticketGrantingTicketId,
                 CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
-            newTicketRegistry.addTicket(ticketGrantingTicket);
-            val st = ticketGrantingTicket.grantServiceTicket("ST-" + i,
-                RegisteredServiceTestUtils.getService(),
-                NeverExpiresExpirationPolicy.INSTANCE, false, true);
-            newTicketRegistry.addTicket(st);
-        }
+        }).limit(COUNT);
+        
         var stopwatch = new StopWatch();
         stopwatch.start();
-        assertEquals(COUNT * 2, newTicketRegistry.getTickets().size());
+        newTicketRegistry.addTicket(ticketGrantingTickets);
+
+        assertEquals(COUNT, newTicketRegistry.getTickets().size());
         stopwatch.stop();
         var time = stopwatch.getTime(TimeUnit.SECONDS);
         assertTrue(time <= 20);
