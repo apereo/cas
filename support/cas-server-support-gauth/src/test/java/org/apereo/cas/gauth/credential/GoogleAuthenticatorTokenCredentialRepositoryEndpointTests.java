@@ -12,8 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
 
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -59,5 +61,21 @@ public class GoogleAuthenticatorTokenCredentialRepositoryEndpointTests extends A
         assertTrue(endpoint.get(acct.getUsername()).isEmpty());
         endpoint.deleteAll();
         assertTrue(endpoint.load().isEmpty());
+    }
+
+    @Test
+    public void verifyImportOperation() throws Exception {
+        val acct = registry.create(UUID.randomUUID().toString());
+        val toSave = GoogleAuthenticatorAccount.builder()
+            .username(acct.getUsername())
+            .secretKey(acct.getSecretKey())
+            .validationCode(acct.getValidationCode())
+            .scratchCodes(acct.getScratchCodes())
+            .name(UUID.randomUUID().toString())
+            .build();
+        val request = new MockHttpServletRequest();
+        val content = new GoogleAuthenticatorAccountSerializer().toString(toSave);
+        request.setContent(content.getBytes(StandardCharsets.UTF_8));
+        assertEquals(HttpStatus.CREATED, endpoint.importAccount(request));
     }
 }

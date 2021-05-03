@@ -36,7 +36,7 @@ import java.util.Objects;
 public class YubiKeyAccountRegistryEndpoint extends BaseCasActuatorEndpoint {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
-    
+
     /**
      * The Registry.
      */

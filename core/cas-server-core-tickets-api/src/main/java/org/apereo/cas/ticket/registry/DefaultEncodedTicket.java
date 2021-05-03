@@ -74,18 +74,21 @@ public class DefaultEncodedTicket implements EncodedTicket {
     }
 
     @Override
+    @JsonIgnore
     public boolean isExpired() {
         getOpNotSupportedMessage("getExpirationPolicy");
         return false;
     }
 
     @Override
+    @JsonIgnore
     public ExpirationPolicy getExpirationPolicy() {
         getOpNotSupportedMessage("getExpirationPolicy");
         return null;
     }
 
     @Override
+    @JsonIgnore
     public void markTicketExpired() {
     }
 
