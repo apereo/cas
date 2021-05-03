@@ -40,24 +40,24 @@ public class RestfulYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     private final YubiKeyRestfulMultifactorProperties restProperties;
 
     public RestfulYubiKeyAccountRegistry(final YubiKeyRestfulMultifactorProperties restProperties,
-        final YubiKeyAccountValidator validator) {
+                                         final YubiKeyAccountValidator validator) {
         super(validator);
         this.restProperties = restProperties;
     }
 
     @Override
     public YubiKeyAccount save(final YubiKeyDeviceRegistrationRequest request, final YubiKeyRegisteredDevice... device) {
-        HttpResponse response = null;
-        try {
-            val account = YubiKeyAccount.builder()
-                .username(request.getUsername())
-                .devices(CollectionUtils.wrapList(device))
-                .build();
-            update(account);
-            return account;
-        } finally {
-            HttpUtils.close(response);
-        }
+        val account = YubiKeyAccount.builder()
+            .username(request.getUsername())
+            .devices(CollectionUtils.wrapList(device))
+            .build();
+        return save(account);
+    }
+
+    @Override
+    public YubiKeyAccount save(final YubiKeyAccount account) {
+        update(account);
+        return account;
     }
 
     @Override
@@ -82,6 +82,59 @@ public class RestfulYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
             HttpUtils.close(response);
         }
         return false;
+    }
+
+    @Override
+    public void delete(final String username, final long deviceId) {
+        HttpResponse response = null;
+        try {
+            val url = StringUtils.appendIfMissing(restProperties.getUrl(), "/")
+                .concat(username).concat("/").concat(String.valueOf(deviceId));
+
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(restProperties.getBasicAuthPassword())
+                .basicAuthUsername(restProperties.getBasicAuthUsername())
+                .method(HttpMethod.DELETE)
+                .url(url)
+                .build();
+
+            response = HttpUtils.execute(exec);
+        } finally {
+            HttpUtils.close(response);
+        }
+    }
+
+    @Override
+    public void delete(final String username) {
+        HttpResponse response = null;
+        try {
+            val url = StringUtils.appendIfMissing(restProperties.getUrl(), "/").concat(username);
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(restProperties.getBasicAuthPassword())
+                .basicAuthUsername(restProperties.getBasicAuthUsername())
+                .method(HttpMethod.DELETE)
+                .url(url)
+                .build();
+            response = HttpUtils.execute(exec);
+        } finally {
+            HttpUtils.close(response);
+        }
+    }
+
+    @Override
+    public void deleteAll() {
+        HttpResponse response = null;
+        try {
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(restProperties.getBasicAuthPassword())
+                .basicAuthUsername(restProperties.getBasicAuthUsername())
+                .method(HttpMethod.DELETE)
+                .url(restProperties.getUrl())
+                .build();
+            response = HttpUtils.execute(exec);
+        } finally {
+            HttpUtils.close(response);
+        }
     }
 
     @Override
@@ -136,58 +189,5 @@ public class RestfulYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
             HttpUtils.close(response);
         }
         return new ArrayList<>(0);
-    }
-
-    @Override
-    public void delete(final String username, final long deviceId) {
-        HttpResponse response = null;
-        try {
-            val url = StringUtils.appendIfMissing(restProperties.getUrl(), "/")
-                .concat(username).concat("/").concat(String.valueOf(deviceId));
-
-            val exec = HttpUtils.HttpExecutionRequest.builder()
-                .basicAuthPassword(restProperties.getBasicAuthPassword())
-                .basicAuthUsername(restProperties.getBasicAuthUsername())
-                .method(HttpMethod.DELETE)
-                .url(url)
-                .build();
-
-            response = HttpUtils.execute(exec);
-        } finally {
-            HttpUtils.close(response);
-        }
-    }
-
-    @Override
-    public void delete(final String username) {
-        HttpResponse response = null;
-        try {
-            val url = StringUtils.appendIfMissing(restProperties.getUrl(), "/").concat(username);
-            val exec = HttpUtils.HttpExecutionRequest.builder()
-                .basicAuthPassword(restProperties.getBasicAuthPassword())
-                .basicAuthUsername(restProperties.getBasicAuthUsername())
-                .method(HttpMethod.DELETE)
-                .url(url)
-                .build();
-            response = HttpUtils.execute(exec);
-        } finally {
-            HttpUtils.close(response);
-        }
-    }
-
-    @Override
-    public void deleteAll() {
-        HttpResponse response = null;
-        try {
-            val exec = HttpUtils.HttpExecutionRequest.builder()
-                .basicAuthPassword(restProperties.getBasicAuthPassword())
-                .basicAuthUsername(restProperties.getBasicAuthUsername())
-                .method(HttpMethod.DELETE)
-                .url(restProperties.getUrl())
-                .build();
-            response = HttpUtils.execute(exec);
-        } finally {
-            HttpUtils.close(response);
-        }
     }
 }

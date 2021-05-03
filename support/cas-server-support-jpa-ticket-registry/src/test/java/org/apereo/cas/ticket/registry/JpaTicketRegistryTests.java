@@ -50,11 +50,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.0.0
  */
 @SpringBootTest(classes = JpaTicketRegistryTests.SharedTestConfiguration.class,
-    properties = "cas.ticket.registry.jpa.ddl-auto=create-drop")
+    properties = {
+        "cas.jdbc.show-sql=false",
+        "cas.ticket.registry.jpa.ddl-auto=create-drop"
+    })
 @Tag("JDBC")
 @Getter
 public class JpaTicketRegistryTests extends BaseTicketRegistryTests {
-    private static final int COUNT = 20_000;
+    private static final int COUNT = 10_000;
 
     @Autowired
     @Qualifier("defaultOAuthCodeFactory")
@@ -77,7 +80,7 @@ public class JpaTicketRegistryTests extends BaseTicketRegistryTests {
             return new TicketGrantingTicketImpl(ticketGrantingTicketId,
                 CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
         }).limit(COUNT);
-        
+
         var stopwatch = new StopWatch();
         stopwatch.start();
         newTicketRegistry.addTicket(ticketGrantingTickets);

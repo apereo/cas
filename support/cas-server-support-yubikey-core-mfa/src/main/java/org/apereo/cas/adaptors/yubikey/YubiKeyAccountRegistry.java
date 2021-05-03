@@ -44,6 +44,14 @@ public interface YubiKeyAccountRegistry {
     boolean registerAccountFor(YubiKeyDeviceRegistrationRequest request);
 
     /**
+     * Save.
+     *
+     * @param account the account
+     * @return the yubi key account
+     */
+    YubiKeyAccount save(YubiKeyAccount account);
+
+    /**
      * Gets accounts for all users.
      *
      * @return the accounts

@@ -11,6 +11,10 @@ import org.apereo.cas.util.spring.ApplicationContextProvider;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.ObjectUtils;
+
+import java.time.Clock;
+import java.time.ZonedDateTime;
 
 /**
  * This is {@link JpaTicketEntityFactory}.
@@ -62,7 +66,7 @@ public class JpaTicketEntityFactory extends AbstractJpaEntityFactory<JpaTicketEn
             .setBody(jsonBody)
             .setType(ticket.getClass().getName())
             .setPrincipalId(authentication != null ? authentication.getPrincipal().getId() : null)
-            .setCreationTime(ticket.getCreationTime());
+            .setCreationTime(ObjectUtils.defaultIfNull(ticket.getCreationTime(), ZonedDateTime.now(Clock.systemUTC())));
     }
 
     @Override

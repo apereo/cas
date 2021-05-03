@@ -91,6 +91,15 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
+    public YubiKeyAccount save(final YubiKeyAccount account) {
+        val jpaAccount = JpaYubiKeyAccount.builder()
+            .username(account.getUsername())
+            .devices(account.getDevices())
+            .build();
+        return this.entityManager.merge(jpaAccount);
+    }
+
+    @Override
     public boolean update(final YubiKeyAccount account) {
         return this.entityManager.merge(account) != null;
     }

@@ -7,7 +7,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.Clock;
+import java.time.ZonedDateTime;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -70,10 +73,25 @@ public abstract class AbstractYubiKeyAccountRegistryTests {
         assertTrue(isYubiKeyRegisteredFor("casuser", null));
         assertEquals(2, getAccounts().size());
         val account = getAccount("casuser");
-        account.ifPresent(acct -> assertEquals(2, acct.getDevices().size()));
+        account.ifPresent(acct -> {
+            assertEquals(2, acct.getDevices().size());
+        });
 
         getYubiKeyAccountRegistry().delete("casuser");
         assertTrue(getAccount("casuser").isEmpty());
+        getYubiKeyAccountRegistry().deleteAll();
+    }
+
+    @Test
+    public void verifySaveAccount() {
+        val account = YubiKeyAccount.builder().username(UUID.randomUUID().toString())
+            .devices(List.of(YubiKeyRegisteredDevice.builder()
+                .name(UUID.randomUUID().toString())
+                .registrationDate(ZonedDateTime.now(Clock.systemUTC()))
+                .publicId(UUID.randomUUID().toString()).build()))
+            .build();
+        assertNotNull(getYubiKeyAccountRegistry().save(account));
+        getYubiKeyAccountRegistry().delete(account.getUsername());
         getYubiKeyAccountRegistry().deleteAll();
     }
 
