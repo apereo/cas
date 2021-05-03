@@ -21,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -63,7 +64,7 @@ public class WebAuthnRegisteredDevicesEndpoint extends BaseCasActuatorEndpoint {
      * @return the boolean
      * @throws Exception the exception
      */
-    @GetMapping(path = "{username}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "{username}", produces = MediaType.APPLICATION_JSON_VALUE)
     public boolean write(@PathVariable final String username, @RequestParam final String record) throws Exception {
         val json = EncodingUtils.decodeBase64ToString(record);
         val registration = WebAuthnUtils.getObjectMapper().readValue(json, CredentialRegistration.class);
