@@ -53,7 +53,7 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
                               final GitRepository gitRepository,
                               final Collection<StringSerializer<RegisteredService>> registeredServiceSerializers,
                               final boolean pushChanges,
-                              final String rootDirectpry,
+                              final String rootDirectory,
                               final Collection<ServiceRegistryListener> serviceRegistryListeners,
                               final List<GitRepositoryRegisteredServiceLocator> registeredServiceLocators) {
         super(applicationContext, serviceRegistryListeners);
@@ -61,7 +61,7 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
         this.registeredServiceSerializers = registeredServiceSerializers;
         this.pushChanges = pushChanges;
         this.registeredServiceLocators = registeredServiceLocators;
-        this.rootDirectory = rootDirectpry;
+        this.rootDirectory = rootDirectory;
     }
 
     @Override
