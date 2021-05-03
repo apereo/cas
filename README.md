@@ -10,6 +10,7 @@
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)][casgitter]
 [![Slack](https://img.shields.io/badge/Slack-join%20chat-blue.svg)][casslack]
 [![Stack Overflow](http://img.shields.io/:stack%20overflow-cas-brightgreen.svg)](http://stackoverflow.com/questions/tagged/cas)
+[![Maintainability](https://cloud.quality-gate.com/dashboard/api/badge?projectName=apereo_cas&branchName=master)](https://cloud.quality-gate.com/dashboard/branches/36#overview)
 
 ## Introduction
 
