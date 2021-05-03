@@ -45,10 +45,10 @@ public class JpaTicketEntity implements Serializable {
 
     private static TicketSerializationManager TICKET_SERIALIZATION_MANAGER;
 
-    @Column(nullable = false, length = 64_000)
+    @Column(nullable = false, length = 8192)
     private String body;
 
-    @Column(nullable = false, length = 1024)
+    @Column(nullable = false, length = 768)
     @Id
     private String id;
 
