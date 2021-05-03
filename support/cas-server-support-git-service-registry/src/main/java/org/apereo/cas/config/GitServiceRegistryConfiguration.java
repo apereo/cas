@@ -83,6 +83,7 @@ public class GitServiceRegistryConfiguration {
                 new RegisteredServiceJsonSerializer(),
                 new RegisteredServiceYamlSerializer()),
             properties.isPushChanges(),
+            properties.getRootDirectory(),
             serviceRegistryListeners.getObject(),
             locators
         );

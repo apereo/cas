@@ -121,7 +121,7 @@ public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
             CollectionUtils.wrapList(
                 new RegisteredServiceJsonSerializer(),
                 new RegisteredServiceYamlSerializer()),
-            false, List.of(), List.of());
+            false, null, List.of(), List.of());
         assertEquals(size, registry.load().size());
     }
 
