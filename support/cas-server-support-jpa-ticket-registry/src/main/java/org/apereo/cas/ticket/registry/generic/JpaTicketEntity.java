@@ -49,6 +49,6 @@ public class JpaTicketEntity implements Serializable {
     @Column(nullable = false, length = 1024)
     private String type;
 
-    @Column(name = "CREATION_TIME", length = 512)
+    @Column(nullable = false, length= 512)
     private ZonedDateTime creationTime;
 }

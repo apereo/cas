@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
     JpaServiceRegistryConfiguration.class,
     CasHibernateJpaConfiguration.class,
     CasCoreServicesConfiguration.class
-}, properties = "cas.jdbc.show-sql=true")
+}, properties = "cas.jdbc.show-sql=false")
 @Tag("JDBC")
 @DirtiesContext
 @Getter

@@ -63,6 +63,11 @@ public class DynamoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
             .username(request.getUsername())
             .devices(Arrays.stream(device).collect(Collectors.toList()))
             .build();
+        return save(account);
+    }
+
+    @Override
+    public YubiKeyAccount save(final YubiKeyAccount account) {
         if (dynamoDbFacilitator.save(account)) {
             return account;
         }

@@ -41,6 +41,7 @@ public class ClosedYubiKeyAccountRegistryTests {
         assertFalse(registry.isYubiKeyRegisteredFor("casuser", "publicId"));
         assertFalse(registry.registerAccountFor(YubiKeyDeviceRegistrationRequest.builder().build()));
         assertFalse(registry.update(YubiKeyAccount.builder().build()));
+        assertNull(registry.save(YubiKeyAccount.builder().build()));
     }
 
 }
