@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.registry.support;
 
+import org.apereo.cas.ticket.registry.generic.JpaLockEntity;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
