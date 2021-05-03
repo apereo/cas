@@ -156,8 +156,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
      */
     private Stream<String> getKeysStream() {
         val cursor = Objects.requireNonNull(client.getConnectionFactory()).getConnection()
-            .scan(ScanOptions.scanOptions().match(getPatternTicketRedisKey())
-                .build());
+            .scan(ScanOptions.scanOptions().match(getPatternTicketRedisKey()).build());
         return StreamSupport
             .stream(Spliterators.spliteratorUnknownSize(cursor, Spliterator.ORDERED), false)
             .map(key -> (String) client.getKeySerializer().deserialize(key))
