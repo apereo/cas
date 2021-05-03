@@ -57,7 +57,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("JDBC")
 @Getter
 public class JpaTicketRegistryTests extends BaseTicketRegistryTests {
-    private static final int COUNT = 10_000;
+    private static final int COUNT = 1_000;
 
     @Autowired
     @Qualifier("defaultOAuthCodeFactory")
