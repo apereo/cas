@@ -6,10 +6,10 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.ticket.TicketCatalog;
-import org.apereo.cas.ticket.registry.JpaTicketEntity;
+import org.apereo.cas.ticket.registry.JpaTicketEntityFactory;
 import org.apereo.cas.ticket.registry.JpaTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.ticket.registry.support.JpaLockEntity;
+import org.apereo.cas.ticket.registry.generic.JpaLockEntity;
 import org.apereo.cas.ticket.registry.support.JpaLockingStrategy;
 import org.apereo.cas.ticket.registry.support.LockingStrategy;
 import org.apereo.cas.util.CollectionUtils;
@@ -67,8 +67,10 @@ public class JpaTicketRegistryConfiguration {
 
     @Bean
     public Set<String> ticketPackagesToScan() {
+        val jpa = casProperties.getTicket().getRegistry().getJpa();
+        val type = new JpaTicketEntityFactory(jpa.getDialect()).getType();
         return CollectionUtils.wrapSet(
-            JpaTicketEntity.class.getPackage().getName(),
+            type.getPackage().getName(),
             JpaLockEntity.class.getPackage().getName());
     }
 
@@ -105,7 +107,7 @@ public class JpaTicketRegistryConfiguration {
     public TicketRegistry ticketRegistry() {
         val jpa = casProperties.getTicket().getRegistry().getJpa();
         val bean = new JpaTicketRegistry(jpa.getTicketLockType(), ticketCatalog.getObject(),
-            jpaBeanFactory.getObject(), jpaTicketRegistryTransactionTemplate());
+            jpaBeanFactory.getObject(), jpaTicketRegistryTransactionTemplate(), casProperties);
         bean.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(jpa.getCrypto(), "jpa"));
         return bean;
     }

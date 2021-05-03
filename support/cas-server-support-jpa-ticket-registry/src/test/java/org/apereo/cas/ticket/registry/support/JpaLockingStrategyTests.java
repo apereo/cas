@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.registry.support;
 import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.registry.JpaTicketRegistryTests;
+import org.apereo.cas.ticket.registry.generic.JpaLockEntity;
 import org.apereo.cas.util.SchedulingUtils;
 
 import lombok.RequiredArgsConstructor;

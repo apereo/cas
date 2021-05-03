@@ -48,11 +48,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@SpringBootTest(classes = JpaTicketRegistryTests.SharedTestConfiguration.class)
+@SpringBootTest(classes = JpaTicketRegistryTests.SharedTestConfiguration.class,
+    properties = "cas.ticket.registry.jpa.ddl-auto=create-drop")
 @Tag("JDBC")
 @Getter
 public class JpaTicketRegistryTests extends BaseTicketRegistryTests {
-    private static final int COUNT = 10_000;
+    private static final int COUNT = 10;
 
     @Autowired
     @Qualifier("defaultOAuthCodeFactory")

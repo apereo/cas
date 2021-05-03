@@ -1,4 +1,4 @@
-package org.apereo.cas.ticket.registry.support;
+package org.apereo.cas.ticket.registry.generic;
 
 import lombok.Getter;
 import lombok.Setter;

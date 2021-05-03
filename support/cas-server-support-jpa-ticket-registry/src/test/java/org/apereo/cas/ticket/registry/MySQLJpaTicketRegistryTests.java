@@ -12,8 +12,8 @@ import org.springframework.test.context.TestPropertySource;
  * @since 6.1.0
  */
 @TestPropertySource(properties = {
-    "cas.ticket.registry.jpa.ddl-auto=create-drop",
     "cas.jdbc.show-sql=true",
+    "cas.ticket.registry.jpa.ddl-auto=create-drop",
     "cas.ticket.registry.jpa.user=root",
     "cas.ticket.registry.jpa.password=password",
     "cas.ticket.registry.jpa.driver-class=com.mysql.cj.jdbc.Driver",
